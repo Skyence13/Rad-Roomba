@@ -1,0 +1,222 @@
+# Rad Roomba system interface contract (machine-readable part)
+# Owner: integration lead. Change only through the lead; every change gets a
+# DEC-xxx entry in planning/decisions.csv and a line in docs/architecture/CHANGELOG.md.
+# Human-readable rationale: docs/architecture/SYSTEM_ARCHITECTURE.md
+# Units: SI (m, s, rad, V, A, W, kg) unless a key name carries another unit suffix (_mm, _us, _ms, _c).
+contract_version: "0.4.0-draft1"
+baseline: {system_design: "0.3", mechanical: "Rev D", head_protocol: "2.0", baseline_commit: "38d101051d32b47e4b21657e2293ec92c63de9c4"}
+next_revision: {system_design: "0.4", mechanical: "Rev E", head_protocol: "2.0 (unchanged envelope; additive descriptor fields only)", chassis_protocol: "1.0"}
+
+# ---------------------------------------------------------------- frames
+frames:
+  convention: "REP-103/105. x forward (toward head), y left, z up, right-handed."
+  cad_units: mm
+  ros_units: m
+  base_link:
+    definition: "On the nominal level floor directly below the midpoint of the drive axle. Identical to the Rev D CAD origin, so CAD(mm)/1000 == base_link(m). No axle-height offset exists anywhere in the software."
+  axle_height_mm: 52.0
+  wheel:
+    nominal_diameter_mm: 104.0
+    track_mm: 220.0            # tyre centre to tyre centre (wheels at y = +/-110)
+    encoder_counts_per_wheel_rev: 9600   # Pololu #2828, quadrature edges at gearbox output
+  caster: {swivel_x_mm: -100.0, wheel_x_mm: -116.0, y_mm: 0.0}
+  head_mount:            # centre of the forward bulkhead mating interface (Rev D datum, preserved)
+    xyz_mm: [138.5, 0.0, 32.0]
+    rpy_rad: [0, 0, 0]
+  head_envelope_rev_d_mm: {x: [138.8, 265.0], y: [-175.0, 175.0], z: [7.0, 42.0]}
+  head_envelope_rev_e_mm:        # provisional; top raised for the acquisition board (DEC-021). Mechanical lead confirms.
+    x: [138.8, 265.0]
+    y: [-175.0, 175.0]
+    z: [5.0, 50.0]               # z min 5.0 covers the 5 mm rail-projection trial; z max is a ceiling, not a target
+  optics:
+    row_center_x_mm: 204.0
+    entrance_film_z_mm: 10.0
+    rail_projection_options_mm: [3.0, 5.0]   # below film -> 7 / 5 mm floor clearance
+    segment_pitch_mm: 87.5
+    active_x_mm: 100.0           # along travel
+    active_y_mm: 80.0            # across travel
+    segment_center_y_mm: [131.25, 43.75, -43.75, -131.25]   # index 0..3, S0 = robot left
+    nominal_seam_mm: 7.5
+    outer_margin_mm: 3.75
+  map_frame:
+    definition: "Fixed to the trailer/container. Origin on the floor at the inside centre of the rear (door) threshold. +x toward the closed front bulkhead, +y left when looking into the trailer from the door, +z up."
+  tf_chain: "map -> odom -> base_link -> head_mount -> seg{0..3}_aperture ; base_link -> lidar_link, imu_link, tof_* (values from mechanical/common/frames.yaml)"
+
+# ---------------------------------------------------------------- motion envelope (design values; all pending physical braking/protection trials)
+motion:
+  survey_speed_mps: 0.10
+  max_forward_speed_mps: 0.20
+  max_reverse_speed_mps: 0.05
+  max_yaw_rate_radps: 0.30          # keeps the outer head corner (r = 0.318 m) at <= 0.095 m/s
+  max_accel_mps2: 0.30
+  controlled_decel_mps2: 0.40
+  command_ttl_ms_max: 250
+  drive_poll_hz: 50
+  odom_sample_hz: 100
+  stop_model: "d = v*t_delay + v^2/(2*a_min) + m ; design inputs t_delay = 0.15 s, a_min = 0.40 m/s^2, m = 0.020 m (baseline example; replace with measured values)"
+  guided_arrival_tolerance_m: 0.010   # provisional, DEC-016
+  expose_spot_reverse_offset_m: 0.35
+
+# ---------------------------------------------------------------- acquisition timing
+timing:
+  head_gate_us_default: 100000
+  head_buffer_frames_min: 128
+  head_link_baud: 1000000
+  head_clock: "64-bit microseconds, monotonic since head MCU boot, derived from the head 24 MHz TCXO"
+  chassis_clock: "64-bit microseconds, monotonic since chassis MCU boot"
+  host_clock: "CLOCK_MONOTONIC on the CM5 (ROS steady time); ROS stamps use system time derived from it once per boot epoch"
+  sync_method: "Host-mediated four-timestamp exchange (TIME op) on both links, linear fit host = offset + drift*device, bound = half round-trip + asymmetry allowance + drift*age."
+  max_time_bound_us_for_mapping: 10000
+  target_time_bound_us: 2000
+  sync_refresh_period_s: 2.0
+  sync_expiry_s: 10.0
+  reserved_hw_sync: "J2 pins 5/6 reserved for a future RS-422 hardware time pulse (not fitted in rev A boards; footprints DNP)."
+
+# ---------------------------------------------------------------- power
+power:
+  battery: {chemistry: LiFePO4, cells_series: 4, nominal_v: 12.8, range_v: [10.0, 14.6], capacity_ah_trial: 8.0, alt_capacity_ah: 12.0}
+  rails:
+    VBAT_RAW:   {desc: "Pack coupler to board, before main protection"}
+    VBAT_SW:    {desc: "After main ideal-diode/eFuse and master switch; feeds all branches"}
+    VMOT:       {desc: "Traction supply; exists only while the hardwired safety chain is latched", limit_a: 12.0}
+    V5_CM5:     {desc: "5.1 V compute rail", limit_a: 5.0}
+    V12_LIDAR:  {desc: "Switched VBAT to LiDAR (9-36 V input device)", limit_a: 1.5}
+    V3V3_CHS:   {desc: "Chassis logic 3.3 V", limit_a: 1.0}
+    HEAD_PWR:   {desc: "J1 pins 1/2. Head electronics supply, VBAT-derived 10-15 V", limit_a: 1.5}
+    HEAD_HTR:   {desc: "J1 pins 3/4. Head heater supply, switched by chassis, modulated by head", limit_a: 4.0}
+    CHS_HTR:    {desc: "Chassis/battery-bay heater branch", limit_a: 3.0}
+    BUS_5V:     {desc: "J2 pin 3/4. 5 V for the bus side of the head's isolated RS-485 transceiver", limit_a: 0.15}
+  head_allocation_w: {electronics_max: 10.0, electronics_target: 5.0, heater_peak_at_12v: 30.0}
+  average_budget_w:        # planning values at the pack terminals; electronics lead refines in electronics/analysis/power_budget.md
+    drive: 15.0
+    compute: 10.0
+    lidar: 6.0
+    chassis_logic_sensors: 3.0
+    head_electronics: 5.0
+    heaters_combined: 15.0
+  charger: {topology: "On-board buck charger with power path (LTC4162-F class), external 24 V DC supply", charge_current_a: 3.0, cold_charge_inhibit_below_c: 5.0}
+
+# ---------------------------------------------------------------- hardwired traction chain
+safety_chain:
+  principle: "Traction energy exists only while a hardware latch is set. The latch is a self-holding relay circuit; any chain element opening drops it. Dropping removes VMOT and connects each motor across a brake resistor through the normally-closed contacts of its DPDT relay (dynamic braking with no power and no firmware). Setting the latch needs every element healthy AND the motion MCU's ARM_PERMIT AND a physical press of the local REARM button. Not a certified safety function; see risks register."
+  series_elements:           # order in the chain; names are used verbatim in schematics, firmware and UI
+    - {id: MODE_RUN,      desc: "Master switch in RUN (not OFF/SERVICE)"}
+    - {id: ESTOP,         desc: "Latching mushroom, positive-opening NC, two poles (high side and low side of the latch coil)"}
+    - {id: HANDS_ON,      desc: "Maintained local HANDS-ON INHIBIT pushbutton, NC, illuminated from the actual chain state"}
+    - {id: CHG_COVER,     desc: "Charge inlet cover switch closed (cover shut) AND charge plug link absent"}
+    - {id: HEAD_DOCK,     desc: "Body-side dock switch: head (or dummy head) mechanically seated and latched"}
+    - {id: HEAD_LOOP,     desc: "J1 pins 5/6 loop through three head rail switches + 1.00 kOhm; window comparator 0.6-1.6 kOhm = healthy; open = contact or unplugged; short = wiring fault"}
+    - {id: LAB_KEY_N,     desc: "J1 pin 7 PRES_ID shows a head without the LAB extension resistor"}
+    - {id: BODY_BUMPER,   desc: "Rear/quarter body bumper NC switches"}
+    - {id: WDG_OK,        desc: "External window watchdog serviced by the motion MCU"}
+    - {id: ARM_PERMIT,    desc: "Motion MCU output; low at reset; firmware-level permissives"}
+  rearm: "Local REARM/Start pushbutton only (momentary NO in the latch set path). No network path can set the hardware latch."
+  software_latch: "PROTECTIVE_STOP in the motion MCU (field intrusion, cliff, stale sensor, command timeout...). Cleared only by an explicit REARM_SW command from the controlling operator session or the local REARM button, with the cause cleared. Never auto-clears."
+
+# ---------------------------------------------------------------- enumerations shared by firmware, ROS and UI
+enums:
+  chassis_mode: [BOOT, SERVICE_CHARGE, LAB, STANDBY, ARMED_IDLE, MOVING, HOLD, PROTECTIVE_STOP, HW_INHIBIT, FAULT]
+  hw_inhibit_reason: [MODE_NOT_RUN, ESTOP, HANDS_ON, CHARGER, HEAD_UNDOCKED, HEAD_LOOP_OPEN, HEAD_LOOP_SHORT, J1_ABSENT, LAB_KEY, BODY_BUMPER, WATCHDOG, MCU_NOT_READY, VMOT_FAULT]
+  protective_stop_reason: [FIELD_FRONT, FIELD_REAR, FIELD_LEFT, FIELD_RIGHT, CLIFF_FL, CLIFF_FR, CLIFF_RL, CLIFF_RR, LOOKAHEAD_L, LOOKAHEAD_R, TOF_STALE, TOF_DISAGREE, CMD_TIMEOUT, HOST_LINK_LOST, STALL, ENCODER_FAULT, IMU_FAULT, TILT, BATTERY_LOW, TEMP_RANGE, HOST_REQUEST, HEAD_LINK, LOCALIZATION, BRAKE_TEST_FAIL]
+  op_mode: [COMMISSIONING, SURVEY_SHARED, SURVEY_UNATTENDED, GUIDED, LAB, SERVICE]
+  head_presence: [ABSENT, HEAD_DIRECT, HEAD_VIA_LAB_EXTENSION, LAB_EXTENSION_ONLY, FAULT]
+  evidence_class: [calculated, simulated, tool-checked, physically-measured, pending]
+
+# ---------------------------------------------------------------- boards (provisional envelopes; mechanical lead confirms fit, electronics leads confirm area)
+boards:
+  RR-HEAD-ACQ:
+    desc: "Head acquisition board: 8 SiPM front ends, bias, thresholds, event-logic FPGA, head MCU, isolated RS-485, heater switch, power"
+    outline_mm: [326.0, 96.0]
+    layers: 4
+    position: "Above the reference guides, long axis along y, centred on x = 204, y = 0; PCB underside nominally z = 33.0"
+    mounting: "8 x M2.5, pattern defined by mechanical/common/params.py"
+    max_height_top_mm: 6.0
+    max_height_bottom_mm: 2.0
+  RR-CHS-MAIN:
+    desc: "Chassis main board: pack input, charger/power path, branch protection, 5 V compute rail, safety chain and brake relays, motion MCU, dual H-bridge, sensor and panel I/O, host-side RS-485 and USB"
+    outline_mm: [160.0, 100.0]
+    layers: 4
+    mounting: "6 x M3"
+    max_height_top_mm: 18.0
+    max_height_bottom_mm: 3.0
+  RR-TOF:
+    desc: "VL53L4ED carrier, 11 per robot (4 cliff, 4 oblique look-ahead, 3 rear proximity)"
+    outline_mm: [18.0, 14.0]
+    layers: 2
+  RR-PANEL:
+    desc: "Operator annunciator board: 5 status LEDs with light pipes, buzzer, button/LED harness landing"
+    outline_mm: [70.0, 24.0]
+    layers: 2
+
+# ---------------------------------------------------------------- system connectors (functions and pin order are frozen here; MPNs live in harness/connectors.yaml)
+connectors:
+  J1:
+    name: "HEAD POWER / INTERLOCK"
+    family: "M16 circular, 8-pole, IEC 61076-2-106, screw locking, IP67 mated, shielded"
+    chassis_side: "panel socket, female contacts (touch-safe source)"
+    head_side: "cable plug, male contacts, on a captive pigtail from the head"
+    rating_per_contact_a: 5.0
+    pins:
+      1: {net: HEAD_PWR_P,  desc: "Head electronics supply +, 10-15 V, 1.5 A limit", awg: 20}
+      2: {net: HEAD_PWR_N,  desc: "Head electronics return (the only DC ground connection between head and chassis)", awg: 20}
+      3: {net: HEAD_HTR_P,  desc: "Head heater supply +, 4 A limit", awg: 18}
+      4: {net: HEAD_HTR_N,  desc: "Head heater return (kept out of the electronics return)", awg: 18}
+      5: {net: HEAD_LOOP_OUT, desc: "Interlock loop source (potential-free pair)", awg: 24}
+      6: {net: HEAD_LOOP_RET, desc: "Interlock loop return", awg: 24}
+      7: {net: HEAD_PRES_ID, desc: "4.70 kOhm 1% to pin 2 inside the head; the LAB extension adds 1.50 kOhm 1% to pin 2 at its chassis-end plug", awg: 24}
+      8: {net: NC_RESERVED, desc: "Reserved, not connected"}
+    shell: "Cable shield. Bonded to chassis at the receptacle; at the head, to head frame through 1 MOhm || 10 nF."
+  J2:
+    name: "HEAD DATA"
+    family: "M12 A-coded, 8-pole, IEC 61076-2-101, screw locking, IP67 mated, shielded"
+    chassis_side: "panel socket, female contacts"
+    head_side: "cable plug, male contacts, on a captive pigtail from the head"
+    pins:
+      1: {net: RS485_DP,  desc: "RS-485 non-inverting line (positive with respect to DN in the idle/mark state)", pair: 1}
+      2: {net: RS485_DN,  desc: "RS-485 inverting line", pair: 1}
+      3: {net: BUS_5V,    desc: "5 V from chassis for the bus side of the head's isolated transceiver", pair: 2}
+      4: {net: BUS_GND,   desc: "Bus reference = chassis logic ground. Galvanically isolated from head ground inside the head.", pair: 2}
+      5: {net: SYNC_P,    desc: "Reserved hardware time pulse +", pair: 3}
+      6: {net: SYNC_N,    desc: "Reserved hardware time pulse -", pair: 3}
+      7: {net: J2_PRES,   desc: "Linked to pin 4 inside the head plug; lets the chassis latch J2 mate/unmate events", pair: 4}
+      8: {net: NC_RESERVED, desc: "Reserved, not connected", pair: 4}
+    shell: "Cable shield, same bonding rule as J1."
+    termination: "120 Ohm at each end (chassis board and head board). Fail-safe bias at the chassis end only."
+  lab_extension:
+    desc: "2 m LAB ONLY extension pair: J1X (M16 8-pole plug to socket) and J2X (M12 A-coded 8-pole plug to socket), straight through, plus the 1.50 kOhm LAB resistor from pin 7 to pin 2 in the J1X chassis-end plug backshell."
+    presence_decode_on_pin7_to_pin2_ohm: {ABSENT: ">20k", HEAD_DIRECT: "4.70k (3.9k-5.6k window)", HEAD_VIA_LAB_EXTENSION: "1.137k (0.95k-1.33k window)", LAB_EXTENSION_ONLY: "1.50k (1.33k-1.8k window)", FAULT: "<0.8k or between windows"}
+
+# ---------------------------------------------------------------- head acquisition source (HAL boundary between head firmware core, FPGA driver and the emulator)
+head_gate_record:
+  desc: "One record per gate from the event logic to the head firmware core. The firmware core turns it into an ACQ 2.0 frame; the emulator fabricates the same record from Poisson draws."
+  per_lane_fields:
+    alpha_counts:  "Events classified alpha-like (slow-path above ALPHA threshold)"
+    beta_counts:   "Events in the beta window (fast-path above BETA_LLD, below BETA_ULD, slow-path below ALPHA)"
+    floor_reject_counts: "Floor events above BETA_ULD without ALPHA (overrange/Cherenkov-like); engineering field"
+    floor_live_ticks: "Clock ticks during which the floor channel logic was able to accept an event"
+    ref_counts:    "Reference events above REF_LLD and below REF_ULD"
+    ref_reject_counts: "Reference events above REF_ULD; engineering field"
+    ref_live_ticks: "Live ticks of the reference channel"
+    flags:         "FLOOR_SATURATED, REF_SATURATED, BIAS_OUT_OF_RANGE, BASELINE_SHIFT"
+  common_fields: [sequence, gate_start_tick, gate_ticks, tick_hz, heater_on_ticks, heater_transition_in_gate]
+  acq_mapping: "segments[n].alpha = {alpha_counts, floor_live_us}; beta_window = {beta_counts, floor_live_us}; photon_ref = {ref_counts, ref_live_us}; lane flags map onto the existing ACQ 2.0 enum (SATURATED, FLOOR_FAULT, REFERENCE_FAULT, DEAD_TIME_UNKNOWN, DISCRIMINATOR_FAULT). ACQ 2.0 is strict (additionalProperties false) and stays byte-compatible: reject counters, per-gate heater-transition markers and other engineering values are fetched with a separate, additive DIAG op (heads without it answer UNSUPPORTED) and archived beside the raw frames."
+
+# ---------------------------------------------------------------- chassis link (host <-> motion MCU), protocol "RR-CHS 1.0"
+chassis_link:
+  transport: "USB 2.0 FS CDC-ACM from the motion MCU to the CM5. Same record framing as head ICD section 4: one UTF-8 JSON object, TAB, 8 uppercase hex CRC-32 (zlib) of the JSON bytes, LF. Max record 2048 bytes. Host polls; one transaction outstanding; retry with the same id returns the cached reply."
+  envelope: {request: '{"type":"REQ","v":"1.0","id":<u32>,"op":<str>,"args":{...}}', response: '{"type":"RSP","v":"1.0","id":<u32>,"status":<str>,"body":{...}}'}
+  status: [OK, BAD_ARG, UNSUPPORTED, REJECTED, BUSY, FAULT]
+  ops:
+    HELLO:    "{} -> fw, hw_rev, serial, boot_id (fresh UUID each boot), proto, caps {encoder_cpr, wheel_radius_nom_m, track_nom_m, max_v_mps, max_w_radps}"
+    TIME:     "{} -> rx_us, tx_us on the chassis clock (same exchange as the head TIME op)"
+    DRIVE:    "{seq, v_mps, w_radps, ttl_ms<=250, op_mode} -> accepted(bool), reject_reason, mode, odom {t_us, left_ticks, right_ticks (signed 64-bit cumulative), left_tps, right_tps}, imu {t_us, gyro_rps[3], accel_mps2[3]}, stops {hw:[...], sw:[...]}, event_seq (newest event number). Cyclic at 50 Hz. A DRIVE older than its ttl, out of order, or received while inhibited is rejected, never queued. v = w = 0 is a valid keep-alive."
+    STATE:    "{} -> mode, op_mode, hw_latch, chain {element: bool for every safety_chain id}, hw_inhibit_reasons[], protective_stop_reasons[], head_presence, j2_present, rails {vbat_v, vmot_v, ibat_a, i_drive_a[2], i_head_a, i_head_htr_a, i_chs_htr_a, v5_v}, battery {soc_pct, temp_c[2], charge_state}, temps {board_c, bay_c}, tof [{id, range_mm, status, age_ms}], bumpers {...}, panel {buttons, leds}, heater {chassis_duty_pct}, faults[]"
+    EVENTS:   "{after_seq} -> list of latched events {seq, t_us, kind, detail}. Every chain-element transition, presence transition on J1/J2, button press, mode change, brownout and reset cause is latched here independently of polling."
+    REARM_SW: "{nonce, operator} -> clears the software PROTECTIVE_STOP latch if causes are clear. Cannot set the hardware latch."
+    STOP:     "{kind: CONTROLLED|PROTECTIVE} -> controlled ramp to zero, or software protective stop latch"
+    SET_OP_MODE: "{op_mode} -> selects the speed/field profile enforced locally. Rejected unless stationary."
+    HEAD_POWER: "{electronics: bool, heater_enable: bool} -> switches the J1 branches. Forced off in SERVICE_CHARGE."
+    HEATER:   "{chassis_setpoint_c} -> chassis/battery bay heater regulation setpoint"
+    PANEL:    "{pattern} -> annunciator/buzzer pattern request (the MCU overrides for safety states)"
+    CONFIG_GET: "{key} -> value ; CONFIG_SET {key, value} persists calibration (wheel radius, track, field distances, speed caps) with CRC; changes are logged as events"
+    BRAKE_TEST: "{} -> runs the stationary brake-relay and VMOT-drop self-test; result in body"
