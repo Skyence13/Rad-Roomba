@@ -1,0 +1,221 @@
+# RR-CHS-MAIN motion MCU pin map PROPOSAL (firmware -> electronics)
+# Owner: chassis firmware lead. Status: proposal rev P1 for schematic capture. The electronics
+# lead adopts/edits; firmware regenerates port/stm32g474/board_pins.h from this file
+# (tools/check_pinmap.py --emit-header) so schematic and firmware cannot drift silently.
+#
+# Evidence:
+#   tool-checked  LQFP64 pin numbers, signal availability and AF numbers are checked by
+#                 tools/check_pinmap.py against tools/stm32g474r_lqfp64_pindata.json (extracted from
+#                 ST "STM32_open_pin_data" and the Zephyr hal_stm32 pinctrl table, 2026-11-25).
+#   UNVERIFIED    everything in an `unverified:` field or note marked UNVERIFIED is recalled from
+#                 datasheets from memory and must be checked against the datasheet by the schematic
+#                 owner (external-device pin behaviour, expander addresses, bootloader details).
+#   Nothing here has been tested on hardware.
+#
+# Logic convention for readbacks: MCU pin HIGH = element closed / healthy / present / asserted-good,
+# unless `active: low` is given. A broken readback wire must read as "not healthy".
+# This MCU does NOT implement a certified safety function. The hardwired chain works without it.
+
+mcu:
+  part: STM32G474RET6
+  package: LQFP64
+  io_available: 51          # PA0-15, PB0-15, PC0-15, PD2, PF0, PF1 (PG10 is NRST)
+  io_used: 51               # 50 assigned + 1 spare/SWO (PB3)
+  supply: {vdd: 3.3, vdda: 3.3, vref: "VREF+ tied to a filtered 3.3 V reference (ratiometric NTC and presence dividers use the same reference)"}
+  clock:
+    hse: "8 MHz or 24 MHz crystal on PF0/PF1 (firmware build option RR_HSE_HZ; default 8 MHz)"
+    sysclk_hz: 144000000    # PLL from HSE: VCO 288 MHz, /R=2 -> 144 MHz, /Q=6 -> 48 MHz for USB (no CRS dependence)
+    note: "170 MHz is not used: 48 MHz USB clock cannot be derived from a 340 MHz VCO; 144 MHz is ample."
+  reset_state_rule: "All GPIO are analog/high-Z after reset. Every output listed with `reset_state` needs the external pull resistor shown so the board is safe with the MCU held in reset, unprogrammed, or in the ROM bootloader."
+
+# ----------------------------------------------------------------------------- native pins
+pins:
+  # --- motor current / voltage / presence analog (ADC1/ADC2, 12-bit, sampled in the 1 kHz control tick; currents PWM-synchronous)
+  - {pin: PA0,  lqfp64: 12, signal: IPROPI_L,       function: ADC1_IN1,  af: ANALOG, dir: in,  note: "DRV8874-class IPROPI left bridge. RIPROPI to AGND sized for 3.0 V at 6.5 A; RC 1 kOhm/10 nF at pin. Scale in firmware config (drive.ipropi_a_per_v)."}
+  - {pin: PA1,  lqfp64: 13, signal: IPROPI_R,       function: ADC2_IN2,  af: ANALOG, dir: in,  note: "As IPROPI_L, right bridge. ADC1+ADC2 dual simultaneous sampling at PWM centre."}
+  - {pin: PA2,  lqfp64: 14, signal: VMOT_SENSE,     function: ADC1_IN3,  af: ANALOG, dir: in,  note: "VMOT (after latch relay) divider 47k/10k (16.0 V -> 2.81 V), 100 nF. Safety-relevant readback: must read ~0 V within the brake-test window after latch drop."}
+  - {pin: PA3,  lqfp64: 17, signal: VBAT_SENSE,     function: ADC1_IN4,  af: ANALOG, dir: in,  note: "VBAT_SW divider 47k/10k. Fast brown-out logging and I2C-independent low-battery check (INA228 is the accurate source)."}
+  - {pin: PC0,  lqfp64: 8,  signal: HEAD_PRES_ID,   function: ADC1_IN6,  af: ANALOG, dir: in,  note: "J1 pin 7. 4.70 kOhm 0.1% pull-up to VREF+, 1 kOhm series + 10 nF + TVS at the connector. Code resistor returns to J1 pin 2. ADC ratio -> ohms in the port; windows per contract lab_extension.presence_decode. Sampled every 1 ms."}
+  - {pin: PC1,  lqfp64: 9,  signal: HEAD_LOOP_SENSE, function: ADC1_IN7, af: ANALOG, dir: in,  note: "Analog copy of the J1 5/6 interlock-loop measurement (loop resistance), diverse from the hardware window comparator outputs HEAD_LOOP_OK/SHORT. Scaling defined by the loop source circuit: port converts to ohms."}
+  - {pin: PC2,  lqfp64: 10, signal: NTC_BAY,        function: ADC1_IN8,  af: ANALOG, dir: in,  note: "10 kOhm B3435-class NTC in the battery bay air/plate, 10.0 kOhm 0.1% pull-up to VREF+. Used for heater regulation."}
+  - {pin: PC3,  lqfp64: 11, signal: NTC_PACK,       function: ADC1_IN9,  af: ANALOG, dir: in,  note: "Second NTC on the pack surface (heater plausibility + battery.temp_c[1]). The charger measures its own pack thermistor (battery.temp_c[0])."}
+  - {pin: PC4,  lqfp64: 22, signal: NTC_BOARD,      function: ADC2_IN5,  af: ANALOG, dir: in,  note: "NTC next to the H-bridges. MCU internal temperature sensor is the cross-check."}
+  - {pin: PB1,  lqfp64: 25, signal: V5_SENSE,       function: ADC1_IN12, af: ANALOG, dir: in,  note: "V5_CM5 divider 10k/10k."}
+
+  # --- IMU + fast expander SPI
+  - {pin: PA4,  lqfp64: 18, signal: IMU_CS_ACC_N,   function: GPIO,      af: GPIO,   dir: out, reset_state: "high via 10k pull-up", note: "BMI088 accelerometer CSB1."}
+  - {pin: PA5,  lqfp64: 19, signal: SPI1_SCK,       function: SPI1_SCK,  af: AF5,    dir: out, note: "SPI mode 3, <= 5 MHz. Shared: BMI088 accel, BMI088 gyro, IOX_A."}
+  - {pin: PA6,  lqfp64: 20, signal: SPI1_MISO,      function: SPI1_MISO, af: AF5,    dir: in,  note: "33 Ohm series at sources."}
+  - {pin: PA7,  lqfp64: 21, signal: SPI1_MOSI,      function: SPI1_MOSI, af: AF5,    dir: out, note: ""}
+  - {pin: PC5,  lqfp64: 23, signal: IMU_CS_GYR_N,   function: GPIO,      af: GPIO,   dir: out, reset_state: "high via 10k pull-up", note: "BMI088 gyro CSB2."}
+  - {pin: PB0,  lqfp64: 24, signal: IOX_A_CS_N,     function: GPIO,      af: GPIO,   dir: out, reset_state: "high via 10k pull-up", note: "Chip select of the fast SPI expander IOX_A (chain readbacks, 1 kHz)."}
+
+  # --- I2C buses
+  - {pin: PA8,  lqfp64: 42, signal: I2C_SYS_SDA,    function: I2C2_SDA,  af: AF4,    dir: bidir, note: "System bus 400 kHz, 2.2k pull-up: charger, pack monitor, branch monitor, IOX_B, IOX_C."}
+  - {pin: PA9,  lqfp64: 43, signal: I2C_SYS_SCL,    function: I2C2_SCL,  af: AF4,    dir: bidir, note: "As above."}
+  - {pin: PA15, lqfp64: 51, signal: I2C_TOF_SCL,    function: I2C1_SCL,  af: AF4,    dir: bidir, note: "ToF bus 400 kHz, 2.2k pull-up: two TCA9548A (0x70, 0x71) -> 11 x VL53L4ED. Separate from the system bus so a hung sensor cable cannot stop power telemetry."}
+  - {pin: PB9,  lqfp64: 62, signal: I2C_TOF_SDA,    function: I2C1_SDA,  af: AF4,    dir: bidir, note: "As above."}
+
+  # --- drive stage
+  - {pin: PC6,  lqfp64: 38, signal: MOT_L_IN1,      function: TIM8_CH1,  af: AF4,    dir: out, reset_state: "low via 10k pull-down", note: "DRV8874-class IN1, 20 kHz centre-aligned PWM."}
+  - {pin: PC7,  lqfp64: 39, signal: MOT_L_IN2,      function: TIM8_CH2,  af: AF4,    dir: out, reset_state: "low via 10k pull-down", note: "IN2."}
+  - {pin: PC8,  lqfp64: 40, signal: MOT_R_IN1,      function: TIM8_CH3,  af: AF4,    dir: out, reset_state: "low via 10k pull-down", note: ""}
+  - {pin: PC9,  lqfp64: 41, signal: MOT_R_IN2,      function: TIM8_CH4,  af: AF4,    dir: out, reset_state: "low via 10k pull-down", note: ""}
+  - {pin: PA10, lqfp64: 44, signal: DRV_NSLEEP,     function: GPIO,      af: GPIO,   dir: out, reset_state: "low via 10k pull-down (bridges asleep)", note: "Both bridges. Recommend hardware AND with HW_LATCH so the bridges sleep whenever the latch is dropped, independent of firmware."}
+  - {pin: PB4,  lqfp64: 57, signal: ENC_R_A,        function: TIM3_CH1,  af: AF2,    dir: in,  note: "Right encoder A after 5 V->3.3 V Schmitt buffer (encoder outputs need 5 V pull-ups). 100 pF. UNVERIFIED: PB4 carries the UCPD dead-battery pull-down after reset until firmware sets PWR_CR3.UCPD_DBDIS; drive it push-pull."}
+  - {pin: PB5,  lqfp64: 58, signal: ENC_R_B,        function: TIM3_CH2,  af: AF2,    dir: in,  note: "Right encoder B."}
+  - {pin: PB6,  lqfp64: 59, signal: ENC_L_A,        function: TIM4_CH1,  af: AF2,    dir: in,  note: "Left encoder A. Same UCPD dead-battery remark as PB4 (UNVERIFIED)."}
+  - {pin: PB7,  lqfp64: 60, signal: ENC_L_B,        function: TIM4_CH2,  af: AF2,    dir: in,  note: "Left encoder B. 16-bit counters extended in software (max 10.7 kcounts/s -> 0.011 counts per 1 us; wrap every 6 s at full speed, sampled every 1 ms)."}
+
+  # --- hardwired chain: outputs the MCU contributes
+  - {pin: PB10, lqfp64: 30, signal: ARM_PERMIT,     function: GPIO,      af: GPIO,   dir: out, reset_state: "LOW via 4.7k pull-down (chain open)", note: "Chain element ARM_PERMIT, active high. Must not be bridged by any debug link."}
+  - {pin: PB11, lqfp64: 33, signal: WDG_STROBE,     function: GPIO,      af: GPIO,   dir: out, reset_state: "static (no edges) -> watchdog times out", note: "WDI of the external window watchdog (TPS3430 class). Firmware strobes once per 10 ms from the supervision task only. UNVERIFIED: TPS3430 window ratio / timing programmed by CWD/SET pins - electronics lead selects 3 ms closed / 30 ms open or nearest; firmware period is a build constant (RR_WDG_STROBE_PERIOD_MS)."}
+
+  # --- hardwired chain: safety-relevant readbacks on native pins (1 kHz sampled, change-latched)
+  - {pin: PB12, lqfp64: 34, signal: ESTOP_A_RB,     function: GPIO,      af: GPIO,   dir: in,  note: "E-stop pole A (high side of latch coil) closed = HIGH. Opto/level-shifted, 10k pull-down, 1 ms RC."}
+  - {pin: PB13, lqfp64: 35, signal: ESTOP_B_RB,     function: GPIO,      af: GPIO,   dir: in,  note: "E-stop pole B (low side). A/B disagreement > 100 ms is reported as a fault."}
+  - {pin: PD2,  lqfp64: 55, signal: HW_LATCH_RB,    function: GPIO,      af: GPIO,   dir: in,  alt: {function: TIM8_BKIN, af: AF4, polarity: "break when LOW"}, note: "Latch relay state (auxiliary contact or coil-voltage opto): HIGH = latched. Also usable as TIM8 break input so PWM is forced off in hardware when the latch drops (firmware enables BKIN with active-low polarity)."}
+  - {pin: PC14, lqfp64: 3,  signal: BRAKE_L_RB,     function: GPIO,      af: GPIO,   dir: in,  note: "Left DPDT brake relay: HIGH = motor connected to bridge (relay energised), LOW = motor across brake resistor. From a spare contact or coil-voltage opto. Backup-domain pin: input only, no load."}
+  - {pin: PC15, lqfp64: 4,  signal: BRAKE_R_RB,     function: GPIO,      af: GPIO,   dir: in,  note: "Right brake relay, as above."}
+  - {pin: PC13, lqfp64: 2,  signal: WDG_OK_RB,      function: GPIO,      af: GPIO,   dir: in,  note: "Watchdog output state as seen by the chain: HIGH = watchdog satisfied."}
+  - {pin: PC12, lqfp64: 54, signal: J2_PRES_RB,     function: GPIO,      af: GPIO,   dir: in,  note: "J2 pin 7 (linked to BUS_GND in the head plug) through a comparator/inverter: HIGH = J2 mated. 1 ms sampling + EXTI12 both edges so a sub-millisecond bounce still latches an event."}
+
+  # --- branch enables that must be OFF with the MCU in reset
+  - {pin: PB14, lqfp64: 36, signal: HEAD_HTR_EN,    function: GPIO,      af: GPIO,   dir: out, reset_state: "low via 10k pull-down (off)", note: "J1 3/4 heater branch eFuse enable."}
+  - {pin: PB15, lqfp64: 37, signal: CHS_HTR_EN,     function: GPIO,      af: GPIO,   dir: out, reset_state: "low via 10k pull-down (off)", note: "Chassis/bay heater eFuse enable; slow PWM (1 s period) from the heater regulator. An independent thermal cut-out in series with the heater is required (not firmware)."}
+
+  # --- panel
+  - {pin: PB2,  lqfp64: 26, signal: BUZZER,         function: TIM5_CH1,  af: AF2,    dir: out, reset_state: "low via 10k pull-down (silent)", note: "Pre-motion alert. Low-side FET to a self-oscillating buzzer (GPIO level) or piezo (PWM tone on TIM5_CH1)."}
+
+  # --- debug / boot / clock / USB
+  - {pin: PC10, lqfp64: 52, signal: DBG_TX,         function: USART3_TX, af: AF7,    dir: out, note: "Debug console 115200 8N1, 3.3 V, 3-pin header + GND."}
+  - {pin: PC11, lqfp64: 53, signal: DBG_RX,         function: USART3_RX, af: AF7,    dir: in,  note: "10k pull-up."}
+  - {pin: PA11, lqfp64: 45, signal: USB_DM,         function: USB_DM,    af: ANALOG, dir: bidir, note: "USB FS device to the CM5 carrier. ESD array at connector. No external pull-up (internal DP pull-up)."}
+  - {pin: PA12, lqfp64: 46, signal: USB_DP,         function: USB_DP,    af: ANALOG, dir: bidir, note: ""}
+  - {pin: PA13, lqfp64: 49, signal: SWDIO,          function: SYS_JTMS-SWDIO, af: AF0, dir: bidir, note: "10-pin 1.27 mm Cortex debug header (SWDIO, SWCLK, SWO, NRST, 3V3, GND)."}
+  - {pin: PA14, lqfp64: 50, signal: SWCLK,          function: SYS_JTCK-SWCLK, af: AF0, dir: in,  note: ""}
+  - {pin: PB3,  lqfp64: 56, signal: SWO_SPARE,      function: SYS_JTDO-SWO, af: AF0, dir: out, note: "SWO trace by default. Spare GPIO on a test point; solder-jumper option to IOX_A INTA/INTB (interrupt-on-change) if polling is ever judged insufficient."}
+  - {pin: PB8,  lqfp64: 61, signal: BOOT0_LED_STAT, function: GPIO,      af: GPIO,   dir: out, reset_state: "low via status LED + 1k to GND (BOOT0 = 0)", note: "BOOT0 sampled at reset: DFU push-button to 3V3 through 1k forces the ROM bootloader (USB DFU). After boot: heartbeat LED, active high. UNVERIFIED: ROM bootloader USB DFU on PA11/PA12 for STM32G474 and its clock requirements - check AN2606 before relying on DFU."}
+  - {pin: PF0,  lqfp64: 5,  signal: OSC_IN,         function: RCC_OSC_IN,  af: ANALOG, dir: in,  note: "HSE crystal."}
+  - {pin: PF1,  lqfp64: 6,  signal: OSC_OUT,        function: RCC_OSC_OUT, af: ANALOG, dir: out, note: ""}
+
+not_io:
+  - {pin: PG10-NRST, lqfp64: 7, signal: NRST, note: "100 nF, reset button, debug header. Must NOT reset IOX_B (V5_CM5 / LiDAR enables hold across MCU resets)."}
+  - {pin: VBAT, lqfp64: 1, signal: 3V3, note: "No backup cell; boot_id and reset log do not depend on RTC."}
+
+# ----------------------------------------------------------------------------- expander decision
+expanders:
+  decision: >
+    51 I/O are fully used by timing-critical and safety-relevant signals (PWM, encoders, analog,
+    E-stop poles, latch, brake relays, watchdog, ARM_PERMIT, presence). The remaining ~40 slow
+    signals go to three small expanders. (1) IOX_A, a 16-bit SPI expander on the IMU SPI bus, read
+    in full every 1 ms inside the 1 kHz tick (4-byte transfer, ~10 us at 4 MHz): the other chain
+    readbacks and buttons, so event latching keeps the same 1 kHz timing as native pins. SPI is
+    chosen over I2C for these because the transfer time is bounded and cannot be stretched by
+    another device. (2) IOX_B, 16-bit I2C, outputs only: annunciators and sticky power enables.
+    (3) IOX_C, 8-bit I2C, inputs only: eFuse faults and alerts. None of the expanders is in the
+    hardwired chain; they only observe it. Loss of IOX_A is detected (dynamic sentinel + register
+    read-back) and treated as HW_INHIBIT/MCU_NOT_READY with ARM_PERMIT low.
+  IOX_A:
+    part: "MCP23S17 class (16-bit, SPI, 10 MHz)"
+    bus: SPI1
+    cs: PB0
+    unverified: "MCP23S17 register map and HAEN address behaviour recalled from memory; driver in port/stm32g474 is marked UNVERIFIED until checked against the datasheet."
+    read_period_ms: 1
+    all_inputs: true
+    pins:
+      GPA0: {signal: MODE_RUN_RB,       note: "Master switch in RUN = HIGH"}
+      GPA1: {signal: HANDS_ON_RB,       note: "HANDS-ON inhibit NOT pressed (contact closed) = HIGH"}
+      GPA2: {signal: CHG_COVER_RB,      note: "Charge inlet cover shut = HIGH"}
+      GPA3: {signal: CHG_PLUG_LINK_RB,  note: "Charge plug link ABSENT (chain contact closed) = HIGH"}
+      GPA4: {signal: HEAD_DOCK_RB,      note: "Dock switch: head seated and latched = HIGH"}
+      GPA5: {signal: HEAD_LOOP_OK_RB,   note: "Window comparator: loop 0.6-1.6 kOhm = HIGH"}
+      GPA6: {signal: HEAD_LOOP_SHORT_RB, note: "Comparator: loop below window (short) = HIGH"}
+      GPA7: {signal: LAB_KEY_N_RB,      note: "Hardware PRES_ID comparator says 'no LAB resistor' (chain contact closed) = HIGH"}
+      GPB0: {signal: BODY_BUMPER_L_RB,  note: "Left/rear-left body bumper NC switch closed = HIGH"}
+      GPB1: {signal: BODY_BUMPER_R_RB,  note: "Right/rear-right body bumper closed = HIGH"}
+      GPB2: {signal: REARM_BTN,         note: "Local REARM/Start pressed = HIGH (second, isolated contact of the button or opto across the set path; the first contact is in the latch set path)"}
+      GPB3: {signal: PAUSE_BTN,         note: "Local PAUSE/Stop pressed = HIGH"}
+      GPB4: {signal: DRV_L_NFAULT,      note: "LOW = left bridge fault (open drain, 10k pull-up)"}
+      GPB5: {signal: DRV_R_NFAULT,      note: "LOW = right bridge fault"}
+      GPB6: {signal: BUS_CLAMP_ACTIVE,  note: "Brake chopper / bus clamp conducting = HIGH"}
+      GPB7: {signal: SENTINEL,          note: "Wired to the WDG_STROBE net (PB11): firmware checks that this bit follows the strobe it generates, which proves the expander read path is live."}
+  IOX_B:
+    part: "TCA9535 / PCA9535 class (16-bit, I2C)"
+    bus: I2C_SYS
+    address_7bit: 0x20
+    unverified: "Address strapping and register map recalled from memory."
+    reset: "Power-on reset only (not MCU NRST). All pins power up as inputs: each enable has the pull resistor giving its safe default."
+    pins:
+      P00: {signal: LED_READY,        dir: out, note: "Annunciator, active high via driver"}
+      P01: {signal: LED_MOVING,       dir: out}
+      P02: {signal: LED_HOLD,         dir: out}
+      P03: {signal: LED_FAULT,        dir: out, note: "Additionally OR-ed in hardware with NOT WDG_OK so a dead MCU shows FAULT"}
+      P04: {signal: LED_CHARGE,       dir: out}
+      P05: {signal: LAMP_REARM,       dir: out, note: "REARM button illumination"}
+      P06: {signal: LAMP_PAUSE,       dir: out}
+      P07: {signal: LED_STAT2,        dir: out, note: "Second on-board status LED (protocol activity)"}
+      P10: {signal: HEAD_PWR_EN,      dir: out, default: "off (pull-down)", note: "J1 1/2 eFuse enable. Forced off by firmware in SERVICE_CHARGE; recommend also gating in hardware with the charger-present signal."}
+      P11: {signal: V12_LIDAR_EN,     dir: out, default: "on (pull-up)", note: "Holds across MCU reset"}
+      P12: {signal: V5_CM5_OFF_REQ,   dir: out, default: "not asserted (pull-down) = rail ON", note: "Only asserted for a deliberate compute power cycle; the 5 V rail stays up across MCU resets and with the MCU unprogrammed."}
+      P13: {signal: TOF_XSHUT_CLIFF,  dir: out, default: "low (sensors held in reset)", note: "Shared XSHUT of the 4 cliff sensors"}
+      P14: {signal: TOF_XSHUT_LOOK,   dir: out, default: "low", note: "Shared XSHUT of the 4 look-ahead sensors"}
+      P15: {signal: TOF_XSHUT_REAR,   dir: out, default: "low", note: "Shared XSHUT of the 3 rear sensors"}
+      P16: {signal: TOF_MUX_NRST,     dir: out, default: "low", note: "Reset of both TCA9548A (bus recovery)"}
+      P17: {signal: SPARE_OUT,        dir: out}
+  IOX_C:
+    part: "TCA9534 / PCA9534 class (8-bit, I2C)"
+    bus: I2C_SYS
+    address_7bit: 0x21
+    unverified: "Address strapping recalled from memory."
+    pins:
+      P0: {signal: HEAD_PWR_NFLT,   note: "LOW = eFuse fault/tripped"}
+      P1: {signal: HEAD_HTR_NFLT}
+      P2: {signal: CHS_HTR_NFLT}
+      P3: {signal: V12_LIDAR_NFLT}
+      P4: {signal: V5_CM5_NFLT}
+      P5: {signal: CHG_NSMBALERT,   note: "Charger alert"}
+      P6: {signal: PMON_NALERT,     note: "Pack monitor alert"}
+      P7: {signal: V5_PGOOD}
+
+# ----------------------------------------------------------------------------- I2C device map
+i2c:
+  I2C_SYS:
+    speed_hz: 400000
+    devices:
+      - {ref: CHARGER,  part: "LTC4162-F class",  address_7bit: 0x68, unverified: "address and telemetry registers recalled from memory; driver stubbed until checked"}
+      - {ref: PMON,     part: "INA228 class",     address_7bit: 0x40, unverified: "register map recalled from memory", note: "Pack-side: VBAT, IBAT, charge/energy accumulation"}
+      - {ref: BRANCH,   part: "INA3221 class (3-channel)", address_7bit: 0x41, unverified: "proposal: replaces three ADC pins", note: "ch1 HEAD_PWR, ch2 HEAD_HTR, ch3 CHS_HTR current + voltage (STATE rails.i_head_a, i_head_htr_a, i_chs_htr_a)"}
+      - {ref: IOX_B,    address_7bit: 0x20}
+      - {ref: IOX_C,    address_7bit: 0x21}
+  I2C_TOF:
+    speed_hz: 400000
+    devices:
+      - {ref: TOF_MUX0, part: TCA9548A, address_7bit: 0x70, unverified: "address range 0x70-0x77 recalled from memory"}
+      - {ref: TOF_MUX1, part: TCA9548A, address_7bit: 0x71}
+      - {ref: "TOF x11", part: VL53L4ED, address_7bit: 0x29, unverified: "default address recalled from memory; never re-addressed (mux isolates)"}
+    mux_channels:        # index = firmware tof id (order used by STATE.tof[] and the emulator)
+      0:  {id: CLIFF_FL, mux: 0, ch: 0, xshut: TOF_XSHUT_CLIFF, role: "downward cliff, front-left wheel/head corner"}
+      1:  {id: CLIFF_FR, mux: 1, ch: 0, xshut: TOF_XSHUT_CLIFF, role: "downward cliff, front-right"}
+      2:  {id: CLIFF_RL, mux: 0, ch: 1, xshut: TOF_XSHUT_CLIFF, role: "downward cliff, rear-left"}
+      3:  {id: CLIFF_RR, mux: 1, ch: 1, xshut: TOF_XSHUT_CLIFF, role: "downward cliff, rear-right"}
+      4:  {id: LOOK_LO,  mux: 0, ch: 2, xshut: TOF_XSHUT_LOOK,  role: "oblique look-ahead, left outer"}
+      5:  {id: LOOK_LI,  mux: 1, ch: 2, xshut: TOF_XSHUT_LOOK,  role: "oblique look-ahead, left inner (pair partner of LOOK_LO)"}
+      6:  {id: LOOK_RI,  mux: 0, ch: 3, xshut: TOF_XSHUT_LOOK,  role: "oblique look-ahead, right inner"}
+      7:  {id: LOOK_RO,  mux: 1, ch: 3, xshut: TOF_XSHUT_LOOK,  role: "oblique look-ahead, right outer (pair partner of LOOK_RI)"}
+      8:  {id: REAR_L,   mux: 0, ch: 4, xshut: TOF_XSHUT_REAR,  role: "rear proximity left"}
+      9:  {id: REAR_C,   mux: 1, ch: 4, xshut: TOF_XSHUT_REAR,  role: "rear proximity centre"}
+      10: {id: REAR_R,   mux: 0, ch: 5, xshut: TOF_XSHUT_REAR,  role: "rear proximity right"}
+    note: "Pair partners and left/right neighbours are on different muxes so one dead mux leaves one sensor of every pair; firmware still stops on any stale sensor (no degraded running)."
+
+# ----------------------------------------------------------------------------- requests to the electronics lead
+hardware_requests:
+  - "ARM_PERMIT 4.7k pull-down; chain must be open with the MCU in reset, in the ROM bootloader (BOOT0 button) and unprogrammed."
+  - "DRV_NSLEEP AND-gated with HW_LATCH in hardware; PWM pins pulled low."
+  - "HW_LATCH_RB on PD2 so TIM8 break can be used."
+  - "Readback polarity as listed (HIGH = healthy) with pull-downs, so an open readback wire reads unhealthy."
+  - "IOX_B reset from the 3.3 V supervisor only, not from NRST."
+  - "LED_FAULT OR-ed with NOT WDG_OK in hardware; HANDS-ON lamp driven from the real chain node (contract)."
+  - "Test points on WDG_STROBE, WDG_OK, ARM_PERMIT, HW_LATCH_RB, VMOT_SENSE, both IPROPI, SPI1, both I2C buses."
+  - "HEAD_PRES_ID pull-up 4.70 kOhm 0.1 % to VREF+ (firmware constant chain.pres_pullup_ohm); if a different value is fitted, change the constant, not the windows."
+  - "External independent thermal cut-out for the chassis heater; firmware heater control is default-off but is not the protection."

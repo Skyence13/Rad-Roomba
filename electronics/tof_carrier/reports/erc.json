@@ -1,0 +1,75 @@
+{
+    "$schema": "https://schemas.kicad.org/erc.v1.json",
+    "coordinate_units": "mm",
+    "date": "",
+    "included_severities": [
+        "error",
+        "warning",
+        "exclusion"
+    ],
+    "kicad_version": "9.0.9",
+    "sheets": [
+        {
+            "path": "/",
+            "uuid_path": "/0bdabd13-a664-5478-8fe2-7f12fb876c3f",
+            "violations": [
+                {
+                    "description": "Global label only appears once in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label '+3V3'",
+                            "pos": {
+                                "x": 0.254,
+                                "y": 1.2954
+                            },
+                            "uuid": "ae0baae2-ca64-568e-8bff-a742a3a50837"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "single_global_label"
+                },
+                {
+                    "description": "Global label only appears once in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'GND'",
+                            "pos": {
+                                "x": 0.381,
+                                "y": 1.2954
+                            },
+                            "uuid": "51bca1ba-c690-5b26-850f-4bfd2fd2ee47"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "single_global_label"
+                },
+                {
+                    "description": "Global label only appears once in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label '+3V3_TOF'",
+                            "pos": {
+                                "x": 0.508,
+                                "y": 1.2954
+                            },
+                            "uuid": "18ba5839-2e99-5fc4-8106-451b354a11f6"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "single_global_label"
+                }
+            ]
+        },
+        {
+            "path": "/connector/",
+            "uuid_path": "/0bdabd13-a664-5478-8fe2-7f12fb876c3f/b6d95149-acad-580a-8bbb-680d45188824",
+            "violations": []
+        },
+        {
+            "path": "/sensor/",
+            "uuid_path": "/0bdabd13-a664-5478-8fe2-7f12fb876c3f/15e75953-821e-5de7-87b5-c947b0e0fc24",
+            "violations": []
+        }
+    ],
+    "source": "RR-TOF-A.kicad_sch"
+}
