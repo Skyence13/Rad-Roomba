@@ -50,7 +50,7 @@ write_csv("k_spectral_mismatch.csv",
 md_table("k_mismatch", ["Beta shield", "g/cm2", "Fraction of photons through shield", "Threshold keV",
                         "k Cs-137", "k ore", "k concentrate", "Δk/k conc. vs ore", "Δk/k conc. vs Cs-137"],
          [(r[0], r[1], r[2], r[3], f"{r[4]:.3f}", f"{r[5]:.3f}", f"{r[7]:.3f}", f"{100*r[9]:.1f} %", f"{100*r[10]:.1f} %")
-          for r in krows if r[3] in (10, 30)])
+          for r in krows if r[3] == 30])
 dk = np.array([abs(r[9]) for r in krows])
 dk_cs = np.array([abs(r[10]) for r in krows])
 

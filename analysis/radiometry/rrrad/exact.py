@@ -13,7 +13,7 @@ from scipy.stats import poisson
 
 from . import model
 
-__all__ = ["comp_flag_probability", "unc_flag_probability"]
+__all__ = ["comp_flag_probability", "unc_flag_probability", "calibrated_nominal_alpha", "detection_rate_exact"]
 
 
 def _support(mu, tail=1e-14):
@@ -68,3 +68,35 @@ def unc_flag_probability(floor_rate, T_F, B0, T0, alpha, *, sigma_assumed=0.0) -
     n_thr = T_F * (b0_hat + r_star)
     p_flag = poisson.sf(np.floor(n_thr + 1e-12), floor_rate * T_F)
     return float(np.sum(p0 * p_flag) / np.sum(p0))
+
+
+def calibrated_nominal_alpha(target, flag_prob_of_alpha, lo=1e-14):
+    """Largest nominal alpha (to ~1 %) whose exactly computed false-alarm probability is <= target.
+
+    flag_prob_of_alpha(a) must be non-decreasing in a. Because counts are integers the achieved
+    probability is a step function; the result is conservative.
+    """
+    hi = float(target)
+    if flag_prob_of_alpha(hi) <= target:
+        return hi
+    if flag_prob_of_alpha(lo) > target:
+        return float("nan")
+    for _ in range(60):
+        mid = np.sqrt(lo * hi)
+        if flag_prob_of_alpha(mid) <= target:
+            lo = mid
+        else:
+            hi = mid
+        if hi / lo < 1.01:
+            break
+    return float(lo)
+
+
+def detection_rate_exact(flag_prob_of_rho, beta=0.05, hi=1.0):
+    """Net rate rho at which the exactly computed flag probability equals 1 - beta."""
+    from scipy.optimize import brentq
+    while flag_prob_of_rho(hi) < 1.0 - beta:
+        hi *= 2.0
+        if hi > 1e9:
+            return float("inf")
+    return float(brentq(lambda r: flag_prob_of_rho(r) - (1.0 - beta), 0.0, hi, xtol=1e-9, rtol=1e-9))

@@ -155,3 +155,14 @@ def test_fields_sanity():
     assert 0.5 < g < 0.8 and fields.rect_geometry_factor(h=1e-6) == pytest.approx(1.0, abs=1e-3)
     K = fields.K_beta_by_basis()
     assert K["Cl-36 equivalent (calibration source basis)"] == pytest.approx(24.0)
+
+
+def test_exact_calibration_helpers():
+    B, T, target = 3.8, 1.0, 1e-4
+    fa = lambda a: exact.unc_flag_probability(B, T, B, np.inf, a)
+    assert fa(target) > 3 * target                 # Gaussian quantile is anti-conservative here
+    a_nom = exact.calibrated_nominal_alpha(target, fa)
+    assert fa(a_nom) <= target < fa(min(a_nom * 3, 0.5))
+    rho = exact.detection_rate_exact(lambda r: exact.unc_flag_probability(B + r, T, B, np.inf, a_nom))
+    assert exact.unc_flag_probability(B + rho, T, B, np.inf, a_nom) == pytest.approx(0.95, abs=1e-6)
+    assert rho > float(model.unc_limits(B, T, 1.0, alpha=target)["r_hash"])

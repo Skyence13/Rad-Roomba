@@ -208,19 +208,19 @@ def simulate_patch_gates(rng, n_trials, Wmat, edges, *, B_gamma, K, D_p, k=1.0, 
 
 
 def patch_rule_oracle(N_F, N_U, edges, mask, *, estimator, alpha, k_hat=1.0, b_hat=0.0, u_k=0.0,
-                      u_b=0.0, B0_hat=None, T0=np.inf, sigma_assumed=0.0, mode="plug_in"):
+                      u_b=0.0, B0_hat=None, T0=np.inf, sigma_assumed=0.0, mode="plug_in", U_true=None):
     """MODEL.md section 5 rule: one decision on the sum over the gates and lanes in mask."""
     dur = np.diff(np.asarray(edges, float))
     T_S = float(np.sum(mask * dur[None, :]))
     nf = np.sum(N_F * mask[None], axis=(1, 2))
     if estimator == "comp":
         nu = np.sum(N_U * mask[None], axis=(1, 2))
-        return flag_comp(nf, T_S, nu, T_S, k_hat, b_hat, u_k, u_b, 0.0, alpha, mode)[0]
+        return flag_comp(nf, T_S, nu, T_S, k_hat, b_hat, u_k, u_b, 0.0, alpha, mode, U_true)[0]
     return flag_unc(nf, T_S, B0_hat, T0, sigma_assumed, alpha)[0]
 
 
 def patch_rule_cells(N_F, N_U, edges, Wmat, n, offset, *, estimator, alpha, k_hat=1.0, b_hat=0.0,
-                     u_k=0.0, u_b=0.0, B0_hat=None, T0=np.inf, sigma_assumed=0.0, mode="plug_in"):
+                     u_k=0.0, u_b=0.0, B0_hat=None, T0=np.inf, sigma_assumed=0.0, mode="plug_in", U_true=None):
     """Fixed map-cell rule: per lane, consecutive cells of n gates; detected if any cell that
     overlaps the patch is flagged. Returns (detected, n_cells_tested)."""
     dur = np.diff(np.asarray(edges, float))
@@ -236,7 +236,7 @@ def patch_rule_cells(N_F, N_U, edges, Wmat, n, offset, *, estimator, alpha, k_ha
     if estimator == "comp":
         kh = np.asarray(k_hat, float).reshape(-1, 1, 1)
         bh = np.asarray(b_hat, float).reshape(-1, 1, 1)
-        fl = flag_comp(nf, T_c, cells(N_U), T_c, kh, bh, u_k, u_b, 0.0, alpha, mode)[0]
+        fl = flag_comp(nf, T_c, cells(N_U), T_c, kh, bh, u_k, u_b, 0.0, alpha, mode, U_true)[0]
     else:
         fl = flag_unc(nf, T_c, np.asarray(B0_hat, float).reshape(-1, 1, 1), T0, sigma_assumed, alpha)[0]
     hit = w_c > 0

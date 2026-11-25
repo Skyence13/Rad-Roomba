@@ -163,3 +163,13 @@ def test_broadcasting():
     out = m.comp_limits(B, T, 20.0, rel_u_k=0.02, u_rel_K=0.1)
     assert out["D_hash"].shape == (3, 2)
     assert np.all(out["D_hash"] > out["D_star"])
+
+
+def test_leakage_detection_limit():
+    U, T, k = 33.0, 10.0, 1.0
+    base = m.leak_detection_limit_rate(U, T, T, k)
+    assert base == pytest.approx(float(m.detection_limit_rate(m.u0sq_comp(U, T, T, k), T)), rel=1e-9)
+    leak = m.leak_detection_limit_rate(U, T, T, k, eps=0.1)
+    assert leak > base / (1 - 0.1 * k)             # mean suppression plus extra reference variance
+    assert leak == pytest.approx(base / (1 - 0.1 * k), rel=0.05)
+    assert np.isinf(m.leak_detection_limit_rate(U, T, T, 2.0, eps=0.5))

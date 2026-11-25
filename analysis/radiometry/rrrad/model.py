@@ -28,7 +28,7 @@ __all__ = [
     "detection_limit_rate", "detection_limit_rate_numeric",
     "detection_limit_activity", "detection_limit_activity_numeric",
     "comp_limits", "unc_limits", "breakeven_sigma_delta", "highfield_floor_activity",
-    "dwell_to_reach",
+    "dwell_to_reach", "leak_detection_limit_rate",
 ]
 
 
@@ -260,3 +260,30 @@ def dwell_to_reach(target_D, dhash_of_T, t_lo=1e-2, t_hi=1e6):
     log_t = brentq(lambda lt: float(dhash_of_T(10.0 ** lt)) - target_D,
                    np.log10(t_lo), np.log10(t_hi), xtol=1e-10)
     return float(10.0 ** log_t)
+
+
+def leak_detection_limit_rate(U, T_F, T_U, k, b=0.0, u_k=0.0, u_b=0.0, cov_kb=0.0, eps=0.0,
+                              alpha=0.05, beta=0.05):
+    """True floor net rate rho# that is detected with probability 1-beta when a fraction eps of the
+    floor surface signal also appears in the reference (rate eps*rho), scalar numerical solve.
+
+    Mean of r:      rho (1 - k eps)
+    Variance of r:  (k U + b + rho)/T_F + k^2 (U + eps rho)/T_U + transfer terms at U + eps rho
+    Threshold:      k_{1-alpha} u~(0) evaluated at the reference rate actually present, U + eps rho
+    Returns inf when k*eps >= 1 (the subtraction removes the whole signal).
+    """
+    ka, kb = float(kappa(alpha)), float(kappa(beta))
+    if k * eps >= 1.0:
+        return float("inf")
+
+    def f(rho):
+        Ur = U + eps * rho
+        v0 = u0sq_comp(Ur, T_F, T_U, k, b, u_k, u_b, cov_kb)
+        return rho * (1.0 - k * eps) - ka * np.sqrt(v0) - kb * np.sqrt(v0 + rho / T_F)
+
+    hi = 1.0
+    while f(hi) < 0:
+        hi *= 2.0
+        if hi > 1e12:
+            return float("inf")
+    return float(brentq(f, 0.0, hi, xtol=1e-12, rtol=1e-12))

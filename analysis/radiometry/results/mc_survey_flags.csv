@@ -1,0 +1,31 @@
+dose_rate_uSv_h,field_scenario,sigma_delta_equivalent,rule,alpha_per_decision,expected_flags_nominal,comp_mean,comp_median,comp_p95,comp_P_ge_1,unc_mean,unc_median,unc_p95,unc_P_ge_1,n_surveys
+0.3,uniform,0.0000,alpha 0.05; ũ(0) plug-in; unc sigma_delta assumed 0,0.05,224,389.6,389,476,1,262.4,253,421,1,1000
+0.3,uniform,0.0000,alpha 0.05; ũ(0) smoothed; unc sigma_delta declared,0.05,224,241.1,237.5,321.1,1,266.2,258.5,430.1,1,1000
+0.3,uniform,0.0000,alpha Sidak; ũ(0) smoothed; unc sigma_delta declared,1.145e-05,0.05129,0.101,0,1,0.096,0.66,0,3,0.43,1000
+0.3,gradient 60 % end to end,0.1649,alpha 0.05; ũ(0) plug-in; unc sigma_delta assumed 0,0.05,224,389.7,388,474,1,371.7,365,550.1,1,1000
+0.3,gradient 60 % end to end,0.1649,alpha 0.05; ũ(0) smoothed; unc sigma_delta declared,0.05,224,226.7,225,298,1,276.8,268,435,1,1000
+0.3,gradient 60 % end to end,0.1649,alpha Sidak; ũ(0) smoothed; unc sigma_delta declared,1.145e-05,0.05129,0.084,0,1,0.078,0.777,1,3,0.502,1000
+0.3,step +50 % in last 2 m (door),0.1683,alpha 0.05; ũ(0) plug-in; unc sigma_delta assumed 0,0.05,224,383.8,384,462,1,480.3,475,667.1,1,1000
+0.3,step +50 % in last 2 m (door),0.1683,alpha 0.05; ũ(0) smoothed; unc sigma_delta declared,0.05,224,237.7,236,313,1,361,350,519,1,1000
+0.3,step +50 % in last 2 m (door),0.1683,alpha Sidak; ũ(0) smoothed; unc sigma_delta declared,1.145e-05,0.05129,0.082,0,1,0.075,3.718,3,9,0.937,1000
+0.3,"time variation ±10 %, 10 min",0.0657,alpha 0.05; ũ(0) plug-in; unc sigma_delta assumed 0,0.05,224,390.4,389,478,1,282.7,273,442.1,1,1000
+0.3,"time variation ±10 %, 10 min",0.0657,alpha 0.05; ũ(0) smoothed; unc sigma_delta declared,0.05,224,226.6,223.5,297,1,265.8,256,420.1,1,1000
+0.3,"time variation ±10 %, 10 min",0.0657,alpha Sidak; ũ(0) smoothed; unc sigma_delta declared,1.145e-05,0.05129,0.09,0,1,0.086,0.75,0,3,0.464,1000
+0.3,gradient + step + time,0.3118,alpha 0.05; ũ(0) plug-in; unc sigma_delta assumed 0,0.05,224,389.5,388,471,1,661.9,653,834,1,1000
+0.3,gradient + step + time,0.3118,alpha 0.05; ũ(0) smoothed; unc sigma_delta declared,0.05,224,225.5,224,295,1,375.6,371,507,1,1000
+0.3,gradient + step + time,0.3118,alpha Sidak; ũ(0) smoothed; unc sigma_delta declared,1.145e-05,0.05129,0.092,0,1,0.089,4.732,4,11,0.949,1000
+1.0,uniform,0.0000,alpha 0.05; ũ(0) plug-in; unc sigma_delta assumed 0,0.05,224,312.1,307,430,1,252.4,245.5,397,1,1000
+1.0,uniform,0.0000,alpha 0.05; ũ(0) smoothed; unc sigma_delta declared,0.05,224,224.5,216,349.1,1,245.1,236.5,378,1,1000
+1.0,uniform,0.0000,alpha Sidak; ũ(0) smoothed; unc sigma_delta declared,1.145e-05,0.05129,0.074,0,1,0.07,0.295,0,1,0.24,1000
+1.0,gradient 60 % end to end,0.1706,alpha 0.05; ũ(0) plug-in; unc sigma_delta assumed 0,0.05,224,309.4,308.5,447.1,1,577.1,573.5,767,1,1000
+1.0,gradient 60 % end to end,0.1706,alpha 0.05; ũ(0) smoothed; unc sigma_delta declared,0.05,224,226.7,220,349,1,260.2,255,375,1,1000
+1.0,gradient 60 % end to end,0.1706,alpha Sidak; ũ(0) smoothed; unc sigma_delta declared,1.145e-05,0.05129,0.081,0,1,0.076,0.106,0,1,0.096,1000
+1.0,step +50 % in last 2 m (door),0.1742,alpha 0.05; ũ(0) plug-in; unc sigma_delta assumed 0,0.05,224,309.5,300,444,1,682.2,675,822,1,1000
+1.0,step +50 % in last 2 m (door),0.1742,alpha 0.05; ũ(0) smoothed; unc sigma_delta declared,0.05,224,225.8,217,346,1,419.3,416.5,506,1,1000
+1.0,step +50 % in last 2 m (door),0.1742,alpha Sidak; ũ(0) smoothed; unc sigma_delta declared,1.145e-05,0.05129,0.058,0,1,0.054,4.007,3,9,0.953,1000
+1.0,"time variation ±10 %, 10 min",0.0680,alpha 0.05; ũ(0) plug-in; unc sigma_delta assumed 0,0.05,224,310.1,304,443,1,309,301,454,1,1000
+1.0,"time variation ±10 %, 10 min",0.0680,alpha 0.05; ũ(0) smoothed; unc sigma_delta declared,0.05,224,226.1,219,343,1,255.1,248,392,1,1000
+1.0,"time variation ±10 %, 10 min",0.0680,alpha Sidak; ũ(0) smoothed; unc sigma_delta declared,1.145e-05,0.05129,0.05,0,0,0.046,0.305,0,1,0.25,1000
+1.0,gradient + step + time,0.3226,alpha 0.05; ũ(0) plug-in; unc sigma_delta assumed 0,0.05,224,309.4,304,437,1,939.2,936,1073,1,1000
+1.0,gradient + step + time,0.3226,alpha 0.05; ũ(0) smoothed; unc sigma_delta declared,0.05,224,224,214,346,1,443.9,444,504,1,1000
+1.0,gradient + step + time,0.3226,alpha Sidak; ũ(0) smoothed; unc sigma_delta declared,1.145e-05,0.05129,0.067,0,1,0.065,1.306,1,4,0.64,1000
