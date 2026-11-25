@@ -1,0 +1,432 @@
+{
+ "board": "RR-TOF-A",
+ "rev": "A",
+ "parts": [
+  {
+   "ref": "C1",
+   "value": "4u7",
+   "group": "sensor",
+   "symbol": "Device:C",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "mpn": "GRM188R61A475KE15D",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "+3V3_TOF",
+     "type": "passive"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "GND",
+     "type": "passive"
+    }
+   ]
+  },
+  {
+   "ref": "C2",
+   "value": "100n",
+   "group": "sensor",
+   "symbol": "Device:C",
+   "footprint": "Capacitor_SMD:C_0402_1005Metric",
+   "mpn": "GRM155R71C104KA88D",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "+3V3_TOF",
+     "type": "passive"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "GND",
+     "type": "passive"
+    }
+   ]
+  },
+  {
+   "ref": "D1",
+   "value": "TPD4E05U06",
+   "group": "connector",
+   "symbol": "Power_Protection:TPD4E05U06DQA",
+   "footprint": "Package_SON:USON-10_2.5x1.0mm_P0.5mm",
+   "mpn": "TPD4E05U06DQAR",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "D1+",
+     "net": "SDA",
+     "type": "passive"
+    },
+    {
+     "pin": "2",
+     "name": "D1-",
+     "net": "SCL",
+     "type": "passive"
+    },
+    {
+     "pin": "3",
+     "name": "GND",
+     "net": "GND",
+     "type": "power_in"
+    },
+    {
+     "pin": "4",
+     "name": "D2+",
+     "net": "XSHUT",
+     "type": "passive"
+    },
+    {
+     "pin": "5",
+     "name": "D2-",
+     "net": "GPIO1",
+     "type": "passive"
+    },
+    {
+     "pin": "6",
+     "name": "NC",
+     "net": null,
+     "type": "free"
+    },
+    {
+     "pin": "7",
+     "name": "NC",
+     "net": null,
+     "type": "free"
+    },
+    {
+     "pin": "8",
+     "name": "GND",
+     "net": "GND",
+     "type": "passive"
+    },
+    {
+     "pin": "9",
+     "name": "NC",
+     "net": null,
+     "type": "free"
+    },
+    {
+     "pin": "10",
+     "name": "NC",
+     "net": null,
+     "type": "free"
+    }
+   ]
+  },
+  {
+   "ref": "FB1",
+   "value": "600R@100MHz",
+   "group": "connector",
+   "symbol": "Device:FerriteBead",
+   "footprint": "Inductor_SMD:L_0603_1608Metric",
+   "mpn": "BLM18AG601SN1D",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "+3V3",
+     "type": "passive"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "+3V3_TOF",
+     "type": "passive"
+    }
+   ]
+  },
+  {
+   "ref": "J1",
+   "value": "JST GH 6p",
+   "group": "connector",
+   "symbol": "Connector_Generic_MountingPin:Conn_01x06_MountingPin",
+   "footprint": "Connector_JST:JST_GH_SM06B-GHS-TB_1x06-1MP_P1.25mm_Horizontal",
+   "mpn": "SM06B-GHS-TB(LF)(SN)",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "Pin_1",
+     "net": "+3V3",
+     "type": "passive"
+    },
+    {
+     "pin": "2",
+     "name": "Pin_2",
+     "net": "GND",
+     "type": "passive"
+    },
+    {
+     "pin": "3",
+     "name": "Pin_3",
+     "net": "SDA",
+     "type": "passive"
+    },
+    {
+     "pin": "4",
+     "name": "Pin_4",
+     "net": "SCL",
+     "type": "passive"
+    },
+    {
+     "pin": "5",
+     "name": "Pin_5",
+     "net": "XSHUT",
+     "type": "passive"
+    },
+    {
+     "pin": "6",
+     "name": "Pin_6",
+     "net": "GPIO1",
+     "type": "passive"
+    },
+    {
+     "pin": "MP",
+     "name": "MountPin",
+     "net": "GND",
+     "type": "passive"
+    }
+   ]
+  },
+  {
+   "ref": "R1",
+   "value": "22R",
+   "group": "connector",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0402_1005Metric",
+   "mpn": "RC0402FR-0722RL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "SDA",
+     "type": "passive"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "TOF_SDA",
+     "type": "passive"
+    }
+   ]
+  },
+  {
+   "ref": "R2",
+   "value": "22R",
+   "group": "connector",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0402_1005Metric",
+   "mpn": "RC0402FR-0722RL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "SCL",
+     "type": "passive"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "TOF_SCL",
+     "type": "passive"
+    }
+   ]
+  },
+  {
+   "ref": "R3",
+   "value": "10k",
+   "group": "sensor",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0402_1005Metric",
+   "mpn": "RC0402FR-0710KL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "+3V3_TOF",
+     "type": "passive"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "XSHUT",
+     "type": "passive"
+    }
+   ]
+  },
+  {
+   "ref": "R4",
+   "value": "10k",
+   "group": "sensor",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0402_1005Metric",
+   "mpn": "RC0402FR-0710KL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "+3V3_TOF",
+     "type": "passive"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "GPIO1",
+     "type": "passive"
+    }
+   ]
+  },
+  {
+   "ref": "U1",
+   "value": "VL53L4ED",
+   "group": "sensor",
+   "symbol": "Sensor_Distance:VL53L1CXV0FY1",
+   "footprint": "Sensor_Distance:ST_VL53L1x",
+   "mpn": "VL53L4EDV0DH/1",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "AVDDVCSEL",
+     "net": "+3V3_TOF",
+     "type": "power_in"
+    },
+    {
+     "pin": "2",
+     "name": "AVSSVCSEL",
+     "net": "GND",
+     "type": "power_in"
+    },
+    {
+     "pin": "3",
+     "name": "GND",
+     "net": "GND",
+     "type": "power_in"
+    },
+    {
+     "pin": "4",
+     "name": "GND",
+     "net": "GND",
+     "type": "passive"
+    },
+    {
+     "pin": "5",
+     "name": "XSHUT",
+     "net": "XSHUT",
+     "type": "input"
+    },
+    {
+     "pin": "6",
+     "name": "GND",
+     "net": "GND",
+     "type": "passive"
+    },
+    {
+     "pin": "7",
+     "name": "GPIO1",
+     "net": "GPIO1",
+     "type": "open_collector"
+    },
+    {
+     "pin": "8",
+     "name": "DNC",
+     "net": null,
+     "type": "no_connect"
+    },
+    {
+     "pin": "9",
+     "name": "SDA",
+     "net": "TOF_SDA",
+     "type": "bidirectional"
+    },
+    {
+     "pin": "10",
+     "name": "SCL",
+     "net": "TOF_SCL",
+     "type": "input"
+    },
+    {
+     "pin": "11",
+     "name": "AVDD",
+     "net": "+3V3_TOF",
+     "type": "power_in"
+    },
+    {
+     "pin": "12",
+     "name": "GND",
+     "net": "GND",
+     "type": "passive"
+    }
+   ]
+  }
+ ],
+ "nets": {
+  "+3V3": [
+   "FB1.1",
+   "J1.1"
+  ],
+  "+3V3_TOF": [
+   "C1.1",
+   "C2.1",
+   "FB1.2",
+   "R3.1",
+   "R4.1",
+   "U1.1",
+   "U1.11"
+  ],
+  "GND": [
+   "C1.2",
+   "C2.2",
+   "D1.3",
+   "D1.8",
+   "J1.2",
+   "J1.MP",
+   "U1.2",
+   "U1.3",
+   "U1.4",
+   "U1.6",
+   "U1.12"
+  ],
+  "GPIO1": [
+   "D1.5",
+   "J1.6",
+   "R4.2",
+   "U1.7"
+  ],
+  "SCL": [
+   "D1.2",
+   "J1.4",
+   "R2.1"
+  ],
+  "SDA": [
+   "D1.1",
+   "J1.3",
+   "R1.1"
+  ],
+  "TOF_SCL": [
+   "R2.2",
+   "U1.10"
+  ],
+  "TOF_SDA": [
+   "R1.2",
+   "U1.9"
+  ],
+  "XSHUT": [
+   "D1.4",
+   "J1.5",
+   "R3.2",
+   "U1.5"
+  ]
+ }
+}

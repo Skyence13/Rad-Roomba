@@ -126,6 +126,7 @@ def stage_gen(board_py, route=True, sch_only=False):
     w = schematic.SchematicWriter(board, libs, None)
     w.prepare_libs()
     nets = resolve(board, libs)
+    board._nets = nets
     w.nets = nets
     log("definition: %d parts, %d nets, %d groups" % (len(board.parts), len(nets), len(board.groups)))
     # stale generated sheets from a previous definition
@@ -161,6 +162,14 @@ def stage_gen(board_py, route=True, sch_only=False):
     write_state(paths, placement=info["placement"], autoplaced=info["autoplaced"],
                 pcb_page_origin=info["origin"], board_bbox=info["bbox"], routed=False,
                 gen_warnings=info["warnings"])
+    with open(os.path.join(paths.reports, "placement.txt"), "w") as f:
+        f.write("# %s placement (board frame: X right, Y up, mm; rot = KiCad orientation).\n"
+                "# Lines marked [auto] were auto-arranged; copy the at=(...) value into board.py to freeze them.\n" % board.name)
+        for ref, (x, y, rot, side) in info["placement"].items():
+            f.write('%-8s at=(%s, %s, %s, "%s")%s\n' % (ref, x, y, ("%g" % rot), side,
+                                                       "   [auto]" if ref in info["autoplaced"] else ""))
+    if info["autoplaced"]:
+        log("auto-arranged %d part(s): see reports/placement.txt" % len(info["autoplaced"]))
     if route and board.routing["enabled"]:
         new_dsn = paths.dsn + ".new"
         pcb.export_dsn(paths.pcb, new_dsn)
@@ -281,7 +290,13 @@ def stage_sch(board_py):
 # ----------------------------------------------------------------------- host
 def _container(args):
     cmd = [KICAD_SH, "python3", os.path.join(EDA, "rrkicad.py")] + args
-    return subprocess.call(cmd)
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+    for line in p.stdout:
+        if "Debug: Adding duplicate image handler" in line:
+            continue  # wxWidgets start-up noise from the pcbnew module
+        sys.stdout.write(line)
+        sys.stdout.flush()
+    return p.wait()
 
 
 def host_build(a):

@@ -1,19 +1,118 @@
 {
+  "autoplaced": [],
+  "board_bbox": [
+    -9.0,
+    -9.4,
+    9.0,
+    4.6
+  ],
   "counts": {
     "nets": 9,
     "parts": 10,
     "sheets": 3
   },
+  "dsn_sha256": "23f634105db4c814d17d311e106c7294d713a60eef2f3e940d02c686dc1a76c7",
+  "dsn_unchanged": true,
+  "gen_warnings": [],
   "generated_files": [
     "RR-TOF-A.kicad_sch",
     "connector.kicad_sch",
     "sensor.kicad_sch"
   ],
   "name": "RR-TOF-A",
+  "pcb_page_origin": [
+    59.0,
+    93.0
+  ],
+  "placement": {
+    "C1": [
+      -1.2,
+      3.5,
+      0.0,
+      "F"
+    ],
+    "C2": [
+      -1.2,
+      2.25,
+      0.0,
+      "F"
+    ],
+    "D1": [
+      -1.25,
+      -1.4,
+      90.0,
+      "B"
+    ],
+    "FB1": [
+      2.2,
+      1.0,
+      0.0,
+      "B"
+    ],
+    "J1": [
+      0.0,
+      -5.75,
+      0.0,
+      "B"
+    ],
+    "R1": [
+      1.6,
+      -1.2,
+      90.0,
+      "B"
+    ],
+    "R2": [
+      2.8,
+      -1.2,
+      90.0,
+      "B"
+    ],
+    "R3": [
+      -1.6,
+      0.6,
+      0.0,
+      "B"
+    ],
+    "R4": [
+      -1.6,
+      1.8,
+      0.0,
+      "B"
+    ],
+    "U1": [
+      0.0,
+      0.0,
+      0.0,
+      "F"
+    ]
+  },
   "pwr_flags": [
     "+3V3",
     "GND",
     "+3V3_TOF"
   ],
+  "route_info": {
+    "dsn_sha256": "e4a129295ae2de4c2d178bf4b6a4df30755824be04bc63c05c34a93f281c86ae",
+    "freerouting": "v2.6.0 (build-date: 2026-11-25)",
+    "log_tail": [
+      "[79F09B\\E67810] Auto-routing stage completed: started with 30 unrouted nets, completed in 3.09 seconds, final score: 1000.00 (0 unrouted and 0 violations), using 2.81 total CPU seconds, 1.47 GB total allocated, and 77.4 MB peak heap usage.",
+      "[79F09B\\E67810] Optimization stage completed:. Baseline router score: 1000.00, baseline optimizer score: 145.57, final router score: 1000.00, final optimizer score: 424.25, completed in 4.29 seconds, using 7.10 total CPU seconds, 7.25 GB total allocated, and 219.7 MB peak heap usage.",
+      "[79F09B\\E67810] Job '79F09B\\E67810' finished with state: COMPLETED (elapsed: 7.50 seconds, finished at UTC: 2026-11-25T18:49:57.282391331Z)."
+    ],
+    "passes_limit": 100,
+    "reused": false,
+    "seconds": 10.4,
+    "threads": 4,
+    "timed_out": false
+  },
+  "route_stats": {
+    "preroutes": 0,
+    "preroutes_missing_after_import": 0,
+    "track_length_mm": 117.83,
+    "tracks": 109,
+    "unconnected_after_fill": 0,
+    "vias": 9
+  },
+  "routed": false,
   "single_pin_nets": []
 }

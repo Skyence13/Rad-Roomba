@@ -3,6 +3,7 @@ import csv
 import json
 import os
 import re
+import shutil
 import subprocess
 
 from .netlist import Netlist
@@ -75,8 +76,19 @@ def generate(board, paths, summary):
     _run(["kicad-cli", "pcb", "export", "pdf", "-o", asm_b, "--mode-single", "--ibt", "--black-and-white", "--mirror",
           "--layers", "B.Fab,B.SilkS,Edge.Cuts", "--cdnp", paths.pcb], res, _rel(paths, asm_b), asm_b)
     cu = os.path.join(out, name + "-copper.pdf")
-    _run(["kicad-cli", "pcb", "export", "pdf", "-o", cu, "--mode-multipage", "--ibt",
-          "--layers", ",".join(copper_layers(board)), "--cl", "Edge.Cuts", paths.pcb], res, _rel(paths, cu), cu)
+    tmpd = os.path.join(out, "_copper_tmp")
+    if os.path.isdir(cu):
+        shutil.rmtree(cu)
+    _run(["kicad-cli", "pcb", "export", "pdf", "-o", tmpd, "--mode-multipage", "--ibt",
+          "--layers", ",".join(copper_layers(board)), "--cl", "Edge.Cuts", paths.pcb], res, _rel(paths, cu))
+    if os.path.isdir(tmpd):
+        pdfs = [f for f in os.listdir(tmpd) if f.endswith(".pdf")]
+        if pdfs:
+            os.replace(os.path.join(tmpd, pdfs[0]), cu)
+        shutil.rmtree(tmpd, ignore_errors=True)
+    elif os.path.isfile(tmpd):
+        os.replace(tmpd, cu)
+    res[-1]["ok"] = res[-1]["ok"] and os.path.isfile(cu)
     # --- 3D ------------------------------------------------------------------------
     step = os.path.join(out, name + ".step")
     ok, log = _run(["kicad-cli", "pcb", "export", "step", "-o", step, "--force", "--drill-origin", "--subst-models",
@@ -157,13 +169,23 @@ def write_bom(board, path):
 
 def write_pinmap(board, paths, path):
     nl = Netlist(paths.netlist)
+    try:
+        from .pcb import pad_positions
+        padpos = pad_positions(paths.pcb, board) if os.path.exists(paths.pcb) else {}
+    except ImportError:
+        padpos = {}
     parts = []
     for p in sorted(board.parts, key=lambda q: _refkey(q.ref)):
         pins = []
         for pin in sorted(p.sym.pins, key=lambda q: _refkey("P" + q.number) if q.number.isdigit() else ("~", 0, q.number)):
             net = nl.pin_net.get((p.ref, pin.number))
             nc = net is None or net.startswith("unconnected-(")
-            pins.append({"pin": pin.number, "name": pin.name, "net": None if nc else net, "type": pin.etype})
+            entry = {"pin": pin.number, "name": pin.name, "net": None if nc else net, "type": pin.etype}
+            pp = padpos.get((p.ref, pin.number))
+            if pp:
+                entry["pad_xy_mm"] = [pp[0][0], pp[0][1]] if len(pp) == 1 else [[q[0], q[1]] for q in pp]
+                entry["side"] = pp[0][2]
+            pins.append(entry)
         parts.append({"ref": p.ref, "value": p.value, "group": p.group.name, "symbol": p.symbol,
                       "footprint": p.footprint, "mpn": p.mpn, "dnp": bool(p.dnp), "pins": pins})
     nets = {}
@@ -172,6 +194,8 @@ def write_pinmap(board, paths, path):
             if pin["net"]:
                 nets.setdefault(pin["net"], []).append("%s.%s" % (part["ref"], pin["pin"]))
     with open(path, "w") as f:
-        json.dump({"board": board.name, "rev": board.rev, "parts": parts,
+        json.dump({"board": board.name, "rev": board.rev,
+                   "coordinates": "pad_xy_mm: board frame, X right / Y up, origin = drill/place origin, viewed from the top",
+                   "parts": parts,
                    "nets": {k: nets[k] for k in sorted(nets)}}, f, indent=1)
         f.write("\n")

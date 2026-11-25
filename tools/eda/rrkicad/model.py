@@ -74,7 +74,7 @@ class Part:
     def __init__(self, group, ref, symbol, value, footprint=None, mpn="", mfr="", pins=None, nc=(),
                  unused="error", at=None, side=None, near=None, edge=None, dnp=False, bom=True,
                  notes="", verify=False, datasheet=None, description=None, fields=None, sch_rot=0,
-                 silk_ref=None, fp_fields=None, model=None, locked=True):
+                 silk_ref=None, model=None, rot=None):
         self.group, self.ref, self.symbol, self.value = group, ref, symbol, str(value)
         self.footprint, self.mpn, self.mfr = footprint, mpn, mfr
         self.pins = {str(k): v for k, v in (pins or {}).items()}
@@ -92,6 +92,7 @@ class Part:
                 self.side = at[3]
         else:
             self.x = self.y = self.rot = None
+        self.auto_rot = rot if at is None else None   # rotation constraint for auto-arrange
         self.side = (self.side or "F").upper()[0]
         if self.side not in "FB":
             raise DefinitionError("%s: side must be 'F' or 'B'" % ref)
@@ -354,6 +355,10 @@ class Board:
             if k not in self.autoplace:
                 raise DefinitionError("unknown autoplace option '%s'" % k)
         self.autoplace.update(kw)
+
+    def fab_note(self, text):
+        """Extra numbered note on the fabrication drawing."""
+        self.stackup_notes.append(text)
 
     def uuid(self, *parts):
         return stable_uuid(self.name, *parts)

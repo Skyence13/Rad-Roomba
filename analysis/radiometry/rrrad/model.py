@@ -24,7 +24,7 @@ from scipy.stats import norm
 
 __all__ = [
     "Calibration", "kappa", "sidak_alpha", "net_rate", "u2_counting", "u2_transfer",
-    "estimate", "u0sq_comp", "u0sq_unc", "decision_threshold",
+    "estimate", "u0sq_comp", "u0sq_unc", "null_reference_rate", "decision_threshold",
     "detection_limit_rate", "detection_limit_rate_numeric",
     "detection_limit_activity", "detection_limit_activity_numeric",
     "comp_limits", "unc_limits", "breakeven_sigma_delta", "highfield_floor_activity",
@@ -122,6 +122,26 @@ def u0sq_unc(B, T_F, B0=None, T0=np.inf, sigma_delta=0.0):
     B = np.asarray(B, float)
     B0 = B if B0 is None else np.asarray(B0, float)
     return B / T_F + B0 / T0 + np.square(sigma_delta) * np.square(B)
+
+
+def null_reference_rate(N_F, T_F, N_U, T_U, k, b=0.0, mode="plug_in", U_true=None):
+    """Reference rate at which u~^2(0) is evaluated when the true U is not known.
+
+    MODEL.md section 3 writes u~^2(0) with U but does not say which estimate to use.
+      "plug_in"  U = N_U/T_U from the same gate set (literal reading). The threshold then
+                 moves with the same fluctuation as r, which inflates the false-alarm rate.
+      "pooled"   U = (N_F - b T_F + N_U)/(k T_F + T_U), the estimate of U under the null
+                 hypothesis from both streams (exact maximum likelihood for b = 0). The
+                 first-order coupling between r and its threshold cancels.
+      "true"     the true rate (simulation oracle).
+    """
+    if mode == "plug_in":
+        return np.asarray(N_U, float) / T_U
+    if mode == "pooled":
+        return np.maximum(np.asarray(N_F, float) - b * T_F + np.asarray(N_U, float), 0.0) / (k * T_F + T_U)
+    if mode == "true":
+        return np.broadcast_to(np.asarray(U_true, float), np.shape(N_U)).astype(float)
+    raise ValueError(f"unknown mode {mode!r}")
 
 
 def decision_threshold(u0sq, alpha=0.05):

@@ -1,0 +1,367 @@
+# Rad Roomba head event logic (RR-HEAD-ACQ FPGA, iCE40UP5K-SG48) - SPI register map
+# Owner: gateware. Single source of truth for gen/head_evt_regs.h and gen/head_evt_regs.vh
+# (regenerate with `make gen`; never edit the generated files).
+# Names are an interface to the head firmware: once published they are only added to, never renamed.
+regmap_version: {major: 1, minor: 0, patch: 0}
+prefix: HEVT
+tick_hz: 48000000          # all tick quantities below are in ticks of this clock (24 MHz TCXO x2 in the PLL); 1 tick = 20.833 ns
+n_floor: 4
+n_ref: 4
+chain_index: "chain 0..3 = floor lane 0..3 (segment index of the ICD, 0 = robot left); chain 4..7 = reference lane 0..3"
+
+spi:
+  role: "FPGA is the slave; head MCU (STM32G474) is the master. Same four pins as the slave-configuration port, reused as user I/O after CDONE (see pins.yaml)."
+  mode: 0                  # CPOL = 0, CPHA = 0: both sides sample on SCK rising, change on SCK falling
+  bit_order: msb_first
+  word_size_bits: 32
+  byte_order: little_endian   # a 32-bit register travels least-significant byte first (memcpy-able on the STM32)
+  sck_hz_max: 4000000      # oversampled in the 48 MHz domain; SCK high and SCK low must each be >= 104 ns (5 ticks)
+  cs_setup_ns_min: 200     # CS low to first SCK rising edge
+  cs_high_ns_min: 200      # CS high between transactions
+  miso: "Driven only while CS is low (high-Z otherwise)."
+  command_byte: "bit 7 = 1 write / 0 read; bits 6..0 = register address A (0x00..0x7F, one address = one 32-bit register)"
+  read:  "MOSI: [cmd][dummy][x ...]. MISO: [STATUS_BYTE][cmd echo][A.b0][A.b1][A.b2][A.b3][A+1.b0]... Address auto-increments after every 4 data bytes and wraps 0x7F -> 0x00. Any number of words per transaction."
+  write: "MOSI: [cmd][A.b0][A.b1][A.b2][A.b3][A+1.b0]... A register is written when its fourth byte completes. CS rising in the middle of a word discards the partial word and sets FLAGS.SPI_FRAME_ERR. MISO: [STATUS_BYTE] then zeros."
+  status_byte: "First MISO byte of every transaction, sampled at CS falling: bit7 REC_AVAIL, bit6 FIFO_FULL, bit5 FIFO_OVERRUN (sticky flag), bit4 ARMED, bit3 any other FLAGS bit set, bits2..0 = 0b101 (link check)."
+  coherent_snapshot_rule:
+    - "Every 32-bit register is sampled once, at the byte boundary before its first data byte, so a word is never torn."
+    - "At CS falling the FPGA latches TICK_LO/TICK_HI (64-bit tick counter), GATE_POS and the STATUS_BYTE; all reads in that transaction see that one snapshot. The snapshot tick is the tick at which the synchronised CS edge is seen: 2 to 3 ticks (42-63 ns) after the pin edge."
+    - "The record window 0x40..0x7F shows the OLDEST unread gate record. It cannot change under the reader: new gates are appended behind it, and when the FIFO is full the NEW gate is dropped (FLAGS.FIFO_OVERRUN, LOST_TOTAL, PREV_LOST in the next stored record). It advances only on CTRL.FIFO_POP. If the FIFO was empty at CS falling the whole window reads as zero for that transaction (HDR magic = 0)."
+    - "SYNC_TICK_LO/HI are one-shot: they hold the first captured edge until CTRL.SYNC_REARM, so they can be read in any order."
+    - "Reads have no side effects; every read can be repeated."
+
+access_legend:
+  ro:  "read-only; writes ignored"
+  rw:  "read/write, may be written at any time"
+  rwf: "read/write configuration, FROZEN while STATUS.ARMED or STATUS.ARM_PENDING: a write is then discarded and FLAGS.CFG_WR_REJECTED is set. Out-of-range values are discarded and set FLAGS.CFG_BAD_VALUE. All rwf registers are covered by CFG_CRC in address order."
+  w1c: "read; write 1 to a bit to clear it"
+  wo:  "write-only command bits (self-clearing); reads as zero"
+
+registers:
+  # ------------------------------------------------------------------ identification / status
+  - {addr: 0x00, name: ID, access: ro, reset: 0x52524556, desc: "Constant 0x52524556 ('RREV'). Proves the bitstream is loaded and the SPI link works."}
+  - addr: 0x01
+    name: VERSION
+    access: ro
+    reset: 0x01000001
+    desc: "Gateware version."
+    fields:
+      - {name: REC_FMT, lsb: 0,  width: 8, desc: "Gate record format version (HDR.FMT)"}
+      - {name: PATCH,   lsb: 8,  width: 8, desc: "regmap patch"}
+      - {name: MINOR,   lsb: 16, width: 8, desc: "regmap minor (additive changes)"}
+      - {name: MAJOR,   lsb: 24, width: 8, desc: "regmap major (incompatible changes)"}
+  - {addr: 0x02, name: BUILD_ID, access: ro, reset: 0, desc: "First 32 bits of the SHA-256 over the RTL sources, regmap.yaml and pins.yaml of this bitstream (same value as HEVT_BITSTREAM_BUILD_ID in gen/head_evt_bitstream.h). Simulation builds read 0."}
+  - {addr: 0x03, name: TICK_HZ, access: ro, reset: 48000000, desc: "Tick frequency in Hz."}
+  - addr: 0x04
+    name: CAPS
+    access: ro
+    reset: 0x30358844
+    desc: "Capabilities."
+    fields:
+      - {name: N_FLOOR,    lsb: 0,  width: 4, desc: "floor chains (4)"}
+      - {name: N_REF,      lsb: 4,  width: 4, desc: "reference chains (4)"}
+      - {name: FIFO_DEPTH, lsb: 8,  width: 4, desc: "gate records the FIFO holds (8)"}
+      - {name: CNT_BITS,   lsb: 12, width: 5, desc: "class counter width (24): saturates at 2^24-1"}
+      - {name: LIVE_BITS,  lsb: 17, width: 6, desc: "live/gate tick counter width (26)"}
+      - {name: REC_WORDS,  lsb: 24, width: 8, desc: "32-bit words per gate record (48)"}
+  - addr: 0x05
+    name: STATUS
+    access: ro
+    reset: 0
+    desc: "Live status (not sticky)."
+    fields:
+      - {name: ARMED,          lsb: 0,  width: 1, desc: "Gates are being recorded. Changes only on a gate boundary."}
+      - {name: ARM_PENDING,    lsb: 1,  width: 1, desc: "ARM accepted; recording starts at the next gate boundary (and not before CFG_CRC is valid)."}
+      - {name: DISARM_PENDING, lsb: 2,  width: 1, desc: "DISARM accepted; the current gate will be completed and stored, then ARMED drops."}
+      - {name: REC_AVAIL,      lsb: 3,  width: 1, desc: "FIFO holds at least one record (record window valid)."}
+      - {name: FIFO_FULL,      lsb: 4,  width: 1, desc: "FIFO holds FIFO_DEPTH records; the next gate will be lost unless one is popped."}
+      - {name: CFG_CRC_VALID,  lsb: 5,  width: 1, desc: "CFG_CRC matches the current configuration (recomputed in about 15 us after any rwf write)."}
+      - {name: PULSER_ACTIVE,  lsb: 6,  width: 1, desc: "Pulser enabled and not stopped / burst not exhausted."}
+      - {name: SELFTEST,       lsb: 7,  width: 1, desc: "Self-test loopback selected (comparator pins ignored)."}
+      - {name: FIFO_LEVEL,     lsb: 8,  width: 4, desc: "Records in the FIFO (0..8)."}
+      - {name: HTR_STATE,      lsb: 12, width: 1, desc: "Synchronised level of the HTR_STATE pin."}
+      - {name: HTR_SYNC,       lsb: 13, width: 1, desc: "Level driven on the HTR_SYNC pin."}
+      - {name: SYNC_VALID,     lsb: 14, width: 1, desc: "SYNC_TICK holds a captured edge."}
+      - {name: TRIG_FIRED,     lsb: 15, width: 1, desc: "A trigger has fired since the last CTRL.TRIG_REARM."}
+      - {name: CHAIN_STUCK,    lsb: 16, width: 8, desc: "Per chain: currently waiting for its inputs to return low beyond STUCK_MAX."}
+      - {name: CHAIN_BUSY,     lsb: 24, width: 8, desc: "Per chain: not idle at this instant."}
+  - addr: 0x06
+    name: FLAGS
+    access: w1c
+    reset: 0
+    desc: "Sticky event flags. Write 1 to clear."
+    fields:
+      - {name: FIFO_OVERRUN,    lsb: 0, width: 1, desc: "At least one armed gate was dropped because the FIFO was full."}
+      - {name: CFG_WR_REJECTED, lsb: 1, width: 1, desc: "A write to an rwf register, or GATE_RESYNC/SEQ_CLEAR, was refused because the logic was armed."}
+      - {name: CFG_BAD_VALUE,   lsb: 2, width: 1, desc: "A write to an rwf register was refused because the value was out of range."}
+      - {name: ANY_STUCK,       lsb: 3, width: 1, desc: "Some chain exceeded STUCK_MAX (see record DIAG flags for which and when)."}
+      - {name: ANY_CNT_SAT,     lsb: 4, width: 1, desc: "Some class counter saturated."}
+      - {name: ANY_ORPHAN,      lsb: 5, width: 1, desc: "An ALPHA input rose while its chain was idle with no LLD edge."}
+      - {name: SPI_FRAME_ERR,   lsb: 6, width: 1, desc: "CS rose in the middle of a write word or a command byte."}
+      - {name: POP_EMPTY,       lsb: 7, width: 1, desc: "FIFO_POP was issued with an empty FIFO."}
+      - {name: SYNC_EXTRA,      lsb: 8, width: 1, desc: "A SYNC_IN edge arrived while SYNC_TICK was still holding an unacknowledged one."}
+  - addr: 0x07
+    name: CTRL
+    access: wo
+    reset: 0
+    desc: "Command bits. Several may be set in one write."
+    fields:
+      - {name: ARM,          lsb: 0,  width: 1, desc: "Request arming. Recording starts with the next complete gate."}
+      - {name: DISARM,       lsb: 1,  width: 1, desc: "Request disarming; the gate in progress is completed and stored first. Cancels a pending ARM at once. Wins over ARM in the same write."}
+      - {name: GATE_RESYNC,  lsb: 2,  width: 1, desc: "Restart the gate generator now (new gate starts on the next tick, with the current GATE_TICKS). Refused while armed."}
+      - {name: FIFO_POP,     lsb: 3,  width: 1, desc: "Discard the oldest record (the one in the record window)."}
+      - {name: FIFO_FLUSH,   lsb: 4,  width: 1, desc: "Discard all stored records and clear LOST_TOTAL."}
+      - {name: SEQ_CLEAR,    lsb: 5,  width: 1, desc: "Set the record sequence number to 0. Refused while armed."}
+      - {name: TRIG_REARM,   lsb: 6,  width: 1, desc: "Clear STATUS.TRIG_FIRED / TRIG_STAT so the next trigger is captured (and, in one-shot mode, emitted)."}
+      - {name: SYNC_REARM,   lsb: 7,  width: 1, desc: "Clear STATUS.SYNC_VALID so the next SYNC_IN edge is captured."}
+      - {name: PULSER_START, lsb: 8,  width: 1, desc: "(Re)start the pulser sequence: first pulse after PULSER_PHASE ticks, burst counter reloaded."}
+      - {name: PULSER_STOP,  lsb: 9,  width: 1, desc: "Stop the pulser until PULSER_START (or, in gate-sync mode, permanently until PULSER_START)."}
+      - {name: SOFT_RESET,   lsb: 15, width: 1, desc: "Return every register and counter to its reset state (tick counter included). Requires KEY."}
+      - {name: KEY,          lsb: 16, width: 16, desc: "Must be 0xA5C3 for SOFT_RESET to act; ignored otherwise."}
+  - addr: 0x08
+    name: IRQ_EN
+    access: rw
+    reset: 0x00000001
+    desc: "IRQ pin = OR of the enabled sources (level, active high)."
+    fields:
+      - {name: REC_AVAIL, lsb: 0, width: 1, desc: "STATUS.REC_AVAIL"}
+      - {name: FIFO_FULL, lsb: 1, width: 1, desc: "STATUS.FIFO_FULL"}
+      - {name: ANY_FLAG,  lsb: 2, width: 1, desc: "FLAGS != 0"}
+  - {addr: 0x09, name: TICK_LO, access: ro, reset: 0, desc: "64-bit free-running tick counter, low word, as latched at CS falling of this transaction."}
+  - {addr: 0x0A, name: TICK_HI, access: ro, reset: 0, desc: "High word of the same snapshot."}
+  - addr: 0x0B
+    name: FIFO_STAT
+    access: ro
+    reset: 0
+    desc: "FIFO bookkeeping."
+    fields:
+      - {name: LEVEL,      lsb: 0,  width: 4,  desc: "Records stored (0..8)."}
+      - {name: LOST_TOTAL, lsb: 16, width: 16, desc: "Armed gates dropped since reset / FIFO_FLUSH (saturates at 65535)."}
+  - {addr: 0x0C, name: GATE_SEQ, access: ro, reset: 0, desc: "Sequence number that the next completed armed gate will carry. Increments for every armed gate, including dropped ones, so a dropped gate leaves a visible gap."}
+  - {addr: 0x0D, name: CFG_CRC, access: ro, reset: 0, desc: "CRC-32 (zlib.crc32) over the 18 rwf registers 0x10..0x21 in address order, each as 4 little-endian bytes (72 bytes). Valid when STATUS.CFG_CRC_VALID. Copied into every gate record."}
+  - {addr: 0x0E, name: GATE_POS, access: ro, reset: 0, desc: "Ticks elapsed in the current gate at the CS-falling snapshot (0 .. GATE_TICKS-1)."}
+  - {addr: 0x0F, name: SCRATCH, access: rw, reset: 0, desc: "No function. SPI link test."}
+
+  # ------------------------------------------------------------------ configuration, frozen while armed, covered by CFG_CRC
+  - {addr: 0x10, name: GATE_TICKS, access: rwf, reset: 4800000, min: 48000, max: 48000000, width: 26,
+     desc: "Gate length in ticks (default 100 ms; 1 ms .. 1 s). Use multiples of 48 so the gate is a whole number of microseconds. A new value is used from the next gate boundary (or GATE_RESYNC)."}
+  - {addr: 0x11, name: FLOOR_WINDOW, access: rwf, reset: 192, min: 24, max: 4800, width: 13,
+     desc: "Floor chains: acceptance window W in ticks (default 4 us; 0.5 .. 100 us)."}
+  - {addr: 0x12, name: FLOOR_HOLDOFF, access: rwf, reset: 96, min: 0, max: 65535, width: 16,
+     desc: "Floor chains: fixed hold-off H after the window, ticks (default 2 us; 0 .. 1.365 ms)."}
+  - {addr: 0x13, name: FLOOR_STUCK_MAX, access: rwf, reset: 48000, min: 48, max: 1048575, width: 20,
+     desc: "Floor chains: ticks the chain may wait for its inputs to return low after the hold-off before BASELINE_STUCK is flagged (default 1 ms)."}
+  - {addr: 0x14, name: REF_WINDOW, access: rwf, reset: 96, min: 24, max: 4800, width: 13,
+     desc: "Reference chains: acceptance window W in ticks (default 2 us)."}
+  - {addr: 0x15, name: REF_HOLDOFF, access: rwf, reset: 48, min: 0, max: 65535, width: 16,
+     desc: "Reference chains: hold-off H in ticks (default 1 us)."}
+  - {addr: 0x16, name: REF_STUCK_MAX, access: rwf, reset: 48000, min: 48, max: 1048575, width: 20,
+     desc: "Reference chains: stuck limit in ticks (default 1 ms)."}
+  - addr: 0x17
+    name: FE_CFG
+    access: rwf
+    reset: 0x0000FF02
+    desc: "Input front end."
+    fields:
+      - {name: SYNC_ONLY,      lsb: 0, width: 1, desc: "1 = bypass the asynchronous pulse-catching latches (plain 2-FF synchronisers; pulses shorter than one tick can be lost). Diagnostic."}
+      - {name: WAIT_ALPHA_LOW, lsb: 1, width: 1, desc: "1 (default) = a floor chain is not idle while its ALPHA input is high (tail extension, and an ALPHA level present before an LLD edge blocks the chain instead of mislabelling the next event)."}
+      - {name: CHAIN_EN,       lsb: 8, width: 8, desc: "Per chain enable (bit n = chain n). A disabled chain ignores its inputs, counts nothing and reports live_ticks = 0 and DIAG.DISABLED, i.e. never a valid zero."}
+  - addr: 0x18
+    name: SELFTEST
+    access: rwf
+    reset: 0
+    desc: "Digital loopback. When EN = 1 the 20 comparator pins are ignored and replaced by synthetic patterns launched by every pulser pulse."
+    fields:
+      - {name: EN,         lsb: 0,  width: 1, desc: "Enable loopback."}
+      - {name: CLASS,      lsb: 1,  width: 2, desc: "0 = LLD only (beta / ref); 1 = LLD+ULD (reject); 2 = LLD+ULD+ALPHA (alpha; reference chains see reject); 3 = rotate 0,1,2 on successive pulses."}
+      - {name: CHAIN_MASK, lsb: 8,  width: 8, desc: "Chains that receive the pattern (bit n = chain n)."}
+  - addr: 0x19
+    name: ST_SHAPE
+    access: rwf
+    reset: 0x00600804
+    desc: "Shape of the synthetic pattern (ticks)."
+    fields:
+      - {name: LLD_W,     lsb: 0,  width: 8,  desc: "Width of the synthetic LLD and ULD pulses (0 acts as 1). Default 4."}
+      - {name: ALPHA_DLY, lsb: 8,  width: 8,  desc: "Delay of the synthetic ALPHA rise after the LLD rise. Default 8."}
+      - {name: ALPHA_W,   lsb: 16, width: 16, desc: "Width of the synthetic ALPHA pulse (0 acts as 1). Default 96 (2 us)."}
+  - addr: 0x1A
+    name: PULSER_CFG
+    access: rwf
+    reset: 0x00000400
+    desc: "Test pulser."
+    fields:
+      - {name: EN,        lsb: 0, width: 1, desc: "Enable. Writing this register with EN = 1 (re)starts the sequence like CTRL.PULSER_START."}
+      - {name: RANDOM,    lsb: 1, width: 1, desc: "0 = periodic (PULSER_PERIOD/PHASE); 1 = pseudo-random: every tick on which the pulser is able to fire it fires with probability PULSER_PROB / 2^32."}
+      - {name: GATE_SYNC, lsb: 2, width: 1, desc: "1 = the sequence (phase and burst counter) restarts at every gate boundary."}
+      - {name: OUT_EN,    lsb: 3, width: 1, desc: "1 = drive the PULSER pin. 0 = pin held low (pulses still feed the self-test loopback and PULSER_COUNT)."}
+      - {name: WIDTH,     lsb: 8, width: 8, desc: "Pulse width in ticks (0 acts as 1). Default 4 (83 ns). After a pulse the pulser cannot fire for one further tick: minimum spacing = WIDTH + 1 ticks."}
+  - {addr: 0x1B, name: PULSER_PERIOD, access: rwf, reset: 48000, min: 2, max: 67108863, width: 26,
+     desc: "Periodic mode: ticks between pulse starts (default 1 ms). Must be >= WIDTH + 2 or pulses are skipped."}
+  - {addr: 0x1C, name: PULSER_PHASE, access: rwf, reset: 0, min: 0, max: 67108863, width: 26,
+     desc: "Periodic mode: the first pulse starts PHASE + 1 ticks after the (re)start; with GATE_SYNC the pulse output rises on tick PHASE + 1 of the gate (tick 0 = first tick of the gate)."}
+  - {addr: 0x1D, name: PULSER_BURST, access: rwf, reset: 0, min: 0, max: 65535, width: 16,
+     desc: "Pulses per (re)start; 0 = unlimited."}
+  - {addr: 0x1E, name: PULSER_PROB, access: rwf, reset: 0x00057619, desc: "Random mode: per-tick firing probability x 2^32. Mean rate = PROB * 48e6 / 2^32 = PROB * 0.011176 s^-1 (default 4000 s^-1)."}
+  - {addr: 0x1F, name: PULSER_SEED, access: rwf, reset: 0x1F2E3D4C, desc: "Seed of the xorshift32 generator (0 is replaced by 0x1F2E3D4C). The generator is reseeded on every non-gate-sync (re)start."}
+  - {addr: 0x20, name: SETUP_TAG, access: rwf, reset: 0, desc: "Opaque value owned by the firmware (e.g. a hash of DAC thresholds, bias set-point and compensation coefficients). Has no function in the logic; it is covered by CFG_CRC so one number identifies the whole setup."}
+  - addr: 0x21
+    name: HTR_CFG
+    access: rwf
+    reset: 0
+    desc: "Heater bookkeeping source."
+    fields:
+      - {name: SRC_INTERNAL, lsb: 0, width: 1, desc: "0 = heater on-ticks and transitions are measured on the HTR_STATE pin (actual switch state); 1 = on the internal HTR_SYNC output (use when HTR_STATE is not wired)."}
+
+  # ------------------------------------------------------------------ run-time controls (never frozen, not in CFG_CRC)
+  - addr: 0x28
+    name: TRIG_CFG
+    access: rw
+    reset: 0x00300000
+    desc: "TRIG_OUT source select (waveform capture trigger)."
+    fields:
+      - {name: CHAIN_MASK, lsb: 0,  width: 8, desc: "Chains that may trigger (bit n = chain n)."}
+      - {name: BETA,       lsb: 8,  width: 1, desc: "Floor: trigger at window end when the event is classified beta-window."}
+      - {name: REJECT,     lsb: 9,  width: 1, desc: "Floor: ... classified reject (ULD without ALPHA)."}
+      - {name: ALPHA,      lsb: 10, width: 1, desc: "Floor: ... classified alpha."}
+      - {name: REF,        lsb: 11, width: 1, desc: "Reference: trigger at window end when the event is a reference count."}
+      - {name: REF_REJECT, lsb: 12, width: 1, desc: "Reference: ... a reference reject."}
+      - {name: START,      lsb: 13, width: 1, desc: "Trigger when a selected chain accepts an event (start of window, before the class is known)."}
+      - {name: PULSER,     lsb: 14, width: 1, desc: "Trigger on every pulser pulse."}
+      - {name: ONESHOT,    lsb: 15, width: 1, desc: "1 = after one trigger no further TRIG_OUT pulse until CTRL.TRIG_REARM."}
+      - {name: WIDTH,      lsb: 16, width: 8, desc: "TRIG_OUT pulse width in ticks (0 acts as 1). Default 48 (1 us)."}
+  - addr: 0x29
+    name: TRIG_STAT
+    access: ro
+    reset: 0
+    desc: "First trigger since TRIG_REARM."
+    fields:
+      - {name: FIRED,     lsb: 0,  width: 1, desc: "A trigger was captured."}
+      - {name: CHAIN,     lsb: 4,  width: 3, desc: "Lowest-numbered chain that caused it (0 if pulser)."}
+      - {name: SRC,       lsb: 8,  width: 3, desc: "0 beta/ref count, 1 reject, 2 alpha, 3 start, 4 pulser."}
+  - {addr: 0x2A, name: TRIG_TICK, access: ro, reset: 0, desc: "Low 32 bits of the tick counter at the captured trigger (the tick on which TRIG_OUT rose)."}
+  - addr: 0x2B
+    name: HTR_CTRL
+    access: rw
+    reset: 0
+    desc: "Heater request."
+    fields:
+      - {name: ON, lsb: 0, width: 1, desc: "Requested heater state. HTR_SYNC follows it only at gate boundaries (first tick of the next gate)."}
+  - {addr: 0x2C, name: SYNC_TICK_LO, access: ro, reset: 0, desc: "64-bit tick count of the captured SYNC_IN rising edge (low word). Resolution 1 tick; fixed latency 2 ticks, +0/+1 tick sampling."}
+  - {addr: 0x2D, name: SYNC_TICK_HI, access: ro, reset: 0, desc: "High word."}
+  - addr: 0x2E
+    name: SYNC_STAT
+    access: ro
+    reset: 0
+    desc: "SYNC_IN capture."
+    fields:
+      - {name: VALID, lsb: 0, width: 1,  desc: "SYNC_TICK holds an edge."}
+      - {name: COUNT, lsb: 8, width: 16, desc: "Rising edges seen since reset (wraps)."}
+  - addr: 0x2F
+    name: LED_CFG
+    access: rw
+    reset: 0x00000001
+    desc: "Status LED."
+    fields:
+      - {name: MODE, lsb: 0, width: 2, desc: "0 off; 1 slow blink (tick bit 25, 0.7 Hz) when disarmed, toggles every gate when armed; 2 on while armed; 3 on while any FLAGS bit is set."}
+  - addr: 0x30
+    name: IN_LEVELS
+    access: ro
+    reset: 0
+    desc: "Synchronised input levels after the front end (bring-up aid; a comparator stuck high shows here)."
+    fields:
+      - {name: BETA_LLD, lsb: 0,  width: 4, desc: "floor lanes 0..3"}
+      - {name: BETA_ULD, lsb: 4,  width: 4, desc: "floor lanes 0..3"}
+      - {name: ALPHA,    lsb: 8,  width: 4, desc: "floor lanes 0..3"}
+      - {name: REF_LLD,  lsb: 12, width: 4, desc: "reference lanes 0..3"}
+      - {name: REF_ULD,  lsb: 16, width: 4, desc: "reference lanes 0..3"}
+      - {name: HTR_STATE, lsb: 20, width: 1, desc: "HTR_STATE pin"}
+      - {name: SYNC_IN,   lsb: 21, width: 1, desc: "SYNC_IN pin"}
+
+  # ------------------------------------------------------------------ gate record window
+  - {addr: 0x40, name: REC_BASE, access: ro, reset: 0, desc: "First word of the record window 0x40..0x7F (oldest stored gate record, layout in `record`). Words beyond REC_WORDS read 0."}
+
+# ---------------------------------------------------------------------- gate shadow record
+record:
+  format_version: 1
+  n_words: 48
+  window_words: 64
+  magic: 0x4752            # 'G','R' in HDR[31:16]
+  rules:
+    - "All fields are 32-bit little-endian words; the record is 192 bytes."
+    - "Gate g covers ticks [START_TICK, START_TICK + GATE_TICKS). Consecutive records with consecutive SEQ satisfy START_TICK(next) = START_TICK + GATE_TICKS exactly."
+    - "An event is counted in the gate that contains the last tick of its acceptance window (the classification tick). The tick on which it was accepted is a live tick of the gate containing that tick. Busy time is split tick-exactly between gates."
+    - "LIVE_TICKS = number of ticks of the gate on which the chain was idle, i.e. would have accepted an LLD rising edge. alpha, beta-window and floor-reject of one lane share one chain and one LIVE_TICKS."
+    - "A valid zero is count = 0 with LIVE_TICKS > 0. LIVE_TICKS = 0 (stuck, disabled) must be reported as null by the firmware."
+    - "CHECKSUM = sum of words 0..46 modulo 2^32."
+  words:
+    - {index: 0,  name: HDR,           desc: "[31:16] magic 0x4752, [15:8] format version (1), [7:0] number of words (48)."}
+    - {index: 1,  name: SEQ,           desc: "Sequence number of this armed gate."}
+    - {index: 2,  name: START_TICK_LO, desc: "Tick count of the first tick of the gate, low word."}
+    - {index: 3,  name: START_TICK_HI, desc: "High word."}
+    - {index: 4,  name: GATE_TICKS,    desc: "Length of this gate in ticks."}
+    - index: 5
+      name: FLAGS
+      desc: "Gate-level flags."
+      fields:
+        - {name: SELFTEST,          lsb: 0,  width: 1, desc: "Self-test loopback was selected."}
+        - {name: PULSER_EN,         lsb: 1,  width: 1, desc: "Pulser was enabled."}
+        - {name: PREV_LOST,         lsb: 2,  width: 1, desc: "One or more gates immediately before this one were dropped (FIFO full)."}
+        - {name: FIRST_AFTER_ARM,   lsb: 3,  width: 1, desc: "First gate after arming."}
+        - {name: HTR_TRANSITION,    lsb: 4,  width: 1, desc: "The heater state changed on a tick of this gate (a change made at a gate boundary belongs to the gate that starts with it)."}
+        - {name: HTR_ON_AT_START,   lsb: 5,  width: 1, desc: "Heater state on the first tick."}
+        - {name: HTR_ON_AT_END,     lsb: 6,  width: 1, desc: "Heater state on the last tick."}
+        - {name: SYNC_EDGE,         lsb: 7,  width: 1, desc: "A SYNC_IN rising edge was seen in this gate."}
+        - {name: LAST_BEFORE_DISARM, lsb: 8, width: 1, desc: "Last gate before disarming."}
+        - {name: CHAIN_EN,          lsb: 16, width: 8, desc: "FE_CFG.CHAIN_EN."}
+        - {name: HTR_TRANS_COUNT,   lsb: 24, width: 8, desc: "Heater transitions in this gate (saturates at 255)."}
+    - {index: 6,  name: HTR_ON_TICKS,  desc: "Ticks of this gate with the heater on."}
+    - {index: 7,  name: PULSER_COUNT,  desc: "Pulser pulses whose rising edge fell in this gate (counted even with OUT_EN = 0)."}
+    - {index: 8,  name: CFG_CRC,       desc: "CFG_CRC of the configuration in force."}
+    - {index: 9,  name: LOST_TOTAL,    desc: "[15:0] FIFO_STAT.LOST_TOTAL when the record was stored."}
+    - {index: 10, name: F0_ALPHA,      desc: "Floor lane 0 alpha counts."}
+    - {index: 11, name: F0_BETA,       desc: "Floor lane 0 beta-window counts."}
+    - {index: 12, name: F0_REJECT,     desc: "Floor lane 0 reject counts (ULD without ALPHA)."}
+    - {index: 13, name: F0_LIVE_TICKS, desc: "Floor lane 0 live ticks."}
+    - index: 14
+      name: F0_DIAG
+      desc: "Floor lane 0 diagnostics. Same layout for every lane and for the reference lanes."
+      fields:
+        - {name: CNT_SAT,     lsb: 0, width: 1, desc: "A class counter of this chain saturated in this gate (count is a lower bound)."}
+        - {name: STUCK,       lsb: 1, width: 1, desc: "BASELINE_STUCK: the chain waited longer than STUCK_MAX for its inputs to go low, on at least one tick of this gate."}
+        - {name: ORPHAN,      lsb: 2, width: 1, desc: "ALPHA rose while idle with no LLD edge (floor only)."}
+        - {name: BUSY_AT_END, lsb: 3, width: 1, desc: "The chain was not idle on the last tick of the gate (an event or its dead time straddles the boundary)."}
+        - {name: DISABLED,    lsb: 4, width: 1, desc: "Chain disabled by FE_CFG.CHAIN_EN."}
+        - {name: ORPHAN_COUNT, lsb: 8, width: 8, desc: "Number of orphan ALPHA assertions in this gate (saturates at 255; floor only)."}
+    - {index: 15, name: F1_ALPHA,      desc: "Floor lane 1 (words 15..19 as 10..14)."}
+    - {index: 16, name: F1_BETA,       desc: ""}
+    - {index: 17, name: F1_REJECT,     desc: ""}
+    - {index: 18, name: F1_LIVE_TICKS, desc: ""}
+    - {index: 19, name: F1_DIAG,       desc: ""}
+    - {index: 20, name: F2_ALPHA,      desc: "Floor lane 2."}
+    - {index: 21, name: F2_BETA,       desc: ""}
+    - {index: 22, name: F2_REJECT,     desc: ""}
+    - {index: 23, name: F2_LIVE_TICKS, desc: ""}
+    - {index: 24, name: F2_DIAG,       desc: ""}
+    - {index: 25, name: F3_ALPHA,      desc: "Floor lane 3."}
+    - {index: 26, name: F3_BETA,       desc: ""}
+    - {index: 27, name: F3_REJECT,     desc: ""}
+    - {index: 28, name: F3_LIVE_TICKS, desc: ""}
+    - {index: 29, name: F3_DIAG,       desc: ""}
+    - {index: 30, name: R0_COUNT,      desc: "Reference lane 0 counts (LLD without ULD)."}
+    - {index: 31, name: R0_REJECT,     desc: "Reference lane 0 reject counts (ULD)."}
+    - {index: 32, name: R0_LIVE_TICKS, desc: "Reference lane 0 live ticks."}
+    - {index: 33, name: R0_DIAG,       desc: "Reference lane 0 diagnostics (layout of F0_DIAG; ORPHAN fields are 0)."}
+    - {index: 34, name: R1_COUNT,      desc: "Reference lane 1."}
+    - {index: 35, name: R1_REJECT,     desc: ""}
+    - {index: 36, name: R1_LIVE_TICKS, desc: ""}
+    - {index: 37, name: R1_DIAG,       desc: ""}
+    - {index: 38, name: R2_COUNT,      desc: "Reference lane 2."}
+    - {index: 39, name: R2_REJECT,     desc: ""}
+    - {index: 40, name: R2_LIVE_TICKS, desc: ""}
+    - {index: 41, name: R2_DIAG,       desc: ""}
+    - {index: 42, name: R3_COUNT,      desc: "Reference lane 3."}
+    - {index: 43, name: R3_REJECT,     desc: ""}
+    - {index: 44, name: R3_LIVE_TICKS, desc: ""}
+    - {index: 45, name: R3_DIAG,       desc: ""}
+    - {index: 46, name: RESERVED,      desc: "0."}
+    - {index: 47, name: CHECKSUM,      desc: "Sum of words 0..46 modulo 2^32."}

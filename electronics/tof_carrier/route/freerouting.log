@@ -1,0 +1,60 @@
+
+
+2026-11-25 18:52:15.189 INFO   Freerouting v2.6.0 (build-date: 2026-11-25)
+2026-11-25 18:52:15.491 INFO   Hardware: 4 CPU cores, 453 CPU score, 3072 MB RAM
+2026-11-25 18:52:15.494 WARN   GUI is disabled and you don't have a console available, so the only feedback from Freerouting is in the log.
+2026-11-25 18:52:16.619 WARN   The '-mp' command-line flag is deprecated and will be removed in a future release; use '--router.autorouter.max_passes' instead.
+2026-11-25 18:52:16.620 WARN   The '-mt' command-line flag is deprecated and will be removed in a future release; use '--router.max_threads=<n>' instead.
+2026-11-25 18:52:16.913 INFO   [00DB42\8F46D7] Loading board file 'RR-TOF-A.dsn'...
+2026-11-25 18:52:16.998 INFO   1 multi-pin net-tie cluster(s) identified and indexed.
+2026-11-25 18:52:17.006 INFO   [00DB42\8F46D7] Job '00DB42\8F46D7' started at 2026-11-25T18:52:17.006128108Z.
+2026-11-25 18:52:17.124 INFO   [00DB42\8F46D7] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=4.
+2026-11-25 18:52:17.159 INFO   [00DB42\8F46D7] Fanout stage started on board '016d1b196dfd412eab80fad594380a38' with 40 of 45 SMD pins needing fanout (5 already connected, 0 netless, 0 ignored).
+2026-11-25 18:52:17.168 INFO   BGA detector: identified component 'U1' (12 pins, pitch=689.37 um, lattice=DEPOPULATED_CAVITY_GRID, rings=1)
+2026-11-25 18:52:17.168 INFO   [00DB42\8F46D7] BGA detector: identified component 'U1' (12 pins, pitch=689.37 um, lattice=DEPOPULATED_CAVITY_GRID, rings=1)
+2026-11-25 18:52:17.170 INFO   BGA escape solver: generated 12/12 CPU escape proposal(s) for U1.
+2026-11-25 18:52:17.170 INFO   [00DB42\8F46D7] BGA escape solver: generated 12/12 CPU escape proposal(s) for U1.
+2026-11-25 18:52:17.175 INFO   BGA escape committer: committed 9/11 escapes (2 rejected by DRC)
+2026-11-25 18:52:17.177 INFO   BGA escape committer: committed 9/12 escape routes for U1 (2 rejected by DRC).
+2026-11-25 18:52:17.177 INFO   [00DB42\8F46D7] BGA escape committer: committed 9/12 escape routes for U1 (2 rejected by DRC).
+2026-11-25 18:52:17.190 INFO   [00DB42\8F46D7] Fanout pass #0 on board '48a795aa1f455aa790632f4308a793b3' completed in 0.00 seconds with 9 SMD pins fanouted, 0 not routed, 2 insert errors, +0 extra vias (0 SMD pins still to check in pass, ripup costs=0).
+2026-11-25 18:52:17.190 INFO   CPU fanout: bypassing 9 already-escaped BGA pin(s) to prevent redundant passes and stubs.
+2026-11-25 18:52:17.691 INFO   [00DB42\8F46D7] Fanout pass #1 on board '9e56f7a595dc9bdcda78c4df55338634' completed in 0.49 seconds with 29 SMD pins fanouted, 0 not routed, 0 insert errors, +6 extra vias (0 SMD pins still to check in pass, ripup costs=100).
+2026-11-25 18:52:17.916 INFO   [00DB42\8F46D7] Fanout pass #2 on board 'f27891e362753bfa19572ca4db998ed4' completed in 0.22 seconds with 20 SMD pins fanouted, 0 not routed, 0 insert errors, +6 extra vias (0 SMD pins still to check in pass, ripup costs=200).
+2026-11-25 18:52:18.002 INFO   [00DB42\8F46D7] Fanout pass #3 on board 'b0b463c7f79a9d140ded58dfe5b37a4b' completed in 0.08 seconds with 7 SMD pins fanouted, 0 not routed, 0 insert errors, +2 extra vias (0 SMD pins still to check in pass, ripup costs=300).
+2026-11-25 18:52:18.062 INFO   [00DB42\8F46D7] Fanout pass #4 on board '8b406105734b874af2c18b8d009d0854' completed in 0.06 seconds with 5 SMD pins fanouted, 0 not routed, 0 insert errors, +0 extra vias (0 SMD pins still to check in pass, ripup costs=400).
+2026-11-25 18:52:18.127 INFO   [00DB42\8F46D7] Fanout pass #5 on board 'de16e9c8c7a0cc213d5b481160927dd0' completed in 0.06 seconds with 5 SMD pins fanouted, 0 not routed, 0 insert errors, +0 extra vias (0 SMD pins still to check in pass, ripup costs=500).
+2026-11-25 18:52:18.196 INFO   [00DB42\8F46D7] Fanout pass #6 on board '171eccc8cb9a4be48d12baa25c1999dc' completed in 0.06 seconds with 5 SMD pins fanouted, 0 not routed, 0 insert errors, +0 extra vias (0 SMD pins still to check in pass, ripup costs=600).
+2026-11-25 18:52:18.270 INFO   [00DB42\8F46D7] Fanout pass #7 on board '13c03a5dbe1fa639c16f21c18c72acf1' completed in 0.07 seconds with 5 SMD pins fanouted, 0 not routed, 0 insert errors, +0 extra vias (0 SMD pins still to check in pass, ripup costs=700).
+2026-11-25 18:52:18.271 INFO   Fanout stopped after 7 passes: no progress for 3 consecutive passes.
+2026-11-25 18:52:18.273 INFO   [00DB42\8F46D7] Fanout stage completed: started with 45 total SMD pins, completed in 1.08 seconds, escaped pins: 37/45 (82.2%), using 1.01 total CPU seconds, 0.51 GB total allocated, and 135.7 MB peak heap usage.
+2026-11-25 18:52:18.280 INFO   [00DB42\8F46D7] Auto-routing stage started on board '13c03a5dbe1fa639c16f21c18c72acf1' with baseline score 483.87 for 12 unrouted items.
+2026-11-25 18:52:18.596 INFO   [00DB42\8F46D7] Auto-routing pass #1 on board '13c03a5dbe1fa639c16f21c18c72acf1' was completed in 0.30 seconds with score 655.91 (8 unrouted and 0 violations), using 0.85 CPU seconds and the job allocated 0.34 GB of memory so far.
+2026-11-25 18:52:18.947 INFO   [00DB42\8F46D7] Auto-routing pass #2 on board 'e2215b4f0111362f7236c6a81c5a0d12' was completed in 0.34 seconds with score 784.95 (5 unrouted and 0 violations), using 0.85 CPU seconds and the job allocated 0.34 GB of memory so far.
+2026-11-25 18:52:19.174 INFO   [00DB42\8F46D7] Auto-routing pass #3 on board '7597fee569d895c04c3f476febb86878' was completed in 0.22 seconds with score 913.98 (2 unrouted and 0 violations), using 1.79 CPU seconds and the job allocated 0.97 GB of memory so far.
+2026-11-25 18:52:19.237 INFO   [00DB42\8F46D7] Auto-routing pass #4 on board '46f719da27c68b693c187d93f75d7fbd' was completed in 0.05 seconds with score 956.99 (1 unrouted and 0 violations), using 1.79 CPU seconds and the job allocated 0.97 GB of memory so far.
+2026-11-25 18:52:19.341 INFO   [00DB42\8F46D7] Auto-routing pass #5 on board 'e4bf293374ecdd599c286c580a012837' was completed in 0.10 seconds with score 913.98 (2 unrouted and 0 violations), using 1.79 CPU seconds and the job allocated 0.97 GB of memory so far.
+2026-11-25 18:52:19.406 INFO   [00DB42\8F46D7] Auto-routing pass #6 on board 'ea416b993897a8e239e6646c5fb41bc5' was completed in 0.06 seconds with score 956.99 (1 unrouted and 0 violations), using 1.79 CPU seconds and the job allocated 0.97 GB of memory so far.
+2026-11-25 18:52:19.430 INFO   [00DB42\8F46D7] Auto-routing pass #7 on board 'e9132afcbe4e4166ce356945730d6fd1' was completed in 0.02 seconds with score 956.99 (1 unrouted and 0 violations), using 1.79 CPU seconds and the job allocated 0.97 GB of memory so far.
+2026-11-25 18:52:19.471 INFO   [00DB42\8F46D7] Auto-routing pass #8 on board 'b8b2da96ff20875eab04a5d67fade975' was completed in 0.03 seconds with score 956.99 (1 unrouted and 0 violations), using 1.79 CPU seconds and the job allocated 0.97 GB of memory so far.
+2026-11-25 18:52:19.589 INFO   [00DB42\8F46D7] Auto-routing pass #9 on board 'd5a330a3f491998ff51526d3af14f6b5' was completed in 0.11 seconds with score 870.97 (3 unrouted and 0 violations), using 1.79 CPU seconds and the job allocated 0.97 GB of memory so far.
+2026-11-25 18:52:19.662 INFO   [00DB42\8F46D7] Auto-routing pass #10 on board 'd4201925be2f27cde1e3911a79ec6366' was completed in 0.07 seconds with score 913.98 (2 unrouted and 0 violations), using 1.79 CPU seconds and the job allocated 0.97 GB of memory so far.
+2026-11-25 18:52:19.828 INFO   [00DB42\8F46D7] Auto-routing pass #11 on board '11d77465447497c75d2c28948b2dde36' was completed in 0.16 seconds with score 870.97 (3 unrouted and 0 violations), using 1.79 CPU seconds and the job allocated 0.97 GB of memory so far.
+2026-11-25 18:52:20.124 INFO   [00DB42\8F46D7] Auto-routing pass #12 on board 'e4bf293374ecdd599c286c580a012837' was completed in 0.28 seconds with score 956.99 (1 unrouted and 0 violations), using 2.74 CPU seconds and the job allocated 1.73 GB of memory so far.
+2026-11-25 18:52:20.231 INFO   [00DB42\8F46D7] Auto-routing pass #13 on board 'e4bf293374ecdd599c286c580a012837' was completed in 0.10 seconds with score 956.99 (1 unrouted and 0 violations), using 2.74 CPU seconds and the job allocated 1.73 GB of memory so far.
+2026-11-25 18:52:20.280 INFO   [00DB42\8F46D7] Auto-routing pass #14 on board '03acae6dc68c5ee37fe5366963d9f75d' was completed in 0.04 seconds with score 956.99 (1 unrouted and 0 violations), using 2.74 CPU seconds and the job allocated 1.73 GB of memory so far.
+2026-11-25 18:52:20.285 INFO   [00DB42\8F46D7] Last-mile rip-up removed 24 blocking trace(s) or via(s) around 1 remaining connection(s).
+2026-11-25 18:52:20.496 INFO   [00DB42\8F46D7] Auto-routing pass #15 on board 'ab0d0fd98fe93625aa68a5e56412dd14' was completed in 0.21 seconds with score 870.97 (3 unrouted and 0 violations), using 2.74 CPU seconds and the job allocated 1.73 GB of memory so far.
+2026-11-25 18:52:20.611 INFO   [00DB42\8F46D7] Auto-routing pass #16 on board 'e2fb9965674a72c26b3af1afc1e55955' was completed in 0.11 seconds with score 956.99 (1 unrouted and 0 violations), using 2.74 CPU seconds and the job allocated 1.73 GB of memory so far.
+2026-11-25 18:52:20.647 INFO   [00DB42\8F46D7] Auto-routing pass #17 on board '400a9e4854028ae8b7c9c68a4e7f3149' was completed in 0.03 seconds with score 1000.00 (0 unrouted and 0 violations), using 2.74 CPU seconds and the job allocated 1.73 GB of memory so far.
+2026-11-25 18:52:20.657 INFO   [00DB42\8F46D7] Auto-routing pass #18 on board 'b316b4380a57513ea5480c003c4e36c0' was completed in 0.00 seconds with score 1000.00 (0 unrouted and 0 violations), using 2.74 CPU seconds and the job allocated 1.73 GB of memory so far.
+2026-11-25 18:52:20.675 INFO   [00DB42\8F46D7] Auto-routing stage completed: started with 30 unrouted nets, completed in 3.55 seconds, final score: 1000.00 (0 unrouted and 0 violations), using 2.74 total CPU seconds, 1.73 GB total allocated, and 52.7 MB peak heap usage.
+2026-11-25 18:52:20.701 INFO   [00DB42\8F46D7] Optimization stage started on board '8cf17e2d20f45ed3e642ccd82f107066'. Baseline router score: 1000.00, optimizer score: -586.46, incomplete connections: 0, clearance violations: 0.
+2026-11-25 18:52:21.646 INFO   [00DB42\8F46D7] Optimizer pass #1 on board '954dbaf970dbda92c892c98b4d64a099' was completed in 0.93 seconds with the score of -586.26 (0 unrouted and 0 violations).
+2026-11-25 18:52:21.657 INFO   [00DB42\8F46D7] Optimizer pass #1: optimizer score -586.46 -> -586.26 (IMPROVED, 0.0123% of the excess), router score: 1000.00, incomplete connections: 0, clearance violations: 0.
+2026-11-25 18:52:21.657 INFO   [00DB42\8F46D7] Stopping optimizer because the improvement in this pass (0.0123%) is below the threshold (2.50%).
+2026-11-25 18:52:21.695 INFO   [00DB42\8F46D7] Step slide: 2 of 80 tried moves kept in 2 passes, trace length 197.30 -> 197.25 mm, bends 100 -> 100, vias 11 -> 11, incomplete connections 0 -> 0, clearance violations 0 -> 0, in 0.04 seconds using 0.04 CPU seconds.
+2026-11-25 18:52:21.702 INFO   [00DB42\8F46D7] Optimization stage completed:. Baseline router score: 1000.00, baseline optimizer score: -586.46, final router score: 1000.00, final optimizer score: 0.00, completed in 1.00 seconds, using 2.15 total CPU seconds, 1.39 GB total allocated, and 184.7 MB peak heap usage.
+2026-11-25 18:52:21.705 INFO   [00DB42\8F46D7] Job '00DB42\8F46D7' finished with state: COMPLETED (elapsed: 4.70 seconds, finished at UTC: 2026-11-25T18:52:21.704613195Z).
+2026-11-25 18:52:21.748 INFO   Saving output file '/home/user/Rad-Roomba/electronics/tof_carrier/route/RR-TOF-A.ses' (SES)...
+2026-11-25 18:52:21.750 INFO   Successfully saved output file '/home/user/Rad-Roomba/electronics/tof_carrier/route/RR-TOF-A.ses' (12149 bytes).
