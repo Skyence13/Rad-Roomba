@@ -33,6 +33,7 @@ def validate(rm):
         assert r["access"] in rm["access_legend"], r
         used = 0
         for f in r.get("fields", []):
+            assert isinstance(f["name"], str), "quote the field name %r in %s (YAML boolean)" % (f["name"], r["name"])
             mask = ((1 << f["width"]) - 1) << f["lsb"]
             assert mask < (1 << 32) and not (used & mask), "field overlap in %s" % r["name"]
             used |= mask
@@ -45,7 +46,7 @@ def validate(rm):
     rec = rm["record"]
     assert regs["VERSION"]["reset"] == (v["major"] << 24) | (v["minor"] << 16) | (v["patch"] << 8) | rec["format_version"]
     assert regs["TICK_HZ"]["reset"] == rm["tick_hz"]
-    caps = rm["n_floor"] | (rm["n_ref"] << 4) | (8 << 8) | (24 << 12) | (26 << 17) | (rec["n_words"] << 24)
+    caps = rm["n_floor"] | (rm["n_ref"] << 4) | (8 << 8) | (21 << 12) | (26 << 17) | (rec["n_words"] << 24)
     assert regs["CAPS"]["reset"] == caps, "CAPS reset should be 0x%08X" % caps
     frozen = [r["addr"] for r in rm["registers"] if r["access"] == "rwf"]
     assert frozen == list(range(0x10, 0x10 + len(frozen))), "rwf registers must be contiguous from 0x10"
@@ -191,9 +192,10 @@ def gen_vh(rm, regs, frozen):
         a("`define %s_RST_%s 32'h%08X" % (p, r["name"], r["reset"]))
     for r in rm["registers"]:
         if "min" in r:
-            a("`define %s_MIN_%s 32'd%d" % (p, r["name"], r["min"]))
-            a("`define %s_MAX_%s 32'd%d" % (p, r["name"], r["max"]))
+            a("`define %s_MIN_%s 26'd%d" % (p, r["name"], r["min"]))
+            a("`define %s_MAX_%s 26'd%d" % (p, r["name"], r["max"]))
             a("`define %s_W_%s %d" % (p, r["name"], r["width"]))
+            a("`define %s_RSTW_%s %d'd%d" % (p, r["name"], r["width"], r["reset"]))
     a("`define %s_CFG_FIRST 7'h%02X" % (p, frozen[0]))
     a("`define %s_CFG_COUNT %d" % (p, len(frozen)))
     for r in rm["registers"]:

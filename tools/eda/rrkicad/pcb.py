@@ -201,6 +201,7 @@ class Builder:
         self.fr = Frame(ox, oy)
         self.warnings = []
         self.fps = {}
+        self.envelope_files = set()
 
     # ------------------------------------------------------------ primitives
     def layer(self, name):
@@ -387,14 +388,76 @@ class Builder:
                     raise DefinitionError("%s: symbol pin %s (net %s) has no pad in footprint %s" % (
                         part.ref, num, net, part.footprint))
                 self.warnings.append("%s: unconnected symbol pin %s has no pad in footprint %s" % (part.ref, num, part.footprint))
-        if part.model:
+        if part.zone_connect:
+            fp.SetLocalZoneConnection({"solid": pcbnew.ZONE_CONNECTION_FULL, "thermal": pcbnew.ZONE_CONNECTION_THERMAL,
+                                       "none": pcbnew.ZONE_CONNECTION_NONE}[part.zone_connect])
+        model = part.model
+        if not model and self.b.envelopes and not self._stock_model_exists(fp):
+            model = self._envelope(part, fp)
+        if model:
             fp.Models().clear()
             m = pcbnew.FP_3DMODEL()
-            m.m_Filename = part.model
+            m.m_Filename = model
             fp.Add3DModel(m)
         self.fps[part.ref] = fp
         if part.placed:
             self.place(part, part.x, part.y, part.rot, part.side)
+
+    def _stock_model_exists(self, fp):
+        base = os.environ.get("KICAD9_3DMODEL_DIR", "/usr/share/kicad/3dmodels")
+        for m in fp.Models():
+            fn = str(m.m_Filename).replace("${KICAD9_3DMODEL_DIR}", base).replace("${KIPRJMOD}", self.paths.dir)
+            stem = os.path.splitext(fn)[0]
+            if any(os.path.exists(stem + ext) for ext in (".step", ".stp", ".STEP", ".wrl")):
+                return True
+        return False
+
+    _HEIGHTS = (("R_0201", 0.26), ("R_0402", 0.35), ("R_0603", 0.45), ("R_0805", 0.5), ("R_1206", 0.55),
+                ("C_0201", 0.3), ("C_0402", 0.5), ("C_0603", 0.8), ("C_0805", 1.25), ("C_1206", 1.6),
+                ("L_0603", 0.8), ("L_0805", 0.9), ("LED_0603", 0.6), ("LED_0805", 0.8),
+                ("SOT-23", 1.1), ("SOT-223", 1.6), ("SOIC", 1.75), ("TSSOP", 1.2), ("LQFP", 1.6), ("TQFP", 1.2),
+                ("QFN", 0.9), ("DFN", 0.8), ("USON", 0.55), ("PinHeader_", 8.5))
+
+    def _envelope(self, part, fp):
+        """Box 3D model from the F.Fab outline and a height (part.height or a per-package default)."""
+        from .stepbox import box_step
+        xs, ys = [], []
+        for g in fp.GraphicalItems():
+            if g.GetLayer() == pcbnew.F_Fab and g.GetClass() == "PCB_SHAPE":
+                bb = g.GetBoundingBox()
+                xs += [bb.GetLeft(), bb.GetRight()]
+                ys += [bb.GetTop(), bb.GetBottom()]
+        if not xs:
+            for pad in fp.Pads():
+                bb = pad.GetBoundingBox()
+                xs += [bb.GetLeft(), bb.GetRight()]
+                ys += [bb.GetTop(), bb.GetBottom()]
+        if not xs:
+            return None
+        pos = fp.GetPosition()
+        x0, x1 = pcbnew.ToMM(min(xs) - pos.x), pcbnew.ToMM(max(xs) - pos.x)
+        y0, y1 = pcbnew.ToMM(min(ys) - pos.y), pcbnew.ToMM(max(ys) - pos.y)
+        name = part.footprint.split(":", 1)[1]
+        h = part.height
+        if h is None:
+            for key, val in self._HEIGHTS:
+                if name.startswith(key) or ("_" + key) in name:
+                    h = val
+                    break
+        if h is None:
+            h = 1.0
+            self.warnings.append("%s: 3D envelope uses the default height 1.0 mm (give height=)" % part.ref)
+        safe = "".join(c if c.isalnum() or c in "-_." else "_" for c in name)
+        fn = "%s_h%s.step" % (safe, ("%.2f" % h).replace(".", "p"))
+        d = os.path.join(self.paths.dir, "3d")
+        os.makedirs(d, exist_ok=True)
+        path = os.path.join(d, fn)
+        text = box_step(safe, round(x0, 4), round(-y1, 4), 0.0, round(x1, 4), round(-y0, 4), float(h), self.b.date or "1970-01-01")
+        if not os.path.exists(path) or open(path).read() != text:
+            with open(path, "w") as f:
+                f.write(text)
+        self.envelope_files.add(fn)
+        return "${KIPRJMOD}/3d/" + fn
 
     def place(self, part, x, y, rot, side):
         fp = self.fps[part.ref]
@@ -566,45 +629,79 @@ def _track_key(t):
     return (t.GetClass(), a, b, t.GetLayer(), t.GetNetname())
 
 
-def finish_pcb(board, paths, ses=None):
-    _seed(board.name, "finish")
-    pcb = pcbnew.LoadBoard(paths.pcb)
-    paper, pw, ph, ox, oy = page_and_origin(board)
-    fr = Frame(ox, oy)
+def import_ses(name, pcb_path, ses, clean="1"):
+    """Phase A (own process): import the SES, verify pre-routes, drop dangling stubs, save.
+
+    Runs in a separate interpreter because removing items leaves the pcbnew SWIG
+    proxies of that process in an unreliable state."""
+    _seed(name, "import")
+    pcb = pcbnew.LoadBoard(pcb_path)
     info = {}
     pre = {}
     for t in pcb.GetTracks():
         if t.IsLocked():
             pre[_track_key(t)] = t
+    if not pcbnew.ImportSpecctraSES(pcb, ses):
+        raise RuntimeError("SES import failed")
+    have = {_track_key(t) for t in pcb.GetTracks()}
+    missing = [k for k in pre if k not in have]
+    info["preroutes"] = len(pre)
+    info["preroutes_missing_after_import"] = len(missing)
+    if missing:
+        raise RuntimeError("%d pre-routed track(s)/via(s) were altered by the autorouter" % len(missing))
+    for t in pcb.GetTracks():
+        if _track_key(t) in pre:
+            t.SetLocked(True)
+    pcbnew.ZONE_FILLER(pcb).Fill(pcb.Zones())
+    pcb.BuildConnectivity()
+    info["unconnected_before_cleanup"] = int(pcb.GetConnectivity().GetUnconnectedCount(True))
+    info["dangling_tracks_removed"] = _remove_dangling(pcb) if clean == "1" else 0
+    pcbnew.SaveBoard(pcb_path, pcb, True)
+    return info
+
+
+def finish_pcb(board, paths, ses=None):
+    import json
+    import subprocess
+    import sys
+    paper, pw, ph, ox, oy = page_and_origin(board)
+    fr = Frame(ox, oy)
+    info = {}
+    def load_filled():
+        _seed(board.name, "finish")
+        pcb = pcbnew.LoadBoard(paths.pcb)
+        pcbnew.ZONE_FILLER(pcb).Fill(pcb.Zones())
+        pcb.BuildConnectivity()
+        return pcb, int(pcb.GetConnectivity().GetUnconnectedCount(True))
     if ses:
         if not os.path.exists(ses):
             raise RuntimeError("SES file not found: %s" % ses)
-        if not pcbnew.ImportSpecctraSES(pcb, ses):
-            raise RuntimeError("SES import failed")
-        have = {_track_key(t) for t in pcb.GetTracks()}
-        missing = [k for k in pre if k not in have]
-        info["preroutes"] = len(pre)
-        info["preroutes_missing_after_import"] = len(missing)
-        if missing:
-            raise RuntimeError("%d pre-routed track(s)/via(s) were altered by the autorouter" % len(missing))
-        for t in pcb.GetTracks():
-            if _track_key(t) in pre:
-                t.SetLocked(True)
-    pcbnew.ZONE_FILLER(pcb).Fill(pcb.Zones())
-    pcb.BuildConnectivity()
-    base_unconnected = int(pcb.GetConnectivity().GetUnconnectedCount(True))
-    if ses:
-        removed = _remove_dangling(pcb)
-        info["dangling_tracks_removed"] = removed
-        if removed:
-            # save + reload: the SWIG track containers are not reliable after removals
-            pcbnew.SaveBoard(paths.pcb, pcb, True)
-            pcb = pcbnew.LoadBoard(paths.pcb)
-            pcbnew.ZONE_FILLER(pcb).Fill(pcb.Zones())
-            pcb.BuildConnectivity()
-            after = int(pcb.GetConnectivity().GetUnconnectedCount(True))
-            if after > base_unconnected:
-                raise RuntimeError("dangling-track clean-up reduced connectivity (%d -> %d)" % (base_unconnected, after))
+        import shutil
+        unrouted = paths.pcb + ".unrouted"
+        shutil.copyfile(paths.pcb, unrouted)
+        code = ("import json,sys; from rrkicad import pcb; "
+                "print('RRJSON'+json.dumps(pcb.import_ses(*sys.argv[1:5])))")
+
+        def run(clean):
+            r = subprocess.run([sys.executable, "-c", code, board.name, paths.pcb, ses, clean],
+                               capture_output=True, text=True)
+            lines = [l for l in r.stdout.splitlines() if l.startswith("RRJSON")]
+            if r.returncode != 0 or not lines:
+                raise RuntimeError("SES import step failed:\n" + r.stdout[-2000:] + r.stderr[-2000:])
+            return json.loads(lines[-1][6:])
+        try:
+            info.update(run("1"))
+            pcb, after = load_filled()
+            if after > info["unconnected_before_cleanup"]:
+                # the clean-up removed something that mattered: redo the import without it
+                shutil.copyfile(unrouted, paths.pcb)
+                info.update(run("0"))
+                info["dangling_cleanup"] = "skipped (would have reduced connectivity)"
+                pcb, after = load_filled()
+        finally:
+            os.remove(unrouted)
+    else:
+        pcb, after = load_filled()
     n_tr = n_via = 0
     length = 0.0
     drills = {}
@@ -636,18 +733,12 @@ def _remove_dangling(pcb):
     fan-out stubs).  Returns the number removed (the caller re-checks connectivity)."""
     conn = pcb.GetConnectivity()
     tracks = [t for t in pcb.GetTracks() if t.GetClass() != "PCB_VIA" and not t.IsLocked()]
-    removed = 0
-    for _ in range(25):
-        victims = [t for t in tracks if conn.TestTrackEndpointDangling(t, True)]
-        if not victims:
-            break
-        ids = {id(t) for t in victims}
-        for t in victims:
-            pcb.Remove(t)
-        tracks = [t for t in tracks if id(t) not in ids]
-        removed += len(victims)
-        pcb.BuildConnectivity()
-    return removed
+    # single pass on purpose: the connectivity object cannot be refreshed reliably
+    # from Python after removals, and a stale one reports false positives
+    victims = [t for t in tracks if conn.TestTrackEndpointDangling(t, True)]
+    for t in victims:
+        pcb.Remove(t)
+    return len(victims)
 
 
 def pad_positions(pcb_path, board):

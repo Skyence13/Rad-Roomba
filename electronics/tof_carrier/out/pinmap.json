@@ -1,6 +1,7 @@
 {
  "board": "RR-TOF-A",
  "rev": "A",
+ "coordinates": "pad_xy_mm: board frame, X right / Y up, origin = drill/place origin, viewed from the top",
  "parts": [
   {
    "ref": "C1",
@@ -15,13 +16,23 @@
      "pin": "1",
      "name": "~",
      "net": "+3V3_TOF",
-     "type": "passive"
+     "type": "passive",
+     "pad_xy_mm": [
+      -1.975,
+      3.5
+     ],
+     "side": "F"
     },
     {
      "pin": "2",
      "name": "~",
      "net": "GND",
-     "type": "passive"
+     "type": "passive",
+     "pad_xy_mm": [
+      -0.425,
+      3.5
+     ],
+     "side": "F"
     }
    ]
   },
@@ -38,13 +49,23 @@
      "pin": "1",
      "name": "~",
      "net": "+3V3_TOF",
-     "type": "passive"
+     "type": "passive",
+     "pad_xy_mm": [
+      -1.68,
+      2.25
+     ],
+     "side": "F"
     },
     {
      "pin": "2",
      "name": "~",
      "net": "GND",
-     "type": "passive"
+     "type": "passive",
+     "pad_xy_mm": [
+      -0.72,
+      2.25
+     ],
+     "side": "F"
     }
    ]
   },
@@ -61,61 +82,111 @@
      "pin": "1",
      "name": "D1+",
      "net": "SDA",
-     "type": "passive"
+     "type": "passive",
+     "pad_xy_mm": [
+      -0.25,
+      -1.785
+     ],
+     "side": "B"
     },
     {
      "pin": "2",
      "name": "D1-",
      "net": "SCL",
-     "type": "passive"
+     "type": "passive",
+     "pad_xy_mm": [
+      -0.75,
+      -1.785
+     ],
+     "side": "B"
     },
     {
      "pin": "3",
      "name": "GND",
      "net": "GND",
-     "type": "power_in"
+     "type": "power_in",
+     "pad_xy_mm": [
+      -1.25,
+      -1.785
+     ],
+     "side": "B"
     },
     {
      "pin": "4",
      "name": "D2+",
      "net": "XSHUT",
-     "type": "passive"
+     "type": "passive",
+     "pad_xy_mm": [
+      -1.75,
+      -1.785
+     ],
+     "side": "B"
     },
     {
      "pin": "5",
      "name": "D2-",
      "net": "GPIO1",
-     "type": "passive"
+     "type": "passive",
+     "pad_xy_mm": [
+      -2.25,
+      -1.785
+     ],
+     "side": "B"
     },
     {
      "pin": "6",
      "name": "NC",
      "net": null,
-     "type": "free"
+     "type": "free",
+     "pad_xy_mm": [
+      -2.25,
+      -1.015
+     ],
+     "side": "B"
     },
     {
      "pin": "7",
      "name": "NC",
      "net": null,
-     "type": "free"
+     "type": "free",
+     "pad_xy_mm": [
+      -1.75,
+      -1.015
+     ],
+     "side": "B"
     },
     {
      "pin": "8",
      "name": "GND",
      "net": "GND",
-     "type": "passive"
+     "type": "passive",
+     "pad_xy_mm": [
+      -1.25,
+      -1.015
+     ],
+     "side": "B"
     },
     {
      "pin": "9",
      "name": "NC",
      "net": null,
-     "type": "free"
+     "type": "free",
+     "pad_xy_mm": [
+      -0.75,
+      -1.015
+     ],
+     "side": "B"
     },
     {
      "pin": "10",
      "name": "NC",
      "net": null,
-     "type": "free"
+     "type": "free",
+     "pad_xy_mm": [
+      -0.25,
+      -1.015
+     ],
+     "side": "B"
     }
    ]
   },
@@ -132,13 +203,23 @@
      "pin": "1",
      "name": "~",
      "net": "+3V3",
-     "type": "passive"
+     "type": "passive",
+     "pad_xy_mm": [
+      2.987,
+      1.0
+     ],
+     "side": "B"
     },
     {
      "pin": "2",
      "name": "~",
      "net": "+3V3_TOF",
-     "type": "passive"
+     "type": "passive",
+     "pad_xy_mm": [
+      1.413,
+      1.0
+     ],
+     "side": "B"
     }
    ]
   },
@@ -155,43 +236,84 @@
      "pin": "1",
      "name": "Pin_1",
      "net": "+3V3",
-     "type": "passive"
+     "type": "passive",
+     "pad_xy_mm": [
+      3.125,
+      -3.9
+     ],
+     "side": "B"
     },
     {
      "pin": "2",
      "name": "Pin_2",
      "net": "GND",
-     "type": "passive"
+     "type": "passive",
+     "pad_xy_mm": [
+      1.875,
+      -3.9
+     ],
+     "side": "B"
     },
     {
      "pin": "3",
      "name": "Pin_3",
      "net": "SDA",
-     "type": "passive"
+     "type": "passive",
+     "pad_xy_mm": [
+      0.625,
+      -3.9
+     ],
+     "side": "B"
     },
     {
      "pin": "4",
      "name": "Pin_4",
      "net": "SCL",
-     "type": "passive"
+     "type": "passive",
+     "pad_xy_mm": [
+      -0.625,
+      -3.9
+     ],
+     "side": "B"
     },
     {
      "pin": "5",
      "name": "Pin_5",
      "net": "XSHUT",
-     "type": "passive"
+     "type": "passive",
+     "pad_xy_mm": [
+      -1.875,
+      -3.9
+     ],
+     "side": "B"
     },
     {
      "pin": "6",
      "name": "Pin_6",
      "net": "GPIO1",
-     "type": "passive"
+     "type": "passive",
+     "pad_xy_mm": [
+      -3.125,
+      -3.9
+     ],
+     "side": "B"
     },
     {
      "pin": "MP",
      "name": "MountPin",
      "net": "GND",
-     "type": "passive"
+     "type": "passive",
+     "pad_xy_mm": [
+      [
+       4.975,
+       -7.1
+      ],
+      [
+       -4.975,
+       -7.1
+      ]
+     ],
+     "side": "B"
     }
    ]
   },
@@ -208,13 +330,23 @@
      "pin": "1",
      "name": "~",
      "net": "SDA",
-     "type": "passive"
+     "type": "passive",
+     "pad_xy_mm": [
+      1.6,
+      -1.71
+     ],
+     "side": "B"
     },
     {
      "pin": "2",
      "name": "~",
      "net": "TOF_SDA",
-     "type": "passive"
+     "type": "passive",
+     "pad_xy_mm": [
+      1.6,
+      -0.69
+     ],
+     "side": "B"
     }
    ]
   },
@@ -231,13 +363,23 @@
      "pin": "1",
      "name": "~",
      "net": "SCL",
-     "type": "passive"
+     "type": "passive",
+     "pad_xy_mm": [
+      2.8,
+      -1.71
+     ],
+     "side": "B"
     },
     {
      "pin": "2",
      "name": "~",
      "net": "TOF_SCL",
-     "type": "passive"
+     "type": "passive",
+     "pad_xy_mm": [
+      2.8,
+      -0.69
+     ],
+     "side": "B"
     }
    ]
   },
@@ -254,13 +396,23 @@
      "pin": "1",
      "name": "~",
      "net": "+3V3_TOF",
-     "type": "passive"
+     "type": "passive",
+     "pad_xy_mm": [
+      -2.11,
+      0.6
+     ],
+     "side": "B"
     },
     {
      "pin": "2",
      "name": "~",
      "net": "XSHUT",
-     "type": "passive"
+     "type": "passive",
+     "pad_xy_mm": [
+      -1.09,
+      0.6
+     ],
+     "side": "B"
     }
    ]
   },
@@ -277,13 +429,23 @@
      "pin": "1",
      "name": "~",
      "net": "+3V3_TOF",
-     "type": "passive"
+     "type": "passive",
+     "pad_xy_mm": [
+      -2.11,
+      1.8
+     ],
+     "side": "B"
     },
     {
      "pin": "2",
      "name": "~",
      "net": "GPIO1",
-     "type": "passive"
+     "type": "passive",
+     "pad_xy_mm": [
+      -1.09,
+      1.8
+     ],
+     "side": "B"
     }
    ]
   },
@@ -300,73 +462,139 @@
      "pin": "1",
      "name": "AVDDVCSEL",
      "net": "+3V3_TOF",
-     "type": "power_in"
+     "type": "power_in",
+     "pad_xy_mm": [
+      [
+       -1.74,
+       0.675
+      ],
+      [
+       -1.6,
+       0.8
+      ]
+     ],
+     "side": "F"
     },
     {
      "pin": "2",
      "name": "AVSSVCSEL",
      "net": "GND",
-     "type": "power_in"
+     "type": "power_in",
+     "pad_xy_mm": [
+      -0.8,
+      0.8
+     ],
+     "side": "F"
     },
     {
      "pin": "3",
      "name": "GND",
      "net": "GND",
-     "type": "power_in"
+     "type": "power_in",
+     "pad_xy_mm": [
+      0.0,
+      0.8
+     ],
+     "side": "F"
     },
     {
      "pin": "4",
      "name": "GND",
      "net": "GND",
-     "type": "passive"
+     "type": "passive",
+     "pad_xy_mm": [
+      0.8,
+      0.8
+     ],
+     "side": "F"
     },
     {
      "pin": "5",
      "name": "XSHUT",
      "net": "XSHUT",
-     "type": "input"
+     "type": "input",
+     "pad_xy_mm": [
+      1.6,
+      0.8
+     ],
+     "side": "F"
     },
     {
      "pin": "6",
      "name": "GND",
      "net": "GND",
-     "type": "passive"
+     "type": "passive",
+     "pad_xy_mm": [
+      1.6,
+      0.0
+     ],
+     "side": "F"
     },
     {
      "pin": "7",
      "name": "GPIO1",
      "net": "GPIO1",
-     "type": "open_collector"
+     "type": "open_collector",
+     "pad_xy_mm": [
+      1.6,
+      -0.8
+     ],
+     "side": "F"
     },
     {
      "pin": "8",
      "name": "DNC",
      "net": null,
-     "type": "no_connect"
+     "type": "no_connect",
+     "pad_xy_mm": [
+      0.8,
+      -0.8
+     ],
+     "side": "F"
     },
     {
      "pin": "9",
      "name": "SDA",
      "net": "TOF_SDA",
-     "type": "bidirectional"
+     "type": "bidirectional",
+     "pad_xy_mm": [
+      0.0,
+      -0.8
+     ],
+     "side": "F"
     },
     {
      "pin": "10",
      "name": "SCL",
      "net": "TOF_SCL",
-     "type": "input"
+     "type": "input",
+     "pad_xy_mm": [
+      -0.8,
+      -0.8
+     ],
+     "side": "F"
     },
     {
      "pin": "11",
      "name": "AVDD",
      "net": "+3V3_TOF",
-     "type": "power_in"
+     "type": "power_in",
+     "pad_xy_mm": [
+      -1.6,
+      -0.8
+     ],
+     "side": "F"
     },
     {
      "pin": "12",
      "name": "GND",
      "net": "GND",
-     "type": "passive"
+     "type": "passive",
+     "pad_xy_mm": [
+      -1.6,
+      0.0
+     ],
+     "side": "F"
     }
    ]
   }

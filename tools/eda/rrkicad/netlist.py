@@ -15,6 +15,14 @@ def export_netlist(root_sch, out_path):
                        capture_output=True, text=True)
     if r.returncode != 0:
         raise RuntimeError("netlist export failed:\n" + r.stdout + r.stderr)
+    # drop the wall-clock date so reruns are byte-identical
+    import re
+    with open(out_path, encoding="utf-8") as f:
+        text = f.read()
+    text2 = re.sub(r'\(date "[^"]*"\)', '(date "")', text, count=1)
+    if text2 != text:
+        with open(out_path, "w", encoding="utf-8") as f:
+            f.write(text2)
     return out_path
 
 

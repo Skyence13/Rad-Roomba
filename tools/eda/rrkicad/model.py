@@ -74,7 +74,7 @@ class Part:
     def __init__(self, group, ref, symbol, value, footprint=None, mpn="", mfr="", pins=None, nc=(),
                  unused="error", at=None, side=None, near=None, edge=None, dnp=False, bom=True,
                  notes="", verify=False, datasheet=None, description=None, fields=None, sch_rot=0,
-                 silk_ref=None, model=None, rot=None):
+                 silk_ref=None, model=None, rot=None, zone_connect=None, height=None):
         self.group, self.ref, self.symbol, self.value = group, ref, symbol, str(value)
         self.footprint, self.mpn, self.mfr = footprint, mpn, mfr
         self.pins = {str(k): v for k, v in (pins or {}).items()}
@@ -102,6 +102,8 @@ class Part:
         self.sch_rot = sch_rot
         self.silk_ref = silk_ref
         self.model = model
+        self.height = height   # body height in mm for the generated 3D envelope (when no real model exists)
+        self.zone_connect = zone_connect   # None | 'solid' | 'thermal' | 'none' (pads of this part)
         # resolved later
         self.sym = None          # SymbolDef
         self.pin_net = {}        # pin number -> net name | None (no-connect)
@@ -155,7 +157,7 @@ class Group:
 
 class Board:
     def __init__(self, name, title, rev="A", date="", docnum="", company="", layers=2, thickness=1.6,
-                 rules=None, description="", silk_refs=True, paper="A3"):
+                 rules=None, description="", silk_refs=True, paper="A3", envelopes=True):
         if not re.match(r"^[A-Za-z0-9_\-\.]+$", name):
             raise DefinitionError("board name must be file-name safe")
         if layers not in (2, 4):
@@ -165,6 +167,7 @@ class Board:
         self.rules = rules or Rules()
         self.description = description
         self.silk_refs = silk_refs
+        self.envelopes = envelopes   # generate box 3D models for parts whose stock model file is missing
         self.paper = paper
         self.groups = []
         self._refs = {}
@@ -183,8 +186,9 @@ class Board:
         self.local_symbols = {}
         self.local_footprints = {}
         self.routing = {"passes": 100, "threads": None, "timeout": None, "enabled": True, "extra_args": [],
-                        "optimizer": True}
-        self.autoplace = {"clearance": 0.3, "grid": 0.25, "edge_margin": 0.5, "ic_halo": 1.5, "rotations": (0, 90, 180, 270)}
+                        "optimizer": True, "fanout": None}
+        self.autoplace = {"clearance": 0.3, "grid": 0.25, "edge_margin": 0.5, "ic_halo": 2.0, "rotations": (0, 90, 180, 270),
+                          "spread": 0.35}
         self.stackup_notes = []
 
     # ------------------------------------------------------------------ parts
@@ -344,7 +348,8 @@ class Board:
 
     # ---------------------------------------------------------------- routing
     def route(self, **kw):
-        """Autorouter options: passes, threads, timeout (s), enabled, optimizer, extra_args."""
+        """Autorouter options: passes, threads, timeout (s), enabled, optimizer, extra_args,
+        fanout (Freerouting SMD fan-out stage; default: on for 4-layer boards, off for 2-layer)."""
         for k in kw:
             if k not in self.routing:
                 raise DefinitionError("unknown routing option '%s'" % k)

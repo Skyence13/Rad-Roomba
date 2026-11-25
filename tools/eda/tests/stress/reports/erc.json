@@ -1,0 +1,49 @@
+{
+    "$schema": "https://schemas.kicad.org/erc.v1.json",
+    "coordinate_units": "mm",
+    "date": "",
+    "included_severities": [
+        "error",
+        "warning",
+        "exclusion"
+    ],
+    "kicad_version": "9.0.9",
+    "sheets": [
+        {
+            "path": "/",
+            "uuid_path": "/bcb17bdb-7ac9-52de-884d-04b646ffbc2d",
+            "violations": []
+        },
+        {
+            "path": "/power/",
+            "uuid_path": "/bcb17bdb-7ac9-52de-884d-04b646ffbc2d/ad418397-cae6-55dc-8929-4f8162349c1b",
+            "violations": []
+        },
+        {
+            "path": "/mcu/",
+            "uuid_path": "/bcb17bdb-7ac9-52de-884d-04b646ffbc2d/89878efa-f092-5fe4-85b9-8fb33652ddf9",
+            "violations": []
+        },
+        {
+            "path": "/aux/",
+            "uuid_path": "/bcb17bdb-7ac9-52de-884d-04b646ffbc2d/847bdff8-c22b-5b55-86c2-2b9433e36a2e",
+            "violations": []
+        },
+        {
+            "path": "/buf1/",
+            "uuid_path": "/bcb17bdb-7ac9-52de-884d-04b646ffbc2d/f6bc5b88-873f-5b49-80b1-c7ae3e4afb14",
+            "violations": []
+        },
+        {
+            "path": "/buf2/",
+            "uuid_path": "/bcb17bdb-7ac9-52de-884d-04b646ffbc2d/db94ed15-3d38-563a-8794-e2f6180f625b",
+            "violations": []
+        },
+        {
+            "path": "/misc/",
+            "uuid_path": "/bcb17bdb-7ac9-52de-884d-04b646ffbc2d/87697c1f-56e2-5d32-87d5-b2b7ae05f602",
+            "violations": []
+        }
+    ],
+    "source": "STRESS-150.kicad_sch"
+}

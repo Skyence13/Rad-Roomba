@@ -123,11 +123,11 @@ class Placer:
         if i1 > i0 and j1 > j0:
             arr[j0:j1, i0:i1] = True
 
-    def mark(self, ref, X, Y, rect, pads, tht, side):
+    def mark(self, ref, X, Y, rect, pads, tht, side, clearance=None):
         x0, y0, x1, y1 = X + rect[0], Y + rect[1], X + rect[2], Y + rect[3]
         sides = ("F", "B") if tht else (side,)
         for s in sides:
-            c = self.clear
+            c = self.clear if clearance is None else clearance
             self._mark_arr(self.occA[s], x0 - c, y0 - c, x1 + c, y1 + c)
             hb = self.halo
             self._mark_arr(self.occB[s], x0 - hb, y0 - hb, x1 + hb, y1 + hb)
@@ -225,6 +225,25 @@ class Placer:
             npads[part.ref] = len(self.meas[part.ref][self.rots(part)[0]][1])
         regions = self.regions(todo)
         self._assign_decoupling(todo, npads)
+        # per-group spreading clearance: use ~"spread" of the group's region area
+        spread = float(b.autoplace.get("spread", 0.35))
+        gclear = {}
+        for gname, reg in regions.items():
+            dims = []
+            for part in todo:
+                if part.group.name == gname and not (part.near or getattr(part, "_auto_near", None)) \
+                        and npads[part.ref] < BIG_PADS:
+                    r = self.meas[part.ref][self.rots(part)[0]][0]
+                    dims.append((r[2] - r[0], r[3] - r[1]))
+            area = (reg[2] - reg[0]) * (reg[3] - reg[1]) * spread
+            lo, hi = self.clear, 2.5
+            for _ in range(20):
+                mid = (lo + hi) / 2.0
+                if sum((w + 2 * mid) * (h + 2 * mid) for w, h in dims) > area:
+                    hi = mid
+                else:
+                    lo = mid
+            gclear[gname] = lo
         fanout = {n: len(p) for n, p in b._nets.items()}
         order = ([p for p in todo if p.edge] +
                  sorted([p for p in todo if not p.edge and npads[p.ref] >= BIG_PADS], key=lambda p: -npads[p.ref]) +
@@ -254,6 +273,14 @@ class Placer:
                         ok &= self.free(self.sat(("B" if big else "A") + s, occ), rect, 0.0)
                     if not ok.any():
                         continue
+                    reg = regions.get(part.group.name)
+                    if reg is not None and not part.edge and near is None:
+                        cxo, cyo = (rect[0] + rect[2]) / 2.0, (rect[1] + rect[3]) / 2.0
+                        inx = (gx + cxo >= reg[0]) & (gx + cxo <= reg[2])
+                        iny = (gy + cyo >= reg[1]) & (gy + cyo <= reg[3])
+                        okr = ok & (iny[:, None] & inx[None, :])
+                        if okr.any():
+                            ok = okr
                     fx = np.zeros(self.nx + 1)
                     fy = np.zeros(self.ny + 1)
                     cxo, cyo = (rect[0] + rect[2]) / 2.0, (rect[1] + rect[3]) / 2.0
@@ -280,9 +307,8 @@ class Placer:
                         fx += 4.0 * (gx + dx - tx) ** 2
                         fy += 4.0 * (gy + dy - ty) ** 2
                         wsum += 4.0
-                    reg = regions.get(part.group.name)
                     if reg is not None:
-                        rw = 1.0 if wsum == 0 else 0.03
+                        rw = 1.0 if wsum == 0 else (0.5 if part.edge else 0.03)
                         fx += rw * (gx + cxo - (reg[0] + reg[2]) / 2.0) ** 2
                         fy += rw * (gy + cyo - (reg[1] + reg[3]) / 2.0) ** 2
                     if part.edge:
@@ -313,7 +339,9 @@ class Placer:
                 rect, pads, tht = self.meas[part.ref][rot]
                 self.bld.place(part, round(X - self.fr.ox, 4), round(self.fr.oy - Y, 4), rot, part.side)
                 part.auto_placed = True
-                self.mark(part.ref, X, Y, rect, pads, tht, part.side)
+                tight = big or part.near or getattr(part, "_auto_near", None)
+                self.mark(part.ref, X, Y, rect, pads, tht, part.side,
+                          None if tight else gclear.get(part.group.name))
                 placed.append(part.ref)
                 pending.remove(part)
                 progressed = True

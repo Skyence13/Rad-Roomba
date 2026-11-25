@@ -150,6 +150,7 @@ def stage_gen(board_py, route=True, sch_only=False):
     netlist.crosscheck(board, nets, nl)
     log("netlist cross-check OK (%d components, %d nets incl. unconnected)" % (len(nl.components), len(nl.nets)))
     single = sorted(n for n, pins in nets.items() if len(pins) < 2)
+    write_state(paths, routing=dict(board.routing, layers=board.layers))
     write_state(paths, name=board.name, generated_files=sorted([p.file for p in pages] + [board.name + ".kicad_sch"]),
                 pwr_flags=w.flag_nets, single_pin_nets=single,
                 counts={"parts": len(board.parts), "nets": len(nets), "sheets": len(pages) + 1})
@@ -321,7 +322,8 @@ def host_build(a):
             if os.path.exists(meta_p):
                 with open(meta_p) as f:
                     meta = json.load(f)
-            reuse = (not a.reroute and os.path.exists(ses) and meta.get("dsn_sha256") == st["dsn_sha256"])
+            reuse = (not a.reroute and os.path.exists(ses) and meta.get("dsn_sha256") == st["dsn_sha256"]
+                     and not a.passes and not a.threads and not a.timeout)
             if reuse:
                 log("routing: DSN unchanged -> re-using %s" % os.path.relpath(ses, REPO))
                 route_info = dict(meta, reused=True)
@@ -347,16 +349,19 @@ def host_build(a):
 
 def run_freerouting(board_py, dsn, ses, a):
     """Run the autorouter container; returns stats dict or None on failure."""
-    # routing options live in the board definition; evaluate it on the host only
-    # for these plain values (the definition API has no KiCad dependency).
-    sys.path.insert(0, EDA)
-    board = load_board(board_py)
-    opts = board.routing
+    # routing options come from the board definition via reports/build_state.json
+    # (the definition itself is only ever evaluated inside the KiCad container).
+    with open(os.path.join(os.path.dirname(board_py), "reports", "build_state.json")) as f:
+        opts = json.load(f)["routing"]
     passes = a.passes or opts["passes"]
     threads = a.threads or opts["threads"] or (os.cpu_count() or 2)
     extra = list(opts.get("extra_args") or [])
     if not opts.get("optimizer", True):
         extra.append("--router.optimizer.enabled=false")
+    fanout = opts.get("fanout")
+    if fanout is None:
+        fanout = opts.get("layers") == 4
+    extra.append("--router.fanout.enabled=%s" % ("true" if fanout else "false"))
     timeout = a.timeout or opts["timeout"]
     logf = os.path.join(os.path.dirname(dsn), "freerouting.log")
     if os.path.exists(ses):
@@ -377,6 +382,7 @@ def run_freerouting(board_py, dsn, ses, a):
                 # strip wall-clock timestamps so the log is diff-friendly
                 keep.append(line)
                 lf.write(line)
+                lf.flush()
                 if "Auto-routing pass #" in line and "was completed" in line:
                     sys.stdout.write("    " + line.split("INFO", 1)[-1].strip()[:150] + "\n")
                     sys.stdout.flush()

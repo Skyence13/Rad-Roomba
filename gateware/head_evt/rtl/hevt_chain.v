@@ -18,17 +18,12 @@
 //   BASELINE_STUCK: WAITLOW entered on tick t0 with the inputs still high on every tick t0 .. t0+S sets `stuck`
 //   from tick t0+S+1 until the inputs go low. The chain stays dead (honest live time), it is never forced idle.
 //
-// Gate handling: on the tick with gate_last = 1 every counter value *including this tick's increment* is copied
-// to the l_* outputs and the counter restarts from zero, so each tick and each classification belongs to exactly
-// one gate.
-//
-// Counters are CNT_W+1 bits and stop at 2^CNT_W (flag CNT_SAT). The live counter cannot overflow: a gate is at
-// most 48,000,000 ticks < 2^26.
+// Gate handling: `ld` is the first tick of a gate. A classification on tick t belongs to the gate containing t;
+// a tick is live for the gate containing it. Counting is done by the accumulator server in hevt_core from
+// evt_done/evt_class (one increment per event) and `dead` (one tick tally per chain).
 `default_nettype none
 module hevt_chain #(
-    parameter HAS_ALPHA = 1,
-    parameter CNT_W     = 24,
-    parameter LIVE_W    = 26
+    parameter HAS_ALPHA = 1
 ) (
     input  wire              clk,
     input  wire              rst,
@@ -36,42 +31,40 @@ module hevt_chain #(
     input  wire              lld,
     input  wire              uld,
     input  wire              alpha,
-    input  wire [20:0]       cfg_win_ld,       // W - 2
-    input  wire [20:0]       cfg_hold_ld,      // H - 2
+    input  wire [12:0]       cfg_win_m1,       // W - 1
+    input  wire [15:0]       cfg_hold_m1,      // H - 1
     input  wire              cfg_hold_zero,    // H == 0
-    input  wire [20:0]       cfg_stuck_ld,     // S - 1
+    input  wire [15:0]       cfg_stuck,        // S
     input  wire              cfg_wait_alpha,
-    input  wire              gate_last,
+    input  wire              ld,               // first tick of a gate
     output wire              evt_start,        // 1 on the tick an event is accepted
     output wire              evt_done,         // 1 on the classification tick
     output wire [1:0]        evt_class,        // valid with evt_done
     output wire              busy,             // not idle
     output reg               stuck,
     output wire              orphan_evt,
-    output wire              sat_now,
-    output reg  [CNT_W:0]    l_c0,             // beta-window / ref
-    output reg  [CNT_W:0]    l_c1,             // reject
-    output reg  [CNT_W:0]    l_c2,             // alpha (floor only)
-    output reg  [LIVE_W-1:0] l_live,
-    output reg  [7:0]        l_orphan,
-    output reg  [4:0]        l_flags           // {DISABLED, BUSY_AT_END, ORPHAN, STUCK, CNT_SAT}
+    output wire              dead,             // this tick is not a live tick (busy, or chain disabled)
+    output reg  [7:0]        sh_orphan,        // shadow: orphan count of the gate that ended
+    output reg  [2:0]        sh_flags          // shadow: {BUSY_AT_END, ORPHAN, STUCK}
 );
     localparam [1:0] S_IDLE = 2'd0, S_WIN = 2'd1, S_HOLD = 2'd2, S_WAIT = 2'd3;
 
     reg [1:0]  state;
-    reg [20:0] tmr;            // counts down; bit 20 set = expired
+    reg [15:0] tmr;            // ticks spent in the current state (0 on its first tick)
     reg        lld_d, alpha_d;
     reg        got_uld, got_alpha;
 
     wire alpha_i   = (HAS_ALPHA != 0) ? alpha : 1'b0;
     wire lld_rise  = lld & ~lld_d;
-    wire tmr_exp   = tmr[20];
     wire idle      = (state == S_IDLE);
     wire in_high   = lld | (cfg_wait_alpha & alpha_i);
+    wire eq_w      = (tmr[12:0] == cfg_win_m1);     // last tick of WINDOW
+    wire eq_h      = (tmr == cfg_hold_m1);          // last tick of HOLD
+    wire eq_s      = (tmr == cfg_stuck);            // WAITLOW has lasted S ticks beyond its first
 
     assign evt_start  = idle & lld_rise;
     assign orphan_evt = idle & ~lld_rise & alpha_i & ~alpha_d;
-    assign evt_done   = (state == S_WIN) & tmr_exp;
+    assign evt_done   = (state == S_WIN) & eq_w;
     wire   a_now      = got_alpha | alpha_i;
     wire   u_now      = got_uld | uld;
     assign evt_class  = a_now ? 2'd2 : (u_now ? 2'd1 : 2'd0);
@@ -80,7 +73,7 @@ module hevt_chain #(
     always @(posedge clk) begin
         if (rst) begin
             state     <= S_WAIT;       // start dead: go idle only once the inputs are seen low
-            tmr       <= 21'd0;
+            tmr       <= 16'd0;
             lld_d     <= 1'b0;
             alpha_d   <= 1'b0;
             got_uld   <= 1'b0;
@@ -92,109 +85,77 @@ module hevt_chain #(
             case (state)
                 S_IDLE: begin
                     stuck <= 1'b0;
+                    tmr   <= 16'd0;
                     if (lld_rise) begin
                         state     <= S_WIN;
-                        tmr       <= cfg_win_ld;
                         got_uld   <= uld;
                         got_alpha <= alpha_i;
                     end else if (cfg_wait_alpha & alpha_i) begin
                         state <= S_WAIT;
-                        tmr   <= cfg_stuck_ld;
                     end
                 end
                 S_WIN: begin
                     got_uld   <= u_now;
                     got_alpha <= a_now;
-                    if (tmr_exp) begin
-                        if (cfg_hold_zero) begin
-                            state <= S_WAIT;
-                            tmr   <= cfg_stuck_ld;
-                        end else begin
-                            state <= S_HOLD;
-                            tmr   <= cfg_hold_ld;
-                        end
+                    if (eq_w) begin
+                        state <= cfg_hold_zero ? S_WAIT : S_HOLD;
+                        tmr   <= 16'd0;
                     end else begin
-                        tmr <= tmr - 21'd1;
+                        tmr <= tmr + 16'd1;
                     end
                 end
                 S_HOLD: begin
-                    if (tmr_exp) begin
+                    if (eq_h) begin
                         state <= S_WAIT;
-                        tmr   <= cfg_stuck_ld;
+                        tmr   <= 16'd0;
                     end else begin
-                        tmr <= tmr - 21'd1;
+                        tmr <= tmr + 16'd1;
                     end
                 end
                 default: begin // S_WAIT
                     if (!in_high) begin
                         state <= S_IDLE;
                         stuck <= 1'b0;
-                    end else if (tmr_exp) begin
+                        tmr   <= 16'd0;
+                    end else if (eq_s) begin
                         stuck <= 1'b1;
-                    end else begin
-                        tmr <= tmr - 21'd1;
+                    end else if (!stuck) begin
+                        tmr <= tmr + 16'd1;
                     end
                 end
             endcase
         end
     end
 
-    // ---------------------------------------------------------------- per-gate counters
-    reg [CNT_W:0]    c0, c1, c2;
-    reg [LIVE_W-1:0] live;
-    reg [7:0]        orphan_cnt;
-    reg              f_stuck, f_orphan;
+    // ---------------------------------------------------------------- per-gate diagnostics
+    // Event counts and dead ticks are accumulated outside (hevt_core accumulator server). Here: the sticky
+    // per-gate flags and the orphan counter, copied to a shadow on `ld` (first tick of the next gate).
+    reg [7:0] orphan_cnt;
+    reg       f_stuck, f_orphan, busy_d;
 
-    wire inc0 = evt_done & (evt_class == 2'd0);
-    wire inc1 = evt_done & (evt_class == 2'd1);
-    wire inc2 = evt_done & (evt_class == 2'd2);
-
-    wire [CNT_W:0] c0_n = c0 + {{CNT_W{1'b0}}, inc0 & ~c0[CNT_W]};
-    wire [CNT_W:0] c1_n = c1 + {{CNT_W{1'b0}}, inc1 & ~c1[CNT_W]};
-    wire [CNT_W:0] c2_n = c2 + {{CNT_W{1'b0}}, inc2 & ~c2[CNT_W]};
-    wire [LIVE_W-1:0] live_n = live + {{(LIVE_W-1){1'b0}}, idle & en};
-    wire [7:0] orphan_n = orphan_cnt + {7'd0, orphan_evt & ~(&orphan_cnt)};
-    wire       f_stuck_n  = f_stuck | stuck;
-    wire       f_orphan_n = f_orphan | orphan_evt;
-
-    assign sat_now = (inc0 & c0[CNT_W]) | (inc1 & c1[CNT_W]) | (inc2 & c2[CNT_W]);
-
-    always @(posedge clk) begin
-        if (rst | gate_last) begin
-            c0         <= {(CNT_W+1){1'b0}};
-            c1         <= {(CNT_W+1){1'b0}};
-            c2         <= {(CNT_W+1){1'b0}};
-            live       <= {LIVE_W{1'b0}};
-            orphan_cnt <= 8'd0;
-            f_stuck    <= 1'b0;
-            f_orphan   <= 1'b0;
-        end else begin
-            c0         <= c0_n;
-            c1         <= c1_n;
-            c2         <= (HAS_ALPHA != 0) ? c2_n : {(CNT_W+1){1'b0}};
-            live       <= live_n;
-            orphan_cnt <= orphan_n;
-            f_stuck    <= f_stuck_n;
-            f_orphan   <= f_orphan_n;
-        end
-    end
+    assign dead = ~(idle & en);
 
     always @(posedge clk) begin
         if (rst) begin
-            l_c0     <= {(CNT_W+1){1'b0}};
-            l_c1     <= {(CNT_W+1){1'b0}};
-            l_c2     <= {(CNT_W+1){1'b0}};
-            l_live   <= {LIVE_W{1'b0}};
-            l_orphan <= 8'd0;
-            l_flags  <= 5'd0;
-        end else if (gate_last) begin
-            l_c0     <= c0_n;
-            l_c1     <= c1_n;
-            l_c2     <= (HAS_ALPHA != 0) ? c2_n : {(CNT_W+1){1'b0}};
-            l_live   <= live_n;
-            l_orphan <= orphan_n;
-            l_flags  <= {~en, busy, f_orphan_n, f_stuck_n,
-                         c0_n[CNT_W] | c1_n[CNT_W] | ((HAS_ALPHA != 0) & c2_n[CNT_W])};
+            orphan_cnt <= 8'd0;
+            f_stuck    <= 1'b0;
+            f_orphan   <= 1'b0;
+            busy_d     <= 1'b0;
+            sh_orphan  <= 8'd0;
+            sh_flags   <= 3'd0;
+        end else begin
+            busy_d <= busy;
+            if (ld) begin
+                sh_orphan  <= (HAS_ALPHA != 0) ? orphan_cnt : 8'd0;
+                sh_flags   <= {busy_d, f_orphan, f_stuck};
+                orphan_cnt <= {7'd0, orphan_evt};
+                f_stuck    <= stuck;
+                f_orphan   <= orphan_evt;
+            end else begin
+                orphan_cnt <= orphan_cnt + {7'd0, orphan_evt & ~(&orphan_cnt)};
+                f_stuck    <= f_stuck | stuck;
+                f_orphan   <= f_orphan | orphan_evt;
+            end
         end
     end
 endmodule

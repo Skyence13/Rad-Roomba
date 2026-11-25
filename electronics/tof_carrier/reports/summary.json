@@ -1,14 +1,5 @@
 {
-  "autoplaced": [
-    "D1",
-    "FB1",
-    "R1",
-    "R2",
-    "C1",
-    "C2",
-    "R3",
-    "R4"
-  ],
+  "autoplaced": [],
   "board": "RR-TOF-A",
   "board_bbox_mm": [
     -9.0,
@@ -30,12 +21,7 @@
   "date": "2026-11-25",
   "docnum": "RR-EL-0101",
   "drc": {
-    "by_type": {
-      "track_dangling": {
-        "errors": 0,
-        "warnings": 2
-      }
-    },
+    "by_type": {},
     "error_items": [],
     "errors": 0,
     "excluded": 0,
@@ -46,21 +32,16 @@
     "unconnected_items": [],
     "unrouted_nets": [],
     "waived": 0,
-    "warnings": 2
+    "warnings": 0
   },
   "erc": {
-    "by_type": {
-      "single_global_label": {
-        "errors": 0,
-        "warnings": 3
-      }
-    },
+    "by_type": {},
     "error_items": [],
     "errors": 0,
     "excluded": 0,
     "report": "reports/erc.json",
     "waived": 0,
-    "warnings": 3
+    "warnings": 0
   },
   "fail_reasons": [],
   "notes": [],
@@ -131,27 +112,29 @@
   "rev": "A",
   "routing": {
     "autorouter": {
-      "dsn_sha256": "e4a129295ae2de4c2d178bf4b6a4df30755824be04bc63c05c34a93f281c86ae",
+      "dsn_sha256": "9e220a7f254209057e507842e9729a03a66812752a55ba346891129569134ca0",
       "freerouting": "v2.6.0 (build-date: 2026-11-25)",
       "log_tail": [
-        "[79F09B\\E67810] Auto-routing stage completed: started with 30 unrouted nets, completed in 3.09 seconds, final score: 1000.00 (0 unrouted and 0 violations), using 2.81 total CPU seconds, 1.47 GB total allocated, and 77.4 MB peak heap usage.",
-        "[79F09B\\E67810] Optimization stage completed:. Baseline router score: 1000.00, baseline optimizer score: 145.57, final router score: 1000.00, final optimizer score: 424.25, completed in 4.29 seconds, using 7.10 total CPU seconds, 7.25 GB total allocated, and 219.7 MB peak heap usage.",
-        "[79F09B\\E67810] Job '79F09B\\E67810' finished with state: COMPLETED (elapsed: 7.50 seconds, finished at UTC: 2026-11-25T18:49:57.282391331Z)."
+        "[B7AEAC\\34DBCC] Auto-routing stage completed: started with 30 unrouted nets, completed in 0.87 seconds, final score: 1000.00 (0 unrouted and 0 violations), using 0.00 total CPU seconds, 0.00 GB total allocated, and 0.0 MB peak heap usage.",
+        "[B7AEAC\\34DBCC] Optimization stage completed:. Baseline router score: 1000.00, baseline optimizer score: -704.95, final router score: 1000.00, final optimizer score: 0.00, completed in 3.40 seconds, using 6.73 total CPU seconds, 2.71 GB total allocated, and 244.4 MB peak heap usage.",
+        "[B7AEAC\\34DBCC] Job 'B7AEAC\\34DBCC' finished with state: COMPLETED (elapsed: 4.41 seconds, finished at UTC: 2026-11-25T23:08:30.219338086Z)."
       ],
       "passes_limit": 100,
-      "reused": false,
-      "seconds": 10.4,
+      "reused": true,
+      "seconds": 7.2,
       "threads": 4,
       "timed_out": false
     },
     "routed": true,
     "stats": {
-      "preroutes": 0,
+      "dangling_tracks_removed": 0,
+      "preroutes": 9,
       "preroutes_missing_after_import": 0,
-      "track_length_mm": 117.83,
-      "tracks": 109,
+      "track_length_mm": 150.06,
+      "tracks": 119,
       "unconnected_after_fill": 0,
-      "vias": 9
+      "unconnected_before_cleanup": 0,
+      "vias": 18
     }
   },
   "single_pin_nets": [],

@@ -5,7 +5,7 @@
 //   of every gate). With the restart strobe on tick r:
 //     periodic: fire decisions on ticks r+1+PHASE, r+1+PHASE+PERIOD, ...; the output rises one tick after a decision
 //               (so with GATE_SYNC the output rises on tick PHASE+1 of the gate, counting the first tick as 0).
-//     random:   a fire decision on every tick on which xorshift32 state < PROB (Bernoulli trial per tick,
+//     random:   a fire decision on every tick after one on which the xorshift32 state was < PROB (Bernoulli trial per tick,
 //               i.e. geometric = discretised exponential intervals, mean rate PROB * tick_hz / 2^32).
 //   A decision is honoured only if the output is low and was low on the previous tick (minimum spacing WIDTH + 1
 //   ticks start to start ... WIDTH high, >= 1 low) and the burst counter is not exhausted; otherwise it is dropped.
@@ -28,7 +28,6 @@ module hevt_pulser (
     input  wire [25:0] cfg_phase,
     input  wire [15:0] cfg_burst,
     input  wire [31:0] cfg_prob,
-    input  wire [31:0] cfg_seed,
     input  wire        restart,          // start / restart sequence
     input  wire        reseed,           // with restart: reload the random generator
     input  wire        stop,
@@ -52,16 +51,18 @@ module hevt_pulser (
     reg        out_d;
     reg [31:0] x;
     reg        rnd_hit;
+    reg        first;
     reg [1:0]  rot;
 
     // xorshift32 (Marsaglia 13,17,5): one full step per tick
     wire [31:0] x1 = x ^ (x << 13);
     wire [31:0] x2 = x1 ^ (x1 >> 17);
     wire [31:0] x3 = x2 ^ (x2 << 5);
-    wire [31:0] seed_eff = (cfg_seed == 32'd0) ? 32'h1F2E3D4C : cfg_seed;
 
     wire [7:0] width_eff = (cfg_width == 8'd0) ? 8'd1 : cfg_width;
-    wire want_fire = cfg_random ? rnd_hit : (pcnt == 26'd0);
+    // periodic: the first decision is at pcnt == 0 (after PHASE ticks), later ones every PERIOD ticks (pcnt == 1)
+    wire per_hit   = (pcnt[25:1] == 25'd0) & (pcnt[0] ^ first);
+    wire want_fire = cfg_random ? rnd_hit : per_hit;
     wire can_fire  = ~out & ~recov & (unlimited | (bleft != 16'd0));
     wire fire      = running & want_fire & can_fire;
 
@@ -80,11 +81,12 @@ module hevt_pulser (
             out_d     <= 1'b0;
             x         <= 32'h1F2E3D4C;
             rnd_hit   <= 1'b0;
+            first     <= 1'b0;
         end else begin
             out_d   <= out;
             recov   <= 1'b0;
             x       <= x3;
-            rnd_hit <= (x3 < cfg_prob);
+            rnd_hit <= (x < cfg_prob);
 
             // output pulse timing
             if (out) begin
@@ -106,16 +108,19 @@ module hevt_pulser (
                 bleft     <= cfg_burst;
                 unlimited <= (cfg_burst == 16'd0);
                 rnd_hit   <= 1'b0;
+                first     <= 1'b1;
                 if (reseed)
-                    x <= seed_eff;
+                    x <= 32'h1F2E3D4C;
             end else if (stop) begin
                 running <= 1'b0;
             end else if (running) begin
                 if (!cfg_random) begin
-                    if (pcnt == 26'd0)
-                        pcnt <= cfg_period - 26'd1;
-                    else
+                    if (per_hit) begin
+                        pcnt  <= cfg_period;
+                        first <= 1'b0;
+                    end else begin
                         pcnt <= pcnt - 26'd1;
+                    end
                 end
                 if (fire) begin
                     out   <= 1'b1;

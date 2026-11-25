@@ -29,7 +29,7 @@ module hevt_spi (
     input  wire [31:0] rd_data,
     output reg         wr_stb,
     output reg  [6:0]  wr_addr,
-    output reg  [31:0] wr_data,
+    output wire [31:0] wr_data,      // valid with wr_stb and for at least 8 SCK periods after it
     output reg         frame_err
 );
     reg [2:0] sck_s;
@@ -62,14 +62,15 @@ module hevt_spi (
     reg [2:0]  bitc;
     reg [6:0]  sr_in;
     reg [1:0]  bidx;        // byte within the 32-bit word
-    reg [23:0] wsh;
+    reg [31:0] wsh;
     reg [7:0]  so;
     reg [7:0]  cmd_echo;
     reg        byte_start;  // next falling edge starts a new MISO byte
 
     wire [7:0] rx = {sr_in, mosi_i};
 
-    assign miso = so[7];
+    assign miso    = so[7];
+    assign wr_data = wsh;
 
     always @(posedge clk) begin
         if (rst) begin
@@ -79,7 +80,7 @@ module hevt_spi (
             bitc       <= 3'd0;
             sr_in      <= 7'd0;
             bidx       <= 2'd0;
-            wsh        <= 24'd0;
+            wsh        <= 32'd0;
             so         <= 8'd0;
             cmd_echo   <= 8'd0;
             byte_start <= 1'b0;
@@ -88,7 +89,6 @@ module hevt_spi (
             addr       <= 7'd0;
             wr_stb     <= 1'b0;
             wr_addr    <= 7'd0;
-            wr_data    <= 32'd0;
             frame_err  <= 1'b0;
         end else begin
             cs_fall   <= 1'b0;
@@ -131,11 +131,10 @@ module hevt_spi (
                             default: begin
                                 bidx <= bidx + 2'd1;
                                 if (is_write) begin
-                                    wsh <= {rx, wsh[23:8]};
+                                    wsh <= {rx, wsh[31:8]};
                                     if (bidx == 2'd3) begin
                                         wr_stb  <= 1'b1;
                                         wr_addr <= addr;
-                                        wr_data <= {rx, wsh};
                                         addr    <= addr + 7'd1;
                                     end
                                 end else if (bidx == 2'd3) begin

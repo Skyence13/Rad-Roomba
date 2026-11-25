@@ -533,6 +533,10 @@ class SchematicWriter:
                 if net in self.rails:
                     d = self.rails[net].natural
                     syms.append(self._power(("flag", net), net, x2, y, d, (x2, y + d[1] * 3.9, True), path, used))
+                    # a local label keeps ERC from reporting the flag as "not connected"
+                    # (a PWR_FLAG wired to nothing but a power symbol counts as unconnected)
+                    labels.append(["label", Q(net), ["at", x + 2.54, y, 0], _font(justify="left bottom"),
+                                   ["uuid", Q(b.uuid("flaglabel", net))]])
                 else:
                     labels.append(self._glabel(("flag", net), net, x2, y, (1, 0)))
         tree = ["kicad_sch", ["version", SCH_VERSION], ["generator", Q("rrkicad")], ["generator_version", Q("9.0")],

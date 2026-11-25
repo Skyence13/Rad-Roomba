@@ -11,36 +11,5 @@
     "schematic_parity": [],
     "source": "RR-TOF-A.kicad_pcb",
     "unconnected_items": [],
-    "violations": [
-        {
-            "description": "Track has unconnected end",
-            "items": [
-                {
-                    "description": "Track [GPIO1] on F.Cu, length 1.0340 mm",
-                    "pos": {
-                        "x": 60.6,
-                        "y": 93.8
-                    },
-                    "uuid": "54d821c1-8de7-4690-ae20-83d1f8e7d636"
-                }
-            ],
-            "severity": "warning",
-            "type": "track_dangling"
-        },
-        {
-            "description": "Track has unconnected end",
-            "items": [
-                {
-                    "description": "Track [TOF_SCL] on F.Cu, length 1.0340 mm",
-                    "pos": {
-                        "x": 58.2,
-                        "y": 93.8
-                    },
-                    "uuid": "a36ce784-6eb5-4ccb-ba4e-4dc49c5744b9"
-                }
-            ],
-            "severity": "warning",
-            "type": "track_dangling"
-        }
-    ]
+    "violations": []
 }

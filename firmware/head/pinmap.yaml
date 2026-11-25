@@ -23,11 +23,11 @@ peripherals:
   USART1:  "RS-485 host link, 1 Mbaud 8N1, hardware driver-enable (DEM) on USART1_DE"
   LPUART1: "debug console 115200 8N1 (same pins as the NUCLEO-G474RE ST-LINK VCP)"
   SPI1:    "threshold/trim DACs, 4 x DAC60508, mode 1, <= 12 MHz, one GPIO chip-select each"
-  SPI3:    "FPGA: slave-configuration of the iCE40UP5K at boot, register interface afterwards"
+  SPI3:    "FPGA: slave-configuration of the iCE40UP5K at boot (mode 3), register interface afterwards (mode 0, <= 4 MHz, see gateware/head_evt/regmap.yaml)"
   I2C3:    "TMP117 x2 (0x48, 0x49) and 24AA025E64 EUI EEPROM (0x50), 100 kHz"
   ADC1:    "housekeeping scan: bias V/I, 4 SiPM NTC, heater NTC, board NTC, supply, heater sense, internal temperature and VREFINT"
   ADC2:    "monitor waveform capture (engineering), DMA circular, stopped after the FPGA trigger"
-  TIM2:    "32-bit 1 MHz head clock (extended to 64 bit in software); CH3 input capture = FPGA gate boundary; CH1 compare (no pin) = scheduled start of a TIME reply"
+  TIM2:    "32-bit 1 MHz head clock (extended to 64 bit in software); CH3 input capture = FPGA gate boundary; CH2 output compare = FPGA_SYNC edge; CH1 compare (no pin) = scheduled start of a TIME reply"
   IWDG:    "independent watchdog (LSI), ~1 s"
   RNG:     "TRNG for the boot UUID (48 MHz from PLLQ)"
 pins:
@@ -43,7 +43,7 @@ pins:
   - {pin: PF0,   lqfp64: 5,  signal: HSE_IN_24M,     peripheral: RCC,    af: "-", dir: in,     note: "RCC_OSC_IN, HSE bypass. Same TCXO net as the FPGA clock pin; separate series resistors at the buffer."}
   - {pin: PA13,  lqfp64: 49, signal: SWDIO,          peripheral: SYS,    af: 0,   dir: bidir,  note: "SWD header (ARM 10-pin 1.27 mm / TC2030)."}
   - {pin: PA14,  lqfp64: 50, signal: SWCLK,          peripheral: SYS,    af: 0,   dir: in,     note: "SWD header."}
-  - {pin: PB3,   lqfp64: 56, signal: SWO,            peripheral: SYS,    af: 0,   dir: out,    note: "SYS_JTDO-SWO to the SWD header; reusable as SPARE_GPIO1 if trace is not wanted."}
+  - {pin: PB3,   lqfp64: 56, signal: FPGA_SYNC,      peripheral: TIM2,   af: 1,   dir: out,    note: "TIM2_CH2 output compare to the FPGA SYNC_IN pin: a hardware-timed edge whose head-clock time is known; the FPGA latches its tick counter on it (SYNC_TICK), which gives the tick <-> microsecond epoch for every ARM. Gives up SWO trace (PB3 is the only SWO pin)."}
   # ---- RS-485 host link (isolated transceiver, logic side)
   - {pin: PA9,   lqfp64: 43, signal: RS485_TX,       peripheral: USART1, af: 7,   dir: out,    note: "USART1_TX to the isolator DI. Idle high."}
   - {pin: PA10,  lqfp64: 44, signal: RS485_RX,       peripheral: USART1, af: 7,   dir: in,     note: "USART1_RX from the isolator RO. 10 k ext PU so a disabled receiver reads mark."}
@@ -66,9 +66,9 @@ pins:
   - {pin: PA15,  lqfp64: 51, signal: FPGA_SS_N,      peripheral: GPIO,   af: "-", dir: out,    note: "iCE40 SPI_SS (pin 16, UNVERIFIED). Must be low when CRESET_B rises to select slave configuration: 10 k ext PD. (Pin is JTDI with an internal pull-up at reset; the external PD wins, verify value.)"}
   - {pin: PD2,   lqfp64: 55, signal: FPGA_CRESET_N,  peripheral: GPIO,   af: "-", dir: out,    note: "iCE40 CRESET_B, 10 k ext PD so the FPGA stays unconfigured (all outputs high-Z, counters off) while the MCU is in reset."}
   - {pin: PB9,   lqfp64: 62, signal: FPGA_CDONE,     peripheral: GPIO,   af: "-", dir: in,     note: "iCE40 CDONE open-drain, 10 k ext PU to +3V3 (FPGA bank supply)."}
-  - {pin: PB10,  lqfp64: 30, signal: FPGA_GATE,      peripheral: TIM2,   af: 1,   dir: in,     note: "TIM2_CH3 input capture. One edge per gate boundary; the capture gives the head-clock time of the boundary and the ISR applies the pending heater state. 100 k ext PD."}
-  - {pin: PB5,   lqfp64: 58, signal: FPGA_MON_TRIG,  peripheral: EXTI5,  af: "-", dir: in,     note: "Monitor-capture trigger from the event logic (rising edge), stops the ADC2 capture after the post-trigger count. 100 k ext PD."}
-  - {pin: PB6,   lqfp64: 59, signal: FPGA_AUX0,      peripheral: GPIO,   af: "-", dir: bidir,  note: "Spare MCU<->FPGA line (default: input, FPGA 'record ready / fault'). PB6 is UCPD1_CC1: a dead-battery pull-down can be present until firmware sets PWR_CR3.UCPD1_DBDIS (behaviour UNVERIFIED) - do not use for a signal that must be high during reset."}
+  - {pin: PB10,  lqfp64: 30, signal: FPGA_GATE,      peripheral: TIM2,   af: 1,   dir: in,     note: "TIM2_CH3 input capture of the FPGA GATE_SYNC output, which toggles on the first tick of every gate (capture both edges): head-clock time of every gate boundary, used to cross-check equal gates. 100 k ext PD."}
+  - {pin: PB5,   lqfp64: 58, signal: FPGA_MON_TRIG,  peripheral: EXTI5,  af: "-", dir: in,     note: "FPGA TRIG_OUT (active-high pulse on a selected event): stops the ADC2 monitor capture after the post-trigger count. 100 k ext PD."}
+  - {pin: PB6,   lqfp64: 59, signal: FPGA_IRQ,       peripheral: EXTI6,  af: "-", dir: in,     note: "FPGA IRQ, level, active high: gate record ready (and optional sources). 100 k ext PD. PB6 is UCPD1_CC1: a dead-battery pull-down can be present until firmware sets PWR_CR3.UCPD1_DBDIS (behaviour UNVERIFIED) - harmless for an active-high input with a pull-down."}
   # ---- analog housekeeping (ADC1)
   - {pin: PA1,   lqfp64: 13, signal: BIAS_VMON,      peripheral: ADC1,   af: "-", dir: analog, channel: 2,  note: "SiPM bias voltage after the output filter, divider 60 V -> 2.4 V (1:25), 10 nF at the pin, source < 10 k."}
   - {pin: PB12,  lqfp64: 34, signal: BIAS_IMON,      peripheral: ADC1,   af: "-", dir: analog, channel: 11, note: "Bias current monitor, 0-2.5 V = 0-250 uA total (scale to be fixed by head electronics)."}
@@ -88,7 +88,7 @@ pins:
   - {pin: PF1,   lqfp64: 6,  signal: MON_MUX_A3,     peripheral: GPIO,   af: "-", dir: out,    note: "Monitor mux select bit 3 (0 = fast path, 1 = slow path). GPIO only because HSE runs in bypass mode. NUCLEO-G474RE: crystal pin, not usable there."}
   # ---- bias and heater
   - {pin: PB13,  lqfp64: 35, signal: HV_EN,          peripheral: GPIO,   af: "-", dir: out,    note: "SiPM bias converter enable, active high, 10 k ext PD (bias off in reset)."}
-  - {pin: PB15,  lqfp64: 37, signal: HTR_EN,         peripheral: GPIO,   af: "-", dir: out,    note: "Heater high-side switch request, active high, 10 k ext PD (heater off in reset). Also routed to an FPGA input so the event logic can count heater_on_ticks and mark the transition gate. In series with the hardware thermal cut-out, which firmware cannot override."}
+  - {pin: PB15,  lqfp64: 37, signal: HTR_EN,         peripheral: GPIO,   af: "-", dir: out,    note: "Heater request, active high, 10 k ext PD (heater off in reset). Goes to the FPGA HTR_STATE input; the FPGA re-times it to the next gate boundary and drives the high-side switch from its HTR_SYNC output (HTR_CFG.SRC_INTERNAL = 0), counts heater_on_ticks and marks the transition gate. Board: AND HTR_SYNC with HTR_EN at the switch so an unconfigured FPGA or an MCU in reset both mean heater off. The hardware thermal cut-out is in series and cannot be overridden."}
   - {pin: PA11,  lqfp64: 45, signal: HTR_CUTOUT_OK,  peripheral: GPIO,   af: "-", dir: in,     note: "Status of the independent thermal cut-out: high = closed/healthy, low = tripped or heater supply absent. Level-shifted from the heater domain, 100 k ext PD."}
   # ---- temperature / identity bus
   - {pin: PA8,   lqfp64: 42, signal: I2C_SCL,        peripheral: I2C3,   af: 2,   dir: bidir,  note: "I2C3_SCL, 2.2 k ext PU. TMP117 x2 + 24AA025E64."}
@@ -107,6 +107,6 @@ dac_map:
   U_DAC2: {cs: DAC_CS2_N, outputs: [REF_LLD_0, REF_ULD_0, REF_LLD_1, REF_ULD_1, REF_LLD_2, REF_ULD_2, REF_LLD_3, REF_ULD_3]}
   U_DAC3: {cs: DAC_CS3_N, outputs: [TRIM_FLOOR_0, TRIM_FLOOR_1, TRIM_FLOOR_2, TRIM_FLOOR_3, TRIM_REF_0, TRIM_REF_1, TRIM_REF_2, TRIM_REF_3]}
 unused_pins: []
-spares: "PB6 (FPGA_AUX0) and PB3 (SWO) are the only uncommitted pins: the LQFP64 package is full. If more are needed, heater sense (PB11) or the board NTC (PB14) are the first candidates to give up; BOOT0 (PB8) can be freed with the nSWBOOT0 option bit (UNVERIFIED) at the cost of the hardware bootloader strap."
+spares: "None: all 52 I/O pins of the LQFP64 package are committed (PB3 gave up SWO for FPGA_SYNC). If more are needed, heater sense (PB11) or the board NTC (PB14) are the first candidates to give up; BOOT0 (PB8) can be freed with the nSWBOOT0 option bit (UNVERIFIED) at the cost of the hardware bootloader strap."
 nucleo_g474re_bringup:
   note: "Bring-up on a NUCLEO-G474RE (MB1367) uses the same firmware with -DRRH_BOARD_NUCLEO: HSE crystal instead of bypass (24 MHz X3 fitted, UNVERIFIED), console on the ST-LINK VCP, RS-485 through an external 3.3 V transceiver on PA9/PA10/PA12. BUMP_ZONE_L/R and MON_MUX_A3 are not available (crystal pins). Header positions are in the Nucleo user manual UM2505 (not checked here)."

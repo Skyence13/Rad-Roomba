@@ -17,7 +17,7 @@ DB = json.loads((HERE / "stm32g474re_lqfp64_pindb.json").read_text())["pins"]
 
 # signal name in pinmap -> exact signal name in the ST database (only for AF / analog functions)
 EXPECT = {
-    "SWDIO": "SYS_JTMS-SWDIO", "SWCLK": "SYS_JTCK-SWCLK", "SWO": "SYS_JTDO-SWO",
+    "SWDIO": "SYS_JTMS-SWDIO", "SWCLK": "SYS_JTCK-SWCLK", "FPGA_SYNC": "TIM2_CH2",
     "RS485_TX": "USART1_TX", "RS485_RX": "USART1_RX", "RS485_DE": "USART1_DE",
     "DBG_TX": "LPUART1_TX", "DBG_RX": "LPUART1_RX",
     "DAC_SCK": "SPI1_SCK", "DAC_MISO": "SPI1_MISO", "DAC_MOSI": "SPI1_MOSI",
