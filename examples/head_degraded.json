@@ -1,0 +1,84 @@
+{
+  "type": "ACQ",
+  "icd": "2.0",
+  "sequence": 153,
+  "start_us": 16300000,
+  "span_us": 100000,
+  "sync": {
+    "state": "HOLDOVER",
+    "sync_id": "fit-07",
+    "bound_us": 15300,
+    "age_us": 6300000
+  },
+  "thermal": {
+    "head_c": 8.2,
+    "heater": "ON",
+    "duty_pct": 25
+  },
+  "flags": [],
+  "segments": [
+    {
+      "id": 0,
+      "alpha": {
+        "counts": 0,
+        "live_us": 99910
+      },
+      "beta_window": {
+        "counts": 7,
+        "live_us": 99910
+      },
+      "photon_ref": {
+        "counts": 5,
+        "live_us": 99970
+      },
+      "flags": []
+    },
+    {
+      "id": 1,
+      "alpha": {
+        "counts": 1,
+        "live_us": 99910
+      },
+      "beta_window": {
+        "counts": 8,
+        "live_us": 99910
+      },
+      "photon_ref": {
+        "counts": 6,
+        "live_us": 99970
+      },
+      "flags": []
+    },
+    {
+      "id": 2,
+      "alpha": {
+        "counts": 0,
+        "live_us": 99910
+      },
+      "beta_window": {
+        "counts": 10,
+        "live_us": 99910
+      },
+      "photon_ref": null,
+      "flags": [
+        "REFERENCE_FAULT"
+      ]
+    },
+    {
+      "id": 3,
+      "alpha": {
+        "counts": 2,
+        "live_us": 99910
+      },
+      "beta_window": {
+        "counts": 12,
+        "live_us": 99910
+      },
+      "photon_ref": {
+        "counts": 7,
+        "live_us": 99970
+      },
+      "flags": []
+    }
+  ]
+}

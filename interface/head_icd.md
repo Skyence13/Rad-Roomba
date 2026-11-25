@@ -1,0 +1,167 @@
+# Removable detector head interface control document
+
+**System design revision 0.3. Proposed command envelope 2.0 and acquisition format 2.0.** The numeric budgets below define trials and cross-team agreements. A manufacturer drawing, electrical characterization, calibrated response map and site acceptance record are required to qualify an installed head.
+
+## 1. Ownership
+
+| Owner | Function and boundary |
+|---|---|
+| Optical module vendor | Floor assembly per lane: ZnS(Ag)/active plastic, guide, SiPM connections. Upper reference gives an independently read scintillation signal. Request access to unclassified pulses on the prototype. |
+| Dedicated detector-head acquisition MCU and front end | One acquisition MCU on the removable head, independent of the base motion MCU and Linux computer. The head MCU owns nonvolatile identity/geometry, synchronization, gating, counters, live-time monitoring and independent fault reporting. The adjacent front end owns bias and temperature sensing, pulse capture or optional vendor discrimination, independent photon-reference readout, live-time accounting, four equal acquisition gates, heater and hardware overtemperature cutoff. The replaceable optical module and associated board form the detachable equipment. |
+| Robot power and motion controller | Protected supply and emergency shutdown, independently monitored bumper/interlock conductors, credentialed mission enable, physical drive inhibit, battery management and vehicle thermal controls. |
+| Robot acquisition and mapping computer | Link master, common-time mapping, immutable raw log, calibration selection, pose interpolation, background correction, uncertainty, classification and visualization. Site RP owns survey profiles and the release decision. |
+
+## 2. Mechanical datum and service
+
+Use x forward, y left, z up. Define the concept floor datum at floor level beneath the drive axle centreline. Define the head mounting datum at the centre of the forward bulkhead mating interface. In the Rev D concept this is approximately x = +138.5 mm, y = 0, z = 32 mm in the concept floor frame. The drawing places active optical planes around x = +204 mm and the entrance film at z = 10 mm. The baseline bumper rail is 3 mm below the entrance film, leaving 7 mm from the floor to the rail on a flat surface. A 5 mm projection (5 mm nominal floor clearance) is a separate mechanical trial. The internal scintillating plane has its own offset above the film. These dimensions are design references only. A nose riding on uneven planks can have a different standoff while the chassis pose is unchanged.
+
+Use indexed seating surfaces, an anti-rotation feature and captive retention operable with gloves. Keep stops and skid features outside the active aperture as far as practicable. Protect the detector window with a replaceable characterized window or grille, and keep attachment/bumper loads out of the optical bonds. Capture a service ID when a window, grid, cassette or discriminator is changed. Survey the installed pose after seating; verify calibration when an intervention changes the optical or geometrical response.
+
+The ROS coordinate chain is map → odom → base_link → head_mount → sample plane. If base_link is defined at axle height, apply the measured base_link-to-floor-datum offset; never import the drawing's z values directly as base_link values. For the head manifest provide all installed floor-plane active polygons, window and active-layer offsets, reference positions, inactive seams, measurement uncertainty and assumed surface standoff in metres. Log the geometry revision with each run. Measure left to right across y with a localized check source and an independent floor coordinate test. Use right-handed rotations in ROS frames and order the four lane identities as follows [I1, I3].
+
+| Segment index | Nominal centre y (mm) | Direction |
+|---|---:|---|
+| 0 | +131.25 | Left outer |
+| 1 | +43.75 | Left inner |
+| 2 | −43.75 | Right inner |
+| 3 | −131.25 | Right outer |
+
+A synthetic nominal polygon/transform fixture is provided in examples/head_geometry_concept.json. Its field_use_approved field is false. It can drive plotting and point-in-polygon checks. A field manifest must use actual measured aperture and extrinsics, a measured normal direction and their uncertainties. In the descriptor each lane also carries reference_center_m and window_to_effective_plane_m (positive into the head); spatial_response_record_id names the host-held spatial response record. The concept fixture uses null for these unmeasured quantities. The complete transmitted descriptor is examples/head_descriptor.json; head_geometry_concept.json is its illustrative CAD-frame companion. In a survey the host records the transmitted descriptor and verifies the robot-side mount transform. A nominal aperture alone cannot establish qualified spatial response.
+
+Proposed 87.5 mm pitch and 80 × 100 mm active aperture (80 across travel) leave 7.5 mm nominal internal gaps. Actual edge response, protective grid transmission, pose error and oblique response determine coverage. Neighbouring readouts and offset/repeated tracks can recover exposure only where an active window actually viewed the floor. Show unknown/unqualified coverage after a pass where this cannot be demonstrated.
+
+To remove a head, park and immobilize, disable head supply and verify power off, isolate hardwired motion permissives, and disconnect the keyed cable(s). Use a protective cover on the downward window and a site-designated handling surface. The site controls contamination assessment and handling of the detached survey head. On reinstallation require positive retention, bumper response, recognized identity/geometry, stable temperature, reference and floor channel checks and valid synchronicity before recording qualified data.
+
+## 3. Electrical interface
+
+| Connector and circuit | Direction | Proposed function |
+|---|---|---|
+| J1, PWR+ and PWR− | Robot → head | Protected nominal 12 V DC from a 12.8 V nominal LiFePO₄ platform. Candidate design envelope at the head is 10–15 V DC including load sag and battery charge condition. Characterize actual supply, protection transients, reverse polarity and brownout before releasing the harness. |
+| J1, LOOP_OUT and LOOP_RETURN | Robot → contact → robot | Potential-free normally closed bumper/interlock circuit. A detached plug or broken conductor opens the circuit. No shared return with power or acquisition data. Host motion MCU monitors independently. If hazard analysis requires redundant contacts/short diagnostics, extend connector and implement and test the required architecture. A single NC loop cannot detect a bypass short by itself. |
+| Separate dock sensor and keyed service interlock | Local to robot power/traction logic | Sense the head mechanically seated at the vehicle. A keyed extension selects bench mode and removes the traction permissive independently of software. The extension carries head power, signals and contact returns but cannot simulate a docked head. |
+| J2, differential pair and isolated signal reference | Half duplex | 1 Mbaud, 8N1, one master and one head, point to point, 120 Ω nominal twisted pair and matched end terminations. Isolate the transceiver from CPU/power as detailed in the electrical design. Provide a fail-safe line bias at one nominated location. Verify polarity from the chosen transceiver datasheet and scope capture. |
+| Connector shells and shield | Chassis/EMC | Drain/shield connections, bond points and mating sequence from harness drawing after ESD/noise test. Keep high-current heater returns out of analog ground paths. Keep pins guarded, strain relieved and keyed. |
+
+Connector part numbers, pin numbering, seal class at −25 °C, fuse rating, permissible hot-plug transients and attachment drawing are open electrical/mechanical reviews. J1/J2 function names are design identifiers. The intended service procedure uses dead mating. Leave room for gloved handling and protect against accidental disconnection.
+
+Reserve up to 10 W for head electronics and 30 W for the optional heater: 40 W total, approximately 4 A at 10 V before cable/conversion losses. Select the final connector, conductors, fuse, hardware current limiter and protective devices using measured inrush, the worst operating load and derating. Separate electronics and heater branch protection at the head. Limit heater power in firmware and fit independent series thermal cutoff appropriate to the materials and fault tests. Record head temperature and applied heater duty; measure any optical/electrical pulse artifacts over heater transitions. A thermistor fault or cutoff opening inhibits qualified measurements if thermal performance cannot be established.
+
+## 4. Serial contract
+
+One host polls one head. Both sides transmit UTF-8 JSON with one serialized object, no literal TAB/CR/LF within its bytes, then a single TAB, eight uppercase hex characters encoding CRC-32 as returned by Python zlib.crc32 over exactly the JSON bytes, then LF. Maximum length including trailer is 8192 bytes. CRC-32 of ASCII 123456789 is CBF43926. Discard malformed, truncated, oversized, duplicate-key or bad-CRC records. An unfinished/oversized record is discarded through the next LF; timeout releases the half-duplex receiver. A CRC detects accidental corruption. Evaluate bus electrical immunity, site remote-access needs and network authorization in the system design.
+
+Host requests use type = REQ, v = "2.0", a 32-bit nonnegative transaction id, op and args. The head returns type = RSP, v, the echoed transaction id, status and body. One transaction may be outstanding on this point-to-point link. OK reports success. Exceptions include EMPTY, GAP, UNSUPPORTED, BAD_ARG, WRONG_BOOT (handshake only), UNBOUND, BUSY and FAULT. The host matches the request and validates framing and CRC before consuming a reply.
+
+**Identity is read once per uninterrupted attachment.** HELLO, descriptor transfer and BIND form the initial handshake. Following BIND, regular reads, commands and clock exchanges carry measurement or operating information only. A host-generated attachment UUID anchors archived counts to the accepted head. The host keeps the descriptor and calibration for the life of that connection. A new scan, clock-fit refresh or ordinary count poll on the same healthy attachment uses the existing binding.
+
+| Operation | Request args | Response and behaviour |
+|---|---|---|
+| HELLO | {} | Begin a new attachment handshake. Return head_id, type, boot_id, firmware, supported_discovery, acq_format, setup_id and descriptor identity/hash/length. See examples/head_hello.json. On a fresh HELLO disarm, discard old buffered gates, sync fit and pending replies. A retry of the same transaction returns its cached response. |
+| GET_DESCRIPTOR | boot_id, descriptor_id, offset, count (1–768 bytes) | Initial handshake only. On OK return boot_id, descriptor_id, offset and bytes_b64. Reject stale identity, bad offset or out-of-range count. The host reconstructs and checks all advertised bytes. |
+| BIND | boot_id, setup_id, descriptor_sha256 | Complete the same handshake after host-side validation. Head checks all three against its current values, establishes a volatile bound state, and replies with bound = true. Persist the host-side attachment manifest. A stale handshake cannot arm replacement or rebooted hardware. |
+| TIME | {} | While bound, return rx_us and tx_us on the head monotonic clock. Timestamp receipt and transmission consistently. Host records its sending/receiving times and characterizes serial/queue delay. |
+| SYNC | sync_id, bound_us, expiry_us | Install a clock-quality record. The sync_id links to a timed fit in the archive. LOCKED, HOLDOVER and UNSYNCED report dynamic timing quality. |
+| ARM | span_us | While bound, start regular acquisition and return first_seq and span_us. Repeating matching ARM preserves active acquisition. Change settings only after disarming. |
+| READ | after_seq | While bound, return the next retained ACQ body. after_seq = −1 requests the first available from sequence zero. GAP gives oldest_seq and newest_seq when data have already expired. Reissue from oldest_seq − 1 after logging the missing range. EMPTY reports that the requested sequence is pending. Keep at least 128 complete frames. |
+| DISARM | {} | Complete the current gate, default the heater off, return last complete sequence or null, and preserve completed frames for retrieval. Subsequent ARM within this attachment continues the sequence. |
+
+The decoded example in examples/head_transactions.ndjson follows an initial handshake, time synchronization, arming and a representative READ. The example shows selected transactions. Routine polls and intermediate clock-fit refreshes before the illustrated sample, including the fit-07 refresh, are omitted. The exact CRC-framed example is examples/head_response.wire. Retry a request with the same id if its reply is lost. The head caches the last completed transaction to keep retries idempotent. A failed CRC on a demonstrably continuous attachment can be retried. A reported sequence gap flags missing counts. Neither event alone implies the head changed.
+
+**Broken continuity.** Capture and latch connector-presence transitions in the robot independently of polling the serial bus. Monitor the actual head connection in both dock and lab configurations. A brief unplug/reseat must leave a detectable event even when the same powered head returns. The proposed J1 loop can open for both contact and disconnection. Unless a separate monitored presence contact distinguishes the events, treat an ambiguous opening as a potential disconnect. If J1 and J2 can be independently unplugged or switched, monitor/bundle the relevant connectors or prove the interface detects every live endpoint change before accepting counts. Qualify rapid disconnect and powered substitution on the bench.
+
+At every MCU boot, including watchdog or brownout recovery, generate a fresh boot UUID for the next handshake. A reset clears binding, arming, old samples, clock state and reply cache. TIME, SYNC, ARM, READ and DISARM during unbound operation answer UNBOUND with no counts. A firmware/setup/descriptor change must invalidate the binding before the new settings can affect a sample. The robot closes the session on connector loss, MCU reset/UNBOUND, host/driver restart or transport disruption beyond the verified continuity budget. Cancel the outstanding poll, discard stale host/adapter buffers, and establish a measured quiet interval covering maximum residual traffic. Allocate fresh transaction IDs across the transition so a deferred reply cannot match a new poll. Withhold attribution until a new HELLO/GET_DESCRIPTOR/BIND completes. Capture the last trusted boundary and preserve the gap. Stop/restart of a read-only browser does not affect the head link.
+
+### Initial handshake and host provenance
+
+1. The base holds motion inhibited while identifying a fitted head. With motion disabled and the independent bumper/interlock intact, the host reads HELLO and the complete GET_DESCRIPTOR file. Its SHA-256 is calculated over the exact file bytes, including any trailing LF. The host accepts at most 16,384 bytes for descriptor format 1.0. Read contiguous chunks; retry the same offset after a failed read. Discard partial data on a boot or descriptor change. A descriptor read is safe before arming.
+2. Read serial, model/type, hardware and geometry revisions, acquisition format, setup, capabilities, allowed acquisition gate range, electrical limits, swept physical envelope (including guards), mount-relative effective apertures and channel order, window nominal working gap and applicable measured uncertainty. The descriptor distinguishes concept geometry from as-built metrology and lists qualified thermal/standoff bounds only once established. This version models four readout lanes; future interchangeable heads advertise their own type and capabilities. An unsupported type can be identified on the screen while its acquisition/mapping plug-in is pending. Never silently reuse another head’s geometry.
+3. The host validates format and digest, cross-checks serial/type, firmware, setup, geometry revision and descriptor hash against its independently maintained registry, and resolves a matching calibration for the applicable service interval and site profile. A hash sent by the head is an integrity check; it does not confer authorization. The trusted local registry and operating-mode rules are authoritative. An unknown head, changed hash or incompatible profile returns a specific service/fault reason. Survey and motion are blocked until resolved; authorized, physically immobilized bench characterization may be separately enabled. After successful BIND, create a new attachment_session_id UUID on the host and persist the immutable head/boot/firmware/setup/geometry record before accepting counts. Link the exact descriptor bytes, measured transform, calibration and applicable site profile to survey records. See examples/head_session.json for a bench attachment manifest. A later scan under another profile has its own survey manifest even if physical attachment continues.
+4. On physical reconnection, loss of head-link continuity, reset of either acquisition endpoint, tool change or calibration-affecting service, end the prior attachment. Validate identity, capability, thermal state, clock and suitable check results again before survey. Archive raw counts/live times and quality flags unchanged. The head performs pulse acquisition and optional classification; the robot computer performs photon-background compensation, efficiency correction, Bq/cm² conversion, mapping and follow-up decisions.
+
+Use head_descriptor.schema.json and head_discovery.py in interface/ with examples/head_descriptor.json, head_hello.json and head_registry_bench.json. The supplied registry enables bench use only. The example geometry is nominal, with null qualified ranges and no field calibration. In laboratory setup, an unknown head can be read for engineering examination without granting normal survey privileges. When approving a new type, review physical and drive envelopes, stop footprint and head mass/moment as well as the radiation calibration.
+
+At 1 Mbaud 8N1 each byte takes 10 µs on the wire. An 8192-byte reply occupies about 82 ms; the default 100 ms interval requires compact ACQ messages. Measure actual worst-case normal response including envelope, requests, direction turnaround, TIME traffic and retries. Target an average bus loading under 50% with margin for one retry; use observed frame sizes to revise the schedule. A prototype bench USB-to-isolated-RS-485 adapter must preserve the same line contract. Never infer acquisition time from serial arrival.
+
+## 5. Acquisition record
+
+The machine-readable payload definition is acquisition.schema.json, JSON Schema draft 2020-12 [I2]. Each complete local gate produces one frame. Keep counters and ticks as exact integers up to 2⁵³ − 1. The ACQ payload carries no serial, boot UUID, firmware, type, setup or geometry identifier. Host archives retain the unchanged wire bytes and attach each accepted frame to a locally recorded attachment_session_id. The immutable session record supplies those identity fields for replay. Write it before the first frame. Count and time continuity are checked independently across the gates of each attachment.
+
+| Field | Meaning |
+|---|---|
+| type, icd | Message kind ACQ and payload format 2.0. Four segment indices identify the four simultaneously measured lanes. |
+| sequence, start_us, span_us | Order per bound attachment (start at zero and increment per gate); local head clock; half-open interval [start_us, start_us + span_us). Default 100,000 µs; available modes separately characterized. |
+| sync.state, sync_id, bound_us, age_us | Sync fit identity, time-quality state, worst-case time-error estimate and age at gate start. An unsynchronized frame carries null sync_id, bound and age. |
+| thermal.head_c, heater, duty_pct | Representative head sensor temperature, heater state and applied duty over the acquisition interval. Log thermistor calibration and sensor position. Missing temperature is null plus thermal fault. |
+| segments[n].alpha, beta_window, photon_ref | Integer gross counts and measured live_us for each readout in the same wall-clock gate. Number before subtraction, calibration, smoothing or software dead-time correction. Floor beta window can include photons. Upper reference can include residual charged-particle response. |
+| flags | Explicit per-head or per-lane fault codes as enumerated in the schema. Unknown or unsupported codes/versions require investigation. |
+
+A valid zero is {"counts":0,"live_us":positive integer}. A missing count or unusable live time is null for that channel plus a diagnostic flag. Preserve any counters still valid during a partial fault. A dead front end never generates authoritative zeros. Do not manufacture measured live time from wall time. If the FPGA/MCU has no defensible live-time signal, return null plus DEAD_TIME_UNKNOWN for production-format use until a validated measurement or correction protocol is defined. Store partial measurements in engineering logs where possible.
+
+If alpha and beta share a common nonparalyzable gate they can report the same measured live time. Prove the dead-time model with pulser/rate sweeps, including vetoes and counter saturation, and log the front-end type. The photon reference always reports its own live time. Start/span refer to wall time; independent live times correct lost exposure in each channel. Raw classified counts are distinct from digitized waveforms. Provide prototype scope access or a separate engineering waveform stream for pulse-shape development; the operational bus does not transport continuous samples. If onboard optical modules expose classified pulses, preserve any remaining diagnostic access and identify which channel logic/dead time came from the vendor.
+
+## 6. Clocks and host gating
+
+Maintain a monotonic clock mapping for each host attachment and clock epoch. Restart the fit after re-identification. Characterize one-way asymmetry and software capture latency with a common observation such as a pulser/logic analyzer. For a host exchange sent at H0 and received at H3, with head receipt/preparation ticks D1 and D2, associate the head midpoint (D1 + D2)/2 with host midpoint (H0 + H3)/2, weighted by path delay. Fit host_time = offset + drift × head_time over several exchanges. Log offset, drift, fit anchors, residuals, worst validated path asymmetry, age, time units, host clock domain and bound; the timing procedure must account for unequal request and reply serialization lengths. Timestamp matching or a small fit residual alone cannot prove the offset.
+
+Convert the entire sample interval to robot time, and evaluate the time bound across its endpoints. Reject mapping when the projection error caused by timing exceeds the position budget at the actual translational and angular speed; the latter is significant at the overhanging sensor. Proposed initial maximum timing bound is 10 ms (1 mm of translation at 0.10 m/s). End-point tracking, clock drift beyond the tested interval, lateral slip and LiDAR pose error are separate. Integrate the segment footprint over the mapped interval using valid poses, and account for turns, occlusions and incomplete exposure. A time reset, unavailable transform, missing calibration, unresolved counter gap or nonqualified exposure never counts as a clean floor observation.
+
+| Event | Data action | Robot action |
+|---|---|---|
+| Cable disconnected, crash, absent head | Archive gap, discard pending partial frame, identify new boot or session | Inhibit survey; controlled stop or hold per safety design. Open independent bumper/interlock calls the separate movement response. |
+| CRC error / duplicate | Reject damaged bytes; replay READ with identical id after timeout. Deduplicate exact frame by (attachment_session_id, sequence). Conflicting copies are a fault. | Continue only while buffer and mission timeout budgets are healthy. |
+| Reference lost on one lane | Preserve floor gross counts; withhold compensated map contributions for the affected lane | Repass affected strip after recovery or escalate per profile. |
+| Out of time lock, all-head or thermal fault | Preserve raw frame and provenance as invalid for qualified mapping | Hold acquisition credit and recover under mission rules. Fault latching/clearance belongs in the head safety and site procedure. |
+| High background despite valid telemetry, poor pose, gaps or insufficient dwell | Independently flag affected floor area; report coverage and sensitivity shortfall | Revisit at slower speed, count stationary, or refer to the rad team. |
+| Thresholds or head change | Create new setup/run interval; preserve previous calibration and transform identities | Require identity, electrical/optic checks, thermal limits and synchronization before restart. |
+
+## 7. Detached bench use and extension harness
+
+The lab setup connects the detached head to the **actual robot** through a keyed extension assembly for both J1 and J2. Put the robot in a stable bench cradle and select maintenance acquisition mode. The robot’s independent dock-presence switch and a hardwired bench-key interlock hold traction power inhibited. Actuating an extended head bumper circuit or plugging in the data cable does not declare the head mechanically mounted. Design the extension with a separate keyed bench identifier, or a positively identified service adapter. Test open circuits, shorts and a missing head. No jumper may bridge the mount or drive inhibit to run the bench test.
+
+Use **2 m as a harness design trial**; qualify the maximum marked cable length/connectors and keep that identity in the run log. Use the operating electronics, polarity, fused power path, current limitation, shielding, paired bus conductors and two end terminations from the installed system. The extension is an inline continuation between those two bus ends, with no terminated stub or extra third termination. Strain-relieve both ends and support the head and cable independently of its entrance window. Dead-mate and confirm the bench state before energizing. Verify loaded voltage and temperature at the head over the intended heater current. A 40 W trial combined load is up to 4 A at 10 V. For a 0.5 V round-trip drop allowance at 4 A, the entire added supply-return path including contacts would be limited to 0.125 ohm; verify actual supply headroom, cable ampacity and fuse coordination as well as voltage drop. Confirm the heater, motors-off electronics, cable routing and length do not bias counts or degrade communication.
+
+| Procedure | Setup and acceptance evidence |
+|---|---|
+| Detector efficiency measurement | Mount the head in an adjustable, repeatable jig. The calibration source and window are referenced to the same planes and separation used in the approved calibration method. Use the representative traceable planar source and a blank, acquire counts and live time by channel at documented standoff (10 mm nominal trial), and record source ID, geometry, temperature, check date and uncertainty. Include the normal window/guard/extra protective hardware. Determine and version coefficients on the robot or calibration workstation; qualify the moving survey configuration separately. |
+| Radiation response or detector “bump” check | Under the RP procedure, use the designated check fixture/source and reproducible position. Compare corrected-for-decay check results and blank against allowable control limits for the associated serial and channels. Record drift or failed lanes and withhold affected calibration from survey. A response check verifies stability between calibrations. |
+| Mechanical bumper check | Independently actuate each bumper zone and check hardwired contacts and the motion permit with a safe test fixture. Repeat in the normal installed configuration. The laboratory interlock continues to inhibit traction throughout detached counting and is inspected when reconnecting. |
+| Return to survey | Isolate power; remove the extension, reseat and secure the head, inspect the window, run the mount and bumper checks, re-identify and validate clock, calibration and check records. Tag laboratory data as bench records without floor coverage, geolocation or Bq/cm² release status. |
+
+A dedicated acquisition MCU in this head is a design requirement. Candidate implementation: an STM32G4-class development board during bring-up, on-board nonvolatile descriptor storage, local acquisition clock, hardware counters/capture, watchdog, isolated RS-485 endpoint and temperature inputs. Verify pin budget, simultaneous event processing, counter loss, firmware latency and actual maximum usable rate. Provide independent hardware timing or an FPGA if measurements show the MCU alone cannot meet classification or dead-time requirements. A material-specific Bq/cm² coefficient, site limit and decision logic remain the host’s responsibility.
+
+## 8. Bench integration and delivery evidence
+
+1. Verify mating datums with a fixture; swap the head repeatedly using gloves. Record standoff and lift after bumper contact. Confirm a directed source passes through indices 0→3 in the expected geometric order. Drive disabled for the swap.
+2. Scope 12 V and counter outputs during head heater PWM, motor reversal, brownout and reset. Exercise a pulser and prove equal gate boundaries, live-time behaviour, no double counting on retry and loss-of-signal handling. Characterize cross-lane coupling electrically and optically.
+3. Inject dropped/corrupted lines, a delayed old response, fast disconnect/reseat, a live head swap, MCU reset between HELLO and BIND, and a reset while armed. Confirm UNBOUND yields zero frames until reidentified. Exercise null channels, sequence skips and clock resets. Confirm raw retention, replay, re-arm inhibition and blank/hatched invalid coverage. Confirm safety and cliff response through independent circuits while the head link is silent.
+4. Use a known mechanical or optical event and both clocks to bound spatial shift while moving. Verify end-to-end clock conversion and pose association, including thermal drift, USB adapter latency if used, and changing localization quality.
+5. Measure the minimum and maximum sustainable report cadence. Request the same frame twice and confirm bitwise-equivalent scientific fields. Overflow the buffer deliberately; verify the exact gap is recorded and unresolved areas are marked for survey.
+6. With the site calibration profile, run the complete moving/parked comparison; record head identity, geometry, calibration, setup, clock fit, thermal state, raw counts, qualified footprint and uncertainty in the review record.
+
+## 9. Example tools
+
+From the extracted package root with Python 3.9+ and jsonschema 4.18+ installed:
+
+```sh
+python interface/check_frames.py --session examples/head_session.json --require-usable examples/head_normal.json
+python interface/check_frames.py --session examples/head_session.json examples/head_normal.json examples/head_degraded.json
+python interface/wire_codec.py decode < examples/head_response.wire
+python interface/head_discovery.py examples/head_hello.json examples/head_descriptor.json examples/head_registry_bench.json
+python interface/test_interface.py
+```
+
+The host joins an ACQ 2.0 frame to the stored attachment record and then to the survey profile. The attachment UUID is host-only. A detached raw frame lacks sufficient provenance for a calibrated survey. To inspect historical self-identifying ACQ 1.0 payloads, use check_frames.py --legacy-v1 with the original archived files. Its retained acquisition.v1.schema.json preserves the earlier format. Keep the original provenance and bytes. The 2.0 link explicitly rejects 1.x endpoints at handshake. The prototype validator permits read-only legacy replay and the live 2.0 path requires a bound head.
+
+The discovery example checks the trusted bench-only setup. Running the same command with --mode SURVEY must reject the example. The first line checks all four lanes. The second retains a synthetically degraded record; no lanes qualify because time is in holdover, and segment 2 also lacks a reference. The wire example carries a synthetic transaction and verifies the CRC. The validator checks format and elementary timing continuity; host motion authorization, calibration lookup, link negotiation, clock fit, footprint accounting and site decision logic require separate implementations and verification.
+
+## References
+
+[I1] ROS REP 103, Standard Units of Measure and Coordinate Conventions. https://github.com/ros-infrastructure/rep/blob/master/rep-0103.rst
+
+[I2] JSON Schema, Draft 2020-12. https://json-schema.org/draft/2020-12
+
+[I3] ROS REP 105, Coordinate Frames for Mobile Platforms. https://github.com/ros-infrastructure/rep/blob/master/rep-0105.rst
+
+## Charging and laboratory mode precedence
+
+The base gives an inserted charging plug priority over LAB mode. With both leads connected it enters Charge/Service, retains its hardware traction inhibit and keeps normal head acquisition and heating off. To start a bench acquisition, disconnect charging power and follow the deliberate lab setup from the beginning.

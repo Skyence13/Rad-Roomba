@@ -1,0 +1,323 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Rad Roomba detachable head acquisition frame v1",
+  "description": "One uncorrected frame on the instrument bus. SI microseconds. Sample counts are measured post-classification, before background or dead-time correction.",
+  "$defs": {
+    "reading": {
+      "type": "object",
+      "required": [
+        "counts",
+        "live_us"
+      ],
+      "properties": {
+        "counts": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "live_us": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000
+        }
+      },
+      "additionalProperties": false
+    },
+    "segment": {
+      "type": "object",
+      "required": [
+        "id",
+        "alpha",
+        "beta_window",
+        "photon_ref",
+        "flags"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3
+        },
+        "alpha": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/reading"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "beta_window": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/reading"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "photon_ref": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/reading"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "flags": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "FLOOR_FAULT",
+              "REFERENCE_FAULT",
+              "SATURATED",
+              "DEAD_TIME_UNKNOWN",
+              "DISCRIMINATOR_FAULT"
+            ]
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "type": "object",
+  "required": [
+    "type",
+    "icd",
+    "head_id",
+    "boot_id",
+    "fw",
+    "setup_id",
+    "sequence",
+    "start_us",
+    "span_us",
+    "sync",
+    "thermal",
+    "flags",
+    "segments"
+  ],
+  "properties": {
+    "type": {
+      "const": "ACQ"
+    },
+    "icd": {
+      "const": "1.0"
+    },
+    "head_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 96,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+    },
+    "boot_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "fw": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 96,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+    },
+    "setup_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 96,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+    },
+    "sequence": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "start_us": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "span_us": {
+      "type": "integer",
+      "minimum": 1000,
+      "maximum": 1000000
+    },
+    "sync": {
+      "type": "object",
+      "required": [
+        "state",
+        "sync_id",
+        "bound_us",
+        "age_us"
+      ],
+      "properties": {
+        "state": {
+          "type": "string",
+          "enum": [
+            "LOCKED",
+            "HOLDOVER",
+            "UNSYNCED"
+          ]
+        },
+        "sync_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 96,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "bound_us": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 10000000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "age_us": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "thermal": {
+      "type": "object",
+      "required": [
+        "head_c",
+        "heater",
+        "duty_pct"
+      ],
+      "properties": {
+        "head_c": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": -100,
+              "maximum": 150
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "heater": {
+          "type": "string",
+          "enum": [
+            "OFF",
+            "ON",
+            "FAULT"
+          ]
+        },
+        "duty_pct": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        }
+      },
+      "additionalProperties": false
+    },
+    "flags": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "ACQ_FAULT",
+          "HEAD_TEMP_OUT_OF_RANGE",
+          "UNDERVOLTAGE",
+          "BIAS_OUT_OF_RANGE",
+          "HEATER_FAULT",
+          "OVERTEMP"
+        ]
+      }
+    },
+    "segments": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "prefixItems": [
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/segment"
+            },
+            {
+              "properties": {
+                "id": {
+                  "const": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/segment"
+            },
+            {
+              "properties": {
+                "id": {
+                  "const": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/segment"
+            },
+            {
+              "properties": {
+                "id": {
+                  "const": 2
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/segment"
+            },
+            {
+              "properties": {
+                "id": {
+                  "const": 3
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "items": false
+    }
+  },
+  "additionalProperties": false
+}

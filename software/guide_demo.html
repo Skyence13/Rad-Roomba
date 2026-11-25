@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guided follow-up · Rad Roomba</title>
+<style>
+:root{color-scheme:light;font-family:system-ui,sans-serif;color:#172e30;background:#edf3f2}
+*{box-sizing:border-box}
+body{margin:0}
+main{margin:auto;max-width:940px;padding:clamp(16px,4vw,40px)}
+h1,h2,p{margin:0}h1{font-size:clamp(1.8rem,5vw,2.8rem);letter-spacing:-.05em}
+header p{margin:4px 0 24px;color:#40585a}
+.grid{display:grid;grid-template-columns:1.5fr 1fr;gap:13px}
+section{background:white;border:1px solid #bfd0cd;border-radius:14px;padding:clamp(14px,2.8vw,24px)}
+h2{font-size:1rem;margin-bottom:12px}canvas{width:100%;height:210px;display:block}
+#status{font-size:1.32rem;font-weight:720;color:#104945}
+#detail{line-height:1.45;color:#36575a;margin:.35rem 0 .9rem;min-height:3.5em}
+button{font-family:inherit;font-size:.95rem;font-weight:620;padding:10px 13px;min-height:44px;border-radius:6px;border:1px solid #94aca8;color:#153c3c;background:white;cursor:pointer}
+button:focus-visible{outline:3px solid #1769c6;outline-offset:2px}
+button:disabled{opacity:.48;cursor:default}#next{background:#155953;color:white;border-color:#155953}
+.actions{display:flex;gap:8px;flex-wrap:wrap}.wide{grid-column:1/-1}.spaced{margin-top:14px}
+ol{padding-left:1.45rem;margin:0}li{margin:6px 0;line-height:1.45;font-size:.95rem}
+#log{font-size:.9rem;color:#375354;list-style-position:outside}
+#floorhint,small{color:#426366;font-size:.86rem;line-height:1.4}
+@media(max-width:680px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}canvas{height:170px}}
+</style>
+</head>
+<body>
+<main>
+<header><h1>Guided follow-up</h1><p>Rad Roomba desk simulation · sample locations · no connection to a robot</p></header>
+<div class="grid">
+<section><h2>Trailer floor</h2><canvas id="floor" aria-label="Map of the trailer, three flagged spots and the simulated survey head"></canvas>
+<p id="floorhint">Doorway at left. The crosshair marks the centre of the selected detector lane. Dashed rings mark flagged locations.</p>
+</section>
+<section><h2>Review controls</h2><p id="status" role="status"></p><p id="detail"></p>
+<div class="actions"><button id="next">Next</button><button id="hold">Hold</button><button id="expose">Expose spot</button><button id="park">Park now</button></div></section>
+<section><h2>Flagged locations</h2><ol id="queue"></ol></section>
+<section><h2>Technician in trailer</h2>
+<p id="access-state" aria-live="polite"></p>
+<div class="actions spaced"><button id="field">Enter protected field</button><button id="hands">Apply hands-on inhibit</button><button id="arm">Restore motion permit</button></div>
+<small>The technician remains in the trailer. These buttons simulate the field and independent hands-on inhibit.</small></section>
+<section class="wide"><h2>Review history</h2><ol id="log"></ol></section>
+</div></main>
+<script>
+"use strict";
+const find = id => document.getElementById(id);
+const spots = [
+  {id:"H01", x:1.5, y:0.52, lane:0},
+  {id:"H02", x:3.7, y:-0.42, lane:2},
+  {id:"H03", x:5.4, y:0.26, lane:1}
+];
+const home = {x:0.48,y:0};
+const s = {fieldClear:true, handsOn:false, permit:true, position:{...home}, active:-1, visited:new Set(), moving:false, arrived:false, exposed:false, parked:false, action:"Ready", message:"Select Next to visit the first flagged location.", timer:null};
+function draw(){
+  const canvas=find("floor"), width=canvas.clientWidth,height=canvas.clientHeight,dpr=window.devicePixelRatio||1;
+  canvas.width=Math.round(width*dpr); canvas.height=Math.round(height*dpr);
+  const c=canvas.getContext("2d"); c.scale(dpr,dpr);
+  const sx=Math.min((width-31)/6.55,(height-42)/2.52), ox=(width-6.55*sx)/2, oy=height/2;
+  const px=x=>ox+x*sx,py=y=>oy-y*sx;
+  c.fillStyle="#eaf1ec"; c.fillRect(px(0),py(1.2),6.4*sx,2.4*sx);
+  c.strokeStyle="#738b8b";c.lineWidth=2;c.strokeRect(px(0),py(1.2),6.4*sx,2.4*sx);
+  c.fillStyle="#274e4a"; c.font="12px system-ui";
+  c.fillText("Door",px(0),py(-1.2)+15);c.fillText("Front",px(6.4)-30,py(-1.2)+15);
+  c.strokeStyle="#b57e27";c.fillStyle="#745015";
+  for(const p of spots){
+    c.setLineDash([3,2]);c.beginPath();c.arc(px(p.x),py(p.y),Math.max(5,sx*.13),0,2*Math.PI);c.stroke();c.setLineDash([]);
+    c.fillText(p.id,px(p.x)+8,py(p.y)-9);
+  }
+  const x=px(s.position.x),y=py(s.position.y);
+  c.fillStyle="#12655d";c.fillRect(x-10,y-8,20,16);
+  c.strokeStyle="#fff";c.lineWidth=1.5;c.beginPath();c.moveTo(x-5,y);c.lineTo(x+5,y);c.moveTo(x,y-5);c.lineTo(x,y+5);c.stroke();
+}
+function log(text){
+  const item=document.createElement("li");item.textContent=text;find("log").prepend(item);
+}
+function paint(){
+  find("status").textContent=s.action;find("detail").textContent=s.message;
+  const hazards=[];
+  if(!s.fieldClear)hazards.push("protected field occupied");
+  if(s.handsOn)hazards.push("hands-on inhibit applied");
+  find("access-state").textContent="Technician inside · "+(hazards.length?hazards.join(" · "):"protected field clear")+" · "+(s.permit?"motion permitted":"motion inhibited");
+  find("field").textContent=s.fieldClear?"Enter protected field":"Step clear of field";
+  find("hands").textContent=s.handsOn?"Release hands-on inhibit":"Apply hands-on inhibit";
+  const enabled=canTravel();
+  find("arm").disabled=!s.fieldClear||s.handsOn||s.permit||s.moving||s.parked;
+  find("next").disabled=!enabled||s.parked;
+  const nextIndex=s.arrived?s.active+1:Math.max(0,s.active);
+  find("next").textContent=nextIndex>=spots.length?"Next · Park":Math.max(0,s.active)===nextIndex&&!s.arrived&&s.active>=0?"Return to spot":"Next";
+  find("park").disabled=!enabled||s.parked;
+  find("hold").disabled=!s.moving&&(!s.permit||s.parked);
+  find("expose").disabled=!enabled||!s.arrived||s.exposed||s.parked;
+  const queue=find("queue");queue.replaceChildren();
+  spots.forEach((p,i)=>{
+    const row=document.createElement("li");
+    const side=p.y>=0?"left":"right";
+    row.textContent=p.id+" · "+p.x.toFixed(2)+" m into trailer, "+Math.abs(p.y).toFixed(2)+" m "+side+" of centre · lane "+p.lane+" · "+(s.visited.has(i)?"visited":s.active===i?"selected":"pending");
+    queue.append(row);
+  });
+  draw();
+}
+function canTravel(){return s.fieldClear&&!s.handsOn&&s.permit&&!s.moving&&!s.parked;}
+function travel(dest,kind){
+  if(!canTravel())return;
+  s.moving=true;s.action="Moving";s.message=kind==="park"?"Returning to the designated parking position.":(kind==="expose"?"Moving aside to expose ":"Aligning the original detector lane over ")+spots[s.active].id+".";
+  log(s.message);paint();
+  const from={...s.position},start=performance.now();
+  s.timer=setInterval(()=>{
+    const t=Math.min(1,(performance.now()-start)/850);
+    s.position={x:from.x*(1-t)+dest.x*t,y:from.y*(1-t)+dest.y*t};
+    if(t<1){draw();return;}
+    clearInterval(s.timer);s.timer=null;s.moving=false;
+    if(kind==="park"){s.parked=true;s.action="Parked";s.message="Motion stopped. "+s.visited.size+" of "+spots.length+" locations visited.";}
+    else if(kind==="expose"){s.exposed=true;s.action="Spot exposed";s.message=spots[s.active].id+" is 0.30 m toward the front and 0.25 m toward trailer left (looking in from the doorway) from the stopped marker. Apply the hands-on inhibit before reaching into the robot’s movement envelope.";}
+    else{s.arrived=true;s.exposed=false;s.visited.add(s.active);s.action="At "+spots[s.active].id;s.message="Head aligned. Remain here until Next, Expose spot, or Park now is selected.";}
+    log(s.action+". "+s.message);paint();
+  },30);
+}
+find("next").onclick=()=>{
+  if(!canTravel())return;
+  const i=s.arrived?s.active+1:Math.max(0,s.active);
+  if(i>=spots.length){travel(home,"park");return;}
+  s.active=i;s.arrived=false;s.exposed=false;travel(spots[i],"spot");
+};
+find("park").onclick=()=>travel(home,"park");
+find("expose").onclick=()=>{if(s.arrived&&!s.exposed){const p=spots[s.active];travel({x:p.x-.30,y:p.y-.25},"expose");}};
+function stop(reason){
+  if(s.timer!==null){clearInterval(s.timer);s.timer=null;}
+  if(s.moving){s.arrived=false;s.exposed=false;}
+  s.moving=false;s.permit=false;s.action=s.parked?"Parked":"Holding";s.message=reason+" Motion inhibited; deliberate restoration is required.";log(s.message);
+}
+find("hold").onclick=()=>{stop("Operator hold.");paint();};
+function reportClearance(text){
+  s.message=text+" The robot stays stationary. Clear all active inhibits, then restore the permit and issue a motion command.";
+  log(s.message);paint();
+}
+find("field").onclick=()=>{
+  s.fieldClear=!s.fieldClear;
+  if(!s.fieldClear){stop("Technician entered the protected field.");paint();}
+  else reportClearance("Technician clear of the field and still inside the trailer.");
+};
+find("hands").onclick=()=>{
+  s.handsOn=!s.handsOn;
+  if(s.handsOn){stop("Hands-on inhibit applied.");paint();}
+  else reportClearance("Hands-on inhibit released.");
+};
+find("arm").onclick=()=>{
+  if(!s.fieldClear||s.handsOn||s.moving||s.parked||s.permit)return;
+  s.permit=true;s.action=s.arrived?(s.exposed?"Spot exposed":"At "+spots[s.active].id):"Ready";
+  s.message="Permit restored. The robot stays stationary until you select a destination.";log(s.message);paint();
+};
+window.addEventListener("resize",draw);
+log("Review queue loaded. Technician inside, outside the simulated protective field.");paint();
+</script></body></html>

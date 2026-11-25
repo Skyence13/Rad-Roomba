@@ -1,0 +1,153 @@
+{
+  "geometry_id": "revD-nominal-geometry-demo",
+  "purpose": "Synthetic fixture derived from concept drawing dimensions for integration and pose tests",
+  "field_use_approved": false,
+  "units": "m",
+  "drawing_frame": "floor_datum",
+  "drawing_origin": "Floor directly below drive axle centre",
+  "geometry_frame": "head_mount",
+  "axes": [
+    "x forward",
+    "y left",
+    "z up"
+  ],
+  "drawing_origin_to_head_mount": {
+    "xyz_m": [
+      0.1385,
+      0.0,
+      0.032
+    ],
+    "quaternion_xyzw": [
+      0,
+      0,
+      0,
+      1
+    ]
+  },
+  "floor_plane_z_m_in_head_mount": -0.032,
+  "nominal_floor_clearance_m": 0.01,
+  "sensing_plane_assumption": "Nominal entrance window plane; effective detector plane position and response require as-built measurements.",
+  "reference_layers": "Physical depth, aperture and response to photons/charged particles to be characterized by head serial.",
+  "segments": [
+    {
+      "id": 0,
+      "center_m": [
+        0.0655,
+        0.13125,
+        -0.022
+      ],
+      "sensitive_polygon_m": [
+        [
+          0.0155,
+          0.09125,
+          -0.022
+        ],
+        [
+          0.1155,
+          0.09125,
+          -0.022
+        ],
+        [
+          0.1155,
+          0.17125,
+          -0.022
+        ],
+        [
+          0.0155,
+          0.17125,
+          -0.022
+        ]
+      ]
+    },
+    {
+      "id": 1,
+      "center_m": [
+        0.0655,
+        0.04375,
+        -0.022
+      ],
+      "sensitive_polygon_m": [
+        [
+          0.0155,
+          0.00375,
+          -0.022
+        ],
+        [
+          0.1155,
+          0.00375,
+          -0.022
+        ],
+        [
+          0.1155,
+          0.08375,
+          -0.022
+        ],
+        [
+          0.0155,
+          0.08375,
+          -0.022
+        ]
+      ]
+    },
+    {
+      "id": 2,
+      "center_m": [
+        0.0655,
+        -0.04375,
+        -0.022
+      ],
+      "sensitive_polygon_m": [
+        [
+          0.0155,
+          -0.08375,
+          -0.022
+        ],
+        [
+          0.1155,
+          -0.08375,
+          -0.022
+        ],
+        [
+          0.1155,
+          -0.00375,
+          -0.022
+        ],
+        [
+          0.0155,
+          -0.00375,
+          -0.022
+        ]
+      ]
+    },
+    {
+      "id": 3,
+      "center_m": [
+        0.0655,
+        -0.13125,
+        -0.022
+      ],
+      "sensitive_polygon_m": [
+        [
+          0.0155,
+          -0.17125,
+          -0.022
+        ],
+        [
+          0.1155,
+          -0.17125,
+          -0.022
+        ],
+        [
+          0.1155,
+          -0.09125,
+          -0.022
+        ],
+        [
+          0.0155,
+          -0.09125,
+          -0.022
+        ]
+      ]
+    }
+  ]
+}

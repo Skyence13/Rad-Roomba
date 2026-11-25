@@ -1,0 +1,195 @@
+{
+  "version": "1.0",
+  "descriptor_id": "D-SIPM4-001-P01",
+  "serial": "HEAD-DEMO-001",
+  "head_type": "FOUR_LANE_ZNS_PLASTIC_WITH_REFERENCE",
+  "mechanical_revision": "D",
+  "electronics_revision": "bench-A",
+  "geometry_id": "revD-nominal-geometry-demo",
+  "setup_id": "optic-test-01",
+  "geometry_basis": "CONCEPT",
+  "frame": "head_mount",
+  "coordinate_units": "m",
+  "axes": [
+    "forward",
+    "left",
+    "up"
+  ],
+  "envelope_m": {
+    "min": [
+      0.0003,
+      -0.175,
+      -0.025
+    ],
+    "max": [
+      0.1265,
+      0.175,
+      0.01
+    ]
+  },
+  "mount_to_window_normal": [
+    0,
+    0,
+    -1
+  ],
+  "nominal_window_standoff_m": 0.01,
+  "bumper_projection_below_window_m": 0.003,
+  "measured_registration_uncertainty_m": null,
+  "electrical": {
+    "supply_range_V": [
+      10,
+      15
+    ],
+    "electronics_power_allocation_W": 10,
+    "heater_power_allocation_W": 30
+  },
+  "channel_order": [
+    "alpha",
+    "beta_window",
+    "photon_ref"
+  ],
+  "acq_format": "2.0",
+  "capabilities": [
+    "raw_counts",
+    "per_channel_live_time",
+    "head_temperature",
+    "heater_status"
+  ],
+  "gate_range_us": [
+    100000,
+    100000
+  ],
+  "qualified_standoff_m": null,
+  "qualified_detector_temperature_C": null,
+  "segments": [
+    {
+      "id": 0,
+      "center_m": [
+        0.0655,
+        0.13125,
+        -0.022
+      ],
+      "sensitive_polygon_m": [
+        [
+          0.0155,
+          0.09125,
+          -0.022
+        ],
+        [
+          0.1155,
+          0.09125,
+          -0.022
+        ],
+        [
+          0.1155,
+          0.17125,
+          -0.022
+        ],
+        [
+          0.0155,
+          0.17125,
+          -0.022
+        ]
+      ],
+      "window_to_effective_plane_m": null,
+      "reference_center_m": null
+    },
+    {
+      "id": 1,
+      "center_m": [
+        0.0655,
+        0.04375,
+        -0.022
+      ],
+      "sensitive_polygon_m": [
+        [
+          0.0155,
+          0.00375,
+          -0.022
+        ],
+        [
+          0.1155,
+          0.00375,
+          -0.022
+        ],
+        [
+          0.1155,
+          0.08375,
+          -0.022
+        ],
+        [
+          0.0155,
+          0.08375,
+          -0.022
+        ]
+      ],
+      "window_to_effective_plane_m": null,
+      "reference_center_m": null
+    },
+    {
+      "id": 2,
+      "center_m": [
+        0.0655,
+        -0.04375,
+        -0.022
+      ],
+      "sensitive_polygon_m": [
+        [
+          0.0155,
+          -0.08375,
+          -0.022
+        ],
+        [
+          0.1155,
+          -0.08375,
+          -0.022
+        ],
+        [
+          0.1155,
+          -0.00375,
+          -0.022
+        ],
+        [
+          0.0155,
+          -0.00375,
+          -0.022
+        ]
+      ],
+      "window_to_effective_plane_m": null,
+      "reference_center_m": null
+    },
+    {
+      "id": 3,
+      "center_m": [
+        0.0655,
+        -0.13125,
+        -0.022
+      ],
+      "sensitive_polygon_m": [
+        [
+          0.0155,
+          -0.17125,
+          -0.022
+        ],
+        [
+          0.1155,
+          -0.17125,
+          -0.022
+        ],
+        [
+          0.1155,
+          -0.09125,
+          -0.022
+        ],
+        [
+          0.0155,
+          -0.09125,
+          -0.022
+        ]
+      ],
+      "window_to_effective_plane_m": null,
+      "reference_center_m": null
+    }
+  ],
+  "spatial_response_record_id": null
+}
