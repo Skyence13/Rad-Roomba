@@ -134,7 +134,9 @@ Baseline directories (`cad/`, `examples/`, `reference/`, `docs/Rad_Roomba_Design
 | DEC-035 | Portable firmware cores; emulators are native builds of them | Full path testable before optics or boards exist. | Firmware, simulation. | — |
 | DEC-036 | Software time sync now; hardware pulse pair reserved on J2 | Meets the 10 ms bound by calculation; keeps an upgrade path. | J2, both boards (DNP parts). | Yes |
 
-Decisions that need Morgan (not blocking implementation): pack size 8 Ah vs 12 Ah once the power budget is calculated; local-only hardware re-arm in unattended mode; the production volume assumption; whether the 0.3 Nav2 candidate must be retained.
+Confirmed by Morgan on 2026-11-25: local-only hardware re-arm is accepted for the unattended mode (a bumper or E-stop trip ends an unattended mission until someone attends) — DEC-026; the 5–25 units/year production assumption — DEC-033; navigation left to the lead's recommendation, which is to keep DEC-030 (no Nav2 dependency in 0.4, with Nav2 remaining a possible alternative behind the same `DRIVE` interface).
+
+Still to put to Morgan (not blocking implementation): pack size 8 Ah vs 12 Ah once the power budget is calculated.
 
 ## 11. Open external dependencies
 
