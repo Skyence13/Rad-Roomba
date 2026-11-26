@@ -302,6 +302,31 @@ def _container(args):
 
 def host_build(a):
     board_py = os.path.abspath(a.board)
+    lock = os.path.join(os.path.dirname(board_py), ".rrkicad.lock")
+    try:
+        fd = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+    except FileExistsError:
+        try:
+            pid = int(open(lock).read().strip() or 0)
+            os.kill(pid, 0)
+            alive = True
+        except (ValueError, OSError):
+            alive = False
+        if alive:
+            raise SystemExit("another rrkicad build of this board is running (pid %d); two builds of one board "
+                             "at the same time corrupt each other" % pid)
+        os.remove(lock)
+        fd = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+    os.write(fd, str(os.getpid()).encode())
+    os.close(fd)
+    try:
+        return _host_build(a, board_py)
+    finally:
+        if os.path.exists(lock):
+            os.remove(lock)
+
+
+def _host_build(a, board_py):
     t0 = time.time()
     rc = _container(["_gen", board_py] + (["--no-route"] if a.no_route else []))
     if rc != 0:

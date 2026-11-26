@@ -159,8 +159,16 @@
     "sheets": 7
   },
   "dsn_sha256": "830e9d536ec8354c78dc7515175bee4699b9e580f5e24d10160db4e6c760366b",
-  "dsn_unchanged": false,
-  "gen_warnings": [],
+  "dsn_unchanged": true,
+  "gen_warnings": [
+    "J1: 3D envelope uses the default height 1.0 mm (give height=)",
+    "U50: 3D envelope uses the default height 1.0 mm (give height=)",
+    "U51: 3D envelope uses the default height 1.0 mm (give height=)",
+    "U52: 3D envelope uses the default height 1.0 mm (give height=)",
+    "U53: 3D envelope uses the default height 1.0 mm (give height=)",
+    "J5: 3D envelope uses the default height 1.0 mm (give height=)",
+    "J6: 3D envelope uses the default height 1.0 mm (give height=)"
+  ],
   "generated_files": [
     "STRESS-150.kicad_sch",
     "aux.kicad_sch",
@@ -1092,12 +1100,12 @@
   "routing": {
     "enabled": true,
     "extra_args": [],
-    "fanout": null,
+    "fanout": false,
     "layers": 4,
-    "optimizer": true,
-    "passes": 30,
+    "optimizer": false,
+    "passes": 25,
     "threads": null,
-    "timeout": 1500
+    "timeout": 900
   },
   "single_pin_nets": []
 }

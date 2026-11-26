@@ -425,6 +425,13 @@ void rrch_drive_step(rrch_t *c)
             d->t_stall[i] = d->t_enc[i] = 0;
             continue;
         }
+        if (d->v_sp == 0.0f && d->w_sp == 0.0f && fabsf(d->tps[i]) < 150.0f) {
+            /* zero-speed clamp: set-point at rest and the wheel below 5 mm/s -> brake (both low sides on) instead
+             * of letting the position integrator creep against friction */
+            d->duty[i] = 0.0f;
+            d->th_err[i] = 0.0f;
+            continue;
+        }
         float inc = w_ref[i] * 0.001f - dth[i];
         d->th_err[i] += inc;
         float u = CFG(c, DRV_MOTOR_KE) * w_ref[i] / vmot + CFG(c, DRV_KP) * (w_ref[i] - d->w_meas[i]) + CFG(c, DRV_KI) * d->th_err[i];
