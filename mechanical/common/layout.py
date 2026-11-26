@@ -502,7 +502,7 @@ CORRIDORS = {   # name: (x0, x1, y0, y1, z0, z1), what runs there
     "front_bay": ((36, 62, -30, 30, 56, 90), "J1/J2 feeds, front cliff ToF, dock switch, clamp resistor leads"),
     "under_bridge_right": ((-12, 20, -41, -20, 40, 76), "pack feed from the coupler between the motor ends to the right gutter"),
     "left_bay_over_cm5": ((-102, -75, 59, 80, 78, 90), "CM5 USB/Ethernet/antenna pigtails, selector and REARM leads"),
-    "right_bay": ((-185, -100, -90, -60, 45, 76), "charge inlet feed, HANDS-ON/Pause leads, right rear ToF, bumper switch"),
+    "right_bay": ((-155, -100, -90, -60, 45, 76), "charge inlet feed, HANDS-ON/Pause leads, right rear ToF, bumper switch"),
 }
 
 

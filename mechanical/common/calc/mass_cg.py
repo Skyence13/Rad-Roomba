@@ -37,10 +37,18 @@ A_PLATE = plan_area(P.BODY_ROWS["lower_inner"][0])
 X_BODY = (P.BODY_TAIL_X + P.BODY_NOSE_X) / 2 - 0.185 * 0.35 * (P.BODY_NOSE_X - P.BODY_TAIL_X) / 2   # egg form is fuller aft
 B = P.BATTERY_BAY
 X_PACK = sum(B["pack_x"]) / 2
-X_HEAD = 199.0    # head CG: optics at 204, socket/pigtails pull it rearward
 
 
-def base_items(build):
+MOUNT_HW = {   # body-side mount hardware per trade-study option: (description, mass kg, x mm, z mm)
+    "A": ("neck shroud, keyed tongue, bearing lands, dock latch", 0.30, 118.0, 38.0),
+    "B": ("front beam, 2 receiver channels, draw latch (arms are on the head)", 0.20, 35.0, 28.0),
+    "C": ("front beam, 2 receiver channels, draw latch, dock switch", 0.20, 35.0, 28.0),
+}
+MOUNT_DX = {"A": 0.0, "B": 0.0, "C": P.HEAD_DX}       # shift of the head relative to the Rev D position
+MOUNT_HEAD_EXTRA = {"A": 0.0, "B": 0.14, "C": 0.05}   # head-side arms / shoes beyond the Rev D socket (kg)
+
+
+def base_items(build, mount="C"):
     """(name, mass kg, x, z, basis). build = 'prototype' (printed, X1C) or 'production' (CNC Al + MJF PA12)."""
     proto = build == "prototype"
     rho_shell, t_shell, kf = (P.MATERIALS["PETG-CF"]["rho"], 3.0, 1.25) if proto else (P.MATERIALS["PA12-MJF"]["rho"], 2.5, 1.20)
@@ -51,12 +59,13 @@ def base_items(build):
     items = [
         ("upper fairing incl. ribs/bosses", m_up, X_BODY, 105, f"calc: {A_UP / 1e2:.0f} cm2 x {t_shell} mm x {rho_shell} g/cm3 x {kf}"),
         ("lower hull + tail-cap hatch + drive pods", m_lo + 0.06, X_BODY, 48, f"calc: {A_LO / 1e2:.0f} cm2 x {t_shell} mm x {rho_shell} g/cm3 x {kf} + 0.06"),
+        ("battery hump + rear sensor brow (12 Ah growth)", 0.08, sum(B["hump_x"]) / 2, 130, "estimate"),
         ("chassis plate" + (" (6 mm printed PA-CF + 2 Al rails)" if proto else " (4 mm 6061, 35 % lightened)"), m_plate, X_BODY + 8, 35, f"calc from plan area {A_PLATE / 1e2:.0f} cm2"),
         ("electronics bridge + posts (2 mm Al)", 0.115, -17, 79, "calc: 104 x 164 x 2 mm Al + posts"),
         ("grip bar, cheeks, legs, yokes, saddle cover", 0.36 if proto else 0.42, P.GRIP["center_x"], 120, "estimate (printed with Al core / machined Al)"),
-        ("battery tunnel, cassette, guides, latch", 0.27, X_PACK, 75, "estimate"),
+        ("battery tunnel, cassette, guides, latch", 0.30, X_PACK, 85, "estimate"),
         ("motor mounts x2", 0.10, 0, 59, "estimate"),
-        ("neck shroud, keyed tongue, bearing lands, dock latch", 0.30, 118, 38, "estimate from Rev D solids (hollow shroud, aluminium tongue)"),
+        (MOUNT_HW[mount][0], MOUNT_HW[mount][1], MOUNT_HW[mount][2], MOUNT_HW[mount][3], "estimate"),
         ("gearmotors x2", 2 * L.mass("motor"), 0, P.MOTOR_AXIS_Z, "Pololu #2828, VERIFIED 0.210 kg each"),
         ("wheels + hubs x2", 2 * L.mass("wheel"), 0, P.AXLE_Z, "UNVERIFIED estimate 0.15 kg each"),
         ("caster + bracket", L.mass("caster") + 0.02, cx, 20, "TENTE datasheet, VERIFIED 0.03 kg"),
@@ -75,9 +84,10 @@ def base_items(build):
     return items
 
 
-def head_items(build):
+def head_items(build, mount="C"):
     proto = build == "prototype"
-    return [
+    dx = MOUNT_DX[mount]
+    items = [
         ("8 light guides + scintillators + films (OEM)", 0.41, 204, 19, "calc: 8 x 100 x 80 x 5 mm PMMA 1.19 + 0.03 (supplier drawing pending)"),
         ("barrier / absorber allowance x4", 0.10, 204, 19, "estimate (material undecided: 76 g plastic .. 173 g aluminium)"),
         ("frame + inter-lane ribs" + (" (printed PETG-CF/PA-CF, split at y=0)" if proto else " (machined 6061)"), 0.22 if proto else 0.43, 200, 20, "calc: ~170 cm3 printed / ~160 cm3 Al"),
@@ -86,11 +96,12 @@ def head_items(build):
         ("RR-HEAD-ACQ populated", 0.145, 204, 36, "calc: 326 x 96 x 1.6 FR4 + 50 g parts"),
         ("cover + seal", 0.12 if proto else 0.11, 202, 42, "calc: 2 mm printed / 1.5 mm Al"),
         ("contact rails, stems, 3 switches", 0.07, 215, 14, "estimate"),
-        ("key socket, captive pin, latch hardware", 0.08, 146, 32, "estimate"),
+        ("receiver hardware on the head (socket/pin, arms or shoes, keeper)", 0.08 + MOUNT_HEAD_EXTRA[mount], {"A": 146, "B": 105, "C": 110}[mount], 28, "estimate"),
         ("stiffening rods x2 (prototype only)", 0.03 if proto else 0.0, 204, 26, "8 mm CF tube"),
         ("fasteners, inserts", 0.06, 204, 30, "estimate"),
         ("J1 + J2 pigtails with plugs (head-borne half)", 0.13, 135, 60, "estimate: 2 x 0.3 m cable + M16/M12 plugs"),
     ]
+    return [(n, m, x + dx, z, s) for n, m, x, z, s in items]
 
 
 def roll_up(items):
@@ -98,12 +109,12 @@ def roll_up(items):
     return m, sum(i[1] * i[2] for i in items) / m, sum(i[1] * i[3] for i in items) / m
 
 
-PACKS = {"9 Ah PSL-SC-1290 (1.00 kg)": 1.00, "12 Ah PSL-SC-12120 (1.65 kg)": 1.65}
+PACKS = {"12 Ah PSL-SC-12120 (1.65 kg, baseline)": 1.65, "9 Ah PSL-SC-1290 (1.00 kg, alternative)": 1.00}
 
 
-def cases(ballast=0.0):
-    base_p, base_q = base_items("prototype"), base_items("production")
-    hp, hq = roll_up(head_items("prototype")), roll_up(head_items("production"))
+def cases(ballast=0.0, mount="C"):
+    base_p, base_q = base_items("prototype", mount), base_items("production", mount)
+    hp, hq = roll_up(head_items("prototype", mount)), roll_up(head_items("production", mount))
     heads = {"none (transport / LAB)": (0.0, 0.0, 0.0), "prototype printed head": hp, "production Al head": hq,
              "heaviest / dummy head (production + 15 %)": (hq[0] * 1.15, hq[1], hq[2])}
     out = []
@@ -112,7 +123,7 @@ def cases(ballast=0.0):
         mb, xb, zb = roll_up(base)
         for pname, mp in PACKS.items():
             for hname, (mh, xh, zh) in heads.items():
-                parts = [(mb, xb, zb), (mp, X_PACK, 75.0), (mh, xh, zh), (ballast, P.BODY_TAIL_X + 22, 60.0)]
+                parts = [(mb, xb, zb), (mp, X_PACK, sum(B["pack_z"]) / 2), (mh, xh, zh), (ballast, P.BODY_TAIL_X + 22, 60.0)]
                 m = sum(p[0] for p in parts)
                 x = sum(p[0] * p[1] for p in parts) / m
                 z = sum(p[0] * p[2] for p in parts) / m
@@ -144,7 +155,7 @@ def run():
         ("Controlled deceleration / max acceleration", f"{P.A_DECEL} / {P.A_MAX}", "m/s2", "contract motion"),
         ("Slope", SLOPE_DEG, "deg", "task statement"), ("Lateral acceleration v*w", f(P.V_MAX_FWD * P.YAW_MAX, 3), "m/s2", "contract motion"),
         ("Upper / lower skin area", f"{A_UP / 1e2:.0f} / {A_LO / 1e2:.0f}", "cm2", "calculated from the Rev E section tables"),
-        ("Pack CG x", f(X_PACK), "mm", "params.BATTERY_BAY"), ("Head CG x", X_HEAD, "mm", "roll-up below"),
+        ("Pack CG x", f(X_PACK), "mm", "params.BATTERY_BAY"), ("Optical row x", P.ROW_X, "mm", "params (mount option C, CCR-11)"),
     ]))
     for build in ("prototype", "production"):
         b, h = base_items(build), head_items(build)
@@ -169,8 +180,8 @@ def run():
     key["ballast_kg"] = bal
     md.append(f"\n**Finding (calculated).** Forward tip margin = -(x_CG + z_CG (a/g + tan 5 deg)); the head lands on its rails when it reaches zero. "
               f"Worst operating case: {key['worst_case']} -> margin **{worst['fwd_tip_margin_mm']:.1f} mm**, static caster load {worst['N_caster']:.1f} N "
-              f"({100 * worst['N_caster'] / (worst['m'] * G):.1f} % of weight). The Rev D body with the same hardware would be nose-heavy: the cantilevered head "
-              f"({key['production_head_kg']:.2f} kg at x = {X_HEAD:.0f} mm) is why the Rev E body grows rearward only and carries the pack, compute, LiDAR and controls behind the axle.")
+              f"({100 * worst['N_caster'] / (worst['m'] * G):.1f} % of weight). With the Rev D neck (row at x = 204) and the 9 Ah pack this margin was -6.9 mm; the 12 Ah baseline pack and the shortened head overhang (row at x = {P.ROW_X}) "
+              f"move the centre of gravity rearward (head {key['production_head_kg']:.2f} kg).")
     if bal is None:
         md.append("No tail ballast up to 3 kg reaches the 8 % target: architecture change needed.")
     elif bal > 0:
@@ -203,7 +214,7 @@ def run():
     gz = (P.GRIP["bar_bottom_z"] + P.GRIP["bar_top_z"]) / 2
     rows = []
     for cc in cs:
-        if cc["build"] == "production" and cc["pack"].startswith("9"):
+        if cc["build"] == "production" and cc["pack"].startswith("12"):
             rows.append((cc["head"], f(cc["m"], 2), f(cc["x"]), f(math.degrees(math.atan2(cc["x"] - P.GRIP["center_x"], gz - cc["z"])))))
     md.append("\n## 3. Carry balance at the grip\n")
     md.append(table(["Head", "Mass (kg)", "CG x (mm)", "Hang angle at the grip, + = nose down (deg)"], rows))

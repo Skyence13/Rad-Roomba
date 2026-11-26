@@ -1,6 +1,6 @@
 {
  "summary": {
-  "volumetric interference": "FAIL -- 5 clash(es)",
+  "volumetric interference": "PASS -- none",
   "containment in Rev E cavity": "FAIL -- 1 part(s) outside",
   "head inside the proposed envelope (CCR-11) and the contract z ceiling": "PASS -- x 68.8..192.2, z 7.0..45.0; shoes reach back to x 30.0",
   "wheel and caster on the floor plane": "PASS -- z = 0 +- 0.05",
@@ -8,7 +8,7 @@
   "LiDAR scan plane": "PASS -- clear",
   "service sweeps (battery, wheels, head, grip hand zone)": "PASS -- free",
   "J1/J2 coupling-nut grasp zone (45 mm radial) free": "PASS -- free (see service section)",
-  "cable corridors": "FAIL -- {'right_bay': [('hands_on_body', 70.0)]}"
+  "cable corridors": "FAIL -- {'right_bay': [('hands_on_body', 69.0)]}"
  },
  "extents": {
   "overall x (tail .. leading rail)": "-271.9 .. 192.2  (length 464.1)",
@@ -23,33 +23,7 @@
   "caster contact / wheel contact z": "0.00 / 0.00",
   "grip bar z / LiDAR top z": "153.0..175.0 / 230.0"
  },
- "clash": [
-  [
-   "chassis_plate",
-   "tof_cliff_fl",
-   28.0
-  ],
-  [
-   "chassis_plate",
-   "tof_cliff_fr",
-   28.0
-  ],
-  [
-   "receiver_channel_L",
-   "tof_cliff_fl",
-   14.0
-  ],
-  [
-   "receiver_channel_R",
-   "tof_cliff_fr",
-   14.0
-  ],
-  [
-   "CM5_carrier_assembly",
-   "rearm_start_body",
-   2.1
-  ]
- ],
+ "clash": [],
  "close": [
   [
    "chassis_plate",
@@ -72,9 +46,29 @@
    1.2
   ],
   [
+   "chassis_plate",
+   "tof_cliff_fl",
+   1.0
+  ],
+  [
+   "chassis_plate",
+   "tof_cliff_fr",
+   1.0
+  ],
+  [
+   "receiver_channel_L",
+   "tof_cliff_fl",
+   1.0
+  ],
+  [
    "receiver_channel_L",
    "head_shoe_L",
    0.5
+  ],
+  [
+   "receiver_channel_R",
+   "tof_cliff_fr",
+   1.0
   ],
   [
    "receiver_channel_R",
@@ -117,6 +111,11 @@
    0.5
   ],
   [
+   "bridge_post_0",
+   "CM5_carrier_assembly",
+   1.0
+  ],
+  [
    "battery_cassette",
    "battery_tunnel_wall_L",
    1.0
@@ -135,6 +134,11 @@
    "battery_tunnel_wall_L",
    "CM5_carrier_assembly",
    1.0
+  ],
+  [
+   "CM5_carrier_assembly",
+   "rearm_start_body",
+   0.91
   ],
   [
    "Leading_contact_rail",
@@ -313,8 +317,8 @@
    [
     -45.0,
     112.0,
-    117.1,
-    -12.9
+    108.1,
+    -0.9
    ]
   ]
  ],
@@ -426,7 +430,7 @@
     99,
     105,
     84,
-    98
+    92
    ],
    "use": "left motor/encoder, left look-ahead ToF, USB/5 V to CM5",
    "blocked_by": []
@@ -438,7 +442,7 @@
     -105,
     -99,
     84,
-    98
+    92
    ],
    "use": "pack feed from the coupler, charge feed, right motor/encoder, E-stop loop",
    "blocked_by": []
@@ -474,7 +478,7 @@
     59,
     80,
     78,
-    98
+    90
    ],
    "use": "CM5 USB/Ethernet/antenna pigtails, selector and REARM leads",
    "blocked_by": []
@@ -483,7 +487,7 @@
    "box": [
     -185,
     -100,
-    -95,
+    -90,
     -60,
     45,
     76
@@ -492,7 +496,7 @@
    "blocked_by": [
     [
      "hands_on_body",
-     70.0
+     69.0
     ]
    ]
   }
@@ -502,7 +506,7 @@
    "sensor": "tof_cliff_fl",
    "start": [
     46.0,
-    108.0,
+    109.5,
     31.0
    ],
    "dir": [
@@ -512,7 +516,7 @@
    ],
    "floor_hit_xy_range": [
     46.0,
-    108.0,
+    109.5,
     31.0
    ],
    "centre_ray_hits": [],
@@ -522,7 +526,7 @@
    "sensor": "tof_cliff_fr",
    "start": [
     46.0,
-    -108.0,
+    -109.5,
     31.0
    ],
    "dir": [
@@ -532,7 +536,7 @@
    ],
    "floor_hit_xy_range": [
     46.0,
-    -108.0,
+    -109.5,
     31.0
    ],
    "centre_ray_hits": [],

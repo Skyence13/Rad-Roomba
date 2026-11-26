@@ -89,3 +89,111 @@ Linear limits above baseline: preamp 4.25 V, FAST/SLOW at the comparator (Schott
 | S13360-6050PE | 1280 | 2.00 | 1.71 | 0.270 |
 | NUV-MT 6x6 @12V | 1550 | 2.00 | 1.70 | 0.071 |
 | 4x J60035@2.5V | 16560 | 2.00 | 1.69 | 0.608 |
+
+### T6 Lowest usable BETA_LLD from dark-count pile-up (calculated from datasheet DCR, crosstalk and the resolving time of T2 x 0.50 (factor fitted to the Monte-Carlo below); DCR(T) = DCR(25 C) * 2^((T-25)/8 C) assumed, range 7..10 C)
+
+| device | DCR case | +25 C: LLD p.e. for <1/s (<0.1/s) | +10 C: LLD p.e. for <1/s (<0.1/s) | +0 C: LLD p.e. for <1/s (<0.1/s) | -20 C: LLD p.e. for <1/s (<0.1/s) |
+|---|---|---|---|---|---|
+| J60035@2.5V | typ | 10 (11)  [DCR 1.8e+06/s] | 8 (10)  [DCR 5e+05/s] | 8 (9)  [DCR 2.1e+05/s] | 7 (8)  [DCR 3.7e+04/s] |
+| J60035@2.5V | max | 11 (13)  [DCR 5.5e+06/s] | 9 (11)  [DCR 1.5e+06/s] | 8 (10)  [DCR 6.3e+05/s] | 7 (9)  [DCR 1.1e+05/s] |
+| J60035@6V | typ | 25 (29)  [DCR 5.5e+06/s] | 21 (25)  [DCR 1.5e+06/s] | 20 (23)  [DCR 6.3e+05/s] | 17 (20)  [DCR 1.1e+05/s] |
+| J60035@6V | max | 29 (33)  [DCR 1.7e+07/s] | 24 (28)  [DCR 4.5e+06/s] | 22 (26)  [DCR 1.9e+06/s] | 18 (22)  [DCR 3.4e+05/s] |
+| J30035@2.5V | typ | 8 (9)  [DCR 4.7e+05/s] | 7 (9)  [DCR 1.3e+05/s] | 7 (8)  [DCR 5.4e+04/s] | 6 (7)  [DCR 9.5e+03/s] |
+| J30035@2.5V | max | 9 (10)  [DCR 1.4e+06/s] | 8 (9)  [DCR 3.9e+05/s] | 7 (9)  [DCR 1.6e+05/s] | 6 (8)  [DCR 2.9e+04/s] |
+| S14160-6050HS | typ | 10 (12)  [DCR 5.8e+06/s] | 9 (10)  [DCR 1.6e+06/s] | 8 (9)  [DCR 6.7e+05/s] | 7 (8)  [DCR 1.2e+05/s] |
+| S14160-6050HS | max | 13 (15)  [DCR 1.8e+07/s] | 10 (11)  [DCR 4.8e+06/s] | 9 (10)  [DCR 2e+06/s] | 8 (9)  [DCR 3.5e+05/s] |
+| S13360-6050PE | typ | 7 (8)  [DCR 2e+06/s] | 6 (7)  [DCR 5.5e+05/s] | 6 (6)  [DCR 2.3e+05/s] | 5 (6)  [DCR 4.1e+04/s] |
+| S13360-6050PE | max | 8 (9)  [DCR 6e+06/s] | 7 (8)  [DCR 1.6e+06/s] | 6 (7)  [DCR 6.9e+05/s] | 5 (6)  [DCR 1.2e+05/s] |
+| NUV-MT 6x6 @12V | typ | 21 (25)  [DCR 4.4e+06/s] | 19 (22)  [DCR 1.2e+06/s] | 17 (21)  [DCR 5e+05/s] | 15 (18)  [DCR 8.9e+04/s] |
+| NUV-MT 6x6 @12V | max | 25 (28)  [DCR 1.3e+07/s] | 21 (24)  [DCR 3.6e+06/s] | 19 (23)  [DCR 1.5e+06/s] | 16 (20)  [DCR 2.7e+05/s] |
+| 4x J60035@2.5V | typ | 14 (16)  [DCR 7.4e+06/s] | 11 (12)  [DCR 2e+06/s] | 9 (11)  [DCR 8.4e+05/s] | 8 (9)  [DCR 1.5e+05/s] |
+| 4x J60035@2.5V | max | 21 (22)  [DCR 2.2e+07/s] | 13 (15)  [DCR 6e+06/s] | 11 (12)  [DCR 2.5e+06/s] | 8 (10)  [DCR 4.5e+05/s] |
+
+The table gives the integer n such that a threshold at (n - 0.5) p.e. has a dark trigger rate below the target.  Sensitivity to the assumed halving temperature (J60035@2.5V typ, -20 C): T_half 7 C -> 6 p.e., T_half 8 C -> 7 p.e., T_half 10 C -> 7 p.e.
+
+Monte-Carlo check (J60035@2.5V, 25 C, 0.6 s of simulated dark pulses, real shaped pulse):
+
+| n (threshold n-0.5 p.e.) | model, resolving time = area/peak 1/s | model, fitted factor 1/s | Monte-Carlo 1/s | MC / fitted model |
+|---|---|---|---|---|
+| 3 | 7.06e+04 | 4.13e+04 | 4.44e+04 | 1.07 |
+| 4 | 1.31e+04 | 6.68e+03 | 6.72e+03 | 1.01 |
+| 5 | 2.41e+03 | 1.12e+03 | 1.06e+03 | 0.95 |
+
+### T7 Timing budget (calculated unless marked)
+
+| item | value | evidence |
+|---|---|---|
+| SiPM recharge (J60035) | 50 ns | datasheet |
+| Input pole R_IN*Ct (J60035, 10.0 ohm) | 41 ns | calculated |
+| FAST peaking time / FWHM / resolving time | 59 / 80 / 91 ns | calculated |
+| FAST undershoot after a beta pulse (fraction of peak) | 0.000 | calculated (pole-zero matched) |
+| SLOW peaking time for a ZnS(Ag) alpha | 0.53 us | calculated (ZnS profile assumed) |
+| Comparator propagation delay (100 mV / 5 mV overdrive) | 4.5 / 7.5 ns typ (12 ns max over T at 5 mV) | datasheet TLV3501 |
+| Latch minimum clock pulse width (SN74LVC74A, 3.3 V) | 3.3 ns | datasheet |
+| Smallest pulse/threshold ratio that still clocks the latch (TOT >= 4.3 ns) | 1.003 (i.e. effective threshold +0.3 %) | calculated |
+| Timer capture resolution (144 MHz) | 6.94 ns | calculated |
+| Acceptance window W | 4 us default | contract |
+| Service interval | 10 us (100 kHz) | contract |
+| Dead time per event: W + U(0, T_service) + ISR | mean 10.5 us, max 15.5 us | calculated; ISR allowance 1.5 us ASSUMED; measured per event in operation |
+
+Non-paralysable live fraction with the mean dead time (calculated):
+
+| true rate 1/s | live fraction | recorded rate 1/s | P(second event inside W) % | P(pile-up inside fast resolving time) % |
+|---|---|---|---|---|
+| 10 | 0.9999 | 10 | 0.00 | 0.000 |
+| 100 | 0.9990 | 100 | 0.04 | 0.001 |
+| 2000 | 0.9794 | 1959 | 0.80 | 0.018 |
+| 10000 | 0.9050 | 9050 | 3.92 | 0.091 |
+| 50000 | 0.6557 | 32787 | 18.13 | 0.453 |
+| 100000 | 0.4878 | 48780 | 32.97 | 0.904 |
+
+Rate at which the live fraction reaches 0.5: 9.52e+04 /s; hard ceiling 1 event per service tick = 100000 /s.
+
+### T8 Bias set-point, trim and temperature compensation (calculated)
+
+HV = 25.0 x V(HV_SET): full scale 62.5 V, 12-bit step 15.26 mV (16-bit DAC80508 drop-in: 0.95 mV). Anode trim step 0.61 mV, range 0.10..2.50 V usable.
+
+| device | Vbias 25 C | Vbias -25 C | Vbias +40 C | max incl. Vbr tolerance | gain change %/C uncompensated | gain step per trim LSB % | IR drop in 1.1 k filter mV (dark typ) | = gain error % if uncorrected | inside 20-60 V |
+|---|---|---|---|---|---|---|---|---|---|
+| J60035@2.5V | 26.95 | 25.88 | 27.27 | 27.52 | 0.86 | 0.024 | 1.0 | 0.04 | yes |
+| J60035@6V | 30.45 | 29.38 | 30.77 | 31.02 | 0.36 | 0.010 | 8.2 | 0.14 | yes |
+| J30035@2.5V | 26.95 | 25.88 | 27.27 | 27.52 | 0.86 | 0.024 | 0.3 | 0.01 | yes |
+| S14160-6050HS | 40.70 | 39.00 | 41.21 | 41.21 | 1.26 | 0.023 | 2.8 | 0.10 | yes |
+| S13360-6050PE | 56.00 | 53.30 | 56.81 | 61.81 | 1.80 | 0.020 | n/a | n/a | NO (>60 V) |
+| NUV-MT 6x6 @12V | 44.50 | 43.00 | 44.95 | 44.95 | 0.25 | 0.005 | 9.5 | 0.08 | yes |
+| 4x J60035@2.5V | 26.95 | 25.88 | 27.27 | 27.52 | 0.86 | 0.024 | 4.0 | 0.16 | yes |
+
+### T9 Heater (calculated; element 4.8 ohm = 30 W at 12.0 V)
+
+| bus V at the element | I A | P W | duty % for 16 W (-20 C) | duty % for 19 W (-25 C) |
+|---|---|---|---|---|
+| 10.0 | 2.08 | 20.8 | 77 | 91 |
+| 12.0 | 2.50 | 30.0 | 53 | 63 |
+| 12.8 | 2.67 | 34.1 | 47 | 56 |
+| 14.6 | 3.04 | 44.4 | 36 | 43 |
+| 15.0 | 3.12 | 46.9 | 34 | 41 |
+
+Slew-limited edge 1.2 ms: dI/dt = 2604 A/s; with an assumed 10 nH mutual inductance to a pigtail loop the induced voltage is 26.0 uV for 1.2 ms (an un-slewed 100 ns edge would give 0.31 V).
+Edge spectrum corner 292 Hz; fast CR (22 ns) passes 4.0e-05 of it -> 6.70e-05 p.e. equivalent at the FAST output (J60035).  Switching energy per edge 0.5*V*I*t = 28 mJ at 15 V.
+
+### T10 Power budget (calculated from datasheet typical/maximum quiescent currents; MCU current assumed)
+
+| rail (from +5V6 pre-regulator) | loads mA typ/max | I typ mA | I max mA | LDO loss typ mW | LDO loss max mW |
+|---|---|---|---|---|---|
+| +5V_A (TPS7A2050) | 16 x OPA838 (preamp, fast) 15/17; 5 x OPA836 (slow x4, monitor) 5/7; 4 x TLV9062 trim buffers + 2 misc op-amps 7/9; 4 x DAC60508 10/16; 5 x TMUX1108, references, dividers 2/4 | 39 | 53 | 24 | 33 |
+| +3V3_EVT (TLV76733) | 20 comparators TLV350x 64/100; 20 latches + OR gates, decoders 3/8 | 67 | 108 | 156 | 252 |
+| +3V3 (TLV76733) | STM32G474 at 144 MHz 45/70; TPS61391 boost input (HV 66 V x 0.6 mA / 60 %) 20/45; ISO1430 logic side, TMP117 x2, EEPROM, TCXO, LEDs 12/20; REF3030, TLV7021 x2, misc 1/3 | 78 | 138 | 182 | 322 |
+
+Pre-regulator output 5.63 V: 184 mA typ / 299 mA max -> input power 1.20 W typ (buck 88 %) / 2.10 W max (buck 82 %), including eFuse and input-filter loss.  Input current at 12.8 V: 93 mA typ; at 9.0 V and maximum load: 234 mA.  Bus side of the isolator (from BUS_5V on J2, not in this total): ~60 mA while transmitting into 60 ohm, <10 mA idle (datasheet class, UNVERIFIED exact figure).
+Against the allocation: 1.20 W typ / 2.10 W max vs 5 W target and 10 W limit.
+
+### T11 Charge-injection pulser (calculated)
+
+| device | Q per p.e. pC | full-scale injection p.e. (100 pF x 2.5 V = 250 pC) | step per DAC LSB p.e. |
+|---|---|---|---|
+| J60035@2.5V | 0.465 | 538 | 0.13 |
+| S14160-6050HS | 0.401 | 624 | 0.15 |
+| S13360-6050PE | 0.272 | 918 | 0.22 |
+| NUV-MT 6x6 @12V | 1.169 | 214 | 0.05 |
+
+wrote head_afe_pulses.png

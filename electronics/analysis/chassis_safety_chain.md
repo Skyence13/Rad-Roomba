@@ -37,7 +37,7 @@ VBAT_SW ─ F2 (PTC 0.20 A hold) ─ CH_N0
   CH_N3  ─[ J_COVER 1-2: inlet cover switch, closed = cover shut ]───────── CH_N4A  CHG_COVER (cover)
   CH_N4A ─[ U20 photo-MOS: on only if plug link absent AND inlet dead ]─── CH_N4   CHG_COVER (plug)
   CH_N4  ─[ J_DOCK 1-3: head dock switch ]──────────────────────────────── CH_N5   HEAD_DOCK
-  CH_N5  ─[ U21 photo-MOS: J1 loop 0.59–1.59 kΩ ]───────────────────────── CH_N6   HEAD_LOOP
+  CH_N5  ─[ U21 photo-MOS: J1 loop 0.59–1.55 kΩ ]───────────────────────── CH_N6   HEAD_LOOP
   CH_N6  ─[ U22 photo-MOS: PRES_ID 3.92–5.64 kΩ (head, no LAB resistor) ]─ CH_N7   LAB_KEY_N
   CH_N7  ─[ J_BUMP_L 1-2 ]─ CH_N8A ─[ J_BUMP_R 1-2 ]────────────────────── CH_N8   BODY_BUMPER
   CH_N8  ─[ U23 photo-MOS: external window watchdog satisfied ]──────────── CH_N9   WDG_OK
@@ -65,8 +65,8 @@ Design rules applied:
 
 | Element | Sensing | Closed when | Fails open on |
 |---|---|---|---|
-| U20 plug link / inlet | Gate of Q20 is pulled up from V5_AUX; the plug link (J_PWR 7–8, linked in the charge plug) or Q21 (on when the inlet carries > ~10 V) pulls it low | no plug link **and** no inlet voltage | loss of V5_AUX, link wire shorted to ground |
-| U21 HEAD_LOOP | V5_AUX → 1.00 kΩ → J1 pin 5 → head (3 NC rail switches + 1.00 kΩ) → J1 pin 6 → 1.00 kΩ to ground; 100 Ω in each line. The voltage on the lower 1.00 kΩ is compared with two taps of a divider on the same V5_AUX (ratiometric) by U30 (LM2903B, open-collector outputs wired-AND) | loop resistance 0.59–1.59 kΩ [C] (1.32–1.79 V on the sense resistor; healthy 1.56 V; short 2.27 V; open 0 V) | open loop, unplugged J1, shorted pair, either line shorted to ground or to +12 V, loss of V5_AUX |
+| U20 plug link / inlet | Gate of Q20 is pulled up from V5_AUX; the plug link (J_PWR 4–8, linked in the charge plug) or Q21 (on when the inlet carries > ~10 V) pulls it low | no plug link **and** no inlet voltage | loss of V5_AUX, link wire shorted to ground |
+| U21 HEAD_LOOP | V5_AUX → 1.00 kΩ → J1 pin 5 → head (3 NC rail switches + 1.00 kΩ) → J1 pin 6 → 1.00 kΩ to ground; 100 Ω in each line. The voltage on the lower 1.00 kΩ is compared with two taps of a divider on the same V5_AUX (ratiometric) by U30 (LM2903B, open-collector outputs wired-AND) | loop resistance 0.59–1.55 kΩ [C] (1.33–1.79 V on the sense resistor; healthy 1.56 V; short 2.27 V; open 0 V) | open loop, unplugged J1, shorted pair, either line shorted to ground or to +12 V, loss of V5_AUX |
 | U22 LAB_KEY_N | VREF_3V0 → 4.70 kΩ 0.1 % → J1 pin 7; code resistor returns to J1 pin 2. Window comparator U31 against a divider on VREF_3V0 | PRES_ID resistance 3.92–5.64 kΩ [C] (1.364–1.636 V; head direct = 1.500 V) | no head (> 5.64 kΩ), LAB extension fitted (1.137 kΩ → 0.58 V), extension alone (1.50 kΩ → 0.73 V), short, loss of VREF or V5_AUX |
 | U23 WDG_OK | TPS3430 window watchdog U40, presets CWD = NC, SET0 = 0, SET1 = 1: strobe must arrive 2.2–23.4 ms after the previous one [D]; firmware strobes every 10 ms. WDO (open drain, 200 ms assertion [D]) drives Q23 | watchdog satisfied | missing, early or late strobe; loss of 3V3 |
 | U24 ARM_PERMIT | MCU PB10 with 4.7 kΩ pull-down drives Q24 | pin driven high | MCU in reset, unprogrammed, in the ROM bootloader; loss of 3V3 |
@@ -113,7 +113,7 @@ The lamp in the HANDS-ON button is supplied from CH_N2 (the chain node upstream 
 
 ### 2.6 What stays live with the selector in OFF
 
-The selector's second contact opens the enable of the pack switch (LM74502 + back-to-back MOSFETs) and of all three regulators. In OFF: the pack coupler, harness, main fuse, J_PWR pins 1–4, the TVS, the MOSFET drains and the 100 kΩ enable feed to the selector are at pack voltage; everything else is dead, including the chain. A connected charger keeps its inlet, fuse and the charger IC's input side at 24 V; nothing is charged and nothing runs in OFF. **OFF is a functional switch-off through MOSFETs, not isolation.** Isolation for service is removal of the pack (blind-mate coupler) and of the charge plug.
+The selector's second contact opens the enable of the pack switch (LM74502 + back-to-back MOSFETs) and of all three regulators. In OFF: the pack coupler, harness, main fuse, J_PWR pins 1–2, the TVS, the MOSFET drains and the 100 kΩ enable feed to the selector are at pack voltage; everything else is dead, including the chain. A connected charger keeps its inlet, fuse and the charger IC's input side at 24 V; nothing is charged and nothing runs in OFF. **OFF is a functional switch-off through MOSFETs, not isolation.** Isolation for service is removal of the pack (blind-mate coupler) and of the charge plug.
 
 ## 3. Timing budget
 
@@ -179,7 +179,7 @@ Columns: failure mode → effect on the chain → detected by → residual risk.
 | 19 | U30 comparator B (short detection) | output stuck off | a shorted loop pair is accepted | same ADC cross-check; only exercised with a shorting plug (commissioning) | **⚠** latent; needs a second fault (pair short) to matter |
 | 20 | U30 | output stuck low | chain open | readback | none |
 | 21 | Loop source R70 / sense R71 (1.00 kΩ) | drift, open, short | R70 open or R71 short: reads open → chain opens. R71 open: reads high → opens. R70 short: healthy loop reads 1.92 V → opens | readback, ADC | none; ±20 % drift of one resistor shifts the window by about 0.2 kΩ (noticed in the ADC value) |
-| 22 | Threshold divider R72–R74 | one resistor open/short | window collapses or widens: open top → both thresholds 0 → "short" → chain open; open bottom → both at 5 V → open-detection lost? No: lower threshold at 5 V means "open" → chain open. R73 short → zero-width window → open | readback | none identified that widens the window on a single fault except R72 drift |
+| 22 | Threshold divider R72 (top), R73 (middle), R74 (bottom), R75 (2.2 MΩ keep-alive to the lower tap) | open or short of one resistor | R72 open or short, R73 short, R74 open: the window closes → chain opens (safe). **R73 open**: upper threshold goes to 5 V (short detection lost); R75 keeps the lower threshold at ≈ 23 mV so an open loop is still detected. **R74 short**: lower threshold 0 V, open-loop detection becomes indeterminate | closed-window cases: readback. R73 open, R74 short: firmware ADC cross-check only | **⚠** R73 open is latent (needs a pair short as second fault); R74 short is dangerous until the ADC cross-check acts (thick-film resistors rarely fail short) |
 | 23 | Q22 (U21 LED driver) | drain-source short | U21 permanently on: HEAD_LOOP element lost | as #18 (ADC against chain node) | **⚠** as #18 |
 | 24 | Head-side: wire-to-wire short inside the head that bypasses the three switches but not the 1.00 kΩ | — | rail switches bypassed, loop reads healthy | not detectable by the chassis | **⚠** head design must place the resistor at the far end of the switch string and the pre-use rail press finds it |
 | 25 | U31 LAB comparators, Q28 | stuck so that U22 stays on | LAB_KEY_N lost: with the LAB extension fitted only HEAD_DOCK (open, head is off the robot) keeps the chain open | firmware decodes PRES_ID on the ADC and compares with LAB_KEY_N_RB | LAB still has HEAD_DOCK open and ARM_PERMIT low; needs two more faults to move |
@@ -248,9 +248,9 @@ Record every reading. Stop at the first deviation.
 
 1. **Unpowered continuity.** No pack. With all field devices connected and in their run state, measure J_MODE 3 → J_ESTOP… through to U20 input: each switch loop < 1 Ω; CH_N0 to ground > 50 kΩ; COIL_RTN to ground < 1 Ω with the E-stop released and open with it pressed. K2/K3: motor terminal A to B = 1.0 Ω + winding in parallel (≈ 0.7 Ω); motor terminals to bridge outputs open.
 2. **Logic rails only.** Bench supply 12.0 V, 0.5 A limit, selector SERVICE. Expect 3V3, V5_AUX, VREF 3.000 V; CH_N1 = 0 V; all readbacks low; VMOT 0 V. Selector RUN: CH_N1…CH_N4 follow as each device is closed; operate each device in turn and note the node that falls and the readback bit.
-3. **HEAD_LOOP window.** Decade box on J1 pins 5–6: U21 on between 0.59 kΩ and 1.59 kΩ (±5 %), off at 0 Ω, at open, and with either pin tied to ground or to 12 V through 1 kΩ. Log HEAD_LOOP_SENSE at 0.6, 1.0, 1.6 kΩ (expect 1.79, 1.56, 1.32 V).
+3. **HEAD_LOOP window.** Decade box on J1 pins 5–6: U21 on between 0.59 kΩ and 1.55 kΩ (±5 %), off at 0 Ω, at open, and with either pin tied to ground or to 12 V through 1 kΩ. Log HEAD_LOOP_SENSE at 0.6, 1.0, 1.6 kΩ (expect 1.79, 1.56, 1.32 V).
 4. **PRES_ID window.** Decade box on J1 pins 7–2: U22 on between 3.92 and 5.64 kΩ only; check 1.137 kΩ, 1.50 kΩ, open and short all give off. Log the ADC value at each contract code.
-5. **Plug link / inlet.** Link J_PWR 7–8: CH_N4 falls. Remove link, apply 24 V to the inlet pins through 1 kΩ: CH_N4 falls.
+5. **Plug link / inlet.** Link J_PWR 4–8: CH_N4 falls. Remove link, apply 24 V to the inlet pins through 1 kΩ: CH_N4 falls.
 6. **Watchdog and permit** with a test firmware: no strobe → CH_N9 low; 10 ms strobe → high; 1 ms and 40 ms strobe → low. ARM_PERMIT low/high → CHAIN_END follows. Hold the MCU in reset: CHAIN_END low.
 7. **Latch.** All elements closed. Press REARM: K1, K2, K3 pick up; RUN_12V = supply − < 0.5 V; chain current 70–90 mA. Hold REARM and open any element: everything drops and does not return while the button is held; after release and re-close, nothing returns until REARM is pressed again, and not within 3 s of the previous press. Short the REARM contacts permanently: the latch must not set after an element is cycled.
 8. **Each element drops the latch.** Arm; open each element in turn (including each E-stop pole alone, by lifting one wire); re-arm between. Scope RUN_12V and a brake-relay NC contact: record time to NC closure (expect ≤ 10.5 ms; ≤ 13 ms for the loop and PRES_ID).

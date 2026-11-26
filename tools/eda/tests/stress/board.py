@@ -24,8 +24,8 @@ board.zone("+3V3", ["In2.Cu"], connect="solid")
 board.zone("+5V", ["In2.Cu"], polygon=[(0, 0), (30, 0), (30, 30), (0, 30)], priority=1, connect="solid")
 board.zone("GND", ["F.Cu", "B.Cu"])
 board.text("{name} rev {rev} {date}", 50, 2.0, size=1.2)
-board.route(passes=40, timeout=1200, fanout=False, optimizer=False)
-board.autoplace_options(clearance=0.5, ic_halo=3.0)
+# measured: 25 passes ~6.5 min -> 4 connections left open; 40 passes / wider spacing was not better
+board.route(passes=25, timeout=900, fanout=False, optimizer=False)
 
 # ------------------------------------------------------------------- power
 pw = board.group("power", "Power input and 3V3 regulator", notes="Screw terminal 5 V in, LDO to 3V3.")

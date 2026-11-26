@@ -181,7 +181,7 @@
     "unconnected": 3,
     "unconnected_items": [
       "unconnected_items | Missing connection between items | Zone 'GND_F.Cu_B.Cu' [GND] on F.Cu and B.Cu, priority 0 | Pad 27 [GND] of U1 on F.Cu",
-      "unconnected_items | Missing connection between items | Track [+3V3] on F.Cu, length 0.7208 mm | Track [+3V3] on F.Cu, length 0.1192 mm",
+      "unconnected_items | Missing connection between items | Track [+3V3] on F.Cu, length 0.7208 mm | Pad 1 [+3V3] of C101 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 59 [IO42] of U1 on F.Cu | Pad 19 [IO42] of U2 on F.Cu"
     ],
     "unrouted_nets": [
@@ -205,7 +205,6 @@
     "DRC: 3 unconnected item(s) on nets: +3V3, GND, IO42"
   ],
   "notes": [
-    "J1: 3D envelope uses the default height 1.0 mm (give height=)",
     "U50: 3D envelope uses the default height 1.0 mm (give height=)",
     "U51: 3D envelope uses the default height 1.0 mm (give height=)",
     "U52: 3D envelope uses the default height 1.0 mm (give height=)",
@@ -281,12 +280,12 @@
       "dsn_sha256": "830e9d536ec8354c78dc7515175bee4699b9e580f5e24d10160db4e6c760366b",
       "freerouting": "v2.6.0 (build-date: 2026-11-25)",
       "log_tail": [
-        "[8B640A\\2975EE] Auto-routing stage completed: started with 377 unrouted nets, completed in 397.72 seconds, final score: 986.90 (4 unrouted and 0 violations), using 384.69 total CPU seconds, 240.12 GB total allocated, and 931.1 MB peak heap usage.",
-        "[8B640A\\2975EE] Job '8B640A\\2975EE' finished with state: COMPLETED (elapsed: 6 minutes 38.12 seconds, finished at UTC: 2026-11-26T04:30:23.313523999Z)."
+        "[277136\\C29E27] Auto-routing stage completed: started with 377 unrouted nets, completed in 396.64 seconds, final score: 986.90 (4 unrouted and 0 violations), using 384.76 total CPU seconds, 242.81 GB total allocated, and 759.4 MB peak heap usage.",
+        "[277136\\C29E27] Job '277136\\C29E27' finished with state: COMPLETED (elapsed: 6 minutes 36.92 seconds, finished at UTC: 2026-11-26T04:58:31.831953447Z)."
       ],
       "passes_limit": 25,
       "reused": false,
-      "seconds": 401.4,
+      "seconds": 400.1,
       "threads": 4,
       "timed_out": false
     },

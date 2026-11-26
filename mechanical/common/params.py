@@ -252,16 +252,16 @@ RECEIVER = {
     "type": "twin shoe: two rails on the head slide rearward (-x) into two channels under the chassis front beam",
     "shoe_y": SEG_PITCH,                    # shoe centre lines on the S0|S1 and S2|S3 lane seams (y = +-87.5)
     "shoe_width": 16.0, "shoe_z": (16.0, 30.0),            # head-side rail section (y width, z range)
-    "shoe_x": (30.0, HEAD_FRAME_X[0]),                     # shoe tip .. head frame rear face (rail continues into the seam rib)
-    "channel_x": (28.0, 64.0), "channel_width": 24.0, "channel_z": (12.0, 33.0),   # body-side block outer envelope
+    "shoe_x": (4.0, HEAD_FRAME_X[0]),                     # shoe tip .. head frame rear face (rail continues into the seam rib)
+    "channel_x": (2.0, 64.0), "channel_width": 24.0, "channel_z": (12.0, 33.0),   # body-side block outer envelope
     "channel_clear": 0.5,                                  # running clearance each side before the lands
-    "land_x": (34.0, 62.0),                                # centres of the two bearing lands in each channel -> base e = 28 mm
+    "land_x": (8.0, 62.0),                                 # centres of the two bearing lands in each channel -> base e = 54 mm
     "x_stop": HEAD_MOUNT[0],                               # datum A: head shoulders seat on the channel front faces at x = 65.7
     "fixed_side": "left (+y) channel locates y; right channel floats +-0.3 mm in y (thermal growth over 175 mm)",
     "z_datum": 16.0,                                       # datum C: shoe undersides on the channel floor lands
     "latch_box": (88.0, 108.0, -12.0, 12.0, 46.0, 60.0),   # one captive over-centre draw latch under the nose tip, lever lifts forward
     "latch_keeper": (104.0, 0.0, HEAD_TOP_Z),              # keeper on the head cover, centre rear
-    "front_beam": (28.0, 62.0, -99.5, 99.5),               # chassis plate front beam/horns (x0, x1, y0, y1) at plate elevation
+    "front_beam": (2.0, 62.0, -99.5, 99.5),               # chassis plate front beam/horns (x0, x1, y0, y1) at plate elevation
     "chin_cut": (62.0, 50.0),                              # lower hull removed for x > 62 below z = 50 (nose overhangs the head by 36 mm)
     "contact_k_printed": 1500.0, "contact_k_aluminium": 6000.0,   # N/mm per bearing land -- STATED ASSUMPTION for all mount options
 }
@@ -292,7 +292,7 @@ CHS_MAIN = {
     "hole_d": 3.2, "hole_keepout_d": 7.0, "screw": "M3",
 }
 TOF_BOARD = {"outline": tuple(BOARDS_C["RR-TOF"]["outline_mm"]), "thickness": 1.6, "depth_behind_window": 6.0}
-PANEL_BOARD = {"outline": tuple(BOARDS_C["RR-PANEL"]["outline_mm"]), "thickness": 1.6, "center": (-80.0, 100.0), "long_axis": "x", "max_top": 8.0, "below_skin": 21.0}
+PANEL_BOARD = {"outline": tuple(BOARDS_C["RR-PANEL"]["outline_mm"]), "thickness": 1.6, "center": (-80.0, 97.0), "long_axis": "x", "max_top": 8.0, "below_skin": 21.0}
 ELECTRONICS_BRIDGE_Z = (78.0, 80.0)    # 2 mm tray over the motors carrying RR-CHS-MAIN (screen + H-bridge heat path)
 
 # --------------------------------------------------------------------------- body packaging (layout decisions)
@@ -417,7 +417,7 @@ LIDAR_SCAN_PLANE_ABOVE_BASE = 60.0   # UNVERIFIED (no Richbeam drawing obtained)
 _bs = skin_point(143.0, 66.0)
 BODY_BUMPER_SWITCHES = {"bumper_sw_l": (_bs[0], _bs[1], 66.0), "bumper_sw_r": (_bs[0], -_bs[1], 66.0)}
 HEAD_RAIL_SWITCHES = {"rail_sw_front": (257.0 + HEAD_DX, 0.0, 21.0), "rail_sw_left": (ROW_X, 168.5, 21.0), "rail_sw_right": (ROW_X, -168.5, 21.0)}
-HEAD_DOCK_SWITCH = (25.0, SEG_PITCH, 23.0)   # body-side D2HW behind the left receiver channel, pressed by the fully seated shoe tip
+HEAD_DOCK_SWITCH = (-3.0, SEG_PITCH, 23.0)   # body-side D2HW behind the left receiver channel, pressed by the fully seated shoe tip
 
 
 def summary():

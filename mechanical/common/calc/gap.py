@@ -14,8 +14,16 @@ LC = -(P.CASTER_SWIVEL[0] - L.env("caster")["offset"])     # caster contact behi
 YC = P.SEG_Y[0] + P.ACTIVE_Y / 2
 XF, XR = P.ROW_X + P.ACTIVE_X / 2, P.ROW_X - P.ACTIVE_X / 2
 CORNERS = {"front-left": (XF, YC), "front-right": (XF, -YC), "rear-left": (XR, YC), "rear-right": (XR, -YC)}
-RAIL_PTS = {"leading rail corner L": (263.2, 175.0), "leading rail corner R": (263.2, -175.0), "leading rail centre": (263.2, 0.0),
-            "wing return L": (142.3, 174.0), "wing return R": (142.3, -174.0)}
+XRAIL, XWING = 263.2 + P.HEAD_DX, 142.3 + P.HEAD_DX     # Rev D rail centre lines, shifted with the head
+RAIL_PTS = {"leading rail corner L": (XRAIL, 175.0), "leading rail corner R": (XRAIL, -175.0), "leading rail centre": (XRAIL, 0.0),
+            "wing return L": (XWING, 174.0), "wing return R": (XWING, -174.0)}
+
+
+def sensitivities(row_x, lc=None, track=None):
+    """Gap change per mm of (caster rise, single wheel drop) at the row centre, front outer corner and leading rail corner."""
+    lc, track = lc or LC, track or T
+    pts = {"row centre": (row_x, 0.0), "front outer corner": (row_x + P.ACTIVE_X / 2, YC), "rail corner": (row_x + 59.2, 175.0)}
+    return {k: {"caster": x / lc, "wheel": 0.5 * (1 + x / lc) + y / track} for k, (x, y) in pts.items()}
 STATIC = [   # (term, +- mm at the outer corners, basis)
     ("Tyre radius / compression / wear", 0.5, "assumed +-0.5 mm on a 52 mm solid tyre; calibrate loaded"),
     ("Caster height tolerance x 254/L", 0.3 * XF / LC, "assumed +-0.3 mm caster height"),
@@ -49,13 +57,13 @@ def run():
     md.append("## 6. Gap error budget at the four outer window corners\n")
     md.append(inputs_table([("Film gap nominal", P.FILM_Z, "mm", "contract"), ("Rail projections", str(P.RAIL_PROJECTIONS), "mm", "contract -> 7 / 5 mm rail clearance"),
                             ("Track T", T, "mm", "params (CCR-01)"), ("Caster contact behind axle L", LC, "mm", "params (CCR-02) + caster offset"),
-                            ("Outer window corners", f"x {XR:.0f} / {XF:.0f}, y +-{YC}", "mm", "contract optics"), ("Leading rail centreline x", 263.2, "mm", "Rev D model")]))
+                            ("Outer window corners", f"x {XR:.0f} / {XF:.0f}, y +-{YC}", "mm", "contract optics"), ("Leading rail centreline x", f(XRAIL), "mm", "Rev D model shifted by HEAD_DX")]))
     md.append("\nSensitivities (mm of gap change per mm of contact height change; calculated from the three-point plane):\n")
     rows = []
     for n, (x, y) in {**CORNERS, "row centre": (P.ROW_X, 0.0), **RAIL_PTS}.items():
         rows.append((n, f(plane(1, 0, 0)(x, y), 3), f(plane(0, 1, 0)(x, y), 3), f(plane(0, 0, 1)(x, y), 3)))
     md.append(table(["Point", "left wheel +1", "right wheel +1", "caster +1"], rows))
-    md.append(f"\nPitch arm: 1 mm at the caster moves the row centre by {P.ROW_X / LC:.2f} mm (Rev D caster at -116: {P.ROW_X / 116:.2f} mm) -- the longer wheelbase halves the pitch term. "
+    md.append(f"\nPitch arm: 1 mm at the caster moves the row centre by {P.ROW_X / LC:.2f} mm (Rev D: row 204, caster -116: {204 / 116:.2f} mm). "
               f"Roll: 1 mm at one wheel moves the outer corners by +-{YC / T:.2f} mm (Rev D track 220: +-{YC / 220:.2f}).\n")
     md.append("### Static (always present) terms\n")
     md.append(table(["Term", "+- mm at an outer corner", "Basis"], [(a, f(b, 2), c) for a, b, c in STATIC]))
