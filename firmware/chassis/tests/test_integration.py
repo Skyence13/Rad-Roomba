@@ -27,16 +27,23 @@ except ImportError:  # pragma: no cover
     jsonschema = None
 
 
+_validators = {}
+
+
+def _validator(name):
+    if name not in _validators:
+        _validators[name] = jsonschema.Draft202012Validator({"$schema": SCHEMA["$schema"], "$defs": SCHEMA["$defs"], "$ref": "#/$defs/" + name})
+    return _validators[name]
+
+
 def check_schema(test, op, rsp):
     """Validate a decoded response against interface/chassis_link.schema.json."""
     if jsonschema is None:
         return
-    reg = {"$schema": SCHEMA["$schema"], "$defs": SCHEMA["$defs"]}
-    jsonschema.validate(rsp, dict(reg, **{"$ref": "#/$defs/response"}))
-    part = "body_" + op if rsp["status"] == "OK" else "error_body"
+    _validator("response").validate(rsp)
     if rsp["status"] == "BUSY":
         return
-    jsonschema.validate(rsp["body"], dict(reg, **{"$ref": "#/$defs/" + part}))
+    _validator("body_" + op if rsp["status"] == "OK" else "error_body").validate(rsp["body"])
 
 
 class Base(unittest.TestCase):
@@ -303,7 +310,7 @@ class TestMotion(Base):
         self.env.set(usb_stall=True)  # the host side of the link freezes
         stopped_after = None
         while time.monotonic() - t0 < 2.0:
-            tr = self.env.latest(0.01)
+            tr = self.env.latest(0.05)
             if abs(tr["v"]) < 1e-3:
                 stopped_after = time.monotonic() - t0
                 break

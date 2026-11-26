@@ -104,11 +104,25 @@ class Env:
     def close(self):
         self.sock.close()
 
+    def _drain(self):
+        """Discard queued datagrams (the 100 Hz truth stream), remembering the newest truth."""
+        self.sock.setblocking(False)
+        try:
+            while True:
+                msg = json.loads(self.sock.recvfrom(4096)[0])
+                if msg.get("type") == "TRUTH":
+                    self.truth = msg
+        except BlockingIOError:
+            pass
+        finally:
+            self.sock.settimeout(1.0)
+
     def set(self, **kv):
+        self._drain()
         self.sock.sendto(json.dumps(kv).encode(), self.addr)
-        end = time.monotonic() + 1.0
+        end = time.monotonic() + 2.0
         while time.monotonic() < end:
-            msg = json.loads(self.sock.recvfrom(2048)[0])
+            msg = json.loads(self.sock.recvfrom(4096)[0])
             if msg.get("type") == "ACK":
                 if not msg["ok"]:
                     raise ValueError("emulator rejected %r" % kv)
@@ -116,19 +130,20 @@ class Env:
             self.truth = msg
         raise TimeoutError("no ACK from the emulator")
 
-    def latest(self, wait=0.05):
-        """Newest ground-truth message (drains the socket)."""
+    def latest(self, wait=0.5):
+        """A fresh ground-truth message: drains the queue, then waits for the next one."""
+        self._drain()
         self.sock.settimeout(wait)
         try:
             while True:
-                msg = json.loads(self.sock.recvfrom(2048)[0])
+                msg = json.loads(self.sock.recvfrom(4096)[0])
                 if msg.get("type") == "TRUTH":
                     self.truth = msg
-                self.sock.settimeout(0.0005)
-        except (socket.timeout, BlockingIOError):
-            pass
-        self.sock.settimeout(1.0)
-        return self.truth
+                    return msg
+        except socket.timeout:
+            return self.truth
+        finally:
+            self.sock.settimeout(1.0)
 
 
 class Sim:
