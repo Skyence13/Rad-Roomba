@@ -2,34 +2,37 @@
 ** Created on (date removed for reproducibility) **
 ** Report includes: Errors, Warnings, Exclusions **
 
-** Found 3 DRC violations **
-[track_width]: Track width (board setup constraints min width 0.1500 mm; actual 0.1200 mm)
-    Rule: netclass 'Default'; error
-    @(106.2190 mm, 80.3986 mm): Track [AUX09] on F.Cu, length 0.2310 mm
-[track_width]: Track width (board setup constraints min width 0.1500 mm; actual 0.1200 mm)
-    Rule: netclass 'Default'; error
-    @(106.1790 mm, 80.3586 mm): Track [AUX09] on F.Cu, length 0.2648 mm
-[track_width]: Track width (board setup constraints min width 0.1500 mm; actual 0.1200 mm)
-    Rule: netclass 'Default'; error
-    @(106.1790 mm, 80.3586 mm): Track [AUX09] on F.Cu, length 0.0566 mm
+** Found 0 DRC violations **
 
-** Found 4 unconnected pads **
+** Found 7 unconnected pads **
 [unconnected_items]: Missing connection between items
     Local override; error
-    @(103.7500 mm, 83.0400 mm): Via [+3V3] on F.Cu - B.Cu
+    @(103.2500 mm, 81.4375 mm): Track [GND] on F.Cu, length 0.8875 mm
+    @(102.5000 mm, 78.0000 mm): Pad 49 [GND] of U2 on F.Cu
+[unconnected_items]: Missing connection between items
+    Local override; error
     @(103.7500 mm, 81.4375 mm): Pad 9 [+3V3] of U2 on F.Cu
+    @(103.7500 mm, 83.0400 mm): Via [+3V3] on F.Cu - B.Cu
 [unconnected_items]: Missing connection between items
     Local override; error
-    @(76.5000 mm, 96.9250 mm): Pad 24 [IO36] of U1 on F.Cu
-    @(101.7500 mm, 81.4375 mm): Pad 5 [IO36] of U2 on F.Cu
+    @(75.5000 mm, 85.5750 mm): Pad 59 [IO42] of U1 on F.Cu
+    @(105.9375 mm, 77.7500 mm): Pad 19 [IO42] of U2 on F.Cu
 [unconnected_items]: Missing connection between items
     Local override; error
-    @(76.0000 mm, 85.5750 mm): Pad 58 [IO41] of U1 on F.Cu
-    @(105.9375 mm, 78.2500 mm): Pad 18 [IO41] of U2 on F.Cu
+    @(82.4250 mm, 94.0000 mm): Pad 35 [IO49] of U1 on F.Cu
+    @(99.0625 mm, 79.2500 mm): Pad 45 [IO49] of U2 on F.Cu
 [unconnected_items]: Missing connection between items
     Local override; error
     @(82.4250 mm, 93.0000 mm): Pad 37 [IO51] of U1 on F.Cu
     @(105.9375 mm, 76.7500 mm): Pad 21 [IO51] of U2 on F.Cu
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(105.9375 mm, 80.2500 mm): Pad 14 [AUX09] of U2 on F.Cu
+    @(137.0900 mm, 79.5400 mm): PTH pad 10 [AUX09] of J4
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(75.0000 mm, 62.8300 mm): PTH pad 5 [OUT02] of J2
+    @(85.2500 mm, 96.4900 mm): Pad 2 [OUT02] of R202 on F.Cu
 
 ** Found 0 Footprint errors **
 

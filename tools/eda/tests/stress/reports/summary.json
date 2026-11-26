@@ -171,44 +171,57 @@
   "date": "2026-11-25",
   "docnum": "RR-EL-TEST",
   "drc": {
-    "by_type": {
-      "track_width": {
-        "errors": 3,
-        "warnings": 0
-      }
-    },
-    "error_items": [
-      "track_width | Track width (board setup constraints min width 0.1500 mm; actual 0.1200 mm) | Track [AUX09] on F.Cu, length 0.2310 mm",
-      "track_width | Track width (board setup constraints min width 0.1500 mm; actual 0.1200 mm) | Track [AUX09] on F.Cu, length 0.2648 mm",
-      "track_width | Track width (board setup constraints min width 0.1500 mm; actual 0.1200 mm) | Track [AUX09] on F.Cu, length 0.0566 mm"
-    ],
-    "errors": 3,
+    "by_type": {},
+    "error_items": [],
+    "errors": 0,
     "excluded": 0,
     "parity": 0,
     "parity_items": [],
     "report": "reports/drc.json",
-    "unconnected": 4,
+    "unconnected": 7,
     "unconnected_items": [
-      "unconnected_items | Missing connection between items | Via [+3V3] on F.Cu - B.Cu | Pad 9 [+3V3] of U2 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 24 [IO36] of U1 on F.Cu | Pad 5 [IO36] of U2 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 58 [IO41] of U1 on F.Cu | Pad 18 [IO41] of U2 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 37 [IO51] of U1 on F.Cu | Pad 21 [IO51] of U2 on F.Cu"
+      "unconnected_items | Missing connection between items | Track [GND] on F.Cu, length 0.8875 mm | Pad 49 [GND] of U2 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 9 [+3V3] of U2 on F.Cu | Via [+3V3] on F.Cu - B.Cu",
+      "unconnected_items | Missing connection between items | Pad 59 [IO42] of U1 on F.Cu | Pad 19 [IO42] of U2 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 35 [IO49] of U1 on F.Cu | Pad 45 [IO49] of U2 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 37 [IO51] of U1 on F.Cu | Pad 21 [IO51] of U2 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 14 [AUX09] of U2 on F.Cu | PTH pad 10 [AUX09] of J4",
+      "unconnected_items | Missing connection between items | PTH pad 5 [OUT02] of J2 | Pad 2 [OUT02] of R202 on F.Cu"
     ],
     "unrouted": [
       {
         "ends": [
           {
-            "item": "Via [+3V3] on F.Cu - B.Cu",
+            "item": "Track [GND] on F.Cu, length 0.8875 mm",
             "xy_mm": [
-              53.75,
-              51.96
+              53.25,
+              53.562
             ]
           },
+          {
+            "item": "Pad 49 [GND] of U2 on F.Cu",
+            "xy_mm": [
+              52.5,
+              57.0
+            ]
+          }
+        ],
+        "net": "GND"
+      },
+      {
+        "ends": [
           {
             "item": "Pad 9 [+3V3] of U2 on F.Cu",
             "xy_mm": [
               53.75,
               53.562
+            ]
+          },
+          {
+            "item": "Via [+3V3] on F.Cu - B.Cu",
+            "xy_mm": [
+              53.75,
+              51.96
             ]
           }
         ],
@@ -217,40 +230,40 @@
       {
         "ends": [
           {
-            "item": "Pad 24 [IO36] of U1 on F.Cu",
+            "item": "Pad 59 [IO42] of U1 on F.Cu",
             "xy_mm": [
-              26.5,
-              38.075
-            ]
-          },
-          {
-            "item": "Pad 5 [IO36] of U2 on F.Cu",
-            "xy_mm": [
-              51.75,
-              53.562
-            ]
-          }
-        ],
-        "net": "IO36"
-      },
-      {
-        "ends": [
-          {
-            "item": "Pad 58 [IO41] of U1 on F.Cu",
-            "xy_mm": [
-              26.0,
+              25.5,
               49.425
             ]
           },
           {
-            "item": "Pad 18 [IO41] of U2 on F.Cu",
+            "item": "Pad 19 [IO42] of U2 on F.Cu",
             "xy_mm": [
               55.938,
-              56.75
+              57.25
             ]
           }
         ],
-        "net": "IO41"
+        "net": "IO42"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 35 [IO49] of U1 on F.Cu",
+            "xy_mm": [
+              32.425,
+              41.0
+            ]
+          },
+          {
+            "item": "Pad 45 [IO49] of U2 on F.Cu",
+            "xy_mm": [
+              49.062,
+              55.75
+            ]
+          }
+        ],
+        "net": "IO49"
       },
       {
         "ends": [
@@ -270,13 +283,54 @@
           }
         ],
         "net": "IO51"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 14 [AUX09] of U2 on F.Cu",
+            "xy_mm": [
+              55.938,
+              54.75
+            ]
+          },
+          {
+            "item": "PTH pad 10 [AUX09] of J4",
+            "xy_mm": [
+              87.09,
+              55.46
+            ]
+          }
+        ],
+        "net": "AUX09"
+      },
+      {
+        "ends": [
+          {
+            "item": "PTH pad 5 [OUT02] of J2",
+            "xy_mm": [
+              25.0,
+              72.17
+            ]
+          },
+          {
+            "item": "Pad 2 [OUT02] of R202 on F.Cu",
+            "xy_mm": [
+              35.25,
+              38.51
+            ]
+          }
+        ],
+        "net": "OUT02"
       }
     ],
     "unrouted_nets": [
       "+3V3",
-      "IO36",
-      "IO41",
-      "IO51"
+      "AUX09",
+      "GND",
+      "IO42",
+      "IO49",
+      "IO51",
+      "OUT02"
     ],
     "waived": 0,
     "warnings": 0
@@ -291,8 +345,7 @@
     "warnings": 0
   },
   "fail_reasons": [
-    "DRC: 3 error(s)",
-    "DRC: 4 unconnected item(s) on nets: +3V3, IO36, IO41, IO51"
+    "DRC: 7 unconnected item(s) on nets: +3V3, AUX09, GND, IO42, IO49, IO51, OUT02"
   ],
   "notes": [
     "U50: 3D envelope uses the default height 1.0 mm (give height=)",
@@ -378,45 +431,29 @@
   "rev": "X",
   "routing": {
     "autorouter": {
-      "attempts": [
-        {
-          "run": 1,
-          "seconds": 605.1,
-          "unconnected": 6
-        },
-        {
-          "run": 2,
-          "seconds": 117.2,
-          "unconnected": 4
-        },
-        {
-          "run": 3,
-          "seconds": 28.1,
-          "unconnected": 4
-        }
-      ],
-      "dsn_sha256": "fe540db1adf620a880a6e2ca7dad94196d0e5d6971888b578523201c3a56c9d3",
+      "dsn_sha256": "4d125d2531af259f5248ce569e1c7f5af08f3ed4dc2b62b55f58fcbb17ecf93a",
       "freerouting": "v2.6.0 (build-date: 2026-11-25)",
       "log_tail": [
-        "[C510A9\\7AD35D] Auto-routing stage completed: started with 11 unrouted nets, completed in 112.30 seconds, final score: 986.90 (4 unrouted and 0 violations), using 108.15 total CPU seconds, 54.14 GB total allocated, and 564.7 MB peak heap usage.",
-        "[C510A9\\7AD35D] Job 'C510A9\\7AD35D' finished with state: COMPLETED (elapsed: 1 minute 53.02 seconds, finished at UTC: 2026-11-26T14:39:43.753097748Z)."
+        "[90E803\\647DCA] Auto-routing stage completed with timeout: started with 188 unrouted nets, completed in 601.06 seconds, final score: 977.07 (7 unrouted and 56 violations), using 550.31 total CPU seconds, 275.50 GB total allocated, and 1043.7 MB peak heap usage.",
+        "[90E803\\647DCA] Job '90E803\\647DCA' finished with state: TIMED_OUT (elapsed: 10 minutes 1.69 seconds, finished at UTC: 2026-11-26T19:35:27.830273746Z)."
       ],
       "passes_limit": 30,
       "reused": false,
-      "seconds": 722.3,
+      "seconds": 606.8,
       "threads": 4,
       "timed_out": false
     },
     "routed": true,
     "stats": {
-      "dangling_tracks_removed": 1,
+      "dangling_tracks_removed": 0,
+      "necked_tracks_widened": 0,
       "preroutes": 379,
       "preroutes_missing_after_import": 0,
-      "track_length_mm": 4098.98,
-      "tracks": 1764,
-      "unconnected_after_fill": 4,
-      "unconnected_before_cleanup": 4,
-      "vias": 436
+      "track_length_mm": 4393.01,
+      "tracks": 1766,
+      "unconnected_after_fill": 7,
+      "unconnected_before_cleanup": 7,
+      "vias": 454
     }
   },
   "single_pin_nets": [],

@@ -1122,46 +1122,30 @@
     "GND"
   ],
   "route_info": {
-    "attempts": [
-      {
-        "run": 1,
-        "seconds": 605.1,
-        "unconnected": 6
-      },
-      {
-        "run": 2,
-        "seconds": 117.2,
-        "unconnected": 4
-      },
-      {
-        "run": 3,
-        "seconds": 28.1,
-        "unconnected": 4
-      }
-    ],
-    "dsn_sha256": "fe540db1adf620a880a6e2ca7dad94196d0e5d6971888b578523201c3a56c9d3",
+    "dsn_sha256": "4d125d2531af259f5248ce569e1c7f5af08f3ed4dc2b62b55f58fcbb17ecf93a",
     "freerouting": "v2.6.0 (build-date: 2026-11-25)",
     "log_tail": [
-      "[C510A9\\7AD35D] Auto-routing stage completed: started with 11 unrouted nets, completed in 112.30 seconds, final score: 986.90 (4 unrouted and 0 violations), using 108.15 total CPU seconds, 54.14 GB total allocated, and 564.7 MB peak heap usage.",
-      "[C510A9\\7AD35D] Job 'C510A9\\7AD35D' finished with state: COMPLETED (elapsed: 1 minute 53.02 seconds, finished at UTC: 2026-11-26T14:39:43.753097748Z)."
+      "[90E803\\647DCA] Auto-routing stage completed with timeout: started with 188 unrouted nets, completed in 601.06 seconds, final score: 977.07 (7 unrouted and 56 violations), using 550.31 total CPU seconds, 275.50 GB total allocated, and 1043.7 MB peak heap usage.",
+      "[90E803\\647DCA] Job '90E803\\647DCA' finished with state: TIMED_OUT (elapsed: 10 minutes 1.69 seconds, finished at UTC: 2026-11-26T19:35:27.830273746Z)."
     ],
     "passes_limit": 30,
     "reused": false,
-    "seconds": 722.3,
+    "seconds": 606.8,
     "threads": 4,
     "timed_out": false
   },
   "route_stats": {
-    "dangling_tracks_removed": 1,
+    "dangling_tracks_removed": 0,
+    "necked_tracks_widened": 0,
     "preroutes": 379,
     "preroutes_missing_after_import": 0,
-    "track_length_mm": 4098.98,
-    "tracks": 1764,
-    "unconnected_after_fill": 4,
-    "unconnected_before_cleanup": 4,
-    "vias": 436
+    "track_length_mm": 4393.01,
+    "tracks": 1766,
+    "unconnected_after_fill": 7,
+    "unconnected_before_cleanup": 7,
+    "vias": 454
   },
-  "routed": false,
+  "routed": true,
   "routing": {
     "enabled": true,
     "extra_args": [],

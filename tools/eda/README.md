@@ -283,7 +283,7 @@ Measured (schematic + ERC only, `python3 tools/eda/rrkicad.py sch tools/eda/test
 |---|---|---|---|---|---|---|---|
 | chassis_main (768) | 753 | 710 parts / 18 symbols | 46 | 15 | 18 | 0 errors, 112 warnings | 14 s |
 | panel (24) | 24 | 24 / 0 | 0 | 0 | 6 | 0 errors, 0 warnings | 3 s |
-| head_acq (1085) | 1081 | 971 parts / 20 symbols | 114 | 4 | see reports | 0 errors, 57 warnings | 17 s |
+| head_acq (1085) | 1081 | 971 parts / 20 symbols | 114 | 4 | 22 | 0 errors, 57 warnings | 17 s |
 
 `reports/import_report.json` in each test directory lists every rejected hint with the
 reason (mostly symbol names that do not exist in the stock library, with the closest
