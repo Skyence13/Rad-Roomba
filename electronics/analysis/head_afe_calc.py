@@ -75,11 +75,11 @@ T_HALF_RANGE = (7.0, 10.0)
 
 # ----------------------------------------------------------------------------- circuit values (must match circuit.py)
 CIR = dict(
-    R_IN=24.9,          # anode load resistor [ohm]  (selectable 10..49.9)
+    R_IN=10.0,          # anode load resistor [ohm]: 2 x 20.0 in parallel fitted (selectable 5..49.9)
     R_SER=22.0,         # series protection resistor at preamp input
-    G1=1 + 249.0 / 24.9, GBW1=300e6,     # OPA838 preamp
+    R_F1=499.0, R_G1=24.9, G1=1 + 499.0 / 24.9, GBW1=300e6,     # OPA838 preamp
     C_D=220e-12, R_D=100.0, R_PZ=None,   # fast CR; R_PZ fitted at bring-up = trec/C_D
-    G2=1 + 499.0 / 49.9, GBW2=300e6, R_F2=499.0, C_F2=22e-12,
+    G2=1 + 499.0 / 24.9, GBW2=300e6, R_F2=499.0, C_F2=10e-12,
     R_S1=1000.0, C_S1=1e-9,              # slow integrator 1 us
     C_S2=4.7e-9, R_S3=10e3,              # slow baseline CR
     G3=1 + 2000.0 / 499.0, GBW3=205e6,   # OPA836
@@ -194,7 +194,7 @@ def enc_pe(s):
     _, h_fast = signal.freqresp(tfs["fast"], w)
     _, h_zin = signal.freqresp(tfs["node_a"], w)
     h_v = h_fast / h_zin
-    rp = 249.0 * 24.9 / (249.0 + 24.9)
+    rp = c["R_F1"] * c["R_G1"] / (c["R_F1"] + c["R_G1"])
     en2_amp = c["EN_AMP"] ** 2 + 4 * K_B * T_K * (c["R_SER"] + rp) + (c["IN_AMP"] * (rp + c["R_SER"])) ** 2
     # R_IN thermal noise current flows in R_IN || C_d -> appears as voltage through zin/R_IN shaping
     v2_rin = 4 * K_B * T_K * c["R_IN"] * np.abs(h_zin / c["R_IN"]) ** 2
@@ -369,10 +369,25 @@ def main():
     print(md_table(["device", "Ct pF", "input-referred e_n nV/rtHz (amp + resistors)", "FAST output noise mV rms",
                     "ENC p.e. rms"], rows))
 
+    # ---- calibrate the rectangular-window model against a Monte-Carlo with the real pulse shape
+    s0 = SIPM["J60035@2.5V"]
+    mb0 = met["J60035@2.5V"][0]
+    dt = 1e-9
+    tt = np.arange(0, 600e-9, dt)
+    shape = np.interp(tt, mb0["t"], mb0["fast"]) / mb0["fast_pk"]
+    mc_rows = {n: mc_dark_rate(s0["dcr"], s0["ct"], tt, shape, n, 0.6) for n in (3, 4, 5)}
+    best = None
+    for fcal in np.arange(0.2, 1.21, 0.02):
+        err = sum((math.log(dark_trigger_rate(s0["dcr"], fcal * mb0["fast_area_over_peak"], s0["ct"], n) / mc_rows[n])) ** 2
+                  for n in (3, 4, 5))
+        if best is None or err < best[0]:
+            best = (err, fcal)
+    F_CAL = best[1]
+
     # ---- T6 dark-count limited threshold
     section("T6 Lowest usable BETA_LLD from dark-count pile-up (calculated from datasheet DCR, crosstalk and the "
-            "resolving time of T2; DCR(T) = DCR(25 C) * 2^((T-25)/%.0f C) assumed, range %.0f..%.0f C)" %
-            (T_HALF_C, *T_HALF_RANGE))
+            "resolving time of T2 x %.2f (factor fitted to the Monte-Carlo below); DCR(T) = DCR(25 C) * 2^((T-25)/%.0f C) "
+            "assumed, range %.0f..%.0f C)" % (F_CAL, T_HALF_C, *T_HALF_RANGE))
     temps = (25, 10, 0, -20)
     hdr = ["device", "DCR case"] + ["%+d C: LLD p.e. for <1/s (<0.1/s)" % t for t in temps]
     rows = []
@@ -382,29 +397,23 @@ def main():
             r = [k, case]
             for t in temps:
                 rate = d * 2 ** ((t - 25) / T_HALF_C)
-                n1 = lowest_lld(rate, mb["fast_area_over_peak"], s["ct"], 1.0)
-                n01 = lowest_lld(rate, mb["fast_area_over_peak"], s["ct"], 0.1)
+                n1 = lowest_lld(rate, F_CAL * mb["fast_area_over_peak"], s["ct"], 1.0)
+                n01 = lowest_lld(rate, F_CAL * mb["fast_area_over_peak"], s["ct"], 0.1)
                 r.append("%s (%s)  [DCR %.2g/s]" % (n1, n01, rate))
             rows.append(r)
     print(md_table(hdr, rows))
     print("\nThe table gives the integer n such that a threshold at (n - 0.5) p.e. has a dark trigger rate below the "
           "target.  Sensitivity to the assumed halving temperature (J60035@2.5V typ, -20 C): " +
           ", ".join("T_half %.0f C -> %s p.e." % (th, lowest_lld(SIPM["J60035@2.5V"]["dcr"] * 2 ** (-45 / th),
-                                                                 met["J60035@2.5V"][0]["fast_area_over_peak"],
+                                                                 F_CAL * met["J60035@2.5V"][0]["fast_area_over_peak"],
                                                                  0.08, 1.0)) for th in (7, 8, 10)))
-    # Monte-Carlo validation of the rectangular-window model with the real pulse shape
-    s = SIPM["J60035@2.5V"]
-    mb = met["J60035@2.5V"][0]
-    dt = 1e-9
-    tt = np.arange(0, 600e-9, dt)
-    shape = np.interp(tt, mb["t"], mb["fast"]) / mb["fast_pk"]
     rows = []
     for n in (3, 4, 5):
-        mc = mc_dark_rate(s["dcr"], s["ct"], tt, shape, n, 0.4)
-        an = dark_trigger_rate(s["dcr"], mb["fast_area_over_peak"], s["ct"], n)
-        rows.append([n, "%.3g" % an, "%.3g" % mc, "%.2f" % (mc / an if an else float("nan"))])
-    print("\nMonte-Carlo check (J60035@2.5V, 25 C, 0.4 s of simulated dark pulses, real shaped pulse):\n")
-    print(md_table(["n (threshold n-0.5 p.e.)", "model rate 1/s", "Monte-Carlo rate 1/s", "MC / model"], rows))
+        an0 = dark_trigger_rate(s0["dcr"], mb0["fast_area_over_peak"], s0["ct"], n)
+        an = dark_trigger_rate(s0["dcr"], F_CAL * mb0["fast_area_over_peak"], s0["ct"], n)
+        rows.append([n, "%.3g" % an0, "%.3g" % an, "%.3g" % mc_rows[n], "%.2f" % (mc_rows[n] / an)])
+    print("\nMonte-Carlo check (J60035@2.5V, 25 C, 0.6 s of simulated dark pulses, real shaped pulse):\n")
+    print(md_table(["n (threshold n-0.5 p.e.)", "model, resolving time = area/peak 1/s", "model, fitted factor 1/s", "Monte-Carlo 1/s", "MC / fitted model"], rows))
 
     # ---- T7 timing
     section("T7 Timing budget (calculated unless marked)")
@@ -422,7 +431,7 @@ def main():
     dead_max = c["W_ACCEPT"] + c["T_SERVICE"] + c["T_ISR"]
     rows = [
         ["SiPM recharge (J60035)", "50 ns", "datasheet"],
-        ["Input pole R_IN*Ct (J60035, 24.9 ohm)", "%.0f ns" % (mb["tau_in"] * 1e9), "calculated"],
+        ["Input pole R_IN*Ct (J60035, %.1f ohm)" % c["R_IN"], "%.0f ns" % (mb["tau_in"] * 1e9), "calculated"],
         ["FAST peaking time / FWHM / resolving time", "%.0f / %.0f / %.0f ns" %
          (mb["fast_tpk"] * 1e9, mb["fast_fwhm"] * 1e9, mb["fast_area_over_peak"] * 1e9), "calculated"],
         ["FAST undershoot after a beta pulse (fraction of peak)", "%.3f" % (-mb["fast_min"] / mb["fast_pk"]),
@@ -492,7 +501,7 @@ def main():
           (t_slew * 1e3, di, m_h * 1e9, m_h * di * 1e6, t_slew * 1e3, m_h * 15.0 / r_h / 100e-9))
     mbj = met["J60035@2.5V"][0]
     f_edge = 0.35 / t_slew
-    att_fast = 2 * math.pi * f_edge * CIR["R_D"] * CIR["C_D"]
+    att_fast = 2 * math.pi * f_edge * CIR["R_D"] * CIR["C_D"]  # CR high-pass well below its corner
     print("Edge spectrum corner %.0f Hz; fast CR (22 ns) passes %.1e of it -> %.2e p.e. equivalent at the FAST output "
           "(J60035).  Switching energy per edge 0.5*V*I*t = %.0f mJ at 15 V." %
           (f_edge, att_fast, m_h * di * CIR["G1"] * CIR["G2"] * att_fast / mbj["fast_pk"], 0.5 * 15 * 15 / r_h * t_slew * 1e3))
