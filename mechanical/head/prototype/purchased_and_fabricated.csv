@@ -7,9 +7,9 @@ RR-HD-S-114,"rear bridge: ties both T-heads across the split, keeper hinge ears"
 RR-HD-S-115,hinged latch keeper plate with hook at x 104 (flips back to release the lid),1,pcs,SS304,machined / sheet,,-,
 PUR-DP3x40,"hinge pin 3 x 40, retained by circlips",1,pcs,SS304,purchased,dowel / hinge pin 3 x 40 with two circlips,UNVERIFIED,
 RR-HD-S-121,one-piece 2 mm spreader / stiffener / FRAME plane (laser cut + tapped),1,pcs,AL6061,machined / sheet,,-,DXF in prototype/dxf
-RR-HD-S-122,"2 mm aluminium lid (shear panel, EMI top), 10 captive M3",1,pcs,AL6061,machined / sheet,,-,DXF in prototype/dxf
+RR-HD-S-122,"2 mm aluminium lid (shear panel, EMI top), 35 x M3 + bonded washers at <= 40 mm pitch",1,pcs,AL6061,machined / sheet,,-,DXF in prototype/dxf
 RR-HD-S-123,1 mm blister plate over the J1 landing opening (8.9 mm internal height),1,pcs,AL6061,machined / sheet,,-,DXF in prototype/dxf
-PUR-GSK-LID,"lid perimeter gasket, closed-cell silicone 1.2 mm (0.8 installed)",2,pcs,SIL-FOAM,purchased,"lid gasket die-cut, closed-cell silicone 1.2 mm (prototype black; production conductive Ni/graphite silicone)",UNVERIFIED,
+PUR-GSK-LID,"lid perimeter gasket, closed-cell silicone 1.2 mm (0.8 installed)",1,pcs,SIL-FOAM,purchased,"lid gasket die-cut, closed-cell silicone 1.2 mm (prototype black; production conductive Ni/graphite silicone)",UNVERIFIED,
 PUR-SO-M3x10.5,"11 x M3 x 10.5 round female spacer on the fence feet (lid hard seat, lid-spreader tie, fence bond)",11,pcs,AL6061,purchased,"round female spacer M3 x 10.5, OD 4.5, aluminium (cut from M3 x 11 or special)",UNVERIFIED,non-standard length; alternative M3 x 10 + 0.5 shim
 PUR-SO-M3x11,6 x M3 x 11 round female spacer in the chimney zones (no fence foot),6,pcs,AL6061,purchased,"round female spacer M3 x 11, OD 4.5, aluminium (Wurth 9701xx / Ettinger class)",UNVERIFIED,
 PUR-SO-M2.5x2.5,8 x M2.5 x 2.5 clinch standoff (FRAME net),8,pcs,BRASS,purchased,"PEM SO-M2.5-2.5 class clinch standoff, thru-thread, steel/zinc or aluminium",UNVERIFIED,mounting hole 4.2 assumed
@@ -52,15 +52,19 @@ PUR-TCO,"bimetal thermal cut-out in series with the heater, on the spreader tab"
 PUR-DES-1G,"4 desiccant pouches (about 0.5 g each) + indicator card, front strip between the lid bosses",4,pcs,MIXED,purchased,"silica gel pouch about 0.5 g, 4 off, + humidity indicator card",UNVERIFIED,3.0 cm3 space in the front strip
 PUR-NTC-10K,"10 k NTC ring-lug sensor on the spreader (heater regulation, board J-heater connector)",1,pcs,MIXED,purchased,10 k NTC ring-lug sensor M3 (Vishay / TDK class),UNVERIFIED,regulation input of the board heater controller
 RR-HD-X-511,split strain-relief grommet (compressed by the lid),1,pcs,TPU,printed (X1C),,-,
-PUR-CABLE,"J1 pigtail cable, 150 mm free length",2,pcs,MIXED,purchased,"shielded PUR cable, J1 8 x (2 x 18 AWG + 2 x 20 AWG + 4 x 24 AWG) 7.5 mm, J2 4 x 2 x 24 AWG twisted 6.5 mm, -40 C flex",UNVERIFIED,OD drives the grommet bore
+PUR-CABLE-J1,"J1 pigtail cable, 150 mm free length",1,pcs,MIXED,purchased,"shielded PUR cable 2 x 18 AWG + 2 x 20 AWG + 4 x 24 AWG, OD 7.5, -40 C flex, 150 mm free length",UNVERIFIED,OD drives the grommet bore
 PUR-M16-8,J1 cable plug envelope,1,pcs,MIXED,purchased,"binder M16 IP67 8-pole male cable connector, shieldable (series 423 / 723 family)",PARTIAL,envelope from mechanical/common/purchased/parts.yaml j1_receptacle
 RR-HD-X-512,split strain-relief grommet (compressed by the lid),1,pcs,TPU,printed (X1C),,-,
+PUR-CABLE-J2,"J2 pigtail cable, 150 mm free length",1,pcs,MIXED,purchased,"shielded PUR cable 4 x 2 x 24 AWG twisted pairs, OD 6.5, -40 C flex, 150 mm free length",UNVERIFIED,OD drives the grommet bore
 PUR-M12-8,J2 cable plug envelope,1,pcs,MIXED,purchased,"binder M12-A 8-pole male cable connector, shieldable (series 763 family)",UNVERIFIED,envelope from parts.yaml j2_receptacle
 PUR-VENT-M6,ePTFE breather vent M6 with internal light baffle,1,pcs,MIXED,purchased,"ePTFE membrane vent M6 x 0.75, black housing (GORE / Amphenol LTW class)",UNVERIFIED,
 PUR-M2.5x8-PAN,"ISO 7045 M2.5 x 8 A2, spreader to rear-zone insert",6,pcs,SS304,purchased,,UNVERIFIED,
 PUR-M3x8-LOW,DIN 7984 M3 x 8 A2 + insulating shoulder washer (prototype) / plain washer,8,pcs,SS304,purchased,,UNVERIFIED,
-PUR-M2.5x5-PAN,"ISO 7045 M2.5 x 5, front fence foot into tapped spreader",20,pcs,SS304,purchased,,UNVERIFIED,
+PUR-M2.5x5-PAN,"ISO 7045 M2.5 x 5, front fence foot into tapped spreader",12,pcs,SS304,purchased,,UNVERIFIED,
+PUR-M2.5x5-PAN-SW,"ISO 7045 M2.5 x 5 + serrated washer, board to standoff (FRAME bond)",8,pcs,SS304,purchased,,UNVERIFIED,
 PUR-M3x8-BUT,"ISO 7380 M3 button head + bonded sealing washer, lid",35,pcs,SS304,purchased,,UNVERIFIED,
+RR-HD-S-433,"VARIANT: side contact rail LH for the 5 mm projection (strip 15 mm tall, same holes); replaces RR-HD-S-431",0,pcs (variant),SS301,machined / sheet,,-,STEP via assembly.build(projection=5); DXF in prototype/dxf
+RR-HD-S-434,"VARIANT: side contact rail RH for the 5 mm projection (strip 15 mm tall, same holes); replaces RR-HD-S-432",0,pcs (variant),SS301,machined / sheet,,-,STEP via assembly.build(projection=5); DXF in prototype/dxf
 PUR-M2.5x8-CSK,"ISO 10642 M2.5 x 8 A2: spreader to rib inserts / tapped ribs (flush, under the board)",10,pcs,-,purchased,,UNVERIFIED,
 PUR-M3x6-CSK,ISO 10642 M3 x 6 A2: lid standoffs from below the spreader,17,pcs,-,purchased,,UNVERIFIED,
 PUR-M2.5x8-CSK-C,ISO 10642 M2.5 x 8 A2: window cassettes (4 each),16,pcs,-,purchased,,UNVERIFIED,

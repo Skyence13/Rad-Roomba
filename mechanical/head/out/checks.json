@@ -675,9 +675,9 @@
     "spreader": 200.5,
     "dummy_board": 168.7,
     "S0_ballast": 101.5,
-    "S1_ballast": 101.5,
     "S2_ballast": 101.5,
     "S3_ballast": 101.5,
+    "S1_ballast": 101.5,
     "frame_L": 97.0,
     "frame_R": 95.9,
     "shoe_L": 62.1,
@@ -710,19 +710,19 @@
     },
     "roll_if_joint_rigid": 0.01611120290691253,
     "modes_hz": {
-     "pitch on the mount": 79.57116710992936,
-     "roll on the mount": 248.47102679620318,
-     "halves rocking about the y = 0 joint": 174.2410268471314,
-     "wing bending": 3393.4580704157524
+     "pitch on the mount": 79.57116710992925,
+     "roll on the mount": 248.47102679620284,
+     "halves rocking about the y = 0 joint": 174.24102684713114,
+     "wing bending": 3393.458070415748
     },
-    "f1_hz": 79.57116710992936,
+    "f1_hz": 79.57116710992925,
     "joint_terms_Nm_per_rad": {
      "spreader alone (2 mm)": 38.413876543209874,
      "lid alone (2 mm)": 39.94498765432098,
      "spreader + lid as a couple through the lid fasteners near the joint (slip model)": 993.100362343998,
      "rear bridge plate (3 x 13 on edge, T-head to T-head)": 280.3209259259259
     },
-    "mass_kg": 1.8462957401524565
+    "mass_kg": 1.8462957401524616
    },
    "prototype, split PA-CF (conditioned, E x 0.5)": {
     "lid fitted (all screws)": {
@@ -747,19 +747,19 @@
     },
     "roll_if_joint_rigid": 0.01611120290691253,
     "modes_hz": {
-     "pitch on the mount": 79.57116710992936,
-     "roll on the mount": 248.47102679620318,
-     "halves rocking about the y = 0 joint": 174.2410268471314,
-     "wing bending": 3121.9610649232463
+     "pitch on the mount": 79.57116710992925,
+     "roll on the mount": 248.47102679620284,
+     "halves rocking about the y = 0 joint": 174.24102684713114,
+     "wing bending": 3121.961064923242
     },
-    "f1_hz": 79.57116710992936,
+    "f1_hz": 79.57116710992925,
     "joint_terms_Nm_per_rad": {
      "spreader alone (2 mm)": 38.413876543209874,
      "lid alone (2 mm)": 39.94498765432098,
      "spreader + lid as a couple through the lid fasteners near the joint (slip model)": 993.100362343998,
      "rear bridge plate (3 x 13 on edge, T-head to T-head)": 280.3209259259259
     },
-    "mass_kg": 1.8462957401524565
+    "mass_kg": 1.8462957401524616
    },
    "prototype, split PETG-CF frame": {
     "lid fitted (all screws)": {
@@ -784,19 +784,19 @@
     },
     "roll_if_joint_rigid": 0.01611120290691253,
     "modes_hz": {
-     "pitch on the mount": 79.57116710992936,
-     "roll on the mount": 248.47102679620318,
-     "halves rocking about the y = 0 joint": 174.2410268471314,
-     "wing bending": 3229.9997151186963
+     "pitch on the mount": 79.57116710992925,
+     "roll on the mount": 248.47102679620284,
+     "halves rocking about the y = 0 joint": 174.24102684713114,
+     "wing bending": 3229.9997151186917
     },
-    "f1_hz": 79.57116710992936,
+    "f1_hz": 79.57116710992925,
     "joint_terms_Nm_per_rad": {
      "spreader alone (2 mm)": 38.413876543209874,
      "lid alone (2 mm)": 39.94498765432098,
      "spreader + lid as a couple through the lid fasteners near the joint (slip model)": 993.100362343998,
      "rear bridge plate (3 x 13 on edge, T-head to T-head)": 280.3209259259259
     },
-    "mass_kg": 1.8462957401524565
+    "mass_kg": 1.8462957401524616
    },
    "production, one-piece 6061 frame": {
     "lid fitted (all screws)": {
@@ -821,12 +821,12 @@
     },
     "roll_if_joint_rigid": 0.004061785266769044,
     "modes_hz": {
-     "pitch on the mount": 150.4188834067117,
-     "roll on the mount": 469.70197581706935,
-     "halves rocking about the y = 0 joint": 545.261098802628,
-     "wing bending": 5838.074972176964
+     "pitch on the mount": 150.4188834067115,
+     "roll on the mount": 469.7019758170687,
+     "halves rocking about the y = 0 joint": 545.2610988026273,
+     "wing bending": 5838.074972176957
     },
-    "f1_hz": 150.4188834067117,
+    "f1_hz": 150.4188834067115,
     "joint_terms_Nm_per_rad": {
      "spreader alone (2 mm)": 38.413876543209874,
      "lid alone (2 mm)": 39.94498765432098,
@@ -834,7 +834,7 @@
      "rear bridge plate (3 x 13 on edge, T-head to T-head)": 280.3209259259259,
      "one-piece aluminium frame walls": 12590.197952071221
     },
-    "mass_kg": 2.0666550530831858
+    "mass_kg": 2.066655053083191
    }
   },
   "rails": {
@@ -1373,5 +1373,5 @@
   "fail": 0,
   "deviation": 4
  },
- "runtime_s": 105.9
+ "runtime_s": 90.6
 }

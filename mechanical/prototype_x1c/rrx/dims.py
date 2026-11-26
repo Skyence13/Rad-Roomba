@@ -23,8 +23,8 @@ MAT = {
 
 # ---- heat-set inserts (brass, knurled, for 3D-printed parts; hole = pilot diameter x depth) -- generic, UNVERIFIED brand
 INSERT = {"M2": (3.2, 4.0), "M2.5": (3.8, 5.0), "M3": (4.0, 5.7), "M4": (5.6, 8.1), "M5": (6.4, 9.5)}
-CLEAR = {"M2": 2.4, "M2.5": 2.9, "M3": 3.4, "M4": 4.5, "M5": 5.5, "M8": 8.5}
-TAP = {"M3": 2.5, "M4": 3.3, "M5": 4.2}
+CLEAR = {"M2": 2.4, "M2.5": 2.9, "M3": 3.4, "M4": 4.5, "M5": 5.5, "M6": 6.6, "M8": 8.5}
+TAP = {"M3": 2.5, "M4": 3.3, "M5": 4.2, "M6": 5.0}
 CSK = {"M3": 6.3, "M4": 8.4, "M5": 10.4}     # 90 deg countersink major diameter
 
 # ---- chassis plate (fabricated, 4 mm 6061-T6, laser/waterjet + countersink/tap)
@@ -56,11 +56,13 @@ MOTOR_BCD = 31.0                               # UNVERIFIED (Pololu 37D drawing)
 TRAY_T = 2.0
 POSTS = [(-64.0, 76.0), (-64.0, -76.0), (30.0, 45.0), (30.0, -45.0)]
 
-# ---- grip frame (fabricated): two 6 mm 6061 side plates, 16 x 2 tube + M8 tie rod, 25 x 25 x 3 angle feet
+# ---- grip frame (fabricated): two 6 mm 6061 side plates, 14 mm solid 6061 bar with M6 tapped ends, 25 x 25 x 3 angle feet
 GRIP_PLATE_Y = (88.0, 94.0)                    # inside the cheek envelope 84..98
-GRIP_TUBE = (16.0, 2.0)
-GRIP_TUBE_X = -14.0                            # tube/tie-rod axis x (bar sleeve stays x -23.5..1.5)
-GRIP_TUBE_Z = (P.GRIP["bar_bottom_z"] + P.GRIP["bar_top_z"]) / 2
+GRIP_BAR_D = 14.0                              # solid round bar (was a 16 x 2 tube on an M8 rod: it collided with the look-ahead ToF seats)
+GRIP_BAR_X = -15.0                             # bar axis x: front of the bar x -8.0 stays behind the look-ahead ToF clips
+GRIP_BAR_Z = (P.GRIP["bar_bottom_z"] + P.GRIP["bar_top_z"]) / 2
+GRIP_BAR_SCREW = "M6"
+GRIP_PLATE_FRONT_X = -8.0                      # cheek front edge of the side plate (z >= 150)
 GRIP_DESIGN_MASS = 9.0                         # kg (task: 3 x the 9 kg robot)
 GRIP_FACTOR = 3.0
 FOOT_X = (-56.0, -22.0)

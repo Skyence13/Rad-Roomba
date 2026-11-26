@@ -9,6 +9,7 @@ from mechanical.common import params as P
 from mechanical.common.purchased import library as L
 
 from . import battery, dims as D, running, shells, structure
+from . import sensors as S
 from .util import Part, bounds, box, cyl, fuse, place
 
 Z1 = D.PLATE_Z[1]
@@ -75,7 +76,7 @@ def purchased(add):
         add(Part("RRX-H52", f"{jn}_mated_plug", place(plug, j["xyz"], j["normal"]), "purchased", "BRASS", "head_placeholder", color=C["conn"], internal=False, mass=0.0, hard=True,
                  mates={f"{jn}_receptacle", "nose_cowl"}))
     for name, t in P.TOF_SENSORS.items():
-        xdir = (1.0, 0.0, 0.0) if name.startswith("tof_cliff_f") else None
+        xdir = (1.0, 0.0, 0.0) if name.startswith("tof_cliff_f") else (S._look_xdir(t["dir"]) if name.startswith("tof_look_f") else None)
         brd = box(-9.0, 9.0, -7.0, 7.0, -6.0, -2.7)
         add(Part("RRX-E03", name, place(brd, t["xyz"], t["dir"], xdir), "purchased", "FR4", "tof", color=C["sens"], internal=False, mass=L.mass("tof_board"), mpn="RR-TOF (custom, VL53L4ED)", verified="contract outline",
                  mates={"*"}))

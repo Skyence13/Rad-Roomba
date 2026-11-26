@@ -21,29 +21,58 @@ def _lbox(x, y, z0, z1):
     return box(-x / 2, x / 2, -y / 2, y / 2, z0, z1)
 
 
-def tof_boss(xyz, d):
+LOOK_BOSS = (22.0, 26.0, 6.6)       # shallow seat for the two look-ahead sensors in the grip fairings (grip bar 0.6 mm behind)
+LOOK_SCREW_Y = 10.5                  # M2 clip screws above/below the board (local y) instead of beside it
+
+
+def _look_xdir(d):
+    """Local x of the look-ahead seats: horizontal, perpendicular to the boresight (board long axis across the cheek)."""
+    return P._unit((-d[1], d[0], 0.0))
+
+
+def tof_boss(xyz, d, look=False, grow=0.0):
     """Seat block for one RR-TOF: front face in the aperture plane, axis = boresight."""
+    if look:
+        bx, by, bz = LOOK_BOSS
+        return place(_lbox(bx + 2 * grow, by + 2 * grow, -bz - grow, grow), xyz, d, _look_xdir(d))
     return place(_lbox(TOF_BOSS[0], TOF_BOSS[1], -TOF_BOSS[2], 0.0), xyz, d)
 
 
-def tof_pocket(xyz, d, sight=14.0):
+def tof_pocket(xyz, d, sight=14.0, look=False):
     """Cut for one RR-TOF: window recess, aperture, board pocket open to the rear, two M2 insert bores, sight tunnel."""
     e = L.env("tof_board")
-    c = fuse(_lbox(TOF_WIN[0] + 0.3, TOF_WIN[1] + 0.3, -(TOF_WIN[2] + 0.1), 0.0),
-             _lbox(TOF_AP[0], TOF_AP[1], -3.0, 0.0),
-             _lbox(e["l"] + 0.5, e["w"] + 0.5, -40.0, -2.6))
-    for sx in (-1, 1):
-        c = c.fuse(cyl(D.INSERT["M2"][0] / 2, D.INSERT["M2"][1], (sx * 11.6, 0, -TOF_BOSS[2])))
+    if look:
+        bx, by, bz = LOOK_BOSS
+        c = fuse(_lbox(TOF_WIN[0] + 0.3, TOF_WIN[1] + 0.3, -(TOF_WIN[2] + 0.1), 0.0),
+                 _lbox(TOF_AP[0], TOF_AP[1], -3.0, 0.0),
+                 _lbox(e["l"] + 0.5, e["w"] + 0.5, -bz, -2.6),
+                 _lbox(bx - 2.0, by - 1.0, -14.0, -bz))                 # clip recess + rear access (bench assembly before the bar)
+        for sy in (-1, 1):
+            c = c.fuse(cyl(D.INSERT["M2"][0] / 2, D.INSERT["M2"][1], (0, sy * LOOK_SCREW_Y, -bz)))
+        xd = _look_xdir(d)
+    else:
+        c = fuse(_lbox(TOF_WIN[0] + 0.3, TOF_WIN[1] + 0.3, -(TOF_WIN[2] + 0.1), 0.0),
+                 _lbox(TOF_AP[0], TOF_AP[1], -3.0, 0.0),
+                 _lbox(e["l"] + 0.5, e["w"] + 0.5, -40.0, -2.6))
+        for sx in (-1, 1):
+            c = c.fuse(cyl(D.INSERT["M2"][0] / 2, D.INSERT["M2"][1], (sx * 11.6, 0, -TOF_BOSS[2])))
+        xd = None
     tunnel = cq.Workplane("XY").rect(TOF_WIN[0] + 0.3, TOF_WIN[1] + 0.3).workplane(offset=sight).rect(TOF_WIN[0] + 0.3 + 0.5 * sight, TOF_WIN[1] + 0.3 + 0.5 * sight).loft().val()
-    return place(c.fuse(tunnel), xyz, d)
+    return place(c.fuse(tunnel), xyz, d, xd)
 
 
 def tof_window(xyz, d):
     return place(_lbox(TOF_WIN[0], TOF_WIN[1], -TOF_WIN[2], 0.0), xyz, d)
 
 
-def tof_clip(xyz, d):
+def tof_clip(xyz, d, look=False):
     """Rear clip that holds the board against the light-blocker gasket (2 x M2)."""
+    if look:
+        bx, by, bz = LOOK_BOSS
+        c = _lbox(bx - 2.6, by - 1.6, -bz - 1.6, -bz)
+        for sy in (-1, 1):
+            c = c.cut(cyl(D.CLEAR["M2"] / 2, 4, (0, sy * LOOK_SCREW_Y, -bz - 2.5)))
+        return place(c, xyz, d, _look_xdir(d))
     c = _lbox(TOF_BOSS[0], 8.0, -TOF_BOSS[2] - 1.6, -TOF_BOSS[2])
     for sx in (-1, 1):
         c = c.cut(cyl(D.CLEAR["M2"] / 2, 4, (sx * 11.6, 0, -TOF_BOSS[2] - 2.5)))

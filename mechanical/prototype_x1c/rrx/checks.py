@@ -34,7 +34,12 @@ def _match(name, patterns):
     return any(fnmatch.fnmatch(name, p) for p in patterns)
 
 
+REAL = ("printed", "fabricated")
+
+
 def is_mate(a, b):
+    if a.kind in REAL and b.kind in REAL:          # two real parts may touch, never overlap
+        return False
     for p, q in ((a, b), (b, a)):
         pats = [m for m in p.mates if m != "*"]
         if "*" in p.mates and _match(q.name, THROUGH_SKIN):
@@ -307,8 +312,8 @@ def plate_bending(M):
 def grip_proof(M=None):
     W = D.GRIP_DESIGN_MASS * G * D.GRIP_FACTOR
     Pside = W / 2
-    od, t = D.GRIP_TUBE
-    I = math.pi * (od ** 4 - (od - 2 * t) ** 4) / 64
+    od = D.GRIP_BAR_D
+    I = math.pi * od ** 4 / 64
     span = D.GRIP_PLATE_Y[0] + D.GRIP_PLATE_Y[1]            # between plate mid-planes
     hand = 100.0
     Mb = Pside * (span / 2 - hand / 4)
@@ -316,10 +321,11 @@ def grip_proof(M=None):
     defl = (W * span ** 3 / (48 * 68900 * I)) * 0.75          # distributed over the hand: ~0.75 of the point-load value
     tp = D.GRIP_PLATE_Y[1] - D.GRIP_PLATE_Y[0]
     leg_w = 9.0
-    e = abs(D.GRIP_TUBE_X - (-26.5))
+    e = abs(D.GRIP_BAR_X - (-26.5))
     s_leg = Pside / (leg_w * tp) + 6 * Pside * e / (tp * leg_w ** 2)
-    s_cheek = Pside / ((14.0 - D.CLEAR["M8"]) * tp)
-    bear = Pside / (8.0 * tp)
+    s_cheek = Pside / ((D.GRIP_PLATE_FRONT_X - (-21.0) - D.CLEAR["M6"]) * tp)
+    bear = Pside / (6.0 * tp)
+    tau6 = Pside / 20.1                                     # M6 shank/thread section in shear (friction ignored)
     a_toe, b_bolt = (D.GRIP_PLATE_Y[0] - 1.5) - (D.GRIP_PLATE_Y[0] - 25.0), 71.0 - (D.GRIP_PLATE_Y[0] - 25.0)
     T = Pside * a_toe / b_bolt / 2
     As5 = 14.2
@@ -330,15 +336,16 @@ def grip_proof(M=None):
     rows = [
         ("design load = 3 x 9 kg x g", round(W, 1), "N", ""),
         ("load per side plate", round(Pside, 1), "N", ""),
-        ("tube 16 x 2 6060-T6: bending stress (hand 100 mm, span %.0f mm)" % span, round(s_tube, 1), "MPa", "allow 150 (0.2 % proof, T6) -> SF %.1f" % (150 / s_tube)),
-        ("tube mid-span deflection", round(defl, 2), "mm", ""),
+        ("bar 14 mm solid 6061-T6: bending stress (hand 100 mm, span %.0f mm)" % span, round(s_tube, 1), "MPa", "allow 240 (0.2 % proof, T6) -> SF %.1f" % (240 / s_tube)),
+        ("bar mid-span deflection", round(defl, 2), "mm", ""),
         ("side plate leg 9 x 6 6061-T6: tension + bending from the %.1f mm offset" % e, round(s_leg, 1), "MPa", "allow 240 -> SF %.1f" % (240 / s_leg)),
-        ("side plate net section at the tie-rod hole", round(s_cheek, 1), "MPa", "SF %.0f" % (240 / s_cheek)),
-        ("M8 tie rod bearing on the 6 mm plate", round(bear, 1), "MPa", "allow 300"),
+        ("side plate net section at the M6 bar-screw hole (cheek x -21..%.0f)" % D.GRIP_PLATE_FRONT_X, round(s_cheek, 1), "MPa", "SF %.0f" % (240 / s_cheek)),
+        ("M6 bar screw bearing on the 6 mm plate", round(bear, 1), "MPa", "allow 300"),
+        ("M6 bar screw shear (friction ignored)", round(tau6, 1), "MPa", "A2-70 shear ~ 270 -> SF %.0f" % (270 / tau6)),
         ("M5 through-bolt tension at the foot (prying about the angle toe, 2 bolts)", round(T, 1), "N", "A2-70 proof 450 MPa x 14.2 mm2 = %.0f N -> SF %.0f" % (450 * As5, 450 * As5 / T)),
         ("angle foot 3 mm leg bending", round(s_angle, 1), "MPa", "allow 150 (6060-T6) -> SF %.1f" % (150 / abs(s_angle))),
         ("M5 countersunk head pull-through in the 4 mm plate", round(pull_through, 0), "N capacity", "SF %.0f" % (pull_through / T)),
-        ("inserts in the lifting path", 0, "-", "none: tube -> tie rod -> side plates -> angle feet -> M5 through-bolts with nuts -> chassis plate"),
+        ("inserts in the lifting path", 0, "-", "none: bar -> 2 x M6 into the tapped bar ends -> side plates -> angle feet -> M5 through-bolts with nyloc nuts -> chassis plate"),
         ("misuse case: whole 3 x weight hung on the lid (16 perimeter M3 inserts in shear/pull-out)", round(W / lid_screws, 1), "N per insert", "typ. pull-out %.0f N (UNVERIFIED) -> SF %.0f" % (ins, ins / (W / lid_screws))),
     ]
     ok_plate = True
@@ -346,7 +353,7 @@ def grip_proof(M=None):
         pr = plate_bending(M)
         rows += pr
         ok_plate = all(r[1] < 240 / 1.5 for r in pr)
-    return {"rows": rows, "ok": s_tube < 150 and s_leg < 240 and abs(s_angle) < 150 and ok_plate,
+    return {"rows": rows, "ok": s_tube < 160 and s_leg < 240 and abs(s_angle) < 150 and ok_plate,
             "cold_note": "6061/6060-T6 and A2 fasteners gain strength at -25 C and stay ductile; no polymer is in the lifting path. Proof test: 3 x weight for 60 s warm and at -20 C (VT-002)."}
 
 

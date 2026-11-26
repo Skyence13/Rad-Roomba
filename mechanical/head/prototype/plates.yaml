@@ -512,7 +512,7 @@ plates:
   overrides:
     wall_loops: 3
     sparse_infill_density: 20%
-    enable_support: false
+    enable_support: true
     brim_type: no_brim
   edge_margin: 8.0
   fits_one_plate: true
@@ -527,7 +527,7 @@ plates:
       - 124.7
     rotation_z: 0
     orientation_note: tray floor on the bed
-    supports: as RR-HD-X-601
+    supports: 'yes: as RR-HD-X-601'
     layer_height: 0.2
     walls: 3
     infill: 20 % gyroid

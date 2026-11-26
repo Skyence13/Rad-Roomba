@@ -3,7 +3,7 @@
  "evidence_class": "simulated",
  "against": "Python protocol fakes (rr_core.fakes), virtual clock",
  "seed": 24,
- "sim_time_s": 554.92,
+ "sim_time_s": 554.98,
  "checks": [
   {
    "check": "planner: reverse-entry wall tracks feasible on both sides (swept-outline check in the planner)",
@@ -70,7 +70,7 @@
   {
    "check": "true outline (rectangles) never left the floor minus the wall/door/front margins outside the pivot band",
    "ok": true,
-   "min_clearance_m": 0.0004652627275194554,
+   "min_clearance_m": 0.0003605477774040189,
    "at_pose": [
     2.777,
     -0.29,
@@ -93,8 +93,8 @@
     ]
    },
    "box": [
-    0.1722,
-    0.2122,
+    0.1771,
+    0.2171,
     0.26,
     0.32
    ]
@@ -102,8 +102,8 @@
   {
    "check": "stopped before reaching the track (no contact)",
    "ok": true,
-   "x": 0.6345915027759693,
-   "track_start": 0.38396
+   "x": 0.6396656663172378,
+   "track_start": 0.38886
   },
   {
    "check": "resume accepted after re-arm",
@@ -116,11 +116,11 @@
    "check": "robot returned to the entry point along the entry path",
    "ok": true,
    "at": [
-    1.3581489046428648,
-    0.20213254039082496
+    1.3630904196381375,
+    0.2021297618557713
    ],
    "P": [
-    1.35909,
+    1.36399,
     0.202
    ]
   },
@@ -140,7 +140,7 @@
   {
    "check": "true swept outline stayed inside the floor margins in the blocked run too",
    "ok": true,
-   "min_clearance_m": 0.0003598453842754701,
+   "min_clearance_m": 0.00022789028644210063,
    "at_pose": [
     2.777,
     -0.29,
@@ -153,14 +153,14 @@
  "coverage": {
   "target_area_m2": 3.0,
   "areas_m2": {
-   "UNVISITED": 0.590325,
+   "UNVISITED": 0.591025,
    "ACCEPTABLE": 0.0,
-   "INSUFFICIENT_SENSITIVITY": 2.409675,
+   "INSUFFICIENT_SENSITIVITY": 2.4089750000000003,
    "INVALID_DATA": 0.0,
    "BLOCKED": 0.0,
    "EXCLUDED": 0.0
   },
-  "valid_exposure_fraction": 0.803225,
+  "valid_exposure_fraction": 0.8029916666666668,
   "acceptable_fraction": 0.0,
   "sub_cell_m": 0.005,
   "decision_cell_m": 0.1,
@@ -170,11 +170,11 @@
   "limit_us": 10000.0,
   "fits": 282,
   "max_gate_bound_us": 838.0520796923137,
-  "median_gate_bound_us": 796.5931683750534
+  "median_gate_bound_us": 796.5927683830523
  },
  "link_stats": {
-  "tx": 27954,
-  "rx": 27951,
+  "tx": 27958,
+  "rx": 27954,
   "bad_lines": 0,
   "stale": 0,
   "duplicates": 0,
@@ -186,7 +186,7 @@
   "time_exchanges_rejected": 0
  },
  "localization_error_vs_truth_m": {
-  "max_x_m": 0.0017904928620226523,
+  "max_x_m": 0.0018130338866800821,
   "max_y_m": 0.0012348988956820128
  },
  "plan": {
@@ -229,16 +229,16 @@
    "id": "HS-0002",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 1,
-   "x_m": 0.9436530164185157,
-   "y_m": -0.2104576257465296,
-   "D": 0.16538661070832117,
-   "u_total": 0.08822157627187908,
-   "D_star": 0.13346495999970753,
-   "D_hash": 0.3359399566224112,
+   "x_m": 0.9445623767526832,
+   "y_m": -0.21089185257343815,
+   "D": 0.16522417847304194,
+   "u_total": 0.08821624346013997,
+   "D_star": 0.13356759125725592,
+   "D_hash": 0.33620299482812055,
    "location": {
-    "distance_from_door_m": 0.944,
+    "distance_from_door_m": 0.945,
     "wall": "right wall",
-    "distance_from_wall_m": 0.29,
+    "distance_from_wall_m": 0.289,
     "text": "0.94 m from the door threshold, 0.29 m from the right wall"
    }
   },
@@ -263,14 +263,14 @@
    "id": "HS-0004",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 2,
-   "x_m": 1.9075756166866265,
-   "y_m": -0.18046672379674497,
-   "D": 0.13972140352948412,
-   "u_total": 0.09834333255840384,
-   "D_star": 0.15628974053848257,
-   "D_hash": 0.38313134707127816,
+   "x_m": 1.9072848491448853,
+   "y_m": -0.18023453608880566,
+   "D": 0.14148737943638778,
+   "u_total": 0.09860859983960327,
+   "D_star": 0.1563403250503898,
+   "D_hash": 0.3832335074599523,
    "location": {
-    "distance_from_door_m": 1.908,
+    "distance_from_door_m": 1.907,
     "wall": "right wall",
     "distance_from_wall_m": 0.32,
     "text": "1.91 m from the door threshold, 0.32 m from the right wall"
@@ -280,8 +280,8 @@
    "id": "HS-0005",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 1,
-   "x_m": 1.5854045919121371,
-   "y_m": 0.1210815793481836,
+   "x_m": 1.5853206390322192,
+   "y_m": 0.12108421642977282,
    "D": 0.22546558175393547,
    "u_total": 0.11924875758398125,
    "D_star": 0.20308522327246842,
@@ -297,14 +297,14 @@
    "id": "HS-0006",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 3,
-   "x_m": 2.253627697443233,
-   "y_m": -0.3606551534594426,
-   "D": 0.14961533504928087,
-   "u_total": 0.07555293914217917,
-   "D_star": 0.12078540747110811,
-   "D_hash": 0.29227312029947927,
+   "x_m": 2.2532827116780703,
+   "y_m": -0.3606530364297667,
+   "D": 0.15152393240945838,
+   "u_total": 0.07563260882569668,
+   "D_star": 0.12092337481103708,
+   "D_hash": 0.29260914552987805,
    "location": {
-    "distance_from_door_m": 2.254,
+    "distance_from_door_m": 2.253,
     "wall": "right wall",
     "distance_from_wall_m": 0.139,
     "text": "2.25 m from the door threshold, 0.14 m from the right wall"
@@ -350,10 +350,10 @@
    "source_lane": 2,
    "x_m": 2.821066322174248,
    "y_m": -0.22604613832038084,
-   "D": 0.14018631200159712,
-   "u_total": 0.10163001368054474,
-   "D_star": 0.1552505493729357,
-   "D_hash": 0.3866339360938536,
+   "D": 0.14222543539178942,
+   "u_total": 0.10165016292914648,
+   "D_star": 0.15525054937293573,
+   "D_hash": 0.38663393609385366,
    "location": {
     "distance_from_door_m": 2.821,
     "wall": "right wall",
@@ -450,14 +450,14 @@
    "id": "HS-0015",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 0,
-   "x_m": 2.1468548515071864,
-   "y_m": 0.3607698079222235,
+   "x_m": 2.1463047502024226,
+   "y_m": 0.36077743582401406,
    "D": 0.13124540116510644,
    "u_total": 0.14548449087197476,
    "D_star": 0.26315847752744265,
    "D_hash": 0.6979036334371546,
    "location": {
-    "distance_from_door_m": 2.147,
+    "distance_from_door_m": 2.146,
     "wall": "left wall",
     "distance_from_wall_m": 0.139,
     "text": "2.15 m from the door threshold, 0.14 m from the left wall"
@@ -484,14 +484,14 @@
    "id": "HS-0017",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 0,
-   "x_m": 1.9523672910579022,
-   "y_m": 0.4202286007325317,
+   "x_m": 1.951350511125242,
+   "y_m": 0.420247659096429,
    "D": 0.11643402556790462,
    "u_total": 0.16924296241000503,
    "D_star": 0.264918763734231,
    "D_hash": 0.7016524117071918,
    "location": {
-    "distance_from_door_m": 1.952,
+    "distance_from_door_m": 1.951,
     "wall": "left wall",
     "distance_from_wall_m": 0.08,
     "text": "1.95 m from the door threshold, 0.08 m from the left wall"
@@ -501,12 +501,12 @@
    "id": "HS-0018",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 0,
-   "x_m": 2.861373470418635,
-   "y_m": 0.42135597581565143,
-   "D": 0.161333932701144,
-   "u_total": 0.1710251995449456,
-   "D_star": 0.21509355915463488,
-   "D_hash": 0.5916490975214844,
+   "x_m": 2.8605026821478154,
+   "y_m": 0.4213501492608277,
+   "D": 0.16187368946724368,
+   "u_total": 0.1710541478256162,
+   "D_star": 0.21463429236637233,
+   "D_hash": 0.59038063928313,
    "location": {
     "distance_from_door_m": 2.861,
     "wall": "left wall",
@@ -518,17 +518,17 @@
    "id": "HS-0019",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 3,
-   "x_m": 2.7658615344729007,
-   "y_m": -0.4212249108926137,
-   "D": -0.00697578535398726,
-   "u_total": 0.19095975323382913,
-   "D_star": 0.2720898577603039,
-   "D_hash": 0.7206866511703723,
+   "x_m": 2.7647776383524914,
+   "y_m": -0.42122034973114847,
+   "D": -0.003676948040757086,
+   "u_total": 0.19030786975767808,
+   "D_star": 0.27041044979194956,
+   "D_hash": 0.7162418483247757,
    "location": {
-    "distance_from_door_m": 2.766,
+    "distance_from_door_m": 2.765,
     "wall": "right wall",
     "distance_from_wall_m": 0.079,
-    "text": "2.77 m from the door threshold, 0.08 m from the right wall"
+    "text": "2.76 m from the door threshold, 0.08 m from the right wall"
    }
   }
  ],
@@ -564,16 +564,16 @@
   },
   "note": "wall strips: reverse-entry wall tracks (straight-motion outline limit); see README coverage section"
  },
- "min_true_outline_clearance_m": 0.0004652627275194554,
- "band_rectangle_clearance_m": -0.04092036171438618,
+ "min_true_outline_clearance_m": 0.0003605477774040189,
+ "band_rectangle_clearance_m": -0.04094417463295352,
  "blocked_run_wall_strip_m": {
   "left_m": 0.095,
   "right_m": 0.055
  },
- "blocked_run_min_clearance_m": 0.0003598453842754701,
+ "blocked_run_min_clearance_m": 0.00022789028644210063,
  "blocked_box": [
-  0.1722,
-  0.2122,
+  0.1771,
+  0.2171,
   0.26,
   0.32
  ]

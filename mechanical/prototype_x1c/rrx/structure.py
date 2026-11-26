@@ -173,7 +173,7 @@ def motor_pod(s):
     r_o = P.DRIVE_POD["outer_r"]
     tube = cyl(r_o, yf + D.POD_FACE_T - D.POD_Y0, (0, D.POD_Y0, ax_z), (0, 1, 0))
     base = box(-26.0, 26.0, D.POD_Y0, yf + D.POD_FACE_T, Z1, Z1 + 9.0)
-    web = box(-r_o, r_o, D.POD_Y0, yf + D.POD_FACE_T, Z1, ax_z)
+    web = box(-16.0, 16.0, D.POD_Y0, yf + D.POD_FACE_T, Z1, ax_z)       # inside the r 23.8 skin cut-out of the hull (corners would clip the skin)
     pod = fuse(tube, base, web).cut(box(-30.0, 30.0, D.POD_Y0 - 1, 130.0, Z0 - 5, Z1))   # tube bottom (z 35.5) trimmed to the plate top
     pod = pod.cut(cyl(D.POD_BORE_R, yf - D.POD_Y0 + 1, (0, D.POD_Y0 - 1, ax_z), (0, 1, 0)))
     e = L.env("motor")
@@ -232,11 +232,12 @@ def grip_side_plate(s):
     """6 mm 6061 laser-cut side plate: foot, leg behind the motor, cheek. Flat part (profile in x-z)."""
     G = P.GRIP
     top = G["bar_top_z"]
-    pts = [(D.FOOT_X[0], Z1), (D.FOOT_X[1], Z1), (D.FOOT_X[1], 78.0), (-1.0, 104.0), (-1.0, 146.0), (-7.0, 150.0), (-7.0, top - 1.0),
+    fx = D.GRIP_PLATE_FRONT_X
+    pts = [(D.FOOT_X[0], Z1), (D.FOOT_X[1], Z1), (D.FOOT_X[1], 78.0), (-1.0, 104.0), (-1.0, 145.0), (fx, 150.0), (fx, top - 1.0),
            (-21.0, top - 1.0), (-21.0, 112.0), (-31.0, 98.0), (-31.0, Z1 + 26.0), (D.FOOT_X[0], Z1 + 26.0)]
     y0, y1 = D.GRIP_PLATE_Y
     pl = prism_xz(pts, y0, y1)
-    pl = pl.cut(cyl(D.CLEAR["M8"] / 2, 10, (D.GRIP_TUBE_X, y0 - 1, D.GRIP_TUBE_Z), (0, 1, 0)))
+    pl = pl.cut(cyl(D.CLEAR[D.GRIP_BAR_SCREW] / 2, 10, (D.GRIP_BAR_X, y0 - 1, D.GRIP_BAR_Z), (0, 1, 0)))
     for x in (-48.0, -30.0):
         pl = pl.cut(cyl(D.CLEAR["M5"] / 2, 10, (x, y0 - 1, Z1 + 16.0), (0, 1, 0)))
     for z in (118.0, 140.0):
@@ -254,47 +255,58 @@ def grip_foot(s):
     return a if s > 0 else mirror_y(a)
 
 
-def grip_tube():
-    od, t = D.GRIP_TUBE
+def grip_bar():
+    """14 mm 6061-T6 round bar between the side plates, both ends drilled 5.0 and tapped M6 x 12."""
     y = D.GRIP_PLATE_Y[0]
-    return cyl(od / 2, 2 * y, (D.GRIP_TUBE_X, -y, D.GRIP_TUBE_Z), (0, 1, 0)).cut(cyl(od / 2 - t, 2 * y + 2, (D.GRIP_TUBE_X, -y - 1, D.GRIP_TUBE_Z), (0, 1, 0)))
+    b = cyl(D.GRIP_BAR_D / 2, 2 * y, (D.GRIP_BAR_X, -y, D.GRIP_BAR_Z), (0, 1, 0))
+    for sy in (-1, 1):
+        b = b.cut(cyl(D.TAP["M6"] / 2, 13.0, (D.GRIP_BAR_X, sy * (y + 1.0), D.GRIP_BAR_Z), (0, -sy, 0)))
+    return b
 
 
-def grip_tie_rod():
-    y = D.GRIP_PLATE_Y[1] + 9.0
-    return cyl(4.0, 2 * y, (D.GRIP_TUBE_X, -y, D.GRIP_TUBE_Z), (0, 1, 0))
+def grip_screw(s):
+    """M6 x 16 ISO 4762 cap screw (envelope: head 10 x 6 in the fairing pocket, shank through the plate into the bar)."""
+    y0, y1 = D.GRIP_PLATE_Y
+    sc = fuse(cyl(5.0, 6.0, (D.GRIP_BAR_X, y1, D.GRIP_BAR_Z), (0, 1, 0)), cyl(2.9, 16.0, (D.GRIP_BAR_X, y1 - 16.0, D.GRIP_BAR_Z), (0, 1, 0)))
+    return sc if s > 0 else mirror_y(sc)
 
 
 def grip_sleeve():
-    """Printed hand sleeve 25 x 22 over the tube between the cheek fairings."""
+    """Printed hand sleeve 25 x 22 over the bar between the cheek fairings; ends relieved round the look-ahead ToF bosses."""
     G = P.GRIP
     x0, x1 = G["center_x"] - G["bar_x"] / 2, G["center_x"] + G["bar_x"] / 2
     hy = G["half_span_y"] - 0.5
-    sl = cq.Workplane("XZ", origin=((x0 + x1) / 2, hy, D.GRIP_TUBE_Z)).rect(G["bar_x"], G["bar_z"]).extrude(2 * hy).edges("|Y").fillet(8.0).val()
-    return sl.cut(cyl(D.GRIP_TUBE[0] / 2 + 0.2, 2 * hy + 2, (D.GRIP_TUBE_X, -hy - 1, D.GRIP_TUBE_Z), (0, 1, 0)))
+    sl = cq.Workplane("XZ", origin=((x0 + x1) / 2, hy, D.GRIP_BAR_Z)).rect(G["bar_x"], G["bar_z"]).extrude(2 * hy).edges("|Y").fillet(8.0).val()
+    sl = sl.cut(cyl(D.GRIP_BAR_D / 2 + 0.2, 2 * hy + 2, (D.GRIP_BAR_X, -hy - 1, D.GRIP_BAR_Z), (0, 1, 0)))
+    from .sensors import tof_boss
+    for name in ("tof_look_fl", "tof_look_fr"):
+        t = P.TOF_SENSORS[name]
+        sl = sl.cut(tof_boss(t["xyz"], t["dir"], look=True, grow=0.4))
+    return sl
 
 
 def cheek_fairing(s):
-    """Printed fairing over the side plate above the shoulder; carries the look-ahead ToF capsule seat on its front face."""
+    """Printed fairing over the side plate above the shoulder; carries the look-ahead ToF seat on its front face."""
     G = P.GRIP
     y0, y1 = G["cheek_y"]
     x0, x1 = G["center_x"] - G["bar_x"] / 2, G["center_x"] + G["bar_x"] / 2
     zb = 109.0
     f = cq.Workplane("XY").add(box(x0, x1, y0, y1, zb, G["bar_top_z"] + 2.0)).edges("|Z").fillet(3.0).val()
     t = P.TOF_SENSORS["tof_look_fl"]
-    d = (t["dir"][0], t["dir"][1], t["dir"][2])
     from .sensors import tof_boss, tof_pocket
-    f = f.fuse(tof_boss((t["xyz"][0], t["xyz"][1], t["xyz"][2]), d)).clean()
-    f = f.cut(box(-21.4, -0.6, D.GRIP_PLATE_Y[0] - 0.3, D.GRIP_PLATE_Y[1] + 0.3, zb - 1, 147.0))       # slot for the plate cheek
-    f = f.cut(box(-21.4, -6.6, D.GRIP_PLATE_Y[0] - 0.3, D.GRIP_PLATE_Y[1] + 0.3, 146.0, G["bar_top_z"] - 0.6))
-    f = f.cut(cyl(D.GRIP_TUBE[0] / 2 + 0.3, 6, (D.GRIP_TUBE_X, y0 - 1, D.GRIP_TUBE_Z), (0, 1, 0)))        # tube enters the inner wall
-    f = f.cut(cyl(8.0, 5, (D.GRIP_TUBE_X, y1 - 3.5, D.GRIP_TUBE_Z), (0, 1, 0)))                           # nut pocket (cap plug)
-    f = f.cut(cyl(D.CLEAR["M8"] / 2, 20, (D.GRIP_TUBE_X, y0, D.GRIP_TUBE_Z), (0, 1, 0)))
+    f = f.fuse(tof_boss(t["xyz"], t["dir"], look=True)).clean()
+    gap = 0.3
+    fx = D.GRIP_PLATE_FRONT_X
+    f = f.cut(box(-21.0 - gap - 0.1, -1.0 + gap + 0.1, D.GRIP_PLATE_Y[0] - gap, D.GRIP_PLATE_Y[1] + gap, zb - 1, 150.5))     # slot for the plate cheek
+    f = f.cut(box(-21.0 - gap - 0.1, fx + gap + 0.1, D.GRIP_PLATE_Y[0] - gap, D.GRIP_PLATE_Y[1] + gap, 145.0, G["bar_top_z"] - 0.6))
+    f = f.cut(cyl(D.GRIP_BAR_D / 2 + 0.3, 6, (D.GRIP_BAR_X, y0 - 1, D.GRIP_BAR_Z), (0, 1, 0)))       # bar enters the inner wall
+    f = f.cut(cyl(5.6, 5, (D.GRIP_BAR_X, y1 - 4.5, D.GRIP_BAR_Z), (0, 1, 0)))                          # screw-head pocket (push-in cap)
+    f = f.cut(cyl(D.CLEAR["M6"] / 2, 20, (D.GRIP_BAR_X, y0, D.GRIP_BAR_Z), (0, 1, 0)))
     for z in (118.0, 140.0):
         f = f.cut(cyl(D.CLEAR["M3"] / 2, 20, (-11.0, y0 - 1, z), (0, 1, 0)))
         f = f.cut(cyl(3.2, 2.2, (-11.0, y1 - 2.0, z), (0, 1, 0)))
-    f = f.cut(tof_pocket((t["xyz"][0], t["xyz"][1], t["xyz"][2]), d))
-    f = f.cut(box(-6.0, -1.5, y0 + 2.5, y1 - 2.5, 112.0, 152.0))                                          # ToF lead channel down the front
+    f = f.cut(tof_pocket(t["xyz"], t["dir"], look=True))
+    f = f.cut(box(-7.0, -2.0, y0 + 0.8, D.GRIP_PLATE_Y[0] - gap - 0.6, 112.0, 156.0))                 # ToF lead channel inboard of the plate
     return f if s > 0 else mirror_y(f)
 
 
@@ -368,12 +380,12 @@ def build(add):
         add(Part("RRX-F03", f"screw_ring_{tag}", screw_ring(s), "fabricated", "SS304", "drive", color=D.MAT["SS304"]["color"], internal=False,
                  note="1 mm 304 laser-cut ring", mates={f"motor_pod_{tag}", f"motor_{tag}"}))
         add(Part("RRX-F05", f"grip_side_plate_{tag}", grip_side_plate(s), "fabricated", "AL6061", "grip", color=AL, internal=False,
-                 note="6 mm 6061-T6 laser cut; same blank both sides", mates={f"grip_foot_{tag}", "grip_tube", "grip_tie_rod", f"cheek_fairing_{tag}", "chassis_plate"}))
+                 note="6 mm 6061-T6 laser cut; same blank both sides", mates=set()))
         add(Part("RRX-F06", f"grip_foot_{tag}", grip_foot(s), "fabricated", "AL6061", "grip", color=AL,
                  note="25 x 25 x 3 6060 angle cut to 34 mm, 4 holes", mates={f"grip_side_plate_{tag}", "chassis_plate"}))
         add(Part(f"RRX-P03{tag}", f"cheek_fairing_{tag}", cheek_fairing(s), "printed", "ASA", "grip", color=D.MAT["ASA"]["color"], internal=False,
                  orient=(0, 0, 0), print_note="upright as fitted; supports only under the ToF nose",
-                 mates={f"grip_side_plate_{tag}", "grip_tube", "grip_tie_rod", "grip_sleeve", f"tof_look_f{tag.lower()}"}))
+                 mates={f"tof_look_f{tag.lower()}"}))
     add(Part("RRX-P04", "dock_switch_bracket", dock_switch_bracket(), "printed", "PAHT-CF", "receiver", color=D.MAT["PAHT-CF"]["color"], internal=False,
              orient=(180, 0, 0), print_note="plate face on the bed", mates={"chassis_plate", "receiver_channel_L", "head_dock_switch"}))
     add(Part("RRX-F04", "bridge_tray", bridge_tray(), "fabricated", "AL5052", "bridge", color=AL, note="2 mm 5052 laser cut; gap pad zone u 50..110, v 30..70",
@@ -384,12 +396,12 @@ def build(add):
     for i, (u, v) in enumerate(P.CHS_MAIN["holes_uv"]):
         add(Part("RRX-H02", f"board_standoff_{i}", board_standoff(u, v), "purchased", "AL6061", "bridge", color="#c9a24a", mpn="M3 x 3 mm round spacer + M3x10 screw + nyloc nut under the tray",
                  verified="standard part", mates={"bridge_tray", "RR-CHS-MAIN_pcb", "RR-CHS-MAIN_bottom_parts"}))
-    add(Part("RRX-F08", "grip_tube", grip_tube(), "fabricated", "AL6061", "grip", color=AL, internal=False, note="16 x 2 6060 tube cut to 176 mm",
-             mates={"grip_side_plate_L", "grip_side_plate_R", "grip_tie_rod", "grip_sleeve", "cheek_fairing_L", "cheek_fairing_R"}))
-    add(Part("RRX-H03", "grip_tie_rod", grip_tie_rod(), "purchased", "SS304", "grip", color=D.MAT["SS304"]["color"], internal=False, mpn="M8 A2 threaded rod 206 mm + 2 nyloc nuts + 2 washers",
-             verified="standard part", mates={"grip_tube", "grip_side_plate_L", "grip_side_plate_R", "cheek_fairing_L", "cheek_fairing_R", "grip_sleeve"}))
+    add(Part("RRX-F08", "grip_bar", grip_bar(), "fabricated", "AL6061", "grip", color=AL, internal=False, note="14 mm 6061-T6 round bar cut to 176 mm, ends drilled 5.0 x 15 and tapped M6 x 12"))
+    for tag, s in SIDES:
+        add(Part("RRX-H03", f"grip_screw_{tag}", grip_screw(s), "purchased", "SS304", "grip", color=D.MAT["SS304"]["color"], internal=False, mass=0.007,
+                 mpn="M6 x 16 ISO 4762 A2-70 + M6 ISO 7089 washer, medium thread-lock", verified="standard part", mates={"grip_bar", f"grip_side_plate_{tag}", f"cheek_fairing_{tag}"}))
     add(Part("RRX-P05", "grip_sleeve", grip_sleeve(), "printed", "ASA", "grip", color="#394046", internal=False, orient=(90, 0, 0),
-             print_note="standing on one end (166 mm tall), brim", mates={"grip_tube", "cheek_fairing_L", "cheek_fairing_R"}))
+             print_note="standing on one end (166 mm tall), brim"))
     add(Part("RRX-F09", "caster_disc", caster_disc(), "fabricated", "SS304", "caster", color=D.MAT["SS304"]["color"], note="2.5 mm 304 laser cut, 4 x M4 tapped",
              mates={"chassis_plate", "caster_shim", "caster"}, internal=False))
     add(Part("RRX-F10", "caster_shim", caster_shim(), "fabricated", "SS304", "caster", color=D.MAT["SS304"]["color"], note="1 mm 304 shim",

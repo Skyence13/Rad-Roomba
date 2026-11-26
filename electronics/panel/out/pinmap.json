@@ -1,0 +1,875 @@
+{
+ "board": "RR-PANEL",
+ "rev": "A",
+ "coordinates": "pad_xy_mm: board frame, X right / Y up, origin = drill/place origin, viewed from the top",
+ "parts": [
+  {
+   "ref": "BZ1",
+   "value": "piezo 4 kHz",
+   "group": "sounder",
+   "symbol": "Device:Buzzer",
+   "footprint": "Buzzer_Beeper:Buzzer_Murata_PKLCS1212E",
+   "mpn": "PKLCS1212E4001-R1",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "+",
+     "net": "BUZ_P",
+     "type": "passive",
+     "pad_xy_mm": [
+      47.4,
+      11.0
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "-",
+     "net": "BUZ_N",
+     "type": "passive",
+     "pad_xy_mm": [
+      58.6,
+      11.0
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "C1",
+   "value": "100n",
+   "group": "connector",
+   "symbol": "Device:C",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "mpn": "CC0603KRX7R9BB104",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "V5_AUX",
+     "type": "passive",
+     "pad_xy_mm": [
+      23.225,
+      16.0
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      24.775,
+      16.0
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "C2",
+   "value": "100n",
+   "group": "connector",
+   "symbol": "Device:C",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "mpn": "CC0603KRX7R9BB104",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "V12_AUX",
+     "type": "passive",
+     "pad_xy_mm": [
+      35.225,
+      16.0
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      36.775,
+      16.0
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "D1",
+   "value": "BAT54",
+   "group": "sounder",
+   "symbol": "Device:D_Schottky",
+   "footprint": "Diode_SMD:D_SOD-123",
+   "mpn": "BAT54W-7-F",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "K",
+     "net": "BUZ_P",
+     "type": "passive",
+     "pad_xy_mm": [
+      42.35,
+      15.0
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "A",
+     "net": "V5_AUX",
+     "type": "passive",
+     "pad_xy_mm": [
+      45.65,
+      15.0
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "FID1",
+   "value": "fiducial",
+   "group": "mech",
+   "symbol": "Mechanical:Fiducial",
+   "footprint": "Fiducial:Fiducial_1mm_Mask2mm",
+   "mpn": "FIDUCIAL",
+   "dnp": false,
+   "pins": []
+  },
+  {
+   "ref": "FID2",
+   "value": "fiducial",
+   "group": "mech",
+   "symbol": "Mechanical:Fiducial",
+   "footprint": "Fiducial:Fiducial_1mm_Mask2mm",
+   "mpn": "FIDUCIAL",
+   "dnp": false,
+   "pins": []
+  },
+  {
+   "ref": "H1",
+   "value": "M2.5",
+   "group": "mech",
+   "symbol": "Mechanical:MountingHole",
+   "footprint": "MountingHole:MountingHole_2.7mm_M2.5",
+   "mpn": "MOUNTING-HOLE-M2.5",
+   "dnp": false,
+   "pins": []
+  },
+  {
+   "ref": "H2",
+   "value": "M2.5",
+   "group": "mech",
+   "symbol": "Mechanical:MountingHole",
+   "footprint": "MountingHole:MountingHole_2.7mm_M2.5",
+   "mpn": "MOUNTING-HOLE-M2.5",
+   "dnp": false,
+   "pins": []
+  },
+  {
+   "ref": "J1",
+   "value": "JST GH 10p side",
+   "group": "connector",
+   "symbol": "Connector_Generic_MountingPin:Conn_01x10_MountingPin",
+   "footprint": "Connector_JST:JST_GH_SM10B-GHS-TB_1x10-1MP_P1.25mm_Horizontal",
+   "mpn": "SM10B-GHS-TB(LF)(SN)",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "Pin_1",
+     "net": "V5_AUX",
+     "type": "passive",
+     "pad_xy_mm": [
+      35.625,
+      18.75
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "Pin_2",
+     "net": "V12_AUX",
+     "type": "passive",
+     "pad_xy_mm": [
+      34.375,
+      18.75
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "3",
+     "name": "Pin_3",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      33.125,
+      18.75
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "4",
+     "name": "Pin_4",
+     "net": "LED_READY_K",
+     "type": "passive",
+     "pad_xy_mm": [
+      31.875,
+      18.75
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "5",
+     "name": "Pin_5",
+     "net": "LED_MOVING_K",
+     "type": "passive",
+     "pad_xy_mm": [
+      30.625,
+      18.75
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "6",
+     "name": "Pin_6",
+     "net": "LED_HOLD_K",
+     "type": "passive",
+     "pad_xy_mm": [
+      29.375,
+      18.75
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "7",
+     "name": "Pin_7",
+     "net": "LED_FAULT_K",
+     "type": "passive",
+     "pad_xy_mm": [
+      28.125,
+      18.75
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "8",
+     "name": "Pin_8",
+     "net": "LED_CHARGE_K",
+     "type": "passive",
+     "pad_xy_mm": [
+      26.875,
+      18.75
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "9",
+     "name": "Pin_9",
+     "net": "BUZ_N",
+     "type": "passive",
+     "pad_xy_mm": [
+      25.625,
+      18.75
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "10",
+     "name": "Pin_10",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      24.375,
+      18.75
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "MP",
+     "name": "MountPin",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      [
+       37.475,
+       21.95
+      ],
+      [
+       22.525,
+       21.95
+      ]
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "J2",
+   "value": "JST GH 2p side",
+   "group": "sounder",
+   "symbol": "Connector_Generic_MountingPin:Conn_01x02_MountingPin",
+   "footprint": "Connector_JST:JST_GH_SM02B-GHS-TB_1x02-1MP_P1.25mm_Horizontal",
+   "mpn": "SM02B-GHS-TB(LF)(SN)",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "Pin_1",
+     "net": "V12_AUX",
+     "type": "passive",
+     "pad_xy_mm": [
+      50.125,
+      18.75
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "Pin_2",
+     "net": "BUZ_N",
+     "type": "passive",
+     "pad_xy_mm": [
+      48.875,
+      18.75
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "MP",
+     "name": "MountPin",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      [
+       51.975,
+       21.95
+      ],
+      [
+       47.025,
+       21.95
+      ]
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "LED1",
+   "value": "green",
+   "group": "annunciator",
+   "symbol": "Device:LED",
+   "footprint": "LED_SMD:LED_0805_2012Metric",
+   "mpn": "150080GS75000",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "K",
+     "net": "LED_READY_K",
+     "type": "passive",
+     "pad_xy_mm": [
+      8.062,
+      8.0
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "A",
+     "net": "LED1_A",
+     "type": "passive",
+     "pad_xy_mm": [
+      9.938,
+      8.0
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "LED2",
+   "value": "amber",
+   "group": "annunciator",
+   "symbol": "Device:LED",
+   "footprint": "LED_SMD:LED_0805_2012Metric",
+   "mpn": "150080YS75000",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "K",
+     "net": "LED_MOVING_K",
+     "type": "passive",
+     "pad_xy_mm": [
+      20.062,
+      8.0
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "A",
+     "net": "LED2_A",
+     "type": "passive",
+     "pad_xy_mm": [
+      21.938,
+      8.0
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "LED3",
+   "value": "white",
+   "group": "annunciator",
+   "symbol": "Device:LED",
+   "footprint": "LED_SMD:LED_0805_2012Metric",
+   "mpn": "158080227A",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "K",
+     "net": "LED_HOLD_K",
+     "type": "passive",
+     "pad_xy_mm": [
+      32.062,
+      8.0
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "A",
+     "net": "LED3_A",
+     "type": "passive",
+     "pad_xy_mm": [
+      33.938,
+      8.0
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "LED4",
+   "value": "blue",
+   "group": "annunciator",
+   "symbol": "Device:LED",
+   "footprint": "LED_SMD:LED_0805_2012Metric",
+   "mpn": "150080BS75000",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "K",
+     "net": "LED_CHARGE_K",
+     "type": "passive",
+     "pad_xy_mm": [
+      44.062,
+      8.0
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "A",
+     "net": "LED4_A",
+     "type": "passive",
+     "pad_xy_mm": [
+      45.938,
+      8.0
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "LED5",
+   "value": "red",
+   "group": "annunciator",
+   "symbol": "Device:LED",
+   "footprint": "LED_SMD:LED_0805_2012Metric",
+   "mpn": "150080RS75000",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "K",
+     "net": "LED_FAULT_K",
+     "type": "passive",
+     "pad_xy_mm": [
+      60.062,
+      8.0
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "A",
+     "net": "LED5_A",
+     "type": "passive",
+     "pad_xy_mm": [
+      61.938,
+      8.0
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "R1",
+   "value": "120",
+   "group": "annunciator",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0805_2012Metric",
+   "mpn": "RC0805FR-07120RL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "V5_AUX",
+     "type": "passive",
+     "pad_xy_mm": [
+      8.088,
+      3.6
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "LED1_A",
+     "type": "passive",
+     "pad_xy_mm": [
+      9.912,
+      3.6
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "R2",
+   "value": "200",
+   "group": "annunciator",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0805_2012Metric",
+   "mpn": "RC0805FR-07200RL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "V5_AUX",
+     "type": "passive",
+     "pad_xy_mm": [
+      20.087,
+      3.6
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "LED2_A",
+     "type": "passive",
+     "pad_xy_mm": [
+      21.913,
+      3.6
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "R3",
+   "value": "130",
+   "group": "annunciator",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0805_2012Metric",
+   "mpn": "RC0805FR-07130RL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "V5_AUX",
+     "type": "passive",
+     "pad_xy_mm": [
+      32.087,
+      3.6
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "LED3_A",
+     "type": "passive",
+     "pad_xy_mm": [
+      33.913,
+      3.6
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "R4",
+   "value": "120",
+   "group": "annunciator",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0805_2012Metric",
+   "mpn": "RC0805FR-07120RL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "V5_AUX",
+     "type": "passive",
+     "pad_xy_mm": [
+      44.087,
+      3.6
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "LED4_A",
+     "type": "passive",
+     "pad_xy_mm": [
+      45.913,
+      3.6
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "R5",
+   "value": "200",
+   "group": "annunciator",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0805_2012Metric",
+   "mpn": "RC0805FR-07200RL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "V5_AUX",
+     "type": "passive",
+     "pad_xy_mm": [
+      60.087,
+      3.6
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "LED5_A",
+     "type": "passive",
+     "pad_xy_mm": [
+      61.913,
+      3.6
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "R6",
+   "value": "1k",
+   "group": "sounder",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0805_2012Metric",
+   "mpn": "RC0805FR-071KL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "BUZ_P",
+     "type": "passive",
+     "pad_xy_mm": [
+      44.0,
+      10.588
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "BUZ_N",
+     "type": "passive",
+     "pad_xy_mm": [
+      44.0,
+      12.412
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "TP1",
+   "value": "V5_AUX",
+   "group": "test",
+   "symbol": "Connector:TestPoint",
+   "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+   "mpn": "TP-PAD-1.5",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "1",
+     "net": "V5_AUX",
+     "type": "passive",
+     "pad_xy_mm": [
+      12.0,
+      15.5
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "TP2",
+   "value": "GND",
+   "group": "test",
+   "symbol": "Connector:TestPoint",
+   "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+   "mpn": "TP-PAD-1.5",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "1",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      16.0,
+      15.5
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "TP3",
+   "value": "BUZ_N",
+   "group": "test",
+   "symbol": "Connector:TestPoint",
+   "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+   "mpn": "TP-PAD-1.5",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "1",
+     "net": "BUZ_N",
+     "type": "passive",
+     "pad_xy_mm": [
+      40.0,
+      19.5
+     ],
+     "side": "B"
+    }
+   ]
+  }
+ ],
+ "nets": {
+  "BUZ_N": [
+   "BZ1.2",
+   "J1.9",
+   "J2.2",
+   "R6.2",
+   "TP3.1"
+  ],
+  "BUZ_P": [
+   "BZ1.1",
+   "D1.1",
+   "R6.1"
+  ],
+  "GND": [
+   "C1.2",
+   "C2.2",
+   "J1.3",
+   "J1.10",
+   "J1.MP",
+   "J2.MP",
+   "TP2.1"
+  ],
+  "LED1_A": [
+   "LED1.2",
+   "R1.2"
+  ],
+  "LED2_A": [
+   "LED2.2",
+   "R2.2"
+  ],
+  "LED3_A": [
+   "LED3.2",
+   "R3.2"
+  ],
+  "LED4_A": [
+   "LED4.2",
+   "R4.2"
+  ],
+  "LED5_A": [
+   "LED5.2",
+   "R5.2"
+  ],
+  "LED_CHARGE_K": [
+   "J1.8",
+   "LED4.1"
+  ],
+  "LED_FAULT_K": [
+   "J1.7",
+   "LED5.1"
+  ],
+  "LED_HOLD_K": [
+   "J1.6",
+   "LED3.1"
+  ],
+  "LED_MOVING_K": [
+   "J1.5",
+   "LED2.1"
+  ],
+  "LED_READY_K": [
+   "J1.4",
+   "LED1.1"
+  ],
+  "V12_AUX": [
+   "C2.1",
+   "J1.2",
+   "J2.1"
+  ],
+  "V5_AUX": [
+   "C1.1",
+   "D1.2",
+   "J1.1",
+   "R1.1",
+   "R2.1",
+   "R3.1",
+   "R4.1",
+   "R5.1",
+   "TP1.1"
+  ]
+ }
+}

@@ -78,9 +78,9 @@ def rows():
     # F  grip
     add("F grip", "countersunk screw + nyloc nut + washer", "M5 x 16 ISO 10642 A2-70", 4, "plate (from below) -> angle feet", torque="4.0", note="proof-load path, through-bolted")
     add("F grip", "socket cap screw + nyloc nut + 2 washers", "M5 x 16 ISO 4762 A2-70", 4, "side plates -> angle feet", torque="4.0", note="proof-load path")
-    add("F grip", "nyloc nut + washer", "M8 ISO 10511 A2", 2, "tie rod ends in the fairing pockets", torque="8.0", note="clamps the tube between the side plates")
+    add("F grip", "socket cap screw + washer", "M6 x 16 ISO 4762 A2-70 + ISO 7089", 2, "side plates -> tapped ends of the 14 mm bar (in the fairing pockets)", torque="6.0", note="medium thread-lock; proof-load path")
     add("F grip", "pan head screw + nyloc nut", "M3 x 20 ISO 7045 A2", 4, "cheek fairings through the side plates", torque="0.5")
-    add("F grip", "end cap", "push-in cap 16 mm, PE", 2, "nut pockets of the fairings", "UNVERIFIED")
+    add("F grip", "end cap", "push-in cap 11 mm, PE", 2, "screw-head pockets of the fairings", "UNVERIFIED")
     # G  lid
     add("G lid", "button head screw + bonded sealing washer", "M3 x 10 ISO 7380 A2 + M3 EPDM bonded washer", N_PERIM, "lid/nose skirt -> tongue inserts (radial)", torque="0.5")
     add("G lid", "pan head screw", "M3 x 12 ISO 7045 A2", 4 + 6, "nose/shoulder (2 per side) and shoulder/deck (3 per side) flanges", torque="0.6")

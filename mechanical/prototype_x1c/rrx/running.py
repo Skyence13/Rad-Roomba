@@ -192,9 +192,13 @@ def build(add):
              local=S.inlet_cover(), print_note="lid face on the bed (upside-down); no supports", mates={"rear_deck_R", "charge_inlet"}))
     for name, t in P.TOF_SENSORS.items():
         front_cliff = name.startswith("tof_cliff_f")
-        xdir = (1.0, 0.0, 0.0) if front_cliff else None
-        if not front_cliff:
+        look = name.startswith("tof_look_f")
+        xdir = (1.0, 0.0, 0.0) if front_cliff else (S._look_xdir(t["dir"]) if look else None)
+        if look:
+            add(Part("RRX-P54", f"tof_clip_{name[4:]}", S.tof_clip(t["xyz"], t["dir"], look=True), "printed", "ASA", "tof", color=ASA, orient=(0, 0, 0), internal=False,
+                     local=S.tof_clip((0, 0, 0), (0, 0, 1), look=True), print_note="flat; 2 off (look-ahead seats in the grip fairings)"))
+        elif not front_cliff:
             add(Part("RRX-P53", f"tof_clip_{name[4:]}", S.tof_clip(t["xyz"], t["dir"]), "printed", "ASA", "tof", color=ASA, orient=(0, 0, 0), internal=False,
-                     local=S.tof_clip((0, 0, 0), (0, 0, 1)), print_note="flat; 9 off on one plate", mates={"*"}))
+                     local=S.tof_clip((0, 0, 0), (0, 0, 1)), print_note="flat; 7 off on one plate"))
         add(Part("RRX-H30", f"tof_window_{name[4:]}", place(S._lbox(S.TOF_WIN[0], S.TOF_WIN[1], -S.TOF_WIN[2], 0.0), t["xyz"], t["dir"], xdir), "purchased", "PMMA", "tof", color="#3b1d1d",
-                 internal=False, mpn="IR-pass PMMA 1.0 mm, laser cut 15 x 11 (e.g. Plexiglas IR acrylic 1146 class)", verified="UNVERIFIED material/supplier; >= 85 % at 940 nm assumed", mates={"*"}))
+                 internal=False, mpn="IR-pass PMMA 1.0 mm, laser cut 15 x 11 (e.g. Plexiglas IR acrylic 1146 class)", verified="UNVERIFIED material/supplier; >= 85 % at 940 nm assumed"))
