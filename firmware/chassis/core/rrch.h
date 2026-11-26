@@ -191,7 +191,9 @@ typedef struct {
     X(DRV_MOTOR_KE, "drive.motor_ke", 1.65, 0.5, 5, "V.s/rad") \
     X(LINK_TIMEOUT_MS, "link.timeout_ms", 1000, 300, 5000, "ms") \
     X(ALERT_PREMOTION_MS, "alert.premotion_ms", 1500, 500, 5000, "ms") \
-    X(ALERT_REST_MS, "alert.rest_ms", 2000, 0, 60000, "ms") \
+    X(ALERT_REST_MS, "alert.rest_ms", 5000, 0, 600000, "ms") \
+    X(STAT_GYRO_MAX, "stationary.gyro_max_radps", 0.05, 0.005, 0.5, "rad/s") \
+    X(STAT_MIN_MS, "stationary.min_ms", 100, 0, 2000, "ms") \
     X(TOF_MAX_AGE_MS, "tof.max_age_ms", 100, 40, 250, "ms") \
     X(TOF_DISAGREE_MS, "tof.disagree_ms", 200, 50, 1000, "ms") \
     X(CLIFF_DROP_MM, "cliff.drop_mm", 60, 20, 200, "mm") \
@@ -346,6 +348,9 @@ typedef struct {
     bool at_rest;
     uint16_t t_rest;
     int64_t rest_ticks[2];
+    bool stat_run;              /* both encoders zero ticks and |gyro| under the threshold, this tick and since stat_since_us */
+    bool is_stationary;         /* ... for at least stationary.min_ms */
+    uint64_t stat_since_us;
     double odometer_m;          /* signed path length of the body centre */
     float v_meas, w_meas_body;
 } rrch_drive_t;

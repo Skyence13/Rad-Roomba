@@ -155,6 +155,20 @@ static void simple(ctx_t *x, const char *status, const char *reason)
     }
 }
 
+static void stationary_obj(ctx_t *x)
+{
+    const rrch_drive_t *d = &x->c->drive;
+    rrc_jw_key(&x->w, "stationary");
+    rrc_jw_obj_begin(&x->w);
+    rrc_jw_kbool(&x->w, "is_stationary", d->is_stationary);
+    if (d->stat_run) {
+        rrc_jw_ku64(&x->w, "since_us", d->stat_since_us);
+    } else {
+        rrc_jw_knull(&x->w, "since_us");
+    }
+    rrc_jw_obj_end(&x->w);
+}
+
 static void stops(ctx_t *x)
 {
     rrc_jw_key(&x->w, "stops");
@@ -326,6 +340,7 @@ static void op_drive(ctx_t *x)
     rrc_jw_kbool(jw, "ok", c->imu.ok);
     rrc_jw_obj_end(jw);
     stops(x);
+    stationary_obj(x);
     rrc_jw_ku64(jw, "event_seq", c->ev_newest);
     rrc_jw_key(jw, "applied");
     rrc_jw_obj_begin(jw);
@@ -459,6 +474,7 @@ static void op_state(ctx_t *x, int level)
     if (level > 0) {
         rrc_jw_kbool(w, "truncated", true);
     }
+    stationary_obj(x);
     rrc_jw_kbool(w, "rearm_ready", !ch->latch && c->boot_done && ch->hw_live == 0u && c->out.arm_permit);
     rrc_jw_ku64(w, "rearm_nonce", c->rearm_nonce);
     kmask(w, "hold", c->hold, hold_names, 2);

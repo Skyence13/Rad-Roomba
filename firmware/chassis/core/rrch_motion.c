@@ -312,6 +312,20 @@ void rrch_drive_step(rrch_t *c)
         dth[i] = (float)delta * RAD_PER_TICK;
         d->i_f[i] += (in->i_mot_a[i] - d->i_f[i]) * 0.2f;
     }
+    /* stationarity evidence for scaler counts: zero encoder ticks on both wheels and a quiet gyro */
+    {
+        float gmax = CFG(c, STAT_GYRO_MAX);
+        bool quiet = in->imu_ok && fabsf(in->gyro[0]) < gmax && fabsf(in->gyro[1]) < gmax && fabsf(in->gyro[2]) < gmax;
+        if (dth[0] == 0.0f && dth[1] == 0.0f && quiet) {
+            if (!d->stat_run) {
+                d->stat_run = true;
+                d->stat_since_us = c->now_us;
+            }
+        } else {
+            d->stat_run = false;
+        }
+        d->is_stationary = d->stat_run && (float)(c->now_us - d->stat_since_us) >= CFG(c, STAT_MIN_MS) * 1000.0f;
+    }
     d->win_i = (uint8_t)((d->win_i + 1u) % 10u);
     d->odometer_m += 0.5 * (double)(dth[0] * r_w[0] + dth[1] * r_w[1]);
     d->v_meas = 0.5f * (d->w_meas[0] * r_w[0] + d->w_meas[1] * r_w[1]);
@@ -366,7 +380,10 @@ void rrch_drive_step(rrch_t *c)
                 d->motion = RRCH_MOTION_ALERT;
                 d->alert_ms = 0;
             } else {
-                d->motion = RRCH_MOTION_RUN;
+                d->motion = RRCH_MOTION_RUN; /* short hop inside the idle time: no delay, one chirp */
+                c->beep_count = 1;
+                c->beep_on_ms = c->beep_ms_left = 120;
+                c->beep_gap = 0;
             }
         }
     } else if (d->motion == RRCH_MOTION_ALERT) {
