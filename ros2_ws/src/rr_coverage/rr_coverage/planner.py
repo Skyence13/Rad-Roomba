@@ -163,3 +163,21 @@ def transit(pose, target, region, reverse_short_m=0.5):
     prims.append({"kind": "straight", "to": (target[0], target[1]), "reverse": use_reverse, "why": "TRANSIT"})
     prims.append({"kind": "pivot", "yaw": target[2]})
     return prims
+
+
+def approach(pose, target, region, standoff_m=0.30):
+    """Primitives that end with a straight forward approach along the target heading
+    (used for deferred counts and guided revisits): transit to a point on the target
+    line inside the pivot-clear region, then drive forward (or back) onto the target."""
+    tx, ty, tyaw = target
+    c, s = math.cos(tyaw), math.sin(tyaw)
+    (x0, x1), (y0, y1) = region["x"], region["y"]
+    if not (y0 - 1e-6 <= ty <= y1 + 1e-6) or abs(s) > 0.05:
+        return None                       # outside the reachable track band / not a track heading
+    xa = min(max(tx - c * standoff_m, x0), x1)
+    prims = transit(pose, (xa, ty, tyaw), region)
+    ahead = (tx - xa) * c
+    if abs(ahead) > 0.002:
+        prims.append({"kind": "straight", "to": (tx, ty), "reverse": ahead < 0, "why": "APPROACH",
+                      "speed": 0.05, "creep_m": 0.08})
+    return prims
