@@ -187,7 +187,7 @@ class Board:
         self.local_symbols = {}
         self.local_footprints = {}
         self.routing = {"passes": 100, "threads": None, "timeout": None, "enabled": True, "extra_args": [],
-                        "optimizer": True, "fanout": None}
+                        "optimizer": True, "fanout": False, "plane_fanout": True, "retries": 2}
         self.autoplace = {"clearance": 0.3, "grid": 0.25, "edge_margin": 0.5, "ic_halo": 2.0, "rotations": (0, 90, 180, 270),
                           "spread": 0.35}
         self.stackup_notes = []
@@ -350,7 +350,9 @@ class Board:
     # ---------------------------------------------------------------- routing
     def route(self, **kw):
         """Autorouter options: passes, threads, timeout (s), enabled, optimizer, extra_args,
-        fanout (Freerouting SMD fan-out stage; default: on for 4-layer boards, off for 2-layer)."""
+        fanout (Freerouting's own SMD fan-out stage, default off), plane_fanout (rrkicad
+        generates a fixed track + via beside every SMD pad of nets that have an inner-plane
+        zone, default on), retries (extra "continue" autorouter runs while nets are unrouted)."""
         for k in kw:
             if k not in self.routing:
                 raise DefinitionError("unknown routing option '%s'" % k)

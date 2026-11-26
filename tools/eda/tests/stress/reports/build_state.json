@@ -158,15 +158,31 @@
     "parts": 150,
     "sheets": 7
   },
-  "dsn_sha256": "830e9d536ec8354c78dc7515175bee4699b9e580f5e24d10160db4e6c760366b",
-  "dsn_unchanged": false,
+  "dsn_sha256": "b7fd38c7706bce5deeb4992f5490da89a3873f2cfff535dd445da954505af71a",
+  "dsn_unchanged": true,
   "gen_warnings": [
     "U50: 3D envelope uses the default height 1.0 mm (give height=)",
     "U51: 3D envelope uses the default height 1.0 mm (give height=)",
     "U52: 3D envelope uses the default height 1.0 mm (give height=)",
     "U53: 3D envelope uses the default height 1.0 mm (give height=)",
     "J5: 3D envelope uses the default height 1.0 mm (give height=)",
-    "J6: 3D envelope uses the default height 1.0 mm (give height=)"
+    "J6: 3D envelope uses the default height 1.0 mm (give height=)",
+    "plane fan-out: no legal via position for C40 pad at (57.77, 27.00) [+5V] (left to the autorouter)",
+    "plane fan-out: no legal via position for U4 pad at (54.66, 27.03) [+5V] (left to the autorouter)",
+    "plane fan-out: no legal via position for C107 pad at (20.25, 15.23) [+3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for U107 pad at (20.11, 18.30) [+3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for C104 pad at (17.50, 20.48) [+3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for U104 pad at (17.36, 23.55) [+3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for C102 pad at (27.75, 24.48) [+3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for C101 pad at (24.25, 26.23) [+3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for U2 pad at (53.25, 53.56) [GND] (left to the autorouter)",
+    "plane fan-out: no legal via position for U2 pad at (53.75, 53.56) [+3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for U2 pad at (55.94, 59.25) [GND] (left to the autorouter)",
+    "plane fan-out: no legal via position for U2 pad at (50.25, 60.44) [GND] (left to the autorouter)",
+    "plane fan-out: no legal via position for U2 pad at (49.06, 54.75) [GND] (left to the autorouter)",
+    "plane fan-out: no legal via position for U2 pad at (52.50, 57.00) [GND] (left to the autorouter)",
+    "plane fan-out: no legal via position for U1 pad at (28.50, 38.07) [+3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for U3 pad at (24.85, 12.00) [+3V3] (left to the autorouter)"
   ],
   "generated_files": [
     "STRESS-150.kicad_sch",
@@ -1084,6 +1100,32 @@
       "F"
     ]
   },
+  "plane_fanout": {
+    "failed": [
+      "C40 pad at (57.77, 27.00) [+5V]",
+      "U4 pad at (54.66, 27.03) [+5V]",
+      "C107 pad at (20.25, 15.23) [+3V3]",
+      "U107 pad at (20.11, 18.30) [+3V3]",
+      "C104 pad at (17.50, 20.48) [+3V3]",
+      "U104 pad at (17.36, 23.55) [+3V3]",
+      "C102 pad at (27.75, 24.48) [+3V3]",
+      "C101 pad at (24.25, 26.23) [+3V3]",
+      "U2 pad at (53.25, 53.56) [GND]",
+      "U2 pad at (53.75, 53.56) [+3V3]",
+      "U2 pad at (55.94, 59.25) [GND]",
+      "U2 pad at (50.25, 60.44) [GND]",
+      "U2 pad at (49.06, 54.75) [GND]",
+      "U2 pad at (52.50, 57.00) [GND]",
+      "U1 pad at (28.50, 38.07) [+3V3]",
+      "U3 pad at (24.85, 12.00) [+3V3]"
+    ],
+    "plane_nets": [
+      "+3V3",
+      "+5V",
+      "GND"
+    ],
+    "vias": 184
+  },
   "pwr_flags": [
     "+5V",
     "GND"
@@ -1102,23 +1144,21 @@
     "timed_out": false
   },
   "route_stats": {
-    "dangling_tracks_removed": 0,
-    "preroutes": 1,
-    "preroutes_missing_after_import": 0,
-    "track_length_mm": 4357.12,
-    "tracks": 1937,
-    "unconnected_after_fill": 3,
-    "unconnected_before_cleanup": 3,
-    "vias": 414
+    "track_length_mm": 146.13,
+    "tracks": 174,
+    "unconnected_after_fill": 195,
+    "vias": 173
   },
-  "routed": true,
+  "routed": false,
   "routing": {
     "enabled": true,
     "extra_args": [],
     "fanout": false,
     "layers": 4,
     "optimizer": false,
-    "passes": 25,
+    "passes": 30,
+    "plane_fanout": true,
+    "retries": 2,
     "threads": null,
     "timeout": 900
   },

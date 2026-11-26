@@ -6,8 +6,8 @@ Status: proposed procedure, nothing measured yet. Numbers in brackets come from 
 
 | Quantity | Symbol | Where (base_link mm) | Why |
 |---|---|---|---|
-| Film-plane to floor gap | g1..g4 | outer window corners (254, +-171.25) and (154, +-171.25) | the four points that bound pitch, roll and wing deflection |
-| Film-plane to floor gap | g0 | row centre (204, 0) | heave reference, separates wing deflection from roll |
+| Film-plane to floor gap | g1..g4 | outer window corners (181, +-171.25) and (81, +-171.25) | the four points that bound pitch, roll and wing deflection |
+| Film-plane to floor gap | g0 | row centre (131, 0) | heave reference, separates wing deflection from roll |
 | Head relative to chassis | r1, r2 | head cover top at (150, +-150) against a chassis-fixed arm | receiver compliance and play, independent of the floor |
 | Rail clearance | c1..c3 | leading rail at y = 0, +-170 | direct check of the 7 mm / 5 mm clearance, both rail inserts |
 | Chassis pitch and roll | theta, phi | IMU on RR-CHS-MAIN | cross-check of g against the three-point model |
@@ -40,7 +40,7 @@ Status: proposed procedure, nothing measured yet. Numbers in brackets come from 
 4. Repeat steps 2-3 after three head remove/refit cycles (repeatability of the indexed mount).
 
 **B. Quasi-static features.** Place each wheel and the caster in turn on the 1.5 and 3 mm shims; record g0..g4 and
-compare with the sensitivity table (calculated 1.76 mm per mm worst corner). A deviation above 0.3 mm means
+compare with the sensitivity table (calculated 1.58 mm per mm worst corner). A deviation above 0.3 mm means
 compliance or play not in the model.
 
 **C. Dynamic passes** on the floor rig at 0.05, 0.10 and 0.20 m/s, forward and reverse, straight and during a pivot turn,
@@ -60,13 +60,13 @@ a configuration is the union over all approved features and speeds.
 
 | Item | Proposed limit | Basis |
 |---|---|---|
-| Static loaded gap, each corner | 10.0 +- 0.5 mm | static term budget (+-1.52 mm worst case calculated) |
+| Static loaded gap, each corner | 10.0 +- 0.5 mm | static term budget (+-1.42 mm worst case calculated) |
 | Static corner-to-corner spread | <= 0.6 mm | head flatness + roll set-up |
 | 20 N corner deflection | <= 1.0 mm, returns within 0.1 mm | receiver stiffness target |
 | Head refit repeatability | <= 0.2 mm at any corner | RQ-015 |
-| Dynamic gap on the approved floor envelope | within the calibrated interval; proposal 7.0 .. 13.0 mm | calculated band 5.0 .. 15.0 mm for 2 mm features |
+| Dynamic gap on the approved floor envelope | within the calibrated interval; proposal 7.0 .. 13.0 mm | calculated band 5.4 .. 14.6 mm for 2 mm features |
 | Rail clearance, 3 mm insert | never below 1.0 mm on approved features, no HEAD_LOOP trip | nuisance stops |
-| Rail clearance, 5 mm insert | report trips per feature; expected to touch at about 2.8 mm features | calculated |
+| Rail clearance, 5 mm insert | report trips per feature; expected to touch at about 3.1 mm features | calculated |
 
 Samples whose gap leaves the calibrated interval are flagged and the host withholds that coverage (RQ-047). If the
 3 mm seam cannot be passed inside the interval, the options in order are: restrict the floor envelope, stiffen the

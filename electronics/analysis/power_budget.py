@@ -10,7 +10,7 @@ import os
 
 # ----------------------------------------------------------------------------- inputs
 V_NOM, V_MIN, V_FULL = 12.8, 10.0, 14.4          # [D] contract power.battery; 14.4 V = 3.60 V/cell charge
-ETA_5V, ETA_AUX = 0.92, 0.85                     # [A] LM61460 12->5.15 V at 1.5-3 A (datasheet curves ~93 %), small bucks
+ETA_5V, ETA_AUX = 0.92, 0.85                     # [A] LM61460 12->5.12 V at 1.5-3 A (datasheet curves ~93 %), small bucks
 PACKS = {                                        # name: (Ah, mass kg, Icont A, source tag)
     "8 Ah (0.3 trial value, no catalogue pack)": (8.0, None, None, "[A]"),
     "9 Ah Power-Sonic PSL-SC-1290":              (9.0, 1.00, 15.0, "[D] mass/dims mechanical parts.yaml; 15 A Power-Sonic technical document (search snippet) [U] BMS trip levels"),
@@ -80,7 +80,7 @@ R_HTR_BAY = 12.0 ** 2 / 20.0         # [A] 20 W / 12 V element -> 7.2 ohm
 I_TRIP = 3.0 / (2490 * 450e-6)       # [C] DRV8874 ITRIP = VREF/(RIPROPI*AIPROPI); [D] AIPROPI 450 uA/A
 def peak(vbus):
     rows = [
-        ("V5_CM5 (12 W at the rail)",        12.0 / ETA_5V / vbus, 5.0 * 5.15 / ETA_5V / vbus, "eFuse 5.0 A on the 5 V side"),
+        ("V5_CM5 (12 W at the rail)",        12.0 / ETA_5V / vbus, 5.0 * 5.12 / ETA_5V / vbus, "eFuse 5.0 A on the 5 V side"),
         ("V12_LIDAR (6 W)",                  6.0 / vbus, 1.5, "eFuse 1.5 A"),
         ("V3V3_CHS + V5_AUX (2.2 W)",        2.2 / ETA_AUX / vbus, 1.0 * 3.3 / ETA_AUX / vbus + 0.6 * 5 / ETA_AUX / vbus, "buck current limits"),
         ("Relay coils",                      0.094 * vbus / 12.0, 0.15, "polyfuse 0.20 A hold"),
@@ -281,15 +281,15 @@ def build():
       "The head's 10 V minimum therefore needs >= %.1f V at the pack in LAB at full head load; the BATTERY_LOW stop (reserve, about 12.6 V at rest) is far above it.\n"
       % ((hd + pk * 4) / 1000 * 1.0 if False else (hd * 1.0 + pk * 4.0) / 1000, ((hd + he) * 1.0 + pk * 4.0) / 1000, pk, 10.0 + ((hd + he) * 1.0 + pk * 4.0) / 1000))
     r5 = tot_r["V5_CM5 buck -> CM5 carrier"]
-    A("**CM5 feed [C]:** buck regulated to 5.15 V +/-1.5 %% at the eFuse input; %.0f mohm to the carrier -> %.2f V at 1.5 A, %.2f V at 5 A (Raspberry Pi 5 V +/-5 %% = 4.75-5.25 V [D CM5 datasheet, U exact clause]).\n"
-      % (r5, 5.15 - r5 * 1.5 / 1000, 5.15 - r5 * 5 / 1000))
+    A("**CM5 feed [C]:** buck regulated to 5.12 V +/-1.5 %% at the eFuse input; %.0f mohm to the carrier -> %.2f V at 1.5 A, %.2f V at 5 A (Raspberry Pi 5 V +/-5 %% = 4.75-5.25 V [D CM5 datasheet, U exact clause]).\n"
+      % (r5, 5.12 - r5 * 1.5 / 1000, 5.12 - r5 * 5 / 1000))
 
     A("## 7. Dissipation on RR-CHS-MAIN\n")
     def brd(i_bus, i_htr_h, i_htr_b, p5, i_mot, charging):
         rows = [
             ("Main switch FETs + shunt + copper (7.4 mohm)", i_bus ** 2 * 7.4e-3),
-            ("5.15 V buck LM61460 (1 - eta)", p5 * (1 / ETA_5V - 1)),
-            ("V5 eFuse", (p5 / 5.15) ** 2 * 0.028),
+            ("5.12 V buck LM61460 (1 - eta)", p5 * (1 / ETA_5V - 1)),
+            ("V5 eFuse", (p5 / 5.12) ** 2 * 0.028),
             ("3.3 V and 5 V_AUX bucks", 0.35),
             ("Logic on the board (3.3 V, 5 V loads)", 1.0),
             ("Head branches: shunts + eFuses", i_htr_h ** 2 * 0.033 + 0.5 ** 2 * 0.048),

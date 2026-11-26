@@ -202,6 +202,7 @@ class Builder:
         self.warnings = []
         self.fps = {}
         self.envelope_files = set()
+        self._all_keepouts = []
 
     # ------------------------------------------------------------ primitives
     def layer(self, name):
@@ -308,13 +309,21 @@ class Builder:
             self._add_via(v)
         for t in b.texts:
             self._add_text(t)
+        fan = {"plane_nets": [], "vias": 0, "failed": []}
+        if b.routing.get("plane_fanout", True):
+            from .fanout import plane_fanout
+            self.via_keepouts = [[self.fr.kmm(*p) for p in ko["_pts"]] for ko in self._all_keepouts if ko["vias"]]
+            fan = plane_fanout(self)
+            for f in fan["failed"]:
+                self.warnings.append("plane fan-out: no legal via position for " + f + " (left to the autorouter)")
+        self.fanout = fan
         pcb.BuildConnectivity()
         pcbnew.SaveBoard(paths.pcb, pcb, True)
         placement = {}
         for part in b.parts:
             placement[part.ref] = [round(part.x, 3), round(part.y, 3), round(part.rot, 1), part.side]
         x0, y0, x1, y1 = outline_bbox(b)
-        return {"placement": placement, "autoplaced": placed, "warnings": self.warnings,
+        return {"placement": placement, "autoplaced": placed, "warnings": self.warnings, "fanout": fan,
                 "origin": [self.fr.ox, self.fr.oy], "bbox": [x0, y0, x1, y1]}
 
     def _load_fp(self, lib_id):
@@ -516,6 +525,7 @@ class Builder:
         z.SetZoneName(ko["name"])
         self.pcb.Add(z)
         ko["_pts"] = pts
+        self._all_keepouts.append(ko)
 
     def _add_zone(self, zd):
         b = self.b

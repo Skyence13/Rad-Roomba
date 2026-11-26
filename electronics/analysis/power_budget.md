@@ -81,7 +81,7 @@ Step-and-count example [A: 12 m x 2.4 m floor, 7 lanes, 0.10 m pitch = 840 stati
 
 | Branch | Worst simultaneous demand (A) | Branch limit referred to the bus (A) | Limiter |
 |---|---:|---:|---|
-| V5_CM5 (12 W at the rail) | 1.30 | 2.80 | eFuse 5.0 A on the 5 V side |
+| V5_CM5 (12 W at the rail) | 1.30 | 2.78 | eFuse 5.0 A on the 5 V side |
 | V12_LIDAR (6 W) | 0.60 | 1.50 | eFuse 1.5 A |
 | V3V3_CHS + V5_AUX (2.2 W) | 0.26 | 0.74 | buck current limits |
 | Relay coils | 0.08 | 0.15 | polyfuse 0.20 A hold |
@@ -95,7 +95,7 @@ Step-and-count example [A: 12 m x 2.4 m floor, 7 lanes, 0.10 m pitch = 840 stati
 
 | Branch | Worst simultaneous demand (A) | Branch limit referred to the bus (A) | Limiter |
 |---|---:|---:|---|
-| V5_CM5 (12 W at the rail) | 1.02 | 2.19 | eFuse 5.0 A on the 5 V side |
+| V5_CM5 (12 W at the rail) | 1.02 | 2.17 | eFuse 5.0 A on the 5 V side |
 | V12_LIDAR (6 W) | 0.47 | 1.50 | eFuse 1.5 A |
 | V3V3_CHS + V5_AUX (2.2 W) | 0.20 | 0.58 | buck current limits |
 | Relay coils | 0.10 | 0.15 | polyfuse 0.20 A hold |
@@ -109,7 +109,7 @@ Step-and-count example [A: 12 m x 2.4 m floor, 7 lanes, 0.10 m pitch = 840 stati
 
 | Branch | Worst simultaneous demand (A) | Branch limit referred to the bus (A) | Limiter |
 |---|---:|---:|---|
-| V5_CM5 (12 W at the rail) | 0.91 | 1.94 | eFuse 5.0 A on the 5 V side |
+| V5_CM5 (12 W at the rail) | 0.91 | 1.93 | eFuse 5.0 A on the 5 V side |
 | V12_LIDAR (6 W) | 0.42 | 1.50 | eFuse 1.5 A |
 | V3V3_CHS + V5_AUX (2.2 W) | 0.18 | 0.51 | buck current limits |
 | Relay coils | 0.11 | 0.15 | polyfuse 0.20 A hold |
@@ -174,14 +174,14 @@ Copper at 20 C [D]; at -20 C copper is 16 % lower. Contact resistances are assum
 
 **Head supply floor [C]:** at 1.0 A (10 W at 10 V) the head sees pack - 0.19 V docked and pack - 0.33 V through the extension (pack path 19 mohm at 4 A included). The head's 10 V minimum therefore needs >= 10.3 V at the pack in LAB at full head load; the BATTERY_LOW stop (reserve, about 12.6 V at rest) is far above it.
 
-**CM5 feed [C]:** buck regulated to 5.15 V +/-1.5 % at the eFuse input; 50 mohm to the carrier -> 5.07 V at 1.5 A, 4.90 V at 5 A (Raspberry Pi 5 V +/-5 % = 4.75-5.25 V [D CM5 datasheet, U exact clause]).
+**CM5 feed [C]:** buck regulated to 5.12 V +/-1.5 % at the eFuse input; 50 mohm to the carrier -> 5.04 V at 1.5 A, 4.87 V at 5 A (Raspberry Pi 5 V +/-5 % = 4.75-5.25 V [D CM5 datasheet, U exact clause]).
 
 ## 7. Dissipation on RR-CHS-MAIN
 
 | Source | Survey +20 C | Survey -20 C, heaters at average duty (rms of on/off cycling) | Worst sustained: all heaters on, CM5 12 W, motors 1.5 A | Charge / Service |
 |---|---:|---:|---:|---:|
 | Main switch FETs + shunt + copper (7.4 mohm) | 0.02 | 0.12 | 0.90 | 0.07 |
-| 5.15 V buck LM61460 (1 - eta) | 0.61 | 0.61 | 1.04 | 0.61 |
+| 5.12 V buck LM61460 (1 - eta) | 0.61 | 0.61 | 1.04 | 0.61 |
 | V5 eFuse | 0.05 | 0.05 | 0.15 | 0.05 |
 | 3.3 V and 5 V_AUX bucks | 0.35 | 0.35 | 0.35 | 0.35 |
 | Logic on the board (3.3 V, 5 V loads) | 1.00 | 1.00 | 1.00 | 1.00 |

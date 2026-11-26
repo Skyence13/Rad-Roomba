@@ -1,14 +1,14 @@
 {
  "summary": {
   "volumetric interference": "PASS -- none",
-  "containment in Rev E cavity": "FAIL -- 1 part(s) outside",
-  "head inside the proposed envelope (CCR-11) and the contract z ceiling": "PASS -- x 68.8..192.2, z 7.0..45.0; shoes reach back to x 30.0",
+  "containment in Rev E cavity": "PASS -- all internal parts inside",
+  "head inside the proposed envelope (CCR-11) and the contract z ceiling": "PASS -- x 68.8..192.2, z 7.0..45.0; shoes reach back to x 4.0",
   "wheel and caster on the floor plane": "PASS -- z = 0 +- 0.05",
   "ToF centre rays": "PASS -- all 11 clear",
   "LiDAR scan plane": "PASS -- clear",
   "service sweeps (battery, wheels, head, grip hand zone)": "PASS -- free",
   "J1/J2 coupling-nut grasp zone (45 mm radial) free": "PASS -- free (see service section)",
-  "cable corridors": "FAIL -- {'right_bay': [('hands_on_body', 69.0)]}"
+  "cable corridors": "PASS -- free"
  },
  "extents": {
   "overall x (tail .. leading rail)": "-271.9 .. 192.2  (length 464.1)",
@@ -16,7 +16,7 @@
   "overall z": "0.0 .. 230.0",
   "body shell x / y / z": "-271.9..102.4 / -146.4..146.4 / 32.9..166.0  (Rev D: -165.0..102.3 / +-112.6 / 32.9..117.6)",
   "width across tyres": "295.0",
-  "head envelope x / y / z": "68.8..192.2 / -175.0..175.0 / 7.0..45.0; shoes to x 30.0  (contract ceiling z (5.0, 50.0))",
+  "head envelope x / y / z": "68.8..192.2 / -175.0..175.0 / 7.0..45.0; shoes to x 4.0  (contract ceiling z (5.0, 50.0))",
   "swept radius about base_link: tail / head outer corner": "278 / 260",
   "ground clearance: body underside / receiver channels / head rail": "32.9 / 12.0 / 7.0",
   "lowest non-running-gear solids": "head_frame_E 9.6; S0_Guard_webs 9.6; S1_Guard_webs 9.6; S2_Guard_webs 9.6",
@@ -311,17 +311,7 @@
    0.9
   ]
  ],
- "outside": [
-  [
-   "RR-PANEL",
-   [
-    -45.0,
-    112.0,
-    108.1,
-    -0.9
-   ]
-  ]
- ],
+ "outside": [],
  "service": {
   "battery_removal_sweep": {
    "direction": "-x (rearward through the tail-cap hatch)",
@@ -485,7 +475,7 @@
   },
   "right_bay": {
    "box": [
-    -185,
+    -155,
     -100,
     -90,
     -60,
@@ -493,12 +483,7 @@
     76
    ],
    "use": "charge inlet feed, HANDS-ON/Pause leads, right rear ToF, bumper switch",
-   "blocked_by": [
-    [
-     "hands_on_body",
-     69.0
-    ]
-   ]
+   "blocked_by": []
   }
  },
  "rays": [
@@ -716,7 +701,7 @@
   "blocked": []
  },
  "head_bounds": [
-  30.0,
+  4.0,
   -175.0,
   7.0,
   192.20000000000002,

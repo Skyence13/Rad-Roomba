@@ -1,7 +1,26 @@
 # Contract change requests from the mechanical lead
 
-Target: `interface/system/contract.yaml` 0.4.0-draft1 (owner: integration lead). Nothing below has been applied; `mechanical/common/params.py`
-carries the proposed values next to the loaded contract values. All numbers are design values (calculated / tool-checked).
+Owner of `interface/system/contract.yaml`: integration lead. All numbers are design values (calculated / tool-checked).
+
+**Status against contract 0.4.0-draft4:** CCR-01, 02, 03 adopted (DEC-039); CCR-04, 05, 06, 07 applied; CCR-08, 09, 10 noted.
+**Open requests: CCR-11 to CCR-14 below** (12 Ah pack growth, DEC-040, and head mount option C from the DEC-041 trade study,
+`out/head_mount_trade_study.md`). `params.py` already carries the requested values next to the loaded contract values; `frames.yaml`,
+`board_envelopes.yaml`, the layout and all calculations are built with them.
+
+## Open requests (2026-11-26)
+
+| ID | Key | Contract now (0.4.0-draft4) | Requested (exact values) | Why | Who is affected |
+|---|---|---|---|---|---|
+| CCR-11a | `frames.head_mount.xyz_mm` | [138.5, 0.0, 32.0] | **[65.7, 0.0, 32.0]** (rpy unchanged [0, 0, 0]) | Mount option C: twin-shoe receiver on the lane seams, overhang shortened by 72.8 mm. Datum = x-stop plane of the receiver, z kept so the head-internal offsets are unchanged. | TF tree, head descriptor origin, route-hold footprint |
+| CCR-11b | `frames.optics.row_center_x_mm` | 204.0 | **131.2** | same; the row stays 65.5 mm ahead of `head_mount` (aperture in the head_mount frame is still (+65.5, y, -22.0)) | mapping offset, coverage planner, `expose_spot_reverse_offset_m` check |
+| CCR-11c | `frames.head_envelope_rev_e_mm` | x [138.8, 265.0], y [-175, 175], z [5.0, 50.0] | **x [66.0, 192.2], y [-175.0, 175.0], z [5.0, 50.0]**; `head_design_top_z_mm` 45.0 unchanged; add `head_shoes_mm: {x: [4.0, 66.0], y_center: [87.5, -87.5], width: 16.0, z: [16.0, 30.0]}` | rigid -72.8 mm shift of the head; the two bearing shoes extend behind the envelope into the receiver channels | head descriptor envelope, swept volume |
+| CCR-11d | `boards.RR-HEAD-ACQ.position` | origin (156.0, 163.0, 34.5) | **origin (83.2, 163.0, 34.5)**; board coordinates, holes, zones, limits unchanged | follows the head | head electronics (none in board coordinates), harness length J1/J2 (pigtails about 150 mm) |
+| CCR-11e | `frames.head_mount_review` | "until it closes, the values below stand" | close with: receiver = two channels under the chassis front beam, envelope x 2..64, 24 wide about y = +-87.5, z 12..33; bearing lands at x 8 and 62; one draw latch under the nose tip; HEAD_DOCK switch at (-3.0, 87.5, 23.0) | DEC-041 | chassis electronics (dock switch lead), body engineers |
+| CCR-12 | `frames.body_rev_e` | shell z [32.9, 143.0]; overall [537, 350, 216] | **shell_envelope_mm unchanged in x and y; z [32.9, 143.0] plus battery hump x [-233.0, -70.5], \|y\| <= 60.5, top z 150.0 and sensor brow to z 166.0; overall_mm [464, 350, 230]** (length now tail -271.9 to leading rail 192.2; height = LiDAR top) ; add `nose: lower hull ends at x = 62 below z = 50` | 12 Ah pack lying 99 mm tall needs a cassette top at z 144 (DEC-040): local dorsal hump, LiDAR base raised 136 -> 150; nose chin removed for the shortened head | renders, transport tray, route-hold model |
+| CCR-13 | `motion.max_yaw_rate_radps` comment | "keeps the outer head corner (r = 0.318 m) at <= 0.095 m/s" | outer head corner r = **0.260 m** (0.078 m/s at 0.30 rad/s); the tail corner r = **0.278 m** now sets the swept circle (0.083 m/s) | option C | chassis firmware caps, protective field shapes |
+| CCR-14 | sensors (frames.yaml only, no contract key) | front cliff pair on the nose chine; look-ahead 14 deg | front cliff pair at (46.0, +-109.5, 31.0) on the chassis front beam beside the tyres; forward look-ahead depression 18 deg (centre ray reaches the floor at x 497, range 524 mm); rear-centre proximity at (-236.0, 0.0, 158.0) | receiver channels occupy the old cliff positions; head edge is closer; hatch is taller | chassis firmware field distances, robot software |
+
+## Earlier requests (text as submitted against 0.4.0-draft1)
 
 | ID | Key | Contract now | Requested | Why | Who is affected |
 |---|---|---|---|---|---|

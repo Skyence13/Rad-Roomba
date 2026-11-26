@@ -218,5 +218,6 @@ def run():
             rows.append((cc["head"], f(cc["m"], 2), f(cc["x"]), f(math.degrees(math.atan2(cc["x"] - P.GRIP["center_x"], gz - cc["z"])))))
     md.append("\n## 3. Carry balance at the grip\n")
     md.append(table(["Head", "Mass (kg)", "CG x (mm)", "Hang angle at the grip, + = nose down (deg)"], rows))
-    md.append(f"\nGrip centre x = {P.GRIP['center_x']} mm, z = {gz:.0f} mm. A Rev D-style rear grip (x = -94 scaled to about -170) would hang the robot more than 45 deg nose-down.")
+    md.append(f"\nGrip centre x = {P.GRIP['center_x']} mm, z = {gz:.0f} mm. With the 12 Ah pack and the shortened head the centre of gravity is 24 to 33 mm behind the grip, so the robot hangs tail-down with the head raised "
+              "(no head: steeply tail-down, carry with the second hand on the cassette pull). The bar cannot move aft: its 45 mm hand zone already ends at the battery hump.")
     return "\n".join(md), key

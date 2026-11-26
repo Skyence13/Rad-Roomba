@@ -348,16 +348,24 @@ class FakeHead:
         self._reply(tid, "OK", {"last_seq": last})
 
     def _op_DIAG(self, tid, args, rx_us):
-        # Additive engineering op (contract head_gate_record.acq_mapping).  Body layout is
-        # provisional until the head firmware lead publishes it; the host archives it verbatim.
+        # Additive engineering op (interface/head_icd_addendum_0.4.md section 3), reduced body;
+        # the host archives it verbatim.
         if not self.diag:
             self._reply(tid, "UNSUPPORTED")
             return
         if not self.bound:
             self._reply(tid, "UNBOUND")
             return
-        self._diag_seq += 1
-        self._reply(tid, "OK", {"diag_seq": self._diag_seq, "newest_seq": self.next_seq - 1,
-                                "lanes": [{"id": n, "floor_reject_counts": self._reject[n],
-                                           "ref_reject_counts": 0} for n in range(4)],
-                                "heater_transition_in_gate": False})
+        seq = args.get("seq")
+        if type(seq) is not int or seq < 0:
+            self._reply(tid, "BAD_ARG")
+            return
+        if seq not in self.frames:
+            self._reply(tid, "EMPTY" if seq >= self.next_seq else "GAP",
+                        {} if seq >= self.next_seq else {"oldest_seq": next(iter(self.frames), 0),
+                                                         "newest_seq": self.next_seq - 1})
+            return
+        self._reply(tid, "OK", {"type": "DIAG", "diag": "1.0", "sequence": seq,
+                                "heater": {"on_us": 0, "transition": False, "plate_c": None},
+                                "lanes": [{"id": n, "floor_reject": self._reject[n], "ref_reject": 0}
+                                          for n in range(4)]})

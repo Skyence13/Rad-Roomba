@@ -160,6 +160,10 @@ def stage_gen(board_py, route=True, sch_only=False):
     info = pcb.build_pcb(board, paths, nl, pages, w.root_uuid)
     # the project file is re-written last: pcbnew must not have the final say
     project.write_project(paths.pro, pro)
+    if info["fanout"]["plane_nets"]:
+        log("plane fan-out: %d via(s) on %s, %d pad(s) left to the autorouter" % (
+            info["fanout"]["vias"], ", ".join(info["fanout"]["plane_nets"]), len(info["fanout"]["failed"])))
+    write_state(paths, plane_fanout=info["fanout"])
     write_state(paths, placement=info["placement"], autoplaced=info["autoplaced"],
                 pcb_page_origin=info["origin"], board_bbox=info["bbox"], routed=False,
                 gen_warnings=info["warnings"])
@@ -383,9 +387,7 @@ def run_freerouting(board_py, dsn, ses, a):
     extra = list(opts.get("extra_args") or [])
     if not opts.get("optimizer", True):
         extra.append("--router.optimizer.enabled=false")
-    fanout = opts.get("fanout")
-    if fanout is None:
-        fanout = opts.get("layers") == 4
+    fanout = bool(opts.get("fanout"))
     extra.append("--router.fanout.enabled=%s" % ("true" if fanout else "false"))
     timeout = a.timeout or opts["timeout"]
     if timeout:

@@ -3,7 +3,8 @@
 # DEC-xxx entry in planning/decisions.csv and a line in docs/architecture/CHANGELOG.md.
 # Human-readable rationale: docs/architecture/SYSTEM_ARCHITECTURE.md
 # Units: SI (m, s, rad, V, A, W, kg) unless a key name carries another unit suffix (_mm, _us, _ms, _c).
-contract_version: "0.4.0-draft4"   # draft4: Rev E body adopted (DEC-039), 12 Ah pack (DEC-040), head mount under trade study (DEC-041)
+contract_version: "0.4.0-draft5"   # draft5: head mount option C adopted (DEC-041 closed): mount datum and optics row moved 72.8 mm aft; 12 Ah layout
+# previous:   # draft4: Rev E body adopted (DEC-039), 12 Ah pack (DEC-040), head mount under trade study (DEC-041)
 # previous:   # draft3: mechanical CCR-04..07 applied, Rev E body proposal recorded as pending owner decision
 # previous:   # draft2: FPGA removed (DEC-037), survey methods added (DEC-038)
 baseline: {system_design: "0.3", mechanical: "Rev D", head_protocol: "2.0", baseline_commit: "38d101051d32b47e4b21657e2293ec92c63de9c4"}
@@ -22,13 +23,14 @@ frames:
     track_mm: 270.0            # Rev E body (DEC-039); Rev D was 220
     encoder_counts_per_wheel_rev: 9600   # Pololu #2828, quadrature edges at gearbox output
   caster: {swivel_x_mm: -195.0, wheel_x_mm: -204.0, y_mm: 0.0}   # Rev E body (DEC-039); Rev D was -100 / -116
-  head_mount_review: "DEC-041: Morgan opened the neck/receiver for redesign on 2026-11-26. A mount trade study in mechanical/common may change the receiver type and shorten the axle-to-row distance. Until it closes, the values below stand; software and firmware must take head geometry from mechanical/common/frames.yaml and the head descriptor, never from literals."
+  head_mount_review: "DEC-041 closed 2026-11-26: option C of mechanical/common/out/head_mount_trade_study.md adopted (twin-shoe receiver on the lane seams, overhang shortened by 72.8 mm, neck deleted). Head-internal geometry in the head_mount frame is unchanged (row at +65.5, film at z -22). Software and firmware still take head geometry from mechanical/common/frames.yaml and the head descriptor, never from literals."
   head_mount:            # centre of the forward bulkhead mating interface (Rev D datum, preserved)
-    xyz_mm: [138.5, 0.0, 32.0]
+    xyz_mm: [65.7, 0.0, 32.0]      # option C twin-shoe receiver (CCR-11a); Rev D neck was [138.5, 0, 32]
     rpy_rad: [0, 0, 0]
+    receiver: "Two 16 x 14 mm head shoes at y = +/-87.5 (lane seams) slide into channels under the chassis front beam; bearing lands at x 8 and 62; x-stop plane x = 65.7; one draw latch under the nose tip; HEAD_DOCK switch behind the left channel. Full definition: mechanical/common/out/mechanical_interfaces.md"
   head_envelope_rev_d_mm: {x: [138.8, 265.0], y: [-175.0, 175.0], z: [7.0, 42.0]}
-  head_envelope_rev_e_mm:        # provisional; top raised for the acquisition board (DEC-021). Mechanical lead confirms.
-    x: [138.8, 265.0]
+  head_envelope_rev_e_mm:        # option C position (CCR-11c); shoes extend x [4.0, 66.0] at y +/-87.5, 16 wide, z [16.0, 30.0]
+    x: [66.0, 192.2]
     y: [-175.0, 175.0]
     z: [5.0, 50.0]               # z min 5.0 covers the 5 mm rail-projection trial; z max is a ceiling, not a target
   head_design_top_z_mm: 45.0     # stack-up in mechanical/common/board_envelopes.yaml (CCR-05)
@@ -36,12 +38,14 @@ frames:
     status: "adopted; the Rev D body cannot contain the selected hardware (mechanical/common/out/layout_report.md section 3). Tail height to grow for the 12 Ah pack (DEC-040); values below are the 9 Ah layout until mechanical/common is rebuilt"
     scale_of_rev_d_section_law: {length: 1.40, width: 1.30, height: 1.30}
     shell_envelope_mm: {x: [-271.9, 102.4], y: [-146.4, 146.4], z: [32.9, 143.0]}
-    overall_mm: [537, 350, 216]     # with head, grip bar top z 175, LiDAR top z 216
+    overall_mm: [464, 350, 230]     # option C mount + 12 Ah hump (CCR-12): LiDAR top z 230, grip bar top z 175; was [537, 350, 216] with the neck
+    battery_hump_mm: {x: [-233.0, -70.5], half_width_y: 60.5, top_z: 150.0, sensor_brow_top_z: 166.0}
+    swept_radii_m: {head_outer_corner: 0.260, tail_corner: 0.278}   # the tail now sets the swept circle (CCR-13)
     track_mm: 270.0
     caster: {swivel_x_mm: -195.0, wheel_x_mm: -204.0}
     top_side: "transverse bridge grip over the CG (its saddle is the main-board service cover); LiDAR moved aft above the battery tunnel"
   optics:
-    row_center_x_mm: 204.0
+    row_center_x_mm: 131.2         # option C (CCR-11b); Rev D was 204.0
     entrance_film_z_mm: 10.0
     rail_projection_options_mm: [3.0, 5.0]   # below film -> 7 / 5 mm floor clearance
     segment_pitch_mm: 87.5
@@ -59,7 +63,7 @@ motion:
   survey_speed_mps: 0.10
   max_forward_speed_mps: 0.20
   max_reverse_speed_mps: 0.05
-  max_yaw_rate_radps: 0.30          # keeps the outer head corner (r = 0.318 m) at <= 0.095 m/s
+  max_yaw_rate_radps: 0.30          # outer head corner r = 0.260 m -> 0.078 m/s; tail corner r = 0.278 m -> 0.083 m/s (option C)
   max_accel_mps2: 0.30
   controlled_decel_mps2: 0.40
   command_ttl_ms_max: 250
@@ -141,7 +145,7 @@ boards:
     desc: "Head acquisition board: 8 SiPM front ends, bias, thresholds, discriminators with event latches, head MCU (STM32G474VET6, LQFP100), isolated RS-485, heater switch, power. No FPGA (DEC-037)."
     outline_mm: [326.0, 96.0]
     layers: 4
-    position: "Above the reference guides, long axis along y. Board frame: origin at the rear-left corner, +u toward robot right (-y), +v forward (+x). Origin in base_link (156.0, 163.0, 34.5) mm; PCB underside z = 34.5 (CCR-04)."
+    position: "Above the reference guides, long axis along y. Board frame: origin at the rear-left corner, +u toward robot right (-y), +v forward (+x). Origin in base_link (83.2, 163.0, 34.5) mm with mount option C (CCR-11d; was 156.0 with the neck); PCB underside z = 34.5 (CCR-04)."
     mounting: "8 x M2.5; coordinates, connector edge allocation and height zones in mechanical/common/board_envelopes.yaml (authoritative)"
     max_height_top_mm: 6.0
     max_height_bottom_mm: 2.0

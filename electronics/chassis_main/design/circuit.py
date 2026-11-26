@@ -102,8 +102,8 @@ def C(val, a, b, block, v=50, notes="", dnp=False, ref=None):
                 verify=mpn.startswith("GRM"))
 
 
-def ECAP(val, v, mpn, a, b, block, notes=""):
-    return part(_ref("C"), val, mpn, "Panasonic", "Hybrid polymer aluminium capacitor %sF %d V, -55..+125 C" % (val, v), "ECAP-10x10",
+def ECAP(val, v, mpn, a, b, block, notes="", ref=None):
+    return part(ref or _ref("C"), val, mpn, "Panasonic", "Hybrid polymer aluminium capacitor %sF %d V, -55..+125 C" % (val, v), "ECAP-10x10",
                 "Device:C_Polarized", "Capacitor_SMD:CP_Elec_10x10.5", {1: ("+", a), 2: ("-", b)}, block, rating="%d V" % v,
                 tol="20%", notes=notes, verify=True)
 
@@ -203,8 +203,8 @@ part("U1", "LM74502-Q1", "LM74502QDDFRQ1", "Texas Instruments", "Reverse-polarit
      "SOT-23-8", None, "Package_TO_SOT_SMD:SOT-23-8", {1: ("EN/UVLO", "EN_SYS"), 2: ("GND", "GND"), 3: None, 4: ("VCAP", "U1_VCAP"), 5: ("VS", "VBAT_RAW"),
      6: ("GATE", "U1_GATE"), 7: ("OV", "U1_OV"), 8: ("SRC", "PSW_SRC")}, B,
      notes="Pin table [D lm74502-q1.pdf]. EN and OV thresholds not read [U]: R values below assume ~1.2 V; check.", verify=True)
-PWRFET("Q1", "VBAT_RAW", "Q1_G", "PSW_SRC", B, notes="blocks a reversed pack (body diode points to the pack)")
-PWRFET("Q2", "VBAT_PROT", "Q2_G", "PSW_SRC", B, notes="master switch / inrush control")
+PWRFET("Q1", "VBAT_RAW", "Q1_G", "PSW_SRC", B, notes="back-to-back pair, common source: off in both directions")
+PWRFET("Q2", "VBAT_PROT", "Q2_G", "PSW_SRC", B, notes="back-to-back pair; gate slew limits inrush")
 R("100", "U1_GATE", "Q1_G", B); R("100", "U1_GATE", "Q2_G", B)
 R("10k", "U1_GATE", "U1_SLEW", B, notes="with C: output slew ~ 0.5 V/ms -> < 1 A inrush into 500 uF [C][U]")
 C("22n", "U1_SLEW", "PSW_SRC", B)
@@ -229,7 +229,7 @@ TP("PACK_PRES_N", B)
 
 # =============================================================================================== CHARGER (LTC4162-F) + POWER PATH
 B = "charger"
-part("F3", "5A", "0453005.MR", "Littelfuse", "Fuse 5 A fast, 125 V, Nano2 SMD", "1812", "Device:Fuse", "Fuse:Fuse_Littelfuse-NANO2-451_453", {1: ("1", "CHG_IN"), 2: ("2", "CHG_F")}, B, rating="5 A")
+part("F_CHG", "5A", "0453005.MR", "Littelfuse", "Fuse 5 A fast, 125 V, Nano2 SMD", "1812", "Device:Fuse", "Fuse:Fuse_Littelfuse-NANO2-451_453", {1: ("1", "CHG_IN"), 2: ("2", "CHG_F")}, B, rating="5 A")
 TVS("CHG_F", B, "SMBJ28A")
 part("Q3", "AOD4185", "AOD4185", "Alpha & Omega", "P-MOSFET -40 V 15 mohm, inlet reverse-polarity protection", "DPAK", "Device:Q_PMOS_GDS", "Package_TO_SOT_SMD:TO-252-2",
      {1: ("G", "Q3_G"), 2: ("D", "CHG_F"), 3: ("S", "CHG_VIN")}, B, notes="tab = drain", verify=True)
@@ -320,7 +320,7 @@ for ref, vout, fb_top, lref, what in (("U11", "3V3", "31.6k", "L3", "V3V3_CHS 3.
 part("U14", "REF3030", "REF3030AIDBZR", "Texas Instruments", "3.000 V 0.2 % reference: MCU VREF+, ratiometric pull-ups, DRV8874 VREF", "SOT-23", "Reference_Voltage:REF3030",
      "Package_TO_SOT_SMD:SOT-23", {1: ("IN", "V5_AUX"), 2: ("OUT", "VREF_3V0"), 3: ("GND", "GND")}, B, notes="pin numbers recalled [U]", verify=True)
 C("1u", "V5_AUX", "GND", B, v=16); C("1u", "VREF_3V0", "GND", B, v=16); C("100n", "VREF_3V0", "GND", B)
-part("FB1", "600R", "BLM18KG601SN1D", "Murata", "Ferrite bead 600 ohm at 100 MHz, 1.3 A", "0603", "Device:FerriteBead", "Inductor_SMD:L_0603_1608Metric",
+part("FB_A", "600R", "BLM18KG601SN1D", "Murata", "Ferrite bead 600 ohm at 100 MHz, 1.3 A", "0603", "Device:FerriteBead", "Inductor_SMD:L_0603_1608Metric",
      {1: ("1", "3V3"), 2: ("2", "3V3A")}, B, verify=True)
 C("1u", "3V3A", "GND", B, v=16); C("100n", "3V3A", "GND", B)
 
@@ -335,7 +335,7 @@ C("100n", "3V3", "GND", B)
 for ref, val, mpn, pkg, out in (("R_SH2", "20m", "WSL1206R0200FEA", "1206", "HEAD_PWR_F"), ("R_SH3", "5m", "WSL25125L000FEA", "2512", "HEAD_HTR_F"), ("R_SH4", "5m", "WSL25125L000FEA", "2512", "CHS_HTR_F")):
     part(ref, val, mpn, "Vishay", "Current shunt %sohm 1 %%" % val, pkg, "Device:R_Shunt", "Resistor_SMD:R_%s" % ("1206_3216Metric" if pkg == "1206" else "2512_6332Metric"),
          {1: ("1", "VBAT_SW"), 2: ("2", out)}, B, rating="0.5 W" if pkg == "1206" else "2 W", tol="1%", verify=True)
-efuse("U16", "HEAD_PWR_F", "HEAD_PWR_P", "HEAD_PWR_EN_G", "HEAD_PWR_NFLT", "2.21k", "10n", B, "HEAD_PWR 1.5 A")
+efuse("U16", "HEAD_PWR_F", "HEAD_PWR_E", "HEAD_PWR_EN_G", "HEAD_PWR_NFLT", "2.21k", "10n", B, "HEAD_PWR 1.5 A")
 efuse("U17", "HEAD_HTR_F", "HEAD_HTR_P", "HEAD_HTR_EN_G", "HEAD_HTR_NFLT", "825", "22n", B, "HEAD_HTR 4.05 A, slew-limited turn-on (~1 V/ms [U])")
 efuse("U18", "CHS_HTR_F", "CHS_HTR_P", "CHS_HTR_EN_G", "CHS_HTR_NFLT", "1.1k", "22n", B, "CHS_HTR 3.04 A")
 efuse("U19", "VBAT_SW", "V12_LIDAR", "LIDAR_EN_G", "V12_LIDAR_NFLT", "2.21k", "10n", B, "V12_LIDAR 1.5 A")
@@ -346,6 +346,9 @@ NFET("Q31", "HEAD_PWR_EN_G", "CHG_VIN_DIV", "GND", B, notes="hardware: head elec
 NFET("Q32", "HEAD_HTR_EN_G", "CHG_VIN_DIV", "GND", B, notes="hardware: head heater off while the charge inlet is live")
 NFET("Q33", "HEAD_HTR_EN_G", "WDG_FAULT", "GND", B, notes="hardware: heater off when the watchdog is not satisfied")
 NFET("Q34", "CHS_HTR_EN_G", "WDG_FAULT", "GND", B, notes="hardware: heater off when the watchdog is not satisfied")
+part("L5", "10u", "XAL4040-103MEC", "Coilcraft", "Shielded inductor 10 uH, >= 2 A: head electronics supply filter (with 2 x 10 uF: corner ~11 kHz)", "IND-5x5x4", "Device:L", "Inductor_SMD:L_Coilcraft_XAL4040-XXX",
+     {1: ("1", "HEAD_PWR_E"), 2: ("2", "HEAD_PWR_P")}, B, notes="keeps 20 kHz bridge ripple and edges off the head supply; damped by the head's own bulk capacitor [U]", verify=True)
+C("10u", "HEAD_PWR_E", "GND", B, v=25)
 C("10u", "HEAD_PWR_P", "GND", B, v=25); C("10u", "HEAD_HTR_P", "GND", B, v=25); C("10u", "V12_LIDAR", "GND", B, v=25); C("10u", "CHS_HTR_P", "GND", B, v=25)
 TVS("HEAD_PWR_P", B); TVS("HEAD_HTR_P", B); TVS("V12_LIDAR", B); TVS("CHS_HTR_P", B)
 part("U25", "TPS2553", "TPS2553DBVR", "Texas Instruments", "Current-limited switch 75 mA-1.7 A, active-high enable: BUS_5V to J2", "SOT-23-6", "Power_Management:TPS2553DBV", "Package_TO_SOT_SMD:SOT-23-6",
@@ -356,7 +359,7 @@ C("1u", "V5_AUX", "GND", B, v=16); C("4.7u", "BUS_5V", "GND", B, v=16)
 
 # =============================================================================================== SAFETY CHAIN
 B = "chain"
-part("F2", "0.2A", "1206L020YR", "Littelfuse", "PTC resettable fuse 0.20 A hold / 0.40 A trip, 30 V", "1206", "Device:Polyfuse", "Fuse:Fuse_1206_3216Metric",
+part("F_CHAIN", "0.2A", "1206L020YR", "Littelfuse", "PTC resettable fuse 0.20 A hold / 0.40 A trip, 30 V", "1206", "Device:Polyfuse", "Fuse:Fuse_1206_3216Metric",
      {1: ("1", "VBAT_SW"), 2: ("2", "CH_N0")}, B, rating="0.2 A hold", verify=True)
 CLIK("J_MODE", 6, ["EN_SRC", "EN_SYS", "CH_N0", "CH_N1", None, None], B, "Selector OFF/SERVICE/RUN: pins 1-2 EN contact (closed in SERVICE and RUN), pins 3-4 RUN contact (closed in RUN only)")
 CLIK("J_ESTOP", 4, ["CH_N1", "CH_N2", "COIL_RTN", "GND"], B, "E-stop XB5AS8444, 2 NC: pole A pins 1-2 (chain high side), pole B pins 3-4 (coil return)")
@@ -437,8 +440,8 @@ part("K1", "G6S-2 DC12", "G6S-2 DC12", "Omron", "Signal relay DPDT 2 A, 12 V coi
      {1: ("COIL+", "K1_COIL_P"), 12: ("COIL-", "COIL_RTN"), 4: ("COM1", "K1_SEAL_A"), 5: ("NO1", "K1_COIL_P"), 3: ("NC1", None) if False else None,
       9: ("COM2", "CHAIN_END"), 8: ("NO2", "RUN_12V"), 10: None}, B,
      notes="Contact pin numbers (COM/NO/NC) recalled, not read [U]. Pole 1 = seal-in, pole 2 = RUN_12V. Operate/release 4 ms max [U].", verify=True)
-DIODE("CHAIN_END", "K1_SEAL_A", B, "BAT54", ref="D30", notes="stops C60 feeding the brake relays through the seal-in contact")
-R("22k", "CHAIN_END", "SET_CAP", B, ref="R60", notes="a held REARM passes < 0.65 V to the coil"); ECAP("100u", 50, "EEHZA1H101P", "SET_CAP", "GND", B, "C60 set-pulse capacitor (-55 C rated)")
+DIODE("CHAIN_END", "K1_SEAL_A", B, "BAT54", ref="D_SEAL", notes="stops C_SET feeding the brake relays through the seal-in contact")
+R("22k", "CHAIN_END", "SET_CAP", B, ref="R_SET", notes="a held REARM passes < 0.65 V to the coil"); ECAP("100u", 50, "EEHZA1H101P", "SET_CAP", "GND", B, "set-pulse capacitor (-55 C rated)", ref="C_SET")
 R("0", "K1_SET", "K1_COIL_P", B, notes="REARM contact return")
 
 
@@ -455,7 +458,7 @@ for n in ("CH_N6", "CH_N7"):
 # E-stop pole B detector and J2 presence detector: P-FET, HIGH = contact closed to ground
 for node, sig, r in (("COIL_RTN", "ESTOP_B_RB", "100k"), ("J2_PRES", "J2_PRES_RB", "10k")):
     g = sig + "_G"
-    R(r, node, g, B); R("1M" if node == "COIL_RTN" else "10k", "3V3", g, B, notes="open/unplugged reads LOW"); DIODE(g, "3V3", B, "BAT54"); C("10n", g, "GND", B)
+    R(r, node, g, B); R("1M" if node == "COIL_RTN" else "100k", "3V3", g, B, notes="open/unplugged reads LOW; gate sits at 0.3 V when the contact is closed"); DIODE(g, "3V3", B, "BAT54"); C("10n", g, "GND", B)
     PFET("Q_" + sig[:6].replace("_", ""), sig, g, "3V3", B); R("10k", sig, "GND", B)
 # HANDS-ON lamp from the real chain state
 R("0", "CH_N2", "HANDS_LAMP_P", B, notes="lamp supply = chain node upstream of the button; replace by a series resistor if the lamp block needs it")
@@ -499,7 +502,7 @@ R("10k", "CLAMP_VG", "CLAMP_G", B); R("4.7k", "VBAT_SW", "CLAMP_VG", B); DIODE("
 PWRFET("Q40", "CLAMP_R", "CLAMP_G", "GND", B, kind="3x3", notes="brake chopper switch")
 for _ in range(2):
     R("9.1", "CLAMP_F", "CLAMP_R", B, tol="5%", pkg="2512", rating="2 W pulse-rated", mpn="CRM2512-JW-9R1ELF", mfr="Bourns", verify=True, notes="2 in parallel = 4.55 ohm")
-part("F4", "1.1A", "1812L110/33GR", "Littelfuse", "PTC 1.1 A hold, 33 V: trips if the clamp sticks on", "1812", "Device:Polyfuse", "Fuse:Fuse_1812_4532Metric",
+part("F_CLAMP", "1.1A", "1812L110/33GR", "Littelfuse", "PTC 1.1 A hold, 33 V: trips if the clamp sticks on", "1812", "Device:Polyfuse", "Fuse:Fuse_1812_4532Metric",
      {1: ("1", "VMOT"), 2: ("2", "CLAMP_F")}, B, verify=True)
 part("W1", "pads", "WIRE-PADS", "(pcb feature)", "Two 2.5 mm wire pads for an optional external clamp resistor (in parallel with the on-board pair)", "PAD-2", "Connector_Generic:Conn_01x02",
      "2 x TestPoint_Pad_2.5x2.5mm", {1: ("1", "CLAMP_F"), 2: ("2", "CLAMP_R")}, B, dnp=True)
@@ -583,7 +586,7 @@ C("100n", "NRST", "GND", B); R("10k", "3V3", "NRST", B)
 part("SW1", "RESET", "PTS636 SM25F SMTR LFS", "C&K", "Tactile switch 2.5 mm high", "SOT-23", "Switch:SW_Push", "Button_Switch_SMD:SW_SPST_PTS636", {1: ("1", "NRST"), 2: ("2", "GND")}, B, verify=True)
 part("SW2", "DFU", "PTS636 SM25F SMTR LFS", "C&K", "Tactile switch: hold at reset for the ROM bootloader (open JP1 first)", "SOT-23", "Switch:SW_Push", "Button_Switch_SMD:SW_SPST_PTS636",
      {1: ("1", "3V3"), 2: ("2", "BOOT0_SW")}, B, verify=True)
-R("1k", "BOOT0_SW", "BOOT0_LED_STAT", B); R("1k", "BOOT0_LED_STAT", "LED_STAT_A", B)
+R("1k", "BOOT0_SW", "BOOT0_LED_STAT", B); R("1k", "BOOT0_LED_STAT", "LED_STAT_A", B); R("10k", "BOOT0_LED_STAT", "GND", B, notes="defines BOOT0 = 0 at reset (an LED alone is not a pull-down)")
 part("LED1", "green", "150060GS75000", "Wurth Elektronik", "LED 0603 green: heartbeat (also holds BOOT0 low)", "0603", "Device:LED", "LED_SMD:LED_0603_1608Metric", {1: ("K", "GND"), 2: ("A", "LED_STAT_A")}, B)
 part("J_SWD", "Cortex debug 2x5 1.27", "FTSH-105-01-L-DV-K", "Samtec", "SWD: 1 VTref, 2 SWDIO, 3 GND, 4 SWCLK, 5 GND, 6 SWO, 7 key, 8 NC, 9 GND, 10 NRST", "HDR-1.27-2x5",
      "Connector:Conn_ARM_JTAG_SWD_10", "Connector_PinHeader_1.27mm:PinHeader_2x05_P1.27mm_Vertical_SMD",
@@ -644,7 +647,7 @@ MICROFIT("J_HTR", 2, ["CHS_HTR_P", "GND"], "branches", "Chassis/bay heater (20 W
 MICROFIT("J_LIDAR", 2, ["V12_LIDAR", "GND"], "branches", "LiDAR supply 10-14.6 V, 1.5 A limit")
 MICROFIT("J_CM5", 4, ["V5_CM5", "V5_CM5", "GND", "GND"], "rails", "CM5 carrier 5.1 V feed, two contacts per pole")
 GH("J_AUX", 3, ["V12_AUX", "GND", "SPARE_IO"], B, "Fan / spare: 12 V (0.35 A PTC), GND, spare 3.3 V I/O (PB3 through JP2)")
-part("F5", "0.35A", "1206L035YR", "Littelfuse", "PTC 0.35 A hold: V12_AUX (lamps, fan, external sounder)", "1206", "Device:Polyfuse", "Fuse:Fuse_1206_3216Metric", {1: ("1", "VBAT_SW"), 2: ("2", "V12_AUX")}, B, verify=True)
+part("F_AUX", "0.35A", "1206L035YR", "Littelfuse", "PTC 0.35 A hold: V12_AUX (lamps, fan, external sounder)", "1206", "Device:Polyfuse", "Fuse:Fuse_1206_3216Metric", {1: ("1", "VBAT_SW"), 2: ("2", "V12_AUX")}, B, verify=True)
 part("JP2", "SJ open", "SOLDER-JUMPER", "(pcb feature)", "Solder jumper, normally open: PB3 (SWO) to the spare I/O pin", "SJ", "Jumper:SolderJumper_2_Open",
      "Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm", {1: ("A", "SWO_SPARE"), 2: ("B", "SPARE_IO_R")}, B)
 R("1k", "SPARE_IO_R", "SPARE_IO", B)
@@ -698,7 +701,7 @@ part("U62", "THVD1450", "THVD1450DR", "Texas Instruments", "RS-485 transceiver 3
      notes="Timing [D thvd1450.pdf]: enable <= 500 ns class, disable <= 200 ns. A = non-inverting = RS485_DP.")
 C("100n", "V5_AUX", "GND", B); R("1k", "FT_TXD", "FT_TXD_R", B, notes="limits back-feed when only one side is powered"); R("1k", "FT_TXDEN", "FT_TXDEN_R", B); R("10k", "FT_TXDEN_R", "GND", B, notes="receive by default")
 R("10k", "V5_AUX", "FT_TXD_R", B, notes="idle mark when the bridge is unpowered")
-R("10k", "RS_RO", "FT_RXD", B); R("20k", "FT_RXD", "GND", B, notes="5 V -> 3.3 V; with the receiver disabled during transmit RXD idles LOW: see note"); R("47k", "V5_AUX", "RS_RO", B, notes="keeps RXD at mark while RE is high")
+DIODE("FT_RXD", "RS_RO", B, "BAT54", notes="5 V receiver output can only pull RXD low; RXD idles at mark while the receiver is disabled during transmit"); R("4.7k", "FT_3V3", "FT_RXD", B, notes="rise time ~70 ns [C]")
 R("120", "RS_A", "RS_B", B, pkg="0805", rating="0.125 W", notes="termination (chassis end)")
 R("560", "V5_AUX", "RS_A", B, pkg="0805", rating="0.125 W", notes="fail-safe bias, chassis end only: 254 mV into 60 ohm [C]"); R("560", "RS_B", "GND", B, pkg="0805", rating="0.125 W")
 R("10", "RS_A", "RS_A_L", B, pkg="0805", rating="0.125 W", notes="pulse-proof series"); R("10", "RS_B", "RS_B_L", B, pkg="0805", rating="0.125 W")
@@ -761,9 +764,9 @@ NETS = build_nets(PARTS)
 
 NET_CLASSES = {
     "HC_PACK": dict(amps=20, nets=["VBAT_RAW", "PSW_SRC", "VBAT_PROT", "VBAT_SW", "GND"], rule="polygon pours on L1+L4 stitched, >= 12 mm equivalent width on 35 um outer copper (20 A, 20 K rise); shortest path J_PWR -> Q1/Q2 -> R_SH1"),
-    "HC_VMOT": dict(amps=8, nets=["VMOT", "OUT1_L", "OUT2_L", "OUT1_R", "OUT2_R", "MOT_*", "MOTC_*", "BRK_*", "CLAMP_F", "CLAMP_R"], rule=">= 2.5 mm, pours preferred; bridge-relay-connector path short and paired"),
-    "HC_BRANCH": dict(amps=5, nets=["HEAD_HTR_F", "HEAD_HTR_P", "HEAD_HTR_N", "CHS_HTR_F", "CHS_HTR_P", "V5_BUCK", "V5_CM5", "VSYS", "CHG_IN", "CHG_F", "CHG_VIN", "U3_CLP", "U3_CSP"], rule=">= 1.5 mm (5 A, outer layer)"),
-    "PWR_1A5": dict(amps=1.5, nets=["HEAD_PWR_F", "HEAD_PWR_P", "V12_LIDAR", "3V3", "V5_AUX", "3V3A", "V12_AUX", "BUS_5V", "TOF*_3V3", "ENC_*_5V"], rule=">= 0.5 mm"),
+    "HC_VMOT": dict(amps=8, nets=["VMOT", "OUT1_L", "OUT2_L", "OUT1_R", "OUT2_R", "MOT_*", "MOTC_*", "BRK_*", "CLAMP_F", "CLAMP_R"], rule=">= 2.6 mm (6.5 A, 20 K rise) or pours; bridge-relay-connector path short and paired"),
+    "HC_BRANCH": dict(amps=5, nets=["HEAD_HTR_F", "HEAD_HTR_P", "HEAD_HTR_N", "CHS_HTR_F", "CHS_HTR_P", "V5_BUCK", "V5_CM5", "VSYS", "CHG_IN", "CHG_F", "CHG_VIN", "U3_CLP", "U3_CSP"], rule=">= 1.8 mm on outer 35 um copper (5 A, 20 K rise, IPC-2221) or a pour"),
+    "PWR_1A5": dict(amps=1.5, nets=["HEAD_PWR_F", "HEAD_PWR_P", "V12_LIDAR", "3V3", "V5_AUX", "3V3A", "V12_AUX", "BUS_5V", "TOF*_3V3", "ENC_*_5V"], rule=">= 0.4 mm (1.5 A needs 0.35 mm at 20 K rise)"),
     "SAFETY_CHAIN": dict(amps=0.2, nets=["CH_N*", "CHAIN_END", "RUN_12V", "COIL_RTN", "K1_*", "SET_CAP", "K?_CL", "HANDS_LAMP_*"],
                          rule="0.4 mm, >= 0.5 mm clearance to every other net, >= 1.0 mm to VBAT_SW/VMOT/VSYS copper (a bridge to +12 V bypasses elements); route as one visible group on L1, no vias under relays; no pours between chain pads"),
     "SWITCHING": dict(nets=["U3_SW", "U3_BOOST", "U10_SW", "U10_CBOOT", "U10_RBOOT", "U11_SW", "U11_CB", "U12_SW", "U12_CB", "U5_CPH", "U5_CPL", "U6_CPH", "U6_CPL", "U5_VCP", "U6_VCP"],
@@ -851,7 +854,7 @@ def self_check(parts=PARTS, nets=None, verbose=True):
         if j not in byref:
             errs.append("CONNECTORS entry without a part: " + j)
     for p in parts:
-        if p["ref"].startswith("J") and p["ref"] not in CONNECTORS:
+        if p["ref"].startswith("J_") and p["ref"] not in CONNECTORS:
             errs.append("connector without a CONNECTORS entry: " + p["ref"])
     if verbose:
         blocks = {}

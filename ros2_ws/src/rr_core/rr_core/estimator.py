@@ -102,7 +102,7 @@ def _pois_support(mu: float, tail: float = 1e-13):
 def _exact_tail(t, r_atoms, p_atoms, sigma):
     """P(r + N(0, sigma) > t) for a discrete r distribution."""
     if sigma <= 0:
-        return float(p_atoms[r_atoms > t + 1e-12].sum())
+        return float(p_atoms[r_atoms > t].sum())
     return float((p_atoms * ndtr((r_atoms - t) / sigma)).sum())
 
 
@@ -131,6 +131,12 @@ def decision_threshold(U0, T_F, T_U, cal: Cal, alpha: float, parts: str = "all",
         return kappa(alpha) * math.sqrt(v0), "normal"
     sigma = math.sqrt(max(v0 - u0sq(U0, T_F, T_U, cal, "counting"), 0.0))
     r, p = _null_atoms(U0, T_F, T_U, cal)
+    if sigma <= 0:
+        # discrete statistic: r* is the smallest attainable value a with P(r > a) <= alpha
+        order = np.argsort(r)
+        rs, ps = r[order], p[order]
+        tail_above = np.concatenate((np.cumsum(ps[::-1])[::-1][1:], [0.0]))
+        return float(rs[np.argmax(tail_above <= alpha)]), "poisson-exact"
     lo, hi = float(r.min()) - 8 * sigma - 1e-9, float(r.max()) + 8 * sigma + 1e-9
     for _ in range(60):
         mid = 0.5 * (lo + hi)

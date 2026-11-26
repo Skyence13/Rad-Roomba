@@ -1,0 +1,176 @@
+{
+  "format_version": "0.1-demo",
+  "document": "Rad Roomba demonstration calibration record",
+  "synthetic": true,
+  "field_use_approved": false,
+  "notice": "SYNTHETIC DEMONSTRATION VALUES. Not measured on any detector. For the simulator and software tests only; never use for a survey, a release decision or a performance claim.",
+  "calibration_id": "DEMO-CAL-SYNTH-0001",
+  "generated_by": "analysis/radiometry/scripts/s5_demo_files.py (fixed seed)",
+  "model": "analysis/radiometry/MODEL.md sections 1-3: r = F - k*U - b; D = r/K",
+  "units": {
+    "k": "dimensionless (floor counts per reference count)",
+    "b_cps": "1/s",
+    "u_k": "same as k",
+    "u_b_cps": "1/s",
+    "cov_kb_cps": "1/s",
+    "K_cps_per_Bq_cm2": "1/s per Bq/cm2",
+    "u_rel_K": "relative standard uncertainty"
+  },
+  "lane_order": "0-3 from the robot's left to right facing the direction of travel",
+  "u0_evaluation": "smoothed_reference",
+  "cov_FU_assumed": 0.0,
+  "validity_envelope": {
+    "setup_id": "DEMO-SETUP-0",
+    "reference_rate_cps": {
+      "min": 2.0,
+      "max": 150.0
+    },
+    "head_temperature_C": {
+      "min": 5.0,
+      "max": 35.0
+    },
+    "standoff_mm": {
+      "min": 8.0,
+      "max": 12.0
+    },
+    "speed_m_s": {
+      "min": 0.0,
+      "max": 0.1
+    },
+    "photon_field": "synthetic; ore-like spectrum assumed"
+  },
+  "lanes": [
+    {
+      "lane_index": 0,
+      "classes": {
+        "beta_window": {
+          "k": 1.0047,
+          "b_cps": 0.432,
+          "u_k": 0.03029,
+          "u_b_cps": 0.0544,
+          "cov_kb_cps": -7.609e-05,
+          "u_k_components": {
+            "fit": 0.003051,
+            "spectral_mismatch_relative": 0.03
+          },
+          "K_cps_per_Bq_cm2": 23.28,
+          "u_rel_K": 0.15,
+          "K_basis": "Cl-36-equivalent (synthetic)"
+        },
+        "alpha_like": {
+          "k": 0.0045084,
+          "b_cps": 0.009236,
+          "u_k": 0.0004762,
+          "u_b_cps": 0.003368,
+          "cov_kb_cps": -2.647e-07,
+          "u_k_components": {
+            "fit": 0.0001534,
+            "spectral_mismatch_relative": 0.1
+          },
+          "K_cps_per_Bq_cm2": 6.18,
+          "u_rel_K": 0.35,
+          "K_basis": "thin natural-uranium alpha equivalent at 10 mm (synthetic)"
+        }
+      }
+    },
+    {
+      "lane_index": 1,
+      "classes": {
+        "beta_window": {
+          "k": 1.0293,
+          "b_cps": 0.5342,
+          "u_k": 0.03103,
+          "u_b_cps": 0.05532,
+          "cov_kb_cps": -7.83e-05,
+          "u_k_components": {
+            "fit": 0.003109,
+            "spectral_mismatch_relative": 0.03
+          },
+          "K_cps_per_Bq_cm2": 24.48,
+          "u_rel_K": 0.15,
+          "K_basis": "Cl-36-equivalent (synthetic)"
+        },
+        "alpha_like": {
+          "k": 0.0049461,
+          "b_cps": 0.008137,
+          "u_k": 0.000518,
+          "u_b_cps": 0.003052,
+          "cov_kb_cps": -2.143e-07,
+          "u_k_components": {
+            "fit": 0.0001539,
+            "spectral_mismatch_relative": 0.1
+          },
+          "K_cps_per_Bq_cm2": 5.88,
+          "u_rel_K": 0.35,
+          "K_basis": "thin natural-uranium alpha equivalent at 10 mm (synthetic)"
+        }
+      }
+    },
+    {
+      "lane_index": 2,
+      "classes": {
+        "beta_window": {
+          "k": 0.97798,
+          "b_cps": 0.5511,
+          "u_k": 0.02949,
+          "u_b_cps": 0.05402,
+          "cov_kb_cps": -7.449e-05,
+          "u_k_components": {
+            "fit": 0.003002,
+            "spectral_mismatch_relative": 0.03
+          },
+          "K_cps_per_Bq_cm2": 24.0,
+          "u_rel_K": 0.15,
+          "K_basis": "Cl-36-equivalent (synthetic)"
+        },
+        "alpha_like": {
+          "k": 0.0046672,
+          "b_cps": 0.01064,
+          "u_k": 0.0004911,
+          "u_b_cps": 0.003283,
+          "cov_kb_cps": -2.427e-07,
+          "u_k_components": {
+            "fit": 0.0001528,
+            "spectral_mismatch_relative": 0.1
+          },
+          "K_cps_per_Bq_cm2": 6.0,
+          "u_rel_K": 0.35,
+          "K_basis": "thin natural-uranium alpha equivalent at 10 mm (synthetic)"
+        }
+      }
+    },
+    {
+      "lane_index": 3,
+      "classes": {
+        "beta_window": {
+          "k": 1.0056,
+          "b_cps": 0.4693,
+          "u_k": 0.03032,
+          "u_b_cps": 0.05542,
+          "cov_kb_cps": -7.843e-05,
+          "u_k_components": {
+            "fit": 0.003064,
+            "spectral_mismatch_relative": 0.03
+          },
+          "K_cps_per_Bq_cm2": 22.8,
+          "u_rel_K": 0.15,
+          "K_basis": "Cl-36-equivalent (synthetic)"
+        },
+        "alpha_like": {
+          "k": 0.004813,
+          "b_cps": 0.007814,
+          "u_k": 0.0005048,
+          "u_b_cps": 0.003058,
+          "cov_kb_cps": -2.16e-07,
+          "u_k_components": {
+            "fit": 0.0001523,
+            "spectral_mismatch_relative": 0.1
+          },
+          "K_cps_per_Bq_cm2": 5.64,
+          "u_rel_K": 0.35,
+          "K_basis": "thin natural-uranium alpha equivalent at 10 mm (synthetic)"
+        }
+      }
+    }
+  ]
+}

@@ -93,6 +93,9 @@ class SurveyProcessor:
         self.flags = []
         self._flag_of_cell = {}
         self.blocked_regions = []
+        self._station_pending = {}     # station tag -> buffered credits (STEP_AND_COUNT)
+        self._station_result = {}      # station tag -> valid?
+        self.stations = []
         self.stats = {"gates": 0, "lane_gates_credited": 0, "lane_gates_rejected": 0}
 
     # ------------------------------------------------------------- utilities
@@ -149,6 +152,8 @@ class SurveyProcessor:
         self._mark_t.append(t_us)
         if mark.get("count_end"):
             self._finish_observation(mark)
+        if mark.get("station_end") is not None:
+            self._finish_station(mark)
 
     def mark_at(self, t_us):
         return self.marks[bisect.bisect_right(self._mark_t, t_us) - 1]
@@ -224,7 +229,16 @@ class SurveyProcessor:
                 if not [r for r in reasons if not r.startswith("NO_CREDIT")] and lane["beta"] is not None:
                     self._obs_gates.setdefault(self.mark_at(gate["t0_us"])[1].get("obs"), []).append((a_idx, seq, n))
                 continue
-            if ok and stage in CREDIT_STAGES:
+            if ok and stage == "SCALER":
+                # STEP_AND_COUNT: a station's gates earn credit only when the supervisor has
+                # confirmed the whole count valid (stationary, no stop/inhibit event inside).
+                tag = self.mark_at(gate["t0_us"])[1].get("station")
+                args = (a_idx, seq, n, lane, eroded[n], poses[1:-1], stage, gate["thermal"]["head_c"], polys[n])
+                if tag in self._station_result:
+                    self._apply_station_credit(args, self._station_result[tag])
+                else:
+                    self._station_pending.setdefault(tag, []).append(args)
+            elif ok and stage in CREDIT_STAGES:
                 self.stats["lane_gates_credited"] += 1
                 self._credit(a_idx, seq, n, lane, eroded[n], poses[1:-1], stage, gate["thermal"]["head_c"])
             else:
@@ -233,6 +247,25 @@ class SurveyProcessor:
                     for p in poses[1:-1]:      # visited with invalid data: full (uneroded) footprint
                         mask, ix0, iy0 = self._raster(transform((p["x"], p["y"], p["yaw"]), polys[n]), False)
                         self._paint(self.seen_invalid, mask, ix0, iy0, True)
+
+    def _apply_station_credit(self, args, valid):
+        if valid:
+            self.stats["lane_gates_credited"] += 1
+            self._credit(*args[:8])
+        else:
+            self.stats["lane_gates_rejected"] += 1
+            for p in args[5]:
+                mask, ix0, iy0 = self._raster(transform((p["x"], p["y"], p["yaw"]), args[8]), False)
+                self._paint(self.seen_invalid, mask, ix0, iy0, True)
+
+    def _finish_station(self, mark):
+        tag = mark["station_end"]
+        valid = bool(mark.get("valid"))
+        self._station_result[tag] = valid
+        self.stations.append({"station": tag, "valid": valid, "reason": mark.get("reason"), "t_us": mark.get("t_us"),
+                              "pose": mark.get("pose")})
+        for args in self._station_pending.pop(tag, []):
+            self._apply_station_credit(args, valid)
 
     def _raster(self, poly, conservative: bool):
         """Sub-cell mask of a convex polygon on the (unclipped) local lattice.

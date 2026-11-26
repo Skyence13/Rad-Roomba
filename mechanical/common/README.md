@@ -24,14 +24,14 @@ mechanical/common/build.sh --rail 5     # same with the 5 mm rail insert
 | Step | Command | Writes |
 |---|---|---|
 | 1 | `python -m mechanical.common.params` | `out/params_summary.json` |
-| 2 | `python -m mechanical.common.gen_interfaces` | `board_envelopes.yaml`, `frames.yaml`, `out/boards/RR-*-envelope.step` |
+| 2 | `python -m mechanical.common.gen_interfaces` | `board_envelopes.yaml`, `frames.yaml`, `out/mechanical_interfaces.md`, `out/boards/RR-*-envelope.step` |
 | 3 | `python -m mechanical.common.layout [--rail 3\|5] [--no-png]` | `out/RR_E_master_layout.step`, `out/RR_E_head_layout.step`, `out/RR_E_master_layout_{top,side,front}.png`, `out/layout_report.md`, `out/layout_checks.json` |
-| 4 | `python -m mechanical.common.calc.run_all` | `out/mech_calcs.md`, `out/gap_measurement_method.md`, `out/mech_calcs.json` |
+| 4 | `python -m mechanical.common.calc.run_all` | `out/mech_calcs.md`, `out/gap_measurement_method.md`, `out/head_mount_trade_study.md`, `out/mech_calcs.json` |
 
 `out/cache/` holds BREP caches of the lofted shells keyed on the parameters; delete it to force a full rebuild.
 Inputs read from outside this folder: `interface/system/contract.yaml`, `cad/source/body_shell.py` (section tables
-are parsed, not imported), `cad/Rad_Roomba_D.step` (neck, receiver, optical stack, rails and key socket are reused
-unchanged).
+are parsed, not imported), `cad/Rad_Roomba_D.step` (optical stack, head frame and rails are reused, shifted by `P.HEAD_DX`; the Rev D neck,
+tongue and key socket are no longer used).
 
 Checks that fail the build: volumetric interference between hard envelopes, containment of internal parts in the
 body cavity, head inside the contract Rev E envelope, wheels and caster on the floor plane, the 11 ToF centre rays
@@ -44,7 +44,7 @@ build failure.
 
 ```python
 from mechanical.common import params as P          # no CadQuery needed
-P.HEAD_MOUNT, P.ROW_X, P.SEG_Y, P.FILM_Z           # contract datums (loaded from contract.yaml)
+P.HEAD_MOUNT, P.ROW_X, P.HEAD_DX, P.RECEIVER       # mount option C datums (CCR-11); P.SEG_Y, P.FILM_Z from the contract
 P.HEAD_STACK, P.HEAD_TOP_Z, P.HEAD_ACQ             # head stack-up and acquisition board (origin, holes, limits)
 P.CHS_MAIN, P.board_to_base(origin, u, v)          # main board and the board->base_link transform
 P.BODY_ROWS, P.half_breadth(x, z, "inner"|"outer"), P.roof_z(x, y), P.inside_body(x, y, z)   # Rev E skin
@@ -62,54 +62,63 @@ Head mechanical owns everything inside `P.HEAD_ENV_E`; the optical stack below z
 
 | Block | Meaning |
 |---|---|
-| contract datums | loaded from `contract.yaml` (`C`): axle 52, wheel 104, head mount (138.5, 0, 32), row x 204, film z 10, lanes, motion limits, board outlines |
+| contract datums | loaded from `contract.yaml` (`C`): axle 52, wheel 104, track 270, caster, film z 10, lanes, motion limits, board outlines; `HEAD_MOUNT_CONTRACT` / `ROW_X_CONTRACT` keep the contract values until CCR-11 is applied |
+| `ROW_X`, `HEAD_DX`, `HEAD_MOUNT`, `RECEIVER` | head mount option C: row x 131.2, rigid head shift -72.8, mount datum (65.7, 0, 32), shoe / channel / land / latch / beam / chin dimensions |
 | `BODY_SCALE_XYZ`, `BODY_PIVOT` | Rev E body proposal: Rev D section tables scaled 1.40 (length) / 1.30 (width, height) about the Rev D nose and underside, so all growth is rearward and upward |
 | `TRACK`, `CASTER_SWIVEL`, `CASTER_MOUNT_Z`, `MOTOR_*`, `DRIVE_POD` | running gear; motor can clocked 7 mm above the axle (eccentric output shaft) so the plate needs no cut-outs |
 | `HEAD_STACK`, `HEAD_TOP_Z`, `HEAD_ACQ` | head stack above the reference guides and the acquisition board |
 | `CHS_MAIN`, `ELECTRONICS_BRIDGE_*`, `SADDLE`, `GRIP` | main board on a bridge over the motors under the removable grip saddle |
-| `BATTERY_BAY` | centre-line cassette, removal direction −x through the tail-cap hatch |
+| `BATTERY_BAY` | centre-line cassette for the 12 Ah pack, dorsal hump, removal direction −x through the tail-cap hatch |
 | `TOF_SENSORS`, `PANEL_CONTROLS`, `J_RECEPTACLES`, `CHARGE_INLET` | positions computed on the skin from the section law |
 
-## Body proposal (lead decision D-1) and the other decisions needed
+## Current design state (2026-11-26)
 
-The Rev D shell (267 × 225 × 85 mm, 1.8 l free) cannot contain the selected hardware (2.1 l of bare envelopes;
-`out/layout_report.md` §3). Proposal, with a complete checked layout:
+Adopted by the lead (contract 0.4.0-draft4): Rev E body (Rev D section law scaled 1.40 length / 1.30 width and height about
+the nose and underside), track 270, caster contact at -204, bridge grip over the main board, LiDAR aft, 12 Ah pack as baseline.
+Implemented here and **pending contract change CCR-11..14**: local growth for the 12 Ah pack and head mount option C.
 
-| | Rev D | Rev E proposal |
+| | Rev D | Rev E as built here |
 |---|---|---|
-| Body shell x / width / top z | −165…102 / 225 / 117.6 | −272…102 / 293 / 143 (same section law and station tables) |
+| Body shell x / width / crown z | -165..102 / 225 / 117.6 | -272..102 / 293 / 143; battery hump top 150 (x -233..-70.5, 121 wide), sensor brow 166 |
 | Track / across tyres | 220 / 245 | 270 / 295 |
-| Caster contact x | −116 | −204 |
-| Overall length × width × height | 430 × 350 × 159 | 537 × 350 × 216 (LiDAR top; grip bar top 175) |
-| Tail swept radius | 176 | 278 (inside the 318 mm head-corner circle) |
+| Caster contact x | -116 | -204 |
+| Head mount datum / optical row x | 138.5 / 204.0 | **65.7 / 131.2** (option C) |
+| Head envelope x | 138.8..265.0 | 66.0..192.2 (+ two shoes back to x 4) |
+| Overall length x width x height | 430 x 350 x 159 | **464 x 350 x 230** (LiDAR top; grip bar top 175) |
+| Swept radius: head corner / tail | 318 / 176 | 260 / 278 |
 
-Sizing drivers: the 160 × 100 main board needs the 1.30 width at z 83–103; the 151 × 99 × 65 pack in a rear-removable
-cassette needs the 1.40 length; the cantilevered head needs everything else behind the axle (see D-3).
+- **12 Ah pack (DEC-040)**: PSL-SC-12120 lies on its 151 x 101 side, 99 mm tall; cassette z 40..144, removed rearward through the
+  tail-cap hatch. Growth is a dorsal hump over the tunnel only (7 mm above the crown); the LiDAR base rises from z 136 to 150.
+  The 9 Ah PSL-SC-1290 fits the same cassette with a spacer.
+- **Head mount (DEC-041)**: `out/head_mount_trade_study.md` compares A (Rev D neck), B (twin arms at the lane seams), C (twin shoes,
+  overhang shortened) and D (floor-following). C is recommended and implemented: two 16 x 14 mm shoes on the head at y = +-87.5
+  slide into two channels under the chassis front beam, one draw latch under the nose tip, row at x = 131.2. The neck is deleted
+  and the lower hull ends at x = 62 below z = 50.
+- **Interfaces for the three downstream engineers**: `out/mechanical_interfaces.md` (generated).
+- Forward tip margin (0.4 m/s2 braking, 5 deg down-slope, heaviest head): +26.6 mm with the 12 Ah pack, +17.4 mm with the 9 Ah
+  pack; no ballast. With the Rev D neck it would be +5.8 / -5.0 mm.
 
-- **D-1 body growth** as above (CCR-01…03). Alternatives considered: uniform 1.30 (pack and board collide), uniform 1.40
-  (works, 22 mm wider for no benefit), stretch only (board does not fit the Rev D width).
-- **D-2 carry grip and LiDAR swap places.** The Rev D deep hand well cannot coexist with a 65 mm pack under it at any
-  scale below about 1.8. Proposed: a transverse bridge grip over the centre of gravity (bar z 153–175, 45 mm glove
-  clearance, hang angle within ±6° with a head fitted) whose saddle is the service cover of the main board; the LiDAR
-  moves aft over the battery tunnel. This changes the top-side appearance; the shell form is kept.
-- **D-3 balance.** Calculated forward tip margin is −7…+18 mm; with the 9 Ah pack and the heaviest head the caster
-  unloads under 0.4 m/s² braking on a 5° down-slope. Remedy: 0.85 kg tail ballast (still 9.8 kg total), or the 12 Ah
-  pack (does not fit, D-4), or a lighter head, or a support roller under the neck (architecture change).
-- **D-4 pack size.** 12 Ah (151 × 99 × 101) needs 35 mm more tail height; not contained.
-- **D-5 rail stroke / stop inputs** (CCR-08), **D-6 heater budget** (CCR-10).
+Items still needing a decision or confirmation:
+
+- CCR-11..14 (new mount datum, row x, head envelope, body envelope, corner radius, sensor positions).
+- Carry attitude: the centre of gravity is now 24..33 mm behind the grip (tail-down 15..20 deg with a head, more without).
+- Head front ends are about 65 mm ahead of the gearmotor cans (EMI check by head electronics).
+- Rail stroke / stop inputs (CCR-08) and heater budget (CCR-10) are unchanged findings.
+- Ground clearance under the receiver channels is 12 mm.
 
 Change requests to the contract are in `CONTRACT_CHANGE_REQUESTS.md`.
 
 ## Assumptions needing supplier or measured confirmation
 
 1. **Gearmotor**: 7 mm shaft eccentricity, boss Ø12 × 6, 6 × M3 on Ø31, cold behaviour — recalled, drawing is an image (UNVERIFIED). Length 72.5, Ø37, shaft Ø6 × 16, 0.21 kg, torque/current figures VERIFIED.
+1b. **Mount**: contact stiffness 1500 / 6000 N/mm per bearing land (printed / aluminium) is an assumption common to all mount options; prove with the 20 N corner test.
 2. **Drive wheel**: no catalogue 104 × 25 mm wheel or hub verified (open item); mass assumed 0.15 kg.
 3. **Caster** (TENTE Compacta 25 mm, dimensions VERIFIED): plain bearing, rated to −20 °C only; a sealed ≤ 36 mm caster was not found.
-4. **Battery**: PSL-SC-1290 dimensions and mass VERIFIED; discharge range read without row labels (same as the verified 12 Ah sheet); BMS cold behaviour and continuous current to confirm. Contract says 8 Ah, pack is 9 Ah.
+4. **Battery**: PSL-SC-12120 (baseline) dimensions, mass, 15 A continuous and -20 C discharge limit VERIFIED from the datasheet; BMS cold behaviour to confirm. PSL-SC-1290 (alternative) dimensions and mass VERIFIED.
 5. **Battery coupler** (Anderson SBS50 candidate), **selector, pushbuttons, charge inlet, J1/J2 receptacle and plug dimensions**: recalled (UNVERIFIED). E-stop depth 43 mm from a distributor (50 used).
 6. **CM5 / carrier**: 85 × 56 outline and interfaces VERIFIED; assembled height 24 mm, hole pattern, CM5 temperature range UNVERIFIED.
-7. **LiDAR**: 60 × 60 × 80 from the family listing (PARTIAL); scan plane 60 mm above the base, connector exit and mounting holes UNVERIFIED — this sets `lidar_link` z and the clearance over the grip bar (21 mm calculated).
-8. **VL53L4ED** 18° field of view and 1.3 m range recalled; grazing-incidence performance of the forward look-ahead (14° to the floor, 670 mm) is a test item.
+7. **LiDAR**: 60 × 60 × 80 from the family listing (PARTIAL); scan plane 60 mm above the base, connector exit and mounting holes UNVERIFIED — this sets `lidar_link` z and the clearance over the grip bar (35 mm calculated).
+8. **VL53L4ED** 18° field of view and 1.3 m range recalled; grazing-incidence performance of the forward look-ahead (18° to the floor, 524 mm) is a test item.
 9. **Optical module thickness** above z 28.5 (supplier drawing pending): 1.5 mm pad allowance.
 10. **Masses** of all printed/machined structure, harness and head (±15 %); receiver stiffness 1500 / 6000 N·m/rad and play; tyre stiffness 40 N/mm; friction 0.6 / 0.3; film coefficients 12 / 25 W/m²K; polymer moduli (data-sheet class values, anisotropy and cold not measured).
 11. **Floor features** used in the gap budget (1.5 / 3 / 5 mm) are representative values, not site data.
@@ -120,5 +129,5 @@ Change requests to the contract are in `CONTRACT_CHANGE_REQUESTS.md`.
 - No fasteners, printable splits, seals or drawings: envelope fidelity only (left to the three downstream engineers).
 - Head rail switches, body bumper band and dock switch are placed as points/small boxes, not designed.
 - Cable corridors are reserved boxes checked for interference; no harness lengths.
-- The 12 Ah pack and a flush (recessed) grip are not achievable in this proposal.
+- A flush (recessed) grip is not achievable; the grip is 24..33 mm ahead of the centre of gravity.
 - No FEA; cantilever and frequency results are beam/lumped estimates with assumed joint stiffness.

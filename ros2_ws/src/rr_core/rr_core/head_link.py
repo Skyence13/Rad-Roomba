@@ -531,6 +531,7 @@ class HeadLinkMaster:
         self.state = "HANDSHAKE"
         self.block_reason = self.block_detail = None
         self.hello = self.descriptor_bytes = self.verified = None
+        self._diag_supported = self.cfg.diag_enabled
         rsp = yield from self._transact("HELLO", {}, self.cfg.handshake_timeout_us)
         if rsp["status"] != "OK":
             self._block("HELLO_" + rsp["status"], "head refused HELLO")
@@ -682,7 +683,10 @@ class HeadLinkMaster:
                 continue
             if self._diag_supported and now >= next_diag:
                 next_diag = now + cfg.diag_period_us
-                rsp = yield from self._transact("DIAG", {})
+                if self.interp.last_seq is None:
+                    continue
+                # head_icd_addendum_0.4 section 3: engineering record per sequence
+                rsp = yield from self._transact("DIAG", {"seq": self.interp.last_seq})
                 if rsp["status"] == "UNSUPPORTED":
                     self._diag_supported = False     # heads without DIAG answer UNSUPPORTED
                     self._note(note="DIAG_UNSUPPORTED")

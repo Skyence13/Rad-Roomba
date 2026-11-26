@@ -5,7 +5,7 @@ import json
 import sys
 
 from .. import params as P
-from . import gap, mass_cg, motion, structure, thermal
+from . import gap, mass_cg, motion, mount_trade, structure, thermal
 
 
 def main():
@@ -21,6 +21,8 @@ def main():
         keys[mod.__name__.split(".")[-1]] = key
     (P.OUT / "mech_calcs.md").write_text("\n\n".join(sections) + "\n", encoding="utf-8")
     (P.OUT / "gap_measurement_method.md").write_text(gap.method(keys["gap"]), encoding="utf-8")
+    trade, _ = mount_trade.run()
+    keys["mount_trade"] = trade
     (P.OUT / "mech_calcs.json").write_text(json.dumps(keys, indent=1, default=str), encoding="utf-8")
     # sanity gates (non-zero exit on failure)
     fails = []
