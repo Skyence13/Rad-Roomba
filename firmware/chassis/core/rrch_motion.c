@@ -171,7 +171,9 @@ void rrch_fields_step(rrch_t *c)
     }
     for (int p = 0; p < 2; p++) {
         rrch_tof_t *a = &c->tof[4 + 2 * p], *b = &c->tof[5 + 2 * p];
-        bool dis = a->valid && b->valid && fabsf((float)(a->range_mm - b->range_mm)) > CFG(c, LOOK_PAIR_TOL_MM);
+        /* only while both read "nominal floor": an abnormal reading is already handled by the cap above */
+        bool an = a->valid && fabsf((float)a->range_mm - nominal) <= tol, bn = b->valid && fabsf((float)b->range_mm - nominal) <= tol;
+        bool dis = an && bn && fabsf((float)(a->range_mm - b->range_mm)) > CFG(c, LOOK_PAIR_TOL_MM);
         if (timer_run(&f->t_disagree[p], dis, (uint16_t)CFG(c, TOF_DISAGREE_MS))) {
             inhibit |= RRCH_DIR_FWD;
             cause |= RRCH_SW(TOF_DISAGREE);

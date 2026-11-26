@@ -33,14 +33,14 @@ Two mechanical builds of the same design: **X1C prototype** (printed on a stock 
 
 | Board | Qty | Function | Why it is its own board |
 |---|---:|---|---|
-| **RR-HEAD-ACQ** | 1 / head | Eight SiPM front ends, programmable bias with temperature compensation, threshold DACs, discriminators, event-logic FPGA with hardware live-time, head MCU (STM32G474), isolated RS-485, heater switch, input protection and low-noise rails. | The head must be buildable and testable alone. One board spanning the four lanes removes inter-board connectors in the signal path; lane circuits are four identical blocks. |
+| **RR-HEAD-ACQ** | 1 / head | Eight SiPM front ends, programmable bias with temperature compensation, threshold DACs, discriminators with event latches, head MCU (STM32G474VET6) doing classification, counting and measured live time with its timers, isolated RS-485, heater switch, input protection and low-noise rails. No FPGA (DEC-037). | The head must be buildable and testable alone. One board spanning the four lanes removes inter-board connectors in the signal path; lane circuits are four identical blocks. |
 | **RR-CHS-MAIN** | 1 | Pack input and main protection, charger with power path, branch eFuses, 5 V compute rail, hardwired traction chain (latch relay, brake relays, watchdog), motion MCU (STM32G474), dual H-bridge, encoder/IMU/ToF/bumper/panel I/O, host-side RS-485 with USB bridge, USB to the CM5, heater switches, telemetry. | One board keeps the safety chain, the drive stage and their monitoring on one copper reference with no harness between them; power and logic are zoned on a 4-layer stack. Fewer connectors matter at −25 °C. |
 | **RR-TOF** | 11 | VL53L4ED carrier with local decoupling, ESD and a 6-pin cable. | Sensors sit at the body perimeter behind windows; identical boards, individually replaceable. |
 | **RR-PANEL** | 1 | Five annunciator LEDs, buzzer, landing for the two program buttons and their indicators. | Sits in the top shell at the operator surface; one cable to the main board. |
 
 Purchased modules (not redesigned): Raspberry Pi CM5 + compact carrier, 2D LiDAR, gearmotors with encoders, LiFePO₄ pack with BMS, external 24 V supply, E-stop and switches, optical modules. Each gets ordering details, an interface schematic and a prototype-to-production crosswalk in `electronics/modules/` and `planning/`.
 
-## 4. Detector head electronics concept (DEC-023, DEC-024)
+## 4. Detector head electronics concept (DEC-023 as revised by DEC-037, DEC-024)
 
 Signal chain per optical channel (8 channels: 4 floor, 4 reference):
 
@@ -50,13 +50,14 @@ SiPM (cathode at filtered HV, anode AC-coupled, anode DC return to a per-channel
   -> fast path  (CR-RC, tens of ns)   -> comparators: floor BETA_LLD, BETA_ULD ; reference REF_LLD, REF_ULD
   -> slow path  (integrating, ~µs)    -> comparator: floor ALPHA      (ZnS(Ag) light is large and slow)
   -> buffered monitor mux -> 50 Ω test output and MCU ADC (triggered waveform capture with pre-trigger)
-comparators -> FPGA event logic: one non-retriggerable acceptance window per event, class decision at window end,
-               class counters, reject counters, live-time counter per chain, all latched on common gate boundaries
-FPGA <-SPI-> head MCU: gate records, configuration, test pulser timing
+comparators -> edge-triggered latches (the low-threshold latch is BUSY: non-retriggerable until the MCU clears it)
+BUSY -> MCU 32-bit timer input capture (event start time captured in hardware)
+MCU service interrupt at a fixed 100 kHz: after the acceptance window, read the latches, classify, count,
+               read the timer for the clear time, clear the latches; gate boundaries snapshot all counters
 ```
 
 - Classification baseline is the amplitude-window method used by commercial dual-phosphor probes (beta window between two fast-path thresholds, alpha above a high threshold), strengthened by taking the alpha decision on the slow path so that large fast pulses (Cherenkov in the guide, high-energy electrons) land in a separate reject counter instead of the alpha counter. Pulse-shape development uses the waveform capture path; it does not change the wire format.
-- Live time is measured in hardware: a per-chain counter runs only while the event logic can accept an event. Floor alpha and beta share one acceptance gate and report the same live time; each reference channel reports its own. A chain whose live fraction or bias current leaves its window reports `SATURATED` and null counts, never zeros.
+- Live time is measured, not modelled: each event's busy interval runs from the hardware-captured start time to the timer reading at which the MCU clears the latches, and the live time of a gate is its span minus those intervals. Expected rates are a few to about 2000 events per second per chain, so the dead fraction is a few percent at most. An FPGA was considered for this job and rejected as unnecessary at these rates (DEC-037); `contract.yaml › head_event_capture` has the detail. Floor alpha and beta share one acceptance gate and report the same live time; each reference channel reports its own. A chain whose live fraction or bias current leaves its window reports `SATURATED` and null counts, never zeros.
 - Bias: one programmable low-noise supply (design range 20–60 V to cover onsemi, Hamamatsu and Broadcom devices) with per-channel anode trim (0–2.5 V) and a firmware temperature-compensation loop from sensors at the SiPMs. Coefficients, set-points and thresholds are part of the `setup_id`; changing them invalidates the binding as the ICD requires.
 - Isolation is at the head end of the RS-485 link. The bus side of the head transceiver is powered from the chassis through J2, so the head contains no isolated DC-DC converter radiating next to the front ends, and the head's only DC ground connection to the robot is the J1 electronics return. The heater has its own feed and return pins on J1 (DEC-025) and switches only on gate boundaries with a slew-limited edge; the gate that contains a transition is marked in the diagnostic record.
 - Unknown OEM values are handled as explicit design ranges with a named test point and the component selection each one drives; see `electronics/analysis/head_afe_budget.md` (owned by the head electronics lead).
@@ -91,6 +92,20 @@ This is not a certified safety function. The verification register keeps the bra
 - ROS 2 Jazzy workspace `ros2_ws/`: `rr_interfaces`, `rr_head_driver`, `rr_chassis_bridge`, `rr_localization`, `rr_coverage`, `rr_mapping`, `rr_web`, `rr_sim`, `rr_bringup`. Localization and coverage are purpose-built for a rectangular trailer (wall-referenced estimator, straight serpentine passes with offset recovery lanes); Nav2 is not a dependency in 0.4 and stays available as an alternative behind the same `DRIVE` interface.
 - Count processing lives in a ROS-free Python library so it can be replayed offline and tested without the middleware.
 
+## 8a. Survey methods (DEC-038)
+
+Definitions are in `contract.yaml › survey_methods`. Mission-time estimates below are `calculated` for a 2.5 × 16 m floor with the 175 mm effective swath per pass that closes the 7.5 mm seams (15 passes, 240 m of travel, about 6 min of turns), move-and-settle of about 1.8 s per 100 mm station, and no allowance for holds or pack swaps.
+
+| Method | Parameters | Estimated time | Comment |
+|---|---|---:|---|
+| Search then count | 0.10 m/s search; scaler counts only at alarms | 46 min + (count time + ~10 s) per alarm | Fits one pack if alarms are few. Floor without an alarm is credited at the search-stage detection limit. |
+| Continuous scan | 0.025 m/s (4 s dwell) | about 2.8 h | Speed set by the dwell the detection goal needs. |
+| Step and count | 2400 stations, 5 s counts | about 4.5 h | Static counts everywhere; several pack swaps. |
+| Step and count | 2400 stations, 10 s counts | about 7.9 h | |
+| Step and count, single pass family | 1280 stations, 10 s counts | about 4.2 h | 8 passes; the 7.5 mm seams between windows are reported unresolved. |
+
+Pack swaps require the trailer datum to be re-registered (0.3 rule, retained); the mission supervisor checkpoints so a multi-pack survey continues as one record with separate epochs.
+
 ## 9. File ownership for parallel work
 
 | Path | Owner |
@@ -101,7 +116,6 @@ This is not a certified safety function. The verification register keeps the bra
 | `electronics/chassis_main/`, `electronics/panel/`, `electronics/modules/`, `electronics/analysis/chassis_*`, `electronics/analysis/power_budget.md` | Chassis electronics |
 | `harness/` | Harness (after board connectors freeze) |
 | `firmware/common/`, `firmware/head/`, `interface/head_*` additions | Head firmware |
-| `gateware/head_evt/` | Gateware |
 | `firmware/chassis/`, `interface/chassis_icd.md` | Chassis firmware |
 | `ros2_ws/`, `software/` additions | Robot software |
 | `mechanical/common/` | Mechanical lead (master layout) |
@@ -119,7 +133,7 @@ Baseline directories (`cad/`, `examples/`, `reference/`, `docs/Rad_Roomba_Design
 |---|---|---|---|---|
 | DEC-021 | Head envelope ceiling raised from z = 42 to ≤ 50 mm | Rev D has ~4 mm above the reference guides; the acquisition board needs ~12 mm. | Look-ahead sightlines, head mass/CG, descriptor envelope, body nose clearance. | Yes |
 | DEC-022 | Board partition of §3 | See §3. | Harness, CAD mounts, firmware pin maps. | Costly after layout |
-| DEC-023 | Discriminators + FPGA event logic + MCU; amplitude windows with slow-path alpha | Deterministic hardware live time and equal gates; low power; PSD development path kept. | Head firmware, gateware, descriptor `setup_id`. | Yes (digitiser later) |
+| DEC-023 | Discriminators + event logic + MCU; amplitude windows with slow-path alpha. *The FPGA part of this decision is withdrawn by DEC-037.* | Low power; PSD development path kept. | Head firmware, descriptor `setup_id`. | Yes (digitiser later) |
 | DEC-024 | RS-485 isolation at the head, bus side powered from chassis | No isolated DC-DC next to the front ends; single DC ground path. | J2 pinout, both boards. | Yes |
 | DEC-025 | J1 = M16 8-pole with separate heater pair and presence code; J2 = M12 A-coded 8-pole with presence link and reserved sync pair | Heater current out of the electronics return; connector families cannot cross-mate; off-the-shelf shielded extensions. | Head ICD §3 (pin numbering now defined), harness, LAB extension. | Before harness build |
 | DEC-026 | Self-holding latch + DPDT brake relays; local-only hardware re-arm; HANDS-ON button | Defined stop on any power loss or inhibit, independent of firmware. | Chassis board, panel, operator procedure. | Yes |
@@ -133,6 +147,9 @@ Baseline directories (`cad/`, `examples/`, `reference/`, `docs/Rad_Roomba_Design
 | DEC-034 | Printed head housing split at the y = 0 rib with full-width stiffening rods and a one-piece spreader plate | 350 mm exceeds the X1C plate; the joint sits in an inactive seam. | Head mechanical, light-tightness test. | Prototype only |
 | DEC-035 | Portable firmware cores; emulators are native builds of them | Full path testable before optics or boards exist. | Firmware, simulation. | — |
 | DEC-036 | Software time sync now; hardware pulse pair reserved on J2 | Meets the 10 ms bound by calculation; keeps an upgrade path. | J2, both boards (DNP parts). | Yes |
+
+| DEC-037 | No FPGA in the head. Event classification, counting and live time use discrete latches and the MCU's 32-bit timer captures; head MCU becomes the 100-pin STM32G474VET6. Raised by Morgan's challenge on 2026-11-26. | At the expected rates (≤ ~2000 s⁻¹ per chain) measured dead time is a few percent; programmable logic added a toolchain, a second firmware artefact, a 1.2 V rail and a skill requirement for no measurable benefit. | Head board, head firmware pin map, `gateware/` removed from the tree (kept in git history). | Yes |
+| DEC-038 | Three selectable survey methods: ratemeter search then scaler count (inline or deferred), step-and-count scaler survey, continuous scan. Requested by Morgan on 2026-11-26. | Matches how direct measurements are specified in RP procedures; lets the site trade mission time against a static, well-defined count. | Mission supervisor, processing, UI, site profile, report. | — |
 
 Confirmed by Morgan on 2026-11-25: local-only hardware re-arm is accepted for the unattended mode (a bumper or E-stop trip ends an unattended mission until someone attends) — DEC-026; the 5–25 units/year production assumption — DEC-033; navigation left to the lead's recommendation, which is to keep DEC-030 (no Nav2 dependency in 0.4, with Nav2 remaining a possible alternative behind the same `DRIVE` interface).
 

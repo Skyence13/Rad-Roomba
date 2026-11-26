@@ -3,7 +3,7 @@
 # DEC-xxx entry in planning/decisions.csv and a line in docs/architecture/CHANGELOG.md.
 # Human-readable rationale: docs/architecture/SYSTEM_ARCHITECTURE.md
 # Units: SI (m, s, rad, V, A, W, kg) unless a key name carries another unit suffix (_mm, _us, _ms, _c).
-contract_version: "0.4.0-draft1"
+contract_version: "0.4.0-draft2"   # draft2: FPGA removed (DEC-037), survey methods added (DEC-038)
 baseline: {system_design: "0.3", mechanical: "Rev D", head_protocol: "2.0", baseline_commit: "38d101051d32b47e4b21657e2293ec92c63de9c4"}
 next_revision: {system_design: "0.4", mechanical: "Rev E", head_protocol: "2.0 (unchanged envelope; additive descriptor fields only)", chassis_protocol: "1.0"}
 
@@ -125,7 +125,7 @@ enums:
 # ---------------------------------------------------------------- boards (provisional envelopes; mechanical lead confirms fit, electronics leads confirm area)
 boards:
   RR-HEAD-ACQ:
-    desc: "Head acquisition board: 8 SiPM front ends, bias, thresholds, event-logic FPGA, head MCU, isolated RS-485, heater switch, power"
+    desc: "Head acquisition board: 8 SiPM front ends, bias, thresholds, discriminators with event latches, head MCU (STM32G474VET6, LQFP100), isolated RS-485, heater switch, power. No FPGA (DEC-037)."
     outline_mm: [326.0, 96.0]
     layers: 4
     position: "Above the reference guides, long axis along y, centred on x = 204, y = 0; PCB underside nominally z = 33.0"
@@ -188,7 +188,7 @@ connectors:
 
 # ---------------------------------------------------------------- head acquisition source (HAL boundary between head firmware core, FPGA driver and the emulator)
 head_gate_record:
-  desc: "One record per gate from the event logic to the head firmware core. The firmware core turns it into an ACQ 2.0 frame; the emulator fabricates the same record from Poisson draws."
+  desc: "One record per gate from the event-capture module (MCU timers + discrete latches, see head_event_capture) to the head firmware core. The firmware core turns it into an ACQ 2.0 frame; the emulator fabricates the same record from Poisson draws."
   per_lane_fields:
     alpha_counts:  "Events classified alpha-like (slow-path above ALPHA threshold)"
     beta_counts:   "Events in the beta window (fast-path above BETA_LLD, below BETA_ULD, slow-path below ALPHA)"
@@ -220,3 +220,30 @@ chassis_link:
     PANEL:    "{pattern} -> annunciator/buzzer pattern request (the MCU overrides for safety states)"
     CONFIG_GET: "{key} -> value ; CONFIG_SET {key, value} persists calibration (wheel radius, track, field distances, speed caps) with CRC; changes are logged as events"
     BRAKE_TEST: "{} -> runs the stationary brake-relay and VMOT-drop self-test; result in body"
+
+# ---------------------------------------------------------------- head event capture without an FPGA (DEC-037)
+head_event_capture:
+  rationale: "Expected rates are a few to ~2000 events/s per chain (radiometry study, assumed responses). At 10-20 us per event the dead fraction is <= 4 %, and it is measured, so programmable logic adds a toolchain and a second firmware artefact without a measurable benefit. Revisit only if measured rates exceed ~2e4 /s per chain or digital pulse-shape discrimination is adopted."
+  per_floor_chain_hardware: "3 comparators (BETA_LLD, BETA_ULD fast path; ALPHA slow path) -> 3 edge-triggered D latches. The BETA_LLD latch is BUSY: once set, further LLD edges do nothing until the MCU clears it (non-retriggerable by construction)."
+  per_ref_chain_hardware: "2 comparators (REF_LLD, REF_ULD) -> 2 latches; REF_LLD latch is BUSY."
+  mcu: "STM32G474VET6. BUSY of the 8 chains -> 8 input-capture channels of the two 32-bit timers (TIM2, TIM5) running from the 24 MHz TCXO-derived clock: the event start time is captured in hardware. A fixed-rate service interrupt (default 100 kHz) classifies every chain whose BUSY has been set for at least the acceptance window W (default 4 us) and whose LLD comparator has returned low (bounded by a maximum hold after which the chain is flagged saturated): reads the ULD/ALPHA latches, increments the class counter, reads the timer for the clear time, pulses CLR. CPU load is independent of count rate."
+  classification: "floor: ALPHA latched -> alpha; else ULD latched -> floor reject; else -> beta window. reference: ULD latched -> ref reject; else -> ref count."
+  live_time: "Per chain and gate: live = gate span - sum over events of (clear time - captured start time), with busy intervals split exactly at gate boundaries. Both ends are timer readings; nothing is inferred from wall time or from a nominal dead time."
+  gates: "Timer compare interrupt at the gate boundary snapshots all counters and live times atomically (interrupts masked for the copy). An event is attributed to the gate in which it is classified."
+  test: "Charge-injection pulser strobed by an MCU timer output (periodic and pseudo-random) for counting, live-time and rate-sweep validation; a firmware self-test drives the latch clocks through a test line with no analog signal."
+
+# ---------------------------------------------------------------- survey methods (DEC-038); selected per mission from the site profile
+survey_methods:
+  terms: "Ratemeter = sliding-window count rate evaluated every gate while moving (window default = aperture transit time L/v). Scaler count = counts and live time accumulated with the robot verified stationary for a preset live time, or adaptively until a decision is reached (D# <= goal, or net result clear of the decision threshold) up to a maximum time."
+  SEARCH_THEN_COUNT:
+    desc: "Ratemeter search at survey speed for hot spots, then park the flagged lane over the spot and take a scaler count. The search alarm is deliberately sensitive; the scaler count makes the reported decision."
+    params: {search_speed_mps: 0.10, ratemeter_window_s: 1.0, count_policy: [INLINE, DEFERRED], scaler_mode: [PRESET_TIME, ADAPTIVE], scaler_preset_s: 30, scaler_max_s: 100}
+    notes: "INLINE stops at once, reverses to centre the alarming lane on the peak and counts. DEFERRED queues the spots and visits them after the pass or after the scan (same motion as a guided revisit). Floor that only saw the search stage is reported at the search-stage detection limit."
+  STEP_AND_COUNT:
+    desc: "Scaler survey of the whole floor: move one station, stop, count, repeat. Every credited measurement is a static count over four defined 80 cm2 apertures."
+    params: {station_pitch_m: 0.100, settle_s: 0.5, scaler_mode: [PRESET_TIME, ADAPTIVE], scaler_preset_s: 10, scaler_max_s: 60}
+    notes: "Counts taken while moving between stations are archived and shown as ratemeter data but earn no coverage credit. Mission time is hours for a full trailer (see architecture document); expect pack swaps."
+  CONTINUOUS_SCAN:
+    desc: "Constant-speed scan with no stops; speed chosen so the aperture dwell meets the detection goal."
+    params: {speed_mps: [0.02, 0.20]}
+  common: "All methods record raw gates identically; the method, its parameters and the stage that produced each cell's decision are stored with the result. A scaler count is valid only while both wheel encoders and the gyro confirm zero motion and no stop/inhibit transition occurred inside it."

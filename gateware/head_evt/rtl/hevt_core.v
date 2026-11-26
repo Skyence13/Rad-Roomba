@@ -369,7 +369,7 @@ module hevt_core #(
     // the accumulator RAM that belongs to the gate in progress; it toggles together with gate_first.
     reg [25:0] n_cur_m2;
     reg        gate_first;
-    reg        bank;
+    reg        bank, bank_d;
     reg        resync_pend;
     reg [63:0] gate_start;
     wire       ser_idle;
@@ -381,9 +381,11 @@ module hevt_core #(
             gate_first  <= 1'b1;
             gate_sync   <= 1'b0;
             bank        <= 1'b0;
+            bank_d      <= 1'b0;
             resync_pend <= 1'b0;
         end else begin
             gate_first <= gate_last;
+            bank_d     <= bank;
             if (ctrl_resync)
                 resync_pend <= 1'b1;
             if (gate_last) begin
@@ -515,7 +517,7 @@ module hevt_core #(
                 .cfg_win_m1(fwin_m1), .cfg_hold_m1(fhold_m1), .cfg_hold_zero(fhold_zero),
                 .cfg_stuck(cfg_fstuck), .cfg_wait_alpha(fe_wait_alpha),
                 .ld(ld),
-                .evt_start(ch_start[gi]), .evt_done(ch_done[gi]), .evt_class(ch_class[2*gi +: 2]),
+                .evt_start_r(ch_start[gi]), .evt_done_r(ch_done[gi]), .evt_class_r(ch_class[2*gi +: 2]),
                 .busy(ch_busy[gi]), .stuck(ch_stuck[gi]), .orphan_evt(ch_orphan[gi]), .dead(ch_dead[gi]),
                 .sh_orphan(ch_sh_orphan[8*gi +: 8]), .sh_flags(ch_sh_flags[3*gi +: 3])
             );
@@ -527,7 +529,7 @@ module hevt_core #(
                 .cfg_win_m1(rwin_m1), .cfg_hold_m1(rhold_m1), .cfg_hold_zero(rhold_zero),
                 .cfg_stuck(cfg_rstuck), .cfg_wait_alpha(1'b0),
                 .ld(ld),
-                .evt_start(ch_start[gi]), .evt_done(ch_done[gi]), .evt_class(ch_class[2*gi +: 2]),
+                .evt_start_r(ch_start[gi]), .evt_done_r(ch_done[gi]), .evt_class_r(ch_class[2*gi +: 2]),
                 .busy(ch_busy[gi]), .stuck(ch_stuck[gi]), .orphan_evt(ch_orphan[gi]), .dead(ch_dead[gi]),
                 .sh_orphan(ch_sh_orphan[8*gi +: 8]), .sh_flags(ch_sh_flags[3*gi +: 3])
             );
@@ -692,7 +694,7 @@ module hevt_core #(
             for (k = 0; k < 8; k = k + 1) begin
                 if (ch_done[k]) begin
                     pend[k]            <= 1'b1;
-                    pend_bank[k]       <= bank;
+                    pend_bank[k]       <= bank_d;        // ch_done is one tick late: bank of the classification tick
                     pend_cls[2*k +: 2] <= ch_class[2*k +: 2];
                     if (pend[k] && !(slot_cls && (cls_c == k[2:0])))
                         acc_err <= 1'b1;
@@ -726,7 +728,7 @@ module hevt_core #(
     // order; if the gate was armed and the FIFO had room they are written to `mem` and committed at the end.
     (* no_rw_check *) reg [31:0] mem [0:511];           // 8 slots x 64 words -> 4 x SB_RAM40_4K
     localparam [2:0] X_IDLE = 3'd0, X_DELAY = 3'd1, X_WORD = 3'd2, X_RAM = 3'd3, X_CALC = 3'd4, X_EMIT = 3'd5,
-                     X_DONE = 3'd6;
+                     X_DONE = 3'd6, X_DEC = 3'd7;
     reg [2:0]  xs;
     reg [5:0]  x_dly;
     reg [5:0]  x_w;
@@ -737,45 +739,67 @@ module hevt_core #(
     assign ser_idle = (xs == X_IDLE);
     assign ser_done = (xs == X_DONE);
 
-    // word decode: kind 0 = register word, 1 = class count (clamped), 2 = live (gate ticks - dead), 3 = raw total
+    // word decode (registered one tick after x_w changes; the pass waits in X_DEC):
+    //   kind 0 = register word, 1 = class count (clamped), 2 = live (gate ticks - dead), 3 = raw total
+    //   {kind, accumulator index, chain, is-DIAG}
+    function [11:0] x_dec_f;
+        input [5:0] w;
+        reg [11:0] x_dec;
+        begin
+            case (w)
+                6'd6 : x_dec = {2'd3, 6'd32, 3'd0, 1'b0};
+                6'd7 : x_dec = {2'd3, 6'd33, 3'd0, 1'b0};
+                6'd10: x_dec = {2'd1, 6'd2 , 3'd0, 1'b0};
+                6'd11: x_dec = {2'd1, 6'd0 , 3'd0, 1'b0};
+                6'd12: x_dec = {2'd1, 6'd1 , 3'd0, 1'b0};
+                6'd13: x_dec = {2'd2, 6'd3 , 3'd0, 1'b0};
+                6'd14: x_dec = {2'd0, 6'd0 , 3'd0, 1'b1};
+                6'd15: x_dec = {2'd1, 6'd6 , 3'd1, 1'b0};
+                6'd16: x_dec = {2'd1, 6'd4 , 3'd1, 1'b0};
+                6'd17: x_dec = {2'd1, 6'd5 , 3'd1, 1'b0};
+                6'd18: x_dec = {2'd2, 6'd7 , 3'd1, 1'b0};
+                6'd19: x_dec = {2'd0, 6'd0 , 3'd1, 1'b1};
+                6'd20: x_dec = {2'd1, 6'd10, 3'd2, 1'b0};
+                6'd21: x_dec = {2'd1, 6'd8 , 3'd2, 1'b0};
+                6'd22: x_dec = {2'd1, 6'd9 , 3'd2, 1'b0};
+                6'd23: x_dec = {2'd2, 6'd11, 3'd2, 1'b0};
+                6'd24: x_dec = {2'd0, 6'd0 , 3'd2, 1'b1};
+                6'd25: x_dec = {2'd1, 6'd14, 3'd3, 1'b0};
+                6'd26: x_dec = {2'd1, 6'd12, 3'd3, 1'b0};
+                6'd27: x_dec = {2'd1, 6'd13, 3'd3, 1'b0};
+                6'd28: x_dec = {2'd2, 6'd15, 3'd3, 1'b0};
+                6'd29: x_dec = {2'd0, 6'd0 , 3'd3, 1'b1};
+                6'd30: x_dec = {2'd1, 6'd16, 3'd4, 1'b0};
+                6'd31: x_dec = {2'd1, 6'd17, 3'd4, 1'b0};
+                6'd32: x_dec = {2'd2, 6'd19, 3'd4, 1'b0};
+                6'd33: x_dec = {2'd0, 6'd0 , 3'd4, 1'b1};
+                6'd34: x_dec = {2'd1, 6'd20, 3'd5, 1'b0};
+                6'd35: x_dec = {2'd1, 6'd21, 3'd5, 1'b0};
+                6'd36: x_dec = {2'd2, 6'd23, 3'd5, 1'b0};
+                6'd37: x_dec = {2'd0, 6'd0 , 3'd5, 1'b1};
+                6'd38: x_dec = {2'd1, 6'd24, 3'd6, 1'b0};
+                6'd39: x_dec = {2'd1, 6'd25, 3'd6, 1'b0};
+                6'd40: x_dec = {2'd2, 6'd27, 3'd6, 1'b0};
+                6'd41: x_dec = {2'd0, 6'd0 , 3'd6, 1'b1};
+                6'd42: x_dec = {2'd1, 6'd28, 3'd7, 1'b0};
+                6'd43: x_dec = {2'd1, 6'd29, 3'd7, 1'b0};
+                6'd44: x_dec = {2'd2, 6'd31, 3'd7, 1'b0};
+                6'd45: x_dec = {2'd0, 6'd0 , 3'd7, 1'b1};
+                default: x_dec = 12'd0;
+            endcase
+            x_dec_f = x_dec;
+        end
+    endfunction
     reg [1:0] x_kind;
     reg [5:0] x_idx;
     reg [2:0] x_chain;
     reg       x_diag;
-    always @(*) begin
-        x_kind  = 2'd0;
-        x_idx   = 6'd0;
-        x_chain = 3'd0;
-        x_diag  = 1'b0;
-        if (x_w == 6'd6) begin
-            x_kind = 2'd3; x_idx = 6'd32;
-        end else if (x_w == 6'd7) begin
-            x_kind = 2'd3; x_idx = 6'd33;
-        end else if (x_w >= 6'd10 && x_w < 6'd30) begin
-            // floor lane L = (w - 10) / 5, k = (w - 10) % 5 : ALPHA, BETA, REJECT, LIVE, DIAG
-            case (x_w)
-                6'd10, 6'd11, 6'd12, 6'd13, 6'd14: x_chain = 3'd0;
-                6'd15, 6'd16, 6'd17, 6'd18, 6'd19: x_chain = 3'd1;
-                6'd20, 6'd21, 6'd22, 6'd23, 6'd24: x_chain = 3'd2;
-                default:                           x_chain = 3'd3;
-            endcase
-            case (x_w)
-                6'd10, 6'd15, 6'd20, 6'd25: begin x_kind = 2'd1; x_idx = {1'b0, x_chain, 2'd2}; end
-                6'd11, 6'd16, 6'd21, 6'd26: begin x_kind = 2'd1; x_idx = {1'b0, x_chain, 2'd0}; end
-                6'd12, 6'd17, 6'd22, 6'd27: begin x_kind = 2'd1; x_idx = {1'b0, x_chain, 2'd1}; end
-                6'd13, 6'd18, 6'd23, 6'd28: begin x_kind = 2'd2; x_idx = {1'b0, x_chain, 2'd3}; end
-                default:                    x_diag = 1'b1;
-            endcase
-        end else if (x_w >= 6'd30 && x_w < 6'd46) begin
-            // reference lane L = (w - 30) / 4 (chain 4 + L), k = (w - 30) % 4 : COUNT, REJECT, LIVE, DIAG
-            x_chain = (x_w < 6'd34) ? 3'd4 : (x_w < 6'd38) ? 3'd5 : (x_w < 6'd42) ? 3'd6 : 3'd7;
-            case (x_w[1:0])
-                2'd2:    begin x_kind = 2'd1; x_idx = {1'b0, x_chain, 2'd0}; end
-                2'd3:    begin x_kind = 2'd1; x_idx = {1'b0, x_chain, 2'd1}; end
-                2'd0:    begin x_kind = 2'd2; x_idx = {1'b0, x_chain, 2'd3}; end
-                default: x_diag = 1'b1;
-            endcase
-        end
+    wire [11:0] x_dec_w = x_dec_f(x_w);
+    always @(posedge clk) begin
+        x_kind  <= x_dec_w[11:10];
+        x_idx   <= x_dec_w[9:4];
+        x_chain <= x_dec_w[3:1];
+        x_diag  <= x_dec_w[0];
     end
 
     wire [31:0] rec_flags = {l_tr, fe_chain_en, 7'd0, l_last, l_sync, l_he, l_hs, (l_tr != 8'd0), l_first,
@@ -897,9 +921,10 @@ module hevt_core #(
                         xs  <= X_DELAY;
                     end else begin
                         x_w <= (x_w == 6'd1) ? 6'd4 : x_w + 6'd1;
-                        xs  <= X_WORD;
+                        xs  <= X_DEC;
                     end
                 end
+                X_DEC: xs <= X_WORD;
                 X_DONE: begin
                     commit  <= x_store;
                     ser_run <= 1'b0;
@@ -938,18 +963,23 @@ module hevt_core #(
                 ((trig_cfg[`HEVT_TRIG_CFG_START_B] & ch_start[gi]) | (ch_done[gi] & cls_en));
         end
     endgenerate
-    wire trig_pul = trig_cfg[`HEVT_TRIG_CFG_PULSER_B] & pul_rise;
-    wire trig_req = (|trig_hit) | trig_pul;
+    // Two register stages between a chain event and TRIG_OUT (the chains are spread over the die):
+    //   event tick d (classification, accept or first pulser tick) -> ch_* strobes on d+1 -> hit_r on d+2
+    //   -> TRIG_OUT rises on d+3. TRIG_TICK = d+2 (TRIG_OUT rises on TRIG_TICK + 1).
+    reg  [7:0] hit_r, hit_done_r;
+    reg [15:0] hit_cls_r;
+    reg        pul_r, hit_pul_r;
+    wire       trig_req = (|hit_r) | hit_pul_r;
 
     reg [2:0] hit_idx;
     always @(*) begin
         hit_idx = 3'd0;
         for (k = 7; k >= 0; k = k - 1)
-            if (trig_hit[k])
+            if (hit_r[k])
                 hit_idx = k[2:0];
     end
-    wire [1:0] hit_class = ch_class[{hit_idx, 1'b0} +: 2];
-    wire       hit_done  = ch_done[hit_idx];
+    wire [1:0] hit_class = hit_cls_r[{hit_idx, 1'b0} +: 2];
+    wire       hit_done  = hit_done_r[hit_idx];
 
     reg [7:0] trig_w;
     wire [7:0] trig_w_eff = (trig_cfg[`HEVT_TRIG_CFG_WIDTH_R] == 8'd0) ? 8'd1 : trig_cfg[`HEVT_TRIG_CFG_WIDTH_R];
@@ -957,7 +987,13 @@ module hevt_core #(
         if (rst_x) begin
             trig_out <= 1'b0; trig_w <= 8'd0;
             trig_fired <= 1'b0; trig_chain <= 3'd0; trig_src <= 3'd0; trig_tick <= 32'd0;
+            hit_r <= 8'd0; hit_done_r <= 8'd0; hit_cls_r <= 16'd0; pul_r <= 1'b0; hit_pul_r <= 1'b0;
         end else begin
+            hit_r      <= trig_hit;
+            hit_done_r <= ch_done;
+            hit_cls_r  <= ch_class;
+            pul_r      <= pul_rise;
+            hit_pul_r  <= trig_cfg[`HEVT_TRIG_CFG_PULSER_B] & pul_r;
             if (trig_out) begin
                 if (trig_w == 8'd0)
                     trig_out <= 1'b0;
@@ -969,8 +1005,8 @@ module hevt_core #(
             if (trig_req && !ctrl_trig_rearm) begin
                 if (!trig_fired) begin
                     trig_fired <= 1'b1;
-                    trig_chain <= (|trig_hit) ? hit_idx : 3'd0;
-                    trig_src   <= (|trig_hit) ? (hit_done ? {1'b0, hit_class} : 3'd3) : 3'd4;
+                    trig_chain <= (|hit_r) ? hit_idx : 3'd0;
+                    trig_src   <= (|hit_r) ? (hit_done ? {1'b0, hit_class} : 3'd3) : 3'd4;
                     trig_tick  <= tick_lo;
                 end
                 if (!trig_out && !(trig_cfg[`HEVT_TRIG_CFG_ONESHOT_B] && trig_fired)) begin

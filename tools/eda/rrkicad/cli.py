@@ -363,6 +363,9 @@ def run_freerouting(board_py, dsn, ses, a):
         fanout = opts.get("layers") == 4
     extra.append("--router.fanout.enabled=%s" % ("true" if fanout else "false"))
     timeout = a.timeout or opts["timeout"]
+    if timeout:
+        # ask Freerouting to stop by itself (it then still writes the SES); hard kill 3 min later
+        extra.append("--router.job_timeout=%02d:%02d:%02d" % (timeout // 3600, (timeout % 3600) // 60, timeout % 60))
     logf = os.path.join(os.path.dirname(dsn), "freerouting.log")
     if os.path.exists(ses):
         os.remove(ses)
@@ -374,7 +377,7 @@ def run_freerouting(board_py, dsn, ses, a):
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
         try:
             keep = []
-            deadline = (t0 + timeout) if timeout else None
+            deadline = (t0 + timeout + 180) if timeout else None
             for line in p.stdout:
                 if "\tat " in line or line.startswith("\tat ") or "ERROR Could not determine local host" in line \
                         or "UnknownHostException" in line or line.strip().startswith("... "):

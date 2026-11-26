@@ -179,13 +179,14 @@ void rrch_chain_step(rrch_t *c)
     if (vlow || vhigh || brb) {
         hw |= RRCH_HW(VMOT_FAULT);
     }
+    uint32_t prev_live = ch->hw_live;
     ch->hw_live = hw;
 
     /* --- latched hardware reasons --- */
     if (latch != ch->latch) {
         ch->latch = latch;
         if (!latch) {
-            ch->hw_latched = hw;
+            ch->hw_latched = hw | prev_live; /* causes seen just before the drop count too */
             if (ch->hw_latched == 0 && !bt_running) {
                 ch->hw_latched = RRCH_HW(VMOT_FAULT); /* drop that no readback explains */
             }

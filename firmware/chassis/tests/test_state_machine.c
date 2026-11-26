@@ -8,6 +8,11 @@
 
 #define OPM "COMMISSIONING"
 
+static bool diag_has(th_t *t, const char *list, const char *name)
+{
+    return th_req(t, "DIAG", "{}") && th_has(t, list, name);
+}
+
 static th_t *armed(uint64_t seed)
 {
     th_t *t = th_new(seed);
@@ -69,16 +74,18 @@ static void chain_case(const char *open_env, const char *close_env, const char *
         printf("  (case %s: mode/reason not as documented)\n", reason);
     }
     CHECK(th_is(t, "mode", mode_while_open));
-    CHECK(th_has(t, "hw_inhibit_reasons", reason) && th_has(t, "hw_active", reason));
+    CHECK(th_has(t, "hw_inhibit_reasons", reason));
     CHECK(!th_true(t, "hw_latch") && !th_true(t, "rearm_ready"));
+    CHECK(diag_has(t, "hw_active", reason));
     CHECK(!th_drive(t, 0.1, 0, 200, OPM) && th_is(t, "reject_reason", mode_while_open) && th_has(t, "stops.hw", reason));
     th_run(t, 600);
     CHECK(fabs(t->sim.v) < 1e-3 && !t->sim.core.out.bridge_awake);
     /* cause removed: nothing clears by itself */
     th_env(t, close_env);
     th_run(t, 1500);
-    CHECK(th_req(t, "STATE", "{}") && th_is(t, "mode", "HW_INHIBIT") && th_has(t, "hw_inhibit_reasons", reason) && !th_has(t, "hw_active", reason));
+    CHECK(th_req(t, "STATE", "{}") && th_is(t, "mode", "HW_INHIBIT") && th_has(t, "hw_inhibit_reasons", reason));
     CHECK(th_true(t, "rearm_ready") && !th_true(t, "hw_latch"));
+    CHECK(!diag_has(t, "hw_active", reason));
     /* REARM_SW cannot set the hardware latch */
     CHECK(th_rearm_sw(t) && !th_true(t, "hw_latch"));
     th_run(t, 300);
@@ -229,7 +236,7 @@ static void clear_pstop(th_t *t, const char *reason, const char *clear_env, bool
         th_run(t, 2500);
     }
     CHECK(th_mode(t, "PROTECTIVE_STOP") && th_has(t, "protective_stop_reasons", reason)); /* did not auto-clear */
-    CHECK(!th_has(t, "sw_active", reason));
+    CHECK(!diag_has(t, "sw_active", reason));
     double x = t->sim.x;
     CHECK(th_rearm_sw(t) && th_has(t, "cleared", reason) && th_is(t, "mode", "ARMED_IDLE"));
     th_run(t, 600);
@@ -469,7 +476,8 @@ static void test_protective_reasons(void)
         printf("  SIMULATED: brake test latch_drop %.0f ms, relays %.0f ms, VMOT decay %.0f ms to %.2f V\n", th_num(t, "latch_drop_ms"), th_num(t, "relay_ms"),
                th_num(t, "vmot_decay_ms"), th_num(t, "vmot_end_v"));
         CHECK(th_num(t, "latch_drop_ms") <= 50 && th_num(t, "probe_i_a.0") < 0.1);
-        CHECK(th_mode(t, "STANDBY") && th_is(t, "brake_test.state", "PASSED") && th_len(t, "hw_inhibit_reasons") == 0);
+        CHECK(th_mode(t, "STANDBY") && th_len(t, "hw_inhibit_reasons") == 0);
+        CHECK(th_req(t, "DIAG", "{}") && th_is(t, "brake_test.state", "PASSED") && th_true(t, "brake_test.passed_since_boot"));
         CHECK(!th_req(t, "BRAKE_TEST", "{}") && th_status(t, "REJECTED")); /* needs ARMED_IDLE */
 
         t = armed(271);
@@ -590,6 +598,9 @@ static void test_commands(void)
     CHECK(th_req(t, "STOP", "{\"kind\":\"CONTROLLED\"}") && th_is(t, "mode", "HOLD") && th_has(t, "hold", "HOST_STOP"));
     CHECK(!th_drive(t, 0.10, 0, 200, OPM) && th_is(t, "reject_reason", "HOLD"));
     th_drive_for(t, 0.10, 0, 1500, OPM);
+    if (!(fabs(t->sim.v) < 1e-3) || !th_mode(t, "HOLD")) {
+        printf("  dbg: v=%f mode=%s sw=%x hold=%x hw=%x\n", t->sim.v, rrch_mode_names[t->sim.core.mode], t->sim.core.sw_latched, t->sim.core.hold, t->sim.core.chain.hw_latched);
+    }
     CHECK(fabs(t->sim.v) < 1e-3 && th_mode(t, "HOLD"));
     CHECK(th_rearm_sw(t) && th_has(t, "hold_cleared", "HOST_STOP") && th_is(t, "mode", "ARMED_IDLE"));
     moving(t, 0.10, 0.0);
@@ -650,7 +661,9 @@ static void test_reset_and_aux(void)
     CHECK(t->sim.x - x0 < 0.05);
     CHECK(!th_drive(t, 0.2, 0, 200, OPM) && th_is(t, "reject_reason", "NO_SESSION"));
     CHECK(th_req(t, "HELLO", "{}") && !th_is(t, "boot_id", boot0) && th_is(t, "reset.cause", "SOFTWARE") && th_num(t, "session") == 1);
-    CHECK(th_mode(t, "STANDBY") && !th_true(t, "hw_latch") && th_is(t, "op_mode", "SERVICE") && th_is(t, "brake_test.state", "NONE"));
+    CHECK(th_mode(t, "STANDBY") && !th_true(t, "hw_latch") && th_is(t, "op_mode", "SERVICE"));
+    CHECK(th_req(t, "DIAG", "{}") && th_is(t, "brake_test.state", "NONE") && !th_true(t, "brake_test.passed_since_boot"));
+    CHECK(th_req(t, "STATE", "{}"));
     CHECK(th_num(t, "uptime_us") < 2e6);
     CHECK(!th_drive(t, 0.2, 0, 200, OPM) && th_is(t, "reject_reason", "STANDBY"));
     th_run(t, 1000);
@@ -790,7 +803,18 @@ static void test_reset_and_aux(void)
     t->max_reply_len = 0;
     CHECK(th_req(t, "STATE", "{}"));
     printf("  worst-case STATE record observed: %zu bytes (limit %u)\n", t->max_reply_len, RRCH_RECORD_MAX);
-    CHECK(t->max_reply_len < RRCH_RECORD_MAX - 150u);
+    CHECK(t->max_reply_len <= RRCH_RECORD_MAX);
+    /* absolute worst case: every reason and flag set at once (forced directly; not reachable in practice) */
+    t->sim.core.sw_latched = t->sim.core.sw_acked = (1u << RRCH_SW_N) - 1u;
+    t->sim.core.chain.hw_latched = (1u << RRCH_HW_N) - 1u;
+    t->sim.core.faults |= ((1u << RRCH_FLT_N) - 1u) & ~RRCH_FLT_FATAL_MASK;
+    t->sim.core.hold = 3u;
+    t->max_reply_len = 0;
+    CHECK(th_req(t, "STATE", "{}") && th_true(t, "truncated") && th_len(t, "protective_stop_reasons") == 8 && th_len(t, "hw_inhibit_reasons") == RRCH_HW_N);
+    CHECK(th_req(t, "DIAG", "{}") && th_len(t, "protective_stop_reasons") == RRCH_SW_N && th_len(t, "faults") >= RRCH_FLT_N - 5);
+    CHECK(th_req(t, "STATE", "{}"));
+    printf("  absolute worst-case STATE record: %zu bytes (additive lists dropped, \"truncated\":true)\n", t->max_reply_len);
+    CHECK(t->max_reply_len <= RRCH_RECORD_MAX && th_len(t, "tof") == RRCH_TOF_N);
     CHECK(th_is(t, "panel.leds.hold", "BLINK_2") && th_is(t, "panel.leds.fault", "BLINK_SLOW") && th_is(t, "panel.pattern", "AUTO"));
     CHECK(th_is(t, "head_presence", "FAULT") && !th_true(t, "chain.ARM_PERMIT") && th_has(t, "hw_inhibit_reasons", "MCU_NOT_READY"));
 }

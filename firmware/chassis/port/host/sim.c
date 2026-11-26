@@ -20,7 +20,7 @@ static double rnd(sim_t *s) /* uniform -1..1 */
 /* ---- HAL ---- */
 static uint64_t h_now(void *ctx)
 {
-    return ((sim_t *)ctx)->t_us;
+    return ((sim_t *)ctx)->t_us - ((sim_t *)ctx)->boot_us;
 }
 
 static bool chain_inputs_ok(const sim_t *s)
@@ -187,6 +187,7 @@ void sim_mcu_reset(sim_t *s, rrch_reset_cause_t cause)
     s->last_strobe_us = 0;
     s->wdg_arm_us = s->t_us + 300000u;
     s->wdg_reset_ms = 0;
+    s->boot_us = s->t_us; /* the chassis clock restarts at 0 */
     core_boot(s);
 }
 
@@ -326,7 +327,7 @@ void sim_step_ms(sim_t *s)
     for (int k = 0; k < RRCH_TOF_N; k++) {
         if ((ms + (uint32_t)k * 2u) % 20u == 0u && !s->tof_stale[k]) {
             int32_t r = s->tof_mm[k] + (int32_t)lround(rnd(s));
-            rrch_tof_update(&s->core, k, r, s->tof_st[k], s->t_us);
+            rrch_tof_update(&s->core, k, r, s->tof_st[k], s->t_us - s->boot_us);
         }
     }
     if (ms % 100u == 0u) {
@@ -534,6 +535,7 @@ size_t sim_truth_json(const sim_t *s, char *buf, size_t cap)
     rrc_jw_obj_begin(&w);
     rrc_jw_kstr(&w, "type", "TRUTH");
     rrc_jw_ku64(&w, "t_us", s->t_us);
+    rrc_jw_ku64(&w, "chassis_us", s->t_us - s->boot_us);
     rrc_jw_kfixed(&w, "x", (int64_t)llround(s->x * 1e6), 6, true);
     rrc_jw_kfixed(&w, "y", (int64_t)llround(s->y * 1e6), 6, true);
     rrc_jw_kfixed(&w, "yaw", (int64_t)llround(s->yaw * 1e6), 6, true);

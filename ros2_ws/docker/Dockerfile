@@ -30,11 +30,12 @@ RUN apt-get update \
       python3-aiohttp \
       python3-serial \
       python3-jsonschema \
+      python3-scipy \
  && rm -rf /var/lib/apt/lists/* \
  && mkdir -p /opt/rr \
  && dpkg-query -W -f='${Package}=${Version}\n' \
       python3-numpy python3-yaml python3-pytest python3-shapely \
-      python3-aiohttp python3-serial python3-jsonschema \
+      python3-aiohttp python3-serial python3-jsonschema python3-scipy \
       ros-jazzy-rclpy ros-jazzy-launch-ros ros-jazzy-rosidl-default-generators \
       ros-jazzy-sensor-msgs ros-jazzy-nav-msgs ros-jazzy-tf2-ros \
       python3-colcon-core > /opt/rr/versions.lock

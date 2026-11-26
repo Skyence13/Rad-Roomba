@@ -12,7 +12,8 @@ typedef struct {
 
 typedef struct {
     sim_params_t p;
-    uint64_t t_us;
+    uint64_t t_us;                  /* simulated (plant) time */
+    uint64_t boot_us;               /* plant time of the last MCU boot: chassis clock = t_us - boot_us */
     uint64_t rng;
     /* plant state */
     double w[2], th[2], i[2];       /* wheel speed rad/s, wheel angle rad, motor current A (left, right) */

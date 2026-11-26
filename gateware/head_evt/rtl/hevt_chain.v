@@ -37,9 +37,9 @@ module hevt_chain #(
     input  wire [15:0]       cfg_stuck,        // S
     input  wire              cfg_wait_alpha,
     input  wire              ld,               // first tick of a gate
-    output wire              evt_start,        // 1 on the tick an event is accepted
-    output wire              evt_done,         // 1 on the classification tick
-    output wire [1:0]        evt_class,        // valid with evt_done
+    output reg               evt_start_r,      // 1 on the tick AFTER an event is accepted
+    output reg               evt_done_r,       // 1 on the tick AFTER the classification tick
+    output reg  [1:0]        evt_class_r,      // valid with evt_done_r
     output wire              busy,             // not idle
     output reg               stuck,
     output wire              orphan_evt,
@@ -62,7 +62,9 @@ module hevt_chain #(
     wire eq_h      = (tmr == cfg_hold_m1);          // last tick of HOLD
     wire eq_s      = (tmr == cfg_stuck);            // WAITLOW has lasted S ticks beyond its first
 
-    assign evt_start  = idle & lld_rise;
+    wire       evt_start = idle & lld_rise;
+    wire       evt_done;
+    wire [1:0] evt_class;
     assign orphan_evt = idle & ~lld_rise & alpha_i & ~alpha_d;
     assign evt_done   = (state == S_WIN) & eq_w;
     wire   a_now      = got_alpha | alpha_i;
@@ -143,8 +145,15 @@ module hevt_chain #(
             busy_d     <= 1'b0;
             sh_orphan  <= 8'd0;
             sh_flags   <= 3'd0;
+            evt_start_r <= 1'b0;
+            evt_done_r  <= 1'b0;
+            evt_class_r <= 2'd0;
         end else begin
             busy_d <= busy;
+            // registered strobes for the accumulator and the trigger (which sit elsewhere on the die)
+            evt_start_r <= evt_start;
+            evt_done_r  <= evt_done;
+            evt_class_r <= evt_class;
             if (ld) begin
                 sh_orphan  <= (HAS_ALPHA != 0) ? orphan_cnt : 8'd0;
                 sh_flags   <= {busy_d, f_orphan, f_stuck};

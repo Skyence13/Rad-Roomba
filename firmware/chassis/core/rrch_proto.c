@@ -97,6 +97,20 @@ static void kmask(rrc_jw_t *w, const char *key, uint32_t mask, const char *const
     rrc_jw_arr_end(w);
 }
 
+/* like kmask but stops after max_names entries (STATE emergency compaction) */
+static void kmask_n(rrc_jw_t *w, const char *key, uint32_t mask, const char *const *names, int n, int max_names)
+{
+    rrc_jw_key(w, key);
+    rrc_jw_arr_begin(w);
+    for (int i = 0; i < n && max_names > 0; i++) {
+        if (mask & (1u << i)) {
+            rrc_jw_str(w, names[i]);
+            max_names--;
+        }
+    }
+    rrc_jw_arr_end(w);
+}
+
 static const char *const hold_names[2] = {"LOCAL_PAUSE", "HOST_STOP"};
 static const char *const led_pat_names[5] = {"OFF", "ON", "BLINK_SLOW", "BLINK_FAST", "BLINK_2"};
 static const char *const led_names[RRCH_LED_N] = {"ready", "moving", "hold", "fault", "charge"};
@@ -330,7 +344,11 @@ static void op_drive(ctx_t *x)
     rrc_jw_ku64(jw, "rearm_nonce", c->rearm_nonce);
 }
 
-static void op_state(ctx_t *x)
+/* The contract STATE content does not always fit in 2048 bytes when many reasons and flags are
+ * set at once. level 0: complete; 1: faults list emptied; 2: protective_stop_reasons cut to 8
+ * names as well. Levels 1 and 2 add "truncated":true; DIAG always carries the complete lists.
+ * The caller retries with the next level if the record would exceed the limit. */
+static void op_state(ctx_t *x, int level)
 {
     rrch_t *c = x->c;
     rrc_jw_t *w = &x->w;
@@ -354,7 +372,7 @@ static void op_state(ctx_t *x)
     rrc_jw_kbool(w, "ARM_PERMIT", c->out.arm_permit);
     rrc_jw_obj_end(w);
     kmask(w, "hw_inhibit_reasons", ch->hw_latched, rrch_hw_names, RRCH_HW_N);
-    kmask(w, "protective_stop_reasons", c->sw_latched, rrch_sw_names, RRCH_SW_N);
+    kmask_n(w, "protective_stop_reasons", c->sw_latched, rrch_sw_names, RRCH_SW_N, level < 2 ? RRCH_SW_N : 8);
     rrc_jw_kstr(w, "head_presence", rrch_pres_names[ch->pres]);
     rrc_jw_kbool(w, "j2_present", (st & RRCH_DI(J2_PRES)) != 0);
     rrc_jw_key(w, "rails");
@@ -437,17 +455,44 @@ static void op_state(ctx_t *x)
     kf(w, "chassis_setpoint_c", c->htr_enabled ? c->htr_setpoint_c : NAN, 1);
     rrc_jw_kbool(w, "sensor_ok", c->htr_sensor_ok);
     rrc_jw_obj_end(w);
-    kmask(w, "faults", c->faults, rrch_flt_names, RRCH_FLT_N);
-    kmask(w, "sw_active", c->sw_active, rrch_sw_names, RRCH_SW_N);
-    kmask(w, "hw_active", ch->hw_live, rrch_hw_names, RRCH_HW_N);
+    kmask(w, "faults", level < 1 ? c->faults : 0u, rrch_flt_names, RRCH_FLT_N);
+    if (level > 0) {
+        rrc_jw_kbool(w, "truncated", true);
+    }
     rrc_jw_kbool(w, "rearm_ready", !ch->latch && c->boot_done && ch->hw_live == 0u && c->out.arm_permit);
     rrc_jw_ku64(w, "rearm_nonce", c->rearm_nonce);
     kmask(w, "hold", c->hold, hold_names, 2);
+    rrc_jw_ku64(w, "event_seq", c->ev_newest);
+    rrc_jw_ku64(w, "uptime_us", c->now_us);
+}
+
+/* Additive op: complete reason/flag lists and engineering detail that does not fit in STATE. */
+static void op_diag(ctx_t *x)
+{
+    rrch_t *c = x->c;
+    rrc_jw_t *w = &x->w;
+    const rrch_chain_t *ch = &c->chain;
+    uint32_t st = ch->state;
+    begin(x, "OK");
+    rrc_jw_kstr(w, "mode", rrch_mode_names[c->mode]);
+    kmask(w, "hw_inhibit_reasons", ch->hw_latched, rrch_hw_names, RRCH_HW_N);
+    kmask(w, "hw_active", ch->hw_live, rrch_hw_names, RRCH_HW_N);
+    kmask(w, "protective_stop_reasons", c->sw_latched, rrch_sw_names, RRCH_SW_N);
+    kmask(w, "sw_active", c->sw_active, rrch_sw_names, RRCH_SW_N);
+    kmask(w, "sw_acknowledged", c->sw_acked, rrch_sw_names, RRCH_SW_N);
+    kmask(w, "faults", c->faults, rrch_flt_names, RRCH_FLT_N);
     rrc_jw_key(w, "estop");
     rrc_jw_obj_begin(w);
     rrc_jw_kbool(w, "a", (st & RRCH_DI(ESTOP_A)) != 0);
     rrc_jw_kbool(w, "b", (st & RRCH_DI(ESTOP_B)) != 0);
     rrc_jw_obj_end(w);
+    rrc_jw_key(w, "readbacks");
+    rrc_jw_obj_begin(w);
+    for (int i = 0; i < RRCH_DI_N; i++) {
+        rrc_jw_kbool(w, rrch_di_names[i], (st & (1u << i)) != 0);
+    }
+    rrc_jw_obj_end(w);
+    rrc_jw_ku64(w, "pres_ohm", ch->pres_ohm > 999999u ? 999999u : ch->pres_ohm);
     rrc_jw_key(w, "head_power");
     rrc_jw_obj_begin(w);
     rrc_jw_kbool(w, "electronics", c->head_pwr);
@@ -461,9 +506,28 @@ static void op_state(ctx_t *x)
     } else {
         rrc_jw_knull(w, "age_s");
     }
+    rrc_jw_kbool(w, "passed_since_boot", c->bt.passed_since_boot);
     rrc_jw_obj_end(w);
-    rrc_jw_ku64(w, "event_seq", c->ev_newest);
-    rrc_jw_ku64(w, "uptime_us", c->now_us);
+    kf(w, "tilt_deg", c->tilt_deg, 1);
+    rrc_jw_key(w, "drive");
+    rrc_jw_obj_begin(w);
+    rrc_jw_key(w, "duty");
+    rrc_jw_arr_begin(w);
+    kf(w, NULL, c->drive.duty[0], 3);
+    kf(w, NULL, c->drive.duty[1], 3);
+    rrc_jw_arr_end(w);
+    kf(w, "v_meas_mps", c->drive.v_meas, 4);
+    kf(w, "w_meas_radps", c->drive.w_meas_body, 4);
+    kf(w, "v_cap_fwd_mps", c->fields.v_cap_fwd, 4);
+    kf(w, "v_cap_rev_mps", c->fields.v_cap_rev, 4);
+    rrc_jw_kbool(w, "bridge_awake", c->out.bridge_awake);
+    rrc_jw_obj_end(w);
+    rrc_jw_key(w, "link");
+    rrc_jw_obj_begin(w);
+    rrc_jw_ku64(w, "session", c->proto.session);
+    rrc_jw_ku64(w, "requests", c->proto.n_req);
+    rrc_jw_ku64(w, "discarded", c->proto.n_bad + c->proto.rx.n_discarded);
+    rrc_jw_obj_end(w);
 }
 
 static void event_detail(rrch_t *c, rrc_jw_t *w, const rrch_event_t *e)
@@ -806,6 +870,11 @@ static void op_panel(ctx_t *x)
         c->beep_on_ms = c->beep_ms_left = 60;
         c->beep_gap = 0;
     }
+    if (c->panel_pat == RRCH_PANEL_ARRIVED) { /* shown at once; the control tick recomputes it every ms */
+        c->led_pat[RRCH_LED_READY] = RRCH_LED_BLINK_2;
+    } else if (c->panel_pat == RRCH_PANEL_LOCATE) {
+        memset(c->led_pat, RRCH_LED_BLINK_FAST, RRCH_LED_N);
+    }
     begin(x, "OK");
     rrc_jw_kstr(&x->w, "pattern", panel_names[c->panel_pat]);
     rrc_jw_key(&x->w, "leds");
@@ -1007,7 +1076,14 @@ static void handle(rrch_t *c, size_t json_len, uint32_t crc)
         } else if (rrc_json_str_eq(d, op, "TIME")) {
             op_time(&x);
         } else if (rrc_json_str_eq(d, op, "STATE")) {
-            op_state(&x);
+            for (int level = 0; level < 3; level++) {
+                op_state(&x, level);
+                if (rrc_jw_ok(&x.w) && rrc_jw_len(&x.w) + 4u <= RRCH_RECORD_MAX - RRC_FRAME_TRAILER_LEN) {
+                    break;
+                }
+            }
+        } else if (rrc_json_str_eq(d, op, "DIAG")) {
+            op_diag(&x);
         } else if (rrc_json_str_eq(d, op, "EVENTS")) {
             op_events(&x);
         } else if (rrc_json_str_eq(d, op, "HELLO")) {
