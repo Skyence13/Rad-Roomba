@@ -1,0 +1,149 @@
+{
+ "scenario": "ros_smoke",
+ "evidence_class": "simulated",
+ "against": "Python protocol fakes over TCP 5540/5550",
+ "real_time": true,
+ "deterministic": false,
+ "checks": [
+  {
+   "check": "services available",
+   "ok": true
+  },
+  {
+   "check": "head bound and armed: gates published",
+   "ok": true,
+   "gates": 21
+  },
+  {
+   "check": "start refused before bring-up (prerequisites)",
+   "ok": true,
+   "reason": "STATE:CONFIGURE"
+  },
+  {
+   "check": "arm accepted after datum, REARM, brake test, REARM",
+   "ok": true,
+   "result": "{\"accepted\": true}"
+  },
+  {
+   "check": "start accepted; repeated idempotency key returns the same receipt",
+   "ok": true
+  },
+  {
+   "check": "mission SCAN",
+   "ok": true,
+   "state": "SCAN"
+  },
+  {
+   "check": "credited coverage grows",
+   "ok": true,
+   "fraction": 0.03636110946536064
+  },
+  {
+   "check": "eligible lane-gates received",
+   "ok": true,
+   "eligible": 1448,
+   "gates": 362
+  },
+  {
+   "check": "coverage flagged not approved for field use",
+   "ok": true
+  },
+  {
+   "check": "web interface serves the live state",
+   "ok": true,
+   "mission": "SCAN",
+   "hold": null,
+   "loc": {
+    "pose": [
+     1.229910453021334,
+     -0.30220597588356124,
+     0.00029451425009982253
+    ],
+    "frame": "map (trailer): origin door-threshold centre, +x to bulkhead, +y left",
+    "uncertainty_2s_m": 0.0009735224859499564,
+    "credit": true,
+    "slip": false,
+    "hold_request": false,
+    "sigma": [
+     0.0004381230331126903,
+     0.00018684404618820894,
+     0.0003136543978272491
+    ]
+   },
+   "events": [
+    [
+     "session_open",
+     null
+    ],
+    [
+     "plan",
+     null
+    ],
+    [
+     "command",
+     "STATE:CONFIGURE"
+    ],
+    [
+     "command",
+     null
+    ],
+    [
+     "command",
+     null
+    ],
+    [
+     "command",
+     null
+    ],
+    [
+     "command",
+     null
+    ],
+    [
+     "task_start",
+     null
+    ]
+   ],
+   "head": {
+    "state": "ARMED",
+    "block_reason": null,
+    "block_detail": null,
+    "attachment": "267931d9-e270-4aff-912b-cb4717ff6676",
+    "head_id": "HEAD-DEMO-001",
+    "last_seq": 362,
+    "bound_us": 616.4968158783722
+   },
+   "chassis": {
+    "link": "UP",
+    "mode": "MOVING",
+    "op_mode": "COMMISSIONING",
+    "motion": "RUN",
+    "accepted": true,
+    "reject_reason": null,
+    "applied": {
+     "v_mps": 0.1,
+     "w_radps": -0.0001
+    },
+    "stationary": {
+     "is_stationary": false,
+     "since_us": null
+    },
+    "battery": {
+     "soc_pct": 80,
+     "temp_c": [
+      18.0,
+      18.5
+     ],
+     "charge_state": "NONE"
+    },
+    "head_presence": "HEAD_DIRECT",
+    "time_bound_us": 519.2217009953308
+   }
+  },
+  {
+   "check": "export service wrote the product set",
+   "ok": true
+  }
+ ],
+ "passed": true
+}

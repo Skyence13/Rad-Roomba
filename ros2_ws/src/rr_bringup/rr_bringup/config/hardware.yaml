@@ -1,0 +1,11 @@
+# Hardware configuration template. Every value marked SITE must be entered/confirmed on site.
+trailer: {id: SITE, length_m: 16.0, width_m: 2.5, door_closed: true, keepouts: []}   # SURVEYED inside dimensions
+profile_id: ore-floor-demo-synthetic        # replace by an approved site profile; yellowcake stays unconfigured
+mode: COMMISSIONING                         # SURVEY needs AS_BUILT geometry, approved calibration and profile
+op_mode: COMMISSIONING
+survey: {sub_res: 0.005, cell_m: 0.10, position_allowance_m: 0.010}
+mission: {method: CONTINUOUS_SCAN, speed: 0.10}
+mover: {patience_s: 20.0}
+link: {byte_time_us: 10.0}                  # 1 Mbaud RS-485
+lidar: {range_max: 12.0}
+simulated: false

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>rr_mapping</name><version>0.4.0</version>
+  <description>ROS wrapper notes for the rr_core processing pipeline (hosted by rr_bringup robot_node)</description>
+  <maintainer email="robot-software@rad-roomba.invalid">Robot software</maintainer><license>Proprietary</license>
+  <exec_depend>rr_core</exec_depend>
+  <exec_depend>python3-numpy</exec_depend>
+  <test_depend>python3-pytest</test_depend>
+  <export><build_type>ament_python</build_type></export>
+</package>

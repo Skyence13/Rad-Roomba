@@ -1,0 +1,29 @@
+{
+  "attempts": [
+    {
+      "run": 1,
+      "seconds": 606.7,
+      "unconnected": 6
+    },
+    {
+      "run": 2,
+      "seconds": 279.3,
+      "unconnected": 4
+    },
+    {
+      "run": 3,
+      "seconds": 268.8,
+      "unconnected": 4
+    }
+  ],
+  "dsn_sha256": "05e26efefd3245f8d15aae28ee634b13718d65ad9dac07c7531c44644beab9cc",
+  "freerouting": "v2.6.0 (build-date: 2026-11-25)",
+  "log_tail": [
+    "[1C4F99\\0F9070] Auto-routing stage completed: started with 9 unrouted nets, completed in 206.30 seconds, final score: 986.90 (4 unrouted and 5 violations), using 249.69 total CPU seconds, 102.01 GB total allocated, and 955.2 MB peak heap usage.",
+    "[1C4F99\\0F9070] Job '1C4F99\\0F9070' finished with state: COMPLETED (elapsed: 4 minutes 33.64 seconds, finished at UTC: 2026-11-26T14:57:36.857587060Z)."
+  ],
+  "passes_limit": 30,
+  "seconds": 886.0,
+  "threads": 4,
+  "timed_out": false
+}

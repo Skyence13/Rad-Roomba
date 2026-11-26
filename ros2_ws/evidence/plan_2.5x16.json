@@ -1,0 +1,230 @@
+{
+ "continuous_0.10": {
+  "n_pairs": 7,
+  "offset_m": 0.04375,
+  "pair_stride_m": 0.31004,
+  "pair_overlap_m": 0.05621,
+  "seam_overlap_per_side_m": 0.01625,
+  "track_y_max_m": 0.952,
+  "turn_radius_m": 0.278,
+  "predicted_residual": {
+   "left_wall_strip_m": 0.1367,
+   "right_wall_strip_m": 0.1368,
+   "door_end_strip_m": 0.121,
+   "front_end_strip_m": 0.051,
+   "end_zone_single_heading_m": {
+    "door": 0.3482,
+    "front": 0.3482
+   },
+   "note": "wall strips are set by the in-place turn radius of the outline; see README coverage section"
+  },
+  "estimated_time_s": 2695.0,
+  "time_breakdown_s": {
+   "passes": 2170.8,
+   "turns": 351.9,
+   "retreats": 115.2,
+   "lateral_shifts": 55.6
+  },
+  "n_tasks": 28,
+  "layout": {
+   "centers_y": [
+    0.13125,
+    0.04375,
+    -0.043750000000000004,
+    -0.13125
+   ],
+   "width": 0.08,
+   "pitch": 0.0875,
+   "seam": 0.0075,
+   "eroded_width": 0.06,
+   "eroded_seam": 0.0275,
+   "offset": 0.04375,
+   "seam_overlap_per_side": 0.01625,
+   "x_min": 0.0912,
+   "x_max": 0.1712,
+   "x_center": 0.1312,
+   "length": 0.1,
+   "y_lo": -0.16125,
+   "y_hi": 0.16125
+  },
+  "predicted_covered_fraction": 0.88102605
+ },
+ "continuous_0.03": {
+  "n_pairs": 7,
+  "offset_m": 0.04375,
+  "pair_stride_m": 0.31004,
+  "pair_overlap_m": 0.05621,
+  "seam_overlap_per_side_m": 0.01625,
+  "track_y_max_m": 0.952,
+  "turn_radius_m": 0.278,
+  "predicted_residual": {
+   "left_wall_strip_m": 0.1367,
+   "right_wall_strip_m": 0.1368,
+   "door_end_strip_m": 0.121,
+   "front_end_strip_m": 0.051,
+   "end_zone_single_heading_m": {
+    "door": 0.3482,
+    "front": 0.3482
+   },
+   "note": "wall strips are set by the in-place turn radius of the outline; see README coverage section"
+  },
+  "estimated_time_s": 7760.1,
+  "time_breakdown_s": {
+   "passes": 7235.9,
+   "turns": 351.9,
+   "retreats": 115.2,
+   "lateral_shifts": 55.6
+  },
+  "n_tasks": 28,
+  "layout": {
+   "centers_y": [
+    0.13125,
+    0.04375,
+    -0.043750000000000004,
+    -0.13125
+   ],
+   "width": 0.08,
+   "pitch": 0.0875,
+   "seam": 0.0075,
+   "eroded_width": 0.06,
+   "eroded_seam": 0.0275,
+   "offset": 0.04375,
+   "seam_overlap_per_side": 0.01625,
+   "x_min": 0.0912,
+   "x_max": 0.1712,
+   "x_center": 0.1312,
+   "length": 0.1,
+   "y_lo": -0.16125,
+   "y_hi": 0.16125
+  },
+  "predicted_covered_fraction": 0.88102605
+ },
+ "step_and_count_10s": {
+  "n_pairs": 7,
+  "offset_m": 0.04375,
+  "pair_stride_m": 0.31004,
+  "pair_overlap_m": 0.05621,
+  "seam_overlap_per_side_m": 0.01625,
+  "track_y_max_m": 0.952,
+  "turn_radius_m": 0.278,
+  "predicted_residual": {
+   "left_wall_strip_m": 0.1367,
+   "right_wall_strip_m": 0.1368,
+   "door_end_strip_m": 0.121,
+   "front_end_strip_m": 0.051,
+   "end_zone_single_heading_m": {
+    "door": 0.3482,
+    "front": 0.3482
+   },
+   "note": "wall strips are set by the in-place turn radius of the outline; see README coverage section"
+  },
+  "estimated_time_s": 27824.2,
+  "time_breakdown_s": {
+   "passes": 27300.0,
+   "turns": 351.9,
+   "retreats": 115.2,
+   "lateral_shifts": 55.6
+  },
+  "n_tasks": 28,
+  "layout": {
+   "centers_y": [
+    0.13125,
+    0.04375,
+    -0.043750000000000004,
+    -0.13125
+   ],
+   "width": 0.08,
+   "pitch": 0.0875,
+   "seam": 0.0075,
+   "eroded_width": 0.06,
+   "eroded_seam": 0.0275,
+   "offset": 0.04375,
+   "seam_overlap_per_side": 0.01625,
+   "x_min": 0.0912,
+   "x_max": 0.1712,
+   "x_center": 0.1312,
+   "length": 0.1,
+   "y_lo": -0.16125,
+   "y_hi": 0.16125
+  },
+  "predicted_covered_fraction": 0.88102605
+ },
+ "continuous_0.10_no_endcaps": {
+  "n_pairs": 7,
+  "offset_m": 0.04375,
+  "pair_stride_m": 0.31004,
+  "pair_overlap_m": 0.05621,
+  "seam_overlap_per_side_m": 0.01625,
+  "track_y_max_m": 0.952,
+  "turn_radius_m": 0.278,
+  "predicted_residual": {
+   "left_wall_strip_m": 0.1367,
+   "right_wall_strip_m": 0.1368,
+   "door_end_strip_m": 0.121,
+   "front_end_strip_m": 0.051,
+   "end_zone_single_heading_m": {
+    "door": 0.3482,
+    "front": 0.3482
+   },
+   "note": "wall strips are set by the in-place turn radius of the outline; see README coverage section"
+  },
+  "estimated_time_s": 2434.4,
+  "time_breakdown_s": {
+   "passes": 2156.0,
+   "turns": 175.9,
+   "retreats": 57.6,
+   "lateral_shifts": 43.3
+  },
+  "n_tasks": 14,
+  "layout": {
+   "centers_y": [
+    0.13125,
+    0.04375,
+    -0.043750000000000004,
+    -0.13125
+   ],
+   "width": 0.08,
+   "pitch": 0.0875,
+   "seam": 0.0075,
+   "eroded_width": 0.06,
+   "eroded_seam": 0.0275,
+   "offset": 0.04375,
+   "seam_overlap_per_side": 0.01625,
+   "x_min": 0.0912,
+   "x_max": 0.1712,
+   "x_center": 0.1312,
+   "length": 0.1,
+   "y_lo": -0.16125,
+   "y_hi": 0.16125
+  },
+  "predicted_covered_fraction": 0.88102605
+ },
+ "outline": {
+  "body_x": [
+   -0.2718,
+   0.102
+  ],
+  "body_half_width": 0.1464,
+  "head_x": [
+   0.066,
+   0.1922
+  ],
+  "head_half_width": 0.175,
+  "turn_radius": 0.278,
+  "rect_radius": 0.30872026172572475,
+  "source": "frames.yaml footprint + contract.yaml body_rev_e (contract 0.4.0-draft5)"
+ },
+ "mount": {
+  "xyz_m": [
+   0.0657,
+   0.0,
+   0.032
+  ],
+  "rpy_rad": [
+   0,
+   0,
+   0
+  ],
+  "basis": "frames.yaml frames.head_mount (nominal design value, not a measured as-installed transform)"
+ }
+}

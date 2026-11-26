@@ -1,0 +1,1144 @@
+{
+ "generated_by": "mechanical/head/checks.py",
+ "contract_version": "0.4.0-draft5",
+ "checks": [
+  {
+   "check": "no interference, prototype assembly, rails at rest",
+   "status": "fail",
+   "evidence": "tool-checked",
+   "detail": "301 candidate pairs intersected; overlaps: [('frame_L', 'spreader', 0.97), ('frame_L', 'sw_lid', 25.14), ('frame_L', 'grommet_J1', 3.89), ('frame_L', 'fasteners_lumped', 0.8), ('frame_R', 'grommet_J2', 3.89), ('frame_R', 'fasteners_lumped', 0.8), ('bridge', 'keeper', 2.87), ('keeper', 'lid', 2.05), ('spreader', 'fasteners_lumped', 4.0), ('lid_gasket', 'grommet_J1', 14.09), ('lid_gasket', 'pigtail_J1', 2.62), ('lid_gasket', 'grommet_J2', 15.7), ('lid_standoffs', 'lid_liner', 34.46), ('lid_standoffs', 'fence_front', 3.11), ('lid_standoffs', 'fence_side_L', 2.19), ('lid_standoffs', 'fence_side_R', 2.19), ('lid_standoffs', 'fence_gaskets', 0.63), ('lid_standoffs', 'sw_lid', 135.86), ('lid_standoffs', 'sw_lid_saddle', 23.03), ('lid_standoffs', 'desiccant', 117.81), ('rib_gaskets', 'fasteners_lumped', 2.4), ('lid_liner', 'pigtail_J1', 1.85), ('fence_front', 'fence_side_L', 3.45), ('fence_front', 'fence_side_R', 3.45), ('fence_side_L', 'fence_rear', 3.3), ('fence_side_R', 'fence_rear', 3.3), ('fence_rear', 'desiccant', 65.46), ('fence_gaskets', 'pigtail_J1', 2.16), ('S0_cassette', 'side_rail_L', 135.84), ('S3_cassette', 'side_rail_R', 135.84)]"
+  },
+  {
+   "check": "no interference, production assembly, rails at rest",
+   "status": "fail",
+   "evidence": "tool-checked",
+   "detail": "226 candidate pairs intersected; overlaps: [('frame', 'sw_lid', 25.14), ('frame', 'grommet_J1', 3.89), ('frame', 'grommet_J2', 3.89), ('frame', 'fasteners_lumped', 1.6), ('bridge', 'keeper', 2.87), ('keeper', 'lid', 2.05), ('spreader', 'fasteners_lumped', 4.0), ('lid_gasket', 'grommet_J1', 14.09), ('lid_gasket', 'pigtail_J1', 2.62), ('lid_gasket', 'grommet_J2', 15.7), ('lid_standoffs', 'lid_liner', 34.46), ('lid_standoffs', 'sw_lid', 135.86), ('lid_standoffs', 'sw_lid_saddle', 23.03), ('lid_standoffs', 'desiccant', 117.81), ('rib_gaskets', 'fasteners_lumped', 2.4), ('lid_liner', 'pigtail_J1', 1.85), ('S0_cassette', 'side_rail_L', 135.84), ('S3_cassette', 'side_rail_R', 135.84)]"
+  },
+  {
+   "check": "no interference, dummy assembly, rails at rest",
+   "status": "fail",
+   "evidence": "tool-checked",
+   "detail": "133 candidate pairs intersected; overlaps: [('frame_L', 'spreader', 0.97), ('frame_L', 'sw_lid', 25.14), ('frame_L', 'grommet_J1', 3.89), ('frame_L', 'fasteners_lumped', 0.8), ('frame_R', 'grommet_J2', 3.89), ('frame_R', 'fasteners_lumped', 0.8), ('bridge', 'keeper', 2.87), ('keeper', 'lid', 2.05), ('spreader', 'fasteners_lumped', 4.0), ('lid_gasket', 'grommet_J1', 14.09), ('lid_gasket', 'pigtail_J1', 2.62), ('lid_gasket', 'grommet_J2', 15.7), ('lid_standoffs', 'sw_lid', 135.86), ('lid_standoffs', 'sw_lid_saddle', 23.03), ('rib_gaskets', 'fasteners_lumped', 2.4), ('S0_cassette', 'side_rail_L', 135.84), ('S3_cassette', 'side_rail_R', 135.84)]"
+  },
+  {
+   "check": "no interference, leading rail travel 17 mm, 3 mm insert",
+   "status": "fail",
+   "evidence": "tool-checked",
+   "detail": "34 pairs; overlaps: [('S0_cassette', 'bail_clip_L', 4.88), ('S0_cassette', 'bail', 8.96), ('S3_cassette', 'bail_clip_R', 4.88), ('S3_cassette', 'bail', 8.96)]"
+  },
+  {
+   "check": "no interference, leading rail travel 0 mm, 5 mm insert",
+   "status": "pass",
+   "evidence": "tool-checked",
+   "detail": "10 pairs; overlaps: none"
+  },
+  {
+   "check": "no interference, leading rail travel 17 mm, 5 mm insert",
+   "status": "fail",
+   "evidence": "tool-checked",
+   "detail": "34 pairs; overlaps: [('S0_cassette', 'bail_clip_L', 4.88), ('S0_cassette', 'bail', 8.96), ('S3_cassette', 'bail_clip_R', 4.88), ('S3_cassette', 'bail', 8.96)]"
+  },
+  {
+   "check": "no interference, side rails at their positive stop (slide 1.32 mm)",
+   "status": "fail",
+   "evidence": "tool-checked",
+   "detail": "8 pairs; overlaps: [('frame_L', 'side_rail_L', 8.15), ('frame_R', 'side_rail_R', 8.15), ('S0_cassette', 'side_rail_L', 181.76), ('S3_cassette', 'side_rail_R', 181.76)]"
+  },
+  {
+   "check": "four 80 x 100 windows at the contract positions, film underside z = 10 (prototype)",
+   "status": "pass",
+   "evidence": "tool-checked",
+   "detail": "[{\"lane\": 0, \"centre_y\": 131.25, \"aperture_free_except_webs\": true, \"aperture_edges_at_80x100\": true, \"film_underside_z\": 10.0}, {\"lane\": 1, \"centre_y\": 43.75, \"aperture_free_except_webs\": true, \"aperture_edges_at_80x100\": true, \"film_underside_z\": 10.0}, {\"lane\": 2, \"centre_y\": -43.75, \"aperture_free_except_webs\": true, \"aperture_edges_at_80x100\": true, \"film_underside_z\": 10.0}, {\"lane\": 3, \"centre_y\": -131.25, \"aperture_free_except_webs\": true, \"aperture_edges_at_80x100\": true, \"film_underside_z\": 10.0}]"
+  },
+  {
+   "check": "four 80 x 100 windows at the contract positions, film underside z = 10 (production)",
+   "status": "pass",
+   "evidence": "tool-checked",
+   "detail": "[{\"lane\": 0, \"centre_y\": 131.25, \"aperture_free_except_webs\": true, \"aperture_edges_at_80x100\": true, \"film_underside_z\": 10.0}, {\"lane\": 1, \"centre_y\": 43.75, \"aperture_free_except_webs\": true, \"aperture_edges_at_80x100\": true, \"film_underside_z\": 10.0}, {\"lane\": 2, \"centre_y\": -43.75, \"aperture_free_except_webs\": true, \"aperture_edges_at_80x100\": true, \"film_underside_z\": 10.0}, {\"lane\": 3, \"centre_y\": -131.25, \"aperture_free_except_webs\": true, \"aperture_edges_at_80x100\": true, \"film_underside_z\": 10.0}]"
+  },
+  {
+   "check": "leading rail underside with the 3 mm insert orientation",
+   "status": "pass",
+   "evidence": "tool-checked",
+   "detail": "insert underside z = 7.00 (required 7.00); lowest other part z = 7.00 (side rails 7.0)"
+  },
+  {
+   "check": "leading rail underside with the 5 mm insert orientation",
+   "status": "pass",
+   "evidence": "tool-checked",
+   "detail": "insert underside z = 5.00 (required 5.00); lowest other part z = 7.00 (side rails 7.0)"
+  },
+  {
+   "check": "side rails / wing returns underside",
+   "status": "deviation",
+   "evidence": "design note",
+   "detail": "side strips are fixed-height at z = 7.0 (3 mm projection); a 5 mm projection on the side zones needs the alternative strip RR-HD-S-433/434 (13 -> 15 mm tall), not modelled"
+  },
+  {
+   "check": "eight M2.5 board standoffs and PCB underside match board_envelopes.yaml",
+   "status": "pass",
+   "evidence": "tool-checked",
+   "detail": "standoff tops [(87.7, -87.5, 34.5), (87.7, 0.0, 34.5), (87.7, 87.5, 34.5), (131.2, -158.0, 34.5), (131.2, 158.0, 34.5), (174.7, -87.5, 34.5), (174.7, 0.0, 34.5), (174.7, 87.5, 34.5)]; yaml [(87.7, -87.5, 34.5), (87.7, 0.0, 34.5), (87.7, 87.5, 34.5), (131.2, -158.0, 34.5), (131.2, 158.0, 34.5), (174.7, -87.5, 34.5), (174.7, 0.0, 34.5), (174.7, 87.5, 34.5)]"
+  },
+  {
+   "check": "board height limits: 6.0 top / 2.0 bottom, >= 6.3 mm clear under the lid, >= 8.3 mm over J1_LANDING",
+   "status": "pass",
+   "evidence": "tool-checked",
+   "detail": "PCB top 36.1; lid underside 43.0 (6.9 mm), liner underside 42.5 (6.4 mm); J1 blister underside 45.0 (8.9 mm); bottom keep-out to spreader 0.50 mm"
+  },
+  {
+   "check": "lane shield cans (36 x 32 x 5) clear of lid liner, standoffs and fences",
+   "status": "pass",
+   "evidence": "tool-checked",
+   "detail": "can top z 41.1, liner underside 42.5; pairwise clearance covered by the interference check"
+  },
+  {
+   "check": "head without the leading-rail stroke system inside the contract envelope (prototype)",
+   "status": "pass",
+   "evidence": "tool-checked",
+   "detail": "x 66.20..192.20 (66.0..192.2), y -175.00..175.00 (+-175), z 7.00..49.80 (5..50; lid top 45.0, J1 blister 46.0, keeper hook 49.8)"
+  },
+  {
+   "check": "head without the leading-rail stroke system inside the contract envelope (production)",
+   "status": "pass",
+   "evidence": "tool-checked",
+   "detail": "x 66.20..192.20 (66.0..192.2), y -175.00..175.00 (+-175), z 7.00..49.80 (5..50; lid top 45.0, J1 blister 46.0, keeper hook 49.8)"
+  },
+  {
+   "check": "leading rail inside the contract envelope x <= 192.2",
+   "status": "deviation",
+   "evidence": "tool-checked",
+   "detail": "rail front face at rest x = 212.2: 20.0 mm outside the envelope (stroke 17 + bar 3 + insert 4 ahead of the frame face 188.2); outer head corner radius 275 mm (contract 260). Needs CCR (IB-11): see head_report.md"
+  },
+  {
+   "check": "lid top at HEAD_TOP_Z",
+   "status": "pass",
+   "evidence": "tool-checked",
+   "detail": "lid top z = 45.0; local items above it: J1 blister z 46.0, keeper z 49.8 (ceiling 50, latch box z 46..60)"
+  },
+  {
+   "check": "shoes match mechanical_interfaces.md (16 x 14 at y +-87.5, z 16..30, tip x 4.0, x-stop shoulder x 65.7, flat tip for HEAD_DOCK)",
+   "status": "fail",
+   "evidence": "tool-checked",
+   "detail": "section y 79.50..95.50, z 16.00..30.00; tip x 4.00, flat tip 10.0 x 8.0 after 3 mm chamfers; shoulder face x 65.69, 40 x 14 mm; dock switch at (-3.0, 87.5, 23.0) lies on the left shoe axis"
+  },
+  {
+   "check": "latch keeper at (104, 0), hook inside the latch box, load path keeper -> hinge -> bridge -> T-heads -> x-stop shoulders (aluminium)",
+   "status": "pass",
+   "evidence": "tool-checked",
+   "detail": "hook centre x 104.0, hook z 47.5..49.8 (latch box z 46.0..60.0), width 30 (latch box 24); no latch load in the lid or in a printed part"
+  },
+  {
+   "check": "J1 / J2 cable ports at the interface positions (71.7, +-87.5, 39.0) in the rear wall",
+   "status": "pass",
+   "evidence": "tool-checked",
+   "detail": "wall x 70.2..72.8; slot floor z 33.5; cable top z 42.75 under the lid at 43.0"
+  },
+  {
+   "check": "rail switch positions vs params.HEAD_RAIL_SWITCHES (layout placeholders)",
+   "status": "deviation",
+   "evidence": "design note",
+   "detail": "designed {'rail_sw_front': (182.6, 87.5, 37.3), 'rail_sw_left': (73.8, 156.75, 20.75), 'rail_sw_right': (73.8, -156.75, 20.75)} vs placeholders {'rail_sw_front': (184.2, 0.0, 21.0), 'rail_sw_left': (131.2, 168.5, 21.0), 'rail_sw_right': (131.2, -168.5, 21.0)}: the placeholders lie inside the optical stack / on the split plane; frames.yaml needs the designed values"
+  },
+  {
+   "check": "every printed part fits the X1C in its print orientation (240 x 240 x 250 usable after 8 mm margins)",
+   "status": "pass",
+   "evidence": "tool-checked",
+   "detail": "[{\"pn\": \"RR-HD-X-101\", \"part\": \"frame_half_left\", \"bbox_print_mm\": [118.0, 174.8, 31.7], \"fits\": true}, {\"pn\": \"RR-HD-X-102\", \"part\": \"frame_half_right\", \"bbox_print_mm\": [118.0, 173.2, 31.7], \"fits\": true}, {\"pn\": \"RR-HD-X-201\", \"part\": \"window_cassette\", \"bbox_print_mm\": [113.6, 87.1, 3.3], \"fits\": true}, {\"pn\": \"RR-HD-X-301\", \"part\": \"lane_spacer_lower\", \"bbox_print_mm\": [100.8, 80.8, 1.8], \"fits\": true}, {\"pn\": \"RR-HD-X-303\", \"part\": \"lane_spacer_upper\", \"bbox_print_mm\": [100.8, 80.8, 3.0], \"fits\": true}, {\"pn\": \"RR-HD-X-302\", \"part\": \"lane_barrier\", \"bbox_print_mm\": [100.8, 80.8, 2.0], \"fits\": true}, {\"pn\": \"RR-HD-X-304\", \"part\": \"chimney_insert\", \"bbox_print_mm\": [18.3, 16.2, 7.0], \"fits\": true}, {\"pn\": \"RR-HD-X-411\", \"part\": \"rail_insert\", \"bbox_print_mm\": [16.0, 87.3, 4.0], \"fits\": true}, {\"pn\": \"RR-HD-X-405\", \"part\": \"bail_block\", \"bbox_print_mm\": [8.3, 30.0, 4.0], \"fits\": true}, {\"pn\": \"RR-HD-X-421\", \"part\": \"front_switch_saddle\", \"bbox_print_mm\": [4.8, 26.6, 10.2], \"fits\": true}, {\"pn\": \"RR-HD-X-422\", \"part\": \"lid_switch_saddle\", \"bbox_print_mm\": [4.8, 26.6, 5.0], \"fits\": true}, {\"pn\": \"RR-HD-X-511\", \"part\": \"grommet_J1\", \"bbox_print_mm\": [11.5, 15.0, 4.1], \"fits\": true}, {\"pn\": \"RR-HD-X-512\", \"part\": \"grommet_J2\", \"bbox_print_mm\": [11.5, 15.0, 4.1], \"fits\": true}, {\"pn\": \"RR-HD-X-601\", \"part\": \"transport_cover_left\", \"bbox_print_mm\": [148.0, 177.3, 30.5], \"fits\": true}, {\"pn\": \"RR-HD-X-602\", \"part\": \"transport_cover_right\", \"bbox_print_mm\": [148.0, 177.3, 30.5], \"fits\": true}, {\"pn\": \"RR-HD-D-302\", \"part\": \"dummy_lane_spacer\", \"bbox_print_mm\": [100.4, 80.4, 15.5], \"fits\": true}, {\"pn\": \"RR-HD-C-611\", \"part\": \"cradle_fence\", \"bbox_print_mm\": [166.0, 91.0, 30.0], \"fits\": true}, {\"pn\": \"RR-HD-C-612\", \"part\": \"cradle_cable_rest\", \"bbox_print_mm\": [12.0, 74.0, 28.0], \"fits\": true}]"
+  },
+  {
+   "check": "split joint at y = 0 clears every window and every lane cavity",
+   "status": "pass",
+   "evidence": "tool-checked",
+   "detail": "joint plane to nearest window edge 3.75 mm, to the cavity wall 3.25 mm; groove depth 1.8 mm leaves 1.45 mm of solid half rib"
+  },
+  {
+   "check": "EMI fence bond pitch to the spreader <= 50 mm (prototype)",
+   "status": "pass",
+   "evidence": "tool-checked",
+   "detail": "largest pitch front 44.0, side 31.2, rear 40.5 mm"
+  },
+  {
+   "check": "shield openings: no slot longer than 20 mm except the cable entries",
+   "status": "deviation",
+   "evidence": "design note",
+   "detail": "{'chimney notch': 18.0, 'cable port': 11.0, 'switch saddle window in the front fence foot': 27.0}; the 27 mm openings are in the fence FOOT (flat on the spreader, closed by it), not in the wall: electrically closed"
+  },
+  {
+   "check": "dummy head mass and CG representative of the prototype head (+-10 g, +-3 mm x/y, +-5 mm z)",
+   "status": "pass",
+   "evidence": "calculated from model volumes x handbook densities",
+   "detail": "dummy 1844 g vs 1844 g; CG offset +0.4 / +0.5 / -2.0 mm; steel ballast 1.66 mm per lane"
+  },
+  {
+   "check": "head mass vs the 1.67 kg (prototype) / 2.10 kg (production) used in mech_calcs.md",
+   "status": "deviation",
+   "evidence": "calculated",
+   "detail": "prototype 1844 g, production 2060 g (model volumes, OEM modules assumed 102 g per lane)"
+  },
+  {
+   "check": "20 N at the front outer window corner: deflection target < 0.5 mm with the lid fitted",
+   "status": "pass",
+   "evidence": "calculated",
+   "detail": "prototype, split PA-CF (dry) frame: 0.16 mm (lid off 0.30), f1 80 Hz; prototype, split PA-CF (conditioned, E x 0.5): 0.16 mm (lid off 0.33), f1 80 Hz; prototype, split PETG-CF frame: 0.16 mm (lid off 0.32), f1 80 Hz; production, one-piece 6061 frame: 0.04 mm (lid off 0.04), f1 151 Hz"
+  },
+  {
+   "check": "leading rail: pre-travel <= 2 mm, post-trip stroke >= 15 mm, switch not over-travelled",
+   "status": "pass",
+   "evidence": "calculated (switch data PARTIAL)",
+   "detail": "trip at 1.13 mm nominal (1.38 max), stroke after trip 15.6 mm, plunger 1.3 of 2.1 mm, return force 3.0..13.2 N"
+  },
+  {
+   "check": "side zones: pre-travel <= 2 mm, trip before the positive stop, switch not over-travelled",
+   "status": "pass",
+   "evidence": "calculated (switch data PARTIAL)",
+   "detail": "trip at 0.40 mm lateral nominal (0.75 max), stop at 0.95 mm, margin 0.20 mm"
+  },
+  {
+   "check": "head contribution to the film-to-floor gap (datum C to film plane)",
+   "status": "pass",
+   "evidence": "calculated",
+   "detail": "nominal film z 10.00; prototype +-0.58 worst / +-0.27 RSS; production +-0.25 / +-0.11 (budget line +-0.30: prototype meets it by RSS only -> trim with the isolator shim at the standoff-height check)"
+  },
+  {
+   "check": "light-path analysis: every joint has a labyrinth turn or an opaque compressed barrier (no open line of sight)",
+   "status": "pass",
+   "evidence": "analysis of the model geometry (not a light test)",
+   "detail": "20 joints tabulated in head_report.md; joints that rely on a gasket only: L03, L04, L10, L14"
+  }
+ ],
+ "data": {
+  "printed_parts": [
+   {
+    "pn": "RR-HD-X-101",
+    "part": "frame_half_left",
+    "bbox_print_mm": [
+     118.0,
+     174.8,
+     31.7
+    ],
+    "fits": true
+   },
+   {
+    "pn": "RR-HD-X-102",
+    "part": "frame_half_right",
+    "bbox_print_mm": [
+     118.0,
+     173.2,
+     31.7
+    ],
+    "fits": true
+   },
+   {
+    "pn": "RR-HD-X-201",
+    "part": "window_cassette",
+    "bbox_print_mm": [
+     113.6,
+     87.1,
+     3.3
+    ],
+    "fits": true
+   },
+   {
+    "pn": "RR-HD-X-301",
+    "part": "lane_spacer_lower",
+    "bbox_print_mm": [
+     100.8,
+     80.8,
+     1.8
+    ],
+    "fits": true
+   },
+   {
+    "pn": "RR-HD-X-303",
+    "part": "lane_spacer_upper",
+    "bbox_print_mm": [
+     100.8,
+     80.8,
+     3.0
+    ],
+    "fits": true
+   },
+   {
+    "pn": "RR-HD-X-302",
+    "part": "lane_barrier",
+    "bbox_print_mm": [
+     100.8,
+     80.8,
+     2.0
+    ],
+    "fits": true
+   },
+   {
+    "pn": "RR-HD-X-304",
+    "part": "chimney_insert",
+    "bbox_print_mm": [
+     18.3,
+     16.2,
+     7.0
+    ],
+    "fits": true
+   },
+   {
+    "pn": "RR-HD-X-411",
+    "part": "rail_insert",
+    "bbox_print_mm": [
+     16.0,
+     87.3,
+     4.0
+    ],
+    "fits": true
+   },
+   {
+    "pn": "RR-HD-X-405",
+    "part": "bail_block",
+    "bbox_print_mm": [
+     8.3,
+     30.0,
+     4.0
+    ],
+    "fits": true
+   },
+   {
+    "pn": "RR-HD-X-421",
+    "part": "front_switch_saddle",
+    "bbox_print_mm": [
+     4.8,
+     26.6,
+     10.2
+    ],
+    "fits": true
+   },
+   {
+    "pn": "RR-HD-X-422",
+    "part": "lid_switch_saddle",
+    "bbox_print_mm": [
+     4.8,
+     26.6,
+     5.0
+    ],
+    "fits": true
+   },
+   {
+    "pn": "RR-HD-X-511",
+    "part": "grommet_J1",
+    "bbox_print_mm": [
+     11.5,
+     15.0,
+     4.1
+    ],
+    "fits": true
+   },
+   {
+    "pn": "RR-HD-X-512",
+    "part": "grommet_J2",
+    "bbox_print_mm": [
+     11.5,
+     15.0,
+     4.1
+    ],
+    "fits": true
+   },
+   {
+    "pn": "RR-HD-X-601",
+    "part": "transport_cover_left",
+    "bbox_print_mm": [
+     148.0,
+     177.3,
+     30.5
+    ],
+    "fits": true
+   },
+   {
+    "pn": "RR-HD-X-602",
+    "part": "transport_cover_right",
+    "bbox_print_mm": [
+     148.0,
+     177.3,
+     30.5
+    ],
+    "fits": true
+   },
+   {
+    "pn": "RR-HD-D-302",
+    "part": "dummy_lane_spacer",
+    "bbox_print_mm": [
+     100.4,
+     80.4,
+     15.5
+    ],
+    "fits": true
+   },
+   {
+    "pn": "RR-HD-C-611",
+    "part": "cradle_fence",
+    "bbox_print_mm": [
+     166.0,
+     91.0,
+     30.0
+    ],
+    "fits": true
+   },
+   {
+    "pn": "RR-HD-C-612",
+    "part": "cradle_cable_rest",
+    "bbox_print_mm": [
+     12.0,
+     74.0,
+     28.0
+    ],
+    "fits": true
+   }
+  ],
+  "mass_prototype": {
+   "mass_g": 1844.1,
+   "cg_mm": [
+    117.74,
+    0.61,
+    33.53
+   ],
+   "mass_without_pigtails_g": 1724.1,
+   "cg_without_pigtails_mm": [
+    125.97,
+    0.38,
+    27.13
+   ],
+   "largest_items_g": {
+    "lid": 213.5,
+    "spreader": 200.1,
+    "pcb": 145.0,
+    "frame_L": 95.5,
+    "frame_R": 94.6,
+    "shoe_L": 62.1,
+    "shoe_R": 62.1,
+    "S0_ref_module": 52.0,
+    "S1_ref_module": 52.0,
+    "S2_ref_module": 52.0,
+    "S3_ref_module": 52.0,
+    "S0_floor_module": 50.0
+   }
+  },
+  "mass_production": {
+   "mass_g": 2059.7,
+   "cg_mm": [
+    119.21,
+    0.55,
+    32.13
+   ],
+   "mass_without_pigtails_g": 1939.7,
+   "cg_without_pigtails_mm": [
+    126.63,
+    0.34,
+    26.34
+   ],
+   "largest_items_g": {
+    "frame": 421.3,
+    "lid": 213.5,
+    "spreader": 200.1,
+    "pcb": 145.0,
+    "shoe_L": 62.1,
+    "shoe_R": 62.1,
+    "S0_ref_module": 52.0,
+    "S1_ref_module": 52.0,
+    "S2_ref_module": 52.0,
+    "S3_ref_module": 52.0,
+    "S0_floor_module": 50.0,
+    "S1_floor_module": 50.0
+   }
+  },
+  "mass_dummy": {
+   "mass_g": 1844.3,
+   "cg_mm": [
+    118.12,
+    1.11,
+    31.58
+   ],
+   "mass_without_pigtails_g": 1724.3,
+   "cg_without_pigtails_mm": [
+    126.38,
+    0.91,
+    25.04
+   ],
+   "largest_items_g": {
+    "lid": 213.5,
+    "spreader": 200.1,
+    "dummy_board": 168.7,
+    "S3_ballast": 102.1,
+    "S0_ballast": 102.1,
+    "S1_ballast": 102.1,
+    "S2_ballast": 102.1,
+    "frame_L": 95.5,
+    "frame_R": 94.6,
+    "shoe_L": 62.1,
+    "shoe_R": 62.1,
+    "fasteners_lumped": 48.0
+   }
+  },
+  "dummy_ballast_mm": 1.66,
+  "structure": {
+   "prototype, split PA-CF (dry) frame": {
+    "lid fitted (10 screws)": {
+     "pitch": 0.09773406492912665,
+     "roll_incl_joint": 0.050001003067479094,
+     "wing_bending": 0.0005467981138346201,
+     "wing_twist": 0.014970123528233764,
+     "total": 0.16325198963867413,
+     "EI_Nm2": 1893.2899906572197,
+     "GJ_Nm2": 186.20420831817148,
+     "k_joint_Nm_per_rad": 1002.8327827804977
+    },
+    "lid removed (service state)": {
+     "pitch": 0.09773406492912665,
+     "roll_incl_joint": 0.11610213609264508,
+     "wing_bending": 0.0037942690054973017,
+     "wing_twist": 0.0806527339352567,
+     "total": 0.2982832039625257,
+     "EI_Nm2": 272.84501819281184,
+     "GJ_Nm2": 34.561754623688785,
+     "k_joint_Nm_per_rad": 318.73480246913573
+    },
+    "roll_if_joint_rigid": 0.01611120290691253,
+    "modes_hz": {
+     "pitch on the mount": 79.6186723641887,
+     "roll on the mount": 248.61936795711296,
+     "halves rocking about the y = 0 joint": 150.7686915359825,
+     "wing bending": 3395.484018938422
+    },
+    "f1_hz": 79.6186723641887,
+    "joint_terms_Nm_per_rad": {
+     "spreader alone (2 mm)": 38.413876543209874,
+     "lid alone (2 mm)": 39.94498765432098,
+     "spreader + lid as a couple through the standoffs (slip model)": 644.152992657041,
+     "rear bridge plate (3 x 13 on edge, T-head to T-head)": 280.3209259259259
+    },
+    "mass_kg": 1.844093176863423
+   },
+   "prototype, split PA-CF (conditioned, E x 0.5)": {
+    "lid fitted (10 screws)": {
+     "pitch": 0.09773406492912665,
+     "roll_incl_joint": 0.050001003067479094,
+     "wing_bending": 0.0006460364434572634,
+     "wing_twist": 0.01578635136470408,
+     "total": 0.16416745580476708,
+     "EI_Nm2": 1602.4597471517363,
+     "GJ_Nm2": 176.57658413915914,
+     "k_joint_Nm_per_rad": 1002.8327827804977
+    },
+    "lid removed (service state)": {
+     "pitch": 0.09773406492912665,
+     "roll_incl_joint": 0.11610213609264508,
+     "wing_bending": 0.007091860684354352,
+     "wing_twist": 0.11179455430318169,
+     "total": 0.33272261600930775,
+     "EI_Nm2": 145.97683766084626,
+     "GJ_Nm2": 24.934130444676473,
+     "k_joint_Nm_per_rad": 318.73480246913573
+    },
+    "roll_if_joint_rigid": 0.01611120290691253,
+    "modes_hz": {
+     "pitch on the mount": 79.6186723641887,
+     "roll on the mount": 248.61936795711296,
+     "halves rocking about the y = 0 joint": 150.7686915359825,
+     "wing bending": 3123.8249254089424
+    },
+    "f1_hz": 79.6186723641887,
+    "joint_terms_Nm_per_rad": {
+     "spreader alone (2 mm)": 38.413876543209874,
+     "lid alone (2 mm)": 39.94498765432098,
+     "spreader + lid as a couple through the standoffs (slip model)": 644.152992657041,
+     "rear bridge plate (3 x 13 on edge, T-head to T-head)": 280.3209259259259
+    },
+    "mass_kg": 1.844093176863423
+   },
+   "prototype, split PETG-CF frame": {
+    "lid fitted (10 screws)": {
+     "pitch": 0.09773406492912665,
+     "roll_incl_joint": 0.050001003067479094,
+     "wing_bending": 0.0006035413286360589,
+     "wing_twist": 0.015464410582592236,
+     "total": 0.16380301990783402,
+     "EI_Nm2": 1715.2883269367578,
+     "GJ_Nm2": 180.25258609841842,
+     "k_joint_Nm_per_rad": 1002.8327827804977
+    },
+    "lid removed (service state)": {
+     "pitch": 0.09773406492912665,
+     "roll_incl_joint": 0.11610213609264508,
+     "wing_bending": 0.005298864444225498,
+     "wing_twist": 0.09743051729521322,
+     "total": 0.31656558276121044,
+     "EI_Nm2": 195.371556817519,
+     "GJ_Nm2": 28.610132403935722,
+     "k_joint_Nm_per_rad": 318.73480246913573
+    },
+    "roll_if_joint_rigid": 0.01611120290691253,
+    "modes_hz": {
+     "pitch on the mount": 79.6186723641887,
+     "roll on the mount": 248.61936795711296,
+     "halves rocking about the y = 0 joint": 150.7686915359825,
+     "wing bending": 3231.9280763995143
+    },
+    "f1_hz": 79.6186723641887,
+    "joint_terms_Nm_per_rad": {
+     "spreader alone (2 mm)": 38.413876543209874,
+     "lid alone (2 mm)": 39.94498765432098,
+     "spreader + lid as a couple through the standoffs (slip model)": 644.152992657041,
+     "rear bridge plate (3 x 13 on edge, T-head to T-head)": 280.3209259259259
+    },
+    "mass_kg": 1.844093176863423
+   },
+   "production, one-piece 6061 frame": {
+    "lid fitted (10 screws)": {
+     "pitch": 0.02443351623228166,
+     "roll_incl_joint": 0.006617703402727465,
+     "wing_bending": 0.00016504634846474582,
+     "wing_twist": 0.006829350868129452,
+     "total": 0.03804561685160332,
+     "EI_Nm2": 6272.464707418014,
+     "GJ_Nm2": 408.1647075724917,
+     "k_joint_Nm_per_rad": 13593.03073485172
+    },
+    "lid removed (service state)": {
+     "pitch": 0.02443351623228166,
+     "roll_incl_joint": 0.006751824093467933,
+     "wing_bending": 0.0004419479280101711,
+     "wing_twist": 0.01086650361853446,
+     "total": 0.042493791872294226,
+     "EI_Nm2": 2342.4646439557646,
+     "GJ_Nm2": 256.522253878009,
+     "k_joint_Nm_per_rad": 12908.932754540358
+    },
+    "roll_if_joint_rigid": 0.004061785266769044,
+    "modes_hz": {
+     "pitch on the mount": 150.67103154862085,
+     "roll on the mount": 470.48934026075494,
+     "halves rocking about the y = 0 joint": 519.4625936707358,
+     "wing bending": 5847.861374809542
+    },
+    "f1_hz": 150.67103154862085,
+    "joint_terms_Nm_per_rad": {
+     "spreader alone (2 mm)": 38.413876543209874,
+     "lid alone (2 mm)": 39.94498765432098,
+     "spreader + lid as a couple through the standoffs (slip model)": 644.152992657041,
+     "rear bridge plate (3 x 13 on edge, T-head to T-head)": 280.3209259259259,
+     "one-piece aluminium frame walls": 12590.197952071221
+    },
+    "mass_kg": 2.0597437418267814
+   }
+  },
+  "rails": {
+   "front": {
+    "stroke_to_stop_mm": 17.0,
+    "trip_travel_mm": {
+     "min": 0.7384615384615384,
+     "nominal": 1.1346153846153846,
+     "max (unshimmed, PT max)": 1.3807692307692307
+    },
+    "post_trip_stroke_mm": 15.61923076923077,
+    "plunger_depression_at_stop_mm": 1.3,
+    "plunger_travel_available_mm": 2.1,
+    "cam": "notch 1.3 deep, ramp 1.6 long (39 deg), then dwell on the rod diameter",
+    "spring_force_N": {
+     "rest (both)": 3.0,
+     "full stroke (both)": 13.2,
+     "solid length ok": true
+    },
+    "trip_force_N_estimate": 4.509375,
+    "bail": {
+     "arm_angle_rest_deg": 48.590377890729144,
+     "arm_angle_full_deg": -8.322040599176994,
+     "tip_z_rest": 14.932681272443194,
+     "tip_z_full": 8.700066489479276,
+     "sync_stiffness_N_per_mm_differential": 5.994483688314485,
+     "lag_of_far_end_mm_for_end_hit": 0.2502300578320143
+    },
+    "stop_model_mm": {
+     "travel after contact, contract inputs (0.10 m/s)": 27.5,
+     "travel after contact, electronics model (0.10 m/s)": 14.3
+    },
+    "max_speed_stopping_inside_post_trip_stroke_mps": {
+     "contract inputs (t 0.15 s, a 0.4)": 0.06686758693765958,
+     "t 0.05 s, a 1.0 m/s2": 0.13368032430955018
+    }
+   },
+   "side": {
+    "travel_to_stop_lateral_mm": 0.9499999999999886,
+    "slide_travel_mm": 1.3435028842544243,
+    "trip_lateral_mm": {
+     "min": 0.05,
+     "nominal": 0.4,
+     "max": 0.75
+    },
+    "plunger_depression_at_stop_mm": 1.4999999999999887,
+    "plunger_travel_available_mm": 2.1,
+    "margin_trip_before_stop_mm": 0.19999999999998863,
+    "note": "adjusting screw M3 on the wing return presets the plunger 0.40 +- 0.15 mm; both a lateral hit on the side strip and a rear hit on the wing return move the L-rail along the 45 deg guide"
+   },
+   "switch_data": {
+    "PT_max": 1.0,
+    "OT_min": 1.1,
+    "MD": 0.25,
+    "OF_max_N": 0.75,
+    "status": "PARTIAL: values read from a search extract of the Omron D2HW table (FP 11.2 max, OP 10.4 +-0.2, TTP 9.1 max); confirm on the datasheet"
+   }
+  },
+  "tolerance_stack": {
+   "nominal_film_z": 10.0,
+   "prototype": {
+    "worst_case_pm_mm": 0.5812222222222222,
+    "rss_pm_mm": 0.2745852315451726
+   },
+   "production": {
+    "worst_case_pm_mm": 0.2541481481481481,
+    "rss_pm_mm": 0.11104963731536362
+   },
+   "rows": [
+    {
+     "contributor": "shoe underside (datum C, z 16.00) to T-head top",
+     "nominal_mm": 13.5,
+     "prototype_pm": 0.03,
+     "production_pm": 0.03,
+     "note": "one machined part"
+    },
+    {
+     "contributor": "isolator / bond shim",
+     "nominal_mm": 0.5,
+     "prototype_pm": 0.05,
+     "production_pm": 0.02,
+     "note": "G10 sheet / aluminium shim; selectable 0.40 / 0.50 / 0.60 for trimming"
+    },
+    {
+     "contributor": "spreader underside = frame top seat (z 30.00)",
+     "nominal_mm": 0.0,
+     "prototype_pm": 0.0,
+     "production_pm": 0.0,
+     "note": "interface plane"
+    },
+    {
+     "contributor": "frame top seat to frame underside",
+     "nominal_mm": -19.5,
+     "prototype_pm": 0.15,
+     "production_pm": 0.03,
+     "note": "printed height over 19.5 mm (0.2 mm layers) / one CNC set-up"
+    },
+    {
+     "contributor": "cassette seat bosses (frame underside to cassette top)",
+     "nominal_mm": -0.5,
+     "prototype_pm": 0.05,
+     "production_pm": 0.02,
+     "note": "hard seats at the four cassette screws"
+    },
+    {
+     "contributor": "film bond line",
+     "nominal_mm": 0.0,
+     "prototype_pm": 0.02,
+     "production_pm": 0.02,
+     "note": "transfer adhesive 0.03 mm"
+    },
+    {
+     "contributor": "frame / spreader flatness over the 350 mm width",
+     "nominal_mm": 0.0,
+     "prototype_pm": 0.2,
+     "production_pm": 0.08,
+     "note": "printed halves pulled flat by the spreader / machined"
+    },
+    {
+     "contributor": "shoe pair parallelism 0.03 over the 54 mm land base x 2.71",
+     "nominal_mm": 0.0,
+     "prototype_pm": 0.08122222222222221,
+     "production_pm": 0.05414814814814815,
+     "note": "front window edge; from the shoe drawing tolerance"
+    }
+   ],
+   "budget_line_in_mech_calcs_pm_mm": 0.3
+  },
+  "light_paths": [
+   {
+    "id": "L01",
+    "joint": "frame halves, y = 0 (prototype)",
+    "from": "ambient (front / rear / underside slit)",
+    "to": "bay",
+    "path": "butt faces; U-shaped tongue 1.2 x 1.6 in a groove (0.15 clearance): in, across, out",
+    "length_mm": 5.4,
+    "turns": 4,
+    "barriers": "tongue-and-groove; the U ends under the lid gasket; black PA-CF",
+    "builds": "X"
+   },
+   {
+    "id": "L02",
+    "joint": "frame halves, y = 0 (prototype)",
+    "from": "ambient / bay",
+    "to": "lane S1 or S2",
+    "path": "the joint plane never touches a lane: each half rib is 3.25 mm solid; remaining routes are L04 (rib top) and L06 (cassette)",
+    "length_mm": 3.25,
+    "turns": 0,
+    "barriers": "3.25 mm solid wall (1.45 mm at the groove)",
+    "builds": "X"
+   },
+   {
+    "id": "L03",
+    "joint": "lid on the tray wall",
+    "from": "ambient",
+    "to": "bay",
+    "path": "flat joint, gasket on the wall top, then the EMI fence flange with its conductive gasket (prototype) / conductive gasket in a groove (production)",
+    "length_mm": 2.5999999999999943,
+    "turns": 0,
+    "barriers": "black closed-cell gasket 1.2 -> 0.8 mm + second (conductive) gasket line; lid interlock opens the bias first",
+    "builds": "X,P"
+   },
+   {
+    "id": "L04",
+    "joint": "spreader on the rib tops",
+    "from": "lane",
+    "to": "adjacent lane",
+    "path": "under the spreader across the rib: land, gasket strip in the 0.6 mm relief, land",
+    "length_mm": 6.5,
+    "turns": 0,
+    "barriers": "black gasket strip 5.4 mm wide compressed 40 % + retention pads lapping the cavity edges",
+    "builds": "X,P"
+   },
+   {
+    "id": "L05",
+    "joint": "spreader edge at the outer side walls",
+    "from": "lane S0 / S3 (top)",
+    "to": "bay",
+    "path": "0.3 mm slot between the spreader edge and the side wall, closed by the pad pressed on the 45 deg relief",
+    "length_mm": 2.0,
+    "turns": 1,
+    "barriers": "compressed pad edge; bay is inside the light-tight volume",
+    "builds": "X,P"
+   },
+   {
+    "id": "L06",
+    "joint": "window cassette, long sides at a seam rib",
+    "from": "ambient (0.4 mm slot between cassettes)",
+    "to": "lane",
+    "path": "up the slot, over the rib fin, down/up the lip in its groove (0.85 mm lip, 0.35 mm overlap), gasket land 1.05 mm",
+    "length_mm": 4.25,
+    "turns": 3,
+    "barriers": "lip in groove + black gasket on the 1.05 mm land + film bond",
+    "builds": "X,P"
+   },
+   {
+    "id": "L07",
+    "joint": "window cassette, long side at the outer wall",
+    "from": "ambient (behind the side rail)",
+    "to": "lane S0 / S3",
+    "path": "lip in the open rebate of the wall foot, gasket land 1.05 mm; the side rail strip covers the slot from outside",
+    "length_mm": 2.8,
+    "turns": 2,
+    "barriers": "lip + gasket; weakest cassette joint (driven by the 3.75 mm outer margin)",
+    "builds": "X,P"
+   },
+   {
+    "id": "L08",
+    "joint": "window cassette, front and rear borders",
+    "from": "ambient",
+    "to": "lane",
+    "path": "lip 1.3 mm tall at the border edge in a groove / rebate, then 5.9 mm gasket land",
+    "length_mm": 8.5,
+    "turns": 2,
+    "barriers": "lip + 5.9 mm gasket land + film bond",
+    "builds": "X,P"
+   },
+   {
+    "id": "L09",
+    "joint": "cassette to cassette under a rib",
+    "from": "lane",
+    "to": "adjacent lane",
+    "path": "gasket land, lip, rib fin 3.4 mm, lip, gasket land",
+    "length_mm": 7.199999999999999,
+    "turns": 4,
+    "barriers": "two lips + two gasket lands",
+    "builds": "X,P"
+   },
+   {
+    "id": "L10",
+    "joint": "entrance film",
+    "from": "ambient",
+    "to": "lane",
+    "path": "aluminised film bonded all round to the cassette land (1.05 mm on the long sides, 5 mm on the ends)",
+    "length_mm": 1.05,
+    "turns": 0,
+    "barriers": "opaque film; pinholes are a film acceptance item (dark-count test)",
+    "builds": "X,P"
+   },
+   {
+    "id": "L11",
+    "joint": "barrier plate in the lane",
+    "from": "floor part of the lane",
+    "to": "reference part of the same lane",
+    "path": "around the plate edge: under the lower spacer ring, 0.1 mm edge clearance with foam edge, over the upper ring",
+    "length_mm": 6.800000000000001,
+    "turns": 2,
+    "barriers": "2 mm opaque plate + black foam edge + two ring overlaps of 2.4 mm",
+    "builds": "X,P"
+   },
+   {
+    "id": "L12",
+    "joint": "chimney insert shelf",
+    "from": "floor carrier space",
+    "to": "reference carrier space (same lane)",
+    "path": "shelf at barrier height; coax notch 5 x 2.5 packed with black foam",
+    "length_mm": 2.5,
+    "turns": 1,
+    "barriers": "shelf + foam plug; SiPM carriers are opaque-potted by the OEM (UNKNOWN)",
+    "builds": "X,P"
+   },
+   {
+    "id": "L13",
+    "joint": "chimney to chimney via the bay",
+    "from": "lane (carrier aperture)",
+    "to": "other lane",
+    "path": "up the chimney, along the rear strip of the bay, down the next chimney",
+    "length_mm": 117.5,
+    "turns": 2,
+    "barriers": "depends on the OEM carrier-to-guide seal (UNKNOWN); chimney inserts are black; dark-count cross-talk test at end of line",
+    "builds": "X,P"
+   },
+   {
+    "id": "L14",
+    "joint": "cable port",
+    "from": "ambient",
+    "to": "bay",
+    "path": "split grommet with three internal ribs on a black cable jacket, compressed by the lid",
+    "length_mm": 4.099999999999994,
+    "turns": 0,
+    "barriers": "compressed elastomer around the cable",
+    "builds": "X,P"
+   },
+   {
+    "id": "L15",
+    "joint": "breather vent",
+    "from": "ambient",
+    "to": "bay",
+    "path": "membrane, then a printed baffle with two 90 deg turns behind the rear comb",
+    "length_mm": 8.0,
+    "turns": 2,
+    "barriers": "ePTFE membrane (translucent) + black baffle",
+    "builds": "X,P"
+   },
+   {
+    "id": "L16",
+    "joint": "rail stop / switch pin",
+    "from": "ambient (rod bore)",
+    "to": "bay",
+    "path": "rod annulus 0.15 x 25 mm, turn up, pin annulus 0.05 x 14 mm, silicone membrane under the saddle",
+    "length_mm": 39,
+    "turns": 1,
+    "barriers": "two close annuli + membrane",
+    "builds": "X,P"
+   },
+   {
+    "id": "L17",
+    "joint": "side-zone guide slits and pin holes",
+    "from": "ambient",
+    "to": "bay",
+    "path": "slit is blind; pin hole closed by the screw and the spreader",
+    "length_mm": 6.0,
+    "turns": 1,
+    "barriers": "screw shank + spreader",
+    "builds": "X,P"
+   },
+   {
+    "id": "L18",
+    "joint": "side switch lead channel",
+    "from": "ambient (switch pocket)",
+    "to": "bay",
+    "path": "channel 1.9 x 2.8 mm potted with black RTV after wiring",
+    "length_mm": 9.0,
+    "turns": 1,
+    "barriers": "potting",
+    "builds": "X,P"
+   },
+   {
+    "id": "L19",
+    "joint": "T-head pocket",
+    "from": "ambient",
+    "to": "lane",
+    "path": "no opening: 2.0 mm solid web between the pocket and the cavities",
+    "length_mm": 2.0,
+    "turns": 0,
+    "barriers": "solid wall + aluminium T-head",
+    "builds": "X,P"
+   },
+   {
+    "id": "L20",
+    "joint": "outer side wall",
+    "from": "ambient",
+    "to": "lane S0 / S3",
+    "path": "1.5 mm solid wall (four perimeters, black PA-CF); side rail strip 0.95 mm outside",
+    "length_mm": 1.5,
+    "turns": 0,
+    "barriers": "solid wall; printed wall opacity to be confirmed by the dark-count test (foil tape contingency)",
+    "builds": "X"
+   }
+  ],
+  "thermal": {
+   "prototype, still air, no jacket": {
+    "UA_W_per_K": 0.4675603261826965,
+    "heater_W_at_-20C_setpoint_+5C": 6.6890081545674125,
+    "heater_W_at_-25C_setpoint_+10C": 11.364611416394379,
+    "split": {
+     "top": 0.15470756756756754,
+     "sides": 0.12390657216494846,
+     "windows": 0.09980848153214775,
+     "underside": 0.02913770491803276,
+     "mount+cables": 0.06
+    }
+   },
+   "prototype, still air, 3 mm external jacket": {
+    "UA_W_per_K": 0.429672758615129,
+    "heater_W_at_-20C_setpoint_+5C": 5.741818965378226,
+    "heater_W_at_-25C_setpoint_+10C": 10.038546551529514,
+    "split": {
+     "top": 0.11682,
+     "sides": 0.12390657216494846,
+     "windows": 0.09980848153214775,
+     "underside": 0.02913770491803276,
+     "mount+cables": 0.06
+    }
+   },
+   "prototype, draught 3 m/s, no jacket": {
+    "UA_W_per_K": 0.5228364401333234,
+    "heater_W_at_-20C_setpoint_+5C": 8.070911003333086,
+    "heater_W_at_-25C_setpoint_+10C": 13.299275404666318,
+    "split": {
+     "top": 0.18504892241379306,
+     "sides": 0.14884133126934987,
+     "windows": 0.09980848153214775,
+     "underside": 0.02913770491803276,
+     "mount+cables": 0.06
+    }
+   },
+   "prototype, draught 3 m/s, 3 mm external jacket": {
+    "UA_W_per_K": 0.4711146916325738,
+    "heater_W_at_-20C_setpoint_+5C": 6.777867290814346,
+    "heater_W_at_-25C_setpoint_+10C": 11.489014207140084,
+    "split": {
+     "top": 0.13332717391304347,
+     "sides": 0.14884133126934987,
+     "windows": 0.09980848153214775,
+     "underside": 0.02913770491803276,
+     "mount+cables": 0.06
+    }
+   },
+   "production, still air, no jacket": {
+    "UA_W_per_K": 0.47317681933109185,
+    "heater_W_at_-20C_setpoint_+5C": 6.829420483277296,
+    "heater_W_at_-25C_setpoint_+10C": 11.561188676588216,
+    "split": {
+     "top": 0.15470756756756754,
+     "sides": 0.12819366741161825,
+     "windows": 0.09980848153214775,
+     "underside": 0.030467102819758278,
+     "mount+cables": 0.06
+    }
+   },
+   "production, still air, 3 mm external jacket": {
+    "UA_W_per_K": 0.43528925176352423,
+    "heater_W_at_-20C_setpoint_+5C": 5.882231294088106,
+    "heater_W_at_-25C_setpoint_+10C": 10.235123811723348,
+    "split": {
+     "top": 0.11682,
+     "sides": 0.12819366741161825,
+     "windows": 0.09980848153214775,
+     "underside": 0.030467102819758278,
+     "mount+cables": 0.06
+    }
+   },
+   "production, draught 3 m/s, no jacket": {
+    "UA_W_per_K": 0.5303953782092752,
+    "heater_W_at_-20C_setpoint_+5C": 8.25988445523188,
+    "heater_W_at_-25C_setpoint_+10C": 13.563838237324632,
+    "split": {
+     "top": 0.18504892241379306,
+     "sides": 0.15507087144357604,
+     "windows": 0.09980848153214775,
+     "underside": 0.030467102819758278,
+     "mount+cables": 0.06
+    }
+   },
+   "production, draught 3 m/s, 3 mm external jacket": {
+    "UA_W_per_K": 0.4786736297085255,
+    "heater_W_at_-20C_setpoint_+5C": 6.9668407427131385,
+    "heater_W_at_-25C_setpoint_+10C": 11.753577039798394,
+    "split": {
+     "top": 0.13332717391304347,
+     "sides": 0.15507087144357604,
+     "windows": 0.09980848153214775,
+     "underside": 0.030467102819758278,
+     "mount+cables": 0.06
+    }
+   }
+  },
+  "oem_dependent": [
+   {
+    "oem_quantity": "Module plan size (assumed 80.6 x 100.6 nominal, band 80.2..80.9 x 100.2..100.9)",
+    "head_dimension": "EDGE (0.5 per side), cavity 81.0 x 101.0, seat shoulder 0.5 mm",
+    "adjustment": "side shims 0.1 / 0.25 mm; below 80.2 the seat shadows the edge or the module must hang from the pad"
+   },
+   {
+    "oem_quantity": "Floor assembly thickness (assumed 5.25: screen 0.25 + guide 5.0)",
+    "head_dimension": "seat z 11.0, lower spacer ring 1.75",
+    "adjustment": "ring thickness is a printed part: re-print for 4.5..6.5 mm"
+   },
+   {
+    "oem_quantity": "Barrier / particle-stop allowance (assumed 2.0 at z 18..20)",
+    "head_dimension": "barrier plate 2.0, shelf of the chimney insert",
+    "adjustment": "plate 1..3 mm by re-printing the two rings"
+   },
+   {
+    "oem_quantity": "Reference assembly thickness (assumed 5.5: tile 0.5 + guide 5.0)",
+    "head_dimension": "upper ring 3.0, reference top z 28.5",
+    "adjustment": "pad 1.0 / 1.5 / 2.0 mm + 0.25 / 0.5 / 1.0 shims: total stack 16.0..18.0 mm accepted (nominal 17.5)"
+   },
+   {
+    "oem_quantity": "SiPM carrier size and position (assumed 13 x 5 x 1.5 at the rear guide edge, lane centre, x 78.6..80.1)",
+    "head_dimension": "chimney 18 wide x 7.9 deep, insert fingers at +-5.2..8.1, carrier band +-1.0 in y, +-0.5 in z, 1.0..2.0 thick",
+    "adjustment": "chimney insert is a small printed part: re-print for another carrier; the frame chimney takes carriers up to 16 x 6 x 2.5"
+   },
+   {
+    "oem_quantity": "SiPM connector / pigtail (assumed two micro-coax per SiPM, U.FL class, exit upward)",
+    "head_dimension": "coax channel 5 x 2.5 in the insert, 18 mm spreader notch, bend radius 6 mm to the board rear edge",
+    "adjustment": "a side-exit connector needs a deeper chimney (not available: 7.9 mm)"
+   },
+   {
+    "oem_quantity": "Entrance plane definition and permissible window load",
+    "head_dimension": "film on the cassette at z 10.00, three 0.8 mm guard webs under the film",
+    "adjustment": "cassette is the only part to change (webs, film, aperture)"
+   },
+   {
+    "oem_quantity": "Module mass (assumed 50 g floor, 52 g reference)",
+    "head_dimension": "mass / CG, dummy ballast, pad preload (about 6 N per lane)",
+    "adjustment": "ballast thickness is computed from the measured mass"
+   },
+   {
+    "oem_quantity": "Module retention force / permissible clamp load on the guides",
+    "head_dimension": "pad compression 0.3 mm of 1.5 mm (silicone foam, about 6 N per lane)",
+    "adjustment": "softer pad or thicker shim"
+   },
+   {
+    "oem_quantity": "Optical seal of the carrier to the guide edge (opaque potting assumed)",
+    "head_dimension": "light paths L12, L13",
+    "adjustment": "black foam plug at the coax notch; dark-count cross-talk test"
+   },
+   {
+    "oem_quantity": "Thermal limits of the bond lines (heater set-point +5..+10 C assumed)",
+    "head_dimension": "heater on the spreader, 1.5 W/cm2 max film",
+    "adjustment": "set-point is firmware"
+   }
+  ],
+  "bond_pitch_mm": {
+   "front": 44.0,
+   "side": 31.19999999999999,
+   "rear": 40.5
+  }
+ },
+ "summary": {
+  "pass": 22,
+  "fail": 7,
+  "deviation": 5
+ },
+ "runtime_s": 50.7
+}

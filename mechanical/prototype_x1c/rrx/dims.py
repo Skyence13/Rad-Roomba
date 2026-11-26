@@ -80,11 +80,9 @@ HATCH_JAMB = (57.5, 60.5)
 # ---- battery bay
 B = P.BATTERY_BAY
 TUNNEL_WALL_Y = (55.5, 58.0)
-TUNNEL_X = (-228.0, B["cassette_x"][1])        # guide walls; front bulkhead ahead of the cassette
+TUNNEL_X = (-230.0, B["cassette_x"][1])        # guide walls; front bulkhead ahead of the cassette
 FLOOR_RIB_Y = 42.0
 KEY_RIB_Y = 50.5                               # off-centre key (left side only): reversed cassette is blocked
-BAIL_PIVOT = (-236.0, 92.0)                    # x, z of the cam-bail pivot on the cassette rear ears
-KEEPER = (-242.0, 100.0)                       # x, z of the keeper pins on the hatch jambs
 
 # ---- wheels: printed hub on a purchased 6 mm clamping hub + printed TPU tyre
 TYRE_T = 9.0

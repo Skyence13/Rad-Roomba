@@ -1,0 +1,247 @@
+{
+    "$schema": "https://schemas.kicad.org/drc.v1.json",
+    "coordinate_units": "mm",
+    "date": "",
+    "included_severities": [
+        "error",
+        "warning",
+        "exclusion"
+    ],
+    "kicad_version": "9.0.9",
+    "schematic_parity": [],
+    "source": "STRESS-150-6L.kicad_pcb",
+    "unconnected_items": [
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 9 [+3V3] of U2 on F.Cu",
+                    "pos": {
+                        "x": 103.75,
+                        "y": 81.4375
+                    },
+                    "uuid": "aab103c8-45ab-4c9a-8791-65100274d05d"
+                },
+                {
+                    "description": "Via [+3V3] on F.Cu - B.Cu",
+                    "pos": {
+                        "x": 103.75,
+                        "y": 83.039999
+                    },
+                    "uuid": "b14f26a5-8dfa-43c7-9b80-5f87a84eeda0"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 25 [IO37] of U1 on F.Cu",
+                    "pos": {
+                        "x": 77.0,
+                        "y": 96.925
+                    },
+                    "uuid": "43edc065-6fdf-4b47-aaf3-a6ffc8e9fc80"
+                },
+                {
+                    "description": "Pad 6 [IO37] of U2 on F.Cu",
+                    "pos": {
+                        "x": 102.25,
+                        "y": 81.4375
+                    },
+                    "uuid": "5e210559-cbca-44ef-8c8c-df185d74a3c1"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 59 [IO42] of U1 on F.Cu",
+                    "pos": {
+                        "x": 75.5,
+                        "y": 85.575
+                    },
+                    "uuid": "f1ebe584-2719-499b-932e-f538dfc19f16"
+                },
+                {
+                    "description": "Pad 19 [IO42] of U2 on F.Cu",
+                    "pos": {
+                        "x": 105.9375,
+                        "y": 77.75
+                    },
+                    "uuid": "5ce54d46-2a29-44f0-aa78-1ef720154b17"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 37 [IO51] of U1 on F.Cu",
+                    "pos": {
+                        "x": 82.425,
+                        "y": 93.0
+                    },
+                    "uuid": "94e98806-649a-4bef-bcbe-928f3cc60938"
+                },
+                {
+                    "description": "Pad 21 [IO51] of U2 on F.Cu",
+                    "pos": {
+                        "x": 105.9375,
+                        "y": 76.75
+                    },
+                    "uuid": "201e37bb-99b8-4618-9269-e0cb33225de3"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        }
+    ],
+    "violations": [
+        {
+            "description": "Clearance violation ( clearance 0.1500 mm; actual 0.1397 mm)",
+            "items": [
+                {
+                    "description": "Track [IO11] on F.Cu, length 0.9930 mm",
+                    "pos": {
+                        "x": 82.2897,
+                        "y": 92.1353
+                    },
+                    "uuid": "08448314-0343-4215-86cd-42ab6fc9754c"
+                },
+                {
+                    "description": "Pad 38 [IO10] of U1 on F.Cu",
+                    "pos": {
+                        "x": 82.425,
+                        "y": 92.5
+                    },
+                    "uuid": "d71208ab-6ac4-4ffc-a216-07b1918957a1"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "Clearance violation ( clearance 0.1500 mm; actual 0.1397 mm)",
+            "items": [
+                {
+                    "description": "Pad 38 [IO10] of U1 on F.Cu",
+                    "pos": {
+                        "x": 82.425,
+                        "y": 92.5
+                    },
+                    "uuid": "d71208ab-6ac4-4ffc-a216-07b1918957a1"
+                },
+                {
+                    "description": "Track [IO11] on F.Cu, length 0.1913 mm",
+                    "pos": {
+                        "x": 82.425,
+                        "y": 92.0
+                    },
+                    "uuid": "e5b5750b-5789-4a5e-969e-3f739510e0b5"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "Clearance violation ( clearance 0.1500 mm; actual 0.1463 mm)",
+            "items": [
+                {
+                    "description": "Pad 42 [IO28] of U1 on F.Cu",
+                    "pos": {
+                        "x": 82.425,
+                        "y": 90.5
+                    },
+                    "uuid": "10a709d4-6a23-4c67-a0ba-572ae587feb6"
+                },
+                {
+                    "description": "Track [IO13] on F.Cu, length 0.1820 mm",
+                    "pos": {
+                        "x": 82.425,
+                        "y": 91.0
+                    },
+                    "uuid": "590cd2b9-ed45-433a-8b27-ed72dcdab040"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "Clearance violation ( clearance 0.1500 mm; actual 0.1463 mm)",
+            "items": [
+                {
+                    "description": "Pad 42 [IO28] of U1 on F.Cu",
+                    "pos": {
+                        "x": 82.425,
+                        "y": 90.5
+                    },
+                    "uuid": "10a709d4-6a23-4c67-a0ba-572ae587feb6"
+                },
+                {
+                    "description": "Track [IO13] on F.Cu, length 0.8435 mm",
+                    "pos": {
+                        "x": 82.5537,
+                        "y": 90.8713
+                    },
+                    "uuid": "6e2f1cd4-1ba2-499f-b552-84927e6c23cf"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "Clearance violation ( clearance 0.2000 mm; actual 0.1810 mm)",
+            "items": [
+                {
+                    "description": "Track [AUX05] on F.Cu, length 0.7196 mm",
+                    "pos": {
+                        "x": 104.131,
+                        "y": 81.5561
+                    },
+                    "uuid": "121777c2-c077-4b4b-8a8b-054f89e08c72"
+                },
+                {
+                    "description": "Pad 9 [+3V3] of U2 on F.Cu",
+                    "pos": {
+                        "x": 103.75,
+                        "y": 81.4375
+                    },
+                    "uuid": "aab103c8-45ab-4c9a-8791-65100274d05d"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "Clearance violation ( clearance 0.2000 mm; actual 0.1810 mm)",
+            "items": [
+                {
+                    "description": "Track [AUX05] on F.Cu, length 0.1680 mm",
+                    "pos": {
+                        "x": 104.25,
+                        "y": 81.4375
+                    },
+                    "uuid": "9cb75bcd-6d72-45c2-b23d-6780c36c99c8"
+                },
+                {
+                    "description": "Pad 9 [+3V3] of U2 on F.Cu",
+                    "pos": {
+                        "x": 103.75,
+                        "y": 81.4375
+                    },
+                    "uuid": "aab103c8-45ab-4c9a-8791-65100274d05d"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        }
+    ]
+}

@@ -69,6 +69,7 @@ class RobotApp:
         self.outline = RobotOutline(**cfg["outline"])
         self.archive_error = None
         self._events = []
+        self.gate_feed = []            # raw gate records for publishers (bounded)
         self.audit = []
         tr = cfg["trailer"]
         link_cfg = HeadLinkConfig(mode=cfg["mode"], **cfg["link"])
@@ -190,8 +191,11 @@ class RobotApp:
         if evs:
             self.pipeline.on_head_events(evs)
             for ev in evs:
-                if ev["ev"] == "gate" and self.mission is not None:
-                    self.mission.on_gate(ev["gate"])
+                if ev["ev"] == "gate":
+                    self.gate_feed.append(ev["gate"])
+                    del self.gate_feed[:-600]
+                    if self.mission is not None:
+                        self.mission.on_gate(ev["gate"])
                 elif ev["ev"] in ("session_open", "session_close", "blocked", "link_down", "fault", "gap"):
                     self.log_event({k: v for k, v in ev.items() if k not in ("manifest", "gate")})
             self._ensure_plan()

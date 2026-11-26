@@ -1,0 +1,7 @@
+# DEMONSTRATION ACCOUNTS ONLY (password = user name). Replace with site accounts before any use.
+# password_hash: salt$pbkdf2-sha256(60000) as produced by rr_web.control.hash_password
+users:
+  viewer:   {role: viewer,   password: viewer}
+  operator: {role: operator, password: operator}
+  operator2: {role: operator, password: operator2}
+  rp:       {role: rp,       password: rp}

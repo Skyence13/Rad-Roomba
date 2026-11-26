@@ -6,24 +6,24 @@ unit Bq/cm2  investigation level 0.3  detection goal < 0.2
 alpha_scan 0.05  alpha_recount 0.000285  beta 0.05  decision cells 180
 
 WHERE THE ROBOT MEASURED
-  valid exposure on 45.1 % of the target floor (1.800 m2)
+  valid exposure on 45.8 % of the target floor (1.800 m2)
   UNVISITED                    0.9679 m2
-  ACCEPTABLE                   0.0625 m2
-  INSUFFICIENT_SENSITIVITY     0.7499 m2
-  INVALID_DATA                 0.0198 m2
+  ACCEPTABLE                   0.1268 m2
+  INSUFFICIENT_SENSITIVITY     0.6980 m2
+  INVALID_DATA                 0.0073 m2
   BLOCKED                      0.0000 m2
   EXCLUDED                     0.0000 m2
 
 HOW SENSITIVE IT WAS
-  decision cells with data 136; sensitivity sufficient (D# < goal, envelope ok) 8
-  D# median 0.251  best 0.189  worst 1.137 Bq/cm2 (beta_window)
+  decision cells with data 136; sensitivity sufficient (D# < goal, envelope ok) 16
+  D# median 0.247  best 0.184  worst 1.145 Bq/cm2 (beta_window)
   time sync: max gate bound 838.0520796923137 us (limit 10000)
 
 WHAT STILL NEEDS ATTENTION
-  HS-0001 INVESTIGATION_LEVEL lane 1 D=0.748 +/- 0.144 Bq/cm2 at 1.00 m from the door threshold, 0.33 m from the right wall status OPEN
-  scan-stage detections below the investigation level awaiting a recount under the two-stage rule: 2
-  unresolved floor INSUFFICIENT_SENSITIVITY: 0.7498 m2 (rectangles in residuals.json)
-  unresolved floor INVALID_DATA: 0.0199 m2 (rectangles in residuals.json)
+  HS-0001 INVESTIGATION_LEVEL lane 1 D=0.636 +/- 0.127 Bq/cm2 at 1.00 m from the door threshold, 0.33 m from the right wall status OPEN
+  scan-stage detections below the investigation level awaiting a recount under the two-stage rule: 1
+  unresolved floor INSUFFICIENT_SENSITIVITY: 0.6980 m2 (rectangles in residuals.json)
+  unresolved floor INVALID_DATA: 0.0073 m2 (rectangles in residuals.json)
   unresolved floor UNVISITED: 0.9679 m2 (rectangles in residuals.json)
 
 A release-status entry is a radiation-protection decision under the site procedure; this report is not one.

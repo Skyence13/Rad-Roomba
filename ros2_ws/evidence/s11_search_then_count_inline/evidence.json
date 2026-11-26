@@ -3,7 +3,7 @@
  "evidence_class": "simulated",
  "against": "Python protocol fakes (rr_core.fakes), virtual clock",
  "seed": 21,
- "sim_time_s": 248.28,
+ "sim_time_s": 229.0,
  "checks": [
   {
    "check": "inline: robot stopped inside the pass for the scaler count",
@@ -16,15 +16,15 @@
   {
    "check": "ratemeter alarm at the hot spot",
    "ok": true,
-   "alarms": 2,
-   "observations": 2
+   "alarms": 1,
+   "observations": 1
   },
   {
    "check": "alarming lane parked over the spot for the count (within 30 mm of the patch centre along track)",
    "ok": true,
    "achieved": [
-    1.573049768004845,
-    -0.15813101185663198
+    1.5563965304468579,
+    -0.1582589333652344
    ]
   },
   {
@@ -32,11 +32,11 @@
    "ok": true,
    "outcome": "EXCEEDS_INVESTIGATION_LEVEL",
    "result": {
-    "D": 1.5515532742005995,
-    "u_stat": 0.08820068608632788,
-    "u_total": 0.2489365944262889,
-    "D_star": 0.14932041178024907,
-    "D_hash": 0.24930460233571444,
+    "D": 1.7530914633725776,
+    "u_stat": 0.09413216871684159,
+    "u_total": 0.27936552043447677,
+    "D_star": 0.14327024857704798,
+    "D_hash": 0.2398319277147734,
     "T_F": 9.89109,
     "detected": true,
     "method": "poisson-exact"
@@ -45,7 +45,7 @@
   {
    "check": "scaler result consistent with the injected patch (lane-average 2.0 Bq/cm2 +/- 30 %)",
    "ok": true,
-   "D": 1.5515532742005995
+   "D": 1.7530914633725776
   },
   {
    "check": "floor that only saw the search stage is reported with stage SEARCH",
@@ -61,14 +61,14 @@
  "coverage": {
   "target_area_m2": 3.0,
   "areas_m2": {
-   "UNVISITED": 1.0641,
+   "UNVISITED": 1.0634000000000001,
    "ACCEPTABLE": 0.0,
-   "INSUFFICIENT_SENSITIVITY": 1.9359000000000002,
+   "INSUFFICIENT_SENSITIVITY": 1.9366,
    "INVALID_DATA": 0.0,
    "BLOCKED": 0.0,
    "EXCLUDED": 0.0
   },
-  "valid_exposure_fraction": 0.6453000000000001,
+  "valid_exposure_fraction": 0.6455333333333334,
   "acceptable_fraction": 0.0,
   "sub_cell_m": 0.005,
   "decision_cell_m": 0.1,
@@ -76,26 +76,26 @@
  },
  "time_sync": {
   "limit_us": 10000.0,
-  "fits": 129,
+  "fits": 119,
   "max_gate_bound_us": 838.0520796923137,
-  "median_gate_bound_us": 798.7195256094885
+  "median_gate_bound_us": 798.7497250055003
  },
  "link_stats": {
-  "tx": 12461,
-  "rx": 12458,
+  "tx": 11488,
+  "rx": 11485,
   "bad_lines": 0,
   "stale": 0,
   "duplicates": 0,
-  "gates": 2463,
+  "gates": 2271,
   "gaps": 0,
   "retries": 2,
   "unassigned_frames": 0,
-  "time_exchanges": 129,
+  "time_exchanges": 119,
   "time_exchanges_rejected": 0
  },
  "localization_error_vs_truth_m": {
-  "max_x_m": 0.0016210563116905163,
-  "max_y_m": 0.0012031014694028064
+  "max_x_m": 0.001740839708691766,
+  "max_y_m": 0.0012165262412379974
  },
  "plan": {
   "n_pairs": 2,
@@ -120,306 +120,323 @@
    "id": "HS-0001",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 3,
-   "x_m": 0.5539166215358204,
-   "y_m": -0.3332732090291108,
-   "D": 0.13414173360917275,
-   "u_total": 0.07063210259525105,
-   "D_star": 0.1064168846132687,
-   "D_hash": 0.2583501128368045,
+   "x_m": 0.5413423237083992,
+   "y_m": -0.3332896681906141,
+   "D": 0.15065979831154827,
+   "u_total": 0.09925653346521156,
+   "D_star": 0.16090841439345888,
+   "D_hash": 0.4028998666718001,
    "location": {
-    "distance_from_door_m": 0.554,
+    "distance_from_door_m": 0.541,
     "wall": "right wall",
     "distance_from_wall_m": 0.167,
-    "text": "0.55 m from the door threshold, 0.17 m from the right wall"
+    "text": "0.54 m from the door threshold, 0.17 m from the right wall"
    }
   },
   {
    "id": "HS-0002",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 1,
-   "x_m": 0.8177994158558171,
-   "y_m": -0.1781999840785222,
-   "D": 0.20621290222943264,
-   "u_total": 0.1331918343507746,
-   "D_star": 0.22052153233597913,
-   "D_hash": 0.5882129061610483,
+   "source_lane": 3,
+   "x_m": 1.0456329290194781,
+   "y_m": -0.33324681825931374,
+   "D": 0.08880403527359836,
+   "u_total": 0.14320139831477996,
+   "D_star": 0.22087154185450275,
+   "D_hash": 0.5722907494742402,
    "location": {
-    "distance_from_door_m": 0.818,
+    "distance_from_door_m": 1.046,
     "wall": "right wall",
-    "distance_from_wall_m": 0.322,
-    "text": "0.82 m from the door threshold, 0.32 m from the right wall"
+    "distance_from_wall_m": 0.167,
+    "text": "1.05 m from the door threshold, 0.17 m from the right wall"
    }
   },
   {
    "id": "HS-0003",
-   "kind": "INVESTIGATION_LEVEL",
+   "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 1,
-   "x_m": 1.5551469246633838,
-   "y_m": -0.16858430639939295,
-   "D": 1.1094819373939366,
-   "u_total": 0.20752211893396155,
-   "D_star": 0.11228683410414284,
-   "D_hash": 0.27011499096767955,
+   "x_m": 1.5433076278373168,
+   "y_m": -0.20194009667824955,
+   "D": 0.19893637689330962,
+   "u_total": 0.10608388811717778,
+   "D_star": 0.22010608211716687,
+   "D_hash": 0.570598841893282,
    "location": {
-    "distance_from_door_m": 1.555,
+    "distance_from_door_m": 1.543,
     "wall": "right wall",
-    "distance_from_wall_m": 0.331,
-    "text": "1.56 m from the door threshold, 0.33 m from the right wall"
+    "distance_from_wall_m": 0.298,
+    "text": "1.54 m from the door threshold, 0.30 m from the right wall"
    }
   },
   {
    "id": "HS-0004",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 2,
-   "x_m": 1.0449590892664928,
-   "y_m": -0.24576168317050362,
-   "D": 0.1310016079729795,
-   "u_total": 0.142665688225466,
-   "D_star": 0.18858578089207764,
-   "D_hash": 0.5225728324803349,
+   "source_lane": 1,
+   "x_m": 1.1521787269821318,
+   "y_m": -0.1801964075620418,
+   "D": 0.1290444107722878,
+   "u_total": 0.11832832864427466,
+   "D_star": 0.1888451867822958,
+   "D_hash": 0.5032133076848531,
    "location": {
-    "distance_from_door_m": 1.045,
+    "distance_from_door_m": 1.152,
     "wall": "right wall",
-    "distance_from_wall_m": 0.254,
-    "text": "1.04 m from the door threshold, 0.25 m from the right wall"
+    "distance_from_wall_m": 0.32,
+    "text": "1.15 m from the door threshold, 0.32 m from the right wall"
    }
   },
   {
    "id": "HS-0005",
-   "kind": "UNRESOLVED_EXCEEDANCE",
+   "kind": "INVESTIGATION_LEVEL",
    "source_lane": 1,
-   "x_m": 1.1838256050399691,
-   "y_m": 0.18349870233056076,
-   "D": 0.18508671177718672,
-   "u_total": 0.09776148972959516,
-   "D_star": 0.15142025445545113,
-   "D_hash": 0.3780947099545726,
+   "x_m": 1.5489521777833015,
+   "y_m": -0.1683264536689091,
+   "D": 1.444223358630535,
+   "u_total": 0.253298521538958,
+   "D_star": 0.10842128413018982,
+   "D_hash": 0.2593392605988392,
    "location": {
-    "distance_from_door_m": 1.184,
-    "wall": "left wall",
-    "distance_from_wall_m": 0.317,
-    "text": "1.18 m from the door threshold, 0.32 m from the left wall"
+    "distance_from_door_m": 1.549,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.332,
+    "text": "1.55 m from the door threshold, 0.33 m from the right wall"
    }
   },
   {
    "id": "HS-0006",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 3,
-   "x_m": 1.6663475257037639,
-   "y_m": -0.3331969852618528,
-   "D": 0.1499313191078763,
-   "u_total": 0.11907343278850102,
-   "D_star": 0.19353691711458798,
-   "D_hash": 0.53338817136711,
+   "source_lane": 2,
+   "x_m": 1.8350556203350772,
+   "y_m": -0.24576585330338094,
+   "D": 0.03713199857306633,
+   "u_total": 0.16489686465570236,
+   "D_star": 0.255733857687631,
+   "D_hash": 0.7031723705250073,
    "location": {
-    "distance_from_door_m": 1.666,
+    "distance_from_door_m": 1.835,
     "wall": "right wall",
-    "distance_from_wall_m": 0.167,
-    "text": "1.67 m from the door threshold, 0.17 m from the right wall"
+    "distance_from_wall_m": 0.254,
+    "text": "1.84 m from the door threshold, 0.25 m from the right wall"
    }
   },
   {
    "id": "HS-0007",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 2,
-   "x_m": 2.5483099414475454,
-   "y_m": -0.20050541918603348,
-   "D": 0.18041942212474624,
-   "u_total": 0.14525694700005584,
-   "D_star": 0.22987846892285063,
-   "D_hash": 0.6107826423303343,
+   "source_lane": 1,
+   "x_m": 1.7412138668806896,
+   "y_m": 0.18973961567820158,
+   "D": 0.10484298514171614,
+   "u_total": 0.13505483635263088,
+   "D_star": 0.18924429458375003,
+   "D_hash": 0.505032644600965,
    "location": {
-    "distance_from_door_m": 2.548,
-    "wall": "right wall",
-    "distance_from_wall_m": 0.299,
-    "text": "2.55 m from the door threshold, 0.30 m from the right wall"
+    "distance_from_door_m": 1.741,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.31,
+    "text": "1.74 m from the door threshold, 0.31 m from the left wall"
    }
   },
   {
    "id": "HS-0008",
-   "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 0,
-   "x_m": 2.8220069534084815,
-   "y_m": -0.07078035086722771,
-   "D": 0.1792675046469663,
-   "u_total": 0.14596827254072453,
-   "D_star": 0.2289063804297506,
-   "D_hash": 0.6065868308479803,
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 3,
+   "x_m": 2.442743760711902,
+   "y_m": -0.23406722330909607,
+   "D": 0.27243836190963183,
+   "u_total": 0.16510898240053037,
+   "D_star": 0.2202859566051502,
+   "D_hash": 0.5711426696418618,
    "location": {
-    "distance_from_door_m": 2.822,
+    "distance_from_door_m": 2.443,
     "wall": "right wall",
-    "distance_from_wall_m": 0.429,
-    "text": "2.82 m from the door threshold, 0.43 m from the right wall"
+    "distance_from_wall_m": 0.266,
+    "text": "2.44 m from the door threshold, 0.27 m from the right wall"
    }
   },
   {
    "id": "HS-0009",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 2,
-   "x_m": 0.22097326547861093,
-   "y_m": -0.1310236882684327,
-   "D": 0.160565231751788,
-   "u_total": 0.11097737357176111,
-   "D_star": 0.17990719378407138,
-   "D_hash": 0.48316168147523797,
+   "source_lane": 1,
+   "x_m": 2.11182848200761,
+   "y_m": -0.1582476310243466,
+   "D": 0.2660804128765448,
+   "u_total": 0.19538540060825438,
+   "D_star": 0.22955411979387852,
+   "D_hash": 0.6077149547718935,
    "location": {
-    "distance_from_door_m": 0.221,
+    "distance_from_door_m": 2.112,
     "wall": "right wall",
-    "distance_from_wall_m": 0.369,
-    "text": "0.22 m from the door threshold, 0.37 m from the right wall"
+    "distance_from_wall_m": 0.342,
+    "text": "2.11 m from the door threshold, 0.34 m from the right wall"
    }
   },
   {
    "id": "HS-0010",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 3,
-   "x_m": 0.897448023779024,
-   "y_m": 0.02671347463926995,
-   "D": 0.12475743029133289,
-   "u_total": 0.12271003304666332,
-   "D_star": 0.1731248953946757,
-   "D_hash": 0.46996364617751774,
+   "source_lane": 2,
+   "x_m": 2.826631605579097,
+   "y_m": -0.2457318853228331,
+   "D": 0.12873602375800344,
+   "u_total": 0.12696231906284475,
+   "D_star": 0.22140526310541497,
+   "D_hash": 0.5885395208462253,
    "location": {
-    "distance_from_door_m": 0.897,
-    "wall": "left wall",
-    "distance_from_wall_m": 0.473,
-    "text": "0.90 m from the door threshold, 0.47 m from the left wall"
+    "distance_from_door_m": 2.827,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.254,
+    "text": "2.83 m from the door threshold, 0.25 m from the right wall"
    }
   },
   {
    "id": "HS-0011",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 0,
-   "x_m": 0.8212870449207097,
-   "y_m": 0.28919985449518854,
-   "D": 0.1560831010428166,
-   "u_total": 0.11247600009840318,
-   "D_star": 0.1772744810456296,
-   "D_hash": 0.474935796342772,
+   "x_m": 2.7990386327396433,
+   "y_m": -0.05729795131803834,
+   "D": 0.1993175553194971,
+   "u_total": 0.1438676048460587,
+   "D_star": 0.21258504247835688,
+   "D_hash": 0.5612578296052048,
    "location": {
-    "distance_from_door_m": 0.821,
-    "wall": "left wall",
-    "distance_from_wall_m": 0.211,
-    "text": "0.82 m from the door threshold, 0.21 m from the left wall"
+    "distance_from_door_m": 2.799,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.443,
+    "text": "2.80 m from the door threshold, 0.44 m from the right wall"
    }
   },
   {
    "id": "HS-0012",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 2,
-   "x_m": 1.8153685065472973,
-   "y_m": 0.11433080938559087,
-   "D": 0.04506230539483442,
-   "u_total": 0.2744124753501063,
-   "D_star": 0.2917227425476949,
-   "D_hash": 0.8685511391745462,
+   "source_lane": 0,
+   "x_m": 0.34873941199863057,
+   "y_m": 0.07074910833574959,
+   "D": 0.13418140066600934,
+   "u_total": 0.1529562923330768,
+   "D_star": 0.18859590435250767,
+   "D_hash": 0.517268738313599,
    "location": {
-    "distance_from_door_m": 1.815,
+    "distance_from_door_m": 0.349,
     "wall": "left wall",
-    "distance_from_wall_m": 0.386,
-    "text": "1.82 m from the door threshold, 0.39 m from the left wall"
+    "distance_from_wall_m": 0.429,
+    "text": "0.35 m from the door threshold, 0.43 m from the left wall"
    }
   },
   {
    "id": "HS-0013",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 2,
-   "x_m": 2.554329986816395,
-   "y_m": 0.11446449117462346,
-   "D": 0.11177542231385593,
-   "u_total": 0.13615943004370215,
-   "D_star": 0.21572970471146552,
-   "D_hash": 0.5634623194294393,
+   "source_lane": 0,
+   "x_m": 0.2543575420674806,
+   "y_m": -0.3061188330448023,
+   "D": 0.09937443694863429,
+   "u_total": 0.1482464725204898,
+   "D_star": 0.1924923765387132,
+   "D_hash": 0.5302259733376092,
    "location": {
-    "distance_from_door_m": 2.554,
-    "wall": "left wall",
-    "distance_from_wall_m": 0.386,
-    "text": "2.55 m from the door threshold, 0.39 m from the left wall"
+    "distance_from_door_m": 0.254,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.194,
+    "text": "0.25 m from the door threshold, 0.19 m from the right wall"
    }
   },
   {
    "id": "HS-0014",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 0,
-   "x_m": 2.8586535513753386,
-   "y_m": 0.29894914588597377,
-   "D": 0.1647254470481311,
-   "u_total": 0.14996039533969818,
-   "D_star": 0.21814645169707575,
-   "D_hash": 0.5623219317981689,
+   "source_lane": 2,
+   "x_m": 0.5080926587682828,
+   "y_m": 0.22159138795981387,
+   "D": 0.23634561390698175,
+   "u_total": 0.13299683673201898,
+   "D_star": 0.1831447195673708,
+   "D_hash": 0.5009121087245966,
    "location": {
-    "distance_from_door_m": 2.859,
+    "distance_from_door_m": 0.508,
     "wall": "left wall",
-    "distance_from_wall_m": 0.201,
-    "text": "2.86 m from the door threshold, 0.20 m from the left wall"
+    "distance_from_wall_m": 0.278,
+    "text": "0.51 m from the door threshold, 0.28 m from the left wall"
    }
   },
   {
    "id": "HS-0015",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 3,
-   "x_m": 1.8437114234254752,
-   "y_m": 0.333339076846024,
-   "D": 0.08676456831161236,
-   "u_total": 0.14187932877782408,
-   "D_star": 0.22048898106435272,
-   "D_hash": 0.5713786759762371,
+   "source_lane": 0,
+   "x_m": 2.489541114002396,
+   "y_m": 0.2894612961907189,
+   "D": 0.2303666729895916,
+   "u_total": 0.13793265146879866,
+   "D_star": 0.21930674501843223,
+   "D_hash": 0.5690245909675805,
    "location": {
-    "distance_from_door_m": 1.844,
+    "distance_from_door_m": 2.49,
     "wall": "left wall",
-    "distance_from_wall_m": 0.167,
-    "text": "1.84 m from the door threshold, 0.17 m from the left wall"
+    "distance_from_wall_m": 0.211,
+    "text": "2.49 m from the door threshold, 0.21 m from the left wall"
    }
   },
   {
    "id": "HS-0016",
-   "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 3,
-   "x_m": 2.0484919921381106,
-   "y_m": 0.3333559872971276,
-   "D": 0.08419106553560501,
-   "u_total": 0.13340058814886327,
-   "D_star": 0.21953716950835733,
-   "D_hash": 0.5692780105201547,
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 0,
+   "x_m": 2.825739066548187,
+   "y_m": 0.29782432603090814,
+   "D": 0.1388484385727913,
+   "u_total": 0.1227409907090118,
+   "D_star": 0.22444593833484433,
+   "D_hash": 0.5790305904955436,
    "location": {
-    "distance_from_door_m": 2.048,
+    "distance_from_door_m": 2.826,
     "wall": "left wall",
-    "distance_from_wall_m": 0.167,
-    "text": "2.05 m from the door threshold, 0.17 m from the left wall"
+    "distance_from_wall_m": 0.202,
+    "text": "2.83 m from the door threshold, 0.20 m from the left wall"
    }
   },
   {
    "id": "HS-0017",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 1,
-   "x_m": 0.37099100045360145,
-   "y_m": 0.1582593262901978,
-   "D": 0.19358384809523566,
-   "u_total": 0.14855589138448913,
-   "D_star": 0.22052153233597913,
-   "D_hash": 0.5882129061610483,
+   "source_lane": 3,
+   "x_m": 2.058008293006687,
+   "y_m": 0.33326374783018947,
+   "D": 0.10157538411128003,
+   "u_total": 0.1316971645021743,
+   "D_star": 0.21824115421460613,
+   "D_hash": 0.5664533885324265,
    "location": {
-    "distance_from_door_m": 0.371,
+    "distance_from_door_m": 2.058,
     "wall": "left wall",
-    "distance_from_wall_m": 0.342,
-    "text": "0.37 m from the door threshold, 0.34 m from the left wall"
+    "distance_from_wall_m": 0.167,
+    "text": "2.06 m from the door threshold, 0.17 m from the left wall"
    }
   },
   {
    "id": "HS-0018",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 3,
-   "x_m": 0.4401173534334021,
-   "y_m": 0.333262514194136,
-   "D": 0.13909400235999328,
-   "u_total": 0.1211393092963053,
-   "D_star": 0.19954888535417217,
-   "D_hash": 0.552286247551617,
+   "x_m": 1.07949579635793,
+   "y_m": 0.33324734159752983,
+   "D": 0.12975785758527586,
+   "u_total": 0.12588466031213935,
+   "D_star": 0.1887659589764888,
+   "D_hash": 0.503981867074567,
    "location": {
-    "distance_from_door_m": 0.44,
+    "distance_from_door_m": 1.079,
     "wall": "left wall",
     "distance_from_wall_m": 0.167,
-    "text": "0.44 m from the door threshold, 0.17 m from the left wall"
+    "text": "1.08 m from the door threshold, 0.17 m from the left wall"
+   }
+  },
+  {
+   "id": "HS-0019",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 3,
+   "x_m": 0.24352289882709474,
+   "y_m": 0.3248623838349786,
+   "D": 0.2983776004200085,
+   "u_total": 0.13263921089763456,
+   "D_star": 0.20145239915861396,
+   "D_hash": 0.5351094792345478,
+   "location": {
+    "distance_from_door_m": 0.244,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.175,
+    "text": "0.24 m from the door threshold, 0.18 m from the left wall"
    }
   }
  ],
@@ -427,109 +444,6 @@
  "observations": [
   {
    "id": "OBS-0001",
-   "flag": null,
-   "lane": 3,
-   "valid": true,
-   "invalid_reason": "COUNT_END",
-   "outcome": "INCONCLUSIVE",
-   "stage": "SCALER",
-   "mode": "PRESET_TIME",
-   "alpha": 0.00017096303211345723,
-   "beta": 0.05,
-   "n_gates": 99,
-   "pose": [
-    0.4341653547079962,
-    -0.20200192896058392,
-    8.949159781711992e-05
-   ],
-   "target_xy": [
-    0.5636596002537331,
-    -0.33324030024524254
-   ],
-   "achieved_xy": [
-    0.5653770999548202,
-    -0.333240187137392
-   ],
-   "t_end_us": 1024341000,
-   "lanes": [
-    {
-     "lane": 0,
-     "D": -0.014996743799556556,
-     "u_stat": 0.04105325033626858,
-     "u_total": 0.04157057941218594,
-     "D_star": 0.1503389532387277,
-     "D_hash": 0.2516534854294971,
-     "T_F": 9.89109,
-     "detected": false,
-     "method": "poisson-exact",
-     "N_F": 45,
-     "N_U": 44,
-     "U0": 4.319477661480281,
-     "u0_method": "four-lane-pooled-same-gates",
-     "envelope_ok": true
-    },
-    {
-     "lane": 1,
-     "D": -0.035649225104026495,
-     "u_stat": 0.040197513905228285,
-     "u_total": 0.041043235725201015,
-     "D_star": 0.14612201102801634,
-     "D_hash": 0.24429761404867556,
-     "T_F": 9.89109,
-     "detected": false,
-     "method": "poisson-exact",
-     "N_F": 45,
-     "N_U": 47,
-     "U0": 4.319477661480281,
-     "u0_method": "four-lane-pooled-same-gates",
-     "envelope_ok": true
-    },
-    {
-     "lane": 2,
-     "D": -0.022984799446918155,
-     "u_stat": 0.03884530587995094,
-     "u_total": 0.03942851497341378,
-     "D_star": 0.14430448494994666,
-     "D_hash": 0.24156279273955647,
-     "T_F": 9.89109,
-     "detected": false,
-     "method": "poisson-exact",
-     "N_F": 43,
-     "N_U": 44,
-     "U0": 4.319477661480281,
-     "u0_method": "four-lane-pooled-same-gates",
-     "envelope_ok": true
-    },
-    {
-     "lane": 3,
-     "D": 0.009658874367594793,
-     "u_stat": 0.039502409837943064,
-     "u_total": 0.03988425041483527,
-     "D_star": 0.1539377658192597,
-     "D_hash": 0.2576159566839439,
-     "T_F": 9.89109,
-     "detected": false,
-     "method": "poisson-exact",
-     "N_F": 43,
-     "N_U": 36,
-     "U0": 4.319477661480281,
-     "u0_method": "four-lane-pooled-same-gates",
-     "envelope_ok": true
-    }
-   ],
-   "result": {
-    "D": 0.009658874367594793,
-    "u_stat": 0.039502409837943064,
-    "u_total": 0.03988425041483527,
-    "D_star": 0.1539377658192597,
-    "D_hash": 0.2576159566839439,
-    "T_F": 9.89109,
-    "detected": false,
-    "method": "poisson-exact"
-   }
-  },
-  {
-   "id": "OBS-0002",
    "flag": null,
    "lane": 1,
    "valid": true,
@@ -541,91 +455,91 @@
    "beta": 0.05,
    "n_gates": 99,
    "pose": [
-    1.4418735721200018,
-    -0.20195233238877952,
-    0.0005436509219171728
+    1.4251893979714418,
+    -0.2019875382775638,
+    -0.00016306788174045206
    ],
    "target_xy": [
-    1.5714084641611357,
-    -0.15827447822365082
+    1.5548691279984617,
+    -0.15830070067695345
    ],
    "achieved_xy": [
-    1.573049768004845,
-    -0.15813101185663198
+    1.5563965304468579,
+    -0.1582589333652344
    ],
-   "t_end_us": 1054201000,
+   "t_end_us": 1034781000,
    "lanes": [
     {
      "lane": 0,
-     "D": 0.12399162195884142,
-     "u_stat": 0.04744491317293731,
-     "u_total": 0.051314137276729475,
-     "D_star": 0.15365755723014138,
-     "D_hash": 0.25684766080635807,
+     "D": -0.019286196494756904,
+     "u_stat": 0.039406643612282403,
+     "u_total": 0.03993259896009085,
+     "D_star": 0.14737925771597693,
+     "D_hash": 0.2470197246492997,
      "T_F": 9.89109,
      "detected": false,
      "method": "poisson-exact",
-     "N_F": 76,
-     "N_U": 43,
-     "U0": 4.521558487748365,
+     "N_F": 41,
+     "N_U": 41,
+     "U0": 4.142656938495708,
      "u0_method": "four-lane-pooled-same-gates",
      "envelope_ok": true
     },
     {
      "lane": 1,
-     "D": 1.5515532742005995,
-     "u_stat": 0.08820068608632788,
-     "u_total": 0.2489365944262889,
-     "D_star": 0.14932041178024907,
-     "D_hash": 0.24930460233571444,
+     "D": 1.7530914633725776,
+     "u_stat": 0.09413216871684159,
+     "u_total": 0.27936552043447677,
+     "D_star": 0.14327024857704798,
+     "D_hash": 0.2398319277147734,
      "T_F": 9.89109,
      "detected": true,
      "method": "poisson-exact",
-     "N_F": 418,
-     "N_U": 36,
-     "U0": 4.521558487748365,
+     "N_F": 474,
+     "N_U": 43,
+     "U0": 4.142656938495708,
      "u0_method": "four-lane-pooled-same-gates",
      "envelope_ok": true
     },
     {
      "lane": 2,
-     "D": -0.043095198297077454,
-     "u_stat": 0.04203817455806995,
-     "u_total": 0.04309994617229218,
-     "D_star": 0.14743027039800213,
-     "D_hash": 0.24645728358755492,
+     "D": 0.009572770172680892,
+     "u_stat": 0.03513614194187707,
+     "u_total": 0.03544893605215464,
+     "D_star": 0.14151780475188028,
+     "D_hash": 0.23719795057608617,
      "T_F": 9.89109,
      "detected": false,
      "method": "poisson-exact",
-     "N_F": 48,
-     "N_U": 54,
-     "U0": 4.521558487748365,
+     "N_F": 39,
+     "N_U": 32,
+     "U0": 4.142656938495708,
      "u0_method": "four-lane-pooled-same-gates",
      "envelope_ok": true
     },
     {
      "lane": 3,
-     "D": 0.036042868990857756,
-     "u_stat": 0.04553722658701614,
-     "u_total": 0.046320461295875345,
-     "D_star": 0.15732058436772972,
-     "D_hash": 0.2629111689838865,
+     "D": 0.02269578254839813,
+     "u_stat": 0.0457569187027241,
+     "u_total": 0.04638249562502197,
+     "D_star": 0.150921125634234,
+     "D_hash": 0.25289254445122517,
      "T_F": 9.89109,
      "detected": false,
      "method": "poisson-exact",
-     "N_F": 59,
-     "N_U": 46,
-     "U0": 4.521558487748365,
+     "N_F": 58,
+     "N_U": 48,
+     "U0": 4.142656938495708,
      "u0_method": "four-lane-pooled-same-gates",
      "envelope_ok": true
     }
    ],
    "result": {
-    "D": 1.5515532742005995,
-    "u_stat": 0.08820068608632788,
-    "u_total": 0.2489365944262889,
-    "D_star": 0.14932041178024907,
-    "D_hash": 0.24930460233571444,
+    "D": 1.7530914633725776,
+    "u_stat": 0.09413216871684159,
+    "u_total": 0.27936552043447677,
+    "D_star": 0.14327024857704798,
+    "D_hash": 0.2398319277147734,
     "T_F": 9.89109,
     "detected": true,
     "method": "poisson-exact"
@@ -635,73 +549,56 @@
  "policy": "INLINE",
  "alarms": [
   {
-   "lane": 3,
-   "xy": [
-    0.5636596002537331,
-    -0.33324030024524254
-   ],
-   "pose": [
-    0.432452201857535,
-    -0.20199769623990677,
-    5.637032116866915e-05
-   ],
-   "D_search": 0.3306099335893532,
-   "task": "T000",
-   "t_us": 1007600000,
-   "ev": "search_alarm",
-   "state": "SCAN"
-  },
-  {
    "lane": 1,
    "xy": [
-    1.5714084641611357,
-    -0.15827447822365082
+    1.5548691279984617,
+    -0.15830070067695345
    ],
    "pose": [
-    1.4401864454132127,
-    -0.20195839168981974,
-    -0.0005036660623931748
+    1.4236530500560107,
+    -0.2020024556691806,
+    -0.00036769856182272047
    ],
-   "D_search": 1.2421405603273663,
+   "D_search": 1.7339509280026535,
    "task": "T000",
-   "t_us": 1037100000,
+   "t_us": 1017695000,
    "ev": "search_alarm",
    "state": "SCAN"
   }
  ],
  "ratemeter": {
   "0": {
-   "rate": 0.0,
-   "net": -2.4420030009002702,
-   "alarm_level": 19.017376554250877,
+   "rate": 1.0009008107296566,
+   "net": -2.4461036906207485,
+   "alarm_level": 18.71821869441117,
    "alarm": false,
-   "D": -0.10489703612114562,
-   "t_us": 1248174389.3185136
+   "D": -0.1050731825868019,
+   "t_us": 1228974773.3108337
   },
   "1": {
-   "rate": 1.0009008107296566,
-   "net": -0.5629080719351429,
-   "alarm_level": 20.16907328935055,
+   "rate": 6.00540486437794,
+   "net": -2.7656661969404563,
+   "alarm_level": 20.00209763626091,
    "alarm": false,
-   "D": -0.022994610781664336,
-   "t_us": 1248174389.3185136
+   "D": -0.11297656033253498,
+   "t_us": 1228974773.3108337
   },
   "2": {
-   "rate": 3.00270243218897,
-   "net": -2.4397649780340966,
-   "alarm_level": 18.46698933662805,
+   "rate": 2.0018016214593133,
+   "net": -3.4406657887637535,
+   "alarm_level": 19.860154065664243,
    "alarm": false,
-   "D": -0.10165687408475403,
-   "t_us": 1248174389.3185136
+   "D": -0.14336107453182306,
+   "t_us": 1228974773.3108337
   },
   "3": {
-   "rate": 4.003603242918627,
-   "net": -0.48930383920601134,
-   "alarm_level": 20.28139158300105,
+   "rate": 3.00270243218897,
+   "net": -2.4961064204668273,
+   "alarm_level": 18.7559559766294,
    "alarm": false,
-   "D": -0.02146069470201804,
-   "t_us": 1248174389.3185136
+   "D": -0.10947835177486084,
+   "t_us": 1228974773.3108337
   }
  },
- "false_alarm_counts": 1
+ "false_alarm_counts": 0
 }

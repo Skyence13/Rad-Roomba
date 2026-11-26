@@ -3,7 +3,7 @@
  "evidence_class": "simulated",
  "against": "Python protocol fakes (rr_core.fakes), virtual clock",
  "seed": 21,
- "sim_time_s": 244.22,
+ "sim_time_s": 254.48,
  "checks": [
   {
    "check": "mission complete",
@@ -11,9 +11,37 @@
   },
   {
    "check": "ratemeter alarm at the hot spot",
-   "ok": false,
-   "alarms": 2,
+   "ok": true,
+   "alarms": 1,
    "observations": 1
+  },
+  {
+   "check": "alarming lane parked over the spot for the count (within 30 mm of the patch centre along track)",
+   "ok": true,
+   "achieved": [
+    1.553098978739987,
+    -0.1582500665751307
+   ]
+  },
+  {
+   "check": "scaler count valid (stationary, no stop event inside) and decided at alpha_recount",
+   "ok": true,
+   "outcome": "EXCEEDS_INVESTIGATION_LEVEL",
+   "result": {
+    "D": 1.9999406086996152,
+    "u_stat": 0.10082209964915737,
+    "u_total": 0.3165536128327811,
+    "D_star": 0.15743542149272047,
+    "D_hash": 0.26200182982366366,
+    "T_F": 9.89109,
+    "detected": true,
+    "method": "poisson-exact"
+   }
+  },
+  {
+   "check": "scaler result consistent with the injected patch (lane-average 2.0 Bq/cm2 +/- 30 %)",
+   "ok": true,
+   "D": 1.9999406086996152
   },
   {
    "check": "floor that only saw the search stage is reported with stage SEARCH",
@@ -28,7 +56,7 @@
    "ok": true
   }
  ],
- "passed": false,
+ "passed": true,
  "field_use_approved": false,
  "coverage": {
   "target_area_m2": 3.0,
@@ -48,21 +76,21 @@
  },
  "time_sync": {
   "limit_us": 10000.0,
-  "fits": 127,
+  "fits": 132,
   "max_gate_bound_us": 838.0520796923137,
-  "median_gate_bound_us": 798.7247256246972
+  "median_gate_bound_us": 798.7115257694865
  },
  "link_stats": {
-  "tx": 12257,
-  "rx": 12254,
+  "tx": 12774,
+  "rx": 12771,
   "bad_lines": 0,
   "stale": 0,
   "duplicates": 0,
-  "gates": 2423,
+  "gates": 2525,
   "gaps": 0,
   "retries": 2,
   "unassigned_frames": 0,
-  "time_exchanges": 127,
+  "time_exchanges": 132,
   "time_exchanges_rejected": 0
  },
  "localization_error_vs_truth_m": {
@@ -485,126 +513,109 @@
   {
    "id": "OBS-0001",
    "flag": null,
-   "lane": 3,
+   "lane": 1,
    "valid": true,
    "invalid_reason": "COUNT_END",
-   "outcome": "INCONCLUSIVE",
+   "outcome": "EXCEEDS_INVESTIGATION_LEVEL",
    "stage": "SCALER",
    "mode": "PRESET_TIME",
    "alpha": 0.00017096303211345723,
    "beta": 0.05,
    "n_gates": 99,
    "pose": [
-    0.43050496439246494,
-    -0.20172199793717685,
-    -0.010991899050849003
+    1.4218723651941718,
+    -0.20192017531437367,
+    -0.0006088655202263549
    ],
    "target_xy": [
-    0.5636596002537331,
-    -0.33324030024524254
+    1.5548691279984617,
+    -0.15830070067695345
    ],
    "achieved_xy": [
-    0.5602543808599977,
-    -0.3344061771988158
+    1.553098978739987,
+    -0.1582500665751307
    ],
-   "t_end_us": 1244141000,
+   "t_end_us": 1254421000,
    "lanes": [
     {
      "lane": 0,
-     "D": 0.0023923704209956606,
-     "u_stat": 0.041508250484988525,
-     "u_total": 0.04194366796070159,
-     "D_star": 0.1524208093356932,
-     "D_hash": 0.25491212110605843,
+     "D": 0.0023034075595530818,
+     "u_stat": 0.04372997715895555,
+     "u_total": 0.04423078688420081,
+     "D_star": 0.1620738790621108,
+     "D_hash": 0.2700141322230246,
      "T_F": 9.89109,
      "detected": false,
      "method": "poisson-exact",
-     "N_F": 48,
-     "N_U": 43,
-     "U0": 4.445778177897833,
+     "N_F": 53,
+     "N_U": 48,
+     "U0": 5.052020656702084,
      "u0_method": "four-lane-pooled-same-gates",
      "envelope_ok": true
     },
     {
      "lane": 1,
-     "D": -0.019129438830677678,
-     "u_stat": 0.041037372708182744,
-     "u_total": 0.0416222544735569,
-     "D_star": 0.14812836230840382,
-     "D_hash": 0.24743867013623075,
+     "D": 1.9999406086996152,
+     "u_stat": 0.10082209964915737,
+     "u_total": 0.3165536128327811,
+     "D_star": 0.15743542149272047,
+     "D_hash": 0.26200182982366366,
      "T_F": 9.89109,
-     "detected": false,
+     "detected": true,
      "method": "poisson-exact",
-     "N_F": 49,
-     "N_U": 47,
-     "U0": 4.445778177897833,
+     "N_F": 542,
+     "N_U": 51,
+     "U0": 5.052020656702084,
      "u0_method": "four-lane-pooled-same-gates",
      "envelope_ok": true
     },
     {
      "lane": 2,
-     "D": 0.04355883276482053,
-     "u_stat": 0.038478645974323177,
-     "u_total": 0.03932345580721115,
-     "D_star": 0.1462652400954121,
-     "D_hash": 0.24463320794664375,
+     "D": -0.010537628677478395,
+     "u_stat": 0.038636754545737166,
+     "u_total": 0.0390699507676262,
+     "D_star": 0.15536261921053796,
+     "D_hash": 0.25887160304109247,
      "T_F": 9.89109,
      "detected": false,
      "method": "poisson-exact",
-     "N_F": 50,
-     "N_U": 35,
-     "U0": 4.445778177897833,
+     "N_F": 44,
+     "N_U": 42,
+     "U0": 5.052020656702084,
      "u0_method": "four-lane-pooled-same-gates",
      "envelope_ok": true
     },
     {
      "lane": 3,
-     "D": -0.04388456053307163,
-     "u_stat": 0.043787243733458533,
-     "u_total": 0.04485506424543656,
-     "D_star": 0.1560598620714915,
-     "D_hash": 0.26093791445853487,
+     "D": -0.06623309735772298,
+     "u_stat": 0.046208090889891834,
+     "u_total": 0.04796728774539814,
+     "D_star": 0.16590132594425075,
+     "D_hash": 0.27633608367327434,
      "T_F": 9.89109,
      "detected": false,
      "method": "poisson-exact",
-     "N_F": 46,
-     "N_U": 51,
-     "U0": 4.445778177897833,
+     "N_F": 49,
+     "N_U": 59,
+     "U0": 5.052020656702084,
      "u0_method": "four-lane-pooled-same-gates",
      "envelope_ok": true
     }
    ],
    "result": {
-    "D": -0.04388456053307163,
-    "u_stat": 0.043787243733458533,
-    "u_total": 0.04485506424543656,
-    "D_star": 0.1560598620714915,
-    "D_hash": 0.26093791445853487,
+    "D": 1.9999406086996152,
+    "u_stat": 0.10082209964915737,
+    "u_total": 0.3165536128327811,
+    "D_star": 0.15743542149272047,
+    "D_hash": 0.26200182982366366,
     "T_F": 9.89109,
-    "detected": false,
+    "detected": true,
     "method": "poisson-exact"
    }
   }
  ],
  "policy": "DEFERRED",
  "alarms": [
-  {
-   "lane": 3,
-   "xy": [
-    0.5636596002537331,
-    -0.33324030024524254
-   ],
-   "pose": [
-    0.432452201857535,
-    -0.20199769623990677,
-    5.637032116866915e-05
-   ],
-   "D_search": 0.3306099335893532,
-   "task": "T000",
-   "t_us": 1007600000,
-   "ev": "search_alarm",
-   "state": "SCAN"
-  },
   {
    "lane": 1,
    "xy": [
@@ -625,37 +636,37 @@
  ],
  "ratemeter": {
   "0": {
-   "rate": 5.004504053648284,
-   "net": -0.4525034486023914,
-   "alarm_level": 18.446146249878907,
+   "rate": 2.0018016214593133,
+   "net": -1.445202879891092,
+   "alarm_level": 20.585661887707264,
    "alarm": false,
-   "D": -0.01943743335920925,
-   "t_us": 1244174469.3169134
+   "D": -0.062079161507349316,
+   "t_us": 1254374265.3209937
   },
   "1": {
-   "rate": 3.00270243218897,
-   "net": -3.7091508637998274,
-   "alarm_level": 18.17359459037742,
-   "alarm": false,
-   "D": -0.15151760064541778,
-   "t_us": 1244174469.3169134
+   "rate": 46.04143729356421,
+   "net": 37.27036623224581,
+   "alarm_level": 19.89644490786493,
+   "alarm": true,
+   "D": 1.5224822807289955,
+   "t_us": 1254374265.3209937
   },
   "2": {
-   "rate": 4.003603242918627,
-   "net": -0.46059068525982705,
-   "alarm_level": 18.31587200721203,
+   "rate": 5.004504053648284,
+   "net": -2.3945103206640104,
+   "alarm_level": 18.90194259093016,
    "alarm": false,
-   "D": -0.019191278552492794,
-   "t_us": 1244174469.3169134
+   "D": -0.09977126336100044,
+   "t_us": 1254374265.3209937
   },
   "3": {
    "rate": 5.004504053648284,
-   "net": 0.5115969715236459,
-   "alarm_level": 19.698977631358712,
+   "net": -2.5061083400698325,
+   "alarm_level": 20.098249386692203,
    "alarm": false,
-   "D": 0.022438463663317802,
-   "t_us": 1244174469.3169134
+   "D": -0.10991703245920317,
+   "t_us": 1254374265.3209937
   }
  },
- "false_alarm_counts": 1
+ "false_alarm_counts": 0
 }

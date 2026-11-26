@@ -112,8 +112,8 @@ g.L("L1", "10u", "SW", "VOUT", pkg="0805", mfr="...", mpn="...")
 g.LED("D1", "green", "LED_A", "GND", pkg="0603", mfr="...", mpn="...")       # anode, cathode
 # R/C/L/FB/LED accept every part() keyword (at=, near=, dnp=, ...).  pkg: 0201 0402 0603 0805 1206 1210 2010 2512
 
-# identical blocks: place (or auto-arrange) one block, copy its PLACEMENT at an offset
-# (routes are not copied: each copy is routed by the autorouter)
+# identical blocks: place (or auto-arrange) one block, copy its placement AND routing at an offset
+# (see "Replicating blocks" below)
 # board.replicate((lane1_group, lane2_group), dx=80.0, dy=0.0)     # groups with the same parts in the same order
 # board.replicate({"U1": "U101", "C1": "C101"}, dx=80.0)          # or an explicit {source_ref: destination_ref} map
 
@@ -232,6 +232,24 @@ classes on top (first matching pattern wins).
   hash). Keep both under version control: with an unchanged definition the build
   re-uses them and reproduces the same PCB. `route/<name>.unrouted.kicad_pcb` is an
   intermediate file and need not be kept.
+
+## Replicating blocks (identical lanes/channels)
+`board.replicate(pairs, dx, dy, routes=True)` — `pairs` is `{source_ref: destination_ref}`
+or a `(source_group, destination_group)` tuple (same parts in the same order).
+* Placement: every destination part takes its source's position + (dx, dy), same rotation
+  and side. The source block may be placed explicitly or auto-arranged; destinations
+  are excluded from auto-arrange. Call it once per copy (lane 0 → 1, 0 → 2, 0 → 3).
+* Routing (`routes=True`, default): after each routed build the tracks/vias of the
+  **block-internal nets** (nets whose pins all belong to the source parts; rails and
+  inter-block nets are excluded) are stored in `route/blocks.json`. The *next* build adds
+  them as fixed pre-routes for the source block and, shifted and renamed, for each copy.
+  So: build once (autorouter routes everything), build again (blocks frozen and
+  identical; the autorouter only has plane leftovers and inter-block nets). If the
+  source placement changes, the stored routes are ignored with a note and refreshed by
+  the next build. Keep `route/blocks.json` under version control.
+* Plane fan-out is generated per pad for the copies as usual; overlaps of a copy with
+  foreign parts or tracks show up in DRC, they are not checked at copy time.
+Tested on `tools/eda/tests/replicate/` (2 lanes, 2 layers); not yet on a large board.
 
 ## Importing a stage-1 circuit definition
 `rrkicad.importer.from_circuit(board, "design/circuit.py", ...)` converts a tool-neutral

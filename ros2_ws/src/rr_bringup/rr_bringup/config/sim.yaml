@@ -1,0 +1,11 @@
+# Simulation configuration (RobotApp config; all values are simulation/design values).
+trailer: {id: SIM-SECTION-3.0x1.2, length_m: 3.0, width_m: 1.2, door_closed: true, keepouts: []}
+profile_id: ore-floor-demo-synthetic        # synthetic, field_use_approved: false
+mode: COMMISSIONING
+op_mode: COMMISSIONING
+survey: {sub_res: 0.005, cell_m: 0.10, position_allowance_m: 0.010}
+mission: {method: CONTINUOUS_SCAN, speed: 0.10}   # CONTINUOUS_SCAN | SEARCH_THEN_COUNT | STEP_AND_COUNT
+mover: {patience_s: 10.0}
+link: {}                                    # HeadLinkConfig overrides; use byte_time_us: 0 for TCP emulators
+lidar: {range_max: 12.0}
+simulated: true

@@ -146,6 +146,64 @@ class TcpTransport(Transport):
             self._sock = None
 
 
+class TcpListenTransport(Transport):
+    """Device side of a TCP link (Python fakes serving the emulator ports): one client."""
+
+    def __init__(self, host: str, port: int):
+        self.url = f"tcp-listen://{host}:{port}"
+        self._srv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self._srv.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self._srv.bind((host, port))
+        self._srv.listen(1)
+        self._srv.setblocking(False)
+        self._conn = None
+
+    def _accept(self):
+        try:
+            conn, _ = self._srv.accept()
+        except (BlockingIOError, InterruptedError):
+            return
+        if self._conn is not None:
+            self._conn.close()
+        conn.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+        conn.setblocking(False)
+        self._conn = conn
+
+    def read(self) -> bytes:
+        self._accept()
+        if self._conn is None:
+            return b""
+        try:
+            data = self._conn.recv(65536)
+        except (BlockingIOError, InterruptedError):
+            return b""
+        except OSError:
+            data = b""
+        if data == b"":
+            self._conn.close()
+            self._conn = None
+        return data
+
+    def write(self, data: bytes) -> None:
+        if self._conn is None:
+            return
+        try:
+            self._conn.setblocking(True)
+            self._conn.settimeout(0.5)
+            self._conn.sendall(data)
+            self._conn.setblocking(False)
+        except OSError:
+            self._conn = None
+
+    def close(self) -> None:
+        for sock in (self._conn, self._srv):
+            try:
+                if sock is not None:
+                    sock.close()
+            except OSError:
+                pass
+
+
 class SerialTransport(Transport):
     def __init__(self, device: str, baud: int, url: str = ""):
         self.device, self.baud, self.url = device, baud, url

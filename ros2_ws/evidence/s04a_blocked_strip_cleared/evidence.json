@@ -3,7 +3,7 @@
  "evidence_class": "simulated",
  "against": "Python protocol fakes (rr_core.fakes), virtual clock",
  "seed": 14,
- "sim_time_s": 441.2,
+ "sim_time_s": 465.98,
  "checks": [
   {
    "check": "strip deferred with withheld credit",
@@ -30,8 +30,8 @@
   {
    "check": "no BLOCKED residual remains inside the band",
    "ok": true,
-   "before": 1.012675,
-   "after": 0.078
+   "before": 1.019425,
+   "after": 0.052425
   },
   {
    "check": "all tasks done",
@@ -43,14 +43,14 @@
  "coverage": {
   "target_area_m2": 4.8,
   "areas_m2": {
-   "UNVISITED": 1.4932,
+   "UNVISITED": 1.172275,
    "ACCEPTABLE": 0.0,
-   "INSUFFICIENT_SENSITIVITY": 3.2288,
+   "INSUFFICIENT_SENSITIVITY": 3.5767,
    "INVALID_DATA": 0.0,
-   "BLOCKED": 0.078,
+   "BLOCKED": 0.051025,
    "EXCLUDED": 0.0
   },
-  "valid_exposure_fraction": 0.6726666666666667,
+  "valid_exposure_fraction": 0.7451458333333334,
   "acceptable_fraction": 0.0,
   "sub_cell_m": 0.005,
   "decision_cell_m": 0.1,
@@ -58,588 +58,588 @@
  },
  "time_sync": {
   "limit_us": 10000.0,
-  "fits": 226,
-  "max_gate_bound_us": 836.9404311515593,
-  "median_gate_bound_us": 796.6647669430804
+  "fits": 238,
+  "max_gate_bound_us": 838.0520796923137,
+  "median_gate_bound_us": 796.6463671918655
  },
  "link_stats": {
-  "tx": 22239,
-  "rx": 22239,
+  "tx": 23456,
+  "rx": 23452,
   "bad_lines": 0,
   "stale": 0,
   "duplicates": 0,
-  "gates": 4400,
+  "gates": 4640,
   "gaps": 0,
-  "retries": 0,
+  "retries": 2,
   "unassigned_frames": 0,
-  "time_exchanges": 226,
+  "time_exchanges": 238,
   "time_exchanges_rejected": 0
  },
  "localization_error_vs_truth_m": {
-  "max_x_m": 0.0016118182247109591,
-  "max_y_m": 0.001260800173716492
+  "max_x_m": 0.0016576746453684787,
+  "max_y_m": 0.0012251712127259728
  },
  "plan": {
   "n_pairs": 4,
   "offset_m": 0.04375,
-  "pair_stride_m": 0.2937,
+  "pair_stride_m": 0.32008,
   "seam_overlap_per_side_m": 0.01625,
   "predicted_residual": {
-   "left_wall_strip_m": 0.1763,
-   "right_wall_strip_m": 0.1763,
+   "left_wall_strip_m": 0.1367,
+   "right_wall_strip_m": 0.1368,
    "door_end_strip_m": 0.121,
    "front_end_strip_m": 0.051,
    "end_zone_single_heading_m": {
-    "door": 0.4606,
-    "front": 0.4606
+    "door": 0.3482,
+    "front": 0.3482
    },
    "note": "wall strips are set by the in-place turn radius of the outline; see README coverage section"
   },
-  "estimated_time_s": 474.7
+  "estimated_time_s": 498.6
  },
  "flags": [
   {
    "id": "HS-0001",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 2,
-   "x_m": 0.8130750151081398,
-   "y_m": -0.5061022043523097,
-   "D": 0.13264212833251043,
-   "u_total": 0.11589404407599899,
-   "D_star": 0.19141020659744776,
-   "D_hash": 0.5111476190492227,
+   "source_lane": 0,
+   "x_m": 0.7543320703491915,
+   "y_m": -0.5225114502578605,
+   "D": 0.15891010916300158,
+   "u_total": 0.127183864065828,
+   "D_star": 0.18777219584439112,
+   "D_hash": 0.5021695628958521,
    "location": {
-    "distance_from_door_m": 0.813,
+    "distance_from_door_m": 0.754,
     "wall": "right wall",
-    "distance_from_wall_m": 0.294,
-    "text": "0.81 m from the door threshold, 0.29 m from the right wall"
+    "distance_from_wall_m": 0.277,
+    "text": "0.75 m from the door threshold, 0.28 m from the right wall"
    }
   },
   {
    "id": "HS-0002",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 3,
-   "x_m": 1.9477996226711756,
-   "y_m": -0.5936473079494323,
-   "D": 0.28741419555070435,
-   "u_total": 0.13865025879286824,
-   "D_star": 0.2264387199622262,
-   "D_hash": 0.581632604189073,
+   "x_m": 1.0275289263222174,
+   "y_m": -0.6331657529610175,
+   "D": 0.08010567735622312,
+   "u_total": 0.13956819577417487,
+   "D_star": 0.2320978971023285,
+   "D_hash": 0.6100604072118541,
    "location": {
-    "distance_from_door_m": 1.948,
+    "distance_from_door_m": 1.028,
     "wall": "right wall",
-    "distance_from_wall_m": 0.206,
-    "text": "1.95 m from the door threshold, 0.21 m from the right wall"
+    "distance_from_wall_m": 0.167,
+    "text": "1.03 m from the door threshold, 0.17 m from the right wall"
    }
   },
   {
    "id": "HS-0003",
-   "kind": "INVESTIGATION_LEVEL",
-   "source_lane": 3,
-   "x_m": 2.3102017571354114,
-   "y_m": -0.33253041269193306,
-   "D": 0.21632201018114677,
-   "u_total": 0.10428065206551453,
-   "D_star": 0.14512400854327173,
-   "D_hash": 0.3645190270580927,
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 1,
+   "x_m": 1.0584130947050174,
+   "y_m": -0.4628374425467281,
+   "D": 0.15437010107749616,
+   "u_total": 0.11466319494097213,
+   "D_star": 0.16788720593053408,
+   "D_hash": 0.43778443397252526,
    "location": {
-    "distance_from_door_m": 2.31,
+    "distance_from_door_m": 1.058,
     "wall": "right wall",
-    "distance_from_wall_m": 0.467,
-    "text": "2.31 m from the door threshold, 0.47 m from the right wall"
+    "distance_from_wall_m": 0.337,
+    "text": "1.06 m from the door threshold, 0.34 m from the right wall"
    }
   },
   {
    "id": "HS-0004",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 1,
-   "x_m": 1.1998526702209897,
-   "y_m": -0.44048674803932725,
-   "D": 0.1626645407923667,
-   "u_total": 0.09551085156514169,
-   "D_star": 0.1426817118917981,
-   "D_hash": 0.3587504918710707,
+   "source_lane": 3,
+   "x_m": 1.3907458432602575,
+   "y_m": -0.6331778091192491,
+   "D": 0.2154246195022559,
+   "u_total": 0.13266984938460138,
+   "D_star": 0.1931864687950909,
+   "D_hash": 0.5151566371481696,
    "location": {
-    "distance_from_door_m": 1.2,
+    "distance_from_door_m": 1.391,
     "wall": "right wall",
-    "distance_from_wall_m": 0.36,
-    "text": "1.20 m from the door threshold, 0.36 m from the right wall"
+    "distance_from_wall_m": 0.167,
+    "text": "1.39 m from the door threshold, 0.17 m from the right wall"
    }
   },
   {
    "id": "HS-0005",
-   "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 2,
-   "x_m": 2.7578576635601886,
-   "y_m": -0.5062004097331965,
-   "D": 0.11861802783896808,
-   "u_total": 0.1306143264559995,
-   "D_star": 0.19199114310507903,
-   "D_hash": 0.5119392040065083,
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 3,
+   "x_m": 1.8670674943234937,
+   "y_m": -0.6332067670579055,
+   "D": 0.2657408135074328,
+   "u_total": 0.13475198435954241,
+   "D_star": 0.18958895013021484,
+   "D_hash": 0.5064994963267453,
    "location": {
-    "distance_from_door_m": 2.758,
+    "distance_from_door_m": 1.867,
     "wall": "right wall",
-    "distance_from_wall_m": 0.294,
-    "text": "2.76 m from the door threshold, 0.29 m from the right wall"
+    "distance_from_wall_m": 0.167,
+    "text": "1.87 m from the door threshold, 0.17 m from the right wall"
    }
   },
   {
    "id": "HS-0006",
-   "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 0,
-   "x_m": 1.9570647179574916,
-   "y_m": -0.3311503752332751,
-   "D": 0.13960000426479713,
-   "u_total": 0.15600589548471258,
-   "D_star": 0.1896816226457485,
-   "D_hash": 0.513035692375757,
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 3,
+   "x_m": 2.2040981382300684,
+   "y_m": -0.63321958841644,
+   "D": 0.3517654110636092,
+   "u_total": 0.1443786608926313,
+   "D_star": 0.21953608672232983,
+   "D_hash": 0.5699676064748334,
    "location": {
-    "distance_from_door_m": 1.957,
+    "distance_from_door_m": 2.204,
     "wall": "right wall",
-    "distance_from_wall_m": 0.469,
-    "text": "1.96 m from the door threshold, 0.47 m from the right wall"
+    "distance_from_wall_m": 0.167,
+    "text": "2.20 m from the door threshold, 0.17 m from the right wall"
    }
   },
   {
    "id": "HS-0007",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 0,
-   "x_m": 0.45929412901884786,
-   "y_m": -0.5499474954727032,
-   "D": 0.2085881407613807,
-   "u_total": 0.13633406827170239,
-   "D_star": 0.24072001888748298,
-   "D_hash": 0.6376238600379581,
+   "x_m": 1.88695705633457,
+   "y_m": -0.37070730849137945,
+   "D": 0.22099139837508053,
+   "u_total": 0.14784568579098986,
+   "D_star": 0.23954911976205906,
+   "D_hash": 0.6351268545168377,
    "location": {
-    "distance_from_door_m": 0.459,
+    "distance_from_door_m": 1.887,
     "wall": "right wall",
-    "distance_from_wall_m": 0.25,
-    "text": "0.46 m from the door threshold, 0.25 m from the right wall"
+    "distance_from_wall_m": 0.429,
+    "text": "1.89 m from the door threshold, 0.43 m from the right wall"
    }
   },
   {
    "id": "HS-0008",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 3,
-   "x_m": 0.1860156248216739,
-   "y_m": -0.30967826637013934,
-   "D": 0.1337366648253545,
-   "u_total": 0.14941912516717523,
-   "D_star": 0.22853306141460297,
-   "D_hash": 0.651001215366073,
+   "source_lane": 0,
+   "x_m": 2.1899376238547577,
+   "y_m": -0.37071163497449233,
+   "D": 0.14980610702565106,
+   "u_total": 0.12236124064714216,
+   "D_star": 0.19927642575895532,
+   "D_hash": 0.5493604606358431,
    "location": {
-    "distance_from_door_m": 0.186,
+    "distance_from_door_m": 2.19,
     "wall": "right wall",
-    "distance_from_wall_m": 0.49,
-    "text": "0.19 m from the door threshold, 0.49 m from the right wall"
+    "distance_from_wall_m": 0.429,
+    "text": "2.19 m from the door threshold, 0.43 m from the right wall"
    }
   },
   {
    "id": "HS-0009",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 2,
-   "x_m": 0.35646664517549065,
-   "y_m": -0.37494981282891027,
-   "D": 0.12846541899295508,
-   "u_total": 0.1420900681187965,
-   "D_star": 0.17891219898240748,
-   "D_hash": 0.4808024126453515,
+   "source_lane": 3,
+   "x_m": 2.6375063057519053,
+   "y_m": -0.6332591707796857,
+   "D": 0.2182047441420682,
+   "u_total": 0.13669979584833059,
+   "D_star": 0.2033784523596191,
+   "D_hash": 0.5607273196680314,
    "location": {
-    "distance_from_door_m": 0.356,
+    "distance_from_door_m": 2.638,
     "wall": "right wall",
-    "distance_from_wall_m": 0.425,
-    "text": "0.36 m from the door threshold, 0.43 m from the right wall"
+    "distance_from_wall_m": 0.167,
+    "text": "2.64 m from the door threshold, 0.17 m from the right wall"
    }
   },
   {
    "id": "HS-0010",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 2,
-   "x_m": 1.5475392228074936,
-   "y_m": -0.21272886301306065,
-   "D": 0.17781153789076193,
-   "u_total": 0.11625178106894458,
-   "D_star": 0.20003310313095182,
-   "D_hash": 0.5225204610581757,
+   "source_lane": 0,
+   "x_m": 2.5570136629307103,
+   "y_m": -0.37075656808025403,
+   "D": 0.07619914862765795,
+   "u_total": 0.13691043402904607,
+   "D_star": 0.2415658919065865,
+   "D_hash": 0.6394218558421135,
    "location": {
-    "distance_from_door_m": 1.548,
+    "distance_from_door_m": 2.557,
     "wall": "right wall",
-    "distance_from_wall_m": 0.587,
-    "text": "1.55 m from the door threshold, 0.59 m from the right wall"
+    "distance_from_wall_m": 0.429,
+    "text": "2.56 m from the door threshold, 0.43 m from the right wall"
    }
   },
   {
    "id": "HS-0011",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 3,
-   "x_m": 2.141119384047278,
-   "y_m": -0.29377817474701123,
-   "D": 0.14016544063077097,
-   "u_total": 0.10735937774197014,
-   "D_star": 0.16660870130500957,
-   "D_hash": 0.4212527524988304,
+   "source_lane": 1,
+   "x_m": 2.846434420649937,
+   "y_m": -0.458243460646309,
+   "D": 0.03440373997434679,
+   "u_total": 0.16326638605114943,
+   "D_star": 0.2693510073629274,
+   "D_hash": 0.6957541441086431,
    "location": {
-    "distance_from_door_m": 2.141,
+    "distance_from_door_m": 2.846,
     "wall": "right wall",
-    "distance_from_wall_m": 0.506,
-    "text": "2.14 m from the door threshold, 0.51 m from the right wall"
+    "distance_from_wall_m": 0.342,
+    "text": "2.85 m from the door threshold, 0.34 m from the right wall"
    }
   },
   {
    "id": "HS-0012",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 2,
-   "x_m": 0.6382403993822792,
-   "y_m": -0.21290216318101915,
-   "D": 0.14549329803085118,
-   "u_total": 0.11813845436561479,
-   "D_star": 0.19353473831139048,
-   "D_hash": 0.517332365362736,
+   "x_m": 0.34877556860481074,
+   "y_m": -0.4144723275261546,
+   "D": 0.13503106994939015,
+   "u_total": 0.12027710068104941,
+   "D_star": 0.18464458124274716,
+   "D_hash": 0.5000448658645794,
    "location": {
-    "distance_from_door_m": 0.638,
+    "distance_from_door_m": 0.349,
     "wall": "right wall",
-    "distance_from_wall_m": 0.587,
-    "text": "0.64 m from the door threshold, 0.59 m from the right wall"
+    "distance_from_wall_m": 0.386,
+    "text": "0.35 m from the door threshold, 0.39 m from the right wall"
    }
   },
   {
    "id": "HS-0013",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 2,
-   "x_m": 2.4449526054323663,
-   "y_m": -0.2124754193882738,
-   "D": 0.09479063060257754,
-   "u_total": 0.13494902424643795,
-   "D_star": 0.21660453012320205,
-   "D_hash": 0.5635096857482472,
+   "source_lane": 0,
+   "x_m": 0.18323879636717852,
+   "y_m": -0.5894816819043984,
+   "D": 0.06386359774485165,
+   "u_total": 0.16776933151912143,
+   "D_star": 0.25987069719695827,
+   "D_hash": 0.7398504517709048,
    "location": {
-    "distance_from_door_m": 2.445,
+    "distance_from_door_m": 0.183,
     "wall": "right wall",
-    "distance_from_wall_m": 0.588,
-    "text": "2.44 m from the door threshold, 0.59 m from the right wall"
+    "distance_from_wall_m": 0.211,
+    "text": "0.18 m from the door threshold, 0.21 m from the right wall"
    }
   },
   {
    "id": "HS-0014",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 2,
-   "x_m": 2.8743333313136863,
-   "y_m": -0.19093336191139548,
-   "D": 0.12221788937977665,
-   "u_total": 0.10944825901751505,
-   "D_star": 0.16284956808531245,
-   "D_hash": 0.40339200207727416,
+   "source_lane": 3,
+   "x_m": 0.1874842176809666,
+   "y_m": -0.36441533013640237,
+   "D": 0.08006282859853184,
+   "u_total": 0.15930177487500197,
+   "D_star": 0.21871635625267588,
+   "D_hash": 0.5916039693310766,
    "location": {
-    "distance_from_door_m": 2.874,
+    "distance_from_door_m": 0.187,
     "wall": "right wall",
-    "distance_from_wall_m": 0.609,
-    "text": "2.87 m from the door threshold, 0.61 m from the right wall"
+    "distance_from_wall_m": 0.436,
+    "text": "0.19 m from the door threshold, 0.44 m from the right wall"
    }
   },
   {
    "id": "HS-0015",
-   "kind": "INVESTIGATION_LEVEL",
-   "source_lane": 0,
-   "x_m": 0.9529681786618881,
-   "y_m": -0.03784732395428477,
-   "D": 0.3031952908628035,
-   "u_total": 0.14403477098363354,
-   "D_star": 0.2386520165982026,
-   "D_hash": 0.6332163465359892,
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 3,
+   "x_m": 1.5803737546937773,
+   "y_m": -0.07627631741226584,
+   "D": 0.17426671611861394,
+   "u_total": 0.10337240243075269,
+   "D_star": 0.18070614883415076,
+   "D_hash": 0.46297688648358065,
    "location": {
-    "distance_from_door_m": 0.953,
+    "distance_from_door_m": 1.58,
     "wall": "right wall",
-    "distance_from_wall_m": 0.762,
-    "text": "0.95 m from the door threshold, 0.76 m from the right wall"
+    "distance_from_wall_m": 0.724,
+    "text": "1.58 m from the door threshold, 0.72 m from the right wall"
    }
   },
   {
    "id": "HS-0016",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 0,
-   "x_m": 2.198227868248107,
-   "y_m": -0.037573673031050754,
-   "D": 0.15988157502426042,
-   "u_total": 0.09331430470260299,
-   "D_star": 0.15492404779893965,
-   "D_hash": 0.3877347587555139,
+   "source_lane": 1,
+   "x_m": 2.2680773718716822,
+   "y_m": 0.05783277011296639,
+   "D": 0.19404046106626288,
+   "u_total": 0.11244485876295666,
+   "D_star": 0.15860902680725888,
+   "D_hash": 0.39321368271360324,
    "location": {
-    "distance_from_door_m": 2.198,
-    "wall": "right wall",
-    "distance_from_wall_m": 0.762,
-    "text": "2.20 m from the door threshold, 0.76 m from the right wall"
+    "distance_from_door_m": 2.268,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.742,
+    "text": "2.27 m from the door threshold, 0.74 m from the left wall"
    }
   },
   {
    "id": "HS-0017",
-   "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 1,
-   "x_m": 0.42775313217494654,
-   "y_m": -0.1687559143337112,
-   "D": 0.15394836935094433,
-   "u_total": 0.11769206138875145,
-   "D_star": 0.17566734540639778,
-   "D_hash": 0.4779940198847184,
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 0,
+   "x_m": 2.742827592543286,
+   "y_m": -0.05066782631590734,
+   "D": 0.26852522922813815,
+   "u_total": 0.14330669161969686,
+   "D_star": 0.19104102337980314,
+   "D_hash": 0.49120988310296065,
    "location": {
-    "distance_from_door_m": 0.428,
+    "distance_from_door_m": 2.743,
     "wall": "right wall",
-    "distance_from_wall_m": 0.631,
-    "text": "0.43 m from the door threshold, 0.63 m from the right wall"
+    "distance_from_wall_m": 0.749,
+    "text": "2.74 m from the door threshold, 0.75 m from the right wall"
    }
   },
   {
    "id": "HS-0018",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 3,
-   "x_m": 1.6958451018633691,
-   "y_m": 0.2951493250312109,
-   "D": 0.16508713026846653,
-   "u_total": 0.08173983022962998,
-   "D_star": 0.12049844637980557,
-   "D_hash": 0.29966913836801473,
+   "source_lane": 2,
+   "x_m": 2.8336417731907186,
+   "y_m": -0.20936139591749559,
+   "D": 0.15292928156581997,
+   "u_total": 0.09421844108414931,
+   "D_star": 0.16025733254107113,
+   "D_hash": 0.40475629881687514,
    "location": {
-    "distance_from_door_m": 1.696,
-    "wall": "left wall",
-    "distance_from_wall_m": 0.505,
-    "text": "1.70 m from the door threshold, 0.50 m from the left wall"
+    "distance_from_door_m": 2.834,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.591,
+    "text": "2.83 m from the door threshold, 0.59 m from the right wall"
    }
   },
   {
    "id": "HS-0019",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 2,
-   "x_m": 1.9377817785959104,
-   "y_m": 0.2076380574894085,
-   "D": 0.14494698104164536,
-   "u_total": 0.10126107948493909,
-   "D_star": 0.162763526352962,
-   "D_hash": 0.4042604240164299,
+   "source_lane": 3,
+   "x_m": 0.3560515697265,
+   "y_m": -0.006901736671689148,
+   "D": 0.2259342821034946,
+   "u_total": 0.11953265927357803,
+   "D_star": 0.1318428149515449,
+   "D_hash": 0.37970587110195725,
    "location": {
-    "distance_from_door_m": 1.938,
-    "wall": "left wall",
-    "distance_from_wall_m": 0.592,
-    "text": "1.94 m from the door threshold, 0.59 m from the left wall"
+    "distance_from_door_m": 0.356,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.793,
+    "text": "0.36 m from the door threshold, 0.79 m from the right wall"
    }
   },
   {
    "id": "HS-0020",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 1,
-   "x_m": 2.7660709721670016,
-   "y_m": 0.1686935779056486,
-   "D": 0.11388110213098651,
-   "u_total": 0.1459484372937784,
-   "D_star": 0.2109130089442031,
-   "D_hash": 0.5538531818260416,
+   "x_m": 0.6027048473619065,
+   "y_m": 0.18182667124832314,
+   "D": 0.1351799890924903,
+   "u_total": 0.11645611473286893,
+   "D_star": 0.19751917235575953,
+   "D_hash": 0.5348015405097528,
    "location": {
-    "distance_from_door_m": 2.766,
+    "distance_from_door_m": 0.603,
     "wall": "left wall",
-    "distance_from_wall_m": 0.631,
-    "text": "2.77 m from the door threshold, 0.63 m from the left wall"
+    "distance_from_wall_m": 0.618,
+    "text": "0.60 m from the door threshold, 0.62 m from the left wall"
    }
   },
   {
    "id": "HS-0021",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 0,
-   "x_m": 0.8443971548507033,
-   "y_m": 0.25599604308978136,
-   "D": 0.12353547244876986,
-   "u_total": 0.16131320039486438,
-   "D_star": 0.20453245274773524,
-   "D_hash": 0.5625466510831543,
+   "x_m": 1.0572430130865396,
+   "y_m": 0.2693408842962593,
+   "D": 0.23841127679149168,
+   "u_total": 0.11627879312415304,
+   "D_star": 0.18959797932711775,
+   "D_hash": 0.5129318064895271,
    "location": {
-    "distance_from_door_m": 0.844,
+    "distance_from_door_m": 1.057,
     "wall": "left wall",
-    "distance_from_wall_m": 0.544,
-    "text": "0.84 m from the door threshold, 0.54 m from the left wall"
+    "distance_from_wall_m": 0.531,
+    "text": "1.06 m from the door threshold, 0.53 m from the left wall"
    }
   },
   {
    "id": "HS-0022",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 3,
-   "x_m": 1.300308534300103,
-   "y_m": 0.2932211042816987,
-   "D": 0.2211972589403059,
-   "u_total": 0.16559681884574357,
-   "D_star": 0.22269878049096944,
-   "D_hash": 0.5931155408167245,
+   "source_lane": 0,
+   "x_m": 1.8451311738413663,
+   "y_m": 0.26936985430045923,
+   "D": 0.14034334872244728,
+   "u_total": 0.13780060646807352,
+   "D_star": 0.1879145681968731,
+   "D_hash": 0.5093783690046086,
    "location": {
-    "distance_from_door_m": 1.3,
+    "distance_from_door_m": 1.845,
     "wall": "left wall",
-    "distance_from_wall_m": 0.507,
-    "text": "1.30 m from the door threshold, 0.51 m from the left wall"
+    "distance_from_wall_m": 0.531,
+    "text": "1.85 m from the door threshold, 0.53 m from the left wall"
    }
   },
   {
    "id": "HS-0023",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 0,
-   "x_m": 2.301191479667507,
-   "y_m": 0.25619365147404566,
-   "D": 0.15085888676623002,
-   "u_total": 0.1046802767603832,
-   "D_star": 0.1630196541034956,
-   "D_hash": 0.4047978554149397,
+   "x_m": 2.664788294375479,
+   "y_m": 0.26940103959181216,
+   "D": 0.14628182955004596,
+   "u_total": 0.1169236213904908,
+   "D_star": 0.18851050891509732,
+   "D_hash": 0.5111636302835953,
    "location": {
-    "distance_from_door_m": 2.301,
+    "distance_from_door_m": 2.665,
     "wall": "left wall",
-    "distance_from_wall_m": 0.544,
-    "text": "2.30 m from the door threshold, 0.54 m from the left wall"
+    "distance_from_wall_m": 0.531,
+    "text": "2.66 m from the door threshold, 0.53 m from the left wall"
    }
   },
   {
    "id": "HS-0024",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 1,
-   "x_m": 0.5313733157645348,
-   "y_m": 0.13011146199570087,
-   "D": 0.11821787157829217,
-   "u_total": 0.11583708796185793,
-   "D_star": 0.1871261174732272,
-   "D_hash": 0.49919353464895694,
+   "x_m": 0.24811150001462742,
+   "y_m": 0.13820492214833874,
+   "D": 0.08658185931507624,
+   "u_total": 0.13743037070734898,
+   "D_star": 0.18489339119792128,
+   "D_hash": 0.5120730540168114,
    "location": {
-    "distance_from_door_m": 0.531,
+    "distance_from_door_m": 0.248,
     "wall": "left wall",
-    "distance_from_wall_m": 0.67,
-    "text": "0.53 m from the door threshold, 0.67 m from the left wall"
+    "distance_from_wall_m": 0.662,
+    "text": "0.25 m from the door threshold, 0.66 m from the left wall"
    }
   },
   {
    "id": "HS-0025",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 0,
-   "x_m": 0.18935679799812993,
-   "y_m": 0.31555266629871603,
-   "D": 0.11925234228285249,
-   "u_total": 0.12026272871125376,
-   "D_star": 0.1846177050876682,
-   "D_hash": 0.48841283984758666,
+   "source_lane": 1,
+   "x_m": 1.1533429473704377,
+   "y_m": 0.4862086909934902,
+   "D": 0.14443859087102867,
+   "u_total": 0.13119962131396692,
+   "D_star": 0.21883863584700708,
+   "D_hash": 0.5679814427131372,
    "location": {
-    "distance_from_door_m": 0.189,
+    "distance_from_door_m": 1.153,
     "wall": "left wall",
-    "distance_from_wall_m": 0.484,
-    "text": "0.19 m from the door threshold, 0.48 m from the left wall"
+    "distance_from_wall_m": 0.314,
+    "text": "1.15 m from the door threshold, 0.31 m from the left wall"
    }
   },
   {
    "id": "HS-0026",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 0,
-   "x_m": 0.6823120052490419,
-   "y_m": 0.549986247768085,
-   "D": 0.09421676188892925,
-   "u_total": 0.15126306384704374,
-   "D_star": 0.23617849706826582,
-   "D_hash": 0.6501092462582841,
+   "source_lane": 1,
+   "x_m": 0.7581775321629791,
+   "y_m": 0.5021611623252896,
+   "D": 0.08187365795292467,
+   "u_total": 0.1363238175539332,
+   "D_star": 0.2008953250130188,
+   "D_hash": 0.5250249062598535,
    "location": {
-    "distance_from_door_m": 0.682,
+    "distance_from_door_m": 0.758,
     "wall": "left wall",
-    "distance_from_wall_m": 0.25,
-    "text": "0.68 m from the door threshold, 0.25 m from the left wall"
+    "distance_from_wall_m": 0.298,
+    "text": "0.76 m from the door threshold, 0.30 m from the left wall"
    }
   },
   {
    "id": "HS-0027",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 1,
-   "x_m": 0.9457933607776831,
-   "y_m": 0.4624215240808524,
-   "D": 0.09867358255439197,
-   "u_total": 0.1332782083039801,
-   "D_star": 0.22157017411329102,
-   "D_hash": 0.5907120140221894,
+   "x_m": 1.6943111816400422,
+   "y_m": 0.5020468309424363,
+   "D": 0.13825406867797085,
+   "u_total": 0.13258242996255917,
+   "D_star": 0.2140719551481003,
+   "D_hash": 0.5588473730310695,
    "location": {
-    "distance_from_door_m": 0.946,
+    "distance_from_door_m": 1.694,
     "wall": "left wall",
-    "distance_from_wall_m": 0.338,
-    "text": "0.95 m from the door threshold, 0.34 m from the left wall"
+    "distance_from_wall_m": 0.298,
+    "text": "1.69 m from the door threshold, 0.30 m from the left wall"
    }
   },
   {
    "id": "HS-0028",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 0,
-   "x_m": 1.6973180639452483,
-   "y_m": 0.5499399579769495,
-   "D": 0.14397081486129581,
-   "u_total": 0.12560438694190607,
-   "D_star": 0.24125854454380016,
-   "D_hash": 0.6387673161936613,
+   "source_lane": 1,
+   "x_m": 1.3506235855086957,
+   "y_m": 0.502137453399199,
+   "D": 0.13846769010678334,
+   "u_total": 0.12790109664973418,
+   "D_star": 0.20195703952446073,
+   "D_hash": 0.5273079566403783,
    "location": {
-    "distance_from_door_m": 1.697,
+    "distance_from_door_m": 1.351,
     "wall": "left wall",
-    "distance_from_wall_m": 0.25,
-    "text": "1.70 m from the door threshold, 0.25 m from the left wall"
+    "distance_from_wall_m": 0.298,
+    "text": "1.35 m from the door threshold, 0.30 m from the left wall"
    }
   },
   {
    "id": "HS-0029",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 1,
-   "x_m": 1.994446984024698,
-   "y_m": 0.4624365161597087,
-   "D": 0.20117118076962412,
-   "u_total": 0.13303471579465442,
-   "D_star": 0.18795573100186908,
-   "D_hash": 0.5191253064688702,
+   "source_lane": 0,
+   "x_m": 2.1024136958688886,
+   "y_m": 0.589584625292815,
+   "D": 0.1560394374442413,
+   "u_total": 0.15261524065975698,
+   "D_star": 0.30043567704538887,
+   "D_hash": 0.8527284462494239,
    "location": {
-    "distance_from_door_m": 1.994,
+    "distance_from_door_m": 2.102,
     "wall": "left wall",
-    "distance_from_wall_m": 0.338,
-    "text": "1.99 m from the door threshold, 0.34 m from the left wall"
+    "distance_from_wall_m": 0.21,
+    "text": "2.10 m from the door threshold, 0.21 m from the left wall"
    }
   },
   {
    "id": "HS-0030",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 1,
-   "x_m": 2.2376558502444786,
-   "y_m": 0.46245802616726006,
-   "D": 0.1208522188595455,
-   "u_total": 0.1542033773398308,
-   "D_star": 0.2627380877472772,
-   "D_hash": 0.6783849046343524,
+   "source_lane": 0,
+   "x_m": 2.6374340078715997,
+   "y_m": 0.5894719126337162,
+   "D": 0.09644619433523036,
+   "u_total": 0.13351054727585634,
+   "D_star": 0.19486054449043658,
+   "D_hash": 0.5141151565101248,
    "location": {
-    "distance_from_door_m": 2.238,
+    "distance_from_door_m": 2.637,
     "wall": "left wall",
-    "distance_from_wall_m": 0.338,
-    "text": "2.24 m from the door threshold, 0.34 m from the left wall"
+    "distance_from_wall_m": 0.211,
+    "text": "2.64 m from the door threshold, 0.21 m from the left wall"
    }
   },
   {
    "id": "HS-0031",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 1,
-   "x_m": 2.59495288951908,
-   "y_m": 0.46242618686385895,
-   "D": 0.248064756603307,
-   "u_total": 0.18301055858245455,
-   "D_star": 0.26099796809138737,
-   "D_hash": 0.6746790738847233,
+   "x_m": 0.36703943327195565,
+   "y_m": 0.4582836874442147,
+   "D": 0.12311706386290015,
+   "u_total": 0.11959979853022532,
+   "D_star": 0.185634329666858,
+   "D_hash": 0.5141815542272377,
    "location": {
-    "distance_from_door_m": 2.595,
+    "distance_from_door_m": 0.367,
     "wall": "left wall",
-    "distance_from_wall_m": 0.338,
-    "text": "2.59 m from the door threshold, 0.34 m from the left wall"
+    "distance_from_wall_m": 0.342,
+    "text": "0.37 m from the door threshold, 0.34 m from the left wall"
    }
   },
   {
    "id": "HS-0032",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 0,
-   "x_m": 2.8387114703731693,
-   "y_m": 0.5499584308836367,
-   "D": 0.09370162406898767,
-   "u_total": 0.17370471986258004,
-   "D_star": 0.24819148557405168,
-   "D_hash": 0.656398350576601,
+   "source_lane": 1,
+   "x_m": 0.19099363033710937,
+   "y_m": 0.43819468506090264,
+   "D": 0.08636186405213221,
+   "u_total": 0.13661030582787254,
+   "D_star": 0.18958836537073756,
+   "D_hash": 0.5254787491663241,
    "location": {
-    "distance_from_door_m": 2.839,
+    "distance_from_door_m": 0.191,
     "wall": "left wall",
-    "distance_from_wall_m": 0.25,
-    "text": "2.84 m from the door threshold, 0.25 m from the left wall"
+    "distance_from_wall_m": 0.362,
+    "text": "0.19 m from the door threshold, 0.36 m from the left wall"
    }
   }
  ],
@@ -650,7 +650,7 @@
   "pair3:B+cap",
   "pair3:B-"
  ],
- "blocked_area_m2": 0.078,
+ "blocked_area_m2": 0.052425,
  "box": [
   1.5,
   1.65,

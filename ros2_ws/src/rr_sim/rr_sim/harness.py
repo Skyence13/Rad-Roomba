@@ -21,14 +21,11 @@ from rr_bringup.geometry_config import load_robot_geometry
 MOUNT = load_robot_geometry()["mount_transform"]      # frames.yaml head_mount (nominal design value)
 
 
-def demo_registry(descriptor_bytes, firmware="sim-1.0"):
-    import hashlib
-    d = json.loads(descriptor_bytes)
-    return {"records": [{"serial": d["serial"], "descriptor_id": d["descriptor_id"], "head_type": d["head_type"],
-                         "geometry_id": d["geometry_id"], "setup_id": d["setup_id"],
-                         "descriptor_sha256": hashlib.sha256(descriptor_bytes).hexdigest(), "firmware": firmware,
-                         "authorized_uses": ["BENCH", "COMMISSIONING"], "calibration_id": "DEMO-CAL-SYNTH-0001",
-                         "mount_transform": MOUNT}]}
+from rr_bringup.runtime import demo_registry as _demo_registry
+
+
+def demo_registry(descriptor_bytes=None, firmware="sim-1.0"):
+    return _demo_registry()
 
 
 class SimSystem:
@@ -110,7 +107,7 @@ class SimSystem:
         self.chassis.press("REARM")
         self.run(0.3)
         assert app.command("preflight")["accepted"]          # now ARMED_IDLE -> brake test (drops the latch)
-        assert self.run(until=lambda: app.chassis.state.get("brake_test", {}).get("state") == "PASSED"
+        assert self.run(until=lambda: app.mission.preflight_done
                         and app.chassis.drive.get("mode") == "STANDBY", timeout=6)
         self.chassis.press("REARM")
         self.run(1.0)

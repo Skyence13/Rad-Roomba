@@ -1,15 +1,118 @@
 
 
-2026-11-26 14:27:19.131 INFO   Freerouting v2.6.0 (build-date: 2026-11-25)
-2026-11-26 14:27:19.502 INFO   Hardware: 4 CPU cores, 373 CPU score, 3072 MB RAM
-2026-11-26 14:27:19.508 WARN   GUI is disabled and you don't have a console available, so the only feedback from Freerouting is in the log.
-2026-11-26 14:27:20.711 WARN   The '-mp' command-line flag is deprecated and will be removed in a future release; use '--router.autorouter.max_passes' instead.
-2026-11-26 14:27:20.714 WARN   The '-mt' command-line flag is deprecated and will be removed in a future release; use '--router.max_threads=<n>' instead.
-2026-11-26 14:27:21.062 INFO   [B66A5C\DED7C8] Loading board file 'STRESS-150.dsn'...
-2026-11-26 14:27:21.974 INFO   The board's own vias decide: router.autorouter.via_touching_pad = true.
-2026-11-26 14:27:22.020 INFO   [B66A5C\DED7C8] Job 'B66A5C\DED7C8' started at 2026-11-26T14:27:22.020600092Z.
-2026-11-26 14:27:22.444 INFO   [B66A5C\DED7C8] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=4.
-2026-11-26 14:27:22.593 INFO   [B66A5C\DED7C8] Auto-routing stage started on board 'c873ae59ee0c79a2183b2bb5ce7451f0' with baseline score 384.11 for 188 unrouted items.
-2026-11-26 14:28:00.427 INFO   [B66A5C\DED7C8] Auto-routing pass #1 on board 'c873ae59ee0c79a2183b2bb5ce7451f0' was completed in 37.73 seconds with score 832.92 (51 unrouted and 0 violations), using 35.86 CPU seconds and the job allocated 16.60 GB of memory so far.
-2026-11-26 14:28:31.182 INFO   [B66A5C\DED7C8] Auto-routing pass #2 on board '4192574c4af2df067b02342c8e019914' was completed in 30.62 seconds with score 855.86 (44 unrouted and 0 violations), using 65.86 CPU seconds and the job allocated 30.85 GB of memory so far.
-2026-11-26 14:29:12.711 INFO   [B66A5C\DED7C8] Auto-routing pass #3 on board '176c604c43b050e2793caf6e70d9afdb' was completed in 41.43 seconds with score 901.72 (30 unrouted and 0 violations), using 105.38 CPU seconds and the job allocated 49.70 GB of memory so far.
+2026-11-26 14:40:08.696 INFO   Freerouting v2.6.0 (build-date: 2026-11-25)
+2026-11-26 14:40:09.019 INFO   Hardware: 4 CPU cores, 367 CPU score, 3072 MB RAM
+2026-11-26 14:40:09.023 WARN   GUI is disabled and you don't have a console available, so the only feedback from Freerouting is in the log.
+2026-11-26 14:40:10.179 WARN   The '-mp' command-line flag is deprecated and will be removed in a future release; use '--router.autorouter.max_passes' instead.
+2026-11-26 14:40:10.180 WARN   The '-mt' command-line flag is deprecated and will be removed in a future release; use '--router.max_threads=<n>' instead.
+2026-11-26 14:40:10.502 INFO   [DFE415\907CA1] Loading board file 'STRESS-150.retry.dsn'...
+2026-11-26 14:40:11.530 WARN   DSN file 'STRESS-150.retry.dsn' was loaded with 23 warning(s).
+2026-11-26 14:40:11.597 INFO   The board's own vias decide: router.autorouter.via_in_pad = true.
+2026-11-26 14:40:11.641 INFO   [DFE415\907CA1] Job 'DFE415\907CA1' started at 2026-11-26T14:40:11.640671196Z.
+2026-11-26 14:40:12.140 INFO   [DFE415\907CA1] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=4.
+2026-11-26 14:40:12.464 INFO   [DFE415\907CA1] Auto-routing stage started on board 'd8ed4b8c4dbc35f5a7803cd8fb0e2bf1' with baseline score 973.79 for 8 unrouted items.
+2026-11-26 14:40:13.342 INFO   [DFE415\907CA1] Auto-routing pass #1 on board 'd8ed4b8c4dbc35f5a7803cd8fb0e2bf1' was completed in 0.65 seconds with score 986.90 (4 unrouted and 0 violations), using 0.62 CPU seconds and the job allocated 0.14 GB of memory so far.
+2026-11-26 14:40:14.087 INFO   [DFE415\907CA1] Auto-routing pass #2 on board '7e6fa6a204ce7f58a92306015d00db76' was completed in 0.49 seconds with score 986.90 (4 unrouted and 0 violations), using 1.52 CPU seconds and the job allocated 0.44 GB of memory so far.
+2026-11-26 14:40:14.517 INFO   [DFE415\907CA1] Auto-routing pass #3 on board '7e6fa6a204ce7f58a92306015d00db76' was completed in 0.35 seconds with score 986.90 (4 unrouted and 0 violations), using 1.52 CPU seconds and the job allocated 0.44 GB of memory so far.
+2026-11-26 14:40:14.814 INFO   [DFE415\907CA1] Auto-routing pass #4 on board '7e6fa6a204ce7f58a92306015d00db76' was completed in 0.23 seconds with score 986.90 (4 unrouted and 0 violations), using 2.45 CPU seconds and the job allocated 0.82 GB of memory so far.
+2026-11-26 14:40:15.250 INFO   [DFE415\907CA1] Auto-routing pass #5 on board '7e6fa6a204ce7f58a92306015d00db76' was completed in 0.38 seconds with score 986.90 (4 unrouted and 0 violations), using 2.45 CPU seconds and the job allocated 0.82 GB of memory so far.
+2026-11-26 14:40:15.581 INFO   [DFE415\907CA1] Auto-routing pass #6 on board '7e6fa6a204ce7f58a92306015d00db76' was completed in 0.26 seconds with score 986.90 (4 unrouted and 0 violations), using 2.45 CPU seconds and the job allocated 0.82 GB of memory so far.
+2026-11-26 14:40:16.036 INFO   [DFE415\907CA1] Auto-routing pass #7 on board '7e6fa6a204ce7f58a92306015d00db76' was completed in 0.35 seconds with score 986.90 (4 unrouted and 0 violations), using 3.41 CPU seconds and the job allocated 1.29 GB of memory so far.
+2026-11-26 14:40:16.309 INFO   [DFE415\907CA1] Auto-routing pass #8 on board '7e6fa6a204ce7f58a92306015d00db76' was completed in 0.19 seconds with score 986.90 (4 unrouted and 0 violations), using 3.41 CPU seconds and the job allocated 1.29 GB of memory so far.
+2026-11-26 14:40:16.571 INFO   [DFE415\907CA1] Auto-routing pass #9 on board '7e6fa6a204ce7f58a92306015d00db76' was completed in 0.22 seconds with score 986.90 (4 unrouted and 0 violations), using 3.41 CPU seconds and the job allocated 1.29 GB of memory so far.
+2026-11-26 14:40:16.834 INFO   [DFE415\907CA1] Auto-routing pass #10 on board '7e6fa6a204ce7f58a92306015d00db76' was completed in 0.22 seconds with score 986.90 (4 unrouted and 0 violations), using 4.39 CPU seconds and the job allocated 1.86 GB of memory so far.
+2026-11-26 14:40:17.136 INFO   [DFE415\907CA1] Auto-routing pass #11 on board '7e6fa6a204ce7f58a92306015d00db76' was completed in 0.24 seconds with score 986.90 (4 unrouted and 0 violations), using 4.39 CPU seconds and the job allocated 1.86 GB of memory so far.
+2026-11-26 14:40:17.330 INFO   [DFE415\907CA1] Last-mile rip-up removed 2 blocking trace(s) or via(s) around 4 remaining connection(s).
+2026-11-26 14:40:17.684 INFO   [DFE415\907CA1] Auto-routing pass #12 on board 'b870a79c1e99391109eec27f5104f987' was completed in 0.23 seconds with score 986.90 (4 unrouted and 0 violations), using 5.38 CPU seconds and the job allocated 2.40 GB of memory so far.
+2026-11-26 14:40:18.109 INFO   [DFE415\907CA1] Auto-routing pass #13 on board '0d686b108661dcf95990f5cb1ebfe109' was completed in 0.26 seconds with score 986.90 (4 unrouted and 0 violations), using 5.38 CPU seconds and the job allocated 2.40 GB of memory so far.
+2026-11-26 14:40:18.443 INFO   [DFE415\907CA1] Auto-routing pass #14 on board '0d686b108661dcf95990f5cb1ebfe109' was completed in 0.25 seconds with score 986.90 (4 unrouted and 0 violations), using 5.38 CPU seconds and the job allocated 2.40 GB of memory so far.
+2026-11-26 14:40:18.743 INFO   [DFE415\907CA1] Auto-routing pass #15 on board '0d686b108661dcf95990f5cb1ebfe109' was completed in 0.24 seconds with score 986.90 (4 unrouted and 0 violations), using 6.36 CPU seconds and the job allocated 2.95 GB of memory so far.
+2026-11-26 14:40:18.935 INFO   [DFE415\907CA1] Last-mile rip-up removed 2 blocking trace(s) or via(s) around 4 remaining connection(s).
+2026-11-26 14:40:19.244 INFO   [DFE415\907CA1] Auto-routing pass #16 on board 'b870a79c1e99391109eec27f5104f987' was completed in 0.29 seconds with score 986.90 (4 unrouted and 0 violations), using 6.36 CPU seconds and the job allocated 2.95 GB of memory so far.
+2026-11-26 14:40:19.786 INFO   [DFE415\907CA1] Auto-routing pass #17 on board 'ff44ea047d295b1f4e60a5ef9baf5185' was completed in 0.27 seconds with score 986.90 (4 unrouted and 0 violations), using 7.35 CPU seconds and the job allocated 3.36 GB of memory so far.
+2026-11-26 14:40:20.022 INFO   [DFE415\907CA1] Auto-routing pass #18 on board 'ff44ea047d295b1f4e60a5ef9baf5185' was completed in 0.18 seconds with score 986.90 (4 unrouted and 0 violations), using 7.35 CPU seconds and the job allocated 3.36 GB of memory so far.
+2026-11-26 14:40:20.099 INFO   [DFE415\907CA1] The router's best score (986.90) has not improved by more than 0.5 points since pass #8. Stopping the auto-router after 18 passes (4 items still unconnected).
+The following connections could not be routed -- please review your design (e.g. check pad clearances, trace width rules, and available routing space):
+  Net '+3V3' (1 unrouted connection):
+    - U2-9  ->  via
+  Net 'IO36' (1 unrouted connection):
+    - U2-5  ->  U1-24
+  Net 'IO41' (1 unrouted connection):
+    - U2-18  ->  U1-58
+  Net 'IO51' (1 unrouted connection):
+    - U2-21  ->  U1-37
+2026-11-26 14:40:20.419 INFO   [DFE415\907CA1] Routing fallback: the default configuration stopped at stagnation with 4 unrouted, 0 new violations (0 total), score 986.90; trying 1 alternative strategy, then continuing the best board.
+2026-11-26 14:40:20.577 INFO   [DFE415\907CA1] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=4.
+2026-11-26 14:40:20.777 INFO   [DFE415\907CA1] Auto-routing stage started on board 'ff44ea047d295b1f4e60a5ef9baf5185' with baseline score 986.90 for 4 unrouted items.
+2026-11-26 14:40:21.164 INFO   [DFE415\907CA1] Auto-routing pass #1 [continue] on board 'ff44ea047d295b1f4e60a5ef9baf5185' was completed in 0.27 seconds with score 986.90 (4 unrouted and 0 violations), using 8.32 CPU seconds and the job allocated 3.83 GB of memory so far.
+2026-11-26 14:40:21.425 INFO   [DFE415\907CA1] Auto-routing pass #2 [continue] on board 'ff44ea047d295b1f4e60a5ef9baf5185' was completed in 0.21 seconds with score 986.90 (4 unrouted and 0 violations), using 8.32 CPU seconds and the job allocated 3.83 GB of memory so far.
+2026-11-26 14:40:21.686 INFO   [DFE415\907CA1] Auto-routing pass #3 [continue] on board 'ff44ea047d295b1f4e60a5ef9baf5185' was completed in 0.21 seconds with score 986.90 (4 unrouted and 0 violations), using 9.30 CPU seconds and the job allocated 4.45 GB of memory so far.
+2026-11-26 14:40:21.970 INFO   [DFE415\907CA1] Auto-routing pass #4 [continue] on board 'ff44ea047d295b1f4e60a5ef9baf5185' was completed in 0.24 seconds with score 986.90 (4 unrouted and 0 violations), using 9.30 CPU seconds and the job allocated 4.45 GB of memory so far.
+2026-11-26 14:40:22.243 INFO   [DFE415\907CA1] Auto-routing pass #5 [continue] on board 'ff44ea047d295b1f4e60a5ef9baf5185' was completed in 0.22 seconds with score 986.90 (4 unrouted and 0 violations), using 9.30 CPU seconds and the job allocated 4.45 GB of memory so far.
+2026-11-26 14:40:22.579 INFO   [DFE415\907CA1] Auto-routing pass #6 [continue] on board 'ff44ea047d295b1f4e60a5ef9baf5185' was completed in 0.27 seconds with score 986.90 (4 unrouted and 0 violations), using 9.30 CPU seconds and the job allocated 4.45 GB of memory so far.
+2026-11-26 14:40:22.909 INFO   [DFE415\907CA1] Auto-routing pass #7 [continue] on board 'ff44ea047d295b1f4e60a5ef9baf5185' was completed in 0.27 seconds with score 986.90 (4 unrouted and 0 violations), using 10.28 CPU seconds and the job allocated 5.00 GB of memory so far.
+2026-11-26 14:40:23.198 INFO   [DFE415\907CA1] Auto-routing pass #8 [continue] on board 'ff44ea047d295b1f4e60a5ef9baf5185' was completed in 0.24 seconds with score 986.90 (4 unrouted and 0 violations), using 10.28 CPU seconds and the job allocated 5.00 GB of memory so far.
+2026-11-26 14:40:23.444 INFO   [DFE415\907CA1] Auto-routing pass #9 [continue] on board 'ff44ea047d295b1f4e60a5ef9baf5185' was completed in 0.20 seconds with score 986.90 (4 unrouted and 0 violations), using 10.28 CPU seconds and the job allocated 5.00 GB of memory so far.
+2026-11-26 14:40:23.773 INFO   [DFE415\907CA1] Auto-routing pass #10 [continue] on board 'ff44ea047d295b1f4e60a5ef9baf5185' was completed in 0.28 seconds with score 986.90 (4 unrouted and 0 violations), using 11.26 CPU seconds and the job allocated 5.63 GB of memory so far.
+2026-11-26 14:40:24.127 INFO   [DFE415\907CA1] Auto-routing pass #11 [continue] on board 'ff44ea047d295b1f4e60a5ef9baf5185' was completed in 0.29 seconds with score 986.90 (4 unrouted and 0 violations), using 11.26 CPU seconds and the job allocated 5.63 GB of memory so far.
+2026-11-26 14:40:24.354 INFO   [DFE415\907CA1] Last-mile rip-up removed 2 blocking trace(s) or via(s) around 4 remaining connection(s).
+2026-11-26 14:40:24.875 INFO   [DFE415\907CA1] Auto-routing pass #12 [continue] on board 'b870a79c1e99391109eec27f5104f987' was completed in 0.35 seconds with score 986.90 (4 unrouted and 0 violations), using 12.25 CPU seconds and the job allocated 6.01 GB of memory so far.
+2026-11-26 14:40:25.380 INFO   [DFE415\907CA1] Auto-routing pass #13 [continue] on board 'de18f70ec67efe593d19b663e1273252' was completed in 0.26 seconds with score 986.90 (4 unrouted and 0 violations), using 12.25 CPU seconds and the job allocated 6.01 GB of memory so far.
+2026-11-26 14:40:25.639 INFO   [DFE415\907CA1] Auto-routing pass #14 [continue] on board 'de18f70ec67efe593d19b663e1273252' was completed in 0.21 seconds with score 986.90 (4 unrouted and 0 violations), using 12.25 CPU seconds and the job allocated 6.01 GB of memory so far.
+2026-11-26 14:40:25.976 INFO   [DFE415\907CA1] Auto-routing pass #15 [continue] on board 'de18f70ec67efe593d19b663e1273252' was completed in 0.28 seconds with score 986.90 (4 unrouted and 0 violations), using 13.23 CPU seconds and the job allocated 6.49 GB of memory so far.
+2026-11-26 14:40:26.144 INFO   [DFE415\907CA1] Last-mile rip-up removed 2 blocking trace(s) or via(s) around 4 remaining connection(s).
+2026-11-26 14:40:26.437 INFO   [DFE415\907CA1] Auto-routing pass #16 [continue] on board 'b870a79c1e99391109eec27f5104f987' was completed in 0.28 seconds with score 986.90 (4 unrouted and 0 violations), using 13.23 CPU seconds and the job allocated 6.49 GB of memory so far.
+2026-11-26 14:40:26.899 INFO   [DFE415\907CA1] Auto-routing pass #17 [continue] on board '737d76e0cc112b6324607929d5478f06' was completed in 0.22 seconds with score 986.90 (4 unrouted and 0 violations), using 14.19 CPU seconds and the job allocated 6.95 GB of memory so far.
+2026-11-26 14:40:27.238 INFO   [DFE415\907CA1] Auto-routing pass #18 [continue] on board '737d76e0cc112b6324607929d5478f06' was completed in 0.29 seconds with score 986.90 (4 unrouted and 0 violations), using 14.19 CPU seconds and the job allocated 6.95 GB of memory so far.
+2026-11-26 14:40:27.307 INFO   [DFE415\907CA1] The router's best score (986.90) has not improved by more than 0.5 points since pass #8. Stopping the auto-router after 18 passes (4 items still unconnected).
+The following connections could not be routed -- please review your design (e.g. check pad clearances, trace width rules, and available routing space):
+  Net '+3V3' (1 unrouted connection):
+    - U2-9  ->  via
+  Net 'IO36' (1 unrouted connection):
+    - U2-5  ->  U1-24
+  Net 'IO41' (1 unrouted connection):
+    - U2-18  ->  U1-58
+  Net 'IO51' (1 unrouted connection):
+    - U2-21  ->  U1-37
+2026-11-26 14:40:27.638 INFO   [DFE415\907CA1] Routing fallback continuation 'continue': 4 unrouted, 0 new violations (0 total), score 986.90 after stagnation.
+2026-11-26 14:40:27.638 INFO   [DFE415\907CA1] Routing fallback: stopping residual continuations after 'continue' did not improve the incumbent.
+2026-11-26 14:40:27.715 INFO   [DFE415\907CA1] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=4.
+2026-11-26 14:40:28.074 INFO   [DFE415\907CA1] Auto-routing stage started on board 'd8ed4b8c4dbc35f5a7803cd8fb0e2bf1' with baseline score 973.79 for 8 unrouted items.
+2026-11-26 14:40:28.497 INFO   [DFE415\907CA1] Auto-routing pass #1 [continue-auto-neck] on board 'd8ed4b8c4dbc35f5a7803cd8fb0e2bf1' was completed in 0.27 seconds with score 986.90 (4 unrouted and 0 violations), using 15.15 CPU seconds and the job allocated 7.42 GB of memory so far.
+2026-11-26 14:40:29.036 INFO   [DFE415\907CA1] Auto-routing pass #2 [continue-auto-neck] on board '7e6fa6a204ce7f58a92306015d00db76' was completed in 0.33 seconds with score 986.90 (4 unrouted and 0 violations), using 16.12 CPU seconds and the job allocated 7.88 GB of memory so far.
+2026-11-26 14:40:29.330 INFO   [DFE415\907CA1] Auto-routing pass #3 [continue-auto-neck] on board '7e6fa6a204ce7f58a92306015d00db76' was completed in 0.23 seconds with score 986.90 (4 unrouted and 0 violations), using 16.12 CPU seconds and the job allocated 7.88 GB of memory so far.
+2026-11-26 14:40:29.675 INFO   [DFE415\907CA1] Auto-routing pass #4 [continue-auto-neck] on board '7e6fa6a204ce7f58a92306015d00db76' was completed in 0.29 seconds with score 986.90 (4 unrouted and 0 violations), using 17.07 CPU seconds and the job allocated 8.48 GB of memory so far.
+2026-11-26 14:40:30.055 INFO   [DFE415\907CA1] Auto-routing pass #5 [continue-auto-neck] on board '7e6fa6a204ce7f58a92306015d00db76' was completed in 0.31 seconds with score 986.90 (4 unrouted and 0 violations), using 17.07 CPU seconds and the job allocated 8.48 GB of memory so far.
+2026-11-26 14:40:30.347 INFO   [DFE415\907CA1] Auto-routing pass #6 [continue-auto-neck] on board '7e6fa6a204ce7f58a92306015d00db76' was completed in 0.25 seconds with score 986.90 (4 unrouted and 0 violations), using 17.07 CPU seconds and the job allocated 8.48 GB of memory so far.
+2026-11-26 14:40:30.634 INFO   [DFE415\907CA1] Auto-routing pass #7 [continue-auto-neck] on board '7e6fa6a204ce7f58a92306015d00db76' was completed in 0.24 seconds with score 986.90 (4 unrouted and 0 violations), using 17.07 CPU seconds and the job allocated 8.48 GB of memory so far.
+2026-11-26 14:40:30.963 INFO   [DFE415\907CA1] Auto-routing pass #8 [continue-auto-neck] on board '7e6fa6a204ce7f58a92306015d00db76' was completed in 0.28 seconds with score 986.90 (4 unrouted and 0 violations), using 18.04 CPU seconds and the job allocated 9.08 GB of memory so far.
+2026-11-26 14:40:31.261 INFO   [DFE415\907CA1] Auto-routing pass #9 [continue-auto-neck] on board '7e6fa6a204ce7f58a92306015d00db76' was completed in 0.25 seconds with score 986.90 (4 unrouted and 0 violations), using 18.04 CPU seconds and the job allocated 9.08 GB of memory so far.
+2026-11-26 14:40:31.517 INFO   [DFE415\907CA1] Auto-routing pass #10 [continue-auto-neck] on board '7e6fa6a204ce7f58a92306015d00db76' was completed in 0.21 seconds with score 986.90 (4 unrouted and 0 violations), using 18.04 CPU seconds and the job allocated 9.08 GB of memory so far.
+2026-11-26 14:40:31.844 INFO   [DFE415\907CA1] Auto-routing pass #11 [continue-auto-neck] on board '7e6fa6a204ce7f58a92306015d00db76' was completed in 0.28 seconds with score 986.90 (4 unrouted and 0 violations), using 19.02 CPU seconds and the job allocated 9.77 GB of memory so far.
+2026-11-26 14:40:32.039 INFO   [DFE415\907CA1] Last-mile rip-up removed 2 blocking trace(s) or via(s) around 4 remaining connection(s).
+2026-11-26 14:40:32.444 INFO   [DFE415\907CA1] Auto-routing pass #12 [continue-auto-neck] on board 'b870a79c1e99391109eec27f5104f987' was completed in 0.29 seconds with score 986.90 (4 unrouted and 0 violations), using 19.02 CPU seconds and the job allocated 9.77 GB of memory so far.
+2026-11-26 14:40:32.871 INFO   [DFE415\907CA1] Auto-routing pass #13 [continue-auto-neck] on board '0d686b108661dcf95990f5cb1ebfe109' was completed in 0.24 seconds with score 986.90 (4 unrouted and 0 violations), using 19.99 CPU seconds and the job allocated 10.26 GB of memory so far.
+2026-11-26 14:40:33.182 INFO   [DFE415\907CA1] Auto-routing pass #14 [continue-auto-neck] on board '0d686b108661dcf95990f5cb1ebfe109' was completed in 0.26 seconds with score 986.90 (4 unrouted and 0 violations), using 19.99 CPU seconds and the job allocated 10.26 GB of memory so far.
+2026-11-26 14:40:33.506 INFO   [DFE415\907CA1] Auto-routing pass #15 [continue-auto-neck] on board '0d686b108661dcf95990f5cb1ebfe109' was completed in 0.27 seconds with score 986.90 (4 unrouted and 0 violations), using 19.99 CPU seconds and the job allocated 10.26 GB of memory so far.
+2026-11-26 14:40:33.670 INFO   [DFE415\907CA1] Last-mile rip-up removed 2 blocking trace(s) or via(s) around 4 remaining connection(s).
+2026-11-26 14:40:34.048 INFO   [DFE415\907CA1] Auto-routing pass #16 [continue-auto-neck] on board 'b870a79c1e99391109eec27f5104f987' was completed in 0.36 seconds with score 986.90 (4 unrouted and 0 violations), using 20.97 CPU seconds and the job allocated 10.85 GB of memory so far.
+2026-11-26 14:40:34.562 INFO   [DFE415\907CA1] Auto-routing pass #17 [continue-auto-neck] on board 'ff44ea047d295b1f4e60a5ef9baf5185' was completed in 0.27 seconds with score 986.90 (4 unrouted and 0 violations), using 20.97 CPU seconds and the job allocated 10.85 GB of memory so far.
+2026-11-26 14:40:34.859 INFO   [DFE415\907CA1] Auto-routing pass #18 [continue-auto-neck] on board 'ff44ea047d295b1f4e60a5ef9baf5185' was completed in 0.25 seconds with score 986.90 (4 unrouted and 0 violations), using 21.95 CPU seconds and the job allocated 11.38 GB of memory so far.
+2026-11-26 14:40:34.947 INFO   [DFE415\907CA1] The router's best score (986.90) has not improved by more than 0.5 points since pass #8. Stopping the auto-router after 18 passes (4 items still unconnected).
+The following connections could not be routed -- please review your design (e.g. check pad clearances, trace width rules, and available routing space):
+  Net '+3V3' (1 unrouted connection):
+    - U2-9  ->  via
+  Net 'IO36' (1 unrouted connection):
+    - U2-5  ->  U1-24
+  Net 'IO41' (1 unrouted connection):
+    - U2-18  ->  U1-58
+  Net 'IO51' (1 unrouted connection):
+    - U2-21  ->  U1-37
+2026-11-26 14:40:35.145 INFO   [DFE415\907CA1] Start necked: 0 connection(s) of nets that needed the neck before routed at the neck width without a class-width search, 36 did not route.
+2026-11-26 14:40:35.325 INFO   [DFE415\907CA1] Routing fallback 'continue-auto-neck': 4 unrouted, 0 new violations (0 total), score 986.90 after stagnation.
+2026-11-26 14:40:35.325 INFO   [DFE415\907CA1] Routing fallback: no alternative replaced the board the continuations ran on; not continuing it again.
+2026-11-26 14:40:35.325 INFO   [DFE415\907CA1] Routing fallback chose 'default': 4 unrouted, 0 new violations (0 total), score 986.90.
+2026-11-26 14:40:35.484 INFO   [DFE415\907CA1] Auto-routing stage completed: started with 8 unrouted nets, completed in 23.19 seconds, final score: 986.90 (4 unrouted and 0 violations), using 21.95 total CPU seconds, 11.38 GB total allocated, and 271.4 MB peak heap usage.
+2026-11-26 14:40:35.518 INFO   [DFE415\907CA1] Job 'DFE415\907CA1' finished with state: COMPLETED (elapsed: 23.88 seconds, finished at UTC: 2026-11-26T14:40:35.517011102Z).
+2026-11-26 14:40:35.536 INFO   Saving output file '/home/user/Rad-Roomba/tools/eda/tests/stress/route/STRESS-150.retry.ses' (SES)...
+2026-11-26 14:40:35.538 INFO   Successfully saved output file '/home/user/Rad-Roomba/tools/eda/tests/stress/route/STRESS-150.retry.ses' (240308 bytes).

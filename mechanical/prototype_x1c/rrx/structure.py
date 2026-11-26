@@ -15,6 +15,9 @@ from .util import (Part, V, box, cut, cyl, fuse, loft, mirror_y, prism, prism_xz
 Z0, Z1 = D.PLATE_Z
 RC = D.RC
 SIDES = (("L", 1), ("R", -1))
+RX_SCREWS = [(14.0, -17.0), (50.0, -17.0), (14.0, 17.0)]      # (x, dy from the channel centre; -dy = inboard)
+RX_DOWELS = [(24.0, -17.0), (40.0, -17.0)]
+CLIFF_SCREWS = [(30.5, 104.0), (30.5, 115.5), (58.8, 112.0)]
 
 
 # ----------------------------------------------------------------------------------------------- plate holes
@@ -24,19 +27,18 @@ def plate_holes():
     H = []
     for _, s in SIDES:
         yc = s * RC["shoe_y"]
-        for x in (14.0, 50.0):                                    # receiver channel: 2 x M4 from above + 2 dowels
-            H.append((x, yc + s * 17.0, D.CLEAR["M4"], "thru", "receiver channel M4 (cap screw from above into the tapped flange ear)"))
-            H.append((x, yc - s * 17.0, D.CLEAR["M4"], "thru", "receiver channel M4"))
-        H.append((6.0, yc, 4.0, "ream", "receiver locating dowel 4 m6 (hole 4 H7)"))
-        H.append((58.0, yc, 4.0, "ream", "receiver locating dowel 4 m6 (slot 4 H7 x 5 on the right side)"))
+        for x, dy in RX_SCREWS:                                    # receiver channel: 3 x M4 from above + 2 dowels
+            H.append((x, yc + s * dy, D.CLEAR["M4"], "thru", "receiver channel M4 cap screw from above into the tapped ear"))
+        for x, dy in RX_DOWELS:
+            H.append((x, yc + s * dy, 4.0, "ream", "receiver locating dowel 4 m6 (plate hole 4 H7)"))
         for x in (-20.0, 20.0):                                    # motor pod feet, M4 countersunk from below into inserts
             for y in (D.POD_Y0 + 5.0, 112.0):
                 H.append((x, s * y, D.CLEAR["M4"], "csk_bottom", "motor pod foot M4"))
         for x in (-48.0, -30.0):                                   # grip angle foot, through-bolted M5
             H.append((x, s * 71.0, D.CLEAR["M5"], "csk_bottom", "grip foot M5 through-bolt (proof-load path)"))
-        H.append((46.0, s * 109.5, 0.0, "window 20x16", "front cliff ToF capsule"))
-        for x in (40.0, 56.0):
-            H.append((x, s * (D.BEAM_HALF_Y - 4.5), D.CLEAR["M3"], "csk_bottom", "cliff pod / deflector M3"))
+        H.append((46.0, s * 109.5, 0.0, "window 21.5x17.5", "front cliff ToF capsule collar"))
+        for x, y in CLIFF_SCREWS:
+            H.append((x, s * y, D.CLEAR["M3"], "thru", "cliff pod / deflector M3 (pan head from above into the pod insert)"))
         for x in (37.0, 47.0):
             H.append((x, s * 34.0, D.CLEAR["M5"], "csk_bottom", "latch arm pedestal M5 through-bolt"))
         H.append((-2.0, s * 80.0, 8.0, "thru", "grommet: dock switch / cliff ToF leads" if s > 0 else "grommet: cliff ToF lead"))
@@ -48,7 +50,7 @@ def plate_holes():
     for x in (-222.0, -190.0, -150.0, -110.0, -76.0):              # battery tunnel feet
         for s in (1, -1):
             H.append((x, s * 64.0, D.CLEAR["M3"], "csk_bottom", "battery tunnel foot M3"))
-    for x, y in ((-146.0, 66.0), (-146.0, 108.0), (-77.0, 66.0), (-77.0, 108.0)):
+    for x, y in ((-140.0, 76.0), (-140.0, 88.0), (-83.0, 76.0), (-83.0, 88.0)):
         H.append((x, y, D.CLEAR["M3"], "csk_bottom", "CM5 tray M3"))
     for y in (-18.0, 18.0):
         H.append((34.5, y, D.TAP["M3"], "tap", "bus clamp resistor M3"))
@@ -101,7 +103,7 @@ def chassis_plate():
     s = s.cut(win)
     for (x, y, d, kind, _) in plate_holes() + [(x, y, D.CLEAR["M3"], "csk_bottom", "hull sole") for x, y in sole_screw_xy()]:
         if kind.startswith("window"):
-            s = s.cut(box(x - 10, x + 10, y - 8, y + 8, Z0 - 1, Z1 + 1))
+            s = s.cut(box(x - 10.75, x + 10.75, y - 8.75, y + 8.75, Z0 - 1, Z1 + 1))
             continue
         s = s.cut(cyl(d / 2, 6, (x, y, Z0 - 1)))
         if kind == "csk_bottom":
@@ -122,8 +124,9 @@ def receiver_channel(s):
     hw = RC["shoe_width"] / 2
     blk = box(x0, x1, yc - w, yc + w, zb, zt)
     fx0, fx1 = D.RX_FLANGE_X
-    flange = box(fx0, fx1, yc - hw - 0.5 - D.RX_PAD[0] - 1.0, yc + hw + 0.5 + D.RX_PAD[0] + 1.0, sz0 - 2.0, zt)   # x-stop pads each side of the shoe
-    ears = box(8.0, 56.0, yc - 21.0, yc + 21.0, zt - 6.0, zt)        # tapped M4 ears under the plate
+    flange = box(fx0, fx1, yc - hw - 0.5 - D.RX_PAD[0] - 1.0, yc + hw + 0.5 + D.RX_PAD[0] + 1.0, zb, zt)   # x-stop pads each side of the shoe
+    ears = fuse(box(8.0, 56.0, yc - s * 21.0, yc - s * 11.0, zt - 6.0, zt),            # inboard ear, full length
+                box(8.0, 24.0, yc + s * 11.0, yc + s * 21.0, zt - 6.0, zt))             # outboard ear, short (cliff pod ahead of it)
     blk = fuse(blk, flange, ears)
     c = D.RX_SLOT_CLEAR
     slot = box(x0 + 1.5, fx1 + 1, yc - hw - c, yc + hw + c, zb - 1, sz1 + c)     # open underneath and to the front
@@ -136,11 +139,10 @@ def receiver_channel(s):
         blk = blk.fuse(box(a, b, yc - hw - c, yc + hw + c, sz1 + D.RX_FIT_Z, sz1 + c))     # roof pad = hold-down
         blk = blk.cut(cyl(D.RX_LAND_PIN_D / 2, 2 * w + 2, (xs, yc - w - 1, sz0 - D.RX_LAND_PIN_D / 2), (0, 1, 0)))   # reamed 4 H7 cross hole
     blk = blk.clean()
-    for x in (14.0, 50.0):
-        for dy in (-17.0, 17.0):
-            blk = blk.cut(cyl(D.TAP["M4"] / 2, 7, (x, yc + dy, zt - 6.5)))
-    for x in (6.0, 58.0):
-        blk = blk.cut(cyl(2.0, 5, (x, yc, zt - 4.0)))                 # locating dowels to the plate
+    for x, dy in RX_SCREWS:
+        blk = blk.cut(cyl(D.TAP["M4"] / 2, 7, (x, yc + s * dy, zt - 6.5)))
+    for x, dy in RX_DOWELS:
+        blk = blk.cut(cyl(2.0, 5, (x, yc + s * dy, zt - 4.0)))
     if s > 0:                                                         # push-pin bore for the HEAD_DOCK switch
         blk = blk.cut(cyl(1.6, 4, (x0 - 1, yc, P.HEAD_DOCK_SWITCH[2]), (1, 0, 0)))
     return blk

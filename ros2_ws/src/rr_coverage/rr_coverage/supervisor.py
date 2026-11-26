@@ -120,7 +120,7 @@ class Mission:
             return {"accepted": False, "reason": "STATE:" + self.state}
         c.request("SET_OP_MODE", {"op_mode": self.cfg.op_mode})
         c.request("HEAD_POWER", {"electronics": True, "heater_enable": False})
-        if c.drive.get("mode") == "ARMED_IDLE" and c.state.get("brake_test", {}).get("state") != "PASSED":
+        if c.drive.get("mode") == "ARMED_IDLE" and not self.preflight_done:
             c.request("BRAKE_TEST", {}, lambda r: setattr(self, "preflight_done", r["status"] == "OK" and r["body"].get("passed")))
         self.state = "READY"
         return {"accepted": True, "note": "press the local REARM button before and after the brake test"}

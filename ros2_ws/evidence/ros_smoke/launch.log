@@ -1,0 +1,10 @@
+[INFO] [launch]: All log files can be found below /tmp/rrhome/log/2026-11-26-14-48-23-486217-vm-33
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [sim_node-1]: process started with pid [47]
+[sim_node-1] [WARN] [1795704503.937884000] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[sim_node-1] [WARN] [1795704503.937902307] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+[INFO] [robot_node-2]: process started with pid [62]
+[robot_node-2] [WARN] [1795704505.703220203] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[robot_node-2] [WARN] [1795704505.703533300] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+[robot_node-2] [WARN] [1795704505.781739645] [rr_robot]: demo registry for the packaged synthetic head descriptor: SIMULATION ONLY
+[robot_node-2] [INFO] [1795704505.973409971] [rr_robot]: RobotApp running: head tcp://127.0.0.1:5540, chassis tcp://127.0.0.1:5550, run /tmp/rrhome/ros_smoke_1795704503, UI http://<robot>:8097/

@@ -803,7 +803,7 @@ def _track_key(t):
     return (t.GetClass(), a, b, t.GetLayer(), t.GetNetname())
 
 
-def import_ses(name, pcb_path, ses, clean="1"):
+def import_ses(name, pcb_path, ses, clean="1", min_track="0"):
     """Phase A (own process): import the SES, verify pre-routes, drop dangling stubs, save.
 
     Runs in a separate interpreter because removing items leaves the pcbnew SWIG
@@ -823,9 +823,17 @@ def import_ses(name, pcb_path, ses, clean="1"):
     info["preroutes_missing_after_import"] = len(missing)
     if missing:
         raise RuntimeError("%d pre-routed track(s)/via(s) were altered by the autorouter" % len(missing))
+    widened = 0
+    mt = MM(float(min_track))
     for t in pcb.GetTracks():
         if _track_key(t) in pre:
             t.SetLocked(True)
+        elif t.GetClass() != "PCB_VIA" and t.GetWidth() < mt:
+            # Freerouting may "neck down" below the fab minimum; restore the minimum width
+            # (if that creates a clearance problem, DRC reports it - nothing is hidden)
+            t.SetWidth(mt)
+            widened += 1
+    info["necked_tracks_widened"] = widened
     pcbnew.ZONE_FILLER(pcb).Fill(pcb.Zones())
     pcb.BuildConnectivity()
     info["unconnected_before_cleanup"] = int(pcb.GetConnectivity().GetUnconnectedCount(True))
@@ -854,10 +862,10 @@ def finish_pcb(board, paths, ses=None):
         unrouted = paths.pcb + ".unrouted"
         shutil.copyfile(paths.pcb, unrouted)
         code = ("import json,sys; from rrkicad import pcb; "
-                "print('RRJSON'+json.dumps(pcb.import_ses(*sys.argv[1:5])))")
+                "print('RRJSON'+json.dumps(pcb.import_ses(*sys.argv[1:6])))")
 
         def run(clean):
-            r = subprocess.run([sys.executable, "-c", code, board.name, paths.pcb, ses, clean],
+            r = subprocess.run([sys.executable, "-c", code, board.name, paths.pcb, ses, clean, str(board.rules.min_track)],
                                capture_output=True, text=True)
             lines = [l for l in r.stdout.splitlines() if l.startswith("RRJSON")]
             if r.returncode != 0 or not lines:
