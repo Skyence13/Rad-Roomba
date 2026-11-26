@@ -195,7 +195,7 @@ void sim_init(sim_t *s, uint64_t seed)
 {
     memset(s, 0, sizeof *s);
     s->rng = seed * 2654435761u + 0x9E3779B97F4A7C15ull;
-    s->p = (sim_params_t){.R = 2.2, .L = 2.3e-3, .Ke = 1.65, .Kt = 1.0, .J = 0.012, .mass = 12.0, .Iz = 0.25, .r = 0.052, .track = 0.220, .tau_c = 0.25, .b_visc = 0.02, .R_brake = 4.7};
+    s->p = (sim_params_t){.R = 2.2, .L = 2.3e-3, .Ke = 1.65, .Kt = 1.0, .J = 0.012, .mass = 12.0, .Iz = 0.30, .r = 0.052, .track = 0.270, /* Rev E body: track 270 mm (contract frames.wheel) */ .tau_c = 0.25, .b_visc = 0.02, .R_brake = 4.7};
     s->mode_run = true;
     s->head_docked = true;
     s->j2 = true;

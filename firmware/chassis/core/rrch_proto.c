@@ -208,8 +208,8 @@ static void op_hello(ctx_t *x)
     rrc_jw_key(w, "caps");
     rrc_jw_obj_begin(w);
     rrc_jw_ki64(w, "encoder_cpr", RRCH_ENCODER_CPR);
-    kf(w, "wheel_radius_nom_m", 0.052, 4);
-    kf(w, "track_nom_m", 0.220, 4);
+    kf(w, "wheel_radius_nom_m", rrch_cfg_desc[RRCH_CFG_CAL_RADIUS_L].def, 4); /* nominal = configuration defaults (contract frames.wheel) */
+    kf(w, "track_nom_m", rrch_cfg_desc[RRCH_CFG_CAL_TRACK].def, 4);
     kf(w, "max_v_mps", RRCH_MAX_V_FWD, 3);
     kf(w, "max_w_radps", RRCH_MAX_W, 3);
     kf(w, "max_rev_mps", RRCH_MAX_V_REV, 3);

@@ -289,6 +289,12 @@ class Acquisition(SimCase):
         self.assertEqual([l["ref_reject"] for l in diag["lanes"]], [l["ref_reject"] for l in t["lanes"]])
         self.assertEqual(diag["gate_ticks"], 14400000)
         self.assertEqual(diag["sequence"], 7)
+        # optional engineering field: pulse-width (time over threshold) histogram per chain
+        self.assertEqual(diag["width_bins_ns"], [150, 400, 2000])
+        for lane, tl in zip(diag["lanes"], t["lanes"]):
+            self.assertEqual(sum(lane["floor_width_hist"]), tl["alpha"] + tl["beta"] + tl["floor_reject"])
+            self.assertEqual(lane["floor_width_hist"][3], tl["alpha"])
+            self.assertEqual(sum(lane["ref_width_hist"]), tl["ref"] + tl["ref_reject"])
         RESULTS["diag_reply_bytes"] = len(self.link.last_rx)
 
     def test_measured_zero_is_preserved(self):
@@ -535,6 +541,21 @@ class Acquisition(SimCase):
         self.assertEqual(beta[7:], [0] * 2)
         self.assertAlmostEqual(beta[5], 2000 / 1.2, delta=170)             # n / (1 + n tau) at 20 kcps, tau 10 us
         self.assertAlmostEqual(beta[6] / beta[5], 0.5 * 1.2 / 1.1, delta=0.08)   # half a gate at the lower loss
+
+
+class NoWidthHistogram(SimCase):
+    sim_args = ("--no-width-hist",)
+
+    def test_head_without_pulse_width_measurement(self):
+        """The width histogram is optional: a head without it omits the DIAG fields, nothing else changes."""
+        hello, reader = self.bound_reader()
+        self.link.ok("ARM", {"span_us": 100000})
+        self.sim.advance(2000 + 100_000 * 2)
+        saved, eligible, _ = self.capture(reader, -1)
+        self.assertEqual(eligible, [])                               # no SYNC yet: frame valid, not time-qualified
+        diag = self.link.ok("DIAG", {"seq": 0})
+        self.assertNotIn("width_bins_ns", diag)
+        self.assertTrue(all("floor_width_hist" not in lane and "ref_width_hist" not in lane for lane in diag["lanes"]))
 
 
 class LinkFaults(SimCase):

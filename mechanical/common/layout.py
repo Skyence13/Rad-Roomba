@@ -82,7 +82,8 @@ def cached(key, builder):
 # ----------------------------------------------------------------------------------------------------- body shells
 def body_shells():
     B = P.BATTERY_BAY
-    key_common = [P.BODY_ROWS, P.WHEEL_Y, P.WHEEL_ARCH_R, P.WHEEL_ARCH_INNER_Y, P.SADDLE, B["hatch_x"], B["hatch_half_y"], B["hatch_z"]]
+    key_common = [P.BODY_ROWS, P.WHEEL_Y, P.WHEEL_ARCH_R, P.WHEEL_ARCH_INNER_Y, P.SADDLE, B["hatch_x"], B["hatch_half_y"], B["hatch_z"], P.RECEIVER["chin_cut"]]
+    chin = L.box(P.RECEIVER["chin_cut"][0], 140, -200, 200, 0, P.RECEIVER["chin_cut"][1])
 
     def cutters():
         arches = [L.cyl(P.WHEEL_ARCH_R, 60, (0, s * P.WHEEL_ARCH_INNER_Y, P.AXLE_Z), (0, s, 0)) for s in (-1, 1)]
@@ -100,7 +101,7 @@ def body_shells():
     def lower():
         arches, sad, hatch = cutters()
         s = loft(P.BODY_ROWS["lower_outer"]).cut(loft(P.BODY_ROWS["lower_inner"]))
-        for t in arches:
+        for t in (*arches, chin):
             s = s.cut(t)
         return s
 
@@ -145,15 +146,25 @@ def build(rail_projection=3.0):
     # ---- Rev D solids reused unchanged (neck/receiver, head optics, rails, socket)
     rev_d = cq.Assembly.importStep(str(P.REV_D_STEP))
     dsolid = {n.name: n.obj.moved(n.loc) for n in rev_d.objects.values() if n.obj is not None}
-    for n in ("Neck_Fixed_Shroud", "Neck_Fixed_Lower_Skid", "Neck_Asymmetric_Keyed_Tongue", "Receiver_bearing_land_L", "Receiver_bearing_land_R"):
-        add(n, dsolid[n], "neck", "struct", internal=False, mates={"head_frame_E"} if n.startswith("Receiver") else ())
+    # (the Rev D neck shroud, keyed tongue and bearing lands are deleted: head mount option C, DEC-041)
 
     # ---- chassis structure
     z0, z1 = P.CHASSIS_PLATE_Z
     cx, cy = P.CASTER_SWIVEL
     plate = cq.Workplane("XY", origin=(0, 0, z0)).polyline(plate_outline()).close().extrude(z1 - z0).val()
     plate = plate.cut(L.cyl(L.env("caster")["swivel_radius"] + 2.5, 10, (cx, cy, z0 - 1)))
+    RC = P.RECEIVER
+    fb = RC["front_beam"]
+    plate = plate.fuse(L.box(fb[0], fb[1], fb[2], fb[3], z0, z1)).cut(L.box(fb[1], 200, -200, 200, z0 - 1, z1 + 1)).clean()
     add("chassis_plate", plate, "chassis", "struct", internal=False)
+    for tag, s in (("L", 1), ("R", -1)):
+        yc = s * RC["shoe_y"]
+        blk = L.box(RC["channel_x"][0], RC["channel_x"][1], yc - RC["channel_width"] / 2, yc + RC["channel_width"] / 2, *RC["channel_z"])
+        cw = RC["shoe_width"] / 2 + RC["channel_clear"]
+        blk = blk.cut(L.box(RC["channel_x"][0] + 1.5, RC["channel_x"][1] + 5, yc - cw, yc + cw, RC["shoe_z"][0] - RC["channel_clear"], RC["shoe_z"][1] + RC["channel_clear"]))
+        add(f"receiver_channel_{tag}", blk, "receiver", "struct", 0.045, internal=False, mates={f"head_shoe_{tag}"})
+    lb = RC["latch_box"]
+    add("head_latch_envelope", L.box(*lb), "receiver", "control", 0.05, internal=False)
     rs = L.env("caster")["swivel_radius"]
     top_hat = L.cyl(rs + 2.0, 2.0, (cx, cy, P.CASTER_MOUNT_Z)).fuse(L.cyl(rs + 9.0, 2.0, (cx, cy, z1)).cut(L.cyl(rs + 2.0, 4.0, (cx, cy, z1 - 1)))).clean()
     add("caster_bracket", top_hat, "chassis", "struct", 0.02, internal=False)
@@ -199,13 +210,15 @@ def build(rail_projection=3.0):
     cas = L.box(*B["cassette_x"], -B["cassette_half_y"], B["cassette_half_y"], *B["cassette_z"])
     pack = L.box(*B["pack_x"], -B["pack_half_y"], B["pack_half_y"], *B["pack_z"])
     add("battery_cassette", cas.cut(pack), "battery", "struct", 0.12)
-    add("battery_pack_PSL-SC-1290", pack, "battery", "battery", L.mass("battery_8ah"))
+    add("battery_pack_PSL-SC-12120", pack, "battery", "battery", L.mass("battery_12ah"))
     add("battery_coupler", L.box(*B["coupler_x"], -B["coupler_half_y"], B["coupler_half_y"], *B["coupler_z"]), "battery", "conn", L.mass("battery_coupler"))
-    roof0 = B["cassette_z"][1] + 1.0
-    add("battery_tunnel_roof", L.box(-200.0, B["cassette_x"][1], -57.5, 57.5, roof0, B["tunnel_roof_z"]), "chassis", "struct", 0.05)
+    hx, hy, hz, hw = B["hump_x"], B["hump_half_y"], B["hump_z"], B["hump_wall"]
+    hump = L.box(hx[0], hx[1], -hy, hy, hz[0], hz[1]).cut(L.box(hx[0] - 10, hx[1] - hw + 1, -hy + hw, hy - hw, hz[0] - 10, hz[1] - hw))
+    add("battery_hump", hump, "shell", "shell", 0.07, internal=False, hard=False)
+    add("rear_sensor_brow", L.box(hx[0] - 4, hx[0] + 8, -12, 12, hz[1], hz[1] + 16), "shell", "shell", 0.01, internal=False, hard=False)
     for tag, s in (("L", 1), ("R", -1)):
-        ya, yb = sorted((s * 55.0, s * 57.5))
-        add(f"battery_tunnel_wall_{tag}", L.box(-212.0, B["cassette_x"][1], ya, yb, z1 + 1, roof0), "chassis", "struct", 0.04)
+        ya, yb = sorted((s * 55.5, s * 58.0))
+        add(f"battery_tunnel_wall_{tag}", L.box(-212.0, B["cassette_x"][1], ya, yb, z1 + 1, hz[0]), "chassis", "struct", 0.04)
     e = L.env("chassis_heater")
     add("chassis_heater_pad", L.box(-164, -164 + e["l"], -e["w"] / 2, e["w"] / 2, 38.2, 38.2 + e["h"]), "thermal", "heat", L.mass("chassis_heater"))
 
@@ -217,7 +230,7 @@ def build(rail_projection=3.0):
     add("lidar_LakiBeam1L", L.lidar().moved(cq.Location(cq.Vector(lx, ly, P.LIDAR_POSE["base_z"]))), "lidar", "lidar", L.mass("lidar"), internal=False)
     pc = P.PANEL_CONTROLS["annunciator"]["xyz"]
     pe = L.env("panel_board")
-    add("RR-PANEL", L.box(pc[0] - pe["w"] / 2, pc[0] + pe["w"] / 2, -pe["l"] / 2, pe["l"] / 2, pc[2] - 6 - pe["h"], pc[2] - 6), "panel", "pcb", L.mass("panel_board"))
+    add("RR-PANEL", L.box(pc[0] - pe["l"] / 2, pc[0] + pe["l"] / 2, pc[1] - pe["w"] / 2, pc[1] + pe["w"] / 2, pc[2] - 12 - pe["h"], pc[2] - 12), "panel", "pcb", L.mass("panel_board"))
 
     # ---- panel devices
     kinds = {"estop": "estop", "hands_on": "pushbutton_22", "mode_selector": "mode_selector", "rearm_start": "pushbutton_22", "pause_stop": "pushbutton_22"}
@@ -247,24 +260,28 @@ def build(rail_projection=3.0):
         add(name, place(L.tof(), t["xyz"], t["dir"]), "tof", "sensor", L.mass("tof_board"), internal=False, mates=host)
     sw = L.switch()
     for name, xyz in {**P.BODY_BUMPER_SWITCHES, "head_dock_switch": P.HEAD_DOCK_SWITCH}.items():
-        add(name, sw.moved(cq.Location(cq.Vector(xyz[0] + (8 if xyz[0] < 0 else 0), xyz[1] * (0.9 if xyz[0] < 0 else 1), xyz[2]))), "switches", "sensor", L.mass("bumper_switch"), internal=False, hard=False)
+        rear = xyz[0] < -100
+        add(name, sw.moved(cq.Location(cq.Vector(xyz[0] + (8 if rear else 0), xyz[1] * (0.9 if rear else 1), xyz[2]))), "switches", "sensor", L.mass("bumper_switch"), internal=False, hard=False)
     e = L.env("clamp_resistor")
     add("bus_clamp_resistor", L.box(20, 20 + e["w"], -e["l"] / 2, e["l"] / 2, z1, z1 + e["h"]), "thermal", "heat", L.mass("clamp_resistor"))
 
     # ---- detector head, Rev E
     proj = rail_projection
     dz = (P.FILM_Z - proj) - 7.0    # Rev D STEP carries the 3 mm rails (underside z = 7)
+    dx = P.HEAD_DX                  # rigid shift of the Rev D head solids (mount option C)
     for n, s in dsolid.items():
         if n.startswith(("S0_", "S1_", "S2_", "S3_")):
             if "Heater_zone" in n:
                 continue
-            add(n, s, "head_optics", "optic", internal=False)
+            add(n, s.translate((dx, 0, 0)), "head_optics", "optic", internal=False)
         elif n.startswith(("Leading_contact_rail", "Side_contact_rail", "Wing_tip_contact_return")):
-            add(n, s.translate((0, 0, dz)) if dz else s, "head_rails", "head", internal=False)
-        elif n in ("Key_socket", "Captive_pin_envelope"):
-            add(n, s, "head_frame", "head", internal=False)
+            add(n, s.translate((dx, 0, dz)), "head_rails", "head", internal=False)
     frame = cached(["head_frame_E", P.HEAD_FRAME_TOP_Z], lambda: dsolid["Peripheral_frame_and_interlane_ribs"].cut(L.box(100, 300, -200, 200, P.HEAD_FRAME_TOP_Z, 60)))
-    add("head_frame_E", frame, "head_frame", "head", internal=False)
+    add("head_frame_E", frame.translate((dx, 0, 0)), "head_frame", "head", internal=False)
+    for tag, s in (("L", 1), ("R", -1)):
+        yc = s * RC["shoe_y"]
+        shoe = L.box(RC["shoe_x"][0], RC["shoe_x"][1], yc - RC["shoe_width"] / 2, yc + RC["shoe_width"] / 2, *RC["shoe_z"])
+        add(f"head_shoe_{tag}", shoe, "head_frame", "struct", 0.03, internal=False, mates={f"receiver_channel_{tag}"})
     for i, y in enumerate(P.SEG_Y):
         add(f"S{i}_retention_pad_and_heater", L.box(P.ROW_X - P.ACTIVE_X / 2, P.ROW_X + P.ACTIVE_X / 2, y - P.ACTIVE_Y / 2, y + P.ACTIVE_Y / 2, P.HEAD_STACK[0][1], P.HEAD_STACK[0][2]), "head_stack", "heat", internal=False)
     add("head_spreader_plate", L.box(*P.HEAD_SPREADER_X, -P.HEAD_SPREADER_HALF_Y, P.HEAD_SPREADER_HALF_Y, P.HEAD_STACK[1][1], P.HEAD_STACK[1][2]), "head_stack", "struct", internal=False)
@@ -278,16 +295,16 @@ def build(rail_projection=3.0):
     xa, xb = P.HEAD_COVER_X
     hy = P.HEAD_COVER_HALF_Y
     skirt = L.box(xa, xb, -hy, hy, P.HEAD_FRAME_TOP_Z, cz0).cut(L.box(xa + 2.5, xb - 2.5, -hy + 2.5, hy - 2.5, P.HEAD_FRAME_TOP_Z - 1, cz0 + 1))
-    skirt = skirt.cut(L.box(138, 154.5, -43.0, 43.0, 20, 42.5))
     cover = L.box(xa, xb, -hy, hy, cz0, cz1).fuse(skirt).clean()
     add("head_cover_E", cover, "head_cover", "shell", internal=False)
 
-    pods = [L.cyl(P.DRIVE_POD["inner_r"], 2 * (P.WHEEL_Y + 5), (0, -(P.WHEEL_Y + 5), P.MOTOR_AXIS_Z), (0, 1, 0))]  # pod bore + shaft exit
+    pods = [L.cyl(P.DRIVE_POD["inner_r"], 2 * (P.WHEEL_Y + 5), (0, -(P.WHEEL_Y + 5), P.MOTOR_AXIS_Z), (0, 1, 0)),  # pod bore + shaft exit
+            L.box(hx[0] - 10, hx[1] - hw, -hy + hw, hy - hw, hz[0] - 5, hz[1] - hw)]                                  # battery hump interior
     return parts, {"cav_u": cav_u, "cav_l": cav_l, "pods": pods, "nuts": nuts, "grasp": grasp, "rev_d": dsolid}
 
 
 # ----------------------------------------------------------------------------------------------------- checks
-SAME_GROUP_OK = {"head_optics", "chs_main", "head_acq", "battery", "grip", "controls", "charge", "connectors", "neck"}
+SAME_GROUP_OK = {"head_optics", "chs_main", "head_acq", "battery", "grip", "controls", "charge", "connectors", "receiver"}
 
 
 def interference(parts, near=12.0):
@@ -478,7 +495,7 @@ def service_checks(parts, extra):
 
 
 CORRIDORS = {   # name: (x0, x1, y0, y1, z0, z1), what runs there
-    "tunnel_top_spine": ((-198, -72, -40, 40, 114, 121), "LiDAR Ethernet/12 V, RR-PANEL, rear ToF and deck controls to the board rear corners"),
+    "hump_side_left": ((-118, -72, 62, 76, 100, 116), "LiDAR Ethernet/12 V, RR-PANEL, rear ToF and deck controls to the board rear corners"),
     "left_gutter": ((-69, -5, 99, 105, 84, 98), "left motor/encoder, left look-ahead ToF, USB/5 V to CM5"),
     "right_gutter": ((-69, -5, -105, -99, 84, 98), "pack feed from the coupler, charge feed, right motor/encoder, E-stop loop"),
     "front_bay": ((36, 62, -30, 30, 56, 90), "J1/J2 feeds, front cliff ToF, dock switch, clamp resistor leads"),
@@ -528,14 +545,11 @@ def rev_d_containment():
 # ----------------------------------------------------------------------------------------------------- outputs
 def alternatives():
     B = P.BATTERY_BAY
-    e8, e12, el, ea = L.env("battery_8ah"), L.env("battery_12ah"), L.env("lidar"), L.env("lidar_alt")
-    need_top = B["cassette_z"][0] + 2.5 + min(e12["w"], e12["h_total"]) + 2.5
-    roof = min(P.roof_z(x, y, "inner") or 0.0 for x in (B["cassette_x"][0], -150.0, B["cassette_x"][1]) for y in (0.0, B["cassette_half_y"]))
+    e9, e12, el, ea = L.env("battery_8ah"), L.env("battery_12ah"), L.env("lidar"), L.env("lidar_alt")
     return [
-        f"12 Ah pack PSL-SC-12120 ({e12['l']:.0f} x {e12['w']:.0f} x {e12['h_total']:.0f} mm, 1.65 kg): same length and width footprint class as the 9 Ah pack lying down "
-        f"({e8['l']:.0f} x {e8['h_total']:.0f}), but {min(e12['w'], e12['h_total']) - e8['w']:.0f} mm taller in either orientation. Cassette top would be z = {need_top:.0f} against the tunnel roof at z = {B['tunnel_roof_z']:.0f}, "
-        f"the lowest inner skin over the bay at z = {roof:.0f} and the LiDAR base at z = {P.LIDAR_POSE['base_z']:.0f}: **does not fit the proposed body** (short by {need_top + 3 - min(roof, P.LIDAR_POSE['base_z']):.0f} mm of height at the tail). "
-        "Fitting it means raising the tail deck and LiDAR by that amount (or a height scale of about 1.55 instead of 1.30). Decision needed with the power budget (it would also supply most of the tail ballast).",
+        f"Baseline pack PSL-SC-12120 ({e12['l']:.0f} x {e12['w']:.0f} x {e12['h_total']:.0f} mm, 1.65 kg, DEC-040) lies on its {e12['l']:.0f} x {e12['h_total']:.0f} side, {e12['w']:.0f} mm tall: cassette z {B['cassette_z'][0]:.0f}..{B['cassette_z'][1]:.0f}. "
+        f"Body growth for it is local: a dorsal hump {2 * B['hump_half_y']:.0f} mm wide over the tunnel with its top at z = {B['hump_z'][1]:.0f} ({B['hump_z'][1] - P.BODY_CROWN_Z:.0f} mm above the Rev E crown, up to about 35 mm above the skin at the tail), LiDAR on top of it.",
+        f"9 Ah pack PSL-SC-1290 ({e9['l']:.0f} x {e9['w']:.0f} x {e9['h_total']:.0f} mm, 1.0 kg) fits the same cassette lying on its side ({e9['h_total']:.0f} wide, {e9['w']:.0f} tall) with a {e12['w'] - e9['w']:.0f} mm spacer on top: kept as an alternative at no layout cost (same coupler position).",
         f"SICK picoScan150 ({ea['l']:.0f} x {ea['w']:.0f} x {ea['h']:.0f} mm, 0.22 kg): same footprint as the LakiBeam 1L pad, {ea['h'] - el['h']:.0f} mm taller -> top at z = {P.LIDAR_POSE['base_z'] + ea['h']:.0f}; fits without layout change (system-plug exit to be checked).",
         f"5 mm rail insert: head envelope z min becomes {P.FILM_Z - 5.0:.1f} (= contract minimum {P.HEAD_ENV_E_CEILING['z'][0]}); run `python -m mechanical.common.layout --rail 5` to regenerate the model with it.",
     ]
@@ -695,15 +709,17 @@ def main(argv=None):
         "overall z": f"{bb[2]:.1f} .. {bb[5]:.1f}",
         "body shell x / y / z": f"{body[0]:.1f}..{body[3]:.1f} / {body[1]:.1f}..{body[4]:.1f} / {body[2]:.1f}..{body[5]:.1f}  (Rev D: -165.0..102.3 / +-112.6 / 32.9..117.6)",
         "width across tyres": f"{P.TRACK + P.TYRE_WIDTH:.1f}",
-        "head envelope x / y / z": f"{headbb[0]:.1f}..{headbb[3]:.1f} / {headbb[1]:.1f}..{headbb[4]:.1f} / {headbb[2]:.1f}..{headbb[5]:.1f}  (contract ceiling z {P.HEAD_ENV_E_CEILING['z']})",
-        "tail swept radius about base_link": f"{max(math.hypot(body[0], 60), math.hypot(-228, 110)):.0f}  (head outer corner {math.hypot(headbb[3], headbb[4]):.0f})",
-        "ground clearance: body underside / neck skid / head rail": f"{body[2]:.1f} / {min(p.bb[2] for p in parts if p.group == 'neck'):.1f} / {min(p.bb[2] for p in parts if p.group == 'head_rails'):.1f}",
+        "head envelope x / y / z": f"{mainbb[0]:.1f}..{mainbb[3]:.1f} / {mainbb[1]:.1f}..{mainbb[4]:.1f} / {mainbb[2]:.1f}..{mainbb[5]:.1f}; shoes to x {headbb[0]:.1f}  (contract ceiling z {P.HEAD_ENV_E_CEILING['z']})",
+        "swept radius about base_link: tail / head outer corner": f"{max(math.hypot(body[0], 60), math.hypot(-228, 110)):.0f} / {math.hypot(headbb[3], headbb[4]):.0f}",
+        "ground clearance: body underside / receiver channels / head rail": f"{body[2]:.1f} / {min(p.bb[2] for p in parts if p.group == 'receiver'):.1f} / {min(p.bb[2] for p in parts if p.group == 'head_rails'):.1f}",
         "lowest non-running-gear solids": "; ".join(f"{n} {z:.1f}" for z, n in low),
         "caster contact / wheel contact z": f"{min(p.bb[2] for p in parts if p.group == 'caster'):.2f} / {min(p.bb[2] for p in parts if p.name.startswith('wheel')):.2f}",
         "grip bar z / LiDAR top z": f"{P.GRIP['bar_bottom_z']:.1f}..{P.GRIP['bar_top_z']:.1f} / {P.LIDAR_POSE['base_z'] + L.env('lidar')['h']:.1f}",
     }
-    head_ok = headbb[5] <= P.HEAD_ENV_E_CEILING["z"][1] + 1e-6 and headbb[2] >= P.HEAD_ENV_E_CEILING["z"][0] - 1e-6 \
-        and headbb[0] >= P.HEAD_ENV_E_CEILING["x"][0] - 1e-6 and headbb[3] <= P.HEAD_ENV_E_CEILING["x"][1] + 1e-6 and abs(headbb[1]) <= 175 + 1e-6 and headbb[4] <= 175 + 1e-6
+    mainbb = bounds(cq.Compound.makeCompound([p.shape for p in head if not p.name.startswith("head_shoe")]))
+    he = P.HEAD_ENV_E
+    head_ok = mainbb[5] <= P.HEAD_ENV_E_CEILING["z"][1] + 1e-6 and mainbb[2] >= P.HEAD_ENV_E_CEILING["z"][0] - 1e-6 \
+        and mainbb[0] >= he["x"][0] - 1e-6 and mainbb[3] <= he["x"][1] + 1e-6 and abs(mainbb[1]) <= 175 + 1e-6 and mainbb[4] <= 175 + 1e-6
     svc_block = {k: v["blocked_by"] for k, v in service.items() if v.get("blocked_by")}
 
     cor_block = {k: v["blocked_by"] for k, v in corridors.items() if v["blocked_by"]}
@@ -711,7 +727,7 @@ def main(argv=None):
     checks = {
         "volumetric interference": (not clash, "none" if not clash else f"{len(clash)} clash(es)"),
         "containment in Rev E cavity": (not outside, "all internal parts inside" if not outside else f"{len(outside)} part(s) outside"),
-        "head inside contract Rev E envelope": (head_ok, f"z {headbb[2]:.1f}..{headbb[5]:.1f}"),
+        "head inside the proposed envelope (CCR-11) and the contract z ceiling": (head_ok, f"x {mainbb[0]:.1f}..{mainbb[3]:.1f}, z {mainbb[2]:.1f}..{mainbb[5]:.1f}; shoes reach back to x {headbb[0]:.1f}"),
         "wheel and caster on the floor plane": (floor_ok, "z = 0 +- 0.05"),
         "ToF centre rays": (not ray_fail, "all 11 clear" if not ray_fail else f"obstructed: {ray_fail}"),
         "LiDAR scan plane": (not lidar["blocked"], "clear" if not lidar["blocked"] else f"{len(lidar['blocked'])} bearings blocked"),

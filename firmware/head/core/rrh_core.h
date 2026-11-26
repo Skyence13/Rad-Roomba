@@ -137,6 +137,8 @@ typedef struct {
     int32_t heater_plate_mc, board_mc;
     uint32_t supply_mv;
     uint8_t bumper_zones; /* zones seen closed at any poll during the gate */
+    uint8_t width_mask;   /* chains with a pulse-width histogram (0 = port does not measure widths) */
+    uint16_t width_hist[2u * RRH_LANES][RRH_WIDTH_BINS]; /* saturating at 65535 */
 } rrh_frame_t;
 
 typedef struct {
@@ -202,6 +204,7 @@ typedef struct {
     uint8_t live_flags;       /* RRH_AF_* conditions true at the last evaluation */
     uint8_t bumper_latched;   /* zones seen since the last HELLO / STATUS clear */
     uint8_t bumper_gate;      /* zones seen during the gate in progress */
+    uint32_t width_edges_ns[RRH_WIDTH_BINS - 1u]; /* histogram bin edges of the last gate record */
     uint32_t bias_cmd_mv;     /* commanded bias set-point */
     bool bias_on;
     uint32_t bias_settle;     /* control periods since the last set-point change */

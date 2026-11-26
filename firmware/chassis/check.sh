@@ -13,10 +13,9 @@ TARGET=1
 step() { printf '\n=== %s ===\n' "$*"; }
 
 step "1/5 pin map (tool-check against STM32G474RE LQFP64 pin data, generated header up to date)"
-python3 tools/check_pinmap.py --emit-header "$BUILD.board_pins.h.tmp" --emit-markdown "$BUILD.pinmap.md.tmp"
+python3 tools/check_pinmap.py --emit-header "$BUILD.board_pins.h.tmp" --readme README.md --check
 cmp "$BUILD.board_pins.h.tmp" port/stm32g474/include/board_pins.h || { echo "board_pins.h is stale: run tools/check_pinmap.py --emit-header port/stm32g474/include/board_pins.h"; exit 1; }
-cmp "$BUILD.pinmap.md.tmp" docs/hardware_mapping.md || { echo "docs/hardware_mapping.md is stale: run tools/check_pinmap.py --emit-markdown docs/hardware_mapping.md"; exit 1; }
-rm -f "$BUILD.board_pins.h.tmp" "$BUILD.pinmap.md.tmp"
+rm -f "$BUILD.board_pins.h.tmp"
 
 step "2/5 host build (core + emulator + unit tests, -Werror, ASan/UBSan on the tests)"
 cmake -S . -B "$BUILD" -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo >/dev/null

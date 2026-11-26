@@ -85,9 +85,9 @@ static void clock_init(void)
 
     RCC->AHB2ENR |= RCC_AHB2ENR_GPIOAEN | RCC_AHB2ENR_GPIOBEN | RCC_AHB2ENR_GPIOCEN | RCC_AHB2ENR_GPIODEN |
                     RCC_AHB2ENR_GPIOEEN | RCC_AHB2ENR_GPIOFEN | RCC_AHB2ENR_ADC12EN | RCC_AHB2ENR_RNGEN;
-    RCC->APB1ENR1 |= RCC_APB1ENR1_TIM2EN | RCC_APB1ENR1_TIM3EN | RCC_APB1ENR1_TIM5EN | RCC_APB1ENR1_TIM6EN |
+    RCC->APB1ENR1 |= RCC_APB1ENR1_TIM2EN | RCC_APB1ENR1_TIM3EN | RCC_APB1ENR1_TIM4EN | RCC_APB1ENR1_TIM5EN | RCC_APB1ENR1_TIM6EN |
                      RCC_APB1ENR1_UART4EN | RCC_APB1ENR1_I2C3EN | RCC_APB1ENR1_PWREN;
-    RCC->APB2ENR |= RCC_APB2ENR_USART1EN | RCC_APB2ENR_SPI1EN | RCC_APB2ENR_SYSCFGEN;
+    RCC->APB2ENR |= RCC_APB2ENR_USART1EN | RCC_APB2ENR_SPI1EN | RCC_APB2ENR_SYSCFGEN | RCC_APB2ENR_TIM8EN;
     (void)RCC->APB2ENR;
     /* PB4 / PB6 are UCPD CC pins: switch their dead-battery pull-downs off (UNVERIFIED need). */
     PWR->CR3 |= PWR_CR3_UCPD_DBDIS;
@@ -156,8 +156,25 @@ static void timebase_init(void)
         t->EGR = TIM_EGR_UG;
         t->SR = 0u;
     }
+    /* TIM4 and TIM3: 16-bit, same clock, free running; all four channels capture the FALLING
+     * edge of the raw LLD comparator outputs (floor on TIM4, reference on TIM3). Together with
+     * the BUSY capture this gives the time over threshold of the triggering pulse. */
+    TIM_TypeDef *const width_timers[2] = {TIM4, TIM3};
+    for (uint32_t i = 0u; i < 2u; i++) {
+        TIM_TypeDef *t = width_timers[i];
+        t->PSC = 0u;
+        t->ARR = 0xFFFFu;
+        t->CCMR1 = TIM_CCMR1_CC1S_0 | TIM_CCMR1_CC2S_0;
+        t->CCMR2 = TIM_CCMR2_CC3S_0 | TIM_CCMR2_CC4S_0;
+        t->CCER = TIM_CCER_CC1E | TIM_CCER_CC1P | TIM_CCER_CC2E | TIM_CCER_CC2P | TIM_CCER_CC3E | TIM_CCER_CC3P |
+                  TIM_CCER_CC4E | TIM_CCER_CC4P;
+        t->EGR = TIM_EGR_UG;
+        t->SR = 0u;
+    }
     TIM2->CR1 = TIM_CR1_CEN;
     TIM5->CR1 = TIM_CR1_CEN;
+    TIM4->CR1 = TIM_CR1_CEN;
+    TIM3->CR1 = TIM_CR1_CEN;
 }
 
 /* ---- RS-485 on USART1 with hardware driver enable ---------------------------------------------- */
@@ -260,21 +277,23 @@ static uint8_t spi_xfer(SPI_TypeDef *spi, uint8_t b)
 
 uint8_t bsp_spi_dac_xfer(uint8_t b) { return spi_xfer(SPI1, b); }
 
-/* Test pulser strobe: TIM3_CH1, 1 kHz, 2 us wide, PWM mode 1. Amplitude comes from a DAC output. */
+/* Test pulser strobe: TIM8_CH1, 1 kHz, 2 us wide, PWM mode 1. Amplitude comes from a DAC output. */
 void bsp_pulser(bool enable)
 {
-    TIM3->CR1 = 0u;
+    TIM8->CR1 = 0u;
     if (!enable) {
-        TIM3->CCER = 0u;
+        TIM8->CCER = 0u;
+        TIM8->BDTR = 0u;
         return;
     }
-    TIM3->PSC = BSP_TICKS_PER_US - 1u; /* 1 MHz */
-    TIM3->ARR = 999u;
-    TIM3->CCR1 = 2u;
-    TIM3->CCMR1 = (6uL << TIM_CCMR1_OC1M_Pos) | TIM_CCMR1_OC1PE;
-    TIM3->CCER = TIM_CCER_CC1E;
-    TIM3->EGR = TIM_EGR_UG;
-    TIM3->CR1 = TIM_CR1_CEN;
+    TIM8->PSC = BSP_TICKS_PER_US - 1u; /* 1 MHz */
+    TIM8->ARR = 999u;
+    TIM8->CCR1 = 2u;
+    TIM8->CCMR1 = (6uL << TIM_CCMR1_OC1M_Pos) | TIM_CCMR1_OC1PE;
+    TIM8->CCER = TIM_CCER_CC1E;
+    TIM8->BDTR = TIM_BDTR_MOE; /* advanced timer: main output enable */
+    TIM8->EGR = TIM_EGR_UG;
+    TIM8->CR1 = TIM_CR1_CEN;
 }
 
 /* ---- DAC60508 (register map recalled from the TI datasheet: UNVERIFIED) ----------------------------- */
@@ -613,13 +632,19 @@ void bsp_init(void)
     CFG_OUT(MON_MUX_A1, false);
     CFG_OUT(MON_MUX_A2, false);
     CFG_OUT(MON_MUX_A3, false);
-    /* Latch read-backs and comparator states: all of port D, PE0..PE3. */
-    for (uint32_t pin = 0u; pin < 16u; pin++) {
+    /* Latch read-backs: PD0..PD11 plain inputs. Raw LLD comparator outputs: PD12..15 (TIM4) and
+     * PE2..5 (TIM3) as timer inputs; their level is still visible in the port's IDR. */
+    for (uint32_t pin = 0u; pin < 12u; pin++) {
         gpio_cfg(GPIOD, pin, MODE_IN, 0u, PULL_DOWN);
     }
-    for (uint32_t pin = 0u; pin < 4u; pin++) {
-        gpio_cfg(GPIOE, pin, MODE_IN, 0u, PULL_DOWN);
-    }
+    CFG_AF(LLD_F0, PULL_DOWN);
+    CFG_AF(LLD_F1, PULL_DOWN);
+    CFG_AF(LLD_F2, PULL_DOWN);
+    CFG_AF(LLD_F3, PULL_DOWN);
+    CFG_AF(LLD_R0, PULL_DOWN);
+    CFG_AF(LLD_R1, PULL_DOWN);
+    CFG_AF(LLD_R2, PULL_DOWN);
+    CFG_AF(LLD_R3, PULL_DOWN);
     CFG_IN(SPARE_PE15, PULL_DOWN);
     CFG_IN(SPARE_PC12, PULL_DOWN);
     CFG_IN(SPARE_PF2, PULL_DOWN);

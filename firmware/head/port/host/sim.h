@@ -55,6 +55,7 @@ typedef struct {
     uint64_t model_us;
     uint8_t saturate_mask;     /* bit n floor lane n, bit 4+n reference lane n */
     bool source_fail;          /* acquisition source refuses to start */
+    bool width_hist;           /* fabricate the optional pulse-width histogram */
     /* storage */
     uint8_t nv[256];
     size_t nv_len;

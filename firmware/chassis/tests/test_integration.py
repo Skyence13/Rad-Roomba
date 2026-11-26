@@ -17,7 +17,6 @@ from rrchs_client import Sim, frame, unframe  # noqa: E402
 SIM_BIN = None
 SCHEMA = None
 OPM = "COMMISSIONING"
-TICKS_PER_M = 9600 / (2 * math.pi * 0.052)
 
 try:
     import jsonschema
@@ -95,6 +94,9 @@ class Base(unittest.TestCase):
         self.wait_mode("STANDBY")
         self.env.set(press="REARM")
         self.wait_mode("ARMED_IDLE")
+        # geometry comes from the chassis, never from literals in the host
+        self.track = hello["caps"]["track_nom_m"]
+        self.ticks_per_m = hello["caps"]["encoder_cpr"] / (2 * math.pi * hello["caps"]["wheel_radius_nom_m"])
         return hello
 
     def drive_for(self, v, w, sim_seconds, op_mode=OPM, until=None):
@@ -175,7 +177,7 @@ class TestProtocol(Base):
         self.ok("HEATER", {"chassis_setpoint_c": None})
         self.assertEqual(self.ok("PANEL", {"pattern": "ARRIVED"})["leds"]["ready"], "BLINK_2")
         g = self.ok("CONFIG_GET", {"key": "cal.track_m"})
-        self.assertAlmostEqual(g["value"], 0.22)
+        self.assertAlmostEqual(g["value"], 0.27)
         keys, off = [], 0
         while True:
             b = self.ok("CONFIG_GET", {"key": "_keys", "offset": off})
@@ -188,8 +190,8 @@ class TestProtocol(Base):
         for k in keys:  # every listed key is readable and inside its limits
             g = self.ok("CONFIG_GET", {"key": k})
             self.assertTrue(g["min"] <= g["value"] <= g["max"], g)
-        s = self.ok("CONFIG_SET", {"key": "cal.track_m", "value": 0.2215})
-        self.assertAlmostEqual(s["old"], 0.22)
+        s = self.ok("CONFIG_SET", {"key": "cal.track_m", "value": 0.2715})
+        self.assertAlmostEqual(s["old"], 0.27)
         self.assertEqual(self.req("CONFIG_SET", {"key": "cal.track_m", "value": 9})[0], "BAD_ARG")
         r = self.link.drive(0.0, 0.0, OPM)
         self.assertTrue(r["accepted"])
@@ -224,9 +226,9 @@ class TestMotion(Base):
         x = y = yaw = 0.0
         for a, b in zip(reps, reps[1:]):
             self.assertGreaterEqual(b["odom"]["t_us"], a["odom"]["t_us"])
-            dl = (b["odom"]["left_ticks"] - a["odom"]["left_ticks"]) / TICKS_PER_M
-            dr = (b["odom"]["right_ticks"] - a["odom"]["right_ticks"]) / TICKS_PER_M
-            ds, dth = (dl + dr) / 2, (dr - dl) / 0.220
+            dl = (b["odom"]["left_ticks"] - a["odom"]["left_ticks"]) / self.ticks_per_m
+            dr = (b["odom"]["right_ticks"] - a["odom"]["right_ticks"]) / self.ticks_per_m
+            ds, dth = (dl + dr) / 2, (dr - dl) / self.track
             x += ds * math.cos(yaw + dth / 2)
             y += ds * math.sin(yaw + dth / 2)
             yaw += dth
@@ -363,7 +365,7 @@ class TestMotion(Base):
         alerts = 0
         for hop in range(3):
             x0 = self.env.latest()["x"]
-            reps = self.drive_for(0.10, 0.0, 4.0, until=lambda r: r["odom"]["left_ticks"] / TICKS_PER_M >= 0.1 * (hop + 1) - 0.006)
+            reps = self.drive_for(0.10, 0.0, 4.0, until=lambda r: r["odom"]["left_ticks"] / self.ticks_per_m >= 0.1 * (hop + 1) - 0.006)
             alerts += any(r["motion"] == "ALERT" for r in reps)
             self.drive_for(0.0, 0.0, 0.7)
             a = self.link.drive(0.0, 0.0, OPM)

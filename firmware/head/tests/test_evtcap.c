@@ -34,6 +34,7 @@ static uint64_t g_now, g_first_gate;
 static uint32_t g_clear_latency = 40u; /* ticks from service entry to the first clear */
 static uint64_t truth_busy[MAX_GATES][RRH_EVT_CHAINS];
 static uint32_t truth_count[MAX_GATES][RRH_EVT_CHAINS][3];
+static uint8_t g_width_mask = 0xFFu;
 static uint32_t heater_calls;
 static bool heater_level;
 
@@ -119,6 +120,11 @@ static void service_at(uint64_t t)
         }
         if (t >= hw[ch].lld_high_until) {
             in.lld_low |= bit;
+            if (hw[ch].busy) {
+                /* the port's falling-edge capture: time over threshold of the triggering pulse */
+                in.width_valid |= bit;
+                in.width_ticks[ch] = (uint32_t)(hw[ch].lld_high_until - hw[ch].start);
+            }
         }
         if (hw[ch].uld) {
             in.uld |= bit;
@@ -132,7 +138,9 @@ static void service_at(uint64_t t)
 
 static void setup(uint64_t first_gate)
 {
-    const rrh_evt_cfg_t cfg = {TICK_HZ, WINDOW, MAX_HOLD, clear_cb, heater_cb, NULL};
+    /* width histogram on all chains, bin edges 150 ns, 400 ns, 2 us */
+    const rrh_evt_cfg_t cfg = {TICK_HZ, WINDOW, MAX_HOLD, clear_cb, heater_cb, NULL, g_width_mask,
+                               {(150u * US) / 1000u, (400u * US) / 1000u, 2u * US}, {150u, 400u, 2000u}};
     memset(hw, 0, sizeof hw);
     memset(truth_busy, 0, sizeof truth_busy);
     memset(truth_count, 0, sizeof truth_count);
@@ -190,6 +198,11 @@ static void test_single_events_of_each_class(void)
     CHECK((r.lane[0].ref_counts == 1u) && (r.lane[0].ref_reject_counts == 0u));
     CHECK((r.lane[1].ref_counts == 0u) && (r.lane[1].ref_reject_counts == 1u));
     CHECK((r.lane[3].beta_counts == 0u) && (r.lane[3].floor_live_ticks == GATE) && (r.lane[3].flags == 0u)); /* a true zero */
+    /* pulse widths: 300 ticks = 2.08 us -> last bin; 100 ticks = 694 ns -> bin 2 (400 ns .. 2 us) */
+    CHECK((r.width_mask == 0xFFu) && (r.width_edges_ns[0] == 150u) && (r.width_edges_ns[2] == 2000u));
+    CHECK((r.width_hist[0][3] == 1u) && (r.width_hist[0][0] + r.width_hist[0][1] + r.width_hist[0][2] == 0u));
+    CHECK((r.width_hist[1][2] == 1u) && (r.width_hist[2][2] == 1u) && (r.width_hist[4][2] == 1u) && (r.width_hist[5][2] == 1u));
+    CHECK(r.width_hist[3][0] + r.width_hist[3][1] + r.width_hist[3][2] + r.width_hist[3][3] == 0u);
     /* dead time of the alpha event: from the captured start to the measured clear, which is the
      * first service at least one window after the start (+ the model's clear latency) */
     const uint64_t first_service = (((t0 + 7u + WINDOW) + SERVICE - 1u) / SERVICE) * SERVICE;
@@ -335,6 +348,12 @@ static void poisson_run(double rate, double seconds, uint32_t jitter, bool hiccu
             prev = r;
             have_prev = true;
             for (uint32_t l = 0; l < RRH_LANES; l++) {
+                /* width histogram: every classified event is in exactly one bin; alpha pulses
+                 * (6 us) in the last bin, everything else (40 ticks = 278 ns) in bin 1 */
+                CHECK(r.width_hist[l][3] == r.lane[l].alpha_counts);
+                CHECK(r.width_hist[l][1] == r.lane[l].beta_counts + r.lane[l].floor_reject_counts);
+                CHECK(r.width_hist[4u + l][1] == r.lane[l].ref_counts + r.lane[l].ref_reject_counts);
+                CHECK((r.width_hist[l][0] == 0u) && (r.width_hist[l][2] == 0u));
                 CHECK(r.lane[l].flags == 0u);
                 counts += (uint64_t)r.lane[l].alpha_counts + r.lane[l].beta_counts + r.lane[l].floor_reject_counts +
                           r.lane[l].ref_counts + r.lane[l].ref_reject_counts;
@@ -446,6 +465,16 @@ static void test_gates_heater_stop_and_overflow(void)
     CHECK(rrh_evtcap_pop(&ec, &r) && (r.sequence == 6u)); /* the loss is visible as a sequence skip */
     rrh_evtcap_abort(&ec);
     CHECK(!rrh_evtcap_running(&ec));
+    /* a port without width measurement: the record says so and the histogram stays empty */
+    g_width_mask = 0u;
+    setup(20u * GATE);
+    g_width_mask = 0xFFu;
+    run_services(20u * GATE, 20u * GATE + 5u * SERVICE);
+    pulse(1u, 20u * GATE + 5u * SERVICE + 3u, 1u, 100u);
+    run_services(20u * GATE + 6u * SERVICE, 21u * GATE + SERVICE);
+    CHECK(rrh_evtcap_pop(&ec, &r) && (r.lane[1].beta_counts == 1u) && (r.width_mask == 0u));
+    CHECK(r.width_hist[1][0] + r.width_hist[1][1] + r.width_hist[1][2] + r.width_hist[1][3] == 0u);
+    rrh_evtcap_abort(&ec);
     /* without gates a heater request acts at once */
     rrh_evtcap_heater_request(&ec, true);
     CHECK(heater_level);

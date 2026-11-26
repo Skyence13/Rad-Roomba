@@ -1,6 +1,6 @@
 # Chassis link interface control document — RR-CHS 1.0
 
-**Status: draft for design 0.4. Owner: chassis firmware lead.** Expands `interface/system/contract.yaml › chassis_link`. Where this document and the contract disagree, the contract wins and the disagreement is a defect to report. Machine-readable companion: [`chassis_link.schema.json`](chassis_link.schema.json). Reference implementation: `firmware/chassis/core/` (the same code runs in the emulator `rr_chassis_sim` and on the STM32G474).
+**Status: draft for design 0.4 (written against contract 0.4.0-draft4). Owner: chassis firmware lead.** Expands `interface/system/contract.yaml › chassis_link`. Where this document and the contract disagree, the contract wins and the disagreement is a defect to report. Machine-readable companion: [`chassis_link.schema.json`](chassis_link.schema.json). Reference implementation: `firmware/chassis/core/` (the same code runs in the emulator `rr_chassis_sim` and on the STM32G474).
 
 Evidence classes: every behaviour described here is implemented in the firmware core and exercised against the emulator (`simulated`, see `firmware/chassis/tests/`). **Nothing has run on hardware.** All distances, times and thresholds are design values pending the physical braking and protection trials (VT-003/004/005/035).
 
@@ -20,7 +20,7 @@ Fields marked **(+)** are additive to the contract op table (present in 1.0, saf
 | Maximum record | 2048 bytes including TAB, CRC and LF, both directions. |
 | Discard rules | Malformed JSON, duplicate keys, bad CRC, wrong trailer, oversize: the record is discarded **without a reply**. An oversized/unfinished record is discarded through the next LF. |
 | Dialogue | The host polls. One transaction outstanding. The chassis never transmits unsolicited records. |
-| Reply time | ≤ 5 ms from the LF of the request to the first byte of the reply for every op except `BRAKE_TEST` (≤ 3 s) and `CONFIG_SET` (≤ 100 ms, flash write). Host timeout recommendation: 50 ms (cyclic ops), then retry with the same `id`. |
+| Reply time | Design target ≤ 5 ms from the LF of the request to the first byte of the reply for every op except `BRAKE_TEST` (≤ 3 s) and `CONFIG_SET` (≤ 100 ms, flash write); not yet measured on hardware. Host timeout recommendation: 50 ms (cyclic ops), then retry with the same `id`. |
 
 ### 1.1 Envelope
 
@@ -42,7 +42,7 @@ response  {"type":"RSP","v":"1.0","id":<u32>,"status":<string>,"body":{...}}
 
 ### 1.2 Retries and the reply cache
 
-The chassis caches the last completed transaction. A request whose `id` **and** `op` equal the cached transaction is not executed again; the cached reply bytes are re-sent. Consequences the host must respect:
+The chassis caches the last completed transaction. A request whose `id` and whose JSON bytes are identical to the cached request (same length and CRC) is not executed again; the cached reply bytes are re-sent. A different request that reuses an `id` is executed normally. `BUSY` replies are never cached. Consequences the host must respect:
 
 - Every new command, including every cyclic `DRIVE`, uses a fresh `id`. Re-sending a `DRIVE` with the same `id` does **not** refresh the command time-to-live.
 - A fresh `HELLO` (new `id`) discards the cache.
@@ -50,7 +50,7 @@ The chassis caches the last completed transaction. A request whose `id` **and** 
 
 ### 1.3 Link session
 
-`HELLO` opens a **link session** (counter `session`, starts at 1 after boot). Ops that can enable or change something (`DRIVE`, `REARM_SW`, `SET_OP_MODE`, `HEAD_POWER`, `HEATER`, `PANEL`, `CONFIG_SET`, `BRAKE_TEST`) are answered `REJECTED / NO_SESSION` (for `DRIVE`: `accepted:false, reject_reason:"NO_SESSION"`) until a `HELLO` has been answered in this boot. `HELLO`, `TIME`, `STATE`, `EVENTS`, `CONFIG_GET` and `STOP` always work. A `HELLO` received while the robot is `MOVING` is treated as a change of controlling session: the motion is stopped and `HOST_LINK_LOST` is latched (§5.3).
+`HELLO` opens a **link session** (counter `session`, starts at 1 after boot). Ops that can enable or change something (`DRIVE`, `REARM_SW`, `SET_OP_MODE`, `HEAD_POWER`, `HEATER`, `PANEL`, `CONFIG_SET`, `BRAKE_TEST`) are answered `REJECTED / NO_SESSION` (for `DRIVE`: `accepted:false, reject_reason:"NO_SESSION"`) until a `HELLO` has been answered in this boot. `HELLO`, `TIME`, `STATE`, `DIAG`, `EVENTS`, `CONFIG_GET` and `STOP` always work. A `HELLO` received while the robot is `MOVING` is treated as a change of controlling session: the motion is stopped and `HOST_LINK_LOST` is latched (§5.3).
 
 ---
 
@@ -78,7 +78,7 @@ Args: `{}`.
 | `serial` | string | `"RRC-"` + 6 digits (config `id.serial_no`) |
 | `boot_id` | string | UUID (version 4), fresh at every MCU boot |
 | `proto` | string | `"RR-CHS 1.0"` |
-| `caps` | object | `encoder_cpr` (9600), `wheel_radius_nom_m` (0.052), `track_nom_m` (0.220), `max_v_mps` (0.20), `max_w_radps` (0.30); **(+)** `max_rev_mps` (0.05), `max_accel_mps2` (0.30), `ttl_ms_max` (250), `drive_hz` (50), `odom_hz` (100), `record_max` (2048), `events_retained` (128), `tof_count` (11) |
+| `caps` | object | `encoder_cpr` (9600), `wheel_radius_nom_m` (0.052) and `track_nom_m` (0.270, Rev E body) — the nominal values, i.e. the defaults of `cal.wheel_radius_*_m` / `cal.track_m`; the calibrated values are read with `CONFIG_GET` — `max_v_mps` (0.20), `max_w_radps` (0.30); **(+)** `max_rev_mps` (0.05), `max_accel_mps2` (0.30), `ttl_ms_max` (250), `drive_hz` (50), `odom_hz` (100), `record_max` (2048), `events_retained` (128), `tof_count` (11) |
 | `session` **(+)** | u32 | Link-session counter |
 | `uptime_us` **(+)** | u64 | Chassis clock now |
 | `reset` **(+)** | object | `cause` (`POWER_ON`, `BROWNOUT`, `PIN`, `WATCHDOG`, `SOFTWARE`, `UNKNOWN`), `boot_count` (persistent) |
@@ -86,7 +86,7 @@ Args: `{}`.
 
 ```json
 {"type":"REQ","v":"1.0","id":1,"op":"HELLO","args":{}}
-{"type":"RSP","v":"1.0","id":1,"status":"OK","body":{"fw":"rr-chassis 0.4.0+sim","hw_rev":"A","serial":"RRC-000001","boot_id":"6f1c2a7e-5d0b-4c3e-9a41-0d2f3b8c7e10","proto":"RR-CHS 1.0","caps":{"encoder_cpr":9600,"wheel_radius_nom_m":0.052,"track_nom_m":0.22,"max_v_mps":0.2,"max_w_radps":0.3,"max_rev_mps":0.05,"max_accel_mps2":0.3,"ttl_ms_max":250,"drive_hz":50,"odom_hz":100,"record_max":2048,"events_retained":128,"tof_count":11},"session":1,"uptime_us":1234567,"reset":{"cause":"POWER_ON","boot_count":7},"config":{"gen":3,"crc":"5A0F3C21","source":"FLASH"}}}
+{"type":"RSP","v":"1.0","id":1,"status":"OK","body":{"fw":"rr-chassis 0.4.0+sim","hw_rev":"A","serial":"RRC-000001","boot_id":"6f1c2a7e-5d0b-4c3e-9a41-0d2f3b8c7e10","proto":"RR-CHS 1.0","caps":{"encoder_cpr":9600,"wheel_radius_nom_m":0.052,"track_nom_m":0.27,"max_v_mps":0.2,"max_w_radps":0.3,"max_rev_mps":0.05,"max_accel_mps2":0.3,"ttl_ms_max":250,"drive_hz":50,"odom_hz":100,"record_max":2048,"events_retained":128,"tof_count":11},"session":1,"uptime_us":1234567,"reset":{"cause":"POWER_ON","boot_count":7},"config":{"gen":3,"crc":"5A0F3C21","source":"FLASH"}}}
 ```
 
 ### 3.2 TIME
@@ -126,7 +126,7 @@ Acceptance rules, in this order. The first failing rule gives `accepted:false` a
 
 An accepted command replaces the previous one and is valid until its TTL ends. `v = w = 0` is a valid keep-alive. If the TTL of a **non-zero** command ends without a newer accepted command, the chassis ramps to rest and latches `PROTECTIVE_STOP / CMD_TIMEOUT`. The ramp starts no later than `ttl_ms` + 1 ms after the command was issued/received.
 
-Starting from rest: when the chassis has been at rest longer than `alert.rest_ms`, the first non-zero command starts the pre-motion alert (buzzer and MOVING indicator, `alert.premotion_ms`, default 1500 ms). The wheels stay held until it ends; the host keeps sending `DRIVE`. `motion` reports `ALERT`. Commands are otherwise executed with the acceleration limits of §6.1.
+Starting from rest (§6.11): the pre-motion alert (buzzer and MOVING indicator for `alert.premotion_ms`, default 1500 ms) precedes the first motion after arming, after any stop/hold/inhibit, and after the chassis has been idle at rest longer than `alert.rest_ms` (default 5 s). The wheels stay held until it ends; the host keeps sending `DRIVE`; `motion` reports `ALERT`. A start from rest inside the idle time (step-and-count hops) is not delayed and is announced by one short chirp. Commands are executed with the acceleration limits of §6.1.
 
 | Body member | Type | Meaning |
 |---|---|---|
@@ -137,6 +137,7 @@ Starting from rest: when the chassis has been at rest longer than `alert.rest_ms
 | `imu` | object | `t_us`: centre time of the 10 ms averaging window. `gyro_rps[3]`, `accel_mps2[3]`: mean over that window, body axes x forward, y left, z up (accel reads +9.81 on z at rest). **(+)** `ok`: bool. |
 | `stops` | object | `hw`: latched `hw_inhibit_reason`s. `sw`: latched `protective_stop_reason`s. Both arrays empty when nothing is latched. |
 | `event_seq` | u32 | Newest event number (§7) |
+| `stationary` **(+)** | object | `is_stationary` (bool), `since_us` (u64 or null): stationarity evidence for scaler counts, §6.10 |
 | `applied` **(+)** | object | `v_mps`, `w_radps`: the set-point the wheel loops are following now (after caps and ramps) |
 | `motion` **(+)** | string | `REST`, `ALERT`, `RUN`, `DECEL` |
 | `allow` **(+)** | object | `fwd`, `rev`, `pivot`: bool — directions not inhibited by protective fields at this instant |
@@ -146,18 +147,20 @@ Starting from rest: when the chassis has been at rest longer than `alert.rest_ms
 
 ```json
 {"type":"REQ","v":"1.0","id":120,"op":"DRIVE","args":{"seq":57,"v_mps":0.1,"w_radps":0.0,"ttl_ms":200,"op_mode":"SURVEY_SHARED"}}
-{"type":"RSP","v":"1.0","id":120,"status":"OK","body":{"accepted":true,"reject_reason":null,"mode":"MOVING","odom":{"t_us":5230000,"left_ticks":18432,"right_ticks":18427,"left_tps":2937.5,"right_tps":2939.1,"seq":523},"imu":{"t_us":5225000,"gyro_rps":[0.0,0.0,0.001],"accel_mps2":[0.02,-0.01,9.81],"ok":true},"stops":{"hw":[],"sw":[]},"event_seq":14,"applied":{"v_mps":0.1,"w_radps":0.0},"motion":"RUN","allow":{"fwd":true,"rev":true,"pivot":true},"v_cap_mps":0.1,"hold":[],"rearm_nonce":0}}
+{"type":"RSP","v":"1.0","id":120,"status":"OK","body":{"accepted":true,"reject_reason":null,"mode":"MOVING","odom":{"t_us":5230000,"left_ticks":18432,"right_ticks":18427,"left_tps":2937.5,"right_tps":2939.1,"seq":523},"imu":{"t_us":5225000,"gyro_rps":[0.0,0.0,0.001],"accel_mps2":[0.02,-0.01,9.81],"ok":true},"stops":{"hw":[],"sw":[]},"event_seq":14,"stationary":{"is_stationary":false,"since_us":null},"applied":{"v_mps":0.1,"w_radps":0.0},"motion":"RUN","allow":{"fwd":true,"rev":true,"pivot":true},"v_cap_mps":0.1,"hold":[],"rearm_nonce":0}}
 ```
 
 Rejected while the e-stop is pressed (telemetry still present):
 
 ```json
-{"type":"RSP","v":"1.0","id":121,"status":"OK","body":{"accepted":false,"reject_reason":"HW_INHIBIT","mode":"HW_INHIBIT","odom":{"t_us":5250000,"left_ticks":18490,"right_ticks":18485,"left_tps":0.0,"right_tps":0.0,"seq":525},"imu":{"t_us":5245000,"gyro_rps":[0.0,0.0,0.0],"accel_mps2":[0.0,0.0,9.81],"ok":true},"stops":{"hw":["ESTOP"],"sw":[]},"event_seq":17,"applied":{"v_mps":0.0,"w_radps":0.0},"motion":"REST","allow":{"fwd":true,"rev":true,"pivot":true},"v_cap_mps":0.1,"hold":[],"rearm_nonce":0}}
+{"type":"RSP","v":"1.0","id":121,"status":"OK","body":{"accepted":false,"reject_reason":"HW_INHIBIT","mode":"HW_INHIBIT","odom":{"t_us":5250000,"left_ticks":18490,"right_ticks":18485,"left_tps":0.0,"right_tps":0.0,"seq":525},"imu":{"t_us":5245000,"gyro_rps":[0.0,0.0,0.0],"accel_mps2":[0.0,0.0,9.81],"ok":true},"stops":{"hw":["ESTOP"],"sw":[]},"event_seq":17,"stationary":{"is_stationary":true,"since_us":5246003},"applied":{"v_mps":0.0,"w_radps":0.0},"motion":"REST","allow":{"fwd":true,"rev":true,"pivot":true},"v_cap_mps":0.1,"hold":[],"rearm_nonce":0}}
 ```
 
 ### 3.4 STATE
 
-Args: `{}`. Snapshot for the UI and diagnostics; poll at ≤ 5 Hz. Worst-case size is below the 2048-byte record limit (checked by a unit test).
+Args: `{}`. Snapshot for the UI and diagnostics; poll at ≤ 5 Hz.
+
+**Size.** The contract content of `STATE` is about 1.8 kB in a normal state, so the 2048-byte record limit leaves room for roughly a dozen reason/flag names. When the record would exceed the limit the chassis compacts it and adds `"truncated":true`: first `faults` is sent empty; if that is not enough, `panel` is sent as `{}`, `heater` keeps only `chassis_duty_pct`, `protective_stop_reasons` is cut to its first 12 names and `rearm_ready`, `hold`, `event_seq`, `uptime_us` are omitted. `hw_inhibit_reasons`, `chain`, `tof`, `rails`, `stationary` and `rearm_nonce` are never cut. `DIAG` (§3.14), `DRIVE.stops` and the event log always carry the complete lists. A unit test forces every reason and flag at once and checks the record (1897 bytes).
 
 | Body member | Type | Meaning |
 |---|---|---|
@@ -177,20 +180,17 @@ Args: `{}`. Snapshot for the UI and diagnostics; poll at ≤ 5 Hz. Worst-case si
 | `panel` | object | `buttons`: `{rearm, pause}` bool pressed. `leds`: `{ready, moving, hold, fault, charge}` each `OFF`, `ON`, `BLINK_SLOW`, `BLINK_FAST`, `BLINK_2`. **(+)** `buzzer`: bool, `pattern`: requested host pattern |
 | `heater` | object | `chassis_duty_pct` (0–100); **(+)** `chassis_setpoint_c` (number or null = off), `sensor_ok` |
 | `faults` | array of string | Active internal fault and warning flags (§5.5) |
-| `sw_active` **(+)** | array of enum | Protective-stop causes **present now** (latched or not). `REARM_SW` succeeds only when this is empty (or holds only retreat-permitted causes). |
-| `hw_active` **(+)** | array of enum | Hardware inhibit causes present now |
-| `rearm_ready` **(+)** | bool | A press of the local REARM button would set the hardware latch now |
+| `stationary` **(+)** | object | As in `DRIVE`, §6.10 |
 | `rearm_nonce` **(+)** | u32 | §3.6 |
+| `rearm_ready` **(+)** | bool | A press of the local REARM button would set the hardware latch now |
 | `hold` **(+)** | array | Latched hold reasons |
-| `estop` **(+)** | object | `a`, `b`: pole readbacks (true = closed) |
-| `head_power` **(+)** | object | `electronics`, `heater_enable`: actual switch state |
-| `brake_test` **(+)** | object | `state`: `NONE`, `RUNNING`, `PASSED`, `FAILED`; `age_s` (null if never run) |
 | `event_seq` **(+)** | u32 | Newest event number |
 | `uptime_us` **(+)** | u64 | |
+| `truncated` **(+)** | bool | Present (true) only when the record was compacted, see above |
 
 ```json
 {"type":"REQ","v":"1.0","id":7,"op":"STATE","args":{}}
-{"type":"RSP","v":"1.0","id":7,"status":"OK","body":{"mode":"ARMED_IDLE","op_mode":"SURVEY_SHARED","hw_latch":true,"chain":{"MODE_RUN":true,"ESTOP":true,"HANDS_ON":true,"CHG_COVER":true,"HEAD_DOCK":true,"HEAD_LOOP":true,"LAB_KEY_N":true,"BODY_BUMPER":true,"WDG_OK":true,"ARM_PERMIT":true},"hw_inhibit_reasons":[],"protective_stop_reasons":[],"head_presence":"HEAD_DIRECT","j2_present":true,"rails":{"vbat_v":13.1,"vmot_v":13.0,"ibat_a":1.42,"i_drive_a":[0.0,0.0],"i_head_a":0.38,"i_head_htr_a":0.0,"i_chs_htr_a":0.0,"v5_v":5.09},"battery":{"soc_pct":82,"temp_c":[18.5,18.9],"charge_state":"NONE"},"temps":{"board_c":24.0,"bay_c":19.2},"tof":[{"id":"CLIFF_FL","range_mm":31,"status":"OK","age_ms":12},{"id":"CLIFF_FR","range_mm":30,"status":"OK","age_ms":4}],"bumpers":{"body_l":false,"body_r":false,"head_loop":"OK","head_loop_ohm":1003},"panel":{"buttons":{"rearm":false,"pause":false},"leds":{"ready":"ON","moving":"OFF","hold":"OFF","fault":"OFF","charge":"OFF"},"buzzer":false,"pattern":"AUTO"},"heater":{"chassis_duty_pct":0,"chassis_setpoint_c":null,"sensor_ok":true},"faults":[],"sw_active":[],"hw_active":[],"rearm_ready":false,"rearm_nonce":0,"hold":[],"estop":{"a":true,"b":true},"head_power":{"electronics":true,"heater_enable":false},"brake_test":{"state":"PASSED","age_s":312},"event_seq":21,"uptime_us":96000123}}
+{"type":"RSP","v":"1.0","id":7,"status":"OK","body":{"mode":"ARMED_IDLE","op_mode":"SURVEY_SHARED","hw_latch":true,"chain":{"MODE_RUN":true,"ESTOP":true,"HANDS_ON":true,"CHG_COVER":true,"HEAD_DOCK":true,"HEAD_LOOP":true,"LAB_KEY_N":true,"BODY_BUMPER":true,"WDG_OK":true,"ARM_PERMIT":true},"hw_inhibit_reasons":[],"protective_stop_reasons":[],"head_presence":"HEAD_DIRECT","j2_present":true,"rails":{"vbat_v":13.1,"vmot_v":13.0,"ibat_a":1.42,"i_drive_a":[0.0,0.0],"i_head_a":0.38,"i_head_htr_a":0.0,"i_chs_htr_a":0.0,"v5_v":5.09},"battery":{"soc_pct":82,"temp_c":[18.5,18.9],"charge_state":"NONE"},"temps":{"board_c":24.0,"bay_c":19.2},"tof":[{"id":"CLIFF_FL","range_mm":31,"status":"OK","age_ms":12},{"id":"CLIFF_FR","range_mm":30,"status":"OK","age_ms":4}],"bumpers":{"body_l":false,"body_r":false,"head_loop":"OK","head_loop_ohm":1003},"panel":{"buttons":{"rearm":false,"pause":false},"leds":{"ready":"ON","moving":"OFF","hold":"OFF","fault":"OFF","charge":"OFF"},"buzzer":false,"pattern":"AUTO"},"heater":{"chassis_duty_pct":0,"chassis_setpoint_c":null,"sensor_ok":true},"faults":[],"stationary":{"is_stationary":true,"since_us":90411003},"rearm_nonce":0,"rearm_ready":false,"hold":[],"event_seq":21,"uptime_us":96000123}}
 ```
 
 (The example `tof` array is shortened to two of the eleven entries.)
@@ -214,9 +214,9 @@ Args: `after_seq` (u32). Returns the retained events with `seq` > `after_seq`, o
 
 ### 3.6 REARM_SW
 
-Args: `nonce` (u32), `operator` (string, 1–32 printable ASCII characters; recorded in the event log).
+Args: `nonce` (u32), `operator` (string, 1–32 printable ASCII characters; the first 15 are recorded in the event log).
 
-`nonce` must equal the `rearm_nonce` currently reported by `STATE`/`DRIVE`. The chassis draws a new random non-zero nonce every time a software stop or hold is latched and every time a `REARM_SW` is answered, so a re-arm request that was composed before the latest stop (cached page, queued request, replay) cannot clear it.
+`nonce` must equal the `rearm_nonce` currently reported by `STATE`/`DRIVE`. The chassis draws a new random non-zero nonce every time a software stop or hold is latched and every time a `REARM_SW` clears something or is rejected for a present cause, so a re-arm request that was composed before the latest stop (cached page, queued request, replay) cannot clear it.
 
 Effect when accepted: clears the software `PROTECTIVE_STOP` latch **and** the hold latch. It never changes the hardware latch (`hw_latch` in the reply shows its state; only the local REARM button can set it). It does not start motion: the next motion needs a new accepted `DRIVE`, and the pre-motion alert runs.
 
@@ -311,10 +311,10 @@ The MCU owns the indicators for safety states: the pre-motion alert, `MOVING`, `
 Keys are listed in §8.
 
 ```json
-{"type":"REQ","v":"1.0","id":95,"op":"CONFIG_SET","args":{"key":"cal.track_m","value":0.2213}}
-{"type":"RSP","v":"1.0","id":95,"status":"OK","body":{"key":"cal.track_m","value":0.2213,"old":0.22,"gen":4,"crc":"9C01D2AB"}}
+{"type":"REQ","v":"1.0","id":95,"op":"CONFIG_SET","args":{"key":"cal.track_m","value":0.2713}}
+{"type":"RSP","v":"1.0","id":95,"status":"OK","body":{"key":"cal.track_m","value":0.2713,"old":0.27,"gen":4,"crc":"9C01D2AB"}}
 {"type":"REQ","v":"1.0","id":96,"op":"CONFIG_GET","args":{"key":"cal.track_m"}}
-{"type":"RSP","v":"1.0","id":96,"status":"OK","body":{"key":"cal.track_m","value":0.2213,"default":0.22,"min":0.18,"max":0.26,"unit":"m","rw":true}}
+{"type":"RSP","v":"1.0","id":96,"status":"OK","body":{"key":"cal.track_m","value":0.2713,"default":0.27,"min":0.2,"max":0.34,"unit":"m","rw":true}}
 ```
 
 ### 3.13 BRAKE_TEST
@@ -341,6 +341,32 @@ A failed test latches `PROTECTIVE_STOP / BRAKE_TEST_FAIL`; the cause stays activ
 ```json
 {"type":"REQ","v":"1.0","id":99,"op":"BRAKE_TEST","args":{}}
 {"type":"RSP","v":"1.0","id":99,"status":"OK","body":{"passed":true,"fail":[],"latch_drop_ms":6,"relay_ms":9,"vmot_decay_ms":142,"vmot_end_v":0.31,"probe_i_a":[0.0,0.0],"moved_ticks":[0,0],"mode":"STANDBY"}}
+```
+
+### 3.14 DIAG **(+)**
+
+Args: `{}`. Additive op (a chassis without it answers `UNSUPPORTED`). Complete reason and flag lists and engineering detail that does not fit in `STATE`; never truncated. Needs no session.
+
+| Body member | Meaning |
+|---|---|
+| `mode` | |
+| `hw_inhibit_reasons`, `protective_stop_reasons` | Latched sets, complete |
+| `hw_active` | Hardware inhibit causes present now (§4.4) |
+| `sw_active` | Protective-stop causes present now, latched or not. `REARM_SW` succeeds only if no latched reason is in this list (retreat-permitted causes excepted, §5.3). |
+| `faults` | Complete flag list (§5.5) |
+| `estop` | `a`, `b`: E-stop pole readbacks, true = closed |
+| `readbacks` | String of 22 characters `0`/`1`: debounced inputs in this order — `MODE_RUN, ESTOP_A, ESTOP_B, HANDS_ON, CHG_COVER, CHG_PLUG_LINK, HEAD_DOCK, HEAD_LOOP_OK, HEAD_LOOP_SHORT, LAB_KEY_N, BODY_BUMPER_L, BODY_BUMPER_R, WDG_OK, BRAKE_L, BRAKE_R, HW_LATCH, J2_PRES, BTN_REARM, BTN_PAUSE, DRV_FAULT_L, DRV_FAULT_R, BUS_CLAMP` (1 = closed/healthy/present/pressed; `HEAD_LOOP_SHORT`, `DRV_FAULT_x`, `BUS_CLAMP`: 1 = asserted; `CHG_PLUG_LINK`: 1 = plug link absent) |
+| `pres_ohm` | J1 pin 7 resistance (saturates at 999999) |
+| `head_power` | `electronics`, `heater_enable`: actual switch state |
+| `brake_test` | `state` (`NONE`, `RUNNING`, `PASSED`, `FAILED`), `age_s` (null if never run), `passed_since_boot` |
+| `tilt_deg` | Tilt estimate (§6.5) |
+| `drive` | `duty[2]`, `v_meas_mps`, `w_meas_radps`, `v_cap_fwd_mps`, `v_cap_rev_mps`, `bridge_awake` |
+| `link` | `session`, `requests`, `discarded` (records dropped for framing/JSON errors) |
+| `sw_acknowledged` | Present only with retreat: causes acknowledged by a re-arm while still present |
+
+```json
+{"type":"REQ","v":"1.0","id":101,"op":"DIAG","args":{}}
+{"type":"RSP","v":"1.0","id":101,"status":"OK","body":{"mode":"ARMED_IDLE","hw_inhibit_reasons":[],"hw_active":[],"protective_stop_reasons":[],"sw_active":[],"faults":["CONFIG_DEFAULTED"],"estop":{"a":true,"b":true},"readbacks":"1111111101111111100000","pres_ohm":4698,"head_power":{"electronics":false,"heater_enable":false},"brake_test":{"state":"PASSED","age_s":0,"passed_since_boot":true},"tilt_deg":0,"drive":{"duty":[0,0],"v_meas_mps":0,"w_meas_radps":0,"v_cap_fwd_mps":0.2,"v_cap_rev_mps":0.05,"bridge_awake":true},"link":{"session":1,"requests":7,"discarded":0}}}
 ```
 
 ---
@@ -388,7 +414,7 @@ The hardware window comparator (healthy 600–1600 Ω) is in the chain. The firm
 | `BODY_BUMPER` | Either body bumper switch open |
 | `WATCHDOG` | External watchdog output not OK |
 | `MCU_NOT_READY` | Firmware is withholding `ARM_PERMIT` (boot, fault, charge/LAB mode, stop escalation, brake test, presence `FAULT`) |
-| `VMOT_FAULT` | Latch set but VMOT below `brake.vmot_min_v` for > 100 ms; latch dropped but VMOT still present after the decay time; brake-relay readback inconsistent with the latch; or the latch dropped with no readback explaining it |
+| `VMOT_FAULT` | Latch set but VMOT below `brake.vmot_min_v` for > 100 ms; latch dropped but VMOT still present after the decay time; brake-relay readback inconsistent with the latch for > 200 ms; or the latch dropped with no readback explaining it. While the condition is present the firmware also withholds ARM_PERMIT. |
 
 ---
 
@@ -414,7 +440,7 @@ The mode is re-evaluated every millisecond with this priority (first match): `FA
 ### 5.2 Hardware latch and latched hardware reasons
 
 - The hardware latch is a relay circuit. The firmware can only **open** the chain (ARM_PERMIT low, or by stopping the watchdog strobe); it has no output that can set the latch. **Only the local REARM button sets it**, and only with every element healthy and ARM_PERMIT high. No protocol op, including `REARM_SW`, can set it.
-- When the latch readback goes low, the live hardware causes of §4.4 are captured as the **latched hardware reasons**. While the latch stays down, further causes that appear are added. The set is cleared only when the latch readback goes high again (i.e. after a successful local REARM). Therefore a momentary cause (bumper tap, brief unplug) stays reported until an operator has re-armed at the robot.
+- When the latch readback goes low, the live hardware causes of §4.4 (those present in that millisecond and in the one before) are captured as the **latched hardware reasons**. While the latch stays down, further causes that appear are added. The set is cleared only when the latch readback goes high again (i.e. after a successful local REARM). Therefore a momentary cause (bumper tap, brief unplug) stays reported until an operator has re-armed at the robot.
 - At boot the latch is always down (ARM_PERMIT is low through reset). If no cause is present after `BOOT`, the mode is `STANDBY`.
 
 ### 5.3 Software protective stop
@@ -423,7 +449,7 @@ A latched set of `protective_stop_reason`s. Setting any reason: the wheel set-po
 
 Cleared only by `REARM_SW` or the local REARM button, and only when no cause is still present. **Nothing clears automatically** — not link recovery, not the cause disappearing, not an MCU-visible timeout. (An MCU reset discards the software latch but always ends in `HW_INHIBIT`/`STANDBY` with the hardware latch down.)
 
-Sensor-derived reasons are latched only while the hardware latch is set (`ARMED_IDLE`, `MOVING`, `HOLD`, `PROTECTIVE_STOP`); in other modes they are shown in `sw_active` and will latch immediately after arming if still present. `HOST_LINK_LOST` and `CMD_TIMEOUT` are latched only in those modes too. `STOP PROTECTIVE` and `BRAKE_TEST_FAIL` latch in any mode.
+Sensor-derived reasons are latched only while the hardware latch is set (`ARMED_IDLE`, `MOVING`, `HOLD`, `PROTECTIVE_STOP`); in other modes they are shown in `DIAG.sw_active` and will latch immediately after arming if still present. `HOST_LINK_LOST` and `CMD_TIMEOUT` are latched only in those modes too. `STOP PROTECTIVE` and `BRAKE_TEST_FAIL` latch in any mode.
 
 | Reason | Set when | Cause considered cleared when |
 |---|---|---|
@@ -432,11 +458,11 @@ Sensor-derived reasons are latched only while the hardware latch is set (`ARMED_
 | `FIELD_REAR` | Rear proximity inside the stop distance while reversing | Rear ranges outside the stop distance |
 | `FIELD_FRONT`, `FIELD_LEFT`, `FIELD_RIGHT` | Host `STOP PROTECTIVE` with that reason (the MCU has no front/side ranging; head-rail contact is in the hardwired chain) | Immediately (host owns the cause) |
 | `TOF_STALE` | A sensor guarding the direction of travel delivered no valid new sample for `tof.max_age_ms` while moving in that direction | All sensors fresh |
-| `TOF_DISAGREE` | Pair partners of a look-ahead side differ by more than `look.pair_tol_mm`, or a cliff sensor reads below `cliff.floor_min_mm` (blocked window), for `tof.disagree_ms`, while moving in a guarded direction | Agreement restored |
+| `TOF_DISAGREE` | Both sensors of a look-ahead side read "nominal floor" yet differ by more than `look.pair_tol_mm`, or a cliff sensor reads below `cliff.floor_min_mm` (blocked window), for `tof.disagree_ms`, while moving in a guarded direction | Agreement restored |
 | `CMD_TIMEOUT` | TTL of a non-zero command ended without a newer accepted command | Immediately |
-| `HOST_LINK_LOST` | While armed: no valid request of any kind for `link.timeout_ms`, USB not configured/suspended, or a new `HELLO` while `MOVING` | A valid request has been received since |
+| `HOST_LINK_LOST` | While armed: no valid request of any kind for `link.timeout_ms`, USB not configured/suspended, or a new `HELLO` while `MOVING`. Consequence: arming with no host connected ends in `PROTECTIVE_STOP` after `link.timeout_ms`, and the local button cannot clear it until a host is polling. | A valid request has been received within `link.timeout_ms` |
 | `STALL` | Wheel at the current limit with speed below 10 % of set-point for `drive.stall_ms` | At rest |
-| `ENCODER_FAULT` | Encoder/drive consistency: no counts while the motor model says the wheel turns, counts opposite to the drive direction, speed above 1.5 × cap, or movement beyond `drive.uncmd_ticks` with no command (uncommanded motion). Stop is by zero duty and, for uncommanded motion, ARM_PERMIT withdrawal. | At rest for 1 s |
+| `ENCODER_FAULT` | Encoder/drive consistency: no counts while the motor model says the wheel turns, counts opposite to the drive direction, wheel speed above 0.33 m/s, or movement beyond `drive.uncmd_ticks` with no command (uncommanded motion). Stop is by zero duty (bridge brake) and, for uncommanded motion, ARM_PERMIT withdrawal. | At rest |
 | `IMU_FAULT` | IMU samples missing > 20 ms, or acceleration norm outside 5–15 m/s² for 1 s | IMU healthy |
 | `TILT` | Tilt from the gravity vector above `imu.tilt_max_deg` for `imu.tilt_ms` | Tilt below limit − 2° |
 | `BATTERY_LOW` | VBAT below `batt.stop_v` for 5 s, or SoC below `batt.stop_soc_pct` | VBAT above `batt.stop_v` + 0.4 V |
@@ -452,9 +478,9 @@ If, after any stop was demanded (protective stop, hold, command timeout, hardwar
 
 ### 5.5 FAULT
 
-Entered on: E-stop pole discrepancy > 200 ms (`ESTOP_DISCREPANCY`), latch readback high while ARM_PERMIT has been low > 100 ms (`LATCH_STUCK`), expander read path dead (`IOX_A`), ADC conversion timeout (`ADC`), control-loop overrun or supervisor/control cross-check failure that the watchdog has not yet acted on (`TIMING`), brake-test latch failure. Left only by an MCU reset (power cycle, NRST, or the watchdog). `faults` in `STATE` lists the active flags.
+Entered on: E-stop pole discrepancy > 200 ms (`ESTOP_DISCREPANCY`), latch readback high while ARM_PERMIT has been low > 100 ms (`LATCH_STUCK`, also the result of a brake test whose latch does not drop), expander read path dead for 5 ms (`IOX_A`), ADC not converting for 5 ms (`ADC`), supervision task not seen by the control tick for 50 ms (`TIMING`). Left only by an MCU reset (power cycle or NRST). In `FAULT` the chassis keeps answering the protocol and keeps strobing the watchdog (ARM_PERMIT low already holds the chain open), so the host can read the cause; only `TIMING` stops the strobe, and the watchdog then resets the MCU. `faults` lists the active flags.
 
-Warnings that do **not** enter `FAULT` (also listed in `faults`): `CONFIG_DEFAULTED`, `LOOP_DISCREPANCY`, `J1_PRES_FAULT`, `CHARGER_COMM`, `PMON_COMM`, `TOF_BUS`, `HEATER_SENSOR`, `EFUSE_HEAD_PWR`, `EFUSE_HEAD_HTR`, `EFUSE_CHS_HTR`, `EFUSE_LIDAR`, `EFUSE_V5`, `BRIDGE_L`, `BRIDGE_R`, `BUS_CLAMP`, `EVENT_OVERFLOW`, `BATTERY_WARN`.
+Warnings that do **not** enter `FAULT` (also listed in `faults`): `CONFIG_DEFAULTED`, `LOOP_DISCREPANCY`, `J1_PRES_FAULT`, `CHARGER_COMM`, `PMON_COMM`, `TOF_BUS`, `HEATER_SENSOR`, `EFUSE_HEAD_PWR`, `EFUSE_HEAD_HTR`, `EFUSE_CHS_HTR`, `EFUSE_LIDAR`, `EFUSE_V5`, `BRIDGE_L`, `BRIDGE_R`, `BUS_CLAMP`, `BATTERY_WARN`.
 
 ### 5.6 Transition table
 
@@ -477,7 +503,7 @@ Warnings that do **not** enter `FAULT` (also listed in `faults`): `CONFIG_DEFAUL
 | `HW_INHIBIT`, `STANDBY` | `PROTECTIVE_STOP` | As above but a software cause is still present | Software latch stays |
 | `STANDBY` | `PROTECTIVE_STOP` | `STOP PROTECTIVE` or failed brake test while the latch is down | — |
 | `PROTECTIVE_STOP` (latch down) | `STANDBY` | `REARM_SW` with causes clear | — |
-| `ARMED_IDLE` | `MOVING` | Accepted non-zero `DRIVE` | Pre-motion alert if at rest longer than `alert.rest_ms`, then ramp |
+| `ARMED_IDLE` | `MOVING` | Accepted non-zero `DRIVE` | Pre-motion alert per §6.11, then ramp |
 | `MOVING` | `ARMED_IDLE` | Command zero (or zero-command TTL ended) and wheels at rest | Bridges braking |
 | `MOVING` | `PROTECTIVE_STOP` | Any reason of §5.3 (incl. `CMD_TIMEOUT`, `HOST_LINK_LOST`) | Ramp to rest, latch reason, new nonce |
 | `ARMED_IDLE`, `HOLD` | `PROTECTIVE_STOP` | Any latching reason of §5.3 | Latch reason |
@@ -520,7 +546,7 @@ Ramps: linear acceleration `drive.accel_mps2` (0.30), deceleration `drive.decel_
 
 ### 6.2 Wheel loops
 
-1 kHz PI speed loop per wheel on the encoder tick rate (feed-forward from the motor model, anti-windup by conditional integration and back-calculation against the duty and current limits). Current limit `drive.i_limit_a` (default 2.5 A) by duty fold-back from the bridge current measurement. Stall, encoder-consistency and uncommanded-motion supervision as in §5.3. Simulated step response and stopping distances are reported in `firmware/chassis/README.md` and regenerated by the test-suite.
+1 kHz speed loop per wheel: feed-forward from the motor model, proportional term on the filtered tick rate, integral term on the accumulated wheel-angle error (so the wheels follow the ramped set-point tick for tick), anti-windup by conditional integration against the duty limit. With the set-point at zero and the wheel below 5 mm/s the bridge is switched to brake (zero-speed clamp) instead of regulating. Current limit `drive.i_limit_a` (default 2.5 A) by duty fold-back from the bridge current measurement. Stall, encoder-consistency and uncommanded-motion supervision as in §5.3. Simulated step response and stopping distances are reported in `firmware/chassis/README.md` and regenerated by the test-suite.
 
 ### 6.3 Protective fields from the ToF sensors
 
@@ -532,7 +558,7 @@ Direction classes of a command: `fwd` (v > 0), `rev` (v < 0), `pivot` (v = 0, w 
 |---|---|---|---|
 | `CLIFF_FL`, `CLIFF_FR` | `fwd`, `pivot` | Range > `cliff.drop_mm`, invalid, stale or < `cliff.floor_min_mm` → those directions are refused (`DIR_INHIBITED`) | Same condition while moving in a guarded direction → `CLIFF_x` (drop/invalid), `TOF_STALE` or `TOF_DISAGREE`. Drop on `cliff.confirm_n` consecutive valid samples = **confirmed cliff** → `CLIFF_x` latched whenever armed, moving or not |
 | `CLIFF_RL`, `CLIFF_RR` | `rev`, `pivot` | as above | as above |
-| `LOOK_LO`+`LOOK_LI` (left), `LOOK_RI`+`LOOK_RO` (right) | `fwd` | Speed cap from the stop model, see below | Cap reaches zero while moving forward → `LOOKAHEAD_L` / `LOOKAHEAD_R`. Stale → `TOF_STALE`; pair disagreement → `TOF_DISAGREE` |
+| `LOOK_LO`+`LOOK_LI` (left), `LOOK_RI`+`LOOK_RO` (right) | `fwd` | Speed cap from the stop model, see below | Cap reaches zero while moving forward → `LOOKAHEAD_L` / `LOOKAHEAD_R`. Stale → `TOF_STALE`; pair disagreement (both nominal, see §5.3) → `TOF_DISAGREE` |
 | `REAR_L`, `REAR_C`, `REAR_R` | `rev` | Range < `rear.stop_mm` (or invalid/stale) → reverse refused; below `rear.slow_mm` the reverse cap follows the stop model | Inside stop distance while reversing → `FIELD_REAR`; stale while reversing → `TOF_STALE` |
 
 **Stop model** (contract): d(v) = v·t_delay + v²/(2·a_min) + m with `stop.t_delay_ms` = 150, `stop.a_min_mps2` = 0.40, `stop.margin_m` = 0.020. The largest speed that stops within an available distance D is v_cap(D) = −a·t + √(a²t² + 2a(D − m)) for D > m, else 0.
@@ -543,7 +569,7 @@ There is no automatic retreat and no degraded running: a stale or invalid sensor
 
 ### 6.4 Odometry
 
-`left_ticks`/`right_ticks` are the 16-bit hardware quadrature counters extended to signed 64 bits in the 1 kHz interrupt, 9600 counts per wheel revolution at the gearbox output, sign positive for forward rolling on both sides. Every 10th tick (100 Hz) the pair is latched together with the chassis clock read in the same interrupt (`odom.t_us`; jitter < 20 µs on target, exact in the emulator). The host integrates differences of cumulative ticks, so skipped polls lose nothing. Wheel radius and track calibration live in the configuration (`cal.*`) and are applied by the host for odometry and by the chassis for command conversion.
+`left_ticks`/`right_ticks` are the 16-bit hardware quadrature counters extended to signed 64 bits in the 1 kHz interrupt, 9600 counts per wheel revolution at the gearbox output, sign positive for forward rolling on both sides. Every 10th tick (100 Hz) the pair is latched together with the chassis clock read in the same interrupt (`odom.t_us`; jitter < 20 µs on target, exact in the emulator). The host integrates differences of cumulative ticks, so skipped polls lose nothing. Wheel radius and track live in the configuration (`cal.*`, nominal defaults 0.052 m and 0.270 m for the Rev E body) and are applied by the host for odometry and by the chassis for command conversion; neither side may use literals. The chassis firmware contains no dimension of the head or of the head mount: the look-ahead and cliff geometry is expressed relative to the sensors themselves through `look.*`, `cliff.*` and `rear.*`.
 
 ### 6.5 IMU and tilt
 
@@ -561,7 +587,7 @@ Default off. With a set-point: time-proportional output (2 s period) from a prop
 | `STANDBY` | BLINK_SLOW | OFF | OFF | OFF | OFF | — |
 | `ARMED_IDLE` | ON | OFF | OFF | OFF | OFF | — |
 | `MOVING`, alert phase | ON | BLINK_FAST | OFF | OFF | OFF | beep 4 Hz for `alert.premotion_ms` |
-| `MOVING` | ON | ON | OFF | OFF | OFF | — |
+| `MOVING` | ON | ON | OFF | OFF | OFF | one chirp at a start from rest without alert |
 | `HOLD` | OFF | OFF | ON | OFF | OFF | one beep on entry |
 | `PROTECTIVE_STOP` | OFF | OFF | BLINK_FAST | OFF | OFF | three beeps on entry |
 | `HW_INHIBIT` | OFF | OFF | BLINK_2 | OFF | OFF | — |
@@ -582,7 +608,29 @@ The test proves the switching elements, not the braking torque; the stopping dis
 
 ### 6.9 Watchdog
 
-The external window watchdog is strobed only by the 100 Hz supervision task, and only when, since its previous run, (a) the 1 kHz control tick ran 10 ± 2 times, (b) the control tick passed all of its program-flow checkpoints, (c) the control tick itself reports that the supervisor is on time, (d) the background loop (protocol, sensor buses) made progress within 500 ms, (e) no `FAULT` is active. A stopped or runaway control loop, a stopped supervisor or a stalled background loop therefore stops the strobe, the watchdog opens `WDG_OK`, the latch drops and the MCU is reset.
+The external window watchdog is strobed only by the 100 Hz supervision task, and only when, since its previous run, (a) the 1 kHz control tick ran 10 ± 2 times, (b) the control tick passed all of its program-flow checkpoints, (c) the control tick itself reports that the supervisor is on time, (d) the background loop (protocol, sensor buses) made progress within 500 ms, (e) no `TIMING` fault is latched. A stopped or runaway control loop, a stopped supervisor or a stalled background loop therefore stops the strobe, the watchdog opens `WDG_OK`, the latch drops and the MCU is reset (the reset path through NRST is a board decision).
+
+### 6.10 Stationarity evidence for scaler counts
+
+`stationary` in `DRIVE` and `STATE` supports the contract rule that a scaler count is valid only while both wheel encoders and the gyro confirm zero motion (`survey_methods.common`).
+
+- Every millisecond the firmware tests: left encoder increment = 0 **and** right encoder increment = 0 **and** the IMU delivered a sample **and** |gyro| < `stationary.gyro_max_radps` (default 0.05 rad/s) on all three axes.
+- `since_us` is the chassis-clock time of the first millisecond of the current unbroken run of such samples; it is `null` while the test fails. One encoder count (34 µm of travel) or one gyro sample over the threshold restarts the run.
+- `is_stationary` is true once the run has lasted `stationary.min_ms` (default 100 ms).
+
+Host rule for a count window [t_a, t_b] on the chassis clock: valid if a `stationary` sample taken at or after t_b shows `is_stationary` true and `since_us` ≤ t_a (the same run covers the whole window), **and** no event of kind `MODE`, `PSTOP`, `HOLD`, `HW_LATCH`, `CHAIN`, `PERMIT`, `J1`, `J2`, `BUTTON` or `BOOT` has `t_us` inside the window (§7; `event_seq` in every `DRIVE` reply tells the host when to read the log). All stop and inhibit transitions are in that list. A count that spans an MCU reset is invalid by the changed `boot_id`.
+
+Limits: an uncalibrated gyro zero-rate offset (BMI088: up to about 0.02 rad/s, UNVERIFIED) counts against the threshold; with the IMU failed `is_stationary` is always false. Evidence class of the function: simulated.
+
+### 6.11 Pre-motion alert and idle time
+
+| Start from rest | Alert |
+|---|---|
+| First motion after arming, after any latched stop, hold or hardware inhibit, after an MCU boot | Full alert `alert.premotion_ms` (default 1500 ms, minimum 500 ms): buzzer 4 Hz, MOVING indicator flashing, wheels held |
+| Chassis idle at rest longer than `alert.rest_ms` (default 5000 ms) | Full alert |
+| Idle at rest for less than `alert.rest_ms` (short hops of a step-and-count survey, direction changes) | No delay; one 120 ms chirp when the wheels start |
+
+"Idle" is measured from the moment the wheels came to rest with a zero set-point. With the contract defaults for `STEP_AND_COUNT` (0.5 s settle + 10 s count) each station exceeds the 5 s default, so every hop would be preceded by the full 1.5 s alert; a host that runs step-and-count sets `alert.rest_ms` above its longest count (up to 600 000 ms) — a deliberate, logged `CONFIG_SET` — and then gets one full alert at the start of the series and a chirp per hop. Whether that is acceptable with technicians present is an operating decision (RQ-051), not a firmware one.
 
 ---
 
@@ -596,15 +644,15 @@ The external window watchdog is strobed only by the 100 Hz supervision task, and
 | `BROWNOUT` | `vbat_v` | VBAT fell below `batt.brownout_v` (9.5 V) — also logged from the retained record after the reset it caused |
 | `CHAIN` | `el` (`MODE_RUN`, `ESTOP_A`, `ESTOP_B`, `HANDS_ON`, `CHG_COVER`, `CHG_PLUG_LINK`, `HEAD_DOCK`, `HEAD_LOOP_OK`, `HEAD_LOOP_SHORT`, `LAB_KEY_N`, `BODY_BUMPER_L`, `BODY_BUMPER_R`, `WDG_OK`, `BRAKE_L`, `BRAKE_R`), `closed` (bool) | Debounced transition of that readback |
 | `HW_LATCH` | `set` (bool), `reasons` (latched set at that moment) | Latch readback transition |
-| `PERMIT` | `on` (bool), `why` | ARM_PERMIT output change |
+| `PERMIT` | `on` (bool), `why` (`NORMAL`, `UNCOMMANDED_MOTION`, `STOP_ESCALATION`, `BRAKE_TEST`, `MODE`) | ARM_PERMIT output change |
 | `J1` | `from`, `to` (`head_presence`), `ohm` | J1 presence class change |
 | `J2` | `present` (bool) | J2 presence change |
 | `BUTTON` | `name` (`REARM`, `PAUSE`), `pressed` (bool) | Button transition |
 | `MODE` | `from`, `to` | Mode change |
 | `PSTOP` | `reason`, `v_mps` (speed at the trigger) | A protective-stop reason is latched |
-| `PSTOP_CLEAR` | `by` (`REARM_SW`, `LOCAL`), `operator`, `cleared` | Software latch cleared |
+| `PSTOP_CLEAR` | `by` (`REARM_SW`, `LOCAL`), `operator` (first 15 characters), `cleared` | Software latch cleared |
 | `HOLD` | `on` (bool), `why` | Hold latched/cleared |
-| `REARM_REJECT` | `why`, `operator` | Rejected `REARM_SW` |
+| `REARM_REJECT` | `why` (`CAUSE_ACTIVE`, `NONCE`), `operator`, `active` | Rejected re-arm |
 | `OP_MODE` | `from`, `to` | Profile change |
 | `CONFIG` | `key`, `old`, `new`, `gen` | Configuration change (also `key:"_defaults"` when flash was invalid at boot) |
 | `HEAD_POWER` | `electronics`, `heater_enable`, `why` (`HOST`, `PRESENCE`, `CHARGE`, `EFUSE`, `BOOT`) | Head branch switch change |
@@ -625,7 +673,7 @@ Stored as 32-bit values in flash with CRC. `rw` = settable with `CONFIG_SET`. Ca
 | `id.hw_rev` | 1 | 1 | 26 | — | 1 = "A" |
 | `cal.wheel_radius_l_m` | 0.0520 | 0.045 | 0.060 | m | Left rolling radius |
 | `cal.wheel_radius_r_m` | 0.0520 | 0.045 | 0.060 | m | Right rolling radius |
-| `cal.track_m` | 0.2200 | 0.18 | 0.26 | m | Effective track |
+| `cal.track_m` | 0.2700 | 0.20 | 0.34 | m | Effective track (nominal: Rev E body, contract `frames.wheel.track_mm`) |
 | `caps.commissioning.v_fwd_mps` | 0.20 | 0 | 0.20 | m/s | |
 | `caps.commissioning.v_rev_mps` | 0.05 | 0 | 0.05 | m/s | |
 | `caps.commissioning.w_radps` | 0.30 | 0 | 0.30 | rad/s | |
@@ -647,12 +695,14 @@ Stored as 32-bit values in flash with CRC. `rw` = settable with `CONFIG_SET`. Ca
 | `drive.i_limit_a` | 2.5 | 0.5 | 5.0 | A | Per-motor current limit |
 | `drive.stall_ms` | 500 | 100 | 2000 | ms | |
 | `drive.enc_fault_ms` | 100 | 20 | 500 | ms | |
-| `drive.uncmd_ticks` | 600 | 50 | 5000 | ticks | ≈ 20 mm of uncommanded travel |
+| `drive.uncmd_ticks` | 600 | 50 | 5000 | ticks | ≈ 20 mm of uncommanded travel at the nominal radius |
 | `drive.motor_r_ohm` | 2.2 | 0.5 | 10 | Ω | Motor model (encoder plausibility, feed-forward) |
 | `drive.motor_ke` | 1.65 | 0.5 | 5 | V·s/rad | Back-EMF constant at the wheel |
 | `link.timeout_ms` | 1000 | 300 | 5000 | ms | Host link supervision while armed |
 | `alert.premotion_ms` | 1500 | 500 | 5000 | ms | Pre-motion alert |
-| `alert.rest_ms` | 2000 | 0 | 60000 | ms | Rest time after which the alert is required again |
+| `alert.rest_ms` | 5000 | 0 | 600000 | ms | Idle time at rest after which the full alert is required again (§6.11) |
+| `stationary.gyro_max_radps` | 0.05 | 0.005 | 0.5 | rad/s | §6.10 |
+| `stationary.min_ms` | 100 | 0 | 2000 | ms | §6.10 |
 | `tof.max_age_ms` | 100 | 40 | 250 | ms | |
 | `tof.disagree_ms` | 200 | 50 | 1000 | ms | |
 | `cliff.drop_mm` | 60 | 20 | 200 | mm | Downward range above this = drop |
@@ -700,12 +750,14 @@ Stored as 32-bit values in flash with CRC. `rw` = settable with `CONFIG_SET`. Ca
 1. `HELLO` after every connect; compare `boot_id`; discard clock fit, sequence state and transaction ids when it changes.
 2. Fresh `id` for every request; fresh, increasing `seq` for every `DRIVE`.
 3. Treat `accepted:false` as "the robot is not executing my command" and stop integrating planned motion; never resend old commands after a stall — issue a new one with a new TTL.
-4. Read `EVENTS` whenever `event_seq` advances; archive them; act on `gap`.
+4. Read `EVENTS` whenever `event_seq` advances; archive them; act on `gap`. Validate scaler counts with §6.10.
 5. Present `REARM_SW` only on a deliberate operator action, with the nonce read after the stop.
 6. Use `STOP PROTECTIVE` with a reason for stops that originate in host protective functions.
 
 ## 10. Open points
 
 - Per-op_mode cap table (§6.1) and `rearm_nonce` semantics (§3.6) are proposals of this document; the contract op table lists `nonce` without semantics.
+- The contract `STATE` content does not always fit in the 2048-byte record (§3.4). A larger chassis record limit (4096) would remove the compaction rules; requested in `firmware/chassis/CONTRACT_CHANGE_REQUESTS.md`.
+- `alert.rest_ms` default (5 s) versus the step-and-count station time (§6.11).
 - A local PAUSE can at present be released remotely by `REARM_SW`; whether local pauses should require local release is an operating-procedure decision.
 - All field distances and the stop-model inputs are design values; VT-003/004/005/035 replace them.

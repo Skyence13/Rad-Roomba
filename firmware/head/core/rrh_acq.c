@@ -329,6 +329,16 @@ static void on_gate(rrh_core_t *c, const rrh_gate_record_t *rec)
     f->supply_mv = c->analog.supply_valid ? c->analog.supply_mv : 0u;
     f->bumper_zones = (uint8_t)(c->bumper_gate | c->analog.bumper_zones);
     c->bumper_gate = 0u;
+    f->width_mask = rec->width_mask;
+    if (rec->width_mask != 0u) {
+        memcpy(c->width_edges_ns, rec->width_edges_ns, sizeof c->width_edges_ns);
+        for (uint32_t ch = 0u; ch < (2u * RRH_LANES); ch++) {
+            for (uint32_t b = 0u; b < RRH_WIDTH_BINS; b++) {
+                const uint32_t v = rec->width_hist[ch][b];
+                f->width_hist[ch][b] = (uint16_t)((v > 65535u) ? 65535u : v);
+            }
+        }
+    }
 
     /* The next gate starts where this one ended: remember which sync record applies to it. */
     c->sync_pinned = (int8_t)sync_newest(c, f->start_us + f->span_us);
@@ -459,9 +469,21 @@ static void put_temp(rrc_jw_t *w, int32_t mc)
 
 /* DIAG 1.0 body: the engineering data of the same gate (addendum 0.4 section 3). Raw counters
  * are reported even for channels that the ACQ frame nulled. */
+static void put_width_hist(rrc_jw_t *w, const char *key, const rrh_frame_t *f, uint32_t chain)
+{
+    if ((((uint32_t)f->width_mask >> chain) & 1u) == 0u) {
+        return; /* optional field: absent where the port does not measure widths */
+    }
+    rrc_jw_key(w, key);
+    rrc_jw_arr_begin(w);
+    for (uint32_t b = 0u; b < RRH_WIDTH_BINS; b++) {
+        rrc_jw_u64(w, f->width_hist[chain][b]);
+    }
+    rrc_jw_arr_end(w);
+}
+
 void rrh_acq_write_diag(const rrh_core_t *c, const rrh_frame_t *f, rrc_jw_t *w)
 {
-    (void)c;
     rrc_jw_obj_begin(w);
     rrc_jw_kstr(w, "type", "DIAG");
     rrc_jw_kstr(w, "diag", "1.0");
@@ -498,6 +520,15 @@ void rrh_acq_write_diag(const rrh_core_t *c, const rrh_frame_t *f, rrc_jw_t *w)
     rrh_write_zone_names(f->bumper_zones, w);
     rrc_jw_key(w, "health");
     rrh_write_health_names(f->health, w);
+    if (f->width_mask != 0u) {
+        /* upper edges of bins 0..n-2 in ns; the last bin is open-ended */
+        rrc_jw_key(w, "width_bins_ns");
+        rrc_jw_arr_begin(w);
+        for (uint32_t b = 0u; b < (RRH_WIDTH_BINS - 1u); b++) {
+            rrc_jw_u64(w, c->width_edges_ns[b]);
+        }
+        rrc_jw_arr_end(w);
+    }
     rrc_jw_key(w, "lanes");
     rrc_jw_arr_begin(w);
     for (uint32_t lane = 0u; lane < RRH_LANES; lane++) {
@@ -513,6 +544,8 @@ void rrh_acq_write_diag(const rrh_core_t *c, const rrh_frame_t *f, rrc_jw_t *w)
         rrc_jw_ku64(w, "ref_live_ticks", l->ref_live_ticks);
         rrc_jw_key(w, "flags");
         put_flag_names(w, l->gate_flags, k_gate_flags, 6u);
+        put_width_hist(w, "floor_width_hist", f, lane);
+        put_width_hist(w, "ref_width_hist", f, lane + RRH_LANES);
         rrc_jw_obj_end(w);
     }
     rrc_jw_arr_end(w);

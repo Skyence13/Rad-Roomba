@@ -83,6 +83,8 @@ over-temperature), `BIAS_OUT_OF_RANGE` (latched over-current trip, or live track
 | `supply_v`, `bumper_zones` | Head supply; bumper zones (`FRONT`, `LEFT`, `RIGHT`) seen closed during the gate (identification only — the series interlock loop never reaches the MCU). |
 | `health` | Latched health codes at the end of the gate (§4 `FAULT_CLEAR`). |
 | `lanes[4]` | `id`, `alpha_raw`, `beta_raw`, `floor_reject`, `floor_live_ticks`, `ref_raw`, `ref_reject`, `ref_live_ticks`, `flags` (`FLOOR_SATURATED`, `REF_SATURATED`, `BIAS_OUT_OF_RANGE`, `BASELINE_SHIFT`, `FLOOR_INVALID`, `REF_INVALID`). Raw counters are reported even where the ACQ frame is null. |
+| `width_bins_ns[3]` (optional) | Upper edges, in ns, of bins 0 … 2 of the pulse-width histograms (default 150, 400, 2000); bin 3 is open-ended. Present only if the head measures pulse widths. |
+| `lanes[n].floor_width_hist[4]`, `lanes[n].ref_width_hist[4]` (optional) | Number of classified events of that chain in the gate per bin of **time over threshold of the triggering low-threshold pulse** (raw comparator falling edge minus hardware-captured start). All classes together (floor: alpha + beta + reject); each count saturates at 65535; events whose width could not be measured are in no bin. Engineering pulse-shape handle only: classification is amplitude-based and does not use it. A field is absent for a chain without width capture. |
 
 Hosts archive DIAG beside the raw frames; it never substitutes for a frame.
 
@@ -120,7 +122,7 @@ complete wire records including TAB, CRC and LF; rates 0.5 – 4 / 80 / 60 s⁻�
 | ACQ reply, typical | 859 – 867 (mean 864) | 8.6 ms |
 | ACQ reply, worst case (all fields at schema maximum, 96-char sync id, all flags) — calculated | 1576 | 15.8 ms |
 | `EMPTY` reply | 73 | 0.73 ms |
-| `DIAG` reply, typical | 962 | 9.6 ms |
+| `DIAG` reply, typical (with the width histograms; 962 bytes without) | 1226 | 12.3 ms |
 | `TIME` request / reply | 68 / 107 | 0.68 / 1.07 ms |
 | `SYNC` request / reply | 126 / 73 | 1.26 / 0.73 ms |
 | Descriptor transfer (1972 bytes in 3 chunks of ≤ 768; requests + replies ≈ 3.7 kB, calculated) | 1972 payload | ≈ 37 ms in total |
@@ -132,11 +134,11 @@ Bus load for the default 100 ms gate (calculated from the sizes above, 10 µs pe
 | one `READ` + ACQ reply | 9.5 % |
 | + one `EMPTY` poll per gate | 11.1 % |
 | + `TIME` and `SYNC` every 2 s | 11.3 % |
-| + `DIAG` for every gate | 21.7 % |
-| + one retried `READ` (request and ACQ reply sent twice) in the same gate | 31.2 % |
+| + `DIAG` for every gate | 24.4 % |
+| + one retried `READ` (request and ACQ reply sent twice) in the same gate | 33.9 % |
 
-A 50 Hz host poll loop measured 15.9 % on the emulator in real-clock mode (12 gates, 67
-transactions, 19 300 bytes in 1.21 s; no DIAG). All figures leave the ICD's < 50 % target with
+A 50 Hz host poll loop measured 15.9 % on the emulator in real-clock mode (12 gates, 68
+transactions, 19 447 bytes in 1.22 s; no DIAG). All figures leave the ICD's < 50 % target with
 margin for one retry. The largest reply the head can produce is below 2 kB; the head's transmit
 buffer is 4096 bytes and a reply that would not fit is replaced by `FAULT`.
 

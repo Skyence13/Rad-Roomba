@@ -65,6 +65,13 @@ typedef struct {
     bool heater_transition_in_gate;
     bool source_fault; /* port-detected fault of the capture hardware for this gate */
     rrh_gate_lane_t lane[RRH_LANES];
+    /* Optional engineering extension (not in the contract record): time over threshold of the
+     * triggering LLD pulse, histogrammed per chain (0..3 floor lanes, 4..7 reference lanes).
+     * width_mask bit n set = the port measures widths on chain n; 0 = feature absent. Bin b
+     * counts classified events with width in [edge[b-1], edge[b]) ns, the last bin is open. */
+    uint8_t width_mask;
+    uint32_t width_edges_ns[RRH_WIDTH_BINS - 1u];
+    uint32_t width_hist[2u * RRH_LANES][RRH_WIDTH_BINS];
 } rrh_gate_record_t;
 
 /* Relation between the capture-timer tick counter and the head clock: tick `tick` happened at

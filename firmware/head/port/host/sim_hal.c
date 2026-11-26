@@ -108,6 +108,7 @@ void sim_init(sim_t *s, uint64_t seed, bool manual)
     s->arm_delay_us = 2000u;
     s->tick_offset = 987654321u;
     s->ambient_c = 20.0;
+    s->width_hist = true;
     s->reset_cause = RRH_RESET_POWER_ON;
     for (uint32_t l = 0u; l < RRH_LANES; l++) {
         s->analog.sipm_mc[l] = 20000;
@@ -307,6 +308,12 @@ bool rrh_hal_acq_poll(rrh_gate_record_t *rec)
         rec->gate_start_tick = us_to_tick(start);
         rec->gate_ticks = s->span_us * (SIM_TICK_HZ / 1000000u);
         rec->tick_hz = SIM_TICK_HZ;
+        if (s->width_hist) {
+            rec->width_mask = 0xFFu;
+            rec->width_edges_ns[0] = 150u;
+            rec->width_edges_ns[1] = 400u;
+            rec->width_edges_ns[2] = 2000u;
+        }
         /* The heater state was latched at this gate's first tick. */
         rec->heater_on_ticks = s->heater_applied ? rec->gate_ticks : 0u;
         for (uint32_t l = 0u; l < RRH_LANES; l++) {
@@ -338,6 +345,15 @@ bool rrh_hal_acq_poll(rrh_gate_record_t *rec)
             }
             if ((((uint32_t)s->fe.chain_enable >> (4u + l)) & 1u) == 0u) {
                 g->flags |= RRH_GF_REF_INVALID;
+            }
+            if (s->width_hist) {
+                /* Synthetic pulse widths: beta-window and reference events in the 150-400 ns
+                 * bin, over-range (reject) events in 0.4-2 us, alpha (slow ZnS light) >= 2 us. */
+                rec->width_hist[l][1] = g->beta_counts;
+                rec->width_hist[l][2] = g->floor_reject_counts;
+                rec->width_hist[l][3] = g->alpha_counts;
+                rec->width_hist[4u + l][1] = g->ref_counts;
+                rec->width_hist[4u + l][2] = g->ref_reject_counts;
             }
             s->drawn[l][0] += g->alpha_counts;
             s->drawn[l][1] += g->beta_counts;

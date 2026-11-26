@@ -38,14 +38,21 @@ _F = C["frames"]
 AXLE_Z = float(_F["axle_height_mm"])                      # 52.0
 WHEEL_D = float(_F["wheel"]["nominal_diameter_mm"])       # 104.0
 WHEEL_R = WHEEL_D / 2
-CONTRACT_TRACK = float(_F["wheel"]["track_mm"])           # 220.0 (Rev D) -- Rev E proposes TRACK below (CCR-01)
+CONTRACT_TRACK = float(_F["wheel"]["track_mm"])           # 270.0 since contract 0.4.0-draft4 (CCR-01 adopted, DEC-039)
 ENCODER_CPR = int(_F["wheel"]["encoder_counts_per_wheel_rev"])
 CONTRACT_CASTER = dict(_F["caster"])                      # Rev D values; Rev E proposal below (CCR-02)
-HEAD_MOUNT = tuple(float(v) for v in _F["head_mount"]["xyz_mm"])          # (138.5, 0, 32)
+HEAD_MOUNT_CONTRACT = tuple(float(v) for v in _F["head_mount"]["xyz_mm"])  # (138.5, 0, 32) until CCR-11 is applied
 HEAD_ENV_D = {k: tuple(v) for k, v in _F["head_envelope_rev_d_mm"].items()}
 HEAD_ENV_E_CEILING = {k: tuple(v) for k, v in _F["head_envelope_rev_e_mm"].items()}
 _O = _F["optics"]
-ROW_X = float(_O["row_center_x_mm"])                      # 204
+ROW_X_CONTRACT = float(_O["row_center_x_mm"])             # 204 until CCR-11 is applied
+# ---- head mount, option C of out/head_mount_trade_study.md (DEC-041): twin shoe receiver on the lane seams, overhang shortened.
+# The head itself (optics, stack, board, rails) is the Rev D/Rev E head translated rigidly in x; nothing inside it moves.
+REV_D_ROW_X = 204.0                                       # x of the optical row in cad/Rad_Roomba_D.step (geometry reference)
+REV_D_HEAD_MOUNT = (138.5, 0.0, 32.0)                     # Rev D mount datum in the same STEP
+ROW_X = 131.2                                             # PROPOSED row centre (CCR-11). Limit: tyre front (x 51.5 at head height) + 14.5 mm
+HEAD_DX = round(ROW_X - REV_D_ROW_X, 3)                             # -72.8: rigid shift of every head coordinate
+HEAD_MOUNT = (round(REV_D_HEAD_MOUNT[0] + HEAD_DX, 3), 0.0, REV_D_HEAD_MOUNT[2])   # (65.7, 0, 32): row stays 65.5 mm ahead of the mount datum
 FILM_Z = float(_O["entrance_film_z_mm"])                  # 10
 RAIL_PROJECTIONS = tuple(float(v) for v in _O["rail_projection_options_mm"])   # (3, 5)
 SEG_PITCH = float(_O["segment_pitch_mm"])                 # 87.5
@@ -205,7 +212,7 @@ BODY_CROWN_Z = BODY_ROWS["upper_outer"][-1][0]
 BODY_SPLIT_Z = BODY_ROWS["upper_outer"][0][0]          # shell split / perimeter seal line
 
 # --------------------------------------------------------------------------- running gear (layout decisions)
-TRACK = 270.0                 # tyre centre to tyre centre. Rev D 220 scaled with the flank at the wheel station (CCR-01)
+TRACK = CONTRACT_TRACK        # tyre centre to tyre centre, 270 (loaded)
 WHEEL_Y = TRACK / 2
 TYRE_WIDTH = 25.0             # Rev D tyre section retained
 WHEEL_ARCH_R = 56.0           # Rev D arch radius 55.8 retained (not scaled; wheel is not scaled)
@@ -213,7 +220,7 @@ WHEEL_ARCH_INNER_Y = WHEEL_Y - 14.3   # Rev D relation: arch cut plane 14.3 mm i
 MOTOR_SHAFT_OFFSET = 7.0      # output shaft is eccentric to the 37 mm can (UNVERIFIED, recalled from the Pololu drawing)
 MOTOR_AXIS_Z = AXLE_Z + MOTOR_SHAFT_OFFSET   # can clocked straight UP so it clears the chassis plate without cut-outs
 MOTOR_FACE_Y = WHEEL_Y - 20.0  # gearbox face; boss 6 + shaft 16 puts the shaft tip 2 mm beyond the tyre centre plane
-CASTER_SWIVEL = (-195.0, 0.0)  # swivel axis (CCR-02); trail = purchased caster offset (9 mm)
+CASTER_SWIVEL = (float(CONTRACT_CASTER["swivel_x_mm"]), float(CONTRACT_CASTER["y_mm"]))  # (-195, 0) loaded; trail = caster offset 9 mm
 CASTER_MOUNT_Z = 36.0          # mounting face = caster overall height (Tente Compacta 25 mm: 36 mm) -> ride height kept
 
 # --------------------------------------------------------------------------- detector head, Rev E stack (z, mm)
@@ -230,15 +237,34 @@ HEAD_STACK = [   # (name, z_bottom, z_top, note)
 ]
 HEAD_FRAME_TOP_Z = 30.0        # Rev D frame top 32.6 lowered to carry the spreader
 HEAD_TOP_Z = 45.0              # Rev E head ceiling used (contract ceiling 50, Rev D 39 cover / 42 socket)
-HEAD_ENV_E = {"x": HEAD_ENV_E_CEILING["x"], "y": HEAD_ENV_E_CEILING["y"],
+HEAD_ENV_E = {"x": (round(HEAD_ENV_D["x"][0] + HEAD_DX, 3), round(HEAD_ENV_D["x"][1] + HEAD_DX, 3)), "y": HEAD_ENV_E_CEILING["y"],
               "z": (FILM_Z - max(RAIL_PROJECTIONS), HEAD_TOP_Z)}
-HEAD_FRAME_X = (143.0, 261.0)  # Rev D frame extents retained
+HEAD_FRAME_X = (round(143.0 + HEAD_DX, 3), round(261.0 + HEAD_DX, 3))  # Rev D frame extents, shifted
 HEAD_FRAME_HALF_Y = 172.5
-HEAD_COVER_X = (143.4, 260.6)
+HEAD_COVER_X = (round(143.4 + HEAD_DX, 3), round(260.6 + HEAD_DX, 3))
 HEAD_COVER_HALF_Y = 172.1
-HEAD_SPREADER_X = (155.0, 257.5)   # rear edge held back: pigtail chimney x 146..155 and key-socket collar
+HEAD_SPREADER_X = (round(155.0 + HEAD_DX, 3), round(257.5 + HEAD_DX, 3))   # rear edge held back: SiPM pigtail chimney (9 mm deep) behind it
 HEAD_SPREADER_HALF_Y = 168.5
-HEAD_PIGTAIL_EXIT = {"J1": (144.5, SEG_PITCH, 39.0), "J2": (144.5, -SEG_PITCH, 39.0)}  # strain-relief ports in the rear wall at the inactive seams, cables leave -x/+z
+HEAD_PIGTAIL_EXIT = {"J1": (round(144.5 + HEAD_DX, 3), SEG_PITCH, 39.0), "J2": (round(144.5 + HEAD_DX, 3), -SEG_PITCH, 39.0)}  # strain-relief ports in the rear wall at the inactive seams, cables leave -x/+z
+
+# --------------------------------------------------------------------------- head / body receiver interface (option C)
+RECEIVER = {
+    "type": "twin shoe: two rails on the head slide rearward (-x) into two channels under the chassis front beam",
+    "shoe_y": SEG_PITCH,                    # shoe centre lines on the S0|S1 and S2|S3 lane seams (y = +-87.5)
+    "shoe_width": 16.0, "shoe_z": (16.0, 30.0),            # head-side rail section (y width, z range)
+    "shoe_x": (30.0, HEAD_FRAME_X[0]),                     # shoe tip .. head frame rear face (rail continues into the seam rib)
+    "channel_x": (28.0, 64.0), "channel_width": 24.0, "channel_z": (12.0, 33.0),   # body-side block outer envelope
+    "channel_clear": 0.5,                                  # running clearance each side before the lands
+    "land_x": (34.0, 62.0),                                # centres of the two bearing lands in each channel -> base e = 28 mm
+    "x_stop": HEAD_MOUNT[0],                               # datum A: head shoulders seat on the channel front faces at x = 65.7
+    "fixed_side": "left (+y) channel locates y; right channel floats +-0.3 mm in y (thermal growth over 175 mm)",
+    "z_datum": 16.0,                                       # datum C: shoe undersides on the channel floor lands
+    "latch_box": (88.0, 108.0, -12.0, 12.0, 46.0, 60.0),   # one captive over-centre draw latch under the nose tip, lever lifts forward
+    "latch_keeper": (104.0, 0.0, HEAD_TOP_Z),              # keeper on the head cover, centre rear
+    "front_beam": (28.0, 62.0, -99.5, 99.5),               # chassis plate front beam/horns (x0, x1, y0, y1) at plate elevation
+    "chin_cut": (62.0, 50.0),                              # lower hull removed for x > 62 below z = 50 (nose overhangs the head by 36 mm)
+    "contact_k_printed": 1500.0, "contact_k_aluminium": 6000.0,   # N/mm per bearing land -- STATED ASSUMPTION for all mount options
+}
 
 # --------------------------------------------------------------------------- boards (envelopes confirmed/corrected here)
 # Board frame convention (both big boards): origin at the rear-left corner seen from above with robot-forward up,
@@ -249,7 +275,7 @@ def board_to_base(origin, u, v):
 
 HEAD_ACQ = {
     "outline": tuple(BOARDS_C["RR-HEAD-ACQ"]["outline_mm"]),          # (326, 96) confirmed
-    "origin": (ROW_X - 48.0, 163.0, 34.5),                             # rear-left corner, PCB underside
+    "origin": (round(ROW_X - 48.0, 3), 163.0, 34.5),                             # rear-left corner, PCB underside
     "thickness": 1.6,
     "max_top": float(BOARDS_C["RR-HEAD-ACQ"]["max_height_top_mm"]),    # 6.0 confirmed
     "max_bottom": float(BOARDS_C["RR-HEAD-ACQ"]["max_height_bottom_mm"]),  # 2.0 confirmed
@@ -266,17 +292,21 @@ CHS_MAIN = {
     "hole_d": 3.2, "hole_keepout_d": 7.0, "screw": "M3",
 }
 TOF_BOARD = {"outline": tuple(BOARDS_C["RR-TOF"]["outline_mm"]), "thickness": 1.6, "depth_behind_window": 6.0}
-PANEL_BOARD = {"outline": tuple(BOARDS_C["RR-PANEL"]["outline_mm"]), "thickness": 1.6, "center": (-93.0, 0.0), "max_top": 8.0}
+PANEL_BOARD = {"outline": tuple(BOARDS_C["RR-PANEL"]["outline_mm"]), "thickness": 1.6, "center": (-70.0, 104.0), "long_axis": "x", "max_top": 8.0}
 ELECTRONICS_BRIDGE_Z = (78.0, 80.0)    # 2 mm tray over the motors carrying RR-CHS-MAIN (screen + H-bridge heat path)
 
 # --------------------------------------------------------------------------- body packaging (layout decisions)
 BATTERY_BAY = {            # 8/9 Ah SLA-format pack lying on its side on the centreline, cassette slides out rearward (-x)
-    "cassette_x": (-227.0, -70.5), "cassette_half_y": 53.5, "cassette_z": (40.0, 110.0),
-    "pack_x": (-224.5, -73.5), "pack_half_y": 49.5, "pack_z": (42.5, 107.5),
-    "coupler_x": (-70.5, -13.0), "coupler_half_y": 19.0, "coupler_z": (44.0, 62.0),
-    "tunnel_roof_z": 113.0, "removal_direction": (-1.0, 0.0, 0.0), "removal_travel": 165.0,
-    "hatch_x": (BODY_TAIL_X - 1.0, -227.0),   # the tail cap behind the cassette is the hatch door
-    "hatch_half_y": 58.0, "hatch_z": (38.5, 116.0),
+    # Baseline pack PSL-SC-12120 (DEC-040) lying on its 151 x 101 side: 99 mm tall. The 9 Ah PSL-SC-1290 fits the same
+    # cassette lying on its side (99 wide, 65 tall) with a 34 mm spacer -- kept as an alternative at no cost.
+    "cassette_x": (-230.0, -73.5), "cassette_half_y": 54.5, "cassette_z": (40.0, 144.0),
+    "pack_x": (-227.5, -76.5), "pack_half_y": 50.5, "pack_z": (42.5, 141.5),
+    "coupler_x": (-73.5, -16.0), "coupler_half_y": 19.0, "coupler_z": (44.0, 62.0),
+    "tunnel_roof_z": 150.0, "removal_direction": (-1.0, 0.0, 0.0), "removal_travel": 165.0,
+    "hatch_x": (BODY_TAIL_X - 1.0, -230.0),   # the tail cap behind the cassette is the hatch door
+    "hatch_half_y": 58.0, "hatch_z": (38.5, 148.0),
+    # local growth for the 12 Ah pack: a dorsal hump over the tunnel (outer box), 7 mm above the Rev E crown
+    "hump_x": (-233.0, -70.5), "hump_half_y": 60.5, "hump_z": (100.0, 150.0), "hump_wall": 3.0,
 }
 SADDLE = {                 # carry-grip saddle over RR-CHS-MAIN = removable service cover (replaces the Rev D hand well)
     "x": (-69.0, 47.0), "half_y": 82.0, "floor_z": (105.0, 108.0),
@@ -287,8 +317,8 @@ GRIP = {                   # transverse bridge grip above the centre of gravity 
 }
 GRIP["bar_bottom_z"] = SADDLE["floor_z"][1] + GRIP["glove_clearance_below"]
 GRIP["bar_top_z"] = GRIP["bar_bottom_z"] + GRIP["bar_z"]
-LIDAR_POSE = {"xy": (-150.0, 0.0), "base_z": 136.0}          # behind the grip, over the battery tunnel
-CM5_POSE = {"x": (-160.0, -75.0), "y": (58.0, 114.0), "pcb_z": 55.0}   # left side bay
+LIDAR_POSE = {"xy": (-150.0, 0.0), "base_z": 150.0}          # behind the grip, on the battery hump
+CM5_POSE = {"x": (-160.0, -75.0), "y": (59.0, 115.0), "pcb_z": 55.0}   # left side bay
 DRIVE_POD = {"inner_r": 21.0, "outer_r": 23.5, "end_y": 119.5}   # motor pod on each flank behind the tyre (local growth, hidden by the wheel)
 ELECTRONICS_BRIDGE_X = (-69.0, 35.0)
 GLOVE_CLEARANCE_CONNECTOR = 45.0     # required free radius around J1/J2 coupling nuts
@@ -337,22 +367,22 @@ def _dir(yaw_deg, depression_deg):
 
 TOF_FOV_FULL_DEG = 18.0       # VL53L4ED field of view (UNVERIFIED, ST datasheet value recalled)
 TOF_MAX_RANGE = 1300.0        # mm (UNVERIFIED, dark-ambient typical)
-LOOKAHEAD_FWD_DEPRESSION = 14.0
+LOOKAHEAD_FWD_DEPRESSION = 18.0
 _cliff_f = skin_point(41.0, 41.0)
 _cliff_r = skin_point(150.0, 41.0)
 _la_r = skin_point(157.0, 100.0)
 _px_c = skin_point(180.0, 118.0)
 _px_s = skin_point(152.0, 80.0)
 TOF_SENSORS = {   # id: position of the sensor aperture (mm, base_link), unit boresight, purpose
-    "tof_cliff_fl": {"xyz": (_cliff_f[0], _cliff_f[1], 41.0), "dir": (0.0, 0.0, -1.0), "purpose": "downward cliff, front left chine ahead of the left wheel"},
-    "tof_cliff_fr": {"xyz": (_cliff_f[0], -_cliff_f[1], 41.0), "dir": (0.0, 0.0, -1.0), "purpose": "downward cliff, front right chine ahead of the right wheel"},
+    "tof_cliff_fl": {"xyz": (24.0, 108.0, 36.0), "dir": (0.0, 0.0, -1.0), "purpose": "downward cliff, on the left drive pod front: 24 mm ahead of the axle, 14.5 mm inboard of the left tyre"},
+    "tof_cliff_fr": {"xyz": (24.0, -108.0, 36.0), "dir": (0.0, 0.0, -1.0), "purpose": "downward cliff, on the right drive pod front"},
     "tof_cliff_rl": {"xyz": (_cliff_r[0], _cliff_r[1], 41.0), "dir": (0.0, 0.0, -1.0), "purpose": "downward cliff, rear left of the caster (reverse and pivot)"},
     "tof_cliff_rr": {"xyz": (_cliff_r[0], -_cliff_r[1], 41.0), "dir": (0.0, 0.0, -1.0), "purpose": "downward cliff, rear right of the caster (reverse and pivot)"},
     "tof_look_fl": {"xyz": (GRIP["center_x"] + GRIP["bar_x"] / 2, 91.0, 162.0), "dir": _dir(6.0, LOOKAHEAD_FWD_DEPRESSION), "purpose": "oblique look-ahead over the head, left: floor/drop-off ahead of the leading rail"},
     "tof_look_fr": {"xyz": (GRIP["center_x"] + GRIP["bar_x"] / 2, -91.0, 162.0), "dir": _dir(-6.0, LOOKAHEAD_FWD_DEPRESSION), "purpose": "oblique look-ahead over the head, right"},
     "tof_look_rl": {"xyz": (_la_r[0], _la_r[1], 100.0), "dir": _dir(170.0, 22.0), "purpose": "oblique look-behind, left: floor/drop-off behind the tail before reverse"},
     "tof_look_rr": {"xyz": (_la_r[0], -_la_r[1], 100.0), "dir": _dir(-170.0, 22.0), "purpose": "oblique look-behind, right"},
-    "tof_prox_rc": {"xyz": (_px_c[0], 0.0, 118.0), "dir": _dir(180.0, 0.0), "purpose": "rear proximity, centre (above the battery hatch)"},
+    "tof_prox_rc": {"xyz": (-236.0, 0.0, 158.0), "dir": _dir(180.0, 0.0), "purpose": "rear proximity, centre (in the brow above the battery hatch)"},
     "tof_prox_rl": {"xyz": (_px_s[0], _px_s[1], 80.0), "dir": _dir(145.0, 0.0), "purpose": "rear proximity, left quarter"},
     "tof_prox_rr": {"xyz": (_px_s[0], -_px_s[1], 80.0), "dir": _dir(-145.0, 0.0), "purpose": "rear proximity, right quarter"},
 }
@@ -365,10 +395,10 @@ def _deck(x, y):
 PANEL_CONTROLS = {   # centre of the control on the outer skin, actuation axis = local skin normal
     "estop": {"xyz": _deck(-120.0, -98.0), "desc": "latching E-stop, 22 mm, 2 NC positive opening (ESTOP)"},
     "hands_on": {"xyz": _deck(-172.0, -92.0), "desc": "HANDS-ON maintained illuminated pushbutton (HANDS_ON)"},
-    "mode_selector": {"xyz": _deck(-120.0, 98.0), "desc": "master OFF / SERVICE / RUN selector (MODE_RUN)"},
+    "mode_selector": {"xyz": _deck(-135.0, 98.0), "desc": "master OFF / SERVICE / RUN selector (MODE_RUN)"},
     "rearm_start": {"xyz": _deck(-172.0, 92.0), "desc": "REARM / Start, guarded momentary NO"},
     "pause_stop": {"xyz": _deck(-84.0, -112.0), "desc": "Pause / Stop momentary"},
-    "annunciator": {"xyz": _deck(PANEL_BOARD["center"][0], 0.0), "desc": "RR-PANEL: five status light pipes + buzzer port, between grip and LiDAR"},
+    "annunciator": {"xyz": _deck(*PANEL_BOARD["center"]), "desc": "RR-PANEL: five status light pipes + buzzer port, left deck beside the grip, long axis along x"},
 }
 for _c in PANEL_CONTROLS.values():
     _c["normal"] = roof_normal(_c["xyz"][0], _c["xyz"][1])
@@ -386,8 +416,8 @@ IMU_POSE = {"xyz": (0.0, 0.0, CHS_MAIN["origin"][2] + CHS_MAIN["thickness"] + 0.
 LIDAR_SCAN_PLANE_ABOVE_BASE = 60.0   # UNVERIFIED (no Richbeam drawing obtained): confirm before fixing lidar_link z
 _bs = skin_point(143.0, 66.0)
 BODY_BUMPER_SWITCHES = {"bumper_sw_l": (_bs[0], _bs[1], 66.0), "bumper_sw_r": (_bs[0], -_bs[1], 66.0)}
-HEAD_RAIL_SWITCHES = {"rail_sw_front": (257.0, 0.0, 21.0), "rail_sw_left": (ROW_X, 168.5, 21.0), "rail_sw_right": (ROW_X, -168.5, 21.0)}
-HEAD_DOCK_SWITCH = (132.0, 30.0, 40.0)   # body-side D2HW at the receiver, actuated by the seated head socket
+HEAD_RAIL_SWITCHES = {"rail_sw_front": (257.0 + HEAD_DX, 0.0, 21.0), "rail_sw_left": (ROW_X, 168.5, 21.0), "rail_sw_right": (ROW_X, -168.5, 21.0)}
+HEAD_DOCK_SWITCH = (25.0, SEG_PITCH, 23.0)   # body-side D2HW behind the left receiver channel, pressed by the fully seated shoe tip
 
 
 def summary():

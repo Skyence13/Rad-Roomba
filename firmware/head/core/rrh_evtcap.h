@@ -39,6 +39,10 @@ typedef struct {
     uint8_t uld;     /* ULD latch set */
     uint8_t alpha;   /* ALPHA latch set (floor chains, bits 0..3) */
     uint64_t start_tick[RRH_EVT_CHAINS];
+    /* Optional: time over threshold of the pulse that set BUSY (raw LLD falling edge minus the
+     * captured start). width_valid bit n set = width_ticks[n] is valid for the pending event. */
+    uint8_t width_valid;
+    uint32_t width_ticks[RRH_EVT_CHAINS];
 } rrh_evt_in_t;
 
 /* Pulse CLR of one chain and return the tick at which the chain can accept the next event. */
@@ -53,6 +57,11 @@ typedef struct {
     rrh_evt_clear_fn clear;
     rrh_evt_heater_fn heater;
     void *ctx;
+    /* Pulse-width histogram (optional): chains on which the port measures widths (0 = none) and
+     * the upper edges of bins 0 .. RRH_WIDTH_BINS-2 in ticks and, for the record, in ns. */
+    uint8_t width_mask;
+    uint32_t width_edges_ticks[RRH_WIDTH_BINS - 1u];
+    uint32_t width_edges_ns[RRH_WIDTH_BINS - 1u];
 } rrh_evt_cfg_t;
 
 typedef struct {
@@ -73,6 +82,8 @@ typedef struct {
     uint8_t saturated;
     /* events cleared a few ticks AFTER the boundary by a service that began before it: they
      * belong to the next gate and wait here until the current one has been closed */
+    uint32_t width_hist[RRH_EVT_CHAINS][RRH_WIDTH_BINS];
+    uint32_t next_width_hist[RRH_EVT_CHAINS][RRH_WIDTH_BINS];
     uint32_t next_count[RRH_EVT_CHAINS][3];
     uint64_t next_busy[RRH_EVT_CHAINS];
     uint8_t next_saturated;

@@ -192,21 +192,28 @@ Copper at 20 C [D]; at -20 C copper is 16 % lower. Contact resistances are assum
 | Charger LTC4162 + inductor (7 % of 43 W) | 0.03 | 0.03 | 0.03 | 3.20 |
 | **Total (W)** | **3.1** | **3.5** | **5.8** | **6.3** |
 
-Motor stall at the hardware limit (2.68 A, firmware stall timer 2 s [A]): DRV8874 at 150 C junction has roughly 1.7x the 25 C resistance [A; TI gives only 25 C values] -> 2.4 W per bridge for the duration of the stall. Board steady-state is 4-8 W spread over 160 x 100 mm with the bridges, buck and charger on the gap pad to the aluminium bridge tray (mechanical THERMAL_TO_BRIDGE zone): about 0.3-0.5 W per 10 cm2, no forced air needed [C, order of magnitude]. The charger is the local hot spot (3.2 W in a 4 x 5 mm QFN and one inductor) and must sit on the pad.
+Motor stall at the hardware limit (2.68 A, firmware stall timer 2 s [A]): DRV8874 at 150 C junction has roughly 1.7x the 25 C resistance [A; TI gives only 25 C values] -> 2.4 W per bridge for the duration of the stall. Board steady-state is 3-6 W spread over 160 x 100 mm with the bridges, buck and charger on the gap pad to the aluminium bridge tray (mechanical THERMAL_TO_BRIDGE zone): about 0.3-0.5 W per 10 cm2, no forced air needed [C, order of magnitude]. The charger is the local hot spot (3.2 W in a 4 x 5 mm QFN and one inductor) and must sit on the pad.
 
-## 8. Recommendation: 9 Ah, not 12 Ah (for the lead to put to Morgan)
+## 8. Pack sizing: 12 Ah baseline (DEC-040), 9 Ah shown for comparison
 
-**Recommendation: build Rev E around the 9 Ah Power-Sonic PSL-SC-1290 (the mechanical layout candidate), carry two packs plus the bench charger, and do not grow the bay by 34 mm for the 12 Ah pack.**
+The owner has fixed the 12 Ah pack (Power-Sonic PSL-SC-12120 class, 1.65 kg, 15 A continuous [D]) as the baseline. Charger current, main fuse, coupler and the tables above are sized for it; the 9 Ah PSL-SC-1290 column is a comparison only and the 8 Ah column carries the 0.3 worksheet forward.
 
-Basis [C unless tagged]:
+| Headline (12 Ah baseline) | Value | 9 Ah comparison | Tag |
+|---|---:|---:|---|
+| Continuous survey at -20 C with 22 W heaters, minutes to 20 % reserve | 125 | 93 | [C] |
+| Continuous survey at -25 C with 30 W heaters | 100 | 75 | [C] |
+| Pessimistic -20 C stack (68 W) | 87 | 65 | [C] |
+| Step-and-count at -20 C (85 % stationary), minutes per pack | 139 | 104 | [C] |
+| Step-and-count at +20 C, minutes per pack | 376 | 282 | [C] |
+| Continuous survey at +20 C | 337 | 253 | [C] |
+| Margin on the one-hour cold deployment (typical / pessimistic) | +108 % / +45 % | +56 % / +8 % | [C] |
+| Worst simultaneous pack current against the 15 A continuous BMS rating | 12.5 A (17 % margin) | same rating [U for the 1290] | [C]/[D] |
+| Charge time at 3.0 A from 20 % reserve (CC to ~95 %, then taper) | about 3.7 h | about 2.9 h | [C] |
+| Charge rate | 0.25 C | 0.33 C | [C]; Power-Sonic's own charger for the 12120 is a 4 A unit [D] |
 
-1. Energy. -20 C continuous survey with the mechanical lead's 22 W heater average: 93 min to a 20 % reserve on 9 Ah (requirement: 60 min), 125 min on 12 Ah. At -25 C (30 W heaters, 75 % deliverable): 75 min on 9 Ah. Even the pessimistic stack (0.3 drive figure of 15 W, CM5 10 W, LiDAR 6 W, head 10 W, heaters 22 W) gives 65 min on 9 Ah - one-hour capable, without margin; 12 Ah gives 87 min.
-2. Peak current. Both packs carry the same 15 A continuous BMS rating [D for the 12 Ah sheet; the 9 Ah figure is from Power-Sonic's technical document via a search snippet, U until the PDF is read]; the worst simultaneous demand is about 12.5 A. Capacity does not buy current margin here.
-3. The new step-and-count missions last hours and need pack swaps with either size (1.7 h per 9 Ah pack at -20 C against 2.3 h per 12 Ah pack; about 4 h against 5.5 h warm). The swap infrastructure is needed anyway; 12 Ah only changes how often.
-4. Cost of 12 Ah: +0.65 kg against the 12 kg lift allowance [D], +34 mm bay height [M], a longer charge (4 h against 3 h at 3 A).
-5. What would reverse the recommendation: a measured -20 C average above about 74 W at the pack (9 Ah then misses 60 min), a measured deliverable fraction below 0.65 at the real cell temperature, or a BMS continuous limit below 13 A. All three are bench measurements on the first pack; none needs the robot.
+Sizing consequences of the 12 Ah baseline [C]: charge current stays at the contract 3.0 A (LTC4162 maximum 3.2 A [D]); the external supply must deliver 56 W -> a 90 W / 24 V unit; main fuse 20 A and the 50 A-class coupler are set by the 15 A BMS rating and the 12.5 A peak, not by capacity; mass +0.65 kg over the 9 Ah pack counts against the 12 kg lift allowance [D]. Step-and-count missions of several hours still need pack swaps in the cold (2.3 h per pack at -20 C).
 
-The 8 Ah value in the contract is a sizing placeholder with no verified catalogue pack; its rows are kept only to carry the 0.3 numbers forward.
+What would make even 12 Ah insufficient for the one-hour cold case: a measured -20 C average above about 98 W at the pack, or a deliverable fraction below 0.38 at the real cell temperature at the typical load. Both are bench measurements on the first pack.
 
 ## 9. Unknowns that move these numbers
 

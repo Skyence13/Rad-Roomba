@@ -185,11 +185,11 @@ int main(void)
         rrch_cfg_t a, b;
         uint8_t img[RRCH_NV_MAX];
         rrch_cfg_defaults(&a);
-        a.v[RRCH_CFG_CAL_TRACK] = 0.2213f;
+        a.v[RRCH_CFG_CAL_TRACK] = 0.2713f;
         a.gen = 41;
         size_t n = rrch_cfg_pack(&a, img, sizeof img);
         CHECK(n > 0 && n <= RRCH_NV_MAX);
-        CHECK(rrch_cfg_unpack(&b, img, n) && b.gen == 41 && b.v[RRCH_CFG_CAL_TRACK] == 0.2213f && b.from_flash);
+        CHECK(rrch_cfg_unpack(&b, img, n) && b.gen == 41 && b.v[RRCH_CFG_CAL_TRACK] == 0.2713f && b.from_flash);
         img[40] ^= 0x01;
         CHECK(!rrch_cfg_unpack(&b, img, n)); /* CRC */
         img[40] ^= 0x01;

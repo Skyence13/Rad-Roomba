@@ -172,6 +172,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--emit-header")
     ap.add_argument("--emit-markdown")
+    ap.add_argument("--readme", help="update (or with --check: verify) the table between the HARDWARE_MAPPING markers")
+    ap.add_argument("--check", action="store_true")
     a = ap.parse_args()
     pm, facts = load()
     errors = check(pm, facts)
@@ -186,6 +188,28 @@ def main():
     if a.emit_markdown:
         emit_markdown(pm, a.emit_markdown)
         print("wrote", a.emit_markdown)
+    if a.readme:
+        # keep the hardware mapping table inside README.md identical to the generated one
+        tmp = a.readme + ".map.tmp"
+        emit_markdown(pm, tmp)
+        with open(tmp) as f:
+            table = f.read()
+        os.remove(tmp)
+        with open(a.readme) as f:
+            txt = f.read()
+        b, e = "<!-- HARDWARE_MAPPING_BEGIN -->\n", "<!-- HARDWARE_MAPPING_END -->"
+        if b not in txt or e not in txt:
+            print("README markers missing")
+            return 1
+        new = txt[: txt.index(b) + len(b)] + table + txt[txt.index(e):]
+        if a.check:
+            if new != txt:
+                print("README.md hardware mapping table is stale: run tools/check_pinmap.py --readme README.md")
+                return 1
+        else:
+            with open(a.readme, "w") as f:
+                f.write(new)
+            print("updated", a.readme)
     return 0
 
 

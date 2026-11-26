@@ -5,7 +5,8 @@
 
 #include "harness.h"
 
-#define TICKS_PER_M (RRCH_ENCODER_CPR / (2.0 * 3.14159265358979 * 0.052))
+#define TICKS_PER_M (RRCH_ENCODER_CPR / (2.0 * 3.14159265358979 * (double)rrch_cfg_desc[RRCH_CFG_CAL_RADIUS_L].def))
+#define TRACK_M ((double)rrch_cfg_desc[RRCH_CFG_CAL_TRACK].def)
 
 static FILE *g_report;
 static void rep(const char *fmt, ...) __attribute__((format(printf, 1, 2)));
@@ -129,7 +130,7 @@ static void odometry(double v, double w, int ms, double slip_l, const char *labe
         last_t = tu;
         if (!first) {
             double dl = (double)(l - pl) / TICKS_PER_M, dr = (double)(r - pr) / TICKS_PER_M;
-            double ds = 0.5 * (dl + dr), dy = (dr - dl) / 0.220;
+            double ds = 0.5 * (dl + dr), dy = (dr - dl) / TRACK_M;
             x += ds * cos(yaw + 0.5 * dy);
             y += ds * sin(yaw + 0.5 * dy);
             yaw += dy;

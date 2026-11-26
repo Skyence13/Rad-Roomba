@@ -164,7 +164,7 @@ typedef struct {
     X(ID_HW_REV, "id.hw_rev", 1, 1, 26, "") \
     X(CAL_RADIUS_L, "cal.wheel_radius_l_m", 0.052, 0.045, 0.060, "m") \
     X(CAL_RADIUS_R, "cal.wheel_radius_r_m", 0.052, 0.045, 0.060, "m") \
-    X(CAL_TRACK, "cal.track_m", 0.220, 0.18, 0.26, "m") \
+    X(CAL_TRACK, "cal.track_m", 0.270, 0.20, 0.34, "m") \
     X(CAP_COM_VF, "caps.commissioning.v_fwd_mps", 0.20, 0, 0.20, "m/s") \
     X(CAP_COM_VR, "caps.commissioning.v_rev_mps", 0.05, 0, 0.05, "m/s") \
     X(CAP_COM_W, "caps.commissioning.w_radps", 0.30, 0, 0.30, "rad/s") \

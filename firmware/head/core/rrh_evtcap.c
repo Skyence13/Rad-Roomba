@@ -19,8 +19,10 @@ static void clear_accumulators(rrh_evtcap_t *e)
     memset(e->count, 0, sizeof e->count);
     memset(e->busy, 0, sizeof e->busy);
     e->saturated = 0u;
+    memset(e->width_hist, 0, sizeof e->width_hist);
     memset(e->next_count, 0, sizeof e->next_count);
     memset(e->next_busy, 0, sizeof e->next_busy);
+    memset(e->next_width_hist, 0, sizeof e->next_width_hist);
     e->next_saturated = 0u;
 }
 
@@ -140,9 +142,16 @@ static void close_gate(rrh_evtcap_t *e)
                 l->ref_live_ticks = 0u;
             }
         }
+        r->width_mask = e->cfg.width_mask;
+        if (r->width_mask != 0u) {
+            memcpy(r->width_edges_ns, e->cfg.width_edges_ns, sizeof r->width_edges_ns);
+            memcpy(r->width_hist, e->width_hist, sizeof r->width_hist);
+        }
         e->fifo_head = next;
     }
     /* The next gate starts with whatever was already booked for it. */
+    memcpy(e->width_hist, e->next_width_hist, sizeof e->width_hist);
+    memset(e->next_width_hist, 0, sizeof e->next_width_hist);
     memcpy(e->count, e->next_count, sizeof e->count);
     memcpy(e->busy, e->next_busy, sizeof e->busy);
     e->saturated = e->next_saturated;
@@ -227,12 +236,24 @@ void rrh_evtcap_service(rrh_evtcap_t *e, uint64_t now, const rrh_evt_in_t *in)
         }
         const uint64_t from = (e->start[ch] > e->g0) ? e->start[ch] : e->g0;
         const bool counted = !forced && ((e->chain_enable & bit) != 0u);
+        /* Pulse width of the triggering pulse, if the port measured it: engineering histogram
+         * only, the class decision above does not use it. */
+        uint32_t wbin = RRH_WIDTH_BINS;
+        if (counted && ((e->cfg.width_mask & in->width_valid & bit) != 0u)) {
+            wbin = 0u;
+            while ((wbin < (RRH_WIDTH_BINS - 1u)) && (in->width_ticks[ch] >= e->cfg.width_edges_ticks[wbin])) {
+                wbin++;
+            }
+        }
         if (clear < e->g1) {
             e->busy[ch] += clear - from;
             if (forced) {
                 e->saturated |= bit; /* over-long BUSY: not counted, the gate is flagged */
             } else if (counted) {
                 e->count[ch][cls]++;
+                if (wbin < RRH_WIDTH_BINS) {
+                    e->width_hist[ch][wbin]++;
+                }
             } else {
                 /* disabled chain: cleared, never counted */
             }
@@ -248,6 +269,9 @@ void rrh_evtcap_service(rrh_evtcap_t *e, uint64_t now, const rrh_evt_in_t *in)
                 e->next_saturated |= bit;
             } else if (counted) {
                 e->next_count[ch][cls]++;
+                if (wbin < RRH_WIDTH_BINS) {
+                    e->next_width_hist[ch][wbin]++;
+                }
             } else {
                 /* disabled chain */
             }

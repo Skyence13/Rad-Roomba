@@ -512,6 +512,7 @@ static void usage(void)
           "  --descriptor-id S --setup-id S --firmware S --boot-id UUID   identifiers for the replica\n"
           "  --tau-floor-us X --tau-ref-us X   dead time per recorded event (default 10, 10)\n"
           "  --truth-log FILE       append one JSON line per generated gate (drawn counts)\n"
+          "  --no-width-hist        emulate a head without pulse-width measurement (no DIAG width fields)\n"
           "  --quiet\n",
           stderr);
 }
@@ -532,12 +533,17 @@ int main(int argc, char **argv)
     uint32_t gate_min = RRH_SPAN_DEFAULT_US, gate_max = RRH_SPAN_DEFAULT_US;
     char desc_id[49] = "";
     bool rail5 = false;
+    bool no_width = false;
 
     for (int i = 1; i < argc; i++) {
         const char *a = argv[i];
         const char *v = ((i + 1) < argc) ? argv[i + 1] : NULL;
         if (strcmp(a, "--quiet") == 0) {
             g_quiet = true;
+            continue;
+        }
+        if (strcmp(a, "--no-width-hist") == 0) {
+            no_width = true;
             continue;
         }
         if ((strcmp(a, "--help") == 0) || (v == NULL)) {
@@ -575,6 +581,7 @@ int main(int argc, char **argv)
         }
     }
     sim_init(&g_sim, seed, manual);
+    g_sim.width_hist = !no_width;
     if (tau_f >= 0.0) { g_sim.tau_floor_us = tau_f; }
     if (tau_r >= 0.0) { g_sim.tau_ref_us = tau_r; }
     if (truth_path != NULL) {

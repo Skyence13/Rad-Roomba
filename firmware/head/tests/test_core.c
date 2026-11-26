@@ -19,6 +19,7 @@ static struct {
     uint64_t t0_us;
     rrh_gate_lane_t lane_template[RRH_LANES];
     uint32_t gate_ticks_override, skip;
+    uint8_t width_mask;
     bool heater_req, heater_applied;
     uint32_t heater_requests;
     rrh_analog_t analog;
@@ -90,6 +91,16 @@ bool rrh_hal_acq_poll(rrh_gate_record_t *rec)
         rec->heater_on_ticks = m.heater_applied ? rec->gate_ticks : 0u;
         m.heater_applied = m.heater_req;
         memcpy(rec->lane, m.lane_template, sizeof rec->lane);
+        if (m.width_mask != 0u) {
+            rec->width_mask = m.width_mask;
+            rec->width_edges_ns[0] = 150u;
+            rec->width_edges_ns[1] = 400u;
+            rec->width_edges_ns[2] = 2000u;
+            for (uint32_t ch = 0; ch < 8u; ch++) {
+                rec->width_hist[ch][1] = 7u + ch;
+                rec->width_hist[ch][3] = (ch == 2u) ? 70000u : 1u;
+            }
+        }
         if (m.skip > 0u) {
             m.skip--;
             continue;
@@ -480,6 +491,7 @@ static void test_frame_mapping_and_nulls(void)
     CHECK(send("DIAG", "{\"seq\":0}") && status_is("OK"));
     CHECK(has("\"id\":2,\"alpha_raw\":2,\"beta_raw\":12,\"floor_reject\":1,\"floor_live_ticks\":0"));
     CHECK(has("\"flags\":[\"BASELINE_SHIFT\"]") && has("\"flags\":[\"REF_SATURATED\"]"));
+    CHECK(!has("width")); /* this port measures no pulse widths: the optional fields are absent */
     /* remaining rules: live fraction below 50 %, live > gate, bias flag, front-end fault, chain off */
     m.lane_template[0].floor_live_ticks = 2000000u;
     m.lane_template[1].flags = RRH_GF_BIAS_OUT_OF_RANGE;
@@ -492,13 +504,22 @@ static void test_frame_mapping_and_nulls(void)
     CHECK(has("{\"id\":1,\"alpha\":null,\"beta_window\":null,\"photon_ref\":null,\"flags\":[\"FLOOR_FAULT\",\"REFERENCE_FAULT\"]}"));
     CHECK(has("{\"id\":2,\"alpha\":null,\"beta_window\":null,\"photon_ref\":{\"counts\":22,\"live_us\":99970},\"flags\":[\"DEAD_TIME_UNKNOWN\"]}"));
     CHECK(has("{\"id\":3,\"alpha\":null,\"beta_window\":null,\"photon_ref\":{\"counts\":23,\"live_us\":99970},\"flags\":[\"SATURATED\"]}"));
+    /* optional pulse-width histogram: floor chains only on this mock port, counts saturate at 65535 */
+    m.width_mask = 0x0Fu;
+    advance(100000u);
+    m.width_mask = 0u;
+    CHECK(send("DIAG", "{\"seq\":2}") && status_is("OK"));
+    CHECK(has("\"width_bins_ns\":[150,400,2000]"));
+    CHECK(has("\"floor_width_hist\":[0,7,0,1]") && has("\"floor_width_hist\":[0,9,0,65535]"));
+    CHECK(!has("ref_width_hist"));
+    CHECK(send("DIAG", "{\"seq\":1}") && status_is("OK") && !has("width"));
     /* missing head temperature: null plus the thermal flag; undervoltage */
     for (uint32_t l = 0; l < RRH_LANES; l++) {
         m.analog.sipm_mc[l] = RRH_TEMP_INVALID;
     }
     m.analog.supply_mv = 9000u;
     advance(100000u);
-    CHECK(send("READ", "{\"after_seq\":1}") && status_is("OK"));
+    CHECK(send("READ", "{\"after_seq\":2}") && status_is("OK"));
     CHECK(has("\"head_c\":null") && has("\"flags\":[\"HEAD_TEMP_OUT_OF_RANGE\",\"UNDERVOLTAGE\"]"));
 }
 

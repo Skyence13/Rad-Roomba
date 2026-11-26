@@ -82,6 +82,7 @@ timing:
   target_time_bound_us: 2000
   sync_refresh_period_s: 2.0
   sync_expiry_s: 10.0
+  head_holdover_rule: "After expiry the head reports HOLDOVER with the bound growing at 200 ppm, and UNSYNCED 60 s after expiry (CR-H5; compile-time constants in firmware/head/core/rrh_config.h)."
   reserved_hw_sync: "J2 pins 5/6 reserved for a future RS-422 hardware time pulse (not fitted in rev A boards; footprints DNP)."
 
 # ---------------------------------------------------------------- power
@@ -210,7 +211,8 @@ head_gate_record:
     ref_counts:    "Reference events above REF_LLD and below REF_ULD"
     ref_reject_counts: "Reference events above REF_ULD; engineering field"
     ref_live_ticks: "Live ticks of the reference channel"
-    flags:         "FLOOR_SATURATED, REF_SATURATED, BIAS_OUT_OF_RANGE, BASELINE_SHIFT"
+    flags:         "FLOOR_SATURATED, REF_SATURATED, BIAS_OUT_OF_RANGE, BASELINE_SHIFT, FLOOR_INVALID, REF_INVALID (CR-H1). Mapping to ACQ 2.0 lane flags is frozen in interface/head_icd_addendum_0.4.md section 2 (CR-H2): BASELINE_SHIFT -> DISCRIMINATOR_FAULT with all three channels null; lane BIAS_OUT_OF_RANGE -> FLOOR_FAULT + REFERENCE_FAULT; live fraction below 50 % -> SATURATED; *_INVALID -> FLOOR_FAULT / REFERENCE_FAULT + null."
+    width_histogram: "Optional engineering extension (CR-H8): per-chain time-over-threshold histogram, 4 bins, with a width_mask naming the chains that provide it; carried only in DIAG."
   common_fields: [sequence, gate_start_tick, gate_ticks, tick_hz, heater_on_ticks, heater_transition_in_gate]
   acq_mapping: "segments[n].alpha = {alpha_counts, floor_live_us}; beta_window = {beta_counts, floor_live_us}; photon_ref = {ref_counts, ref_live_us}; lane flags map onto the existing ACQ 2.0 enum (SATURATED, FLOOR_FAULT, REFERENCE_FAULT, DEAD_TIME_UNKNOWN, DISCRIMINATOR_FAULT). ACQ 2.0 is strict (additionalProperties false) and stays byte-compatible: reject counters, per-gate heater-transition markers and other engineering values are fetched with a separate, additive DIAG op (heads without it answer UNSUPPORTED) and archived beside the raw frames."
 
@@ -242,7 +244,9 @@ head_event_capture:
   mcu: "STM32G474VET6. BUSY of the 8 chains -> 8 input-capture channels of the two 32-bit timers (TIM2, TIM5) running from the 24 MHz TCXO-derived clock: the event start time is captured in hardware. A fixed-rate service interrupt (default 100 kHz) classifies every chain whose BUSY has been set for at least the acceptance window W (default 4 us) and whose LLD comparator has returned low (bounded by a maximum hold after which the chain is flagged saturated): reads the ULD/ALPHA latches, increments the class counter, reads the timer for the clear time, pulses CLR. CPU load is independent of count rate."
   classification: "floor: ALPHA latched -> alpha; else ULD latched -> floor reject; else -> beta window. reference: ULD latched -> ref reject; else -> ref count."
   live_time: "Per chain and gate: live = gate span - sum over events of (clear time - captured start time), with busy intervals split exactly at gate boundaries. Both ends are timer readings; nothing is inferred from wall time or from a nominal dead time."
-  gates: "Timer compare interrupt at the gate boundary snapshots all counters and live times atomically (interrupts masked for the copy). An event is attributed to the gate in which it is classified."
+  gates: "The service interrupt that follows the gate boundary (within 10 us) snapshots all counters atomically and splits busy intervals arithmetically at the exact boundary tick (CR-H3). An event is attributed to the gate in which it is classified."
+  tick: "TIM2/TIM5 at 144 MHz (144 ticks per microsecond). A chain whose comparator is high while its latch is clear is treated as saturated. Dead time is about 9.7 us per event in the host simulation of the capture logic (simulated, CR-H4)."
+  pulse_width: "Raw LLD comparator outputs on TIM4 (floor) and TIM3 (reference) capture channels for time-over-threshold (CR-H8)."
   test: "Charge-injection pulser strobed by an MCU timer output (periodic and pseudo-random) for counting, live-time and rate-sweep validation; a firmware self-test drives the latch clocks through a test line with no analog signal."
 
 # ---------------------------------------------------------------- survey methods (DEC-038); selected per mission from the site profile

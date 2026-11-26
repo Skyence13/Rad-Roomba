@@ -42,7 +42,7 @@ static void test_boot_and_hello(void)
     CHECK(th_mode(t, "STANDBY") && th_true(t, "rearm_ready") && th_true(t, "chain.ARM_PERMIT") && !th_true(t, "hw_latch"));
     CHECK(th_is(t, "op_mode", "SERVICE"));
     CHECK(th_req(t, "HELLO", "{}"));
-    CHECK(th_is(t, "proto", "RR-CHS 1.0") && th_num(t, "caps.encoder_cpr") == 9600 && th_num(t, "caps.max_v_mps") == 0.2 && th_num(t, "session") == 1);
+    CHECK(th_is(t, "proto", "RR-CHS 1.0") && th_num(t, "caps.encoder_cpr") == 9600 && th_num(t, "caps.max_v_mps") == 0.2 && th_num(t, "caps.track_nom_m") == 0.27 && th_num(t, "caps.wheel_radius_nom_m") == 0.052 && th_num(t, "session") == 1);
     CHECK(th_is(t, "reset.cause", "POWER_ON") && th_num(t, "reset.boot_count") == 1 && th_is(t, "config.source", "DEFAULTS"));
     char boot[40];
     CHECK(rrc_json_str_copy(&t->doc, th_get(t, "boot_id"), boot, sizeof boot) == 36 && rrc_uuid_is_canonical(boot));
@@ -794,19 +794,19 @@ static void test_reset_and_aux(void)
 
     SECTION("CONFIG: range check, persistence with CRC across resets, defaults on corruption, write failure");
     t = armed(403);
-    CHECK(th_req(t, "CONFIG_GET", "{\"key\":\"cal.track_m\"}") && th_num(t, "value") == 0.22 && th_num(t, "min") == 0.18);
+    CHECK(th_req(t, "CONFIG_GET", "{\"key\":\"cal.track_m\"}") && th_num(t, "value") == 0.27 && th_num(t, "min") == 0.2);
     CHECK(!th_req(t, "CONFIG_SET", "{\"key\":\"cal.track_m\",\"value\":0.5}") && th_status(t, "BAD_ARG"));
     CHECK(!th_req(t, "CONFIG_SET", "{\"key\":\"caps.commissioning.v_fwd_mps\",\"value\":0.25}") && th_status(t, "BAD_ARG")); /* contract ceiling */
     CHECK(!th_req(t, "CONFIG_GET", "{\"key\":\"nope\"}") && th_status(t, "BAD_ARG"));
-    CHECK(th_req(t, "CONFIG_SET", "{\"key\":\"cal.track_m\",\"value\":0.2213}") && th_num(t, "gen") == 1 && th_num(t, "old") == 0.22);
+    CHECK(th_req(t, "CONFIG_SET", "{\"key\":\"cal.track_m\",\"value\":0.2713}") && th_num(t, "gen") == 1 && th_num(t, "old") == 0.27);
     CHECK(th_req(t, "CONFIG_SET", "{\"key\":\"cal.wheel_radius_l_m\",\"value\":0.0518}") && th_num(t, "gen") == 2);
     CHECK(th_req(t, "CONFIG_GET", "{\"key\":\"_keys\",\"offset\":0}") && th_len(t, "keys") == 24 && th_num(t, "total") == RRCH_CFG_N);
     moving(t, 0.10, 0);
-    CHECK(!th_req(t, "CONFIG_SET", "{\"key\":\"cal.track_m\",\"value\":0.2}") && th_status(t, "REJECTED") && th_is(t, "reason", "NOT_STATIONARY"));
+    CHECK(!th_req(t, "CONFIG_SET", "{\"key\":\"cal.track_m\",\"value\":0.26}") && th_status(t, "REJECTED") && th_is(t, "reason", "NOT_STATIONARY"));
     th_env(t, "{\"mcu_reset\":\"PIN\"}");
     th_run_silent(t, 400);
     CHECK(th_req(t, "HELLO", "{}") && th_is(t, "config.source", "FLASH") && th_num(t, "config.gen") == 2);
-    CHECK(th_req(t, "CONFIG_GET", "{\"key\":\"cal.track_m\"}") && fabs(th_num(t, "value") - 0.2213) < 1e-6);
+    CHECK(th_req(t, "CONFIG_GET", "{\"key\":\"cal.track_m\"}") && fabs(th_num(t, "value") - 0.2713) < 1e-6);
     CHECK(th_req(t, "CONFIG_GET", "{\"key\":\"cal.wheel_radius_l_m\"}") && fabs(th_num(t, "value") - 0.0518) < 1e-6);
     t->sim.nv[RRCH_NV_SLOT_CFG_B][30] ^= 0xFF; /* newest copy (gen 2) corrupted: the older valid copy is used */
     th_env(t, "{\"mcu_reset\":\"PIN\"}");
@@ -819,8 +819,8 @@ static void test_reset_and_aux(void)
     CHECK(th_req(t, "HELLO", "{}") && th_is(t, "config.source", "DEFAULTS"));
     CHECK(th_req(t, "STATE", "{}") && th_has(t, "faults", "CONFIG_DEFAULTED"));
     th_env(t, "{\"nv_fail\":true}");
-    CHECK(!th_req(t, "CONFIG_SET", "{\"key\":\"cal.track_m\",\"value\":0.23}") && th_status(t, "FAULT") && th_is(t, "reason", "NV_WRITE"));
-    CHECK(th_req(t, "CONFIG_GET", "{\"key\":\"cal.track_m\"}") && th_num(t, "value") == 0.22);
+    CHECK(!th_req(t, "CONFIG_SET", "{\"key\":\"cal.track_m\",\"value\":0.28}") && th_status(t, "FAULT") && th_is(t, "reason", "NV_WRITE"));
+    CHECK(th_req(t, "CONFIG_GET", "{\"key\":\"cal.track_m\"}") && th_num(t, "value") == 0.27);
 
     SECTION("EVENTS: every transition logged in order, paging with after_seq, gap flag after overflow");
     t = armed(404);

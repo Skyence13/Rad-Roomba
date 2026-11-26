@@ -306,26 +306,34 @@ def build():
         A("| %s | " % cases7[0][1][k][0] + " | ".join(fmt(c[1][k][1], 2) for c in cases7) + " |")
     A("| **Total (W)** | " + " | ".join("**%s**" % fmt(sum(x[1] for x in c[1]), 1) for c in cases7) + " |")
     A("\nMotor stall at the hardware limit (%.2f A, firmware stall timer 2 s [A]): DRV8874 at 150 C junction has roughly 1.7x the 25 C resistance [A; TI gives only 25 C values] -> %.1f W per bridge for the duration of the stall. "
-      "Board steady-state is 4-8 W spread over 160 x 100 mm with the bridges, buck and charger on the gap pad to the aluminium bridge tray (mechanical THERMAL_TO_BRIDGE zone): "
+      "Board steady-state is 3-6 W spread over 160 x 100 mm with the bridges, buck and charger on the gap pad to the aluminium bridge tray (mechanical THERMAL_TO_BRIDGE zone): "
       "about 0.3-0.5 W per 10 cm2, no forced air needed [C, order of magnitude]. The charger is the local hot spot (3.2 W in a 4 x 5 mm QFN and one inductor) and must sit on the pad.\n"
       % (I_TRIP, I_TRIP ** 2 * 0.34))
 
-    A("## 8. Recommendation: 9 Ah, not 12 Ah (for the lead to put to Morgan)\n")
+    A("## 8. Pack sizing: 12 Ah baseline (DEC-040), 9 Ah shown for comparison\n")
     k9 = "9 Ah Power-Sonic PSL-SC-1290"; k12 = "12 Ah Power-Sonic PSL-SC-12120"
-    A("**Recommendation: build Rev E around the 9 Ah Power-Sonic PSL-SC-1290 (the mechanical layout candidate), carry two packs plus the bench charger, and do not grow the bay by 34 mm for the 12 Ah pack.**\n")
-    A("Basis [C unless tagged]:\n")
-    A("1. Energy. -20 C continuous survey with the mechanical lead's 22 W heater average: %.0f min to a 20 %% reserve on 9 Ah (requirement: 60 min), %.0f min on 12 Ah. At -25 C (30 W heaters, 75 %% deliverable): %.0f min on 9 Ah. "
-      "Even the pessimistic stack (0.3 drive figure of 15 W, CM5 10 W, LiDAR 6 W, head 10 W, heaters 22 W) gives %.0f min on 9 Ah - one-hour capable, without margin; 12 Ah gives %.0f min."
-      % (rt[("Survey -20 C with heaters", k9)], rt[("Survey -20 C with heaters", k12)], rt[("Survey -25 C with heaters", k9)],
-         rt[("Pessimistic -20 C: 0.3 drive 15 W, CM5 10 W, LiDAR 6 W, head 10 W, heaters 22 W", k9)], rt[("Pessimistic -20 C: 0.3 drive 15 W, CM5 10 W, LiDAR 6 W, head 10 W, heaters 22 W", k12)]))
-    A("2. Peak current. Both packs carry the same 15 A continuous BMS rating [D for the 12 Ah sheet; the 9 Ah figure is from Power-Sonic's technical document via a search snippet, U until the PDF is read]; the worst simultaneous demand is about 12.5 A. Capacity does not buy current margin here.")
-    A("3. The new step-and-count missions last hours and need pack swaps with either size (%.1f h per 9 Ah pack at -20 C against %.1f h per 12 Ah pack; about 4 h against 5.5 h warm). The swap infrastructure is needed anyway; 12 Ah only changes how often."
-      % (rt[("Step-and-count -20 C (85 % stationary)", k9)] / 60, rt[("Step-and-count -20 C (85 % stationary)", k12)] / 60))
-    A("4. Cost of 12 Ah: +0.65 kg against the 12 kg lift allowance [D], +34 mm bay height [M], a longer charge (4 h against 3 h at 3 A).")
-    A("5. What would reverse the recommendation: a measured -20 C average above about %.0f W at the pack (9 Ah then misses 60 min), a measured deliverable fraction below 0.65 at the real cell temperature, "
-      "or a BMS continuous limit below 13 A. All three are bench measurements on the first pack; none needs the robot.\n" % (9 * V_NOM * 0.64 / 1.0))
-    A("The 8 Ah value in the contract is a sizing placeholder with no verified catalogue pack; its rows are kept only to carry the 0.3 numbers forward.\n")
-
+    pess = "Pessimistic -20 C: 0.3 drive 15 W, CM5 10 W, LiDAR 6 W, head 10 W, heaters 22 W"
+    A("The owner has fixed the 12 Ah pack (Power-Sonic PSL-SC-12120 class, 1.65 kg, 15 A continuous [D]) as the baseline. Charger current, main fuse, coupler and the tables above are sized for it; "
+      "the 9 Ah PSL-SC-1290 column is a comparison only and the 8 Ah column carries the 0.3 worksheet forward.\n")
+    A("| Headline (12 Ah baseline) | Value | 9 Ah comparison | Tag |\n|---|---:|---:|---|")
+    for lab, key in [("Continuous survey at -20 C with 22 W heaters, minutes to 20 % reserve", "Survey -20 C with heaters"),
+                     ("Continuous survey at -25 C with 30 W heaters", "Survey -25 C with heaters"),
+                     ("Pessimistic -20 C stack (68 W)", pess),
+                     ("Step-and-count at -20 C (85 % stationary), minutes per pack", "Step-and-count -20 C (85 % stationary)"),
+                     ("Step-and-count at +20 C, minutes per pack", "Step-and-count +20 C (85 % stationary)"),
+                     ("Continuous survey at +20 C", "Survey +20 C")]:
+        A("| %s | %.0f | %.0f | [C] |" % (lab, rt[(key, k12)], rt[(key, k9)]))
+    A("| Margin on the one-hour cold deployment (typical / pessimistic) | %+.0f %% / %+.0f %% | %+.0f %% / %+.0f %% | [C] |"
+      % ((rt[("Survey -20 C with heaters", k12)] / 60 - 1) * 100, (rt[(pess, k12)] / 60 - 1) * 100, (rt[("Survey -20 C with heaters", k9)] / 60 - 1) * 100, (rt[(pess, k9)] / 60 - 1) * 100))
+    A("| Worst simultaneous pack current against the 15 A continuous BMS rating | 12.5 A (17 % margin) | same rating [U for the 1290] | [C]/[D] |")
+    A("| Charge time at 3.0 A from 20 %% reserve (CC to ~95 %%, then taper) | about %.1f h | about %.1f h | [C] |" % (12 * 0.8 / 3.0 + 0.5, 9 * 0.8 / 3.0 + 0.5))
+    A("| Charge rate | 0.25 C | 0.33 C | [C]; Power-Sonic's own charger for the 12120 is a 4 A unit [D] |")
+    A("")
+    A("Sizing consequences of the 12 Ah baseline [C]: charge current stays at the contract 3.0 A (LTC4162 maximum 3.2 A [D]); the external supply must deliver %.0f W -> a 90 W / 24 V unit; "
+      "main fuse 20 A and the 50 A-class coupler are set by the 15 A BMS rating and the 12.5 A peak, not by capacity; mass +0.65 kg over the 9 Ah pack counts against the 12 kg lift allowance [D]. "
+      "Step-and-count missions of several hours still need pack swaps in the cold (%.1f h per pack at -20 C).\n" % (chg_in, rt[("Step-and-count -20 C (85 % stationary)", k12)] / 60))
+    A("What would make even 12 Ah insufficient for the one-hour cold case: a measured -20 C average above about %.0f W at the pack, or a deliverable fraction below %.2f at the real cell temperature at the typical load. "
+      "Both are bench measurements on the first pack.\n" % (12 * V_NOM * 0.64, 60 * 47.3 / (12 * V_NOM * 0.8 * 60)))
     A("## 9. Unknowns that move these numbers\n")
     A("| Unknown | Design range used | How it is closed |\n|---|---|---|")
     for r in [

@@ -9,6 +9,7 @@
 #define RRH_HEAD_TYPE "FOUR_LANE_ZNS_PLASTIC_WITH_REFERENCE"
 
 #define RRH_LANES 4u
+#define RRH_WIDTH_BINS 4u /* coarse pulse-width (time over threshold) histogram bins per chain */
 
 /* Link */
 #define RRH_RX_MAX 8192u          /* ICD section 4: maximum record including trailer */
