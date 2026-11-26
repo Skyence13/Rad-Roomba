@@ -3,7 +3,7 @@
  "evidence_class": "simulated",
  "against": "Python protocol fakes (rr_core.fakes), virtual clock",
  "seed": 16,
- "sim_time_s": 31.76,
+ "sim_time_s": 32.52,
  "checks": [
   {
    "check": "chassis in SERVICE_CHARGE, mission SERVICE",
@@ -28,8 +28,8 @@
   },
   {
    "check": "head acquisition off in Charge/Service (head power forced off -> attachment closed)",
-   "ok": false,
-   "head_state": "ARMED"
+   "ok": true,
+   "head_state": "DISABLED"
   },
   {
    "check": "data export works in Charge/Service",
@@ -53,7 +53,7 @@
    "mode": "HW_INHIBIT"
   }
  ],
- "passed": false,
+ "passed": true,
  "field_use_approved": false,
  "refused": {
   "arm": "CHARGE_SERVICE: traction inhibited while the charger is connected",

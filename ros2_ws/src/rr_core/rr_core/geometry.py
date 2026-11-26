@@ -150,8 +150,7 @@ class RobotOutline:
     Parameterised; nothing downstream uses literals.
     """
 
-    def __init__(self, body_x=(-0.2718, 0.1388), body_half_width=0.1464,
-                 head_x=(0.1388, 0.265), head_half_width=0.175, source="defaults (frames.yaml Rev E, 2026-11-26)"):
+    def __init__(self, body_x, body_half_width, head_x, head_half_width, turn_radius=None, source="caller"):
         self.body_x, self.body_half_width = tuple(body_x), float(body_half_width)
         self.head_x, self.head_half_width = tuple(head_x), float(head_half_width)
         self.source = source
@@ -161,17 +160,12 @@ class RobotOutline:
             np.array([[head_x[0], -hw], [head_x[1], -hw], [head_x[1], hw], [head_x[0], hw]]),
         ]
         self.points = np.vstack(self.parts)
-        self.turn_radius = float(np.max(np.hypot(self.points[:, 0], self.points[:, 1])))
+        # In-place turn clearance: the contract swept radius when given (rounded tail), else the
+        # bounding rectangles (conservative).  Route-hold sweeps always use the rectangles.
+        self.rect_radius = float(np.max(np.hypot(self.points[:, 0], self.points[:, 1])))
+        self.turn_radius = float(turn_radius) if turn_radius else self.rect_radius
         self.front, self.rear = float(head_x[1]), float(body_x[0])
         self.half_width = max(bw, hw)
-
-    @classmethod
-    def from_frames_yaml(cls, frames: dict, shell_half_width: float):
-        fp = frames["footprint"]
-        head = fp["head_envelope_m"]
-        return cls(body_x=(fp["body_x_m"][0], head["x"][0]), body_half_width=shell_half_width,
-                   head_x=tuple(head["x"]), head_half_width=max(abs(v) for v in head["y"]),
-                   source="mechanical/common/frames.yaml footprint")
 
     def at(self, pose, margin: float = 0.0) -> list:
         """Convex parts at a pose, each grown by `margin` (rectangles: exact for axis growth)."""
@@ -187,7 +181,7 @@ class RobotOutline:
     def as_dict(self):
         return {"body_x": list(self.body_x), "body_half_width": self.body_half_width,
                 "head_x": list(self.head_x), "head_half_width": self.head_half_width,
-                "turn_radius": self.turn_radius, "source": self.source}
+                "turn_radius": self.turn_radius, "rect_radius": self.rect_radius, "source": self.source}
 
 
 def swept_parts(outline: RobotOutline, pose, move: dict, margin: float, step: float = 0.02) -> list:
@@ -207,7 +201,7 @@ def swept_parts(outline: RobotOutline, pose, move: dict, margin: float, step: fl
             poses.append((x + d * math.cos(yaw), y + d * math.sin(yaw), yaw))
     else:
         ang = move["angle"]
-        n = max(1, int(math.ceil(abs(ang) * outline.turn_radius / step)))
+        n = max(1, int(math.ceil(abs(ang) * outline.rect_radius / step)))
         for i in range(n + 1):
             poses.append((x, y, yaw + ang * i / n))
     parts = []

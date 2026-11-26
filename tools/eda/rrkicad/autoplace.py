@@ -339,9 +339,10 @@ class Placer:
                 rect, pads, tht = self.meas[part.ref][rot]
                 self.bld.place(part, round(X - self.fr.ox, 4), round(self.fr.oy - Y, 4), rot, part.side)
                 part.auto_placed = True
-                tight = big or part.near or getattr(part, "_auto_near", None)
-                self.mark(part.ref, X, Y, rect, pads, tht, part.side,
-                          None if tight else gclear.get(part.group.name))
+                tight = part.near or getattr(part, "_auto_near", None)
+                # ICs keep small parts (decoupling!) off their pin rows so signals can escape
+                cl = float(b.autoplace.get("ic_keepaway", 1.0)) if big else (None if tight else gclear.get(part.group.name))
+                self.mark(part.ref, X, Y, rect, pads, tht, part.side, cl)
                 placed.append(part.ref)
                 pending.remove(part)
                 progressed = True

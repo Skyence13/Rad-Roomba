@@ -113,7 +113,6 @@ def replay(run_dir, out_dir, calibration=None, profile=None):
     """Offline replay: rebuild every product under the archived (or a given) profile version."""
     from .export import export_survey
     pipe, run = build_from_run(run_dir, calibration, profile)
-    pipe.proc.finish()
     if profile is not None:
         run = dict(run, profile=profile)
     return export_survey(pipe, run, out_dir, run_dir=None)

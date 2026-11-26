@@ -1,0 +1,78 @@
+source: interface/system/contract.yaml
+contract_version: 0.4.0-draft5
+body_rev_e:
+  shell_envelope_mm:
+    x:
+    - -271.9
+    - 102.4
+    y:
+    - -146.4
+    - 146.4
+    z:
+    - 32.9
+    - 143.0
+  swept_radii_m:
+    head_outer_corner: 0.26
+    tail_corner: 0.278
+  overall_mm:
+  - 464
+  - 350
+  - 230
+motion:
+  survey_speed_mps: 0.1
+  max_forward_speed_mps: 0.2
+  max_reverse_speed_mps: 0.05
+  max_yaw_rate_radps: 0.3
+  max_accel_mps2: 0.3
+  controlled_decel_mps2: 0.4
+  command_ttl_ms_max: 250
+  drive_poll_hz: 50
+  odom_sample_hz: 100
+  stop_model: d = v*t_delay + v^2/(2*a_min) + m ; design inputs t_delay = 0.15 s, a_min = 0.40 m/s^2, m = 0.020 m (baseline example; replace with measured values)
+  guided_arrival_tolerance_m: 0.01
+  expose_spot_reverse_offset_m: 0.35
+timing:
+  max_time_bound_us_for_mapping: 10000
+  target_time_bound_us: 2000
+  sync_refresh_period_s: 2.0
+  sync_expiry_s: 10.0
+  head_gate_us_default: 100000
+survey_methods:
+  terms: Ratemeter = sliding-window count rate evaluated every gate while moving (window default = aperture transit time L/v). Scaler count = counts and live time accumulated with the robot verified stationary
+    for a preset live time, or adaptively until a decision is reached (D# <= goal, or net result clear of the decision threshold) up to a maximum time.
+  SEARCH_THEN_COUNT:
+    desc: Ratemeter search at survey speed for hot spots, then park the flagged lane over the spot and take a scaler count. The search alarm is deliberately sensitive; the scaler count makes the reported
+      decision.
+    params:
+      search_speed_mps: 0.1
+      ratemeter_window_s: 1.0
+      count_policy:
+      - INLINE
+      - DEFERRED
+      scaler_mode:
+      - PRESET_TIME
+      - ADAPTIVE
+      scaler_preset_s: 30
+      scaler_max_s: 100
+    notes: INLINE stops at once, reverses to centre the alarming lane on the peak and counts. DEFERRED queues the spots and visits them after the pass or after the scan (same motion as a guided revisit).
+      Floor that only saw the search stage is reported at the search-stage detection limit.
+  STEP_AND_COUNT:
+    desc: 'Scaler survey of the whole floor: move one station, stop, count, repeat. Every credited measurement is a static count over four defined 80 cm2 apertures.'
+    params:
+      station_pitch_m: 0.1
+      settle_s: 0.5
+      scaler_mode:
+      - PRESET_TIME
+      - ADAPTIVE
+      scaler_preset_s: 10
+      scaler_max_s: 60
+    notes: Counts taken while moving between stations are archived and shown as ratemeter data but earn no coverage credit. Mission time is hours for a full trailer (see architecture document); expect pack
+      swaps.
+  CONTINUOUS_SCAN:
+    desc: Constant-speed scan with no stops; speed chosen so the aperture dwell meets the detection goal.
+    params:
+      speed_mps:
+      - 0.02
+      - 0.2
+  common: All methods record raw gates identically; the method, its parameters and the stage that produced each cell's decision are stored with the result. A scaler count is valid only while both wheel
+    encoders and the gyro confirm zero motion and no stop/inhibit transition occurred inside it.

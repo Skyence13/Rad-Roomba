@@ -303,9 +303,9 @@ Measured on 4 cores / 16 GB (KiCad 9.0.9, Freerouting 2.6.0):
 | step | RR-TOF-A (10 parts, 2 layers) | STRESS-150 (150 parts, 4 layers) |
 |---|---|---|
 | schematic + netlist check + PCB + auto-arrange + DSN | ~5 s | ~20 s |
-| Freerouting | ~7 s (16 passes, complete) | @@STRESS_ROUTE@@ |
+| Freerouting | ~7 s (16 passes, complete) | 4 layers: 15 min first run (30 passes / 900 s limit) + 2 continue runs of ~4 min |
 | SES import, fill, ERC, DRC, all outputs | ~8 s | ~25 s |
-| result | ERC 0, DRC 0, unconnected 0, parity 0 | @@STRESS_RESULT@@ |
+| result | ERC 0, DRC 0, unconnected 0, parity 0 | 4 layers, auto-arranged: ERC 0, DRC 0 errors, parity 0, **FAIL: 4 of 377 connections open** (status of 2026-11-26, see below) |
 
 What the stress test showed, and what was changed because of it:
 * Schematic: 7 A3 sheets, no label/field collisions, ERC 0 errors / 0 warnings; multi-unit

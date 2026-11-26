@@ -16,7 +16,9 @@ from rr_core.profiles import DATA, Calibration
 from rr_core.transport import MemoryLink, VirtualClock
 from rr_sim.world import World
 
-MOUNT = {"xyz_m": [0.1385, 0.0, 0.032], "rpy_rad": [0, 0, 0], "basis": "contract.yaml frames.head_mount (nominal, not measured)"}
+from rr_bringup.geometry_config import load_robot_geometry
+
+MOUNT = load_robot_geometry()["mount_transform"]      # frames.yaml head_mount (nominal design value)
 
 
 def demo_registry(descriptor_bytes, firmware="sim-1.0"):
@@ -74,6 +76,7 @@ class SimSystem:
         self.head.step()
         self.chassis.step()
         if self._tick % 10 == 0:
+            self.head.power(bool(self.chassis.head_power["electronics"]))     # J1 branch switched by the chassis
             truth = (self.chassis.x, self.chassis.y, self.chassis.yaw)
             self.head.set_rates(self.world.rates(truth))
             self.chassis.inputs["rear_blocked"] = self.world.rear_blocked(truth, self.app.outline)

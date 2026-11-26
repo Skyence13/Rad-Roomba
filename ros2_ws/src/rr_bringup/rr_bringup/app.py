@@ -35,8 +35,9 @@ DEFAULTS = {
     "mode": "COMMISSIONING", "op_mode": "COMMISSIONING",
     "survey": {"sub_res": 0.005, "cell_m": 0.10, "position_allowance_m": 0.010},
     "plan": {}, "mission": {}, "mover": {}, "link": {}, "localizer": {},
-    "lidar": {"xy": [-0.15, 0.0], "yaw": 0.0, "range_max": 12.0},
-    "outline": {},                       # RobotOutline kwargs; default = frames.yaml Rev E values
+    "lidar": {"range_max": 12.0},        # xy/yaw come from frames.yaml unless given here
+    "outline": {},                       # RobotOutline kwargs; default = frames.yaml + contract (geometry_config)
+    "auto_head_power": True,
     "start_pose": None,                  # default: first pass start
     "simulated": True,
 }
@@ -53,7 +54,14 @@ class RobotApp:
     def __init__(self, clock, head_transport, chassis_transport, run_dir, registry, config=None,
                  calibrations=None, profiles=None, uuid_factory=None, resume=False):
         self.clock = clock
-        self.cfg = cfg = merge(DEFAULTS, config)
+        from .geometry_config import load_robot_geometry
+        self.geometry = geo = load_robot_geometry()
+        cfg = merge(DEFAULTS, config)
+        cfg["outline"] = merge({k: v for k, v in geo["outline"].items()}, cfg["outline"])
+        cfg["lidar"] = merge(geo["lidar"], cfg["lidar"])
+        cfg.setdefault("guided_arrival_tolerance_m", geo["guided_arrival_tolerance_m"])
+        cfg.setdefault("expose_spot_reverse_offset_m", geo["expose_spot_reverse_offset_m"])
+        self.cfg = cfg
         self.run_dir = Path(run_dir)
         self.calibrations = calibrations or [Calibration.load(DATA / "demo_calibration.json")]
         self.profiles = profiles or ProfileStore.load(DATA / "demo_site_profile_ore.json")
@@ -207,6 +215,9 @@ class RobotApp:
                     self.loc.cfg.cpr = caps.get("encoder_cpr", self.loc.cfg.cpr)
                 if self.loc.initialized and self._caps_applied is not None:
                     self.pipeline.record(now, "J", {"op": "epoch", "t_us": now, "reason": "CHASSIS_BOOT"})
+                if self._caps_applied is None and self.cfg["auto_head_power"]:
+                    # head electronics on at first link-up (traction stays inactive); never automatic afterwards
+                    self.chassis.request("HEAD_POWER", {"electronics": True, "heater_enable": False})
                 self._caps_applied = caps
             elif ev["ev"] == "chassis_event":
                 e = ev["event"]
@@ -217,6 +228,9 @@ class RobotApp:
                         self.head.notify_continuity_event(f"{e['kind']}:{json.dumps(e['detail'], sort_keys=True)}")
             elif ev["ev"] in ("drive_rejected", "link_down", "event_gap"):
                 self.log_event(ev)
+        hp = self.chassis.state.get("head_power")
+        if hp is not None:
+            self.head.enabled = bool(hp.get("electronics"))      # no polling of an unpowered head
         if now >= self._next_ctrl:
             self._next_ctrl = now + 20_000
             lease = bool(self.control_ok())
@@ -233,6 +247,9 @@ class RobotApp:
             lt = self.pipeline.traj.latest_t
             if lt is not None and self.pipeline.proc._queue:
                 self.pipeline.record(now, "J", {"op": "advance", "w": lt - 60_000})
+            self._eval_n = getattr(self, "_eval_n", 0) + 1
+            if self._eval_n % 25 == 0 and self.pipeline.proc.dirty:
+                self.pipeline.record(now, "J", {"op": "evaluate"})   # live map refresh every 5 s
 
     def on_scan(self, t_us, angles, ranges):
         if not self.loc.initialized:
@@ -287,7 +304,10 @@ class RobotApp:
         return out
 
     def export(self, out_dir):
-        self.pipeline.proc.advance(math.inf) if False else None
+        now, lt = self.clock.now_us(), self.pipeline.traj.latest_t
+        if lt is not None:
+            self.pipeline.record(now, "J", {"op": "advance", "w": lt - 60_000})
+        self.pipeline.record(now, "J", {"op": "evaluate"})          # journaled: replay evaluates at the same point
         self.archive.flush()
         return export_survey(self.pipeline, self.run, out_dir, run_dir=self.run_dir)
 
@@ -345,8 +365,7 @@ class RobotApp:
         """Compact layers for the live plan view (no interpolation between cells)."""
         from rr_core.export import coverage_blocks
         proc = self.pipeline.proc
-        proc.evaluate()
-        ch = proc._decision_channel()
+        ch = proc._decision_channel()                # decisions as of the last journaled evaluation
         cells = []
         for (cy, cx), dd in sorted(proc.decisions[ch].items()):
             if dd.D is None:

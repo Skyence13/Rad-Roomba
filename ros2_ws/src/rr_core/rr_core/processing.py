@@ -221,7 +221,7 @@ class SurveyProcessor:
             n = lane["id"]
             reasons = list(lane["reasons"]) + common
             ok = not reasons and eroded[n] is not None
-            log["lanes"].append({"id": n, "credited": bool(ok), "reasons": reasons})
+            log["lanes"].append({"id": n, "credited": bool(ok) and stage in CREDIT_STAGES, "reasons": reasons})
             if lane["beta"] is not None and lane["ref"] is not None:
                 self._gate_counts[(a_idx, seq, n)] = (lane["beta"][0], lane["beta"][1] * 1e-6,
                                                       lane["alpha"][0] if lane["alpha"] else None,

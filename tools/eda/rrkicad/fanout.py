@@ -194,6 +194,13 @@ def plane_fanout(bld):
                     return False
         return True
     made, failed = 0, []
+    centre = {}      # ref -> pad-bbox centre and pad count, to fan big ICs out towards their inside
+    for me in todo:
+        pass
+    for fp in pcb.GetFootprints():
+        ps = [p.GetPosition() for p in fp.Pads()]
+        if ps:
+            centre[fp.GetReference()] = (pcbnew.ToMM(sum(p.x for p in ps) / len(ps)), pcbnew.ToMM(sum(p.y for p in ps) / len(ps)), len(ps))
     for me in todo:
         net = me["net"]
         x0, y0, x1, y1 = me["rect"]
@@ -201,12 +208,16 @@ def plane_fanout(bld):
         w, h = x1 - x0, y1 - y0
         tw = max(r.min_track, min(b.class_of(net)["track"], min(w, h) - 0.05))
         cands = []
+        cx, cy, npads = centre.get(me["ref"], (px, py, 0))
         for ux, uy in DIRS:
             e = min(w / 2.0 / abs(ux) if ux else 1e9, h / 2.0 / abs(uy) if uy else 1e9)
+            # ICs: prefer vias under the package (towards its centre) so the outside stays free for signal escape
+            inward = 0 if (npads < 16 or (ux * (cx - px) + uy * (cy - py)) > 0.3 * math.hypot(cx - px, cy - py)) else 1
             for g in GAPS:
                 d = e + g + vr
-                cands.append((d, px + ux * d, py + uy * d))
+                cands.append((inward, d, px + ux * d, py + uy * d))
         cands.sort()
+        cands = [c[1:] for c in cands]
         hit = None
         for allow in (False, True):
             for d, vx, vy in cands:

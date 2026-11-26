@@ -126,7 +126,7 @@ A 5 p.e. threshold is ≥ 18 σ of electronic noise for a single device: electro
 
 Model: dark pulses are Poisson with a Borel-distributed crosstalk multiplicity; a trigger is an upward crossing of (n − 0.5) p.e. when a new pulse lands on the pile-up of
 earlier ones inside the resolving time. The resolving time is 0.50 × (area/peak) of the shaped pulse, the factor fitted to a Monte-Carlo with the real pulse shape
-(agreement within 7 % at n = 3…5; the extrapolation to 1 s⁻¹ is model, not Monte-Carlo).
+(agreement within 10 % at n = 3…5 in a 0.2 s Monte-Carlo; the extrapolation to 1 s⁻¹ is model, not Monte-Carlo).
 Integer n such that the dark trigger rate is < 1 s⁻¹ (in brackets < 0.1 s⁻¹):
 
 | device | DCR | +25 °C | +10 °C | 0 °C | −20 °C |

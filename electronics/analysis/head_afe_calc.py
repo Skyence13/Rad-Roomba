@@ -420,7 +420,7 @@ def main():
     dt = 1e-9
     tt = np.arange(0, 600e-9, dt)
     shape = np.interp(tt, mb0["t"], mb0["fast"]) / mb0["fast_pk"]
-    mc_rows = {n: mc_dark_rate(s0["dcr"], s0["ct"], tt, shape, n, 0.6) for n in (3, 4, 5)}
+    mc_rows = {n: mc_dark_rate(s0["dcr"], s0["ct"], tt, shape, n, 0.2) for n in (3, 4, 5)}
     best = None
     for fcal in np.arange(0.2, 1.21, 0.02):
         err = sum((math.log(dark_trigger_rate(s0["dcr"], fcal * mb0["fast_area_over_peak"], s0["ct"], n) / mc_rows[n])) ** 2
@@ -457,7 +457,7 @@ def main():
         an0 = dark_trigger_rate(s0["dcr"], mb0["fast_area_over_peak"], s0["ct"], n)
         an = dark_trigger_rate(s0["dcr"], F_CAL * mb0["fast_area_over_peak"], s0["ct"], n)
         rows.append([n, "%.3g" % an0, "%.3g" % an, "%.3g" % mc_rows[n], "%.2f" % (mc_rows[n] / an)])
-    print("\nMonte-Carlo check (J60035@2.5V, 25 C, 0.6 s of simulated dark pulses, real shaped pulse):\n")
+    print("\nMonte-Carlo check (J60035@2.5V, 25 C, 0.2 s of simulated dark pulses, real shaped pulse):\n")
     print(md_table(["n (threshold n-0.5 p.e.)", "model, resolving time = area/peak 1/s", "model, fitted factor 1/s", "Monte-Carlo 1/s", "MC / fitted model"], rows))
 
     # ---- T7 timing

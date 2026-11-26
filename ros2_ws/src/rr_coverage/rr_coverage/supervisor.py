@@ -33,7 +33,8 @@ class MissionConfig:
     def __init__(self, op_mode="COMMISSIONING", method="CONTINUOUS_SCAN", speed=0.10, recover_back_m=0.15,
                  max_task_attempts=2, credit_grace_s=2.0, count_policy="INLINE", scaler_mode="PRESET_TIME",
                  scaler_preset_s=30.0, scaler_max_s=100.0, ratemeter_window_s=1.0, ratemeter_alpha=None,
-                 station_pitch_m=0.10, settle_s=0.5, station_preset_s=10.0, refractory_m=0.15,
+                 station_pitch_m=0.10, settle_s=0.5, station_preset_s=10.0, refractory_m=0.10,
+                 peak_search_m=0.15,
                  operator="operator"):
         self.__dict__.update(locals())
         del self.__dict__["self"]
@@ -490,8 +491,27 @@ class Mission:
             alarm = r > r_star
             self.ratemeter[n] = {"rate": N_F / T_F, "net": r, "alarm_level": c.k * U0 + c.b + r_star, "alarm": alarm,
                                  "D": r / c.K, "t_us": gate["t1_us"]}
-            if alarm and searching:
-                self._search_alarm(n, 0.5 * (win[0][0] + win[-1][1]), r / c.K)
+            if searching:
+                self._track_peak(n, 0.5 * (win[0][0] + win[-1][1]), r, c.K, alarm)
+            else:
+                self._peak = None
+
+    def _track_peak(self, lane, t_centre, r, K, alarm):
+        """The alarm fires on the leading edge of a spot; follow the window rate for at most
+        `peak_search_m` (or until it has fallen to half its maximum) to locate the peak."""
+        pk = getattr(self, "_peak", None)
+        x = self.app.mover.pose[0]
+        if pk is None:
+            if alarm:
+                self._peak = {"lane": lane, "t": t_centre, "r": r, "x0": x, "K": K}
+            return
+        if pk["lane"] != lane:
+            return
+        if r > pk["r"]:
+            pk["r"], pk["t"] = r, t_centre
+        if abs(x - pk["x0"]) >= self.cfg.peak_search_m or r < 0.5 * pk["r"]:
+            self._peak = None
+            self._search_alarm(lane, pk["t"], pk["r"] / K)
 
     def _search_alarm(self, lane, t_centre, D):
         a, t = self.app, self.task
@@ -501,8 +521,8 @@ class Mission:
             return
         centre = transform((p["x"], p["y"], p["yaw"]), [a.pipeline.proc.lane_center_base(len(a.pipeline.proc.sessions) - 1, lane)])[0]
         for s in self.counted_spots + self.deferred_counts:
-            if s["lane"] == lane and math.hypot(s["xy"][0] - centre[0], s["xy"][1] - centre[1]) < self.cfg.refractory_m:
-                return
+            if math.hypot(s["xy"][0] - centre[0], s["xy"][1] - centre[1]) < self.cfg.refractory_m:
+                return                       # already counted / queued (any lane, any pass)
         spot = {"lane": lane, "xy": [float(centre[0]), float(centre[1])], "pose": [p["x"], p["y"], p["yaw"]],
                 "D_search": D, "task": t["id"], "t_us": t_centre}
         self._log("search_alarm", **spot)

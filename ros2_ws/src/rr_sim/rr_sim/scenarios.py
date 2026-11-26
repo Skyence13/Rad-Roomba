@@ -453,7 +453,8 @@ def s06_charge_service(tmp, seed=16):
           and app.chassis.drive["reject_reason"] == "SERVICE_CHARGE" and math.dist(pose[:2], sim.truth()[:2]) < 1e-5)
     app.chassis.activate(False)
     c.add("head acquisition off in Charge/Service (head power forced off -> attachment closed)",
-          app.chassis.state.get("head_power", {}).get("electronics") is False and app.head.session is None,
+          app.chassis.state.get("head_power", {}).get("electronics") is False and app.head.session is None
+          and app.head.state == "DISABLED",
           head_state=app.head.state)
     exp = app.export(app.run_dir / "export_service")
     c.add("data export works in Charge/Service", Path(exp["dir"], "MANIFEST.sha256.json").exists() and len(exp["files"]) > 15)
@@ -583,7 +584,9 @@ def s10_step_and_count(tmp, seed=20, preset_s=3.0):
     _wait(sim, lambda: app.mission.state == "HOLD", 3)
     app.command("rearm", actor="op1")                    # a Pause pressed on the robot may be cleared remotely
     sim.run(0.5)
-    c.add("local Pause cleared remotely by the controlling operator, resume accepted", app.command("resume")["accepted"])
+    r = app.command("resume")
+    c.add("local Pause cleared remotely by the controlling operator, resume accepted", r["accepted"], result=r,
+          mode=app.chassis.drive.get("mode"))
     _scan_to_end(sim, timeout=3000, stop_on_hold=False)
     proc = app.pipeline.proc
     c.add("mission complete", app.mission.state == "REVIEW")

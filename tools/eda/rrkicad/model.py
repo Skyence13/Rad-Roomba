@@ -193,7 +193,7 @@ class Board:
         self.routing = {"passes": 100, "threads": None, "timeout": None, "enabled": True, "extra_args": [],
                         "optimizer": True, "fanout": False, "plane_fanout": True, "retries": 2}
         self.autoplace = {"clearance": 0.3, "grid": 0.25, "edge_margin": 0.5, "ic_halo": 2.0, "rotations": (0, 90, 180, 270),
-                          "spread": 0.35}
+                          "spread": 0.35, "ic_keepaway": 1.0}
         self.stackup_notes = []
 
     # ------------------------------------------------------------------ parts
