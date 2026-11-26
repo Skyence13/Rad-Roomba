@@ -3,7 +3,7 @@
  "evidence_class": "simulated",
  "against": "Python protocol fakes (rr_core.fakes), virtual clock",
  "seed": 11,
- "sim_time_s": 516.06,
+ "sim_time_s": 1082.22,
  "checks": [
   {
    "check": "start accepted",
@@ -29,7 +29,7 @@
   {
    "check": "detection goal met on part of the floor at this speed (D# < 0.20)",
    "ok": true,
-   "best": 0.17181414936880018
+   "best": 0.12825702516785503
   },
   {
    "check": "robot waits at rest in REVIEW (no unsolicited motion)",
@@ -54,7 +54,7 @@
   {
    "check": "true lane centre within 10 mm of the saved footprint",
    "ok": true,
-   "true_err": 0.0020898375585562635
+   "true_err": 0.0021676714096531893
   },
   {
    "check": "revisit used the flag's source lane",
@@ -68,7 +68,7 @@
   {
    "check": "Expose reversed by the contract offset 0.35 m (+/- 10 mm)",
    "ok": true,
-   "back": 0.3495077973489063
+   "back": 0.34954649893535994
   },
   {
    "check": "item EXPOSED with hand-probe directions",
@@ -88,40 +88,40 @@
  "coverage": {
   "target_area_m2": 3.0,
   "areas_m2": {
-   "UNVISITED": 1.0634000000000001,
-   "ACCEPTABLE": 1.1300000000000001,
-   "INSUFFICIENT_SENSITIVITY": 0.8066,
+   "UNVISITED": 0.588175,
+   "ACCEPTABLE": 1.8889250000000002,
+   "INSUFFICIENT_SENSITIVITY": 0.5229,
    "INVALID_DATA": 0.0,
    "BLOCKED": 0.0,
    "EXCLUDED": 0.0
   },
-  "valid_exposure_fraction": 0.6455333333333334,
-  "acceptable_fraction": 0.3766666666666667,
+  "valid_exposure_fraction": 0.8039416666666668,
+  "acceptable_fraction": 0.6296416666666668,
   "sub_cell_m": 0.005,
   "decision_cell_m": 0.1,
   "position_allowance_m": 0.01
  },
  "time_sync": {
   "limit_us": 10000.0,
-  "fits": 263,
+  "fits": 546,
   "max_gate_bound_us": 838.0520796923137,
-  "median_gate_bound_us": 796.6115677686453
+  "median_gate_bound_us": 794.6664067910742
  },
  "link_stats": {
-  "tx": 25987,
-  "rx": 25984,
+  "tx": 54672,
+  "rx": 54669,
   "bad_lines": 0,
   "stale": 0,
   "duplicates": 0,
-  "gates": 5141,
+  "gates": 10803,
   "gaps": 0,
   "retries": 2,
   "unassigned_frames": 0,
-  "time_exchanges": 263,
+  "time_exchanges": 546,
   "time_exchanges_rejected": 0
  },
  "localization_error_vs_truth_m": {
-  "max_x_m": 0.0011411409947988393,
+  "max_x_m": 0.0016700445164616884,
   "max_y_m": 0.0011856311773950357
  },
  "plan": {
@@ -130,34 +130,34 @@
   "pair_stride_m": 0.36025,
   "seam_overlap_per_side_m": 0.01625,
   "predicted_residual": {
-   "left_wall_strip_m": 0.1368,
-   "right_wall_strip_m": 0.1368,
+   "left_wall_strip_m": 0.0488,
+   "right_wall_strip_m": 0.0488,
    "door_end_strip_m": 0.121,
    "front_end_strip_m": 0.051,
    "end_zone_single_heading_m": {
     "door": 0.3482,
     "front": 0.3482
    },
-   "note": "wall strips are set by the in-place turn radius of the outline; see README coverage section"
+   "note": "wall strips: reverse-entry wall tracks (straight-motion outline limit); see README coverage section"
   },
-  "estimated_time_s": 481.5
+  "estimated_time_s": 1038.3
  },
  "flags": [
   {
    "id": "HS-0003",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 2,
-   "x_m": 1.3524145429506256,
-   "y_m": -0.24570941661315185,
-   "D": 0.11740636536036601,
-   "u_total": 0.05243950767422861,
-   "D_star": 0.07333611301668981,
-   "D_hash": 0.17233926159845742,
+   "source_lane": 1,
+   "x_m": 1.3487323789015973,
+   "y_m": -0.24447239818739136,
+   "D": 0.09348619496208621,
+   "u_total": 0.03724551996495621,
+   "D_star": 0.05811246925153121,
+   "D_hash": 0.13176542560554044,
    "location": {
-    "distance_from_door_m": 1.352,
+    "distance_from_door_m": 1.349,
     "wall": "right wall",
-    "distance_from_wall_m": 0.254,
-    "text": "1.35 m from the door threshold, 0.25 m from the right wall"
+    "distance_from_wall_m": 0.256,
+    "text": "1.35 m from the door threshold, 0.26 m from the right wall"
    }
   },
   {
@@ -181,35 +181,35 @@
    "id": "HS-0007",
    "kind": "INVESTIGATION_LEVEL",
    "source_lane": 1,
-   "x_m": 1.544318460202668,
-   "y_m": 0.17815318654053047,
-   "D": 0.7831883388872014,
-   "u_total": 0.14539404440851958,
-   "D_star": 0.08225859626709846,
-   "D_hash": 0.1917667563025567,
+   "x_m": 1.544597231509977,
+   "y_m": 0.18521035891488644,
+   "D": 0.701017900098737,
+   "u_total": 0.12084455538696919,
+   "D_star": 0.05913924276966484,
+   "D_hash": 0.13441584358688868,
    "location": {
-    "distance_from_door_m": 1.544,
+    "distance_from_door_m": 1.545,
     "wall": "left wall",
-    "distance_from_wall_m": 0.322,
-    "text": "1.54 m from the door threshold, 0.32 m from the left wall"
+    "distance_from_wall_m": 0.315,
+    "text": "1.54 m from the door threshold, 0.31 m from the left wall"
    }
   }
  ],
- "scan_detections": 4,
+ "scan_detections": 8,
  "observations": [],
  "survey_speed_mps": 0.03,
  "patch_centre": [
   1.545,
   0.15825
  ],
- "D_hash_median": 0.20062519805895812,
- "D_hash_best": 0.17181414936880018,
- "acceptable_fraction": 0.3766666666666667,
- "flag_position_error_vs_patch_m": 0.01991485201959835,
- "revisit_error_estimated_m": 0.0017164584151695096,
- "revisit_error_true_m": 0.0020898375585562635,
- "revisit_uncertainty_2s_m": 0.0005396745068220517,
+ "D_hash_median": 0.1786886583961732,
+ "D_hash_best": 0.12825702516785503,
+ "acceptable_fraction": 0.6296416666666668,
+ "flag_position_error_vs_patch_m": 0.02696336728370646,
+ "revisit_error_estimated_m": 0.0017438930092482864,
+ "revisit_error_true_m": 0.0021676714096531893,
+ "revisit_uncertainty_2s_m": 0.000535919657733158,
  "revisit_lane": 1,
- "expose_reverse_m": 0.3495077973489063,
- "park_error_true_m": 0.0009054455034066837
+ "expose_reverse_m": 0.34954649893535994,
+ "park_error_true_m": 0.0007726533497951166
 }
