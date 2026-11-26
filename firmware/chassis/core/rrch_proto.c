@@ -360,8 +360,8 @@ static void op_drive(ctx_t *x)
 }
 
 /* The contract STATE content does not always fit in 2048 bytes when many reasons and flags are
- * set at once. level 0: complete; 1: faults list emptied; 2: protective_stop_reasons cut to 8
- * names as well. Levels 1 and 2 add "truncated":true; DIAG always carries the complete lists.
+ * set at once. level 0: complete; 1: faults list emptied; 2: additionally the panel object is
+ * emptied, protective_stop_reasons is cut to 12 names and the minor additive members are dropped. Levels 1 and 2 add "truncated":true; DIAG always carries the complete lists.
  * The caller retries with the next level if the record would exceed the limit. */
 static void op_state(ctx_t *x, int level)
 {
@@ -387,7 +387,7 @@ static void op_state(ctx_t *x, int level)
     rrc_jw_kbool(w, "ARM_PERMIT", c->out.arm_permit);
     rrc_jw_obj_end(w);
     kmask(w, "hw_inhibit_reasons", ch->hw_latched, rrch_hw_names, RRCH_HW_N);
-    kmask_n(w, "protective_stop_reasons", c->sw_latched, rrch_sw_names, RRCH_SW_N, level < 2 ? RRCH_SW_N : 8);
+    kmask_n(w, "protective_stop_reasons", c->sw_latched, rrch_sw_names, RRCH_SW_N, level < 2 ? RRCH_SW_N : 12);
     rrc_jw_kstr(w, "head_presence", rrch_pres_names[ch->pres]);
     rrc_jw_kbool(w, "j2_present", (st & RRCH_DI(J2_PRES)) != 0);
     rrc_jw_key(w, "rails");
@@ -450,6 +450,7 @@ static void op_state(ctx_t *x, int level)
     rrc_jw_obj_end(w);
     rrc_jw_key(w, "panel");
     rrc_jw_obj_begin(w);
+    if (level < 2) {
     rrc_jw_key(w, "buttons");
     rrc_jw_obj_begin(w);
     rrc_jw_kbool(w, "rearm", (st & RRCH_DI(BTN_REARM)) != 0);
@@ -463,23 +464,28 @@ static void op_state(ctx_t *x, int level)
     rrc_jw_obj_end(w);
     rrc_jw_kbool(w, "buzzer", c->out.buzzer);
     rrc_jw_kstr(w, "pattern", panel_names[c->panel_pat]);
+    }
     rrc_jw_obj_end(w);
     rrc_jw_key(w, "heater");
     rrc_jw_obj_begin(w);
     kf(w, "chassis_duty_pct", c->htr_duty * 100.0f, 0);
-    kf(w, "chassis_setpoint_c", c->htr_enabled ? c->htr_setpoint_c : NAN, 1);
-    rrc_jw_kbool(w, "sensor_ok", c->htr_sensor_ok);
+    if (level < 2) {
+        kf(w, "chassis_setpoint_c", c->htr_enabled ? c->htr_setpoint_c : NAN, 1);
+        rrc_jw_kbool(w, "sensor_ok", c->htr_sensor_ok);
+    }
     rrc_jw_obj_end(w);
     kmask(w, "faults", level < 1 ? c->faults : 0u, rrch_flt_names, RRCH_FLT_N);
     if (level > 0) {
         rrc_jw_kbool(w, "truncated", true);
     }
     stationary_obj(x);
-    rrc_jw_kbool(w, "rearm_ready", !ch->latch && c->boot_done && ch->hw_live == 0u && c->out.arm_permit);
     rrc_jw_ku64(w, "rearm_nonce", c->rearm_nonce);
-    kmask(w, "hold", c->hold, hold_names, 2);
-    rrc_jw_ku64(w, "event_seq", c->ev_newest);
-    rrc_jw_ku64(w, "uptime_us", c->now_us);
+    if (level < 2) {
+        rrc_jw_kbool(w, "rearm_ready", !ch->latch && c->boot_done && ch->hw_live == 0u && c->out.arm_permit);
+        kmask(w, "hold", c->hold, hold_names, 2);
+        rrc_jw_ku64(w, "event_seq", c->ev_newest);
+        rrc_jw_ku64(w, "uptime_us", c->now_us);
+    }
 }
 
 /* Additive op: complete reason/flag lists and engineering detail that does not fit in STATE. */
@@ -495,19 +501,18 @@ static void op_diag(ctx_t *x)
     kmask(w, "hw_active", ch->hw_live, rrch_hw_names, RRCH_HW_N);
     kmask(w, "protective_stop_reasons", c->sw_latched, rrch_sw_names, RRCH_SW_N);
     kmask(w, "sw_active", c->sw_active, rrch_sw_names, RRCH_SW_N);
-    kmask(w, "sw_acknowledged", c->sw_acked, rrch_sw_names, RRCH_SW_N);
     kmask(w, "faults", c->faults, rrch_flt_names, RRCH_FLT_N);
     rrc_jw_key(w, "estop");
     rrc_jw_obj_begin(w);
     rrc_jw_kbool(w, "a", (st & RRCH_DI(ESTOP_A)) != 0);
     rrc_jw_kbool(w, "b", (st & RRCH_DI(ESTOP_B)) != 0);
     rrc_jw_obj_end(w);
-    rrc_jw_key(w, "readbacks");
-    rrc_jw_obj_begin(w);
+    char bits[RRCH_DI_N + 1]; /* debounced readbacks as a 0/1 string in the order of ICD section 3.14 */
     for (int i = 0; i < RRCH_DI_N; i++) {
-        rrc_jw_kbool(w, rrch_di_names[i], (st & (1u << i)) != 0);
+        bits[i] = (st & (1u << i)) ? '1' : '0';
     }
-    rrc_jw_obj_end(w);
+    bits[RRCH_DI_N] = 0;
+    rrc_jw_kstr(w, "readbacks", bits);
     rrc_jw_ku64(w, "pres_ohm", ch->pres_ohm > 999999u ? 999999u : ch->pres_ohm);
     rrc_jw_key(w, "head_power");
     rrc_jw_obj_begin(w);
@@ -544,6 +549,9 @@ static void op_diag(ctx_t *x)
     rrc_jw_ku64(w, "requests", c->proto.n_req);
     rrc_jw_ku64(w, "discarded", c->proto.n_bad + c->proto.rx.n_discarded);
     rrc_jw_obj_end(w);
+    if (c->sw_acked != 0u && rrc_jw_len(w) + 400u < RRCH_RECORD_MAX) { /* retreat acknowledgements, if room */
+        kmask(w, "sw_acknowledged", c->sw_acked, rrch_sw_names, RRCH_SW_N);
+    }
 }
 
 static void event_detail(rrch_t *c, rrc_jw_t *w, const rrch_event_t *e)
@@ -1094,7 +1102,7 @@ static void handle(rrch_t *c, size_t json_len, uint32_t crc)
         } else if (rrc_json_str_eq(d, op, "STATE")) {
             for (int level = 0; level < 3; level++) {
                 op_state(&x, level);
-                if (rrc_jw_ok(&x.w) && rrc_jw_len(&x.w) + 4u <= RRCH_RECORD_MAX - RRC_FRAME_TRAILER_LEN) {
+                if (!x.w.error && rrc_jw_len(&x.w) + 4u <= RRCH_RECORD_MAX - RRC_FRAME_TRAILER_LEN) { /* 4 = closing braces */
                     break;
                 }
             }

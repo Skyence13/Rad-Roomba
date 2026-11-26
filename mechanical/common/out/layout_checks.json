@@ -8,7 +8,7 @@
   "LiDAR scan plane": "PASS -- clear",
   "service sweeps (battery, wheels, head, grip hand zone)": "PASS -- free",
   "J1/J2 coupling-nut grasp zone (45 mm radial) free": "PASS -- free (see service section)",
-  "cable corridors": "FAIL -- {'left_bay_over_cm5': [('mode_selector_body', 1272.0), ('rearm_start_body', 101.0)]}"
+  "cable corridors": "PASS -- free"
  },
  "extents": {
   "overall x (tail .. leading rail)": "-271.9 .. 265.0  (length 536.9)",
@@ -548,24 +548,15 @@
   },
   "left_bay_over_cm5": {
    "box": [
-    -150,
+    -102,
     -75,
     59,
-    75,
+    80,
     78,
     98
    ],
    "use": "CM5 USB/Ethernet/antenna pigtails, selector and REARM leads",
-   "blocked_by": [
-    [
-     "mode_selector_body",
-     1272.0
-    ],
-    [
-     "rearm_start_body",
-     101.0
-    ]
-   ]
+   "blocked_by": []
   },
   "right_bay": {
    "box": [

@@ -526,6 +526,21 @@ def rev_d_containment():
 
 
 # ----------------------------------------------------------------------------------------------------- outputs
+def alternatives():
+    B = P.BATTERY_BAY
+    e8, e12, el, ea = L.env("battery_8ah"), L.env("battery_12ah"), L.env("lidar"), L.env("lidar_alt")
+    need_top = B["cassette_z"][0] + 2.5 + min(e12["w"], e12["h_total"]) + 2.5
+    roof = min(P.roof_z(x, y, "inner") or 0.0 for x in (B["cassette_x"][0], -150.0, B["cassette_x"][1]) for y in (0.0, B["cassette_half_y"]))
+    return [
+        f"12 Ah pack PSL-SC-12120 ({e12['l']:.0f} x {e12['w']:.0f} x {e12['h_total']:.0f} mm, 1.65 kg): same length and width footprint class as the 9 Ah pack lying down "
+        f"({e8['l']:.0f} x {e8['h_total']:.0f}), but {min(e12['w'], e12['h_total']) - e8['w']:.0f} mm taller in either orientation. Cassette top would be z = {need_top:.0f} against the tunnel roof at z = {B['tunnel_roof_z']:.0f}, "
+        f"the lowest inner skin over the bay at z = {roof:.0f} and the LiDAR base at z = {P.LIDAR_POSE['base_z']:.0f}: **does not fit the proposed body** (short by {need_top + 3 - min(roof, P.LIDAR_POSE['base_z']):.0f} mm of height at the tail). "
+        "Fitting it means raising the tail deck and LiDAR by that amount (or a height scale of about 1.55 instead of 1.30). Decision needed with the power budget (it would also supply most of the tail ballast).",
+        f"SICK picoScan150 ({ea['l']:.0f} x {ea['w']:.0f} x {ea['h']:.0f} mm, 0.22 kg): same footprint as the LakiBeam 1L pad, {ea['h'] - el['h']:.0f} mm taller -> top at z = {P.LIDAR_POSE['base_z'] + ea['h']:.0f}; fits without layout change (system-plug exit to be checked).",
+        f"5 mm rail insert: head envelope z min becomes {P.FILM_Z - 5.0:.1f} (= contract minimum {P.HEAD_ENV_E_CEILING['z'][0]}); run `python -m mechanical.common.layout --rail 5` to regenerate the model with it.",
+    ]
+
+
 def export_step(parts, path):
     asm = cq.Assembly(name="RR_E_master_layout")
     groups = {}
@@ -642,7 +657,10 @@ def write_report(R, path):
     A("Hand -> transverse grip bar (25 x 22 mm, 168 mm span, above the calculated centre of gravity) -> two cheeks (14 x 25 mm) -> "
       "cheek legs outside the main-board edges -> chassis plate between the motor mounts -> motor mounts/wheels and battery bay. "
       "The printed shells carry no lifting load. Bar and cheek stresses are in out/mech_calcs.md.")
-    A("\n## 10. Mass roll-up of placed purchased parts\n")
+    A("\n## 10. Alternative purchased parts (calculated from the verified envelopes)\n")
+    for line in R["alternatives"]:
+        A(f"- {line}")
+    A("\n## 11. Mass roll-up of placed purchased parts\n")
     A(f"Sum of purchased-part masses placed in this model: {R['mass_placed']:.2f} kg (full budget incl. structure in out/mech_calcs.md).\n")
     path.write_text("\n".join(L_) + "\n", encoding="utf-8")
 
@@ -704,7 +722,7 @@ def main(argv=None):
     R = {"rail": args.rail, "summary": {k: ("PASS" if ok else "FAIL") + f" -- {txt}" for k, (ok, txt) in checks.items()},
          "extents": extents, "rev_d": rev_d_containment(), "clash": clash, "close": close, "nearest": nearest, "outside": outside,
          "service": service, "corridors": corridors, "rays": rays, "lidar": lidar, "n_parts": len(parts), "n_hard": sum(p.hard for p in parts),
-         "mass_placed": sum(p.mass for p in parts)}
+         "mass_placed": sum(p.mass for p in parts), "alternatives": alternatives()}
     write_report(R, OUT / "layout_report.md")
     (OUT / "layout_checks.json").write_text(json.dumps({"summary": R["summary"], "extents": extents, "clash": clash, "close": close,
                                                         "outside": outside, "service": service, "corridors": corridors, "rays": rays,

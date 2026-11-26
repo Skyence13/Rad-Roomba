@@ -3,7 +3,8 @@
 # DEC-xxx entry in planning/decisions.csv and a line in docs/architecture/CHANGELOG.md.
 # Human-readable rationale: docs/architecture/SYSTEM_ARCHITECTURE.md
 # Units: SI (m, s, rad, V, A, W, kg) unless a key name carries another unit suffix (_mm, _us, _ms, _c).
-contract_version: "0.4.0-draft2"   # draft2: FPGA removed (DEC-037), survey methods added (DEC-038)
+contract_version: "0.4.0-draft3"   # draft3: mechanical CCR-04..07 applied, Rev E body proposal recorded as pending owner decision
+# previous:   # draft2: FPGA removed (DEC-037), survey methods added (DEC-038)
 baseline: {system_design: "0.3", mechanical: "Rev D", head_protocol: "2.0", baseline_commit: "38d101051d32b47e4b21657e2293ec92c63de9c4"}
 next_revision: {system_design: "0.4", mechanical: "Rev E", head_protocol: "2.0 (unchanged envelope; additive descriptor fields only)", chassis_protocol: "1.0"}
 
@@ -28,6 +29,15 @@ frames:
     x: [138.8, 265.0]
     y: [-175.0, 175.0]
     z: [5.0, 50.0]               # z min 5.0 covers the 5 mm rail-projection trial; z max is a ceiling, not a target
+  head_design_top_z_mm: 45.0     # stack-up in mechanical/common/board_envelopes.yaml (CCR-05)
+  body_rev_e_proposal:           # PENDING OWNER DECISION (mechanical D-1/D-2, CCR-01..03). Not yet adopted.
+    status: "proposed 2026-11-26; the Rev D body cannot contain the selected hardware (mechanical/common/out/layout_report.md section 3)"
+    scale_of_rev_d_section_law: {length: 1.40, width: 1.30, height: 1.30}
+    shell_envelope_mm: {x: [-271.9, 102.4], y: [-146.4, 146.4], z: [32.9, 143.0]}
+    overall_mm: [537, 350, 216]     # with head, grip bar top z 175, LiDAR top z 216
+    track_mm: 270.0
+    caster: {swivel_x_mm: -195.0, wheel_x_mm: -204.0}
+    top_side: "transverse bridge grip over the CG (its saddle is the main-board service cover); LiDAR moved aft above the battery tunnel"
   optics:
     row_center_x_mm: 204.0
     entrance_film_z_mm: 10.0
@@ -74,7 +84,7 @@ timing:
 
 # ---------------------------------------------------------------- power
 power:
-  battery: {chemistry: LiFePO4, cells_series: 4, nominal_v: 12.8, range_v: [10.0, 14.6], capacity_ah_trial: 8.0, alt_capacity_ah: 12.0}
+  battery: {chemistry: LiFePO4, cells_series: 4, nominal_v: 12.8, range_v: [10.0, 14.6], capacity_ah_trial: 8.0, alt_capacity_ah: 12.0, layout_candidate: "Power-Sonic PSL-SC-1290, 9 Ah, 151 x 65 x 94/99 mm, 1.0 kg (nearest verified catalogue pack, CCR-07); the 12 Ah PSL-SC-12120 needs 34 mm more bay height"}
   rails:
     VBAT_RAW:   {desc: "Pack coupler to board, before main protection"}
     VBAT_SW:    {desc: "After main ideal-diode/eFuse and master switch; feeds all branches"}
@@ -93,7 +103,7 @@ power:
     lidar: 6.0
     chassis_logic_sensors: 3.0
     head_electronics: 5.0
-    heaters_combined: 15.0
+    heaters_combined: 15.0        # mechanical lumped model gives ~21 W at -20 C (head +10 C set-point 16 W + bay 6 W), ~30 W at -25 C (CCR-10); power budget owner to reconcile
   charger: {topology: "On-board buck charger with power path (LTC4162-F class), external 24 V DC supply", charge_current_a: 3.0, cold_charge_inhibit_below_c: 5.0}
 
 # ---------------------------------------------------------------- hardwired traction chain
@@ -128,15 +138,16 @@ boards:
     desc: "Head acquisition board: 8 SiPM front ends, bias, thresholds, discriminators with event latches, head MCU (STM32G474VET6, LQFP100), isolated RS-485, heater switch, power. No FPGA (DEC-037)."
     outline_mm: [326.0, 96.0]
     layers: 4
-    position: "Above the reference guides, long axis along y, centred on x = 204, y = 0; PCB underside nominally z = 33.0"
-    mounting: "8 x M2.5, pattern defined by mechanical/common/params.py"
+    position: "Above the reference guides, long axis along y. Board frame: origin at the rear-left corner, +u toward robot right (-y), +v forward (+x). Origin in base_link (156.0, 163.0, 34.5) mm; PCB underside z = 34.5 (CCR-04)."
+    mounting: "8 x M2.5; coordinates, connector edge allocation and height zones in mechanical/common/board_envelopes.yaml (authoritative)"
     max_height_top_mm: 6.0
     max_height_bottom_mm: 2.0
   RR-CHS-MAIN:
     desc: "Chassis main board: pack input, charger/power path, branch protection, 5 V compute rail, safety chain and brake relays, motion MCU, dual H-bridge, sensor and panel I/O, host-side RS-485 and USB"
     outline_mm: [160.0, 100.0]
     layers: 4
-    mounting: "6 x M3"
+    position: "Flat on a bridge over the motors under the grip saddle; origin in base_link (-67.0, 80.0, 83.0) mm in the Rev E body proposal (CCR-06). Fits only the Rev E body proposal, not the Rev D body."
+    mounting: "6 x M3; coordinates, connector edge allocation and height zones in mechanical/common/board_envelopes.yaml (authoritative)"
     max_height_top_mm: 18.0
     max_height_bottom_mm: 3.0
   RR-TOF:

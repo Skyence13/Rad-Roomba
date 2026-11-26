@@ -168,7 +168,7 @@ Model: each wing is a cantilever of length 132.8 mm clamped at the key-socket co
 | Receiver pitch / roll stiffness, prototype | 1500 / 1200 | N m/rad | ASSUMPTION (two lands 62 mm apart, 24 mm engagement, printed) -- measure on the first article |
 | Receiver pitch / roll stiffness, production | 6000 / 5000 | N m/rad | ASSUMPTION |
 | Receiver play prototype / production | 0.10 / 0.03 | mm over 24 mm | ASSUMPTION; preload should remove it |
-| Head mass used (heaviest prototype / production + 15 %) | 1.62 / 1.83 | kg | section 1, rounded up |
+| Head mass used (prototype / production + 15 % = dummy head) | 1.62 / 2.05 | kg | section 1 |
 
 ### prototype PETG-CF
 
@@ -238,7 +238,7 @@ EI = 837 N m2, GJ open / closed = 12.5 / 1026 N m2, neutral axis z = 27.3 mm, re
 | 20 N at row centre | 0.01 | 0.00 | 0.03 |
 | receiver play (unloaded rattle, +-) | 0.08 | 0.02 | 0.14 |
 
-First modes (calculated): head pitch on the receiver 123 Hz, head roll on the receiver 82 Hz, wing bending 399 Hz.
+First modes (calculated): head pitch on the receiver 117 Hz, head roll on the receiver 78 Hz, wing bending 377 Hz.
 
 **Reading.** Positive values are downward at the named point. The wings themselves are stiff (short, deep); the receiver joint and, if the cover is not a shear panel, wing twist dominate the 20 N corner case. Design rules for the head engineers: (1) screw the cover to the frame at <= 40 mm pitch so the spreader-cover cell is closed; (2) the spreader must be one piece across y = 0 and bolted to both frame halves; (3) receiver stiffness >= 1500 N m/rad in pitch is the number to prove by test (20 N at the front corner then moves it < 1 mm).
 
@@ -332,7 +332,7 @@ Static band at an outer corner: +-1.52 mm worst case, +-0.74 mm RSS.
 | left wheel in a dip | 1.79 | 3.9 | 2.8 | 3.1 | 1.9 |
 | caster on a bump | 1.29 | 5.4 | 3.9 | 4.2 | 2.7 |
 
-**Gap band (calculated).** For a floor whose single features stay within 2 mm (seam step, debris under one wheel, cross-member dishing over the wheelbase) the film gap at the outer corners stays within **5.0 .. 15.0 mm** including the static worst case (6.5 .. 13.5 mm without it). The most sensitive situation is one drive wheel dropping while the same-side front corner leads (1.79 mm per mm). The 3 mm rail (7 mm clearance) touches at a 3.9 mm single feature (3.1 mm with the static band used up); the 5 mm rail (5 mm clearance) at 2.8 mm (1.9 mm). A rail touch opens HEAD_LOOP, so these are nuisance-stop thresholds as well as protection thresholds: on floors with 3 mm seams the 5 mm rail will stop the robot at most seams, the 3 mm rail will not. Floor crown is negligible (5 mm sag over a 2.4 m wide floor changes the corner gap by < 0.1 mm). Dynamic terms (braking pitch on 40 N/mm tyres < 0.05 mm, receiver bounce at 0.5 g < 0.1 mm) are small against the kinematic terms; they must be confirmed on the rig.
+**Gap band (calculated).** For a floor whose single features stay within 2 mm (seam step, debris under one wheel, cross-member dishing over the wheelbase) the film gap at the outer corners stays within **5.0 .. 15.0 mm** including the static worst case (6.5 .. 13.5 mm without it). The most sensitive situation is one drive wheel dropping while the same-side front corner leads (1.79 mm per mm). The 3 mm rail (7 mm clearance) touches at a 3.9 mm single feature (3.1 mm with the static band used up); the 5 mm rail (5 mm clearance) at 2.8 mm (1.9 mm). A rail touch opens HEAD_LOOP, so these are nuisance-stop thresholds as well as protection thresholds: on a 3 mm seam the 3 mm rail keeps about 3 mm of clearance, while the 5 mm rail keeps about 1 mm nominally and touches once the static band or an oblique crossing (one wheel first) is included. Floor crown is negligible (5 mm sag over a 2.4 m wide floor changes the corner gap by < 0.1 mm). Dynamic terms (braking pitch on 40 N/mm tyres < 0.05 mm, receiver bounce at 0.5 g < 0.1 mm) are small against the kinematic terms; they must be confirmed on the rig.
 
 The measurement method that replaces these assumptions with data is in `out/gap_measurement_method.md`.
 
@@ -365,7 +365,7 @@ The measurement method that replaces these assumptions with data is in `out/gap_
 | draught 3 m/s (open door) | yes | 0.82 | 5.0 | 15.6 | 19.7 |
 | draught 3 m/s (open door) | yes | 0.82 | 10.0 | 19.7 | 23.9 |
 
-With side foam in still air UA = 0.69 W/K (top 0.23, sides 0.18, windows 0.17, bottom frame 0.05, mount + cables 0.06); time constant 47 min. Unheated, a head started at +20 C settles at -13 C and passes 0 C after 44 min, so the heater is needed for any mission longer than that. Sizing: **19 W** holds +10 C at -25 C in still air; the 30 W peak allocation covers draught only with the side-wall foam. Use a 4-zone film of 30 W total at 12 V (7.5 W per lane, 2.4 kOhm... see electronics) on the spreader underside.
+With side foam in still air UA = 0.69 W/K (top 0.23, sides 0.18, windows 0.17, bottom frame 0.05, mount + cables 0.06); time constant 47 min. Unheated, a head started at +20 C settles at -13 C and passes 0 C after 44 min, so the heater is needed for any mission longer than that. Sizing: **19 W** holds +10 C at -25 C in still air; the 30 W peak allocation covers draught only with the side-wall foam. Use a 4-zone film of 30 W total at 12 V (7.5 W per lane) on the spreader underside.
 
 ### Chassis and battery bay
 

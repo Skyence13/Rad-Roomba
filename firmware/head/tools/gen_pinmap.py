@@ -27,7 +27,7 @@ def header(doc):
         if not m or e["peripheral"] in ("power", "SYS", "RCC"):
             continue
         sig = re.sub(r"[^A-Z0-9_]", "_", e["signal"].upper())
-        out.append(f"#define PIN_{sig}_PORT GPIO{m.group(1)} /* {e['pin']}, LQFP64 pin {e['lqfp64']}, {e['peripheral']} */")
+        out.append(f"#define PIN_{sig}_PORT GPIO{m.group(1)} /* {e['pin']}, LQFP100 pin {e['lqfp100']}, {e['peripheral']} */")
         out.append(f"#define PIN_{sig}_PIN {m.group(2)}u")
         if e["af"] != "-":
             out.append(f"#define PIN_{sig}_AF {e['af']}u")
@@ -38,10 +38,10 @@ def header(doc):
 
 
 def table(doc):
-    rows = ["| LQFP64 | Pin | Signal | Peripheral | AF | Dir | Electrical note |", "|---:|---|---|---|---|---|---|"]
-    for e in sorted(doc["pins"], key=lambda e: e["lqfp64"]):
+    rows = ["| LQFP100 | Pin | Signal | Peripheral | AF | Dir | Electrical note |", "|---:|---|---|---|---|---|---|"]
+    for e in sorted(doc["pins"], key=lambda e: e["lqfp100"]):
         per = e["peripheral"] + (f" IN{e['channel']}" if "channel" in e else "")
-        rows.append(f"| {e['lqfp64']} | {e['pin']} | `{e['signal']}` | {per} | {e['af']} | {e['dir']} | {e['note']} |")
+        rows.append(f"| {e['lqfp100']} | {e['pin']} | `{e['signal']}` | {per} | {e['af']} | {e['dir']} | {e['note']} |")
     return "\n".join(rows)
 
 

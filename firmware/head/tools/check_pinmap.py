@@ -13,16 +13,17 @@ import yaml
 
 HERE = Path(__file__).resolve().parent
 PINMAP = HERE.parent / "pinmap.yaml"
-DB = json.loads((HERE / "stm32g474re_lqfp64_pindb.json").read_text())["pins"]
+DB = json.loads((HERE / "stm32g474ve_lqfp100_pindb.json").read_text())["pins"]
 
 # signal name in pinmap -> exact signal name in the ST database (only for AF / analog functions)
 EXPECT = {
-    "SWDIO": "SYS_JTMS-SWDIO", "SWCLK": "SYS_JTCK-SWCLK", "FPGA_SYNC": "TIM2_CH2",
+    "SWDIO": "SYS_JTMS-SWDIO", "SWCLK": "SYS_JTCK-SWCLK",
     "RS485_TX": "USART1_TX", "RS485_RX": "USART1_RX", "RS485_DE": "USART1_DE",
-    "DBG_TX": "LPUART1_TX", "DBG_RX": "LPUART1_RX",
+    "DBG_TX": "UART4_TX", "DBG_RX": "UART4_RX",
     "DAC_SCK": "SPI1_SCK", "DAC_MISO": "SPI1_MISO", "DAC_MOSI": "SPI1_MOSI",
-    "FPGA_SCK": "SPI3_SCK", "FPGA_MISO": "SPI3_MISO", "FPGA_MOSI": "SPI3_MOSI",
-    "FPGA_GATE": "TIM2_CH3", "I2C_SCL": "I2C3_SCL", "I2C_SDA": "I2C3_SDA",
+    "BUSY_F0": "TIM2_CH1", "BUSY_F1": "TIM2_CH2", "BUSY_F2": "TIM2_CH3", "BUSY_F3": "TIM2_CH4",
+    "BUSY_R0": "TIM5_CH1", "BUSY_R1": "TIM5_CH2", "BUSY_R2": "TIM5_CH3", "BUSY_R3": "TIM5_CH4",
+    "PULSER_STROBE": "TIM3_CH1", "I2C_SCL": "I2C3_SCL", "I2C_SDA": "I2C3_SDA",
     "HSE_IN_24M": "RCC_OSC_IN",
 }
 
@@ -32,21 +33,23 @@ def main():
     errors = []
     seen_pins, seen_signals, seen_pos = set(), set(), set()
     for e in doc["pins"]:
-        pin, pos, sig = e["pin"], e["lqfp64"], e["signal"]
+        pin, pos, sig = e["pin"], e["lqfp100"], e["signal"]
         if pin in seen_pins and pin not in ("VSS", "VDD"):
             errors.append(f"{pin}: used twice")
         if sig in seen_signals:
             errors.append(f"{sig}: assigned twice")
         if pos in seen_pos:
-            errors.append(f"LQFP64 pin {pos}: used twice")
+            errors.append(f"LQFP100 pin {pos}: used twice")
         seen_pins.add(pin); seen_signals.add(sig); seen_pos.add(pos)
         db = DB.get(pin)
         if db is None:
-            errors.append(f"{pin}: not in the STM32G474RET6 LQFP64 database")
+            errors.append(f"{pin}: not in the STM32G474VET6 LQFP100 database")
             continue
         if pos not in db["positions"]:
             errors.append(f"{pin}: pin number {pos} != database {db['positions']}")
         want = EXPECT.get(sig)
+        if e["af"] != "-" and e["peripheral"] != "SYS" and not want:
+            errors.append(f"{pin}: {sig} claims AF{e['af']} but has no expected database signal in check_pinmap.py")
         if want:
             if want not in db["signals"]:
                 errors.append(f"{pin}: {want} is not available on this pin")

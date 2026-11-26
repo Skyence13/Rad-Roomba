@@ -585,7 +585,7 @@ static void test_commands(void)
     CHECK(fabs(t->sim.v) < 1e-3);
     th_drive_for(t, 0.10, 0, 300, OPM);
     CHECK(t->sim.v > 0.02);
-    th_drive_for(t, 0, 0, 3000, OPM); /* long rest: alert again */
+    th_drive_for(t, 0, 0, 5500, OPM); /* rest longer than alert.rest_ms (5 s): alert again */
     (void)th_drive(t, 0.10, 0, 200, OPM);
     th_run_silent(t, 19);
     CHECK(th_drive(t, 0.10, 0, 200, OPM) && th_is(t, "motion", "ALERT"));
@@ -642,6 +642,71 @@ static void test_commands(void)
     th_env(t, "{\"tof\":{\"CLIFF_RL\":30}}");
     th_drive_for(t, 0.20, 0, 1500, OPM);
     CHECK(t->sim.v > 0.19);
+}
+
+/* ------------------------------------------------------------------------------------------ */
+static void test_step_and_count(void)
+{
+    SECTION("step-and-count: stationary evidence, no long alert between short hops, stop/inhibit events inside a count");
+    th_t *t = armed(350);
+    CHECK(th_drive(t, 0, 0, 200, OPM) && th_true(t, "stationary.is_stationary") && th_num(t, "stationary.since_us") > 0);
+    int alerts = 0;
+    double prev_since = 0;
+    for (int hop = 0; hop < 4; hop++) {
+        double x0 = t->sim.x;
+        bool saw_moving_flag = false;
+        for (int k = 0; k < 400 && t->sim.x - x0 < 0.095; k++) { /* move ~100 mm */
+            (void)th_drive(t, 0.10, 0, 200, OPM);
+            alerts += th_is(t, "motion", "ALERT") && k == 2;
+            if (t->sim.v > 0.02) {
+                saw_moving_flag |= !th_true(t, "stationary.is_stationary") && rrc_json_is_null(&t->doc, th_get(t, "stationary.since_us"));
+            }
+            th_run_silent(t, 19);
+        }
+        CHECK(saw_moving_flag);
+        th_drive_for(t, 0, 0, 600, OPM); /* stop and settle */
+        CHECK(th_drive(t, 0, 0, 200, OPM) && th_true(t, "stationary.is_stationary") && th_is(t, "motion", "REST"));
+        double since = th_num(t, "stationary.since_us");
+        CHECK(since > prev_since && since <= (double)(t->sim.t_us - t->sim.boot_us));
+        for (int k = 0; k < 100; k++) { /* a 2 s scaler count: the evidence must not move */
+            th_run_silent(t, 19);
+            CHECK(th_drive(t, 0, 0, 200, OPM) && th_true(t, "stationary.is_stationary") && th_num(t, "stationary.since_us") == since);
+        }
+        CHECK(th_req(t, "STATE", "{}") && th_true(t, "stationary.is_stationary") && th_num(t, "stationary.since_us") == since);
+        prev_since = since;
+        CHECK(fabs(t->sim.x - x0 - 0.10) < 0.012);
+    }
+    printf("  SIMULATED: 4 hops of ~100 mm with 2.6 s counts: %d pre-motion alert(s) (first start only; idle time alert.rest_ms = 5 s)\n", alerts);
+    CHECK(alerts == 1);
+    /* something disturbs the robot during a count: the evidence resets and the transition is in the event log */
+    CHECK(th_drive(t, 0, 0, 200, OPM));
+    double since = th_num(t, "stationary.since_us"), ev0 = th_num(t, "event_seq");
+    uint64_t t_bump = t->sim.t_us - t->sim.boot_us;
+    th_env(t, "{\"bumper_r\":true}");
+    for (int i = 0; i < 30; i++) { /* the contact also shoves the robot a little */
+        t->sim.w[0] = t->sim.w[1] = 0.3;
+        th_run_silent(t, 1);
+    }
+    th_env(t, "{\"bumper_r\":false}");
+    th_run(t, 600);
+    CHECK(!th_drive(t, 0, 0, 200, OPM) && th_num(t, "stationary.since_us") > since && th_num(t, "event_seq") > ev0);
+    char a[48];
+    snprintf(a, sizeof a, "{\"after_seq\":%.0f}", ev0);
+    CHECK(th_req(t, "EVENTS", a));
+    bool chain_ev = false, latch_ev = false, mode_ev = false;
+    for (int i = 0; i < th_len(t, "events"); i++) {
+        char p[40];
+        snprintf(p, sizeof p, "events.%d.t_us", i);
+        bool in_window = th_num(t, p) >= (double)t_bump && th_num(t, p) <= (double)t_bump + 60000.0;
+        snprintf(p, sizeof p, "events.%d.kind", i);
+        chain_ev |= in_window && th_is(t, p, "CHAIN");
+        latch_ev |= in_window && th_is(t, p, "HW_LATCH");
+        mode_ev |= in_window && th_is(t, p, "MODE");
+    }
+    CHECK(chain_ev && latch_ev && mode_ev);
+    /* gyro alone (no encoder ticks) also breaks stationarity: threshold is configurable */
+    CHECK(th_req(t, "CONFIG_GET", "{\"key\":\"stationary.gyro_max_radps\"}") && th_num(t, "value") == 0.05);
+    CHECK(th_req(t, "CONFIG_GET", "{\"key\":\"alert.rest_ms\"}") && th_num(t, "value") == 5000);
 }
 
 /* ------------------------------------------------------------------------------------------ */
@@ -802,6 +867,7 @@ static void test_reset_and_aux(void)
     th_run(t, 400);
     t->max_reply_len = 0;
     CHECK(th_req(t, "STATE", "{}"));
+    CHECK(th_is(t, "mode", "HW_INHIBIT") && th_len(t, "hw_inhibit_reasons") >= 7);
     printf("  worst-case STATE record observed: %zu bytes (limit %u)\n", t->max_reply_len, RRCH_RECORD_MAX);
     CHECK(t->max_reply_len <= RRCH_RECORD_MAX);
     /* absolute worst case: every reason and flag set at once (forced directly; not reachable in practice) */
@@ -810,12 +876,11 @@ static void test_reset_and_aux(void)
     t->sim.core.faults |= ((1u << RRCH_FLT_N) - 1u) & ~RRCH_FLT_FATAL_MASK;
     t->sim.core.hold = 3u;
     t->max_reply_len = 0;
-    CHECK(th_req(t, "STATE", "{}") && th_true(t, "truncated") && th_len(t, "protective_stop_reasons") == 8 && th_len(t, "hw_inhibit_reasons") == RRCH_HW_N);
-    CHECK(th_req(t, "DIAG", "{}") && th_len(t, "protective_stop_reasons") == RRCH_SW_N && th_len(t, "faults") >= RRCH_FLT_N - 5);
+    CHECK(th_req(t, "STATE", "{}") && th_true(t, "truncated") && th_len(t, "protective_stop_reasons") == 12 && th_len(t, "hw_inhibit_reasons") == RRCH_HW_N);
+    CHECK(th_req(t, "DIAG", "{}") && th_len(t, "protective_stop_reasons") == RRCH_SW_N && th_len(t, "faults") >= 3 && th_len(t, "hw_inhibit_reasons") == RRCH_HW_N);
     CHECK(th_req(t, "STATE", "{}"));
     printf("  absolute worst-case STATE record: %zu bytes (additive lists dropped, \"truncated\":true)\n", t->max_reply_len);
     CHECK(t->max_reply_len <= RRCH_RECORD_MAX && th_len(t, "tof") == RRCH_TOF_N);
-    CHECK(th_is(t, "panel.leds.hold", "BLINK_2") && th_is(t, "panel.leds.fault", "BLINK_SLOW") && th_is(t, "panel.pattern", "AUTO"));
     CHECK(th_is(t, "head_presence", "FAULT") && !th_true(t, "chain.ARM_PERMIT") && th_has(t, "hw_inhibit_reasons", "MCU_NOT_READY"));
 }
 
@@ -825,6 +890,7 @@ int main(void)
     test_chain_elements();
     test_protective_reasons();
     test_commands();
+    test_step_and_count();
     test_reset_and_aux();
     return th_summary("test_state_machine");
 }

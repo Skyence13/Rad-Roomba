@@ -1,0 +1,2151 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://rad-roomba.invalid/interface/chassis_link.schema.json",
+ "title": "RR-CHS 1.0 chassis link records (JSON part of a record; framing TAB + CRC-32 + LF is outside this schema)",
+ "description": "Companion of interface/chassis_icd.md. Validate a record against #/$defs/request or #/$defs/response, then args against #/$defs/args_<OP> and, for status OK, body against #/$defs/body_<OP>; for any other status against #/$defs/error_body. Bodies allow additional members (additive evolution); the contract members are listed as required.",
+ "oneOf": [
+  {
+   "$ref": "#/$defs/request"
+  },
+  {
+   "$ref": "#/$defs/response"
+  }
+ ],
+ "$defs": {
+  "chassis_mode": {
+   "enum": [
+    "BOOT",
+    "SERVICE_CHARGE",
+    "LAB",
+    "STANDBY",
+    "ARMED_IDLE",
+    "MOVING",
+    "HOLD",
+    "PROTECTIVE_STOP",
+    "HW_INHIBIT",
+    "FAULT"
+   ]
+  },
+  "hw_inhibit_reason": {
+   "enum": [
+    "MODE_NOT_RUN",
+    "ESTOP",
+    "HANDS_ON",
+    "CHARGER",
+    "HEAD_UNDOCKED",
+    "HEAD_LOOP_OPEN",
+    "HEAD_LOOP_SHORT",
+    "J1_ABSENT",
+    "LAB_KEY",
+    "BODY_BUMPER",
+    "WATCHDOG",
+    "MCU_NOT_READY",
+    "VMOT_FAULT"
+   ]
+  },
+  "protective_stop_reason": {
+   "enum": [
+    "FIELD_FRONT",
+    "FIELD_REAR",
+    "FIELD_LEFT",
+    "FIELD_RIGHT",
+    "CLIFF_FL",
+    "CLIFF_FR",
+    "CLIFF_RL",
+    "CLIFF_RR",
+    "LOOKAHEAD_L",
+    "LOOKAHEAD_R",
+    "TOF_STALE",
+    "TOF_DISAGREE",
+    "CMD_TIMEOUT",
+    "HOST_LINK_LOST",
+    "STALL",
+    "ENCODER_FAULT",
+    "IMU_FAULT",
+    "TILT",
+    "BATTERY_LOW",
+    "TEMP_RANGE",
+    "HOST_REQUEST",
+    "HEAD_LINK",
+    "LOCALIZATION",
+    "BRAKE_TEST_FAIL"
+   ]
+  },
+  "op_mode": {
+   "enum": [
+    "COMMISSIONING",
+    "SURVEY_SHARED",
+    "SURVEY_UNATTENDED",
+    "GUIDED",
+    "LAB",
+    "SERVICE"
+   ]
+  },
+  "head_presence": {
+   "enum": [
+    "ABSENT",
+    "HEAD_DIRECT",
+    "HEAD_VIA_LAB_EXTENSION",
+    "LAB_EXTENSION_ONLY",
+    "FAULT"
+   ]
+  },
+  "status": {
+   "enum": [
+    "OK",
+    "BAD_ARG",
+    "UNSUPPORTED",
+    "REJECTED",
+    "BUSY",
+    "FAULT"
+   ]
+  },
+  "request": {
+   "type": "object",
+   "properties": {
+    "type": {
+     "const": "REQ"
+    },
+    "v": {
+     "const": "1.0"
+    },
+    "id": {
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    },
+    "op": {
+     "type": "string"
+    },
+    "args": {
+     "type": "object"
+    }
+   },
+   "required": [
+    "type",
+    "v",
+    "id",
+    "op",
+    "args"
+   ]
+  },
+  "response": {
+   "type": "object",
+   "properties": {
+    "type": {
+     "const": "RSP"
+    },
+    "v": {
+     "const": "1.0"
+    },
+    "id": {
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    },
+    "status": {
+     "$ref": "#/$defs/status"
+    },
+    "body": {
+     "type": "object"
+    }
+   },
+   "required": [
+    "type",
+    "v",
+    "id",
+    "status",
+    "body"
+   ]
+  },
+  "error_body": {
+   "type": "object",
+   "properties": {
+    "reason": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "reason"
+   ]
+  },
+  "args_HELLO": {
+   "type": "object",
+   "properties": {},
+   "required": []
+  },
+  "args_TIME": {
+   "type": "object",
+   "properties": {},
+   "required": []
+  },
+  "args_STATE": {
+   "type": "object",
+   "properties": {},
+   "required": []
+  },
+  "args_DIAG": {
+   "type": "object",
+   "properties": {},
+   "required": []
+  },
+  "args_BRAKE_TEST": {
+   "type": "object",
+   "properties": {},
+   "required": []
+  },
+  "args_DRIVE": {
+   "type": "object",
+   "properties": {
+    "seq": {
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    },
+    "v_mps": {
+     "type": "number",
+     "minimum": -0.5,
+     "maximum": 0.5
+    },
+    "w_radps": {
+     "type": "number",
+     "minimum": -1,
+     "maximum": 1
+    },
+    "ttl_ms": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 250
+    },
+    "op_mode": {
+     "enum": [
+      "COMMISSIONING",
+      "SURVEY_SHARED",
+      "SURVEY_UNATTENDED",
+      "GUIDED",
+      "LAB",
+      "SERVICE"
+     ]
+    },
+    "issued_us": {
+     "type": "integer",
+     "minimum": 0
+    }
+   },
+   "required": [
+    "seq",
+    "v_mps",
+    "w_radps",
+    "ttl_ms",
+    "op_mode"
+   ]
+  },
+  "args_EVENTS": {
+   "type": "object",
+   "properties": {
+    "after_seq": {
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    }
+   },
+   "required": [
+    "after_seq"
+   ]
+  },
+  "args_REARM_SW": {
+   "type": "object",
+   "properties": {
+    "nonce": {
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    },
+    "operator": {
+     "type": "string",
+     "minLength": 1,
+     "maxLength": 32,
+     "pattern": "^[ -~]+$"
+    }
+   },
+   "required": [
+    "nonce",
+    "operator"
+   ]
+  },
+  "args_STOP": {
+   "type": "object",
+   "properties": {
+    "kind": {
+     "enum": [
+      "CONTROLLED",
+      "PROTECTIVE"
+     ]
+    },
+    "reason": {
+     "enum": [
+      "HOST_REQUEST",
+      "FIELD_FRONT",
+      "FIELD_LEFT",
+      "FIELD_RIGHT",
+      "FIELD_REAR",
+      "HEAD_LINK",
+      "LOCALIZATION"
+     ]
+    }
+   },
+   "required": [
+    "kind"
+   ]
+  },
+  "args_SET_OP_MODE": {
+   "type": "object",
+   "properties": {
+    "op_mode": {
+     "enum": [
+      "COMMISSIONING",
+      "SURVEY_SHARED",
+      "SURVEY_UNATTENDED",
+      "GUIDED",
+      "LAB",
+      "SERVICE"
+     ]
+    }
+   },
+   "required": [
+    "op_mode"
+   ]
+  },
+  "args_HEAD_POWER": {
+   "type": "object",
+   "properties": {
+    "electronics": {
+     "type": "boolean"
+    },
+    "heater_enable": {
+     "type": "boolean"
+    }
+   },
+   "required": [
+    "electronics",
+    "heater_enable"
+   ]
+  },
+  "args_HEATER": {
+   "type": "object",
+   "properties": {
+    "chassis_setpoint_c": {
+     "type": [
+      "number",
+      "null"
+     ],
+     "minimum": 0,
+     "maximum": 30
+    }
+   },
+   "required": [
+    "chassis_setpoint_c"
+   ]
+  },
+  "args_PANEL": {
+   "type": "object",
+   "properties": {
+    "pattern": {
+     "enum": [
+      "AUTO",
+      "ARRIVED",
+      "ATTENTION",
+      "LOCATE",
+      "QUIET"
+     ]
+    }
+   },
+   "required": [
+    "pattern"
+   ]
+  },
+  "args_CONFIG_GET": {
+   "type": "object",
+   "properties": {
+    "key": {
+     "type": "string"
+    },
+    "offset": {
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    }
+   },
+   "required": [
+    "key"
+   ]
+  },
+  "args_CONFIG_SET": {
+   "type": "object",
+   "properties": {
+    "key": {
+     "type": "string"
+    },
+    "value": {
+     "type": [
+      "number",
+      "boolean"
+     ]
+    }
+   },
+   "required": [
+    "key",
+    "value"
+   ]
+  },
+  "body_HELLO": {
+   "type": "object",
+   "properties": {
+    "fw": {
+     "type": "string"
+    },
+    "hw_rev": {
+     "type": "string"
+    },
+    "serial": {
+     "type": "string",
+     "pattern": "^RRC-[0-9]{6}$"
+    },
+    "boot_id": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "proto": {
+     "const": "RR-CHS 1.0"
+    },
+    "caps": {
+     "type": "object",
+     "properties": {
+      "encoder_cpr": {
+       "type": "integer"
+      },
+      "wheel_radius_nom_m": {
+       "type": "number"
+      },
+      "track_nom_m": {
+       "type": "number"
+      },
+      "max_v_mps": {
+       "type": "number"
+      },
+      "max_w_radps": {
+       "type": "number"
+      }
+     },
+     "required": [
+      "encoder_cpr",
+      "wheel_radius_nom_m",
+      "track_nom_m",
+      "max_v_mps",
+      "max_w_radps"
+     ]
+    },
+    "session": {
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    },
+    "uptime_us": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "reset": {
+     "type": "object",
+     "properties": {
+      "cause": {
+       "enum": [
+        "POWER_ON",
+        "BROWNOUT",
+        "PIN",
+        "WATCHDOG",
+        "SOFTWARE",
+        "UNKNOWN"
+       ]
+      },
+      "boot_count": {
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 4294967295
+      }
+     },
+     "required": [
+      "cause",
+      "boot_count"
+     ]
+    },
+    "config": {
+     "type": "object",
+     "properties": {
+      "gen": {
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 4294967295
+      },
+      "crc": {
+       "type": "string",
+       "pattern": "^[0-9A-F]{8}$"
+      },
+      "source": {
+       "enum": [
+        "FLASH",
+        "DEFAULTS"
+       ]
+      }
+     },
+     "required": [
+      "gen",
+      "crc",
+      "source"
+     ]
+    }
+   },
+   "required": [
+    "fw",
+    "hw_rev",
+    "serial",
+    "boot_id",
+    "proto",
+    "caps"
+   ]
+  },
+  "body_TIME": {
+   "type": "object",
+   "properties": {
+    "rx_us": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "tx_us": {
+     "type": "integer",
+     "minimum": 0
+    }
+   },
+   "required": [
+    "rx_us",
+    "tx_us"
+   ]
+  },
+  "body_DRIVE": {
+   "type": "object",
+   "properties": {
+    "accepted": {
+     "type": "boolean"
+    },
+    "reject_reason": {
+     "enum": [
+      null,
+      "NO_SESSION",
+      "SEQ",
+      "TTL",
+      "OP_MODE",
+      "LIMIT",
+      "BRAKE_TEST_REQUIRED",
+      "DIR_INHIBITED",
+      "BOOT",
+      "FAULT",
+      "SERVICE_CHARGE",
+      "LAB",
+      "STANDBY",
+      "HW_INHIBIT",
+      "PROTECTIVE_STOP",
+      "HOLD"
+     ]
+    },
+    "mode": {
+     "enum": [
+      "BOOT",
+      "SERVICE_CHARGE",
+      "LAB",
+      "STANDBY",
+      "ARMED_IDLE",
+      "MOVING",
+      "HOLD",
+      "PROTECTIVE_STOP",
+      "HW_INHIBIT",
+      "FAULT"
+     ]
+    },
+    "odom": {
+     "type": "object",
+     "properties": {
+      "t_us": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "left_ticks": {
+       "type": "integer"
+      },
+      "right_ticks": {
+       "type": "integer"
+      },
+      "left_tps": {
+       "type": "number"
+      },
+      "right_tps": {
+       "type": "number"
+      },
+      "seq": {
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 4294967295
+      }
+     },
+     "required": [
+      "t_us",
+      "left_ticks",
+      "right_ticks",
+      "left_tps",
+      "right_tps"
+     ]
+    },
+    "imu": {
+     "type": "object",
+     "properties": {
+      "t_us": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "gyro_rps": {
+       "type": "array",
+       "items": {
+        "type": "number"
+       },
+       "minItems": 3,
+       "maxItems": 3
+      },
+      "accel_mps2": {
+       "type": "array",
+       "items": {
+        "type": "number"
+       },
+       "minItems": 3,
+       "maxItems": 3
+      },
+      "ok": {
+       "type": "boolean"
+      }
+     },
+     "required": [
+      "t_us",
+      "gyro_rps",
+      "accel_mps2"
+     ]
+    },
+    "stops": {
+     "type": "object",
+     "properties": {
+      "hw": {
+       "type": "array",
+       "items": {
+        "enum": [
+         "MODE_NOT_RUN",
+         "ESTOP",
+         "HANDS_ON",
+         "CHARGER",
+         "HEAD_UNDOCKED",
+         "HEAD_LOOP_OPEN",
+         "HEAD_LOOP_SHORT",
+         "J1_ABSENT",
+         "LAB_KEY",
+         "BODY_BUMPER",
+         "WATCHDOG",
+         "MCU_NOT_READY",
+         "VMOT_FAULT"
+        ]
+       }
+      },
+      "sw": {
+       "type": "array",
+       "items": {
+        "enum": [
+         "FIELD_FRONT",
+         "FIELD_REAR",
+         "FIELD_LEFT",
+         "FIELD_RIGHT",
+         "CLIFF_FL",
+         "CLIFF_FR",
+         "CLIFF_RL",
+         "CLIFF_RR",
+         "LOOKAHEAD_L",
+         "LOOKAHEAD_R",
+         "TOF_STALE",
+         "TOF_DISAGREE",
+         "CMD_TIMEOUT",
+         "HOST_LINK_LOST",
+         "STALL",
+         "ENCODER_FAULT",
+         "IMU_FAULT",
+         "TILT",
+         "BATTERY_LOW",
+         "TEMP_RANGE",
+         "HOST_REQUEST",
+         "HEAD_LINK",
+         "LOCALIZATION",
+         "BRAKE_TEST_FAIL"
+        ]
+       }
+      }
+     },
+     "required": [
+      "hw",
+      "sw"
+     ]
+    },
+    "event_seq": {
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    },
+    "stationary": {
+     "type": "object",
+     "properties": {
+      "is_stationary": {
+       "type": "boolean"
+      },
+      "since_us": {
+       "type": [
+        "integer",
+        "null"
+       ],
+       "minimum": 0
+      }
+     },
+     "required": [
+      "is_stationary",
+      "since_us"
+     ]
+    },
+    "applied": {
+     "type": "object",
+     "properties": {
+      "v_mps": {
+       "type": "number"
+      },
+      "w_radps": {
+       "type": "number"
+      }
+     },
+     "required": [
+      "v_mps",
+      "w_radps"
+     ]
+    },
+    "motion": {
+     "enum": [
+      "REST",
+      "ALERT",
+      "RUN",
+      "DECEL"
+     ]
+    },
+    "allow": {
+     "type": "object",
+     "properties": {
+      "fwd": {
+       "type": "boolean"
+      },
+      "rev": {
+       "type": "boolean"
+      },
+      "pivot": {
+       "type": "boolean"
+      }
+     },
+     "required": [
+      "fwd",
+      "rev",
+      "pivot"
+     ]
+    },
+    "v_cap_mps": {
+     "type": "number"
+    },
+    "hold": {
+     "type": "array",
+     "items": {
+      "enum": [
+       "LOCAL_PAUSE",
+       "HOST_STOP"
+      ]
+     }
+    },
+    "rearm_nonce": {
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    }
+   },
+   "required": [
+    "accepted",
+    "reject_reason",
+    "mode",
+    "odom",
+    "imu",
+    "stops",
+    "event_seq",
+    "stationary"
+   ]
+  },
+  "body_STATE": {
+   "type": "object",
+   "properties": {
+    "mode": {
+     "enum": [
+      "BOOT",
+      "SERVICE_CHARGE",
+      "LAB",
+      "STANDBY",
+      "ARMED_IDLE",
+      "MOVING",
+      "HOLD",
+      "PROTECTIVE_STOP",
+      "HW_INHIBIT",
+      "FAULT"
+     ]
+    },
+    "op_mode": {
+     "enum": [
+      "COMMISSIONING",
+      "SURVEY_SHARED",
+      "SURVEY_UNATTENDED",
+      "GUIDED",
+      "LAB",
+      "SERVICE"
+     ]
+    },
+    "hw_latch": {
+     "type": "boolean"
+    },
+    "chain": {
+     "type": "object",
+     "properties": {
+      "MODE_RUN": {
+       "type": "boolean"
+      },
+      "ESTOP": {
+       "type": "boolean"
+      },
+      "HANDS_ON": {
+       "type": "boolean"
+      },
+      "CHG_COVER": {
+       "type": "boolean"
+      },
+      "HEAD_DOCK": {
+       "type": "boolean"
+      },
+      "HEAD_LOOP": {
+       "type": "boolean"
+      },
+      "LAB_KEY_N": {
+       "type": "boolean"
+      },
+      "BODY_BUMPER": {
+       "type": "boolean"
+      },
+      "WDG_OK": {
+       "type": "boolean"
+      },
+      "ARM_PERMIT": {
+       "type": "boolean"
+      }
+     },
+     "required": [
+      "MODE_RUN",
+      "ESTOP",
+      "HANDS_ON",
+      "CHG_COVER",
+      "HEAD_DOCK",
+      "HEAD_LOOP",
+      "LAB_KEY_N",
+      "BODY_BUMPER",
+      "WDG_OK",
+      "ARM_PERMIT"
+     ],
+     "additionalProperties": false
+    },
+    "hw_inhibit_reasons": {
+     "type": "array",
+     "items": {
+      "enum": [
+       "MODE_NOT_RUN",
+       "ESTOP",
+       "HANDS_ON",
+       "CHARGER",
+       "HEAD_UNDOCKED",
+       "HEAD_LOOP_OPEN",
+       "HEAD_LOOP_SHORT",
+       "J1_ABSENT",
+       "LAB_KEY",
+       "BODY_BUMPER",
+       "WATCHDOG",
+       "MCU_NOT_READY",
+       "VMOT_FAULT"
+      ]
+     }
+    },
+    "protective_stop_reasons": {
+     "type": "array",
+     "items": {
+      "enum": [
+       "FIELD_FRONT",
+       "FIELD_REAR",
+       "FIELD_LEFT",
+       "FIELD_RIGHT",
+       "CLIFF_FL",
+       "CLIFF_FR",
+       "CLIFF_RL",
+       "CLIFF_RR",
+       "LOOKAHEAD_L",
+       "LOOKAHEAD_R",
+       "TOF_STALE",
+       "TOF_DISAGREE",
+       "CMD_TIMEOUT",
+       "HOST_LINK_LOST",
+       "STALL",
+       "ENCODER_FAULT",
+       "IMU_FAULT",
+       "TILT",
+       "BATTERY_LOW",
+       "TEMP_RANGE",
+       "HOST_REQUEST",
+       "HEAD_LINK",
+       "LOCALIZATION",
+       "BRAKE_TEST_FAIL"
+      ]
+     }
+    },
+    "head_presence": {
+     "enum": [
+      "ABSENT",
+      "HEAD_DIRECT",
+      "HEAD_VIA_LAB_EXTENSION",
+      "LAB_EXTENSION_ONLY",
+      "FAULT"
+     ]
+    },
+    "j2_present": {
+     "type": "boolean"
+    },
+    "rails": {
+     "type": "object",
+     "properties": {
+      "vbat_v": {
+       "type": [
+        "number",
+        "null"
+       ]
+      },
+      "vmot_v": {
+       "type": [
+        "number",
+        "null"
+       ]
+      },
+      "ibat_a": {
+       "type": [
+        "number",
+        "null"
+       ]
+      },
+      "i_drive_a": {
+       "type": "array",
+       "items": {
+        "type": [
+         "number",
+         "null"
+        ]
+       },
+       "minItems": 2,
+       "maxItems": 2
+      },
+      "i_head_a": {
+       "type": [
+        "number",
+        "null"
+       ]
+      },
+      "i_head_htr_a": {
+       "type": [
+        "number",
+        "null"
+       ]
+      },
+      "i_chs_htr_a": {
+       "type": [
+        "number",
+        "null"
+       ]
+      },
+      "v5_v": {
+       "type": [
+        "number",
+        "null"
+       ]
+      }
+     },
+     "required": [
+      "vbat_v",
+      "vmot_v",
+      "ibat_a",
+      "i_drive_a",
+      "i_head_a",
+      "i_head_htr_a",
+      "i_chs_htr_a",
+      "v5_v"
+     ]
+    },
+    "battery": {
+     "type": "object",
+     "properties": {
+      "soc_pct": {
+       "type": [
+        "number",
+        "null"
+       ]
+      },
+      "temp_c": {
+       "type": "array",
+       "items": {
+        "type": [
+         "number",
+         "null"
+        ]
+       },
+       "minItems": 2,
+       "maxItems": 2
+      },
+      "charge_state": {
+       "enum": [
+        "NONE",
+        "PRECHARGE",
+        "CC",
+        "CV",
+        "DONE",
+        "TEMP_INHIBIT",
+        "FAULT",
+        "UNKNOWN"
+       ]
+      }
+     },
+     "required": [
+      "soc_pct",
+      "temp_c",
+      "charge_state"
+     ]
+    },
+    "temps": {
+     "type": "object",
+     "properties": {
+      "board_c": {
+       "type": [
+        "number",
+        "null"
+       ]
+      },
+      "bay_c": {
+       "type": [
+        "number",
+        "null"
+       ]
+      }
+     },
+     "required": [
+      "board_c",
+      "bay_c"
+     ]
+    },
+    "tof": {
+     "type": "array",
+     "minItems": 11,
+     "maxItems": 11,
+     "items": {
+      "type": "object",
+      "properties": {
+       "id": {
+        "enum": [
+         "CLIFF_FL",
+         "CLIFF_FR",
+         "CLIFF_RL",
+         "CLIFF_RR",
+         "LOOK_LO",
+         "LOOK_LI",
+         "LOOK_RI",
+         "LOOK_RO",
+         "REAR_L",
+         "REAR_C",
+         "REAR_R"
+        ]
+       },
+       "range_mm": {
+        "type": [
+         "integer",
+         "null"
+        ]
+       },
+       "status": {
+        "enum": [
+         "OK",
+         "NO_TARGET",
+         "INVALID",
+         "STALE",
+         "OFFLINE"
+        ]
+       },
+       "age_ms": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 9999
+       }
+      },
+      "required": [
+       "id",
+       "range_mm",
+       "status",
+       "age_ms"
+      ]
+     }
+    },
+    "bumpers": {
+     "type": "object",
+     "properties": {
+      "body_l": {
+       "type": "boolean"
+      },
+      "body_r": {
+       "type": "boolean"
+      },
+      "head_loop": {
+       "enum": [
+        "OK",
+        "OPEN",
+        "SHORT"
+       ]
+      },
+      "head_loop_ohm": {
+       "type": [
+        "integer",
+        "null"
+       ]
+      }
+     },
+     "required": [
+      "body_l",
+      "body_r",
+      "head_loop",
+      "head_loop_ohm"
+     ]
+    },
+    "panel": {
+     "type": "object",
+     "properties": {
+      "buttons": {
+       "type": "object",
+       "properties": {
+        "rearm": {
+         "type": "boolean"
+        },
+        "pause": {
+         "type": "boolean"
+        }
+       },
+       "required": [
+        "rearm",
+        "pause"
+       ]
+      },
+      "leds": {
+       "type": "object",
+       "properties": {
+        "ready": {
+         "enum": [
+          "OFF",
+          "ON",
+          "BLINK_SLOW",
+          "BLINK_FAST",
+          "BLINK_2"
+         ]
+        },
+        "moving": {
+         "enum": [
+          "OFF",
+          "ON",
+          "BLINK_SLOW",
+          "BLINK_FAST",
+          "BLINK_2"
+         ]
+        },
+        "hold": {
+         "enum": [
+          "OFF",
+          "ON",
+          "BLINK_SLOW",
+          "BLINK_FAST",
+          "BLINK_2"
+         ]
+        },
+        "fault": {
+         "enum": [
+          "OFF",
+          "ON",
+          "BLINK_SLOW",
+          "BLINK_FAST",
+          "BLINK_2"
+         ]
+        },
+        "charge": {
+         "enum": [
+          "OFF",
+          "ON",
+          "BLINK_SLOW",
+          "BLINK_FAST",
+          "BLINK_2"
+         ]
+        }
+       },
+       "required": [
+        "ready",
+        "moving",
+        "hold",
+        "fault",
+        "charge"
+       ]
+      },
+      "buzzer": {
+       "type": "boolean"
+      },
+      "pattern": {
+       "type": "string"
+      }
+     },
+     "required": []
+    },
+    "heater": {
+     "type": "object",
+     "properties": {
+      "chassis_duty_pct": {
+       "type": "number"
+      },
+      "chassis_setpoint_c": {
+       "type": [
+        "number",
+        "null"
+       ]
+      },
+      "sensor_ok": {
+       "type": "boolean"
+      }
+     },
+     "required": [
+      "chassis_duty_pct"
+     ]
+    },
+    "faults": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "truncated": {
+     "type": "boolean"
+    },
+    "stationary": {
+     "type": "object",
+     "properties": {
+      "is_stationary": {
+       "type": "boolean"
+      },
+      "since_us": {
+       "type": [
+        "integer",
+        "null"
+       ],
+       "minimum": 0
+      }
+     },
+     "required": [
+      "is_stationary",
+      "since_us"
+     ]
+    },
+    "rearm_nonce": {
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    },
+    "rearm_ready": {
+     "type": "boolean"
+    },
+    "hold": {
+     "type": "array",
+     "items": {
+      "enum": [
+       "LOCAL_PAUSE",
+       "HOST_STOP"
+      ]
+     }
+    },
+    "event_seq": {
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    },
+    "uptime_us": {
+     "type": "integer",
+     "minimum": 0
+    }
+   },
+   "required": [
+    "mode",
+    "op_mode",
+    "hw_latch",
+    "chain",
+    "hw_inhibit_reasons",
+    "protective_stop_reasons",
+    "head_presence",
+    "j2_present",
+    "rails",
+    "battery",
+    "temps",
+    "tof",
+    "bumpers",
+    "panel",
+    "heater",
+    "faults",
+    "stationary",
+    "rearm_nonce"
+   ]
+  },
+  "body_DIAG": {
+   "type": "object",
+   "properties": {
+    "mode": {
+     "enum": [
+      "BOOT",
+      "SERVICE_CHARGE",
+      "LAB",
+      "STANDBY",
+      "ARMED_IDLE",
+      "MOVING",
+      "HOLD",
+      "PROTECTIVE_STOP",
+      "HW_INHIBIT",
+      "FAULT"
+     ]
+    },
+    "hw_inhibit_reasons": {
+     "type": "array",
+     "items": {
+      "enum": [
+       "MODE_NOT_RUN",
+       "ESTOP",
+       "HANDS_ON",
+       "CHARGER",
+       "HEAD_UNDOCKED",
+       "HEAD_LOOP_OPEN",
+       "HEAD_LOOP_SHORT",
+       "J1_ABSENT",
+       "LAB_KEY",
+       "BODY_BUMPER",
+       "WATCHDOG",
+       "MCU_NOT_READY",
+       "VMOT_FAULT"
+      ]
+     }
+    },
+    "hw_active": {
+     "type": "array",
+     "items": {
+      "enum": [
+       "MODE_NOT_RUN",
+       "ESTOP",
+       "HANDS_ON",
+       "CHARGER",
+       "HEAD_UNDOCKED",
+       "HEAD_LOOP_OPEN",
+       "HEAD_LOOP_SHORT",
+       "J1_ABSENT",
+       "LAB_KEY",
+       "BODY_BUMPER",
+       "WATCHDOG",
+       "MCU_NOT_READY",
+       "VMOT_FAULT"
+      ]
+     }
+    },
+    "protective_stop_reasons": {
+     "type": "array",
+     "items": {
+      "enum": [
+       "FIELD_FRONT",
+       "FIELD_REAR",
+       "FIELD_LEFT",
+       "FIELD_RIGHT",
+       "CLIFF_FL",
+       "CLIFF_FR",
+       "CLIFF_RL",
+       "CLIFF_RR",
+       "LOOKAHEAD_L",
+       "LOOKAHEAD_R",
+       "TOF_STALE",
+       "TOF_DISAGREE",
+       "CMD_TIMEOUT",
+       "HOST_LINK_LOST",
+       "STALL",
+       "ENCODER_FAULT",
+       "IMU_FAULT",
+       "TILT",
+       "BATTERY_LOW",
+       "TEMP_RANGE",
+       "HOST_REQUEST",
+       "HEAD_LINK",
+       "LOCALIZATION",
+       "BRAKE_TEST_FAIL"
+      ]
+     }
+    },
+    "sw_active": {
+     "type": "array",
+     "items": {
+      "enum": [
+       "FIELD_FRONT",
+       "FIELD_REAR",
+       "FIELD_LEFT",
+       "FIELD_RIGHT",
+       "CLIFF_FL",
+       "CLIFF_FR",
+       "CLIFF_RL",
+       "CLIFF_RR",
+       "LOOKAHEAD_L",
+       "LOOKAHEAD_R",
+       "TOF_STALE",
+       "TOF_DISAGREE",
+       "CMD_TIMEOUT",
+       "HOST_LINK_LOST",
+       "STALL",
+       "ENCODER_FAULT",
+       "IMU_FAULT",
+       "TILT",
+       "BATTERY_LOW",
+       "TEMP_RANGE",
+       "HOST_REQUEST",
+       "HEAD_LINK",
+       "LOCALIZATION",
+       "BRAKE_TEST_FAIL"
+      ]
+     }
+    },
+    "faults": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "estop": {
+     "type": "object",
+     "properties": {
+      "a": {
+       "type": "boolean"
+      },
+      "b": {
+       "type": "boolean"
+      }
+     },
+     "required": [
+      "a",
+      "b"
+     ]
+    },
+    "readbacks": {
+     "type": "string",
+     "pattern": "^[01]{22}$"
+    },
+    "pres_ohm": {
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    },
+    "head_power": {
+     "type": "object",
+     "properties": {
+      "electronics": {
+       "type": "boolean"
+      },
+      "heater_enable": {
+       "type": "boolean"
+      }
+     },
+     "required": [
+      "electronics",
+      "heater_enable"
+     ]
+    },
+    "brake_test": {
+     "type": "object",
+     "properties": {
+      "state": {
+       "enum": [
+        "NONE",
+        "RUNNING",
+        "PASSED",
+        "FAILED"
+       ]
+      },
+      "age_s": {
+       "type": [
+        "integer",
+        "null"
+       ]
+      },
+      "passed_since_boot": {
+       "type": "boolean"
+      }
+     },
+     "required": [
+      "state",
+      "age_s",
+      "passed_since_boot"
+     ]
+    },
+    "tilt_deg": {
+     "type": "number"
+    },
+    "drive": {
+     "type": "object"
+    },
+    "link": {
+     "type": "object"
+    },
+    "sw_acknowledged": {
+     "type": "array",
+     "items": {
+      "enum": [
+       "FIELD_FRONT",
+       "FIELD_REAR",
+       "FIELD_LEFT",
+       "FIELD_RIGHT",
+       "CLIFF_FL",
+       "CLIFF_FR",
+       "CLIFF_RL",
+       "CLIFF_RR",
+       "LOOKAHEAD_L",
+       "LOOKAHEAD_R",
+       "TOF_STALE",
+       "TOF_DISAGREE",
+       "CMD_TIMEOUT",
+       "HOST_LINK_LOST",
+       "STALL",
+       "ENCODER_FAULT",
+       "IMU_FAULT",
+       "TILT",
+       "BATTERY_LOW",
+       "TEMP_RANGE",
+       "HOST_REQUEST",
+       "HEAD_LINK",
+       "LOCALIZATION",
+       "BRAKE_TEST_FAIL"
+      ]
+     }
+    }
+   },
+   "required": [
+    "mode",
+    "hw_inhibit_reasons",
+    "hw_active",
+    "protective_stop_reasons",
+    "sw_active",
+    "faults",
+    "estop",
+    "readbacks",
+    "head_power",
+    "brake_test"
+   ]
+  },
+  "body_EVENTS": {
+   "type": "object",
+   "properties": {
+    "events": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "seq": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 4294967295
+       },
+       "t_us": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "kind": {
+        "enum": [
+         "BOOT",
+         "BROWNOUT",
+         "CHAIN",
+         "HW_LATCH",
+         "PERMIT",
+         "J1",
+         "J2",
+         "BUTTON",
+         "MODE",
+         "PSTOP",
+         "PSTOP_CLEAR",
+         "HOLD",
+         "REARM_REJECT",
+         "OP_MODE",
+         "CONFIG",
+         "HEAD_POWER",
+         "FAULT",
+         "BRAKE_TEST",
+         "LINK",
+         "TOF"
+        ]
+       },
+       "detail": {
+        "type": "object"
+       }
+      },
+      "required": [
+       "seq",
+       "t_us",
+       "kind",
+       "detail"
+      ],
+      "additionalProperties": false
+     }
+    },
+    "newest_seq": {
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    },
+    "oldest_seq": {
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    },
+    "more": {
+     "type": "boolean"
+    },
+    "gap": {
+     "type": "boolean"
+    }
+   },
+   "required": [
+    "events",
+    "newest_seq",
+    "oldest_seq",
+    "more",
+    "gap"
+   ]
+  },
+  "body_REARM_SW": {
+   "type": "object",
+   "properties": {
+    "cleared": {
+     "type": "array",
+     "items": {
+      "enum": [
+       "FIELD_FRONT",
+       "FIELD_REAR",
+       "FIELD_LEFT",
+       "FIELD_RIGHT",
+       "CLIFF_FL",
+       "CLIFF_FR",
+       "CLIFF_RL",
+       "CLIFF_RR",
+       "LOOKAHEAD_L",
+       "LOOKAHEAD_R",
+       "TOF_STALE",
+       "TOF_DISAGREE",
+       "CMD_TIMEOUT",
+       "HOST_LINK_LOST",
+       "STALL",
+       "ENCODER_FAULT",
+       "IMU_FAULT",
+       "TILT",
+       "BATTERY_LOW",
+       "TEMP_RANGE",
+       "HOST_REQUEST",
+       "HEAD_LINK",
+       "LOCALIZATION",
+       "BRAKE_TEST_FAIL"
+      ]
+     }
+    },
+    "hold_cleared": {
+     "type": "array",
+     "items": {
+      "enum": [
+       "LOCAL_PAUSE",
+       "HOST_STOP"
+      ]
+     }
+    },
+    "mode": {
+     "enum": [
+      "BOOT",
+      "SERVICE_CHARGE",
+      "LAB",
+      "STANDBY",
+      "ARMED_IDLE",
+      "MOVING",
+      "HOLD",
+      "PROTECTIVE_STOP",
+      "HW_INHIBIT",
+      "FAULT"
+     ]
+    },
+    "hw_latch": {
+     "type": "boolean"
+    },
+    "rearm_nonce": {
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    }
+   },
+   "required": [
+    "cleared",
+    "hold_cleared",
+    "mode",
+    "hw_latch",
+    "rearm_nonce"
+   ]
+  },
+  "body_STOP": {
+   "type": "object",
+   "properties": {
+    "mode": {
+     "enum": [
+      "BOOT",
+      "SERVICE_CHARGE",
+      "LAB",
+      "STANDBY",
+      "ARMED_IDLE",
+      "MOVING",
+      "HOLD",
+      "PROTECTIVE_STOP",
+      "HW_INHIBIT",
+      "FAULT"
+     ]
+    },
+    "stops": {
+     "type": "object",
+     "properties": {
+      "hw": {
+       "type": "array",
+       "items": {
+        "enum": [
+         "MODE_NOT_RUN",
+         "ESTOP",
+         "HANDS_ON",
+         "CHARGER",
+         "HEAD_UNDOCKED",
+         "HEAD_LOOP_OPEN",
+         "HEAD_LOOP_SHORT",
+         "J1_ABSENT",
+         "LAB_KEY",
+         "BODY_BUMPER",
+         "WATCHDOG",
+         "MCU_NOT_READY",
+         "VMOT_FAULT"
+        ]
+       }
+      },
+      "sw": {
+       "type": "array",
+       "items": {
+        "enum": [
+         "FIELD_FRONT",
+         "FIELD_REAR",
+         "FIELD_LEFT",
+         "FIELD_RIGHT",
+         "CLIFF_FL",
+         "CLIFF_FR",
+         "CLIFF_RL",
+         "CLIFF_RR",
+         "LOOKAHEAD_L",
+         "LOOKAHEAD_R",
+         "TOF_STALE",
+         "TOF_DISAGREE",
+         "CMD_TIMEOUT",
+         "HOST_LINK_LOST",
+         "STALL",
+         "ENCODER_FAULT",
+         "IMU_FAULT",
+         "TILT",
+         "BATTERY_LOW",
+         "TEMP_RANGE",
+         "HOST_REQUEST",
+         "HEAD_LINK",
+         "LOCALIZATION",
+         "BRAKE_TEST_FAIL"
+        ]
+       }
+      }
+     },
+     "required": [
+      "hw",
+      "sw"
+     ]
+    },
+    "hold": {
+     "type": "array",
+     "items": {
+      "enum": [
+       "LOCAL_PAUSE",
+       "HOST_STOP"
+      ]
+     }
+    },
+    "rearm_nonce": {
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    }
+   },
+   "required": [
+    "mode",
+    "stops",
+    "hold",
+    "rearm_nonce"
+   ]
+  },
+  "body_SET_OP_MODE": {
+   "type": "object",
+   "properties": {
+    "op_mode": {
+     "enum": [
+      "COMMISSIONING",
+      "SURVEY_SHARED",
+      "SURVEY_UNATTENDED",
+      "GUIDED",
+      "LAB",
+      "SERVICE"
+     ]
+    },
+    "caps": {
+     "type": "object",
+     "properties": {
+      "v_fwd_mps": {
+       "type": "number"
+      },
+      "v_rev_mps": {
+       "type": "number"
+      },
+      "w_radps": {
+       "type": "number"
+      }
+     },
+     "required": [
+      "v_fwd_mps",
+      "v_rev_mps",
+      "w_radps"
+     ]
+    }
+   },
+   "required": [
+    "op_mode",
+    "caps"
+   ]
+  },
+  "body_HEAD_POWER": {
+   "type": "object",
+   "properties": {
+    "electronics": {
+     "type": "boolean"
+    },
+    "heater_enable": {
+     "type": "boolean"
+    },
+    "head_presence": {
+     "enum": [
+      "ABSENT",
+      "HEAD_DIRECT",
+      "HEAD_VIA_LAB_EXTENSION",
+      "LAB_EXTENSION_ONLY",
+      "FAULT"
+     ]
+    }
+   },
+   "required": [
+    "electronics",
+    "heater_enable",
+    "head_presence"
+   ]
+  },
+  "body_HEATER": {
+   "type": "object",
+   "properties": {
+    "chassis_setpoint_c": {
+     "type": [
+      "number",
+      "null"
+     ]
+    },
+    "duty_pct": {
+     "type": "number"
+    },
+    "bay_c": {
+     "type": [
+      "number",
+      "null"
+     ]
+    },
+    "sensor_ok": {
+     "type": "boolean"
+    }
+   },
+   "required": [
+    "chassis_setpoint_c",
+    "duty_pct",
+    "bay_c",
+    "sensor_ok"
+   ]
+  },
+  "body_PANEL": {
+   "type": "object",
+   "properties": {
+    "pattern": {
+     "type": "string"
+    },
+    "leds": {
+     "type": "object",
+     "properties": {
+      "ready": {
+       "enum": [
+        "OFF",
+        "ON",
+        "BLINK_SLOW",
+        "BLINK_FAST",
+        "BLINK_2"
+       ]
+      },
+      "moving": {
+       "enum": [
+        "OFF",
+        "ON",
+        "BLINK_SLOW",
+        "BLINK_FAST",
+        "BLINK_2"
+       ]
+      },
+      "hold": {
+       "enum": [
+        "OFF",
+        "ON",
+        "BLINK_SLOW",
+        "BLINK_FAST",
+        "BLINK_2"
+       ]
+      },
+      "fault": {
+       "enum": [
+        "OFF",
+        "ON",
+        "BLINK_SLOW",
+        "BLINK_FAST",
+        "BLINK_2"
+       ]
+      },
+      "charge": {
+       "enum": [
+        "OFF",
+        "ON",
+        "BLINK_SLOW",
+        "BLINK_FAST",
+        "BLINK_2"
+       ]
+      }
+     },
+     "required": [
+      "ready",
+      "moving",
+      "hold",
+      "fault",
+      "charge"
+     ]
+    },
+    "buzzer": {
+     "type": "boolean"
+    }
+   },
+   "required": [
+    "pattern",
+    "leds",
+    "buzzer"
+   ]
+  },
+  "body_CONFIG_GET": {
+   "anyOf": [
+    {
+     "type": "object",
+     "properties": {
+      "key": {
+       "type": "string"
+      },
+      "value": {
+       "type": "number"
+      },
+      "default": {
+       "type": "number"
+      },
+      "min": {
+       "type": "number"
+      },
+      "max": {
+       "type": "number"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "rw": {
+       "type": "boolean"
+      }
+     },
+     "required": [
+      "key",
+      "value",
+      "default",
+      "min",
+      "max",
+      "unit",
+      "rw"
+     ]
+    },
+    {
+     "type": "object",
+     "properties": {
+      "keys": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "total": {
+       "type": "integer"
+      },
+      "offset": {
+       "type": "integer"
+      }
+     },
+     "required": [
+      "keys",
+      "total",
+      "offset"
+     ]
+    }
+   ]
+  },
+  "body_CONFIG_SET": {
+   "type": "object",
+   "properties": {
+    "key": {
+     "type": "string"
+    },
+    "value": {
+     "type": "number"
+    },
+    "old": {
+     "type": "number"
+    },
+    "gen": {
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    },
+    "crc": {
+     "type": "string",
+     "pattern": "^[0-9A-F]{8}$"
+    }
+   },
+   "required": [
+    "key",
+    "value",
+    "old",
+    "gen",
+    "crc"
+   ]
+  },
+  "body_BRAKE_TEST": {
+   "type": "object",
+   "properties": {
+    "passed": {
+     "type": "boolean"
+    },
+    "fail": {
+     "type": "array",
+     "items": {
+      "enum": [
+       "PRECOND_VMOT",
+       "PRECOND_RELAY",
+       "LATCH_NOT_DROPPED",
+       "RELAY_L",
+       "RELAY_R",
+       "VMOT_NOT_REMOVED",
+       "BRIDGE_CURRENT_L",
+       "BRIDGE_CURRENT_R",
+       "WHEEL_MOVED"
+      ]
+     }
+    },
+    "latch_drop_ms": {
+     "type": "integer"
+    },
+    "relay_ms": {
+     "type": "integer"
+    },
+    "vmot_decay_ms": {
+     "type": "integer"
+    },
+    "vmot_end_v": {
+     "type": "number"
+    },
+    "probe_i_a": {
+     "type": "array",
+     "items": {
+      "type": "number"
+     }
+    },
+    "moved_ticks": {
+     "type": "array",
+     "items": {
+      "type": "integer"
+     }
+    },
+    "mode": {
+     "enum": [
+      "BOOT",
+      "SERVICE_CHARGE",
+      "LAB",
+      "STANDBY",
+      "ARMED_IDLE",
+      "MOVING",
+      "HOLD",
+      "PROTECTIVE_STOP",
+      "HW_INHIBIT",
+      "FAULT"
+     ]
+    }
+   },
+   "required": [
+    "passed",
+    "fail",
+    "latch_drop_ms",
+    "relay_ms",
+    "vmot_decay_ms",
+    "vmot_end_v",
+    "probe_i_a",
+    "moved_ticks",
+    "mode"
+   ]
+  }
+ }
+}
