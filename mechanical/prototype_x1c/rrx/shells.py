@@ -218,7 +218,7 @@ def nose_cowl():
         lip = LO().cut(LI()).fuse(gap_fill()).intersect(box(xc + GAP, 200, -200, 200, P.RECEIVER["chin_cut"][1], ZU + 0.01))
         chin = box(xc - 4.0, 200, -200, 200, P.RECEIVER["chin_cut"][1], LATCH_ARM_Z[0]).intersect(LO()).cut(box(xc - 5, xc + GAP, -200, 200, 0, 300))
         fl = flange("x", D.X_NOSE, +1, box(0, 200, -200, 200, 0, 300)).cut(box(0, 200, -SAD["half_y"] - D.WELL_WALL, SAD["half_y"] + D.WELL_WALL, 0, 300))
-        n = fuse(up, lip, chin, fl)
+        n = _union([up, lip, chin, fl])
         feats = []
         for jn, key in (("J1", "j1_receptacle"), ("J2", "j2_receptacle")):
             j, e = P.J_RECEPTACLES[jn], L.env(key)
@@ -243,7 +243,7 @@ def shoulder(s):
     def b():
         reg = box(D.X_DECK + GAP, D.X_NOSE - GAP, 0.0, 200, 0, 300)
         p = upper_master().intersect(reg)
-        p = fuse(p, flange("x", D.X_NOSE, -1, reg), flange("x", D.X_DECK, +1, reg))
+        p = _union([p, flange("x", D.X_NOSE, -1, reg), flange("x", D.X_DECK, +1, reg)])
         for (y, z) in x_joint_points(D.X_NOSE, zs_side=(74.0, 88.0)):
             bo, br = insert_boss_x(D.X_NOSE, y, z, -1)
             p = p.fuse(bo.intersect(UI())).cut(br)
@@ -267,7 +267,7 @@ def rear_deck(s):
         reg = box(-400, D.X_DECK - GAP, 0.0, 200, 0, 300)
         p = upper_master().intersect(reg)
         curb = box(HUMP_X[0], HUMP_X[1], B["hump_half_y"] + 0.3, B["hump_half_y"] + 6.3, 0, 300).intersect(UI()).cut(UINS())
-        p = fuse(p, flange("x", D.X_DECK, -1, reg), curb)
+        p = _union([p, flange("x", D.X_DECK, -1, reg), curb])
         for (y, z) in x_joint_points(D.X_DECK, zs_side=(76.0, 98.0), ys_roof=(104.0,)):
             p = p.cut(cyl(D.CLEAR["M3"] / 2, 12, (D.X_DECK - 8, y, z), (1, 0, 0)))
         for x in HUMP_SCREW_X:
@@ -443,10 +443,9 @@ def door():
         plate = box(FRAME_X[0] - 3.3, FRAME_X[0] - 0.3, -hy, hy, 100.0, B["hump_z"][1] - 0.5).cut(UI())
         inside = UO().fuse(LO()).fuse(gap_fill())
         skirt = box(-400, FRAME_X[0] - 0.3, -hy + 0.2, hy - 0.2, 86.0, 142.0).cut(box(-401, FRAME_X[0], -55.0, 55.0, 30, 160)).intersect(inside)
-        d = fuse(cap, plate, skirt)
+        d = _union([cap, plate, skirt])
         for s in (1, -1):                                                # ribs that block the door unless the bail is fully up
             d = d.fuse(box(-400, -242.5, s * 49.5, s * 53.5, 92.0, 124.0).intersect(inside))
-        d = d.clean()
         from .battery import DOOR_PEG
         for s in (1, -1):                                                # hook-and-swing: the door is lowered onto the jamb pegs tilted back, then swung shut
             slot = box(DOOR_PEG[0] - 2.3, DOOR_PEG[0] + 2.3, s * 54.0, s * 58.5, 80.0, DOOR_PEG[1] + 2.3)   # hook slots, open downward

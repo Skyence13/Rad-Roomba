@@ -231,3 +231,52 @@ def render(items, path, azim=-55.0, elev=28.0, size=(1500, 950), tol=0.35, bg=(2
         for k, t in enumerate(labels):
             dr.text((24, Hh - 30 - 24 * (len(labels) - 1 - k)), t, fill=(40, 60, 66), font=f2)
     im.save(path)
+
+
+# ------------------------------------------------------------------------------------------------ filled sections
+def section_faces(shape, origin, normal, view):
+    """Cut faces of `shape` by a plane: list of (outer polygon, [hole polygons]) in the drawing coordinates of `view`."""
+    from OCP.BRepTools import BRepTools_WireExplorer
+    from OCP.TopAbs import TopAbs_REVERSED
+    pl = cq.Face.makePlane(2000, 2000, cq.Vector(*origin), cq.Vector(*normal))
+    try:
+        cut = shape.intersect(pl)
+    except Exception:      # noqa: BLE001
+        return []
+    out = []
+
+    def wire_pts(w):
+        ex = BRepTools_WireExplorer(w.wrapped)
+        pts = []
+        while ex.More():
+            e = cq.Edge(ex.Current())
+            p = _edge_pts(e, 10)
+            if ex.Current().Orientation() == TopAbs_REVERSED:
+                p = p[::-1]
+            pts += [proj(view, q) for q in p]
+            ex.Next()
+        return pts
+
+    for f in cut.Faces():
+        try:
+            out.append((wire_pts(f.outerWire()), [wire_pts(w) for w in f.innerWires()]))
+        except Exception:      # noqa: BLE001
+            continue
+    return out
+
+
+def fill_faces(ax, faces, color, alpha=0.85, lw=0.4, hatch=None, zorder=1):
+    from matplotlib.patches import PathPatch
+    from matplotlib.path import Path as MP
+    for outer, holes in faces:
+        verts, codes = [], []
+        for ring in [outer] + holes:
+            if len(ring) < 3:
+                continue
+            verts += ring + [ring[0]]
+            codes += [MP.MOVETO] + [MP.LINETO] * (len(ring) - 1) + [MP.CLOSEPOLY]
+        if verts:
+            ax.add_patch(PathPatch(MP(verts, codes), fc=color, ec="k", lw=lw, alpha=alpha, hatch=hatch, zorder=zorder))
+
+
+SEC_VIEWS = {"y": ((0, -1, 0), (1, 0, 0)), "x": ((1, 0, 0), (0, 1, 0)), "z": ((0, 0, 1), (1, 0, 0))}   # plane normal axis -> view (drawing x, y = (x,z), (y,z), (x,y))
