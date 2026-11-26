@@ -1,55 +1,51 @@
 {
  "summary": {
-  "volumetric interference": "PASS -- none",
-  "containment in Rev E cavity": "PASS -- all internal parts inside",
-  "head inside contract Rev E envelope": "PASS -- z 7.0..45.0",
+  "volumetric interference": "FAIL -- 4 clash(es)",
+  "containment in Rev E cavity": "FAIL -- 1 part(s) outside",
+  "head inside the proposed envelope (CCR-11) and the contract z ceiling": "PASS -- x 68.8..192.2, z 7.0..45.0; shoes reach back to x 30.0",
   "wheel and caster on the floor plane": "PASS -- z = 0 +- 0.05",
   "ToF centre rays": "PASS -- all 11 clear",
   "LiDAR scan plane": "PASS -- clear",
-  "service sweeps (battery, wheels, head, grip hand zone)": "PASS -- free",
+  "service sweeps (battery, wheels, head, grip hand zone)": "FAIL -- {'battery_removal_sweep': [('upper_fairing_E', 127396.0)]}",
   "J1/J2 coupling-nut grasp zone (45 mm radial) free": "PASS -- free (see service section)",
   "cable corridors": "PASS -- free"
  },
  "extents": {
-  "overall x (tail .. leading rail)": "-271.9 .. 265.0  (length 536.9)",
+  "overall x (tail .. leading rail)": "-271.9 .. 192.2  (length 464.1)",
   "overall y": "-175.0 .. 175.0  (width 350.0)",
-  "overall z": "0.0 .. 216.0",
-  "body shell x / y / z": "-271.9..102.4 / -146.4..146.4 / 32.9..143.0  (Rev D: -165.0..102.3 / +-112.6 / 32.9..117.6)",
+  "overall z": "0.0 .. 230.0",
+  "body shell x / y / z": "-271.9..102.4 / -146.4..146.4 / 32.9..166.0  (Rev D: -165.0..102.3 / +-112.6 / 32.9..117.6)",
   "width across tyres": "295.0",
-  "head envelope x / y / z": "138.8..265.0 / -175.0..175.0 / 7.0..45.0  (contract ceiling z (5.0, 50.0))",
-  "tail swept radius about base_link": "278  (head outer corner 318)",
-  "ground clearance: body underside / neck skid / head rail": "32.9 / 21.7 / 7.0",
+  "head envelope x / y / z": "68.8..192.2 / -175.0..175.0 / 7.0..45.0; shoes to x 30.0  (contract ceiling z (5.0, 50.0))",
+  "swept radius about base_link: tail / head outer corner": "278 / 260",
+  "ground clearance: body underside / receiver channels / head rail": "32.9 / 12.0 / 7.0",
   "lowest non-running-gear solids": "head_frame_E 9.6; S0_Guard_webs 9.6; S1_Guard_webs 9.6; S2_Guard_webs 9.6",
   "caster contact / wheel contact z": "0.00 / 0.00",
-  "grip bar z / LiDAR top z": "153.0..175.0 / 216.0"
+  "grip bar z / LiDAR top z": "153.0..175.0 / 230.0"
  },
- "clash": [],
+ "clash": [
+  [
+   "chassis_plate",
+   "tof_cliff_fl",
+   1.5
+  ],
+  [
+   "chassis_plate",
+   "tof_cliff_fr",
+   1.5
+  ],
+  [
+   "motor_mount_L",
+   "tof_cliff_fl",
+   70.0
+  ],
+  [
+   "motor_mount_R",
+   "tof_cliff_fr",
+   70.0
+  ]
+ ],
  "close": [
-  [
-   "Neck_Fixed_Shroud",
-   "Key_socket",
-   0.6
-  ],
-  [
-   "Neck_Fixed_Lower_Skid",
-   "Key_socket",
-   0.6
-  ],
-  [
-   "Neck_Asymmetric_Keyed_Tongue",
-   "Key_socket",
-   0.5
-  ],
-  [
-   "Neck_Asymmetric_Keyed_Tongue",
-   "Captive_pin_envelope",
-   0.25
-  ],
-  [
-   "Neck_Asymmetric_Keyed_Tongue",
-   "head_frame_E",
-   1.87
-  ],
   [
    "chassis_plate",
    "caster",
@@ -69,6 +65,21 @@
    "chassis_plate",
    "chassis_heater_pad",
    1.2
+  ],
+  [
+   "receiver_channel_L",
+   "head_shoe_L",
+   0.5
+  ],
+  [
+   "receiver_channel_R",
+   "head_shoe_R",
+   0.5
+  ],
+  [
+   "head_latch_envelope",
+   "head_cover_E",
+   1.0
   ],
   [
    "caster_bracket",
@@ -101,49 +112,14 @@
    0.5
   ],
   [
-   "electronics_bridge",
    "battery_cassette",
-   1.5
-  ],
-  [
-   "electronics_bridge",
    "battery_tunnel_wall_L",
-   1.5
-  ],
-  [
-   "electronics_bridge",
-   "battery_tunnel_wall_R",
-   1.5
-  ],
-  [
-   "saddle_service_cover",
-   "battery_cassette",
-   1.5
-  ],
-  [
-   "saddle_service_cover",
-   "battery_tunnel_wall_L",
-   1.5
-  ],
-  [
-   "saddle_service_cover",
-   "battery_tunnel_wall_R",
-   1.5
-  ],
-  [
-   "battery_cassette",
-   "battery_tunnel_roof",
    1.0
   ],
   [
    "battery_cassette",
-   "battery_tunnel_wall_L",
-   1.5
-  ],
-  [
-   "battery_cassette",
    "battery_tunnel_wall_R",
-   1.5
+   1.0
   ],
   [
    "battery_cassette",
@@ -153,87 +129,22 @@
   [
    "battery_tunnel_wall_L",
    "CM5_carrier_assembly",
-   0.5
+   1.0
   ],
   [
    "battery_tunnel_wall_L",
    "rearm_start_body",
-   0.54
+   0.04
   ],
   [
    "battery_tunnel_wall_R",
    "hands_on_body",
-   0.54
+   0.04
   ],
   [
    "CM5_carrier_assembly",
    "rearm_start_body",
    1.07
-  ],
-  [
-   "Key_socket",
-   "Captive_pin_envelope",
-   0.3
-  ],
-  [
-   "Key_socket",
-   "S1_Reference_tile_envelope",
-   0.2
-  ],
-  [
-   "Key_socket",
-   "S1_Reference_guide",
-   0.2
-  ],
-  [
-   "Key_socket",
-   "S1_Reference_carrier",
-   0.5
-  ],
-  [
-   "Key_socket",
-   "S2_Reference_tile_envelope",
-   0.2
-  ],
-  [
-   "Key_socket",
-   "S2_Reference_guide",
-   0.2
-  ],
-  [
-   "Key_socket",
-   "S2_Reference_carrier",
-   0.5
-  ],
-  [
-   "Key_socket",
-   "S1_retention_pad_and_heater",
-   0.2
-  ],
-  [
-   "Key_socket",
-   "S2_retention_pad_and_heater",
-   0.2
-  ],
-  [
-   "Key_socket",
-   "head_spreader_plate",
-   1.2
-  ],
-  [
-   "Key_socket",
-   "head_cover_E",
-   0.5
-  ],
-  [
-   "Captive_pin_envelope",
-   "head_frame_E",
-   0.3
-  ],
-  [
-   "Captive_pin_envelope",
-   "head_cover_E",
-   1.5
   ],
   [
    "Leading_contact_rail",
@@ -381,6 +292,16 @@
    1.1
   ],
   [
+   "head_shoe_L",
+   "head_cover_E",
+   0.4
+  ],
+  [
+   "head_shoe_R",
+   "head_cover_E",
+   0.4
+  ],
+  [
    "head_spreader_plate",
    "RR-HEAD-ACQ_bottom_parts",
    0.5
@@ -396,12 +317,27 @@
    0.9
   ]
  ],
- "outside": [],
+ "outside": [
+  [
+   "RR-PANEL",
+   [
+    -35.0,
+    116.0,
+    113.8,
+    -15.2
+   ]
+  ]
+ ],
  "service": {
   "battery_removal_sweep": {
    "direction": "-x (rearward through the tail-cap hatch)",
    "travel_mm": 165.0,
-   "blocked_by": []
+   "blocked_by": [
+    [
+     "upper_fairing_E",
+     127396.0
+    ]
+   ]
   },
   "grip_hand_zone": {
    "box": "45 mm in front of, behind and below the bar, 130 mm wide",
@@ -486,14 +422,14 @@
   }
  },
  "corridors": {
-  "tunnel_top_spine": {
+  "hump_side_left": {
    "box": [
-    -198,
+    -118,
     -72,
-    -40,
-    40,
-    114,
-    121
+    62,
+    76,
+    100,
+    116
    ],
    "use": "LiDAR Ethernet/12 V, RR-PANEL, rear ToF and deck controls to the board rear corners",
    "blocked_by": []
@@ -575,9 +511,9 @@
   {
    "sensor": "tof_cliff_fl",
    "start": [
-    49.0,
-    74.7,
-    41.0
+    24.0,
+    108.0,
+    36.0
    ],
    "dir": [
     0.0,
@@ -585,9 +521,9 @@
     -1.0
    ],
    "floor_hit_xy_range": [
-    49.0,
-    74.7,
-    41.0
+    24.0,
+    108.0,
+    36.0
    ],
    "centre_ray_hits": [],
    "cone_edge_hits": {}
@@ -595,9 +531,9 @@
   {
    "sensor": "tof_cliff_fr",
    "start": [
-    49.0,
-    -74.7,
-    41.0
+    24.0,
+    -108.0,
+    36.0
    ],
    "dir": [
     0.0,
@@ -605,9 +541,9 @@
     -1.0
    ],
    "floor_hit_xy_range": [
-    49.0,
-    -74.7,
-    41.0
+    24.0,
+    -108.0,
+    36.0
    ],
    "centre_ray_hits": [],
    "cone_edge_hits": {}
@@ -660,14 +596,14 @@
     162.0
    ],
    "dir": [
-    0.965,
-    0.101,
-    -0.242
+    0.946,
+    0.099,
+    -0.309
    ],
    "floor_hit_xy_range": [
-    647.7,
-    158.9,
-    669.6
+    497.4,
+    143.1,
+    524.2
    ],
    "centre_ray_hits": [],
    "cone_edge_hits": {}
@@ -680,14 +616,14 @@
     162.0
    ],
    "dir": [
-    0.965,
-    -0.101,
-    -0.242
+    0.946,
+    -0.099,
+    -0.309
    ],
    "floor_hit_xy_range": [
-    647.7,
-    -158.9,
-    669.6
+    497.4,
+    -143.1,
+    524.2
    ],
    "centre_ray_hits": [],
    "cone_edge_hits": {}
@@ -735,9 +671,9 @@
   {
    "sensor": "tof_prox_rc",
    "start": [
-    -242.8,
+    -236.0,
     0.0,
-    118.0
+    158.0
    ],
    "dir": [
     -1.0,
@@ -782,14 +718,14 @@
   }
  ],
  "lidar": {
-  "scan_z": 196.0,
+  "scan_z": 210.0,
   "blocked": []
  },
  "head_bounds": [
-  138.79999990000002,
+  30.0,
   -175.0,
   7.0,
-  265.0,
+  192.20000000000002,
   175.0,
   45.0
  ],
@@ -799,6 +735,6 @@
   32.918882519513225,
   102.35411332970963,
   146.38826569855505,
-  142.98000010000004
+  166.0
  ]
 }

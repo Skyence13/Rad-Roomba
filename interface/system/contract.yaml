@@ -129,8 +129,8 @@ safety_chain:
 # ---------------------------------------------------------------- enumerations shared by firmware, ROS and UI
 enums:
   chassis_mode: [BOOT, SERVICE_CHARGE, LAB, STANDBY, ARMED_IDLE, MOVING, HOLD, PROTECTIVE_STOP, HW_INHIBIT, FAULT]
-  hw_inhibit_reason: [MODE_NOT_RUN, ESTOP, HANDS_ON, CHARGER, HEAD_UNDOCKED, HEAD_LOOP_OPEN, HEAD_LOOP_SHORT, J1_ABSENT, LAB_KEY, BODY_BUMPER, WATCHDOG, MCU_NOT_READY, VMOT_FAULT]
-  protective_stop_reason: [FIELD_FRONT, FIELD_REAR, FIELD_LEFT, FIELD_RIGHT, CLIFF_FL, CLIFF_FR, CLIFF_RL, CLIFF_RR, LOOKAHEAD_L, LOOKAHEAD_R, TOF_STALE, TOF_DISAGREE, CMD_TIMEOUT, HOST_LINK_LOST, STALL, ENCODER_FAULT, IMU_FAULT, TILT, BATTERY_LOW, TEMP_RANGE, HOST_REQUEST, HEAD_LINK, LOCALIZATION, BRAKE_TEST_FAIL]
+  hw_inhibit_reason: [MODE_NOT_RUN, ESTOP, HANDS_ON, CHARGER, HEAD_UNDOCKED, HEAD_LOOP_OPEN, HEAD_LOOP_SHORT, J1_ABSENT, LAB_KEY, BODY_BUMPER, WATCHDOG, MCU_NOT_READY, VMOT_FAULT, LATCH_UNEXPLAINED]
+  protective_stop_reason: [FIELD_FRONT, FIELD_REAR, FIELD_LEFT, FIELD_RIGHT, CLIFF_FL, CLIFF_FR, CLIFF_RL, CLIFF_RR, LOOKAHEAD_L, LOOKAHEAD_R, TOF_STALE, TOF_DISAGREE, CMD_TIMEOUT, HOST_LINK_LOST, STALL, ENCODER_FAULT, IMU_FAULT, TILT, BATTERY_LOW, TEMP_RANGE, HOST_REQUEST, HEAD_LINK, LOCALIZATION, BRAKE_TEST_FAIL, STOP_ESCALATED]
   op_mode: [COMMISSIONING, SURVEY_SHARED, SURVEY_UNATTENDED, GUIDED, LAB, SERVICE]
   head_presence: [ABSENT, HEAD_DIRECT, HEAD_VIA_LAB_EXTENSION, LAB_EXTENSION_ONLY, FAULT]
   evidence_class: [calculated, simulated, tool-checked, physically-measured, pending]
@@ -218,7 +218,8 @@ head_gate_record:
 
 # ---------------------------------------------------------------- chassis link (host <-> motion MCU), protocol "RR-CHS 1.0"
 chassis_link:
-  transport: "USB 2.0 FS CDC-ACM from the motion MCU to the CM5. Same record framing as head ICD section 4: one UTF-8 JSON object, TAB, 8 uppercase hex CRC-32 (zlib) of the JSON bytes, LF. Max record 2048 bytes. Host polls; one transaction outstanding; retry with the same id returns the cached reply."
+  transport: "USB 2.0 FS CDC-ACM from the motion MCU to the CM5. Same record framing as head ICD section 4: one UTF-8 JSON object, TAB, 8 uppercase hex CRC-32 (zlib) of the JSON bytes, LF. Max record 4096 bytes (raised from 2048 because a full STATE reply is about 1.8 kB before fault lists; chassis CR 1). Host polls; one transaction outstanding; a retry with the same id and identical bytes returns the cached reply. HELLO opens the session and is required before any other op except TIME; a new HELLO while moving latches HOST_LINK_LOST. No request for 1 s while armed latches HOST_LINK_LOST."
+  authoritative_text: "interface/chassis_icd.md and interface/chassis_link.schema.json (owner: chassis firmware). The op summaries below are the original contract table; additive members accepted on 2026-11-26: op DIAG; DRIVE request issued_us and reply stationary {is_stationary, since_us}, applied, motion, allow, v_cap_mps, hold, rearm_nonce; STOP optional reason so the host can assert FIELD_FRONT/LEFT/RIGHT/REAR, HEAD_LINK, LOCALIZATION; REARM_SW nonce is chassis-issued (rearm_nonce). Per-op_mode speed caps in ICD 6.1 are provisional pending braking and personnel-protection trials. Motion requires a passed BRAKE_TEST since boot. Head branch power is forced off at every MCU boot."
   envelope: {request: '{"type":"REQ","v":"1.0","id":<u32>,"op":<str>,"args":{...}}', response: '{"type":"RSP","v":"1.0","id":<u32>,"status":<str>,"body":{...}}'}
   status: [OK, BAD_ARG, UNSUPPORTED, REJECTED, BUSY, FAULT]
   ops:

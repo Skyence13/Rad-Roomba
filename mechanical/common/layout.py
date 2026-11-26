@@ -82,7 +82,8 @@ def cached(key, builder):
 # ----------------------------------------------------------------------------------------------------- body shells
 def body_shells():
     B = P.BATTERY_BAY
-    key_common = [P.BODY_ROWS, P.WHEEL_Y, P.WHEEL_ARCH_R, P.WHEEL_ARCH_INNER_Y, P.SADDLE, B["hatch_x"], B["hatch_half_y"], B["hatch_z"], P.RECEIVER["chin_cut"]]
+    key_common = [P.BODY_ROWS, P.WHEEL_Y, P.WHEEL_ARCH_R, P.WHEEL_ARCH_INNER_Y, P.SADDLE, B["hatch_x"], B["hatch_half_y"], B["hatch_z"], P.RECEIVER["chin_cut"], B["hump_x"], B["hump_half_y"], B["hump_z"], B["hump_wall"]]
+    hump_open = L.box(B["hump_x"][0] - 10, B["hump_x"][1] - B["hump_wall"], -B["hump_half_y"] + B["hump_wall"], B["hump_half_y"] - B["hump_wall"], B["hump_z"][0], 260)
     chin = L.box(P.RECEIVER["chin_cut"][0], 140, -200, 200, 0, P.RECEIVER["chin_cut"][1])
 
     def cutters():
@@ -94,7 +95,7 @@ def body_shells():
     def upper():
         arches, sad, hatch = cutters()
         s = loft(P.BODY_ROWS["upper_outer"]).cut(loft(P.BODY_ROWS["upper_inner"]))
-        for t in (*arches, sad):
+        for t in (*arches, sad, hump_open):
             s = s.cut(t)
         return s
 
@@ -702,6 +703,7 @@ def main(argv=None):
     bb = bounds(allp)
     body = bounds(cq.Compound.makeCompound([p.shape for p in parts if p.group == "shell"]))
     headbb = bounds(cq.Compound.makeCompound([p.shape for p in head]))
+    mainbb = bounds(cq.Compound.makeCompound([p.shape for p in head if not p.name.startswith("head_shoe")]))
     low = sorted((p.bb[2], p.name) for p in parts if p.group not in ("head_rails", "caster") and not p.name.startswith("wheel"))[:4]
     extents = {
         "overall x (tail .. leading rail)": f"{bb[0]:.1f} .. {bb[3]:.1f}  (length {bb[3] - bb[0]:.1f})",
@@ -716,7 +718,6 @@ def main(argv=None):
         "caster contact / wheel contact z": f"{min(p.bb[2] for p in parts if p.group == 'caster'):.2f} / {min(p.bb[2] for p in parts if p.name.startswith('wheel')):.2f}",
         "grip bar z / LiDAR top z": f"{P.GRIP['bar_bottom_z']:.1f}..{P.GRIP['bar_top_z']:.1f} / {P.LIDAR_POSE['base_z'] + L.env('lidar')['h']:.1f}",
     }
-    mainbb = bounds(cq.Compound.makeCompound([p.shape for p in head if not p.name.startswith("head_shoe")]))
     he = P.HEAD_ENV_E
     head_ok = mainbb[5] <= P.HEAD_ENV_E_CEILING["z"][1] + 1e-6 and mainbb[2] >= P.HEAD_ENV_E_CEILING["z"][0] - 1e-6 \
         and mainbb[0] >= he["x"][0] - 1e-6 and mainbb[3] <= he["x"][1] + 1e-6 and abs(mainbb[1]) <= 175 + 1e-6 and mainbb[4] <= 175 + 1e-6

@@ -292,7 +292,7 @@ CHS_MAIN = {
     "hole_d": 3.2, "hole_keepout_d": 7.0, "screw": "M3",
 }
 TOF_BOARD = {"outline": tuple(BOARDS_C["RR-TOF"]["outline_mm"]), "thickness": 1.6, "depth_behind_window": 6.0}
-PANEL_BOARD = {"outline": tuple(BOARDS_C["RR-PANEL"]["outline_mm"]), "thickness": 1.6, "center": (-70.0, 104.0), "long_axis": "x", "max_top": 8.0}
+PANEL_BOARD = {"outline": tuple(BOARDS_C["RR-PANEL"]["outline_mm"]), "thickness": 1.6, "center": (-80.0, 100.0), "long_axis": "x", "max_top": 8.0}
 ELECTRONICS_BRIDGE_Z = (78.0, 80.0)    # 2 mm tray over the motors carrying RR-CHS-MAIN (screen + H-bridge heat path)
 
 # --------------------------------------------------------------------------- body packaging (layout decisions)
@@ -374,8 +374,8 @@ _la_r = skin_point(157.0, 100.0)
 _px_c = skin_point(180.0, 118.0)
 _px_s = skin_point(152.0, 80.0)
 TOF_SENSORS = {   # id: position of the sensor aperture (mm, base_link), unit boresight, purpose
-    "tof_cliff_fl": {"xyz": (24.0, 108.0, 36.0), "dir": (0.0, 0.0, -1.0), "purpose": "downward cliff, on the left drive pod front: 24 mm ahead of the axle, 14.5 mm inboard of the left tyre"},
-    "tof_cliff_fr": {"xyz": (24.0, -108.0, 36.0), "dir": (0.0, 0.0, -1.0), "purpose": "downward cliff, on the right drive pod front"},
+    "tof_cliff_fl": {"xyz": (46.0, 108.0, 31.0), "dir": (0.0, 0.0, -1.0), "purpose": "downward cliff on the outboard end of the chassis front beam: 46 mm ahead of the axle, 14.5 mm inboard of the left tyre"},
+    "tof_cliff_fr": {"xyz": (46.0, -108.0, 31.0), "dir": (0.0, 0.0, -1.0), "purpose": "downward cliff on the outboard end of the chassis front beam, right"},
     "tof_cliff_rl": {"xyz": (_cliff_r[0], _cliff_r[1], 41.0), "dir": (0.0, 0.0, -1.0), "purpose": "downward cliff, rear left of the caster (reverse and pivot)"},
     "tof_cliff_rr": {"xyz": (_cliff_r[0], -_cliff_r[1], 41.0), "dir": (0.0, 0.0, -1.0), "purpose": "downward cliff, rear right of the caster (reverse and pivot)"},
     "tof_look_fl": {"xyz": (GRIP["center_x"] + GRIP["bar_x"] / 2, 91.0, 162.0), "dir": _dir(6.0, LOOKAHEAD_FWD_DEPRESSION), "purpose": "oblique look-ahead over the head, left: floor/drop-off ahead of the leading rail"},
@@ -394,9 +394,9 @@ def _deck(x, y):
 
 PANEL_CONTROLS = {   # centre of the control on the outer skin, actuation axis = local skin normal
     "estop": {"xyz": _deck(-120.0, -98.0), "desc": "latching E-stop, 22 mm, 2 NC positive opening (ESTOP)"},
-    "hands_on": {"xyz": _deck(-172.0, -92.0), "desc": "HANDS-ON maintained illuminated pushbutton (HANDS_ON)"},
+    "hands_on": {"xyz": _deck(-172.0, -97.0), "desc": "HANDS-ON maintained illuminated pushbutton (HANDS_ON)"},
     "mode_selector": {"xyz": _deck(-135.0, 98.0), "desc": "master OFF / SERVICE / RUN selector (MODE_RUN)"},
-    "rearm_start": {"xyz": _deck(-172.0, 92.0), "desc": "REARM / Start, guarded momentary NO"},
+    "rearm_start": {"xyz": _deck(-172.0, 97.0), "desc": "REARM / Start, guarded momentary NO"},
     "pause_stop": {"xyz": _deck(-84.0, -112.0), "desc": "Pause / Stop momentary"},
     "annunciator": {"xyz": _deck(*PANEL_BOARD["center"]), "desc": "RR-PANEL: five status light pipes + buzzer port, left deck beside the grip, long axis along x"},
 }
