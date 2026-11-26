@@ -2,8 +2,8 @@
 
 Evidence classes: calculated / simulated / tool-checked. Nothing here is physically measured.
 All calibration and profile data are synthetic (`field_use_approved: false`); the yellowcake
-profile is present and unconfigured. Observed results are in `README.md` §"Observed results"
-and in `evidence/*/evidence.json`; this file says what exists, what is thin and what is missing.
+profile is present and unconfigured. Observed results are in the verification log below and in
+`evidence/*/evidence.json`; this file says what exists, what is thin and what is missing.
 
 ## Verification log (close-out, 2026-11-26; filled in as runs complete)
 
@@ -120,7 +120,8 @@ Python fakes or real-time emulators; "tool-checked" = headless browser / unit to
   nodes, and those two nodes were built but **never run** (not covered by any test).
 - **Startup ordering** is enforced by the mission prerequisites check, not by ROS lifecycle nodes.
 - **TF**: the robot node publishes `map → base_link` only (no separate `odom` frame, CR-11, logged for a later decision).
-- **Along-trailer reference** (CR-07 → IB-30) and **cell statistics** (CR-08/09 → IB-31): as described in CONTRACT_CHANGE_REQUESTS.md, decisions deferred.
+- **Cell statistics** (CR-08/09 → IB-31): as described in CONTRACT_CHANGE_REQUESTS.md, decision deferred.
+- **Along-trailer reference** (CR-07 → IB-30, implemented): rule enforced at arming; between end references x is odometry only and credit is withheld when the budget is exceeded.
 - **The `GuidedVisit` action server** is implemented and builds; it was not called by a test
   (the scenarios and the smoke test use the command service / in-process calls).
 - **Wall strips**: with the default reverse-entry wall tracks ~0.049 m per wall remains (0.137 m with
@@ -130,19 +131,25 @@ Python fakes or real-time emulators; "tool-checked" = headless browser / unit to
 - **Blocked-strip replanning** is "defer the task, retry once after the other passes"; there is no
   path search around an obstacle.
 - **Scan evidence at 0.10 m/s does not meet the 0.20 Bq/cm² goal** with the demo calibration
-  (D# ≈ 0.35 per 0.1 m cell); s01 runs at 0.03 m/s where the median cell is at 0.20.
+  (D# ≈ 0.35 per 0.1 m cell); s01 runs at 0.03 m/s where the median cell is at 0.18–0.20.
 - **LiDAR**: no motion de-skew; range 12 m and noise are assumptions. Reverse moves rely on the
   chassis rear field (CR-10).
 - **Replay** rebuilds every product from the journal (raw head wire stream, recorded poses and
   supervisor marks). The trajectory is replayed as recorded, not recomputed from LiDAR scans;
   raw scans are not archived.
-- **Web**: plain HTTP, demo accounts with trivial passwords, no TLS, no session re-authentication
-  for hand-off. Browser-level tests and screenshots were **not** made (`evidence/ui/` is empty).
+- **Web**: plain HTTP, demo accounts with trivial passwords (now marked and warned), no TLS, no real
+  authentication, no session re-authentication for hand-off — all **required before field use**.
+  Browser-level evidence: one Playwright run (14 checks) against the stand-alone simulator, taken
+  before the wall-track default was switched on (pages unaffected); no cross-browser or accessibility test.
 - **Serial transports** are implemented with pyserial and untested (no hardware).
 - **Head DIAG** bodies are archived; nothing consumes them. `STATUS`, `FAULT_CLEAR`, `ENG_*` are unused.
 - **Multi-pack-swap step-and-count**: resume-as-new-epoch is tested once on a continuous scan
   (s12); a step-and-count mission across a restart was not run.
-- **`colcon test`** was not run; the unit and scenario suites are run with pytest on the sources.
+- **`colcon test`** was not run (not part of `tools/test.sh all`); the unit and scenario suites are run with
+  pytest on the sources. The workspace was not rebuilt after the close-out edits (`--symlink-install`
+  links the edited sources); `tools/build.sh` should be run once before the next ROS run.
+- **Localisation unit tests**: `rr_localization` still has no unit test file; the door-target path is
+  exercised by s13 only.
 
 ## Failed or flaky
 
