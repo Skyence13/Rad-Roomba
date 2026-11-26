@@ -20,9 +20,10 @@ for i, (x, y) in enumerate(((4, 4), (96, 4), (4, 76), (96, 76))):
 board.cutout_rect(50.0, 76.0, 12.0, 3.0, radius=1.0)
 board.keepout("KO_ANT", polygon=[(80, 60), (92, 60), (92, 72), (80, 72)], footprints=True)
 board.zone("GND", ["In1.Cu"], connect="solid")
-board.zone("+3V3", ["In2.Cu"], connect="solid")
-board.zone("+5V", ["In2.Cu"], polygon=[(0, 0), (30, 0), (30, 30), (0, 30)], priority=1, connect="solid")
-board.zone("GND", ["F.Cu", "B.Cu"])
+# split power plane: two NON-overlapping polygons (Freerouting rejects overlapping plane areas)
+board.zone("+3V3", ["In2.Cu"], polygon=[(30.5, 0), (100, 0), (100, 80), (0, 80), (0, 30.5), (30.5, 30.5)], connect="solid")
+board.zone("+5V", ["In2.Cu"], polygon=[(0, 0), (30, 0), (30, 30), (0, 30)], connect="solid")
+# no GND pours on the outer signal layers: every GND/power pad gets its own plane via (plane fan-out)
 board.text("{name} rev {rev} {date}", 50, 2.0, size=1.2)
 # measured: 25 passes ~6.5 min -> 4 connections left open; 40 passes / wider spacing was not better
 board.route(passes=30, timeout=900, optimizer=False)

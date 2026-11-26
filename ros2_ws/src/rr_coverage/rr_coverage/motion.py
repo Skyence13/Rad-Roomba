@@ -94,6 +94,10 @@ class Mover:
         if why:
             self._hold(why, stop=False)
             return
+        rej, t_rej = self.chassis.nonzero_reject
+        if rej and self.prim is not None and t_rej > self.prim.get("_t0", 0):
+            self._hold("DRIVE_REJECTED:" + str(rej), stop=False)      # e.g. DIR_INHIBITED by the rear field
+            return
         if not self.pose_ok:
             self.chassis.stop("PROTECTIVE", "LOCALIZATION")
             self._hold("LOCALIZATION", stop=False)

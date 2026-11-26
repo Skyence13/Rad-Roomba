@@ -1,0 +1,1790 @@
+{
+    "$schema": "https://schemas.kicad.org/erc.v1.json",
+    "coordinate_units": "mm",
+    "date": "",
+    "included_severities": [
+        "error",
+        "warning",
+        "exclusion"
+    ],
+    "kicad_version": "9.0.9",
+    "sheets": [
+        {
+            "path": "/",
+            "uuid_path": "/24b58d30-9ba2-5335-8109-54a89c9ea41f",
+            "violations": [
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP1 [TestPoint]",
+                            "pos": {
+                                "x": 2.3876,
+                                "y": 0.9398
+                            },
+                            "uuid": "33b29df6-c883-5965-85e3-4bdcd4aef412"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Global label not connected anywhere else in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'EN_SRC'",
+                            "pos": {
+                                "x": 3.3528,
+                                "y": 0.5715
+                            },
+                            "uuid": "5aa7b931-f7d4-53d4-8b3e-e03d361259e8"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "global_label_dangling"
+                },
+                {
+                    "description": "Global label not connected anywhere else in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'CH_N3'",
+                            "pos": {
+                                "x": 0.762,
+                                "y": 0.9525
+                            },
+                            "uuid": "be07aa3d-6eed-5f46-80b1-697430aaac64"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "global_label_dangling"
+                },
+                {
+                    "description": "Global label not connected anywhere else in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'K1_SET'",
+                            "pos": {
+                                "x": 2.6162,
+                                "y": 0.4191
+                            },
+                            "uuid": "569f0b9b-fb48-5b48-8d15-8a49afec0305"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "global_label_dangling"
+                },
+                {
+                    "description": "Global label not connected anywhere else in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'CH_N1'",
+                            "pos": {
+                                "x": 2.9972,
+                                "y": 0.5207
+                            },
+                            "uuid": "801886d7-f225-5cf2-8ad3-202cfa621373"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "global_label_dangling"
+                },
+                {
+                    "description": "Global label not connected anywhere else in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'HANDS_LAMP_P'",
+                            "pos": {
+                                "x": 2.4638,
+                                "y": 2.1971
+                            },
+                            "uuid": "f9d54f16-34e0-5a9e-8507-38b1b9d44b43"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "global_label_dangling"
+                },
+                {
+                    "description": "Global label not connected anywhere else in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'HANDS_LAMP_K'",
+                            "pos": {
+                                "x": 2.8702,
+                                "y": 2.0574
+                            },
+                            "uuid": "c2485741-5afa-5327-8af2-7be5ee13f1b5"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "global_label_dangling"
+                },
+                {
+                    "description": "Global label not connected anywhere else in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'CH_N8A'",
+                            "pos": {
+                                "x": 3.4798,
+                                "y": 0.9779
+                            },
+                            "uuid": "d0404e84-6159-501e-8e57-b273c77c191d"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "global_label_dangling"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP8 [TestPoint]",
+                            "pos": {
+                                "x": 3.4036,
+                                "y": 1.4986
+                            },
+                            "uuid": "40e4013e-6849-5102-8f0b-b65124c37816"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP9 [TestPoint]",
+                            "pos": {
+                                "x": 3.4036,
+                                "y": 1.7272
+                            },
+                            "uuid": "a28c7a38-e680-5717-872d-145fede36f3a"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP24 [TestPoint]",
+                            "pos": {
+                                "x": 0.254,
+                                "y": 0.381
+                            },
+                            "uuid": "9541cff6-ebc4-5283-8f26-6a3ced9f5d33"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP26 [TestPoint]",
+                            "pos": {
+                                "x": 0.4572,
+                                "y": 0.381
+                            },
+                            "uuid": "3b02c6d1-1ed5-5387-8f43-62c986babcfe"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP25 [TestPoint]",
+                            "pos": {
+                                "x": 0.254,
+                                "y": 0.6604
+                            },
+                            "uuid": "ca7266af-3944-561e-8132-7f2900cc96a4"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP28 [TestPoint]",
+                            "pos": {
+                                "x": 0.6604,
+                                "y": 0.381
+                            },
+                            "uuid": "5026ebac-1c79-55e2-8cc0-0a43723d4afd"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP27 [TestPoint]",
+                            "pos": {
+                                "x": 0.4572,
+                                "y": 0.6604
+                            },
+                            "uuid": "b2f59466-505c-53c8-8072-7b697e44c4cf"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP29 [TestPoint]",
+                            "pos": {
+                                "x": 0.6604,
+                                "y": 0.6604
+                            },
+                            "uuid": "f8f60825-9e49-586c-8337-d4db5ecdcc21"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP30 [TestPoint]",
+                            "pos": {
+                                "x": 0.8636,
+                                "y": 0.381
+                            },
+                            "uuid": "0d24fda9-c9f5-5d51-895d-dacefcd20806"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP31 [TestPoint]",
+                            "pos": {
+                                "x": 0.8636,
+                                "y": 0.635
+                            },
+                            "uuid": "afca4591-9895-5f8e-82e8-16c4668a8bdf"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP32 [TestPoint]",
+                            "pos": {
+                                "x": 1.0414,
+                                "y": 0.381
+                            },
+                            "uuid": "2caf5e1c-4b76-5cca-856c-d6374efa6db0"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP33 [TestPoint]",
+                            "pos": {
+                                "x": 1.0414,
+                                "y": 0.6604
+                            },
+                            "uuid": "33ab0c3f-79c0-5b4c-80f6-9a387f9d2751"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP34 [TestPoint]",
+                            "pos": {
+                                "x": 1.2446,
+                                "y": 0.381
+                            },
+                            "uuid": "37875a42-6918-5d89-8d58-98e357d5a82b"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP35 [TestPoint]",
+                            "pos": {
+                                "x": 1.2446,
+                                "y": 0.6604
+                            },
+                            "uuid": "ca7f996b-a235-5472-80b9-2b03bf7bf08b"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP36 [TestPoint]",
+                            "pos": {
+                                "x": 1.4478,
+                                "y": 0.381
+                            },
+                            "uuid": "4d78e23d-e0bf-594b-8bde-ec48976abb7e"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP37 [TestPoint]",
+                            "pos": {
+                                "x": 1.4478,
+                                "y": 0.6604
+                            },
+                            "uuid": "1b4eaec9-9d20-57f8-82be-550717ddfd26"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP38 [TestPoint]",
+                            "pos": {
+                                "x": 1.651,
+                                "y": 0.381
+                            },
+                            "uuid": "4cdd825f-21da-5938-8259-bb18b8e62254"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP39 [TestPoint]",
+                            "pos": {
+                                "x": 1.651,
+                                "y": 0.6604
+                            },
+                            "uuid": "e29ff845-c1e1-5b17-839e-07ed4de58f44"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP40 [TestPoint]",
+                            "pos": {
+                                "x": 1.8542,
+                                "y": 0.381
+                            },
+                            "uuid": "f23576fa-a56c-57a6-866f-3d5045215054"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP41 [TestPoint]",
+                            "pos": {
+                                "x": 1.8542,
+                                "y": 0.635
+                            },
+                            "uuid": "d845aa1f-9661-5456-86ce-9fee8c5e6224"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP42 [TestPoint]",
+                            "pos": {
+                                "x": 2.032,
+                                "y": 0.381
+                            },
+                            "uuid": "0a5aed27-8eca-54db-8724-0ca5c1a116b7"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP43 [TestPoint]",
+                            "pos": {
+                                "x": 2.032,
+                                "y": 0.5842
+                            },
+                            "uuid": "38c6b5f5-1057-5e46-8744-455a353ecd93"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP44 [TestPoint]",
+                            "pos": {
+                                "x": 2.1844,
+                                "y": 0.381
+                            },
+                            "uuid": "8d81f75f-ed2e-5262-8082-4b712fd0cb2e"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP45 [TestPoint]",
+                            "pos": {
+                                "x": 2.1844,
+                                "y": 0.5842
+                            },
+                            "uuid": "9836f2e3-b01e-59d2-8b27-aa5b6e31c1b6"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP46 [TestPoint]",
+                            "pos": {
+                                "x": 2.3368,
+                                "y": 0.381
+                            },
+                            "uuid": "6cb937fd-fa22-5ecc-8683-25a0daeaeede"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP47 [TestPoint]",
+                            "pos": {
+                                "x": 2.3368,
+                                "y": 0.635
+                            },
+                            "uuid": "cd93abe9-9cb2-5e98-8f95-438fd35dcce7"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP48 [TestPoint]",
+                            "pos": {
+                                "x": 2.5146,
+                                "y": 0.381
+                            },
+                            "uuid": "0e0ac3ac-ea30-5100-8c05-8aa880a04aca"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP49 [TestPoint]",
+                            "pos": {
+                                "x": 2.5146,
+                                "y": 0.5842
+                            },
+                            "uuid": "368a4b51-b1a8-588d-89be-b6ab8e8187b0"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP50 [TestPoint]",
+                            "pos": {
+                                "x": 2.6416,
+                                "y": 0.381
+                            },
+                            "uuid": "bd8663e6-5268-5fbc-8b7a-1da82f5cb140"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP51 [TestPoint]",
+                            "pos": {
+                                "x": 2.6416,
+                                "y": 0.6096
+                            },
+                            "uuid": "b686045a-755d-544e-8e3c-efc590e9feae"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP52 [TestPoint]",
+                            "pos": {
+                                "x": 2.794,
+                                "y": 0.381
+                            },
+                            "uuid": "50dcd6e0-0b4c-5488-8c7e-6d3f91616e23"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP53 [TestPoint]",
+                            "pos": {
+                                "x": 2.794,
+                                "y": 0.6096
+                            },
+                            "uuid": "662b5bd1-4697-532e-8578-9a4f38397e98"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP54 [TestPoint]",
+                            "pos": {
+                                "x": 2.9464,
+                                "y": 0.381
+                            },
+                            "uuid": "4f2ba0ec-1e82-5478-8573-2060db0fc9cd"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP55 [TestPoint]",
+                            "pos": {
+                                "x": 2.9464,
+                                "y": 0.6604
+                            },
+                            "uuid": "57b6623f-85c5-5c9c-8409-4bb8ec1d6926"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP56 [TestPoint]",
+                            "pos": {
+                                "x": 3.1496,
+                                "y": 0.381
+                            },
+                            "uuid": "fd17d25a-18da-5dbb-8860-593de5241c78"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP57 [TestPoint]",
+                            "pos": {
+                                "x": 3.1496,
+                                "y": 0.635
+                            },
+                            "uuid": "122abd2c-21c0-50b7-89b7-76e006b232e9"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP58 [TestPoint]",
+                            "pos": {
+                                "x": 3.3274,
+                                "y": 0.381
+                            },
+                            "uuid": "f8a02715-a273-5baf-8d76-124a56662880"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP59 [TestPoint]",
+                            "pos": {
+                                "x": 3.3274,
+                                "y": 0.6096
+                            },
+                            "uuid": "38fe3093-393d-5a4d-8753-044ec11a334a"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP14 [TestPoint]",
+                            "pos": {
+                                "x": 0.9144,
+                                "y": 1.651
+                            },
+                            "uuid": "f9a9fb43-82bd-549b-8948-38c9be75edb2"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP13 [TestPoint]",
+                            "pos": {
+                                "x": 2.3368,
+                                "y": 1.0922
+                            },
+                            "uuid": "25e16f27-b94f-503a-8ccf-86cde88dab62"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP16 [TestPoint]",
+                            "pos": {
+                                "x": 1.7018,
+                                "y": 2.2098
+                            },
+                            "uuid": "b156da8f-1210-5482-8da8-0b3467be2919"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP12 [TestPoint]",
+                            "pos": {
+                                "x": 3.048,
+                                "y": 0.7874
+                            },
+                            "uuid": "a46f8583-f458-5995-8984-e2531426f4f3"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP15 [TestPoint]",
+                            "pos": {
+                                "x": 3.2004,
+                                "y": 1.651
+                            },
+                            "uuid": "02a2fe90-a9bd-5ef8-875f-fd45eb8c7530"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Global label not connected anywhere else in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'U10_RT'",
+                            "pos": {
+                                "x": 0.254,
+                                "y": 0.4191
+                            },
+                            "uuid": "e54030e9-205b-5797-852d-1030fb3e29e4"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "global_label_dangling"
+                },
+                {
+                    "description": "Global label not connected anywhere else in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'U10_VCC'",
+                            "pos": {
+                                "x": 0.4064,
+                                "y": 0.4191
+                            },
+                            "uuid": "79997723-de91-5ca3-895c-2c512d4a0ef4"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "global_label_dangling"
+                },
+                {
+                    "description": "Global label not connected anywhere else in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'U10_CBOOT'",
+                            "pos": {
+                                "x": 0.5588,
+                                "y": 0.4445
+                            },
+                            "uuid": "02e21751-442c-5373-8934-58f4b812ffa6"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "global_label_dangling"
+                },
+                {
+                    "description": "Footprint 'L_Coilcraft_XAL60xx_6.36x6.56mm' not found in library 'Inductor_SMD'.",
+                    "items": [
+                        {
+                            "description": "Symbol L2 [L]",
+                            "pos": {
+                                "x": 0.8382,
+                                "y": 0.4826
+                            },
+                            "uuid": "40dc9581-8fce-59b4-801a-9777fc42f0f2"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'L_Wuerth_WE-LQS-5040' not found in library 'Inductor_SMD'.",
+                    "items": [
+                        {
+                            "description": "Symbol L3 [L]",
+                            "pos": {
+                                "x": 1.4478,
+                                "y": 1.0414
+                            },
+                            "uuid": "79010dd0-e895-578d-8656-95f5f2ce511e"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'L_Wuerth_WE-LQS-5040' not found in library 'Inductor_SMD'.",
+                    "items": [
+                        {
+                            "description": "Symbol L4 [L]",
+                            "pos": {
+                                "x": 2.8194,
+                                "y": 1.0414
+                            },
+                            "uuid": "456b1137-3d24-5295-851e-b25cd963ca3b"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Global label not connected anywhere else in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'U13_DVDT'",
+                            "pos": {
+                                "x": 3.1242,
+                                "y": 0.4445
+                            },
+                            "uuid": "309dc463-e8bf-51ff-8459-4a0f6cb5fdf9"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "global_label_dangling"
+                },
+                {
+                    "description": "Global label not connected anywhere else in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'U13_ITMR'",
+                            "pos": {
+                                "x": 3.2766,
+                                "y": 0.4445
+                            },
+                            "uuid": "3a78dad9-91bf-52f2-856a-09143e337dec"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "global_label_dangling"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP2 [TestPoint]",
+                            "pos": {
+                                "x": 3.7084,
+                                "y": 0.381
+                            },
+                            "uuid": "01a48341-810e-5316-8007-85b040e1864f"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'VQFN-24-1EP_4x4mm_P0.5mm (split pad per datasheet)' not found in library 'Package_DFN_QFN'.",
+                    "items": [
+                        {
+                            "description": "Symbol U8 [TPS259822ONRGER]",
+                            "pos": {
+                                "x": 0.5334,
+                                "y": 0.5334
+                            },
+                            "uuid": "d2d63e44-61bd-5b2a-8bdb-8b1800721654"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP10 [TestPoint]",
+                            "pos": {
+                                "x": 1.5494,
+                                "y": 0.381
+                            },
+                            "uuid": "e010a242-5e20-5e9e-8d6c-5d4ba2cb1e77"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP11 [TestPoint]",
+                            "pos": {
+                                "x": 2.159,
+                                "y": 0.381
+                            },
+                            "uuid": "0ebf9411-7231-57d8-8812-2bda5efab7cc"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP17 [TestPoint]",
+                            "pos": {
+                                "x": 1.2954,
+                                "y": 0.381
+                            },
+                            "uuid": "64ced70d-b943-52c0-8074-c82168500690"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP20 [TestPoint]",
+                            "pos": {
+                                "x": 0.9144,
+                                "y": 1.4986
+                            },
+                            "uuid": "bd286c20-c41f-556a-8097-cd9b84b8288f"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP19 [TestPoint]",
+                            "pos": {
+                                "x": 2.3368,
+                                "y": 0.9398
+                            },
+                            "uuid": "524ebde2-3d66-50d0-8849-81deed78f29e"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP22 [TestPoint]",
+                            "pos": {
+                                "x": 1.7272,
+                                "y": 2.0574
+                            },
+                            "uuid": "9f0d8004-b96c-5646-85e7-305bf9f4bea0"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP21 [TestPoint]",
+                            "pos": {
+                                "x": 3.2004,
+                                "y": 1.4986
+                            },
+                            "uuid": "2d04829e-4edf-5c0a-8d05-639112e70e1b"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP18 [TestPoint]",
+                            "pos": {
+                                "x": 3.5814,
+                                "y": 0.381
+                            },
+                            "uuid": "099fa489-6ae3-5f5f-8a03-ae4bcd131748"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'VQFN-16-1EP_4x4mm_P0.65mm_EP2.1x2.1mm' not found in library 'Package_DFN_QFN'.",
+                    "items": [
+                        {
+                            "description": "Symbol U15 [INA3221AIRGVR]",
+                            "pos": {
+                                "x": 0.508,
+                                "y": 0.4826
+                            },
+                            "uuid": "6fd0f11b-d150-51be-8a47-76995a58f4c6"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Global label not connected anywhere else in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'U18_ITMR'",
+                            "pos": {
+                                "x": 0.254,
+                                "y": 1.0033
+                            },
+                            "uuid": "c7c0f07d-71a0-5784-8a6b-38a332bc31ef"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "global_label_dangling"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP5 [TestPoint]",
+                            "pos": {
+                                "x": 0.6858,
+                                "y": 0.9398
+                            },
+                            "uuid": "37394288-6102-53c5-8871-447886554cae"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Global label not connected anywhere else in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'U19_DVDT'",
+                            "pos": {
+                                "x": 1.016,
+                                "y": 1.0033
+                            },
+                            "uuid": "b0b190f7-eaa4-5d99-8b9e-7200e2141fc4"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "global_label_dangling"
+                },
+                {
+                    "description": "Global label not connected anywhere else in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'U19_ITMR'",
+                            "pos": {
+                                "x": 1.1684,
+                                "y": 1.0033
+                            },
+                            "uuid": "10fb91f2-c8d7-502d-8a7e-17643fadeee4"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "global_label_dangling"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP6 [TestPoint]",
+                            "pos": {
+                                "x": 1.6002,
+                                "y": 0.9398
+                            },
+                            "uuid": "f9ea4d96-3ec0-568c-8c64-d6fb6335ba7f"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Global label not connected anywhere else in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'U16_DVDT'",
+                            "pos": {
+                                "x": 2.159,
+                                "y": 0.4445
+                            },
+                            "uuid": "178acbe9-905b-5c2a-8939-5f74c1c7eea0"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "global_label_dangling"
+                },
+                {
+                    "description": "Global label not connected anywhere else in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'U16_ITMR'",
+                            "pos": {
+                                "x": 2.3114,
+                                "y": 0.4445
+                            },
+                            "uuid": "1835e58b-df45-5955-8fff-e87fb3c1b2b3"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "global_label_dangling"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP3 [TestPoint]",
+                            "pos": {
+                                "x": 2.7432,
+                                "y": 0.381
+                            },
+                            "uuid": "53ca74fa-0766-5a44-8a43-3bb4a7d53f83"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP7 [TestPoint]",
+                            "pos": {
+                                "x": 2.4384,
+                                "y": 1.4986
+                            },
+                            "uuid": "9fd378b0-f37f-5b83-8805-8c18fc163304"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Global label not connected anywhere else in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'U17_DVDT'",
+                            "pos": {
+                                "x": 3.048,
+                                "y": 0.4445
+                            },
+                            "uuid": "b48ff647-2cbe-5410-8129-cce231d11a36"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "global_label_dangling"
+                },
+                {
+                    "description": "Global label not connected anywhere else in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'U17_ITMR'",
+                            "pos": {
+                                "x": 3.2004,
+                                "y": 0.4445
+                            },
+                            "uuid": "22856b01-697c-5a56-8ead-f512a0b81614"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "global_label_dangling"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP4 [TestPoint]",
+                            "pos": {
+                                "x": 3.6322,
+                                "y": 0.381
+                            },
+                            "uuid": "dd240304-6d6c-535a-8c12-ff911f76aefa"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Global label not connected anywhere else in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'U18_DVDT'",
+                            "pos": {
+                                "x": 3.937,
+                                "y": 0.4445
+                            },
+                            "uuid": "f6df8c87-93bf-5708-8afa-d68b68e11d41"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "global_label_dangling"
+                },
+                {
+                    "description": "Footprint 'L_CommonModeChoke_TDK_ACM2012' not found in library 'Inductor_SMD'.",
+                    "items": [
+                        {
+                            "description": "Symbol L60 [L_Coupled_1243]",
+                            "pos": {
+                                "x": 1.8034,
+                                "y": 1.3462
+                            },
+                            "uuid": "a2e88084-d8d0-54eb-86df-24fd2b42a1f0"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'TestPoint_Keystone_5019_Minature' not found in library 'TestPoint'.",
+                    "items": [
+                        {
+                            "description": "Symbol TP23 [TestPoint]",
+                            "pos": {
+                                "x": 3.3782,
+                                "y": 0.9906
+                            },
+                            "uuid": "02a44024-a2bb-59d2-8a56-2154f7e120ba"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'SW_SPST_PTS636' not found in library 'Button_Switch_SMD'.",
+                    "items": [
+                        {
+                            "description": "Symbol SW2 [SW_Push]",
+                            "pos": {
+                                "x": 2.286,
+                                "y": 0.381
+                            },
+                            "uuid": "98c9c666-8403-5ac5-8b04-a628e13106bf"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'SW_SPST_PTS636' not found in library 'Button_Switch_SMD'.",
+                    "items": [
+                        {
+                            "description": "Symbol SW1 [SW_Push]",
+                            "pos": {
+                                "x": 1.9304,
+                                "y": 1.4224
+                            },
+                            "uuid": "d66eee6d-6a3a-5664-8349-cf66ad5bd618"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Footprint 'Bosch_LGA-16_4.5x3mm_P0.5mm' not found in library 'Package_LGA'.",
+                    "items": [
+                        {
+                            "description": "Symbol U42 [BMI088]",
+                            "pos": {
+                                "x": 1.778,
+                                "y": 1.7018
+                            },
+                            "uuid": "63315109-88f0-5adf-89f5-268f17d0c32c"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "footprint_link_issues"
+                },
+                {
+                    "description": "Global label not connected anywhere else in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'LAMP_REARM_K'",
+                            "pos": {
+                                "x": 0.7112,
+                                "y": 0.9398
+                            },
+                            "uuid": "5c2387f2-c206-5d54-8106-af68a7370386"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "global_label_dangling"
+                },
+                {
+                    "description": "Global label not connected anywhere else in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'LAMP_PAUSE_K'",
+                            "pos": {
+                                "x": 1.397,
+                                "y": 0.9398
+                            },
+                            "uuid": "c695411d-5fa2-501d-8883-477883a12c04"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "global_label_dangling"
+                }
+            ]
+        },
+        {
+            "path": "/power_entry/",
+            "uuid_path": "/24b58d30-9ba2-5335-8109-54a89c9ea41f/7452490b-0d73-5f10-8cbc-2dc7ac878657",
+            "violations": [
+                {
+                    "description": "Global label only appears once in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'EN_SRC'",
+                            "pos": {
+                                "x": 3.3528,
+                                "y": 0.5715
+                            },
+                            "uuid": "5aa7b931-f7d4-53d4-8b3e-e03d361259e8"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "single_global_label"
+                }
+            ]
+        },
+        {
+            "path": "/charger/",
+            "uuid_path": "/24b58d30-9ba2-5335-8109-54a89c9ea41f/9cea6f5d-0cd7-5562-8288-4373a024f49c",
+            "violations": []
+        },
+        {
+            "path": "/rails/",
+            "uuid_path": "/24b58d30-9ba2-5335-8109-54a89c9ea41f/16dfcf55-b095-5096-8f5f-0a8f63134b66",
+            "violations": [
+                {
+                    "description": "Global label only appears once in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'U10_RT'",
+                            "pos": {
+                                "x": 0.254,
+                                "y": 0.4191
+                            },
+                            "uuid": "e54030e9-205b-5797-852d-1030fb3e29e4"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "single_global_label"
+                },
+                {
+                    "description": "Global label only appears once in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'U10_VCC'",
+                            "pos": {
+                                "x": 0.4064,
+                                "y": 0.4191
+                            },
+                            "uuid": "79997723-de91-5ca3-895c-2c512d4a0ef4"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "single_global_label"
+                },
+                {
+                    "description": "Global label only appears once in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'U10_CBOOT'",
+                            "pos": {
+                                "x": 0.5588,
+                                "y": 0.4445
+                            },
+                            "uuid": "02e21751-442c-5373-8934-58f4b812ffa6"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "single_global_label"
+                },
+                {
+                    "description": "Global label only appears once in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'U13_DVDT'",
+                            "pos": {
+                                "x": 3.1242,
+                                "y": 0.4445
+                            },
+                            "uuid": "309dc463-e8bf-51ff-8459-4a0f6cb5fdf9"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "single_global_label"
+                },
+                {
+                    "description": "Global label only appears once in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'U13_ITMR'",
+                            "pos": {
+                                "x": 3.2766,
+                                "y": 0.4445
+                            },
+                            "uuid": "3a78dad9-91bf-52f2-856a-09143e337dec"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "single_global_label"
+                }
+            ]
+        },
+        {
+            "path": "/branches/",
+            "uuid_path": "/24b58d30-9ba2-5335-8109-54a89c9ea41f/9d658a89-978b-57bf-852e-b35b9af23b00",
+            "violations": [
+                {
+                    "description": "Global label only appears once in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'U18_ITMR'",
+                            "pos": {
+                                "x": 0.254,
+                                "y": 1.0033
+                            },
+                            "uuid": "c7c0f07d-71a0-5784-8a6b-38a332bc31ef"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "single_global_label"
+                },
+                {
+                    "description": "Global label only appears once in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'U19_DVDT'",
+                            "pos": {
+                                "x": 1.016,
+                                "y": 1.0033
+                            },
+                            "uuid": "b0b190f7-eaa4-5d99-8b9e-7200e2141fc4"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "single_global_label"
+                },
+                {
+                    "description": "Global label only appears once in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'U19_ITMR'",
+                            "pos": {
+                                "x": 1.1684,
+                                "y": 1.0033
+                            },
+                            "uuid": "10fb91f2-c8d7-502d-8a7e-17643fadeee4"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "single_global_label"
+                },
+                {
+                    "description": "Global label only appears once in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'U16_DVDT'",
+                            "pos": {
+                                "x": 2.159,
+                                "y": 0.4445
+                            },
+                            "uuid": "178acbe9-905b-5c2a-8939-5f74c1c7eea0"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "single_global_label"
+                },
+                {
+                    "description": "Global label only appears once in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'U16_ITMR'",
+                            "pos": {
+                                "x": 2.3114,
+                                "y": 0.4445
+                            },
+                            "uuid": "1835e58b-df45-5955-8fff-e87fb3c1b2b3"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "single_global_label"
+                },
+                {
+                    "description": "Global label only appears once in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'U17_DVDT'",
+                            "pos": {
+                                "x": 3.048,
+                                "y": 0.4445
+                            },
+                            "uuid": "b48ff647-2cbe-5410-8129-cce231d11a36"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "single_global_label"
+                },
+                {
+                    "description": "Global label only appears once in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'U17_ITMR'",
+                            "pos": {
+                                "x": 3.2004,
+                                "y": 0.4445
+                            },
+                            "uuid": "22856b01-697c-5a56-8ead-f512a0b81614"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "single_global_label"
+                },
+                {
+                    "description": "Global label only appears once in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'U18_DVDT'",
+                            "pos": {
+                                "x": 3.937,
+                                "y": 0.4445
+                            },
+                            "uuid": "f6df8c87-93bf-5708-8afa-d68b68e11d41"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "single_global_label"
+                }
+            ]
+        },
+        {
+            "path": "/chain/",
+            "uuid_path": "/24b58d30-9ba2-5335-8109-54a89c9ea41f/de566298-8220-5f37-8ff9-0e9fff5e6202",
+            "violations": []
+        },
+        {
+            "path": "/chain_2/",
+            "uuid_path": "/24b58d30-9ba2-5335-8109-54a89c9ea41f/9e230316-a8d1-590b-8786-9a7502d396a1",
+            "violations": [
+                {
+                    "description": "Global label only appears once in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'CH_N3'",
+                            "pos": {
+                                "x": 0.762,
+                                "y": 0.9525
+                            },
+                            "uuid": "be07aa3d-6eed-5f46-80b1-697430aaac64"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "single_global_label"
+                },
+                {
+                    "description": "Global label only appears once in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'K1_SET'",
+                            "pos": {
+                                "x": 2.6162,
+                                "y": 0.4191
+                            },
+                            "uuid": "569f0b9b-fb48-5b48-8d15-8a49afec0305"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "single_global_label"
+                },
+                {
+                    "description": "Global label only appears once in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'CH_N1'",
+                            "pos": {
+                                "x": 2.9972,
+                                "y": 0.5207
+                            },
+                            "uuid": "801886d7-f225-5cf2-8ad3-202cfa621373"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "single_global_label"
+                },
+                {
+                    "description": "Global label only appears once in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'HANDS_LAMP_P'",
+                            "pos": {
+                                "x": 2.4638,
+                                "y": 2.1971
+                            },
+                            "uuid": "f9d54f16-34e0-5a9e-8507-38b1b9d44b43"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "single_global_label"
+                },
+                {
+                    "description": "Global label only appears once in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'HANDS_LAMP_K'",
+                            "pos": {
+                                "x": 2.8702,
+                                "y": 2.0574
+                            },
+                            "uuid": "c2485741-5afa-5327-8af2-7be5ee13f1b5"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "single_global_label"
+                },
+                {
+                    "description": "Global label only appears once in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'CH_N8A'",
+                            "pos": {
+                                "x": 3.4798,
+                                "y": 0.9779
+                            },
+                            "uuid": "d0404e84-6159-501e-8e57-b273c77c191d"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "single_global_label"
+                }
+            ]
+        },
+        {
+            "path": "/chain_3/",
+            "uuid_path": "/24b58d30-9ba2-5335-8109-54a89c9ea41f/b7dd2963-e6d2-57c9-8870-cd3ba07b7ae9",
+            "violations": []
+        },
+        {
+            "path": "/drive/",
+            "uuid_path": "/24b58d30-9ba2-5335-8109-54a89c9ea41f/45a3fc50-9bce-582a-8ee3-042fc1d52e3b",
+            "violations": []
+        },
+        {
+            "path": "/drive_2/",
+            "uuid_path": "/24b58d30-9ba2-5335-8109-54a89c9ea41f/40e3d2c5-f160-59f3-8b22-aadeafcad4b9",
+            "violations": []
+        },
+        {
+            "path": "/mcu/",
+            "uuid_path": "/24b58d30-9ba2-5335-8109-54a89c9ea41f/1b3b9183-d10b-57b6-8b1a-5eb29fbe2e98",
+            "violations": []
+        },
+        {
+            "path": "/mcu_2/",
+            "uuid_path": "/24b58d30-9ba2-5335-8109-54a89c9ea41f/46eb4c23-8653-5f63-8c29-3460e045f60d",
+            "violations": []
+        },
+        {
+            "path": "/tof/",
+            "uuid_path": "/24b58d30-9ba2-5335-8109-54a89c9ea41f/87605c7e-b2c5-5fa8-8a0f-1fc29efd5aaa",
+            "violations": []
+        },
+        {
+            "path": "/tof_2/",
+            "uuid_path": "/24b58d30-9ba2-5335-8109-54a89c9ea41f/d233f6d8-1fe1-56a6-8718-bc26f68a46b3",
+            "violations": []
+        },
+        {
+            "path": "/head_link/",
+            "uuid_path": "/24b58d30-9ba2-5335-8109-54a89c9ea41f/53e5b9f7-5c8c-5c2f-8011-8007a1043976",
+            "violations": []
+        },
+        {
+            "path": "/panel_io/",
+            "uuid_path": "/24b58d30-9ba2-5335-8109-54a89c9ea41f/b07bad35-61c2-59e4-8e23-a1d4499fa268",
+            "violations": [
+                {
+                    "description": "Global label only appears once in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'LAMP_REARM_K'",
+                            "pos": {
+                                "x": 0.7112,
+                                "y": 0.9398
+                            },
+                            "uuid": "5c2387f2-c206-5d54-8106-af68a7370386"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "single_global_label"
+                },
+                {
+                    "description": "Global label only appears once in the schematic",
+                    "items": [
+                        {
+                            "description": "Global Label 'LAMP_PAUSE_K'",
+                            "pos": {
+                                "x": 1.397,
+                                "y": 0.9398
+                            },
+                            "uuid": "c695411d-5fa2-501d-8883-477883a12c04"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "single_global_label"
+                }
+            ]
+        },
+        {
+            "path": "/test/",
+            "uuid_path": "/24b58d30-9ba2-5335-8109-54a89c9ea41f/2a508c4d-2095-592d-838f-844963955af1",
+            "violations": []
+        },
+        {
+            "path": "/mech/",
+            "uuid_path": "/24b58d30-9ba2-5335-8109-54a89c9ea41f/6c44778c-ff0b-58ae-8b4d-2dd2326cd8c0",
+            "violations": []
+        }
+    ],
+    "source": "IMPORT-TEST.kicad_sch"
+}

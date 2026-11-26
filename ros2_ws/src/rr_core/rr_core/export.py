@@ -45,7 +45,7 @@ BANNER = "SYNTHETIC CALIBRATION/PROFILE - field_use_approved: false - NOT FOR SU
 
 
 def _json(path: Path, obj, indent=1):
-    path.write_text(json.dumps(obj, indent=indent, sort_keys=True, allow_nan=False) + "\n")
+    path.write_text(json.dumps(_clean(obj), indent=indent, sort_keys=True, allow_nan=False) + "\n")
 
 
 def _clean(v):
@@ -55,8 +55,10 @@ def _clean(v):
         return {k: _clean(x) for k, x in v.items()}
     if isinstance(v, (list, tuple)):
         return [_clean(x) for x in v]
-    if isinstance(v, (np.floating, np.integer)):
-        return v.item()
+    if isinstance(v, (np.floating, np.integer, np.bool_)):
+        return _clean(v.item())
+    if isinstance(v, np.ndarray):
+        return _clean(v.tolist())
     if isinstance(v, set):
         return sorted(v)
     return v

@@ -59,6 +59,7 @@ class ChassisLink:
         self.stats = {"drive": 0, "rejected": 0, "timeouts": 0, "boots": 0, "event_gaps": 0}
         self.link_state = "DOWN"
         self.last_reject = None
+        self.nonzero_reject = (None, 0)        # (reason, host time) of the last refused non-zero command
         self._last_ticks = None
         self._proc = self._main()
 
@@ -303,6 +304,7 @@ class ChassisLink:
             if v or w:
                 # ICD 9.3: the robot is not executing my command - drop it, never resend.
                 self.clear_command()
+                self.nonzero_reject = (b.get("reject_reason"), now)
                 self.out_events.append({"ev": "drive_rejected", "reason": b.get("reject_reason"),
                                         "mode": b.get("mode"), "t_us": now, "source": source})
         else:

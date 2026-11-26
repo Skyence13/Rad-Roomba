@@ -280,7 +280,7 @@ def channel(ch):
     R(sc, 499, n("FAST"), n("FFB"), desc="fast R_F")
     C(sc, "10p", n("FAST"), n("FFB"), desc="fast integration pole (5 ns)")
     R(sc, 24.9, n("FFB"), VBL, desc="fast R_G to the baseline AC ground")
-    R(sc, 100, n("FAST"), n("FCMP"), desc="comparator drive / clamp current limit")
+    R(sc, 330, n("FAST"), n("FCMP"), desc="comparator drive / clamp current limit (4 mA into the clamp at full overdrive)")
     dual_diode(sc, "BAT54S,215", "GND", "+3V3_EVT", n("FCMP"), "clamp to the comparator supply")
     R(sc, 1000, n("FCMP"), n("MFAST"), desc="monitor tap: fast")
     lld, uld = ("BETA_LLD", "BETA_ULD") if floor else ("REF_LLD", "REF_ULD")
@@ -305,7 +305,7 @@ def channel(ch):
         C(sc, "100n", V5, "GND", desc="decoupling slow stage")
         R(sc, 2000, n("SLOW"), n("SFB"), desc="slow R_F")
         R(sc, 499, n("SFB"), VBL, desc="slow R_G")
-        R(sc, 100, n("SLOW"), n("SCMP"), desc="comparator drive / clamp current limit")
+        R(sc, 330, n("SLOW"), n("SCMP"), desc="comparator drive / clamp current limit (4 mA into the clamp at full overdrive)")
         dual_diode(sc, "BAT54S,215", "GND", "+3V3_EVT", n("SCMP"), "clamp to the comparator supply")
         R(sc, 1000, n("SCMP"), n("MSLOW"), desc="monitor tap: slow")
         R(sc, 1000, "THR_ALPHA_" + ch, n("TA"), desc="ALPHA threshold filter")
@@ -397,10 +397,26 @@ def lane(k):
     R(sc, 100e3, L + "LED_G", "GND", desc="LED gate pull-down")
 
 
+def lane_shield(k):
+    """Attachment pattern for one formed shield can per lane over the preamps, shapers and comparators.
+    The prototype housing is printed plastic with no shielding (IB-09), so the can is part of the board design."""
+    sc = Scope("L%d" % k, 1000 + 100 * k, "LANE")
+    for i in range(12):
+        add(sc, "SH", "shield clip", "S1711-46R", "Harwin", "SMT shield-can clip %d/12 (3 per side of the lane can)" % (i + 1),
+            "shield clip", "Device:RF_Shield_One_Piece", "RF_Shielding:Harwin_S1711-46R (project-local footprint)",
+            {1: ("1", "GND")}, verify=True,
+            notes="clip size, wall thickness range and seated height UNVERIFIED; can outline in BOARD['lane_shield']")
+    add(sc, "SH", "lane shield can", "RR-HEAD-SHLD-A", "(custom formed part)", "formed can 36.0 x 32.0 x 5.0 mm outside, 0.2 mm "
+        "tin-plated steel or nickel silver, held by the 12 clips; mouse-holes for the two anode traces and the bias/threshold feeds",
+        "custom shield can", "Device:RF_Shield_One_Piece", "none (mechanical part, held by clips)", {}, npins=0, verify=True,
+        notes="custom mechanical part, drawing owed by head mechanical from layout_guidance.md section 4")
+
+
 for _ch in CHANNELS:
     channel(_ch)
 for _k in range(4):
     lane(_k)
+    lane_shield(_k)
 
 # =============================================================================================== board-level blocks
 def decap(sc, net, what, key="100n"):
@@ -970,6 +986,9 @@ BOARD = dict(
     mounting_holes_uv_mm={"H1": (75.5, 4.5), "H2": (163.0, 4.5), "H3": (250.5, 4.5), "H4": (75.5, 91.5),
                           "H5": (163.0, 91.5), "H6": (250.5, 91.5), "H7": (5.0, 48.0), "H8": (321.0, 48.0)},
     lane_centre_u_mm={"S0": 31.75, "S1": 119.25, "S2": 206.75, "S3": 294.25},
+    lane_shield=dict(outline_du_mm=(-18.0, 18.0), outline_v_mm=(5.5, 37.5), height_mm=5.0, wall_mm=0.2,
+                     note="one can per lane centred on the lane centre u; U.FL and auxiliary connectors stay outside "
+                          "(v < 5.5); +/-18 mm keeps clear of J1_LANDING (u 50..100) and J2_LANDING (u 226..276) for all lanes"),
     zones=dict(AFE_STRIP="v 0..30", J1_LANDING="u 50..100, v 0..18", J2_LANDING="u 226..276, v 0..18",
                RAIL_SWITCH_LANDING="u 150..176, v 84..96", DIGITAL_POWER="v 30..84", SERVICE="u 100..226, v 84..96"),
 )
@@ -1121,7 +1140,7 @@ PKG_AREA = {"0402": 2.0, "0603": 4.0, "0805": 6.5, "1206": 10.0, "1210": 14.5, "
             "VSSOP-8 (DCU)": 10.0, "LQFP-100 14x14": 272.0, "HTSSOP-16 PowerPAD": 38.0, "WQFN-16 3x3 (RTE)": 16.0,
             "WSON-6 2x2 (DRV)": 9.0, "TO-252 (DPAK)": 75.0, "U.FL receptacle": 16.0, "4.0x4.0x4.1 mm": 22.0,
             "4.0x4.0x1.8 mm": 20.0, "4.5x2.0 mm": 14.0, "2.5x2.0 mm 4-pad": 9.0, "TC2030 no-legs": 24.0,
-            "2.7 mm hole, 6 mm pad": 36.0, "pad 1.0 mm": 2.3, "1 mm copper, 2 mm mask": 9.0, "solder jumper 2-pad": 4.0}
+            "2.7 mm hole, 6 mm pad": 36.0, "shield clip": 14.0, "custom shield can": 0.0, "pad 1.0 mm": 2.3, "1 mm copper, 2 mm mask": 9.0, "solder jumper 2-pad": 4.0}
 
 
 def _area(p):
@@ -1165,6 +1184,7 @@ def self_check(verbose=True):
         blocks[p["block"]][0] += 1
         blocks[p["block"]][1] += 1 if p["dnp"] else 0
     purchased = [p for p in PARTS if not p["dnp"] and "(PCB feature)" not in p["manufacturer"]
+                 and "(custom" not in p["manufacturer"]
                  and p["ref"][:2] not in ("TP",) and p["ref"][:3] != "FID"]
     say("RR-HEAD-ACQ rev A circuit definition")
     say("  part records: %d   (fitted purchased parts: %d, DNP/pads/PCB features: %d)" %

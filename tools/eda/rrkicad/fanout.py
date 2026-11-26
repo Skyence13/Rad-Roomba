@@ -68,7 +68,7 @@ def plane_fanout(bld):
     zones = []      # (layer name, priority, net, polygon in KiCad mm)
     for zd in b.zones:
         for lname in zd["layers"]:
-            if lname.startswith("In"):
+            if lname in b.plane_layers:
                 zones.append((lname, zd["priority"], zd["net"], [fr.kmm(*p) for p in (zd["polygon"] or b.outline["pts"])]))
     if not zones:
         return {"plane_nets": [], "vias": 0, "failed": []}

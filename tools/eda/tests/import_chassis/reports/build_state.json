@@ -1,0 +1,72 @@
+{
+  "counts": {
+    "nets": 431,
+    "parts": 753,
+    "sheets": 18
+  },
+  "generated_files": [
+    "IMPORT-TEST.kicad_sch",
+    "branches.kicad_sch",
+    "chain.kicad_sch",
+    "chain_2.kicad_sch",
+    "chain_3.kicad_sch",
+    "charger.kicad_sch",
+    "drive.kicad_sch",
+    "drive_2.kicad_sch",
+    "head_link.kicad_sch",
+    "mcu.kicad_sch",
+    "mcu_2.kicad_sch",
+    "mech.kicad_sch",
+    "panel_io.kicad_sch",
+    "power_entry.kicad_sch",
+    "rails.kicad_sch",
+    "test.kicad_sch",
+    "tof.kicad_sch",
+    "tof_2.kicad_sch"
+  ],
+  "name": "IMPORT-TEST",
+  "pwr_flags": [
+    "GND",
+    "VBAT_SW",
+    "3V3",
+    "V5_AUX",
+    "3V3A",
+    "FT_VCC"
+  ],
+  "routing": {
+    "enabled": true,
+    "extra_args": [],
+    "fanout": false,
+    "layers": 6,
+    "optimizer": true,
+    "passes": 100,
+    "plane_fanout": true,
+    "retries": 2,
+    "threads": null,
+    "timeout": null
+  },
+  "single_pin_nets": [
+    "CH_N1",
+    "CH_N3",
+    "CH_N8A",
+    "EN_SRC",
+    "HANDS_LAMP_K",
+    "HANDS_LAMP_P",
+    "K1_SET",
+    "LAMP_PAUSE_K",
+    "LAMP_REARM_K",
+    "U10_CBOOT",
+    "U10_RT",
+    "U10_VCC",
+    "U13_DVDT",
+    "U13_ITMR",
+    "U16_DVDT",
+    "U16_ITMR",
+    "U17_DVDT",
+    "U17_ITMR",
+    "U18_DVDT",
+    "U18_ITMR",
+    "U19_DVDT",
+    "U19_ITMR"
+  ]
+}

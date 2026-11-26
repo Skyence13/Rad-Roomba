@@ -158,8 +158,8 @@
     "parts": 150,
     "sheets": 7
   },
-  "dsn_sha256": "b7fd38c7706bce5deeb4992f5490da89a3873f2cfff535dd445da954505af71a",
-  "dsn_unchanged": true,
+  "dsn_sha256": "94076febb64a3e3ab74953b76d9157bf1dd023d3e9068e2027d3bc3dffaedc50",
+  "dsn_unchanged": false,
   "gen_warnings": [
     "U50: 3D envelope uses the default height 1.0 mm (give height=)",
     "U51: 3D envelope uses the default height 1.0 mm (give height=)",
@@ -174,6 +174,7 @@
     "plane fan-out: no legal via position for C104 pad at (17.50, 20.48) [+3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for U104 pad at (17.36, 23.55) [+3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for C102 pad at (27.75, 24.48) [+3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for U102 pad at (27.86, 27.55) [+3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for C101 pad at (24.25, 26.23) [+3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for U2 pad at (53.25, 53.56) [GND] (left to the autorouter)",
     "plane fan-out: no legal via position for U2 pad at (53.75, 53.56) [+3V3] (left to the autorouter)",
@@ -1109,6 +1110,7 @@
       "C104 pad at (17.50, 20.48) [+3V3]",
       "U104 pad at (17.36, 23.55) [+3V3]",
       "C102 pad at (27.75, 24.48) [+3V3]",
+      "U102 pad at (27.86, 27.55) [+3V3]",
       "C101 pad at (24.25, 26.23) [+3V3]",
       "U2 pad at (53.25, 53.56) [GND]",
       "U2 pad at (53.75, 53.56) [+3V3]",
@@ -1124,32 +1126,53 @@
       "+5V",
       "GND"
     ],
-    "vias": 184
+    "vias": 183
   },
   "pwr_flags": [
     "+5V",
     "GND"
   ],
   "route_info": {
-    "dsn_sha256": "830e9d536ec8354c78dc7515175bee4699b9e580f5e24d10160db4e6c760366b",
+    "attempts": [
+      {
+        "run": 1,
+        "seconds": 905.8,
+        "unconnected": 6
+      },
+      {
+        "run": 2,
+        "seconds": 212.5,
+        "unconnected": 4
+      },
+      {
+        "run": 3,
+        "seconds": 244.4,
+        "unconnected": 4
+      }
+    ],
+    "dsn_sha256": "94076febb64a3e3ab74953b76d9157bf1dd023d3e9068e2027d3bc3dffaedc50",
     "freerouting": "v2.6.0 (build-date: 2026-11-25)",
     "log_tail": [
-      "[277136\\C29E27] Auto-routing stage completed: started with 377 unrouted nets, completed in 396.64 seconds, final score: 986.90 (4 unrouted and 0 violations), using 384.76 total CPU seconds, 242.81 GB total allocated, and 759.4 MB peak heap usage.",
-      "[277136\\C29E27] Job '277136\\C29E27' finished with state: COMPLETED (elapsed: 6 minutes 36.92 seconds, finished at UTC: 2026-11-26T04:58:31.831953447Z)."
+      "[A68513\\77698B] Auto-routing stage completed: started with 10 unrouted nets, completed in 147.62 seconds, final score: 986.90 (4 unrouted and 0 violations), using 199.91 total CPU seconds, 82.47 GB total allocated, and 577.7 MB peak heap usage.",
+      "[A68513\\77698B] Job 'A68513\\77698B' finished with state: COMPLETED (elapsed: 3 minutes 27.99 seconds, finished at UTC: 2026-11-26T10:00:45.056639488Z)."
     ],
-    "passes_limit": 25,
+    "passes_limit": 30,
     "reused": false,
-    "seconds": 400.1,
+    "seconds": 1118.3,
     "threads": 4,
     "timed_out": false
   },
   "route_stats": {
-    "track_length_mm": 146.13,
-    "tracks": 174,
-    "unconnected_after_fill": 195,
-    "vias": 173
+    "dangling_tracks_removed": 0,
+    "preroutes": 367,
+    "preroutes_missing_after_import": 0,
+    "track_length_mm": 4029.02,
+    "tracks": 1642,
+    "unconnected_after_fill": 4,
+    "unconnected_before_cleanup": 4,
+    "vias": 404
   },
-  "routed": false,
+  "routed": true,
   "routing": {
     "enabled": true,
     "extra_args": [],

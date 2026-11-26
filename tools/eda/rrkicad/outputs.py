@@ -32,7 +32,7 @@ def _rel(paths, p):
 
 
 def copper_layers(board):
-    return ["F.Cu", "In1.Cu", "In2.Cu", "B.Cu"] if board.layers == 4 else ["F.Cu", "B.Cu"]
+    return list(board.copper_layers)
 
 
 def generate(board, paths, summary):

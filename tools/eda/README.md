@@ -76,7 +76,9 @@ not waived. Warnings never fail the build but are counted.
 from rrkicad import Board, Pad, SymPin, Rules
 
 board = Board("RR-XYZ-A", title="Example board", rev="A", date="2026-11-25", docnum="RR-EL-0123",
-              company="Rad Roomba", layers=4,          # 2 or 4 (4 = F.Cu sig / In1 plane / In2 plane / B.Cu sig)
+              company="Rad Roomba", layers=4,          # 2, 4 or 6:
+                                                        #   4 = F.Cu sig / In1 plane / In2 plane / B.Cu sig
+                                                        #   6 = F.Cu sig / In1 GND / In2 sig / In3 sig / In4 PWR / B.Cu sig
               thickness=1.6, silk_refs=True,            # False hides all reference designators on silk
               rules=Rules(),                            # fab rules, see "Rules" below
               paper="A3", description="free text shown on the root sheet")
@@ -110,7 +112,8 @@ g.L("L1", "10u", "SW", "VOUT", pkg="0805", mfr="...", mpn="...")
 g.LED("D1", "green", "LED_A", "GND", pkg="0603", mfr="...", mpn="...")       # anode, cathode
 # R/C/L/FB/LED accept every part() keyword (at=, near=, dnp=, ...).  pkg: 0201 0402 0603 0805 1206 1210 2010 2512
 
-# identical blocks: place (or auto-arrange) one block, copy its placement at an offset
+# identical blocks: place (or auto-arrange) one block, copy its PLACEMENT at an offset
+# (routes are not copied: each copy is routed by the autorouter)
 # board.replicate((lane1_group, lane2_group), dx=80.0, dy=0.0)     # groups with the same parts in the same order
 # board.replicate({"U1": "U101", "C1": "C101"}, dx=80.0)          # or an explicit {source_ref: destination_ref} map
 
@@ -146,7 +149,10 @@ fp = board.footprint("MYSENSOR_LGA4", [Pad(1, -1.0, -0.8, 0.6, 0.9), Pad(2, 1.0,
 g.part("U9", sym, "MYSENSOR", fp, mfr="...", mpn="...", pins={"VDD": "+3V3", "OUT": "S1", "GND": "GND", "EN": "+3V3"})
 
 # --- autorouter / auto-arrange / waivers ---------------------------------------------
-board.route(passes=100, threads=None, timeout=None, optimizer=True, fanout=None, enabled=True, extra_args=[])
+board.route(passes=100, threads=None, timeout=None, optimizer=True, enabled=True, extra_args=[],
+            plane_fanout=True,     # rrkicad's own track+via beside every SMD pad of plane nets (see Routing notes)
+            retries=2,             # extra "continue" autorouter runs while connections are open
+            fanout=False)          # Freerouting's own fan-out stage (escape via on every SMD pin; rarely useful)
 board.autoplace_options(clearance=0.3, ic_halo=2.0, edge_margin=0.5, grid=0.25, spread=0.35, rotations=(0, 90, 180, 270))
 board.waive("drc", "silk_overlap", "Reference text overlaps on the dense RF corner; assembly uses the Fab layer.",
             match=r"R1[0-9]")                             # regex on the violation text; None = all of that type
@@ -191,18 +197,69 @@ written to the project's board setup and the `Default` net class; `netclass()` a
 classes on top (first matching pattern wins).
 
 ## Routing notes
-* Zones on the outer (signal) layers are *not* given to the autorouter: those nets are
-  routed with real tracks and the pour is added afterwards. Zones on inner plane layers
-  are exported; Freerouting connects plane nets with fan-out vias.
-* Pre-routes (`board.track`, `board.via`) are locked, exported as fixed, and verified
-  after the SES import; the build fails if the router changed them.
-* Unrouted connections are never hidden: they appear as `unconnected` / `unrouted_nets`
-  in the summary and fail the build. Typical fixes: better placement, more passes, fewer
-  parts per mm², a GND via (`board.via`) next to an isolated pad.
-* Pours can be cut into islands by routing; islands are removed. Add `board.via("GND", x, y)`
-  stitching vias where needed (see RR-TOF-A).
-* The routing result lives in `route/<name>.ses`. Keep it under version control: with an
-  unchanged definition the build re-uses it and reproduces the same PCB.
+* **Plane fan-out (4/6 layers).** For every net that has a zone on a plane layer
+  (`In1/In2` on 4 layers, `In1/In4` on 6) the PCB step itself adds a short locked track
+  and a via beside each SMD pad of that net (through-hole pads connect to the plane
+  directly). The via respects copper clearance, hole-to-hole, edge clearance, cut-outs,
+  via keep-outs and other parts' courtyards where possible, and must land inside its
+  own net's plane polygon (split planes). The autorouter then sees those nets as done
+  and only routes signals. Pads with no legal via position are listed in the summary
+  notes and left to the autorouter. After zone fill, KiCad's DRC connectivity check is
+  what confirms every plane connection (`unconnected` must be 0).
+  Split planes must be **non-overlapping polygons** (Freerouting rejects overlapping
+  plane areas; do not rely on zone priority for splits).
+  If you also pour a plane net on the outer layers, use `connect="solid"` for that pour
+  (or leave the outer layers unpoured): thermal spokes next to fan-out tracks get starved.
+* Zones on signal layers are *not* given to the autorouter: those nets are routed with
+  real tracks and the pour is added afterwards (2-layer boards: see RR-TOF-A, with GND
+  stitching vias from `board.via`).
+* The autorouter gets keep-out bands along the outline and around cut-outs so routed
+  copper keeps the board-edge clearance.
+* Pre-routes (`board.track`, `board.via`) and the plane fan-out are locked, exported as
+  fixed, and verified after the SES import; the build fails if the router changed them.
+* **Completion strategy.** If connections are still open after the first run, the build
+  automatically lets Freerouting *continue from the routed result* (new DSN from the
+  routed board; fresh rip-up budget concentrated on the failed nets), up to
+  `retries` times, keeping a run only if it reduces the open count. Freerouting itself
+  also switches strategy when it stagnates (visible in `route/freerouting.log`).
+  What is still open afterwards is reported, never hidden: `summary.json` →
+  `drc.unrouted` lists every open connection with net, both end items and their board
+  coordinates (also printed as `OPEN ...` lines), `routing.autorouter.attempts` lists
+  the runs. A board with open connections is always FAIL.
+* Giving Freerouting a `timeout` is safe: it is passed as Freerouting's own job timeout
+  (verified: it stops and still writes the result); a hard kill follows 3 min later.
+* The routing result lives in `route/<name>.ses` (+ `route_meta.json` with the DSN
+  hash). Keep both under version control: with an unchanged definition the build
+  re-uses them and reproduces the same PCB. `route/<name>.unrouted.kicad_pcb` is an
+  intermediate file and need not be kept.
+
+## Importing a stage-1 circuit definition
+`rrkicad.importer.from_circuit(board, "design/circuit.py", ...)` converts a tool-neutral
+`PARTS` list (dicts with `ref, value, mpn, manufacturer, description, package,
+symbol_hint, footprint_hint, pins={pin_number: (pin_name, net) | None}, block, dnp,
+notes`, optional `verify`, `height_mm`) into groups (one per `block`) and parts:
+```python
+from rrkicad import Board
+from rrkicad.importer import from_circuit
+board = Board("RR-CHS-MAIN", title="...", layers=6, ...)
+report = from_circuit(board, os.path.join(os.path.dirname(__file__), "design/circuit.py"),
+                      footprints={"U10": "Package_DFN_QFN:...", "MICROFIT-2x2-RA": "Connector_Molex:..."},  # by ref or package
+                      symbols={"U42": "rr_local:MYSYM"},        # override the symbol of single parts
+                      place={"J_PWR": (8, 50, 90, "F")},        # at= by ref (everything else is auto-arranged)
+                      titles={"mcu": "Microcontroller"},        # sheet titles by block
+                      allow_missing=False)                      # True: skip parts that have no footprint yet
+board.rail("GND", "+3V3", ...); board.netclass(...); board.outline_rect(...); ...
+```
+Symbol per part: `symbols[ref]`, else `symbol_hint` if that stock symbol exists, has all
+pin numbers used and no conflicting stacked pins, else a generated local box symbol (all
+pins `passive`, named from the MPN). Pins with `None` become no-connects. `report` lists
+`hint_rejected` (with the reason), `local_symbols`, `missing_footprints`. Parts can be
+tuned afterwards: `board.part("U1").at = ...` is not supported - pass `place=`; other
+attributes (`near`, `side`, `edge`, `zone_connect`, `silk_ref`) may be set on
+`board.part(ref)` before the build. Measured on `electronics/chassis_main/design/circuit.py`
+(`tools/eda/tests/import_chassis/`): 753 of 768 parts imported (15 have no usable
+footprint hint yet), 710 stock + 18 generated symbols, 18 A3 sheets, netlist cross-check
+OK, ERC 0 errors / 112 warnings, 14 s.
 
 ## Reproducibility
 UUIDs are derived from hashes (schematic) or a seeded generator (PCB), ordering is
@@ -215,7 +272,7 @@ optimiser is multi-threaded) — which is why the SES is cached.
 * No drawn wires in the schematic: connectivity is by label/power symbol only (readable,
   but not a hand-drawn schematic). No buses, no hierarchical pins, no symbol mirroring.
 * Net labels are always global; there is no per-sheet local net scope.
-* 2 or 4 copper layers only; through vias only; no differential-pair or length tuning
+* 2, 4 or 6 copper layers; through vias only; no differential-pair or length tuning
   (net-class diff-pair fields are written but the autorouter ignores them).
 * Auto-arrange is a greedy helper (top/bottom side per part, courtyard rectangles). It
   avoids overlaps and keep-outs but knows nothing about signal integrity; place

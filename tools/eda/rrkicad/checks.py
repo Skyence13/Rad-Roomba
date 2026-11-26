@@ -66,7 +66,7 @@ def run_erc(board, paths, waivers=None):
     return res
 
 
-def run_drc(board, paths, waivers=None):
+def run_drc(board, paths, waivers=None, state=None):
     js = os.path.join(paths.reports, "drc.json")
     rpt = os.path.join(paths.reports, "drc.rpt")
     for fmt, outp in (("json", js), ("report", rpt)):
@@ -90,6 +90,17 @@ def run_drc(board, paths, waivers=None):
                 nets.add(m.group(1))
     res["unrouted_nets"] = sorted(nets)
     res["unconnected_items"] = [_text(u)[:300] for u in unconn[:200]]
+    ox, oy = (state or {}).get("pcb_page_origin") or (0.0, 0.0)
+    detail = []
+    for u in unconn[:200]:
+        ends = []
+        for it in u.get("items", []):
+            pos = it.get("pos") or {}
+            ends.append({"item": it.get("description", ""),
+                         "xy_mm": [round(pos.get("x", 0) - ox, 3), round(oy - pos.get("y", 0), 3)]})
+        m = re.search(r"\[([^\]]+)\]", ends[0]["item"]) if ends else None
+        detail.append({"net": m.group(1) if m else "?", "ends": ends})
+    res["unrouted"] = detail
     par = _classify(parity, waivers, "drc")
     res["parity"] = par["errors"] + par["warnings"]
     res["parity_items"] = [_text(p)[:300] for p in parity if not p.get("excluded")][:200]
@@ -128,7 +139,7 @@ def run_checks(board, paths, state):
     waivers = [dict(w, count=0) for w in board.waivers]
     erc = run_erc(board, paths, waivers)
     have_pcb = os.path.exists(paths.pcb)
-    drc = run_drc(board, paths, waivers) if have_pcb else None
+    drc = run_drc(board, paths, waivers, state) if have_pcb else None
     reasons = []
     if erc["errors"]:
         reasons.append("ERC: %d error(s)" % erc["errors"])
@@ -158,7 +169,7 @@ def run_checks(board, paths, state):
         "erc": {k: erc[k] for k in ("errors", "warnings", "waived", "excluded", "by_type", "error_items", "report")},
         "drc": None if drc is None else {k: drc[k] for k in (
             "errors", "warnings", "unconnected", "parity", "waived", "excluded", "by_type", "error_items",
-            "unrouted_nets", "unconnected_items", "parity_items", "report")},
+            "unrouted_nets", "unrouted", "unconnected_items", "parity_items", "report")},
         "waivers": [{"check": w["check"], "rule": w["rule"], "match": w["match"], "reason": w["reason"],
                      "matched": w["count"], "kind": "violation waiver (tool-level; the KiCad GUI still lists these)"}
                     for w in waivers] +
@@ -204,6 +215,9 @@ def print_summary(s):
         print("  ERC  %-28s errors=%d warnings=%d" % (t, c["errors"], c["warnings"]))
     for r in s["fail_reasons"]:
         print("  FAIL: " + r)
+    for u in (d or {}).get("unrouted", [])[:25]:
+        print("  OPEN  %-12s %s" % (u["net"], "  <->  ".join(
+            "%s @(%.2f, %.2f)" % (e["item"][:38], e["xy_mm"][0], e["xy_mm"][1]) for e in u["ends"])))
     for n in s["notes"]:
         print("  note: " + n)
     for w in s["waivers"]:

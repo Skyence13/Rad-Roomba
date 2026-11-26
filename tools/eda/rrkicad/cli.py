@@ -60,6 +60,12 @@ class Paths:
     @property
     def ses(self): return os.path.join(self.route_dir, self.name + ".ses")
     @property
+    def unrouted(self): return os.path.join(self.route_dir, self.name + ".unrouted.kicad_pcb")
+    @property
+    def retry_dsn(self): return os.path.join(self.route_dir, self.name + ".retry.dsn")
+    @property
+    def retry_ses(self): return os.path.join(self.route_dir, self.name + ".retry.ses")
+    @property
     def reports(self): return os.path.join(self.dir, "reports")
     @property
     def out(self): return os.path.join(self.dir, "out")
@@ -176,8 +182,9 @@ def stage_gen(board_py, route=True, sch_only=False):
     if info["autoplaced"]:
         log("auto-arranged %d part(s): see reports/placement.txt" % len(info["autoplaced"]))
     if route and board.routing["enabled"]:
+        shutil.copyfile(paths.pcb, paths.unrouted)
         new_dsn = paths.dsn + ".new"
-        pcb.export_dsn(paths.pcb, new_dsn)
+        pcb.export_dsn(paths.pcb, new_dsn, board)
         same = os.path.exists(paths.dsn) and sha256(paths.dsn) == sha256(new_dsn)
         os.replace(new_dsn, paths.dsn)
         write_state(paths, dsn_sha256=sha256(paths.dsn), dsn_unchanged=bool(same))
@@ -233,14 +240,16 @@ def _cleanup(paths):
                 os.remove(p)
 
 
-def stage_post(board_py, routed=True, outputs=True, route_info=None):
+def stage_post(board_py, routed=True, outputs=True, route_info=None, ses=None):
     """SES import, zone fill, fab notes, checks, outputs, summary."""
     from . import pcb, checks, outputs as outmod, project
     board = load_board(board_py)
     paths = Paths(board_py, board.name)
     _resolve_for_post(board)
     st = read_state(paths)
-    info = pcb.finish_pcb(board, paths, ses=paths.ses if routed else None)
+    if routed and os.path.exists(paths.unrouted):
+        shutil.copyfile(paths.unrouted, paths.pcb)     # always import into the pristine generated board
+    info = pcb.finish_pcb(board, paths, ses=(ses or paths.ses) if routed else None)
     # keep the project file exactly as generated (pcbnew may have re-saved it)
     with open(paths.pro) as f:
         pro = json.load(f)
@@ -276,6 +285,15 @@ def stage_check(board_py, board=None, do_outputs=False):
     _cleanup(paths)
     checks.print_summary(summary)
     return 0 if summary["status"] == "pass" else 1
+
+
+def stage_retrydsn(board_py):
+    """DSN of the *routed* board: the autorouter continues from the current result."""
+    from . import pcb
+    board = load_board(board_py)
+    paths = Paths(board_py, board.name)
+    pcb.export_dsn(paths.pcb, paths.retry_dsn, board)
+    return 0
 
 
 def stage_sch(board_py):
@@ -372,6 +390,54 @@ def _host_build(a, board_py):
     if route_info:
         args += ["--route-info", json.dumps(route_info)]
     rc = _container(args)
+    # completion strategy: while connections are open, let the autorouter continue from
+    # the current result (fresh rip-up budget on the failed nets), keep the best result
+    if routed and route_info and not route_info.get("reused"):
+        bdir = os.path.dirname(board_py)
+        state_p = os.path.join(bdir, "reports", "build_state.json")
+        st = json.load(open(state_p))
+        retries = int(st.get("routing", {}).get("retries", 0))
+        open_now = (st.get("route_stats") or {}).get("unconnected_after_fill", 0)
+        attempts = [{"run": 1, "seconds": route_info.get("seconds"), "unconnected": open_now}]
+        name = st["name"]
+        ses = os.path.join(bdir, "route", name + ".ses")
+        rdsn = os.path.join(bdir, "route", name + ".retry.dsn")
+        rses = os.path.join(bdir, "route", name + ".retry.ses")
+        n = 1
+        while open_now > 0 and n <= retries:
+            n += 1
+            log("routing: %d connection(s) still open -> continue run %d" % (open_now, n))
+            if _container(["_retrydsn", board_py]) != 0:
+                break
+            info = run_freerouting(board_py, rdsn, rses, a)
+            if info is None:
+                break
+            shutil.copyfile(ses, ses + ".prev")
+            shutil.copyfile(rses, ses)
+            merged = dict(route_info, seconds=round(route_info.get("seconds", 0) + info["seconds"], 1),
+                          log_tail=info.get("log_tail"))
+            rc2 = _container(["_post", board_py, "--route-info", json.dumps(merged)])
+            st = json.load(open(state_p))
+            new_open = (st.get("route_stats") or {}).get("unconnected_after_fill", 0)
+            attempts.append({"run": n, "seconds": info["seconds"], "unconnected": new_open})
+            if new_open < open_now:
+                open_now, rc, route_info = new_open, rc2, merged
+                os.remove(ses + ".prev")
+            else:   # not better: restore the previous result and stop
+                shutil.copyfile(ses + ".prev", ses)
+                os.remove(ses + ".prev")
+                rc = _container(["_post", board_py, "--route-info", json.dumps(route_info)])
+                break
+        for f in (rdsn, rses):
+            if os.path.exists(f):
+                os.remove(f)
+        route_info["attempts"] = attempts
+        meta_p = os.path.join(bdir, "route", "route_meta.json")
+        with open(meta_p, "w") as f:
+            json.dump({k: v for k, v in route_info.items() if k != "reused"}, f, indent=2, sort_keys=True)
+            f.write("\n")
+        if len(attempts) > 1:
+            rc = _container(["_post", board_py, "--route-info", json.dumps(route_info)])
     log("total build time %.1f s" % (time.time() - t0))
     return rc
 
@@ -447,7 +513,7 @@ def _fr_version(lines):
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="rrkicad", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
-    for name in ("build", "check", "sch", "_gen", "_post", "_check", "_sch"):
+    for name in ("build", "check", "sch", "_gen", "_post", "_check", "_sch", "_retrydsn"):
         sp = sub.add_parser(name)
         sp.add_argument("board")
         sp.add_argument("--no-route", action="store_true", help="skip autorouting (PCB stays unrouted)")
@@ -467,6 +533,8 @@ def main(argv=None):
             if a.cmd == "_post":
                 return stage_post(a.board, routed=not a.no_route,
                                   route_info=json.loads(a.route_info) if a.route_info else None)
+            if a.cmd == "_retrydsn":
+                return stage_retrydsn(a.board)
             if a.cmd == "_check":
                 return stage_check(a.board)
             if a.cmd == "_sch":

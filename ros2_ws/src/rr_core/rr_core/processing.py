@@ -148,6 +148,7 @@ class SurveyProcessor:
         tag, reason, obs (observation id for COUNT), valid (for COUNT_END)."""
         if t_us < self._mark_t[-1]:
             raise ValueError("marks must be time ordered")
+        mark = dict(mark, t_us=t_us)
         self.marks.append((t_us, mark))
         self._mark_t.append(t_us)
         if mark.get("count_end"):
@@ -436,8 +437,8 @@ class SurveyProcessor:
 
     def sensitivity_ok(self, d) -> bool:
         """MODEL 3: D# strictly below the goal AND calibration envelope valid."""
-        return (d is not None and d.D_hash is not None and d.envelope_ok
-                and d.D_hash < self.profile["detection_goal_Bq_cm2"])
+        return bool(d is not None and d.D_hash is not None and d.envelope_ok
+                    and d.D_hash < self.profile["detection_goal_Bq_cm2"])
 
     # ------------------------------------------------------------------ flags
     def _classify(self, d):
@@ -698,7 +699,7 @@ class SurveyProcessor:
                     row[f"{p}.detected"] = d.detected if d else None
                     row[f"{p}.threshold_method"] = d.method if d else ""
                     row[f"{p}.u0_method"] = "|".join(d.u0_methods) if d else ""
-                    row[f"{p}.sensitivity_sufficient"] = self.sensitivity_ok(d) if d and d.D is not None else None
+                    row[f"{p}.sensitivity_sufficient"] = bool(self.sensitivity_ok(d)) if d and d.D is not None else None
                     row[f"{p}.envelope"] = (d.envelope_reason or "ok") if d and d.D is not None else ""
                 flag = self._flag_of_cell.get((cy, cx))
                 row["flag"] = flag["id"] if flag else ""

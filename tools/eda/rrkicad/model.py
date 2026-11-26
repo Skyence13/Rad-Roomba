@@ -161,8 +161,12 @@ class Board:
                  rules=None, description="", silk_refs=True, paper="A3", envelopes=True):
         if not re.match(r"^[A-Za-z0-9_\-\.]+$", name):
             raise DefinitionError("board name must be file-name safe")
-        if layers not in (2, 4):
-            raise DefinitionError("layers must be 2 or 4")
+        if layers not in (2, 4, 6):
+            raise DefinitionError("layers must be 2, 4 or 6")
+        # inner layers reserved for planes (typed "power" in KiCad, not used for signal routing)
+        self.plane_layers = {2: (), 4: ("In1.Cu", "In2.Cu"), 6: ("In1.Cu", "In4.Cu")}[layers]
+        self.copper_layers = {2: ["F.Cu", "B.Cu"], 4: ["F.Cu", "In1.Cu", "In2.Cu", "B.Cu"],
+                              6: ["F.Cu", "In1.Cu", "In2.Cu", "In3.Cu", "In4.Cu", "B.Cu"]}[layers]
         self.name, self.title, self.rev, self.date = name, title, rev, date
         self.docnum, self.company, self.layers, self.thickness = docnum, company, layers, thickness
         self.rules = rules or Rules()

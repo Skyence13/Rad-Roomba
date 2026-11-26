@@ -82,7 +82,7 @@ def _stackup(board):
     if board.layers == 2:
         lay("dielectric 1", "core", t - 0.09, die)
         desc = ["F.Cu 0.035", "core FR-4 %.3f" % (t - 0.09), "B.Cu 0.035"]
-    else:
+    elif board.layers == 4:
         pp, inner = 0.2104, 0.0152
         core = t - 0.09 - 2 * pp - 2 * inner
         lay("dielectric 1", "prepreg", pp, die)
@@ -90,9 +90,25 @@ def _stackup(board):
         lay("dielectric 2", "core", core, die)
         lay("In2.Cu", "copper", inner)
         lay("dielectric 3", "prepreg", pp, die)
-        desc = ["F.Cu 0.035 (signal)", "prepreg %.4f" % pp, "In1.Cu %.4f (GND plane)" % inner,
-                "core FR-4 %.4f" % core, "In2.Cu %.4f (power plane)" % inner, "prepreg %.4f" % pp,
+        desc = ["F.Cu 0.035 (signal)", "prepreg %.4f" % pp, "In1.Cu %.4f (plane)" % inner,
+                "core FR-4 %.4f" % core, "In2.Cu %.4f (plane)" % inner, "prepreg %.4f" % pp,
                 "B.Cu 0.035 (signal)"]
+    else:
+        pp, ppm, inner = 0.0994, 0.1088, 0.0152
+        core = (t - 0.09 - 2 * pp - ppm - 4 * inner) / 2.0
+        lay("dielectric 1", "prepreg", pp, die)
+        lay("In1.Cu", "copper", inner)
+        lay("dielectric 2", "core", core, die)
+        lay("In2.Cu", "copper", inner)
+        lay("dielectric 3", "prepreg", ppm, die)
+        lay("In3.Cu", "copper", inner)
+        lay("dielectric 4", "core", core, die)
+        lay("In4.Cu", "copper", inner)
+        lay("dielectric 5", "prepreg", pp, die)
+        desc = ["F.Cu 0.035 (signal)", "prepreg %.4f" % pp, "In1.Cu %.4f (GND plane)" % inner,
+                "core FR-4 %.4f" % core, "In2.Cu %.4f (signal)" % inner, "prepreg %.4f" % ppm,
+                "In3.Cu %.4f (signal)" % inner, "core FR-4 %.4f" % core, "In4.Cu %.4f (power plane)" % inner,
+                "prepreg %.4f" % pp, "B.Cu 0.035 (signal)"]
     lay("B.Cu", "copper", 0.035)
     lay("B.Mask", "Bottom Solder Mask", 0.01)
     lay("B.Paste", "Bottom Solder Paste")
@@ -107,7 +123,9 @@ def _q(s):
 
 def header_text(board, paper, ox, oy):
     stack, _ = _stackup(board)
-    inner = '\t\t(4 "In1.Cu" power)\n\t\t(6 "In2.Cu" power)\n' if board.layers == 4 else ""
+    ids = {"In1.Cu": 4, "In2.Cu": 6, "In3.Cu": 8, "In4.Cu": 10}
+    inner = "".join('\t\t(%d "%s" %s)\n' % (ids[l], l, "power" if l in board.plane_layers else "signal")
+                    for l in board.copper_layers[1:-1])
     return (
         '(kicad_pcb\n\t(version 20241229)\n\t(generator "pcbnew")\n\t(generator_version "9.0")\n'
         '\t(general\n\t\t(thickness %s)\n\t\t(legacy_teardrops no)\n\t)\n'
@@ -215,7 +233,7 @@ class Builder:
         out = []
         for n in names:
             if n == "*.Cu":
-                out += [pcbnew.F_Cu] + ([pcbnew.In1_Cu, pcbnew.In2_Cu] if self.b.layers == 4 else []) + [pcbnew.B_Cu]
+                out += [self.layer(l) for l in self.b.copper_layers]
             else:
                 out.append(self.layer(n))
         return out
@@ -628,7 +646,49 @@ def build_pcb(board, paths, nl, pages, root_uuid):
 
 
 # -------------------------------------------------------------------- routing
-def export_dsn(pcb_path, dsn_path):
+def _edge_guard(pcb, board):
+    """Autorouter-only keep-out bands along the outline (inside) and around cut-outs so
+    that routed copper respects the board-edge clearance (the DSN format has no such rule).
+    Added to the in-memory copy used for the DSN export, never saved."""
+    paper, pw, ph, ox, oy = page_and_origin(board)
+    fr = Frame(ox, oy)
+    w = board.rules.edge_clearance + 0.05
+    polys = [(fillet(board.outline["pts"], board.outline["radius"])[1], True)]
+    for c in board.cutouts:
+        pts = circle_pts(c["x"], c["y"], c["dia"]) if c["kind"] == "circle" else fillet(c["pts"], c.get("radius", 0))[1]
+        polys.append((pts, False))
+    ls = pcbnew.LSET()
+    for l in board.copper_layers:
+        ls.AddLayer(pcb.GetLayerID(l))
+    for pts, inward in polys:
+        area = sum(pts[i][0] * pts[(i + 1) % len(pts)][1] - pts[(i + 1) % len(pts)][0] * pts[i][1] for i in range(len(pts)))
+        sign = (1.0 if area > 0 else -1.0) * (1.0 if inward else -1.0)   # left normal points inside for CCW polygons
+        for i in range(len(pts)):
+            p, q = pts[i], pts[(i + 1) % len(pts)]
+            dx, dy = q[0] - p[0], q[1] - p[1]
+            ln = math.hypot(dx, dy)
+            if ln < 1e-6:
+                continue
+            nx, ny = -dy / ln * sign * w, dx / ln * sign * w
+            ex, ey = dx / ln * w, dy / ln * w      # extend along the edge so corners are covered
+            quad = [(p[0] - ex, p[1] - ey), (q[0] + ex, q[1] + ey), (q[0] + ex + nx, q[1] + ey + ny), (p[0] - ex + nx, p[1] - ey + ny)]
+            z = pcbnew.ZONE(pcb)
+            ol = z.Outline()
+            ol.NewOutline()
+            for x, y in quad:
+                v = fr.k(x, y)
+                ol.Append(v.x, v.y)
+            z.SetLayerSet(ls)
+            z.SetIsRuleArea(True)
+            z.SetDoNotAllowTracks(True)
+            z.SetDoNotAllowVias(True)
+            z.SetDoNotAllowPads(False)
+            z.SetDoNotAllowCopperPour(False)
+            z.SetDoNotAllowFootprints(False)
+            pcb.Add(z)
+
+
+def export_dsn(pcb_path, dsn_path, board=None):
     """Export a Specctra DSN.  Zones on outer *signal* layers are left out so the
     autorouter routes those nets with real tracks; inner plane zones are kept."""
     pcb = pcbnew.LoadBoard(pcb_path)
@@ -638,6 +698,8 @@ def export_dsn(pcb_path, dsn_path):
         lids = [l for l in z.GetLayerSet().CuStack()]
         if all(pcb.GetLayerType(l) == pcbnew.LT_SIGNAL for l in lids):
             pcb.Remove(z)
+    if board is not None:
+        _edge_guard(pcb, board)
     pcb.BuildConnectivity()
     if os.path.exists(dsn_path):
         os.remove(dsn_path)
@@ -834,7 +896,7 @@ def _fab_notes(board, pcb, fr, drills, n_via):
         "",
         "FABRICATION NOTES",
         "1. Material FR-4, Tg >= 150 C, %d copper layers, finished thickness %.2f mm +/-10 %%." % (board.layers, board.thickness),
-        "2. Outer copper 35 um (1 oz) finished%s." % ("; inner copper 17.5 um (0.5 oz)" if board.layers == 4 else ""),
+        "2. Outer copper 35 um (1 oz) finished%s." % ("; inner copper 17.5 um (0.5 oz)" if board.layers > 2 else ""),
         "3. Min track / space %.2f / %.2f mm.  Min finished hole %.2f mm.  Min annular ring %.2f mm." % (
             r.min_track, r.min_clearance, r.min_hole, r.min_annular),
         "4. Surface finish ENIG.  Solder mask both sides, vias tented.  Silkscreen both sides.",

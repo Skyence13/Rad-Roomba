@@ -1,0 +1,379 @@
+{
+ "scenario": "s08_replay",
+ "evidence_class": "simulated",
+ "against": "Python protocol fakes (rr_core.fakes), virtual clock",
+ "seed": 18,
+ "sim_time_s": 203.78,
+ "checks": [
+  {
+   "check": "replay of the raw archive reproduces every product bit-for-bit",
+   "ok": false,
+   "differing": [
+    "cells.csv",
+    "cells.geojson",
+    "gates.csv",
+    "map_activity.svg",
+    "residuals.json",
+    "summary.txt",
+    "survey_manifest.json"
+   ]
+  },
+  {
+   "check": "second replay identical to the first",
+   "ok": true
+  },
+  {
+   "check": "products compared",
+   "ok": true,
+   "n": 18
+  },
+  {
+   "check": "raw segments sealed with digests",
+   "ok": true,
+   "entries": 31808
+  }
+ ],
+ "passed": false,
+ "field_use_approved": false,
+ "coverage": {
+  "target_area_m2": 3.0,
+  "areas_m2": {
+   "UNVISITED": 1.3429,
+   "ACCEPTABLE": 0.0,
+   "INSUFFICIENT_SENSITIVITY": 1.6571,
+   "INVALID_DATA": 0.0,
+   "BLOCKED": 0.0,
+   "EXCLUDED": 0.0
+  },
+  "valid_exposure_fraction": 0.5523666666666667,
+  "acceptable_fraction": 0.0,
+  "sub_cell_m": 0.005,
+  "decision_cell_m": 0.1,
+  "position_allowance_m": 0.01
+ },
+ "time_sync": {
+  "limit_us": 10000.0,
+  "fits": 112,
+  "max_gate_bound_us": 836.9404311515593,
+  "median_gate_bound_us": 800.9690047472668
+ },
+ "link_stats": {
+  "tx": 10206,
+  "rx": 10206,
+  "bad_lines": 2,
+  "stale": 0,
+  "duplicates": 0,
+  "gates": 2014,
+  "gaps": 0,
+  "retries": 2,
+  "unassigned_frames": 0,
+  "time_exchanges": 112,
+  "time_exchanges_rejected": 0
+ },
+ "localization_error_vs_truth_m": {
+  "max_x_m": 0.0016519256598139243,
+  "max_y_m": 0.0012262983143784545
+ },
+ "plan": {
+  "n_pairs": 2,
+  "offset_m": 0.04375,
+  "pair_stride_m": 0.28111,
+  "seam_overlap_per_side_m": 0.01625,
+  "predicted_residual": {
+   "left_wall_strip_m": 0.1763,
+   "right_wall_strip_m": 0.1763,
+   "door_end_strip_m": 0.121,
+   "front_end_strip_m": 0.051,
+   "end_zone_single_heading_m": {
+    "door": 0.4606,
+    "front": 0.4606
+   },
+   "note": "wall strips are set by the in-place turn radius of the outline; see README coverage section"
+  },
+  "estimated_time_s": 234.9
+ },
+ "flags": [
+  {
+   "id": "HS-0001",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 2,
+   "x_m": 1.0083537914445029,
+   "y_m": -0.20629729082893997,
+   "D": 0.167494526554613,
+   "u_total": 0.11949102745560593,
+   "D_star": 0.18036587194850073,
+   "D_hash": 0.4831799599911674,
+   "location": {
+    "distance_from_door_m": 1.008,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.294,
+    "text": "1.01 m from the door threshold, 0.29 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0002",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 2,
+   "x_m": 2.064981523030865,
+   "y_m": -0.20622773980980813,
+   "D": 0.15145703474675357,
+   "u_total": 0.11162802825327317,
+   "D_star": 0.15277168084674553,
+   "D_hash": 0.3932769902253208,
+   "location": {
+    "distance_from_door_m": 2.065,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.294,
+    "text": "2.06 m from the door threshold, 0.29 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0003",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 1,
+   "x_m": 0.7372002126262419,
+   "y_m": -0.1188511162056968,
+   "D": 0.13424617436308747,
+   "u_total": 0.12899998827211212,
+   "D_star": 0.1617328261281594,
+   "D_hash": 0.44817842189254176,
+   "location": {
+    "distance_from_door_m": 0.737,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.381,
+    "text": "0.74 m from the door threshold, 0.38 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0004",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 1,
+   "x_m": 1.835610879119124,
+   "y_m": -0.11871916270782704,
+   "D": 0.22014973649665098,
+   "u_total": 0.12261363637558963,
+   "D_star": 0.1638101165219377,
+   "D_hash": 0.4537577320251165,
+   "location": {
+    "distance_from_door_m": 1.836,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.381,
+    "text": "1.84 m from the door threshold, 0.38 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0005",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 1,
+   "x_m": 2.3821319228907605,
+   "y_m": -0.11868348751050241,
+   "D": 0.09146568526048376,
+   "u_total": 0.13072138647959292,
+   "D_star": 0.18850026669224895,
+   "D_hash": 0.5108839201214973,
+   "location": {
+    "distance_from_door_m": 2.382,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.381,
+    "text": "2.38 m from the door threshold, 0.38 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0006",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 1,
+   "x_m": 2.6346264197469185,
+   "y_m": -0.11869005123951211,
+   "D": 0.22070366602523855,
+   "u_total": 0.12952791011823406,
+   "D_star": 0.19227481119614445,
+   "D_hash": 0.5128867601884721,
+   "location": {
+    "distance_from_door_m": 2.635,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.381,
+    "text": "2.63 m from the door threshold, 0.38 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0007",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 2,
+   "x_m": 0.46449440773707035,
+   "y_m": -0.07491828308207131,
+   "D": 0.16533963124282186,
+   "u_total": 0.12923027621223637,
+   "D_star": 0.17807794368458602,
+   "D_hash": 0.4783343974336452,
+   "location": {
+    "distance_from_door_m": 0.464,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.425,
+    "text": "0.46 m from the door threshold, 0.43 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0008",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 1,
+   "x_m": 1.235496257682296,
+   "y_m": 0.13583477543905287,
+   "D": 0.14397793504127296,
+   "u_total": 0.08695412628429912,
+   "D_star": 0.11900601388858803,
+   "D_hash": 0.2941054881411886,
+   "location": {
+    "distance_from_door_m": 1.235,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.364,
+    "text": "1.24 m from the door threshold, 0.36 m from the left wall"
+   }
+  },
+  {
+   "id": "HS-0009",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 1,
+   "x_m": 1.5598012235466,
+   "y_m": 0.12909778853169246,
+   "D": 1.3286273850092414,
+   "u_total": 0.2684060991258169,
+   "D_star": 0.14204194308588858,
+   "D_hash": 0.3574788938744458,
+   "location": {
+    "distance_from_door_m": 1.56,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.371,
+    "text": "1.56 m from the door threshold, 0.37 m from the left wall"
+   }
+  },
+  {
+   "id": "HS-0010",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 1,
+   "x_m": 0.7399143927684375,
+   "y_m": 0.1621236111427997,
+   "D": 0.26002996372161236,
+   "u_total": 0.1319756051536386,
+   "D_star": 0.22176165131961062,
+   "D_hash": 0.5911197917957641,
+   "location": {
+    "distance_from_door_m": 0.74,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.338,
+    "text": "0.74 m from the door threshold, 0.34 m from the left wall"
+   }
+  },
+  {
+   "id": "HS-0011",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 1,
+   "x_m": 2.5097344736945275,
+   "y_m": 0.16238605175939114,
+   "D": 0.11938330644878489,
+   "u_total": 0.15929618731777564,
+   "D_star": 0.22506638260142942,
+   "D_hash": 0.5981576841395312,
+   "location": {
+    "distance_from_door_m": 2.51,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.338,
+    "text": "2.51 m from the door threshold, 0.34 m from the left wall"
+   }
+  },
+  {
+   "id": "HS-0012",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 1,
+   "x_m": 2.8002790535015123,
+   "y_m": 0.16240812957500717,
+   "D": 0.09366714061805775,
+   "u_total": 0.12601098926932183,
+   "D_star": 0.26034129557171504,
+   "D_hash": 0.690345808964321,
+   "location": {
+    "distance_from_door_m": 2.8,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.338,
+    "text": "2.80 m from the door threshold, 0.34 m from the left wall"
+   }
+  },
+  {
+   "id": "HS-0013",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 2,
+   "x_m": 0.9345038678448857,
+   "y_m": 0.2062438470132297,
+   "D": 0.17502718773017167,
+   "u_total": 0.09351073077450779,
+   "D_star": 0.1420643306335862,
+   "D_hash": 0.35744765383073346,
+   "location": {
+    "distance_from_door_m": 0.935,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.294,
+    "text": "0.93 m from the door threshold, 0.29 m from the left wall"
+   }
+  },
+  {
+   "id": "HS-0014",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 0,
+   "x_m": 2.146989619256255,
+   "y_m": 0.24981886623350086,
+   "D": 0.13020849781132243,
+   "u_total": 0.10631707558023785,
+   "D_star": 0.14356049459593145,
+   "D_hash": 0.36102218426565785,
+   "location": {
+    "distance_from_door_m": 2.147,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.25,
+    "text": "2.15 m from the door threshold, 0.25 m from the left wall"
+   }
+  }
+ ],
+ "scan_detections": 0,
+ "observations": [],
+ "journal_entries": 31808,
+ "segments": 2,
+ "products": [
+  "calibration.json",
+  "cells.csv",
+  "cells.geojson",
+  "clock_fits.ndjson",
+  "coverage.png",
+  "flags.json",
+  "gaps.json",
+  "gates.csv",
+  "grid.json",
+  "map_activity.svg",
+  "map_coverage.svg",
+  "observations.json",
+  "poses.csv",
+  "profile.json",
+  "residuals.json",
+  "summary.txt",
+  "survey_manifest.json",
+  "transforms.json"
+ ],
+ "product_sha256": {
+  "calibration.json": "3c246b889453729593dad6ceea9c0c6a15ad5d36ce7387fa6324263386786960",
+  "cells.csv": "7eba3db9dad1a793e3c637a4426abd80521a0ccdfa36b00145af19af874723bb",
+  "cells.geojson": "82a433a181b4511cca1337b6ea0c42a1b9aeaa0444433b306d1c6d447b415112",
+  "clock_fits.ndjson": "b6b0d3b04cb386efd37fa96eab03dca9e2c165289e70eaf0db79ec4946e981f0",
+  "coverage.png": "0a2135f096e592dc8cd27174ace5c13ba2fb8634606cf73b68856db55b8ea32e",
+  "flags.json": "f590bbc1a91b24c859926d9c05411f9c65726f1bac4cb6040aeb74caae03863f",
+  "gaps.json": "345872230d60d01950bd716903b63e178eeb2d3c7c955df9e9ec1a1b7ae9373a",
+  "gates.csv": "c7fe8fe7251ea44f3a943a174dc28e91c3c94d925bd6782cae02f44447431230",
+  "grid.json": "b1193a616edcd1b6884ec2fb1d48e0c0ec57f7cfd14e0a2b7fb32429b3345a4e",
+  "map_activity.svg": "20b9b51e0f989909ad1bc9657138511c07b78a44a810ea580d7f22932e900b51",
+  "map_coverage.svg": "01993aed6bf1e33899e461c2b272d419477838d443f799ca26dc7a7a59bc1981",
+  "observations.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+  "poses.csv": "e79ed88c211efcb46ba4e9c33ac175c7174fb8af5526575db0803060a666d2e4",
+  "profile.json": "b392cbc90c61f4bd977cfa09f423449734e5d83c1549b1041d907c8eb1022e87",
+  "residuals.json": "0ba60daf5fd0c726a71f01ec268d97052a24736555645eeddaf6d033974c7c4e",
+  "summary.txt": "078b67a7032e292ea5e639600c20ebbd93e61aa7bd5142b1f50c2dfbb3a4ab20",
+  "survey_manifest.json": "aa3e71395692afa5b65d35f67857fd68c449d0b0298f5e43983acf89ce40e026",
+  "transforms.json": "b3f59b634187adbcb53ba918e14451a2ecf27e05ac87d4d43804f2bdfeb48e7d"
+ }
+}

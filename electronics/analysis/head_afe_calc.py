@@ -266,6 +266,51 @@ def mc_dark_rate(rate, p_ct, shape_t, shape_y, n_thr, t_total, seed=1):
     return cross / (nseg * 2e-3)
 
 
+def check_against_circuit():
+    """Compare the values used here with electronics/head_acq/design/circuit.py (channel F0)."""
+    import importlib.util
+    import os
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "head_acq", "design", "circuit.py")
+    spec = importlib.util.spec_from_file_location("rr_head_circuit", path)
+    cir = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(cir)
+
+    def between(a, b, kind):
+        out = []
+        for p in cir.PARTS:
+            if p["dnp"] or not p["ref"].startswith(kind) or len(p["pins"]) != 2:
+                continue
+            nets = {v[1] for v in p["pins"].values() if v}
+            if nets == {a, b}:
+                out.append(p)
+        return out
+
+    def rpar(a, b):
+        rs = [p["ohms"] for p in between(a, b, "R")]
+        return 1.0 / sum(1.0 / r for r in rs)
+
+    def cap(a, b):
+        mult = {"pF": 1e-12, "nF": 1e-9, "uF": 1e-6}
+        tot = 0.0
+        for p in between(a, b, "C"):
+            v = p["value"]
+            tot += float(v[:-2]) * mult[v[-2:]]
+        return tot
+    c = CIR
+    got = {
+        "R_IN": rpar("F0_A", "F0_TRIM"), "R_SER": rpar("F0_A", "F0_PINA"),
+        "G1": 1 + rpar("F0_PRE", "F0_PFB") / rpar("F0_PFB", "F0_PG"),
+        "C_D": cap("F0_PRE", "F0_FS"), "R_D": rpar("F0_FS", "F0_VBL"),
+        "G2": 1 + rpar("F0_FAST", "F0_FFB") / rpar("F0_FFB", "F0_VBL"), "C_F2": cap("F0_FAST", "F0_FFB"),
+        "R_S1": rpar("F0_PRE", "F0_SI"), "C_S1": cap("F0_SI", "GND"), "C_S2": cap("F0_SI", "F0_SS"),
+        "R_S3": rpar("F0_SS", "F0_VBL"), "G3": 1 + rpar("F0_SLOW", "F0_SFB") / rpar("F0_SFB", "F0_VBL"),
+        "C_INJ": cap("F0_TPI", "F0_A"),
+    }
+    bad = {k: (v, c[k]) for k, v in got.items() if abs(v - c[k]) > 1e-3 * abs(c[k])}
+    rpz = rpar("F0_PRE", "F0_FS")
+    return bad, rpz
+
+
 # ----------------------------------------------------------------------------- report helpers
 def md_table(header, rows):
     out = ["| " + " | ".join(header) + " |", "|" + "|".join(["---"] * len(header)) + "|"]
@@ -547,6 +592,11 @@ def main():
                      "%.2f" % (c["C_INJ"] * c["DAC_FS"] / 4096 / q1)])
     print(md_table(["device", "Q per p.e. pC", "full-scale injection p.e. (100 pF x 2.5 V = 250 pC)",
                     "step per DAC LSB p.e."], rows))
+
+    section("T12 Cross-check against circuit.py (channel F0)")
+    bad, rpz = check_against_circuit()
+    print("Values in this script that differ from circuit.py: %s.  Pole-zero resistor fitted in circuit.py: %.0f ohm "
+          "(matched value for a 50 ns recharge time: %.0f ohm)." % (bad or "none", rpz, 50e-9 / c["C_D"]))
 
     if plots:
         import matplotlib

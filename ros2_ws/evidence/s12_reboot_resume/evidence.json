@@ -1,0 +1,466 @@
+{
+ "scenario": "s12_reboot_resume",
+ "evidence_class": "simulated",
+ "against": "Python protocol fakes (rr_core.fakes), virtual clock",
+ "seed": 22,
+ "sim_time_s": 252.96,
+ "checks": [
+  {
+   "check": "restart opens a new archive epoch; earlier segments sealed read-only",
+   "ok": true
+  },
+  {
+   "check": "committed raw data replayed into the new process",
+   "ok": true
+  },
+  {
+   "check": "no motion after restart (chassis latched HOST_LINK_LOST or idle)",
+   "ok": true
+  },
+  {
+   "check": "tasks completed before the reboot stay done",
+   "ok": true
+  },
+  {
+   "check": "arming refused until the datum is re-registered",
+   "ok": true,
+   "missing": [
+    "TRANSFORMS:datum not registered",
+    "CHASSIS_MODE:PROTECTIVE_STOP",
+    "OP_MODE"
+   ]
+  },
+  {
+   "check": "deliberate re-arm and arm after restart",
+   "ok": true,
+   "missing": null,
+   "mode": "ARMED_IDLE"
+  },
+  {
+   "check": "start accepted",
+   "ok": true
+  },
+  {
+   "check": "mission complete after resume",
+   "ok": true
+  },
+  {
+   "check": "new trajectory epoch: no pose interpolation across the restart",
+   "ok": true,
+   "epochs": [
+    "START",
+    "PROCESS_RESTART"
+   ]
+  },
+  {
+   "check": "interrupted strip re-surveyed",
+   "ok": true
+  },
+  {
+   "check": "new attachment after host restart",
+   "ok": true
+  }
+ ],
+ "passed": true,
+ "field_use_approved": false,
+ "coverage": {
+  "target_area_m2": 3.0,
+  "areas_m2": {
+   "UNVISITED": 1.3422,
+   "ACCEPTABLE": 0.0,
+   "INSUFFICIENT_SENSITIVITY": 1.6578000000000002,
+   "INVALID_DATA": 0.0,
+   "BLOCKED": 0.0,
+   "EXCLUDED": 0.0
+  },
+  "valid_exposure_fraction": 0.5526000000000001,
+  "acceptable_fraction": 0.0,
+  "sub_cell_m": 0.005,
+  "decision_cell_m": 0.1,
+  "position_allowance_m": 0.01
+ },
+ "time_sync": {
+  "limit_us": 10000.0,
+  "fits": 136,
+  "max_gate_bound_us": 836.9404311515593,
+  "median_gate_bound_us": 798.7363055123091
+ },
+ "link_stats": {
+  "tx": 12690,
+  "rx": 12690,
+  "bad_lines": 0,
+  "stale": 1,
+  "duplicates": 0,
+  "gates": 2506,
+  "gaps": 0,
+  "retries": 0,
+  "unassigned_frames": 0,
+  "time_exchanges": 136,
+  "time_exchanges_rejected": 0
+ },
+ "localization_error_vs_truth_m": {
+  "max_x_m": 0.0009178525809367954,
+  "max_y_m": 0.0005864677639338123
+ },
+ "plan": {
+  "n_pairs": 2,
+  "offset_m": 0.04375,
+  "pair_stride_m": 0.28111,
+  "seam_overlap_per_side_m": 0.01625,
+  "predicted_residual": {
+   "left_wall_strip_m": 0.1763,
+   "right_wall_strip_m": 0.1763,
+   "door_end_strip_m": 0.121,
+   "front_end_strip_m": 0.051,
+   "end_zone_single_heading_m": {
+    "door": 0.4606,
+    "front": 0.4606
+   },
+   "note": "wall strips are set by the in-place turn radius of the outline; see README coverage section"
+  },
+  "estimated_time_s": 234.9
+ },
+ "flags": [
+  {
+   "id": "HS-0001",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 2,
+   "x_m": 2.562618295064592,
+   "y_m": -0.20620241495404218,
+   "D": 0.19612497653243,
+   "u_total": 0.14733124428085387,
+   "D_star": 0.20339187979661344,
+   "D_hash": 0.5332154425590424,
+   "location": {
+    "distance_from_door_m": 2.563,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.294,
+    "text": "2.56 m from the door threshold, 0.29 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0002",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 2,
+   "x_m": 2.8282164523514384,
+   "y_m": -0.18655103808703316,
+   "D": 0.1698047339642094,
+   "u_total": 0.12147987669684397,
+   "D_star": 0.17220867348010765,
+   "D_hash": 0.4255340427028275,
+   "location": {
+    "distance_from_door_m": 2.828,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.313,
+    "text": "2.83 m from the door threshold, 0.31 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0003",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 2,
+   "x_m": 0.7507095314392395,
+   "y_m": -0.10667161141014732,
+   "D": 0.1524243422928416,
+   "u_total": 0.09288592449473691,
+   "D_star": 0.12535477755424482,
+   "D_hash": 0.31872949428595976,
+   "location": {
+    "distance_from_door_m": 0.751,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.393,
+    "text": "0.75 m from the door threshold, 0.39 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0004",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 1,
+   "x_m": 1.4590914622824505,
+   "y_m": -0.11874214569710852,
+   "D": 0.15023352651960725,
+   "u_total": 0.1425768744125618,
+   "D_star": 0.1903946378110738,
+   "D_hash": 0.5074624310342734,
+   "location": {
+    "distance_from_door_m": 1.459,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.381,
+    "text": "1.46 m from the door threshold, 0.38 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0005",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 1,
+   "x_m": 2.1095805296504677,
+   "y_m": -0.1187145547436807,
+   "D": 0.10087607723139722,
+   "u_total": 0.14737055929959667,
+   "D_star": 0.191860397515473,
+   "D_hash": 0.510921690579074,
+   "location": {
+    "distance_from_door_m": 2.11,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.381,
+    "text": "2.11 m from the door threshold, 0.38 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0006",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 0,
+   "x_m": 1.0525385541108774,
+   "y_m": -0.031233665946855404,
+   "D": 0.14693216751442198,
+   "u_total": 0.12659464984192378,
+   "D_star": 0.18964367895713607,
+   "D_hash": 0.5129256088947373,
+   "location": {
+    "distance_from_door_m": 1.053,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.469,
+    "text": "1.05 m from the door threshold, 0.47 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0007",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 0,
+   "x_m": 1.2467215113831922,
+   "y_m": -0.031216791118893663,
+   "D": 0.05953664989786015,
+   "u_total": 0.16151085132562265,
+   "D_star": 0.1927061390431918,
+   "D_hash": 0.5205979706743838,
+   "location": {
+    "distance_from_door_m": 1.247,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.469,
+    "text": "1.25 m from the door threshold, 0.47 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0008",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 3,
+   "x_m": 2.4812152265058276,
+   "y_m": -0.004092339921365629,
+   "D": 0.3043246157433347,
+   "u_total": 0.12187750196715906,
+   "D_star": 0.16063678224292677,
+   "D_hash": 0.40956147471857957,
+   "location": {
+    "distance_from_door_m": 2.481,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.496,
+    "text": "2.48 m from the door threshold, 0.50 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0009",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 0,
+   "x_m": 2.752430843024022,
+   "y_m": -0.031211059075044248,
+   "D": 0.09336642766147815,
+   "u_total": 0.12651145426863603,
+   "D_star": 0.19025796555646973,
+   "D_hash": 0.5137598558476437,
+   "location": {
+    "distance_from_door_m": 2.752,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.469,
+    "text": "2.75 m from the door threshold, 0.47 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0011",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 1,
+   "x_m": 0.4242835551408665,
+   "y_m": -0.1624264049872839,
+   "D": 0.14398800860166017,
+   "u_total": 0.12152056056531811,
+   "D_star": 0.2217206091132513,
+   "D_hash": 0.5907665096315575,
+   "location": {
+    "distance_from_door_m": 0.424,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.338,
+    "text": "0.42 m from the door threshold, 0.34 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0012",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 1,
+   "x_m": 0.23626773641082877,
+   "y_m": 0.11047403981316582,
+   "D": 0.134584506841352,
+   "u_total": 0.10459335449961905,
+   "D_star": 0.1625350568607077,
+   "D_hash": 0.4185600962751739,
+   "location": {
+    "distance_from_door_m": 0.236,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.39,
+    "text": "0.24 m from the door threshold, 0.39 m from the left wall"
+   }
+  },
+  {
+   "id": "HS-0013",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 1,
+   "x_m": 0.8363030311671003,
+   "y_m": 0.1623786315993745,
+   "D": 0.14683524211878912,
+   "u_total": 0.10495741269283501,
+   "D_star": 0.18750836734627294,
+   "D_hash": 0.5189774153758487,
+   "location": {
+    "distance_from_door_m": 0.836,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.338,
+    "text": "0.84 m from the door threshold, 0.34 m from the left wall"
+   }
+  },
+  {
+   "id": "HS-0014",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 1,
+   "x_m": 1.0387476015417505,
+   "y_m": 0.16235771452329553,
+   "D": 0.18979510901538849,
+   "u_total": 0.15419647309135187,
+   "D_star": 0.22086444779430267,
+   "D_hash": 0.5892090700810199,
+   "location": {
+    "distance_from_door_m": 1.039,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.338,
+    "text": "1.04 m from the door threshold, 0.34 m from the left wall"
+   }
+  },
+  {
+   "id": "HS-0015",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 1,
+   "x_m": 1.3486777652244417,
+   "y_m": 0.16235011953736717,
+   "D": 0.18931329826499466,
+   "u_total": 0.10684540642503401,
+   "D_star": 0.222558346163444,
+   "D_hash": 0.5928164660677635,
+   "location": {
+    "distance_from_door_m": 1.349,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.338,
+    "text": "1.35 m from the door threshold, 0.34 m from the left wall"
+   }
+  },
+  {
+   "id": "HS-0016",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 1,
+   "x_m": 1.6554756013254588,
+   "y_m": 0.1624224334639424,
+   "D": 0.12756572332223026,
+   "u_total": 0.13295559911644453,
+   "D_star": 0.22392192381800657,
+   "D_hash": 0.5957203974064399,
+   "location": {
+    "distance_from_door_m": 1.655,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.338,
+    "text": "1.66 m from the door threshold, 0.34 m from the left wall"
+   }
+  },
+  {
+   "id": "HS-0017",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 1,
+   "x_m": 2.8429443041082614,
+   "y_m": 0.1624746556209042,
+   "D": 0.09311533845004955,
+   "u_total": 0.13613036393293285,
+   "D_star": 0.22405777990810433,
+   "D_hash": 0.5962767940894711,
+   "location": {
+    "distance_from_door_m": 2.843,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.338,
+    "text": "2.84 m from the door threshold, 0.34 m from the left wall"
+   }
+  },
+  {
+   "id": "HS-0018",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 3,
+   "x_m": 2.162163300954468,
+   "y_m": 0.2938100763615212,
+   "D": 0.1532373408124631,
+   "u_total": 0.10446444613126099,
+   "D_star": 0.1564843354043962,
+   "D_hash": 0.388947487842215,
+   "location": {
+    "distance_from_door_m": 2.162,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.206,
+    "text": "2.16 m from the door threshold, 0.21 m from the left wall"
+   }
+  },
+  {
+   "id": "HS-0019",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 0,
+   "x_m": 2.650571786601145,
+   "y_m": 0.24990523958080735,
+   "D": 0.05940449740987121,
+   "u_total": 0.16331162109979291,
+   "D_star": 0.242346009430524,
+   "D_hash": 0.6410832263684144,
+   "location": {
+    "distance_from_door_m": 2.651,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.25,
+    "text": "2.65 m from the door threshold, 0.25 m from the left wall"
+   }
+  },
+  {
+   "id": "HS-0020",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 2,
+   "x_m": 0.5384945635246068,
+   "y_m": 0.20616120658520398,
+   "D": 0.12957827026843025,
+   "u_total": 0.12319649852105191,
+   "D_star": 0.1547898858743096,
+   "D_hash": 0.4288538692438758,
+   "location": {
+    "distance_from_door_m": 0.538,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.294,
+    "text": "0.54 m from the door threshold, 0.29 m from the left wall"
+   }
+  }
+ ],
+ "scan_detections": 1,
+ "observations": [],
+ "done_before_reboot": [
+  "T000",
+  "T001"
+ ],
+ "trajectory_epochs": [
+  {
+   "epoch": 0,
+   "t_us": null,
+   "reason": "START"
+  },
+  {
+   "epoch": 1,
+   "t_us": 1066660000,
+   "reason": "PROCESS_RESTART"
+  }
+ ]
+}

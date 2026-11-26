@@ -68,7 +68,7 @@ class SurveyPipeline:
         elif kind == "J":
             op = payload["op"]
             if op == "mark":
-                self.proc.add_mark(payload["t_us"], **{k: v for k, v in payload.items() if k != "op"})
+                self.proc.add_mark(payload["t_us"], **{k: v for k, v in payload.items() if k not in ("op", "t_us")})
             elif op == "advance":
                 self.proc.advance(payload["w"])
             elif op == "blocked":
