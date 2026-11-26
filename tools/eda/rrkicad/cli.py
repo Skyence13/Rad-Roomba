@@ -169,7 +169,9 @@ def stage_gen(board_py, route=True, sch_only=False):
     if info["fanout"]["plane_nets"]:
         log("plane fan-out: %d via(s) on %s, %d pad(s) left to the autorouter" % (
             info["fanout"]["vias"], ", ".join(info["fanout"]["plane_nets"]), len(info["fanout"]["failed"])))
-    write_state(paths, plane_fanout=info["fanout"])
+    if info.get("block_copies"):
+        log("replicate: %d fixed track/via item(s) from route/blocks.json" % info["block_copies"])
+    write_state(paths, plane_fanout=info["fanout"], block_copies=info.get("block_copies", 0))
     write_state(paths, placement=info["placement"], autoplaced=info["autoplaced"],
                 pcb_page_origin=info["origin"], board_bbox=info["bbox"], routed=False,
                 gen_warnings=info["warnings"])
@@ -247,6 +249,10 @@ def stage_post(board_py, routed=True, outputs=True, route_info=None, ses=None):
     paths = Paths(board_py, board.name)
     _resolve_for_post(board)
     st = read_state(paths)
+    for ref, (x, y, rot, side) in (st.get("placement") or {}).items():   # incl. auto-arranged positions
+        if ref in board._refs:
+            pt = board.part(ref)
+            pt.x, pt.y, pt.rot, pt.side = x, y, rot, side
     if routed and os.path.exists(paths.unrouted):
         shutil.copyfile(paths.unrouted, paths.pcb)     # always import into the pristine generated board
     info = pcb.finish_pcb(board, paths, ses=(ses or paths.ses) if routed else None)

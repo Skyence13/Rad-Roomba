@@ -6,37 +6,42 @@ unit Bq/cm2  investigation level 0.3  detection goal < 0.2
 alpha_scan 0.05  alpha_recount 0.000171  beta 0.05  decision cells 300
 
 WHERE THE ROBOT MEASURED
-  valid exposure on 55.2 % of the target floor (3.000 m2)
-  UNVISITED                    1.3429 m2
-  ACCEPTABLE                   0.0200 m2
-  INSUFFICIENT_SENSITIVITY     1.6371 m2
+  valid exposure on 64.5 % of the target floor (3.000 m2)
+  UNVISITED                    1.0641 m2
+  ACCEPTABLE                   0.0000 m2
+  INSUFFICIENT_SENSITIVITY     1.9359 m2
   INVALID_DATA                 0.0000 m2
   BLOCKED                      0.0000 m2
   EXCLUDED                     0.0000 m2
 
 HOW SENSITIVE IT WAS
-  decision cells with data 226; sensitivity sufficient (D# < goal, envelope ok) 2
-  D# median 0.394  best 0.187  worst 3.449 Bq/cm2 (beta_window)
-  time sync: max gate bound 836.9404311515593 us (limit 10000)
+  decision cells with data 232; sensitivity sufficient (D# < goal, envelope ok) 0
+  D# median 0.387  best 0.222  worst 1.585 Bq/cm2 (beta_window)
+  time sync: max gate bound 838.0520796923137 us (limit 10000)
 
 WHAT STILL NEEDS ATTENTION
-  HS-0001 UNRESOLVED_EXCEEDANCE lane 1 D=0.246 +/- 0.101 Bq/cm2 at 2.05 m from the door threshold, 0.47 m from the left wall status OPEN
-  HS-0002 UNRESOLVED_EXCEEDANCE lane 2 D=0.182 +/- 0.142 Bq/cm2 at 2.31 m from the door threshold, 0.29 m from the right wall status OPEN
-  HS-0003 UNRESOLVED_EXCEEDANCE lane 3 D=0.169 +/- 0.128 Bq/cm2 at 2.84 m from the door threshold, 0.22 m from the right wall status OPEN
-  HS-0004 UNRESOLVED_EXCEEDANCE lane 0 D=0.154 +/- 0.111 Bq/cm2 at 1.01 m from the door threshold, 0.47 m from the right wall status OPEN
-  HS-0005 INVESTIGATION_LEVEL lane 1 D=0.953 +/- 0.187 Bq/cm2 at 1.53 m from the door threshold, 0.38 m from the right wall status OPEN
-  HS-0006 UNRESOLVED_EXCEEDANCE lane 0 D=0.153 +/- 0.126 Bq/cm2 at 1.25 m from the door threshold, 0.47 m from the right wall status OPEN
-  HS-0007 UNRESOLVED_EXCEEDANCE lane 2 D=0.153 +/- 0.205 Bq/cm2 at 0.18 m from the door threshold, 0.40 m from the right wall status OPEN
-  HS-0008 UNRESOLVED_EXCEEDANCE lane 1 D=0.146 +/- 0.123 Bq/cm2 at 0.80 m from the door threshold, 0.36 m from the left wall status OPEN
-  HS-0009 UNRESOLVED_EXCEEDANCE lane 1 D=0.124 +/- 0.152 Bq/cm2 at 1.65 m from the door threshold, 0.34 m from the left wall status OPEN
-  HS-0010 UNRESOLVED_EXCEEDANCE lane 1 D=0.183 +/- 0.165 Bq/cm2 at 2.28 m from the door threshold, 0.34 m from the left wall status OPEN
-  HS-0011 UNRESOLVED_EXCEEDANCE lane 0 D=0.181 +/- 0.168 Bq/cm2 at 2.71 m from the door threshold, 0.25 m from the left wall status OPEN
-  HS-0012 UNRESOLVED_EXCEEDANCE lane 0 D=0.125 +/- 0.155 Bq/cm2 at 1.14 m from the door threshold, 0.25 m from the left wall status OPEN
-  HS-0013 UNRESOLVED_EXCEEDANCE lane 0 D=0.137 +/- 0.130 Bq/cm2 at 1.85 m from the door threshold, 0.25 m from the left wall status OPEN
+  HS-0001 UNRESOLVED_EXCEEDANCE lane 3 D=0.134 +/- 0.071 Bq/cm2 at 0.55 m from the door threshold, 0.17 m from the right wall status OPEN
+  HS-0002 UNRESOLVED_EXCEEDANCE lane 1 D=0.206 +/- 0.133 Bq/cm2 at 0.82 m from the door threshold, 0.32 m from the right wall status OPEN
+  HS-0003 INVESTIGATION_LEVEL lane 1 D=1.109 +/- 0.208 Bq/cm2 at 1.56 m from the door threshold, 0.33 m from the right wall status OPEN
+  HS-0004 UNRESOLVED_EXCEEDANCE lane 2 D=0.131 +/- 0.143 Bq/cm2 at 1.04 m from the door threshold, 0.25 m from the right wall status OPEN
+  HS-0005 UNRESOLVED_EXCEEDANCE lane 1 D=0.185 +/- 0.098 Bq/cm2 at 1.18 m from the door threshold, 0.32 m from the left wall status OPEN
+  HS-0006 UNRESOLVED_EXCEEDANCE lane 3 D=0.150 +/- 0.119 Bq/cm2 at 1.67 m from the door threshold, 0.17 m from the right wall status OPEN
+  HS-0007 UNRESOLVED_EXCEEDANCE lane 2 D=0.180 +/- 0.145 Bq/cm2 at 2.55 m from the door threshold, 0.30 m from the right wall status OPEN
+  HS-0008 UNRESOLVED_EXCEEDANCE lane 0 D=0.179 +/- 0.146 Bq/cm2 at 2.82 m from the door threshold, 0.43 m from the right wall status OPEN
+  HS-0009 UNRESOLVED_EXCEEDANCE lane 2 D=0.161 +/- 0.111 Bq/cm2 at 0.22 m from the door threshold, 0.37 m from the right wall status OPEN
+  HS-0010 UNRESOLVED_EXCEEDANCE lane 3 D=0.125 +/- 0.123 Bq/cm2 at 0.90 m from the door threshold, 0.47 m from the left wall status OPEN
+  HS-0011 UNRESOLVED_EXCEEDANCE lane 0 D=0.156 +/- 0.112 Bq/cm2 at 0.82 m from the door threshold, 0.21 m from the left wall status OPEN
+  HS-0012 UNRESOLVED_EXCEEDANCE lane 2 D=0.045 +/- 0.274 Bq/cm2 at 1.82 m from the door threshold, 0.39 m from the left wall status OPEN
+  HS-0013 UNRESOLVED_EXCEEDANCE lane 2 D=0.112 +/- 0.136 Bq/cm2 at 2.55 m from the door threshold, 0.39 m from the left wall status OPEN
+  HS-0014 UNRESOLVED_EXCEEDANCE lane 0 D=0.165 +/- 0.150 Bq/cm2 at 2.86 m from the door threshold, 0.20 m from the left wall status OPEN
+  HS-0015 UNRESOLVED_EXCEEDANCE lane 3 D=0.087 +/- 0.142 Bq/cm2 at 1.84 m from the door threshold, 0.17 m from the left wall status OPEN
+  HS-0016 UNRESOLVED_EXCEEDANCE lane 3 D=0.084 +/- 0.133 Bq/cm2 at 2.05 m from the door threshold, 0.17 m from the left wall status OPEN
+  HS-0017 UNRESOLVED_EXCEEDANCE lane 1 D=0.194 +/- 0.149 Bq/cm2 at 0.37 m from the door threshold, 0.34 m from the left wall status OPEN
+  HS-0018 UNRESOLVED_EXCEEDANCE lane 3 D=0.139 +/- 0.121 Bq/cm2 at 0.44 m from the door threshold, 0.17 m from the left wall status OPEN
   scan-stage detections below the investigation level awaiting a recount under the two-stage rule: 0
-  scaler count OBS-0001 (flag None, lane 3): INCONCLUSIVE D=0.050 +/- 0.040, D*=0.147, D#=0.247, T=9.9 s
-  scaler count OBS-0002 (flag None, lane 1): EXCEEDS_INVESTIGATION_LEVEL D=1.091 +/- 0.182, D*=0.159, D#=0.264, T=9.9 s
-  unresolved floor INSUFFICIENT_SENSITIVITY: 1.6371 m2 (rectangles in residuals.json)
-  unresolved floor UNVISITED: 1.3429 m2 (rectangles in residuals.json)
+  scaler count OBS-0001 (flag None, lane 3): INCONCLUSIVE D=0.010 +/- 0.040, D*=0.154, D#=0.258, T=9.9 s
+  scaler count OBS-0002 (flag None, lane 1): EXCEEDS_INVESTIGATION_LEVEL D=1.552 +/- 0.249, D*=0.149, D#=0.249, T=9.9 s
+  unresolved floor INSUFFICIENT_SENSITIVITY: 1.9359 m2 (rectangles in residuals.json)
+  unresolved floor UNVISITED: 1.0641 m2 (rectangles in residuals.json)
 
 A release-status entry is a radiation-protection decision under the site procedure; this report is not one.

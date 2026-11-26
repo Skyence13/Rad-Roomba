@@ -190,6 +190,7 @@ class Board:
         self.severities = []
         self.local_symbols = {}
         self.local_footprints = {}
+        self.replicas = []
         self.routing = {"passes": 100, "threads": None, "timeout": None, "enabled": True, "extra_args": [],
                         "optimizer": True, "fanout": False, "plane_fanout": True, "retries": 2}
         self.autoplace = {"clearance": 0.3, "grid": 0.25, "edge_margin": 0.5, "ic_halo": 2.0, "rotations": (0, 90, 180, 270),
@@ -368,12 +369,18 @@ class Board:
                 raise DefinitionError("unknown autoplace option '%s'" % k)
         self.autoplace.update(kw)
 
-    def replicate(self, pairs, dx=0.0, dy=0.0):
+    def replicate(self, pairs, dx=0.0, dy=0.0, routes=True):
         """Copy placement: every destination part gets the position of its source part
         shifted by (dx, dy), same rotation and side.  *pairs*: {src_ref: dst_ref} or a
         (src_group, dst_group) tuple of Group objects with the same number of parts in
         the same order.  Sources may be explicit (at=) or auto-arranged; destinations
-        must not have at=.  Overlaps with other parts are caught by DRC (courtyards)."""
+        must not have at=.  Overlaps with other parts are caught by DRC (courtyards).
+
+        routes=True also copies the routing of the block-internal nets (nets whose pins all
+        belong to the source parts): after a build, the routed tracks/vias of those nets are
+        stored in route/blocks.json; the NEXT build adds them as fixed pre-routes for the
+        source block and, shifted, for every copy - so all copies are identical and the
+        autorouter only has the inter-block nets left.  (Two builds: route once, then freeze.)"""
         if isinstance(pairs, tuple):
             a, b = pairs
             if len(a.parts) != len(b.parts):
@@ -387,6 +394,7 @@ class Board:
             if self._refs[dst].footprint != self._refs[src].footprint:
                 raise DefinitionError("replicate: %s and %s have different footprints" % (src, dst))
             self._refs[dst].replica_of = (src, float(dx), float(dy))
+        self.replicas.append({"pairs": dict(pairs), "dx": float(dx), "dy": float(dy), "routes": bool(routes)})
 
     def fab_note(self, text):
         """Extra numbered note on the fabrication drawing."""

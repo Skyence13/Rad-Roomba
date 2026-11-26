@@ -327,6 +327,7 @@ class Builder:
             self._add_via(v)
         for t in b.texts:
             self._add_text(t)
+        self.block_copies = self._block_routes()
         fan = {"plane_nets": [], "vias": 0, "failed": []}
         if b.routing.get("plane_fanout", True):
             from .fanout import plane_fanout
@@ -342,6 +343,7 @@ class Builder:
             placement[part.ref] = [round(part.x, 3), round(part.y, 3), round(part.rot, 1), part.side]
         x0, y0, x1, y1 = outline_bbox(b)
         return {"placement": placement, "autoplaced": placed, "warnings": self.warnings, "fanout": fan,
+                "block_copies": self.block_copies,
                 "origin": [self.fr.ox, self.fr.oy], "bbox": [x0, y0, x1, y1]}
 
     def _load_fp(self, lib_id):
@@ -510,6 +512,40 @@ class Builder:
                         done = False
             if done:
                 break
+
+    def _block_routes(self):
+        """Pre-route the source block and its copies from route/blocks.json (see Board.replicate)."""
+        import json
+        b = self.b
+        path = os.path.join(self.paths.route_dir, "blocks.json")
+        reps = [r for r in b.replicas if r["routes"]]
+        if not reps or not os.path.exists(path):
+            return 0
+        with open(path) as f:
+            stored = json.load(f)
+        by_key = {(s["first"], s["dx"], s["dy"]): s for s in stored}
+        n = 0
+        done_src = set()
+        for rep in reps:
+            s = by_key.get((sorted(rep["pairs"])[0], rep["dx"], rep["dy"]))
+            if s is None or s["sig"] != block_signature(b, rep["pairs"]):
+                self.warnings.append("replicate: stored block routes are stale (source placement changed) - "
+                                     "copies of %s... are routed by the autorouter; rebuild to refresh" % sorted(rep["pairs"])[0])
+                continue
+            for it in s["items"]:
+                for net, dx, dy in ((it["src"], 0.0, 0.0), (it["dst"], rep["dx"], rep["dy"])):
+                    if dx == 0.0 and dy == 0.0:
+                        key = json.dumps(it, sort_keys=True)
+                        if key in done_src:
+                            continue
+                        done_src.add(key)
+                    if it["k"] == "via":
+                        self._add_via({"net": net, "x": it["xy"][0] + dx, "y": it["xy"][1] + dy, "dia": it["dia"], "drill": it["drill"]})
+                    else:
+                        self._add_track({"net": net, "layer": it["layer"], "width": it["w"],
+                                         "pts": [(it["a"][0] + dx, it["a"][1] + dy), (it["b"][0] + dx, it["b"][1] + dy)]})
+                    n += 1
+        return n
 
     def _add_hole(self, h):
         fp = self._load_fp("%s:%s" % (locallib.NICK, h["footprint"]))
@@ -709,6 +745,57 @@ def export_dsn(pcb_path, dsn_path, board=None):
     return dsn_path
 
 
+def block_netmap(board, pairs):
+    """{source net: destination net} for nets that live entirely inside the source block."""
+    src = set(pairs)
+    out = {}
+    for net, pins in board._nets.items():
+        if net in board.rails or not all(ref in src for ref, _ in pins):
+            continue
+        dst = {board.part(pairs[ref]).pin_net.get(pin) for ref, pin in pins}
+        if len(dst) == 1 and None not in dst:
+            out[net] = dst.pop()
+    return out
+
+
+def block_signature(board, pairs):
+    return ";".join("%s:%.3f,%.3f,%.1f,%s" % (r, board.part(r).x, board.part(r).y, board.part(r).rot, board.part(r).side)
+                    for r in sorted(pairs))
+
+
+def save_block_routes(board, pcb, fr, paths):
+    """Store the routed tracks/vias of block-internal nets for Board.replicate(routes=True)."""
+    import json
+    blocks = []
+    for rep in board.replicas:
+        if not rep["routes"]:
+            continue
+        nm = block_netmap(board, rep["pairs"])
+        items = []
+        for t in pcb.GetTracks():
+            n = t.GetNetname()
+            if n not in nm:
+                continue
+            if t.GetClass() == "PCB_VIA":
+                x, y = fr.user(t.GetPosition())
+                items.append({"k": "via", "src": n, "dst": nm[n], "xy": [x, y],
+                              "dia": round(pcbnew.ToMM(t.GetWidth(pcbnew.F_Cu)), 4), "drill": round(pcbnew.ToMM(t.GetDrillValue()), 4)})
+            else:
+                a, e = fr.user(t.GetStart()), fr.user(t.GetEnd())
+                items.append({"k": "seg", "src": n, "dst": nm[n], "layer": t.GetLayerName(), "a": list(a), "b": list(e),
+                              "w": round(pcbnew.ToMM(t.GetWidth()), 4)})
+        items.sort(key=lambda i: json.dumps(i, sort_keys=True))
+        blocks.append({"sig": block_signature(board, rep["pairs"]), "first": sorted(rep["pairs"])[0],
+                       "dx": rep["dx"], "dy": rep["dy"], "items": items})
+    path = os.path.join(paths.route_dir, "blocks.json")
+    if blocks:
+        with open(path, "w") as f:
+            json.dump(blocks, f, indent=0, sort_keys=True)
+            f.write("\n")
+    elif os.path.exists(path):
+        os.remove(path)
+
+
 def _track_key(t):
     a, b = (t.GetStart().x, t.GetStart().y), (t.GetEnd().x, t.GetEnd().y)
     if b < a:
@@ -810,6 +897,8 @@ def finish_pcb(board, paths, ses=None):
                 drills[key] = drills.get(key, 0) + 1
     info.update({"tracks": n_tr, "vias": n_via, "track_length_mm": round(length, 2),
                  "unconnected_after_fill": int(pcb.GetConnectivity().GetUnconnectedCount(True))})
+    if ses:
+        save_block_routes(board, pcb, fr, paths)
     _fab_notes(board, pcb, fr, drills, n_via)
     pcbnew.SaveBoard(paths.pcb, pcb, True)
     return info

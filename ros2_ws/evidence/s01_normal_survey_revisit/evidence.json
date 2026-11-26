@@ -3,7 +3,7 @@
  "evidence_class": "simulated",
  "against": "Python protocol fakes (rr_core.fakes), virtual clock",
  "seed": 11,
- "sim_time_s": 487.86,
+ "sim_time_s": 516.06,
  "checks": [
   {
    "check": "start accepted",
@@ -29,7 +29,7 @@
   {
    "check": "detection goal met on part of the floor at this speed (D# < 0.20)",
    "ok": true,
-   "best": 0.14770930433434645
+   "best": 0.17181414936880018
   },
   {
    "check": "robot waits at rest in REVIEW (no unsolicited motion)",
@@ -44,7 +44,7 @@
    "check": "arrived: AT_SPOT",
    "ok": true,
    "notes": [
-    "ARRIVED: lane 1 over the saved footprint, offset 1.6 mm (tolerance 10 mm, 2-sigma uncertainty 0.5 mm)"
+    "ARRIVED: lane 1 over the saved footprint, offset 1.7 mm (tolerance 10 mm, 2-sigma uncertainty 0.5 mm)"
    ]
   },
   {
@@ -54,7 +54,7 @@
   {
    "check": "true lane centre within 10 mm of the saved footprint",
    "ok": true,
-   "true_err": 0.002041332001762762
+   "true_err": 0.0020898375585562635
   },
   {
    "check": "revisit used the flag's source lane",
@@ -68,7 +68,7 @@
   {
    "check": "Expose reversed by the contract offset 0.35 m (+/- 10 mm)",
    "ok": true,
-   "back": 0.34953508252829746
+   "back": 0.3495077973489063
   },
   {
    "check": "item EXPOSED with hand-probe directions",
@@ -88,76 +88,110 @@
  "coverage": {
   "target_area_m2": 3.0,
   "areas_m2": {
-   "UNVISITED": 1.34325,
-   "ACCEPTABLE": 1.1186500000000001,
-   "INSUFFICIENT_SENSITIVITY": 0.5381,
+   "UNVISITED": 1.0634000000000001,
+   "ACCEPTABLE": 1.1300000000000001,
+   "INSUFFICIENT_SENSITIVITY": 0.8066,
    "INVALID_DATA": 0.0,
    "BLOCKED": 0.0,
    "EXCLUDED": 0.0
   },
-  "valid_exposure_fraction": 0.55225,
-  "acceptable_fraction": 0.3728833333333334,
+  "valid_exposure_fraction": 0.6455333333333334,
+  "acceptable_fraction": 0.3766666666666667,
   "sub_cell_m": 0.005,
   "decision_cell_m": 0.1,
   "position_allowance_m": 0.01
  },
  "time_sync": {
   "limit_us": 10000.0,
-  "fits": 249,
-  "max_gate_bound_us": 836.9404311515593,
-  "median_gate_bound_us": 796.6255676078558
+  "fits": 263,
+  "max_gate_bound_us": 838.0520796923137,
+  "median_gate_bound_us": 796.6115677686453
  },
  "link_stats": {
-  "tx": 24595,
-  "rx": 24595,
+  "tx": 25987,
+  "rx": 25984,
   "bad_lines": 0,
   "stale": 0,
   "duplicates": 0,
-  "gates": 4867,
+  "gates": 5141,
   "gaps": 0,
-  "retries": 0,
+  "retries": 2,
   "unassigned_frames": 0,
-  "time_exchanges": 249,
+  "time_exchanges": 263,
   "time_exchanges_rejected": 0
  },
  "localization_error_vs_truth_m": {
-  "max_x_m": 0.0011855219843824316,
-  "max_y_m": 0.0011930877848494448
+  "max_x_m": 0.0011411409947988393,
+  "max_y_m": 0.0011856311773950357
  },
  "plan": {
   "n_pairs": 2,
   "offset_m": 0.04375,
-  "pair_stride_m": 0.28111,
+  "pair_stride_m": 0.36025,
   "seam_overlap_per_side_m": 0.01625,
   "predicted_residual": {
-   "left_wall_strip_m": 0.1763,
-   "right_wall_strip_m": 0.1763,
+   "left_wall_strip_m": 0.1368,
+   "right_wall_strip_m": 0.1368,
    "door_end_strip_m": 0.121,
    "front_end_strip_m": 0.051,
    "end_zone_single_heading_m": {
-    "door": 0.4606,
-    "front": 0.4606
+    "door": 0.3482,
+    "front": 0.3482
    },
    "note": "wall strips are set by the in-place turn radius of the outline; see README coverage section"
   },
-  "estimated_time_s": 455.2
+  "estimated_time_s": 481.5
  },
  "flags": [
   {
-   "id": "HS-0004",
+   "id": "HS-0003",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 2,
+   "x_m": 1.3524145429506256,
+   "y_m": -0.24570941661315185,
+   "D": 0.11740636536036601,
+   "u_total": 0.05243950767422861,
+   "D_star": 0.07333611301668981,
+   "D_hash": 0.17233926159845742,
+   "location": {
+    "distance_from_door_m": 1.352,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.254,
+    "text": "1.35 m from the door threshold, 0.25 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0006",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 3,
+   "x_m": 0.28182142599502213,
+   "y_m": -0.02696984691028241,
+   "D": 0.1697300476749982,
+   "u_total": 0.09695839574950316,
+   "D_star": 0.1277616645462282,
+   "D_hash": 0.3260016559533037,
+   "location": {
+    "distance_from_door_m": 0.282,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.473,
+    "text": "0.28 m from the door threshold, 0.47 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0007",
    "kind": "INVESTIGATION_LEVEL",
    "source_lane": 1,
-   "x_m": 1.5474108729673297,
-   "y_m": 0.12902899028037942,
-   "D": 0.702934119594954,
-   "u_total": 0.13165267450084367,
-   "D_star": 0.08107574162660668,
-   "D_hash": 0.18918841484678273,
+   "x_m": 1.544318460202668,
+   "y_m": 0.17815318654053047,
+   "D": 0.7831883388872014,
+   "u_total": 0.14539404440851958,
+   "D_star": 0.08225859626709846,
+   "D_hash": 0.1917667563025567,
    "location": {
-    "distance_from_door_m": 1.547,
+    "distance_from_door_m": 1.544,
     "wall": "left wall",
-    "distance_from_wall_m": 0.371,
-    "text": "1.55 m from the door threshold, 0.37 m from the left wall"
+    "distance_from_wall_m": 0.322,
+    "text": "1.54 m from the door threshold, 0.32 m from the left wall"
    }
   }
  ],
@@ -166,16 +200,16 @@
  "survey_speed_mps": 0.03,
  "patch_centre": [
   1.545,
-  0.11868
+  0.15825
  ],
- "D_hash_median": 0.20151529122159798,
- "D_hash_best": 0.14770930433434645,
- "acceptable_fraction": 0.3728833333333334,
- "flag_position_error_vs_patch_m": 0.01062609562765127,
- "revisit_error_estimated_m": 0.001620321961054472,
- "revisit_error_true_m": 0.002041332001762762,
- "revisit_uncertainty_2s_m": 0.0005414240398816686,
+ "D_hash_median": 0.20062519805895812,
+ "D_hash_best": 0.17181414936880018,
+ "acceptable_fraction": 0.3766666666666667,
+ "flag_position_error_vs_patch_m": 0.01991485201959835,
+ "revisit_error_estimated_m": 0.0017164584151695096,
+ "revisit_error_true_m": 0.0020898375585562635,
+ "revisit_uncertainty_2s_m": 0.0005396745068220517,
  "revisit_lane": 1,
- "expose_reverse_m": 0.34953508252829746,
- "park_error_true_m": 0.0007355684889218032
+ "expose_reverse_m": 0.3495077973489063,
+ "park_error_true_m": 0.0009054455034066837
 }

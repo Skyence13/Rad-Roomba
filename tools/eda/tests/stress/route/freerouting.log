@@ -1,14 +1,15 @@
 
 
-2026-11-26 14:23:51.902 INFO   Freerouting v2.6.0 (build-date: 2026-11-25)
-2026-11-26 14:23:52.386 INFO   Hardware: 4 CPU cores, 366 CPU score, 3072 MB RAM
-2026-11-26 14:23:52.391 WARN   GUI is disabled and you don't have a console available, so the only feedback from Freerouting is in the log.
-2026-11-26 14:23:54.172 WARN   The '-mp' command-line flag is deprecated and will be removed in a future release; use '--router.autorouter.max_passes' instead.
-2026-11-26 14:23:54.172 WARN   The '-mt' command-line flag is deprecated and will be removed in a future release; use '--router.max_threads=<n>' instead.
-2026-11-26 14:23:54.519 INFO   [C2D2F6\8208C7] Loading board file 'STRESS-150.dsn'...
-2026-11-26 14:23:55.501 INFO   The board's own vias decide: router.autorouter.via_touching_pad = true.
-2026-11-26 14:23:55.529 INFO   [C2D2F6\8208C7] Job 'C2D2F6\8208C7' started at 2026-11-26T14:23:55.529635827Z.
-2026-11-26 14:23:56.172 INFO   [C2D2F6\8208C7] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=4.
-2026-11-26 14:23:56.593 INFO   [C2D2F6\8208C7] Auto-routing stage started on board 'c873ae59ee0c79a2183b2bb5ce7451f0' with baseline score 384.11 for 188 unrouted items.
-2026-11-26 14:24:38.050 INFO   [C2D2F6\8208C7] Auto-routing pass #1 on board 'c873ae59ee0c79a2183b2bb5ce7451f0' was completed in 41.15 seconds with score 832.92 (51 unrouted and 0 violations), using 36.05 CPU seconds and the job allocated 17.95 GB of memory so far.
-2026-11-26 14:25:09.322 INFO   [C2D2F6\8208C7] Auto-routing pass #2 on board '4192574c4af2df067b02342c8e019914' was completed in 30.98 seconds with score 855.86 (44 unrouted and 0 violations), using 65.22 CPU seconds and the job allocated 33.04 GB of memory so far.
+2026-11-26 14:27:19.131 INFO   Freerouting v2.6.0 (build-date: 2026-11-25)
+2026-11-26 14:27:19.502 INFO   Hardware: 4 CPU cores, 373 CPU score, 3072 MB RAM
+2026-11-26 14:27:19.508 WARN   GUI is disabled and you don't have a console available, so the only feedback from Freerouting is in the log.
+2026-11-26 14:27:20.711 WARN   The '-mp' command-line flag is deprecated and will be removed in a future release; use '--router.autorouter.max_passes' instead.
+2026-11-26 14:27:20.714 WARN   The '-mt' command-line flag is deprecated and will be removed in a future release; use '--router.max_threads=<n>' instead.
+2026-11-26 14:27:21.062 INFO   [B66A5C\DED7C8] Loading board file 'STRESS-150.dsn'...
+2026-11-26 14:27:21.974 INFO   The board's own vias decide: router.autorouter.via_touching_pad = true.
+2026-11-26 14:27:22.020 INFO   [B66A5C\DED7C8] Job 'B66A5C\DED7C8' started at 2026-11-26T14:27:22.020600092Z.
+2026-11-26 14:27:22.444 INFO   [B66A5C\DED7C8] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=4.
+2026-11-26 14:27:22.593 INFO   [B66A5C\DED7C8] Auto-routing stage started on board 'c873ae59ee0c79a2183b2bb5ce7451f0' with baseline score 384.11 for 188 unrouted items.
+2026-11-26 14:28:00.427 INFO   [B66A5C\DED7C8] Auto-routing pass #1 on board 'c873ae59ee0c79a2183b2bb5ce7451f0' was completed in 37.73 seconds with score 832.92 (51 unrouted and 0 violations), using 35.86 CPU seconds and the job allocated 16.60 GB of memory so far.
+2026-11-26 14:28:31.182 INFO   [B66A5C\DED7C8] Auto-routing pass #2 on board '4192574c4af2df067b02342c8e019914' was completed in 30.62 seconds with score 855.86 (44 unrouted and 0 violations), using 65.86 CPU seconds and the job allocated 30.85 GB of memory so far.
+2026-11-26 14:29:12.711 INFO   [B66A5C\DED7C8] Auto-routing pass #3 on board '176c604c43b050e2793caf6e70d9afdb' was completed in 41.43 seconds with score 901.72 (30 unrouted and 0 violations), using 105.38 CPU seconds and the job allocated 49.70 GB of memory so far.

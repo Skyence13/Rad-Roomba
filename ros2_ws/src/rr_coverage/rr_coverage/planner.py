@@ -172,7 +172,7 @@ def approach(pose, target, region, standoff_m=0.30):
     tx, ty, tyaw = target
     c, s = math.cos(tyaw), math.sin(tyaw)
     (x0, x1), (y0, y1) = region["x"], region["y"]
-    if not (y0 - 1e-6 <= ty <= y1 + 1e-6) or abs(s) > 0.05:
+    if not (y0 - 0.005 <= ty <= y1 + 0.005) or abs(s) > 0.05:      # 5 mm: path-following tolerance of a track
         return None                       # outside the reachable track band / not a track heading
     xa = min(max(tx - c * standoff_m, x0), x1)
     prims = transit(pose, (xa, ty, tyaw), region)

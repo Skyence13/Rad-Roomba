@@ -261,6 +261,11 @@ class Mission:
         mover.events.clear()
         # acquisition supervision (independent of the web interface)
         why = None
+        cmode = a.chassis.drive.get("mode")
+        if cmode not in ("ARMED_IDLE", "MOVING") and a.chassis.link_state == "UP":
+            st = a.chassis.drive.get("stops", {})
+            self._enter_hold(f"CHASSIS:{cmode}:" + ",".join(st.get("hw", []) + st.get("sw", []) + a.chassis.drive.get("hold", [])))
+            return
         if a.archive_error:
             why = "RECORDER:" + str(a.archive_error)
         elif a.head.state != "ARMED":
@@ -480,7 +485,9 @@ class Mission:
             if sum(w[5] for w in older) >= 5.0:
                 U0 = sum(w[4] for w in older) / sum(w[5] for w in older)
             else:
-                U0 = N_U / T_U
+                # MODEL.md 3 (R1) fallback: four-lane pooled reference rate over the same gates
+                pool = [w for h in self._rate.values() for w in list(h)[-n_win:] if w is not None]
+                U0 = sum(w[4] for w in pool) / max(sum(w[5] for w in pool), 1e-9)
             c = cal.cal(n, "beta")
             key = (n, round(U0, 1), alpha)
             cache = self.__dict__.setdefault("_thr_cache", {})

@@ -72,12 +72,13 @@ def test_lane_polygons_from_descriptor_and_mount():
 def test_clip_and_sweep():
     sq = np.array([[0, 0], [1, 0], [1, 1], [0, 1]], float)
     assert geo.polygon_area(geo.clip_convex(sq + 0.5, sq)) == pytest.approx(0.25)
-    out = geo.RobotOutline()
+    out = geo.RobotOutline(body_x=(-0.2718, 0.1388), body_half_width=0.1464, head_x=(0.1388, 0.265), head_half_width=0.175)
     parts = geo.swept_parts(out, (0, 0, 0), {"kind": "straight", "dist": -0.35}, 0.05)
     assert geo.points_in_parts(parts, [[-0.6, 0.0]])[0] and not geo.points_in_parts(parts, [[-0.6, 0.3]])[0]
     parts = geo.swept_parts(out, (0, 0, 0), {"kind": "pivot", "angle": math.pi / 2}, 0.03)
     assert geo.points_in_parts(parts, [[0.0, 0.25]])[0] and not geo.points_in_parts(parts, [[0.36, -0.2]])[0]
     assert out.turn_radius == pytest.approx(math.hypot(0.265, 0.175), abs=1e-3)
+    assert geo.RobotOutline((-0.27, 0.07), 0.146, (0.07, 0.19), 0.175, turn_radius=0.278).turn_radius == 0.278
 
 
 def test_trajectory_epochs_and_gaps():
