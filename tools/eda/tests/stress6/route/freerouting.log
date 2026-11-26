@@ -114,3 +114,28 @@ The following connections could not be routed -- please review your design (e.g.
 2026-11-26 20:05:31.640 INFO   [CA098F\A2271F] Auto-routing pass #14 [continue] on board '1b21e5510ca78c8c05ea0955d98489d6' was completed in 0.23 seconds with score 980.34 (6 unrouted and 58 violations), using 232.17 CPU seconds and the job allocated 104.72 GB of memory so far.
 2026-11-26 20:05:31.939 INFO   [CA098F\A2271F] Auto-routing pass #15 [continue] on board '1b21e5510ca78c8c05ea0955d98489d6' was completed in 0.25 seconds with score 980.34 (6 unrouted and 58 violations), using 232.17 CPU seconds and the job allocated 104.72 GB of memory so far.
 2026-11-26 20:05:32.111 INFO   [CA098F\A2271F] Last-mile rip-up removed 5 blocking trace(s) or via(s) around 6 remaining connection(s).
+2026-11-26 20:05:37.619 INFO   [CA098F\A2271F] Auto-routing pass #16 [continue] on board 'ad75ef137bbfb0c5b40475950ed24962' was completed in 5.40 seconds with score 980.34 (6 unrouted and 58 violations), using 236.85 CPU seconds and the job allocated 107.10 GB of memory so far.
+2026-11-26 20:05:43.146 INFO   [CA098F\A2271F] Auto-routing pass #17 [continue] on board 'bd79614cdda1994554934b2cc8109666' was completed in 5.36 seconds with score 980.34 (6 unrouted and 58 violations), using 242.39 CPU seconds and the job allocated 109.70 GB of memory so far.
+2026-11-26 20:05:43.431 INFO   [CA098F\A2271F] Auto-routing pass #18 [continue] on board 'bd79614cdda1994554934b2cc8109666' was completed in 0.24 seconds with score 980.34 (6 unrouted and 58 violations), using 242.39 CPU seconds and the job allocated 109.70 GB of memory so far.
+2026-11-26 20:05:43.497 INFO   [CA098F\A2271F] The router's best score (986.90) has not improved by more than 0.5 points since pass #8. Stopping the auto-router after 18 passes (4 items still unconnected).
+The following connections could not be routed -- please review your design (e.g. check pad clearances, trace width rules, and available routing space):
+  Net 'GND' (1 unrouted connection):
+    - U1-15  ->  C10-2
+  Net '+3V3' (1 unrouted connection):
+    - U2-9  ->  via
+  Net 'IO37' (1 unrouted connection):
+    - U2-6  ->  U1-25
+  Net 'IO38' (1 unrouted connection):
+    - U2-2  ->  U1-26
+  Net 'IO46' (1 unrouted connection):
+    - U2-41  ->  U1-30
+  Net 'IO51' (1 unrouted connection):
+    - U2-21  ->  U1-37
+2026-11-26 20:05:44.406 INFO   [CA098F\A2271F] Routing fallback continuation 'continue': 4 unrouted, 0 new violations (58 total), score 986.90 after stagnation.
+2026-11-26 20:05:44.444 INFO   [CA098F\A2271F] Routing fallback: stopping residual continuations after 'continue' did not improve the incumbent.
+2026-11-26 20:05:44.444 INFO   [CA098F\A2271F] Routing fallback chose 'continue-auto-neck': 4 unrouted, 0 new violations (58 total), score 986.90.
+2026-11-26 20:05:44.444 WARN   [CA098F\A2271F] Fallback auto-neckdown (neck_width_um=150.0) was used because routing remained incomplete with no explicit neck_width_um configured.
+2026-11-26 20:05:44.552 INFO   [CA098F\A2271F] Auto-routing stage completed: started with 12 unrouted nets, completed in 185.79 seconds, final score: 986.90 (4 unrouted and 58 violations), using 243.30 total CPU seconds, 110.16 GB total allocated, and 893.3 MB peak heap usage.
+2026-11-26 20:05:44.578 INFO   [CA098F\A2271F] Job 'CA098F\A2271F' finished with state: COMPLETED (elapsed: 4 minutes 42.41 seconds, finished at UTC: 2026-11-26T20:05:44.576703204Z).
+2026-11-26 20:05:44.611 INFO   Saving output file '/home/user/Rad-Roomba/tools/eda/tests/stress6/route/STRESS-150-6L.retry.ses' (SES)...
+2026-11-26 20:05:44.616 INFO   Successfully saved output file '/home/user/Rad-Roomba/tools/eda/tests/stress6/route/STRESS-150-6L.retry.ses' (220260 bytes).

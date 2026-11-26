@@ -108,7 +108,21 @@ def joints():
     Pf = A.build("prototype", travel=H.RAIL_GAP)
     joint_fig("J8_rail_full_stroke", "Leading rail on its positive stop: bar on the frame front face, bail arm folded into its groove (y = 160)", "y", H.BAIL_Y, ((172, 200), (5, 48)), Pf,
               notes=[((189.7, 29), "bail pivot wire 2.5", (194, 36)), ((187.2, 13), "arm in the 2.8 mm groove", (176, 8)), ((189.7, 15), "bar on the frame face", (194, 24))], scale=4.0, travel_note="; rail travel 17 mm")
-    return 11
+    # lid fastening (shear panel) and the chimney drain
+    yb = H.LID_BOSS_FRONT_Y[1]
+    joint_fig("J9a_lid_front_boss", f"Lid screw into a front wall boss (y = {yb:g}): hard seat z 43.0 inside the gasket loop, M3 heat-set insert", "y", yb, ((172, 196), (26, 50)), P_,
+              notes=[((H.LID_BOSS_FRONT_X, 39), "boss dia 6.6, M3 insert 4.0 x 6", (174, 47.5)), ((187.0, 42.6), "lid gasket 1.2 -> 0.8", (189, 48.5)),
+                     ((H.LID_BOSS_FRONT_X, 46.5), "M3 button + bonded washer", (188, 31)), ((180.2, 36), "EMI fence", (173, 30))], scale=6.0)
+    xb = H.LID_BOSS_SIDE_X[1]
+    joint_fig("J9b_lid_side_boss", f"Lid screw into a side wall boss (x = {xb:g}): seat inside the gasket loop, side fence foot below", "x", xb, ((156, 178), (26, 50)), P_,
+              notes=[((H.LID_BOSS_SIDE_Y, 39), "boss dia 6.6, M3 insert", (157, 47.5)), ((171.5, 42.6), "lid gasket", (172, 48.5)), ((164.0, 36), "side fence 0.5", (157, 29))], scale=6.0)
+    joint_fig("J9c_lid_rear_standoff", "Rear lid line: M3 x 10.5 standoff clamping the EMI comb foot to the spreader (y = 0)", "y", 0.0, ((66, 92), (26, 50)), P_,
+              notes=[((77.5, 38), "standoff M3 x 10.5 on the comb foot", (80, 47.5)), ((73.15, 37), "EMI comb 0.5", (67, 47.5)), ((76.8, 33), "rear spreader screw", (82, 29))], scale=6.0)
+    yd = H.SEG_Y[0] + H.DRAIN["dy"]
+    joint_fig("J10_chimney_drain", f"Light-trap drain of chimney S0 (y = {yd:g}): up, across, up -- three turns, no line of sight (tool-checked)", "y", yd, ((66, 84), (6, 20)), P_,
+              notes=[((H.DRAIN["x_out"], 11.0), "outlet dia 1.2 (underside)", (66.5, 7.5)), ((73.0, 11.9), "channel 1.2 x 0.8", (76.5, 8.5)),
+                     ((H.DRAIN["x_in"], 12.7), "inlet under the chimney insert", (76, 18.5)), ((76.5, 10), "cassette", (79, 7))], scale=8.0)
+    return 15
 
 
 # ------------------------------------------------------------------------------------------------ fabrication drawings
@@ -426,7 +440,43 @@ def steps():
     return 12
 
 
+def steps_production():
+    """Production assembly sequence (same order as the prototype, CNC frame, no fences) + dummy head view."""
+    out = HERE / "production" / "assembly"
+    out.mkdir(parents=True, exist_ok=True)
+    Pp = {p.name: p for p in A.build("production")}
+    col = lambda k: Pp[k].color if Pp[k].color != "#111111" else "#444444"
+    grey = "#b8c0c4"
+    heads = [k for k in Pp if k.startswith("hd_")]
+    seq = [
+        ("frame, shoes with bond shims, rear bridge", ["frame", "shoe_L", "shoe_R", "shoe_isolator_L", "shoe_isolator_R", "bridge"], {"shoe_L": (-40, 0, 0), "shoe_R": (-40, 0, 0), "bridge": (-60, 0, 0)}),
+        ("side rails, guide pins, switches; guide rods, springs, stop pins", ["side_rail_L", "side_rail_R", "guide_pins_L", "guide_pins_R", "sw_side_L", "sw_side_R", "guide_rod_L", "guide_rod_R",
+                                                                            "rod_spring_L", "rod_spring_R", "stop_pin_L", "stop_pin_R"], {"guide_rod_L": (45, 0, 0), "guide_rod_R": (45, 0, 0), "guide_pins_L": (0, 0, 35), "guide_pins_R": (0, 0, 35)}),
+        ("lane kits (MJF rings, barrier, chimney insert) from above", [f"S{i}_{k}" for i in range(4) for k in ("floor_module", "spacer_lower", "barrier", "spacer_upper", "ref_module", "floor_carrier", "ref_carrier",
+                                                                                                                "floor_sipm", "ref_sipm", "chimney_insert")], {}),
+        ("spreader with heater, pads, rib gaskets; standoffs; board, cans, switches, cables", ["spreader", "rib_gaskets", "board_standoffs", "lid_standoffs", "pcb", "sw_front", "sw_front_saddle", "sw_lid", "sw_lid_saddle",
+                                                                                            "grommet_J1", "grommet_J2", "thermal_cutout", "ntc", "desiccant", "vent"] + [f"S{i}_{k}" for i in range(4) for k in ("pad", "heater", "shield_can")]
+         + [h for h in heads if not h.startswith("hd_lid")], {"pcb": (0, 0, 50), **{f"S{i}_shield_can": (0, 0, 70) for i in range(4)}}),
+        ("lid (35 x M3 + bonded washers), blister, keeper", ["lid", "lid_gasket", "lid_liner", "j1_blister", "keeper", "keeper_pin"] + [h for h in heads if h.startswith("hd_lid")], {"keeper": (-10, 0, 60), "keeper_pin": (-10, 0, 60)}),
+        ("cassettes and leading rail", [f"S{i}_{k}" for i in range(4) for k in ("cassette", "film", "cassette_gasket")] + ["bail", "bail_block_C", "bail_block_L", "bail_block_R", "rail_bar", "bail_clip_L", "bail_clip_R"]
+         + [f"rail_insert_{k}" for k in range(4)], {**{f"S{i}_{k}": (0, 0, -40) for i in range(4) for k in ("cassette", "film", "cassette_gasket")}, "rail_bar": (40, 0, 0), **{f"rail_insert_{k}": (60, 0, 0) for k in range(4)}}),
+    ]
+    done = []
+    for n, (title, new, per) in enumerate(seq, start=1):
+        items = [(Pp[k].shape, grey, (0, 0, 0)) for k in done if not k.startswith(("pigtail", "plug"))]
+        default = (0, 0, 35) if n in (3, 4, 5) else (0, 0, 0)
+        items += [(Pp[k].shape, col(k), per.get(k, default)) for k in new if k in Pp]
+        elev = -30 if n == 6 else 30
+        D.render(items, out / f"step_{n:02d}.png", azim=-58 if n != 1 else -125, elev=elev, title=f"Production step {n}: {title}", size=(1400, 880))
+        done += new
+    D.render([(p.shape, col(k), (0, 0, 0)) for k, p in Pp.items() if p.pn != "-"], out / "overview.png", azim=-58, elev=30, title="Production head RR-HD-P-000 (CNC 6061 frame)", size=(1400, 880))
+    Pd, t = A.build_dummy(sum(p.mass() for p in A.build("prototype")))
+    D.render([(p.shape, p.color if p.color != "#111111" else "#444444", (0, 0, 0)) for p in Pd if p.pn != "-" and p.name not in ("lid", "keeper", "keeper_pin", "j1_blister") and not p.name.startswith("hd_lid")],
+             HERE / "aux" / "dummy_head_lid_off.png", azim=-58, elev=34, title=f"Dummy head RR-HD-D-000, lid off: steel ballast {t:.2f} mm per lane, plate on the 8 standoffs, resistor block", size=(1400, 880))
+    return 8
+
+
 if __name__ == "__main__":
-    what = sys.argv[1:] or ["joints", "fab", "steps"]
+    what = sys.argv[1:] or ["joints", "fab", "steps", "steps_production"]
     for w in what:
-        print("==", w, {"joints": joints, "fab": fab, "steps": steps}[w]())
+        print("==", w, {"joints": joints, "fab": fab, "steps": steps, "steps_production": steps_production}[w]())

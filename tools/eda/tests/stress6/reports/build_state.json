@@ -1129,25 +1129,25 @@
     "dsn_sha256": "a21c502c5d322a235d9f25019b36e14c2d4048c7e3023915dec110ef189e6085",
     "freerouting": "v2.6.0 (build-date: 2026-11-25)",
     "log_tail": [
-      "[7987B6\\739C17] Auto-routing stage completed with timeout: started with 190 unrouted nets, completed in 600.51 seconds, final score: 973.79 (8 unrouted and 56 violations), using 541.05 total CPU seconds, 231.51 GB total allocated, and 1132.1 MB peak heap usage.",
-      "[7987B6\\739C17] Job '7987B6\\739C17' finished with state: TIMED_OUT (elapsed: 10 minutes 1.16 seconds, finished at UTC: 2026-11-26T20:00:28.634145176Z)."
+      "[CA098F\\A2271F] Auto-routing stage completed: started with 12 unrouted nets, completed in 185.79 seconds, final score: 986.90 (4 unrouted and 58 violations), using 243.30 total CPU seconds, 110.16 GB total allocated, and 893.3 MB peak heap usage.",
+      "[CA098F\\A2271F] Job 'CA098F\\A2271F' finished with state: COMPLETED (elapsed: 4 minutes 42.41 seconds, finished at UTC: 2026-11-26T20:05:44.576703204Z)."
     ],
     "passes_limit": 30,
     "reused": false,
-    "seconds": 606.6,
+    "seconds": 895.1,
     "threads": 4,
     "timed_out": false
   },
   "route_stats": {
     "dangling_tracks_removed": 0,
-    "necked_tracks_widened": 5,
+    "necked_tracks_widened": 0,
     "preroutes": 375,
     "preroutes_missing_after_import": 0,
-    "track_length_mm": 3667.95,
-    "tracks": 1570,
-    "unconnected_after_fill": 8,
-    "unconnected_before_cleanup": 8,
-    "vias": 415
+    "track_length_mm": 3741.12,
+    "tracks": 1644,
+    "unconnected_after_fill": 4,
+    "unconnected_before_cleanup": 4,
+    "vias": 425
   },
   "routed": true,
   "routing": {
