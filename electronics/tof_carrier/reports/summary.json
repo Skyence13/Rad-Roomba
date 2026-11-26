@@ -30,6 +30,7 @@
     "report": "reports/drc.json",
     "unconnected": 0,
     "unconnected_items": [],
+    "unrouted": [],
     "unrouted_nets": [],
     "waived": 0,
     "warnings": 0
@@ -111,29 +112,30 @@
   "rev": "A",
   "routing": {
     "autorouter": {
-      "dsn_sha256": "c0018d17a5d490a8f1c2edc26c8ee5c4fcf24fc7098ce250a060e4f3b12d9942",
+      "dsn_sha256": "c246955d7bd9cfcabec93a677e0c3737c96c50d3e7bfce36d96f9e13a6377ecb",
       "freerouting": "v2.6.0 (build-date: 2026-11-25)",
       "log_tail": [
-        "[C75F55\\57E03C] Auto-routing stage completed: started with 30 unrouted nets, completed in 10.84 seconds, final score: 1000.00 (0 unrouted and 0 violations), using 3.39 total CPU seconds, 1.46 GB total allocated, and 143.4 MB peak heap usage.",
-        "[C75F55\\57E03C] Optimization stage completed:. Baseline router score: 1000.00, baseline optimizer score: -799.76, final router score: 1000.00, final optimizer score: 0.00, completed in 17.99 seconds, using 10.58 total CPU seconds, 8.22 GB total allocated, and 427.8 MB peak heap usage.",
-        "[C75F55\\57E03C] Job 'C75F55\\57E03C' finished with state: COMPLETED (elapsed: 29.24 seconds, finished at UTC: 2026-11-26T04:43:27.493225138Z)."
+        "[A0EBCB\\A3D110] Auto-routing stage completed: started with 30 unrouted nets, completed in 1.73 seconds, final score: 1000.00 (0 unrouted and 0 violations), using 7.68 total CPU seconds, 4.08 GB total allocated, and 163.3 MB peak heap usage.",
+        "[A0EBCB\\A3D110] Optimization stage completed:. Baseline router score: 1000.00, baseline optimizer score: -871.73, final router score: 1000.00, final optimizer score: 0.00, completed in 5.88 seconds, using 5.95 total CPU seconds, 4.36 GB total allocated, and 275.8 MB peak heap usage.",
+        "[A0EBCB\\A3D110] Job 'A0EBCB\\A3D110' finished with state: COMPLETED (elapsed: 21.89 seconds, finished at UTC: 2026-11-26T19:24:51.403492985Z)."
       ],
       "passes_limit": 100,
       "reused": false,
-      "seconds": 33.5,
+      "seconds": 25.5,
       "threads": 4,
       "timed_out": false
     },
     "routed": true,
     "stats": {
       "dangling_tracks_removed": 0,
+      "necked_tracks_widened": 0,
       "preroutes": 9,
       "preroutes_missing_after_import": 0,
-      "track_length_mm": 154.67,
-      "tracks": 131,
+      "track_length_mm": 155.74,
+      "tracks": 125,
       "unconnected_after_fill": 0,
       "unconnected_before_cleanup": 0,
-      "vias": 25
+      "vias": 18
     }
   },
   "single_pin_nets": [],

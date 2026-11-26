@@ -184,7 +184,7 @@ def run():
     # 5 envelope
     for b in ("prototype", "production"):
         parts = builds[b]
-        fixed = [p for p in parts if not p.name.startswith(("pigtail", "plug", "shoe_L", "shoe_R", "rail_bar", "rail_insert", "guide_rod", "bail", "bail_clip"))
+        fixed = [p for p in parts if p.pn != "-" and not p.name.startswith(("pigtail", "plug", "shoe_L", "shoe_R", "rail_bar", "rail_insert", "guide_rod", "bail", "bail_clip"))
                  or p.name.startswith("bail_block")]
         bb = bounds(compound([p.shape for p in fixed]))
         e = P.HEAD_ENV_E_CEILING

@@ -185,13 +185,13 @@ def build(add):
              mates={"chassis_plate", "CM5_carrier_assembly", "battery_tunnel"}))
     ci = P.CHARGE_INLET
     xd = P._unit((-ci["normal"][1], ci["normal"][0], 0.0))
-    add(Part("RRX-P52", "inlet_cover", place(S.inlet_cover(), ci["xyz"], ci["normal"], xd), "printed", "ASA", "charge", color="#da9745", internal=False, orient=None,
-             print_note="lid face on the bed", mates={"rear_deck_R", "charge_inlet"}))
+    add(Part("RRX-P52", "inlet_cover", place(S.inlet_cover(), ci["xyz"], ci["normal"], xd), "printed", "ASA", "charge", color="#da9745", internal=False, orient=(180, 0, 0),
+             local=S.inlet_cover(), print_note="lid face on the bed (upside-down); no supports", mates={"rear_deck_R", "charge_inlet"}))
     for name, t in P.TOF_SENSORS.items():
         front_cliff = name.startswith("tof_cliff_f")
         xdir = (1.0, 0.0, 0.0) if front_cliff else None
         if not front_cliff:
-            add(Part("RRX-P53", f"tof_clip_{name[4:]}", S.tof_clip(t["xyz"], t["dir"]), "printed", "ASA", "tof", color=ASA, orient=None, internal=False,
-                     print_note="flat; 9 off on one plate", mates={"*"}))
+            add(Part("RRX-P53", f"tof_clip_{name[4:]}", S.tof_clip(t["xyz"], t["dir"]), "printed", "ASA", "tof", color=ASA, orient=(0, 0, 0), internal=False,
+                     local=S.tof_clip((0, 0, 0), (0, 0, 1)), print_note="flat; 9 off on one plate", mates={"*"}))
         add(Part("RRX-H30", f"tof_window_{name[4:]}", place(S._lbox(S.TOF_WIN[0], S.TOF_WIN[1], -S.TOF_WIN[2], 0.0), t["xyz"], t["dir"], xdir), "purchased", "PMMA", "tof", color="#3b1d1d",
                  internal=False, mpn="IR-pass PMMA 1.0 mm, laser cut 15 x 11 (e.g. Plexiglas IR acrylic 1146 class)", verified="UNVERIFIED material/supplier; >= 85 % at 940 nm assumed", mates={"*"}))

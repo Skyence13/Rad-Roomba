@@ -32,9 +32,7 @@ def _prop(name, value, x, y, rot=0, hide=False, justify=None):
 def make_symbol(name, spec):
     """Box symbol from a SymPin list."""
     pins = spec["pins"]
-    if not pins:
-        raise DefinitionError("local symbol %s has no pins" % name)
-    units = sorted({p.unit for p in pins})
+    units = sorted({p.unit for p in pins}) or [1]     # pin-less symbols (mechanical parts) are allowed
     sx = ["symbol", Q(name),
           ["pin_names", ["offset", 1.016]],
           ["exclude_from_sim", "no"], ["in_bom", "yes"], ["on_board", "yes"]]

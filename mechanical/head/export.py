@@ -53,22 +53,22 @@ def printed_parts():
         infill="40 % gyroid (ribs solid by perimeters)", brim="5 mm outer brim (PA-CF warp)")
     add("RR-HD-X-201", "window_cassette", T.cassette(1), (0, 0, 0), "PETG-CF", 4, "H03", "none", "underside on the bed, lips and seat bosses up; webs full height so nothing bridges", walls=3, infill="100 %")
     add("RR-HD-X-301", "lane_spacer_lower", lane["spacer_lower"][0], (0, 0, 0), "PETG-CF", 4, "H04", "none", "flat", walls=3, infill="100 %")
-    add("RR-HD-X-303", "lane_spacer_upper", lane["spacer_upper"][0], (0, 0, 0), "PETG-CF", 4, "H04", "none", "flat (nested inside the lower rings is not possible: same outline; both ring sets share plate H04 two by two)", walls=3, infill="100 %")
-    add("RR-HD-X-302", "lane_barrier", lane["barrier"][0], (0, 0, 0), "PETG-CF", 4, "H05", "none", "flat, 100 % infill for opacity", walls=3, infill="100 %")
-    add("RR-HD-X-304", "chimney_insert", lane["chimney_insert"][0], (0, -90, 0), "PA-CF", 4, "H06", "none", "rear face on the bed, fingers and shelf up", walls=3, infill="100 %")
-    add("RR-HD-X-411", "rail_insert", P["rail_insert_1"].shape, (0, 90, 0), "PA-CF", 4, "H06", "none", "lying on the contact face (smooth bed side = wear / contact face); print 8 (one spare set)", walls=4, infill="100 %")
-    add("RR-HD-X-405", "bail_block", P["bail_block_C"].shape, (0, -90, 0), "PA-CF", 3, "H06", "none", "frame-side face on the bed; the 2.8 mm wire bore prints as a horizontal hole", walls=4, infill="100 %")
-    add("RR-HD-X-421", "front_switch_saddle", P["sw_front_saddle"].shape, (180, 0, 0), "PA-CF", 1, "H06", "none", "upside down (top bar on the bed)", walls=3, infill="100 %")
-    add("RR-HD-X-422", "lid_switch_saddle", P["sw_lid_saddle"].shape, (180, 0, 0), "PA-CF", 1, "H06", "none", "upside down (top bar on the bed)", walls=3, infill="100 %")
-    add("RR-HD-X-511", "grommet_J1", P["grommet_J1"].shape, (0, -90, 0), "TPU", 1, "H07", "none", "cable axis vertical; slit with a blade after printing", walls=3, infill="100 %")
-    add("RR-HD-X-512", "grommet_J2", P["grommet_J2"].shape, (0, -90, 0), "TPU", 1, "H07", "none", "cable axis vertical; slit with a blade after printing", walls=3, infill="100 %")
-    add("RR-HD-X-601", "transport_cover_left", T.transport_cover(1), (0, 0, 0), "PETG-CF", 1, "H08", "yes: snap bridge over the shoe and the front lip (two short bridges, tree supports optional)", "tray floor on the bed", walls=3, infill="20 % gyroid")
-    add("RR-HD-X-602", "transport_cover_right", T.transport_cover(-1), (0, 0, 0), "PETG-CF", 1, "H09", "as RR-HD-X-601", "tray floor on the bed", walls=3, infill="20 % gyroid")
-    add("RR-HD-D-302", "dummy_lane_spacer", T.dummy_spacer(1, 2.0), (180, 0, 0), "PETG-CF", 4, "H10", "none", "open side up (flipped); height follows the ballast thickness in checks.json", kit="dummy head", walls=3, infill="20 % gyroid")
+    add("RR-HD-X-303", "lane_spacer_upper", lane["spacer_upper"][0], (0, 0, 0), "PETG-CF", 4, "H05", "none", "flat", walls=3, infill="100 %")
+    add("RR-HD-X-302", "lane_barrier", lane["barrier"][0], (0, 0, 0), "PETG-CF", 4, "H06", "none", "flat, 100 % infill for opacity", walls=3, infill="100 %")
+    add("RR-HD-X-304", "chimney_insert", lane["chimney_insert"][0], (0, -90, 0), "PA-CF", 4, "H07", "none", "rear face on the bed, fingers and shelf up", walls=3, infill="100 %")
+    add("RR-HD-X-411", "rail_insert", P["rail_insert_1"].shape, (0, 90, 0), "PA-CF", 4, "H07", "none", "lying on the contact face (smooth bed side = wear / contact face); print 8 (one spare set)", walls=4, infill="100 %")
+    add("RR-HD-X-405", "bail_block", P["bail_block_C"].shape, (0, -90, 0), "PA-CF", 3, "H07", "none", "frame-side face on the bed; the 2.8 mm wire bore prints as a horizontal hole", walls=4, infill="100 %")
+    add("RR-HD-X-421", "front_switch_saddle", P["sw_front_saddle"].shape, (180, 0, 0), "PA-CF", 1, "H07", "none", "upside down (top bar on the bed)", walls=3, infill="100 %")
+    add("RR-HD-X-422", "lid_switch_saddle", P["sw_lid_saddle"].shape, (180, 0, 0), "PA-CF", 1, "H07", "none", "upside down (top bar on the bed)", walls=3, infill="100 %")
+    add("RR-HD-X-511", "grommet_J1", P["grommet_J1"].shape, (0, -90, 0), "TPU", 1, "H08", "none", "cable axis vertical; slit with a blade after printing", walls=3, infill="100 %")
+    add("RR-HD-X-512", "grommet_J2", P["grommet_J2"].shape, (0, -90, 0), "TPU", 1, "H08", "none", "cable axis vertical; slit with a blade after printing", walls=3, infill="100 %")
+    add("RR-HD-X-601", "transport_cover_left", T.transport_cover(1), (0, 0, 0), "PETG-CF", 1, "H09", "yes: snap bridge over the shoe and the front lip (two short bridges, tree supports optional)", "tray floor on the bed", walls=3, infill="20 % gyroid")
+    add("RR-HD-X-602", "transport_cover_right", T.transport_cover(-1), (0, 0, 0), "PETG-CF", 1, "H10", "as RR-HD-X-601", "tray floor on the bed", walls=3, infill="20 % gyroid")
+    add("RR-HD-D-302", "dummy_lane_spacer", T.dummy_spacer(1, 2.0), (180, 0, 0), "PETG-CF", 4, "H11", "none", "open side up (flipped); height follows the ballast thickness in checks.json", kit="dummy head", walls=3, infill="20 % gyroid")
     for nm, shape, mat, kind, desc in T.cradle_parts():
         if kind == "printed" and nm.endswith("_L"):
             flat = (90, 0, 0) if "cable_rest" in nm else (0, 0, 0)
-            add("RR-HD-C-" + ("611" if "fence" in nm else "612"), nm[:-2], shape, flat, "PETG-CF", 2, "H11" if "fence" in nm else "H12", "none", "mirror in the slicer for the right-hand part" if "fence" in nm else "lying on its side", kit="bench cradle", walls=4)
+            add("RR-HD-C-" + ("611" if "fence" in nm else "612"), nm[:-2], shape, flat, "PETG-CF", 2, "H12" if "fence" in nm else "H13", "none", "mirror in the slicer for the right-hand part" if "fence" in nm else "lying on its side", kit="bench cradle", walls=4)
     return rows
 
 
@@ -117,7 +117,7 @@ def run(mesh=True):
     cr = [Part(n, "RR-HD-C-" + str(600 + k), s, m, kind=kd, desc=d, color="#8e6bbf") for k, (n, s, m, kd, d) in enumerate(T.cradle_parts(), start=1)]
     for p in cr:
         export_step(p.shape, AUX / "step" / f"{p.pn}__{p.name}.step")
-    assembly_step(cr + [Part(q.name, q.pn, q.shape, q.material, color=q.color) for q in A.build("prototype") if not q.name.startswith(("pigtail", "plug"))],
+    assembly_step(cr + [Part(q.name, q.pn, q.shape, q.material, color=q.color) for q in A.build("prototype") if q.group in ("frame", "receiver", "window", "rail")],
                   AUX / "RR-HD-C-600_bench_cradle_with_head.step", "RR_bench_cradle")
     for k, (n, s, m, kd, d) in enumerate(T.gauge_parts(), start=1):
         export_step(s, AUX / "step" / f"RR-HD-G-70{k}__{n}.step")
@@ -170,7 +170,7 @@ def run(mesh=True):
         for n, w, d, r in items:
             e = seen.setdefault(r["name"], {"part": r["name"], "part_number": r["pn"], "mesh": f"print/{r['pn']}__{r['name']}.stl", "step": f"print/{r['pn']}__{r['name']}.step",
                                             "qty": 0, "positions": [], "rotation_z": rot, "orientation_note": r["note"], "supports": r["supports"], "layer_height": r["layer_height"],
-                                            "walls": r["walls"], "infill": r["infill"], "brim": r["brim"], "bbox_print_mm": r["bbox"], "volume_cm3": r["volume_cm3"]})
+                                            "walls": r["walls"], "infill": r["infill"], "brim": r["brim"], "bbox_print_mm": r["bbox"], "volume_cm3": r["volume_cm3"], "mesh_open_edges": r.get("open_edges")})
             e["qty"] += 1
             if pos:
                 e["positions"].append(list(pos[n]))

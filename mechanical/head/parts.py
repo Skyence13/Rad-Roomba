@@ -255,7 +255,7 @@ def fence_front():
 
 def fence_side(side):
     t, y = H.FENCE_T, FENCE_SIDE_Y
-    xa, xb = FENCE_REAR_X + 2.2, FENCE_FRONT_X - 2.7
+    xa, xb = 79.2, FENCE_FRONT_X - 2.7
     s = fuse_all([box(xa, xb, y, y + t, H.Z_SPR1, FENCE_TOP), box(xa, xb, y, H.SPR_HY - 0.1, H.Z_SPR1, H.Z_SPR1 + t),
                   box(xa, xb, y - 2.5, y + t, FENCE_TOP - t, FENCE_TOP)])
     s = cut_all(s, [cyl(2.7, 3, (xx, yy, H.Z_SPR1 - 1)) for xx, yy in lid_holes() if abs(yy) > 160])

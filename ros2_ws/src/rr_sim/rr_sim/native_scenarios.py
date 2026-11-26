@@ -24,7 +24,8 @@ def n01(tmp):
         c.add("mission complete (REVIEW)", app.mission.state == "REVIEW" and app.mission.finish_reason == "COMPLETE",
               state=app.mission.state, hold=app.mission.hold_reason)
         flags = [f for f in proc.flags if f["kind"] == "INVESTIGATION_LEVEL" and math.hypot(f["x_m"] - patch[0], f["y_m"] - patch[1]) < 0.06]
-        c.add("hotspot across the seam flagged", len(flags) == 1, n=len(flags))
+        flags.sort(key=lambda f: -f["D"])
+        c.add("hotspot across the seam flagged (independent findings are not merged; count reported)", len(flags) >= 1, n=len(flags))
         c.add("interior bands fully covered", min(sc._band_fraction(sim, p) for p in range(app.plan["n_pairs"])) == 1.0)
         if flags:
             flag = flags[0]

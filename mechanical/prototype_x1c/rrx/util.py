@@ -160,11 +160,12 @@ class Part:
     """One real part of the RR-X build, modelled in base_link coordinates (assembled position)."""
 
     def __init__(self, pn, name, shape, kind, material, group, *, qty=1, mass=None, color="#9aa3a8", orient=(0, 0, 0), note="",
-                 hard=True, internal=None, mates=(), supplier="", mpn="", verified="", print_note="", subasm="", process=None):
+                 hard=True, internal=None, mates=(), supplier="", mpn="", verified="", print_note="", subasm="", process=None, local=None):
         self.pn, self.name, self.shape, self.kind, self.material, self.group = pn, name, shape, kind, material, group
         self.qty, self._mass, self.color, self.orient, self.note = qty, mass, color, orient, note
         self.hard, self.internal, self.mates = hard, internal, set(mates)
         self.supplier, self.mpn, self.verified, self.print_note, self.subasm, self.process = supplier, mpn, verified, print_note, subasm or group, process
+        self.local = local          # same solid in its own flat frame (for parts that are placed at an angle)
         self.bb = bounds(shape)
 
     @property

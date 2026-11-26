@@ -274,10 +274,22 @@ pins `passive`, named from the MPN). Pins with `None` become no-connects. `repor
 `hint_rejected` (with the reason), `local_symbols`, `missing_footprints`. Parts can be
 tuned afterwards: `board.part("U1").at = ...` is not supported - pass `place=`; other
 attributes (`near`, `side`, `edge`, `zone_connect`, `silk_ref`) may be set on
-`board.part(ref)` before the build. Measured on `electronics/chassis_main/design/circuit.py`
-(`tools/eda/tests/import_chassis/`): 753 of 768 parts imported (15 have no usable
-footprint hint yet), 710 stock + 18 generated symbols, 18 A3 sheets, netlist cross-check
-OK, ERC 0 errors / 112 warnings, 14 s.
+`board.part(ref)` before the build. Reference designators are taken as they are
+(`J_PWR`, `R_SH1` work).
+
+Measured (schematic + ERC only, `python3 tools/eda/rrkicad.py sch tools/eda/tests/import_<x>/board.py`):
+
+| circuit.py | parts imported | stock / generated symbols | hints rejected | no footprint | sheets | ERC | time |
+|---|---|---|---|---|---|---|---|
+| chassis_main (768) | 753 | 710 parts / 18 symbols | 46 | 15 | 18 | 0 errors, 112 warnings | 14 s |
+| panel (24) | 24 | 24 / 0 | 0 | 0 | 6 | 0 errors, 0 warnings | 3 s |
+| head_acq (1085) | 1081 | 971 parts / 20 symbols | 114 | 4 | see reports | 0 errors, 57 warnings | 17 s |
+
+`reports/import_report.json` in each test directory lists every rejected hint with the
+reason (mostly symbol names that do not exist in the stock library, with the closest
+matches) and every part without a footprint - that list is the stage-2 to-do list.
+Generated symbols have all-passive pins, so ERC cannot check pin directions on them.
+No PCB was built from these imports (no placement, rails or outline decisions yet).
 
 ## Reproducibility
 UUIDs are derived from hashes (schematic) or a seeded generator (PCB), ordering is
@@ -315,49 +327,67 @@ optimiser is multi-threaded) — which is why the SES is cached.
 `tools/eda/tests/stress/board.py`: synthetic 4-layer 100 x 80 mm board, 150 parts
 (LQFP-64, QFN-48 0.5 mm, 20 SOT-23-5, SOIC-8 multi-unit, SOT-223, 119 passives, 2x10
 headers, JST GH, screw terminal, local symbol + footprint, DNP, cut-out, keep-out,
-pre-route, GND plane + split power plane), 146 parts auto-arranged, 377 connections.
-Measured on 4 cores / 16 GB (KiCad 9.0.9, Freerouting 2.6.0):
+pre-route, GND plane + split power plane), 146 parts auto-arranged, 377 connections of
+which 184 are plane connections made by the plane fan-out. `tools/eda/tests/stress6/` is
+the same circuit on 6 layers with the MCU decoupling on the bottom side.
+Measured on a shared 4-core / 16 GB machine (KiCad 9.0.9, Freerouting 2.6.0; other jobs
+were running, so times are upper bounds):
 
-| step | RR-TOF-A (10 parts, 2 layers) | STRESS-150 (150 parts, 4 layers) |
-|---|---|---|
-| schematic + netlist check + PCB + auto-arrange + DSN | ~5 s | ~20 s |
-| Freerouting | ~7 s (16 passes, complete) | 4 layers: 15 min first run (30 passes / 900 s limit) + 2 continue runs of ~4 min |
-| SES import, fill, ERC, DRC, all outputs | ~8 s | ~25 s |
-| result | ERC 0, DRC 0, unconnected 0, parity 0 | 4 layers, auto-arranged: ERC 0, DRC 0 errors, parity 0, **FAIL: 4 of 377 connections open** (status of 2026-11-26, see below) |
+| step | RR-TOF-A (10 parts, 2 layers) | STRESS-150 (150 parts, 4 layers) | STRESS-150-6L (6 layers) |
+|---|---|---|---|
+| schematic + netlist check + PCB + auto-arrange + fan-out + DSN | ~5 s | ~25 s | ~25 s |
+| Freerouting, first run | 7-33 s, complete | @@R4@@ | @@R6@@ |
+| automatic continue runs | not needed | @@C4@@ | @@C6@@ |
+| SES import, fill, ERC, DRC, all outputs | ~8 s | ~30 s | ~30 s |
+| result | **PASS**: ERC 0, DRC 0, unconnected 0, parity 0 | @@S4@@ | @@S6@@ |
 
-What the stress test showed, and what was changed because of it:
+**STRESS-150 does not reach zero unconnected with fully automatic placement + routing**,
+on 4 or on 6 layers. What works and what does not:
 * Schematic: 7 A3 sheets, no label/field collisions, ERC 0 errors / 0 warnings; multi-unit
-  and local symbols work; generation time is negligible.
-* Auto-arrange: first version piled every part around the MCU (courtyard overlap free
-  but unroutable). Now each group gets a board region, parts are spread to ~35 % region
-  fill (`spread`), ICs keep a halo, decoupling capacitors are assigned to supply pins.
-  Result on the stress board: 0 courtyard overlaps, 0 DRC errors before routing.
-* Freerouting: the autorouter pass is single-threaded (threads only help the optimiser).
-  Its SMD fan-out stage gave every pin an escape via (472 vias) and, after stagnating, it
-  silently restarted with another strategy and ran past 25 min. Defaults were changed:
-  fan-out stage only on request for dense plane boards (`board.route(fanout=...)`),
-  `timeout=` is passed to Freerouting as its own job timeout with a hard kill 3 min later,
-  and for boards of this size use `optimizer=False` and a pass limit (25-40).
-* Completion: with auto-arranged placement the router plateaus after ~18 passes with a
-  few connections open (see table). The flow reports them and fails the build; it does not
-  hide them. Closing the last connections needs engineering input: explicit placement
-  of the ICs/connectors, `near=` for decoupling, a pre-routed via or track, or more room.
+  and local symbols work. Parity 0. Generation time is negligible.
+* Auto-arrange: 0 courtyard overlaps, 0 DRC errors before routing (group regions,
+  spreading, IC halo/keep-away, decoupling assigned to supply pins, bottom side works).
+* Plane fan-out: 183-187 of 200 plane pads get their via automatically; the rest (pads
+  whose own plane polygon is far away in the split-plane corner, and QFN pads boxed in by
+  the exposed pad) are left to the autorouter. Freerouting then starts with ~193 open
+  connections instead of 377.
+* Autorouter: reaches 371-374 of 377 connections; the same 3-6 connections stay open in
+  every run (7 runs, 25-40 passes, with and without Freerouting's own fan-out, wider
+  spacing, continue runs, 6 layers). They are always signal pins of the two 0.5 mm-pitch
+  ICs (LQFP-64 U1 <-> QFN-48 U2, a 16-net bus with arbitrary pin order) plus occasionally
+  one QFN supply pad without a fan-out via. The area is not congested (see the copper
+  PDF): the router boxes a pad in with its neighbours' escape vias and cannot recover.
+  Two extra signal layers do not change this, so it is an escape-routing limitation, not
+  a capacity limit.
+* Reported, not hidden: `summary.json` → `drc.unrouted` / the `OPEN` lines name each
+  net with both pads and their coordinates.
 
-Practical guidance (measured up to 150 parts; anything larger is an estimate):
-* <= 50 parts, 2 layers: fully automatic builds in well under a minute.
-* ~150 parts, 4 layers, <= 2 fine-pitch ICs: 5-10 min per routing run; expect to iterate
-  on placement a few times to reach zero unconnected. Keep `route/<name>.ses`.
-* ~600 parts (e.g. a 326 x 96 mm 4-layer board with four identical lanes): not measured.
-  Generation and checks scale linearly (expect 1-2 min); Freerouting does not (expect
-  tens of minutes per run and incomplete routing with pure auto-arrange). Recommended:
-  place one lane explicitly, `board.replicate()` it to the others, pre-route the
-  sensitive analogue nets (`board.track`), give high-current nets their own net class
-  and/or polygons (`board.zone(net, layers, polygon)`), raise the Java heap
-  (`RR_FREEROUTING_JAVA_OPTS=-Xmx8g`), and set `passes`/`timeout`. The PCB page grows
-  automatically (A4 -> A1); the schematic adds sheets per group automatically.
-* High-current nets: net-class widths are honoured by the router, but very wide tracks
-  into fine-pitch pads will fail to route; use zones or pre-routes for those. Not tested
-  beyond 0.4 mm classes.
-* Only one build per board directory at a time (a `.rrkicad.lock` file enforces it).
-* Other small generator tests: `tools/eda/tests/replicate/` (placement replication,
-  `waive`, `severity`).
+What a board author must do to get to zero (in order of effect):
+1. Fine-pitch ICs (<= 0.5 mm): pre-route the escape of the pins named in the `OPEN`
+   lines - a 1-2 mm `board.track(...)` stub away from the pad plus a `board.via(...)`, or
+   the whole short net - then rebuild; expect 3-6 such nets per pair of fine-pitch ICs
+   that share a bus. Choose pin assignments so buses do not cross (MCU pin swap).
+2. Place ICs, connectors and anything with a bus explicitly (`at=`), facing each other;
+   put decoupling on the bottom side under the IC (`side="B"`, `near="U1.16"`).
+3. Keep plane splits simple and non-overlapping; make sure every supply pad lies over
+   its own plane polygon (otherwise it is a routed power track).
+4. Sensitive analogue nets: always pre-route; the autorouter optimises nothing but
+   connectivity.
+Sizes: boards like RR-TOF-A (tens of parts, 0.8 mm pitch and up) route to completion
+automatically in seconds. 150 parts with SOT-23/SOIC/0402 only would be expected to
+complete (all failures here are at the two 0.5 mm-pitch ICs) but that was not measured
+separately. For the 600-1000-part boards (326 x 96 mm head board, 160 x 100 mm chassis
+board at 63 % fill, both with fine-pitch ICs) plan for: explicit placement of every
+IC/connector, `board.replicate()` for the identical lanes, pre-routed fine-pitch
+escapes and analogue nets, 6 layers, and several routing iterations of tens of minutes
+each (Freerouting's routing pass is single-threaded; 150 parts = 20-60 s per pass, so
+1000 parts will be several minutes per pass - not measured). Raise the Java heap with
+`RR_FREEROUTING_JAVA_OPTS=-Xmx8g`. High-current nets: use zones/polygons
+(`board.zone(net, layers, polygon)`) or pre-routes; wide net-class tracks into small pads
+are not something the autorouter handles well (not tested beyond 0.4 mm).
+
+Other generator tests: `tools/eda/tests/replicate/` (placement + route replication,
+`waive`, `severity`), `tools/eda/tests/import_chassis|import_panel|import_head_acq/`
+(importer + schematic for the three stage-1 circuit definitions: 753/768, 24/24 and
+1081/1085 parts imported, the rest have no footprint yet; ERC 0 errors each).
+Only one build per board directory at a time (a `.rrkicad.lock` file enforces it).

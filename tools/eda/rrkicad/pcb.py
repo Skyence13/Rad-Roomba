@@ -742,6 +742,19 @@ def export_dsn(pcb_path, dsn_path, board=None):
     ok = pcbnew.ExportSpecctraDSN(pcb, dsn_path)
     if not ok or not os.path.exists(dsn_path):
         raise RuntimeError("Specctra DSN export failed")
+    # Freerouting's clearance model is a few tens of micrometres more optimistic than KiCad's DRC
+    # at fine-pitch pads: give it 25 um of extra clearance so its result passes DRC.
+    import re
+    with open(dsn_path) as f:
+        text = f.read()
+
+    def bump(m):
+        v = float(m.group(1))
+        return "(clearance %s" % (("%.1f" % (v + 25.0)).rstrip("0").rstrip(".") if v >= 100.0 else m.group(1))
+    text2 = re.sub(r"\(clearance ([0-9.]+)", bump, text)
+    if text2 != text:
+        with open(dsn_path, "w") as f:
+            f.write(text2)
     return dsn_path
 
 

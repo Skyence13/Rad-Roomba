@@ -7,7 +7,7 @@
 #   tools/test.sh native [n01|n02]       # scenarios 1 and 2 against the native firmware emulators (real time)
 #   tools/test.sh ros                    # ROS graph smoke test (needs tools/build.sh)
 #   tools/test.sh colcon          # colcon test on the built workspace (needs tools/build.sh)
-#   tools/test.sh all             # unit + scenarios + colcon
+#   tools/test.sh all             # unit + scenarios + native (if built) + ros (if built); non-zero exit on any failure
 source "$(dirname "${BASH_SOURCE[0]}")/_common.sh"
 rr_require_image
 what="${1:-unit}"; [ "$#" -gt 0 ] && shift
@@ -20,6 +20,16 @@ case "$what" in
              rr_docker_run -e PYTHONPATH="$PP" -- python3 -m rr_sim.native_scenarios "$@" ;;
   ros)       rr_docker_run -- python3 "$RR_WS/tools/ros_smoke.py" "$@" ;;
   colcon)    rr_docker_run -- bash -c 'colcon test --parallel-workers '"$RR_PARALLEL"' --event-handlers console_cohesion+ && colcon test-result --verbose' ;;
-  all)       "$0" unit && "$0" scenarios && "$0" colcon ;;
+  all)       rc=0
+             "$0" unit || rc=1
+             "$0" scenarios || rc=1
+             if [ -x "$RR_REPO/firmware/head/build/host/rr_head_sim" ] && [ -x "$RR_REPO/firmware/chassis/build/rr_chassis_sim" ]; then
+               "$0" native || rc=1
+             else
+               echo "SKIPPED native: emulators not built (see README: firmware build commands)"; fi
+             if [ -f "$RR_WS/install/setup.bash" ]; then "$0" ros || rc=1
+             else echo "SKIPPED ros: workspace not built (tools/build.sh)"; fi
+             [ "$rc" = 0 ] && echo "ALL TEST GROUPS PASSED" || echo "AT LEAST ONE TEST GROUP FAILED"
+             exit "$rc" ;;
   *) echo "usage: tools/test.sh [unit|scenarios|native|ros|colcon|all] [pytest args]" >&2; exit 2 ;;
 esac

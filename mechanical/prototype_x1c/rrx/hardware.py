@@ -1,0 +1,119 @@
+"""Bill of hardware of the RR-X build (screws, inserts, pins, gaskets, pads, foam ...) by sub-assembly.
+
+Quantities are derived from the same lists that cut the holes in the model wherever such a list exists.  Fasteners are
+ISO metric A2 stainless unless stated.  `status`: STD = standard part (any supplier), UNVERIFIED = supplier part number
+or a dimension it depends on was not opened/confirmed in this session, DESIGN = defined by this model.
+"""
+from __future__ import annotations
+
+import math
+
+from mechanical.common import params as P
+
+from . import dims as D
+from .shells import COVER_SCREWS, HUMP_SCREW_X, perim_stations
+from .structure import CLIFF_SCREWS, RX_DOWELS, RX_SCREWS, sole_screw_xy
+
+N_SOLE = len(sole_screw_xy())
+N_PERIM = len(perim_stations())
+N_PERIM_HULL = sum(1 for g, s, p, n in perim_stations() if p[0] < P.RECEIVER["chin_cut"][0])
+
+
+def perimeter_len():
+    row = P.BODY_ROWS["upper_outer"][0]
+    pts = [P.ring_point(row, 2 * math.pi * i / 400) for i in range(401)]
+    return sum(math.dist(a[:2], b[:2]) for a, b in zip(pts, pts[1:]))
+
+
+def rows():
+    R = []
+
+    def add(sub, item, spec, qty, where, status="STD", torque="", note=""):
+        R.append({"subassembly": sub, "item": item, "spec": spec, "qty": qty, "where": where, "status": status, "torque_Nm": torque, "note": note})
+
+    # A  chassis plate, receiver, caster, front sensors
+    add("A chassis", "socket cap screw", "M4 x 10 ISO 4762 A2-70", 2 * len(RX_SCREWS), "plate (from above) -> tapped ears of the receiver channels", torque="2.2", note="medium thread-lock; datum joint")
+    add("A chassis", "dowel pin", "4 m6 x 10 ISO 8734", 2 * len(RX_DOWELS), "plate 4 H7 -> channel ear (right channel: one hole slotted 4 x 5)", note="locates the head datum; press in the channel, slide in the plate")
+    add("A chassis", "push pin (dock switch)", "3 h8 x 6 stainless dowel, ends rounded", 1, "left channel end wall, between shoe tip and D2HW plunger", "DESIGN")
+    add("A chassis", "pan head screw", "M3 x 8 ISO 7045 A2", 2, "plate -> dock switch bracket inserts", torque="0.6")
+    add("A chassis", "pan head screw", "M3 x 10 ISO 7045 A2", 2 * len(CLIFF_SCREWS), "plate -> cliff pod inserts", torque="0.6")
+    add("A chassis", "countersunk screw", "M3 x 6 ISO 10642 A2", 4, "caster disc -> tapped plate", torque="0.8", note="thread-lock")
+    add("A chassis", "pan head screw", "M4 x 6 ISO 7045 A2", 4, "caster top plate -> tapped caster disc (through the shim)", torque="1.5", note="thread-lock; must not stand above the disc")
+    add("A chassis", "countersunk screw", "M5 x 25 ISO 10642 A2-70", 4, "plate (from below) -> bulkhead pedestals -> tapped latch arm", torque="3.0", note="latch reaction path")
+    add("A chassis", "socket cap screw", "M4 x 10 ISO 4762 A2", 4, "draw latch -> chin floor -> tapped latch arm", torque="2.0", status="UNVERIFIED", note="latch hole pattern depends on the selected latch")
+    add("A chassis", "snap-action switch", "Omron D2HW-C201M", 4, "HEAD_DOCK, CHG_COVER, 2 x BODY_BUMPER", "UNVERIFIED", note="dimensions PARTIAL in parts.yaml; mounting holes 2.35 mm assumed")
+    add("A chassis", "pan head screw + insert", "M2 x 10 ISO 7045 A2 + M2 heat-set insert", 8, "D2HW retention in the four printed pockets", "UNVERIFIED", "0.15")
+    add("A chassis", "cable grommet", "8 mm hole, 5 mm bore, silicone", 2, "plate grommet holes (dock switch / cliff leads)", "UNVERIFIED")
+    # B  lower hull
+    add("B lower hull", "countersunk screw", "M3 x 8 ISO 10642 A2", N_SOLE, "plate (from below) -> sole-ring inserts", torque="0.6")
+    add("B lower hull", "pan head screw", "M3 x 10 ISO 7045 A2", 2, "front/rear hull splice flanges (x = %.0f)" % D.X_LOWER, torque="0.6")
+    add("B lower hull", "membrane vent", "M12 x 1.5 ePTFE protective vent + nut, IP67", 1, "right rear quarter (12.2 mm hole)", "UNVERIFIED")
+    add("B lower hull", "duck-bill drain valve", "3 mm stem, silicone", 2, "plate drain holes beside the caster", "UNVERIFIED")
+    add("B lower hull", "sealant bead", "neutral-cure RTV silicone, -50 C", 1, "plate edge / hull wrap, floor plug, pod notches, cheek slots", note="one 80 ml tube")
+    # C  drive
+    add("C drive", "countersunk screw", "M4 x 12 ISO 10642 A2", 8, "plate (from below) -> motor pod inserts", torque="1.5")
+    add("C drive", "button head screw", "M3 x 6 ISO 7380 A2", 12, "screw ring + pod end face -> gearbox (<= 3 mm engagement)", "UNVERIFIED", "0.5", "Pololu thread depth and pattern clocking UNVERIFIED: pod has both clockings")
+    add("C drive", "wheel-to-hub screw", "#4-40 x 3/8 in pan head (supplied with the hub)", 8, "wheel web -> hub flange", "UNVERIFIED", "0.5")
+    add("C drive", "tyre adhesive", "flexible cyanoacrylate or polyurethane adhesive", 1, "tyre keys on the rim", note="tyre is also keyed (8 ribs)")
+    # D  battery bay and cassette
+    add("D battery bay", "countersunk screw", "M3 x 8 ISO 10642 A2", 12, "plate (from below) -> tunnel feet (10) and coupler cradle (2)", torque="0.6")
+    add("D battery bay", "socket cap screw + nyloc nut", "M4 x 55 ISO 4762 A2 + M4 ISO 10511", 2, "cross pins through the cradle cheeks and the fixed SBS50 half", "UNVERIFIED", "1.0", "SBS50 mounting-hole positions UNVERIFIED")
+    add("D battery bay", "pan head screw", "M3 x 10 ISO 7045 A2", 6, "hatch frame -> tunnel end bosses (4) and hump end (2)", torque="0.6")
+    add("D battery bay", "polyimide heater pad", "90 x 70 mm, 12 V 20 W, PSA", 1, "on the floor plug", "UNVERIFIED")
+    add("D battery bay", "NTC + bimetal cut-out", "10 k NTC bead x 2, 60 C normally-closed disc thermostat", 1, "beside the pad / on the plate under the tunnel foot", "UNVERIFIED")
+    add("D battery bay", "blind-mate coupler", "Anderson SBS50 housing pair, 2 power + 2 auxiliary contacts each", 1, "cradle (fixed) / cassette carrier (floating)", "UNVERIFIED")
+    add("D cassette", "shoulder screw", "M5 thread, 6 mm shoulder x 6", 2, "bail pivots -> M5 inserts in the cassette ears", "UNVERIFIED", "1.5")
+    add("D cassette", "pan head screw", "M3 x 8 ISO 7045 A2", 2, "cassette lid", torque="0.5")
+    add("D cassette", "shoulder screw", "M3 thread, 4 mm shoulder x 5", 4, "floating coupler carrier (+-1 mm)", "UNVERIFIED", "0.5")
+    add("D cassette", "foam pads", "closed-cell EPDM 3 mm, PSA", 1, "pack sides/top inside the cassette (retention under shock)", note="1 sheet 200 x 300")
+    add("D cassette", "pack leads", "2.5 mm2 silicone wire, 6.3 mm insulated receptacles", 1, "pack F2 tabs -> SBS50 contacts", "UNVERIFIED")
+    # E  bridge / electronics
+    add("E bridge", "countersunk screw", "M4 x 10 ISO 10642 A2", 4, "plate (from below) -> bridge posts", torque="1.5")
+    add("E bridge", "pan head screw", "M4 x 8 ISO 7045 A2", 4, "tray -> bridge posts", torque="1.5")
+    add("E bridge", "pan head screw + nyloc nut", "M3 x 10 ISO 7045 A2 + M3 ISO 10511", 6, "RR-CHS-MAIN -> 3 mm spacers -> tray", torque="0.5", note="H1, H3 hard chassis bond")
+    add("E bridge", "thermal gap pad", "60 x 40 x 2 mm, >= 3 W/mK", 1, "board underside zone u 50..110, v 30..70 -> tray", "UNVERIFIED")
+    add("E bridge", "countersunk screw", "M3 x 8 ISO 10642 A2", 4, "plate -> CM5 tray inserts", torque="0.6")
+    add("E bridge", "pan head screw", "M2.5 x 6 ISO 7045 A2", 4, "CM5 carrier -> tray inserts", "UNVERIFIED", "0.3", "carrier hole pattern UNVERIFIED")
+    add("E bridge", "pan head screw", "M3 x 8 ISO 7045 A2", 2, "bus clamp resistor -> tapped plate", "UNVERIFIED", "0.6")
+    # F  grip
+    add("F grip", "countersunk screw + nyloc nut + washer", "M5 x 16 ISO 10642 A2-70", 4, "plate (from below) -> angle feet", torque="4.0", note="proof-load path, through-bolted")
+    add("F grip", "socket cap screw + nyloc nut + 2 washers", "M5 x 16 ISO 4762 A2-70", 4, "side plates -> angle feet", torque="4.0", note="proof-load path")
+    add("F grip", "nyloc nut + washer", "M8 ISO 10511 A2", 2, "tie rod ends in the fairing pockets", torque="8.0", note="clamps the tube between the side plates")
+    add("F grip", "pan head screw + nyloc nut", "M3 x 20 ISO 7045 A2", 4, "cheek fairings through the side plates", torque="0.5")
+    add("F grip", "end cap", "push-in cap 16 mm, PE", 2, "nut pockets of the fairings", "UNVERIFIED")
+    # G  lid
+    add("G lid", "button head screw + bonded sealing washer", "M3 x 10 ISO 7380 A2 + M3 EPDM bonded washer", N_PERIM, "lid/nose skirt -> tongue inserts (radial)", torque="0.5")
+    add("G lid", "pan head screw", "M3 x 12 ISO 7045 A2", 4 + 6, "nose/shoulder (2 per side) and shoulder/deck (3 per side) flanges", torque="0.6")
+    add("G lid", "dowel pin", "3 m6 x 8 ISO 2338", 2 + 4, "lid joint alignment", note="1 per side at x = 47, 2 per side at x = %.0f" % D.X_DECK)
+    add("G lid", "countersunk screw", "M3 x 8 ISO 10642 A2", 2 * len(HUMP_SCREW_X), "hump walls (from inside) -> deck curb inserts", torque="0.5")
+    add("G lid", "captive panel screw", "M3 x 10 reduced-shank captive screw + retaining washer", len(COVER_SCREWS), "saddle service cover", "UNVERIFIED", "0.5")
+    add("G lid", "light pipe", "3 mm rigid press-fit light pipe, 20 mm", 5, "left deck over RR-PANEL", "UNVERIFIED")
+    add("G lid", "acoustic vent", "8 mm adhesive ePTFE acoustic membrane", 1, "sounder port behind the left deck", "UNVERIFIED")
+    add("G lid", "pan head screw", "M3 x 8 ISO 7045 A2", 2, "RR-PANEL tray -> deck bosses", torque="0.5")
+    add("G lid", "pan head screw", "M2 x 6 ISO 7045 A2", 18, "ToF rear clips (9 seats)", torque="0.15")
+    add("G lid", "light-blocker gasket", "black closed-cell foam 1.5 mm, die-cut 14 x 10 with two apertures", 11, "between VL53L4ED and window", "DESIGN", note="crosstalk barrier; assumption, see report")
+    add("G lid", "LiDAR screws + gasket", "M3 x 8 x 4, 60 x 60 x 1 silicone gasket, M12 cable gland", 1, "hump pad", "UNVERIFIED", note="LiDAR hole pattern UNVERIFIED: pad drilled 4 x 3.4 on a 50 mm square")
+    add("G lid", "set screw (door peg)", "M4 x 10 dog point ISO 4028 A2", 2, "upper jamb bosses", torque="1.0")
+    add("G lid", "hinge pin", "2 mm x 40 stainless pin", 1, "charge inlet cover", note="torsion spring optional")
+    add("G lid", "draw-latch screws", "M4 x 8 ISO 7045 A2", 4, "hatch latch on the hump roof, catch plate on the door", "UNVERIFIED", "1.0")
+    add("G lid", "lanyard", "1.5 mm stainless wire rope, 150 mm, 2 eyelets", 1, "door -> hump (captive door)")
+    add("G bumper", "guide screw + sleeve + spring", "M3 x 25 ISO 4762 + 5 x 0.75 x 14 PTFE-lined sleeve + compression spring 6 OD x 12, ~0.5 N/mm", 6, "2 per bumper segment", "UNVERIFIED", "0.5")
+    add("G bumper", "push pin + spring", "3 mm pin x 10 + spring 4 OD x 8", 2, "side segments -> D2HW plungers", "DESIGN")
+    # heat-set inserts
+    ins = {"M2": 18 + 8, "M2.5": 4, "M3": N_SOLE + 2 + 12 + 6 + N_PERIM_HULL + (N_PERIM - N_PERIM_HULL) * 0 + 4 + 6 + 2 * len(HUMP_SCREW_X) + len(COVER_SCREWS) + 2 + 2 * len(CLIFF_SCREWS) + 2 + 4 + 2 + 4 + 6,
+           "M4": 8 + 2, "M5": 2}
+    for m, n in ins.items():
+        add("H inserts", "heat-set insert", f"{m} brass, knurled, for {D.INSERT[m][0]} mm hole x {D.INSERT[m][1]} deep", n, "all printed parts", "UNVERIFIED", note="brand to choose; hole sizes in dims.INSERT")
+    # gaskets, foam
+    add("J seals", "perimeter gasket", D.GASKET["perimeter"], round(perimeter_len() / 1000 + 0.1, 2), "lid / lower hull land (m)", "UNVERIFIED")
+    add("J seals", "flat gasket sheet", "closed-cell silicone 1.0 mm, 300 x 300", 1, "lid flange joints, hump curb, hull splice, bulkhead/nose", "UNVERIFIED")
+    add("J seals", "cover gasket", D.GASKET["cover"], 0.62, "saddle cover ledge (m)", "UNVERIFIED")
+    add("J seals", "hatch gasket", "silicone sponge strip 3 x 2 mm, PSA", 0.5, "hatch frame land (m)", "UNVERIFIED")
+    add("J seals", "O-ring cord", "silicone 2 mm", 0.4, "motor pod notches (m)", "UNVERIFIED")
+    add("J seals", "insulation liner", "closed-cell foam 5 mm, PSA, -40 C (EPDM/NBR or PE)", 0.25, "inside of every shell piece and the door (m2)", "UNVERIFIED")
+    add("J seals", "desiccant + indicator", "10 g silica gel bag + humidity card", 1, "under the saddle cover")
+    # K  transport tray
+    add("K tray", "wood screw", "3.5 x 16 countersunk", 17, "chocks, caster cup, head guards -> base board")
+    add("K tray", "pad", "EVA foam 3 mm, 380 x 140", 1, "on the base under the head (clean, soft surface 7 mm below the rails)")
+    add("K tray", "strap", "25 mm cam-buckle strap 1.2 m", 2, "through the base slots over the saddle / hump")
+    return R
