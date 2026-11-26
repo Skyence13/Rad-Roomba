@@ -77,5 +77,12 @@ def write(res):
               [(k, f"{v['UA_W_per_K']:.2f}", f"{v['heater_W_at_-20C_setpoint_+5C']:.1f}", f"{v['heater_W_at_-25C_setpoint_+10C']:.1f}") for k, v in d["thermal"].items()]), "",
            "The 0.9 mm cover clearance of the stack and the 6.3 mm internal height required by the board leave room for a 0.5 mm liner only, not the 3 mm foam assumed in mech_calcs.md. "
            "The 3 mm external jacket (closed-cell foam cap with a wipeable skin on the lid, head top z 48, cut out around the keeper and the J1 blister) is offered as a cold-kit option and needs the lead's agreement.", ""]
-    md += ["## 10. Printed parts in print orientation", "", _t(["Part number", "Part", "Bounding box (mm)", "Fits"], [(x["pn"], x["part"], " x ".join(str(v) for v in x["bbox_print_mm"]), x["fits"]) for x in d["printed_parts"]]), ""]
+    md += ["## 10. Printed parts in print orientation (tool-checked: bounding box and downward-facing faces of the oriented solid)", "",
+           "Downward faces = faces above the bed whose normal points more than 45 deg downward: each needs a bridge or support. Where the slicer "
+           "will put supports and why they do not touch a critical surface is stated per part in `prototype/print_schedule.md`.", "",
+           _t(["Part number", "Part", "Bounding box (mm)", "Fits", "Downward faces", "Area (mm2)", "Largest (z / span / length mm)"],
+              [(x["pn"], x["part"], " x ".join(str(v) for v in x["bbox_print_mm"]), x["fits"], x.get("downward_faces", "-"), x.get("downward_area_mm2", "-"),
+                "; ".join(f"{o['z']}/{o['span_mm']}/{o['length_mm']}" for o in x.get("largest_downward_faces", [])[:3])) for x in d["printed_parts"]]), ""]
+    md += ["## 11. EMI bond points of the prototype fences (tool-checked clamping)", "",
+           "; ".join(f"{k}: " + ", ".join(f"{v:+.1f}" for v in vals) for k, vals in d.get("bond_points", {}).items()), ""]
     (OUT / "head_report.md").write_text("\n".join(md))

@@ -12,7 +12,7 @@ Python fakes or real-time emulators; "tool-checked" = headless browser / unit to
 
 | Group | Command | Observed |
 |---|---|---|
-| Unit | `tools/test.sh unit` | **46 passed** (rr_core: wire/descriptor 12, estimator 9, head link 9, processing 7, clock fit 5; rr_web 4 incl. 2 added at close-out: server-side motion interlock, demo-account marking). Before the close-out additions: 44 passed. |
+| Unit | `tools/test.sh unit` | **47 passed** (rr_core: wire/descriptor 12, estimator 9, head link 9, processing 7, clock fit 5; rr_web 4 incl. 2 added at close-out: server-side motion interlock, demo-account marking; rr_bringup 1 added: station-pitch default follows contract). Before the close-out additions: 44 passed. |
 | Scenarios (Python fakes, simulated, deterministic) | `tools/test.sh scenarios` | **14 passed** in 11 min 42 s (s01, s02, s03, s04a/b, s05, s06, s07, s08, s09, s10, s11 INLINE/DEFERRED, s12). Key numbers (3.0 × 1.2 m section): s01 at 0.03 m/s — flag 20 mm from the injected patch, revisit error 1.7 mm estimated / **2.1 mm true**, Expose reverse 0.350 m, park error 0.9 mm, valid exposure 0.646 of the floor (wall/end strips are a large share of a 1.2 m floor), acceptable 0.377, **median D# 0.201 Bq/cm², best 0.172** (goal 0.20: met by the median only marginally); localisation error vs truth ≤ 1.1 mm (x) / 1.2 mm (y). s09 — true time error never exceeded the reported bound in 4 cases (0.2 ms: bound ≤ 0.82 ms; 3 ms + 80 ppm: ≤ 3.8 ms; asymmetric 0.2/6 ms: error 3.3 ms ≤ bound 3.8 ms; 12 ms: bound 12.8 ms → all 31 gates rejected, arming refused HEAD_CLOCK); moving hotspot mapped within 2.7 mm along track. s10 step-and-count (3 s preset) — interrupted station invalidated and repeated, only static gates credited, median D# 0.247. s08 — two replays bit-identical to the live export. |
 | Native emulators | `tools/test.sh native` | pending |
 | ROS graph smoke | `tools/test.sh ros` | pending |
@@ -41,7 +41,12 @@ Python fakes or real-time emulators; "tool-checked" = headless browser / unit to
    ports — both failed: head stuck in `QUIET`, `link_down TRANSPORT:peer closed`). The previous
    engineer's `evidence/native_run.log` ("line 29: syntax error") shows the same thing. Those runs
    are discarded; results below are from clean runs.
-5. Tooling: `tools/replay.sh`, `tools/plan_report.py` (`tools/test.sh plan`),
+5. **CR-05 accepted by the lead** (contract `station_pitch_m: 0.080`): the STEP_AND_COUNT default now
+   comes from the contract (`geometry_config.survey_method_defaults`), fall-back defaults 0.08,
+   packaged `contract_snapshot.yaml` refreshed; still a parameter. Test `rr_bringup/test/test_config.py`.
+   s10 keeps an explicit 0.10 m (documents the 20 mm stripes). CR-06/07/08/09/11 logged by the lead
+   (IB-29…31), not implemented.
+6. Tooling: `tools/replay.sh`, `tools/plan_report.py` (`tools/test.sh plan`),
    `tools/ui_screenshots.js`; `tools/ros_smoke.py` now records every transition into HOLD with
    its reason and appends each run to `evidence/ros_smoke/runs.ndjson`.
 
@@ -62,9 +67,9 @@ Python fakes or real-time emulators; "tool-checked" = headless browser / unit to
 | Coverage accounting on 5 mm sub-cells, decision cells (0.10 m), reason codes, flags with stable IDs and named locations, scaler observations, step-and-count station credit, residual rectangles | `rr_core/processing.py` | `test_processing.py`, scenarios |
 | Append-only archive (atomic sealed segments with SHA-256, epochs), journal pipeline, export (CSV, GeoJSON-like, SVG, PNG, summary, manifest), replay | `rr_core/archive.py`, `pipeline.py`, `export.py` | scenarios s08, s12 |
 | Wall-referenced localisation (wheel+gyro EKF, wall/bulkhead/door line fits, residual gate, slip flag, credit/hold budgets) | `rr_localization/estimator.py` | scenarios only (no unit test file) |
-| Coverage planner, motion executor with route monitoring, mission supervisor with CONTINUOUS_SCAN / SEARCH_THEN_COUNT (INLINE, DEFERRED) / STEP_AND_COUNT | `rr_coverage/` | scenarios s01–s04, s10–s12 |
-| Guided review (Next / Expose / Park / Repeat / Skip) | `rr_guidance/guidance.py` | scenarios s01, s05, s07 (Repeat and Skip are not exercised by a scenario) |
-| Operator web service + UI, roles, single control lease, idempotent receipts, hash-chained audit, SSE | `rr_web/` | `rr_web/test/test_web.py` (fake backend), scenario s07 (lease logic) |
+| Coverage planner, motion executor with route monitoring, mission supervisor with CONTINUOUS_SCAN / SEARCH_THEN_COUNT (INLINE, DEFERRED) / STEP_AND_COUNT (station pitch from contract) | `rr_coverage/` | scenarios s01–s04, s10–s12; `rr_bringup/test/test_config.py`; plan figures `tools/test.sh plan` (calculated) |
+| Guided review (Next / Expose / Park / Repeat / Skip) | `rr_guidance/guidance.py` | scenarios s01, s05, s07, native_s01, UI run (Next/Expose/Park from the page). Repeat and Skip are not exercised by any test. |
+| Operator web service + UI, roles, single control lease, idempotent receipts, hash-chained audit, SSE, server-side motion interlock (Charge/Service, traction inhibited), demo-account marking | `rr_web/`, `rr_bringup/runtime.py` | `rr_web/test/test_web.py` (4 tests), scenario s07 (lease logic), Playwright drive of the real page against the simulator (`tools/ui_screenshots.js`, 14 checks, `evidence/ui/`) |
 | RobotApp composition, geometry from `frames.yaml` + contract | `rr_bringup/app.py`, `geometry_config.py` | all scenarios |
 | ROS 2 workspace: 11 packages build with colcon; `rr_interfaces` (12 msg, 2 srv, 1 action); robot node, simulator node, stand-alone head driver and chassis bridge nodes; sim/hardware launch files | `src/*/`, `rr_bringup/launch/` | `tools/test.sh ros` (graph smoke test, real time) |
 
@@ -76,11 +81,12 @@ Python fakes or real-time emulators; "tool-checked" = headless browser / unit to
   package apart from its manifest. Only `rr_head_driver` and `rr_chassis_bridge` have stand-alone
   nodes, and those two nodes were built but **never run** (not covered by any test).
 - **Startup ordering** is enforced by the mission prerequisites check, not by ROS lifecycle nodes.
-- **TF**: the robot node publishes `map → base_link` only (no separate `odom` frame, CR-11).
+- **TF**: the robot node publishes `map → base_link` only (no separate `odom` frame, CR-11, logged for a later decision).
+- **Along-trailer reference** (CR-07 → IB-30) and **cell statistics** (CR-08/09 → IB-31): as described in CONTRACT_CHANGE_REQUESTS.md, decisions deferred.
 - **The `GuidedVisit` action server** is implemented and builds; it was not called by a test
   (the scenarios and the smoke test use the command service / in-process calls).
-- **Wall strips**: outer tracks are limited by in-place turns (CR-06): ~0.14 m per wall remains
-  unsurveyed in a 2.5 m trailer. Keep-outs are excluded from the target but not planned around.
+- **Wall strips**: outer tracks are limited by in-place turns (CR-06 → IB-29, deferred): ~0.14 m per
+  wall remains unsurveyed in a 2.5 m trailer. Keep-outs are excluded from the target but not planned around.
 - **Blocked-strip replanning** is "defer the task, retry once after the other passes"; there is no
   path search around an obstacle.
 - **Scan evidence at 0.10 m/s does not meet the 0.20 Bq/cm² goal** with the demo calibration

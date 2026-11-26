@@ -24,6 +24,20 @@ def _find(env, rel, snapshot):
     return CONFIG / snapshot
 
 
+def survey_method_defaults(contract: dict) -> dict:
+    """MissionConfig defaults taken from contract `survey_methods` (DEC-038).  Only scalar values
+    that MissionConfig knows are used; the mission config YAML still overrides them.
+    STEP_AND_COUNT.station_pitch_m follows the contract (0.080 m since CR-05 was accepted)."""
+    sm = contract.get("survey_methods") or {}
+    out = {}
+    stc = (sm.get("STEP_AND_COUNT") or {}).get("params") or {}
+    if "station_pitch_m" in stc:
+        out["station_pitch_m"] = float(stc["station_pitch_m"])
+    if "settle_s" in stc:
+        out["settle_s"] = float(stc["settle_s"])
+    return out
+
+
 def load_robot_geometry() -> dict:
     fpath = _find("RR_FRAMES_YAML", "mechanical/common/frames.yaml", "frames_snapshot.yaml")
     cpath = _find("RR_CONTRACT_YAML", "interface/system/contract.yaml", "contract_snapshot.yaml")
@@ -49,5 +63,6 @@ def load_robot_geometry() -> dict:
         "guided_arrival_tolerance_m": motion["guided_arrival_tolerance_m"],
         "expose_spot_reverse_offset_m": motion["expose_spot_reverse_offset_m"],
         "survey_speed_mps": motion["survey_speed_mps"],
+        "survey_method_defaults": survey_method_defaults(contract),
         "sources": {"frames": str(fpath), "contract": str(cpath)},
     }

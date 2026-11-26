@@ -59,7 +59,7 @@ survey_methods:
   STEP_AND_COUNT:
     desc: 'Scaler survey of the whole floor: move one station, stop, count, repeat. Every credited measurement is a static count over four defined 80 cm2 apertures.'
     params:
-      station_pitch_m: 0.1
+      station_pitch_m: 0.08
       settle_s: 0.5
       scaler_mode:
       - PRESET_TIME

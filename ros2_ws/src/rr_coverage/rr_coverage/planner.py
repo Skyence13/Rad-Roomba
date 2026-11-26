@@ -30,7 +30,7 @@ class PlanConfig:
     def __init__(self, wall_margin_m=0.03, turn_margin_m=0.02, front_margin_m=0.03, door_margin_m=0.10,
                  pair_overlap_m=0.005, allowance_m=0.010, speed_mps=0.10, transit_speed_mps=0.10,
                  reverse_speed_mps=0.05, yaw_rate_radps=0.25, end_caps=True, method="CONTINUOUS_SCAN",
-                 station_pitch_m=0.10, settle_s=0.5, scaler_preset_s=10.0, premotion_s=1.5):
+                 station_pitch_m=0.08, settle_s=0.5, scaler_preset_s=10.0, premotion_s=1.5):
         self.__dict__.update(locals())
         del self.__dict__["self"]
 

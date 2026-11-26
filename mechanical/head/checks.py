@@ -12,13 +12,15 @@ import time
 
 import yaml
 
+from .geom import Part
+
 from mechanical.common import params as P
 
 from . import assembly as A
 from . import calc as C
 from . import hp as H
 from . import parts as T
-from .geom import OUT, bounds, box, compound, mass_cg, oriented, volume
+from .geom import OUT, bounds, box, compound, cyl, cyl2, mass_cg, oriented, volume
 
 TOL_VOL = 0.5      # mm3 of overlap tolerated (tessellation-free boolean noise)
 BED = (256.0, 256.0, 250.0)     # stock X1C preset volume (mechanical/tools/README.md)
@@ -103,20 +105,64 @@ def bed_fit():
     return ok, rows, lim
 
 
-def bond_pitch():
-    """Largest spacing between consecutive bond fasteners along each prototype EMI fence (requirement <= 50 mm)."""
-    out = {}
-    fr = sorted([y for y in T.FENCE_FRONT_Y] + [-y for y in T.FENCE_FRONT_Y] + [y for x, y in T.lid_holes() if x > 150])
-    out["front"] = max(b - a for a, b in zip(fr, fr[1:]))
-    sd = sorted(list(T.FENCE_SIDE_X) + [x for x, y in T.lid_holes() if y > 160])
-    out["side"] = max(b - a for a, b in zip(sd, sd[1:]))
-    rr = []
-    for s in (1, -1):
-        rr += [s * y for y in H.REAR_SCREW_Y] + [s * H.SHOE_Y + dy for dy in H.THEAD_SCREW_DY] + [s * y for x, y in T.FENCE_REAR_EXTRA]
-    rr += [y for x, y in T.lid_holes() if x < 90]
-    rr = sorted(rr)
-    out["rear"] = max(b - a for a, b in zip(rr, rr[1:]))
-    return out
+def bond_pitch(parts):
+    """Largest spacing between consecutive BOND points along each prototype EMI fence (requirement <= 50 mm). A bond point is a screw or a
+    lid standoff that clamps the fence foot to the spreader; a clearance hole is not counted. Standoff clamping is tool-checked (fence
+    material under the standoff base annulus)."""
+    by = {p.name: p for p in parts}
+    clamp = {}
+    for x, y in T.lid_holes():
+        ring = cyl(H.LID_STANDOFF_D / 2, H.FENCE_T, (x, y, H.Z_SPR1)).cut(cyl(1.7, 2, (x, y, H.Z_SPR1 - 0.5)))
+        on = [n for n in ("fence_front", "fence_side_L", "fence_side_R", "fence_rear") if volume(ring.intersect(by[n].shape)) >= 0.95 * volume(ring)]
+        clamp[(x, y)] = on[0] if on else None
+    fr = sorted([s_ * y for y in T.FENCE_FRONT_Y for s_ in (1, -1)] + [y for (x, y), f in clamp.items() if f == "fence_front"])
+    sd = sorted(list(T.FENCE_SIDE_X) + [x for (x, y), f in clamp.items() if f == "fence_side_L"])
+    rr = sorted([s_ * y for y in H.REAR_SCREW_Y for s_ in (1, -1)] + [y for (x, y), f in clamp.items() if f == "fence_rear"])
+    gaps = lambda v, lo, hi: max(b - a for a, b in zip([lo] + v, v + [hi]))
+    hy = T.FENCE_SIDE_Y + H.FENCE_T
+    out = {"front": gaps(fr, -hy, hy), "side": gaps(sd, 79.2, T.FENCE_FRONT_X - 2.7), "rear": gaps(rr, -hy, hy)}
+    return out, {f"{x:.1f},{y:+.1f}": f for (x, y), f in clamp.items()}, {"front": fr, "side": sd, "rear": rr}
+
+
+def lid_pitch():
+    """Lid fasteners round the closed loop: largest distance between neighbours (requirement <= 40 mm)."""
+    pts = T.lid_loop()
+    d = [math.dist(pts[i], pts[(i + 1) % len(pts)]) for i in range(len(pts))]
+    k = max(range(len(d)), key=lambda i: d[i])
+    return len(pts), max(d), (pts[k], pts[(k + 1) % len(pts)])
+
+
+def drain_check(frame_shapes):
+    """Each chimney drain: the three legs are open (probe solids free of frame material) and the straight line from the outlet to the
+    inlet is blocked by frame material (no line of sight)."""
+    d, rows, ok = H.DRAIN, [], True
+    for i, yc in enumerate(P.SEG_Y):
+        yd = yc + d["dy"] * (1 if yc > 0 else -1)
+        legs = [cyl(0.5, d["z_ch"][0] - H.Z_FB - 0.1, (d["x_out"], yd, H.Z_FB + 0.05)),
+                box(d["x_out"], d["x_in"], yd - 0.4, yd + 0.4, d["z_ch"][0] + 0.2, d["z_ch"][1] - 0.2),
+                cyl(0.5, H.CHIM_FLOOR_REAR - d["z_ch"][1] - 0.1, (d["x_in"], yd, d["z_ch"][1] + 0.05))]
+        open_ = sum(volume(l.intersect(f)) for l in legs for f in frame_shapes) < 1e-3
+        los = cyl2(0.2, (d["x_out"], yd, H.Z_FB - 0.01), (d["x_in"], yd, H.CHIM_FLOOR_REAR + 0.01))
+        blocked = sum(volume(los.intersect(f)) for f in frame_shapes) > 0.05
+        ok &= open_ and blocked
+        rows.append({"lane": i, "passage_open": bool(open_), "line_of_sight_blocked": bool(blocked)})
+    return ok, rows
+
+
+def overhangs(shape, orient, min_area=4.0):
+    """Downward-facing faces (normal z < -0.707) above the bed in print orientation: these need support or bridging."""
+    o = oriented(shape, orient)
+    out = []
+    for f in o.Faces():
+        try:
+            n = f.normalAt()
+        except Exception:      # noqa: BLE001
+            continue
+        if n.z < -0.707:
+            b = bounds(f)
+            if b[2] > 0.3 and f.Area() >= min_area:
+                out.append({"z": round(b[2], 1), "area_mm2": round(f.Area(), 1), "span_mm": round(min(b[3] - b[0], b[4] - b[1]), 1), "length_mm": round(max(b[3] - b[0], b[4] - b[1]), 1)})
+    return sorted(out, key=lambda r: -r["area_mm2"])
 
 
 def run():
@@ -145,7 +191,6 @@ def run():
         add(f"no interference, leading rail travel {trav:g} mm, {proj:g} mm insert", "pass" if not r["overlaps"] else "fail", f"{r['pairs_tested']} pairs; overlaps: {r['overlaps'] or 'none'}")
     s_full = H.SIDE_GAP * math.sqrt(2) - 0.02
     parts = [p for p in builds["prototype"] if p.group in ("frame", "window", "receiver", "switch", "deck") or p.name.startswith("guide_pins")]
-    from .geom import Part
     side_parts = [Part(f"side_rail_{t}", "-", T.side_rail(s, s_full), "SS301", allow={f"guide_pins_{t}", f"sw_side_{t}"}) for s, t in ((1, "L"), (-1, "R"))]
     r = interference(parts + side_parts, "side stroke", only_between={"side_rail_L", "side_rail_R"})
     add(f"no interference, side rails at their positive stop (slide {s_full:.2f} mm)", "pass" if not r["overlaps"] else "fail", f"{r['pairs_tested']} pairs; overlaps: {r['overlaps'] or 'none'}")
@@ -161,8 +206,14 @@ def run():
         low_other = min(bounds(p.shape)[2] for p in builds["prototype"] if not p.name.startswith(("rail_insert",)))
         ok = all(abs(z - want) < 1e-6 for z in zs) and low_other >= want - 1e-6 if proj == 3.0 else all(abs(z - want) < 1e-6 for z in zs)
         add(f"leading rail underside with the {proj:g} mm insert orientation", "pass" if ok else "fail", f"insert underside z = {zs[0]:.2f} (required {want:.2f}); lowest other part z = {low_other:.2f} (side rails {H.SIDE_Z0:.1f})")
-    add("side rails / wing returns underside", "deviation" if True else "pass",
-        f"side strips are fixed-height at z = {H.SIDE_Z0:.1f} (3 mm projection); a 5 mm projection on the side zones needs the alternative strip RR-HD-S-433/434 (13 -> 15 mm tall), not modelled", "design note")
+    p5 = A.build("prototype", projection=5.0)
+    zs3 = [bounds(p.shape)[2] for p in builds["prototype"] if p.name.startswith("side_rail")]
+    zs5 = [bounds(p.shape)[2] for p in p5 if p.name.startswith("side_rail")]
+    ok = all(abs(z - (P.FILM_Z - 3.0)) < 1e-6 for z in zs3) and all(abs(z - (P.FILM_Z - 5.0)) < 1e-6 for z in zs5)
+    movers = {p.name for p in p5 if p.name.startswith(("side_rail", "rail_insert"))}
+    r = interference([p for p in p5 if p.group in ("frame", "window", "receiver", "rail", "switch", "deck", "fastener")], "5 mm rails", only_between=movers)
+    add("side rails / wing returns underside for both projections (RR-HD-S-431/432 3 mm, RR-HD-S-433/434 5 mm)", "pass" if ok and not r["overlaps"] else "fail",
+        f"side strip underside z = {zs3[0]:.2f} (3 mm set) / {zs5[0]:.2f} (5 mm set); 5 mm set vs head: {r['pairs_tested']} pairs, overlaps {r['overlaps'] or 'none'}")
     # 4 board standoffs
     env = yaml.safe_load((P.HERE / "board_envelopes.yaml").read_text())["RR-HEAD-ACQ"]
     want = sorted(tuple(round(v, 3) for v in h["base_link_xyz_mm"]) for h in env["mounting"]["holes"])
@@ -224,6 +275,11 @@ def run():
         f"designed {sw} vs placeholders {P.HEAD_RAIL_SWITCHES}: the placeholders lie inside the optical stack / on the split plane; frames.yaml needs the designed values", "design note")
     # 7 bed fit
     ok, rows, lim = bed_fit()
+    for r_, c_ in zip(rows, printed_catalogue()):
+        ov = overhangs(c_["shape"], c_["orient"])
+        r_["downward_faces"] = len(ov)
+        r_["downward_area_mm2"] = round(sum(o["area_mm2"] for o in ov), 0)
+        r_["largest_downward_faces"] = ov[:4]
     add(f"every printed part fits the X1C in its print orientation ({lim[0]:.0f} x {lim[1]:.0f} x {lim[2]:.0f} usable after {BED_MARGIN:g} mm margins)", "pass" if ok else "fail", json.dumps(rows))
     res["data"]["printed_parts"] = rows
     # 8 split joint clears the windows
@@ -232,8 +288,27 @@ def run():
     add("split joint at y = 0 clears every window and every lane cavity", "pass" if edge - feat > 0 and H.RIB_W / 2 - feat > 1.0 else "fail",
         f"joint plane to nearest window edge {edge:.2f} mm, to the cavity wall {H.RIB_W / 2:.2f} mm; groove depth {feat:.1f} mm leaves {H.RIB_W / 2 - feat:.2f} mm of solid half rib")
     # 9 EMI bond pitch
-    bp = bond_pitch()
-    add("EMI fence bond pitch to the spreader <= 50 mm (prototype)", "pass" if max(bp.values()) <= 50.0 else "fail", f"largest pitch front {bp['front']:.1f}, side {bp['side']:.1f}, rear {bp['rear']:.1f} mm")
+    bp, clamp, bpts = bond_pitch(builds["prototype"])
+    unclamped = [k for k, v in clamp.items() if v is None]
+    add("EMI fence bond pitch to the spreader <= 50 mm (prototype; bond = screw or standoff clamping the foot, clamping tool-checked)",
+        "pass" if max(bp.values()) <= 50.0 and not unclamped else "fail",
+        f"largest gap front {bp['front']:.1f}, side {bp['side']:.1f}, rear {bp['rear']:.1f} mm (fence ends included); standoffs not on a fence foot: {unclamped or 'none'}")
+    res["data"]["bond_points"] = bpts
+    n, dmax, pair = lid_pitch()
+    seats = [bounds(T.lid_standoffs(True))[5], bounds(T.lid_standoffs(False))[5]]
+    boss_top = max(bounds(p.shape)[5] for p in builds["prototype"] if p.name.startswith("frame"))
+    add(f"cover = shear panel: lid fasteners round a closed loop at <= {H.LID_PITCH_MAX:g} mm pitch, all on hard seats at the lid underside",
+        "pass" if dmax <= H.LID_PITCH_MAX + 1e-6 and all(abs(z - H.Z_LID0) < 1e-6 for z in seats + [boss_top]) else "fail",
+        f"{n} M3 screws ({len(T.lid_holes())} into standoffs on the spreader, {len(T.lid_boss_xy())} into frame bosses); largest neighbour distance {dmax:.1f} mm between "
+        f"({pair[0][0]:.1f}, {pair[0][1]:+.1f}) and ({pair[1][0]:.1f}, {pair[1][1]:+.1f}); standoff tops z {seats[0]:.2f} / {seats[1]:.2f}, boss tops z {boss_top:.2f}")
+    ok, rows = drain_check([p.shape for p in builds["prototype"] if p.name.startswith("frame")])
+    ok2, rows2 = drain_check([p.shape for p in builds["production"] if p.name == "frame"])
+    add("light-safe chimney drains: passage open, no straight line of sight (both builds)", "pass" if ok and ok2 else "fail", json.dumps(rows + rows2))
+    covers = [Part(f"transport_cover_{t}", "-x", T.transport_cover(s_), "PETG-CF") for s_, t in ((1, "L"), (-1, "R"))]
+    sub = [p for p in builds["prototype"] if p.group in ("frame", "receiver", "window", "rail", "fastener", "switch", "cable")]
+    r = interference(sub + covers, "transport cover", only_between={"transport_cover_L", "transport_cover_R"})
+    add("transport covers clip on without touching the films or any part except their seats", "pass" if not r["overlaps"] else "fail",
+        f"{r['pairs_tested']} pairs; overlaps: {r['overlaps'] or 'none'}; cover rests touch the cassette borders only (z {H.CAS_Z0 - 0.3:.1f} vs film z {H.FILM_Z:g})")
     slots = {"chimney notch": 2 * H.CHIM_HY, "cable port": 2 * H.PORT_SLOT_HY, "switch saddle window in the front fence foot": 27.0}
     add("shield openings: no slot longer than 20 mm except the cable entries", "deviation" if slots["switch saddle window in the front fence foot"] > 20 else "pass",
         f"{slots}; the 27 mm openings are in the fence FOOT (flat on the spreader, closed by it), not in the wall: electrically closed", "design note")

@@ -159,7 +159,8 @@ class RobotApp:
         import base64
         desc = json.loads(base64.b64decode(m["descriptor_b64"]))
         lanes = lane_polygons(desc, m["mount_transform"])
-        mcfg = MissionConfig(**merge({"op_mode": self.cfg["op_mode"]}, self.cfg["mission"]))
+        mcfg = MissionConfig(**merge(dict(self.geometry.get("survey_method_defaults") or {}, op_mode=self.cfg["op_mode"]),
+                                     self.cfg["mission"]))       # contract survey_methods defaults, config overrides
         pcfg = PlanConfig(**merge({"allowance_m": self.cfg["survey"]["position_allowance_m"], "method": mcfg.method,
                                    "speed_mps": mcfg.speed, "station_pitch_m": mcfg.station_pitch_m,
                                    "settle_s": mcfg.settle_s, "scaler_preset_s": mcfg.station_preset_s}, self.cfg["plan"]))

@@ -101,7 +101,7 @@ def n03(tmp, preset_s=3.0):
     """Step-and-count on the native emulators (opt-in: `tools/test.sh native n03`): only static
     scaler gates earn credit; the hot spot is flagged from static counts."""
     cfg = sc._cfg(trailer={"id": "SIM-SECTION-1.8x1.0", "length_m": 1.8, "width_m": 1.0},
-                  mission={"method": "STEP_AND_COUNT", "station_preset_s": preset_s, "station_pitch_m": 0.10})
+                  mission={"method": "STEP_AND_COUNT", "station_preset_s": preset_s})   # pitch: contract default (0.080 m, CR-05)
     sim = NativeSystem(Path(tmp) / "n03", cfg, seed=33)
     c = sc.Checks()
     try:
@@ -124,7 +124,7 @@ def n03(tmp, preset_s=3.0):
         c.add("hot spot flagged from static counts", any(abs(f["x_m"] - 0.995) < 0.06 for f in flags), flags=[(f["id"], f["x_m"], f["y_m"]) for f in flags])
         dh = sorted(d.D_hash for d in proc.decisions["beta"].values() if d.D is not None and math.isfinite(d.D_hash))
         ev = sc._finish("native_s10_step_and_count", sim, c, {"stations": len(stations), "stations_invalid": sum(1 for s in stations if not s["valid"]),
-                                                             "station_preset_s": preset_s, "D_hash_median": dh[len(dh) // 2] if dh else None})
+                                                             "station_preset_s": preset_s, "station_pitch_m": app.mission.cfg.station_pitch_m, "D_hash_median": dh[len(dh) // 2] if dh else None})
     finally:
         sim.close()
     return ev

@@ -34,9 +34,23 @@ def frame_walls(e_frame):
 
 POST_FIXITY = 0.2          # STATED ASSUMPTION: a 5 mm post clamped in 2 mm plates reaches 20 % of the fixed-fixed stiffness
 POST_K = POST_FIXITY * 12 * E_AL * (math.pi * H.LID_STANDOFF_D ** 4 / 64) / (H.Z_LID0 - H.Z_SPR1) ** 3     # N/mm per lid standoff
+K_BOSS = {"prototype": 1500.0, "production": 8000.0}   # STATED ASSUMPTION: lateral stiffness of one M3 lid screw in a printed boss with a heat-set
+                                                        # insert (prototype) / tapped in a 6061 boss (production), N/mm
 
 
-def section(e_frame, lid_composite):
+def lid_rows(build):
+    """Shear-web stiffness of the lid fastener rows (front and rear lines), N/mm per mm of row x height (= G t equivalent)."""
+    from . import parts as T
+    h = (H.Z_LID0 + H.Z_LID1) / 2 - (H.Z_SPR0 + H.Z_SPR1) / 2
+    front = [p for p in T.lid_holes() if p[0] > 150]
+    rear = [p for p in T.lid_holes() if p[0] < 90]
+    bf = [p for p in T.lid_boss_xy() if p[0] > 150]
+    kf = (len(front) * POST_K + len(bf) * K_BOSS[build]) * h / (2 * H.YW)
+    kr = len(rear) * POST_K * h / (2 * H.YW)
+    return {"front_row_Gt": kf, "rear_row_Gt": kr, "n_front": len(front) + len(bf), "n_rear": len(rear)}
+
+
+def section(e_frame, lid_composite, build="prototype"):
     w_spr, w_lid = H.SPR_X1 - H.SPR_NOTCH_X, H.XF - H.XR - 2 * H.LID_INSET
     plates = [(E_AL, w_spr, H.Z_SPR0, H.Z_SPR1), (E_AL, w_lid, H.Z_LID0, H.Z_LID1)]
     walls = frame_walls(e_frame)
@@ -51,8 +65,8 @@ def section(e_frame, lid_composite):
         G_AL * (w_spr + w_lid) * 2.0 ** 3 / 3
     b = 183.0 - 77.5                       # distance between the front and rear standoff rows
     h = (H.Z_LID0 + H.Z_LID1) / 2 - (H.Z_SPR0 + H.Z_SPR1) / 2
-    pitch = 2 * H.YW / 4                   # four standoffs per row over the head width
-    gt_web = POST_K * h / pitch            # equivalent G*t of a standoff row
+    rows = lid_rows(build)
+    gt_web = min(rows["front_row_Gt"], rows["rear_row_Gt"])     # equivalent G*t of the weaker lid fastener row
     flex = 2 * b / (G_AL * 2.0) + 2 * h / gt_web
     gj_closed = 4 * (b * h) ** 2 / flex
     return {"EI": ei, "zc": zc, "GJ_open": gj_open, "GJ_closed": gj_closed + gj_open, "cell_b": b, "cell_h": h, "gt_web": gt_web}
@@ -67,8 +81,10 @@ def joint_stiffness(build):
     out["spreader alone (2 mm)"] = E_AL * w_spr * 2.0 ** 3 / 12 / span
     out["lid alone (2 mm)"] = E_AL * w_lid * 2.0 ** 3 / 12 / span
     h = (H.Z_LID0 + H.Z_LID1) / 2 - (H.Z_SPR0 + H.Z_SPR1) / 2
-    n_posts = 2                                        # standoffs between the joint and each shoe line: (77.5, 25) and (182.9, 42)
-    out["spreader + lid as a couple through the standoffs (slip model)"] = h ** 2 * n_posts * POST_K / 2
+    from . import parts as T
+    half = span / 2
+    k_conn = sum(POST_K for x, y in T.lid_holes() if abs(y) <= half) + sum(K_BOSS[build] for x, y in T.lid_boss_xy() if abs(y) <= half)
+    out["spreader + lid as a couple through the lid fasteners near the joint (slip model)"] = h ** 2 * k_conn / 4
     out["rear bridge plate (3 x 13 on edge, T-head to T-head)"] = E_AL * H.BRIDGE_T * 13.0 ** 3 / 12 / (2 * H.BRIDGE_HY)
     if build == "production":
         e = E_AL
@@ -114,12 +130,12 @@ def structure(masses):
         al = mat == "AL6061"
         kj = joint_stiffness(build)
         kj_all = sum(kj.values())
-        kj_nolid = kj_all - kj["lid alone (2 mm)"] - kj["spreader + lid as a couple through the standoffs (slip model)"]
+        kj_nolid = kj_all - kj["lid alone (2 mm)"] - kj["spreader + lid as a couple through the lid fasteners near the joint (slip model)"]
         root_y = H.SHOE_Y + H.THEAD_HY                     # wing clamps at the outer end of the T-head / spreader tab
         wing = H.YW - root_y
         out = {}
         for tag, comp, kjv, closed in (("lid fitted (10 screws)", True, kj_all, True), ("lid removed (service state)", False, kj_nolid, False)):
-            sec = section(e, comp)
+            sec = section(e, comp, build)
             # (a) rigid-body pitch on the four lands (lead's model, mount C), (b) roll through the two-halves model, (c) wing bending, (d) wing twist
             pitch = S.point_deflection("C", k_c, al, TIP, arm_f, 0.0, arm_f, 0.0) - TIP / (4 * k_c)
             roll, _ = halves_model(k_c, kjv)
@@ -136,7 +152,7 @@ def structure(masses):
         lever = (S.ARM_ROW - 5 + S.MOUNTS["C"]["c0"]) / 1000
         i_pitch = mass * (lever ** 2 + 0.118 ** 2 / 12)
         i_roll = mass * 0.350 ** 2 / 12
-        sec = section(e, True)
+        sec = section(e, True, build)
         mu = mass / (2 * H.YW / 1000)
         f_wing = 1.875 ** 2 / (2 * math.pi) * math.sqrt((sec["EI"] / 1e6) / (mu * (wing / 1000) ** 4))
         i_half = (mass / 2) * (H.YW / 1000) ** 2 / 12
@@ -214,7 +230,7 @@ def light_paths():
         ("L02", "frame halves, y = 0 (prototype)", "ambient / bay", "lane S1 or S2",
          f"the joint plane never touches a lane: each half rib is {half_rib:.2f} mm solid; remaining routes are L04 (rib top) and L06 (cassette)", half_rib, 0,
          f"{half_rib:.2f} mm solid wall (1.45 mm at the groove)", "X"),
-        ("L03", "lid on the tray wall", "ambient", "bay", "flat joint, gasket on the wall top, then the EMI fence flange with its conductive gasket (prototype) / conductive gasket in a groove (production)",
+        ("L03", "lid on the tray wall", "ambient", "bay", "flat joint, gasket on the wall top (lid seated on hard bosses / standoffs inside the gasket loop), then the EMI fence flange with its conductive gasket (prototype) / conductive gasket in a groove (production)",
          H.XF - H.BAY_X1, 0, "black closed-cell gasket 1.2 -> 0.8 mm + second (conductive) gasket line; lid interlock opens the bias first", "X,P"),
         ("L04", "spreader on the rib tops", "lane", "adjacent lane", "under the spreader across the rib: land, gasket strip in the 0.6 mm relief, land",
          H.RIB_W, 0, "black gasket strip 5.4 mm wide compressed 40 % + retention pads lapping the cavity edges", "X,P"),
@@ -248,6 +264,11 @@ def light_paths():
         ("L19", "T-head pocket", "ambient", "lane", "no opening: 2.0 mm solid web between the pocket and the cavities", 2.0, 0, "solid wall + aluminium T-head", "X,P"),
         ("L20", "outer side wall", "ambient", "lane S0 / S3", "1.5 mm solid wall (four perimeters, black PA-CF); side rail strip 0.95 mm outside", H.SIDE_WALL, 0,
          "solid wall; printed wall opacity to be confirmed by the dark-count test (foil tape contingency)", "X"),
+        ("L21", "chimney drain (one per lane)", "ambient (frame underside behind the cassette)", "chimney / lane carrier space",
+         f"up {H.DRAIN['z_ch'][0] - H.Z_FB:.1f} mm, across {H.DRAIN['x_in'] - H.DRAIN['x_out']:.2f} mm in a {H.DRAIN['d']} x 1.0 channel in the floor, up {H.CHIM_FLOOR_REAR - H.DRAIN['z_ch'][1]:.1f} mm, "
+         "then 0.6 mm under the black chimney insert", 0.9 + (H.DRAIN['x_in'] - H.DRAIN['x_out']) + 0.6 + 3.0, 3, "three right-angle turns in black material; no straight line of sight (tool-checked)", "X,P"),
+        ("L22", "lid screw holes (34 M3)", "ambient", "bay", "screw head on a bonded sealing washer; boss / standoff top clamped to the lid underside",
+         2.0, 1, "bonded sealing washer (elastomer) + clamped hard seat; holes are inside the gasket loop", "X,P"),
     ]
     return [dict(zip(("id", "joint", "from", "to", "path", "length_mm", "turns", "barriers", "builds"), r)) for r in rows]
 

@@ -33,7 +33,7 @@ class MissionConfig:
     def __init__(self, op_mode="COMMISSIONING", method="CONTINUOUS_SCAN", speed=0.10, recover_back_m=0.15,
                  max_task_attempts=2, credit_grace_s=2.0, count_policy="INLINE", scaler_mode="PRESET_TIME",
                  scaler_preset_s=30.0, scaler_max_s=100.0, ratemeter_window_s=1.0, ratemeter_alpha=None,
-                 station_pitch_m=0.10, settle_s=0.5, station_preset_s=10.0, refractory_m=0.10,
+                 station_pitch_m=0.08, settle_s=0.5, station_preset_s=10.0, refractory_m=0.10,
                  peak_search_m=0.15,
                  operator="operator"):
         self.__dict__.update(locals())
