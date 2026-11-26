@@ -112,6 +112,13 @@
   "rev": "A",
   "routing": {
     "autorouter": {
+      "attempts": [
+        {
+          "run": 1,
+          "seconds": 25.5,
+          "unconnected": 0
+        }
+      ],
       "dsn_sha256": "c246955d7bd9cfcabec93a677e0c3737c96c50d3e7bfce36d96f9e13a6377ecb",
       "freerouting": "v2.6.0 (build-date: 2026-11-25)",
       "log_tail": [
@@ -120,7 +127,7 @@
         "[A0EBCB\\A3D110] Job 'A0EBCB\\A3D110' finished with state: COMPLETED (elapsed: 21.89 seconds, finished at UTC: 2026-11-26T19:24:51.403492985Z)."
       ],
       "passes_limit": 100,
-      "reused": false,
+      "reused": true,
       "seconds": 25.5,
       "threads": 4,
       "timed_out": false

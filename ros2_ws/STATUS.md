@@ -14,6 +14,7 @@ Python fakes or real-time emulators; "tool-checked" = headless browser / unit to
 |---|---|---|
 | Unit | `tools/test.sh unit` | **47 passed** (rr_core: wire/descriptor 12, estimator 9, head link 9, processing 7, clock fit 5; rr_web 4 incl. 2 added at close-out: server-side motion interlock, demo-account marking; rr_bringup 1 added: station-pitch default follows contract). Before the close-out additions: 44 passed. |
 | Scenarios (Python fakes, simulated, deterministic) | `tools/test.sh scenarios` | **14 passed** in 11 min 42 s (s01, s02, s03, s04a/b, s05, s06, s07, s08, s09, s10, s11 INLINE/DEFERRED, s12). Key numbers (3.0 × 1.2 m section): s01 at 0.03 m/s — flag 20 mm from the injected patch, revisit error 1.7 mm estimated / **2.1 mm true**, Expose reverse 0.350 m, park error 0.9 mm, valid exposure 0.646 of the floor (wall/end strips are a large share of a 1.2 m floor), acceptable 0.377, **median D# 0.201 Bq/cm², best 0.172** (goal 0.20: met by the median only marginally); localisation error vs truth ≤ 1.1 mm (x) / 1.2 mm (y). s09 — true time error never exceeded the reported bound in 4 cases (0.2 ms: bound ≤ 0.82 ms; 3 ms + 80 ppm: ≤ 3.8 ms; asymmetric 0.2/6 ms: error 3.3 ms ≤ bound 3.8 ms; 12 ms: bound 12.8 ms → all 31 gates rejected, arming refused HEAD_CLOCK); moving hotspot mapped within 2.7 mm along track. s10 step-and-count (3 s preset) — interrupted station invalidated and repeated, only static gates credited, median D# 0.247. s08 — two replays bit-identical to the live export. |
+| Native step-and-count (opt-in) | `tools/test.sh native n03` | **native_s10_step_and_count PASS (5/5)**, 8 min 28 s: 1.8 × 1.0 m, preset 3 s, station pitch **0.080 m** (contract default after CR-05), 68 stations, 0 invalid, only static scaler gates credited, hotspot flagged, median D# 0.213, time-sync bound ≤ 1.09 ms. Unvisited area 0.84 m² vs 0.97 m² in s10 (fakes, 0.10 m pitch): the 20 mm inter-station stripes are closed. |
 | Native emulators (simulated, real time) | `tools/test.sh native` | **native_s01 PASS (11/11 checks), native_s02 PASS (10/10)**, 8 min 28 s (clean run after the two contaminated attempts, see change 4). s01: hotspot across a seam flagged 28 mm from the patch centre, revisit error 1.6 mm estimated / **1.8 mm true** (limit 10 mm), Expose reverse 0.350 m, time-sync bound max 1.14 ms / median 0.92 ms (limit 10 ms, 146 fits, 0 rejected), link 15 410 replies, 0 bad lines/gaps/retries, valid exposure 0.646. s02: MCU reset → HOLD HEAD_LINK, session closed, fresh handshake with new boot id, no counts attributed before the new BIND, resume only after re-arm, both bands complete. **Note:** max localisation error vs truth on the emulators was 12.4 mm (s01) / 15.7 mm (s02) in x, versus ≤ 1.7 mm on the Python fakes — larger than the 10 mm credit budget at some instant; not investigated further (the revisit, measured at rest, was within 2 mm). |
 | ROS graph smoke (simulated, real time, Python fakes over TCP) | `tools/test.sh ros` | **3 of 3 clean runs passed** (13/13 checks each; ~2 min each; workspace built earlier with `tools/build.sh`, `--symlink-install`). No HOLD during the scan in any run (the only HOLD recorded is the test's own `OPERATOR_PAUSE` before export at ~42 s). Each run is appended to `evidence/ros_smoke/runs.ndjson`. The earlier flake (HOLD ~25 s into the scan, 1 of 2 runs) was **not reproduced** and its reason was never captured; the test now records every HOLD with its reason, so a recurrence will be diagnosable. One further run at close-out failed for a known external reason (it ran concurrently with a native run on the same ports — change 4) and was discarded. |
 | UI (Playwright, tool-checked) | `tools/run_sim.sh --port 8090 --auto --method SEARCH_THEN_COUNT --speedup 6` + `node tools/ui_screenshots.js http://127.0.0.1:8090` | **14/14 checks passed** (2nd run; 1st run failed: lease lost under `--speedup`, fixed — change 3). 14 PNGs in `evidence/ui/` (desktop 1280 px `d01–d10`: login, status + coverage layer, activity layer, detection-limit layer, ratemeter/scaler, review queue, Next at spot, Expose spot, parked, Charge/Service + reports; phone 390 px `p01–p04`: viewer status, viewer review queue, viewer Charge/Service, second operator seeing control held), `ui_checks.json`. Observed: 27 review items on the 3.0 × 1.2 m section with one injected patch — the patch (INVESTIGATION_LEVEL, scaler-counted) plus `UNRESOLVED_EXCEEDANCE` cells whose search-stage D# (≈ 0.57–0.62 Bq/cm²) exceeds the 0.3 investigation level, so they cannot be cleared; expected with the synthetic calibration at 0.10 m/s, but a field queue would be long. |
@@ -44,8 +45,9 @@ Python fakes or real-time emulators; "tool-checked" = headless browser / unit to
 5. **CR-05 accepted by the lead** (contract `station_pitch_m: 0.080`): the STEP_AND_COUNT default now
    comes from the contract (`geometry_config.survey_method_defaults`), fall-back defaults 0.08,
    packaged `contract_snapshot.yaml` refreshed; still a parameter. Test `rr_bringup/test/test_config.py`.
-   s10 keeps an explicit 0.10 m (documents the 20 mm stripes). CR-06/07/08/09/11 logged by the lead
-   (IB-29…31), not implemented.
+   s10 keeps an explicit 0.10 m (documents the 20 mm stripes). CR-08/09/11 logged by the lead
+   (IB-31 and backlog), not implemented. CR-06 (IB-29) and CR-07 (IB-30) were then decided by the owner
+   and implemented (items 6 and 7).
 6. **Owner decision IB-30 (long trailers, doors open) implemented:** `trailer.door_target_x_m`
    (removable flat door-end target; null = none). The localiser uses the target line exactly like the
    closed door (`rr_localization.estimator.door_reference_x`); the planner moves the door end to the
@@ -55,7 +57,34 @@ Python fakes or real-time emulators; "tool-checked" = headless browser / unit to
    2.0 m): refusal without target, accepted with target at 0.25 m, 232 x-updates from the target,
    x error vs truth 1.8 mm, no hold — passed. Rule stated in README §8.2 and in
    `software/Operator_Interface_0.4_delta.md` §3 step 0.
-7. Tooling: `tools/replay.sh`, `tools/plan_report.py` (`tools/test.sh plan`),
+7. **Owner decision CR-06 / IB-29 implemented: reverse-entry wall tracks** (`plan.wall_track_entry:
+   in_place | reverse_entry`, default `reverse_entry`). Planner (`rr_coverage/planner.py`
+   `_wall_side`, `check_prims`): per side wall one extra track pair as close to the wall as the
+   straight-motion outline allows (half-width 0.175 + wall margin 0.03 + tracking tolerance 0.005 m),
+   outer +x / inner −x (offset p/2). Entry = reverse along a 0.09 rad diagonal from a pivot-clear point,
+   small align pivot; exit = back-off along the track, small peel pivot, forward diagonal to the band.
+   Every primitive incl. the pass is checked with the swept RECTANGLE outline (body + head + tail)
+   against the floor shrunk by wall/door/front margins and the tracking tolerance; track starts are
+   moved away from the end wall so the tail clears it through the whole align pivot. Reverse ≤ 0.05 m/s,
+   forward ≤ 0.10 m/s, yaw ≤ 0.25 rad/s (contract max 0.30). No credit on manoeuvre primitives.
+   Supervisor phases WALL_ENTRY / WALL_EXIT / WALL_RETURN: a stopped or refused reverse entry
+   abandons the track (status `RESIDUAL`, blocked rectangle journaled), the robot drives back along
+   the verified entry path, the track is not retried; a hold on the track recovers as a normal pass;
+   a hold in the exit resumes the exit. Scenario **s14_wall_tracks** (3.0 × 1.0 m): predicted strip
+   48.8 mm, **achieved 55 mm** both sides (5 mm sub-cells), min clearance of the true rectangle outline
+   to the margins outside the pivot band **+0.5 mm**, no credit on the diagonals, rear-field stop of
+   the entry → HOLD FIELD_REAR 0.25 m before the track, resume → back to the entry point, track
+   RESIDUAL after 1 attempt, mission complete (left strip then 95 mm) — passed. 2.5 × 16 m (calculated,
+   `evidence/plan_2.5x16.json`): wall strips 0.137 → **0.049 m**, covered fraction 0.881 → 0.951,
+   extra time **+865 s at 0.10 m/s** (45 → 59 min), +2301 s at 0.03 m/s (2.2 → 2.8 h), +9745 s
+   step-and-count 10 s (9.5 → 12.2 h).
+   Scenarios s02–s13 and the native runs pin `in_place` to stay comparable with the baseline;
+   s01 and s14 run the default.
+   Finding: inside the pivot band the baseline in-place pivots are planned with the contract swept
+   radius 0.278 m (rounded tail); the rectangle outline's corner radius is 0.309 m, so a rectangle
+   check there shows −41 mm at the door-end pivots. This is the model difference, not a new excursion,
+   but nobody has verified the rounded-tail assumption against the as-built tail (mechanical).
+8. Tooling: `tools/replay.sh`, `tools/plan_report.py` (`tools/test.sh plan`),
    `tools/ui_screenshots.js`; `tools/ros_smoke.py` now records every transition into HOLD with
    its reason and appends each run to `evidence/ros_smoke/runs.ndjson`.
 
@@ -94,8 +123,10 @@ Python fakes or real-time emulators; "tool-checked" = headless browser / unit to
 - **Along-trailer reference** (CR-07 → IB-30) and **cell statistics** (CR-08/09 → IB-31): as described in CONTRACT_CHANGE_REQUESTS.md, decisions deferred.
 - **The `GuidedVisit` action server** is implemented and builds; it was not called by a test
   (the scenarios and the smoke test use the command service / in-process calls).
-- **Wall strips**: outer tracks are limited by in-place turns (CR-06 → IB-29, deferred): ~0.14 m per
-  wall remains unsurveyed in a 2.5 m trailer. Keep-outs are excluded from the target but not planned around.
+- **Wall strips**: with the default reverse-entry wall tracks ~0.049 m per wall remains (0.137 m with
+  `in_place`). Guided revisit and deferred counts plan their approach only inside the pivot band
+  (`approach()`); a flag seen only by a wall track can be reported UNREACHABLE (not exercised by a test).
+  A process restart in the middle of a wall manoeuvre (s12-type resume) was not tested. Keep-outs are excluded from the target but not planned around.
 - **Blocked-strip replanning** is "defer the task, retry once after the other passes"; there is no
   path search around an obstacle.
 - **Scan evidence at 0.10 m/s does not meet the 0.20 Bq/cm² goal** with the demo calibration

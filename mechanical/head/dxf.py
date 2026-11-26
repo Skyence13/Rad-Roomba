@@ -149,14 +149,15 @@ def fences(folder):
     d.saveas(folder / "RR-HD-X-126_fence_rear_comb.dxf")
 
 
-def side_rail(path):
+def side_rail(path, projection=3.0):
     """Flat pattern of the left side rail (mirror for the right): return | bend | side strip, tabs on the top edge."""
     d, m = _doc()
     t = H.SIDE_T
     ba = bend_allow(t)
     ret = (H.SIDE_Y0 + t) - H.RET_Y0 - t
     side = 187.6 - H.RET_X1
-    hgt = H.SIDE_Z1 - H.SIDE_Z0
+    z0 = H.rail_underside(projection)
+    hgt = H.SIDE_Z1 - z0
     L = ret + ba + side
     _rect(m, 0, L, 0, hgt)
     m.add_line((ret + ba / 2, 0), (ret + ba / 2, hgt), dxfattribs={"layer": "BEND"})
@@ -167,8 +168,8 @@ def side_rail(path):
         m.add_line((u0, hgt + rise + ba / 2), (u1, hgt + rise + ba / 2), dxfattribs={"layer": "BEND"})
         cx = (u0 + u1) / 2
         m.add_lwpolyline([(cx - 1.2, hgt + rise + ba + depth * 0.35), (cx + 1.2, hgt + rise + ba + depth * 0.35 + 2.4)], dxfattribs={"layer": "ETCH"})
-    m.add_circle((ret - (H.SW_SIDE["y"] - H.RET_Y0), H.SW_SIDE["z"] - H.SIDE_Z0), 2.1, dxfattribs={"layer": "CUT"})
-    _txt(m, "RR-HD-S-431 SIDE RAIL LH 0.8 SS 301 1/2H (RR-HD-S-432 = mirrored bends). Tabs: 3.2 wide slot at 45 deg x 4.6 long (ETCH line = slot axis); dia 4.2: clinch nut M3 for the adjusting screw",
+    m.add_circle((ret - (H.SW_SIDE["y"] - H.RET_Y0), H.SW_SIDE["z"] - z0), 2.1, dxfattribs={"layer": "CUT"})
+    _txt(m, ("RR-HD-S-431 SIDE RAIL LH 3 mm projection" if projection == 3.0 else "RR-HD-S-433 SIDE RAIL LH 5 mm projection") + " 0.8 SS 301 1/2H (RH = mirrored bends). Tabs: 3.2 wide slot at 45 deg x 4.6 long (ETCH line = slot axis); dia 4.2: clinch nut M3 for the adjusting screw",
          (0, -8), 2.2)
     d.saveas(path)
 
@@ -206,8 +207,9 @@ def run():
         spreader(folder / "RR-HD-S-121_spreader.dxf")
         lid(folder / "RR-HD-S-122_lid.dxf")
         side_rail(folder / "RR-HD-S-431_side_rail_lh.dxf")
+        side_rail(folder / "RR-HD-S-433_side_rail_lh_5mm.dxf", 5.0)
         shield_can(folder / "RR-HEAD-SHLD-A_lane_shield_can.dxf")
-        n += 5
+        n += 6
     fences(PROTO)
     cradle_deck(AUX / "RR-HD-C-601_cradle_deck.dxf")
     return n + 4

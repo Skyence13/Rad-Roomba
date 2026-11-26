@@ -63,3 +63,7 @@ def test_s12_reboot_resume(tmp_path):
 
 def test_s13_door_target(tmp_path):
     run(sc.s13_door_target, tmp_path)
+
+
+def test_s14_wall_tracks(tmp_path):
+    run(sc.s14_wall_tracks, tmp_path)

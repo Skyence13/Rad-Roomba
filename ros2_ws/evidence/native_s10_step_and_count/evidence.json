@@ -1,0 +1,128 @@
+{
+ "scenario": "native_s10_step_and_count",
+ "evidence_class": "simulated",
+ "against": "native firmware emulators rr_head_sim + rr_chassis_sim (real time; world/LiDAR from rr_sim.world)",
+ "seed": 33,
+ "sim_time_s": 503.75,
+ "checks": [
+  {
+   "check": "start accepted",
+   "ok": true
+  },
+  {
+   "check": "mission complete",
+   "ok": true,
+   "state": "REVIEW",
+   "hold": null
+  },
+  {
+   "check": "only static SCALER gates earn credit; moving gates archived without credit",
+   "ok": true,
+   "stages": [
+    "SCALER"
+   ],
+   "moving": 3002
+  },
+  {
+   "check": "every cell records method and stage",
+   "ok": true
+  },
+  {
+   "check": "hot spot flagged from static counts",
+   "ok": true,
+   "flags": [
+    [
+     "HS-0001",
+     0.9901137928733893,
+     -0.1721173377991454
+    ]
+   ]
+  }
+ ],
+ "passed": true,
+ "field_use_approved": false,
+ "coverage": {
+  "target_area_m2": 1.8,
+  "areas_m2": {
+   "UNVISITED": 0.8380000000000001,
+   "ACCEPTABLE": 0.55235,
+   "INSUFFICIENT_SENSITIVITY": 0.40965,
+   "INVALID_DATA": 0.0,
+   "BLOCKED": 0.0,
+   "EXCLUDED": 0.0
+  },
+  "valid_exposure_fraction": 0.5344444444444444,
+  "acceptable_fraction": 0.3068611111111111,
+  "sub_cell_m": 0.005,
+  "decision_cell_m": 0.1,
+  "position_allowance_m": 0.01
+ },
+ "time_sync": {
+  "limit_us": 10000.0,
+  "fits": 256,
+  "max_gate_bound_us": 1092.5957207887172,
+  "median_gate_bound_us": 920.5106821328211
+ },
+ "link_stats": {
+  "tx": 27296,
+  "rx": 27296,
+  "bad_lines": 0,
+  "stale": 0,
+  "duplicates": 0,
+  "gates": 5024,
+  "gaps": 0,
+  "retries": 0,
+  "unassigned_frames": 0,
+  "time_exchanges": 257,
+  "time_exchanges_rejected": 1
+ },
+ "localization_error_vs_truth_m": {
+  "max_x_m": 0.012704493583013399,
+  "max_y_m": 0.017776015690156452
+ },
+ "plan": {
+  "n_pairs": 2,
+  "offset_m": 0.04375,
+  "pair_stride_m": 0.36025,
+  "seam_overlap_per_side_m": 0.01625,
+  "predicted_residual": {
+   "left_wall_strip_m": 0.1368,
+   "right_wall_strip_m": 0.1368,
+   "door_end_strip_m": 0.121,
+   "front_end_strip_m": 0.051,
+   "end_zone_single_heading_m": {
+    "door": 0.3482,
+    "front": 0.3482
+   },
+   "note": "wall strips are set by the in-place turn radius of the outline; see README coverage section"
+  },
+  "estimated_time_s": 507.8
+ },
+ "flags": [
+  {
+   "id": "HS-0001",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 1,
+   "x_m": 0.9901137928733893,
+   "y_m": -0.1721173377991454,
+   "D": 0.8128307287061461,
+   "u_total": 0.14647892039596608,
+   "D_star": 0.07961200110121684,
+   "D_hash": 0.18434988294136628,
+   "location": {
+    "distance_from_door_m": 0.99,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.328,
+    "text": "0.99 m from the door threshold, 0.33 m from the right wall"
+   }
+  }
+ ],
+ "scan_detections": 4,
+ "observations": [],
+ "stations": 68,
+ "stations_invalid": 0,
+ "station_preset_s": 3.0,
+ "station_pitch_m": 0.08,
+ "D_hash_median": 0.2127854955477037,
+ "deterministic": false
+}

@@ -167,6 +167,23 @@ def overhangs(shape, orient, min_area=4.0):
     return sorted(out, key=lambda r: -r["area_mm2"])
 
 
+FRAME_NET = ("spreader", "lid", "j1_blister", "fence_", "lid_standoffs", "board_standoffs", "hd_board", "hd_lid", "hd_rear", "hd_ffoot", "hd_sfoot")
+SHOE_NET = ("shoe_L", "shoe_R", "bridge", "keeper", "hd_thead")
+
+
+def frame_isolation(parts):
+    """Smallest metal-to-metal distance between the FRAME net (spreader, lid, fences, standoffs and their screws) and the receiver metal
+    (shoes, bridge, keeper, T-head screws) -- the receiver touches the body channels when docked."""
+    from OCP.BRepExtrema import BRepExtrema_DistShapeShape
+    fr = compound([p.shape for p in parts if p.name.startswith(FRAME_NET) and p.name != "fence_gaskets"])
+    wash = box(0, 300, -200, 200, 0, H.Z_SPR1 + 0.8)            # the T-head screw sits on an insulating shoulder washer (prototype): metal starts above it
+    sh = compound([p.shape.cut(wash) if p.name.startswith("hd_thead") else p.shape for p in parts if p.name.startswith(SHOE_NET) and not p.name.startswith("shoe_isolator")])
+    d = BRepExtrema_DistShapeShape(fr.wrapped, sh.wrapped)
+    d.Perform()
+    p1, p2 = d.PointOnShape1(1), d.PointOnShape2(1)
+    return d.Value(), (round(p1.X(), 1), round(p1.Y(), 1), round(p1.Z(), 1))
+
+
 def run():
     t0 = time.time()
     res = {"generated_by": "mechanical/head/checks.py", "contract_version": P.CONTRACT_VERSION, "checks": [], "data": {}}
@@ -275,6 +292,12 @@ def run():
     sw = {"rail_sw_front": (H.PIN_X, H.SHOE_Y, 37.3), "rail_sw_left": (H.XR + 3.6, H.SW_SIDE["y"], H.SW_SIDE["z"]), "rail_sw_right": (H.XR + 3.6, -H.SW_SIDE["y"], H.SW_SIDE["z"])}
     add("rail switch positions vs params.HEAD_RAIL_SWITCHES (layout placeholders)", "deviation",
         f"designed {sw} vs placeholders {P.HEAD_RAIL_SWITCHES}: the placeholders lie inside the optical stack / on the split plane; frames.yaml needs the designed values", "design note")
+    gap, where = frame_isolation(builds["prototype"])
+    add("FRAME net isolated from the receiver metal (prototype: R2801 fitted, single DC ground on J1 pin 2)", "pass" if gap >= 0.3 else "fail",
+        f"smallest gap {gap:.2f} mm near {where} (0.5 mm G10 isolators under the T-heads, insulating shoulder washers 0.8 mm under the T-head screws, keeper 0.6 mm above the lid "
+        f"plus 0.1 mm polyimide tape); production is bonded on purpose through the aluminium shims (see production/README.md section 4)")
+    gp, _ = frame_isolation(builds["production"])
+    res["data"]["frame_to_receiver_gap_mm"] = {"prototype": round(gap, 3), "production": round(gp, 3)}
     # 7 bed fit
     ok, rows, lim = bed_fit()
     for r_, c_ in zip(rows, printed_catalogue()):

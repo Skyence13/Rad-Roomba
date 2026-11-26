@@ -65,7 +65,7 @@ def printed_parts():
     add("RR-HD-X-511", "grommet_J1", P["grommet_J1"].shape, (0, -90, 0), "TPU", 1, "H08", "none", "cable axis vertical; slit with a blade after printing", walls=3, infill="100 %")
     add("RR-HD-X-512", "grommet_J2", P["grommet_J2"].shape, (0, -90, 0), "TPU", 1, "H08", "none", "cable axis vertical; slit with a blade after printing", walls=3, infill="100 %")
     add("RR-HD-X-601", "transport_cover_left", T.transport_cover(1), (0, 0, 0), "PETG-CF", 1, "H09", "yes: snap bridge over the shoe and the front lip (two short bridges, tree supports optional)", "tray floor on the bed", walls=3, infill="20 % gyroid")
-    add("RR-HD-X-602", "transport_cover_right", T.transport_cover(-1), (0, 0, 0), "PETG-CF", 1, "H10", "as RR-HD-X-601", "tray floor on the bed", walls=3, infill="20 % gyroid")
+    add("RR-HD-X-602", "transport_cover_right", T.transport_cover(-1), (0, 0, 0), "PETG-CF", 1, "H10", "yes: as RR-HD-X-601", "tray floor on the bed", walls=3, infill="20 % gyroid")
     add("RR-HD-D-302", "dummy_lane_spacer", T.dummy_spacer(1, 2.0), (0, 0, 0), "PETG-CF", 4, "H11", "none", "floor on the bed, open side up (as installed); height follows the ballast thickness in checks.json", kit="dummy head", walls=3, infill="20 % gyroid")
     for nm, shape, mat, kind, desc in T.cradle_parts():
         if kind == "printed" and nm.endswith("_L"):
@@ -124,6 +124,9 @@ def run(mesh=True):
     for k, (n, s, m, kd, d) in enumerate(T.gauge_parts(), start=1):
         export_step(s, AUX / "step" / f"RR-HD-G-70{k}__{n}.step")
     export_step(T.shield_can(), PROTO / "step" / "RR-HEAD-SHLD-A__lane_shield_can.step")
+    for root in (PROTO, PROD):                                   # 5 mm projection side-rail variant
+        for s, pn in ((1, "RR-HD-S-433"), (-1, "RR-HD-S-434")):
+            export_step(T.side_rail(s, 0.0, 5.0), root / "step" / f"{pn}__side_rail_{'L' if s == 1 else 'R'}_5mm.step")
     # ---- printed parts in print orientation
     rows = printed_parts()
     plates = {}

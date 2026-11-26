@@ -40,7 +40,7 @@ def build(build="prototype", projection=3.0, travel=0.0):
     _p(P, "keeper_pin", "PUR-DP3x40", T.keeper_pin(), "SS304", "purchased", "receiver", "hinge pin 3 x 40, retained by circlips")
     # ---------------- deck
     _p(P, "spreader", "RR-HD-S-121", T.spreader(), "AL6061", "fab", "deck", "one-piece 2 mm spreader / stiffener / FRAME plane (laser cut + tapped)", proc="laser cut 5052-H32 or 6061-T6 2.0 mm, DXF")
-    _p(P, "lid", "RR-HD-S-122", T.lid(), "AL6061", "fab", "deck", "2 mm aluminium lid (shear panel, EMI top), 10 captive M3", proc="laser cut 2.0 mm, DXF")
+    _p(P, "lid", "RR-HD-S-122", T.lid(), "AL6061", "fab", "deck", "2 mm aluminium lid (shear panel, EMI top), 35 x M3 + bonded washers at <= 40 mm pitch", proc="laser cut 2.0 mm, DXF")
     _p(P, "j1_blister", "RR-HD-S-123", T.j1_blister(), "AL6061", "fab", "deck", "1 mm blister plate over the J1 landing opening (8.9 mm internal height)", proc="laser cut 1.0 mm, conductive-bonded + 4 rivets")
     _p(P, "lid_gasket", "PUR-GSK-LID", T.lid_gasket(), "SIL-FOAM", "purchased", "seal", "lid perimeter gasket, closed-cell silicone 1.2 mm (0.8 installed)", hard=False)
     nso = len(T.lid_holes())
@@ -122,7 +122,7 @@ def build(build="prototype", projection=3.0, travel=0.0):
     for nm in ("J1", "J2"):
         _p(P, f"grommet_{nm}", f"RR-HD-{X}-51{1 if nm == 'J1' else 2}", T.grommet(nm), "TPU", "printed" if printed_frame else "fab", "cable", "split strain-relief grommet (compressed by the lid)", hard=False)
         c, plug = T.pigtail(nm)
-        _p(P, f"pigtail_{nm}", "PUR-CABLE", c, "MIXED", "purchased", "cable", f"{nm} pigtail cable, 150 mm free length", mass_g=25.0, allow={f"grommet_{nm}"})
+        _p(P, f"pigtail_{nm}", f"PUR-CABLE-{nm}", c, "MIXED", "purchased", "cable", f"{nm} pigtail cable, 150 mm free length", mass_g=25.0, allow={f"grommet_{nm}"})
         _p(P, f"plug_{nm}", "PUR-" + ("M16-8" if nm == "J1" else "M12-8"), plug, "MIXED", "purchased", "cable", f"{nm} cable plug envelope", mass_g=40.0 if nm == "J1" else 30.0)
     _p(P, "vent", "PUR-VENT-M6", T.vent(), "MIXED", "purchased", "seal", "ePTFE breather vent M6 with internal light baffle", mass_g=1.0)
     # ---------------- lumped small items (mass only, at the head centre)

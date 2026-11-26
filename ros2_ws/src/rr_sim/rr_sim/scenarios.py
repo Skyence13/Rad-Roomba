@@ -15,13 +15,17 @@ import numpy as np
 
 from rr_core.archive import read_journal
 from rr_core.export import compare_exports
-from rr_core.geometry import transform
+from rr_core.geometry import transform, wrap
 from rr_core.pipeline import replay
 from rr_sim.harness import SimSystem
 
 WS = Path(__file__).resolve().parents[3]
 EVIDENCE = WS / "evidence"
-SMALL = {"trailer": {"id": "SIM-SECTION-3.0x1.0", "length_m": 3.0, "width_m": 1.0}, "mover": {"patience_s": 5.0}}
+# The scenarios s02-s13 and the native runs isolate other behaviour and pin the pivot-limited pattern
+# (wall_track_entry: in_place) so their results stay comparable with the 0.4 baseline; s01 and s14
+# run the default reverse-entry wall tracks (owner decision 2026-11-26, CR-06 / IB-29).
+SMALL = {"trailer": {"id": "SIM-SECTION-3.0x1.0", "length_m": 3.0, "width_m": 1.0}, "mover": {"patience_s": 5.0},
+         "plan": {"wall_track_entry": "in_place"}}
 
 
 class Checks(list):
@@ -98,7 +102,7 @@ def _true_lane_centre(sim, flag):
 
 # ------------------------------------------------------------------ scenario 1
 def s01_normal_survey_and_revisit(tmp, seed=11, speed=0.03):
-    sim = SimSystem(_run_dir("s01", tmp), _cfg(mission={"speed": speed}), seed=seed)
+    sim = SimSystem(_run_dir("s01", tmp), _cfg(mission={"speed": speed}, plan={"wall_track_entry": "reverse_entry"}), seed=seed)
     c = Checks()
     sim.bringup()
     patch = _seam_patch(sim)
@@ -758,3 +762,121 @@ def s13_door_target(tmp, seed=23):
     c.add("localisation error vs truth stays within 10 mm in x", err["max_x_m"] < 0.010, err=err)
     c.add("no LOCALIZATION hold", app.mission.state == "SCAN", state=app.mission.state, hold=app.mission.hold_reason)
     return _finish("s13_door_target", sim, c, {"door_target_x_m": 0.25, "lidar_range_max_m": 2.0}, export=True)
+
+
+# ------------------------------------------------------------------ scenario 14 (CR-06 / IB-29)
+def _wall_strip(sim, x0=0.75, x1=2.25, need=0.99):
+    """Achieved unsurveyed strip along each side wall: distance from the wall to the outermost
+    sub-cell row whose valid-exposure fraction over the interior x range is >= `need`, scanning
+    outward from the centre line (so an interior gap would show as a wide strip)."""
+    proc, W = sim.app.pipeline.proc, sim.app.cfg["trailer"]["width_m"]
+    r = proc.cfg.sub_res
+    ix0, ix1, _, _ = proc._rect_idx((x0, x1, 0, 0))
+    frac = (proc.exposure[:, ix0:ix1] > 0).mean(axis=1)
+    yc = proc.y0 + (np.arange(len(frac)) + 0.5) * r
+    mid = int(np.argmin(np.abs(yc)))
+    hi = mid
+    while hi + 1 < len(frac) and frac[hi + 1] >= need:
+        hi += 1
+    lo = mid
+    while lo - 1 >= 0 and frac[lo - 1] >= need:
+        lo -= 1
+    return {"left_m": round(W / 2 - (yc[hi] + r / 2), 4), "right_m": round((yc[lo] - r / 2) + W / 2, 4)}
+
+
+def _outline_clearance(sim, outside_band_only=True):
+    """Minimum distance of the TRUE outline (body + head + tail RECTANGLES) to the floor rectangle
+    shrunk by the wall / door / front margins, over every recorded true pose outside the
+    pivot-clear band (|y| > band edge + 3 mm), i.e. wherever the wall-track manoeuvre operates.
+    Inside the band the in-place pivots are planned with the contract swept radius (rounded tail,
+    0.278 m); the rectangle model's corner radius is larger (0.309 m), so the rectangle check is not
+    applied there (reported separately as `band_rectangle_clearance_m`)."""
+    app = sim.app
+    y_band = app.plan["pivot_region"]["y"][1]
+    tr, pc = app.cfg["trailer"], app.plan["config"]
+    L, W = tr["length_m"], tr["width_m"]
+    xlo, xhi = pc["door_end_x_m"] + pc["door_margin_m"], L - pc["front_margin_m"]
+    ylo, yhi = -W / 2 + pc["wall_margin_m"], W / 2 - pc["wall_margin_m"]
+    worst, at = math.inf, None
+    for row in sim.trace:
+        if outside_band_only and abs(row[2]) <= y_band + 0.003:
+            continue
+        pts = np.vstack(app.outline.at((row[1], row[2], row[3])))
+        c = min(pts[:, 0].min() - xlo, xhi - pts[:, 0].max(), pts[:, 1].min() - ylo, yhi - pts[:, 1].max())
+        if c < worst:
+            worst, at = float(c), (round(row[1], 3), round(row[2], 3), round(row[3], 3))
+    return worst, at
+
+
+def s14_wall_tracks(tmp, seed=24):
+    """Reverse-entry wall tracks on a narrow floor: achieved wall strip, swept outline inside the
+    floor with the wall margin at every recorded true pose, no credit on the manoeuvre, and a
+    rear-field stop of the reverse entry leaves the strip as a residual without a retry."""
+    c = Checks()
+    cfg = _cfg(plan={"wall_track_entry": "reverse_entry"})
+    # --- A. complete mission with wall tracks
+    sim = SimSystem(_run_dir("s14a", tmp), cfg, seed=seed)
+    sim.bringup()
+    app = sim.app
+    wt = app.plan["wall_tracks"]
+    c.add("planner: reverse-entry wall tracks feasible on both sides (swept-outline check in the planner)",
+          all(v.get("feasible") for v in wt["sides"].values()), sides={k: {kk: v.get(kk) for kk in ("feasible", "theta_rad", "clearance_min_m", "y_outer")} for k, v in wt["sides"].items()})
+    pred = app.plan["predicted_residual"]
+    c.add("start accepted", app.command("start")["accepted"])
+    _scan_to_end(sim, timeout=2000)
+    c.add("mission complete (REVIEW)", app.mission.state == "REVIEW" and app.mission.finish_reason == "COMPLETE",
+          state=app.mission.state, hold=app.mission.hold_reason)
+    walls = [t for t in app.mission.tasks if t.get("wall_track")]
+    c.add("all four wall tracks done", len(walls) == 4 and all(t["status"] == "DONE" for t in walls),
+          tasks=[(t["name"], t["status"]) for t in walls])
+    strip = _wall_strip(sim)
+    c.add("achieved wall strip <= predicted + 10 mm (two 5 mm sub-cells) on both sides (interior x 0.75-2.25 m)",
+          strip["left_m"] <= pred["left_wall_strip_m"] + 0.010 and strip["right_m"] <= pred["right_wall_strip_m"] + 0.010,
+          achieved=strip, predicted=[pred["left_wall_strip_m"], pred["right_wall_strip_m"]])
+    clr, at = _outline_clearance(sim)
+    c.add("true outline (rectangles) never left the floor minus the wall/door/front margins outside the pivot band",
+          clr >= 0.0, min_clearance_m=clr, at_pose=at)
+    bad = [g for g in app.pipeline.proc.gate_log if g["pose"] is not None and any(l["credited"] for l in g["lanes"])
+           and min(abs(wrap(g["pose"][2])), abs(wrap(g["pose"][2] - math.pi))) > 0.03]
+    c.add("no coverage credit while turned for the entry/peel diagonals (|heading error| > 0.03 rad)", not bad, n=len(bad))
+    extra = {"plan_wall_tracks": {k: {kk: v.get(kk) for kk in ("feasible", "theta_rad", "clearance_min_m", "y_outer")} for k, v in wt["sides"].items()},
+             "extra_time_s_planned": wt.get("extra_time_s"), "achieved_wall_strip_m": strip, "predicted_residual": pred,
+             "min_true_outline_clearance_m": clr, "band_rectangle_clearance_m": _outline_clearance(sim, False)[0]}
+    # --- B. rear field blocks the reverse entry of the left outer track
+    sim2 = SimSystem(_run_dir("s14b", tmp), cfg, seed=seed + 1)
+    sim2.bringup()
+    app2 = sim2.app
+    tL = next(t for t in app2.plan["tasks"] if t["name"] == "wallL:outer+")
+    ex, ey = tL["x_start"], tL["y"]
+    hi = ex + app2.outline.rear - 0.15 + 0.25       # rear field (0.15 m) reaches it ~0.25 m before the track start
+    box = (round(hi - 0.04, 4), round(hi, 4), round(ey - 0.03, 4), round(ey + 0.03, 4))
+    app2.command("start")
+    _wait(sim2, lambda: app2.mission.task is not None and app2.mission.task["name"] == "wallL:outer+"
+          and app2.mission.phase == "WALL_ENTRY", 2000)
+    sim2.world.set_box("crate", box)
+    _wait(sim2, lambda: app2.mission.state == "HOLD", 120)
+    p_hold = sim2.truth()
+    c.add("rear field stopped the reverse entry (mission HOLD)", app2.mission.state == "HOLD", hold=app2.mission.hold_reason,
+          stops=app2.chassis.drive.get("stops"), box=box)
+    c.add("stopped before reaching the track (no contact)", p_hold[0] > ex + 0.05, x=p_hold[0], track_start=ex)
+    sim2.world.set_box("crate", None)              # the obstacle goes away: the strip must still not be retried blindly
+    sim2.run(0.5)
+    app2.command("rearm", actor="op1")
+    sim2.run(1.0)
+    r = app2.command("resume")
+    c.add("resume accepted after re-arm", r["accepted"], result=r)
+    _wait(sim2, lambda: app2.mission.state != "SCAN" or app2.mission.phase == "NEXT" or
+          (app2.mission.task is not None and app2.mission.task["name"] != "wallL:outer+"), 300)
+    P = tL["maneuver"]["entry_pose"]
+    c.add("robot returned to the entry point along the entry path", math.dist(sim2.truth()[:2], P[:2]) < 0.03
+          or app2.mission.task is None or app2.mission.task["name"] != "wallL:outer+", at=sim2.truth()[:2], P=P[:2])
+    _scan_to_end(sim2, timeout=2000)
+    c.add("mission complete", app2.mission.state == "REVIEW", state=app2.mission.state, hold=app2.mission.hold_reason)
+    c.add("left outer wall track left as RESIDUAL, attempted once (no blind retry)",
+          tL["status"] == "RESIDUAL" and tL["attempts"] == 1, status=tL["status"], attempts=tL["attempts"],
+          reason=tL.get("defer_reason"))
+    clr2, at2 = _outline_clearance(sim2)
+    c.add("true swept outline stayed inside the floor margins in the blocked run too", clr2 >= 0.0, min_clearance_m=clr2, at_pose=at2)
+    strip2 = _wall_strip(sim2)
+    extra.update({"blocked_run_wall_strip_m": strip2, "blocked_run_min_clearance_m": clr2, "blocked_box": box})
+    return _finish("s14_wall_tracks", sim, c, extra)

@@ -22,6 +22,9 @@ def _yz_prism(pts, x0, x1):
 
 
 # =============================================================================================== frame
+INS_R = {False: 1.85, True: 1.025}     # M2.5 heat-set insert hole dia 3.7 (prototype, maker data PARTIAL) / M2.5 tap drill 2.05 (production)
+
+
 def _frame(kind):
     """kind: 'L' (left printed half, tongue), 'R' (right printed half, groove), 'P' (one-piece production frame)."""
     y0 = {"L": H.JOINT_Y, "R": -H.YW, "P": -H.YW}[kind]
@@ -54,7 +57,7 @@ def _frame(kind):
         cuts.append(box(H.WIN_X1 + a - 0.1, H.XF + 1, yc - H.CAS_HY, yc + H.CAS_HY, 0, H.FILM_Z + hgt + 0.2))
         for dx, dy in H.CAS_SCREW:                                                                                 # M2.5 inserts for the cassette
             x = H.WIN_X0 + dx if dx < 0 else H.WIN_X1 + dx
-            cuts.append(cyl(1.7, 5.5 if dx > 0 else 5.0, (x, yc + dy, H.Z_FB - 1)))
+            cuts.append(cyl(INS_R[kind == 'P'], 5.5 if dx > 0 else 5.0, (x, yc + dy, H.Z_FB - 1)))
     for s in SIDES[kind]:
         ys = s * H.SHOE_Y
         # 45 deg relief under the upper side wall (printable overhang; clears the module top corner)
@@ -65,12 +68,12 @@ def _frame(kind):
         cuts.append(cyl(H.PIN_D / 2 + 0.05, H.Z_SPR0 + 1 - H.ROD_Z, (H.PIN_X, ys, H.ROD_Z)))                                               # stop / switch pin
         cuts.append(box(H.XF - 2.8, H.XF + 1, s * H.BAIL_Y - 2.1, s * H.BAIL_Y + 2.1, 0, H.BAIL_Z + 1.5))                                  # bail arm groove
         for x in H.ROD_PAD_X:                                                                                                             # M2.5 inserts on the rib
-            cuts.append(cyl(1.7, 5.2, (x, ys, H.Z_SPR0 - 5)))
+            cuts.append(cyl(INS_R[kind == 'P'], 5.2, (x, ys, H.Z_SPR0 - 5)))
         xs = (H.CAV_X0,) + tuple(v for x in H.ROD_PAD_X for v in (x - 4, x + 4)) + (H.CAV_X1,)
         for xa, xb in zip(xs[0::2], xs[1::2]):                                                                                           # rib top relief for the gasket strip
             cuts.append(box(xa, xb, ys - H.RIB_W / 2 - 0.02, ys + H.RIB_W / 2 + 0.02, H.RIB_TOP_Z, H.Z_SPR0 + 0.02))
         for yy in H.REAR_SCREW_Y:
-            cuts.append(cyl(1.7, 5.2, (H.REAR_SCREW_X, s * yy, H.Z_SPR0 - 5)))
+            cuts.append(cyl(INS_R[kind == 'P'], 5.2, (H.REAR_SCREW_X, s * yy, H.Z_SPR0 - 5)))
         # side-zone guide slits and pin holes
         (x1, yg1), (x3, yg3), (x2, yg2) = H.GUIDE_PINS
         cuts += [box(H.XR - 1, 78.3, s * 163.8, s * (H.YW + 1), *H.SLIT_Z), box(H.XR - 1, 78.3, s * 142.2, s * 148.8, *H.SLIT_Z),
@@ -83,13 +86,13 @@ def _frame(kind):
         cuts.append(box(74.6, H.XR + H.SW["h"] + 0.2, s * 148.3, s * 150.2, H.SW_SIDE["z"] - 2.0, H.Z_SPR0 + 0.02))
         cuts.append(box(H.XR - 1, H.BAY_X0 + 1, ys - H.PORT_SLOT_HY, ys + H.PORT_SLOT_HY, H.PORT_SLOT_Z0, 60))                             # cable port U-slot
         for dy in (-6.0, 6.0):                                                                                                            # bail block inserts (outer blocks)
-            cuts.append(cyl(1.7, 5.2, (H.XF + 0.02, s * 130.0 + dy, 25.7), (-1, 0, 0)))
+            cuts.append(cyl(INS_R[kind == 'P'], 5.2, (H.XF + 0.02, s * 130.0 + dy, 25.7), (-1, 0, 0)))
         cuts.append(box(H.BAY_X1 - 0.02, H.BAY_X1 + 0.6, ys - 8.0, ys + 8.0, H.Z_SPR1 + 0.2, H.Z_WALL_TOP + 1))                            # switch relief (front rail switch left, lid switch right)
     # centre rib: gasket relief (no screws possible in a 3.25 mm half rib), bail centre block inserts
     cy0, cy1 = max(y0, -H.RIB_W / 2 - 0.02), min(y1, H.RIB_W / 2 + 0.02)
     cuts.append(box(H.CAV_X0, H.CAV_X1, cy0, cy1, H.RIB_TOP_Z, H.Z_SPR0 + 0.02))
     for s in SIDES[kind]:
-        cuts.append(cyl(1.7, 5.2, (H.XF + 0.02, s * 10.0, 25.7), (-1, 0, 0)))
+        cuts.append(cyl(INS_R[kind == 'P'], 5.2, (H.XF + 0.02, s * 10.0, 25.7), (-1, 0, 0)))
     if kind in ("R", "P"):
         cuts.append(cyl(3.0, 6, (H.XR - 1, H.VENT[1], H.VENT[2]), (1, 0, 0)))                                                              # M6 breather vent
     body = cut_all(body, cuts)
@@ -201,7 +204,7 @@ def spreader_holes():
     for s in (1, -1):
         h += [(x, s * H.SHOE_Y, 2.8, "M2.5 into rib insert, countersunk 90 deg x dia 5.2 on top (ISO 10642 head flush: under the board)") for x in H.ROD_PAD_X]
         h += [(H.REAR_SCREW_X, s * y, 2.8, "M2.5 into rear-zone insert (also rear comb foot)") for y in H.REAR_SCREW_Y]
-        h += [(H.THEAD_SCREW_X, s * H.SHOE_Y + dy, 5.0, "M3 into T-head, insulating shoulder washer (prototype) / plain washer (production)") for dy in H.THEAD_SCREW_DY]
+        h += [(H.THEAD_SCREW_X, s * H.SHOE_Y + dy, 4.6, "M3 into T-head, insulating shoulder washer (prototype) / plain washer (production)") for dy in H.THEAD_SCREW_DY]
         h += [(183.0, s * y, 2.05, "tap M2.5: front fence foot") for y in FENCE_FRONT_Y]
         h += [(x, s * 166.9, 2.05, "tap M2.5: side fence foot") for x in FENCE_SIDE_X]
         h += [(H.PIN_X, s * H.SHOE_Y, 3.2, "rail stop/switch pin clearance"), (183.1, s * H.SHOE_Y + 10.5, 2.05, "tap M2.5: switch saddle"),
@@ -797,7 +800,7 @@ def fastener_heads(build):
                 out.append((f"hd_sfoot_{x:.0f}_{s:+d}", "PUR-M2.5x5-PAN", _head(x, s * 166.9, H.Z_SPR1 + foot, "M2.5_pan"), "ISO 7045 M2.5 x 5, side fence foot"))
     pcb_top = H.ACQ["origin"][2] + (2.0 if build == "dummy" else H.ACQ["thickness"])
     for k, (x, y, _) in enumerate(board_holes()):
-        out.append((f"hd_board_{k}", "PUR-M2.5x5-PAN", _head(x, y, pcb_top, "M2.5_pan"), "ISO 7045 M2.5 x 5 + serrated washer, board to standoff (FRAME bond)"))
+        out.append((f"hd_board_{k}", "PUR-M2.5x5-PAN-SW", _head(x, y, pcb_top, "M2.5_pan"), "ISO 7045 M2.5 x 5 + serrated washer, board to standoff (FRAME bond)"))
     a, b, c, d = blister_rect()
     for x, y in lid_all_holes():
         z = H.Z_LID1 + (1.0 if a < x < b and c < y < d else 0.0)

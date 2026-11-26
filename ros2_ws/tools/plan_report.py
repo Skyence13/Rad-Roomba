@@ -22,11 +22,18 @@ res = {"evidence_class": "calculated", "floor_m": [L, W],
 for name, kw in (("continuous_0.10", dict(speed_mps=0.10)), ("continuous_0.03", dict(speed_mps=0.03)),
                  ("search_then_count_0.10_search_only", dict(method="SEARCH_THEN_COUNT", speed_mps=0.10)),
                  ("step_and_count_10s", dict(method="STEP_AND_COUNT", scaler_preset_s=10.0)),
+                 ("continuous_0.10_in_place", dict(speed_mps=0.10, wall_track_entry="in_place")),
+                 ("continuous_0.03_in_place", dict(speed_mps=0.03, wall_track_entry="in_place")),
+                 ("step_and_count_10s_in_place", dict(method="STEP_AND_COUNT", scaler_preset_s=10.0, wall_track_entry="in_place")),
                  ("continuous_0.10_no_endcaps", dict(speed_mps=0.10, end_caps=False))):
     p = plan_coverage(L, W, out, lanes, PlanConfig(**kw))
     r = {k: p[k] for k in ("n_pairs", "offset_m", "pair_stride_m", "pair_overlap_m", "seam_overlap_per_side_m", "track_y_max_m",
                            "turn_radius_m", "predicted_residual", "estimated_time_s", "time_breakdown_s")}
     r["method"] = kw.get("method", "CONTINUOUS_SCAN")
+    r["wall_track_entry"] = kw.get("wall_track_entry", "reverse_entry")
+    r["wall_tracks"] = {k: {kk: v.get(kk) for kk in ("feasible", "theta_rad", "y_outer", "y_band_edge", "clearance_min_m", "reason")}
+                        for k, v in p["wall_tracks"]["sides"].items()}
+    r["wall_tracks_extra_time_s"] = p["wall_tracks"].get("extra_time_s")
     r["n_tasks"] = len(p["tasks"]); r["layout"] = p["layout"]
     pr = p["predicted_residual"]
     r["predicted_covered_fraction"] = round((W - pr["left_wall_strip_m"] - pr["right_wall_strip_m"]) * (L - pr["door_end_strip_m"] - pr["front_end_strip_m"]) / (L * W), 4)

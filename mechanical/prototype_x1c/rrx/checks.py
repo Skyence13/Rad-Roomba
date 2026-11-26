@@ -26,6 +26,8 @@ INTERNAL = ("battery_tunnel", "battery_cassette", "cassette_lid", "coupler_*", "
             "board_standoff_*", "RR-CHS-MAIN_*", "RR-PANEL", "panel_tray", "grip_foot_*", "chassis_heater_pad", "bus_clamp_resistor", "bail", "bail_pin_*")
 ROBOT_EXCLUDE = {"tray", "cassette_option", "head_placeholder"}
 G = 9.81
+CR04_GRIP_X = -30.0          # requested grip bar centre (CHANGE_REQUESTS.md CR-04), for the comparison column only
+SLIVER_MAX = 100.0           # mm3: largest boolean sliver that may be dropped from a printed/fabricated part
 
 
 def _match(name, patterns):
@@ -259,13 +261,50 @@ def mass_cg(parts):
         lat = abs((0 - x) * P.WHEEL_Y / nrm * 1.0 - 0.0) if False else (P.WHEEL_Y * (x + Lc) / nrm) - z * slope
         cfg.append({"head": hn, "mass_kg": round(M, 2), "cg_x": round(x, 1), "cg_z": round(z, 1), "caster_N": round(caster, 1), "each_wheel_N": round((M * G - caster) / 2, 1),
                     "caster_fraction": round(caster / (M * G), 3), "tip_margin_forward_mm": round(fwd, 1), "tip_margin_rearward_mm": round(rear, 1), "tip_margin_lateral_mm": round(lat, 1),
-                    "hang_angle_deg": round(math.degrees(math.atan2(x - gx, gz - z)), 1)})
+                    "hang_angle_deg": round(math.degrees(math.atan2(x - gx, gz - z)), 1),
+                    "hang_angle_deg_CR04_bar_x-30": round(math.degrees(math.atan2(x - CR04_GRIP_X, gz - z)), 1)})
     return {"base_without_head": {k: round(v, 2) for k, v in base.items()}, "groups": {k: {"mass_kg": round(v[0], 3), "x": round(v[1] / v[0], 1), "z": round(v[2] / v[0], 1)} for k, v in sorted(groups.items())},
             "items": items, "configurations": cfg, "mass_goal_kg": P.MASS_GOAL_KG,
             "assumptions": "printed parts: CAD volume x density x effective fill (dims.MAT); purchased: parts.yaml masses; lumped items from the common budget; evidence class: calculated"}
 
 
-def grip_proof():
+def _plate_half_width(x):
+    from .structure import plate_outline
+    pts = plate_outline()
+    ys = []
+    for (x0, y0), (x1, y1) in zip(pts, pts[1:] + pts[:1]):
+        if (x0 - x) * (x1 - x) <= 0 and x0 != x1:
+            ys.append(abs(y0 + (y1 - y0) * (x - x0) / (x1 - x0)))
+    hw = max(ys) if ys else 0.0
+    if D.BEAM_X[0] <= x <= D.BEAM_X[1]:
+        hw = max(hw, D.BEAM_HALF_Y)
+    return hw
+
+
+def plate_bending(M):
+    """Chassis plate as a beam when the robot hangs on the grip: everything is lifted through the two foot lines
+    (x -56..-22); the plate carries the masses ahead of and behind them in bending.  -> rows (calculated)."""
+    items = [(m, x) for _, m, x, _ in M["items"]] + [(m, x) for _, m, x, _, _ in LUMPED]
+    head = HEADS["prototype printed head"]
+    items.append((head[0], head[1]))
+    t = D.PLATE_Z[1] - D.PLATE_Z[0]
+    rows = []
+    for xs, side in ((-60.0, "aft"), (-90.0, "aft"), (-140.0, "aft"), (-15.0, "fore"), (30.0, "fore")):
+        sel = [(m, x) for m, x in items if (x < xs if side == "aft" else x > xs)]
+        Mb = sum(m * G * D.GRIP_FACTOR * abs(x - xs) for m, x in sel)        # N mm, 3 x g
+        w = 2 * _plate_half_width(xs)
+        x0, x1, hy = D.BAY_WINDOW
+        if x0 <= xs <= x1:
+            w -= 2 * hy
+        if abs(xs - P.CASTER_SWIVEL[0]) < D.CASTER_HOLE_R:
+            w -= 2 * D.CASTER_HOLE_R
+        sig = 6 * Mb / (w * t * t)
+        rows.append((f"chassis plate bending at x = {xs:.0f} ({side} masses {sum(m for m, _ in sel):.2f} kg x 3 g; net width {w:.0f} mm x {t:.0f} mm, shells and tunnel ignored)",
+                     round(sig, 1), "MPa", "allow 240 (6061-T6) -> SF %.1f" % (240 / sig if sig else 99)))
+    return rows
+
+
+def grip_proof(M=None):
     W = D.GRIP_DESIGN_MASS * G * D.GRIP_FACTOR
     Pside = W / 2
     od, t = D.GRIP_TUBE
@@ -302,8 +341,56 @@ def grip_proof():
         ("inserts in the lifting path", 0, "-", "none: tube -> tie rod -> side plates -> angle feet -> M5 through-bolts with nuts -> chassis plate"),
         ("misuse case: whole 3 x weight hung on the lid (16 perimeter M3 inserts in shear/pull-out)", round(W / lid_screws, 1), "N per insert", "typ. pull-out %.0f N (UNVERIFIED) -> SF %.0f" % (ins, ins / (W / lid_screws))),
     ]
-    return {"rows": rows, "ok": s_tube < 150 and s_leg < 240 and abs(s_angle) < 150,
+    ok_plate = True
+    if M is not None:
+        pr = plate_bending(M)
+        rows += pr
+        ok_plate = all(r[1] < 240 / 1.5 for r in pr)
+    return {"rows": rows, "ok": s_tube < 150 and s_leg < 240 and abs(s_angle) < 150 and ok_plate,
             "cold_note": "6061/6060-T6 and A2 fasteners gain strength at -25 C and stay ductile; no polymer is in the lifting path. Proof test: 3 x weight for 60 s warm and at -20 C (VT-002)."}
+
+
+def width_rule(parts):
+    """Shared rule 8.3: nothing on the body wider than the tyres (|y| <= WHEEL_Y + TYRE_WIDTH / 2)."""
+    lim = P.WHEEL_Y + P.TYRE_WIDTH / 2 + 0.01
+    over = [(p.name, round(max(-p.bb[1], p.bb[4]), 2)) for p in parts
+            if p.group not in ROBOT_EXCLUDE and p.group != "tray" and max(-p.bb[1], p.bb[4]) > lim]
+    return {"limit_half_width_mm": round(lim, 2), "over": over, "ok": not over}
+
+
+def corridors(parts):
+    robot = [p for p in parts if p.group not in ROBOT_EXCLUDE and p.group != "tray"]
+    return {k: {"box": list(b), "use": use, "blocked_by": LY.box_free(robot, b)} for k, (b, use) in LY.CORRIDORS.items()}
+
+
+def ccr_e08(parts):
+    """CCR-E08 (chassis electronics): 12 mm clear height over the rear corners and the front-centre strip of RR-CHS-MAIN,
+    and room for the mated right-angle Mini-Fit (J_PWR, right edge rear u = 160, v 8..31) with its 2-into-1 loom."""
+    b = P.CHS_MAIN
+    ox, oy, oz = b["origin"]
+    top = oz + b["thickness"]
+
+    def uv_box(u0, u1, v0, v1, z0, z1):
+        return (ox + v0, ox + v1, oy - u1, oy - u0, z0, z1)
+    zones = {"rear-left corner u 0-45, v 0-20, 12 mm above the PCB": uv_box(0, 45, 0, 20, top + 0.05, top + 12.0),
+             "rear-right corner u 112-160, v 0-22, 12 mm above the PCB": uv_box(112, 160, 0, 22, top + 0.05, top + 12.0),
+             "front-centre strip u 40-120, v 80-100, 12 mm above the PCB (strip extent ASSUMED)": uv_box(40, 120, 80, 100, top + 0.05, top + 12.0),
+             "J_PWR mated plug + loom: u 160..183 (23 mm beyond the right edge), v 7..32, PCB top .. +14 mm": uv_box(160, 183, 7, 32, top - 1.5, top + 14.0),
+             "rear-edge connector space u 0..18 and 142..160 behind the board (x -79..-67), z PCB .. +12 mm (IB-12)": None}
+    robot = [p for p in parts if p.group not in ROBOT_EXCLUDE and p.group != "tray" and not p.name.startswith("RR-CHS-MAIN")]
+    out = {}
+    for k, bx in zones.items():
+        if bx is None:
+            blk = LY.box_free(robot, (ox - 12.0, ox - 0.05, oy - 18.0, oy, top, top + 12.0)) + LY.box_free(robot, (ox - 12.0, ox - 0.05, oy - 160.0, oy - 142.0, top, top + 12.0))
+            out[k] = {"blocked_by": blk}
+        else:
+            out[k] = {"box": [round(v, 1) for v in bx], "blocked_by": LY.box_free(robot, bx)}
+    return out
+
+
+def slivers(parts):
+    rows = [(p.name, p.dropped) for p in parts if p.dropped]
+    return {"dropped": rows, "ok": all(max(d) <= SLIVER_MAX for _, d in rows)}
 
 
 def run_all(parts, table, log=print):
@@ -319,8 +406,12 @@ def run_all(parts, table, log=print):
     log(f"  containment / floor / rays / sweeps / receiver: {time.time() - t:.0f} s")
     R["bed_fit"] = [{"part": r["name"], "pn": r["pn"], "bbox_print": r["bbox_print"], "verdict": r["bed_fit"], "note": r["bed_note"], "open_edges": r.get("open_edges")}
                     for r in table if r["kind"] == "printed"]
+    R["width_rule"] = width_rule(parts)
+    R["corridors"] = corridors(parts)
+    R["ccr_e08"] = ccr_e08(parts)
+    R["slivers"] = slivers(parts)
     R["mass_cg"] = mass_cg(parts)
-    R["grip"] = grip_proof()
+    R["grip"] = grip_proof(R["mass_cg"])
     svc_block = {k: v["blocked_by"] for k, v in R["service"].items() if v.get("blocked_by")}
     worst_fit = [r for r in R["bed_fit"] if r["verdict"] == "NO"]
     leaks = [r["part"] for r in R["bed_fit"] if r["open_edges"]]
@@ -335,5 +426,9 @@ def run_all(parts, table, log=print):
         "every printed part fits the X1C bed in its print orientation": [not worst_fit, f"{len(R['bed_fit'])} parts; marginal: {[r['part'] for r in R['bed_fit'] if r['verdict'] == 'MARGINAL']}; no-fit: {[r['part'] for r in worst_fit]}"],
         "printed-part meshes watertight": [not leaks, "all closed" if not leaks else f"open edges in {leaks}"],
         "grip proof-load calculation (3 x 9 kg)": [R["grip"]["ok"], "calculated"],
+        "nothing wider than the tyres (295 mm)": [R["width_rule"]["ok"], "none over" if R["width_rule"]["ok"] else str(R["width_rule"]["over"])],
+        "cable corridors of the master layout free": [not any(v["blocked_by"] for v in R["corridors"].values()), (str({k: v["blocked_by"] for k, v in R["corridors"].items() if v["blocked_by"]}) if any(v["blocked_by"] for v in R["corridors"].values()) else "all free")],
+        "CCR-E08 keep-outs over RR-CHS-MAIN free": [not any(v["blocked_by"] for v in R["ccr_e08"].values()), (str({k[:30]: v["blocked_by"] for k, v in R["ccr_e08"].items() if v["blocked_by"]}) if any(v["blocked_by"] for v in R["ccr_e08"].values()) else "all free")],
+        "boolean slivers dropped from parts below %.0f mm3" % SLIVER_MAX: [R["slivers"]["ok"], str(R["slivers"]["dropped"]) if R["slivers"]["dropped"] else "none"],
     }
     return R

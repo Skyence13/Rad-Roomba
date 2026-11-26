@@ -59,7 +59,7 @@ plates:
   overrides:
     wall_loops: 5
     sparse_infill_density: 40%
-    enable_support: true
+    enable_support: false
     brim_type: outer_only
   edge_margin: 8.0
   fits_one_plate: true
@@ -74,8 +74,10 @@ plates:
       - 123.6
     rotation_z: 0
     orientation_note: underside (z 10.5) on the bed; cavity walls, seat shoulder, rib top and wall top are all vertical or upward faces; joint face vertical
-    supports: 'yes, small: roof of the T-head pocket (60 mm span) and the two guide slits at the rear corner; tree supports, non-critical surfaces. None in a cavity,
-      on the seat shoulder or on the joint face.'
+    supports: 'optional, non-critical: the rear wall bridges 60 mm over each T-head pocket opening at z 30.0 (tree supports from the pocket floor; the face carries
+      no load, the spreader is the seat). Everything else bridges <= 13.5 mm (side switch pocket roof, guide slits, drain channel) or overhangs <= 5 mm (lid boss
+      undersides, tongue). Horizontal bores (guide rods 4.3, dowels, bail-block inserts) print as holes and are reamed. No support on the cassette seat (bed face),
+      the module seat shoulders, the rib tops, the spreader seat or the joint faces.'
     layer_height: 0.2
     walls: 5
     infill: '40 % gyroid (100 % below z 11 and in the ribs: 4-5 perimeters fill them)'
@@ -83,8 +85,9 @@ plates:
     bbox_print_mm:
     - 118.0
     - 175.2
-    - 31.7
-    volume_cm3: 78.3
+    - 32.5
+    volume_cm3: 79.5
+    mesh_open_edges: 0
 - id: H02
   name: frame_half_right
   material: PA-CF
@@ -115,8 +118,9 @@ plates:
     bbox_print_mm:
     - 118.0
     - 173.2
-    - 31.7
-    volume_cm3: 77.4
+    - 32.5
+    volume_cm3: 78.6
+    mesh_open_edges: 0
 - id: H03
   name: window_cassette
   material: PETG-CF
@@ -155,8 +159,9 @@ plates:
     - 84.0
     - 3.3
     volume_cm3: 3.8
+    mesh_open_edges: 0
 - id: H04
-  name: lane_spacer_lower, lane_spacer_upper
+  name: lane_spacer_lower
   material: PETG-CF
   kit: head
   overrides:
@@ -165,15 +170,23 @@ plates:
     enable_support: false
     brim_type: no_brim
   edge_margin: 8.0
-  fits_one_plate: false
+  fits_one_plate: true
   parts:
   - part: lane_spacer_lower
     part_number: RR-HD-X-301
     mesh: print/RR-HD-X-301__lane_spacer_lower.stl
     step: print/RR-HD-X-301__lane_spacer_lower.step
     qty: 4
-    positions: []
-    rotation_z: 90
+    positions:
+    - - 58.4
+      - 76.4
+    - - 165.2
+      - 76.4
+    - - 58.4
+      - 163.2
+    - - 165.2
+      - 163.2
+    rotation_z: 0
     orientation_note: flat
     supports: none
     layer_height: 0.2
@@ -185,14 +198,35 @@ plates:
     - 80.8
     - 1.8
     volume_cm3: 1.5
+    mesh_open_edges: 0
+- id: H05
+  name: lane_spacer_upper
+  material: PETG-CF
+  kit: head
+  overrides:
+    wall_loops: 3
+    sparse_infill_density: 100%
+    enable_support: false
+    brim_type: no_brim
+  edge_margin: 8.0
+  fits_one_plate: true
+  parts:
   - part: lane_spacer_upper
     part_number: RR-HD-X-303
     mesh: print/RR-HD-X-303__lane_spacer_upper.stl
     step: print/RR-HD-X-303__lane_spacer_upper.step
     qty: 4
-    positions: []
-    rotation_z: 90
-    orientation_note: 'flat (nested inside the lower rings is not possible: same outline; both ring sets share plate H04 two by two)'
+    positions:
+    - - 58.4
+      - 76.4
+    - - 165.2
+      - 76.4
+    - - 58.4
+      - 163.2
+    - - 165.2
+      - 163.2
+    rotation_z: 0
+    orientation_note: flat
     supports: none
     layer_height: 0.2
     walls: 3
@@ -203,7 +237,8 @@ plates:
     - 80.8
     - 3.0
     volume_cm3: 2.5
-- id: H05
+    mesh_open_edges: 0
+- id: H06
   name: lane_barrier
   material: PETG-CF
   kit: head
@@ -241,7 +276,8 @@ plates:
     - 80.8
     - 2.0
     volume_cm3: 16.3
-- id: H06
+    mesh_open_edges: 0
+- id: H07
   name: bail_block, chimney_insert, front_switch_saddle, lid_switch_saddle, rail_insert
   material: PA-CF
   kit: head
@@ -279,6 +315,7 @@ plates:
     - 16.2
     - 7.0
     volume_cm3: 0.6
+    mesh_open_edges: 0
   - part: rail_insert
     part_number: RR-HD-X-411
     mesh: print/RR-HD-X-411__rail_insert.stl
@@ -313,6 +350,7 @@ plates:
     - 87.3
     - 4.0
     volume_cm3: 5.5
+    mesh_open_edges: 0
   - part: bail_block
     part_number: RR-HD-X-405
     mesh: print/RR-HD-X-405__bail_block.stl
@@ -337,6 +375,7 @@ plates:
     - 30.0
     - 4.0
     volume_cm3: 0.9
+    mesh_open_edges: 0
   - part: front_switch_saddle
     part_number: RR-HD-X-421
     mesh: print/RR-HD-X-421__front_switch_saddle.stl
@@ -357,6 +396,7 @@ plates:
     - 26.6
     - 10.2
     volume_cm3: 0.7
+    mesh_open_edges: 0
   - part: lid_switch_saddle
     part_number: RR-HD-X-422
     mesh: print/RR-HD-X-422__lid_switch_saddle.stl
@@ -377,7 +417,8 @@ plates:
     - 26.6
     - 5.0
     volume_cm3: 0.4
-- id: H07
+    mesh_open_edges: 0
+- id: H08
   name: grommet_J1, grommet_J2
   material: TPU
   kit: head
@@ -409,6 +450,7 @@ plates:
     - 15.0
     - 4.0
     volume_cm3: 0.4
+    mesh_open_edges: 0
   - part: grommet_J2
     part_number: RR-HD-X-512
     mesh: print/RR-HD-X-512__grommet_J2.stl
@@ -429,7 +471,8 @@ plates:
     - 15.0
     - 4.0
     volume_cm3: 0.4
-- id: H08
+    mesh_open_edges: 0
+- id: H09
   name: transport_cover_left
   material: PETG-CF
   kit: head
@@ -447,7 +490,7 @@ plates:
     step: print/RR-HD-X-601__transport_cover_left.step
     qty: 1
     positions:
-    - - 82.0
+    - - 83.6
       - 124.7
     rotation_z: 0
     orientation_note: tray floor on the bed
@@ -457,11 +500,12 @@ plates:
     infill: 20 % gyroid
     brim: none
     bbox_print_mm:
-    - 148.0
+    - 151.2
     - 177.3
     - 30.5
-    volume_cm3: 78.0
-- id: H09
+    volume_cm3: 79.3
+    mesh_open_edges: 0
+- id: H10
   name: transport_cover_right
   material: PETG-CF
   kit: head
@@ -479,7 +523,7 @@ plates:
     step: print/RR-HD-X-602__transport_cover_right.step
     qty: 1
     positions:
-    - - 82.0
+    - - 83.6
       - 124.7
     rotation_z: 0
     orientation_note: tray floor on the bed
@@ -489,11 +533,12 @@ plates:
     infill: 20 % gyroid
     brim: none
     bbox_print_mm:
-    - 148.0
+    - 151.2
     - 177.3
     - 30.5
-    volume_cm3: 78.0
-- id: H10
+    volume_cm3: 79.3
+    mesh_open_edges: 0
+- id: H11
   name: dummy_lane_spacer
   material: PETG-CF
   kit: dummy head
@@ -520,7 +565,7 @@ plates:
     - - 164.6
       - 162.6
     rotation_z: 0
-    orientation_note: open side up (flipped); height follows the ballast thickness in checks.json
+    orientation_note: floor on the bed, open side up (as installed); height follows the ballast thickness in checks.json
     supports: none
     layer_height: 0.2
     walls: 3
@@ -531,7 +576,8 @@ plates:
     - 80.4
     - 15.5
     volume_cm3: 24.3
-- id: H11
+    mesh_open_edges: 0
+- id: H12
   name: cradle_fence
   material: PETG-CF
   kit: bench cradle
@@ -565,7 +611,8 @@ plates:
     - 91.0
     - 30.0
     volume_cm3: 61.0
-- id: H12
+    mesh_open_edges: 0
+- id: H13
   name: cradle_cable_rest
   material: PETG-CF
   kit: bench cradle
@@ -583,10 +630,10 @@ plates:
     step: print/RR-HD-C-612__cradle_cable_rest.step
     qty: 2
     positions:
-    - - 14.0
-      - 73.0
-    - - 32.0
-      - 73.0
+    - - 45.0
+      - 50.0
+    - - 125.0
+      - 50.0
     rotation_z: 0
     orientation_note: lying on its side
     supports: none
@@ -595,7 +642,8 @@ plates:
     infill: 25 % gyroid
     brim: none
     bbox_print_mm:
-    - 12.0
     - 74.0
     - 28.0
+    - 12.0
     volume_cm3: 11.4
+    mesh_open_edges: 0

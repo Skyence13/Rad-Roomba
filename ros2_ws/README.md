@@ -50,8 +50,9 @@ Groups individually:
 | Command | What | Time (4 shared cores) |
 |---|---|---|
 | `tools/test.sh unit` | pytest on every package's `test/` except rr_sim | ~20 s |
-| `tools/test.sh scenarios` | 15 end-to-end scenarios against the Python protocol fakes, deterministic seeds; rewrites `evidence/s*/` | ~10–20 min |
-| `tools/test.sh native [n01] [n02]` | scenarios 1 and 2 against the native firmware emulators, real time; rewrites `evidence/native_*/` | ~20–30 min |
+| `tools/test.sh scenarios` | 16 end-to-end scenarios against the Python protocol fakes, deterministic seeds; rewrites `evidence/s*/` | ~10–20 min |
+| `tools/test.sh native [n01] [n02] [n03]` | scenarios 1 and 2 (default) and step-and-count (`n03`, opt-in) against the native firmware emulators, real time; rewrites `evidence/native_*/` | ~9 min for n01+n02, ~9 min for n03 |
+| `tools/test.sh plan` | calculated 2.5 × 16 m plan and mission times → `evidence/plan_2.5x16.json` | seconds |
 | `tools/test.sh ros [--native]` | ROS graph smoke test (launch, services, topics, web), real time; writes `evidence/ros_smoke/` | ~2 min |
 | `tools/test.sh colcon` | `colcon test` on the built workspace | not part of `all` (see STATUS) |
 | `node tools/ui_screenshots.js [url] [out]` | Playwright drive of the UI against a running simulator; writes `evidence/ui/` | ~5–15 min |
@@ -161,6 +162,7 @@ Fixed per mission; stored with every result (`survey_methods` in `interface/syst
 |---|---|---|
 | `CONTINUOUS_SCAN` | constant-speed serpentine scan, no stops; each cell credited with its swept exposure | `mission: {method: CONTINUOUS_SCAN, speed: 0.10}` |
 | `SEARCH_THEN_COUNT` | ratemeter search at survey speed; on alarm follow the peak ≤ 0.15 m, stop, centre the alarming lane and take a scaler count (`count_policy` INLINE) or queue the spot for after the pass (DEFERRED) | `mission: {method: SEARCH_THEN_COUNT, speed: 0.10, count_policy: INLINE, ratemeter_alpha: 1e-5, scaler_preset_s: 30}` |
+| *(all methods)* | wall tracks along the side walls (§8.1) | `plan: {wall_track_entry: reverse_entry}` (default) or `in_place` |
 | `STEP_AND_COUNT` | move one station, settle, verified-stationary scaler count, repeat; moving counts archived but uncredited. Station pitch default **0.080 m** from contract `survey_methods.STEP_AND_COUNT.station_pitch_m` (CR-05 accepted: aperture length 0.10 m − 2 × 10 mm erosion, so credited footprints abut) | `mission: {method: STEP_AND_COUNT, station_preset_s: 10}` (override `station_pitch_m` only deliberately) |
 
 Set it in the config YAML (`config:=` launch argument) or, for the stand-alone simulator,
@@ -169,26 +171,48 @@ Set it in the config YAML (`config:=` launch argument) or, for the stand-alone s
 ### 8.1 Coverage pattern and mission time for a 2.5 × 16 m trailer (calculated)
 
 From `rr_coverage/planner.py` with the demo descriptor geometry (4 lanes, 80 mm wide, pitch
-87.5 mm, position allowance e = 10 mm) and the frames.yaml outline (in-place turn radius 0.278 m):
+87.5 mm, position allowance e = 10 mm) and the frames.yaml / contract outline (body half-width
+0.146 m, head half-width 0.175 m, in-place turn radius 0.278 m):
 
 | Quantity | Value |
 |---|---|
-| Passes | 7 pairs; each pair = pass A (+x) and pass B (−x) offset by half a lane pitch **0.04375 m**, so every eroded seam of A lies under a lane centre of B; plus short end-cap passes (28 tasks) |
+| Interior passes | 7 pairs; each pair = pass A (+x) and pass B (−x) offset by half a lane pitch **0.04375 m**, so every eroded seam of A lies under a lane centre of B; plus short end-cap passes (28 tasks) |
 | Seam overlap | 16.25 mm per side (eroded lane 60 mm vs eroded seam 27.5 mm) |
 | Pair stride / overlap | 0.310 m stride, 56 mm overlap between neighbouring pairs |
-| Outermost track | |y| = 0.952 m (turn radius + 20 mm margin from the wall) |
-| Residual strips | left wall 0.137 m, right wall 0.137 m, door end 0.121 m, bulkhead end 0.051 m → predicted covered fraction **0.881** of the floor; strips reported as residual rectangles (CR-06) |
+| Pivot-clear band | \|y\| ≤ 0.952 m (turn radius + 20 mm from the wall); every in-place pivot happens inside it |
+| Wall tracks (`wall_track_entry: reverse_entry`, default) | per wall one more pair at \|y\| = **1.045 m** (outer, +x) and 1.001 m (inner, −x): head half-width 0.175 + wall margin 0.030 + tracking tolerance 0.005 m from the wall. Entered by **reversing along a 0.09 rad diagonal** from the band (0.98 m / 0.49 m long), small align pivot, pass, back-off, small peel pivot, forward diagonal back to the band. Every primitive is checked in the planner with the swept rectangle outline (body + head + tail) against the floor less the margins; min clearance 0.0 m by construction (the 5 mm tracking tolerance is reserved on top). No credit on the manoeuvre. |
+| Residual strips | **left / right wall 0.049 m** each (0.137 m with `in_place`), door end 0.121 m, bulkhead end 0.051 m → predicted covered fraction **0.951** (0.881 with `in_place`); strips reported as residual rectangles |
 
-Estimated mission time (planner estimate: passes + turns + retreats + lateral shifts; no recharge, no holds):
+Estimated mission time (planner estimate: passes + turns + retreats + lateral shifts + wall-track
+manoeuvres; no recharge, no holds):
 
-| Method | Setting | Estimate |
-|---|---|---|
-| CONTINUOUS_SCAN | 0.10 m/s | 2695 s ≈ **45 min** (does not meet the 0.20 Bq/cm² goal with the demo calibration) |
-| CONTINUOUS_SCAN | 0.03 m/s | 7760 s ≈ **2.2 h** |
-| SEARCH_THEN_COUNT | 0.10 m/s search | ≈ **45 min + ~40–110 s per alarm** (30 s preset, ≤ 100 s adaptive, plus stop/reverse/realign) |
-| STEP_AND_COUNT | 10 s preset, 0.080 m pitch (contract default) | 34 103 s ≈ **9.5 h** (pack swaps expected; at the former 0.10 m pitch: 27 824 s ≈ 7.7 h with 20 mm uncredited stripes) |
+| Method | Setting | Default (`reverse_entry`) | `in_place` | Wall tracks add |
+|---|---|---|---|---|
+| CONTINUOUS_SCAN | 0.10 m/s | 3560 s ≈ **59 min** | 2695 s ≈ 45 min | +865 s |
+| CONTINUOUS_SCAN | 0.03 m/s (meets the median D# goal in s01) | 10 061 s ≈ **2.8 h** | 7760 s ≈ 2.2 h | +2301 s |
+| SEARCH_THEN_COUNT | 0.10 m/s search | ≈ **59 min + ~40–110 s per alarm** (30 s preset, ≤ 100 s adaptive, plus stop/reverse/realign) | ≈ 45 min + per alarm | +865 s |
+| STEP_AND_COUNT | 10 s preset, 0.080 m pitch (contract default) | 43 848 s ≈ **12.2 h** | 34 103 s ≈ 9.5 h | +9745 s |
 
-Source: `evidence/plan_2.5x16.json`, regenerated by `tools/test.sh plan` (`tools/plan_report.py`). Evidence class: calculated.
+At 0.10 m/s the demo calibration does not reach the 0.20 Bq/cm² goal. STEP_AND_COUNT at the former
+0.10 m pitch (in_place) was 27 824 s ≈ 7.7 h with 20 mm uncredited stripes between stations (CR-05).
+Source: `evidence/plan_2.5x16.json`, regenerated by `tools/test.sh plan` (`tools/plan_report.py`).
+Evidence class: calculated. Simulated check of the manoeuvre: scenario s14 (3.0 × 1.0 m: predicted
+strip 48.8 mm, achieved 55 mm on 5 mm sub-cells, true outline ≥ +0.5 mm inside the margins).
+
+Rear-field behaviour: the reverse entry relies on the chassis rear proximity field (the LiDAR is blind
+behind). A refused or stopped reverse puts the mission in HOLD; after re-arm and Resume the robot
+drives back to the entry point along the entry path, the wall track is marked `RESIDUAL`, its strip
+is journaled as a residual rectangle and it is **not retried**.
+
+### 8.2 Long trailers with open doors (site rule, IB-30)
+
+The along-trailer (x) reference comes from an end wall seen by the LiDAR. If the trailer is longer
+than `lidar.range_max` (default 12 m, an assumption), survey motion requires either
+`trailer.door_closed: true` or a removable flat target placed across the door end with its distance
+from the door threshold in `trailer.door_target_x_m` (the localiser treats it as the door wall, the
+planner treats it as the door end, the floor behind it is a residual). Otherwise Arm/Start/Resume are
+refused with `ALONG_TRACK_REFERENCE`. The LOCALIZATION hold (2σ budget exceeded) stays in force in
+all cases. Scenario s13 (LiDAR range set to 2 m on a 3 m section).
 
 ## 9. Where data lands
 
@@ -216,9 +240,9 @@ verification item, which need the hardware and procedures listed in `verificatio
 
 | ID | Subject | Exercised by |
 |---|---|---|
-| RQ-012 / VT-007 | Localization and timing | s09_timing (clock-fit bound), s01/native_s01 (revisit error vs truth), s04 (localisation hold), `test_clockfit.py` |
+| RQ-012 / VT-007 | Localization and timing | s09_timing (clock-fit bound), s01/native_s01 (revisit error vs truth), **s13_door_target** (door-end target, ALONG_TRACK_REFERENCE), `test_clockfit.py` |
 | RQ-013 / VT-008 | Whole-floor accounting | s01, s04a/b (blocked strip → residual), s10, `test_processing.py` (reason codes, residual rectangles) |
-| RQ-014 / VT-008 | Seam, perimeter and wall strips | s01 / native_s01 (seam hotspot, interior bands fully covered), `evidence/plan_2.5x16.json`, `test_processing.py` |
+| RQ-014 / VT-008 | Seam, perimeter and wall strips | s01 / native_s01 (seam hotspot, interior bands fully covered), **s14_wall_tracks** (achieved wall strip, outline clearance, rear-field stop), `evidence/plan_2.5x16.json`, `test_processing.py` |
 | RQ-021 / VT-020 | Map in Bq/cm² | `test_estimator.py` (incl. cross-test vs `analysis/radiometry/rrrad`), s01 exports |
 | RQ-022 | Moving sensitivity | s01 (0.03 m/s, median D#), `test_estimator.py`; goal not met at 0.10 m/s (STATUS) |
 | RQ-023 / VT-022 | Hotspot and uncertainty decisions | s01, s10, s11 INLINE/DEFERRED (scaler counts), `test_estimator.py` |
@@ -246,10 +270,13 @@ Carried from `STATUS.md` (read that file for the current, complete list):
 - One composed robot node; localisation, mapping, coverage, guidance and web are libraries inside
   `robot_node`. The stand-alone `rr_head_driver` / `rr_chassis_bridge` nodes and the `GuidedVisit`
   action server are built but not exercised by any test. No lifecycle nodes.
-- Wall strips ~0.14 m per wall stay unsurveyed (outer tracks limited by in-place turns, swept radius
-  0.278 m; CR-06, logged by the lead as **IB-29**, decision deferred — a peel-off / reverse-entry lane
-  change would cut it to ~44 mm). Keep-outs are not planned around; blocked strips are deferred and
-  retried once, no path search.
+- Wall strips: ~0.049 m per wall with the default reverse-entry wall tracks (CR-06 / IB-29, owner
+  decision 2026-11-26), ~0.137 m with `in_place`. A stopped reverse entry leaves the track as a residual.
+  Flags seen only by a wall track may be UNREACHABLE for guided revisit / deferred counts (approaches
+  are planned inside the pivot band only). Keep-outs are not planned around; blocked strips are deferred
+  and retried once, no path search. In-place pivots are planned with the contract swept radius 0.278 m
+  (rounded tail); the rectangle outline reaches 0.309 m — the rounded-tail assumption is not verified
+  against the as-built tail.
 - Continuous scan at 0.10 m/s does not meet the 0.20 Bq/cm² goal with the demo calibration.
 - Cell statistics (CR-08/CR-09, **IB-31**, MODEL.md owner to decide): footprint-weighted sums use the Poisson
   form, which is conservative; lane combinations use the exact per-lane threshold combined in normal form
@@ -257,8 +284,8 @@ Carried from `STATUS.md` (read that file for the current, complete list):
 - TF: the robot node publishes `map → base_link` only, no separate continuous `odom` frame (CR-11, logged by
   the lead for a later decision).
 - LiDAR: no de-skew; 12 m range and noise are assumptions. Along-trailer (x) position comes only from an end
-  wall inside LiDAR range; with doors open and the bulkhead out of range x is odometry only and credit is
-  withheld once the budget is exceeded (CR-07, **IB-30**: site rule — closed doors or a removable target).
+  wall (or the door-end target) inside LiDAR range; between them x is odometry and credit is withheld once
+  the budget is exceeded (CR-07 / IB-30 site rule implemented, §8.2).
 - Replay uses the recorded trajectory (raw scans are not archived).
 - Web: **plain HTTP, demonstration accounts, no TLS, no real authentication, no re-authentication on
   hand-off** — required before field use.

@@ -49,7 +49,7 @@ ROD_PAD_X = (96.0, 116.0, 136.0, 156.0, 176.0)   # spreader screw stations on th
 REAR_SCREW_X = 76.8
 REAR_SCREW_Y = (8.0, 22.0, 153.0)                # spreader screws into the printed rear zone (each side), also comb-foot bond points
 THEAD_SCREW_DY = (-24.0, -10.0, 10.0, 24.0)       # M3 low-head through the spreader tab into the aluminium T-head (about y = +-87.5)
-THEAD_SCREW_X = 76.5   # (was M4 at 75.8: the 7 mm head overlapped the rear wall and the EMI comb; tool-checked with modelled heads)
+THEAD_SCREW_X = 76.8   # (was M4 at 75.8: the 7 mm head overlapped the rear wall and the EMI comb and the 6.5 hole broke out of the spreader edge; tool-checked)
 
 # receiver shoe + T-head (aluminium, both builds)
 SHOE_Y = RC["shoe_y"]

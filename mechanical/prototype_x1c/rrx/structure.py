@@ -17,7 +17,7 @@ RC = D.RC
 SIDES = (("L", 1), ("R", -1))
 RX_SCREWS = [(14.0, -17.0), (50.0, -17.0), (14.0, 17.0)]      # (x, dy from the channel centre; -dy = inboard)
 RX_DOWELS = [(24.0, -17.0), (40.0, -17.0)]
-CLIFF_SCREWS = [(30.5, 104.0), (30.5, 115.5), (58.8, 112.0)]
+CLIFF_SCREWS = [(30.5, 104.0), (30.5, 115.5), (54.5, 115.0)]       # rear pair + one ahead, all aft of the x-stop flange (x 59.7)
 
 
 # ----------------------------------------------------------------------------------------------- plate holes
@@ -134,8 +134,8 @@ def receiver_channel(s):
     fit_y = D.RX_FIT_Y_LEFT if s > 0 else D.RX_FLOAT_Y_RIGHT
     for xs in RC["land_x"]:                                          # station pads left standing when the slot is milled
         a, b = xs - D.RX_STATION_LEN / 2, min(xs + D.RX_STATION_LEN / 2, fx1)
-        blk = blk.fuse(box(a, b, yc - hw - c, yc - hw - fit_y, sz0, sz1 + c))
-        blk = blk.fuse(box(a, b, yc + hw + fit_y, yc + hw + c, sz0, sz1 + c))
+        blk = blk.fuse(box(a, b, yc - hw - c, yc - hw - fit_y, sz0 + 0.5, sz1 + c))      # y pads start 0.5 above datum C (no tangency with the pin bore)
+        blk = blk.fuse(box(a, b, yc + hw + fit_y, yc + hw + c, sz0 + 0.5, sz1 + c))
         blk = blk.fuse(box(a, b, yc - hw - c, yc + hw + c, sz1 + D.RX_FIT_Z, sz1 + c))     # roof pad = hold-down
         blk = blk.cut(cyl(D.RX_LAND_PIN_D / 2, 2 * w + 2, (xs, yc - w - 1, sz0 - D.RX_LAND_PIN_D / 2), (0, 1, 0)))   # reamed 4 H7 cross hole
     blk = blk.clean()

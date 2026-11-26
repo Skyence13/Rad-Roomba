@@ -256,7 +256,7 @@ def fab():
     fig = D.sheet("SPREADER PLATE (FRAME net plane)", "RR-HD-S-121", notes=[
         "MATERIAL 5052-H32 or 6061-T6 sheet 2.00 +-0.05, flatness 0.15 over 340. FINISH: chromate conversion (conductive) both sides; no anodise. Underside: heater film + rib gasket strips + lane pads bonded per assembly.md.",
         "Profile and holes per DXF RR-HD-S-121_spreader.dxf (base_link x, y). 8 x clinch standoff M2.5 x 2.5 at the board holes: top face of the standoffs z 34.50 +-0.05 above datum (PCB underside), POS dia 0.2.",
-        "17 x dia 3.2 countersunk 90 deg on the UNDERSIDE for M3 x 6 (lid standoffs M3 x 11 production / x 10.5 prototype). 8 x dia 5.0 for M3 low-head with insulating shoulder washers (prototype) at the T-head tabs. 10 rib holes dia 2.8 countersunk 90 deg x dia 5.2 on TOP (ISO 10642 M2.5 flush: under the board).",
+        "17 x dia 3.2 countersunk 90 deg on the UNDERSIDE for M3 x 6 (lid standoffs M3 x 11 production / x 10.5 prototype). 8 x dia 4.6 for M3 low-head with insulating shoulder washers (prototype) at the T-head tabs. 10 rib holes dia 2.8 countersunk 90 deg x dia 5.2 on TOP (ISO 10642 M2.5 flush: under the board).",
         "TAP M2.5 through at the fence-foot and switch-saddle stations (red in the DXF). Deburr both sides; no burr on the front edge (it slides under the frame lip)."])
     ax = _hlr_ax(fig, (14, 120, 392, 160), sp, "top", "TOP VIEW (forward up, robot right to the right)", margin=16)
     D.dim(ax, tv((H.SPR_X0, H.SPR_HY, 0)), tv((H.SPR_X0, -H.SPR_HY, 0)), off=-10, horizontal=True, fmt="{:.2f}", tol=" +-0.1")
@@ -411,7 +411,7 @@ def steps():
         for k, dz in (("floor_module", 25), ("floor_carrier", 25), ("floor_sipm", 25), ("spacer_lower", 45), ("barrier", 60), ("spacer_upper", 75), ("ref_module", 95), ("ref_carrier", 95), ("ref_sipm", 95), ("chimney_insert", 120)):
             per[f"S{i}_{k}"] = (0, 0, dz)
     img(3, "load the four lane kits from above", s3, s1 + s2, per=per, labels=["floor assembly on the seat shoulder, lower ring, barrier, upper ring, reference assembly, chimney insert; shims as needed"])
-    s4 = ["spreader", "rib_gaskets", "board_standoffs", "lid_standoffs"] + lanes("pad", "heater")
+    s4 = ["spreader", "rib_gaskets", "board_standoffs", "lid_standoffs", "lid_standoffs_11"] + lanes("pad", "heater")
     img(4, "spreader with heater zones, pads and rib gaskets: front edge under the lip, then screw down", s4, s1 + s2 + s3, explode=(0, 0, 45), labels=["M2.5 x 8 into the rib and rear-zone inserts 0.35 N m; M3 x 8 low-head with insulating washers into the T-heads 0.9 N m"])
     s5 = ["fence_front", "fence_side_L", "fence_side_R", "fence_rear", "fence_gaskets", "pcb", "sw_front", "sw_front_saddle", "sw_lid", "sw_lid_saddle", "grommet_J1", "grommet_J2", "pigtail_J1", "pigtail_J2", "plug_J1", "plug_J2",
           "thermal_cutout", "ntc", "desiccant", "vent"] + [f"S{i}_shield_can" for i in range(4)]

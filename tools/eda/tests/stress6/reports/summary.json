@@ -178,75 +178,14 @@
     "parity": 0,
     "parity_items": [],
     "report": "reports/drc.json",
-    "unconnected": 8,
+    "unconnected": 4,
     "unconnected_items": [
-      "unconnected_items | Missing connection between items | Pad 15 [GND] of U1 on F.Cu | Track [GND] on B.Cu, length 1.4100 mm",
-      "unconnected_items | Missing connection between items | Pad 49 [GND] of U2 on F.Cu | Track [GND] on F.Cu, length 0.8875 mm",
-      "unconnected_items | Missing connection between items | Pad 9 [+3V3] of U2 on F.Cu | Via [+3V3] on F.Cu - B.Cu",
       "unconnected_items | Missing connection between items | Pad 25 [IO37] of U1 on F.Cu | Pad 6 [IO37] of U2 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 26 [IO38] of U1 on F.Cu | Pad 2 [IO38] of U2 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 30 [IO46] of U1 on F.Cu | Pad 41 [IO46] of U2 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 37 [IO51] of U1 on F.Cu | Pad 21 [IO51] of U2 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 22 [AUX00] of U2 on F.Cu | PTH pad 1 [AUX00] of J4"
     ],
     "unrouted": [
-      {
-        "ends": [
-          {
-            "item": "Pad 15 [GND] of U1 on F.Cu",
-            "xy_mm": [
-              21.075,
-              40.5
-            ]
-          },
-          {
-            "item": "Track [GND] on B.Cu, length 1.4100 mm",
-            "xy_mm": [
-              21.0,
-              40.98
-            ]
-          }
-        ],
-        "net": "GND"
-      },
-      {
-        "ends": [
-          {
-            "item": "Pad 49 [GND] of U2 on F.Cu",
-            "xy_mm": [
-              52.5,
-              57.0
-            ]
-          },
-          {
-            "item": "Track [GND] on F.Cu, length 0.8875 mm",
-            "xy_mm": [
-              53.25,
-              53.562
-            ]
-          }
-        ],
-        "net": "GND"
-      },
-      {
-        "ends": [
-          {
-            "item": "Pad 9 [+3V3] of U2 on F.Cu",
-            "xy_mm": [
-              53.75,
-              53.562
-            ]
-          },
-          {
-            "item": "Via [+3V3] on F.Cu - B.Cu",
-            "xy_mm": [
-              53.75,
-              51.96
-            ]
-          }
-        ],
-        "net": "+3V3"
-      },
       {
         "ends": [
           {
@@ -307,25 +246,6 @@
       {
         "ends": [
           {
-            "item": "Pad 37 [IO51] of U1 on F.Cu",
-            "xy_mm": [
-              32.425,
-              42.0
-            ]
-          },
-          {
-            "item": "Pad 21 [IO51] of U2 on F.Cu",
-            "xy_mm": [
-              55.938,
-              58.25
-            ]
-          }
-        ],
-        "net": "IO51"
-      },
-      {
-        "ends": [
-          {
             "item": "Pad 22 [AUX00] of U2 on F.Cu",
             "xy_mm": [
               55.938,
@@ -344,13 +264,10 @@
       }
     ],
     "unrouted_nets": [
-      "+3V3",
       "AUX00",
-      "GND",
       "IO37",
       "IO38",
-      "IO46",
-      "IO51"
+      "IO46"
     ],
     "waived": 0,
     "warnings": 0
@@ -365,7 +282,7 @@
     "warnings": 0
   },
   "fail_reasons": [
-    "DRC: 8 unconnected item(s) on nets: +3V3, AUX00, GND, IO37, IO38, IO46, IO51"
+    "DRC: 4 unconnected item(s) on nets: AUX00, IO37, IO38, IO46"
   ],
   "notes": [
     "U50: 3D envelope uses the default height 1.0 mm (give height=)",
@@ -453,29 +370,46 @@
   "rev": "X",
   "routing": {
     "autorouter": {
+      "attempts": [
+        {
+          "run": 1,
+          "seconds": 606.6,
+          "unconnected": 8
+        },
+        {
+          "run": 2,
+          "seconds": 288.5,
+          "unconnected": 4
+        },
+        {
+          "run": 3,
+          "seconds": 227.1,
+          "unconnected": 4
+        }
+      ],
       "dsn_sha256": "a21c502c5d322a235d9f25019b36e14c2d4048c7e3023915dec110ef189e6085",
       "freerouting": "v2.6.0 (build-date: 2026-11-25)",
       "log_tail": [
-        "[7987B6\\739C17] Auto-routing stage completed with timeout: started with 190 unrouted nets, completed in 600.51 seconds, final score: 973.79 (8 unrouted and 56 violations), using 541.05 total CPU seconds, 231.51 GB total allocated, and 1132.1 MB peak heap usage.",
-        "[7987B6\\739C17] Job '7987B6\\739C17' finished with state: TIMED_OUT (elapsed: 10 minutes 1.16 seconds, finished at UTC: 2026-11-26T20:00:28.634145176Z)."
+        "[CA098F\\A2271F] Auto-routing stage completed: started with 12 unrouted nets, completed in 185.79 seconds, final score: 986.90 (4 unrouted and 58 violations), using 243.30 total CPU seconds, 110.16 GB total allocated, and 893.3 MB peak heap usage.",
+        "[CA098F\\A2271F] Job 'CA098F\\A2271F' finished with state: COMPLETED (elapsed: 4 minutes 42.41 seconds, finished at UTC: 2026-11-26T20:05:44.576703204Z)."
       ],
       "passes_limit": 30,
       "reused": false,
-      "seconds": 606.6,
+      "seconds": 895.1,
       "threads": 4,
       "timed_out": false
     },
     "routed": true,
     "stats": {
       "dangling_tracks_removed": 0,
-      "necked_tracks_widened": 5,
+      "necked_tracks_widened": 0,
       "preroutes": 375,
       "preroutes_missing_after_import": 0,
-      "track_length_mm": 3667.95,
-      "tracks": 1570,
-      "unconnected_after_fill": 8,
-      "unconnected_before_cleanup": 8,
-      "vias": 415
+      "track_length_mm": 3741.12,
+      "tracks": 1644,
+      "unconnected_after_fill": 4,
+      "unconnected_before_cleanup": 4,
+      "vias": 425
     }
   },
   "single_pin_nets": [],

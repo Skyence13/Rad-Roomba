@@ -22,7 +22,7 @@ import math
 from collections import deque
 
 from rr_core import estimator as est
-from rr_core.geometry import transform
+from rr_core.geometry import transform, wrap
 
 from .planner import approach, transit
 
@@ -213,7 +213,7 @@ class Mission:
         if self.state == "HOLD":
             return
         mover = self.app.mover
-        self._hold_ctx = {"phase": self.phase, "pose": tuple(mover.pose) if mover.pose else None}
+        self._hold_ctx = {"phase": self.phase, "pose": tuple(mover.pose) if mover.pose else None, "reason": reason}
         mover.cancel(reason, state="IDLE")
         self.app.chassis.clear_command()
         self._mark(stage=None, reason="HOLD:" + reason)
@@ -229,6 +229,9 @@ class Mission:
     def _defer_task(self, why):
         t = self.task
         if t is None:
+            return
+        if t.get("maneuver") and t.get("phase_reached") in ("WALL_ENTRY", "PASS"):
+            self._wall_abandon(why, move=self.state == "SCAN")     # in HOLD: the return runs on Resume
             return
         pose = self.app.mover.pose
         lay = self.plan["layout"]
@@ -336,7 +339,9 @@ class Mission:
         t = self.task = pending[0]
         t["attempts"] += 1
         t["phase_reached"] = "TRANSIT"
-        prims = transit(self.app.mover.pose, (t["x_start"], t["y"], t["heading"]), self.region)
+        man = t.get("maneuver")
+        target = tuple(man["entry_pose"]) if man else (t["x_start"], t["y"], t["heading"])
+        prims = transit(self.app.mover.pose, target, self.region)
         for p in prims:
             p.setdefault("route", "planning")
         self.phase = "TRANSIT"
@@ -349,7 +354,90 @@ class Mission:
         if m.state == "BLOCKED":
             self._defer_task("TRANSIT_BLOCKED")
         elif m.state in ("DONE", "IDLE"):
+            if self.task.get("maneuver"):
+                self._wall_entry()
+            else:
+                self._begin_pass()
+
+    # ------------------------------------------------ wall tracks (reverse entry, CR-06 / IB-29)
+    def _wall_prims(self, key):
+        return [dict(p, route="planning") if not p.get("reverse") else dict(p) for p in self.task["maneuver"][key]]
+
+    def _wall_entry(self):
+        """Reverse along the planned diagonal onto the wall track, then the small align pivot.
+        No coverage credit (no stage).  The reverse relies on the chassis rear field; a refused or
+        stopped reverse ends the attempt: the robot returns to the entry point and the strip stays
+        a residual (never retried blindly)."""
+        self.task["phase_reached"] = "WALL_ENTRY"
+        self.phase = "WALL_ENTRY"
+        self._log("wall_entry", task=self.task["id"])
+        self._start(self._wall_prims("entry"))
+
+    def _ph_WALL_ENTRY(self):
+        if self.app.mover.state in ("DONE", "IDLE"):
             self._begin_pass()
+
+    def _ph_WALL_EXIT(self):
+        if self.app.mover.state in ("DONE", "IDLE"):
+            self.task["_exited"] = True
+            self._task_done()
+
+    def _ph_WALL_RETURN(self):
+        """Back to the entry point along the verified entry path after an abandoned wall track."""
+        if self.app.mover.state in ("DONE", "IDLE"):
+            t = self.task
+            self._log("wall_returned", task=t["id"])
+            self.task = None
+            self.phase = "NEXT"
+
+    def _wall_return_prims(self, pose):
+        """From anywhere on the entry path or the track: reverse along the track to its start E,
+        pivot back to the entry heading, forward along the diagonal to the entry point P
+        (the exact reverse of the verified entry, so the swept region is the checked one)."""
+        t, man = self.task, self.task["maneuver"]
+        h, h_m = t["heading"], man["h_m"]
+        P = man["entry_pose"]
+        prims = []
+        if abs(wrap(pose[2] - h)) < 0.03:
+            if math.hypot(pose[0] - t["x_start"], pose[1] - t["y"]) > 0.003:
+                prims.append({"kind": "straight", "to": (t["x_start"], t["y"]), "reverse": True, "why": "WALL_RETURN_BACK",
+                              "speed": self.app.mover.cfg.reverse_speed})
+        prims.append({"kind": "pivot", "yaw": h_m, "why": "WALL_RETURN_PIVOT"})
+        prims.append({"kind": "straight", "to": (P[0], P[1]), "reverse": False, "why": "WALL_RETURN", "route": "planning"})
+        return prims
+
+    def _wall_exit_prims(self, pose):
+        """Resume an interrupted exit: finish the back-off, the peel pivot and the diagonal."""
+        t, man = self.task, self.task["maneuver"]
+        h = t["heading"]
+        ex = man["exit"]
+        prims = []
+        if abs(wrap(pose[2] - h)) < 0.03:
+            fb = ex[0]["to"]
+            if math.hypot(pose[0] - fb[0], pose[1] - fb[1]) > 0.003:
+                prims.append(dict(ex[0]))
+        prims += [dict(ex[1]), dict(ex[2], route="planning")]
+        return prims
+
+    def _wall_abandon(self, why, move=True):
+        """Stop using this wall track for this mission: residual recorded, robot returns to P."""
+        t = self.task
+        pose = self.app.mover.pose
+        lay = self.plan["layout"]
+        dirn = 1.0 if abs(t["heading"]) < 1 else -1.0
+        rect = (min(t["x_start"] + dirn * lay["x_min"], t["x_end"] + dirn * lay["x_max"]),
+                max(t["x_start"] + dirn * lay["x_min"], t["x_end"] + dirn * lay["x_max"]),
+                t["y"] + lay["y_lo"], t["y"] + lay["y_hi"])
+        tt = self.app.clock.now_us()
+        self.app.pipeline.record(tt, "J", {"op": "blocked", "rect": [round(v, 4) for v in rect], "reason": why, "t_us": tt})
+        t["status"] = "RESIDUAL"                      # not retried: the strip stays a reported residual
+        t["defer_reason"] = why
+        self._log("wall_track_abandoned", task=t["id"], reason=why, rect=rect)
+        self.phase = "WALL_RETURN"
+        if move:
+            self._start(self._wall_return_prims(pose))
+        else:
+            self._hold_ctx = {"phase": "WALL_RETURN", "pose": tuple(pose) if pose else None, "reason": why}
 
     def _begin_pass(self):
         t = self.task
@@ -382,6 +470,13 @@ class Mission:
             self._task_done()
 
     def _task_done(self):
+        t = self.task
+        if t.get("maneuver") and not t.get("_exited"):
+            self._mark(stage=None, reason="PASS_END")
+            self.phase = "WALL_EXIT"
+            self._log("wall_exit", task=t["id"])
+            self._start(self._wall_prims("exit"))
+            return
         self._mark(stage=None, reason="PASS_END")
         self.task["status"] = "DONE"
         self._log("task_done", task=self.task["id"])
@@ -400,6 +495,18 @@ class Mission:
             return
         pose = self.app.mover.pose
         was = ctx.get("phase")
+        if t.get("maneuver") and was in ("WALL_ENTRY", "WALL_RETURN"):
+            # a stopped or refused reverse entry is not retried: back out along the entry path
+            if was == "WALL_ENTRY":
+                self._wall_abandon("WALL_ENTRY_STOPPED:" + str(ctx.get("reason")))
+            else:
+                self.phase = "WALL_RETURN"
+                self._start(self._wall_return_prims(pose))
+            return
+        if t.get("maneuver") and was == "WALL_EXIT":
+            self.phase = "WALL_EXIT"
+            self._start(self._wall_exit_prims(pose))
+            return
         if was in ("PASS", "COUNT", "COUNT_BACK", "PASS_RESUME") or (was or "").startswith("STEP"):
             dirn = 1.0 if abs(t["heading"]) < 1 else -1.0
             if self.cfg.method == "STEP_AND_COUNT":
@@ -677,6 +784,7 @@ class Mission:
         return {"state": self.state, "hold_reason": self.hold_reason, "phase": self.phase, "method": self.cfg.method,
                 "task": self.task["name"] if self.task else None, "tasks_done": done, "tasks_total": len(self.tasks),
                 "tasks_deferred": [t["id"] for t in self.tasks if t["status"] == "DEFERRED"],
+                "tasks_residual": [t["id"] for t in self.tasks if t["status"] == "RESIDUAL"],
                 "deferred_counts": len(self.deferred_counts), "ratemeter": self.ratemeter,
                 "station": self._station["tag"] if self._station else None,
                 "counting": self.count["obs"] if self.count and self.count.get("obs") else None,
