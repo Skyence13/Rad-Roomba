@@ -16,13 +16,14 @@ from rr_core.geometry import clip_convex, polygon_area, transform
 
 
 class World:
-    def __init__(self, length_m, width_m, calibration, lane_polys_base, seed=1, door_closed=True,
+    def __init__(self, length_m, width_m, calibration, lane_polys_base, seed=1, door_closed=True, door_target_x_m=None,
                  lidar_xy=(-0.15, 0.0), fov_deg=270.0, n_rays=541, range_sigma=0.005, dropout=0.02,
                  range_max=12.0, ref_rate=(4.0, 1.5, 0.0), alpha_bkg=0.02):
         self.L, self.W = length_m, width_m
         self.cal, self.lanes = calibration, [np.asarray(p) for p in lane_polys_base]
         self.rng = np.random.default_rng(seed)
         self.door_closed = door_closed
+        self.door_target_x_m = door_target_x_m      # removable flat target across the door end (doors open)
         self.lidar_xy = lidar_xy
         self.angles = np.radians(np.linspace(-fov_deg / 2, fov_deg / 2, n_rays))
         self.range_sigma, self.dropout, self.range_max = range_sigma, dropout, range_max
@@ -50,6 +51,9 @@ class World:
         segs = [(0, h, L, h), (0, -h, L, -h), (L, -h, L, h)]
         if self.door_closed:
             segs.append((0, -h, 0, h))
+        elif self.door_target_x_m is not None:
+            xt = self.door_target_x_m
+            segs.append((xt, -h, xt, h))
         for x0, x1, y0, y1 in self.boxes.values():
             segs += [(x0, y0, x1, y0), (x1, y0, x1, y1), (x1, y1, x0, y1), (x0, y1, x0, y0)]
         return np.array(segs, dtype=float)

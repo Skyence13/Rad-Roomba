@@ -1,5 +1,5 @@
 # Simulation configuration (RobotApp config; all values are simulation/design values).
-trailer: {id: SIM-SECTION-3.0x1.2, length_m: 3.0, width_m: 1.2, door_closed: true, keepouts: []}
+trailer: {id: SIM-SECTION-3.0x1.2, length_m: 3.0, width_m: 1.2, door_closed: true, door_target_x_m: null, keepouts: []}
 profile_id: ore-floor-demo-synthetic        # synthetic, field_use_approved: false
 mode: COMMISSIONING
 op_mode: COMMISSIONING

@@ -6,7 +6,7 @@
    "check": "no interference, prototype assembly, rails at rest",
    "status": "pass",
    "evidence": "tool-checked",
-   "detail": "403 candidate pairs intersected; overlaps: none"
+   "detail": "424 candidate pairs intersected; overlaps: none"
   },
   {
    "check": "no interference, production assembly, rails at rest",
@@ -16,9 +16,9 @@
   },
   {
    "check": "no interference, dummy assembly, rails at rest",
-   "status": "fail",
+   "status": "pass",
    "evidence": "tool-checked",
-   "detail": "185 candidate pairs intersected; overlaps: [('resistor_block', 'hd_board_0', 2.87)]"
+   "detail": "184 candidate pairs intersected; overlaps: none"
   },
   {
    "check": "no interference, leading rail travel 17 mm, 3 mm insert",
@@ -144,7 +144,7 @@
    "check": "every printed part fits the X1C in its print orientation (240 x 240 x 250 usable after 8 mm margins)",
    "status": "pass",
    "evidence": "tool-checked",
-   "detail": "[{\"pn\": \"RR-HD-X-101\", \"part\": \"frame_half_left\", \"bbox_print_mm\": [118.0, 175.2, 32.5], \"fits\": true, \"downward_faces\": 41, \"downward_area_mm2\": 3029.0, \"largest_downward_faces\": [{\"z\": 1.4, \"area_mm2\": 696.9, \"span_mm\": 4.3, \"length_mm\": 52.0}, {\"z\": 19.5, \"area_mm2\": 186.8, \"span_mm\": 1.8, \"length_mm\": 101.0}, {\"z\": 2.0, \"area_mm2\": 185.8, \"span_mm\": 1.6, \"length_mm\": 116.1}, {\"z\": 21.6, \"area_mm2\": 169.9, \"span_mm\": 1.0, \"length_mm\": 169.9}]}, {\"pn\": \"RR-HD-X-102\", \"part\": \"frame_half_right\", \"bbox_print_mm\": [118.0, 173.2, 32.5], \"fits\": true, \"downward_faces\": 41, \"downward_area_mm2\": 3048.0, \"largest_downward_faces\": [{\"z\": 1.4, \"area_mm2\": 696.9, \"span_mm\": 4.3, \"length_mm\": 52.0}, {\"z\": 3.4, \"area_mm2\": 204.1, \"span_mm\": 1.8, \"length_mm\": 113.4}, {\"z\": 19.5, \"area_mm2\": 186.8, \"span_mm\": 1.9, \"length_mm\": 101.0}, {\"z\": 21.6, \"area_mm2\": 169.9, \"span_mm\": 1.0, \"length_mm\": 169.9}]}, {\"pn\": \"RR-HD-X-201\", \"part\": \"window_cassette\", \"bbox_print_mm\": [113.6, 84.0, 3.3], \"fits\": true, \"downward_faces\": 0, \"downward_area_mm2\": 0, \"largest_downward_faces\": []}, {\"pn\": \"RR-HD-X-301\", \"part\": \"lane_spacer_lower\", \"bbox_print_mm\": [100.8, 80.8, 1.8], \"fits\": true, \"downward_faces\": 0, \"downward_area_mm2\": 0, \"largest_downward_faces\": []}, {\"pn\": \"RR-HD-X-303\", \"part\": \"lane_spacer_upper\", \"bbox_print_mm\": [100.8, 80.8, 3.0], \"fits\": true, \"downward_faces\": 0, \"downward_area_mm2\": 0, \"largest_downward_faces\": []}, {\"pn\": \"RR-HD-X-302\", \"part\": \"lane_barrier\", \"bbox_print_mm\": [100.8, 80.8, 2.0], \"fits\": true, \"downward_faces\": 0, \"downward_area_mm2\": 0, \"largest_downward_faces\": []}, {\"pn\": \"RR-HD-X-304\", \"part\": \"chimney_insert\", \"bbox_print_mm\": [18.3, 16.2, 7.0], \"fits\": true, \"downward_faces\": 3, \"downward_area_mm2\": 21.0, \"largest_downward_faces\": [{\"z\": 5.2, \"area_mm2\": 8.0, \"span_mm\": 1.6, \"length_mm\": 5.0}, {\"z\": 2.4, \"area_mm2\": 6.7, \"span_mm\": 2.3, \"length_mm\": 2.9}, {\"z\": 2.4, \"area_mm2\": 6.7, \"span_mm\": 2.3, \"length_mm\": 2.9}]}, {\"pn\": \"RR-HD-X-411\", \"part\": \"rail_insert\", \"bbox_print_mm\": [16.0, 87.3, 4.0], \"fits\": true, \"downward_faces\": 0, \"downward_area_mm2\": 0, \"largest_downward_faces\": []}, {\"pn\": \"RR-HD-X-405\", \"part\": \"bail_block\", \"bbox_print_mm\": [8.8, 30.0, 4.0], \"fits\": true, \"downward_faces\": 0, \"downward_area_mm2\": 0, \"largest_downward_faces\": []}, {\"pn\": \"RR-HD-X-421\", \"part\": \"front_switch_saddle\", \"bbox_print_mm\": [4.8, 26.6, 10.2], \"fits\": true, \"downward_faces\": 0, \"downward_area_mm2\": 0, \"largest_downward_faces\": []}, {\"pn\": \"RR-HD-X-422\", \"part\": \"lid_switch_saddle\", \"bbox_print_mm\": [4.8, 26.6, 5.0], \"fits\": true, \"downward_faces\": 0, \"downward_area_mm2\": 0, \"largest_downward_faces\": []}, {\"pn\": \"RR-HD-X-511\", \"part\": \"grommet_J1\", \"bbox_print_mm\": [11.5, 15.0, 4.0], \"fits\": true, \"downward_faces\": 0, \"downward_area_mm2\": 0, \"largest_downward_faces\": []}, {\"pn\": \"RR-HD-X-512\", \"part\": \"grommet_J2\", \"bbox_print_mm\": [11.5, 15.0, 4.0], \"fits\": true, \"downward_faces\": 0, \"downward_area_mm2\": 0, \"largest_downward_faces\": []}, {\"pn\": \"RR-HD-X-601\", \"part\": \"transport_cover_left\", \"bbox_print_mm\": [148.0, 177.3, 30.5], \"fits\": true, \"downward_faces\": 2, \"downward_area_mm2\": 836.0, \"largest_downward_faces\": [{\"z\": 21.9, \"area_mm2\": 797.9, \"span_mm\": 4.5, \"length_mm\": 177.3}, {\"z\": 29.1, \"area_mm2\": 38.0, \"span_mm\": 2.0, \"length_mm\": 19.0}]}, {\"pn\": \"RR-HD-X-602\", \"part\": \"transport_cover_right\", \"bbox_print_mm\": [148.0, 177.3, 30.5], \"fits\": true, \"downward_faces\": 2, \"downward_area_mm2\": 836.0, \"largest_downward_faces\": [{\"z\": 21.9, \"area_mm2\": 797.9, \"span_mm\": 4.5, \"length_mm\": 177.3}, {\"z\": 29.1, \"area_mm2\": 38.0, \"span_mm\": 2.0, \"length_mm\": 19.0}]}, {\"pn\": \"RR-HD-D-302\", \"part\": \"dummy_lane_spacer\", \"bbox_print_mm\": [100.4, 80.4, 15.5], \"fits\": true, \"downward_faces\": 1, \"downward_area_mm2\": 6705.0, \"largest_downward_faces\": [{\"z\": 14.3, \"area_mm2\": 6705.3, \"span_mm\": 74.4, \"length_mm\": 94.4}]}, {\"pn\": \"RR-HD-C-611\", \"part\": \"cradle_fence\", \"bbox_print_mm\": [166.0, 91.0, 30.0], \"fits\": true, \"downward_faces\": 0, \"downward_area_mm2\": 0, \"largest_downward_faces\": []}, {\"pn\": \"RR-HD-C-612\", \"part\": \"cradle_cable_rest\", \"bbox_print_mm\": [12.0, 74.0, 28.0], \"fits\": true, \"downward_faces\": 1, \"downward_area_mm2\": 840.0, \"largest_downward_faces\": [{\"z\": 8.0, \"area_mm2\": 840.0, \"span_mm\": 12.0, \"length_mm\": 70.0}]}]"
+   "detail": "[{\"pn\": \"RR-HD-X-101\", \"part\": \"frame_half_left\", \"bbox_print_mm\": [118.0, 175.2, 32.5], \"fits\": true, \"downward_faces\": 45, \"downward_area_mm2\": 3039.0, \"largest_downward_faces\": [{\"z\": 1.4, \"area_mm2\": 696.9, \"span_mm\": 4.3, \"length_mm\": 52.0}, {\"z\": 19.5, \"area_mm2\": 186.8, \"span_mm\": 1.8, \"length_mm\": 101.0}, {\"z\": 2.0, \"area_mm2\": 185.8, \"span_mm\": 1.6, \"length_mm\": 116.1}, {\"z\": 21.6, \"area_mm2\": 169.9, \"span_mm\": 1.0, \"length_mm\": 169.9}]}, {\"pn\": \"RR-HD-X-102\", \"part\": \"frame_half_right\", \"bbox_print_mm\": [118.0, 173.2, 32.5], \"fits\": true, \"downward_faces\": 45, \"downward_area_mm2\": 3057.0, \"largest_downward_faces\": [{\"z\": 1.4, \"area_mm2\": 696.9, \"span_mm\": 4.3, \"length_mm\": 52.0}, {\"z\": 3.4, \"area_mm2\": 204.1, \"span_mm\": 1.8, \"length_mm\": 113.4}, {\"z\": 19.5, \"area_mm2\": 186.8, \"span_mm\": 1.9, \"length_mm\": 101.0}, {\"z\": 21.6, \"area_mm2\": 169.9, \"span_mm\": 1.0, \"length_mm\": 169.9}]}, {\"pn\": \"RR-HD-X-201\", \"part\": \"window_cassette\", \"bbox_print_mm\": [113.6, 84.0, 3.3], \"fits\": true, \"downward_faces\": 0, \"downward_area_mm2\": 0, \"largest_downward_faces\": []}, {\"pn\": \"RR-HD-X-301\", \"part\": \"lane_spacer_lower\", \"bbox_print_mm\": [100.8, 80.8, 1.8], \"fits\": true, \"downward_faces\": 0, \"downward_area_mm2\": 0, \"largest_downward_faces\": []}, {\"pn\": \"RR-HD-X-303\", \"part\": \"lane_spacer_upper\", \"bbox_print_mm\": [100.8, 80.8, 3.0], \"fits\": true, \"downward_faces\": 0, \"downward_area_mm2\": 0, \"largest_downward_faces\": []}, {\"pn\": \"RR-HD-X-302\", \"part\": \"lane_barrier\", \"bbox_print_mm\": [100.8, 80.8, 2.0], \"fits\": true, \"downward_faces\": 0, \"downward_area_mm2\": 0, \"largest_downward_faces\": []}, {\"pn\": \"RR-HD-X-304\", \"part\": \"chimney_insert\", \"bbox_print_mm\": [18.3, 16.2, 7.0], \"fits\": true, \"downward_faces\": 3, \"downward_area_mm2\": 21.0, \"largest_downward_faces\": [{\"z\": 5.2, \"area_mm2\": 8.0, \"span_mm\": 1.6, \"length_mm\": 5.0}, {\"z\": 2.4, \"area_mm2\": 6.7, \"span_mm\": 2.3, \"length_mm\": 2.9}, {\"z\": 2.4, \"area_mm2\": 6.7, \"span_mm\": 2.3, \"length_mm\": 2.9}]}, {\"pn\": \"RR-HD-X-411\", \"part\": \"rail_insert\", \"bbox_print_mm\": [16.0, 87.3, 4.0], \"fits\": true, \"downward_faces\": 0, \"downward_area_mm2\": 0, \"largest_downward_faces\": []}, {\"pn\": \"RR-HD-X-405\", \"part\": \"bail_block\", \"bbox_print_mm\": [8.8, 30.0, 4.0], \"fits\": true, \"downward_faces\": 0, \"downward_area_mm2\": 0, \"largest_downward_faces\": []}, {\"pn\": \"RR-HD-X-421\", \"part\": \"front_switch_saddle\", \"bbox_print_mm\": [4.8, 26.6, 10.2], \"fits\": true, \"downward_faces\": 0, \"downward_area_mm2\": 0, \"largest_downward_faces\": []}, {\"pn\": \"RR-HD-X-422\", \"part\": \"lid_switch_saddle\", \"bbox_print_mm\": [4.8, 26.6, 5.0], \"fits\": true, \"downward_faces\": 0, \"downward_area_mm2\": 0, \"largest_downward_faces\": []}, {\"pn\": \"RR-HD-X-511\", \"part\": \"grommet_J1\", \"bbox_print_mm\": [11.5, 15.0, 4.0], \"fits\": true, \"downward_faces\": 0, \"downward_area_mm2\": 0, \"largest_downward_faces\": []}, {\"pn\": \"RR-HD-X-512\", \"part\": \"grommet_J2\", \"bbox_print_mm\": [11.5, 15.0, 4.0], \"fits\": true, \"downward_faces\": 0, \"downward_area_mm2\": 0, \"largest_downward_faces\": []}, {\"pn\": \"RR-HD-X-601\", \"part\": \"transport_cover_left\", \"bbox_print_mm\": [151.2, 177.3, 30.5], \"fits\": true, \"downward_faces\": 2, \"downward_area_mm2\": 833.0, \"largest_downward_faces\": [{\"z\": 21.9, \"area_mm2\": 797.9, \"span_mm\": 4.5, \"length_mm\": 177.3}, {\"z\": 29.1, \"area_mm2\": 35.2, \"span_mm\": 2.0, \"length_mm\": 17.6}]}, {\"pn\": \"RR-HD-X-602\", \"part\": \"transport_cover_right\", \"bbox_print_mm\": [151.2, 177.3, 30.5], \"fits\": true, \"downward_faces\": 2, \"downward_area_mm2\": 833.0, \"largest_downward_faces\": [{\"z\": 21.9, \"area_mm2\": 797.9, \"span_mm\": 4.5, \"length_mm\": 177.3}, {\"z\": 29.1, \"area_mm2\": 35.2, \"span_mm\": 2.0, \"length_mm\": 17.6}]}, {\"pn\": \"RR-HD-D-302\", \"part\": \"dummy_lane_spacer\", \"bbox_print_mm\": [100.4, 80.4, 15.5], \"fits\": true, \"downward_faces\": 0, \"downward_area_mm2\": 0, \"largest_downward_faces\": []}, {\"pn\": \"RR-HD-C-611\", \"part\": \"cradle_fence\", \"bbox_print_mm\": [166.0, 91.0, 30.0], \"fits\": true, \"downward_faces\": 0, \"downward_area_mm2\": 0, \"largest_downward_faces\": []}, {\"pn\": \"RR-HD-C-612\", \"part\": \"cradle_cable_rest\", \"bbox_print_mm\": [74.0, 28.0, 12.0], \"fits\": true, \"downward_faces\": 0, \"downward_area_mm2\": 0, \"largest_downward_faces\": []}]"
   },
   {
    "check": "split joint at y = 0 clears every window and every lane cavity",
@@ -156,7 +156,7 @@
    "check": "EMI fence bond pitch to the spreader <= 50 mm (prototype; bond = screw or standoff clamping the foot, clamping tool-checked)",
    "status": "pass",
    "evidence": "tool-checked",
-   "detail": "largest gap front 48.0, side 31.2, rear 40.0 mm (fence ends included); standoffs not on a fence foot: none"
+   "detail": "largest gap front 48.0, side 31.2, rear 48.5 mm (fence ends included); standoffs meant to clamp a foot but not on one: none; standoffs in the chimney zones (on the spreader, not bond points): ['77.5,+31.5', '77.5,-31.5', '77.5,+57.0', '77.5,-57.0', '77.5,+144.5', '77.5,-144.5']"
   },
   {
    "check": "cover = shear panel: lid fasteners round a closed loop at <= 40 mm pitch, all on hard seats at the lid underside",
@@ -166,15 +166,15 @@
   },
   {
    "check": "light-safe chimney drains: passage open, no straight line of sight (both builds)",
-   "status": "fail",
+   "status": "pass",
    "evidence": "tool-checked",
-   "detail": "[{\"lane\": 0, \"passage_open\": true, \"line_of_sight_blocked\": false}, {\"lane\": 1, \"passage_open\": true, \"line_of_sight_blocked\": false}, {\"lane\": 2, \"passage_open\": true, \"line_of_sight_blocked\": false}, {\"lane\": 3, \"passage_open\": true, \"line_of_sight_blocked\": false}, {\"lane\": 0, \"passage_open\": true, \"line_of_sight_blocked\": false}, {\"lane\": 1, \"passage_open\": true, \"line_of_sight_blocked\": false}, {\"lane\": 2, \"passage_open\": true, \"line_of_sight_blocked\": false}, {\"lane\": 3, \"passage_open\": true, \"line_of_sight_blocked\": false}]"
+   "detail": "[{\"lane\": 0, \"passage_open\": true, \"line_of_sight_blocked\": true}, {\"lane\": 1, \"passage_open\": true, \"line_of_sight_blocked\": true}, {\"lane\": 2, \"passage_open\": true, \"line_of_sight_blocked\": true}, {\"lane\": 3, \"passage_open\": true, \"line_of_sight_blocked\": true}, {\"lane\": 0, \"passage_open\": true, \"line_of_sight_blocked\": true}, {\"lane\": 1, \"passage_open\": true, \"line_of_sight_blocked\": true}, {\"lane\": 2, \"passage_open\": true, \"line_of_sight_blocked\": true}, {\"lane\": 3, \"passage_open\": true, \"line_of_sight_blocked\": true}]"
   },
   {
    "check": "transport covers clip on without touching the films or any part except their seats",
-   "status": "fail",
+   "status": "pass",
    "evidence": "tool-checked",
-   "detail": "45 pairs; overlaps: [('shoe_L', 'transport_cover_L', 196.0), ('shoe_R', 'transport_cover_R', 196.0), ('side_rail_L', 'transport_cover_L', 104.24), ('side_rail_R', 'transport_cover_R', 104.24)]; cover rests touch the cassette borders only (z 7.7 vs film z 10)"
+   "detail": "45 pairs; overlaps: none; cover rests touch the cassette borders only (z 7.7 vs film z 10)"
   },
   {
    "check": "shield openings: no slot longer than 20 mm except the cable entries",
@@ -186,7 +186,7 @@
    "check": "dummy head mass and CG representative of the prototype head (+-10 g, +-3 mm x/y, +-5 mm z)",
    "status": "pass",
    "evidence": "calculated from model volumes x handbook densities",
-   "detail": "dummy 1847 g vs 1847 g; CG offset +0.1 / +0.5 / -1.9 mm; steel ballast 1.65 mm per lane"
+   "detail": "dummy 1847 g vs 1847 g; CG offset +0.1 / +0.4 / -1.9 mm; steel ballast 1.64 mm per lane"
   },
   {
    "check": "head mass vs the 1.67 kg (prototype) / 2.10 kg (production) used in mech_calcs.md",
@@ -236,8 +236,8 @@
      32.5
     ],
     "fits": true,
-    "downward_faces": 41,
-    "downward_area_mm2": 3029.0,
+    "downward_faces": 45,
+    "downward_area_mm2": 3039.0,
     "largest_downward_faces": [
      {
       "z": 1.4,
@@ -274,8 +274,8 @@
      32.5
     ],
     "fits": true,
-    "downward_faces": 41,
-    "downward_area_mm2": 3048.0,
+    "downward_faces": 45,
+    "downward_area_mm2": 3057.0,
     "largest_downward_faces": [
      {
       "z": 1.4,
@@ -469,13 +469,13 @@
     "pn": "RR-HD-X-601",
     "part": "transport_cover_left",
     "bbox_print_mm": [
-     148.0,
+     151.2,
      177.3,
      30.5
     ],
     "fits": true,
     "downward_faces": 2,
-    "downward_area_mm2": 836.0,
+    "downward_area_mm2": 833.0,
     "largest_downward_faces": [
      {
       "z": 21.9,
@@ -485,9 +485,9 @@
      },
      {
       "z": 29.1,
-      "area_mm2": 38.0,
+      "area_mm2": 35.2,
       "span_mm": 2.0,
-      "length_mm": 19.0
+      "length_mm": 17.6
      }
     ]
    },
@@ -495,13 +495,13 @@
     "pn": "RR-HD-X-602",
     "part": "transport_cover_right",
     "bbox_print_mm": [
-     148.0,
+     151.2,
      177.3,
      30.5
     ],
     "fits": true,
     "downward_faces": 2,
-    "downward_area_mm2": 836.0,
+    "downward_area_mm2": 833.0,
     "largest_downward_faces": [
      {
       "z": 21.9,
@@ -511,9 +511,9 @@
      },
      {
       "z": 29.1,
-      "area_mm2": 38.0,
+      "area_mm2": 35.2,
       "span_mm": 2.0,
-      "length_mm": 19.0
+      "length_mm": 17.6
      }
     ]
    },
@@ -526,16 +526,9 @@
      15.5
     ],
     "fits": true,
-    "downward_faces": 1,
-    "downward_area_mm2": 6705.0,
-    "largest_downward_faces": [
-     {
-      "z": 14.3,
-      "area_mm2": 6705.3,
-      "span_mm": 74.4,
-      "length_mm": 94.4
-     }
-    ]
+    "downward_faces": 0,
+    "downward_area_mm2": 0,
+    "largest_downward_faces": []
    },
    {
     "pn": "RR-HD-C-611",
@@ -554,21 +547,14 @@
     "pn": "RR-HD-C-612",
     "part": "cradle_cable_rest",
     "bbox_print_mm": [
-     12.0,
      74.0,
-     28.0
+     28.0,
+     12.0
     ],
     "fits": true,
-    "downward_faces": 1,
-    "downward_area_mm2": 840.0,
-    "largest_downward_faces": [
-     {
-      "z": 8.0,
-      "area_mm2": 840.0,
-      "span_mm": 12.0,
-      "length_mm": 70.0
-     }
-    ]
+    "downward_faces": 0,
+    "downward_area_mm2": 0,
+    "largest_downward_faces": []
    }
   ],
   "bond_points": {
@@ -592,33 +578,27 @@
     162.0
    ],
    "rear": [
-    -160.0,
-    -144.5,
+    -153.0,
     -104.5,
     -70.5,
-    -57.0,
-    -31.5,
-    -20.0,
+    -22.0,
     -8.0,
     0.0,
     8.0,
-    20.0,
-    31.5,
-    57.0,
+    22.0,
     70.5,
     104.5,
-    144.5,
-    160.0
+    153.0
    ]
   },
   "mass_prototype": {
-   "mass_g": 1846.8,
+   "mass_g": 1846.5,
    "cg_mm": [
-    118.2,
+    118.21,
     0.38,
     34.39
    ],
-   "mass_without_pigtails_g": 1726.8,
+   "mass_without_pigtails_g": 1726.5,
    "cg_without_pigtails_mm": [
     126.5,
     0.13,
@@ -640,13 +620,13 @@
    }
   },
   "mass_production": {
-   "mass_g": 2063.7,
+   "mass_g": 2063.8,
    "cg_mm": [
     119.75,
     0.34,
     32.84
    ],
-   "mass_without_pigtails_g": 1943.7,
+   "mass_without_pigtails_g": 1943.8,
    "cg_without_pigtails_mm": [
     127.21,
     0.12,
@@ -668,26 +648,26 @@
    }
   },
   "mass_dummy": {
-   "mass_g": 1847.0,
+   "mass_g": 1846.7,
    "cg_mm": [
-    118.34,
+    118.35,
     0.83,
     32.47
    ],
-   "mass_without_pigtails_g": 1727.0,
+   "mass_without_pigtails_g": 1726.7,
    "cg_without_pigtails_mm": [
-    126.64,
+    126.66,
     0.61,
-    25.96
+    25.97
    ],
    "largest_items_g": {
     "lid": 212.3,
     "spreader": 200.4,
     "dummy_board": 168.7,
     "S0_ballast": 101.5,
+    "S3_ballast": 101.5,
     "S1_ballast": 101.5,
     "S2_ballast": 101.5,
-    "S3_ballast": 101.5,
     "frame_L": 97.2,
     "frame_R": 96.1,
     "shoe_L": 62.1,
@@ -695,10 +675,10 @@
     "fasteners_lumped": 48.0
    }
   },
-  "dummy_ballast_mm": 1.65,
+  "dummy_ballast_mm": 1.64,
   "structure": {
    "prototype, split PA-CF (dry) frame": {
-    "lid fitted (10 screws)": {
+    "lid fitted (all screws)": {
      "pitch": 0.09773406492912665,
      "roll_incl_joint": 0.041455014861280934,
      "wing_bending": 0.0005467981138346201,
@@ -720,22 +700,22 @@
     },
     "roll_if_joint_rigid": 0.01611120290691253,
     "modes_hz": {
-     "pitch on the mount": 79.56090027776435,
-     "roll on the mount": 248.43896731507905,
-     "halves rocking about the y = 0 joint": 174.21854504318313,
-     "wing bending": 3393.0202225654143
+     "pitch on the mount": 79.56642277528222,
+     "roll on the mount": 248.45621201160145,
+     "halves rocking about the y = 0 joint": 174.23063793654163,
+     "wing bending": 3393.255739580578
     },
-    "f1_hz": 79.56090027776435,
+    "f1_hz": 79.56642277528222,
     "joint_terms_Nm_per_rad": {
      "spreader alone (2 mm)": 38.413876543209874,
      "lid alone (2 mm)": 39.94498765432098,
      "spreader + lid as a couple through the lid fasteners near the joint (slip model)": 993.100362343998,
      "rear bridge plate (3 x 13 on edge, T-head to T-head)": 280.3209259259259
     },
-    "mass_kg": 1.8467722765283843
+    "mass_kg": 1.8465159261478694
    },
    "prototype, split PA-CF (conditioned, E x 0.5)": {
-    "lid fitted (10 screws)": {
+    "lid fitted (all screws)": {
      "pitch": 0.09773406492912665,
      "roll_incl_joint": 0.041455014861280934,
      "wing_bending": 0.0006460364434572634,
@@ -757,22 +737,22 @@
     },
     "roll_if_joint_rigid": 0.01611120290691253,
     "modes_hz": {
-     "pitch on the mount": 79.56090027776435,
-     "roll on the mount": 248.43896731507905,
-     "halves rocking about the y = 0 joint": 174.21854504318313,
-     "wing bending": 3121.5582475279075
+     "pitch on the mount": 79.56642277528222,
+     "roll on the mount": 248.45621201160145,
+     "halves rocking about the y = 0 joint": 174.23063793654163,
+     "wing bending": 3121.774921768818
     },
-    "f1_hz": 79.56090027776435,
+    "f1_hz": 79.56642277528222,
     "joint_terms_Nm_per_rad": {
      "spreader alone (2 mm)": 38.413876543209874,
      "lid alone (2 mm)": 39.94498765432098,
      "spreader + lid as a couple through the lid fasteners near the joint (slip model)": 993.100362343998,
      "rear bridge plate (3 x 13 on edge, T-head to T-head)": 280.3209259259259
     },
-    "mass_kg": 1.8467722765283843
+    "mass_kg": 1.8465159261478694
    },
    "prototype, split PETG-CF frame": {
-    "lid fitted (10 screws)": {
+    "lid fitted (all screws)": {
      "pitch": 0.09773406492912665,
      "roll_incl_joint": 0.041455014861280934,
      "wing_bending": 0.0006035413286360589,
@@ -794,22 +774,22 @@
     },
     "roll_if_joint_rigid": 0.01611120290691253,
     "modes_hz": {
-     "pitch on the mount": 79.56090027776435,
-     "roll on the mount": 248.43896731507905,
-     "halves rocking about the y = 0 joint": 174.21854504318313,
-     "wing bending": 3229.5829578161124
+     "pitch on the mount": 79.56642277528222,
+     "roll on the mount": 248.45621201160145,
+     "halves rocking about the y = 0 joint": 174.23063793654163,
+     "wing bending": 3229.807130290356
     },
-    "f1_hz": 79.56090027776435,
+    "f1_hz": 79.56642277528222,
     "joint_terms_Nm_per_rad": {
      "spreader alone (2 mm)": 38.413876543209874,
      "lid alone (2 mm)": 39.94498765432098,
      "spreader + lid as a couple through the lid fasteners near the joint (slip model)": 993.100362343998,
      "rear bridge plate (3 x 13 on edge, T-head to T-head)": 280.3209259259259
     },
-    "mass_kg": 1.8467722765283843
+    "mass_kg": 1.8465159261478694
    },
    "production, one-piece 6061 frame": {
-    "lid fitted (10 screws)": {
+    "lid fitted (all screws)": {
      "pitch": 0.02443351623228166,
      "roll_incl_joint": 0.0063738023521439,
      "wing_bending": 0.00016504634846474582,
@@ -831,12 +811,12 @@
     },
     "roll_if_joint_rigid": 0.004061785266769044,
     "modes_hz": {
-     "pitch on the mount": 150.52518235049354,
-     "roll on the mount": 470.03390770481366,
-     "halves rocking about the y = 0 joint": 545.6464272771875,
-     "wing bending": 5842.200658987067
+     "pitch on the mount": 150.52454288808633,
+     "roll on the mount": 470.03191090262163,
+     "halves rocking about the y = 0 joint": 545.6441092572229,
+     "wing bending": 5842.175840098703
     },
-    "f1_hz": 150.52518235049354,
+    "f1_hz": 150.52454288808633,
     "joint_terms_Nm_per_rad": {
      "spreader alone (2 mm)": 38.413876543209874,
      "lid alone (2 mm)": 39.94498765432098,
@@ -844,7 +824,7 @@
      "rear bridge plate (3 x 13 on edge, T-head to T-head)": 280.3209259259259,
      "one-piece aluminium frame walls": 12590.197952071221
     },
-    "mass_kg": 2.063737193398378
+    "mass_kg": 2.0637547278832047
    }
   },
   "rails": {
@@ -1199,8 +1179,8 @@
     "joint": "chimney drain (one per lane)",
     "from": "ambient (frame underside behind the cassette)",
     "to": "chimney / lane carrier space",
-    "path": "up 0.9 mm, across 2.50 mm in a 1.5 x 1.0 channel in the floor, up 0.6 mm, then 0.6 mm under the black chimney insert",
-    "length_mm": 7.0,
+    "path": "up 1.0 mm, across 4.00 mm in a 1.2 x 1.0 channel in the floor, up 0.7 mm, then 0.6 mm under the black chimney insert",
+    "length_mm": 8.5,
     "turns": 3,
     "barriers": "three right-angle turns in black material; no straight line of sight (tool-checked)",
     "builds": "X,P"
@@ -1375,13 +1355,13 @@
   "bond_pitch_mm": {
    "front": 48.0,
    "side": 31.19999999999999,
-   "rear": 40.0
+   "rear": 48.5
   }
  },
  "summary": {
-  "pass": 30,
-  "fail": 3,
+  "pass": 33,
+  "fail": 0,
   "deviation": 4
  },
- "runtime_s": 64.4
+ "runtime_s": 109.4
 }

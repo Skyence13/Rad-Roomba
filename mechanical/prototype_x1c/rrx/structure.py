@@ -174,7 +174,7 @@ def motor_pod(s):
     tube = cyl(r_o, yf + D.POD_FACE_T - D.POD_Y0, (0, D.POD_Y0, ax_z), (0, 1, 0))
     base = box(-26.0, 26.0, D.POD_Y0, yf + D.POD_FACE_T, Z1, Z1 + 9.0)
     web = box(-r_o, r_o, D.POD_Y0, yf + D.POD_FACE_T, Z1, ax_z)
-    pod = fuse(tube, base, web)
+    pod = fuse(tube, base, web).cut(box(-30.0, 30.0, D.POD_Y0 - 1, 130.0, Z0 - 5, Z1))   # tube bottom (z 35.5) trimmed to the plate top
     pod = pod.cut(cyl(D.POD_BORE_R, yf - D.POD_Y0 + 1, (0, D.POD_Y0 - 1, ax_z), (0, 1, 0)))
     e = L.env("motor")
     pod = pod.cut(cyl(e["boss_d"] / 2 + 0.5, 10, (0, yf - 1, P.AXLE_Z), (0, 1, 0)))        # shaft boss, 7 mm below the can axis

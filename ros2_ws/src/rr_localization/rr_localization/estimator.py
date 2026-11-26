@@ -2,7 +2,9 @@
 
 Wheel + gyro dead reckoning fused (EKF on x, y, yaw in the map frame) with 2D
 LiDAR line fits to the side walls, the front bulkhead and, when the doors are
-closed, the door end.  The trailer dimensions are the SURVEYED values entered
+closed, the door end -- or, with the doors open, a removable flat target placed
+across the door end at `door_target_x_m` (site rule for long trailers, IB-30),
+which is treated exactly like the door end wall at that x.  The trailer dimensions are the SURVEYED values entered
 at configuration.  Outputs a pose sample with covariance, a quality figure, a
 `credit` flag (uncertainty at the detector row within the mapping budget) and a
 hold request when the uncertainty exceeds the hold budget.
@@ -21,13 +23,21 @@ import numpy as np
 
 
 class LocalizerConfig:
-    def __init__(self, length_m, width_m, door_closed=True, lidar_xy=(-0.15, 0.0), lidar_yaw=0.0,
+    def __init__(self, length_m, width_m, door_closed=True, lidar_xy=(-0.15, 0.0), lidar_yaw=0.0, door_target_x_m=None,
                  track_m=0.270, wheel_radius_m=0.052, cpr=9600, head_lever_m=0.32,
                  credit_budget_m=0.010, hold_budget_m=0.040, gate_m=0.08, corner_exclusion_m=0.12,
                  min_points=15, range_sigma_m=0.006, slip_yaw_rad=0.012, odo_scale_sigma=0.02,
                  max_constraint_age_us=1_500_000):
         self.__dict__.update(locals())
         del self.__dict__["self"]
+
+
+def door_reference_x(cfg) -> float | None:
+    """x of the door-end reference line: 0 with the doors closed, the removable target's x with the
+    doors open and a target placed, else None (no door-end reference)."""
+    if cfg.door_closed:
+        return 0.0
+    return None if cfg.door_target_x_m is None else float(cfg.door_target_x_m)
 
 
 class WallLocalizer:
@@ -120,13 +130,15 @@ class WallLocalizer:
         walls = {"left": (np.abs(pm[:, 1] - W / 2) < gate) & (pm[:, 0] > ce) & (pm[:, 0] < L - ce),
                  "right": (np.abs(pm[:, 1] + W / 2) < gate) & (pm[:, 0] > ce) & (pm[:, 0] < L - ce),
                  "front": (np.abs(pm[:, 0] - L) < gate) & (np.abs(pm[:, 1]) < W / 2 - ce)}
-        if c.door_closed:
-            walls["door"] = (np.abs(pm[:, 0]) < gate) & (np.abs(pm[:, 1]) < W / 2 - ce)
+        xd = door_reference_x(c)
+        if xd is not None:
+            walls["door"] = (np.abs(pm[:, 0] - xd) < gate) & (np.abs(pm[:, 1]) < W / 2 - ce)
         explained = np.zeros(len(pb), dtype=bool)
         for m in walls.values():
             explained |= m
         near_any = ((np.abs(np.abs(pm[:, 1]) - W / 2) < gate) | (np.abs(pm[:, 0] - L) < gate) | (np.abs(pm[:, 0]) < gate)
-                    | (np.abs(pm[:, 1]) > W / 2) | (pm[:, 0] > L) | (pm[:, 0] < 0))
+                    | (np.abs(pm[:, 1]) > W / 2) | (pm[:, 0] > L) | (pm[:, 0] < 0)
+                    | ((np.abs(pm[:, 0] - xd) < gate) if xd is not None else False))
         self.residuals = {}
         for name, mask in walls.items():
             pts = pb[mask]
@@ -161,7 +173,7 @@ class WallLocalizer:
                 if self._scalar_update(1, y, sig_d ** 2, name + "_y"):
                     self.last_update["y"] = t_us
             else:
-                x = (L - d) if name == "front" else d
+                x = (L - d) if name == "front" else xd + d
                 if self._scalar_update(0, x, sig_d ** 2, name + "_x"):
                     self.last_update["x"] = t_us
                     self.dist_since_x = 0.0

@@ -182,6 +182,122 @@ STEPS = [
 ]
 
 
+STAGE_TEXT = {   # hand-written work instructions per stage: (do, inserts / torque notes, harness, check after the stage)
+    "01_chassis": (
+        ["Deburr the plate; countersink from BELOW and tap per `out/dxf/chassis_plate_holes.csv` (78 holes). Ream the four 4 H7 dowel holes of the receiver in one set-up with the hole pattern.",
+         "Press the two 4 m6 x 10 locating dowels into each channel ear; press the two hardened 4 m6 x 24 land pins through each channel (they are the z datum C: flush both sides, no burr on the top line).",
+         "Fit each channel to the plate underside on its dowels; 3 x M4 x 10 cap screws from above, medium thread-lock.",
+         "Dock switch: D2HW-C201M into the bracket pocket (2 x M2 into inserts), 3 mm push pin into the left channel end wall, bracket to the plate (2 x M3 from above).",
+         "Cliff pods: RR-TOF boards with light-blocker foam into the pods, IR window bonded in its recess (clear silicone, no squeeze-out over the aperture); pods to the plate (3 x M3 each).",
+         "Caster: shim and 2.5 mm disc on the plate underside (4 x M3 countersunk), caster to the tapped disc (4 x M4 pan head, thread-lock)."],
+        "Inserts: dock switch bracket 2 x M3, cliff pods 3 x M3 each (set at 230-245 C tip for PAHT-CF, flush +-0.1). Torques: M4 receiver 2.2 N m, M3 0.6 N m, M4 caster 1.5 N m.",
+        "Cliff ToF and dock switch leads up through the two 8 mm grommets at x = -2, y = +-80. Leave 150 mm coiled on top of the plate.",
+        "Slide a 16.00 x 14.00 x 70 mm gauge bar (the head-shoe gauge) the full length of each channel: left channel no perceptible y shake, right channel 0.6 mm total y float; 0.06 mm feeler fits under the roof pad, 0.12 mm does not. "
+        "X-stop faces coplanar within 0.05 mm (straight edge + feelers). Dock switch clicks in the last 1.5 mm of gauge travel (continuity meter)."),
+    "02_lower_hull": (
+        ["Set all inserts in the four hull pieces first (sole ring, splice flange, tongue).",
+         "Bond the 1 mm gasket on the front splice flanges; join FL+RL and FR+RR with 1 x M3 x 10 each.",
+         "Run a bead of neutral-cure RTV round the plate edge, lower each hull half onto the plate (the sole ring wraps the plate edge) and screw from below (M3 x 8 countersunk into the sole inserts). Close the y = 0 butt seams on the floor with RTV.",
+         "Front bulkhead on the plate at the chin cut (its pedestals take the latch-arm bolts in stage 6).",
+         "Rear cliff ToF boards into the hull bosses with their clips (2 x M2 each)."],
+        "Inserts: M3 in the sole ring and tongue (ASA: 220-235 C tip), M2 in the ToF seats. Torque M3 into ASA inserts 0.5-0.6 N m (stop at first resistance + 1/8 turn).",
+        "Nothing routed yet; rear cliff leads coiled inside.",
+        "Underside flush with the plate (no step > 0.3 mm a broom could catch); lower land at z = 61.9 continuous across the four pieces (straight edge, gap <= 0.3 mm)."),
+    "03_drive": (
+        ["Insert each gearmotor into its pod from inboard, gearbox face against the pod end wall; 6 x M3 x 6 button head through the stainless screw ring (use whichever of the two printed clockings matches the motor).",
+         "O-ring cord in the pod skin notch; lower the pod+motor into the hull and screw it to the plate from below (4 x M4 x 12 countersunk).",
+         "Hub on the D shaft, flat face outboard, two set screws on the flat (thread-lock); then the wheel rim onto the hub from outboard (6 x M3 x 8), tyre pre-bonded on the rim keys."],
+        "Inserts: 4 x M4 per pod (PAHT-CF). Torque M4 1.5 N m; motor M3 0.5 N m (<= 3 mm thread engagement: use the 6 mm screws only).",
+        "Motor + encoder leads up the pod notch into the left / right gutter (z 84..92 along the hull wall, x -69..-5); cable-tie to the gutter clips, 20 mm service loop at the pod.",
+        "Wheels spin freely by hand, tyre run-out < 0.5 mm radial (dial gauge), both tyre bottoms and the caster wheel on a surface plate within 0.3 mm (feeler under each)."),
+    "04_battery_bay": (
+        ["Insulating floor plug into the plate window (RTV the flange), heater pad on the plug, NTC beside it; bimetal cut-out screwed to the plate under the tunnel foot.",
+         "Tunnel onto the plate (10 x M3 x 8 countersunk from below), fixed SBS50 half into the cradle and cross-pinned (2 x M4 x 55 + nyloc).",
+         "Hatch frame onto the tunnel end bosses (4 x M3 x 10)."],
+        "Inserts: tunnel feet 10 x M3, end bosses 4 x M3, cradle 2 x M3. Torque M3 0.6 N m, M4 cross pins 1.0 N m (snug: the housing is plastic).",
+        "Pack feed + aux leads from the fixed coupler half along under_bridge_right to the right gutter (2-into-1 loom to J_PWR, CCR-E08), heater/NTC leads with them; P-clip at the cradle (strain relief).",
+        "An empty cassette slides in and out with no binding; key rib reversed = blocked at the gate; coupler halves mate by hand."),
+    "05_bridge_grip": (
+        ["Grip feet (angle) on the plate: 2 x M5 x 16 countersunk from below + nyloc above each; side plates to the feet (2 x M5 x 16 cap + nyloc).",
+         "Four bridge posts (M4 from below), bridge tray on top (M4 x 8), gap pad on the tray under the bridge zone, RR-CHS-MAIN on 3 mm spacers (6 x M3 + nyloc under the tray; H1 and H3 bond to chassis).",
+         "CM5 tray (4 x M3 from below), CM5 carrier (4 x M2.5), clamp resistor (2 x M3 into the tapped plate, thermal paste)."],
+        "Torques: M5 grip 4.0 N m (proof-load path: no thread-lock substitutes for the nyloc), M4 1.5 N m, M3 0.5-0.6 N m.",
+        "Now connect in this order: (1) J_PWR (right rear edge, the only Mini-Fit) -- 12 mm clear height over the inboard top-entry headers must be kept free of loom; (2) motor connectors J_MOT_L/R from the gutters; "
+        "(3) cliff and dock leads from the grommets via front_bay; (4) CM5 USB x2 + Ethernet over left_bay_over_cm5; (5) rear-left corner headers (panel, mode, buttons, bumper, rear ToF) via hump_side_left; (6) rear-right corner headers (E-stop, HANDS-ON, cover, NTC, heater). Every lead tie-wrapped within 40 mm of its header.",
+        "Grip side plates vertical within 1 deg; board lies flat (no rocking on the six spacers); continuity board H1/H3 to plate < 0.1 ohm."),
+    "06_nose": (
+        ["Latch arm onto the bulkhead pedestals (4 x M5 x 25 countersunk from below through the plate).",
+         "Nose cowl: J1/J2 receptacles fitted first (O-ring on the outside face, nut inside); slide the cowl rearward over the latch arm until its flange meets the shoulders line (x = 47).",
+         "Draw latch through the chin floor into the tapped arm (4 x M4)."],
+        "Torques: M5 3.0 N m; M4 latch 2.0 N m; receptacle nuts per binder (UNVERIFIED, typ. 1.0-1.5 N m).",
+        "J1/J2 internal leads down the nose cavity through front_bay to the board front edge.",
+        "With a head (or the 16 x 14 shoe gauge bars + a latch keeper dummy) the latch closes with a clear over-centre snap; 45 mm glove ring round each coupling nut free (feel with a gloved hand)."),
+    "07_lid": (
+        ["Pre-assemble the lid pieces off the robot: panel devices into the decks (anti-rotation notch), RR-PANEL on its tray with the light pipes, rear ToF boards and clips, charge inlet + cover + cover switch, bumper switches, door pegs, LiDAR on the hump (gasket, cable gland).",
+         "Perimeter gasket on the lower land; lower the shoulders over the grip side plates (slots), then the rear decks; dowels at x = -45 and x = 47; flange screws.",
+         "Hump down through the deck opening onto the tunnel; curb screws (M3 countersunk from inside), hatch-frame screw at the top."],
+        "Inserts: deck/shoulder flanges, perimeter tongue, hump curb, panel tray bosses, ToF seats. Radial perimeter screws M3 x 10 + bonded washer at 0.5 N m (do not crush the gasket below 1.5 mm).",
+        "Deck harness (controls, panel, rear ToF, LiDAR, inlet) into the board rear corners along hump_side_left / right_bay before the hump closes the space; service loop 60 mm so a deck half can be lifted 50 mm.",
+        "Perimeter land gap even all round (1.5-2.0 mm compressed gasket visible); every control actuates without touching the skin; E-stop latches and resets."),
+    "08_grip_cover": (
+        ["Cheek fairings over the side plates (2 x M3 x 20 through each), look-ahead ToF boards in the fairing noses.",
+         "Grip tube between the side plates, M8 tie rod through, printed sleeve over the tube; nyloc nuts in the fairing pockets, push-in caps.",
+         "Saddle cover on its gasket ledge, 9 captive M3 screws."],
+        "Torque M8 8.0 N m; captive cover screws 0.5 N m.",
+        "Look-ahead ToF leads down the fairing channel into the gutters.",
+        "PROOF LOAD (VT-002): hang 3 x 9 kg = 265 N on the bar centre over 100 mm for 60 s; no permanent set at the side plates, feet or plate (dial gauge on the plate edge < 0.1 mm residual)."),
+    "09_cassette_door": (
+        ["Pack into the cassette with EPDM pads (terminals +y), leads to the floating SBS50 half on its carrier, lid (2 x M3).",
+         "Cassette in, bail swung up (latched, cam pins at the bottom of the slots).",
+         "Hook the door onto the jamb pegs tilted back, swing shut, close the hatch draw latch; bumper segments on their guide screws with springs."],
+        "Inserts: cassette lid 2 x M3, bail pivots 2 x M5, carrier 4 x M3, bumper guides 6 x M3.",
+        "None (the cassette harness is self-contained).",
+        "Door will NOT close with the bail down (ribs block it); with the bail up the door closes and the latch pulls it onto the gasket. Each bumper segment trips its D2HW within 2-6 mm and returns by spring; 8 mm free stroke."),
+    "10_head_tray": (
+        ["Dock the head: shoes into the channels from the front, push to the x-stops, close the draw latch; plug J1/J2.",
+         "For transport: robot onto the tray (wheels into the chocks, caster into the cup), head guards screwed on, straps over saddle and hump."],
+        "-", "J1/J2 pigtails clipped to the shoe roots (head side).",
+        "HEAD_DOCK reads closed only with the latch closed and the head fully seated; head film gap per the head checklist."),
+}
+
+
+def write_assembly(parts, log=print):
+    """assembly.md: illustrated sequence (images from write_images), inserts/torques, harness order, checks per stage."""
+    from .checks import grip_proof
+    A = ["# RR-X prototype body -- assembly sequence\n",
+         "Generated by `rrx/docs.py` from the model (stage images `img/step_*.png` are rendered from the CAD: the new parts of each stage in colour, earlier parts grey). "
+         "Fastener list by sub-assembly with quantities: `hardware_by_subassembly.md`; full parts list: `purchased_and_fabricated.csv`; joint sections at 1:1: `joints/README.md`.\n",
+         "## General rules\n",
+         "- **Heat-set inserts** go in before any part is assembled: soldering iron with the matching insert tip, ASA 220-235 C, PAHT-CF 240-250 C (dry the part first), "
+         "press square to 0.1 mm proud then flatten with a cold flat tip; pull-test one coupon per batch (M3 target >= 400 N in ASA, the value the grip misuse case uses at 600 N is UNVERIFIED until tested).",
+         "- **Screws into inserts**: M2 0.15, M2.5 0.3, M3 0.5-0.6, M4 1.5, M5 2.5 N m. Into aluminium (tapped): M3 0.8, M4 2.2, M5 3.0-4.0 N m. Stainless into aluminium: anti-seize, or medium thread-lock where stated.",
+         "- **Gaskets** (closed-cell silicone, -40 C): fit dry, butt joints scarfed 45 deg and glued with silicone adhesive; never stretch the strip round corners.",
+         "- **Cold**: assemble and torque at room temperature; re-check the M5 grip and M4 receiver torques after the first -20 C soak (aluminium/steel differential is small; printed parts creep).",
+         "- Work order follows the load path: plate and datum first, then everything that is screwed from below, then the lid, cover and the removable items.\n"]
+    shown = []
+    for i, (key, title, pats, _) in enumerate(STEPS, 1):
+        new = [p.name for p in _sel(parts, pats) if p.name not in shown]
+        shown += new
+        do, ins, harness, check = STAGE_TEXT[key]
+        A.append(f"## {title}\n\n![{key}](img/step_{key}.png)\n")
+        A.append(f"Parts added ({len(new)}): {', '.join(new)}.\n")
+        A += [f"{j}. {t}" for j, t in enumerate(do, 1)]
+        A.append(f"\n**Inserts / torques:** {ins}\n\n**Harness:** {harness}\n\n**Check before the next stage:** {check}\n")
+    g = grip_proof()
+    A.append("## Harness routing order (summary)\n")
+    A.append("Corridors are the reserved boxes of `mechanical/common/layout.py` (checked free in `out/prototype_report.md`): front_bay (J1/J2, front cliff, dock switch, clamp resistor), left/right gutter "
+             "(motors, look-ahead ToF, CM5 power; pack and charge feed on the right), under_bridge_right (pack feed between the motor ends), left_bay_over_cm5 (CM5 USB/Ethernet), hump_side_left "
+             "(LiDAR, RR-PANEL, rear ToF, deck controls), right_bay (charge inlet, HANDS-ON/Pause, right rear ToF, bumper). Order: plate-level leads (stage 1-4) -> board connectors in the stage 5 order "
+             "-> nose (stage 6) -> lid (stage 7) -> grip ToF (stage 8). Strain relief: P-clip or tie-wrap within 40 mm of every board header, grommet at every plate pass-through, "
+             "sealed glands at the LiDAR and at the J receptacles (connector seals), service loops where a lid piece must lift.\n")
+    A.append(f"## Removal procedures (checked as sweeps in the report)\n\n- **Battery**: open the hatch latch, lift the door off its pegs, swing the bail down (jacks the cassette 12 mm out of the coupler), pull 165 mm straight back.\n"
+             "- **Wheel**: 6 x M3 out of the rim web, pull the wheel 60 mm outboard; the hub stays on the shaft.\n- **Head**: open the draw latch (lever forward/up), unplug J1/J2, slide the head 66 mm forward.\n"
+             "- **Service cover**: 9 captive screws, lift straight up under the bar, slide forward over the nose. The grip stays in place.\n")
+    A.append(f"Grip proof-load design value: {g['rows'][0][1]} N (calculated, see report section 8).\n")
+    (ROOT / "assembly.md").write_text("\n".join(A) + "\n", encoding="utf-8")
+    log("  assembly.md written")
+
+
 def _sel(parts, pats):
     return [p for p in parts if any(fnmatch.fnmatch(p.name, q) for q in pats) and p.name != "spacer_9ah"]
 

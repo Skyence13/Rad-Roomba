@@ -30,7 +30,7 @@ class PlanConfig:
     def __init__(self, wall_margin_m=0.03, turn_margin_m=0.02, front_margin_m=0.03, door_margin_m=0.10,
                  pair_overlap_m=0.005, allowance_m=0.010, speed_mps=0.10, transit_speed_mps=0.10,
                  reverse_speed_mps=0.05, yaw_rate_radps=0.25, end_caps=True, method="CONTINUOUS_SCAN",
-                 station_pitch_m=0.08, settle_s=0.5, scaler_preset_s=10.0, premotion_s=1.5):
+                 station_pitch_m=0.08, settle_s=0.5, scaler_preset_s=10.0, premotion_s=1.5, door_end_x_m=0.0):
         self.__dict__.update(locals())
         del self.__dict__["self"]
 
@@ -69,10 +69,11 @@ def plan_coverage(length_m, width_m, outline, lane_polys, cfg: PlanConfig) -> di
         raise ValueError("floor too narrow for the turn radius of the outline")
     n_pairs = max(1, int(math.ceil(span / stride_max - 1e-9)) + 1)
     stride = span / (n_pairs - 1) if n_pairs > 1 else 0.0
-    x_door_pivot = cfg.door_margin_m + max(-outline.rear, outline.turn_radius)
+    xd = cfg.door_end_x_m               # 0, or the removable door-end target's x (doors open, IB-30)
+    x_door_pivot = xd + cfg.door_margin_m + max(-outline.rear, outline.turn_radius)
     x_front_pivot = length_m - cfg.front_margin_m - outline.turn_radius
     x_front_end = length_m - cfg.front_margin_m - outline.front       # axle x with the nose at the front margin
-    x_door_end = cfg.door_margin_m + outline.front                    # axle x heading -x with the nose at the door margin
+    x_door_end = xd + cfg.door_margin_m + outline.front               # axle x heading -x with the nose at the door margin
     if x_front_pivot <= x_door_pivot:
         raise ValueError("floor too short for in-place turns")
     stage = {"CONTINUOUS_SCAN": "SCAN", "SEARCH_THEN_COUNT": "SEARCH", "STEP_AND_COUNT": "SCALER"}[cfg.method]

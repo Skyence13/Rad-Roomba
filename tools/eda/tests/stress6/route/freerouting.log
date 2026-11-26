@@ -1,33 +1,116 @@
 
 
-2026-11-26 19:50:23.898 INFO   Freerouting v2.6.0 (build-date: 2026-11-25)
-2026-11-26 19:50:24.281 INFO   Hardware: 4 CPU cores, 379 CPU score, 3072 MB RAM
-2026-11-26 19:50:24.285 WARN   GUI is disabled and you don't have a console available, so the only feedback from Freerouting is in the log.
-2026-11-26 19:50:25.473 WARN   The '-mp' command-line flag is deprecated and will be removed in a future release; use '--router.autorouter.max_passes' instead.
-2026-11-26 19:50:25.473 WARN   The '-mt' command-line flag is deprecated and will be removed in a future release; use '--router.max_threads=<n>' instead.
-2026-11-26 19:50:26.132 INFO   [7987B6\739C17] Loading board file 'STRESS-150-6L.dsn'...
-2026-11-26 19:50:27.430 INFO   The board's own vias decide: router.autorouter.via_touching_pad = true.
-2026-11-26 19:50:27.479 INFO   [7987B6\739C17] Job '7987B6\739C17' started at 2026-11-26T19:50:27.470537638Z.
-2026-11-26 19:50:27.811 WARN   Design Warning: Board has 56 pre-existing clearance violation(s) in the loaded design (before routing):
-  - 56 unfixable violation(s) (cannot be resolved by Freerouting):
+2026-11-26 20:00:57.880 INFO   Freerouting v2.6.0 (build-date: 2026-11-25)
+2026-11-26 20:00:58.282 INFO   Hardware: 4 CPU cores, 271 CPU score, 3072 MB RAM
+2026-11-26 20:00:58.285 WARN   GUI is disabled and you don't have a console available, so the only feedback from Freerouting is in the log.
+2026-11-26 20:00:59.469 WARN   The '-mp' command-line flag is deprecated and will be removed in a future release; use '--router.autorouter.max_passes' instead.
+2026-11-26 20:00:59.469 WARN   The '-mt' command-line flag is deprecated and will be removed in a future release; use '--router.max_threads=<n>' instead.
+2026-11-26 20:01:00.050 INFO   [CA098F\A2271F] Loading board file 'STRESS-150-6L.retry.dsn'...
+2026-11-26 20:01:02.093 INFO   The board's own vias decide: router.autorouter.via_in_pad = true.
+2026-11-26 20:01:02.167 INFO   [CA098F\A2271F] Job 'CA098F\A2271F' started at 2026-11-26T20:01:02.166838737Z.
+2026-11-26 20:01:02.699 WARN   Design Warning: Board has 58 pre-existing clearance violation(s) in the loaded design (before routing):
+  - 58 unfixable violation(s) (cannot be resolved by Freerouting):
       * 56 pin-to-pin clearance violations (first 5 shown):
           - U2.49 [net GND] <-> U2.48 [net +3V3]
           - U2.49 [net GND] <-> U2.46 [net IO50]
           - U2.49 [net GND] <-> U2.45 [net IO49]
           - U2.49 [net GND] <-> U2.44 [net unconnected-(U2-BOOT0-Pad44)]
           - U2.49 [net GND] <-> U2.43 [net IO48]
+      * 2 fixed trace/via clearance violations:
+          - FixedTrace#3053 [net IO50] <-> U1.37 [net IO51]
+          - FixedTrace#3045 [net IO50] <-> U1.37 [net IO51]
   - 0 potentially fixable violations
 Notice: Freerouting does not modify component placement, board outlines, or fixed items.
-Resolving these 56 unfixable violation(s) is the responsibility of the board author in their EDA tool (e.g. KiCad).
-2026-11-26 19:50:27.995 INFO   [7987B6\739C17] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=4.
-2026-11-26 19:50:28.233 INFO   [7987B6\739C17] Auto-routing stage started on board 'c2d5702e0f7f75389f47234a5bb7f927' with baseline score 377.56 for 190 unrouted items.
-2026-11-26 19:50:29.405 WARN   Polyline: must contain at least 2 different points
-2026-11-26 19:50:31.181 WARN   Polyline: must contain at least 2 different points
-2026-11-26 19:51:43.753 INFO   [7987B6\739C17] Auto-routing pass #1 on board 'c2d5702e0f7f75389f47234a5bb7f927' was completed in 75.43 seconds with score 846.03 (47 unrouted and 56 violations), using 65.11 CPU seconds and the job allocated 27.97 GB of memory so far.
-2026-11-26 19:52:44.876 INFO   [7987B6\739C17] Auto-routing pass #2 on board 'a96a9cba5050e83c94b789eccc548ffe' was completed in 60.90 seconds with score 908.27 (28 unrouted and 56 violations), using 121.57 CPU seconds and the job allocated 51.84 GB of memory so far.
-2026-11-26 19:53:34.783 INFO   [7987B6\739C17] Auto-routing pass #3 on board 'b698b736b920e045a52793f00c6410d9' was completed in 49.67 seconds with score 947.58 (16 unrouted and 56 violations), using 166.37 CPU seconds and the job allocated 71.64 GB of memory so far.
-2026-11-26 19:54:24.226 INFO   [7987B6\739C17] Auto-routing pass #4 on board 'f9bd0ee045022da2e2e7b89b3c66f81e' was completed in 49.29 seconds with score 947.58 (16 unrouted and 56 violations), using 212.59 CPU seconds and the job allocated 91.37 GB of memory so far.
-2026-11-26 19:55:14.175 INFO   [7987B6\739C17] Auto-routing pass #5 on board '14e07bfd2ed35964dbcad96046a295fb' was completed in 49.66 seconds with score 960.69 (12 unrouted and 56 violations), using 257.17 CPU seconds and the job allocated 109.48 GB of memory so far.
-2026-11-26 19:56:07.561 INFO   [7987B6\739C17] Auto-routing pass #6 on board '84162c39f333993f8d0b6d700339deec' was completed in 53.16 seconds with score 957.41 (13 unrouted and 56 violations), using 305.43 CPU seconds and the job allocated 128.70 GB of memory so far.
-2026-11-26 19:56:37.035 INFO   [7987B6\739C17] Auto-routing pass #7 on board '3e6b09b1288384014b08bf71ac335099' was completed in 29.20 seconds with score 967.24 (10 unrouted and 56 violations), using 331.97 CPU seconds and the job allocated 139.98 GB of memory so far.
-2026-11-26 19:57:08.008 INFO   [7987B6\739C17] Auto-routing pass #8 on board '50a290049a277b86e581a0ac8a5c200d' was completed in 30.82 seconds with score 967.24 (10 unrouted and 56 violations), using 360.38 CPU seconds and the job allocated 151.95 GB of memory so far.
+Resolving these 58 unfixable violation(s) is the responsibility of the board author in their EDA tool (e.g. KiCad).
+2026-11-26 20:01:03.037 INFO   [CA098F\A2271F] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=4.
+2026-11-26 20:01:03.577 INFO   [CA098F\A2271F] Auto-routing stage started on board '71b3ac873bd273bc3438bc4fad1e77d4' with baseline score 960.69 for 12 unrouted items.
+2026-11-26 20:01:13.604 INFO   [CA098F\A2271F] Auto-routing pass #1 on board '71b3ac873bd273bc3438bc4fad1e77d4' was completed in 9.72 seconds with score 977.07 (7 unrouted and 58 violations), using 6.78 CPU seconds and the job allocated 2.50 GB of memory so far.
+2026-11-26 20:01:25.738 INFO   [CA098F\A2271F] Auto-routing pass #2 on board '9067d51b43c699e0f57ccb7545776209' was completed in 11.69 seconds with score 977.07 (7 unrouted and 58 violations), using 16.97 CPU seconds and the job allocated 6.76 GB of memory so far.
+2026-11-26 20:01:35.918 INFO   [CA098F\A2271F] Auto-routing pass #3 on board '9067d51b43c699e0f57ccb7545776209' was completed in 10.10 seconds with score 977.07 (7 unrouted and 58 violations), using 26.10 CPU seconds and the job allocated 11.02 GB of memory so far.
+2026-11-26 20:01:41.532 INFO   [CA098F\A2271F] Auto-routing pass #4 on board '9067d51b43c699e0f57ccb7545776209' was completed in 5.49 seconds with score 977.07 (7 unrouted and 58 violations), using 31.47 CPU seconds and the job allocated 13.38 GB of memory so far.
+2026-11-26 20:01:47.006 INFO   [CA098F\A2271F] Auto-routing pass #5 on board '9067d51b43c699e0f57ccb7545776209' was completed in 5.34 seconds with score 977.07 (7 unrouted and 58 violations), using 36.09 CPU seconds and the job allocated 15.46 GB of memory so far.
+2026-11-26 20:01:52.242 INFO   [CA098F\A2271F] Auto-routing pass #6 on board '9067d51b43c699e0f57ccb7545776209' was completed in 5.14 seconds with score 977.07 (7 unrouted and 58 violations), using 40.73 CPU seconds and the job allocated 17.65 GB of memory so far.
+2026-11-26 20:01:57.972 INFO   [CA098F\A2271F] Auto-routing pass #7 on board '9067d51b43c699e0f57ccb7545776209' was completed in 5.67 seconds with score 980.34 (6 unrouted and 58 violations), using 46.31 CPU seconds and the job allocated 20.12 GB of memory so far.
+2026-11-26 20:02:04.042 INFO   [CA098F\A2271F] Auto-routing pass #8 on board '8aef7a544db98ed0cd39c633fd10247a' was completed in 5.77 seconds with score 980.34 (6 unrouted and 58 violations), using 51.62 CPU seconds and the job allocated 22.41 GB of memory so far.
+2026-11-26 20:02:10.363 INFO   [CA098F\A2271F] Auto-routing pass #9 on board '8aef7a544db98ed0cd39c633fd10247a' was completed in 6.22 seconds with score 980.34 (6 unrouted and 58 violations), using 57.73 CPU seconds and the job allocated 24.92 GB of memory so far.
+2026-11-26 20:02:10.773 INFO   [CA098F\A2271F] Auto-routing pass #10 on board '8aef7a544db98ed0cd39c633fd10247a' was completed in 0.32 seconds with score 980.34 (6 unrouted and 58 violations), using 57.73 CPU seconds and the job allocated 24.92 GB of memory so far.
+2026-11-26 20:02:16.496 INFO   [CA098F\A2271F] Auto-routing pass #11 on board '8aef7a544db98ed0cd39c633fd10247a' was completed in 5.66 seconds with score 980.34 (6 unrouted and 58 violations), using 63.37 CPU seconds and the job allocated 27.27 GB of memory so far.
+2026-11-26 20:02:16.843 INFO   [CA098F\A2271F] Last-mile rip-up removed 5 blocking trace(s) or via(s) around 6 remaining connection(s).
+2026-11-26 20:02:23.696 INFO   [CA098F\A2271F] Auto-routing pass #12 on board '31eb92ff44d2b09a2a35b308bd3514ca' was completed in 6.62 seconds with score 980.34 (6 unrouted and 58 violations), using 69.60 CPU seconds and the job allocated 29.81 GB of memory so far.
+2026-11-26 20:02:24.376 INFO   [CA098F\A2271F] Auto-routing pass #13 on board 'fe2a0dbe0acf2ae59934a3a81c266edc' was completed in 0.31 seconds with score 980.34 (6 unrouted and 58 violations), using 70.38 CPU seconds and the job allocated 30.23 GB of memory so far.
+2026-11-26 20:02:24.736 INFO   [CA098F\A2271F] Auto-routing pass #14 on board 'fe2a0dbe0acf2ae59934a3a81c266edc' was completed in 0.30 seconds with score 980.34 (6 unrouted and 58 violations), using 70.38 CPU seconds and the job allocated 30.23 GB of memory so far.
+2026-11-26 20:02:25.097 INFO   [CA098F\A2271F] Auto-routing pass #15 on board 'fe2a0dbe0acf2ae59934a3a81c266edc' was completed in 0.29 seconds with score 980.34 (6 unrouted and 58 violations), using 70.38 CPU seconds and the job allocated 30.23 GB of memory so far.
+2026-11-26 20:02:25.336 INFO   [CA098F\A2271F] Last-mile rip-up removed 5 blocking trace(s) or via(s) around 6 remaining connection(s).
+2026-11-26 20:02:31.400 INFO   [CA098F\A2271F] Auto-routing pass #16 on board 'a854c507821767e6a4063f41b137ced4' was completed in 5.94 seconds with score 980.34 (6 unrouted and 58 violations), using 76.83 CPU seconds and the job allocated 33.24 GB of memory so far.
+2026-11-26 20:02:37.431 INFO   [CA098F\A2271F] Auto-routing pass #17 on board '7a0ac9a9fdd78de593bfe1b8e4131628' was completed in 5.82 seconds with score 980.34 (6 unrouted and 58 violations), using 82.28 CPU seconds and the job allocated 35.53 GB of memory so far.
+2026-11-26 20:02:37.803 INFO   [CA098F\A2271F] Auto-routing pass #18 on board '7a0ac9a9fdd78de593bfe1b8e4131628' was completed in 0.30 seconds with score 980.34 (6 unrouted and 58 violations), using 82.28 CPU seconds and the job allocated 35.53 GB of memory so far.
+2026-11-26 20:02:37.885 INFO   [CA098F\A2271F] The router's best score (980.34) has not improved by more than 0.5 points since pass #8. Stopping the auto-router after 18 passes (6 items still unconnected).
+The following connections could not be routed -- please review your design (e.g. check pad clearances, trace width rules, and available routing space):
+  Net 'GND' (1 unrouted connection):
+    - U1-15  ->  C10-2
+  Net '+3V3' (1 unrouted connection):
+    - U2-9  ->  via
+  Net 'IO37' (1 unrouted connection):
+    - U2-6  ->  U1-25
+  Net 'IO38' (1 unrouted connection):
+    - U2-2  ->  U1-26
+  Net 'IO46' (1 unrouted connection):
+    - U2-41  ->  U1-30
+  Net 'IO51' (1 unrouted connection):
+    - U2-21  ->  U1-37
+2026-11-26 20:02:38.307 INFO   [CA098F\A2271F] Routing fallback: the default configuration stopped at stagnation with 6 unrouted, 0 new violations (58 total), score 980.34; trying 1 alternative strategy.
+2026-11-26 20:02:38.649 INFO   [CA098F\A2271F] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=4.
+2026-11-26 20:02:39.103 INFO   [CA098F\A2271F] Auto-routing stage started on board '71b3ac873bd273bc3438bc4fad1e77d4' with baseline score 960.69 for 12 unrouted items.
+2026-11-26 20:02:50.444 INFO   Necked retry routed net 'IO51' at 150.0 um trace width.
+2026-11-26 20:02:50.713 INFO   [CA098F\A2271F] Auto-routing pass #1 [continue-auto-neck] on board '71b3ac873bd273bc3438bc4fad1e77d4' was completed in 11.38 seconds with score 986.90 (4 unrouted and 58 violations), using 93.99 CPU seconds and the job allocated 41.16 GB of memory so far.
+2026-11-26 20:03:01.047 INFO   [CA098F\A2271F] Auto-routing pass #2 [continue-auto-neck] on board '0188511dede5e7ee0dd0e826dfe716e5' was completed in 10.10 seconds with score 986.90 (4 unrouted and 58 violations), using 103.29 CPU seconds and the job allocated 45.50 GB of memory so far.
+2026-11-26 20:03:12.516 INFO   [CA098F\A2271F] Auto-routing pass #3 [continue-auto-neck] on board '0188511dede5e7ee0dd0e826dfe716e5' was completed in 11.42 seconds with score 986.90 (4 unrouted and 58 violations), using 114.39 CPU seconds and the job allocated 50.08 GB of memory so far.
+2026-11-26 20:03:12.950 INFO   Necked retry routed net 'AUX00' at 150.0 um trace width.
+2026-11-26 20:03:13.291 INFO   [CA098F\A2271F] Auto-routing pass #4 [continue-auto-neck] on board '0188511dede5e7ee0dd0e826dfe716e5' was completed in 0.72 seconds with score 986.90 (4 unrouted and 58 violations), using 114.39 CPU seconds and the job allocated 50.08 GB of memory so far.
+2026-11-26 20:03:20.796 INFO   [CA098F\A2271F] Auto-routing pass #5 [continue-auto-neck] on board '078b958c577e8b61892b3456392f0842' was completed in 7.33 seconds with score 986.90 (4 unrouted and 58 violations), using 120.47 CPU seconds and the job allocated 52.66 GB of memory so far.
+2026-11-26 20:03:29.098 INFO   [CA098F\A2271F] Auto-routing pass #6 [continue-auto-neck] on board '078b958c577e8b61892b3456392f0842' was completed in 8.25 seconds with score 986.90 (4 unrouted and 58 violations), using 126.05 CPU seconds and the job allocated 54.77 GB of memory so far.
+2026-11-26 20:03:34.754 INFO   [CA098F\A2271F] Auto-routing pass #7 [continue-auto-neck] on board '078b958c577e8b61892b3456392f0842' was completed in 5.60 seconds with score 986.90 (4 unrouted and 58 violations), using 131.66 CPU seconds and the job allocated 57.29 GB of memory so far.
+2026-11-26 20:03:40.120 INFO   [CA098F\A2271F] Auto-routing pass #8 [continue-auto-neck] on board '078b958c577e8b61892b3456392f0842' was completed in 5.31 seconds with score 986.90 (4 unrouted and 58 violations), using 136.35 CPU seconds and the job allocated 59.43 GB of memory so far.
+2026-11-26 20:03:47.397 INFO   [CA098F\A2271F] Auto-routing pass #9 [continue-auto-neck] on board '078b958c577e8b61892b3456392f0842' was completed in 7.23 seconds with score 986.90 (4 unrouted and 58 violations), using 141.50 CPU seconds and the job allocated 61.75 GB of memory so far.
+2026-11-26 20:03:55.066 INFO   [CA098F\A2271F] Auto-routing pass #10 [continue-auto-neck] on board '078b958c577e8b61892b3456392f0842' was completed in 7.62 seconds with score 986.90 (4 unrouted and 58 violations), using 147.06 CPU seconds and the job allocated 64.12 GB of memory so far.
+2026-11-26 20:04:00.665 INFO   [CA098F\A2271F] Auto-routing pass #11 [continue-auto-neck] on board '078b958c577e8b61892b3456392f0842' was completed in 5.55 seconds with score 986.90 (4 unrouted and 58 violations), using 152.69 CPU seconds and the job allocated 66.68 GB of memory so far.
+2026-11-26 20:04:00.957 INFO   [CA098F\A2271F] Last-mile rip-up removed 8 blocking trace(s) or via(s) around 4 remaining connection(s).
+2026-11-26 20:04:13.332 INFO   [CA098F\A2271F] Auto-routing pass #12 [continue-auto-neck] on board '3fbf3e56da3c820b6b8c0674051a54f2' was completed in 12.17 seconds with score 986.90 (4 unrouted and 58 violations), using 160.00 CPU seconds and the job allocated 69.89 GB of memory so far.
+2026-11-26 20:04:19.993 INFO   [CA098F\A2271F] Auto-routing pass #13 [continue-auto-neck] on board '3cd21209397eb9cf631abf46d598a19a' was completed in 6.40 seconds with score 983.62 (5 unrouted and 58 violations), using 165.78 CPU seconds and the job allocated 72.48 GB of memory so far.
+2026-11-26 20:04:25.614 INFO   [CA098F\A2271F] Auto-routing pass #14 [continue-auto-neck] on board '2185acf694c153d8d4c81b4531851912' was completed in 5.38 seconds with score 986.90 (4 unrouted and 58 violations), using 171.37 CPU seconds and the job allocated 74.98 GB of memory so far.
+2026-11-26 20:04:30.829 INFO   [CA098F\A2271F] Auto-routing pass #15 [continue-auto-neck] on board '4b034f90b57019002fe2b23046de89e8' was completed in 5.05 seconds with score 986.90 (4 unrouted and 58 violations), using 176.14 CPU seconds and the job allocated 77.20 GB of memory so far.
+2026-11-26 20:04:31.000 INFO   [CA098F\A2271F] Last-mile rip-up removed 8 blocking trace(s) or via(s) around 4 remaining connection(s).
+2026-11-26 20:04:42.211 INFO   [CA098F\A2271F] Auto-routing pass #16 [continue-auto-neck] on board 'a138d6992d447140e3d45e5e9663439d' was completed in 11.10 seconds with score 986.90 (4 unrouted and 58 violations), using 186.02 CPU seconds and the job allocated 81.95 GB of memory so far.
+2026-11-26 20:04:47.897 INFO   [CA098F\A2271F] Auto-routing pass #17 [continue-auto-neck] on board '4b67fd036bb4b4881e5b2ecc0cb044a4' was completed in 5.51 seconds with score 986.90 (4 unrouted and 58 violations), using 191.29 CPU seconds and the job allocated 84.49 GB of memory so far.
+2026-11-26 20:04:54.071 INFO   [CA098F\A2271F] Auto-routing pass #18 [continue-auto-neck] on board '4b67fd036bb4b4881e5b2ecc0cb044a4' was completed in 6.06 seconds with score 986.90 (4 unrouted and 58 violations), using 196.58 CPU seconds and the job allocated 86.85 GB of memory so far.
+2026-11-26 20:04:54.151 INFO   [CA098F\A2271F] The router's best score (986.90) has not improved by more than 0.5 points since pass #8. Stopping the auto-router after 18 passes (4 items still unconnected).
+The following connections could not be routed -- please review your design (e.g. check pad clearances, trace width rules, and available routing space):
+  Net 'IO37' (1 unrouted connection):
+    - U2-6  ->  U1-25
+  Net 'IO38' (1 unrouted connection):
+    - U2-2  ->  U1-26
+  Net 'IO46' (1 unrouted connection):
+    - U2-41  ->  U1-30
+  Net 'AUX00' (1 unrouted connection):
+    - U2-22  ->  J4-1
+2026-11-26 20:04:54.337 INFO   [CA098F\A2271F] Start necked: 14 connection(s) of nets that needed the neck before routed at the neck width without a class-width search, 15 did not route.
+2026-11-26 20:04:54.560 INFO   [CA098F\A2271F] Routing fallback 'continue-auto-neck': 4 unrouted, 0 new violations (58 total), score 986.90 after stagnation.
+2026-11-26 20:04:54.859 INFO   [CA098F\A2271F] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=4.
+2026-11-26 20:04:55.138 INFO   [CA098F\A2271F] Auto-routing stage started on board 'cf265d1e0f4746b557d94cf89a1d9531' with baseline score 986.90 for 4 unrouted items.
+2026-11-26 20:04:59.850 INFO   [CA098F\A2271F] Auto-routing pass #1 [continue] on board 'cf265d1e0f4746b557d94cf89a1d9531' was completed in 4.58 seconds with score 986.90 (4 unrouted and 58 violations), using 202.03 CPU seconds and the job allocated 89.56 GB of memory so far.
+2026-11-26 20:05:04.701 INFO   [CA098F\A2271F] Auto-routing pass #2 [continue] on board 'cf265d1e0f4746b557d94cf89a1d9531' was completed in 4.81 seconds with score 986.90 (4 unrouted and 58 violations), using 206.76 CPU seconds and the job allocated 91.91 GB of memory so far.
+2026-11-26 20:05:09.698 INFO   [CA098F\A2271F] Auto-routing pass #3 [continue] on board 'cf265d1e0f4746b557d94cf89a1d9531' was completed in 4.95 seconds with score 986.90 (4 unrouted and 58 violations), using 211.42 CPU seconds and the job allocated 94.14 GB of memory so far.
+2026-11-26 20:05:09.917 INFO   [CA098F\A2271F] Auto-routing pass #4 [continue] on board 'cf265d1e0f4746b557d94cf89a1d9531' was completed in 0.17 seconds with score 986.90 (4 unrouted and 58 violations), using 211.42 CPU seconds and the job allocated 94.14 GB of memory so far.
+2026-11-26 20:05:14.914 INFO   [CA098F\A2271F] Auto-routing pass #5 [continue] on board 'cf265d1e0f4746b557d94cf89a1d9531' was completed in 4.95 seconds with score 986.90 (4 unrouted and 58 violations), using 216.14 CPU seconds and the job allocated 96.44 GB of memory so far.
+2026-11-26 20:05:19.631 INFO   [CA098F\A2271F] Auto-routing pass #6 [continue] on board 'cf265d1e0f4746b557d94cf89a1d9531' was completed in 4.67 seconds with score 986.90 (4 unrouted and 58 violations), using 220.92 CPU seconds and the job allocated 98.84 GB of memory so far.
+2026-11-26 20:05:19.893 INFO   [CA098F\A2271F] Auto-routing pass #7 [continue] on board 'cf265d1e0f4746b557d94cf89a1d9531' was completed in 0.21 seconds with score 986.90 (4 unrouted and 58 violations), using 220.92 CPU seconds and the job allocated 98.84 GB of memory so far.
+2026-11-26 20:05:20.124 INFO   [CA098F\A2271F] Auto-routing pass #8 [continue] on board 'cf265d1e0f4746b557d94cf89a1d9531' was completed in 0.18 seconds with score 986.90 (4 unrouted and 58 violations), using 220.92 CPU seconds and the job allocated 98.84 GB of memory so far.
+2026-11-26 20:05:25.113 INFO   [CA098F\A2271F] Auto-routing pass #9 [continue] on board 'cf265d1e0f4746b557d94cf89a1d9531' was completed in 4.94 seconds with score 986.90 (4 unrouted and 58 violations), using 225.69 CPU seconds and the job allocated 101.15 GB of memory so far.
+2026-11-26 20:05:25.358 INFO   [CA098F\A2271F] Auto-routing pass #10 [continue] on board 'cf265d1e0f4746b557d94cf89a1d9531' was completed in 0.20 seconds with score 986.90 (4 unrouted and 58 violations), using 225.69 CPU seconds and the job allocated 101.15 GB of memory so far.
+2026-11-26 20:05:29.940 INFO   [CA098F\A2271F] Auto-routing pass #11 [continue] on board 'cf265d1e0f4746b557d94cf89a1d9531' was completed in 4.53 seconds with score 986.90 (4 unrouted and 58 violations), using 230.37 CPU seconds and the job allocated 103.64 GB of memory so far.
+2026-11-26 20:05:30.111 INFO   [CA098F\A2271F] Last-mile rip-up removed 21 blocking trace(s) or via(s) around 4 remaining connection(s).
+2026-11-26 20:05:30.941 INFO   [CA098F\A2271F] Auto-routing pass #12 [continue] on board '3c9e6bbbed7e70966a1f80349e4a84cd' was completed in 0.72 seconds with score 980.34 (6 unrouted and 58 violations), using 231.25 CPU seconds and the job allocated 104.14 GB of memory so far.
+2026-11-26 20:05:31.360 INFO   [CA098F\A2271F] Auto-routing pass #13 [continue] on board '1b21e5510ca78c8c05ea0955d98489d6' was completed in 0.25 seconds with score 980.34 (6 unrouted and 58 violations), using 231.25 CPU seconds and the job allocated 104.14 GB of memory so far.
+2026-11-26 20:05:31.640 INFO   [CA098F\A2271F] Auto-routing pass #14 [continue] on board '1b21e5510ca78c8c05ea0955d98489d6' was completed in 0.23 seconds with score 980.34 (6 unrouted and 58 violations), using 232.17 CPU seconds and the job allocated 104.72 GB of memory so far.
+2026-11-26 20:05:31.939 INFO   [CA098F\A2271F] Auto-routing pass #15 [continue] on board '1b21e5510ca78c8c05ea0955d98489d6' was completed in 0.25 seconds with score 980.34 (6 unrouted and 58 violations), using 232.17 CPU seconds and the job allocated 104.72 GB of memory so far.
+2026-11-26 20:05:32.111 INFO   [CA098F\A2271F] Last-mile rip-up removed 5 blocking trace(s) or via(s) around 6 remaining connection(s).

@@ -140,7 +140,7 @@ class NativeSystem:
             tr, geo = self._world_args
             lanes = lane_polygons(json.loads(base64.b64decode(m["descriptor_b64"])), m["mount_transform"])
             self.world = World(tr["length_m"], tr["width_m"], Calibration.load(DATA / "demo_calibration.json"), lanes,
-                               seed=self.seed, door_closed=tr["door_closed"], lidar_xy=tuple(geo["lidar"]["xy"]))
+                               seed=self.seed, door_closed=tr["door_closed"], door_target_x_m=tr.get("door_target_x_m"), lidar_xy=tuple(geo["lidar"]["xy"]))
 
     @property
     def t(self):

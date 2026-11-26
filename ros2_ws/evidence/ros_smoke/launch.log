@@ -1,11 +1,11 @@
-[INFO] [launch]: All log files can be found below /tmp/rrhome/log/2026-11-26-19-49-03-161994-vm-33
+[INFO] [launch]: All log files can be found below /tmp/rrhome/log/2026-11-26-20-01-08-467475-vm-34
 [INFO] [launch]: Default logging verbosity is set to INFO
-[INFO] [sim_node-1]: process started with pid [36]
-[sim_node-1] [WARN] [1795722543.835486636] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
-[sim_node-1] [WARN] [1795722543.835517716] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
-[INFO] [robot_node-2]: process started with pid [62]
-[robot_node-2] [WARN] [1795722545.506518837] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
-[robot_node-2] [WARN] [1795722545.506550944] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
-[robot_node-2] [WARN] [1795722545.578238815] [rr_robot]: demo registry for the packaged synthetic head descriptor: SIMULATION ONLY
+[INFO] [sim_node-1]: process started with pid [48]
+[sim_node-1] [WARN] [1795723269.051556860] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[sim_node-1] [WARN] [1795723269.051989890] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+[INFO] [robot_node-2]: process started with pid [63]
+[robot_node-2] [WARN] [1795723270.906240751] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[robot_node-2] [WARN] [1795723270.906557179] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+[robot_node-2] [WARN] [1795723270.978619935] [rr_robot]: demo registry for the packaged synthetic head descriptor: SIMULATION ONLY
 [robot_node-2] WARNING: DEMONSTRATION ACCOUNTS loaded (operator, operator2, rp, viewer); passwords are trivial or stored in plain text and the operator interface is plain HTTP without TLS. NOT for field use: replace the accounts (password_hash only) and put TLS + real authentication in front of the service first.
-[robot_node-2] [INFO] [1795722546.066554939] [rr_robot]: RobotApp running: head tcp://127.0.0.1:5540, chassis tcp://127.0.0.1:5550, run /tmp/rrhome/ros_smoke_1795722542, UI http://<robot>:8097/
+[robot_node-2] [INFO] [1795723271.146443605] [rr_robot]: RobotApp running: head tcp://127.0.0.1:5540, chassis tcp://127.0.0.1:5550, run /tmp/rrhome/ros_smoke_1795723267, UI http://<robot>:8097/

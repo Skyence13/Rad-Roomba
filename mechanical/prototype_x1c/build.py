@@ -56,6 +56,7 @@ def main(argv=None):
         print(f"[6/6] images and joint sections ({time.time() - t0:.0f} s)", flush=True)
         docs.write_images(parts)
         docs.write_joints(parts)
+    docs.write_assembly(parts)
     if not args.no_checks:
         docs.write_report(R, table, parts, f"{time.time() - t0:.0f} s (BREP cache {'warm' if time.time() - t0 < 400 else 'cold or partly cold'})")
     print(f"done in {time.time() - t0:.0f} s -> {'ALL CHECKS PASS' if ok else 'CHECK FAILURES (see out/prototype_report.md)'}")

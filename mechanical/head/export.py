@@ -47,7 +47,9 @@ def printed_parts():
         rows.append({"pn": pn, "name": name, "shape": shape, "orient": orient, "material": material, "qty": qty, "plate": plate, "supports": supports, "note": note, "kit": kit, **d})
 
     add("RR-HD-X-101", "frame_half_left", P["frame_L"].shape, (0, 0, 0), "PA-CF", 1, "H01",
-        "yes, small: roof of the T-head pocket (60 mm span) and the two guide slits at the rear corner; tree supports, non-critical surfaces. None in a cavity, on the seat shoulder or on the joint face.",
+        "optional, non-critical: the rear wall bridges 60 mm over each T-head pocket opening at z 30.0 (tree supports from the pocket floor; the face carries no load, the spreader is the seat). "
+        "Everything else bridges <= 13.5 mm (side switch pocket roof, guide slits, drain channel) or overhangs <= 5 mm (lid boss undersides, tongue). Horizontal bores (guide rods 4.3, dowels, bail-block inserts) print as holes and are reamed. "
+        "No support on the cassette seat (bed face), the module seat shoulders, the rib tops, the spreader seat or the joint faces.",
         "underside (z 10.5) on the bed; cavity walls, seat shoulder, rib top and wall top are all vertical or upward faces; joint face vertical", walls=5, infill="40 % gyroid (100 % below z 11 and in the ribs: 4-5 perimeters fill them)", brim="5 mm outer brim (PA-CF warp)")
     add("RR-HD-X-102", "frame_half_right", P["frame_R"].shape, (0, 0, 0), "PA-CF", 1, "H02", "as RR-HD-X-101", "as RR-HD-X-101 (groove side of the joint, vent hole)", walls=5,
         infill="40 % gyroid (ribs solid by perimeters)", brim="5 mm outer brim (PA-CF warp)")
@@ -64,10 +66,10 @@ def printed_parts():
     add("RR-HD-X-512", "grommet_J2", P["grommet_J2"].shape, (0, -90, 0), "TPU", 1, "H08", "none", "cable axis vertical; slit with a blade after printing", walls=3, infill="100 %")
     add("RR-HD-X-601", "transport_cover_left", T.transport_cover(1), (0, 0, 0), "PETG-CF", 1, "H09", "yes: snap bridge over the shoe and the front lip (two short bridges, tree supports optional)", "tray floor on the bed", walls=3, infill="20 % gyroid")
     add("RR-HD-X-602", "transport_cover_right", T.transport_cover(-1), (0, 0, 0), "PETG-CF", 1, "H10", "as RR-HD-X-601", "tray floor on the bed", walls=3, infill="20 % gyroid")
-    add("RR-HD-D-302", "dummy_lane_spacer", T.dummy_spacer(1, 2.0), (180, 0, 0), "PETG-CF", 4, "H11", "none", "open side up (flipped); height follows the ballast thickness in checks.json", kit="dummy head", walls=3, infill="20 % gyroid")
+    add("RR-HD-D-302", "dummy_lane_spacer", T.dummy_spacer(1, 2.0), (0, 0, 0), "PETG-CF", 4, "H11", "none", "floor on the bed, open side up (as installed); height follows the ballast thickness in checks.json", kit="dummy head", walls=3, infill="20 % gyroid")
     for nm, shape, mat, kind, desc in T.cradle_parts():
         if kind == "printed" and nm.endswith("_L"):
-            flat = (90, 0, 0) if "cable_rest" in nm else (0, 0, 0)
+            flat = (0, 90, 0) if "cable_rest" in nm else (0, 0, 0)
             add("RR-HD-C-" + ("611" if "fence" in nm else "612"), nm[:-2], shape, flat, "PETG-CF", 2, "H12" if "fence" in nm else "H13", "none", "mirror in the slicer for the right-hand part" if "fence" in nm else "lying on its side", kit="bench cradle", walls=4)
     return rows
 

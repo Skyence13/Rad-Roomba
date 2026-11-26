@@ -36,7 +36,7 @@ class SimNode(Node):
         desc = (DATA / "head_descriptor_demo.json").read_bytes()
         cal = Calibration.load(DATA / "demo_calibration.json")
         self.world = World(tr["length_m"], tr["width_m"], cal, lane_polygons(json.loads(desc), geo["mount_transform"]), seed=seed,
-                           door_closed=tr["door_closed"], lidar_xy=tuple(geo["lidar"]["xy"]))
+                           door_closed=tr["door_closed"], door_target_x_m=tr.get("door_target_x_m"), lidar_xy=tuple(geo["lidar"]["xy"]))
         if self.native:
             from rr_sim.native import NativeChassis, NativeHead
             self.head, self.chassis = NativeHead(), NativeChassis()

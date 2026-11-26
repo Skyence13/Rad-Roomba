@@ -30,11 +30,11 @@ def write(res):
            "Largest items, prototype (g): " + ", ".join(f"{k} {v}" for k, v in d["mass_prototype"]["largest_items_g"].items()), ""]
     md += ["## 4. Deflection under 20 N at the front outer window corner and first modes (calculated)", "",
            "Model: rigid-body pitch on the four receiver lands (lead's mount model C, same contact stiffness assumption), roll through a two-halves model (each half on its own shoe, "
-           "joined at y = 0 by the listed bridging members), wing bending and wing twist of the 47.75 mm overhang beyond the T-head. The lid is tied to the spreader by ten M3 standoffs; "
-           "their bending stiffness (20 % of fixed-fixed, STATED ASSUMPTION) is the shear web of the closed cell. Lid-off values show what the cover contributes.", ""]
+           "joined at y = 0 by the listed bridging members), wing bending and wing twist of the 47.75 mm overhang beyond the T-head. The lid is a shear panel: 35 M3 screws round a closed loop at <= 40 mm pitch, 17 into M3 standoffs on the spreader (bending stiffness 20 % of fixed-fixed, "
+           "STATED ASSUMPTION) and 18 into hard bosses on the frame walls (1500 N/mm per printed-insert joint, 8000 N/mm tapped aluminium, STATED ASSUMPTION); the weaker fastener row is the shear web of the closed cell. Lid-off values show what the cover contributes.", ""]
     rows = []
     for k, v in d["structure"].items():
-        a, b = v["lid fitted (10 screws)"], v["lid removed (service state)"]
+        a, b = v["lid fitted (all screws)"], v["lid removed (service state)"]
         rows.append((k, f"{v['mass_kg']:.2f}", f"{a['pitch']:.3f}", f"{a['roll_incl_joint']:.3f}", f"{a['wing_bending']:.3f}", f"{a['wing_twist']:.3f}", f"**{a['total']:.2f}**", f"{b['total']:.2f}",
                      f"{v['roll_if_joint_rigid']:.3f}", f"{a['k_joint_Nm_per_rad']:.0f}", f"{v['f1_hz']:.0f}"))
     md += [_t(["Case", "Mass (kg)", "Pitch (mm)", "Roll incl. joint (mm)", "Wing bending (mm)", "Wing twist (mm)", "Total, lid on (mm)", "Total, lid off (mm)", "Roll if joint rigid (mm)",

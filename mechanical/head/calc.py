@@ -134,7 +134,7 @@ def structure(masses):
         root_y = H.SHOE_Y + H.THEAD_HY                     # wing clamps at the outer end of the T-head / spreader tab
         wing = H.YW - root_y
         out = {}
-        for tag, comp, kjv, closed in (("lid fitted (10 screws)", True, kj_all, True), ("lid removed (service state)", False, kj_nolid, False)):
+        for tag, comp, kjv, closed in (("lid fitted (all screws)", True, kj_all, True), ("lid removed (service state)", False, kj_nolid, False)):
             sec = section(e, comp, build)
             # (a) rigid-body pitch on the four lands (lead's model, mount C), (b) roll through the two-halves model, (c) wing bending, (d) wing twist
             pitch = S.point_deflection("C", k_c, al, TIP, arm_f, 0.0, arm_f, 0.0) - TIP / (4 * k_c)

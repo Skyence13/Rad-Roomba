@@ -21,23 +21,30 @@
   },
   {
    "check": "arm accepted after datum, REARM, brake test, REARM",
-   "ok": false,
-   "result": "{\"accepted\": false, \"reason\": \"PREREQUISITES\", \"missing\": [\"HEAD_IDENTITY:QUIET\"]}"
+   "ok": true,
+   "result": "{\"accepted\": true}"
   },
   {
    "check": "start accepted; repeated idempotency key returns the same receipt",
-   "ok": false
+   "ok": true
   },
   {
    "check": "mission SCAN",
-   "ok": false,
-   "state": "READY"
+   "ok": true,
+   "state": "SCAN"
   },
   {
    "check": "no HOLD during the first 25 s of the scan",
    "ok": true,
-   "holds": [],
-   "state": "READY",
+   "holds": [
+    {
+     "t_wall": 41.91,
+     "reason": "OPERATOR_PAUSE",
+     "task": "pair0:A+",
+     "phase": "PASS"
+    }
+   ],
+   "state": "SCAN",
    "safety": {
     "traction_inhibited": false,
     "hw": [],
@@ -47,14 +54,14 @@
   },
   {
    "check": "credited coverage grows",
-   "ok": false,
-   "fraction": 0.0
+   "ok": true,
+   "fraction": 0.03636110946536064
   },
   {
    "check": "eligible lane-gates received",
    "ok": true,
-   "eligible": 1164,
-   "gates": 291
+   "eligible": 1448,
+   "gates": 362
   },
   {
    "check": "coverage flagged not approved for field use",
@@ -62,83 +69,83 @@
   },
   {
    "check": "web interface serves the live state",
-   "ok": false,
-   "mission": "READY",
+   "ok": true,
+   "mission": "SCAN",
    "hold": null,
    "loc": {
     "pose": [
-     0.5999599993379365,
-     -1.0155108378844167e-05,
-     4.95613747639634e-05
+     1.232301276599396,
+     -0.30188271858729515,
+     -1.3099090831591466e-05
     ],
     "frame": "map (trailer): origin door-threshold centre, +x to bulkhead, +y left",
-    "uncertainty_2s_m": 0.00030185508136444834,
+    "uncertainty_2s_m": 0.0009906229363782746,
     "credit": true,
     "slip": false,
     "hold_request": false,
     "sigma": [
-     0.00013119103859798224,
-     5.989517517632544e-05,
-     0.00013907485614222663
+     0.0004461452289210964,
+     0.00018854465671821002,
+     0.0003238380317940831
     ]
    },
    "events": [
     [
-     "link_down",
-     "TRANSPORT:peer closed"
+     "session_open",
+     null
     ],
     [
-     "link_down",
-     "TRANSPORT:peer closed"
+     "plan",
+     null
     ],
     [
-     "link_down",
-     "TRANSPORT:peer closed"
+     "command",
+     "STATE:CONFIGURE"
     ],
     [
-     "link_down",
-     "TRANSPORT:peer closed"
+     "command",
+     null
     ],
     [
-     "link_down",
-     "TRANSPORT:peer closed"
+     "command",
+     null
     ],
     [
-     "link_down",
-     "TRANSPORT:peer closed"
+     "command",
+     null
     ],
     [
-     "link_down",
-     "TRANSPORT:peer closed"
+     "command",
+     null
     ],
     [
-     "link_down",
-     "TRANSPORT:peer closed"
+     "task_start",
+     null
     ]
    ],
    "head": {
-    "state": "QUIET",
+    "state": "ARMED",
     "block_reason": null,
     "block_detail": null,
-    "attachment": null,
+    "attachment": "aa62337a-d199-46b5-9e69-bfab7bedd9bc",
     "head_id": "HEAD-DEMO-001",
-    "last_seq": 244,
-    "bound_us": null
+    "last_seq": 362,
+    "bound_us": 517.815734783783
    },
    "chassis": {
     "link": "UP",
-    "mode": "ARMED_IDLE",
+    "mode": "MOVING",
     "op_mode": "COMMISSIONING",
-    "motion": "REST",
+    "motion": "RUN",
     "accepted": true,
     "reject_reason": null,
     "applied": {
-     "v_mps": 0.0,
+     "v_mps": 0.1,
      "w_radps": 0.0
     },
     "stationary": {
-     "is_stationary": true,
-     "since_us": 52765
+     "is_stationary": false,
+     "since_us": null
     },
     "battery": {
      "soc_pct": 80,
@@ -149,7 +156,7 @@
      "charge_state": "NONE"
     },
     "head_presence": "HEAD_DIRECT",
-    "time_bound_us": 590.4395854123687
+    "time_bound_us": 594.6966227801513
    }
   },
   {
@@ -157,6 +164,13 @@
    "ok": true
   }
  ],
- "holds": [],
- "passed": false
+ "holds": [
+  {
+   "t_wall": 41.91,
+   "reason": "OPERATOR_PAUSE",
+   "task": "pair0:A+",
+   "phase": "PASS"
+  }
+ ],
+ "passed": true
 }

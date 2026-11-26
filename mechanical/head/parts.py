@@ -189,7 +189,7 @@ def P_board(u, v):
 FENCE_FRONT_Y = (20.0, 64.0, 112.0, 152.0)     # 112 (was 108): screw head clear of the boss at 104.5
 FENCE_SIDE_X = (100.0, 162.0)
 COMB_FOOT_X1 = 80.0       # rear comb feet reach under the rear lid-standoff row (standoffs clamp the feet: bond points)
-COMB_CHIM_MARGIN = 0.5    # feet stop 0.5 mm short of each spreader chimney notch
+COMB_CHIM_MARGIN = 7.5    # feet stop 7.5 mm beyond each chimney notch (one-piece flat pattern: the liner side flanges develop into that space)
 
 
 def spreader_holes():
@@ -323,7 +323,7 @@ def fence_rear():
     s = fuse_all(parts)
     cuts = [box(x - 1, x + 3, sg * H.SHOE_Y - H.PORT_SLOT_HY, sg * H.SHOE_Y + H.PORT_SLOT_HY, H.PORT_SLOT_Z0, 50) for sg in (1, -1)]
     cuts += [cyl(2.5, 4, (x - 1, H.VENT[1], H.VENT[2]), (1, 0, 0))]
-    cuts += [cyl(1.7, 3, (xx, yy, H.Z_SPR1 - 1)) for xx, yy in lid_holes() if xx < 90]                     # standoffs clamp the feet
+    cuts += [cyl(1.7, 3, (xx, yy, H.Z_SPR1 - 1)) for xx, yy in lid_holes() if xx < 90]                     # standoffs clamp the feet (where there is one)
     cuts += [cyl(1.45, 3, (H.REAR_SCREW_X, sg * yy, H.Z_SPR1 - 1)) for sg in (1, -1) for yy in H.REAR_SCREW_Y]  # rear spreader screws clamp the feet
     cuts += [cyl(3.3, 3, (H.THEAD_SCREW_X, sg * H.SHOE_Y + dy, H.Z_SPR1 - 1)) for sg in (1, -1) for dy in H.THEAD_SCREW_DY]   # insulating washer clearance
     a = bounds(thermal_cutout())
@@ -345,10 +345,24 @@ def fence_gaskets():
     return compound(out)
 
 
-def lid_standoffs(on_fence_feet=False):
-    """Prototype: every standoff stands on (and clamps) an EMI fence foot -> 10.5 mm. Production: on the spreader -> 11 mm."""
-    z0 = H.Z_SPR1 + (H.FENCE_T if on_fence_feet else 0.0)
-    return compound([cyl(H.LID_STANDOFF_D / 2, H.Z_LID0 - z0, (x, y, z0)) for x, y in lid_holes()])
+def standoff_on_foot(x, y):
+    """True where a lid standoff stands on an EMI fence foot (prototype)."""
+    if x < 90:
+        return all(abs(y - yc) >= H.CHIM_HY + COMB_CHIM_MARGIN + H.LID_STANDOFF_D / 2 for yc in H.SEG_Y)
+    return True
+
+
+def lid_standoffs(prototype=False, which=None):
+    """Prototype: 10.5 mm where the standoff stands on (and clamps) a fence foot, 11 mm elsewhere. Production: 11 mm on the spreader.
+    which: None (all), 'foot' or 'spreader'."""
+    out = []
+    for x, y in lid_holes():
+        foot = prototype and standoff_on_foot(x, y)
+        if which == "foot" and not foot or which == "spreader" and foot:
+            continue
+        z0 = H.Z_SPR1 + (H.FENCE_T if foot else 0.0)
+        out.append(cyl(H.LID_STANDOFF_D / 2, H.Z_LID0 - z0, (x, y, z0)))
+    return compound(out)
 
 
 def board_standoffs():
@@ -443,14 +457,13 @@ def cassette_gasket(i):
 def transport_cover(side):
     """Clip-on transport / protection cover, one per head half (two windows each)."""
     def build():
-        x0, x1 = H.XR - 3.5, H.XF + H.RAIL_GAP + H.BAR_T + H.INS_T + 2.5
+        x0, x1 = H.XSTOP - 2.2, H.XF + H.RAIL_GAP + H.BAR_T + H.INS_T + 2.5      # rear wall behind the x-stop shoulders and the wing returns
         y1 = 177.5
         tray = box(x0, x1, 0.2, y1, 1.5, 4.0)
         walls = [box(x0, x0 + 2, 0.2, y1, 4.0, 9.0), box(x1 - 2, x1, 0.2, y1, 4.0, 24.6), box(x0, x1, y1 - 2, y1, 4.0, 9.0),
                  box(x1 - 6.5, x1, 0.2, y1, 23.4, 24.6),                                  # front lip resting over the rail insert top
-                 box(H.XR - 3.5, H.XR - 1.5, H.SHOE_Y - 13, H.SHOE_Y - 9.5, 4.0, 32.0), box(H.XR - 3.5, H.XR - 1.5, H.SHOE_Y + 9.5, H.SHOE_Y + 13, 4.0, 32.0),
-                 box(H.XR - 3.5, H.XR - 1.5, H.SHOE_Y - 13, H.SHOE_Y + 13, 30.6, 32.0),   # snap bridge over the shoe top
-                 box(H.XR - 3.5, H.XR + 6.0, H.SHOE_Y + 30.5, H.SHOE_Y + 34.5, 4.0, 8.0)]
+                 box(x0, x0 + 2, H.SHOE_Y - 12, H.SHOE_Y - 8.8, 4.0, 32.0), box(x0, x0 + 2, H.SHOE_Y + 8.8, H.SHOE_Y + 12, 4.0, 32.0),
+                 box(x0, x0 + 2, H.SHOE_Y - 12, H.SHOE_Y + 12, 30.6, 32.0)]                # snap bridge over the shoe top, behind the shoulder
         # four soft-faced rests that touch only the cassette borders (never the film)
         rests = [box(x, x + 4, y - 2, y + 2, 4.0, H.CAS_Z0 - 0.3) for x in (75.5, 183.5) for y in (23.75, 63.75, 111.25, 151.25)]
         return fuse_all([tray] + walls + rests)
@@ -698,7 +711,7 @@ def dummy_board():
 
 
 def resistor_block():
-    x, y, z = P_board(75.0, 12.0)
+    x, y, z = P_board(75.0, 14.0)
     return box(x - 6, x + 6, y - 14, y + 14, z + 2.0, z + 8.0)
 
 

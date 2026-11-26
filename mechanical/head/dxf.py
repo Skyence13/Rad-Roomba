@@ -57,18 +57,21 @@ def lid(path):
     x0, x1, y0, y1 = H.XR + i, H.XF - i, -H.YW + i, H.YW - i
     m.add_lwpolyline([(x0 + r, y0, 0), (x1 - r, y0, 0.4142), (x1, y0 + r, 0), (x1, y1 - r, 0.4142), (x1 - r, y1, 0), (x0 + r, y1, 0.4142), (x0, y1 - r, 0), (x0, y0 + r, 0.4142)],
                      format="xyb", close=True, dxfattribs={"layer": "CUT"})
-    for x, y in T.lid_holes():
+    for x, y in T.lid_all_holes():
         m.add_circle((x, y), 1.7, dxfattribs={"layer": "CUT"})
     a, b, c, e = T.j1_zone()
     _rect(m, a - 0.5, b + 0.5, c - 0.5, e + 0.5)
-    _txt(m, "RR-HD-S-122 LID 2.0 AL 5052-H32; 10 x dia 3.4 for captive M3; J1 opening covered by RR-HD-S-123", (90, 20), 3)
+    _txt(m, "RR-HD-S-122 LID 2.0 AL 5052-H32; 35 x dia 3.4 for M3 + bonded sealing washer; J1 opening covered by RR-HD-S-123", (90, 20), 3)
     d.saveas(path)
     d, m = _doc()
-    _rect(m, a - 5.5, b + 5.5, c - 5.5, e + 5.5)
-    for xx in (a - 3.0, b + 3.0):
-        for yy in (c - 3.0, e + 3.0):
-            m.add_circle((xx, yy), 1.25, dxfattribs={"layer": "CUT"})
-    _txt(m, "RR-HD-S-123 J1 BLISTER 1.0 AL; 4 x dia 2.5 rivet", (a, c - 12), 2.5)
+    ba, bb, bc, bd = T.blister_rect()
+    _rect(m, ba, bb, bc, bd)
+    for yy in (bc + 3.0, bd - 3.0):
+        m.add_circle((bb - 3.0, yy), 1.25, dxfattribs={"layer": "CUT"})
+    for xx, yy in T.lid_all_holes():
+        if ba < xx < bb and bc < yy < bd:
+            m.add_circle((xx, yy), 1.7, dxfattribs={"layer": "CUT"})
+    _txt(m, "RR-HD-S-123 J1 BLISTER 1.0 AL; 2 x dia 2.5 rivet (front), 3 x dia 3.4 lid screws (rear)", (ba, bc - 12), 2.5)
     d.saveas(path.with_name("RR-HD-S-123_j1_blister.dxf"))
 
 
@@ -120,9 +123,9 @@ def fences(folder):
     y_wall0 = 0.0
     y_wall1 = wall_h
     liner = H.Z_SPR1 - (H.CHIM_FLOOR_REAR + 0.5)          # liner length below the spreader top
-    foot = 79.0 - T.FENCE_REAR_X - t
+    foot = T.COMB_FOOT_X1 - T.FENCE_REAR_X - t
     pts = [(-hy, y_wall1 + ba + top), (hy, y_wall1 + ba + top), (hy, y_wall0)]
-    edges = [-hy] + [v for yc in sorted(H.SEG_Y) for v in (yc - H.CHIM_HY - 7.5, yc + H.CHIM_HY + 7.5)] + [hy]
+    edges = [-hy] + [v for yc in sorted(H.SEG_Y) for v in (yc - H.CHIM_HY - T.COMB_CHIM_MARGIN, yc + H.CHIM_HY + T.COMB_CHIM_MARGIN)] + [hy]
     segs = list(zip(edges[0::2], edges[1::2]))
     prof = [(hy, y_wall1 + ba + top), (hy, -ba - foot)]
     for (ya, yb), yc in zip(reversed(segs), [None] + sorted(H.SEG_Y, reverse=True)):

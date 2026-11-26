@@ -84,7 +84,7 @@ def joints():
                      ((87.5, 29.7), "rib gasket", (93, 30.6)), ((91.0, 19), "barrier plate + foam edge", (93, 21.5))],
               dims=[((83.75, 26), (91.25, 26), 1.5, True)], scale=6.0)
     joint_fig("J3_lid_wall_fence_front", "Lid, wall gasket, EMI fence and lid standoff at the front wall (y = 42, through a standoff)", "y", 42.0, ((172, 216), (5, 48)), P_,
-              notes=[((186.9, 42.6), "lid gasket 1.2 -> 0.8", (192, 44.5)), ((183.0, 38), "M3 x 11 standoff\n(lid hard seat, lid-spreader tie)", (192, 38)), ((180.2, 37), "EMI fence 0.5 Al", (173, 40)),
+              notes=[((186.9, 42.6), "lid gasket 1.2 -> 0.8", (192, 44.5)), ((183.0, 38), "M3 x 10.5 standoff on the fence foot\n(lid hard seat, fence bond)", (192, 38)), ((180.2, 37), "EMI fence 0.5 Al", (173, 40)),
                      ((179.0, 42.7), "conductive gasket", (173, 46)), ((186.0, 31), "spreader edge under the lip", (192, 32.5)), ((206.7, 15), "rail bar", (200, 26)), ((210.2, 15), "insert", (212, 26)),
                      ((185, 20), "front wall 6.5", (192, 20)), ((178, 35.3), "RR-HEAD-ACQ", (173, 33.5))],
               dims=[((188.2, 6.5), (205.2, 6.5), -0.8, True)], scale=4.0)
@@ -93,7 +93,7 @@ def joints():
                      ((183.2, 37), "D2HW-C201M in the bay", (150, 40)), ((184.2, 15.2), "cam notch 1.3 deep, ramp 1.6", (194, 9)), ((206.7, 20), "bar 14 x 3", (196, 30)), ((210.2, 22), "insert (3 mm position)", (200, 36))],
               dims=[((188.2, 6.3), (205.2, 6.3), -0.6, True)], scale=3.0)
     joint_fig("J5_shoe_T_head_and_cable_port", "Receiver shoe T-head, isolator, spreader tab and cable port (y = 87.0)", "y", H.SHOE_Y - 0.5, ((60, 100), (8, 48)), P_,
-              notes=[((66, 23), "x-stop shoulder x 65.7 (datum A)", (61, 12)), ((74.5, 23), "T-head 6061", (78, 12)), ((76, 29.75), "isolator 0.5 G10 (prototype)", (84, 26.5)), ((79, 31), "spreader tab, 4 x M4", (86, 34)),
+              notes=[((66, 23), "x-stop shoulder x 65.7 (datum A)", (61, 12)), ((74.5, 23), "T-head 6061", (78, 12)), ((76, 29.75), "isolator 0.5 G10 (prototype)", (84, 26.5)), ((79, 31), "spreader tab, 4 x M3", (86, 34)),
                      ((71.5, 39), "split grommet + cable", (84, 44)), ((90, 35.3), "RR-HEAD-ACQ", (90, 38.5))], scale=4.0)
     joint_fig("J6a_side_zone_tab_level", "Side zone, rear outer corner at the guide-tab level (z = 25.4): tabs in the slits, guide pins", "z", H.SLIT_Z[0] + 0.7, ((62, 84), (136, 178)), P_,
               notes=[((75.0, 168.5), "guide pin M3 in a 45 deg slot", (79, 176)), ((75.0, 145.7), "guide pin", (80, 150)), ((68.2, 160), "wing-tip return", (63, 156))], scale=5.0)
@@ -214,9 +214,9 @@ def fab():
     # ---------------- sheet 3: receiver shoe
     sh = T.shoe(1)
     fig = D.sheet("RECEIVER SHOE WITH T-HEAD (LH shown; RH identical, part is symmetric)", "RR-HD-S-111", notes=[
-        "MATERIAL 6061-T6. FINISH: hard anodise 25-40 um on the shoe (x 4..65.7); MASK the x-stop shoulder face, the T-head top face and the four M4 holes (chromate conversion) -- prototype uses the G10 isolator on the T-head top.",
+        "MATERIAL 6061-T6. FINISH: hard anodise 25-40 um on the shoe (x 4..65.7); MASK the x-stop shoulder face, the T-head top face and the four M3 holes (chromate conversion) -- prototype uses the G10 isolator on the T-head top.",
         "Datum A = x-stop shoulder face (x 65.7); datum B = shoe side faces (mid-plane, y +-87.5 in the head); datum C = shoe underside (z 16.00). These are the head datums of mechanical_interfaces.md section 1.",
-        "4 x M4-6H through the T-head (spreader tab), 2 x M4-6H x 8 in each rear ear (bridge). Lead-in chamfers 3 x 45 deg on the four tip edges; tip face flat (HEAD_DOCK switch target on the LH shoe)."])
+        "4 x M3-6H x 7 in the T-head (spreader tab; was M4, changed so the screw heads clear the rear wall), 2 x M4-6H x 8 in each rear ear (bridge). Lead-in chamfers 3 x 45 deg on the four tip edges; tip face flat (HEAD_DOCK switch target on the LH shoe)."])
     ax = _hlr_ax(fig, (14, 160, 300, 110), sh, "top", "TOP VIEW", margin=14, hidden=True)
     y0 = H.SHOE_Y
     D.dim(ax, tv((H.SHOE_X0, y0 - 8, 0)), tv((H.XSTOP, y0 - 8, 0)), off=-10, horizontal=False, fmt="{:.2f}", tol=" +-0.05")
@@ -242,7 +242,7 @@ def fab():
     fig = D.sheet("SPREADER PLATE (FRAME net plane)", "RR-HD-S-121", notes=[
         "MATERIAL 5052-H32 or 6061-T6 sheet 2.00 +-0.05, flatness 0.15 over 340. FINISH: chromate conversion (conductive) both sides; no anodise. Underside: heater film + rib gasket strips + lane pads bonded per assembly.md.",
         "Profile and holes per DXF RR-HD-S-121_spreader.dxf (base_link x, y). 8 x clinch standoff M2.5 x 2.5 at the board holes: top face of the standoffs z 34.50 +-0.05 above datum (PCB underside), POS dia 0.2.",
-        "10 x dia 3.2 countersunk 90 deg on the UNDERSIDE for M3 x 6 (lid standoffs M3 x 11, round 4.5). 8 x dia 6.5 for M4 with insulating shoulder washers (prototype) at the T-head tabs.",
+        "17 x dia 3.2 countersunk 90 deg on the UNDERSIDE for M3 x 6 (lid standoffs M3 x 11 production / x 10.5 prototype). 8 x dia 5.0 for M3 low-head with insulating shoulder washers (prototype) at the T-head tabs. 10 rib holes dia 2.8 countersunk 90 deg x dia 5.2 on TOP (ISO 10642 M2.5 flush: under the board).",
         "TAP M2.5 through at the fence-foot and switch-saddle stations (red in the DXF). Deburr both sides; no burr on the front edge (it slides under the frame lip)."])
     ax = _hlr_ax(fig, (14, 120, 392, 160), sp, "top", "TOP VIEW (forward up, robot right to the right)", margin=16)
     D.dim(ax, tv((H.SPR_X0, H.SPR_HY, 0)), tv((H.SPR_X0, -H.SPR_HY, 0)), off=-10, horizontal=True, fmt="{:.2f}", tol=" +-0.1")
@@ -264,8 +264,8 @@ def fab():
     figs.append(("RR-HD-S-121_spreader", fig))
     # ---------------- sheet 5: lid, blister, shield can
     fig = D.sheet("LID, J1 BLISTER AND LANE SHIELD CAN", "RR-HD-S-122 / RR-HD-S-123 / RR-HEAD-SHLD-A", notes=[
-        "LID: 5052-H32 2.00, chromate conversion inside (conductive), black anodise or powder coat outside with the ten screw seats masked. Flatness 0.2. 10 x dia 3.4 for captive M3 (retaining washers).",
-        "BLISTER: 1.0 aluminium, bonded with conductive epoxy bead + 4 x dia 2.4 blind rivets over the 51 x 19 opening (J1 landing connector clearance 8.9 mm above the PCB top, CCR-HE-02).",
+        "LID: 5052-H32 2.00, chromate conversion inside (conductive), black anodise or powder coat outside. Flatness 0.2. 35 x dia 3.4 for M3 button head + bonded sealing washer: 17 standoffs (labelled) + 18 frame bosses (front x 184.2, sides y +-168.4).",
+        "BLISTER: 1.0 aluminium, bonded with conductive epoxy bead + 2 x dia 2.4 blind rivets (front) and clamped by three lid screws (rear) over the 51 x 19 opening (J1 landing connector clearance 8.9 mm above the PCB top, CCR-HE-02).",
         "SHIELD CAN RR-HEAD-SHLD-A: 0.20 tin-plated steel (or C770 nickel silver), folded 5-sided can 36.0 x 32.0 x 5.0 outside (+0/-0.1), corners open <= 0.3; two mouse holes 2.0 x 1.2 in the rear wall for the anode traces;",
         "held by 12 SMT clips (3 per side) on board GND -- not connected to the lid. Flat pattern: RR-HEAD-SHLD-A_lane_shield_can.dxf. Positions on the board: du -18..+18, v 5.5..37.5 about each lane centre."])
     ld = T.lid().fuse(T.j1_blister())
@@ -288,7 +288,7 @@ def fab():
     # ---------------- sheet 6: assembly with balloons and BOM
     Pp = A.build("production")
     fig = D.sheet("HEAD ASSEMBLY, PRODUCTION", "RR-HD-P-000", notes=[
-        "Torques: M2.5 into aluminium 0.45 N m, M3 0.9 N m, M4 2.0 N m (class A2-70, medium thread-lock on every screw that is not a service screw). Lid: 10 captive M3, 0.6 N m, cross pattern from the centre.",
+        "Torques: M2.5 into aluminium 0.45 N m, M3 0.9 N m, M4 (bridge ears) 2.0 N m (A2-70, medium thread-lock on every screw that is not a service screw). Lid: 35 x M3 button + bonded washer, 0.6 N m, centre outward.",
         "Sealing: lid gasket = conductive silicone elastomer (Ni/graphite) in the wall-top land; cassette gaskets and rib strips = black closed-cell silicone; ports = moulded split grommets; vent = ePTFE M6.",
         "End-of-line tests and service access: production/README.md. Datums A, B, C on the shoes (RR-HD-S-111); film plane and standoff GD&T on sheet RR-HD-P-000-ICD."])
     main = [p for p in Pp if p.group in ("frame", "receiver", "deck", "rail", "window") and p.kind != "purchased" or p.name in ("lid_standoffs",)]
@@ -296,7 +296,7 @@ def fab():
     items = [("frame", "RR-HD-P-101", "Frame, CNC 6061", 1, (150, -120)), ("shoe_L", "RR-HD-S-111", "Receiver shoe with T-head", 2, (30, 87.5)), ("bridge", "RR-HD-S-114", "Rear bridge / keeper hinge", 1, (68, 30)),
              ("spreader", "RR-HD-S-121", "Spreader plate 2 mm", 1, (100, -150)), ("pcb", "EL-RR-HEAD-ACQ", "Head acquisition board", 1, (140, 60)), ("rail_bar", "RR-HD-S-401", "Leading rail bar", 1, (206.5, -60)),
              ("rail_insert_0", "RR-HD-P-411", "Wear insert, reversible 3 / 5 mm", 4, (210.5, -130)), ("guide_rod_L", "RR-HD-S-402", "Guide rod 4 h6", 2, (196, 87.5)), ("bail", "RR-HD-S-403", "Anti-racking bail", 1, (189.7, 60)),
-             ("side_rail_L", "RR-HD-S-431/432", "Side rail LH / RH", 2, (130, 174.6)), ("lid_standoffs", "PUR-SO-M3x11", "Lid standoff M3 x 11", 10, (183, 130)), ("sw_front", "PUR-D2HW", "D2HW-C201M (front, 2 side, lid)", 4, (183, 87.5)),
+             ("side_rail_L", "RR-HD-S-431/432", "Side rail LH / RH", 2, (130, 174.6)), ("lid_standoffs", "PUR-SO-M3x11", "Lid standoff M3 x 11", 17, (183, 130)), ("sw_front", "PUR-D2HW", "D2HW-C201M (front, 2 side, lid)", 4, (183, 87.5)),
              ("S1_shield_can", "RR-HEAD-SHLD-A", "Lane shield can", 4, (104, 43.75)), ("grommet_J1", "RR-HD-P-511/512", "Port grommet J1 / J2", 2, (71.5, 87.5))]
     offs = [(-20, -18), (-10, 16), (-14, -14), (-22, 12), (0, 22), (16, -8), (18, 10), (16, 14), (18, 22), (-6, 12), (12, 20), (22, 4), (-10, 20), (-14, 22)]
     for k, ((nm, pn, desc, qty, xy), o) in enumerate(zip(items, offs), start=1):
@@ -398,13 +398,13 @@ def steps():
             per[f"S{i}_{k}"] = (0, 0, dz)
     img(3, "load the four lane kits from above", s3, s1 + s2, per=per, labels=["floor assembly on the seat shoulder, lower ring, barrier, upper ring, reference assembly, chimney insert; shims as needed"])
     s4 = ["spreader", "rib_gaskets", "board_standoffs", "lid_standoffs"] + lanes("pad", "heater")
-    img(4, "spreader with heater zones, pads and rib gaskets: front edge under the lip, then screw down", s4, s1 + s2 + s3, explode=(0, 0, 45), labels=["M2.5 x 8 into the rib and rear-zone inserts 0.35 N m; M4 x 10 with insulating washers into the T-heads 1.5 N m"])
+    img(4, "spreader with heater zones, pads and rib gaskets: front edge under the lip, then screw down", s4, s1 + s2 + s3, explode=(0, 0, 45), labels=["M2.5 x 8 into the rib and rear-zone inserts 0.35 N m; M3 x 8 low-head with insulating washers into the T-heads 0.9 N m"])
     s5 = ["fence_front", "fence_side_L", "fence_side_R", "fence_rear", "fence_gaskets", "pcb", "sw_front", "sw_front_saddle", "sw_lid", "sw_lid_saddle", "grommet_J1", "grommet_J2", "pigtail_J1", "pigtail_J2", "plug_J1", "plug_J2",
-          "thermal_cutout", "desiccant", "vent"] + [f"S{i}_shield_can" for i in range(4)]
+          "thermal_cutout", "ntc", "desiccant", "vent"] + [f"S{i}_shield_can" for i in range(4)]
     img(5, "EMI fences, board, shield cans, switches, pigtails and grommets", s5, s1 + s2 + s3 + s4, explode=(0, 0, 40), per={"fence_rear": (-20, 0, 55), "pcb": (0, 0, 70), **{f"S{i}_shield_can": (0, 0, 95) for i in range(4)},
         "pigtail_J1": (-30, 0, 20), "pigtail_J2": (-30, 0, 20), "plug_J1": (-30, 0, 20), "plug_J2": (-30, 0, 20)}, labels=["8 x M2.5 x 5 board screws 0.35 N m; coax pigtails up through the spreader notches (R >= 6 mm)"])
     s6 = ["lid", "lid_gasket", "lid_liner", "j1_blister", "keeper", "keeper_pin"]
-    img(6, "lid with gasket (10 captive M3), keeper plate swings down over it", s6, s1 + s2 + s3 + s4 + s5, explode=(0, 0, 40), per={"keeper": (-10, 0, 75), "keeper_pin": (-10, 40, 75)}, labels=["lid screws 0.6 N m, cross pattern from the centre"])
+    img(6, "lid with gasket (35 M3 + bonded washers), keeper plate swings down over it", s6, s1 + s2 + s3 + s4 + s5, explode=(0, 0, 40), per={"keeper": (-10, 0, 75), "keeper_pin": (-10, 40, 75)}, labels=["lid screws 0.6 N m, cross pattern from the centre"])
     allabove = s1 + s2 + s3 + s4 + s5 + s6
     s7 = lanes("cassette", "film", "cassette_gasket")
     img(7, "underside: window cassettes with film and gasket (4 x M2.5 countersunk each)", s7, [k for k in allabove if not k.startswith(("pigtail", "plug"))], explode=(0, 0, -45), azim=-58, elev=-32,

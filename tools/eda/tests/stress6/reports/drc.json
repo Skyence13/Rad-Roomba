@@ -15,6 +15,52 @@
             "description": "Missing connection between items",
             "items": [
                 {
+                    "description": "Pad 15 [GND] of U1 on F.Cu",
+                    "pos": {
+                        "x": 71.075,
+                        "y": 94.5
+                    },
+                    "uuid": "341edef8-0142-4362-bf2a-bbf1e3c33a1d"
+                },
+                {
+                    "description": "Track [GND] on B.Cu, length 1.4100 mm",
+                    "pos": {
+                        "x": 71.0,
+                        "y": 94.02
+                    },
+                    "uuid": "ae90e121-5c9d-45ce-b733-a2a107776358"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 49 [GND] of U2 on F.Cu",
+                    "pos": {
+                        "x": 102.5,
+                        "y": 78.0
+                    },
+                    "uuid": "b13f4c8a-3572-451b-bd86-f1fcb5c8663d"
+                },
+                {
+                    "description": "Track [GND] on F.Cu, length 0.8875 mm",
+                    "pos": {
+                        "x": 103.25,
+                        "y": 81.4375
+                    },
+                    "uuid": "ea96d931-27cd-4ad4-b779-b913bedbe9bb"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
                     "description": "Pad 9 [+3V3] of U2 on F.Cu",
                     "pos": {
                         "x": 103.75,
@@ -61,20 +107,43 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "Pad 59 [IO42] of U1 on F.Cu",
+                    "description": "Pad 26 [IO38] of U1 on F.Cu",
                     "pos": {
-                        "x": 75.5,
-                        "y": 85.575
+                        "x": 77.5,
+                        "y": 96.925
                     },
-                    "uuid": "f1ebe584-2719-499b-932e-f538dfc19f16"
+                    "uuid": "19afd6a4-1ecd-495b-b17d-85ee620e606d"
                 },
                 {
-                    "description": "Pad 19 [IO42] of U2 on F.Cu",
+                    "description": "Pad 2 [IO38] of U2 on F.Cu",
                     "pos": {
-                        "x": 105.9375,
-                        "y": 77.75
+                        "x": 100.25,
+                        "y": 81.4375
                     },
-                    "uuid": "5ce54d46-2a29-44f0-aa78-1ef720154b17"
+                    "uuid": "a7506119-d28e-4a2b-bb71-01b72ed989ab"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 30 [IO46] of U1 on F.Cu",
+                    "pos": {
+                        "x": 79.5,
+                        "y": 96.925
+                    },
+                    "uuid": "fdf35040-8133-422f-9b8c-e504d37015f5"
+                },
+                {
+                    "description": "Pad 41 [IO46] of U2 on F.Cu",
+                    "pos": {
+                        "x": 99.0625,
+                        "y": 77.25
+                    },
+                    "uuid": "3268ad04-b673-41fa-b05d-80478c197aea"
                 }
             ],
             "severity": "error",
@@ -102,146 +171,30 @@
             ],
             "severity": "error",
             "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 22 [AUX00] of U2 on F.Cu",
+                    "pos": {
+                        "x": 105.9375,
+                        "y": 76.25
+                    },
+                    "uuid": "924fafc3-ebdd-4a23-b0f4-495abc4dc724"
+                },
+                {
+                    "description": "PTH pad 1 [AUX00] of J4",
+                    "pos": {
+                        "x": 147.25,
+                        "y": 77.0
+                    },
+                    "uuid": "170607dd-709c-4bf7-942a-3768fd073920"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
         }
     ],
-    "violations": [
-        {
-            "description": "Clearance violation ( clearance 0.1500 mm; actual 0.1397 mm)",
-            "items": [
-                {
-                    "description": "Track [IO11] on F.Cu, length 0.9930 mm",
-                    "pos": {
-                        "x": 82.2897,
-                        "y": 92.1353
-                    },
-                    "uuid": "08448314-0343-4215-86cd-42ab6fc9754c"
-                },
-                {
-                    "description": "Pad 38 [IO10] of U1 on F.Cu",
-                    "pos": {
-                        "x": 82.425,
-                        "y": 92.5
-                    },
-                    "uuid": "d71208ab-6ac4-4ffc-a216-07b1918957a1"
-                }
-            ],
-            "severity": "error",
-            "type": "clearance"
-        },
-        {
-            "description": "Clearance violation ( clearance 0.1500 mm; actual 0.1397 mm)",
-            "items": [
-                {
-                    "description": "Pad 38 [IO10] of U1 on F.Cu",
-                    "pos": {
-                        "x": 82.425,
-                        "y": 92.5
-                    },
-                    "uuid": "d71208ab-6ac4-4ffc-a216-07b1918957a1"
-                },
-                {
-                    "description": "Track [IO11] on F.Cu, length 0.1913 mm",
-                    "pos": {
-                        "x": 82.425,
-                        "y": 92.0
-                    },
-                    "uuid": "e5b5750b-5789-4a5e-969e-3f739510e0b5"
-                }
-            ],
-            "severity": "error",
-            "type": "clearance"
-        },
-        {
-            "description": "Clearance violation ( clearance 0.1500 mm; actual 0.1463 mm)",
-            "items": [
-                {
-                    "description": "Pad 42 [IO28] of U1 on F.Cu",
-                    "pos": {
-                        "x": 82.425,
-                        "y": 90.5
-                    },
-                    "uuid": "10a709d4-6a23-4c67-a0ba-572ae587feb6"
-                },
-                {
-                    "description": "Track [IO13] on F.Cu, length 0.1820 mm",
-                    "pos": {
-                        "x": 82.425,
-                        "y": 91.0
-                    },
-                    "uuid": "590cd2b9-ed45-433a-8b27-ed72dcdab040"
-                }
-            ],
-            "severity": "error",
-            "type": "clearance"
-        },
-        {
-            "description": "Clearance violation ( clearance 0.1500 mm; actual 0.1463 mm)",
-            "items": [
-                {
-                    "description": "Pad 42 [IO28] of U1 on F.Cu",
-                    "pos": {
-                        "x": 82.425,
-                        "y": 90.5
-                    },
-                    "uuid": "10a709d4-6a23-4c67-a0ba-572ae587feb6"
-                },
-                {
-                    "description": "Track [IO13] on F.Cu, length 0.8435 mm",
-                    "pos": {
-                        "x": 82.5537,
-                        "y": 90.8713
-                    },
-                    "uuid": "6e2f1cd4-1ba2-499f-b552-84927e6c23cf"
-                }
-            ],
-            "severity": "error",
-            "type": "clearance"
-        },
-        {
-            "description": "Clearance violation ( clearance 0.2000 mm; actual 0.1810 mm)",
-            "items": [
-                {
-                    "description": "Track [AUX05] on F.Cu, length 0.7196 mm",
-                    "pos": {
-                        "x": 104.131,
-                        "y": 81.5561
-                    },
-                    "uuid": "121777c2-c077-4b4b-8a8b-054f89e08c72"
-                },
-                {
-                    "description": "Pad 9 [+3V3] of U2 on F.Cu",
-                    "pos": {
-                        "x": 103.75,
-                        "y": 81.4375
-                    },
-                    "uuid": "aab103c8-45ab-4c9a-8791-65100274d05d"
-                }
-            ],
-            "severity": "error",
-            "type": "clearance"
-        },
-        {
-            "description": "Clearance violation ( clearance 0.2000 mm; actual 0.1810 mm)",
-            "items": [
-                {
-                    "description": "Track [AUX05] on F.Cu, length 0.1680 mm",
-                    "pos": {
-                        "x": 104.25,
-                        "y": 81.4375
-                    },
-                    "uuid": "9cb75bcd-6d72-45c2-b23d-6780c36c99c8"
-                },
-                {
-                    "description": "Pad 9 [+3V3] of U2 on F.Cu",
-                    "pos": {
-                        "x": 103.75,
-                        "y": 81.4375
-                    },
-                    "uuid": "aab103c8-45ab-4c9a-8791-65100274d05d"
-                }
-            ],
-            "severity": "error",
-            "type": "clearance"
-        }
-    ]
+    "violations": []
 }

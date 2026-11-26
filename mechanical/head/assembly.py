@@ -45,7 +45,9 @@ def build(build="prototype", projection=3.0, travel=0.0):
     _p(P, "lid_gasket", "PUR-GSK-LID", T.lid_gasket(), "SIL-FOAM", "purchased", "seal", "lid perimeter gasket, closed-cell silicone 1.2 mm (0.8 installed)", hard=False)
     nso = len(T.lid_holes())
     if proto:
-        _p(P, "lid_standoffs", "PUR-SO-M3x10.5", T.lid_standoffs(True), "AL6061", "purchased", "deck", f"{nso} x M3 x 10.5 round female spacer on the fence feet (lid hard seats, lid-spreader tie, fence bond)")
+        nf = sum(1 for x, y in T.lid_holes() if T.standoff_on_foot(x, y))
+        _p(P, "lid_standoffs", "PUR-SO-M3x10.5", T.lid_standoffs(True, "foot"), "AL6061", "purchased", "deck", f"{nf} x M3 x 10.5 round female spacer on the fence feet (lid hard seat, lid-spreader tie, fence bond)")
+        _p(P, "lid_standoffs_11", "PUR-SO-M3x11", T.lid_standoffs(True, "spreader"), "AL6061", "purchased", "deck", f"{nso - nf} x M3 x 11 round female spacer in the chimney zones (no fence foot)")
     else:
         _p(P, "lid_standoffs", "PUR-SO-M3x11", T.lid_standoffs(False), "AL6061", "purchased", "deck", f"{nso} x M3 x 11 round female spacer (lid hard seats, lid-spreader tie)")
     _p(P, "board_standoffs", "PUR-SO-M2.5x2.5", T.board_standoffs(), "BRASS", "purchased", "deck", "8 x M2.5 x 2.5 clinch standoff (FRAME net)")

@@ -59,3 +59,7 @@ def test_s11_search_then_count(tmp_path, policy):
 
 def test_s12_reboot_resume(tmp_path):
     run(sc.s12_reboot_resume, tmp_path)
+
+
+def test_s13_door_target(tmp_path):
+    run(sc.s13_door_target, tmp_path)

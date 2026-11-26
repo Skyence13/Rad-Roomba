@@ -14,8 +14,8 @@ Python fakes or real-time emulators; "tool-checked" = headless browser / unit to
 |---|---|---|
 | Unit | `tools/test.sh unit` | **47 passed** (rr_core: wire/descriptor 12, estimator 9, head link 9, processing 7, clock fit 5; rr_web 4 incl. 2 added at close-out: server-side motion interlock, demo-account marking; rr_bringup 1 added: station-pitch default follows contract). Before the close-out additions: 44 passed. |
 | Scenarios (Python fakes, simulated, deterministic) | `tools/test.sh scenarios` | **14 passed** in 11 min 42 s (s01, s02, s03, s04a/b, s05, s06, s07, s08, s09, s10, s11 INLINE/DEFERRED, s12). Key numbers (3.0 × 1.2 m section): s01 at 0.03 m/s — flag 20 mm from the injected patch, revisit error 1.7 mm estimated / **2.1 mm true**, Expose reverse 0.350 m, park error 0.9 mm, valid exposure 0.646 of the floor (wall/end strips are a large share of a 1.2 m floor), acceptable 0.377, **median D# 0.201 Bq/cm², best 0.172** (goal 0.20: met by the median only marginally); localisation error vs truth ≤ 1.1 mm (x) / 1.2 mm (y). s09 — true time error never exceeded the reported bound in 4 cases (0.2 ms: bound ≤ 0.82 ms; 3 ms + 80 ppm: ≤ 3.8 ms; asymmetric 0.2/6 ms: error 3.3 ms ≤ bound 3.8 ms; 12 ms: bound 12.8 ms → all 31 gates rejected, arming refused HEAD_CLOCK); moving hotspot mapped within 2.7 mm along track. s10 step-and-count (3 s preset) — interrupted station invalidated and repeated, only static gates credited, median D# 0.247. s08 — two replays bit-identical to the live export. |
-| Native emulators | `tools/test.sh native` | pending |
-| ROS graph smoke | `tools/test.sh ros` | pending |
+| Native emulators (simulated, real time) | `tools/test.sh native` | **native_s01 PASS (11/11 checks), native_s02 PASS (10/10)**, 8 min 28 s (clean run after the two contaminated attempts, see change 4). s01: hotspot across a seam flagged 28 mm from the patch centre, revisit error 1.6 mm estimated / **1.8 mm true** (limit 10 mm), Expose reverse 0.350 m, time-sync bound max 1.14 ms / median 0.92 ms (limit 10 ms, 146 fits, 0 rejected), link 15 410 replies, 0 bad lines/gaps/retries, valid exposure 0.646. s02: MCU reset → HOLD HEAD_LINK, session closed, fresh handshake with new boot id, no counts attributed before the new BIND, resume only after re-arm, both bands complete. **Note:** max localisation error vs truth on the emulators was 12.4 mm (s01) / 15.7 mm (s02) in x, versus ≤ 1.7 mm on the Python fakes — larger than the 10 mm credit budget at some instant; not investigated further (the revisit, measured at rest, was within 2 mm). |
+| ROS graph smoke (simulated, real time, Python fakes over TCP) | `tools/test.sh ros` | **3 of 3 clean runs passed** (13/13 checks each; ~2 min each; workspace built earlier with `tools/build.sh`, `--symlink-install`). No HOLD during the scan in any run (the only HOLD recorded is the test's own `OPERATOR_PAUSE` before export at ~42 s). Each run is appended to `evidence/ros_smoke/runs.ndjson`. The earlier flake (HOLD ~25 s into the scan, 1 of 2 runs) was **not reproduced** and its reason was never captured; the test now records every HOLD with its reason, so a recurrence will be diagnosable. One further run at close-out failed for a known external reason (it ran concurrently with a native run on the same ports — change 4) and was discarded. |
 | UI (Playwright, tool-checked) | `tools/run_sim.sh --port 8090 --auto --method SEARCH_THEN_COUNT --speedup 6` + `node tools/ui_screenshots.js http://127.0.0.1:8090` | **14/14 checks passed** (2nd run; 1st run failed: lease lost under `--speedup`, fixed — change 3). 14 PNGs in `evidence/ui/` (desktop 1280 px `d01–d10`: login, status + coverage layer, activity layer, detection-limit layer, ratemeter/scaler, review queue, Next at spot, Expose spot, parked, Charge/Service + reports; phone 390 px `p01–p04`: viewer status, viewer review queue, viewer Charge/Service, second operator seeing control held), `ui_checks.json`. Observed: 27 review items on the 3.0 × 1.2 m section with one injected patch — the patch (INVESTIGATION_LEVEL, scaler-counted) plus `UNRESOLVED_EXCEEDANCE` cells whose search-stage D# (≈ 0.57–0.62 Bq/cm²) exceeds the 0.3 investigation level, so they cannot be cleared; expected with the synthetic calibration at 0.10 m/s, but a field queue would be long. |
 
 ### Changes made at close-out (small defects / hygiene only, no new features)
@@ -46,7 +46,16 @@ Python fakes or real-time emulators; "tool-checked" = headless browser / unit to
    packaged `contract_snapshot.yaml` refreshed; still a parameter. Test `rr_bringup/test/test_config.py`.
    s10 keeps an explicit 0.10 m (documents the 20 mm stripes). CR-06/07/08/09/11 logged by the lead
    (IB-29…31), not implemented.
-6. Tooling: `tools/replay.sh`, `tools/plan_report.py` (`tools/test.sh plan`),
+6. **Owner decision IB-30 (long trailers, doors open) implemented:** `trailer.door_target_x_m`
+   (removable flat door-end target; null = none). The localiser uses the target line exactly like the
+   closed door (`rr_localization.estimator.door_reference_x`); the planner moves the door end to the
+   target; the simulator world draws it. New prerequisite `ALONG_TRACK_REFERENCE`: in a trailer longer
+   than `lidar.range_max` with the doors open and no target, Arm/Start/Resume are refused. The
+   LOCALIZATION hold is unchanged. Scenario **s13_door_target** (3.0 m section, LiDAR range set to
+   2.0 m): refusal without target, accepted with target at 0.25 m, 232 x-updates from the target,
+   x error vs truth 1.8 mm, no hold — passed. Rule stated in README §8.2 and in
+   `software/Operator_Interface_0.4_delta.md` §3 step 0.
+7. Tooling: `tools/replay.sh`, `tools/plan_report.py` (`tools/test.sh plan`),
    `tools/ui_screenshots.js`; `tools/ros_smoke.py` now records every transition into HOLD with
    its reason and appends each run to `evidence/ros_smoke/runs.ndjson`.
 
@@ -106,6 +115,9 @@ Python fakes or real-time emulators; "tool-checked" = headless browser / unit to
 
 ## Failed or flaky
 
-- ROS graph smoke test (`tools/test.sh ros`): 2 complete runs, 1 passed, 1 ended with the mission
-  in HOLD about 25 s into the scan (cause not captured; real-time run on a loaded 4-core host).
-- Native emulators: see `README.md` for the last result of `tools/test.sh native`.
+- ROS graph smoke test (`tools/test.sh ros`): previous engineer: 2 runs, 1 passed, 1 ended in HOLD
+  about 25 s into the scan (reason not captured). Close-out: 3 of 3 passed with HOLD capture in place
+  (load average ~8–10 on 4 cores from other work). Status: **flake not reproduced, cause unknown**;
+  treat the smoke test as timing-sensitive. Do not run it together with `native` (same TCP ports).
+- Native emulators: passed at close-out (see verification log). Localisation error vs truth on the
+  emulators reached 12–16 mm in x at some instant (fakes: < 2 mm) — not investigated.

@@ -534,7 +534,7 @@ Recommendation to the board layout (stage 2): put J_TOF3, J_TOF10, J_BUMP_R and 
 ### W-024  OPTIONAL external 22 mm sounder: RR-PANEL J2 to the panel sounder
 
 * **Length:** 100 mm (routed path 18 mm + 2 x 20 mm termination/strain relief + 40 mm service loop = 98 mm, rounded up to 100 mm). *Estimated from layout, confirm on first build.*
-* **Construction:** 2 x AWG 24 twisted pair. The sounder position is not in the sources (assumed within 100 mm of the annunciator).
+* **Construction:** 2 x AWG 26 twisted pair (JST GH contacts take AWG 26-30). The sounder position is not in the sources (assumed within 100 mm of the annunciator).
 * **Shield / bonding:** none
 * **Protection upstream:** V12_AUX PTC F_AUX 0.35 A hold (lamps, fan, external sounder); sounder <= 100 mA
 * **Strain relief:** Adhesive-lined heat-shrink boot over the housing and the first 15 mm of jacket; P-clip or saddle tie within 60 mm; no tension on crimps; cable leaves sideways below 12 mm on the board; Cable clamped/clipped within 50 mm of the device terminals; drip loop at panel devices; ferrules or the device's own terminal type (TBD)
@@ -543,8 +543,8 @@ Recommendation to the board layout (stage 2): put J_TOF3, J_TOF10, J_BUMP_R and 
 
 | Wire | From (conn.pin) | To (conn.pin) | Net (from -> to) | AWG | Colour | Insulation | Pair | Length |
 |---|---|---|---|---|---|---|---|---|
-| W-024.1 | PNL.J2.1 | SOUNDER-EXT.+ | V12_AUX | 24 | PK | SI | P1 | 100 |
-| W-024.2 | PNL.J2.2 | SOUNDER-EXT.- | BUZ_N | 24 | BU | SI | P1 | 100 |
+| W-024.1 | PNL.J2.1 | SOUNDER-EXT.+ | V12_AUX | 26 | PK | SI | P1 | 100 |
+| W-024.2 | PNL.J2.2 | SOUNDER-EXT.- | BUZ_N | 26 | BU | SI | P1 | 100 |
 
 ### W-030  ToF carrier CLIFF_FL (RR-TOF #0): main board J_TOF0 to the carrier J1
 
@@ -863,13 +863,13 @@ Recommendation to the board layout (stage 2): put J_TOF3, J_TOF10, J_BUMP_R and 
 | W-103.3 | HEAD-HEATER.2 | SPL-HCUT.2 | HTR_CUT | 18 | BN | SI | - | 100 |
 | W-103.4 | SPL-HCUT.3 | HEAD-CUTOUT.1 | HTR_CUT | 18 | BN | SI | - | 100 |
 | W-103.5 | HEAD-CUTOUT.2 | HEAD.J2601.2 | HEAD_HTR_N | 18 | BN | SI | - | 100 |
-| W-103.6 | NTC-SPR.a | HEAD.J2601.4 | NTC_HTR | 26 | WH | FEP | P1 | 100 |
-| W-103.7 | NTC-SPR.b | HEAD.J2601.5 | GND | 26 | BK | FEP | P1 | 100 |
+| W-103.6 | NTC-SPR.a | HEAD.J2601.4 | NTC_HTR | 24 | WH | FEP | P1 | 100 |
+| W-103.7 | NTC-SPR.b | HEAD.J2601.5 | GND | 24 | BK | FEP | P1 | 100 |
 
 ### W-104  Head rail switch front (series element of the interlock loop): head board J2002 to the switch
 
 * **Length:** 80 mm (routed path 19 mm + 2 x 15 mm termination/strain relief + 30 mm service loop = 79 mm, rounded up to 80 mm). *Estimated from layout, confirm on first build.*
-* **Construction:** 2 x AWG 24 twisted pair in the front wall channel. Connector pins 3 and 4 (AUX_N/AUX_GND zone read-back) are NOT wired: the D2HW is single-pole and its NO throw is not potential-free from the loop (CCR-HE-04). The NO lead is cut back and insulated.
+* **Construction:** 2 x AWG 26 twisted pair in the front wall channel (JST GH contacts take AWG 26-30). Connector pins 3 and 4 (AUX_N/AUX_GND zone read-back) are NOT wired: the D2HW is single-pole and its NO throw is not potential-free from the loop (CCR-HE-04). The NO lead is cut back and insulated.
 * **Shield / bonding:** none (inside the shielded head)
 * **Protection upstream:** No fuse: signal conductors, series-limited (loop through 1.00 kohm; PRES_ID through the 4.70 kohm pull-up) [circuit.py]
 * **Strain relief:** Clip in the front wall channel every 50 mm; switch end clipped within 20 mm
@@ -878,13 +878,13 @@ Recommendation to the board layout (stage 2): put J_TOF3, J_TOF10, J_BUMP_R and 
 
 | Wire | From (conn.pin) | To (conn.pin) | Net (from -> to) | AWG | Colour | Insulation | Pair | Length |
 |---|---|---|---|---|---|---|---|---|
-| W-104.1 | RAIL-F.COM | HEAD.J2002.1 | HEAD_LOOP_OUT | 24 | GN | FEP | P1 | 80 |
-| W-104.2 | RAIL-F.NC | HEAD.J2002.2 | LOOP_A | 24 | GY | FEP | P1 | 80 |
+| W-104.1 | RAIL-F.COM | HEAD.J2002.1 | HEAD_LOOP_OUT | 26 | GN | FEP | P1 | 80 |
+| W-104.2 | RAIL-F.NC | HEAD.J2002.2 | LOOP_A | 26 | GY | FEP | P1 | 80 |
 
 ### W-105  Head rail switch left (series element of the interlock loop): head board J2003 to the switch
 
 * **Length:** 280 mm (routed path 212 mm + 2 x 15 mm termination/strain relief + 30 mm service loop = 272 mm, rounded up to 280 mm). *Estimated from layout, confirm on first build.*
-* **Construction:** 2 x AWG 24 twisted pair in the front wall channel. Connector pins 3 and 4 (AUX_N/AUX_GND zone read-back) are NOT wired: the D2HW is single-pole and its NO throw is not potential-free from the loop (CCR-HE-04). The NO lead is cut back and insulated.
+* **Construction:** 2 x AWG 26 twisted pair in the front wall channel (JST GH contacts take AWG 26-30). Connector pins 3 and 4 (AUX_N/AUX_GND zone read-back) are NOT wired: the D2HW is single-pole and its NO throw is not potential-free from the loop (CCR-HE-04). The NO lead is cut back and insulated.
 * **Shield / bonding:** none (inside the shielded head)
 * **Protection upstream:** No fuse: signal conductors, series-limited (loop through 1.00 kohm; PRES_ID through the 4.70 kohm pull-up) [circuit.py]
 * **Strain relief:** Clip in the front wall channel every 50 mm; switch end clipped within 20 mm
@@ -893,13 +893,13 @@ Recommendation to the board layout (stage 2): put J_TOF3, J_TOF10, J_BUMP_R and 
 
 | Wire | From (conn.pin) | To (conn.pin) | Net (from -> to) | AWG | Colour | Insulation | Pair | Length |
 |---|---|---|---|---|---|---|---|---|
-| W-105.1 | RAIL-L.COM | HEAD.J2003.1 | LOOP_A | 24 | GN | FEP | P1 | 280 |
-| W-105.2 | RAIL-L.NC | HEAD.J2003.2 | LOOP_B | 24 | GY | FEP | P1 | 280 |
+| W-105.1 | RAIL-L.COM | HEAD.J2003.1 | LOOP_A | 26 | GN | FEP | P1 | 280 |
+| W-105.2 | RAIL-L.NC | HEAD.J2003.2 | LOOP_B | 26 | GY | FEP | P1 | 280 |
 
 ### W-106  Head rail switch right (series element of the interlock loop): head board J2004 to the switch
 
 * **Length:** 280 mm (routed path 212 mm + 2 x 15 mm termination/strain relief + 30 mm service loop = 272 mm, rounded up to 280 mm). *Estimated from layout, confirm on first build.*
-* **Construction:** 2 x AWG 24 twisted pair in the front wall channel. Connector pins 3 and 4 (AUX_N/AUX_GND zone read-back) are NOT wired: the D2HW is single-pole and its NO throw is not potential-free from the loop (CCR-HE-04). The NO lead is cut back and insulated.
+* **Construction:** 2 x AWG 26 twisted pair in the front wall channel (JST GH contacts take AWG 26-30). Connector pins 3 and 4 (AUX_N/AUX_GND zone read-back) are NOT wired: the D2HW is single-pole and its NO throw is not potential-free from the loop (CCR-HE-04). The NO lead is cut back and insulated.
 * **Shield / bonding:** none (inside the shielded head)
 * **Protection upstream:** No fuse: signal conductors, series-limited (loop through 1.00 kohm; PRES_ID through the 4.70 kohm pull-up) [circuit.py]
 * **Strain relief:** Clip in the front wall channel every 50 mm; switch end clipped within 20 mm
@@ -908,8 +908,8 @@ Recommendation to the board layout (stage 2): put J_TOF3, J_TOF10, J_BUMP_R and 
 
 | Wire | From (conn.pin) | To (conn.pin) | Net (from -> to) | AWG | Colour | Insulation | Pair | Length |
 |---|---|---|---|---|---|---|---|---|
-| W-106.1 | RAIL-R.COM | HEAD.J2004.1 | LOOP_B | 24 | GN | FEP | P1 | 280 |
-| W-106.2 | RAIL-R.NC | HEAD.J2004.2 | LOOP_C | 24 | GY | FEP | P1 | 280 |
+| W-106.1 | RAIL-R.COM | HEAD.J2004.1 | LOOP_B | 26 | GN | FEP | P1 | 280 |
+| W-106.2 | RAIL-R.NC | HEAD.J2004.2 | LOOP_C | 26 | GY | FEP | P1 | 280 |
 
 ### W-107  Head lid (light-leak) interlock switch: head board J2201 to the lid switch
 

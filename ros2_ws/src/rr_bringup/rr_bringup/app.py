@@ -30,7 +30,8 @@ from rr_guidance.guidance import GuidedReview
 from rr_localization.estimator import LocalizerConfig, WallLocalizer
 
 DEFAULTS = {
-    "trailer": {"id": "SIM-TRAILER", "length_m": 3.0, "width_m": 2.5, "door_closed": True, "keepouts": []},
+    "trailer": {"id": "SIM-TRAILER", "length_m": 3.0, "width_m": 2.5, "door_closed": True, "door_target_x_m": None,
+                "keepouts": []},
     "profile_id": "ore-floor-demo-synthetic",
     "mode": "COMMISSIONING", "op_mode": "COMMISSIONING",
     "survey": {"sub_res": 0.005, "cell_m": 0.10, "position_allowance_m": 0.010},
@@ -104,6 +105,7 @@ class RobotApp:
             self.head._emit("C", {"c": "SESSION_CLOSE", "reason": "HOST_RESTART"})
         self.chassis = ChassisLink(chassis_transport, clock, sink=self._aux_sink)
         self.loc = WallLocalizer(LocalizerConfig(tr["length_m"], tr["width_m"], door_closed=tr["door_closed"],
+                                                 door_target_x_m=None if tr["door_closed"] else tr.get("door_target_x_m"),
                                                  lidar_xy=tuple(cfg["lidar"]["xy"]), lidar_yaw=cfg["lidar"]["yaw"],
                                                  **cfg["localizer"]))
         self.mover = Mover(clock, self.chassis, self.outline, MoverConfig(**cfg["mover"]))
@@ -159,9 +161,12 @@ class RobotApp:
         import base64
         desc = json.loads(base64.b64decode(m["descriptor_b64"]))
         lanes = lane_polygons(desc, m["mount_transform"])
+        tr_cfg = self.cfg["trailer"]
         mcfg = MissionConfig(**merge(dict(self.geometry.get("survey_method_defaults") or {}, op_mode=self.cfg["op_mode"]),
                                      self.cfg["mission"]))       # contract survey_methods defaults, config overrides
+        door_end_x = 0.0 if tr_cfg["door_closed"] or tr_cfg.get("door_target_x_m") is None else float(tr_cfg["door_target_x_m"])
         pcfg = PlanConfig(**merge({"allowance_m": self.cfg["survey"]["position_allowance_m"], "method": mcfg.method,
+                                   "door_end_x_m": door_end_x,
                                    "speed_mps": mcfg.speed, "station_pitch_m": mcfg.station_pitch_m,
                                    "settle_s": mcfg.settle_s, "scaler_preset_s": mcfg.station_preset_s}, self.cfg["plan"]))
         tr = self.cfg["trailer"]

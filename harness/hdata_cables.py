@@ -340,9 +340,9 @@ cable("W-023", "RR-PANEL: main board J_PANEL to RR-PANEL J1 (straight 1:1)", "ro
       shield="none", protection=PRO["aux12"] + "; " + PRO["logic"], strain=STRAIN["gh"],
       notes="RR-PANEL J1 is JST SM10B-GHS-TB side entry on the bottom side (4.25 mm against the 3 mm bottom limit, CCR-E08(d)).")
 cable("W-024", "OPTIONAL external 22 mm sounder: RR-PANEL J2 to the panel sounder", "robot", [
-    w("PNL.J2", "1", "SOUNDER-EXT", "+", "V12_AUX", 24, "PK", pair="P1"), w("PNL.J2", "2", "SOUNDER-EXT", "-", "BUZ_N", 24, "BU", pair="P1")],
+    w("PNL.J2", "1", "SOUNDER-EXT", "+", "V12_AUX", 26, "PK", pair="P1"), w("PNL.J2", "2", "SOUNDER-EXT", "-", "BUZ_N", 26, "BU", pair="P1")],
     path=[(-80, 97, 110), (-80, 97, 128)], end=20, loop=40,
-    construction="2 x AWG 24 twisted pair. The sounder position is not in the sources (assumed within 100 mm of the annunciator).", shield="none", protection=PRO["aux12"] + "; sounder <= 100 mA", strain=STRAIN["gh"] + "; " + STRAIN["device"],
+    construction="2 x AWG 26 twisted pair (JST GH contacts take AWG 26-30). The sounder position is not in the sources (assumed within 100 mm of the annunciator).", shield="none", protection=PRO["aux12"] + "; sounder <= 100 mA", strain=STRAIN["gh"] + "; " + STRAIN["device"],
     notes="Recommended by the panel circuit (on-board piezo about 60 dB at 1 m). No part verified (TBD).")
 
 # ================================================================ ROBOT: ToF carriers
@@ -428,7 +428,7 @@ cable("W-103", "Head heater film, bimetal cut-out and spreader NTC: head board J
     w("HEAD-HEATER", "2", "SPL-HCUT", "2", "HTR_CUT", 18, "BN", note="element end to the junction"),
     w("SPL-HCUT", "3", "HEAD-CUTOUT", "1", "HTR_CUT", 18, "BN"),
     w("HEAD-CUTOUT", "2", "HEAD.J2601", "2", "HEAD_HTR_N", 18, "BN", note="heater return through the low-side cut-out; HEAD_HTR_N never touches ground on the board"),
-    w("NTC-SPR", "a", "HEAD.J2601", "4", "NTC_HTR", 26, "WH", ins=FEP, pair="P1"), w("NTC-SPR", "b", "HEAD.J2601", "5", "GND", 26, "BK", ins=FEP, pair="P1")],
+    w("NTC-SPR", "a", "HEAD.J2601", "4", "NTC_HTR", 24, "WH", ins=FEP, pair="P1"), w("NTC-SPR", "b", "HEAD.J2601", "5", "GND", 24, "BK", ins=FEP, pair="P1")],
     path=[hdb(88, 8), (76, 87.5, 30), (74, 87.5, 24)], end=20, loop=30, budget=350,
     construction="Heater circuit AWG 18 pair (supply and return twisted) plus AWG 24 sense and an AWG 26 NTC pair. Assembly (per J2601): HTR_SW -> 4.8 ohm element -> CUTOUT_SENSE -> bimetal cut-out (low side) -> HEAD_HTR_N. Tail comes up the rear chimney at y = +87.5. J2601 pin 6 not wired.",
     shield="none inside the shielded head", protection=PRO["head_htr"] + "; cut-out status reads 'tripped' when the feed is off (by design)", strain="Leads clipped to the spreader with Kapton/high-temperature tape within 20 mm of the film tail",
@@ -438,9 +438,9 @@ for cid, nm, jref, dev, sw in (("W-104", "front", "J2002", "RAIL-F", (184.2, 0.0
     via = {"front": [], "left": [(180, 8, 30), (180, 160, 25)], "right": [(180, -8, 30), (180, -160, 25)]}[nm]
     nets = {"J2002": ("HEAD_LOOP_OUT", "LOOP_A"), "J2003": ("LOOP_A", "LOOP_B"), "J2004": ("LOOP_B", "LOOP_C")}[jref]
     cable(cid, "Head rail switch %s (series element of the interlock loop): head board %s to the switch" % (nm, jref), "head", [
-        w(dev, "COM", "HEAD." + jref, "1", nets[0], 24, "GN", ins=FEP, pair="P1"), w(dev, "NC", "HEAD." + jref, "2", nets[1], 24, "GY", ins=FEP, pair="P1")],
+        w(dev, "COM", "HEAD." + jref, "1", nets[0], 26, "GN", ins=FEP, pair="P1"), w(dev, "NC", "HEAD." + jref, "2", nets[1], 26, "GY", ins=FEP, pair="P1")],
         path=[pos] + via + [sw], end=15, loop=30,
-        construction="2 x AWG 24 twisted pair in the front wall channel. Connector pins 3 and 4 (AUX_N/AUX_GND zone read-back) are NOT wired: the D2HW is single-pole and its NO throw is not potential-free from the loop (CCR-HE-04). The NO lead is cut back and insulated.",
+        construction="2 x AWG 26 twisted pair in the front wall channel (JST GH contacts take AWG 26-30). Connector pins 3 and 4 (AUX_N/AUX_GND zone read-back) are NOT wired: the D2HW is single-pole and its NO throw is not potential-free from the loop (CCR-HE-04). The NO lead is cut back and insulated.",
         shield="none (inside the shielded head)", protection=PRO["head_sig"], strain="Clip in the front wall channel every 50 mm; switch end clipped within 20 mm",
         notes="Loop is a potential-free series chain; see the loop diagram in cables.md.")
 cable("W-107", "Head lid (light-leak) interlock switch: head board J2201 to the lid switch", "head", [

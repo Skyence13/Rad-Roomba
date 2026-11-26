@@ -48,7 +48,7 @@ class SimSystem:
                             uuid_factory=uuid, resume=resume)
         tr = self.app.cfg["trailer"]
         lanes = lane_polygons(json.loads(desc), MOUNT)
-        self.world = world or World(tr["length_m"], tr["width_m"], cal, lanes, seed=seed, door_closed=tr["door_closed"],
+        self.world = world or World(tr["length_m"], tr["width_m"], cal, lanes, seed=seed, door_closed=tr["door_closed"], door_target_x_m=tr.get("door_target_x_m"),
                                     lidar_xy=tuple(self.app.cfg["lidar"]["xy"]))
         self.chassis = FakeChassis(self.clock, self.clink.ends[1], seed=seed, pose=start_pose or (0.6, 0.0, 0.0),
                                    drift_ppm=chassis_drift_ppm)

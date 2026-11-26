@@ -1,5 +1,7 @@
 # Hardware configuration template. Every value marked SITE must be entered/confirmed on site.
-trailer: {id: SITE, length_m: 16.0, width_m: 2.5, door_closed: true, keepouts: []}   # SURVEYED inside dimensions
+trailer: {id: SITE, length_m: 16.0, width_m: 2.5, door_closed: true, door_target_x_m: null, keepouts: []}   # SURVEYED inside dimensions
+# Long trailer rule (IB-30): if length_m > lidar.range_max, survey motion needs door_closed: true OR a removable
+# flat target across the door end at door_target_x_m (m from the door threshold); otherwise arming is refused.
 profile_id: ore-floor-demo-synthetic        # replace by an approved site profile; yellowcake stays unconfigured
 mode: COMMISSIONING                         # SURVEY needs AS_BUILT geometry, approved calibration and profile
 op_mode: COMMISSIONING

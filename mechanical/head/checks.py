@@ -142,8 +142,10 @@ def drain_check(frame_shapes):
                 box(d["x_out"], d["x_in"], yd - 0.4, yd + 0.4, d["z_ch"][0] + 0.2, d["z_ch"][1] - 0.2),
                 cyl(0.5, H.CHIM_FLOOR_REAR - d["z_ch"][1] - 0.1, (d["x_in"], yd, d["z_ch"][1] + 0.05))]
         open_ = sum(volume(l.intersect(f)) for l in legs for f in frame_shapes) < 1e-3
-        los = cyl2(0.2, (d["x_out"], yd, H.Z_FB - 0.01), (d["x_in"], yd, H.CHIM_FLOOR_REAR + 0.01))
-        blocked = sum(volume(los.intersect(f)) for f in frame_shapes) > 0.05
+        r = d["d"] / 2 - 0.05          # extreme sight lines: every pair of opposite rim points of the outlet (bottom) and inlet (top)
+        lines = [cyl2(0.02, (d["x_out"] + a * r, yd + b * r, H.Z_FB - 0.01), (d["x_in"] + c * r, yd + e * r, H.CHIM_FLOOR_REAR + 0.01))
+                 for a, b in ((-1, 0), (1, 0), (0, -1), (0, 1), (0, 0)) for c, e in ((-1, 0), (1, 0), (0, -1), (0, 1), (0, 0))]
+        blocked = all(sum(volume(l.intersect(f)) for f in frame_shapes) > 1e-4 for l in lines)
         ok &= open_ and blocked
         rows.append({"lane": i, "passage_open": bool(open_), "line_of_sight_blocked": bool(blocked)})
     return ok, rows
@@ -289,16 +291,17 @@ def run():
         f"joint plane to nearest window edge {edge:.2f} mm, to the cavity wall {H.RIB_W / 2:.2f} mm; groove depth {feat:.1f} mm leaves {H.RIB_W / 2 - feat:.2f} mm of solid half rib")
     # 9 EMI bond pitch
     bp, clamp, bpts = bond_pitch(builds["prototype"])
-    unclamped = [k for k, v in clamp.items() if v is None]
+    unclamped = [k for k, v in clamp.items() if v is None and T.standoff_on_foot(*map(float, k.split(",")))]
     add("EMI fence bond pitch to the spreader <= 50 mm (prototype; bond = screw or standoff clamping the foot, clamping tool-checked)",
         "pass" if max(bp.values()) <= 50.0 and not unclamped else "fail",
-        f"largest gap front {bp['front']:.1f}, side {bp['side']:.1f}, rear {bp['rear']:.1f} mm (fence ends included); standoffs not on a fence foot: {unclamped or 'none'}")
+        f"largest gap front {bp['front']:.1f}, side {bp['side']:.1f}, rear {bp['rear']:.1f} mm (fence ends included); standoffs meant to clamp a foot but not on one: {unclamped or 'none'}; "
+        f"standoffs in the chimney zones (on the spreader, not bond points): {[k for k, v in clamp.items() if v is None]}")
     res["data"]["bond_points"] = bpts
     n, dmax, pair = lid_pitch()
-    seats = [bounds(T.lid_standoffs(True))[5], bounds(T.lid_standoffs(False))[5]]
+    seats = [bounds(T.lid_standoffs(True))[5], bounds(T.lid_standoffs(False))[5], bounds(T.lid_standoffs(True))[2]]
     boss_top = max(bounds(p.shape)[5] for p in builds["prototype"] if p.name.startswith("frame"))
     add(f"cover = shear panel: lid fasteners round a closed loop at <= {H.LID_PITCH_MAX:g} mm pitch, all on hard seats at the lid underside",
-        "pass" if dmax <= H.LID_PITCH_MAX + 1e-6 and all(abs(z - H.Z_LID0) < 1e-6 for z in seats + [boss_top]) else "fail",
+        "pass" if dmax <= H.LID_PITCH_MAX + 1e-6 and all(abs(z - H.Z_LID0) < 1e-6 for z in seats[:2] + [boss_top]) else "fail",
         f"{n} M3 screws ({len(T.lid_holes())} into standoffs on the spreader, {len(T.lid_boss_xy())} into frame bosses); largest neighbour distance {dmax:.1f} mm between "
         f"({pair[0][0]:.1f}, {pair[0][1]:+.1f}) and ({pair[1][0]:.1f}, {pair[1][1]:+.1f}); standoff tops z {seats[0]:.2f} / {seats[1]:.2f}, boss tops z {boss_top:.2f}")
     ok, rows = drain_check([p.shape for p in builds["prototype"] if p.name.startswith("frame")])
@@ -332,9 +335,9 @@ def run():
     # 11 calculations
     st = C.structure(masses)
     res["data"]["structure"] = st
-    worst = max(v["lid fitted (10 screws)"]["total"] for v in st.values())
+    worst = max(v["lid fitted (all screws)"]["total"] for v in st.values())
     add("20 N at the front outer window corner: deflection target < 0.5 mm with the lid fitted", "pass" if worst < 0.5 else "fail",
-        "; ".join(f"{k}: {v['lid fitted (10 screws)']['total']:.2f} mm (lid off {v['lid removed (service state)']['total']:.2f}), f1 {v['f1_hz']:.0f} Hz" for k, v in st.items()), "calculated")
+        "; ".join(f"{k}: {v['lid fitted (all screws)']['total']:.2f} mm (lid off {v['lid removed (service state)']['total']:.2f}), f1 {v['f1_hz']:.0f} Hz" for k, v in st.items()), "calculated")
     rl = C.rails()
     res["data"]["rails"] = rl
     f = rl["front"]

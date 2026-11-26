@@ -47,7 +47,7 @@ LAP_T, LAP_H = 1.0, 2.0            # ship-lap of the upper walls across the join
 DOWEL_D = 4.0
 ROD_PAD_X = (96.0, 116.0, 136.0, 156.0, 176.0)   # spreader screw stations on the y = +-87.5 ribs (hard pads, M2.5 inserts)
 REAR_SCREW_X = 76.8
-REAR_SCREW_Y = (8.0, 20.0, 160.0)                # spreader screws into the printed rear zone (each side); 160 (was 156) clears the lid standoff row
+REAR_SCREW_Y = (8.0, 22.0, 153.0)                # spreader screws into the printed rear zone (each side), also comb-foot bond points
 THEAD_SCREW_DY = (-24.0, -10.0, 10.0, 24.0)       # M3 low-head through the spreader tab into the aluminium T-head (about y = +-87.5)
 THEAD_SCREW_X = 76.5   # (was M4 at 75.8: the 7 mm head overlapped the rear wall and the EMI comb; tool-checked with modelled heads)
 
@@ -70,7 +70,7 @@ STANDOFF_BOARD_H = 2.5
 # spreader (the 2.6 mm rear wall cannot take an insert and the rear strip is full); front and side lines: hard bosses on the wall inner faces
 # (prototype: M3 heat-set inserts; production: tapped M3), inside the gasket loop, top = lid seat z 43.0.
 LID_STANDOFFS = [(183.0, 42.0), (183.0, 130.0), (77.5, 0.0), (77.5, 31.5), (77.5, 57.0), (77.5, 70.5), (77.5, 104.5), (77.5, 144.5), (ROW_X, 166.9)]
-LID_STANDOFF_D = 4.5   # +- y -> 17 off; prototype M3 x 10.5 (standing on the 0.5 mm EMI fence feet, clamping them = bond points), production M3 x 11
+LID_STANDOFF_D = 4.5   # +- y -> 17 off; prototype: M3 x 10.5 where it stands on (and clamps) a 0.5 mm EMI fence foot, M3 x 11 in the chimney zones; production M3 x 11
 LID_BOSS_FRONT_X = 184.2                         # front bosses (centre x), lid hole edge = gasket inner edge 185.9
 LID_BOSS_FRONT_Y = (6.0, 35.0, 70.5, 104.5, 137.0, 168.4)   # +- y (none on the y = 0 split); 168.4 = front corner boss
 LID_BOSS_SIDE_Y = 168.4                          # side bosses (centre |y|), lid hole edge 170.1 < gasket inner edge 170.2
@@ -137,7 +137,7 @@ SW = {"l": 13.3, "t": 5.3, "h": 7.0, "plunger": 1.5, "pt_max": 1.0, "ot_min": 1.
 PORT_SLOT_HY, PORT_SLOT_Z0 = 5.5, 33.5
 CABLE_D = {"J1": 7.5, "J2": 6.5}
 VENT = (XR, -65.0, 37.5)
-DRAIN = {"dy": 6.5, "x_in": 74.4, "x_out": 71.9, "d": 1.5, "z_ch": (11.4, 12.4)}   # light-trap drain per chimney: up-across-up, 3 turns
+DRAIN = {"dy": 6.5, "x_in": 75.0, "x_out": 71.0, "d": 1.2, "z_ch": (11.5, 12.3)}   # light-trap drain per chimney: up-across-up, 3 turns
 LID_SW = (183.0, -SHOE_Y)           # lid interlock switch on the front strip (x, y): mirror position of the front rail switch
 
 # keeper

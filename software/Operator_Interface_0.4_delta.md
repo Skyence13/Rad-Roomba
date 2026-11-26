@@ -28,6 +28,7 @@ inhibited is rejected with the reason and is not kept.
 
 ## 3. Start sequence (replaces "Start / Resume" preflight detail)
 
+0. **Along-trailer reference (long trailers, site rule IB-30, 2026-11-26).** If the trailer is longer than the configured LiDAR range, survey motion needs either the **doors closed** (`trailer.door_closed: true`) or a **removable flat target placed across the door end**, with its distance from the door threshold entered as `trailer.door_target_x_m`. The LiDAR treats the target as the door-end wall; the floor between the threshold and the target is reported as an unsurveyed residual. Without one of them, **Arm** is refused and the page lists `ALONG_TRACK_REFERENCE`. Independently, localisation still holds the mission (`LOCALIZATION`) whenever the position uncertainty exceeds its budget.
 1. Robot on the surveyed start mark → **Register datum**. Required again after every restart or pack swap; arming is refused without it.
 2. Press **REARM** on the robot → **Preflight / brake test** (selects the operating profile, switches head power on, runs the stationary brake test, which drops the latch on purpose) → press **REARM** again.
 3. **Arm** is accepted only when the recorder is writing, the head is identified with a calibration, both clock fits are within 10 ms, the datum is registered and localisation is inside its budget. The page lists what is missing.

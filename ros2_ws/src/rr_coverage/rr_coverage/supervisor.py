@@ -74,6 +74,16 @@ class Mission:
         t = self.app.clock.now_us()
         self.app.pipeline.record(t, "J", dict(mark, op="mark", t_us=t))
 
+    def along_track_reference_missing(self):
+        """Site rule (IB-30): in a trailer longer than the configured LiDAR range the along-trailer
+        reference needs the doors closed or a removable flat target across the door end
+        (`trailer.door_target_x_m`); otherwise survey motion is refused."""
+        tr, rng = self.app.cfg["trailer"], float(self.app.cfg["lidar"]["range_max"])
+        if tr["length_m"] <= rng or tr.get("door_closed") or tr.get("door_target_x_m") is not None:
+            return None
+        return (f"ALONG_TRACK_REFERENCE: trailer {tr['length_m']} m > LiDAR range {rng} m with the doors open - "
+                "close the doors or place the door-end target and set trailer.door_target_x_m")
+
     def prerequisites(self):
         """Everything that must hold before survey motion (startup ordering)."""
         a = self.app
@@ -88,6 +98,9 @@ class Mission:
             missing.append("CHASSIS_LINK")
         elif not math.isfinite(a.chassis.time_bound_us()) or a.chassis.time_bound_us() > a.head.cfg.max_bound_us:
             missing.append("CHASSIS_CLOCK")
+        ref = self.along_track_reference_missing()
+        if ref:
+            missing.append(ref)
         if not a.loc.initialized:
             missing.append("TRANSFORMS:datum not registered")
         elif not a.loc.sample()["credit"]:

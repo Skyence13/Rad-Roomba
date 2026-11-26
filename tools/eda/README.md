@@ -26,9 +26,10 @@ Both mount the repository at the same absolute path, run as the calling uid with
 
 | step | where | what |
 |---|---|---|
-| 1 `_gen` | KiCad container | evaluate `board.py`; resolve symbols; write `.kicad_pro`, `sym-lib-table`, `fp-lib-table`, `rr_local.kicad_sym`, `rr_local.pretty/`, root + one `.kicad_sch` per group; export the KiCad netlist from the generated schematic and **cross-check it pin-by-pin against the definition**; build the unrouted `.kicad_pcb` with pcbnew (pad nets come from that netlist); auto-arrange unplaced parts; export `route/<name>.dsn` |
+| 1 `_gen` | KiCad container | evaluate `board.py`; resolve symbols; write `.kicad_pro`, `sym-lib-table`, `fp-lib-table`, `rr_local.kicad_sym`, `rr_local.pretty/`, root + one `.kicad_sch` per group; export the KiCad netlist from the generated schematic and **cross-check it pin-by-pin against the definition**; build the unrouted `.kicad_pcb` with pcbnew (pad nets come from that netlist); auto-arrange unplaced parts; copy replicated blocks; plane fan-out vias; export `route/<name>.dsn` (with 25 um extra clearance and edge keep-outs for the autorouter) |
 | 2 route | Freerouting container | `route/<name>.dsn` → `route/<name>.ses` (+ `freerouting.log`, `route_meta.json`). Skipped when the DSN hash is unchanged and a SES exists (so reruns are deterministic); `--reroute` forces it |
-| 3 `_post` | KiCad container | import SES, verify pre-routes are untouched, remove dangling stubs, fill zones, add fab notes/dimensions, save; ERC; DRC with schematic parity; outputs; `reports/summary.json` |
+| 3 `_post` | KiCad container | import SES into the pristine generated board, verify pre-routes are untouched, widen tracks the router necked below the fab minimum, remove dangling stubs, fill zones, add fab notes/dimensions, save; ERC; DRC with schematic parity; outputs; `reports/summary.json` |
+| 4 continue | both | only while connections are open: up to `retries` further Freerouting runs starting from the routed board (see Routing notes) |
 
 Files per board directory:
 ```
@@ -304,6 +305,8 @@ optimiser is multi-threaded) — which is why the SES is cached.
 * Net labels are always global; there is no per-sheet local net scope.
 * 2, 4 or 6 copper layers; through vias only; no differential-pair or length tuning
   (net-class diff-pair fields are written but the autorouter ignores them).
+* Fully automatic routing does not complete on boards with 0.5 mm-pitch ICs (see the
+  stress test): expect to pre-route a handful of pin escapes per fine-pitch IC pair.
 * Auto-arrange is a greedy helper (top/bottom side per part, courtyard rectangles). It
   avoids overlaps and keep-outs but knows nothing about signal integrity; place
   connectors, sensitive analogue parts and anything mechanical explicitly.

@@ -707,3 +707,54 @@ def s12_reboot_resume(tmp, seed=22):
     c.add("interrupted strip re-surveyed", min(_band_fraction(sim2, p) for p in (0, 1)) == 1.0)
     c.add("new attachment after host restart", len(app2.pipeline.sessions) >= 2 and any(x["reason"] == "HOST_RESTART" for x in app2.pipeline.closes))
     return _finish("s12_reboot_resume", sim2, c, {"done_before_reboot": done_before, "trajectory_epochs": app2.pipeline.traj.epochs})
+
+
+def s13_door_target(tmp, seed=23):
+    """Site rule for long trailers with open doors (IB-30): a trailer longer than the LiDAR range needs the
+    doors closed or a removable door-end target (`trailer.door_target_x_m`) before survey motion; with the
+    target the localiser takes x from it exactly like the door wall.  The LiDAR range is configured short
+    (2.0 m) so that the 3.0 m section stands in for a long trailer."""
+    c = Checks()
+    base = dict(trailer={"id": "SIM-SECTION-3.0x1.0-OPEN", "length_m": 3.0, "width_m": 1.0, "door_closed": False},
+                lidar={"range_max": 2.0})
+    # 1. doors open, no target: refused before motion
+    sim = SimSystem(_run_dir("s13a", tmp), _cfg(**base), seed=seed)
+    try:
+        sim.bringup()                                  # asserts that arm is accepted -> must fail here
+        r = {"accepted": True}
+    except AssertionError as err:
+        r = err.args[0] if err.args and isinstance(err.args[0], dict) else {"accepted": False, "reason": repr(err)}
+    miss = r.get("missing") or []
+    c.add("doors open, no target, trailer longer than LiDAR range: arm refused with ALONG_TRACK_REFERENCE",
+          not r.get("accepted") and any(m.startswith("ALONG_TRACK_REFERENCE") for m in miss), result=r)
+    c.add("... the only other missing item is LOCALIZATION (no x reference in range: the existing guard still applies)",
+          set(m.split(":")[0] for m in miss) <= {"ALONG_TRACK_REFERENCE", "LOCALIZATION"}, missing=miss)
+    c.add("start rejected", not sim.app.command("start")["accepted"])
+    # 2. doors open, removable target at x = 0.25 m: accepted, x referenced to the target
+    cfg = _cfg(**base)
+    cfg["trailer"]["door_target_x_m"] = 0.25
+    sim = SimSystem(_run_dir("s13b", tmp), cfg, seed=seed)
+    sim.bringup()
+    app = sim.app
+    miss = app.mission.prerequisites()
+    c.add("with the door-end target: no ALONG_TRACK_REFERENCE prerequisite", not any(m.startswith("ALONG") for m in miss), missing=miss)
+    c.add("plan keeps the door end clear of the target", app.plan["pivot_region"]["x"][0] >= 0.25 + 0.10 + 0.27, pivot_x=app.plan["pivot_region"]["x"])
+    c.add("start accepted", app.command("start")["accepted"])
+    x_updates = []
+    seen = {"t": None}
+
+    def watch():
+        lu = app.loc.last_update["x"]
+        if lu is not None and lu != seen["t"]:
+            seen["t"] = lu
+            x_updates.append((round(sim.truth()[2], 2), round(sim.truth()[0], 3)))
+        return app.mission.state == "HOLD" or (app.mission.task is not None and app.mission.task["name"] == "pair0:A-cap"
+                                               and app.mission.phase == "PASS")
+    _wait(sim, watch, 600)
+    near_door = [u for u in x_updates if abs(abs(u[0]) - math.pi) < 0.3]
+    c.add("x updated from the door-end target while heading to the door (bulkhead out of the configured range)",
+          len(near_door) > 5, n=len(near_door), n_all=len(x_updates))
+    err = sim.loc_error()
+    c.add("localisation error vs truth stays within 10 mm in x", err["max_x_m"] < 0.010, err=err)
+    c.add("no LOCALIZATION hold", app.mission.state == "SCAN", state=app.mission.state, hold=app.mission.hold_reason)
+    return _finish("s13_door_target", sim, c, {"door_target_x_m": 0.25, "lidar_range_max_m": 2.0}, export=True)
