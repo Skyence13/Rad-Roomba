@@ -111,6 +111,7 @@ class Obstacles:
             self.keepouts.append({"poly": poly, "bb": bbox_of(poly), "layers": lays,
                                   "tracks": bool(ko.get("tracks")), "vias": bool(ko.get("vias"))})
         self._clr = {}
+        self.why = ""
         self.pads_by_ref = {}
         self._load(bld.pcb)
 
@@ -200,8 +201,10 @@ class Obstacles:
         return True
 
     def via_ok(self, x, y, r, drill, net, courtyard_ignore=(), check_court=True, ignore=None):
+        self.why = "edge"
         if not self.board_ok_point(x, y, r):
             return False
+        self.why = "keepout"
         for ko in self.keepouts:
             if ko["vias"] and ko["bb"][0] - r <= x <= ko["bb"][2] + r and ko["bb"][1] - r <= y <= ko["bb"][3] + r:
                 if pip(x, y, ko["poly"]) or pt_poly_edge(x, y, ko["poly"]) < r:
@@ -209,6 +212,7 @@ class Obstacles:
         if check_court:
             for rect, ref in self.court:
                 if ref not in courtyard_ignore and pt_rect(x, y, rect) < r:
+                    self.why = "courtyard of " + ref
                     return False
         rr = self.r
         m = r + 1.0
@@ -217,6 +221,7 @@ class Obstacles:
                 continue
             same = it["net"] == net and net != ""
             k = it["kind"]
+            self.why = "via: %s %s %s" % (k, it["net"], it.get("ref", ""))
             if k == "via":
                 d = math.hypot(x - it["x"], y - it["y"])
                 if d < drill / 2.0 + it["drill"] / 2.0 + rr.min_hole_to_hole + self.margin:
@@ -242,8 +247,10 @@ class Obstacles:
     def seg_ok(self, a, b, w, layer, net, own=None, ignore=None):
         """Track a-b (width w, layer) is clear of everything of other nets.  *own*: item ids that
         the track may overlap whatever their net (the pad it starts from)."""
+        self.why = "seg edge"
         if not self.board_ok_seg(a, b, w):
             return False
+        self.why = "seg keepout"
         for ko in self.keepouts:
             if ko["tracks"] and layer in ko["layers"]:
                 if pip(a[0], a[1], ko["poly"]) or pip(b[0], b[1], ko["poly"]) or seg_poly_edge(a, b, ko["poly"]) < w / 2.0:
@@ -258,6 +265,7 @@ class Obstacles:
                 continue
             c = self.clr(net, it["net"]) + w / 2.0
             k = it["kind"]
+            self.why = "seg: %s %s %s" % (k, it["net"], it.get("ref", ""))
             if k == "via":
                 if pt_seg(it["x"], it["y"], a[0], a[1], b[0], b[1]) < c + it["r"]:
                     return False

@@ -1,13 +1,15 @@
 pn,description,qty,unit,material,make,supplier_part,verification,note
 RR-HD-P-101,"one-piece frame, CNC 6061-T6, black anodise, bond lands masked",1,pcs,AL6061,machined / sheet,,-,
 RR-HD-S-111,"receiver shoe with T-head and x-stop shoulder (datums A, B, C)",2,pcs,AL6061,machined / sheet,,-,
-RR-HD-P-113,0.5 mm aluminium bond shim (production: FRAME bonded to the shoes),2,pcs,AL6061,machined / sheet,,-,
+RR-HD-S-113,"0.5 mm G10 isolator, selectable 0.40 / 0.50 / 0.60 (FRAME isolated from the shoes in both builds)",2,pcs,FR4,machined / sheet,,-,
 RR-HD-S-114,"rear bridge: ties both T-heads across the split, keeper hinge ears",1,pcs,AL6061,machined / sheet,,-,
 RR-HD-S-115,hinged latch keeper plate with hook at x 104 (flips back to release the lid),1,pcs,SS304,machined / sheet,,-,
 PUR-DP3x40,"hinge pin 3 x 40, retained by circlips",1,pcs,SS304,purchased,dowel / hinge pin 3 x 40 with two circlips,UNVERIFIED,
 RR-HD-S-121,one-piece 2 mm spreader / stiffener / FRAME plane (laser cut + tapped),1,pcs,AL6061,machined / sheet,,-,DXF in production/dxf
 RR-HD-S-122,"2 mm aluminium lid (shear panel, EMI top), 35 x M3 + bonded washers at <= 40 mm pitch",1,pcs,AL6061,machined / sheet,,-,DXF in production/dxf
 RR-HD-S-123,1 mm blister plate over the J1 landing opening (8.9 mm internal height),1,pcs,AL6061,machined / sheet,,-,DXF in production/dxf
+RR-HD-S-131,"insulating jacket cap 3 mm closed-cell foam, wipeable skin, PSA on the lid (standard cold configuration)",1,pcs,EPDM-FOAM,machined / sheet,"die-cut 3 mm closed-cell PE/EPDM foam with wipeable PU skin, PSA, rated -40 C (fabricated from DXF / STEP)",UNVERIFIED,standard cold configuration; lid screws pass through 9 mm holes
+RR-HD-S-132,"insulating jacket front band 3 mm, PSA on the frame front face above the bail blocks",1,pcs,EPDM-FOAM,machined / sheet,"3 mm closed-cell foam strip 12.7 x 340 with skin, PSA",UNVERIFIED,standard cold configuration
 PUR-GSK-LID,"lid perimeter gasket, closed-cell silicone 1.2 mm (0.8 installed)",1,pcs,SIL-FOAM,purchased,"lid gasket die-cut, closed-cell silicone 1.2 mm (prototype black; production conductive Ni/graphite silicone)",UNVERIFIED,
 PUR-SO-M3x11,"17 x M3 x 11 round female spacer (lid hard seats, lid-spreader tie)",17,pcs,AL6061,purchased,"round female spacer M3 x 11, OD 4.5, aluminium (Wurth 9701xx / Ettinger class)",UNVERIFIED,
 PUR-SO-M2.5x2.5,8 x M2.5 x 2.5 clinch standoff (FRAME net),8,pcs,BRASS,purchased,"PEM SO-M2.5-2.5 class clinch standoff, thru-thread, steel/zinc or aluminium",UNVERIFIED,mounting hole 4.2 assumed
@@ -66,6 +68,8 @@ PUR-M2.5x12-PAN,ISO 7045 M2.5 x 12 A2: switch saddles to the spreader,4,pcs,-,pu
 PUR-M3x8-SHCS,ISO 4762 M3 x 8 A2: rail inserts (2 each) and rods to the bar,10,pcs,-,purchased,,UNVERIFIED,
 PUR-M4x10-SHCS,ISO 4762 M4 x 10 A2: rear bridge to the T-head ears,4,pcs,-,purchased,,UNVERIFIED,
 PUR-M3-BONDSEAL,"bonded sealing washer M3 (steel + NBR/silicone, -40 C), under every lid screw",35,pcs,-,purchased,,UNVERIFIED,
+PUR-M3-ISOWASH,"insulating shoulder washer M3 (PA66 / G10): T-head screws (FRAME isolated from the shoes, both builds)",8,pcs,-,purchased,,UNVERIFIED,
+PUR-PI-TAPE,"polyimide tape 0.1 mm, 30 x 45 mm, on the lid under the keeper (isolation)",1,pcs,-,purchased,,UNVERIFIED,
 PUR-RIVET-2.4,"blind rivet 2.4 Al, J1 blister front edge",2,pcs,-,purchased,,UNVERIFIED,
 PUR-COAX,"SiPM micro-coax pigtail U.FL class, about 60 mm, through the chimney (harness; length per OEM carrier)",16,pcs,-,purchased,,UNVERIFIED,
 PUR-RTV-BLACK,"black RTV, side-switch lead channel potting (2 x 0.1 ml)",1,pcs,-,purchased,,UNVERIFIED,

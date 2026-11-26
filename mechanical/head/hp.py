@@ -58,7 +58,10 @@ SHOE_Z0, SHOE_Z1 = RC["shoe_z"]
 SHOE_X0 = RC["shoe_x"][0]
 XSTOP = RC["x_stop"]                # 65.7 datum A
 THEAD_HY = 30.0                     # T-head half length in y (between the chimneys of the two adjacent lanes)
-THEAD_X1 = 78.7                     # T-head front face (pocket depth 8.5; 2.0 mm web to the cavities)
+THEAD_X1 = 78.7                     # T-head front face (pocket depth 8.5; 1.7 mm web to the cavities)
+THEAD_POCKET_CLR = 0.3              # air gap T-head to pocket (both builds): FRAME isolated from the receiver metal (lead decision: same scheme in both builds)
+JACKET_T = 3.0                      # external insulating jacket (standard cold configuration, lead decision): top cap + front band
+JACKET_FRONT_Z = (32.3, 45.0)       # front band above the bail blocks (top z 32.0) up to the lid top
 SHOULDER_HY = 20.0                  # x-stop shoulder boss half width about the shoe
 
 # spreader plate (detail of the lead's nominal 82.2..184.7 x +-168.5 rectangle)

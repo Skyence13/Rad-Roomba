@@ -69,13 +69,12 @@ Hand-written: this file, `production/README.md` (fabrication / test pack), `STAT
 
 ## Open items (details: head_report.md section 2, STATUS.md)
 
-1. Leading rail outside the contract envelope (front face x 212.2 vs 192.2): a >= 15 mm post-trip stroke cannot fit in front of the frame inside the
-   envelope (IB-11 / CCR-08) -- lead / CCR decision.
+1. Closed: contract draft6 envelope x [66.0, 212.5] admits the sprung leading rail (front face x 212.2 unloaded, 195.2 stroked).
 2. `params.HEAD_RAIL_SWITCHES` placeholders vs the designed switch positions (frames.yaml update).
 3. Head mass 1.85 kg (prototype) / 2.06 kg (production) vs 1.67 / 2.10 kg in mech_calcs.md.
 4. Front-fence foot saddle windows 27 mm (> 20 mm slot rule, but closed by the spreader).
 5. Rib screws stay M2.5 into heat-set inserts (6.5 mm rib cannot hold an M3 insert next to the lane cavities) -- deviation from the "M3 minimum for
    structure" rule in mechanical_interfaces.md section 8; all lid screws and the T-head screws are M3.
-6. Production FRAME is bonded to the shoes: needs conductive (chromate) channel front faces on the production body and R2801 removed (CCR-HE-03).
-7. Insulation: only a 0.5 mm liner fits under the cover (mech_calcs assumed 3 mm); external 3 mm jacket offered as a cold kit.
+6. Closed: grounding is the same in both builds -- FRAME isolated from the receiver shoes, R2801 fitted (production/README.md section 4).
+7. Closed: the external 3 mm jacket RR-HD-S-131/132 is standard for operation below 0 C (heater power with / without it: head_report.md section 9).
 8. Every OEM-dependent dimension (head_report.md section 8); switch data PARTIAL; most PUR items UNVERIFIED.

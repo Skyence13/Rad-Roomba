@@ -1,0 +1,153 @@
+(footprint "VSON-8_3.3x3.3mm_P0.65mm_NexFET_G0.2"
+	(version 20241229)
+	(generator "rrkicad")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(descr "TI NexFET SON 3.3 x 3.3 (CSD18543Q3A): KiCad stock VSON-8_3.3x3.3mm_P0.65mm_NexFET with pads 1-4 0.45 mm tall (stock 0.5 mm) and the drain fingers merged into pad 5")
+	(property "Reference" "REF**"
+		(at 0 -2.7 0)
+		(layer "F.SilkS")
+		(uuid "2543282a-891b-5627-802a-921928983c3c")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.12)
+			)
+		)
+	)
+	(property "Value" "VSON-8_3.3x3.3mm_P0.65mm_NexFET_G0.2"
+		(at 0 2.7 0)
+		(layer "F.Fab")
+		(uuid "90d467e8-ce25-50dd-88ef-52bcbdefd916")
+		(effects
+			(font
+				(size 0.6 0.6)
+				(thickness 0.09)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "fd20d44c-d2b3-51c6-8e51-fd5d0dd6f212")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.12)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "d34cb6ba-619e-5670-886b-b078ff097a40")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.12)
+			)
+		)
+	)
+	(attr smd)
+	(fp_rect
+		(start -1.65 -1.65)
+		(end 1.65 1.65)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.Fab")
+		(uuid "026db10b-d93b-58e4-8a5a-2bfdf168fc1d")
+	)
+	(fp_rect
+		(start -2 -1.9)
+		(end 2 1.9)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "539dacef-0f2c-5b49-864f-cea46f3d2834")
+	)
+	(fp_line
+		(start -1.65 -1.76)
+		(end 1.65 -1.76)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "3c1d3dcb-bc8c-5844-8f4a-4800bb4fe5f9")
+	)
+	(fp_line
+		(start -1.65 1.76)
+		(end 1.65 1.76)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "da7f75c0-2f24-5455-83c5-4448b34ea1c6")
+	)
+	(fp_circle
+		(center -1.15 -1.15)
+		(end -1.05 -1.15)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.Fab")
+		(uuid "c192e106-8e58-59ec-8bcf-82c44d9a3186")
+	)
+	(fp_text user "${REFERENCE}"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(uuid "9baa371e-b9b1-5bf1-8b37-800cf4d26922")
+		(effects
+			(font
+				(size 0.5 0.5)
+				(thickness 0.08)
+			)
+		)
+	)
+	(pad "1" smd roundrect
+		(at -1.44 -0.975 0)
+		(size 0.63 0.45)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.25)
+		(uuid "f6e1446b-ba47-5dab-8cef-934c115758f4")
+	)
+	(pad "2" smd roundrect
+		(at -1.44 -0.325 0)
+		(size 0.63 0.45)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.25)
+		(uuid "e5af54cd-f7d6-5cce-8b02-244126d2706a")
+	)
+	(pad "3" smd roundrect
+		(at -1.44 0.325 0)
+		(size 0.63 0.45)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.25)
+		(uuid "da3a9041-f23d-5590-8a44-406c7e53a498")
+	)
+	(pad "4" smd roundrect
+		(at -1.44 0.975 0)
+		(size 0.63 0.45)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.25)
+		(uuid "3b02d628-2571-5cd7-8268-121242c74738")
+	)
+	(pad "5" smd rect
+		(at 0.6 0 0)
+		(size 2.3 2.45)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "6e256f5f-a64a-5b59-8fc3-38ddff9c60c1")
+	)
+	(embedded_fonts no)
+)

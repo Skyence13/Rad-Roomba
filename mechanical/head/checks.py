@@ -167,7 +167,7 @@ def overhangs(shape, orient, min_area=4.0):
     return sorted(out, key=lambda r: -r["area_mm2"])
 
 
-FRAME_NET = ("spreader", "lid", "j1_blister", "fence_", "lid_standoffs", "board_standoffs", "hd_board", "hd_lid", "hd_rear", "hd_ffoot", "hd_sfoot")
+FRAME_NET = ("spreader", "lid", "j1_blister", "fence_", "lid_standoffs", "board_standoffs", "hd_board", "hd_lid", "hd_rear", "hd_ffoot", "hd_sfoot", "frame")
 SHOE_NET = ("shoe_L", "shoe_R", "bridge", "keeper", "hd_thead")
 
 
@@ -175,7 +175,7 @@ def frame_isolation(parts):
     """Smallest metal-to-metal distance between the FRAME net (spreader, lid, fences, standoffs and their screws) and the receiver metal
     (shoes, bridge, keeper, T-head screws) -- the receiver touches the body channels when docked."""
     from OCP.BRepExtrema import BRepExtrema_DistShapeShape
-    fr = compound([p.shape for p in parts if p.name.startswith(FRAME_NET) and p.name != "fence_gaskets"])
+    fr = compound([p.shape for p in parts if p.name.startswith(FRAME_NET) and p.name != "fence_gaskets" and p.material in ("AL6061", "AL5052", "BRASS", "SS304", "STEEL")])
     wash = box(0, 300, -200, 200, 0, H.Z_SPR1 + 0.8)            # the T-head screw sits on an insulating shoulder washer (prototype): metal starts above it
     sh = compound([p.shape.cut(wash) if p.name.startswith("hd_thead") else p.shape for p in parts if p.name.startswith(SHOE_NET) and not p.name.startswith("shoe_isolator")])
     d = BRepExtrema_DistShapeShape(fr.wrapped, sh.wrapped)
@@ -260,13 +260,16 @@ def run():
         e = P.HEAD_ENV_E_CEILING
         ok = bb[0] >= e["x"][0] - 1e-6 and bb[3] <= e["x"][1] + 1e-6 and bb[1] >= e["y"][0] - 1e-6 and bb[4] <= e["y"][1] + 1e-6 and bb[2] >= e["z"][0] - 1e-6 and bb[5] <= e["z"][1] + 1e-6
         add(f"head without the leading-rail stroke system inside the contract envelope ({b})", "pass" if ok else "fail",
-            f"x {bb[0]:.2f}..{bb[3]:.2f} (66.0..192.2), y {bb[1]:.2f}..{bb[4]:.2f} (+-175), z {bb[2]:.2f}..{bb[5]:.2f} (5..50; lid top {H.Z_LID1:.1f}, J1 blister {H.Z_LID1 + 1:.1f}, keeper hook {bb[5]:.1f})")
+            f"x {bb[0]:.2f}..{bb[3]:.2f} ({e['x'][0]}..{e['x'][1]}), y {bb[1]:.2f}..{bb[4]:.2f} (+-175), z {bb[2]:.2f}..{bb[5]:.2f} ({e['z'][0]}..{e['z'][1]}; lid top {H.Z_LID1:.1f}, jacket top {H.Z_LID1 + H.JACKET_T:.1f}, keeper hook {bb[5]:.1f})")
     rail = [p for p in builds["prototype"] if p.name.startswith(("rail_bar", "rail_insert", "bail"))]
     bbr = bounds(compound([p.shape for p in rail]))
-    over = bbr[3] - P.HEAD_ENV_E_CEILING["x"][1]
-    add("leading rail inside the contract envelope x <= 192.2", "deviation" if over > 1e-6 else "pass",
-        f"rail front face at rest x = {bbr[3]:.1f}: {over:.1f} mm outside the envelope (stroke {H.RAIL_GAP:g} + bar {H.BAR_T:g} + insert {H.INS_T:g} ahead of the frame face {H.XF}); "
-        f"outer head corner radius {math.hypot(bbr[3], 175):.0f} mm (contract 260). Needs CCR (IB-11): see head_report.md")
+    xe = P.HEAD_ENV_E_CEILING["x"][1]
+    full = bounds(compound([p.shape for p in A.build("prototype", travel=H.RAIL_GAP) if p.name.startswith(("rail_bar", "rail_insert"))]))[3]
+    res["data"]["rail_front_face"] = {"unloaded_x": bbr[3], "full_stroke_x": full, "window_front_edge_x": H.WIN_X1,
+                                      "residual_strip_unloaded_mm": bbr[3] - H.WIN_X1, "residual_strip_full_stroke_mm": full - H.WIN_X1}
+    add(f"leading rail inside the contract envelope x <= {xe:g} (draft6, sprung rail admitted)", "pass" if bbr[3] <= xe + 1e-6 else "fail",
+        f"rail front face unloaded x {bbr[3]:.1f}, fully stroked (bar on the frame face) x {full:.1f}; end-wall residual strip window front edge x {H.WIN_X1:.1f} to rail face: "
+        f"{bbr[3] - H.WIN_X1:.1f} mm unloaded, {full - H.WIN_X1:.1f} mm stroked; outer corner radius {math.hypot(bbr[3], 175):.0f} mm")
     add("lid top at HEAD_TOP_Z", "pass" if abs(H.Z_LID1 - P.HEAD_TOP_Z) < 1e-6 else "fail", f"lid top z = {H.Z_LID1}; local items above it: J1 blister z 46.0, keeper z 49.8 (ceiling 50, latch box z 46..60)")
     # 6 receiver interface
     sh = T.shoe(1)
@@ -292,12 +295,13 @@ def run():
     sw = {"rail_sw_front": (H.PIN_X, H.SHOE_Y, 37.3), "rail_sw_left": (H.XR + 3.6, H.SW_SIDE["y"], H.SW_SIDE["z"]), "rail_sw_right": (H.XR + 3.6, -H.SW_SIDE["y"], H.SW_SIDE["z"])}
     add("rail switch positions vs params.HEAD_RAIL_SWITCHES (layout placeholders)", "deviation",
         f"designed {sw} vs placeholders {P.HEAD_RAIL_SWITCHES}: the placeholders lie inside the optical stack / on the split plane; frames.yaml needs the designed values", "design note")
-    gap, where = frame_isolation(builds["prototype"])
-    add("FRAME net isolated from the receiver metal (prototype: R2801 fitted, single DC ground on J1 pin 2)", "pass" if gap >= 0.3 else "fail",
-        f"smallest gap {gap:.2f} mm near {where} (0.5 mm G10 isolators under the T-heads, insulating shoulder washers 0.8 mm under the T-head screws, keeper 0.6 mm above the lid "
-        f"plus 0.1 mm polyimide tape); production is bonded on purpose through the aluminium shims (see production/README.md section 4)")
-    gp, _ = frame_isolation(builds["production"])
-    res["data"]["frame_to_receiver_gap_mm"] = {"prototype": round(gap, 3), "production": round(gp, 3)}
+    iso = {b: frame_isolation(builds[b]) for b in ("prototype", "production")}
+    res["data"]["frame_to_receiver_gap_mm"] = {b: round(v[0], 3) for b, v in iso.items()}
+    add("FRAME net isolated from the receiver metal in BOTH builds (R2801 fitted in both; J1 pin 2 the only DC ground path)",
+        "pass" if all(v[0] >= 0.3 - 1e-6 for v in iso.values()) else "fail",
+        "; ".join(f"{b}: smallest air gap {v[0]:.2f} mm near {v[1]}" for b, v in iso.items())
+        + ". Barriers: 0.5 mm G10 isolators under the T-heads, 0.3 mm air round the T-heads in the pockets, insulating shoulder washers under the T-head screws, "
+          "bridge 0.3 mm behind the frame, keeper 0.6 mm above the lid (+ 0.1 mm polyimide tape); production adds anodise on shoes and pockets (second barrier)")
     # 7 bed fit
     ok, rows, lim = bed_fit()
     for r_, c_ in zip(rows, printed_catalogue()):
@@ -327,6 +331,15 @@ def run():
         "pass" if dmax <= H.LID_PITCH_MAX + 1e-6 and all(abs(z - H.Z_LID0) < 1e-6 for z in seats[:2] + [boss_top]) else "fail",
         f"{n} M3 screws ({len(T.lid_holes())} into standoffs on the spreader, {len(T.lid_boss_xy())} into frame bosses); largest neighbour distance {dmax:.1f} mm between "
         f"({pair[0][0]:.1f}, {pair[0][1]:+.1f}) and ({pair[1][0]:.1f}, {pair[1][1]:+.1f}); standoff tops z {seats[0]:.2f} / {seats[1]:.2f}, boss tops z {boss_top:.2f}")
+    jk = [p for p in builds["prototype"] if p.name.startswith("jacket")]
+    lb_ = P.RECEIVER["latch_box"]
+    latch = box(lb_[0], lb_[1], lb_[2], lb_[3], lb_[4], lb_[5])
+    zj = max(bounds(p.shape)[5] for p in jk)
+    vl = sum(volume(p.shape.intersect(latch)) for p in jk)
+    add("insulating jacket (RR-HD-S-131/132, standard cold configuration) inside z <= 50, clear of the latch box, rails and receiver",
+        "pass" if zj <= P.HEAD_ENV_E_CEILING["z"][1] + 1e-6 and vl < 1e-6 else "fail",
+        f"jacket top z {zj:.1f}; volume in the latch box {vl:.2f} mm3; clearance to rails (rest and full stroke, 3 / 5 mm), shoes, bridge, keeper and screw heads "
+        "covered by the interference checks above (jacket parts are in the deck group)")
     ok, rows = drain_check([p.shape for p in builds["prototype"] if p.name.startswith("frame")])
     ok2, rows2 = drain_check([p.shape for p in builds["production"] if p.name == "frame"])
     add("light-safe chimney drains: passage open, no straight line of sight (both builds)", "pass" if ok and ok2 else "fail", json.dumps(rows + rows2))

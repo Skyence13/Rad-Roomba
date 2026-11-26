@@ -209,13 +209,23 @@ class Placer:
     def run(self):
         b = self.b
         todo = [p for p in b.parts if not p.placed and not p.replica_of]
+        # fine-pitch ICs that get an escape ring keep a wider band free around them
+        from . import escape as esc
+        est = esc.settings(b)
+        self.esc_parts = set()
+        if est is not None:
+            for part in b.parts:
+                if part.escape is not False and esc.is_candidate(part, esc.footprint_info(self.bld, part), est):
+                    self.esc_parts.add(part.ref)
+        ekeep = max(float(b.autoplace.get("ic_keepaway", 1.0)), float(b.autoplace.get("escape_keepaway", 2.0)))
         # occupancy of explicitly placed parts
         for part in b.parts:
             if part.placed:
                 fp = self.bld.fps[part.ref]
                 rect, pads, tht = self._measure_fp(fp)
                 pos = fp.GetPosition()
-                self.mark(part.ref, pcbnew.ToMM(pos.x), pcbnew.ToMM(pos.y), rect, pads, tht, part.side)
+                self.mark(part.ref, pcbnew.ToMM(pos.x), pcbnew.ToMM(pos.y), rect, pads, tht, part.side,
+                          ekeep if part.ref in self.esc_parts else None)
         if not todo:
             return []
         self.meas = {}
@@ -342,6 +352,8 @@ class Placer:
                 tight = part.near or getattr(part, "_auto_near", None)
                 # ICs keep small parts (decoupling!) off their pin rows so signals can escape
                 cl = float(b.autoplace.get("ic_keepaway", 1.0)) if big else (None if tight else gclear.get(part.group.name))
+                if part.ref in self.esc_parts:
+                    cl = ekeep
                 self.mark(part.ref, X, Y, rect, pads, tht, part.side, cl)
                 placed.append(part.ref)
                 pending.remove(part)

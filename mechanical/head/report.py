@@ -60,7 +60,10 @@ def write(res):
            ]), "",
            f"Travel after contact at 0.10 m/s from mech_calcs.md section 8: {f['stop_model_mm']}. The {f['post_trip_stroke_mm']:.1f} mm stroke covers the electronics-model value with margin and "
            "not the contract-input value (27.5 mm): the remaining distance is the 7 mm between the frame front face and the window edge (rigid frame, no optics loaded) plus the speed limit near obstacles.", "",
-           f"Switch data used: {r['switch_data']}", ""]
+           f"Switch data used: {r['switch_data']}", "",
+           (lambda q: f"**Leading rail front face (tool-checked):** unloaded x {q['unloaded_x']:.1f}, fully stroked (bar on the frame face) x {q['full_stroke_x']:.1f}; "
+                      f"end-wall residual strip from the window front edge (x {q['window_front_edge_x']:.1f}) to the rail face {q['residual_strip_unloaded_mm']:.1f} mm unloaded, "
+                      f"{q['residual_strip_full_stroke_mm']:.1f} mm stroked. Contract draft6 envelope x [66.0, 212.5].")(d["rail_front_face"]), ""]
     md += ["## 6. Light-path analysis of every joint (analysis of the model geometry, not a light test)", "",
            _t(["Id", "Joint", "From", "To", "Path", "Length (mm)", "Turns", "Barriers", "Builds"],
               [(x["id"], x["joint"], x["from"], x["to"], x["path"], f"{x['length_mm']:.1f}", x["turns"], x["barriers"], x["builds"]) for x in d["light_paths"]]), "",
@@ -72,11 +75,19 @@ def write(res):
            f"Film plane nominal z = {t['nominal_film_z']:.2f}. Prototype: +-{t['prototype']['worst_case_pm_mm']:.2f} mm worst case, +-{t['prototype']['rss_pm_mm']:.2f} mm RSS. "
            f"Production: +-{t['production']['worst_case_pm_mm']:.2f} / +-{t['production']['rss_pm_mm']:.2f} mm. Budget line in mech_calcs.md section 6: +-{t['budget_line_in_mech_calcs_pm_mm']:.2f} mm.", ""]
     md += ["## 8. Dimensions that depend on the missing OEM drawing", "", _t(["OEM quantity (assumption)", "Head dimension it drives", "How the housing absorbs a different value"], [(x["oem_quantity"], x["head_dimension"], x["adjustment"]) for x in d["oem_dependent"]]), ""]
-    md += ["## 9. Thermal check of the head as designed (calculated, lumped; same coefficients as mech_calcs.md section 7)", "",
+    th = {k: v for k, v in d["thermal"].items() if not k.startswith("_")}
+    cov = d["thermal"]["_jacket_coverage"]
+    md += ["## 9. Thermal: heater power with and without the standard insulating jacket (calculated, lumped; same coefficients as mech_calcs.md section 7)", "",
+           f"Assumptions: steady state; outside film 12 W/m2K (still air) / 25 W/m2K (3 m/s draught), inside 6, floor-facing side 8 W/m2K; foam k 0.035, printed PA-CF k 0.30, "
+           f"6061 k 160 W/m K; 0.5 mm liner under the lid in both configurations; jacket RR-HD-S-131 (cap) covers {cov['cap_covered_m2']:.4f} of {cov['top_area_m2']:.4f} m2 of the top "
+           f"({100 * cov['cap_fraction']:.0f} %: screw holes, keeper / latch cut-out uncovered) and RR-HD-S-132 covers {cov['front_band_m2']:.4f} of {cov['side_area_m2']:.4f} m2 of the "
+           "side faces (front band; sides beside the side rails, rear face and underside are not insulated); 5 W electronics dissipation counted as heating; "
+           "mount and cables 0.06 W/K. Heater = UA x (set-point - ambient) - 5 W.", "",
            _t(["Case", "UA (W/K)", "Heater at -20 C, set-point +5 C (W)", "Heater at -25 C, set-point +10 C (W)"],
-              [(k, f"{v['UA_W_per_K']:.2f}", f"{v['heater_W_at_-20C_setpoint_+5C']:.1f}", f"{v['heater_W_at_-25C_setpoint_+10C']:.1f}") for k, v in d["thermal"].items()]), "",
-           "The 0.9 mm cover clearance of the stack and the 6.3 mm internal height required by the board leave room for a 0.5 mm liner only, not the 3 mm foam assumed in mech_calcs.md. "
-           "The 3 mm external jacket (closed-cell foam cap with a wipeable skin on the lid, head top z 48, cut out around the keeper and the J1 blister) is offered as a cold-kit option and needs the lead's agreement.", ""]
+              [(k, f"{v['UA_W_per_K']:.2f}", f"{v['heater_W_at_-20C_setpoint_+5C']:.1f}", f"{v['heater_W_at_-25C_setpoint_+10C']:.1f}") for k, v in th.items()]), "",
+           "The jacket is part of the standard cold configuration (lead decision): required for operation below 0 C. Only a 0.5 mm liner fits inside the cover "
+           "(0.9 mm cover clearance, 6.3 mm board height), so the jacket is external: cap top z 48.0 (ceiling 50), front band x 188.2..191.2 (envelope 212.5). "
+           "The 30 W heater allocation (contract heater_peak_at_12v) is compared with the draught cases.", ""]
     md += ["## 10. Printed parts in print orientation (tool-checked: bounding box and downward-facing faces of the oriented solid)", "",
            "Downward faces = faces above the bed whose normal points more than 45 deg downward: each needs a bridge or support. Where the slicer "
            "will put supports and why they do not touch a critical surface is stated per part in `prototype/print_schedule.md`.", "",

@@ -50,21 +50,20 @@ def is_mate(a, b):
 
 
 def interference(parts, vol_tol=5.0, log=print):
+    from .interference import overlaps
+    from .util import CACHE
     hard = [p for p in parts if p.hard and p.group != "tray"]
-    clash, declared, n = [], [], 0
+    byn = {p.name: p for p in hard}
     t0 = time.time()
-    for a, b in itertools.combinations(hard, 2):
-        if any(a.bb[i] > b.bb[i + 3] - 0.01 or b.bb[i] > a.bb[i + 3] - 0.01 for i in range(3)):
-            continue
-        n += 1
-        try:
-            v = sum(s.Volume() for s in a.shape.intersect(b.shape).Solids())
-        except Exception:  # noqa: BLE001
-            v = float("nan")
+    rows = overlaps(hard, CACHE.parent / "_interference", log=log)
+    clash, declared = [], []
+    for a, b, v, method, dt in rows:
         if not v <= vol_tol:
-            (declared if is_mate(a, b) else clash).append((a.name, b.name, round(v, 1)))
-    log(f"  interference: {n} candidate pairs, {len(clash)} clash(es), {len(declared)} declared envelope overlaps, {time.time() - t0:.0f} s")
-    return {"pairs_evaluated": n, "clashes": sorted(clash, key=lambda c: -c[2] if c[2] == c[2] else 0), "declared_overlaps": sorted(declared, key=lambda c: -c[2])}
+            (declared if is_mate(byn[a], byn[b]) else clash).append((a, b, round(v, 1), method))
+    slow = sorted(((dt, a, b, m) for a, b, v, m, dt in rows), reverse=True)[:5]
+    log(f"  interference: {len(rows)} candidate pairs, {len(clash)} clash(es), {len(declared)} declared envelope overlaps, {time.time() - t0:.0f} s")
+    return {"pairs_evaluated": len(rows), "clashes": sorted(clash, key=lambda c: -c[2] if c[2] == c[2] else 0), "declared_overlaps": sorted(declared, key=lambda c: -c[2]),
+            "methods": {m: sum(1 for r in rows if r[3] == m) for m in {r[3] for r in rows}}, "slowest_pairs_s": slow}
 
 
 def containment(parts):

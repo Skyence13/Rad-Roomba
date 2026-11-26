@@ -27,7 +27,7 @@ LOOK_SCREW_Y = 10.5                  # M2 clip screws above/below the board (loc
 
 def _look_xdir(d):
     """Local x of the look-ahead seats: horizontal, perpendicular to the boresight (board long axis across the cheek)."""
-    return P._unit((-d[1], d[0], 0.0))
+    return P._unit((-d[1], d[0], 0.0)) if abs(d[0]) + abs(d[1]) > 1e-9 else (1.0, 0.0, 0.0)
 
 
 def tof_boss(xyz, d, look=False, grow=0.0):

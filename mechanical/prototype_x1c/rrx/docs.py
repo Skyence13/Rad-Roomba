@@ -384,11 +384,12 @@ def write_report(R, table, parts, timing):
     I = R["interference"]
     w(f"{I['pairs_evaluated']} pairs with overlapping bounding boxes were intersected (boolean common, threshold 5 mm3).\n")
     w("**Clashes:** " + ("none" if not I["clashes"] else ""))
-    for a, b, v in I["clashes"]:
-        w(f"- {a} x {b}: {v} mm3")
+    for a, b, v, m in I["clashes"]:
+        w(f"- {a} x {b}: {v} mm3 ({m})")
     w("\n**Declared through-wall envelope overlaps** (the purchased envelope is deliberately larger than its cut-out, e.g. a 30 mm switch body behind a 22.3 mm hole, or two mated parts modelled line-to-line):\n")
-    for a, b, v in I["declared_overlaps"]:
-        w(f"- {a} x {b}: {v} mm3")
+    for a, b, v, m in I["declared_overlaps"]:
+        w(f"- {a} x {b}: {v} mm3 ({m})")
+    w(f"\nEvaluation methods: {I['methods']} ('sampled' = boolean did not finish within the time limit; overlap volume from a 1 mm point grid). Slowest pairs: {I['slowest_pairs_s']}.\n")
     w("\n## 3. Containment, floor contact, sensor rays (tool-checked)\n")
     w(f"- Internal parts checked against the inner skin lofts (1 mm margin, tool of `mechanical/common/layout.py`): {len(R['containment']['checked'])}; outside: {R['containment']['outside'] or 'none'}.")
     w(f"- Floor contact z: {R['floor']['contact_z']}; lowest other parts: {R['floor']['lowest_other_parts']}.")

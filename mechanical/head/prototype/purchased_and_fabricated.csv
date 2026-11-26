@@ -2,13 +2,15 @@ pn,description,qty,unit,material,make,supplier_part,verification,note
 RR-HD-X-101,"printed frame half, left (S0, S1), joint tongue",1,pcs,PA-CF,printed (X1C),,-,
 RR-HD-X-102,"printed frame half, right (S2, S3), joint groove",1,pcs,PA-CF,printed (X1C),,-,
 RR-HD-S-111,"receiver shoe with T-head and x-stop shoulder (datums A, B, C)",2,pcs,AL6061,machined / sheet,,-,
-RR-HD-X-113,0.5 mm G10 isolator (prototype: FRAME isolated from the shoes),2,pcs,FR4,machined / sheet,,-,
+RR-HD-S-113,"0.5 mm G10 isolator, selectable 0.40 / 0.50 / 0.60 (FRAME isolated from the shoes in both builds)",2,pcs,FR4,machined / sheet,,-,
 RR-HD-S-114,"rear bridge: ties both T-heads across the split, keeper hinge ears",1,pcs,AL6061,machined / sheet,,-,
 RR-HD-S-115,hinged latch keeper plate with hook at x 104 (flips back to release the lid),1,pcs,SS304,machined / sheet,,-,
 PUR-DP3x40,"hinge pin 3 x 40, retained by circlips",1,pcs,SS304,purchased,dowel / hinge pin 3 x 40 with two circlips,UNVERIFIED,
 RR-HD-S-121,one-piece 2 mm spreader / stiffener / FRAME plane (laser cut + tapped),1,pcs,AL6061,machined / sheet,,-,DXF in prototype/dxf
 RR-HD-S-122,"2 mm aluminium lid (shear panel, EMI top), 35 x M3 + bonded washers at <= 40 mm pitch",1,pcs,AL6061,machined / sheet,,-,DXF in prototype/dxf
 RR-HD-S-123,1 mm blister plate over the J1 landing opening (8.9 mm internal height),1,pcs,AL6061,machined / sheet,,-,DXF in prototype/dxf
+RR-HD-S-131,"insulating jacket cap 3 mm closed-cell foam, wipeable skin, PSA on the lid (standard cold configuration)",1,pcs,EPDM-FOAM,machined / sheet,"die-cut 3 mm closed-cell PE/EPDM foam with wipeable PU skin, PSA, rated -40 C (fabricated from DXF / STEP)",UNVERIFIED,standard cold configuration; lid screws pass through 9 mm holes
+RR-HD-S-132,"insulating jacket front band 3 mm, PSA on the frame front face above the bail blocks",1,pcs,EPDM-FOAM,machined / sheet,"3 mm closed-cell foam strip 12.7 x 340 with skin, PSA",UNVERIFIED,standard cold configuration
 PUR-GSK-LID,"lid perimeter gasket, closed-cell silicone 1.2 mm (0.8 installed)",1,pcs,SIL-FOAM,purchased,"lid gasket die-cut, closed-cell silicone 1.2 mm (prototype black; production conductive Ni/graphite silicone)",UNVERIFIED,
 PUR-SO-M3x10.5,"11 x M3 x 10.5 round female spacer on the fence feet (lid hard seat, lid-spreader tie, fence bond)",11,pcs,AL6061,purchased,"round female spacer M3 x 10.5, OD 4.5, aluminium (cut from M3 x 11 or special)",UNVERIFIED,non-standard length; alternative M3 x 10 + 0.5 shim
 PUR-SO-M3x11,6 x M3 x 11 round female spacer in the chimney zones (no fence foot),6,pcs,AL6061,purchased,"round female spacer M3 x 11, OD 4.5, aluminium (Wurth 9701xx / Ettinger class)",UNVERIFIED,
@@ -73,7 +75,8 @@ PUR-M2.5x12-PAN,ISO 7045 M2.5 x 12 A2: switch saddles to the spreader,4,pcs,-,pu
 PUR-M3x8-SHCS,ISO 4762 M3 x 8 A2: rail inserts (2 each) and rods to the bar,10,pcs,-,purchased,,UNVERIFIED,
 PUR-M4x10-SHCS,ISO 4762 M4 x 10 A2: rear bridge to the T-head ears,4,pcs,-,purchased,,UNVERIFIED,
 PUR-M3-BONDSEAL,"bonded sealing washer M3 (steel + NBR/silicone, -40 C), under every lid screw",35,pcs,-,purchased,,UNVERIFIED,
-PUR-M3-ISOWASH,insulating shoulder washer M3 (PA66 / G10): T-head screws (FRAME isolated from the shoes),8,pcs,-,purchased,,UNVERIFIED,
+PUR-M3-ISOWASH,"insulating shoulder washer M3 (PA66 / G10): T-head screws (FRAME isolated from the shoes, both builds)",8,pcs,-,purchased,,UNVERIFIED,
+PUR-PI-TAPE,"polyimide tape 0.1 mm, 30 x 45 mm, on the lid under the keeper (isolation)",1,pcs,-,purchased,,UNVERIFIED,
 PUR-INS-M2.5,"heat-set insert M2.5 in the printed frame (ribs 10, rear zone 6, cassettes 16, bail blocks 6)",38,pcs,-,purchased,brass heat-set insert M2.5 x 4 (Ruthex / CNC Kitchen class),PARTIAL,hole dia 3.7 per distributor data (Albany County Fasteners spec sheet); maker's own figure not opened
 PUR-INS-M3,heat-set insert M3 in the printed lid bosses,18,pcs,-,purchased,brass heat-set insert M3 x 5.7 (Ruthex RX-M3x5.7 class),PARTIAL,"hole dia 4.0, min boss dia 6.5 per McMaster 94459A / distributor data; boss modelled 6.6"
 PUR-DOWEL-3x6,"dowel pin 3 x 6 h8, split-joint location",2,pcs,-,purchased,,UNVERIFIED,

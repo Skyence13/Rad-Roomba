@@ -35,27 +35,32 @@ and cassette before the first production order.
 ## 3. Fabrication notes (summary of the drawing notes)
 
 - **Frame RR-HD-P-101**: 6061-T6 plate 35 mm, 3-axis, two set-ups plus front / rear drilling. Black anodise MIL-A-8625 type II class 2 (matte, bead-blasted;
-  Ra <= 1.6 in the lane cavities). **Masked** (chromate conversion MIL-DTL-5541 type II class 3, conductive): spreader seat z 30.0, T-head pocket faces,
-  wall-top gasket land z 42.2 and the 18 lid boss tops (z 43.0), so the lid, spreader and shoes bond to the frame. Threads: M2.5-6H (ribs, rear zone,
+  Ra <= 1.6 in the lane cavities). **Masked** (chromate conversion MIL-DTL-5541 type II class 3, conductive): spreader seat z 30.0, wall-top gasket
+  land z 42.2 and the 18 lid boss tops (z 43.0), so the lid and spreader bond to the frame. The T-head pockets stay **anodised** (0.3 mm air gap + anodise
+  isolate the frame from the shoes). Threads: M2.5-6H (ribs, rear zone,
   cassettes, bail blocks), M3-6H x 8 in the lid bosses, M6 x 0.75 vent. Guide-rod bores 4.00 H8, PAR 0.05 to datum A. Light-trap drains (one per
   chimney): 1.2 vertical from below at x 71.0, 1.2 cross-drilled from the rear face at z 11.9 and plugged (press pin), 1.2 vertical from the chimney floor at x 75.0.
-- **Shoe RR-HD-S-111**: datums A (x-stop shoulder face, x 65.7), B (shoe side faces), C (underside z 16.00); hard anodise 25-40 um except the shoulder face,
-  T-head top and the four M3 holes (masked, chromate) -- these are the bond faces in production.
+- **Shoe RR-HD-S-111**: datums A (x-stop shoulder face, x 65.7), B (shoe side faces), C (underside z 16.00); hard anodise 25-40 um all over in both builds
+  (threads masked only): the shoe faces that touch the body channels are insulating, no chromate bond faces.
 - **Spreader RR-HD-S-121**: 2.00 sheet, chromate both sides (no anodise). Eight clinch standoffs M2.5 x 2.5, tops z 34.50 +-0.05, POS 0.2 (board datum).
 - **Lid RR-HD-S-122**: 2.00 5052-H32, chromate inside, black anodise or powder outside; 35 holes 3.4. Flatness 0.2.
 - **Cassette RR-HD-P-201**: 6061 from 4 mm, black anodise, film land masked (bond), four CSK seats; the seat bosses set the film plane (z 10.00).
 - Window plane, board standoffs and receiver shoes carry GD&T on the drawings; the head's contribution to the film-to-floor gap is +-0.25 worst case /
   +-0.11 RSS (calculated, head_report.md section 7).
 
-## 4. FRAME net and bonding scheme (answers CCR-HE-03 / IB-20)
+## 4. FRAME net and grounding scheme (answers CCR-HE-03 / IB-20; lead decision: the same scheme in both builds)
+
+The contract makes the J1 electronics return (pin 2) the only DC ground path between head and robot, and EMI results must transfer between the builds,
+so the head frame is **isolated from the chassis at the receiver shoes in both builds** and the board's single FRAME-to-ground bond R2801 is **fitted in both**.
 
 | | Prototype RR-HD-X-000 | Production RR-HD-P-000 |
 |---|---|---|
-| FRAME net = | spreader + EMI fences (rear comb, sides, front) + lid + blister + standoffs; the board's eight standoff screws | spreader + one-piece frame (masked lands) + lid + blister + standoffs |
-| Receiver metal (shoes, T-heads, bridge, keeper) | **isolated** from FRAME: 0.5 mm G10 under each T-head, insulating shoulder washers under the 8 T-head screws, keeper 0.6 mm above the lid (+ 0.1 mm polyimide tape under the keeper). Smallest metal gap **tool-checked** in checks.py ("FRAME net isolated ...") | **bonded** on purpose: 0.5 mm aluminium shims under the T-heads, plain washers, masked shoe faces |
-| Does the frame touch chassis metal when docked? | **No** (the printed frame and the isolators separate FRAME from the shoes, which do touch the body channels) | **Yes**, through the shoes and the x-stop shoulders, if the body channels are conductive (body work package: chromate, not anodise, on the channel front faces -- interface item) |
-| R2801 (board FRAME-to-ground 0 ohm) | **fitted** (the plastic prototype needs the DC bond for shielding) | **removed**: only the 1 Mohm // 10 nF bonds remain, so J1 pin 2 stays the single DC ground path |
-| Cable shields | bonded to chassis at the receptacles; at the head SHLD_J1 / SHLD_J2 pads -> 1 Mohm // 10 nF -> FRAME | same |
+| FRAME net = | spreader + EMI fences (rear comb, sides, front) + lid + blister + standoffs; the board's eight standoff screws | spreader + one-piece aluminium frame (masked lands) + lid + blister + standoffs |
+| Receiver metal (shoes, T-heads, bridge, keeper) | isolated: 0.5 mm G10 RR-HD-S-113 under each T-head, insulating shoulder washers under the 8 T-head screws, 0.3 mm air round each T-head in its pocket, bridge 0.3 mm behind the frame, keeper 0.6 mm above the lid + 0.1 mm polyimide tape | identical, plus anodise on the shoes (all over) and in the T-head pockets as a second barrier |
+| Smallest FRAME-to-receiver metal gap | tool-checked in checks.py ("FRAME net isolated ... BOTH builds"), see head_report.md | same check |
+| Does the frame touch chassis metal when docked? | **No** | **No** (shoe contact faces hard-anodised; body channels need not be conductive) |
+| R2801 | fitted | fitted |
+| Cable shields | bonded to chassis at the receptacles; at the head SHLD_J1 / SHLD_J2 -> 1 Mohm // 10 nF -> FRAME (contract shield rule) | same |
 
 The EMI enclosure required by `electronics/head_acq/design/layout_guidance.md` section 4: prototype = 0.5 mm 5052 fences round the board bonded to the
 spreader at <= 50 mm (bond points tool-checked: front 48.0, side 31.2, rear 48.5 mm largest gap) + the aluminium lid on conductive gaskets; production =
@@ -75,6 +80,7 @@ the lead's acceptance.
 | Breather | ePTFE membrane vent M6 in the rear wall at y -65, internal baffle | thread + O-ring |
 | Drains | four light-trap drains (one per chimney), three turns, no line of sight (tool-checked) | -- |
 | Desiccant | 4 pouches in the front strip, indicator card visible with the lid off | -- |
+| Insulating jacket (standard cold configuration, required below 0 C) | 3 mm closed-cell foam cap RR-HD-S-131 on the lid (top z 48.0) + front band RR-HD-S-132 (x 188.2..191.2, z 32.3..45); clear of the latch box, rails and receiver (tool-checked) | PSA; the cap's 9 mm holes leave the lid screws accessible |
 
 ## 6. Harness routing inside the head
 
@@ -98,7 +104,8 @@ RR-HD-S-433/434 (5 mm), same holes and tabs. Differences between the builds:
 | Function | Prototype (RR-HD-X) | Production (RR-HD-P) | Requalify if changed? |
 |---|---|---|---|
 | Frame | two PA-CF halves, tongue-and-groove + ship-lap, 2 dowels, 56 heat-set inserts | one CNC 6061 part, tapped threads | yes: light tightness (E1), corner deflection, film plane |
-| Shoe isolation | G10 isolators + insulating washers | Al bond shims | yes: E7 |
+| Shoe isolation | G10 isolators + insulating washers | identical (shared RR-HD-S-113) + anodised shoes and pockets | no (same scheme); E7 on every head |
+| Insulating jacket | RR-HD-S-131 / 132 | identical | yes if changed: E8 heater duty at the cold set-point |
 | EMI enclosure | 0.5 mm fences + conductive gaskets | frame + conductive lid gasket | yes: B11 bench EMI test |
 | Lane rings, barrier, chimney insert | PETG-CF / PA-CF printed | MJF PA12 dyed black | yes: E1 (opacity) |
 | Cassette | PETG-CF printed | 6061 black anodise | yes: film plane E4, E1 |
@@ -118,7 +125,7 @@ requalification by E1 + E4; a change to the receiver (shoe, bridge, keeper) requ
 |---|---|---|
 | Change an entrance film / window | from below, head on the bench cradle or transport cover: 4 x M2.5 CSK per cassette; lid stays closed, light seal unaffected | 1.5 hex, torque driver |
 | Flip / change rail inserts (3 <-> 5 mm), side strips | from the front / sides, 2 x M3 per insert | 2.5 hex |
-| Board, shield cans, desiccant, switches | lid off (35 x M3), keeper swung back first | 2.0 hex |
+| Board, shield cans, desiccant, switches | lid off (35 x M3 through the jacket holes), keeper swung back first; the jacket cap stays on the lid | 2.0 hex |
 | Lane optics | lid, board (8 screws, unplug coax), spreader (24 screws) off, then from above | as above |
 | Vent | from outside | 8 mm spanner |
 | Shoes / bridge / keeper | rear, without opening the head | 2.5 / 3 hex |
@@ -136,5 +143,5 @@ Every intervention that opens the light-tight volume (lid, spreader, cassette) i
 | E4 | Standoff height / film plane | head on the bench cradle (datums A/B/C), wedge gauge or followers at the four outer window corners and the row centre | 10.00 +-0.30 mm (production stack +-0.25 worst case, calculated) |
 | E5 | Mass and CG | three scales under the shoe lands and the front post | within +-3 % / +-3 mm of the calculated values (head_report.md section 3) |
 | E6 | Loop and presence | J1 pins 5/6 and 7/2 | 1.00 kOhm +-1 %, 4.70 kOhm +-1 %, J2 pin 7-4 linked |
-| E7 | FRAME bond / isolation | milliohm meter FRAME (spreader) to each shoe shoulder | production <= 10 mohm; prototype >= 10 Mohm at 50 V |
+| E7 | FRAME isolation | insulation tester FRAME (spreader) to each shoe shoulder and to the keeper, 50 V | >= 10 Mohm, both builds (R2801 fitted) |
 | E8 | Heater chain | zone resistances, cut-out continuity, NTC at 20 C | per heater datasheet; NTC 10 k +-3 % |

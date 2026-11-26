@@ -74,7 +74,7 @@ class Part:
     def __init__(self, group, ref, symbol, value, footprint=None, mpn="", mfr="", pins=None, nc=(),
                  unused="error", at=None, side=None, near=None, edge=None, dnp=False, bom=True,
                  notes="", verify=False, datasheet=None, description=None, fields=None, sch_rot=0,
-                 silk_ref=None, model=None, rot=None, zone_connect=None, height=None):
+                 silk_ref=None, model=None, rot=None, zone_connect=None, height=None, escape=None):
         self.group, self.ref, self.symbol, self.value = group, ref, symbol, str(value)
         self.footprint, self.mpn, self.mfr = footprint, mpn, mfr
         self.pins = {str(k): v for k, v in (pins or {}).items()}
@@ -104,6 +104,9 @@ class Part:
         self.model = model
         self.height = height   # body height in mm for the generated 3D envelope (when no real model exists)
         self.zone_connect = zone_connect   # None | 'solid' | 'thermal' | 'none' (pads of this part)
+        if escape not in (None, True, False):
+            raise DefinitionError("%s: escape must be None (automatic), True or False" % ref)
+        self.escape = escape     # fine-pitch escape: None = by pad pitch, True = force, False = never
         # resolved later
         self.sym = None          # SymbolDef
         self.pin_net = {}        # pin number -> net name | None (no-connect)
@@ -192,9 +195,11 @@ class Board:
         self.local_footprints = {}
         self.replicas = []
         self.routing = {"passes": 100, "threads": None, "timeout": None, "enabled": True, "extra_args": [],
-                        "optimizer": True, "fanout": False, "plane_fanout": True, "retries": 2}
+                        "optimizer": True, "fanout": False, "plane_fanout": True, "retries": 2,
+                        "escape": "auto", "escape_pitch": 0.65, "escape_layers": None, "escape_via": None,
+                        "escape_track": None, "escape_direct": True, "finisher": True}
         self.autoplace = {"clearance": 0.3, "grid": 0.25, "edge_margin": 0.5, "ic_halo": 2.0, "rotations": (0, 90, 180, 270),
-                          "spread": 0.35, "ic_keepaway": 1.0}
+                          "spread": 0.35, "ic_keepaway": 1.0, "escape_keepaway": 2.0}
         self.stackup_notes = []
 
     # ------------------------------------------------------------------ parts
@@ -357,10 +362,23 @@ class Board:
         """Autorouter options: passes, threads, timeout (s), enabled, optimizer, extra_args,
         fanout (Freerouting's own SMD fan-out stage, default off), plane_fanout (rrkicad
         generates a fixed track + via beside every SMD pad of nets that have an inner-plane
-        zone, default on), retries (extra "continue" autorouter runs while nets are unrouted)."""
+        zone, default on), retries (extra "continue" autorouter runs while nets are unrouted).
+
+        Fine-pitch escape (see escape.py / README): escape ("auto" = on for 4/6 layers, True,
+        False), escape_pitch (mm; ICs with a smaller pad pitch get escaped, default 0.65),
+        escape_layers (target layers recorded per via, round-robin), escape_via ((dia, drill),
+        default the board's via), escape_track (stub width, default min_track), escape_direct
+        (short direct pre-route to a nearby two-pad passive instead of a via, default True).
+        finisher: built-in maze router for connections the autorouter leaves open (default True)."""
         for k in kw:
             if k not in self.routing:
                 raise DefinitionError("unknown routing option '%s'" % k)
+        if "escape" in kw and kw["escape"] not in ("auto", True, False):
+            raise DefinitionError("route(escape=...) must be 'auto', True or False")
+        if kw.get("escape_layers"):
+            for l in kw["escape_layers"]:
+                if l not in self.copper_layers or l in self.plane_layers:
+                    raise DefinitionError("escape_layers: '%s' is not a signal layer of this board" % l)
         self.routing.update(kw)
 
     def autoplace_options(self, **kw):

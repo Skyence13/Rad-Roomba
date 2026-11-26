@@ -158,7 +158,7 @@ def fab():
     # ---------------- sheet 1: frame, top and rear views
     fig = D.sheet("FRAME, ONE-PIECE", "RR-HD-P-101 sheet 1/2", notes=[
         "MATERIAL 6061-T6 plate 35 mm. FINISH: black anodise MIL-A-8625 type II class 2, 10-20 um, matte (bead blast before anodise, Ra <= 1.6 inside the four lane cavities).",
-        "MASK (no anodise; chromate conversion MIL-DTL-5541 type II class 3): spreader seat z 30.0 (ribs, front and rear zone), T-head pocket floor and roof faces, wall top land z 42.2 (lid gasket / EMI land).",
+        "MASK (no anodise; chromate conversion MIL-DTL-5541 type II class 3): spreader seat z 30.0 (ribs, front and rear zone), wall top land z 42.2 (lid gasket / EMI land), lid boss tops z 43.0. T-head pockets ANODISED (not masked): 0.3 air gap + anodise isolate the frame from the shoes.",
         "THREADS: M2.5-6H x 5 deep at the 26 spreader / cassette stations, M3-6H x 6 at the bail-block stations (helicoil-free; 2 x D minimum engagement in the parent metal).",
         "Datum A = spreader seat plane; datum B = rear face x 70.2; datum C = centre plane (mid-plane of the two guide-rod bores). Head-level datums (receiver) are on RR-HD-S-111.",
         "Dimensions in brackets [ ] are base_link coordinates for cross-reference with mechanical/common/params.py."])
@@ -228,7 +228,7 @@ def fab():
     # ---------------- sheet 3: receiver shoe
     sh = T.shoe(1)
     fig = D.sheet("RECEIVER SHOE WITH T-HEAD (LH shown; RH identical, part is symmetric)", "RR-HD-S-111", notes=[
-        "MATERIAL 6061-T6. FINISH: hard anodise 25-40 um on the shoe (x 4..65.7); MASK the x-stop shoulder face, the T-head top face and the four M3 holes (chromate conversion) -- prototype uses the G10 isolator on the T-head top.",
+        "MATERIAL 6061-T6. FINISH: hard anodise 25-40 um ALL OVER, both builds (insulating: the head frame must not touch chassis metal through the shoes); mask threads only. No chromate bond faces. 0.5 G10 isolator on the T-head top in both builds.",
         "Datum A = x-stop shoulder face (x 65.7); datum B = shoe side faces (mid-plane, y +-87.5 in the head); datum C = shoe underside (z 16.00). These are the head datums of mechanical_interfaces.md section 1.",
         "4 x M3-6H x 7 in the T-head (spreader tab; was M4, changed so the screw heads clear the rear wall), 2 x M4-6H x 8 in each rear ear (bridge). Lead-in chamfers 3 x 45 deg on the four tip edges; tip face flat (HEAD_DOCK switch target on the LH shoe)."])
     ax = _hlr_ax(fig, (14, 160, 300, 110), sh, "top", "TOP VIEW", margin=14, hidden=True)
@@ -335,7 +335,8 @@ def fab():
         "Datum A: x-stop shoulder faces of both shoes (x 65.70). Datum B: LH shoe side faces (y +87.50, fitted channel). Datum C: undersides of both shoes (z 16.00). Verified on the bench cradle, which reproduces A, B, C.",
         "Window plane (film underside): z 10.00 = 6.00 below datum C; PROFILE 0.6 | C (prototype), 0.3 | C (production) over the four windows; window pattern POS 0.3 | A | B | C.",
         "Board standoff tops: 18.50 above datum C (z 34.50), each +-0.10; pattern POS dia 0.3 | A | B. Lid top 29.00 above datum C (z 45.00) +-0.3. Rail underside 3.00 +-0.2 (or 5.00 +-0.2) below the window plane.",
-        "Leading rail front face at rest x 212.2 (146.5 from datum A): OUTSIDE the contract envelope x 192.2 -> CCR pending (IB-11)."])
+        "Leading rail front face x 212.2 unloaded, 195.2 at full stroke (146.5 / 129.5 from datum A), inside the draft6 envelope x 212.5. Insulating jacket RR-HD-S-131/132: top z 48.0, front band to x 191.2.",
+        "GROUNDING (both builds): head FRAME isolated from the receiver shoes (G10 isolators, insulating washers, anodised shoes and pockets); board R2801 fitted; cable shells to FRAME via 1 Mohm // 10 nF."])
     sub = [p for p in Pp if p.group in ("frame", "receiver", "window", "rail", "deck") and p.kind != "purchased"]
     ax = _hlr_ax(fig, (14, 150, 392, 130), compound([p.shape for p in sub]), "bottom", "VIEW FROM THE FLOOR (forward up)", margin=16)
     bv = lambda p: D.proj("bottom", p)
@@ -449,7 +450,7 @@ def steps_production():
     grey = "#b8c0c4"
     heads = [k for k in Pp if k.startswith("hd_")]
     seq = [
-        ("frame, shoes with bond shims, rear bridge", ["frame", "shoe_L", "shoe_R", "shoe_isolator_L", "shoe_isolator_R", "bridge"], {"shoe_L": (-40, 0, 0), "shoe_R": (-40, 0, 0), "bridge": (-60, 0, 0)}),
+        ("frame, shoes with G10 isolators and insulating washers, rear bridge", ["frame", "shoe_L", "shoe_R", "shoe_isolator_L", "shoe_isolator_R", "bridge"], {"shoe_L": (-40, 0, 0), "shoe_R": (-40, 0, 0), "bridge": (-60, 0, 0)}),
         ("side rails, guide pins, switches; guide rods, springs, stop pins", ["side_rail_L", "side_rail_R", "guide_pins_L", "guide_pins_R", "sw_side_L", "sw_side_R", "guide_rod_L", "guide_rod_R",
                                                                             "rod_spring_L", "rod_spring_R", "stop_pin_L", "stop_pin_R"], {"guide_rod_L": (45, 0, 0), "guide_rod_R": (45, 0, 0), "guide_pins_L": (0, 0, 35), "guide_pins_R": (0, 0, 35)}),
         ("lane kits (MJF rings, barrier, chimney insert) from above", [f"S{i}_{k}" for i in range(4) for k in ("floor_module", "spacer_lower", "barrier", "spacer_upper", "ref_module", "floor_carrier", "ref_carrier",
@@ -457,7 +458,7 @@ def steps_production():
         ("spreader with heater, pads, rib gaskets; standoffs; board, cans, switches, cables", ["spreader", "rib_gaskets", "board_standoffs", "lid_standoffs", "pcb", "sw_front", "sw_front_saddle", "sw_lid", "sw_lid_saddle",
                                                                                             "grommet_J1", "grommet_J2", "thermal_cutout", "ntc", "desiccant", "vent"] + [f"S{i}_{k}" for i in range(4) for k in ("pad", "heater", "shield_can")]
          + [h for h in heads if not h.startswith("hd_lid")], {"pcb": (0, 0, 50), **{f"S{i}_shield_can": (0, 0, 70) for i in range(4)}}),
-        ("lid (35 x M3 + bonded washers), blister, keeper", ["lid", "lid_gasket", "lid_liner", "j1_blister", "keeper", "keeper_pin"] + [h for h in heads if h.startswith("hd_lid")], {"keeper": (-10, 0, 60), "keeper_pin": (-10, 0, 60)}),
+        ("lid (35 x M3 + bonded washers), blister, keeper, insulating jacket", ["lid", "lid_gasket", "lid_liner", "j1_blister", "keeper", "keeper_pin", "jacket_top", "jacket_front"] + [h for h in heads if h.startswith("hd_lid")], {"keeper": (-10, 0, 60), "keeper_pin": (-10, 0, 60)}),
         ("cassettes and leading rail", [f"S{i}_{k}" for i in range(4) for k in ("cassette", "film", "cassette_gasket")] + ["bail", "bail_block_C", "bail_block_L", "bail_block_R", "rail_bar", "bail_clip_L", "bail_clip_R"]
          + [f"rail_insert_{k}" for k in range(4)], {**{f"S{i}_{k}": (0, 0, -40) for i in range(4) for k in ("cassette", "film", "cassette_gasket")}, "rail_bar": (40, 0, 0), **{f"rail_insert_{k}": (60, 0, 0) for k in range(4)}}),
     ]

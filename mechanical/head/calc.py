@@ -278,7 +278,7 @@ def tolerance_stack():
     lever = (H.WIN_X1 - sum(P.RECEIVER["land_x"]) / 2) / (P.RECEIVER["land_x"][1] - P.RECEIVER["land_x"][0])
     rows = [  # contributor, nominal (signed, mm, from datum C upward +), prototype tol, production tol, note
         ("shoe underside (datum C, z 16.00) to T-head top", H.Z_SPR0 - 0.5 - H.SHOE_Z0, 0.03, 0.03, "one machined part"),
-        ("isolator / bond shim", 0.5, 0.05, 0.02, "G10 sheet / aluminium shim; selectable 0.40 / 0.50 / 0.60 for trimming"),
+        ("G10 isolator (both builds)", 0.5, 0.05, 0.02, "G10 sheet, measured and selected (0.40 / 0.50 / 0.60) for trimming"),
         ("spreader underside = frame top seat (z 30.00)", 0.0, 0.0, 0.0, "interface plane"),
         ("frame top seat to frame underside", -(H.Z_SPR0 - H.Z_FB), 0.15, 0.03, "printed height over 19.5 mm (0.2 mm layers) / one CNC set-up"),
         ("cassette seat bosses (frame underside to cassette top)", -(H.Z_FB - H.FILM_Z), 0.05, 0.02, "hard seats at the four cassette screws"),
@@ -297,28 +297,49 @@ def tolerance_stack():
 
 
 # ------------------------------------------------------------------------------------------------ thermal (lumped)
+K_FOAM, K_PRINT, K_AL = 0.035, 0.30, 160.0     # W/m K: closed-cell foam, printed PA-CF, 6061 (handbook)
+P_ELEC = 5.0                                  # W dissipated by the electronics (contract electronics_target), counted as heating
+
+
+def jacket_coverage():
+    """Projected areas (m2) actually covered by the jacket, from the solids: cap (minus screw holes and the keeper / latch cut-out)
+    and front band."""
+    from . import parts as T
+    from .geom import box, volume
+    cap = T.jacket_top()
+    z = H.Z_LID1 + H.JACKET_T
+    a_cap = volume(cap.intersect(box(0, 300, -200, 200, z - 0.1, z))) / 0.1 / 1e6
+    fb = T.jacket_front()
+    a_front = volume(fb) / H.JACKET_T / 1e6
+    return a_cap, a_front
+
+
 def thermal():
-    """Steady-state UA of the head as designed (lid 2 mm Al + 0.5 mm liner, printed walls, no side foam) -- same film coefficients
-    as mechanical/common/calc/thermal.py so the numbers compare with mech_calcs.md section 7."""
+    """Steady-state lumped UA of the head and the heater power to hold the set-point (calculated). Same film coefficients as
+    mechanical/common/calc/thermal.py (still air 12, draught 3 m/s 25 W/m2K outside, 6 inside, 8 on the floor-facing side).
+    Configurations: 'liner only' = 2 mm Al lid + 0.5 mm closed-cell liner; 'standard cold' = liner + the 3 mm jacket
+    RR-HD-S-131/132 (k 0.035) over the covered areas computed from the solids. Side, rear and bottom faces unchanged (no room
+    inside the y +-175 envelope beside the side rails, ports and receiver at the rear). Heater power = UA x (set-point - ambient) - P_ELEC."""
     out = {}
     a_top = (H.XF - H.XR) * 2 * H.YW / 1e6
     a_side = 2 * ((H.XF - H.XR) + 2 * H.YW) * (H.Z_LID1 - H.Z_FB) / 1e6
     a_win = 4 * H.ACT_X * H.ACT_Y / 1e6
     a_bot = a_top - a_win
-    for label, hext, wall_k, wall_t in (("prototype, still air", 12.0, 0.30, 0.0026), ("prototype, draught 3 m/s", 25.0, 0.30, 0.0026),
-                                        ("production, still air", 12.0, 160.0, 0.0026), ("production, draught 3 m/s", 25.0, 160.0, 0.0026)):
-        r_in = 1 / 6.0
-        liner = 0.0005 / 0.035
-        for jacket in (0.0, 0.003):
-            r_top = 1 / hext + liner + r_in + jacket / 0.035
-            ua_top = a_top / r_top
-            ua_side = a_side / (1 / hext + wall_t / wall_k + r_in + (0.0 if wall_k < 5 else 0.0))
+    a_cap, a_front = jacket_coverage()
+    out["_jacket_coverage"] = {"top_area_m2": a_top, "cap_covered_m2": a_cap, "cap_fraction": a_cap / a_top, "front_band_m2": a_front, "side_area_m2": a_side}
+    for label, hext, wall_k in (("prototype, still air", 12.0, K_PRINT), ("prototype, draught 3 m/s", 25.0, K_PRINT),
+                                ("production, still air", 12.0, K_AL), ("production, draught 3 m/s", 25.0, K_AL)):
+        r_in, liner, r_j = 1 / 6.0, 0.0005 / K_FOAM, H.JACKET_T / 1000 / K_FOAM
+        for cfg, jac in (("liner only", False), ("standard cold (liner + 3 mm jacket)", True)):
+            r_top = 1 / hext + liner + r_in
+            r_side = 1 / hext + 0.0026 / wall_k + r_in
+            ua_top = a_top / r_top if not jac else (a_top - a_cap) / r_top + a_cap / (r_top + r_j)
+            ua_side = a_side / r_side if not jac else (a_side - a_front) / r_side + a_front / (r_side + r_j)
             ua_win = a_win / (1 / 8.0 + 0.001 / 0.024 + 0.0055 / 0.19 + 1 / 8.0)        # floor-facing: low coefficient, air gap, guide
             ua_bot = a_bot / (1 / 8.0 + 0.004 / wall_k + r_in)
             ua = ua_top + ua_side + ua_win + ua_bot + 0.06
-            out[f"{label}, {'3 mm external jacket' if jacket else 'no jacket'}"] = {
-                "UA_W_per_K": ua, "heater_W_at_-20C_setpoint_+5C": max(ua * 25 - 5.0, 0), "heater_W_at_-25C_setpoint_+10C": max(ua * 35 - 5.0, 0),
-                "split": {"top": ua_top, "sides": ua_side, "windows": ua_win, "underside": ua_bot, "mount+cables": 0.06}}
+            out[f"{label}, {cfg}"] = {"UA_W_per_K": ua, "heater_W_at_-20C_setpoint_+5C": max(ua * 25 - P_ELEC, 0), "heater_W_at_-25C_setpoint_+10C": max(ua * 35 - P_ELEC, 0),
+                                      "split": {"top": ua_top, "sides": ua_side, "windows": ua_win, "underside": ua_bot, "mount+cables": 0.06}}
     return out
 
 

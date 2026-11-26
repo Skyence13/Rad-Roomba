@@ -62,8 +62,9 @@ class Grid:
         return out
 
 
-def plane_fanout(bld):
-    """Add locked fan-out tracks/vias to bld.pcb.  Returns stats dict."""
+def plane_fanout(bld, skip=None):
+    """Add locked fan-out tracks/vias to bld.pcb.  Returns stats dict.
+    *skip*: pad keys (ref, number, x, y) already escaped by escape.escape()."""
     b, pcb, fr = bld.b, bld.pcb, bld.fr
     zones = []      # (layer name, priority, net, polygon in KiCad mm)
     for zd in b.zones:
@@ -126,6 +127,9 @@ def plane_fanout(bld):
             item = {"rect": rect, "net": pad.GetNetname(), "layer": lay, "ref": ref, "tht": tht}
             pads.add(rect, item)
             if not tht and item["net"] in plane_nets and not (part is not None and part.zone_connect == "none"):
+                p = pad.GetPosition()
+                if skip and (ref, pad.GetNumber(), round(pcbnew.ToMM(p.x), 3), round(pcbnew.ToMM(p.y), 3)) in skip:
+                    continue
                 todo.append(item)
     for t in pcb.GetTracks():
         if t.GetClass() == "PCB_VIA":

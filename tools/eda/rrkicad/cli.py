@@ -169,9 +169,15 @@ def stage_gen(board_py, route=True, sch_only=False):
     if info["fanout"]["plane_nets"]:
         log("plane fan-out: %d via(s) on %s, %d pad(s) left to the autorouter" % (
             info["fanout"]["vias"], ", ".join(info["fanout"]["plane_nets"]), len(info["fanout"]["failed"])))
+    esc = info.get("escape") or {}
+    if esc.get("enabled"):
+        log("escape: %d via(s), %d direct pre-route(s) on %s; %d pad(s) skipped %s" % (
+            esc["vias"], esc["direct"], ", ".join(sorted(r for r, v in esc["parts"].items() if "pitch" in v)) or "no fine-pitch part",
+            len(esc["skipped"]), json.dumps(esc["skipped_by_reason"], sort_keys=True)))
     if info.get("block_copies"):
         log("replicate: %d fixed track/via item(s) from route/blocks.json" % info["block_copies"])
-    write_state(paths, plane_fanout=info["fanout"], block_copies=info.get("block_copies", 0))
+    write_state(paths, plane_fanout=info["fanout"], escape=info.get("escape"), block_copies=info.get("block_copies", 0),
+                finisher=None)
     write_state(paths, placement=info["placement"], autoplaced=info["autoplaced"],
                 pcb_page_origin=info["origin"], board_bbox=info["bbox"], routed=False,
                 gen_warnings=info["warnings"])
@@ -299,6 +305,29 @@ def stage_retrydsn(board_py):
     board = load_board(board_py)
     paths = Paths(board_py, board.name)
     pcb.export_dsn(paths.pcb, paths.retry_dsn, board)
+    return 0
+
+
+def stage_finish(board_py):
+    """Finisher: grid maze router for the connections still open after autorouting."""
+    from . import pcb, finisher
+    board = load_board(board_py)
+    paths = Paths(board_py, board.name)
+    _resolve_for_post(board)
+    st = read_state(paths)
+    for ref, (x, y, rot, side) in (st.get("placement") or {}).items():
+        if ref in board._refs:
+            pt = board.part(ref)
+            pt.x, pt.y, pt.rot, pt.side = x, y, rot, side
+    with open(os.path.join(paths.reports, "summary.json")) as f:
+        summ = json.load(f)
+    unrouted = (summ.get("drc") or {}).get("unrouted") or []
+    paper, pw, ph, ox, oy = pcb.page_and_origin(board)
+    res = finisher.run(board, paths, pcb.Frame(ox, oy), sha256(paths.ses), unrouted)
+    log("finisher: %d of %d open connection(s) routed (%d item(s)) in %.1f s%s" % (
+        len(res["routed"]), len(unrouted), res["items"], res["seconds"],
+        "".join("\n    not routed: %s (%s)" % (f["net"], f["why"]) for f in res["failed"])))
+    write_state(paths, finisher=res)
     return 0
 
 
@@ -444,8 +473,19 @@ def _host_build(a, board_py):
             f.write("\n")
         if len(attempts) > 1:
             rc = _container(["_post", board_py, "--route-info", json.dumps(route_info)])
+    # finisher: built-in maze router for what the autorouter left open (checked by DRC like the rest)
+    if routed and route_info:
+        bdir = os.path.dirname(board_py)
+        state_p = os.path.join(bdir, "reports", "build_state.json")
+        st = json.load(open(state_p))
+        open_now = (st.get("route_stats") or {}).get("unconnected_after_fill", 0)
+        if open_now > 0 and st.get("routing", {}).get("finisher", True):
+            log("routing: %d connection(s) still open -> finisher" % open_now)
+            if _container(["_finish", board_py]) == 0:
+                rc = _container(["_post", board_py, "--route-info", json.dumps(route_info)])
     log("total build time %.1f s" % (time.time() - t0))
     return rc
+
 
 
 def run_freerouting(board_py, dsn, ses, a):
@@ -519,7 +559,7 @@ def _fr_version(lines):
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="rrkicad", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
-    for name in ("build", "check", "sch", "_gen", "_post", "_check", "_sch", "_retrydsn"):
+    for name in ("build", "check", "sch", "_gen", "_post", "_check", "_sch", "_retrydsn", "_finish"):
         sp = sub.add_parser(name)
         sp.add_argument("board")
         sp.add_argument("--no-route", action="store_true", help="skip autorouting (PCB stays unrouted)")
@@ -541,6 +581,8 @@ def main(argv=None):
                                   route_info=json.loads(a.route_info) if a.route_info else None)
             if a.cmd == "_retrydsn":
                 return stage_retrydsn(a.board)
+            if a.cmd == "_finish":
+                return stage_finish(a.board)
             if a.cmd == "_check":
                 return stage_check(a.board)
             if a.cmd == "_sch":

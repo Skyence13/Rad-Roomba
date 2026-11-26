@@ -26,7 +26,7 @@ import math
 
 import pcbnew
 
-from .geom import Obstacles, MM, T
+from .geom import Obstacles, MM, T, pt_seg
 
 TAN_FAN = math.tan(math.radians(40.0))     # max angle of a stub from the pad axis
 DIRECT_MAX = 4.0                           # mm, pad tip -> passive pad centre
@@ -40,7 +40,7 @@ def settings(b):
     if not on:
         return None
     r = b.rules
-    via = o.get("escape_via") or (r.via_dia, r.via_drill)
+    via = o.get("escape_via") or (max(r.min_via_dia, r.min_via_drill + 2 * r.min_annular), r.min_via_drill)
     dia, drill = float(via[0]), float(via[1])
     tw = float(o.get("escape_track") or r.min_track)
     return {"pitch": float(o.get("escape_pitch", 0.65)), "via_dia": dia, "via_drill": drill, "track": tw,
@@ -235,15 +235,11 @@ def escape(bld):
             sd.c = sum(lat(it) for it in sd.pads) / len(sd.pads)
             for k, it in enumerate(sd.pads):
                 queue.append((sd, k, it))
-        # per-side geometry of the ring
-        clr = obs.clr("", "") + 0.005
-        q = (2 * vr + 2 * clr + tw) / 2.0 + 0.005
+        # per-side stub geometry (clearance of the widest net class present on the side)
         for sd in sides.values():
-            sd.kf = max(1.0, q / pitch)
-            maxshift = max(abs(sd.lat(it) - sd.c) for it in sd.pads) * (sd.kf - 1.0)
-            sd.e1 = tw / 2.0 + clr + 0.01
-            sd.r0 = max(vr + clr + 0.02, sd.e1 + maxshift / TAN_FAN)
-            sd.dr = max(math.sqrt(max(0.0, (2 * vr + clr) ** 2 - q * q)), vdr + rr.min_hole_to_hole) + 0.02
+            nets = sorted({it["net"] for it in sd.pads})
+            sd.clr = max(obs.clr(n1, n2) for n1 in nets for n2 in nets) + 0.005
+            sd.e1 = tw / 2.0 + sd.clr + 0.01
         own_court = (ref,)
 
         def ring_path(sd, it, V, R):
@@ -279,13 +275,19 @@ def escape(bld):
 
         def try_via(it, path, plane):
             if path is None:
+                it["_why"] = "stub angle"
                 return False
             vx, vy = path[-1]
             if plane and not in_plane(it["net"], vx, vy):
+                it["_why"] = "outside own plane"
                 return False
             if not obs.via_ok(vx, vy, vr, vdr, it["net"], courtyard_ignore=own_court):
+                it["_why"] = obs.why
                 return False
-            return path_ok(path, layer, it["net"], {id(it)})
+            if not path_ok(path, layer, it["net"], {id(it)}):
+                it["_why"] = obs.why
+                return False
+            return True
 
         # classify pads
         work = []
@@ -295,7 +297,7 @@ def escape(bld):
                 skip(ref, it, "no net (not connected)")
                 continue
             if pin_count.get(net, 0) < 2:
-                skip(ref, it, "single-pin net")
+                skip(ref, it, "not connected (single-pin net)")
                 continue
             members = b._nets.get(net, [])
             if all(r2 == ref for r2, _ in members):
@@ -342,7 +344,6 @@ def escape(bld):
                         if d <= DIRECT_MAX:
                             cands.append((d, r2, tp))
             cands.sort(key=lambda c: (c[0], c[1]))
-            wd = max(rr.min_track, min(b.class_of(it["net"])["track"], tw if tw > rr.min_track else rr.track))
             for d, r2, tp in cands:
                 p0 = (it["cx"], it["cy"])
                 p1 = sd.xy(sd.tip, sd.lat(it), sd.e1)
@@ -370,23 +371,61 @@ def escape(bld):
                     break
             if not done:
                 ring.append((sd, k, it, plane))
-        # 3) ring: planned positions (row 0 first, then row 1), then a local search
+        # 3) ring.  Row = pad index parity on its side.  Lateral via positions are spread
+        #    (fanned) so that the stub of a row-1 via passes between its two row-0 neighbours
+        #    with full clearance: spacing q between neighbours = via radius + half stub +
+        #    clearance of the two nets (pairs where one pad needs no ring via keep the pad pitch).
+        in_ring = {id(w[2]) for w in ring}
+        for sd in sides.values():
+            n = len(sd.pads)
+            need = [id(it) in in_ring for it in sd.pads]
+            pos = [0.0]
+            qmin = None
+            for k in range(1, n):
+                a, c2 = sd.pads[k - 1], sd.pads[k]
+                gap = sd.lat(c2) - sd.lat(a)
+                if need[k - 1] and need[k]:
+                    qk = vr + tw / 2.0 + obs.clr(a["net"], c2["net"]) + 0.01
+                    qmin = qk if qmin is None else min(qmin, qk)
+                    gap = max(gap, qk)
+                pos.append(pos[-1] + gap)
+            shift = (sum(sd.lat(it) for it in sd.pads) / n) - (sum(pos) / n)
+            sd.V = {id(it): pos[k] + shift for k, it in enumerate(sd.pads)}
+            # row 0 radius: fan angle limit, pad clearance, and the start of every row-1 stub
+            # (at the pad, before it turns) must clear the neighbouring row-0 vias
+            r0 = max(vr + sd.clr + 0.02, sd.e1 + max(abs(sd.V[id(it)] - sd.lat(it)) for it in sd.pads) / TAN_FAN)
+            for k, it in enumerate(sd.pads):
+                if k % 2 == 1 and need[k]:
+                    L, V = sd.lat(it), sd.V[id(it)]
+                    rb = sd.e1 + abs(V - L) / TAN_FAN
+                    for j in (k - 1, k + 1):
+                        if 0 <= j < n and need[j]:
+                            nd = vr + tw / 2.0 + obs.clr(it["net"], sd.pads[j]["net"]) + 0.005
+                            Vj = sd.V[id(sd.pads[j])]
+                            # smallest r0 at which via j clears the slanted part of stub k
+                            # (the radial part passes at the lateral spacing q >= nd)
+                            while r0 < sd.e1 + 4.0 and pt_seg(Vj, r0, L, sd.e1, V, rb) < nd:
+                                r0 += 0.01
+            sd.r0 = r0
+            q = qmin if qmin is not None else pitch
+            sd.dr = max(math.sqrt(max(0.0, (2 * vr + sd.clr) ** 2 - q * q)), vdr + rr.min_hole_to_hole) + 0.03
         path_w[0] = tw
         left = []
         for parity in (0, 1):
             for sd, k, it, plane in ring:
                 if k % 2 != parity:
                     continue
-                V = sd.c + (sd.lat(it) - sd.c) * sd.kf
+                V = sd.V[id(it)]
                 R = sd.r0 + parity * sd.dr
                 p = ring_path(sd, it, V, R)
                 if try_via(it, p, plane):
                     commit(ref, it, p, p[-1], layer, "ring")
                 else:
+                    it["_why0"] = "%s path=%s r0=%.3f dr=%.3f e1=%.3f" % (it.get("_why"), [(round(a, 3), round(c, 3)) for a, c in (p or [])], sd.r0, sd.dr, sd.e1)
                     left.append((sd, k, it, plane))
         left.sort(key=lambda w: (w[0].axis, w[0].sign, w[1]))
         for sd, k, it, plane in left:
-            Vp = sd.c + (sd.lat(it) - sd.c) * sd.kf
+            Vp = sd.V[id(it)]
             cands = []
             for m in range(0, 6):
                 R = sd.r0 + m * sd.dr * 0.5
@@ -414,6 +453,7 @@ def escape(bld):
                         break
             if not done:
                 skip(ref, it, "no legal escape position" + (" inside its own plane polygon" if plane else ""))
+                stats.setdefault("debug", []).append("%s.%s planned: %s; last: %s" % (ref, it["num"], it.get("_why0"), it.get("_why")))
     return stats, handled
 
 

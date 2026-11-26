@@ -328,11 +328,18 @@ class Builder:
         for t in b.texts:
             self._add_text(t)
         self.block_copies = self._block_routes()
+        # fine-pitch escape first (it also takes the plane pads of those ICs), then plane fan-out
+        from .escape import escape
+        esc, handled = escape(self)
+        for sk in esc["skipped"]:
+            if "no legal escape position" in sk:
+                self.warnings.append("escape: " + sk + " (left to the autorouter)")
+        self.escape = esc
         fan = {"plane_nets": [], "vias": 0, "failed": []}
         if b.routing.get("plane_fanout", True):
             from .fanout import plane_fanout
             self.via_keepouts = [[self.fr.kmm(*p) for p in ko["_pts"]] for ko in self._all_keepouts if ko["vias"]]
-            fan = plane_fanout(self)
+            fan = plane_fanout(self, skip=handled)
             for f in fan["failed"]:
                 self.warnings.append("plane fan-out: no legal via position for " + f + " (left to the autorouter)")
         self.fanout = fan
@@ -343,6 +350,7 @@ class Builder:
             placement[part.ref] = [round(part.x, 3), round(part.y, 3), round(part.rot, 1), part.side]
         x0, y0, x1, y1 = outline_bbox(b)
         return {"placement": placement, "autoplaced": placed, "warnings": self.warnings, "fanout": fan,
+                "escape": self.escape,
                 "block_copies": self.block_copies,
                 "origin": [self.fr.ox, self.fr.oy], "bbox": [x0, y0, x1, y1]}
 
@@ -897,6 +905,13 @@ def finish_pcb(board, paths, ses=None):
             os.remove(unrouted)
     else:
         pcb, after = load_filled()
+    if ses:
+        from . import finisher
+        n_fin = finisher.apply(board, pcb, fr, paths, ses)
+        info["finisher_items"] = n_fin
+        if n_fin:
+            pcbnew.ZONE_FILLER(pcb).Fill(pcb.Zones())
+            pcb.BuildConnectivity()
     n_tr = n_via = 0
     length = 0.0
     drills = {}

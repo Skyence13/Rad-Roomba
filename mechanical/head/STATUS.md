@@ -16,7 +16,12 @@
   overhang (support) analysis of printed parts, transport-cover fit check (cover moved behind the x-stop shoulders / wing returns), M2.5 insert holes 3.7 (prototype) /
   tap drills (production), desiccant moved to the front strip, dummy resistor block off a board screw, print orientation fixes (dummy spacer, cable rest).
 
+## Lead decisions applied (after commit 8773c49)
+- Grounding identical in both builds: FRAME isolated from the receiver shoes (G10 RR-HD-S-113, insulating washers, 0.3 mm pocket air gap, anodised shoes / pockets in
+  production), R2801 fitted in both; isolation check runs for both builds.
+- Insulating jacket RR-HD-S-131 (cap) / RR-HD-S-132 (front band) standard below 0 C; heater power with / without it in head_report.md section 9.
+- Contract draft6 envelope x [66.0, 212.5]: leading-rail check is a pass; rail front-face positions and residual strip reported.
+
 ## Open (lead decisions / other work packages): see README.md "Open items" and head_report.md section 2
-- Leading rail outside the envelope (IB-11), switch positions for frames.yaml, mass vs mech_calcs, 27 mm fence-foot window, M2.5 rib screws vs the M3 rule,
-  production FRAME-to-chassis bond (body channel finish, R2801), 0.5 mm liner vs 3 mm foam.
+- Switch positions for frames.yaml, mass vs mech_calcs, 27 mm fence-foot window, M2.5 rib screws vs the M3 rule.
 - Not modelled: loop-lead notch in the front fence, vent baffle, coax / harness solids, drawing sheets for bridge / keeper / cassette.

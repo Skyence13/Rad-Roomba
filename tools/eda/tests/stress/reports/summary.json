@@ -171,148 +171,24 @@
   "date": "2026-11-25",
   "docnum": "RR-EL-TEST",
   "drc": {
-    "by_type": {},
+    "by_type": {
+      "via_dangling": {
+        "errors": 0,
+        "warnings": 27
+      }
+    },
     "error_items": [],
     "errors": 0,
     "excluded": 0,
     "parity": 0,
     "parity_items": [],
     "report": "reports/drc.json",
-    "unconnected": 6,
-    "unconnected_items": [
-      "unconnected_items | Missing connection between items | Pad 9 [+3V3] of U2 on F.Cu | Via [+3V3] on F.Cu - B.Cu",
-      "unconnected_items | Missing connection between items | Pad 59 [IO42] of U1 on F.Cu | Pad 19 [IO42] of U2 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 35 [IO49] of U1 on F.Cu | Pad 45 [IO49] of U2 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 37 [IO51] of U1 on F.Cu | Pad 21 [IO51] of U2 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 14 [AUX09] of U2 on F.Cu | PTH pad 10 [AUX09] of J4",
-      "unconnected_items | Missing connection between items | PTH pad 5 [OUT02] of J2 | Pad 2 [OUT02] of R202 on F.Cu"
-    ],
-    "unrouted": [
-      {
-        "ends": [
-          {
-            "item": "Pad 9 [+3V3] of U2 on F.Cu",
-            "xy_mm": [
-              53.75,
-              53.562
-            ]
-          },
-          {
-            "item": "Via [+3V3] on F.Cu - B.Cu",
-            "xy_mm": [
-              53.75,
-              51.96
-            ]
-          }
-        ],
-        "net": "+3V3"
-      },
-      {
-        "ends": [
-          {
-            "item": "Pad 59 [IO42] of U1 on F.Cu",
-            "xy_mm": [
-              25.5,
-              49.425
-            ]
-          },
-          {
-            "item": "Pad 19 [IO42] of U2 on F.Cu",
-            "xy_mm": [
-              55.938,
-              57.25
-            ]
-          }
-        ],
-        "net": "IO42"
-      },
-      {
-        "ends": [
-          {
-            "item": "Pad 35 [IO49] of U1 on F.Cu",
-            "xy_mm": [
-              32.425,
-              41.0
-            ]
-          },
-          {
-            "item": "Pad 45 [IO49] of U2 on F.Cu",
-            "xy_mm": [
-              49.062,
-              55.75
-            ]
-          }
-        ],
-        "net": "IO49"
-      },
-      {
-        "ends": [
-          {
-            "item": "Pad 37 [IO51] of U1 on F.Cu",
-            "xy_mm": [
-              32.425,
-              42.0
-            ]
-          },
-          {
-            "item": "Pad 21 [IO51] of U2 on F.Cu",
-            "xy_mm": [
-              55.938,
-              58.25
-            ]
-          }
-        ],
-        "net": "IO51"
-      },
-      {
-        "ends": [
-          {
-            "item": "Pad 14 [AUX09] of U2 on F.Cu",
-            "xy_mm": [
-              55.938,
-              54.75
-            ]
-          },
-          {
-            "item": "PTH pad 10 [AUX09] of J4",
-            "xy_mm": [
-              87.09,
-              55.46
-            ]
-          }
-        ],
-        "net": "AUX09"
-      },
-      {
-        "ends": [
-          {
-            "item": "PTH pad 5 [OUT02] of J2",
-            "xy_mm": [
-              25.0,
-              72.17
-            ]
-          },
-          {
-            "item": "Pad 2 [OUT02] of R202 on F.Cu",
-            "xy_mm": [
-              35.25,
-              38.51
-            ]
-          }
-        ],
-        "net": "OUT02"
-      }
-    ],
-    "unrouted_nets": [
-      "+3V3",
-      "AUX09",
-      "IO42",
-      "IO49",
-      "IO51",
-      "OUT02"
-    ],
+    "unconnected": 0,
+    "unconnected_items": [],
+    "unrouted": [],
+    "unrouted_nets": [],
     "waived": 0,
-    "warnings": 0
+    "warnings": 27
   },
   "erc": {
     "by_type": {},
@@ -323,9 +199,7 @@
     "waived": 0,
     "warnings": 0
   },
-  "fail_reasons": [
-    "DRC: 6 unconnected item(s) on nets: +3V3, AUX09, IO42, IO49, IO51, OUT02"
-  ],
+  "fail_reasons": [],
   "notes": [
     "U50: 3D envelope uses the default height 1.0 mm (give height=)",
     "U51: 3D envelope uses the default height 1.0 mm (give height=)",
@@ -333,16 +207,12 @@
     "U53: 3D envelope uses the default height 1.0 mm (give height=)",
     "J5: 3D envelope uses the default height 1.0 mm (give height=)",
     "J6: 3D envelope uses the default height 1.0 mm (give height=)",
-    "plane fan-out: no legal via position for C40 pad at (58.02, 27.00) [+5V] (left to the autorouter)",
-    "plane fan-out: no legal via position for U4 pad at (54.91, 27.03) [+5V] (left to the autorouter)",
-    "plane fan-out: no legal via position for C107 pad at (20.02, 12.75) [+3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for U107 pad at (19.86, 16.05) [+3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for C104 pad at (17.50, 20.48) [+3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for U104 pad at (17.36, 23.55) [+3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2 pad at (53.75, 53.56) [+3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for C40 pad at (57.77, 26.75) [+5V] (left to the autorouter)",
+    "plane fan-out: no legal via position for U4 pad at (54.66, 26.78) [+5V] (left to the autorouter)",
+    "plane fan-out: no legal via position for U104 pad at (27.39, 23.20) [+3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for C102 pad at (19.25, 19.48) [+3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for U102 pad at (19.11, 22.55) [+3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for U2 pad at (52.50, 57.00) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for U1 pad at (28.50, 38.07) [+3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for D1 pad at (28.79, 17.00) [+3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for U3 pad at (24.85, 12.00) [+3V3] (left to the autorouter)"
   ],
   "outputs": [
@@ -413,47 +283,111 @@
       "attempts": [
         {
           "run": 1,
-          "seconds": 606.8,
-          "unconnected": 7
+          "seconds": 608.7,
+          "unconnected": 1
         },
         {
           "run": 2,
-          "seconds": 493.6,
-          "unconnected": 6
-        },
-        {
-          "run": 3,
-          "seconds": 226.8,
-          "unconnected": 6
+          "seconds": 29.2,
+          "unconnected": 0
         }
       ],
-      "dsn_sha256": "4d125d2531af259f5248ce569e1c7f5af08f3ed4dc2b62b55f58fcbb17ecf93a",
+      "dsn_sha256": "7721f5153caa892cddafb87f1043d542d5452fb049d49d4e08359cfbbbe138f8",
       "freerouting": "v2.6.0 (build-date: 2026-11-25)",
       "log_tail": [
-        "[49B50B\\3F344A] Auto-routing stage completed: started with 9 unrouted nets, completed in 485.49 seconds, final score: 980.34 (6 unrouted and 56 violations), using 201.82 total CPU seconds, 93.28 GB total allocated, and 946.6 MB peak heap usage.",
-        "[49B50B\\3F344A] Job '49B50B\\3F344A' finished with state: COMPLETED (elapsed: 8 minutes 6.98 seconds, finished at UTC: 2026-11-26T19:44:15.648808413Z)."
+        "[289412\\9E5A4F] Auto-routing stage completed: started with 9 unrouted nets, completed in 10.02 seconds, final score: 1000.00 (0 unrouted and 56 violations), using 2.62 total CPU seconds, 0.74 GB total allocated, and 187.2 MB peak heap usage.",
+        "[289412\\9E5A4F] Job '289412\\9E5A4F' finished with state: COMPLETED (elapsed: 13.82 seconds, finished at UTC: 2026-11-26T20:47:05.933891199Z)."
       ],
       "passes_limit": 30,
       "reused": false,
-      "seconds": 1100.4,
+      "seconds": 637.9,
       "threads": 4,
       "timed_out": false
+    },
+    "escape": {
+      "direct": 0,
+      "enabled": true,
+      "inward": 10,
+      "layers": [
+        "B.Cu"
+      ],
+      "parts": {
+        "U1": {
+          "exposed_pad": false,
+          "inward": 10,
+          "pads": 64,
+          "pitch": 0.5,
+          "ring": 54
+        },
+        "U2": {
+          "exposed_pad": true,
+          "pads": 49,
+          "pitch": 0.5,
+          "ring": 37,
+          "skipped": 11
+        }
+      },
+      "pitch_limit": 0.65,
+      "skipped": [
+        "U2.37 [unconnected-(U2-PA14-Pad37)]: not connected (single-pin net)",
+        "U2.38 [unconnected-(U2-PA15-Pad38)]: not connected (single-pin net)",
+        "U2.44 [unconnected-(U2-BOOT0-Pad44)]: not connected (single-pin net)",
+        "U2.17 [unconnected-(U2-PA7-Pad17)]: not connected (single-pin net)",
+        "U2.34 [unconnected-(U2-PA13-Pad34)]: not connected (single-pin net)",
+        "U2.33 [unconnected-(U2-PA12-Pad33)]: not connected (single-pin net)",
+        "U2.32 [unconnected-(U2-PA11-Pad32)]: not connected (single-pin net)",
+        "U2.31 [unconnected-(U2-PA10-Pad31)]: not connected (single-pin net)",
+        "U2.30 [unconnected-(U2-PA9-Pad30)]: not connected (single-pin net)",
+        "U2.29 [unconnected-(U2-PA8-Pad29)]: not connected (single-pin net)",
+        "U2.7 [unconnected-(U2-NRST-Pad7)]: not connected (single-pin net)"
+      ],
+      "skipped_by_reason": {
+        "not connected (single-pin net)": 11
+      },
+      "track": 0.15,
+      "via": [
+        0.6,
+        0.3
+      ],
+      "via_target_layers": {
+        "B.Cu": 101
+      },
+      "vias": 101
+    },
+    "finisher": null,
+    "plane_fanout": {
+      "failed": [
+        "C40 pad at (57.77, 26.75) [+5V]",
+        "U4 pad at (54.66, 26.78) [+5V]",
+        "U104 pad at (27.39, 23.20) [+3V3]",
+        "C102 pad at (19.25, 19.48) [+3V3]",
+        "U102 pad at (19.11, 22.55) [+3V3]",
+        "U2 pad at (52.50, 57.00) [GND]",
+        "U3 pad at (24.85, 12.00) [+3V3]"
+      ],
+      "plane_nets": [
+        "+3V3",
+        "+5V",
+        "GND"
+      ],
+      "vias": 172
     },
     "routed": true,
     "stats": {
       "dangling_tracks_removed": 0,
+      "finisher_items": null,
       "necked_tracks_widened": 0,
-      "preroutes": 379,
+      "preroutes": 745,
       "preroutes_missing_after_import": 0,
-      "track_length_mm": 4394.89,
-      "tracks": 1798,
-      "unconnected_after_fill": 6,
-      "unconnected_before_cleanup": 6,
-      "vias": 455
+      "track_length_mm": 4735.03,
+      "tracks": 1985,
+      "unconnected_after_fill": 0,
+      "unconnected_before_cleanup": 0,
+      "vias": 463
     }
   },
   "single_pin_nets": [],
-  "status": "fail",
+  "status": "pass",
   "title": "rrkicad stress test",
   "tools": {
     "kicad": "9.0.9"

@@ -63,7 +63,8 @@ def _frame(kind):
         # 45 deg relief under the upper side wall (printable overhang; clears the module top corner)
         yo, yi = s * (H.SEG_Y[0] + H.CAV_HY), s * H.BAY_HY
         cuts.append(_yz_prism([(yo, H.Z_SPR0 - abs(yo - yi)), (yo, H.Z_SPR0 + 0.02), (yi, H.Z_SPR0 + 0.02)], H.CAV_X0, H.CAV_X1))
-        cuts.append(box(H.XR - 1, H.THEAD_X1 + 0.15, ys - H.THEAD_HY - 0.15, ys + H.THEAD_HY + 0.15, H.SHOE_Z0 - 0.1, H.Z_SPR0 + 0.02))  # T-head pocket
+        c_ = H.THEAD_POCKET_CLR
+        cuts.append(box(H.XR - 1, H.THEAD_X1 + c_, ys - H.THEAD_HY - c_, ys + H.THEAD_HY + c_, H.SHOE_Z0 - c_, H.Z_SPR0 + 0.02))  # T-head pocket, air gap all round
         cuts.append(cyl(H.ROD_D / 2 + 0.15, H.ROD_BORE_DEPTH + 1, (H.XF + 1, ys, H.ROD_Z), (-1, 0, 0)))                                   # guide rod bore
         cuts.append(cyl(H.PIN_D / 2 + 0.05, H.Z_SPR0 + 1 - H.ROD_Z, (H.PIN_X, ys, H.ROD_Z)))                                               # stop / switch pin
         cuts.append(box(H.XF - 2.8, H.XF + 1, s * H.BAIL_Y - 2.1, s * H.BAIL_Y + 2.1, 0, H.BAIL_Z + 1.5))                                  # bail arm groove
@@ -137,9 +138,10 @@ def frame(kind):
 def shoe(side):
     y = side * H.SHOE_Y
     w = H.SHOE_W / 2
-    bar = cq.Workplane("XY").add(box(H.SHOE_X0, H.XR, y - w, y + w, H.SHOE_Z0, H.SHOE_Z1)).faces("<X").edges().chamfer(3.0).val()
-    return fuse_all([bar, box(H.XSTOP, H.XR, y - H.SHOULDER_HY, y + H.SHOULDER_HY, H.SHOE_Z0, H.SHOE_Z1),
-                     box(H.XR - 0.01, H.THEAD_X1, y - H.THEAD_HY, y + H.THEAD_HY, H.SHOE_Z0, H.Z_SPR0 - 0.5)])
+    xe = H.XR - H.THEAD_POCKET_CLR          # bar and shoulder stop 0.3 short of the frame rear face (FRAME isolation); only the T-head neck enters the pocket
+    bar = cq.Workplane("XY").add(box(H.SHOE_X0, xe, y - w, y + w, H.SHOE_Z0, H.SHOE_Z1)).faces("<X").edges().chamfer(3.0).val()
+    return fuse_all([bar, box(H.XSTOP, xe, y - H.SHOULDER_HY, y + H.SHOULDER_HY, H.SHOE_Z0, H.SHOE_Z1),
+                     box(xe, H.THEAD_X1, y - H.THEAD_HY, y + H.THEAD_HY, H.SHOE_Z0, H.Z_SPR0 - 0.5)])
 
 
 def shoe_isolator(side):
@@ -791,7 +793,7 @@ def fastener_heads(build):
             out.append((f"hd_rear_{s * y:+.0f}", "PUR-M2.5x8-PAN", _head(H.REAR_SCREW_X, s * y, H.Z_SPR1 + foot, "M2.5_pan"), "ISO 7045 M2.5 x 8 A2, spreader to rear-zone insert"))
         for dy in H.THEAD_SCREW_DY:
             y = s * H.SHOE_Y + dy
-            st = ("M3_iso_washer", "M3_low") if build != "production" else ("M3_washer", "M3_low")
+            st = ("M3_iso_washer", "M3_low")              # insulating shoulder washer in both builds (FRAME isolated from the receiver)
             out.append((f"hd_thead_{y:+.0f}", "PUR-M3x8-LOW", _head(H.THEAD_SCREW_X, y, H.Z_SPR1, *st), "DIN 7984 M3 x 8 A2 + insulating shoulder washer (prototype) / plain washer"))
         if proto:
             for y in FENCE_FRONT_Y:
@@ -806,3 +808,24 @@ def fastener_heads(build):
         z = H.Z_LID1 + (1.0 if a < x < b and c < y < d else 0.0)
         out.append((f"hd_lid_{x:.0f}_{y:+.0f}", "PUR-M3x8-BUT", _head(x, y, z, "M3_bonded_washer", "M3_button"), "ISO 7380 M3 button head + bonded sealing washer, lid"))
     return out
+
+
+# =============================================================================================== insulating jacket (standard cold configuration)
+LATCH_CUT = (60.0, 110.5, -17.0, 17.0)      # keeper plate and the body's latch box (x 88..108, |y| <= 12, z 46..60) stay free
+
+
+def jacket_top():
+    """RR-HD-S-131: 3 mm closed-cell foam cap with a wipeable skin, PSA-bonded on the lid; rides over the J1 blister (2 mm there),
+    9 mm holes give the lid screws through it (the lid comes off with the cap on it), cut out round the keeper and the latch box."""
+    i, t = H.LID_INSET, H.JACKET_T
+    cap = round_z(box(H.XR + i, H.XF - i, -H.YW + i, H.YW - i, H.Z_LID1, H.Z_LID1 + t), 3.0)
+    a, b, c, d = blister_rect()
+    x0, x1, y0, y1 = LATCH_CUT
+    cuts = [box(a - 0.3, b + 0.3, c - 0.3, d + 0.3, H.Z_LID1 - 1, H.Z_LID1 + 1.3), box(x0, x1, y0, y1, 40, 60)]
+    cuts += [cyl(4.5, t + 2, (x, y, H.Z_LID1 - 1)) for x, y in lid_all_holes()]
+    return cut_all(cap, cuts)
+
+
+def jacket_front():
+    """RR-HD-S-132: 3 mm foam band PSA-bonded on the frame front face above the bail blocks (clear of the rail at full stroke and the bail)."""
+    return box(H.XF, H.XF + H.JACKET_T, -170.0, 170.0, *H.JACKET_FRONT_Z)

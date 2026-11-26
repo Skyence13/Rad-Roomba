@@ -33,8 +33,8 @@ def build(build="prototype", projection=3.0, travel=0.0):
     # ---------------- receiver (aluminium, both builds)
     for s, tag in ((1, "L"), (-1, "R")):
         _p(P, f"shoe_{tag}", "RR-HD-S-111", T.shoe(s), "AL6061", "fab", "receiver", "receiver shoe with T-head and x-stop shoulder (datums A, B, C)", proc="CNC 6061-T6, hard anodise, shoulder + tab face masked")
-        _p(P, f"shoe_isolator_{tag}", "RR-HD-X-113" if printed_frame else "RR-HD-P-113", T.shoe_isolator(s), "FR4" if printed_frame else "AL6061", "fab", "receiver",
-           "0.5 mm G10 isolator (prototype: FRAME isolated from the shoes)" if printed_frame else "0.5 mm aluminium bond shim (production: FRAME bonded to the shoes)")
+        _p(P, f"shoe_isolator_{tag}", "RR-HD-S-113", T.shoe_isolator(s), "FR4", "fab", "receiver",
+           "0.5 mm G10 isolator, selectable 0.40 / 0.50 / 0.60 (FRAME isolated from the shoes in both builds)")
     _p(P, "bridge", "RR-HD-S-114", T.bridge(), "AL6061", "fab", "receiver", "rear bridge: ties both T-heads across the split, keeper hinge ears")
     _p(P, "keeper", "RR-HD-S-115", T.keeper(), "SS304", "fab", "receiver", "hinged latch keeper plate with hook at x 104 (flips back to release the lid)")
     _p(P, "keeper_pin", "PUR-DP3x40", T.keeper_pin(), "SS304", "purchased", "receiver", "hinge pin 3 x 40, retained by circlips")
@@ -42,6 +42,9 @@ def build(build="prototype", projection=3.0, travel=0.0):
     _p(P, "spreader", "RR-HD-S-121", T.spreader(), "AL6061", "fab", "deck", "one-piece 2 mm spreader / stiffener / FRAME plane (laser cut + tapped)", proc="laser cut 5052-H32 or 6061-T6 2.0 mm, DXF")
     _p(P, "lid", "RR-HD-S-122", T.lid(), "AL6061", "fab", "deck", "2 mm aluminium lid (shear panel, EMI top), 35 x M3 + bonded washers at <= 40 mm pitch", proc="laser cut 2.0 mm, DXF")
     _p(P, "j1_blister", "RR-HD-S-123", T.j1_blister(), "AL6061", "fab", "deck", "1 mm blister plate over the J1 landing opening (8.9 mm internal height)", proc="laser cut 1.0 mm, conductive-bonded + 4 rivets")
+    if not dummy:
+        _p(P, "jacket_top", "RR-HD-S-131", T.jacket_top(), "EPDM-FOAM", "fab", "deck", "insulating jacket cap 3 mm closed-cell foam, wipeable skin, PSA on the lid (standard cold configuration)", hard=False)
+        _p(P, "jacket_front", "RR-HD-S-132", T.jacket_front(), "EPDM-FOAM", "fab", "deck", "insulating jacket front band 3 mm, PSA on the frame front face above the bail blocks", hard=False)
     _p(P, "lid_gasket", "PUR-GSK-LID", T.lid_gasket(), "SIL-FOAM", "purchased", "seal", "lid perimeter gasket, closed-cell silicone 1.2 mm (0.8 installed)", hard=False)
     nso = len(T.lid_holes())
     if proto:

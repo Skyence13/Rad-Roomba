@@ -1,0 +1,218 @@
+Refs,Qty,Value,Footprint,Manufacturer,MPN,DNP,Notes
+C1 C3 C4 C5 C6 C10 C12 C13 C16 C19 C24 C25 C27 C34 C35 C36 C39 C41 C45 C51 C53 C54 C57 C60 C63 C66 C75 C76 C77 C78 C81 C82 C83 C85 C86 C100 C101 C108 C109 C110 C111 C114 C116 C118 C121 C122 C126 C128 C130 C133 C134 C137 C138 C139 C140 C141 C143 C147 C149 C150 C151 C152 C153 C154 C155 C156 C157 C158 C159 C160 C161 C162 C163 C164 C165 C166 C167 C168 C169 C173 C174 C175,82,100n,Capacitor_SMD:C_0603_1608Metric,Yageo,CC0603KRX7R9BB104,,charge-pump capacitor: check the reference node in the datasheet (VS or SRC) [U]; inlet-voltage detect for Q21 (chain) and Q31/Q32 (head branches off while charging); CBOOT-RBOOT 0 ohm = fastest edge; raise RBOOT to slow the SW edge if EMI requires; 1 ms
+C2 C58 C61 C87 C88 C89 C90 C91 C92 C93 C94 C95 C96 C97 C115 C127,16,22n,Capacitor_SMD:C_0603_1608Metric,Yageo,CC0603KRX7R9BB223,,output slew control
+C7 C105 C106 C107,4,270u,Capacitor_SMD:CP_Elec_10x10.5,Panasonic,EEHZA1V271P,,"VBAT_SW bulk; VMOT bulk, ripple-rated, -55 C; verify: true"
+C8 C9 C67 C68 C69 C70 C71 C117 C129,9,10u,Capacitor_SMD:C_1206_3216Metric,Murata,GRM31CR71E106KA12L,,verify: true
+C11 C17 C18 C32 C33,5,10u,Capacitor_SMD:C_1210_3225Metric,Murata,GRM32ER71H106KA12L,,verify: true
+C14 C73 C142 C172,4,4.7u,Capacitor_SMD:C_0805_2012Metric,Murata,GRM21BR71C475KA73L,,verify: true
+C15 C26 C49 C50 C52 C72 C144,7,1u,Capacitor_SMD:C_0603_1608Metric,Murata,GRM188R71C105KA12D,,verify: true
+C20 C_SET,2,100u,Capacitor_SMD:CP_Elec_10x10.5,Panasonic,EEHZA1H101P,,VSYS bulk (24 V while charging); set-pulse capacitor (-55 C rated); verify: true
+C21 C22,2,22u,Capacitor_SMD:C_1210_3225Metric,Murata,GRM32ER71E226KE15L,,verify: true
+C23,1,10n,Capacitor_SMD:C_0603_1608Metric,Yageo,CC0603KRX7R9BB103,DNP,
+C28 C145 C146,3,10p,Capacitor_SMD:C_0603_1608Metric,Yageo,CC0603JRNPO9BN100,,
+C29 C30 C31 C40 C43 C44 C47 C48,8,22u,Capacitor_SMD:C_1206_3216Metric,Murata,GRM31CR71A226KE15L,,verify: true
+C37,1,3.3n,Capacitor_SMD:C_0603_1608Metric,Yageo,CC0603KRX7R9BB332,,output slew control
+C38 C55 C56 C59 C62 C64 C65 C74 C79 C80 C98 C99 C103 C104 C113 C125 C148 C176 C177 C178 C179,21,10n,Capacitor_SMD:C_0603_1608Metric,Yageo,CC0603KRX7R9BB103,,over-current blanking; output slew control; soft start a few ms into 810 uF [U]
+C42 C46,2,4.7u,Capacitor_SMD:C_1206_3216Metric,Murata,GRM31CR71H475KA12L,,verify: true
+C84 C102 C112 C119 C120 C123 C124 C131 C132 C135 C136,11,1n,Capacitor_SMD:C_0603_1608Metric,Yageo,CC0603JRNPO9BN102,,tau 4.7 us; max edge rate 10.7 kHz
+C170 C171,2,47p,Capacitor_SMD:C_0603_1608Metric,Yageo,CC0603JRNPO9BN470,,
+D1 D4 D5 D6 D7,5,SMBJ16CA,Diode_SMD:D_SMB,Littelfuse,SMBJ16CA,,bidirectional: survives a reversed pack
+D2,1,SMBJ28A,Diode_SMD:D_SMB,Littelfuse,SMBJ28A,,
+D3 D30,2,Z12,Diode_SMD:D_SOD-123,Diodes Inc.,BZT52C12-7-F,,gate clamp; 10-12 V gate supply
+D8,1,Z5V1,Diode_SMD:D_SOD-123,Diodes Inc.,BZT52C5V1-7-F,,clamps the gate if LINK_A is shorted to +24 V at the inlet
+D9 D10 D12,3,PESD15VL2BT,Package_TO_SOT_SMD:SOT-23,Nexperia,"PESD15VL2BT,215",,verify: true
+D11 D13 D16 D17 D18 D19 D20 D21 D22 D23 D24 D25 D26 D27 D28 D33 D36 D50 D_SEAL,19,BAT54,Diode_SMD:D_SOD-123,Diodes Inc.,BAT54W-7-F,,WDO also resets the MCU (firmware request); stops C_SET feeding the brake relays through the seal-in contact; 5 V receiver output can only pull RXD low; RXD idles at mark while the receiver is disabled during transmit
+D14 D31 D34,3,1N4148W,Diode_SMD:D_SOD-123,Diodes Inc.,1N4148W-7-F,,
+D15 D32 D35,3,Z24,Diode_SMD:D_SOD-123,Diodes Inc.,BZT52C24-7-F,,coil clamp: diode + 24 V Zener
+D29 D37 D38 D39 D40 D41 D42 D43 D44 D45 D46 D47 D48 D49 D_PAUSE,15,TPD4E05U06,Package_SON:USON-10_2.5x1.0mm_P0.5mm,Texas Instruments,TPD4E05U06DQAR,,"pin use as on RR-TOF-A (pins 6, 7, 9, 10 are flow-through NC); pins 6, 7, 9, 10 flow-through NC (as D29); encoder lines (5 V)"
+D60,1,SM712,Package_TO_SOT_SMD:SOT-23,Semtech,SM712.TCT,,
+F1 F2,2,0.1A,Fuse:Fuse_1206_3216Metric,Littelfuse,1206L010YR,,verify: true
+FB1 FB2 FB3 FB4,4,50R 6A,Inductor_SMD:L_1206_3216Metric,Murata,BLM31SN500SN1L,,verify: true
+FB5 FB6 FB7 FB8 FB9 FB10 FB11 FB12 FB13 FB14 FB15 FB_A FB_U,13,600R,Inductor_SMD:L_0603_1608Metric,Murata,BLM18KG601SN1D,,verify: true
+F_AUX,1,0.35A,Fuse:Fuse_1206_3216Metric,Littelfuse,1206L035YR,,verify: true
+F_CHAIN,1,0.2A,Fuse:Fuse_1206_3216Metric,Littelfuse,1206L020YR,,verify: true
+F_CHG,1,5A,Fuse:Fuse_Littelfuse-NANO2-451_453,Littelfuse,0453005.MR,,
+F_CLAMP,1,1.1A,Fuse:Fuse_1812_4532Metric,Littelfuse,1812L110/33GR,,verify: true
+J_AUX,1,JST GH 3p top,Connector_JST:JST_GH_BM03B-GHS-TBT_1x03-1MP_P1.25mm_Vertical,JST,BM03B-GHS-TBT(LF)(SN),,JST GH is rated -25..+85 C [U]: no margin at the -25 C objective (CCR-E05)
+J_BTN,1,CLIK-Mate 2.0 8p top,Connector_Molex:Molex_CLIK-Mate_502443-0870_1x08-1MP_P2.00mm_Vertical,Molex,502443-0870,,"SAFETY family. Series number recalled, not confirmed [U].; verify: true"
+J_BUMP_L J_BUMP_R,2,CLIK-Mate 2.0 2p top,Connector_Molex:Molex_CLIK-Mate_502443-0270_1x02-1MP_P2.00mm_Vertical,Molex,502443-0270,,"SAFETY family. Series number recalled, not confirmed [U].; verify: true"
+J_CM5,1,Micro-Fit 3.0 2x2 RA,Connector_Molex:Molex_Micro-Fit_3.0_43045-0400_2x02_P3.00mm_Horizontal,Molex,43045-0400,,POWER family. Suffix for plating/pegs to be chosen with the harness lead.; verify: true
+J_COVER J_DOCK,2,CLIK-Mate 2.0 3p top,Connector_Molex:Molex_CLIK-Mate_502443-0370_1x03-1MP_P2.00mm_Vertical,Molex,502443-0370,,"SAFETY family. Series number recalled, not confirmed [U].; verify: true"
+J_DBG J_NTC J_PAUX,3,JST GH 4p top,Connector_JST:JST_GH_BM04B-GHS-TBT_1x04-1MP_P1.25mm_Vertical,JST,BM04B-GHS-TBT(LF)(SN),,JST GH is rated -25..+85 C [U]: no margin at the -25 C objective (CCR-E05)
+J_ESTOP,1,CLIK-Mate 2.0 4p top,Connector_Molex:Molex_CLIK-Mate_502443-0470_1x04-1MP_P2.00mm_Vertical,Molex,502443-0470,,"SAFETY family. Series number recalled, not confirmed [U].; verify: true"
+J_HANDS,1,CLIK-Mate 2.0 5p top,Connector_Molex:Molex_CLIK-Mate_502443-0570_1x05-1MP_P2.00mm_Vertical,Molex,502443-0570,,"SAFETY family. Series number recalled, not confirmed [U].; verify: true"
+J_HEAD1,1,Mini-Fit Jr 2x5 RA,Connector_Molex:Molex_Mini-Fit_Jr_5569-10A2_2x05_P4.20mm_Horizontal,Molex,39-30-1100,,POWER family. Suffix for plating/pegs to be chosen with the harness lead.; verify: true
+J_HEAD2,1,JST GH 8p side,Connector_JST:JST_GH_SM08B-GHS-TB_1x08-1MP_P1.25mm_Horizontal,JST,SM08B-GHS-TB(LF)(SN),,JST GH is rated -25..+85 C [U]: no margin at the -25 C objective (CCR-E05)
+J_HTR J_LIDAR,2,Micro-Fit 3.0 2x1 RA,Connector_Molex:Molex_Micro-Fit_3.0_43045-0200_2x01_P3.00mm_Horizontal,Molex,43045-0200,,POWER family. Suffix for plating/pegs to be chosen with the harness lead.; verify: true
+J_MODE,1,CLIK-Mate 2.0 6p top,Connector_Molex:Molex_CLIK-Mate_502443-0670_1x06-1MP_P2.00mm_Vertical,Molex,502443-0670,,"SAFETY family. Series number recalled, not confirmed [U].; verify: true"
+J_MOT_L J_MOT_R,2,Micro-Fit 3.0 2x3 RA,Connector_Molex:Molex_Micro-Fit_3.0_43045-0600_2x03_P3.00mm_Horizontal,Molex,43045-0600,,POWER family. Suffix for plating/pegs to be chosen with the harness lead.; verify: true
+J_PANEL,1,JST GH 10p top,Connector_JST:JST_GH_BM10B-GHS-TBT_1x10-1MP_P1.25mm_Vertical,JST,BM10B-GHS-TBT(LF)(SN),,JST GH is rated -25..+85 C [U]: no margin at the -25 C objective (CCR-E05)
+J_PAUSE J_USB_HEAD J_USB_MCU,3,JST GH 5p top,Connector_JST:JST_GH_BM05B-GHS-TBT_1x05-1MP_P1.25mm_Vertical,JST,BM05B-GHS-TBT(LF)(SN),,"IB-33. Signal family (PAUSE is program control, not a chain element, CCR-E12). 5 circuits: unique in the rear-right cluster (J_NTC/J_PAUX are 4-way GH, ToF 6-way GH). JST GH -25..+85 C [U] (CCR-E05).; JST GH is rated -25..+85 C [U]: no margin at the -25 C objective (CCR-E05)"
+J_PWR,1,Mini-Fit Jr 2x4 RA,Connector_Molex:Molex_Mini-Fit_Jr_5569-08A2_2x04_P4.20mm_Horizontal,Molex,39-30-1080,,Only 8-circuit Mini-Fit on the board: cannot be cross-mated.; verify: true
+J_SWD,1,Cortex debug 2x5 1.27,Connector_PinHeader_1.27mm:PinHeader_2x05_P1.27mm_Vertical_SMD,Samtec,FTSH-105-01-L-DV-K,,
+J_TOF0 J_TOF1 J_TOF10 J_TOF2 J_TOF3 J_TOF4 J_TOF5 J_TOF6 J_TOF7 J_TOF8 J_TOF9,11,JST GH 6p top,Connector_JST:JST_GH_BM06B-GHS-TBT_1x06-1MP_P1.25mm_Vertical,JST,BM06B-GHS-TBT(LF)(SN),,JST GH is rated -25..+85 C [U]: no margin at the -25 C objective (CCR-E05)
+K1,1,G6S-2 DC12,Relay_THT:Relay_DPDT_Omron_G6S-2,Omron,G6S-2 DC12,,"Contact pin numbers (COM/NO/NC) recalled, not read [U]. Pole 1 = seal-in, pole 2 = RUN_12V. Operate/release 4 ms max [U].; verify: true"
+K2 K3,2,G2RL-2 DC12,Relay_THT:Relay_DPDT_Omron_G2RL-2,Omron,G2RL-2 DC12,,"Coil data, 15 ms operate / 5 ms release [D en-g2rl.pdf]. Contact pin numbers recalled [U]. 15.7 mm high.; verify: true"
+L1,1,4.7u,Inductor_SMD:L_Coilcraft_XAL5050-XXX,Coilcraft,XAL5050-472MEC,,"value for ~1.5 MHz switching [U]; ripple ~1 A at 24 V in, 14.4 V out [C]; verify: true"
+L2,1,6.8u,Inductor_SMD:L_Coilcraft_XAL6030-XXX,Coilcraft,XAL6060-682MEC,,"ripple 1.1 A at 12.8 V in, 1.5 A at 26 V in [C] | stage 2: XAL6060 uses the XAL60xx-family land pattern (stock XAL6030 footprint; same 6.36 x 6.56 mm base) [verify]; verify: true"
+L3 L4,2,22u,rr_local:L_Wuerth_WE-LQS-5040,Wurth Elektronik,74404054220,, | stage 2: PLACEHOLDER land pattern (not from a manufacturer drawing) - redraw before fabrication; verify: true
+L5,1,10u,Inductor_SMD:L_Coilcraft_XAL4040-XXX,Coilcraft,XAL4040-103MEC,,keeps 20 kHz bridge ripple and edges off the head supply; damped by the head's own bulk capacitor [U]; verify: true
+L60,1,CMC 90R,Inductor_SMD:L_CommonModeChoke_Coilank_ACM2012,TDK,ACM2012-900-2P-T002,,pin pairing 1-2 / 4-3 to be confirmed against the footprint [U] | stage 2: TDK ACM2012 on the Coilank ACM2012 land pattern (same 2.0 x 1.2 mm body); WINDING PAIRING 1-2/4-3 vs 1-4/2-3 MUST BE CHECKED; verify: true
+LED1 LED2,2,green,LED_SMD:LED_0603_1608Metric,Wurth Elektronik,150060GS75000,,
+LED3,1,red,LED_SMD:LED_0603_1608Metric,Wurth Elektronik,150060RS75000,,
+Q1 Q2,2,CSD18540Q5B,Package_TO_SOT_SMD:TDSON-8-1,Texas Instruments,CSD18540Q5B,,"back-to-back pair, common source: off in both directions; back-to-back pair; gate slew limits inrush"
+Q3,1,AOD4185,Package_TO_SOT_SMD:TO-252-2,Alpha & Omega,AOD4185,,tab = drain; verify: true
+Q4 Q5 Q40,3,CSD18543Q3A,rr_local:VSON-8_3.3x3.3mm_P0.65mm_NexFET_G0.2,Texas Instruments,CSD18543Q3A,,"input ideal diode: source at the inlet side [U orientation per datasheet figure] | stage 2: stock VSON-8 NexFET land with pads 1-4 0.45 mm tall (stock 0.5 mm leaves 0.14 mm between S and G, below the 0.15 mm fab rule); battery ideal diode: source at the battery | stage 2: stock VSON-8 NexFET land with pads 1-4 0.45 mm tall (see Q4); brake chopper switch | stage 2: stock VSON-8 NexFET land with pads 1-4 0.45 mm tall (see Q4); verify: true"
+Q6 Q10 Q20 Q21 Q22 Q23 Q24 Q25 Q26 Q27 Q28 Q29 Q31 Q32 Q33 Q34 Q41 Q42 Q50 Q51 Q52 Q53 Q54 Q55 Q56 Q57 Q58,27,BSS138,Package_TO_SOT_SMD:SOT-23,onsemi,BSS138,,"series switch in the NTC line: off (cold or logic unpowered) inserts R below -> charger reads 'too cold' and pauses; IOX_B P12 high = deliberate compute power cycle; hardware: head electronics off while the charge inlet is live; hardware: head heater off while the charge inlet is live; hardware: heater off when the watchdog is not satisfied; inlet voltage present -> open the chain; inverter: WDG_FAULT high when WDO is low (heater clamps, FAULT LED); lamp off while the node after the button is live; lamp off while latched; inverter: BRAKE_x_RB HIGH = at least one pole connects the motor to the bridge; FAULT LED lit by hardware whenever the watchdog is not satisfied"
+Q_ESTOP Q_J2PRE,2,BSS84,Package_TO_SOT_SMD:SOT-23,Nexperia,"BSS84,215",,
+R1 R2 R66 R67 R196 R221 R222 R226 R227 R231 R232 R236 R237 R241 R242 R246 R247 R251 R252 R256 R257 R261 R262 R266 R267 R271 R272,27,100,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-07100RL,,
+R3 R12 R13 R23 R25 R31 R32 R33 R34 R36 R41 R43 R45 R47 R49 R51 R52 R54 R56 R58 R61 R64 R69 R74 R76 R82 R85 R87 R89 R90 R92 R121 R122 R124 R129 R131 R137 R140 R141 R142 R143 R147 R156 R157 R158 R163 R164 R165 R166 R167 R169 R174 R175 R176 R181 R182 R183 R184 R185 R187 R192 R195 R199 R202 R203 R204 R210 R281 R282 R298,70,10k,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-0710KL,,with C: output slew ~ 0.5 V/ms -> < 1 A inrush into 500 uF [C][U]; presence link pulls low; read by the charger-cold comparator block only as a test point (no MCU pin free); bias for a 10 k B3490-class NTC; JEITA cold limit is raised to +5 C by firmware over I2C (default threshold [U]); link to GND in the charge plug pulls the gate to 0.45 V; HIGH = loop 0.59-1.55 kohm; drives Q22 and IOX_A GPA5; HIGH = head without LAB resistor; drives Q28 and IOX_A GPA7; HIGH = loop below window; IOX_A GPA6; 2.08 V = 22.6 kohm = +5.3 C on a 10 k B3435 NTC with 10.0 k pull-up to 3.000 V [C]; HIGH = warm enough; gate of Q6. Open sensor reads cold -> no charge; 5 V pull-up; defines BOOT0 = 0 at reset (an LED alone is not a pull-down); receive by default; idle mark when the bridge is unpowered
+R4 R7 R14 R26 R37 R39 R53 R55 R57 R59 R63 R97 R99 R101 R103 R105 R107 R109 R111 R113 R115 R117 R119 R123 R126 R127 R133 R144 R151 R206 R207 R208 R209 R291 R292 R293 R294 R295 R296 R297,40,100k,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-07100KL,,feeds the selector EN contact; limits current into a reversed pack; default ON without the MCU; default OFF with the expander/MCU pin floating; default ON with the expander/MCU pin floating; open/unplugged reads LOW; gate sits at 0.3 V when the contact is closed; default low
+R5,1,8.06k,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-078K06L,,OV cut-off ~16.6 V with a 1.23 V threshold [U]
+R6 R29 R96 R125 R155 R173,6,0,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-070RL,,"OV ladder top; fit 0 ohm, value in R above; boot resistor path: verify CBOOT/RBOOT/SW arrangement against the datasheet figure [U]; REARM contact return; lamp supply = chain node upstream of the button; replace by a series resistor if the lamp block needs it; IMODE strap (GND); replace per datasheet table"
+R8,1,15.8k,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-0715K8L,,"UVLO ~9.0 V at the pack with a 1.23 V threshold [U]; EN_SYS also enables U10, U11, U12"
+R9 R10,2,10,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-0710RL,,
+R11 R38 R130 R132 R139,5,47k,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-0747KL,,
+R15,1,100k,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-07100KL,DNP,only if the device has an RT pin [U]
+R16 R290,2,10k,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-0710KL,DNP,"compensation, only if the device has a VC pin [U]"
+R17 R18 R19 R20 R21 R22,6,0,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-070RL,DNP,cell-count strap option A; cell-count strap option B; cell-count strap option C
+R24,1,220k,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-07220KL,,makes the charger see < -30 C when Q6 is off: hardware +5 C inhibit independent of the charger registers
+R27 R134 R_SET,3,22k,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-0722KL,,a held REARM passes < 0.65 V to the coil; on above ~6.8 V on RUN_12V with a 1.2 V threshold [U]
+R28,1,33.2k,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-0733K2L,,400 kHz [D]
+R30,1,41.2k,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-0741K2L,,
+R35,1,665,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-07665RL,,current limit; ILM also carries the analogue current monitor
+R40,1,31.6k,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-0731K6L,,
+R42,1,52.3k,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-0752K3L,,
+R44 R50,2,2.21k,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-072K21L,,current limit; ILM also carries the analogue current monitor
+R46,1,845,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-07845RL,,current limit; ILM also carries the analogue current monitor; verify: true
+R48,1,1.1k,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-071K1L,,current limit; ILM also carries the analogue current monitor
+R60,1,133k,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-07133KL,,~0.17 A typ [U formula]; contract limit 0.15 A nominal
+R62 R75 R83,3,680,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-07680RL,,
+R65 R68,2,1k,Resistor_SMD:R_0603_1608Metric,Yageo,RT0603BRD071KL,,
+R70,1,24.3k,Resistor_SMD:R_0603_1608Metric,Yageo,RT0603BRD0724K3L,,
+R71,1,3.57k,Resistor_SMD:R_0603_1608Metric,Yageo,RT0603BRD073K57L,,
+R72 R79 R81 R215 R217 R219,6,10k,Resistor_SMD:R_0603_1608Metric,Yageo,RT0603BRD0710KL,,
+R73,1,2.2M,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-072M2L,,keeps the open-loop threshold above zero if the middle divider resistor opens
+R77,1,4.7k,Resistor_SMD:R_0603_1608Metric,Yageo,RT0603BRD074K7L,,firmware constant chain.pres_pullup_ohm; no series resistance in the measured path
+R78 R84 R95 R128 R154 R172 R193 R194 R216 R218 R220 R225 R230 R235 R240 R245 R250 R255 R260 R265 R270 R275 R278 R279 R280 R299 R_PAUSE,27,1k,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-071KL,,"to MCU PC0; PAUSE contact supply, current-limited like BTN_3V3 (R128): a short in the PAUSE cable cannot load 3V3; a shorted cable cannot pull the group low; limits back-feed when only one side is powered"
+R80,1,2k,Resistor_SMD:R_0603_1608Metric,Yageo,RT0603BRD072KL,,
+R86,1,4.42k,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-074K42L,,
+R88 R120 R200 R300 R301 R302 R303,7,1M,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-071ML,,~2 K hysteresis; open/unplugged reads LOW; gate sits at 0.3 V when the contact is closed
+R91 R93,2,330,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-07330RL,,
+R94 R148 R168 R170 R186 R188 R283,7,4.7k,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-074K7L,,chain open with the MCU in reset / bootloader / unprogrammed; rise time ~70 ns [C]
+R98 R100 R102 R104 R106 R108 R110 R112 R114 R116 R118,11,56k,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-0756KL,,
+R135,1,237,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-07237RL,,6.5 A
+R136,1,1.5k,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-071K5L,,"0.37 V/A, test point only"
+R138,1,1k,Resistor_SMD:R_1206_3216Metric,Yageo,RC1206FR-071KL,,bleed: 0.21 W at 14.6 V; tau 0.8 s
+R145,1,19.1k,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-0719K1L,,on at 15.6 V
+R146,1,3.3M,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-073M3L,,hysteresis ~0.5 V
+R149 R150,2,9.1,Resistor_SMD:R_2512_6332Metric,Bourns,CRM2512-JW-9R1ELF,,2 in parallel = 4.55 ohm; verify: true
+R152,1,33k,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-0733KL,,HIGH = clamp conducting; IOX_A GPB6
+R153 R171,2,2.49k,Resistor_SMD:R_0603_1608Metric,Yageo,RT0603BRD072K49L,,ITRIP = 3.000 V / (2490 x 450 uA/A) = 2.68 A; 1.1205 V/A
+R159 R160 R177 R178,4,4.7k,Resistor_SMD:R_0805_2012Metric,Yageo,RC0805FR-074K7L,,defines the isolated bridge output for the brake readback
+R161 R179,2,1,Resistor_SMD:R_2512_6332Metric,Bourns,CRM2512-FX-1R00ELF,,brake resistor; verify: true
+R162 R180,2,2.2k,Resistor_SMD:R_0805_2012Metric,Yageo,RC0805FR-072K2L,,motor-side bias for the contact readback
+R189,1,14k,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-0714KL,,
+R190,1,590,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-07590RL,,0.20 V threshold
+R191 R197 R198,3,220,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-07220RL,,
+R201 R205,2,33,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-0733RL,,
+R211 R212 R213 R214 R223 R224 R228 R229 R233 R234 R238 R239 R243 R244 R248 R249 R253 R254 R258 R259 R263 R264 R268 R269 R273 R274,26,2.2k,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-072K2L,,
+R276 R277,2,27,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-0727RL,,
+R284,1,120,Resistor_SMD:R_0805_2012Metric,Yageo,RC0805FR-07120RL,,termination (chassis end)
+R285 R286,2,560,Resistor_SMD:R_0805_2012Metric,Yageo,RC0805FR-07560RL,,"fail-safe bias, chassis end only: 254 mV into 60 ohm [C]"
+R287 R288,2,10,Resistor_SMD:R_0805_2012Metric,Yageo,RC0805FR-0710RL,,pulse-proof series
+R289,1,120,Resistor_SMD:R_0805_2012Metric,Yageo,RC0805FR-07120RL,DNP,
+RT1,1,10k NTC,Resistor_SMD:R_0603_1608Metric,Murata,NCP18XH103F03RB,,verify: true
+R_SH1,1,1m,Resistor_SMD:R_2512_6332Metric,Vishay,WSL25121L000FEA,,Kelvin to U2; verify: true
+R_SH2,1,20m,Resistor_SMD:R_1206_3216Metric,Vishay,WSL1206R0200FEA,,verify: true
+R_SH3 R_SH4,2,5m,Resistor_SMD:R_2512_6332Metric,Vishay,WSL25125L000FEA,,verify: true
+R_SNSB,1,10m,Resistor_SMD:R_1206_3216Metric,Vishay,WSL1206R0100FEA,,verify: true
+R_SNSI,1,8m,Resistor_SMD:R_1206_3216Metric,Vishay,WSL12068L000FEA,,verify: true
+SW1,1,RESET,Button_Switch_SMD:SW_Tactile_SPST_NO_Straight_CK_PTS636Sx25SMTRLFS,C&K,PTS636 SM25F SMTR LFS,,verify: true
+SW2,1,DFU,Button_Switch_SMD:SW_Tactile_SPST_NO_Straight_CK_PTS636Sx25SMTRLFS,C&K,PTS636 SM25F SMTR LFS,,verify: true
+TP1,1,PACK_PRES_N,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP2,1,U13_ILM,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,current monitor
+TP3,1,U16_ILM,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,current monitor
+TP4,1,U17_ILM,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,current monitor
+TP5,1,U18_ILM,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,current monitor
+TP6,1,U19_ILM,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,current monitor
+TP7,1,BUS5V_NFLT,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP8,1,CH_N6,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,chain node without a dedicated readback (inferred from the next node)
+TP9,1,CH_N7,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,chain node without a dedicated readback (inferred from the next node)
+TP10,1,U8_IMON,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP11,1,VMOT_PG,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP12,1,TOF0_GPIO1,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,"GPIO1 interrupt: not used by firmware, pad only"
+TP13,1,TOF1_GPIO1,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,"GPIO1 interrupt: not used by firmware, pad only"
+TP14,1,TOF2_GPIO1,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,"GPIO1 interrupt: not used by firmware, pad only"
+TP15,1,TOF3_GPIO1,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,"GPIO1 interrupt: not used by firmware, pad only"
+TP16,1,TOF4_GPIO1,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,"GPIO1 interrupt: not used by firmware, pad only"
+TP17,1,TOF5_GPIO1,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,"GPIO1 interrupt: not used by firmware, pad only"
+TP18,1,TOF6_GPIO1,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,"GPIO1 interrupt: not used by firmware, pad only"
+TP19,1,TOF7_GPIO1,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,"GPIO1 interrupt: not used by firmware, pad only"
+TP20,1,TOF8_GPIO1,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,"GPIO1 interrupt: not used by firmware, pad only"
+TP21,1,TOF9_GPIO1,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,"GPIO1 interrupt: not used by firmware, pad only"
+TP22,1,TOF10_GPIO1,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,"GPIO1 interrupt: not used by firmware, pad only"
+TP23,1,SYNC_TTL,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,reserved
+TP24,1,WDG_STROBE,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP25,1,WDG_OK,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP26,1,ARM_PERMIT,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP27,1,HW_LATCH_RB,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP28,1,VMOT_SENSE,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP29,1,IPROPI_L,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP30,1,IPROPI_R,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP31,1,SPI1_SCK,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP32,1,SPI1_MISO,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP33,1,SPI1_MOSI,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP34,1,I2C_SYS_SDA,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP35,1,I2C_SYS_SCL,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP36,1,I2C_TOF_SDA,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP37,1,I2C_TOF_SCL,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP38,1,CHAIN_END,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP39,1,RUN_12V,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP40,1,COIL_RTN,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP41,1,VBAT_SW,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP42,1,VSYS,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP43,1,V5_CM5,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP44,1,3V3,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP45,1,V5_AUX,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP46,1,VREF_3V0,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP47,1,VMOT,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP48 TP49,2,GND,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP50,1,CH_N0,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP51,1,EN_SYS,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP52,1,LOOP_F,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP53,1,PRES_F,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP54,1,CHG_TEMP_OK,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP55,1,CLAMP_G,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP56,1,FT_TXDEN,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP57,1,RS_RO,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP58,1,U3_NTC,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+TP59,1,V12_AUX,TestPoint:TestPoint_Keystone_5019_Miniature,Keystone,5019,,
+U1,1,LM74502-Q1,Package_TO_SOT_SMD:SOT-23-8,Texas Instruments,LM74502QDDFRQ1,,Pin table [D lm74502-q1.pdf]. EN and OV thresholds not read [U]: R values below assume ~1.2 V; check.; verify: true
+U2,1,INA228,Package_SO:VSSOP-10_3x3mm_P0.5mm,Texas Instruments,INA228AIDGSR,,Pin table [D ina228.pdf]. Positive current = discharge.
+U3,1,LTC4162-FAD,Package_DFN_QFN:QFN-28-1EP_4x5mm_P0.5mm_EP2.65x3.65mm,Analog Devices,LTC4162EUFD-FAD#PBF,,"PIN NUMBERS AND SEVERAL PIN NAMES ARE NOT VERIFIED: analog.com was unreachable from the stage-1 environment (HTTP 503). Net-level intent: VIN -> INFET ideal diode (Q4) -> RSNSI (R_SNSI, CLP-CLN) -> VSYS (service loads); buck SW -> L1 -> RSNSB (R_SNSB, CSP-CSN) -> VBAT_SW; BATFET ideal diode (Q5) VBAT_SW -> VSYS when no input. 4 cells selected by CELLS1/CELLS0 straps (coding unverified: both pins have GND/INTVCC/VCC2P5 strap resistors, fit per datasheet). Variant -FAD = I2C-adjustable charge voltage, MPPT off [U default 3.6 V/cell]. Rebuild this symbol from the datasheet before layout.; verify: true"
+U5 U6,2,DRV8874,Package_SO:HTSSOP-16-1EP_4.4x5mm_P0.65mm_EP3.4x5mm_Mask2.46x2.31mm,Texas Instruments,DRV8874PWPR,,Pin table and electrical data [D drv8874.pdf]. PMODE high = PWM (IN/IN) mode [D]. IMODE level for fixed-off-time chopping with auto-retry: set per datasheet table [U].
+U8,1,TPS25982,rr_local:TI_TPS25982_VQFN-24_4x4mm_SplitPad_PLACEHOLDER,Texas Instruments,TPS259822ONRGER,,"Pin table [D tps25982.pdf]. RETRY_DLY = GND: latch-off after a fault, cleared by re-arming (EN cycle). ILIM = 1546 / R [C from D]. Orderable suffix [U]. | stage 2: PLACEHOLDER land pattern (not from a manufacturer drawing) - redraw before fabrication; verify: true"
+U9,1,74LVC1G08,Package_TO_SOT_SMD:SOT-23-5,Texas Instruments,SN74LVC1G08DBVR,,
+U10,1,LM61460-Q1,rr_local:TI_RJR0014A_VQFN-HR-14_4x3.5mm_PLACEHOLDER,Texas Instruments,LM61460AASQRJRRQ1,,Pin table [D lm61460-q1.pdf]. FB reference 1.0 V [U]; orderable suffix [U]. Enabled by EN_SYS only: stays up across MCU resets. | stage 2: PLACEHOLDER land pattern (not from a manufacturer drawing) - redraw before fabrication; verify: true
+U11 U12,2,LMR51610X,Package_TO_SOT_SMD:SOT-23-6,Texas Instruments,LMR51610XDBVR,,Pin table and 0.8 V reference [D lmr51610.pdf].
+U13 U16 U17 U18 U19,5,TPS259470A,rr_local:TI_RPW0010A_VQFN-HR-10_2x2mm_PLACEHOLDER,Texas Instruments,TPS259470ARPWR,,"Pins 1, 2, 5-10 [D tps25947.pdf]; pins 3 (AUXOFF) and 4 (FLT) for the 470x variant read from a garbled table [U]. ILIM = 3343 / RILM [C from D table]. Auto-retry variant (A). | stage 2: PLACEHOLDER land pattern (not from a manufacturer drawing) - redraw before fabrication; verify: true"
+U14,1,REF3030,Package_TO_SOT_SMD:SOT-23,Texas Instruments,REF3030AIDBZR,,pin numbers recalled [U]; verify: true
+U15,1,INA3221,Package_DFN_QFN:Texas_RGV0016A_VQFN-16-1EP_4x4mm_P0.65mm_EP2.1x2.1mm,Texas Instruments,INA3221AIRGVR,,Pin table [D ina3221.pdf]; A0 = VS -> 0x41 [D]. Shunts measured on the supply side of each eFuse.
+U20 U21 U22 U23 U24,5,TLP241A,Package_DIP:SMDIP-4_W9.53mm,Toshiba,"TLP241A(TP1,F",,"Ratings, trigger current (assumed <= 3 mA) and turn-off time (assumed <= 1 ms) not read: toshiba.semicon-storage.com returned 403 [U].; verify: true"
+U20M,1,STM32G474RET6,Package_QFP:LQFP-64_10x10mm_P0.5mm,STMicroelectronics,STM32G474RET6,,Pin assignment = firmware/chassis/pinmap.yaml (tool-checked by the firmware lead against ST open pin data). LQFP64 pin numbers as in that file.
+U25,1,TPS2553,Package_TO_SOT_SMD:SOT-23-6,Texas Instruments,TPS2553DBVR,,pin numbers recalled [U]; always on with V5_AUX (no MCU pin allocated); verify: true
+U30 U31 U32 U33 U35 U36,6,LM2903B,Package_SO:SOIC-8_3.9x4.9mm_P1.27mm,Texas Instruments,LM2903BIDR,,powered from VBAT_SW so the clamp works with the logic rails down
+U34,1,LM4040-2.5,Package_TO_SOT_SMD:SOT-23,Texas Instruments,LM4040C25IDBZR,,pin 3 must float; verify: true
+U37 U38,2,74LVC2G17,Package_TO_SOT_SMD:SOT-23-6,Texas Instruments,SN74LVC2G17DBVR,,[D sn74lvc2g17.pdf not re-read; standard pinout]
+U40,1,TPS3430,Package_SON:VSON-10-1EP_3x3mm_P0.5mm_EP1.65x2.4mm,Texas Instruments,TPS3430WDRCR,,Pin table and timing [D tps3430.pdf]. CWD (2) and CRST (4) open = factory presets. Firmware strobes every 10 ms.
+U41 U60,2,USBLC6-2SC6,Package_TO_SOT_SMD:SOT-23-6,STMicroelectronics,USBLC6-2SC6,,
+U42,1,BMI088,Package_LGA:Bosch_LGA-16_4.5x3mm_P0.5mm_LayoutBorder7x1y_ClockwisePinNumbering,Bosch Sensortec,BMI088,,Pin numbers recalled from the Bosch datasheet [U]. Interrupt pins unused (polled at 1 kHz per pin map). | stage 2: Stock Bosch LGA-16 pattern (clockwise numbering); stage-1 pin numbers recalled; verify: true
+U43,1,MCP23S17,Package_SO:SSOP-28_5.3x10.2mm_P0.65mm,Microchip,MCP23S17-E/SS,,Pin numbers recalled (same as MCP23017 with SPI pins) [U]. INTA/INTB unused.; verify: true
+U44,1,TCA9535,Package_SO:TSSOP-24_4.4x7.8mm_P0.65mm,Texas Instruments,TCA9535PWR,,Pin numbers recalled [U]. P17 (SPARE_OUT in the pin map) carries CHAIN_END_RB as an INPUT: see CCR-E02.; verify: true
+U45,1,TCA9534,Package_SO:TSSOP-16_4.4x5mm_P0.65mm,Texas Instruments,TCA9534PWR,,Pin numbers recalled [U].; verify: true
+U50 U51,2,TCA9548A,Package_SO:TSSOP-24_4.4x7.8mm_P0.65mm,Texas Instruments,TCA9548APWR,,Pin table [D tca9548a.pdf]. Unused channels left open.
+U61,1,FT230XS,Package_SO:SSOP-16_3.9x4.9mm_P0.635mm,FTDI,FT230XS-R,,"Pin numbers recalled [U]; CBUS0 = TXDEN is the factory default [U], confirm or program the EEPROM (FT_PROG). TXDEN timing taken from the FT232R description (one bit before the start bit, released at the end of the stop bit) [U]. Host: set latency_timer to 1 ms (ftdi_sio sysfs).; verify: true"
+U62,1,THVD1450,Package_SO:SOIC-8_3.9x4.9mm_P1.27mm,Texas Instruments,THVD1450DR,,"Timing [D thvd1450.pdf]: enable <= 500 ns class, disable <= 200 ns. A = non-inverting = RS485_DP."
+U63,1,THVD1450,Package_SO:SOIC-8_3.9x4.9mm_P1.27mm,Texas Instruments,THVD1450DR,DNP,
+Y1,1,8MHz,Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm,NDK,NX3225GD-8.000M-STD-CRA-3,,verify: true

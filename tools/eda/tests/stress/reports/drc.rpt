@@ -2,33 +2,90 @@
 ** Created on (date removed for reproducibility) **
 ** Report includes: Errors, Warnings, Exclusions **
 
-** Found 0 DRC violations **
+** Found 27 DRC violations **
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(77.5997 mm, 83.0516 mm): Via [IO03] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(69.2862 mm, 91.5406 mm): Via [IO05] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(68.6414 mm, 92.1056 mm): Via [IO06] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(69.2862 mm, 92.6706 mm): Via [IO07] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(84.9313 mm, 92.0853 mm): Via [IO11] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(84.2865 mm, 91.5203 mm): Via [IO12] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(84.9313 mm, 90.9553 mm): Via [IO13] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(68.6414 mm, 93.2356 mm): Via [IO20] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(73.7278 mm, 98.6293 mm): Via [IO25] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(74.2928 mm, 99.2741 mm): Via [IO26] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(74.8578 mm, 98.6293 mm): Via [IO27] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(84.9313 mm, 89.8253 mm): Via [IO29] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(84.9313 mm, 88.6953 mm): Via [IO31] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(84.2865 mm, 88.1303 mm): Via [IO32] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(101.1221 mm, 83.4742 mm): Via [IO40] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(76.4697 mm, 83.0516 mm): Via [IO40] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(75.9047 mm, 83.6964 mm): Via [IO41] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(74.7747 mm, 83.6964 mm): Via [IO43] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(97.6709 mm, 76.0425 mm): Via [IO44] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(74.2097 mm, 83.0516 mm): Via [IO44] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(97.6709 mm, 79.3025 mm): Via [IO49] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(105.4221 mm, 72.7552 mm): Via [AUX01] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(103.7271 mm, 73.4000 mm): Via [AUX04] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(104.4821 mm, 83.4742 mm): Via [AUX05] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(105.6121 mm, 83.4742 mm): Via [AUX07] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(107.8920 mm, 81.0387 mm): Via [AUX08] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(107.8920 mm, 79.9087 mm): Via [AUX10] on F.Cu - B.Cu
 
-** Found 6 unconnected pads **
-[unconnected_items]: Missing connection between items
-    Local override; error
-    @(103.7500 mm, 81.4375 mm): Pad 9 [+3V3] of U2 on F.Cu
-    @(103.7500 mm, 83.0400 mm): Via [+3V3] on F.Cu - B.Cu
-[unconnected_items]: Missing connection between items
-    Local override; error
-    @(75.5000 mm, 85.5750 mm): Pad 59 [IO42] of U1 on F.Cu
-    @(105.9375 mm, 77.7500 mm): Pad 19 [IO42] of U2 on F.Cu
-[unconnected_items]: Missing connection between items
-    Local override; error
-    @(82.4250 mm, 94.0000 mm): Pad 35 [IO49] of U1 on F.Cu
-    @(99.0625 mm, 79.2500 mm): Pad 45 [IO49] of U2 on F.Cu
-[unconnected_items]: Missing connection between items
-    Local override; error
-    @(82.4250 mm, 93.0000 mm): Pad 37 [IO51] of U1 on F.Cu
-    @(105.9375 mm, 76.7500 mm): Pad 21 [IO51] of U2 on F.Cu
-[unconnected_items]: Missing connection between items
-    Local override; error
-    @(105.9375 mm, 80.2500 mm): Pad 14 [AUX09] of U2 on F.Cu
-    @(137.0900 mm, 79.5400 mm): PTH pad 10 [AUX09] of J4
-[unconnected_items]: Missing connection between items
-    Local override; error
-    @(75.0000 mm, 62.8300 mm): PTH pad 5 [OUT02] of J2
-    @(85.2500 mm, 96.4900 mm): Pad 2 [OUT02] of R202 on F.Cu
+** Found 0 unconnected pads **
 
 ** Found 0 Footprint errors **
 
