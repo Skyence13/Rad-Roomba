@@ -1,14 +1,14 @@
 {
  "summary": {
-  "volumetric interference": "FAIL -- 4 clash(es)",
+  "volumetric interference": "FAIL -- 5 clash(es)",
   "containment in Rev E cavity": "FAIL -- 1 part(s) outside",
   "head inside the proposed envelope (CCR-11) and the contract z ceiling": "PASS -- x 68.8..192.2, z 7.0..45.0; shoes reach back to x 30.0",
   "wheel and caster on the floor plane": "PASS -- z = 0 +- 0.05",
   "ToF centre rays": "PASS -- all 11 clear",
   "LiDAR scan plane": "PASS -- clear",
-  "service sweeps (battery, wheels, head, grip hand zone)": "FAIL -- {'battery_removal_sweep': [('upper_fairing_E', 127396.0)]}",
+  "service sweeps (battery, wheels, head, grip hand zone)": "PASS -- free",
   "J1/J2 coupling-nut grasp zone (45 mm radial) free": "PASS -- free (see service section)",
-  "cable corridors": "PASS -- free"
+  "cable corridors": "FAIL -- {'right_bay': [('hands_on_body', 70.0)]}"
  },
  "extents": {
   "overall x (tail .. leading rail)": "-271.9 .. 192.2  (length 464.1)",
@@ -27,22 +27,27 @@
   [
    "chassis_plate",
    "tof_cliff_fl",
-   1.5
+   28.0
   ],
   [
    "chassis_plate",
    "tof_cliff_fr",
-   1.5
+   28.0
   ],
   [
-   "motor_mount_L",
+   "receiver_channel_L",
    "tof_cliff_fl",
-   70.0
+   14.0
   ],
   [
-   "motor_mount_R",
+   "receiver_channel_R",
    "tof_cliff_fr",
-   70.0
+   14.0
+  ],
+  [
+   "CM5_carrier_assembly",
+   "rearm_start_body",
+   2.1
   ]
  ],
  "close": [
@@ -130,21 +135,6 @@
    "battery_tunnel_wall_L",
    "CM5_carrier_assembly",
    1.0
-  ],
-  [
-   "battery_tunnel_wall_L",
-   "rearm_start_body",
-   0.04
-  ],
-  [
-   "battery_tunnel_wall_R",
-   "hands_on_body",
-   0.04
-  ],
-  [
-   "CM5_carrier_assembly",
-   "rearm_start_body",
-   1.07
   ],
   [
    "Leading_contact_rail",
@@ -321,10 +311,10 @@
   [
    "RR-PANEL",
    [
-    -35.0,
-    116.0,
-    113.8,
-    -15.2
+    -45.0,
+    112.0,
+    117.1,
+    -12.9
    ]
   ]
  ],
@@ -332,12 +322,7 @@
   "battery_removal_sweep": {
    "direction": "-x (rearward through the tail-cap hatch)",
    "travel_mm": 165.0,
-   "blocked_by": [
-    [
-     "upper_fairing_E",
-     127396.0
-    ]
-   ]
+   "blocked_by": []
   },
   "grip_hand_zone": {
    "box": "45 mm in front of, behind and below the bar, 130 mm wide",
@@ -405,7 +390,7 @@
      "bumper_sw_r"
     ],
     [
-     66.8,
+     62.1,
      "hands_on_body"
     ]
    ],
@@ -504,16 +489,21 @@
     76
    ],
    "use": "charge inlet feed, HANDS-ON/Pause leads, right rear ToF, bumper switch",
-   "blocked_by": []
+   "blocked_by": [
+    [
+     "hands_on_body",
+     70.0
+    ]
+   ]
   }
  },
  "rays": [
   {
    "sensor": "tof_cliff_fl",
    "start": [
-    24.0,
+    46.0,
     108.0,
-    36.0
+    31.0
    ],
    "dir": [
     0.0,
@@ -521,9 +511,9 @@
     -1.0
    ],
    "floor_hit_xy_range": [
-    24.0,
+    46.0,
     108.0,
-    36.0
+    31.0
    ],
    "centre_ray_hits": [],
    "cone_edge_hits": {}
@@ -531,9 +521,9 @@
   {
    "sensor": "tof_cliff_fr",
    "start": [
-    24.0,
+    46.0,
     -108.0,
-    36.0
+    31.0
    ],
    "dir": [
     0.0,
@@ -541,9 +531,9 @@
     -1.0
    ],
    "floor_hit_xy_range": [
-    24.0,
+    46.0,
     -108.0,
-    36.0
+    31.0
    ],
    "centre_ray_hits": [],
    "cone_edge_hits": {}

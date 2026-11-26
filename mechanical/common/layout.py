@@ -231,7 +231,7 @@ def build(rail_projection=3.0):
     add("lidar_LakiBeam1L", L.lidar().moved(cq.Location(cq.Vector(lx, ly, P.LIDAR_POSE["base_z"]))), "lidar", "lidar", L.mass("lidar"), internal=False)
     pc = P.PANEL_CONTROLS["annunciator"]["xyz"]
     pe = L.env("panel_board")
-    add("RR-PANEL", L.box(pc[0] - pe["l"] / 2, pc[0] + pe["l"] / 2, pc[1] - pe["w"] / 2, pc[1] + pe["w"] / 2, pc[2] - 12 - pe["h"], pc[2] - 12), "panel", "pcb", L.mass("panel_board"))
+    add("RR-PANEL", L.box(pc[0] - pe["l"] / 2, pc[0] + pe["l"] / 2, pc[1] - pe["w"] / 2, pc[1] + pe["w"] / 2, pc[2] - P.PANEL_BOARD["below_skin"] - pe["h"], pc[2] - P.PANEL_BOARD["below_skin"]), "panel", "pcb", L.mass("panel_board"))
 
     # ---- panel devices
     kinds = {"estop": "estop", "hands_on": "pushbutton_22", "mode_selector": "mode_selector", "rearm_start": "pushbutton_22", "pause_stop": "pushbutton_22"}
@@ -497,12 +497,12 @@ def service_checks(parts, extra):
 
 CORRIDORS = {   # name: (x0, x1, y0, y1, z0, z1), what runs there
     "hump_side_left": ((-118, -72, 62, 76, 100, 116), "LiDAR Ethernet/12 V, RR-PANEL, rear ToF and deck controls to the board rear corners"),
-    "left_gutter": ((-69, -5, 99, 105, 84, 98), "left motor/encoder, left look-ahead ToF, USB/5 V to CM5"),
-    "right_gutter": ((-69, -5, -105, -99, 84, 98), "pack feed from the coupler, charge feed, right motor/encoder, E-stop loop"),
+    "left_gutter": ((-69, -5, 99, 105, 84, 92), "left motor/encoder, left look-ahead ToF, USB/5 V to CM5"),
+    "right_gutter": ((-69, -5, -105, -99, 84, 92), "pack feed from the coupler, charge feed, right motor/encoder, E-stop loop"),
     "front_bay": ((36, 62, -30, 30, 56, 90), "J1/J2 feeds, front cliff ToF, dock switch, clamp resistor leads"),
     "under_bridge_right": ((-12, 20, -41, -20, 40, 76), "pack feed from the coupler between the motor ends to the right gutter"),
-    "left_bay_over_cm5": ((-102, -75, 59, 80, 78, 98), "CM5 USB/Ethernet/antenna pigtails, selector and REARM leads"),
-    "right_bay": ((-185, -100, -95, -60, 45, 76), "charge inlet feed, HANDS-ON/Pause leads, right rear ToF, bumper switch"),
+    "left_bay_over_cm5": ((-102, -75, 59, 80, 78, 90), "CM5 USB/Ethernet/antenna pigtails, selector and REARM leads"),
+    "right_bay": ((-185, -100, -90, -60, 45, 76), "charge inlet feed, HANDS-ON/Pause leads, right rear ToF, bumper switch"),
 }
 
 

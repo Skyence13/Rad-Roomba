@@ -292,7 +292,7 @@ CHS_MAIN = {
     "hole_d": 3.2, "hole_keepout_d": 7.0, "screw": "M3",
 }
 TOF_BOARD = {"outline": tuple(BOARDS_C["RR-TOF"]["outline_mm"]), "thickness": 1.6, "depth_behind_window": 6.0}
-PANEL_BOARD = {"outline": tuple(BOARDS_C["RR-PANEL"]["outline_mm"]), "thickness": 1.6, "center": (-80.0, 100.0), "long_axis": "x", "max_top": 8.0}
+PANEL_BOARD = {"outline": tuple(BOARDS_C["RR-PANEL"]["outline_mm"]), "thickness": 1.6, "center": (-80.0, 100.0), "long_axis": "x", "max_top": 8.0, "below_skin": 21.0}
 ELECTRONICS_BRIDGE_Z = (78.0, 80.0)    # 2 mm tray over the motors carrying RR-CHS-MAIN (screen + H-bridge heat path)
 
 # --------------------------------------------------------------------------- body packaging (layout decisions)
@@ -318,7 +318,7 @@ GRIP = {                   # transverse bridge grip above the centre of gravity 
 GRIP["bar_bottom_z"] = SADDLE["floor_z"][1] + GRIP["glove_clearance_below"]
 GRIP["bar_top_z"] = GRIP["bar_bottom_z"] + GRIP["bar_z"]
 LIDAR_POSE = {"xy": (-150.0, 0.0), "base_z": 150.0}          # behind the grip, on the battery hump
-CM5_POSE = {"x": (-160.0, -75.0), "y": (59.0, 115.0), "pcb_z": 55.0}   # left side bay
+CM5_POSE = {"x": (-154.0, -69.0), "y": (59.0, 115.0), "pcb_z": 55.0}   # left side bay
 DRIVE_POD = {"inner_r": 21.0, "outer_r": 23.5, "end_y": 119.5}   # motor pod on each flank behind the tyre (local growth, hidden by the wheel)
 ELECTRONICS_BRIDGE_X = (-69.0, 35.0)
 GLOVE_CLEARANCE_CONNECTOR = 45.0     # required free radius around J1/J2 coupling nuts
@@ -374,8 +374,8 @@ _la_r = skin_point(157.0, 100.0)
 _px_c = skin_point(180.0, 118.0)
 _px_s = skin_point(152.0, 80.0)
 TOF_SENSORS = {   # id: position of the sensor aperture (mm, base_link), unit boresight, purpose
-    "tof_cliff_fl": {"xyz": (46.0, 108.0, 31.0), "dir": (0.0, 0.0, -1.0), "purpose": "downward cliff on the outboard end of the chassis front beam: 46 mm ahead of the axle, 14.5 mm inboard of the left tyre"},
-    "tof_cliff_fr": {"xyz": (46.0, -108.0, 31.0), "dir": (0.0, 0.0, -1.0), "purpose": "downward cliff on the outboard end of the chassis front beam, right"},
+    "tof_cliff_fl": {"xyz": (46.0, 109.5, 31.0), "dir": (0.0, 0.0, -1.0), "purpose": "downward cliff on the outboard end of the chassis front beam: 46 mm ahead of the axle, 13 mm inboard of the left tyre"},
+    "tof_cliff_fr": {"xyz": (46.0, -109.5, 31.0), "dir": (0.0, 0.0, -1.0), "purpose": "downward cliff on the outboard end of the chassis front beam, right"},
     "tof_cliff_rl": {"xyz": (_cliff_r[0], _cliff_r[1], 41.0), "dir": (0.0, 0.0, -1.0), "purpose": "downward cliff, rear left of the caster (reverse and pivot)"},
     "tof_cliff_rr": {"xyz": (_cliff_r[0], -_cliff_r[1], 41.0), "dir": (0.0, 0.0, -1.0), "purpose": "downward cliff, rear right of the caster (reverse and pivot)"},
     "tof_look_fl": {"xyz": (GRIP["center_x"] + GRIP["bar_x"] / 2, 91.0, 162.0), "dir": _dir(6.0, LOOKAHEAD_FWD_DEPRESSION), "purpose": "oblique look-ahead over the head, left: floor/drop-off ahead of the leading rail"},
