@@ -1,32 +1,46 @@
 
 
-2026-11-25 23:08:23.980 INFO   Freerouting v2.6.0 (build-date: 2026-11-25)
-2026-11-25 23:08:24.292 INFO   Hardware: 4 CPU cores, 444 CPU score, 3072 MB RAM
-2026-11-25 23:08:24.296 WARN   GUI is disabled and you don't have a console available, so the only feedback from Freerouting is in the log.
-2026-11-25 23:08:25.428 WARN   The '-mp' command-line flag is deprecated and will be removed in a future release; use '--router.autorouter.max_passes' instead.
-2026-11-25 23:08:25.428 WARN   The '-mt' command-line flag is deprecated and will be removed in a future release; use '--router.max_threads=<n>' instead.
-2026-11-25 23:08:25.718 INFO   [B7AEAC\34DBCC] Loading board file 'RR-TOF-A.dsn'...
-2026-11-25 23:08:25.801 INFO   1 multi-pin net-tie cluster(s) identified and indexed.
-2026-11-25 23:08:25.809 INFO   [B7AEAC\34DBCC] Job 'B7AEAC\34DBCC' started at 2026-11-25T23:08:25.808980533Z.
-2026-11-25 23:08:25.897 INFO   [B7AEAC\34DBCC] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=4.
-2026-11-25 23:08:25.921 INFO   [B7AEAC\34DBCC] Auto-routing stage started on board '30f12d6fd21ec08f86ef2c29209fc855' with baseline score 21.51 for 30 unrouted items.
-2026-11-25 23:08:26.525 INFO   [B7AEAC\34DBCC] Auto-routing pass #1 on board '30f12d6fd21ec08f86ef2c29209fc855' was completed in 0.59 seconds with score 956.99 (1 unrouted and 0 violations).
-2026-11-25 23:08:26.611 INFO   [B7AEAC\34DBCC] Auto-routing pass #2 on board 'ae858e0b433190138359df1e541216b7' was completed in 0.08 seconds with score 956.99 (1 unrouted and 0 violations).
-2026-11-25 23:08:26.642 INFO   [B7AEAC\34DBCC] Auto-routing pass #3 on board '4af2a35c4ed367a55178a7d7d1b2d1d8' was completed in 0.02 seconds with score 913.98 (2 unrouted and 0 violations).
-2026-11-25 23:08:26.715 INFO   [B7AEAC\34DBCC] Auto-routing pass #4 on board '62acd9b18314cefd8c99ceb37b25f8c1' was completed in 0.07 seconds with score 913.98 (2 unrouted and 0 violations).
-2026-11-25 23:08:26.754 INFO   [B7AEAC\34DBCC] Auto-routing pass #5 on board '39bde108749e328cda79a6ba19b765c0' was completed in 0.03 seconds with score 1000.00 (0 unrouted and 0 violations).
-2026-11-25 23:08:26.761 INFO   [B7AEAC\34DBCC] Auto-routing pass #6 on board 'c657718475656cf67ddd9793716df8d5' was completed in 0.00 seconds with score 1000.00 (0 unrouted and 0 violations).
-2026-11-25 23:08:26.776 INFO   [B7AEAC\34DBCC] Auto-routing stage completed: started with 30 unrouted nets, completed in 0.87 seconds, final score: 1000.00 (0 unrouted and 0 violations), using 0.00 total CPU seconds, 0.00 GB total allocated, and 0.0 MB peak heap usage.
-2026-11-25 23:08:26.817 INFO   [B7AEAC\34DBCC] Optimization stage started on board 'c657718475656cf67ddd9793716df8d5'. Baseline router score: 1000.00, optimizer score: -704.95, incomplete connections: 0, clearance violations: 0.
-2026-11-25 23:08:28.392 INFO   [B7AEAC\34DBCC] Optimizer pass #1 on board '4efa3e835cab8b1306a0692fbd2680e8' was completed in 1.56 seconds with the score of -640.57 (0 unrouted and 0 violations).
-2026-11-25 23:08:28.409 INFO   [B7AEAC\34DBCC] Optimizer pass #1: optimizer score -704.95 -> -640.57 (IMPROVED, 3.7764% of the excess), router score: 1000.00, incomplete connections: 0, clearance violations: 0.
-2026-11-25 23:08:29.399 INFO   [B7AEAC\34DBCC] Optimizer pass #2 on board '0cbb6aa395c8eb3ea19f04bfebe06854' was completed in 0.97 seconds with the score of -584.76 (0 unrouted and 0 violations).
-2026-11-25 23:08:29.410 INFO   [B7AEAC\34DBCC] Optimizer pass #2: optimizer score -640.57 -> -584.76 (IMPROVED, 3.4018% of the excess), router score: 1000.00, incomplete connections: 0, clearance violations: 0.
-2026-11-25 23:08:30.108 INFO   [B7AEAC\34DBCC] Optimizer pass #3 on board 'f06730702dad13461f4587a36bd5df62' was completed in 0.68 seconds with the score of -574.54 (0 unrouted and 0 violations).
-2026-11-25 23:08:30.126 INFO   [B7AEAC\34DBCC] Optimizer pass #3: optimizer score -584.76 -> -574.54 (IMPROVED, 0.6450% of the excess), router score: 1000.00, incomplete connections: 0, clearance violations: 0.
-2026-11-25 23:08:30.126 INFO   [B7AEAC\34DBCC] Stopping optimizer because the improvement in this pass (0.6450%) is below the threshold (2.50%).
-2026-11-25 23:08:30.208 INFO   [B7AEAC\34DBCC] Step slide: 2 of 48 tried moves kept in 2 passes, trace length 150.15 -> 150.06 mm, bends 60 -> 60, vias 18 -> 18, incomplete connections 0 -> 0, clearance violations 0 -> 0, in 0.08 seconds using 0.04 CPU seconds.
-2026-11-25 23:08:30.215 INFO   [B7AEAC\34DBCC] Optimization stage completed:. Baseline router score: 1000.00, baseline optimizer score: -704.95, final router score: 1000.00, final optimizer score: 0.00, completed in 3.40 seconds, using 6.73 total CPU seconds, 2.71 GB total allocated, and 244.4 MB peak heap usage.
-2026-11-25 23:08:30.220 INFO   [B7AEAC\34DBCC] Job 'B7AEAC\34DBCC' finished with state: COMPLETED (elapsed: 4.41 seconds, finished at UTC: 2026-11-25T23:08:30.219338086Z).
-2026-11-25 23:08:30.234 INFO   Saving output file '/home/user/Rad-Roomba/electronics/tof_carrier/route/RR-TOF-A.ses' (SES)...
-2026-11-25 23:08:30.236 INFO   Successfully saved output file '/home/user/Rad-Roomba/electronics/tof_carrier/route/RR-TOF-A.ses' (10716 bytes).
+2026-11-26 04:22:44.376 INFO   Freerouting v2.6.0 (build-date: 2026-11-25)
+2026-11-26 04:22:44.881 INFO   Hardware: 4 CPU cores, 443 CPU score, 3072 MB RAM
+2026-11-26 04:22:44.885 WARN   GUI is disabled and you don't have a console available, so the only feedback from Freerouting is in the log.
+2026-11-26 04:22:46.545 WARN   The '-mp' command-line flag is deprecated and will be removed in a future release; use '--router.autorouter.max_passes' instead.
+2026-11-26 04:22:46.546 WARN   The '-mt' command-line flag is deprecated and will be removed in a future release; use '--router.max_threads=<n>' instead.
+2026-11-26 04:22:46.850 INFO   [4A3BFA\19BB16] Loading board file 'RR-TOF-A.dsn'...
+2026-11-26 04:22:46.986 INFO   [4A3BFA\19BB16] Job '4A3BFA\19BB16' started at 2026-11-26T04:22:46.985689594Z.
+2026-11-26 04:22:47.082 INFO   [4A3BFA\19BB16] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=4.
+2026-11-26 04:22:47.219 INFO   [4A3BFA\19BB16] Auto-routing stage started on board '11f45e3c558ec4896a0f884f743d2908' with baseline score 0.00 for 30 unrouted items.
+2026-11-26 04:22:48.065 INFO   [4A3BFA\19BB16] Auto-routing pass #1 on board '11f45e3c558ec4896a0f884f743d2908' was completed in 0.84 seconds with score 866.67 (3 unrouted and 0 violations), using 0.70 CPU seconds and the job allocated 0.18 GB of memory so far.
+2026-11-26 04:22:48.243 INFO   [4A3BFA\19BB16] Auto-routing pass #2 on board '0bd48401780693363e79a31fb642aa12' was completed in 0.16 seconds with score 911.11 (2 unrouted and 0 violations), using 0.70 CPU seconds and the job allocated 0.18 GB of memory so far.
+2026-11-26 04:22:48.363 INFO   [4A3BFA\19BB16] Auto-routing pass #3 on board '14d3905c0b93e135e5086541a1e84b9b' was completed in 0.11 seconds with score 955.56 (1 unrouted and 0 violations), using 0.70 CPU seconds and the job allocated 0.18 GB of memory so far.
+2026-11-26 04:22:48.474 INFO   [4A3BFA\19BB16] Auto-routing pass #4 on board '4cfae48ad98c528cd1a56943ec77562a' was completed in 0.10 seconds with score 911.11 (2 unrouted and 0 violations), using 0.70 CPU seconds and the job allocated 0.18 GB of memory so far.
+2026-11-26 04:22:48.551 INFO   [4A3BFA\19BB16] Auto-routing pass #5 on board '6234179013693bf378b1835119a847bb' was completed in 0.07 seconds with score 955.56 (1 unrouted and 0 violations), using 0.70 CPU seconds and the job allocated 0.18 GB of memory so far.
+2026-11-26 04:22:48.684 INFO   [4A3BFA\19BB16] Auto-routing pass #6 on board '5a56144d664541183a97da228b30de96' was completed in 0.12 seconds with score 911.11 (2 unrouted and 0 violations), using 0.70 CPU seconds and the job allocated 0.18 GB of memory so far.
+2026-11-26 04:22:48.826 INFO   [4A3BFA\19BB16] Auto-routing pass #7 on board 'c1287819a3823e177fbd59438996304e' was completed in 0.13 seconds with score 911.11 (2 unrouted and 0 violations), using 0.70 CPU seconds and the job allocated 0.18 GB of memory so far.
+2026-11-26 04:22:49.047 INFO   [4A3BFA\19BB16] Auto-routing pass #8 on board '4cfae48ad98c528cd1a56943ec77562a' was completed in 0.21 seconds with score 955.56 (1 unrouted and 0 violations), using 1.65 CPU seconds and the job allocated 0.65 GB of memory so far.
+2026-11-26 04:22:49.151 INFO   [4A3BFA\19BB16] Auto-routing pass #9 on board '4cfae48ad98c528cd1a56943ec77562a' was completed in 0.10 seconds with score 911.11 (2 unrouted and 0 violations), using 1.65 CPU seconds and the job allocated 0.65 GB of memory so far.
+2026-11-26 04:22:49.221 INFO   [4A3BFA\19BB16] Auto-routing pass #10 on board 'b4fd825d820bed43c9ccf9b4825f9ad7' was completed in 0.06 seconds with score 955.56 (1 unrouted and 0 violations), using 1.65 CPU seconds and the job allocated 0.65 GB of memory so far.
+2026-11-26 04:22:49.233 INFO   [4A3BFA\19BB16] Last-mile rip-up removed 11 blocking trace(s) or via(s) around 1 remaining connection(s).
+2026-11-26 04:22:49.450 INFO   [4A3BFA\19BB16] Auto-routing pass #11 on board '2c72f1082857b31f25728dc57795684f' was completed in 0.21 seconds with score 911.11 (2 unrouted and 0 violations), using 1.65 CPU seconds and the job allocated 0.65 GB of memory so far.
+2026-11-26 04:22:49.649 INFO   [4A3BFA\19BB16] Auto-routing pass #12 on board '4cfae48ad98c528cd1a56943ec77562a' was completed in 0.19 seconds with score 955.56 (1 unrouted and 0 violations), using 1.65 CPU seconds and the job allocated 0.65 GB of memory so far.
+2026-11-26 04:22:49.795 INFO   [4A3BFA\19BB16] Auto-routing pass #13 on board '4cfae48ad98c528cd1a56943ec77562a' was completed in 0.14 seconds with score 911.11 (2 unrouted and 0 violations), using 1.65 CPU seconds and the job allocated 0.65 GB of memory so far.
+2026-11-26 04:22:49.900 INFO   [4A3BFA\19BB16] Auto-routing pass #14 on board '3c26c2e5f482f0222bff9d7f72d2c811' was completed in 0.10 seconds with score 955.56 (1 unrouted and 0 violations), using 1.65 CPU seconds and the job allocated 0.65 GB of memory so far.
+2026-11-26 04:22:49.910 INFO   [4A3BFA\19BB16] Last-mile rip-up removed 8 blocking trace(s) or via(s) around 1 remaining connection(s).
+2026-11-26 04:22:50.076 INFO   [4A3BFA\19BB16] Auto-routing pass #15 on board '99edab7b5631ebce620332f41c386dec' was completed in 0.16 seconds with score 911.11 (2 unrouted and 0 violations), using 2.54 CPU seconds and the job allocated 1.12 GB of memory so far.
+2026-11-26 04:22:50.231 INFO   [4A3BFA\19BB16] Auto-routing pass #16 on board '4cfae48ad98c528cd1a56943ec77562a' was completed in 0.15 seconds with score 955.56 (1 unrouted and 0 violations), using 2.54 CPU seconds and the job allocated 1.12 GB of memory so far.
+2026-11-26 04:22:50.313 INFO   [4A3BFA\19BB16] Auto-routing pass #17 on board '4cfae48ad98c528cd1a56943ec77562a' was completed in 0.08 seconds with score 911.11 (2 unrouted and 0 violations), using 2.54 CPU seconds and the job allocated 1.12 GB of memory so far.
+2026-11-26 04:22:50.478 INFO   [4A3BFA\19BB16] Auto-routing pass #18 on board '07a84e4608f3eb921389319f302e110c' was completed in 0.16 seconds with score 1000.00 (0 unrouted and 0 violations), using 2.54 CPU seconds and the job allocated 1.12 GB of memory so far.
+2026-11-26 04:22:50.489 INFO   [4A3BFA\19BB16] Auto-routing pass #19 on board 'a63b604442b54e7d8c1a146f968ebca8' was completed in 0.00 seconds with score 1000.00 (0 unrouted and 0 violations), using 2.54 CPU seconds and the job allocated 1.12 GB of memory so far.
+2026-11-26 04:22:50.510 INFO   [4A3BFA\19BB16] Auto-routing stage completed: started with 30 unrouted nets, completed in 3.42 seconds, final score: 1000.00 (0 unrouted and 0 violations), using 2.54 total CPU seconds, 1.12 GB total allocated, and 137.6 MB peak heap usage.
+2026-11-26 04:22:50.535 INFO   [4A3BFA\19BB16] Optimization stage started on board 'a63b604442b54e7d8c1a146f968ebca8'. Baseline router score: 1000.00, optimizer score: -799.76, incomplete connections: 0, clearance violations: 0.
+2026-11-26 04:22:52.844 INFO   [4A3BFA\19BB16] Optimizer pass #1 on board '04cb3e3d234cc615cb37210f79664a7d' was completed in 2.29 seconds with the score of -917.49 (0 unrouted and 0 violations).
+2026-11-26 04:22:52.846 INFO   [4A3BFA\19BB16] Optimizer pass #1 candidate rejected: OPTIMIZER_SCORE_NOT_IMPROVED. Restoring incumbent (optimizer score -799.76, incomplete connections: 0, clearance violations: 0).
+2026-11-26 04:22:52.860 INFO   [4A3BFA\19BB16] Optimizer pass #1: optimizer score -799.76 -> -917.49 (REGRESSED, -6.5412% of the excess), router score: 1000.00, incomplete connections: 0, clearance violations: 0.
+2026-11-26 04:22:55.513 INFO   [4A3BFA\19BB16] Optimizer pass #2 on board 'd233799c5a8e3d717a02e9fe21b832c6' was completed in 2.64 seconds with the score of -882.02 (0 unrouted and 0 violations).
+2026-11-26 04:22:55.515 INFO   [4A3BFA\19BB16] Optimizer pass #2 candidate rejected: OPTIMIZER_SCORE_NOT_IMPROVED. Restoring incumbent (optimizer score -799.76, incomplete connections: 0, clearance violations: 0).
+2026-11-26 04:22:55.527 INFO   [4A3BFA\19BB16] Optimizer pass #2: optimizer score -799.76 -> -882.02 (REGRESSED, -4.5705% of the excess), router score: 1000.00, incomplete connections: 0, clearance violations: 0.
+2026-11-26 04:22:55.527 INFO   [4A3BFA\19BB16] Stopping optimizer because the improvement in this pass (0.0000%) is below the threshold (2.50%).
+2026-11-26 04:22:55.539 INFO   [4A3BFA\19BB16] Step slide: 0 of 15 tried moves kept in 1 passes, trace length 154.67 -> 154.67 mm, bends 58 -> 58, vias 25 -> 25, incomplete connections 0 -> 0, clearance violations 0 -> 0, in 0.01 seconds using 0.01 CPU seconds.
+2026-11-26 04:22:55.542 INFO   [4A3BFA\19BB16] Optimization stage completed:. Baseline router score: 1000.00, baseline optimizer score: -799.76, final router score: 1000.00, final optimizer score: 0.00, completed in 5.00 seconds, using 10.19 total CPU seconds, 8.15 GB total allocated, and 399.8 MB peak heap usage.
+2026-11-26 04:22:55.546 INFO   [4A3BFA\19BB16] Job '4A3BFA\19BB16' finished with state: COMPLETED (elapsed: 8.56 seconds, finished at UTC: 2026-11-26T04:22:55.545671083Z).
+2026-11-26 04:22:55.553 INFO   Saving output file '/home/user/Rad-Roomba/electronics/tof_carrier/route/RR-TOF-A.ses' (SES)...
+2026-11-26 04:22:55.555 INFO   Successfully saved output file '/home/user/Rad-Roomba/electronics/tof_carrier/route/RR-TOF-A.ses' (12700 bytes).

@@ -58,7 +58,7 @@ def head_acq():
             {"id": "RAIL_SWITCH_LANDING", "u": [150, 176], "v": [84, 96], "top_max": 6.0,
              "use": "Three head rail switches (front, left, right NC loop) land on the FRONT edge centre; leads run in the front wall channel."},
             {"id": "DIGITAL_POWER", "u": [0, 326], "v": [30, 84], "top_max": 6.0, "bottom_max": 2.0,
-             "use": "Bias supply, DACs, comparators, FPGA, MCU, rails. Heater switch next to J1_LANDING; keep heater current out of AFE_STRIP (route in v > 30)."},
+             "use": "Bias supply, DACs, comparators, event logic and head MCU (100-pin LQFP, DEC-037: no FPGA; 1.6 mm package height is inside the 6.0 mm limit), rails. Heater switch next to J1_LANDING; keep heater current out of AFE_STRIP (route in v > 30)."},
             {"id": "SERVICE", "u": [100, 226], "v": [84, 96], "top_max": 6.0,
              "use": "SWD/JTAG, 50 ohm monitor output, test points: reachable with the cover off, no external opening."},
         ],
@@ -101,8 +101,8 @@ def chs_main():
         ],
         "connector_edges": {
             "right_edge_rear  (u = 160, v 4..34)": "POWER ENTRY: pack feed from the blind-mate coupler (under the board, routed around the right side), charge inlet feed (inlet is on the right rear quarter), bus-clamp resistor. Main protection, charger and latch/brake relays belong in this corner.",
-            "right_edge_front (u = 160, v 68..96)": "Right motor + encoder, right look-ahead ToF (in the right grip cheek).",
-            "left_edge_front  (u = 0, v 68..96)": "Left motor + encoder, left look-ahead ToF.",
+            "right_edge_front (u = 160, v 72..96)": "Right motor + encoder, right look-ahead ToF (in the right grip cheek).",
+            "left_edge_front  (u = 0, v 72..96)": "Left motor + encoder, left look-ahead ToF.",
             "left_edge_rear   (u = 0, v 4..34)": "HOST: USB to the CM5 and the 5.1 V compute feed (CM5 carrier is in the left rear bay), LiDAR 12 V.",
             "rear_corners     (v = 0, u 0..25 and 135..160)": "left: RR-PANEL, selector / REARM / Pause; rear ToF x5, body bumper switches. right: E-stop (2 poles), HANDS-ON, charge-cover switch, chassis heater + bay NTCs.",
             "front_edge       (v = 100, u 8..40)": "J1 feed (HEAD_PWR, HEAD_HTR, loop, PRES_ID) to the left shoulder receptacle.",
@@ -111,7 +111,7 @@ def chs_main():
         },
         "keepouts": [
             "NO connectors on the rear edge between u = 26 and 134: the battery cassette top (z 110) stands 3.5 mm behind it.",
-            "NO connectors on the left/right edges between v = 34 and 68: the grip cheek legs stand 4 mm outboard of the board there.",
+            "NO connectors on the left/right edges between v = 34 and 70: the grip cheek legs and cheeks (base x -31 .. +1.5, |y| 84..98) stand 4 mm outboard of the board there.",
             "7.0 mm diameter around every mounting hole, both sides.",
             "Top-entry plugs are not possible above 18 mm: the saddle cover underside is 20.4 mm above the PCB top. Use right-angle or low-profile vertical headers.",
         ],

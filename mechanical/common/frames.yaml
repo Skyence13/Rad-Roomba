@@ -1,6 +1,6 @@
 # Rad Roomba static frames for the robot software (base_link -> sensors, head, controls, connectors).
 generated_by: mechanical/common/gen_interfaces.py from params.py -- do not edit by hand
-contract_version: 0.4.0-draft1
+contract_version: 0.4.0-draft2
 parent: base_link
 units:
   xyz: m
@@ -157,7 +157,7 @@ tof:
     fov_full_deg: 18.0
   tof_look_fl:
     xyz:
-    - -0.0035
+    - 0.0015
     - 0.091
     - 0.162
     dir:
@@ -168,7 +168,7 @@ tof:
     fov_full_deg: 18.0
   tof_look_fr:
     xyz:
-    - -0.0035
+    - 0.0015
     - -0.091
     - 0.162
     dir:
@@ -246,12 +246,12 @@ panel_controls:
   hands_on:
     xyz:
     - -0.172
-    - -0.082
-    - 0.13124
+    - -0.092
+    - 0.12748
     normal:
-    - -0.1323
-    - -0.2207
-    - 0.9663
+    - -0.2022
+    - -0.405
+    - 0.8917
     desc: HANDS-ON maintained illuminated pushbutton (HANDS_ON)
   mode_selector:
     xyz:
@@ -266,21 +266,21 @@ panel_controls:
   rearm_start:
     xyz:
     - -0.172
-    - 0.082
-    - 0.13124
+    - 0.092
+    - 0.12748
     normal:
-    - -0.1323
-    - 0.2207
-    - 0.9663
+    - -0.2022
+    - 0.405
+    - 0.8917
     desc: REARM / Start, guarded momentary NO
   pause_stop:
     xyz:
     - -0.084
-    - 0.112
+    - -0.112
     - 0.12197
     normal:
     - 0.0491
-    - 0.5205
+    - -0.5205
     - 0.8524
     desc: Pause / Stop momentary
   annunciator:
@@ -296,34 +296,34 @@ panel_controls:
 connectors:
   J1:
     xyz:
-    - 0.06
-    - 0.058
-    - 0.11242
+    - 0.072
+    - 0.032
+    - 0.11686
     mating_axis:
-    - 0.519
-    - 0.4639
-    - 0.718
+    - 0.6246
+    - 0.2901
+    - 0.7251
     family: M16 circular, 8-pole, IEC 61076-2-106, screw locking, IP67 mated, shielded
     side: left
   J2:
     xyz:
-    - 0.06
-    - -0.058
-    - 0.11242
+    - 0.072
+    - -0.032
+    - 0.11686
     mating_axis:
-    - 0.519
-    - -0.4639
-    - 0.718
+    - 0.6246
+    - -0.2901
+    - 0.7251
     family: M12 A-coded, 8-pole, IEC 61076-2-101, screw locking, IP67 mated, shielded
     side: right
   charge_inlet:
     xyz:
-    - -0.24535
-    - -0.08602
-    - 0.084
+    - -0.20107
+    - -0.12475
+    - 0.088
     mating_axis:
-    - -0.8245
-    - -0.5658
+    - -0.3788
+    - -0.9255
     - 0.0
     desc: charge inlet (M12 L-coded) under a hinged cover with cover switch, right rear quarter
   head_pigtail_exits:

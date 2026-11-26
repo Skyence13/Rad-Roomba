@@ -1,7 +1,7 @@
 (export (version "E")
   (design
     (source "/home/user/Rad-Roomba/electronics/tof_carrier/RR-TOF-A.kicad_sch")
-    (date "2026-11-25T23:14:04+0000")
+    (date "")
     (tool "Eeschema 9.0.9")
     (textvar (name "BOARD") "RR-TOF-A")
     (textvar (name "DATE") "2026-11-25")
@@ -241,7 +241,7 @@
       (tstamps "892eed47-2da3-5836-8504-456cdd798cde"))
     (comp (ref "U1")
       (value "VL53L4ED")
-      (footprint "Sensor_Distance:ST_VL53L1x")
+      (footprint "OptoDevice:ST_VL53L0X")
       (datasheet "https://www.st.com/resource/en/datasheet/vl53l4ed.pdf")
       (description "Time-of-flight high-accuracy proximity sensor with extended temperature capability, LGA-12")
       (fields
@@ -249,7 +249,7 @@
         (field (name "Manufacturer") "STMicroelectronics")
         (field (name "Notes") "ordering code not checked against the ST datasheet")
         (field (name "Verify") "MPN/part data not verified against manufacturer data")
-        (field (name "Footprint") "Sensor_Distance:ST_VL53L1x")
+        (field (name "Footprint") "OptoDevice:ST_VL53L0X")
         (field (name "Datasheet") "https://www.st.com/resource/en/datasheet/vl53l4ed.pdf")
         (field (name "Description") "Time-of-flight high-accuracy proximity sensor with extended temperature capability, LGA-12"))
       (libsource (lib "Sensor_Distance") (part "VL53L1CXV0FY1") (description "4m distance ranging ToF sensor, Optical LGA12"))

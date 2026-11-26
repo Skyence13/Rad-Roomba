@@ -454,7 +454,7 @@
    "value": "VL53L4ED",
    "group": "sensor",
    "symbol": "Sensor_Distance:VL53L1CXV0FY1",
-   "footprint": "Sensor_Distance:ST_VL53L1x",
+   "footprint": "OptoDevice:ST_VL53L0X",
    "mpn": "VL53L4EDV0DH/1",
    "dnp": false,
    "pins": [
@@ -464,14 +464,8 @@
      "net": "+3V3_TOF",
      "type": "power_in",
      "pad_xy_mm": [
-      [
-       -1.74,
-       0.675
-      ],
-      [
-       -1.6,
-       0.8
-      ]
+      -1.6,
+      0.8
      ],
      "side": "F"
     },
@@ -482,7 +476,7 @@
      "type": "power_in",
      "pad_xy_mm": [
       -0.8,
-      0.8
+      0.79
      ],
      "side": "F"
     },

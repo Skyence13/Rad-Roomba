@@ -80,7 +80,7 @@ def run():
     t_inf = P.T_OPERATING_C + P_HEAD_ELEC / ua0
     md.append(f"\nWith side foam in still air UA = {ua0:.2f} W/K ({', '.join(f'{k} {v:.2f}' for k, v in key['head_parts'].items())}); time constant {tau:.0f} min. "
               f"Unheated, a head started at +20 C settles at {t_inf:.0f} C and passes 0 C after {-tau * math.log((0 - t_inf) / (20 - t_inf)):.0f} min, so the heater is needed for any mission longer than that. "
-              f"Sizing: **{ua0 * (10 - P.T_QUAL_C) - P_HEAD_ELEC:.0f} W** holds +10 C at -25 C in still air; the 30 W peak allocation covers draught only with the side-wall foam. Use a 4-zone film of 30 W total at 12 V (7.5 W per lane, 2.4 kOhm... see electronics) on the spreader underside.")
+              f"Sizing: **{ua0 * (10 - P.T_QUAL_C) - P_HEAD_ELEC:.0f} W** holds +10 C at -25 C in still air; the 30 W peak allocation covers draught only with the side-wall foam. Use a 4-zone film of 30 W total at 12 V (7.5 W per lane) on the spreader underside.")
     key.update(head_htr_m20=ua0 * (10 - P.T_OPERATING_C) - P_HEAD_ELEC, head_htr_m25=ua0 * (10 - P.T_QUAL_C) - P_HEAD_ELEC)
     md.append("\n### Chassis and battery bay\n")
     rows = []

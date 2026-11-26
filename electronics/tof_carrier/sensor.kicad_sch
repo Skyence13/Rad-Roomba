@@ -979,7 +979,7 @@
 		)
 		(uuid "7242f64e-8bce-5cc1-8e55-0e1208cd23f4")
 	)
-	(text "U1 uses the stock VL53L1 symbol/footprint: VL53L4ED is the same 12-pin optical LGA (4.4 x 2.4 mm)\nand is pin-compatible with VL53L1X / VL53L4CD. AVDD range 2.6 - 3.5 V. DNC (pin 8) left open.\nXSHUT and GPIO1 are pulled up to the filtered sensor rail (inputs are not 5 V tolerant)."
+	(text "U1 uses the stock VL53L1 symbol (same 12-pin pinout) and the stock 4.4 x 2.4 mm LGA-12 land pattern\n(OptoDevice:ST_VL53L0X; identical pads to ST_VL53L1x, smaller body outline). AVDD range 2.6 - 3.5 V. DNC (pin 8) left open.\nXSHUT and GPIO1 are pulled up to the filtered sensor rail (inputs are not 5 V tolerant)."
 		(exclude_from_sim no)
 		(at 20 26 0)
 		(effects
@@ -1403,7 +1403,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Sensor_Distance:ST_VL53L1x"
+		(property "Footprint" "OptoDevice:ST_VL53L0X"
 			(at 48.26 73.66 0)
 			(effects
 				(font

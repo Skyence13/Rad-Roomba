@@ -23,7 +23,7 @@ CASES = {   # frame material, wall thickness mm, head mass kg, receiver key, col
     "prototype PA-CF (dry)": ("PA-CF", 3.0, 1.62, "prototype (printed PA-CF receiver, steel pin)"),
     "prototype PA-CF (conditioned, E x 0.5)": ("PA-CF", 3.0, 1.62, "prototype (printed PA-CF receiver, steel pin)"),
     "prototype ASA": ("ASA", 3.0, 1.62, "prototype (printed PA-CF receiver, steel pin)"),
-    "production 6061": ("AL6061", 2.5, 1.83, "production (aluminium receiver, preloaded pin)"),
+    "production 6061": ("AL6061", 2.5, 2.05, "production (aluminium receiver, preloaded pin)"),
 }
 
 
@@ -100,7 +100,7 @@ def run():
         ("Receiver pitch / roll stiffness, prototype", "1500 / 1200", "N m/rad", "ASSUMPTION (two lands 62 mm apart, 24 mm engagement, printed) -- measure on the first article"),
         ("Receiver pitch / roll stiffness, production", "6000 / 5000", "N m/rad", "ASSUMPTION"),
         ("Receiver play prototype / production", "0.10 / 0.03", "mm over 24 mm", "ASSUMPTION; preload should remove it"),
-        ("Head mass used (heaviest prototype / production + 15 %)", "1.62 / 1.83", "kg", "section 1, rounded up"),
+        ("Head mass used (prototype / production + 15 % = dummy head)", "1.62 / 2.05", "kg", "section 1"),
     ]))
     for name in CASES:
         d, s = deflections(name)

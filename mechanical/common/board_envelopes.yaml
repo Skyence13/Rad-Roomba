@@ -1,7 +1,7 @@
 # Rad Roomba board envelopes -- mechanical lead's confirmation of contract.yaml > boards.
 # Positions are in base_link (mm) for the Rev E layout. STEP solids: out/boards/*.step
 generated_by: mechanical/common/gen_interfaces.py from params.py -- do not edit by hand
-contract_version: 0.4.0-draft1
+contract_version: 0.4.0-draft2
 evidence_class: calculated (fit tool-checked by layout.py)
 convention: 'Board frame: origin at the rear-left corner seen from above with robot-forward up; +u toward robot right (= -y of base_link), +v forward (= +x of base_link),
   +w up (= +z); top/component side faces +z. base_link = origin + (v, -u, w). Origin z is the PCB UNDERSIDE. All dimensions mm.'
@@ -220,7 +220,8 @@ RR-HEAD-ACQ:
     - 84
     top_max: 6.0
     bottom_max: 2.0
-    use: Bias supply, DACs, comparators, FPGA, MCU, rails. Heater switch next to J1_LANDING; keep heater current out of AFE_STRIP (route in v > 30).
+    use: 'Bias supply, DACs, comparators, event logic and head MCU (100-pin LQFP, DEC-037: no FPGA; 1.6 mm package height is inside the 6.0 mm limit), rails. Heater
+      switch next to J1_LANDING; keep heater current out of AFE_STRIP (route in v > 30).'
   - id: SERVICE
     u:
     - 100
@@ -368,8 +369,8 @@ RR-CHS-MAIN:
   connector_edges:
     right_edge_rear  (u = 160, v 4..34): 'POWER ENTRY: pack feed from the blind-mate coupler (under the board, routed around the right side), charge inlet feed (inlet
       is on the right rear quarter), bus-clamp resistor. Main protection, charger and latch/brake relays belong in this corner.'
-    right_edge_front (u = 160, v 68..96): Right motor + encoder, right look-ahead ToF (in the right grip cheek).
-    left_edge_front  (u = 0, v 68..96): Left motor + encoder, left look-ahead ToF.
+    right_edge_front (u = 160, v 72..96): Right motor + encoder, right look-ahead ToF (in the right grip cheek).
+    left_edge_front  (u = 0, v 72..96): Left motor + encoder, left look-ahead ToF.
     left_edge_rear   (u = 0, v 4..34): 'HOST: USB to the CM5 and the 5.1 V compute feed (CM5 carrier is in the left rear bay), LiDAR 12 V.'
     rear_corners     (v = 0, u 0..25 and 135..160): 'left: RR-PANEL, selector / REARM / Pause; rear ToF x5, body bumper switches. right: E-stop (2 poles), HANDS-ON,
       charge-cover switch, chassis heater + bay NTCs.'
@@ -378,7 +379,8 @@ RR-CHS-MAIN:
     front_edge       (v = 100, u 50..110): Front cliff ToF x2, HEAD_DOCK switch.
   keepouts:
   - 'NO connectors on the rear edge between u = 26 and 134: the battery cassette top (z 110) stands 3.5 mm behind it.'
-  - 'NO connectors on the left/right edges between v = 34 and 68: the grip cheek legs stand 4 mm outboard of the board there.'
+  - 'NO connectors on the left/right edges between v = 34 and 70: the grip cheek legs and cheeks (base x -31 .. +1.5, |y| 84..98) stand 4 mm outboard of the board
+    there.'
   - 7.0 mm diameter around every mounting hole, both sides.
   - 'Top-entry plugs are not possible above 18 mm: the saddle cover underside is 20.4 mm above the PCB top. Use right-angle or low-profile vertical headers.'
   cable_exits: Horizontally outward from the named edges; side bays (|y| 80..115) and the front bay (x > 33) are the cable corridors.

@@ -96,7 +96,7 @@ def run():
               f"**{P.FILM_Z + lo - worst:.1f} .. {P.FILM_Z + hi + worst:.1f} mm** including the static worst case ({P.FILM_Z + lo:.1f} .. {P.FILM_Z + hi:.1f} mm without it). "
               f"The most sensitive situation is one drive wheel dropping while the same-side front corner leads ({kmax:.2f} mm per mm). "
               f"The 3 mm rail (7 mm clearance) touches at a {7 / kmax:.1f} mm single feature ({(7 - worst) / kmax:.1f} mm with the static band used up); the 5 mm rail (5 mm clearance) at {5 / kmax:.1f} mm ({(5 - worst) / kmax:.1f} mm). "
-              "A rail touch opens HEAD_LOOP, so these are nuisance-stop thresholds as well as protection thresholds: on floors with 3 mm seams the 5 mm rail will stop the robot at most seams, the 3 mm rail will not. "
+              "A rail touch opens HEAD_LOOP, so these are nuisance-stop thresholds as well as protection thresholds: on a 3 mm seam the 3 mm rail keeps about 3 mm of clearance, while the 5 mm rail keeps about 1 mm nominally and touches once the static band or an oblique crossing (one wheel first) is included. "
               "Floor crown is negligible (5 mm sag over a 2.4 m wide floor changes the corner gap by < 0.1 mm). Dynamic terms (braking pitch on 40 N/mm tyres < 0.05 mm, receiver bounce at 0.5 g < 0.1 mm) are small against the kinematic terms; they must be confirmed on the rig.")
     md.append("\nThe measurement method that replaces these assumptions with data is in `out/gap_measurement_method.md`.")
     return "\n".join(md), key
