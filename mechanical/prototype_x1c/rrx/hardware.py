@@ -53,7 +53,7 @@ def rows():
     # C  drive
     add("C drive", "countersunk screw", "M4 x 12 ISO 10642 A2", 8, "plate (from below) -> motor pod inserts", torque="1.5")
     add("C drive", "button head screw", "M3 x 6 ISO 7380 A2", 12, "screw ring + pod end face -> gearbox (<= 3 mm engagement)", "UNVERIFIED", "0.5", "Pololu thread depth and pattern clocking UNVERIFIED: pod has both clockings")
-    add("C drive", "wheel-to-hub screw", "#4-40 x 3/8 in pan head (supplied with the hub)", 8, "wheel web -> hub flange", "UNVERIFIED", "0.5")
+    add("C drive", "wheel-to-hub screw", "M3 x 8 ISO 7380 A2 button head (not supplied with the hub)", 12, "wheel web -> tapped hub holes (6 per wheel)", "STD", "0.6", "medium thread-lock; check <= 5 mm engagement against the 9.2 mm hub")
     add("C drive", "tyre adhesive", "flexible cyanoacrylate or polyurethane adhesive", 1, "tyre keys on the rim", note="tyre is also keyed (8 ribs)")
     # D  battery bay and cassette
     add("D battery bay", "countersunk screw", "M3 x 8 ISO 10642 A2", 12, "plate (from below) -> tunnel feet (10) and coupler cradle (2)", torque="0.6")

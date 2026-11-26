@@ -131,3 +131,81 @@ def test_sse_first_event_is_current_state_and_stream_keeps_lease():
         assert cc.lease_state() is None               # stream closed -> lease lost
         await a.close()
     asyncio.run(go())
+
+
+class NaiveBackend(FakeBackend):
+    """Executes everything it is given: proves the refusals below come from the web layer."""
+
+    def __init__(self):
+        super().__init__()
+        self.safety = {"traction_inhibited": False, "charge_service": False, "hw_inhibit_reasons": [], "protective_stop_reasons": []}
+
+    def snapshot(self):
+        return dict(super().snapshot(), safety=dict(self.safety))
+
+    def command(self, name, args, actor, role):
+        self.executed.append((name, actor))
+        return {"accepted": True, "n": len(self.executed)}
+
+
+def test_web_refuses_motion_in_charge_service_and_while_inhibited():
+    """Server-side interlock independent of the backend (security hygiene; RQ-041, VT-028)."""
+    async def go():
+        be, cc = NaiveBackend(), ControlCenter(Clock(), USERS, lease_ttl_s=30)
+        a = await client(be, cc)
+        ha = await login(a, "op1", "pw1")
+        assert (await (await a.post("/api/control", json={"action": "take"}, headers=ha)).json())["accepted"]
+        n = iter(range(1000))
+
+        async def cmd(name):
+            return await (await a.post("/api/command", json={"id": f"c{next(n)}", "name": name}, headers=ha)).json()
+        assert (await cmd("next"))["accepted"]                      # permitted state: passes through
+        # Charge/Service: every drive request refused by the web service, nothing reaches the backend
+        be.mode, be.safety["charge_service"], be.safety["traction_inhibited"] = "SERVICE_CHARGE", True, True
+        before = len(be.executed)
+        for name in ("start", "resume", "next", "expose", "park", "repeat", "arm", "preflight"):
+            r = await cmd(name)
+            assert not r["accepted"] and r["reason"].startswith("CHARGE_SERVICE") and r["refused_by"] == "web", (name, r)
+        assert len(be.executed) == before
+        assert (await cmd("export"))["accepted"] and (await cmd("pause"))["accepted"]   # data access / stop still allowed
+        # hardware inhibit (e.g. E-stop): motion refused, re-arm/pause/abort still reach the backend
+        be.mode = "HW_INHIBIT"
+        be.safety.update(charge_service=False, traction_inhibited=True, hw_inhibit_reasons=["ESTOP"])
+        before = len(be.executed)
+        for name in ("start", "resume", "next", "expose", "park", "repeat"):
+            r = await cmd(name)
+            assert not r["accepted"] and r["reason"].startswith("INHIBITED") and "ESTOP" in r["reason"], (name, r)
+        assert len(be.executed) == before
+        assert (await cmd("rearm"))["accepted"] and (await cmd("abort"))["accepted"]
+        # software protective stop: same refusal until the cause is cleared
+        be.mode = "PROTECTIVE_STOP"
+        be.safety.update(hw_inhibit_reasons=[], protective_stop_reasons=["FIELD_FRONT"])
+        r = await cmd("resume")
+        assert not r["accepted"] and "FIELD_FRONT" in r["reason"]
+        be.mode = "ARMED_IDLE"
+        be.safety.update(traction_inhibited=False, protective_stop_reasons=[])
+        assert (await cmd("resume"))["accepted"]
+        au = cc.audit
+        assert sum(1 for x in au if x["op"] == "command" and x.get("reason", "") and str(x["reason"]).startswith(("CHARGE_SERVICE", "INHIBITED"))) >= 15
+        await a.close()
+    asyncio.run(go())
+
+
+def test_demo_accounts_are_marked_and_warned(capsys):
+    """The packaged accounts are flagged demo, a start-up warning is printed, and every client sees it."""
+    from rr_bringup.runtime import load_users
+    users = load_users()
+    err = capsys.readouterr().err
+    assert "DEMONSTRATION ACCOUNTS" in err and "TLS" in err
+    assert users and all(u["demo"] for u in users.values())
+    cc = ControlCenter(Clock(), users)
+    assert cc.public_state()["demo_accounts"] is True
+    assert ControlCenter(Clock(), USERS).public_state()["demo_accounts"] is False
+
+    async def go():
+        c = await client(FakeBackend(), cc)
+        r = await (await c.post("/api/login", json={"user": "viewer", "password": "viewer"})).json()
+        assert r["demo_account"] is True
+        assert (await (await c.get("/api/state")).json())["control"]["demo_accounts"] is True
+        await c.close()
+    asyncio.run(go())

@@ -170,4 +170,10 @@ class ControlCenter:
         return {"holder": holder["user"] if holder else None,
                 "you": None if s is None else {"user": s["user"], "role": s["role"],
                                                "has_control": bool(self.lease and self.lease["session"] == token)},
-                "viewers": sorted({v["user"] for v in self.sessions.values()})}
+                "viewers": sorted({v["user"] for v in self.sessions.values()}),
+                "demo_accounts": self.demo_accounts}
+
+    @property
+    def demo_accounts(self) -> bool:
+        """True when any account is a demonstration account (see rr_bringup.runtime.load_users)."""
+        return any(u.get("demo") for u in self.users.values())

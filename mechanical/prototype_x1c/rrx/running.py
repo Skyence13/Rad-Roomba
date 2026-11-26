@@ -18,8 +18,10 @@ Z0, Z1 = D.PLATE_Z
 WY = P.WHEEL_Y
 TW = P.TYRE_WIDTH
 RIM_R = P.WHEEL_R - D.TYRE_T
-HUB = {"flange_d": 25.4, "flange_t": 5.0, "boss_d": 12.7, "boss_l": 7.7, "y0": 122.0}     # Pololu #1999 class, UNVERIFIED
-WEB_Y = (HUB["y0"] + HUB["boss_l"] + HUB["flange_t"], HUB["y0"] + HUB["boss_l"] + HUB["flange_t"] + 5.0)
+HUB = {"d": 25.4, "t": 9.2, "y0": 122.0, "bcd": 19.05, "n": 6}
+# Pololu #1999: 25.4 dia x 9.2 thick, 6 mm bore, six M3 tapped holes, 6.8 g -- VERIFIED (pololu.com/product/1999/specs, 2026-11-26);
+# bolt circle 19.05 mm UNVERIFIED (recalled; dimension diagram not opened) -> rim holes 3.6 mm give +-0.2 mm of BCD tolerance.
+WEB_Y = (HUB["y0"] + HUB["t"], HUB["y0"] + HUB["t"] + 5.0)
 N_KEYS = 8
 
 
@@ -37,9 +39,9 @@ def wheel_rim(s):
     web = cyl(RIM_R - 3.0, WEB_Y[1] - WEB_Y[0], (0, WEB_Y[0], P.AXLE_Z), (0, 1, 0))
     rim = rim.fuse(web).fuse(_keys(RIM_R - 1.0, RIM_R + 1.5)).clean()
     rim = rim.cut(cyl(3.6, 12, (0, WEB_Y[0] - 1, P.AXLE_Z), (0, 1, 0)))
-    for i in range(4):
-        a = math.radians(45 + 90 * i)
-        rim = rim.cut(cyl(D.CLEAR["M3"] / 2, 12, (D.HUB_FLANGE_BCD / 2 * math.cos(a), WEB_Y[0] - 1, P.AXLE_Z + D.HUB_FLANGE_BCD / 2 * math.sin(a)), (0, 1, 0)))
+    for i in range(HUB["n"]):
+        a = math.radians(30 + 360.0 / HUB["n"] * i)
+        rim = rim.cut(cyl(1.8, 12, (HUB["bcd"] / 2 * math.cos(a), WEB_Y[0] - 1, P.AXLE_Z + HUB["bcd"] / 2 * math.sin(a)), (0, 1, 0)))
     for i in range(6):                                                    # lightening / wash-out holes
         a = math.radians(60 * i)
         rim = rim.cut(cyl(7.0, 12, (27.0 * math.cos(a), WEB_Y[0] - 1, P.AXLE_Z + 27.0 * math.sin(a)), (0, 1, 0)))
@@ -54,8 +56,7 @@ def tyre(s):
 
 
 def hub(s):
-    h = fuse(cyl(HUB["boss_d"] / 2, HUB["boss_l"], (0, HUB["y0"], P.AXLE_Z), (0, 1, 0)),
-             cyl(HUB["flange_d"] / 2, HUB["flange_t"], (0, HUB["y0"] + HUB["boss_l"], P.AXLE_Z), (0, 1, 0)))
+    h = cyl(HUB["d"] / 2, HUB["t"], (0, HUB["y0"], P.AXLE_Z), (0, 1, 0))
     h = h.cut(cyl(3.0, 20, (0, HUB["y0"] - 1, P.AXLE_Z), (0, 1, 0)))
     return h if s > 0 else mirror_y(h)
 
@@ -102,6 +103,7 @@ def bumper_side(s):
     for off in (-14.0, 14.0):
         seg = seg.cut(place(cyl(D.INSERT["M3"][0] / 2, D.INSERT["M3"][1], (off, 0, BUMP_IN - 1.1)), sw, n))
     seg = seg.cut(place(cyl(1.6, 6.0, (0, 0, BUMP_IN - 1.1)), sw, n))
+    seg = seg.intersect(box(-400, 0, 0, P.WHEEL_Y + P.TYRE_WIDTH / 2 - 0.5, 0, 200))     # stays inside the 295 mm tyre width
     return seg if s > 0 else mirror_y(seg)
 
 
@@ -166,7 +168,7 @@ def build(add):
         add(Part("RRX-P31", f"tyre_{tag}", tyre(s), "printed", "TPU95A", "wheel", color=TPU, internal=False, orient=(-90 if s > 0 else 90, 0, 0),
                  print_note="axis vertical; 4 walls, 20 % gyroid; print slow and dry", mates={f"wheel_rim_{tag}"}))
         add(Part("RRX-H20", f"wheel_hub_{tag}", hub(s), "purchased", "AL6061", "wheel", color="#c9a24a", internal=False,
-                 mpn="Pololu #1999 universal aluminium mounting hub, 6 mm shaft, 4-40 (pair)", verified="UNVERIFIED dimensions (flange 25.4, pattern 19.05 BCD recalled)",
+                 mpn="Pololu #1999 universal aluminium mounting hub, 6 mm shaft, M3 holes (2-pack)", verified="VERIFIED 25.4 x 9.2, 6 x M3, 6.8 g (pololu.com specs); bolt circle 19.05 UNVERIFIED", mass=0.0068,
                  mates={f"wheel_rim_{tag}", f"motor_{tag}"}))
         add(Part(f"RRX-P32{tag}", f"cliff_pod_{tag}", cliff_pod(s), "printed", "PAHT-CF", "front_sensors", color=PA, internal=False, orient=(180, 0, 0),
                  print_note="plate face on the bed (upside-down); supports under the bezel step only", mates={"chassis_plate", f"tof_cliff_f{tag.lower()}", f"receiver_channel_{tag}"}))

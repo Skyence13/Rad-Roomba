@@ -167,6 +167,7 @@ class Part:
         self.supplier, self.mpn, self.verified, self.print_note, self.subasm, self.process = supplier, mpn, verified, print_note, subasm or group, process
         self.local = local          # same solid in its own flat frame (for parts that are placed at an angle)
         self.bb = bounds(shape)
+        self.dropped = []           # volumes (mm3) of boolean slivers removed by assembly.add()
 
     @property
     def volume(self):

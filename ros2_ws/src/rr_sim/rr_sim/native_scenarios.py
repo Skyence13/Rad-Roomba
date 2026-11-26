@@ -1,5 +1,6 @@
 """Scenarios 1 and 2 against the native firmware emulators (real time, not deterministic).
-Run:  tools/test.sh native      Evidence: ros2_ws/evidence/native_*/"""
+Run:  tools/test.sh native [n01 n02 n03]   (default n01 n02; n03 = step-and-count, opt-in)
+Evidence: ros2_ws/evidence/native_*/"""
 from __future__ import annotations
 
 import math
@@ -91,6 +92,39 @@ def n02(tmp):
         c.add("affected strip re-surveyed (bands complete)", min(sc._band_fraction(sim, p) for p in (0, 1)) == 1.0,
               bands=[sc._band_fraction(sim, p) for p in (0, 1)])
         ev = sc._finish("native_s02_head_reset", sim, c, {})
+    finally:
+        sim.close()
+    return ev
+
+
+def n03(tmp, preset_s=3.0):
+    """Step-and-count on the native emulators (opt-in: `tools/test.sh native n03`): only static
+    scaler gates earn credit; the hot spot is flagged from static counts."""
+    cfg = sc._cfg(trailer={"id": "SIM-SECTION-1.8x1.0", "length_m": 1.8, "width_m": 1.0},
+                  mission={"method": "STEP_AND_COUNT", "station_preset_s": preset_s, "station_pitch_m": 0.10})
+    sim = NativeSystem(Path(tmp) / "n03", cfg, seed=33)
+    c = sc.Checks()
+    try:
+        sim.bringup()
+        app = sim.app
+        ya = next(t["y"] for t in app.plan["tasks"] if t["name"] == "pair0:A+")
+        sim.world.add_patch(0.95, 1.04, ya + 0.04375 - 0.03, ya + 0.04375 + 0.03, 3.0)
+        c.add("start accepted", app.command("start")["accepted"])
+        sc._scan_to_end(sim, timeout=3000, stop_on_hold=False)
+        proc = app.pipeline.proc
+        c.add("mission complete", app.mission.state == "REVIEW", state=app.mission.state, hold=app.mission.hold_reason)
+        stations = proc.stations
+        moving = [g for g in proc.gate_log if g["stage"] is None and g["pose"] is not None]
+        credited_stage = {g["stage"] for g in proc.gate_log if any(l["credited"] for l in g["lanes"])}
+        c.add("only static SCALER gates earn credit; moving gates archived without credit", credited_stage == {"SCALER"} and len(moving) > 50,
+              stages=sorted(map(str, credited_stage)), moving=len(moving))
+        rows = [r for r in proc.cells_table() if r["n_lane_gates"]]
+        c.add("every cell records method and stage", all(r["method"] == "STEP_AND_COUNT" and r["stage"] == "SCALER" for r in rows))
+        flags = [f for f in proc.flags if f["kind"] == "INVESTIGATION_LEVEL"]
+        c.add("hot spot flagged from static counts", any(abs(f["x_m"] - 0.995) < 0.06 for f in flags), flags=[(f["id"], f["x_m"], f["y_m"]) for f in flags])
+        dh = sorted(d.D_hash for d in proc.decisions["beta"].values() if d.D is not None and math.isfinite(d.D_hash))
+        ev = sc._finish("native_s10_step_and_count", sim, c, {"stations": len(stations), "stations_invalid": sum(1 for s in stations if not s["valid"]),
+                                                             "station_preset_s": preset_s, "D_hash_median": dh[len(dh) // 2] if dh else None})
     finally:
         sim.close()
     return ev

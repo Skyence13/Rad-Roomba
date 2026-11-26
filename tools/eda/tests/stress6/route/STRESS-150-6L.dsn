@@ -1268,7 +1268,7 @@
     (via "Via[0-5]_600:300_um" "Via[0-5]_800:400_um")
     (rule
       (width 200)
-      (clearance 150)
+      (clearance 175)
       (clearance 37.5 (type smd_smd))
     )
   )
@@ -2840,7 +2840,7 @@
       )
       (rule
         (width 200)
-        (clearance 150)
+        (clearance 175)
       )
     )
     (class PWR +3V3 +5V GND VIN
@@ -2849,7 +2849,7 @@
       )
       (rule
         (width 400)
-        (clearance 200)
+        (clearance 225)
       )
     )
   )

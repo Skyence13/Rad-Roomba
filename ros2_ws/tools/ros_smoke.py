@@ -22,7 +22,19 @@ n = Node("rr_smoke")
 latched = QoSProfile(depth=1, reliability=ReliabilityPolicy.RELIABLE, durability=DurabilityPolicy.TRANSIENT_LOCAL)
 seen = {"gates": 0, "eligible": 0, "mission": None, "coverage": None, "safety": None}
 n.create_subscription(GateCounts, "head/gates", lambda m: seen.update(gates=seen["gates"] + 1, eligible=seen["eligible"] + sum(l.eligible for l in m.lanes)), 50)
-n.create_subscription(MissionState, "mission/state", lambda m: seen.update(mission=m), latched)
+holds = []                      # every transition into HOLD with its reason (flaky-run diagnosis)
+
+
+def on_mission(m):
+    prev = seen["mission"]
+    if m.state == "HOLD" and (prev is None or prev.state != "HOLD" or prev.hold_reason != m.hold_reason):
+        holds.append({"t_wall": round(time.time() - T0, 2), "reason": m.hold_reason, "task": m.task, "phase": m.phase})
+        print("HOLD", holds[-1], flush=True)
+    seen.update(mission=m)
+
+
+T0 = time.time()
+n.create_subscription(MissionState, "mission/state", on_mission, latched)
 n.create_subscription(CoverageStatus, "coverage/status", lambda m: seen.update(coverage=m), latched)
 n.create_subscription(SafetyState, "safety/state", lambda m: seen.update(safety=m), 5)
 cmd, simc, exp = n.create_client(MissionCommand, "mission/command"), n.create_client(MissionCommand, "sim/control"), n.create_client(ExportSurvey, "mission/export")
@@ -66,7 +78,11 @@ try:
     check("start accepted; repeated idempotency key returns the same receipt", r1.accepted and r2.result_json == r1.result_json)
     check("mission SCAN", spin(10, lambda: seen["mission"] is not None and seen["mission"].state == "SCAN"),
           state=seen["mission"].state if seen["mission"] else None)
+    t_scan = time.time()
     spin(25)
+    check("no HOLD during the first 25 s of the scan", not holds, holds=holds, state=seen["mission"].state if seen["mission"] else None,
+          safety=None if seen["safety"] is None else {"traction_inhibited": seen["safety"].traction_inhibited,
+                                                      "hw": list(seen["safety"].hw_inhibit_reasons), "sw": list(seen["safety"].protective_stop_reasons), "hold": list(seen["safety"].hold)})
     check("credited coverage grows", spin(15, lambda: seen["coverage"] is not None and seen["coverage"].valid_exposure_fraction > 0.01),
           fraction=seen["coverage"].valid_exposure_fraction if seen["coverage"] else None)
     check("eligible lane-gates received", seen["eligible"] > 200, eligible=seen["eligible"], gates=seen["gates"])
@@ -88,7 +104,10 @@ finally:
     except subprocess.TimeoutExpired:
         launch.kill()
     ev = {"scenario": "ros_smoke", "evidence_class": "simulated", "against": "native emulators" if NATIVE else "Python protocol fakes over TCP 5540/5550",
-          "real_time": True, "deterministic": False, "checks": checks, "passed": bool(checks) and all(c["ok"] for c in checks)}
+          "real_time": True, "deterministic": False, "checks": checks, "holds": holds, "passed": bool(checks) and all(c["ok"] for c in checks)}
     (out / "evidence.json").write_text(json.dumps(ev, indent=1) + "\n")
+    with open(out / "runs.ndjson", "a") as f:      # history of every run (pass and fail), newest last
+        f.write(json.dumps({"t": time.strftime("%Y-%m-%dT%H:%M:%S"), "passed": ev["passed"], "holds": holds,
+                            "failed": [c for c in checks if not c["ok"]]}) + "\n")
     rclpy.try_shutdown()
 sys.exit(0 if ev["passed"] else 1)

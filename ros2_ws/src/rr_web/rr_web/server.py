@@ -13,7 +13,8 @@
   GET  /api/export/...        files of the last export
 
 Motion commands are refused server-side (not merely hidden) without the lease,
-for viewers, and in Charge/Service.  The backend is any object with
+for viewers, in Charge/Service and while traction is inhibited (`interlock_refusal`,
+evaluated by this service from the backend state, in addition to the backend's own checks).  The backend is any object with
 `lock`, `snapshot()`, `map_layers()`, `command(name, args, actor, role)`,
 `export_dir()`, `profile_edit(...)`, `profiles_view()`.
 """
@@ -33,6 +34,29 @@ CONTROL_COMMANDS = ("preflight", "arm", "start", "pause", "rearm", "resume", "de
                     "next", "expose", "park", "repeat", "skip", "register_datum", "head_power", "rehandshake")
 OPEN_COMMANDS = ("export",)                 # operator or rp, no lease needed (also in Charge/Service)
 RP_COMMANDS = ("profile_edit",)
+# Commands that put the wheels in motion (directly or by resuming a task).  The web layer refuses
+# them itself from the backend's reported state, independent of the checks in the backend.
+MOTION_COMMANDS = ("start", "resume", "next", "expose", "park", "repeat")
+CHARGE_REFUSED = MOTION_COMMANDS + ("preflight", "arm")      # brake test / arming are traction too
+TRACTION_PERMITTED_MODES = ("ARMED_IDLE", "MOVING")
+
+
+def interlock_refusal(name, snap):
+    """Reason string when the web service must refuse `name` given the backend snapshot, else None.
+
+    * Charge/Service (chassis mode SERVICE_CHARGE or safety.charge_service): no drive request at all.
+    * Traction inhibited (chassis mode not ARMED_IDLE/MOVING, unknown mode, or a hardware inhibit
+      reason present): no motion command; the operator clears the cause (local REARM, software
+      re-arm) and the page then shows traction permitted again.  Nothing is queued."""
+    ch, sf = snap.get("chassis") or {}, snap.get("safety") or {}
+    mode = ch.get("mode")
+    if name in CHARGE_REFUSED and (mode == "SERVICE_CHARGE" or sf.get("charge_service")):
+        return "CHARGE_SERVICE: drive requests are refused while the charger is connected"
+    if name in MOTION_COMMANDS:
+        if mode not in TRACTION_PERMITTED_MODES or sf.get("hw_inhibit_reasons") or sf.get("traction_inhibited"):
+            why = ",".join(list(sf.get("hw_inhibit_reasons") or []) + list(sf.get("protective_stop_reasons") or []))
+            return f"INHIBITED: traction not permitted (chassis mode {mode}{': ' + why if why else ''})"
+    return None
 
 
 def make_app(backend, cc: ControlCenter, sim_hooks=None, sse_period_s=0.5) -> web.Application:
@@ -62,7 +86,8 @@ def make_app(backend, cc: ControlCenter, sim_hooks=None, sse_period_s=0.5) -> we
         if tok is None:
             return web.json_response({"ok": False, "reason": "BAD_CREDENTIALS"}, status=401)
         s = cc.sessions[tok]
-        resp = web.json_response({"ok": True, "user": s["user"], "role": s["role"], "csrf": s["csrf"]})
+        resp = web.json_response({"ok": True, "user": s["user"], "role": s["role"], "csrf": s["csrf"],
+                                  "demo_account": bool(cc.users.get(s["user"], {}).get("demo"))})
         resp.set_cookie(COOKIE, tok, httponly=True, samesite="Strict", max_age=int(cc.session_ttl_us / 1e6))
         return resp
 
@@ -138,6 +163,9 @@ def make_app(backend, cc: ControlCenter, sim_hooks=None, sse_period_s=0.5) -> we
                     return {"accepted": False, "reason": "ROLE: viewers are read-only"}
                 if name == "profile_edit":
                     return backend.profile_edit(args, user, role)
+                refusal = interlock_refusal(name, backend.snapshot()) if name in CHARGE_REFUSED else None
+                if refusal:
+                    return {"accepted": False, "reason": refusal, "refused_by": "web"}
                 return backend.command(name, args, user, role)
         result, status = cc.submit(token(req), key, name, args, execute, csrf=req.headers.get("X-CSRF", ""), **kw)
         return web.json_response(result, status=status)

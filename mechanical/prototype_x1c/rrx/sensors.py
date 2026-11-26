@@ -106,10 +106,15 @@ def cm5_tray():
     return t
 
 
+INLET_COVER_T = 5.0     # cover height above the receptacle nose (parts.yaml candidate value 8.0 reduced: 3 mm air over the nose,
+                        # keeps the closed cover inside the 295 mm tyre width)
+
+
 def inlet_cover():
     """Hinged cap over the charge inlet (hinge at the top, 2 mm stainless pin), finger tab, tongue that presses the cover switch pin."""
     e = L.env("charge_inlet")
-    cw, ch, ct = e["cover"]
+    cw, ch, _ = e["cover"]
+    ct = INLET_COVER_T
     z0 = e["front_projection"]
     c = box(-cw / 2, cw / 2, -ch / 2, ch / 2, z0 + ct - 2.0, z0 + ct)                    # lid plate
     skirt = box(-cw / 2, cw / 2, -ch / 2, ch / 2, 1.0, z0 + ct).cut(box(-cw / 2 + 2, cw / 2 - 2, -ch / 2 + 2, ch / 2 - 2, 0, z0 + ct - 2.0))
@@ -123,8 +128,10 @@ def inlet_cover():
 def inlet_seat():
     """-> (add, cut) in the inlet frame (origin on the skin, +z outward, +y up)."""
     e = L.env("charge_inlet")
-    cw, ch, ct = e["cover"]
+    cw, ch, _ = e["cover"]
+    ct = INLET_COVER_T
     add = fuse(cyl(e["body_d"] / 2 + 6.0, 6.0, (0, 0, -5.5)),
+               box(-cw / 2, cw / 2, 8.0, ch / 2 + 4.0, -5.5, 0.5),                                                 # hinge pad joining the lugs to the boss
                box(-cw / 2, -cw / 2 + 3.6, ch / 2 - 2.0, ch / 2 + 4.0, -3.0, e["front_projection"] + ct),      # hinge lugs
                box(cw / 2 - 3.6, cw / 2, ch / 2 - 2.0, ch / 2 + 4.0, -3.0, e["front_projection"] + ct),
                box(-8.0, 8.0, -ch / 2 - 1.0, -ch / 2 + 9.0, -14.0, -2.0))                                         # cover-switch pocket block

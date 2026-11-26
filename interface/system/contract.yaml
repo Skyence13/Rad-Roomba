@@ -110,8 +110,8 @@ power:
     lidar: 6.0
     chassis_logic_sensors: 3.0
     head_electronics: 5.0
-    heaters_combined: 15.0        # mechanical lumped model gives ~21 W at -20 C (head +10 C set-point 16 W + bay 6 W), ~30 W at -25 C (CCR-10); power budget owner to reconcile
-  charger: {topology: "On-board buck charger with power path (LTC4162-F class), external 24 V DC supply", charge_current_a: 3.0, cold_charge_inhibit_below_c: 5.0}
+    heaters_combined: 22.0        # was 15.0 in the 0.3 worksheet; mechanical lumped model and power_budget.md give about 21-22 W at -20 C (head 16 W + bay 6 W) and about 30 W at -25 C
+  charger: {topology: "On-board buck charger with power path (LTC4162-F class), external 24 V DC supply", charge_current_a: 3.0, cold_charge_inhibit_below_c: 5.0, note: "The +5 C gate is the on-board charger's thermistor qualification. The baseline pack's own BMS gate is lower (datasheet charge range 0 to +45 C), so it is a backstop, not a second +5 C channel."}
 
 # ---------------------------------------------------------------- hardwired traction chain
 safety_chain:
@@ -263,8 +263,8 @@ survey_methods:
     notes: "INLINE stops at once, reverses to centre the alarming lane on the peak and counts. DEFERRED queues the spots and visits them after the pass or after the scan (same motion as a guided revisit). Floor that only saw the search stage is reported at the search-stage detection limit."
   STEP_AND_COUNT:
     desc: "Scaler survey of the whole floor: move one station, stop, count, repeat. Every credited measurement is a static count over four defined 80 cm2 apertures."
-    params: {station_pitch_m: 0.100, settle_s: 0.5, scaler_mode: [PRESET_TIME, ADAPTIVE], scaler_preset_s: 10, scaler_max_s: 60}
-    notes: "Counts taken while moving between stations are archived and shown as ratemeter data but earn no coverage credit. Mission time is hours for a full trailer (see architecture document); expect pack swaps."
+    params: {station_pitch_m: 0.080, settle_s: 0.5, scaler_mode: [PRESET_TIME, ADAPTIVE], scaler_preset_s: 10, scaler_max_s: 60}
+    notes: "Station pitch is the aperture length (0.100 m) less twice the position-erosion allowance (2 x 10 mm), so credited footprints of successive stations abut (robot software CR-05). Counts taken while moving between stations are archived and shown as ratemeter data but earn no coverage credit. Mission time is hours for a full trailer (see architecture document); expect pack swaps."
   CONTINUOUS_SCAN:
     desc: "Constant-speed scan with no stops; speed chosen so the aperture dwell meets the detection goal."
     params: {speed_mps: [0.02, 0.20]}

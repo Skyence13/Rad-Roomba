@@ -11,7 +11,7 @@ import math
 import cadquery as cq
 
 from . import hp as H
-from .geom import V, box, cyl, cyl2, compound, cut_all, fuse_all, prism_xz, cached, round_z
+from .geom import V, bounds, box, cyl, cyl2, compound, cut_all, fuse_all, prism_xz, cached, round_z
 
 LANES = {"L": (0, 1), "R": (2, 3), "P": (0, 1, 2, 3)}
 SIDES = {"L": (1,), "R": (-1,), "P": (1, -1)}
@@ -93,6 +93,21 @@ def _frame(kind):
     if kind in ("R", "P"):
         cuts.append(cyl(3.0, 6, (H.XR - 1, H.VENT[1], H.VENT[2]), (1, 0, 0)))                                                              # M6 breather vent
     body = cut_all(body, cuts)
+    # lid bosses (hard seats z 43.0 inside the gasket loop): prototype M3 heat-set insert, production tapped M3
+    ya_, yb_ = {"L": (0.0, 999), "R": (-999, 0.0), "P": (-999, 999)}[kind]
+    bosses = [(x, y) for x, y in lid_boss_xy() if ya_ < y < yb_]
+    clip = box(60, H.BAY_X1 + 0.3, -H.BAY_HY - 0.3, H.BAY_HY + 0.3, 0, 60)
+    body = fuse_all([body] + [cyl(H.LID_BOSS_R, H.Z_LID0 - H.LID_BOSS_Z0, (x, y, H.LID_BOSS_Z0)).intersect(clip) for x, y in bosses])
+    hole = (H.INSERT_M3["hole_d"] / 2, H.INSERT_M3["depth"]) if kind != "P" else (1.25, 8.0)
+    cuts = [cyl(hole[0], hole[1] + 1, (x, y, H.Z_LID0 - hole[1])) for x, y in bosses]
+    # light-trap drain at each chimney rear floor: up 0.6 (under the chimney insert), across 3.75 in the floor, down to the underside
+    d = H.DRAIN
+    for i in LANES[kind]:
+        yd = H.SEG_Y[i] + d["dy"] * (1 if H.SEG_Y[i] > 0 else -1)
+        cuts += [cyl(d["d"] / 2, H.CHIM_FLOOR_REAR - d["z_ch"][0] + 0.02, (d["x_in"], yd, d["z_ch"][0])),
+                 box(d["x_out"] - d["d"] / 2, d["x_in"] + d["d"] / 2, yd - d["d"] / 2, yd + d["d"] / 2, *d["z_ch"]),
+                 cyl(d["d"] / 2, d["z_ch"][1] - H.Z_FB + 0.5, (d["x_out"], yd, H.Z_FB - 0.5))]
+    body = cut_all(body, cuts)
     if kind == "P":
         return body.clean()
     # ---- split joint: U tongue (left) / groove (right), two 3 mm dowels, see joints.md
@@ -144,7 +159,8 @@ HINGE_X = 68.3
 def keeper():
     plate = fuse_all([box(67.2, 108.0, -15.0, 15.0, 45.6, 47.6), box(102.5, 105.5, -15.0, 15.0, 47.5, 49.8),
                       cyl(2.1, 30.0, (HINGE_X, -15.0, 46.6), (0, 1, 0))])
-    return cut_all(plate, [cyl(1.55, 42, (HINGE_X, -21, 46.6), (0, 1, 0))])
+    holes = [cyl(4.25, 5, (x, y, 44.0)) for x, y in lid_all_holes() if 67.2 < x < 108.0 and abs(y) < 15.0]   # clearance over the lid screw head
+    return cut_all(plate, [cyl(1.55, 42, (HINGE_X, -21, 46.6), (0, 1, 0))] + holes)
 
 
 def keeper_pin():
@@ -170,9 +186,10 @@ def P_board(u, v):
     return P.board_to_base(H.ACQ["origin"], u, v)
 
 
-FENCE_FRONT_Y = (20.0, 64.0, 108.0, 152.0)
+FENCE_FRONT_Y = (20.0, 64.0, 112.0, 152.0)     # 112 (was 108): screw head clear of the boss at 104.5
 FENCE_SIDE_X = (100.0, 162.0)
-FENCE_REAR_EXTRA = [(80.0, H.SHOE_Y - 17.0), (80.0, H.SHOE_Y + 17.0)]
+COMB_FOOT_X1 = 80.0       # rear comb feet reach under the rear lid-standoff row (standoffs clamp the feet: bond points)
+COMB_CHIM_MARGIN = 0.5    # feet stop 0.5 mm short of each spreader chimney notch
 
 
 def spreader_holes():
@@ -182,12 +199,11 @@ def spreader_holes():
         for s in ((1, -1) if y else (1,)):
             h.append((x, s * y, 3.2, "lid standoff M3 x 11, M3 CSK from below"))
     for s in (1, -1):
-        h += [(x, s * H.SHOE_Y, 2.8, "M2.5 into rib insert") for x in H.ROD_PAD_X]
+        h += [(x, s * H.SHOE_Y, 2.8, "M2.5 into rib insert, countersunk 90 deg x dia 5.2 on top (ISO 10642 head flush: under the board)") for x in H.ROD_PAD_X]
         h += [(H.REAR_SCREW_X, s * y, 2.8, "M2.5 into rear-zone insert (also rear comb foot)") for y in H.REAR_SCREW_Y]
-        h += [(H.THEAD_SCREW_X, s * H.SHOE_Y + dy, 6.5, "M4 into T-head, insulating shoulder washer") for dy in H.THEAD_SCREW_DY]
+        h += [(H.THEAD_SCREW_X, s * H.SHOE_Y + dy, 5.0, "M3 into T-head, insulating shoulder washer (prototype) / plain washer (production)") for dy in H.THEAD_SCREW_DY]
         h += [(183.0, s * y, 2.05, "tap M2.5: front fence foot") for y in FENCE_FRONT_Y]
         h += [(x, s * 166.9, 2.05, "tap M2.5: side fence foot") for x in FENCE_SIDE_X]
-        h += [(x, s * y, 2.05, "tap M2.5: rear comb foot") for x, y in FENCE_REAR_EXTRA]
         h += [(H.PIN_X, s * H.SHOE_Y, 3.2, "rail stop/switch pin clearance"), (183.1, s * H.SHOE_Y + 10.5, 2.05, "tap M2.5: switch saddle"),
               (183.1, s * H.SHOE_Y - 10.5, 2.05, "tap M2.5: switch saddle")]
     return h
@@ -210,7 +226,30 @@ def j1_zone():
 
 
 def lid_holes():
+    """Lid standoff positions (on the spreader)."""
     return [(x, s * y) for x, y in H.LID_STANDOFFS for s in ((1, -1) if y else (1,))]
+
+
+def lid_boss_xy():
+    """Lid boss positions on the frame walls (front line and both side lines)."""
+    out = [(H.LID_BOSS_FRONT_X, s * y) for y in H.LID_BOSS_FRONT_Y for s in (1, -1)]
+    out += [(x, s * H.LID_BOSS_SIDE_Y) for x in H.LID_BOSS_SIDE_X for s in (1, -1)]
+    return out
+
+
+def lid_all_holes():
+    return lid_holes() + lid_boss_xy()
+
+
+BLISTER = (74.5, None, 53.0, None)      # J1 blister rear / left edges extended so three rear-line lid screws pass through it (clamp + bond)
+
+
+def lid_loop():
+    """All lid fasteners ordered round the closed loop (for the pitch check)."""
+    import math as _m
+    pts = lid_all_holes()
+    cx, cy = (H.XR + H.XF) / 2, 0.0
+    return sorted(pts, key=lambda p: _m.atan2(p[1] - cy, p[0] - cx))
 
 
 def lid():
@@ -218,14 +257,20 @@ def lid():
         i = H.LID_INSET
         pl = round_z(box(H.XR + i, H.XF - i, -H.YW + i, H.YW - i, H.Z_LID0, H.Z_LID1), 3.0)
         x0, x1, y0, y1 = j1_zone()
-        cuts = [cyl(1.7, 4, (x, y, H.Z_LID0 - 1)) for x, y in lid_holes()] + [box(x0 - 0.5, x1 + 0.5, y0 - 0.5, y1 + 0.5, 40, 50)]
+        cuts = [cyl(1.7, 4, (x, y, H.Z_LID0 - 1)) for x, y in lid_all_holes()] + [box(x0 - 0.5, x1 + 0.5, y0 - 0.5, y1 + 0.5, 40, 50)]
         return cut_all(pl, cuts)
     return cached("lid", build)
 
 
-def j1_blister():
+def blister_rect():
     x0, x1, y0, y1 = j1_zone()
-    return box(x0 - 5.5, x1 + 5.5, y0 - 5.5, y1 + 5.5, H.Z_LID1, H.Z_LID1 + 1.0)
+    return (BLISTER[0], x1 + 5.5, BLISTER[2], y1 + 5.5)
+
+
+def j1_blister():
+    a, b, c, d = blister_rect()
+    pl = box(a, b, c, d, H.Z_LID1, H.Z_LID1 + 1.0)
+    return pl.cut(compound([cyl(1.7, 3, (x, y, H.Z_LID1 - 1)) for x, y in lid_all_holes() if a < x < b and c < y < d]))
 
 
 def lid_gasket():
@@ -247,7 +292,7 @@ def fence_front():
     hy = FENCE_SIDE_Y + t
     s = fuse_all([box(x, x + t, -hy, hy, H.Z_SPR1, FENCE_TOP), box(x, H.BAY_X1 - 0.1, -hy, hy, H.Z_SPR1, H.Z_SPR1 + t),
                   box(x - 2.5, x + t, -hy, hy, FENCE_TOP - t, FENCE_TOP)])
-    cuts = [cyl(2.7, 3, (xx, yy, H.Z_SPR1 - 1)) for xx, yy in lid_holes() if xx > 150]
+    cuts = [cyl(1.7, 3, (xx, yy, H.Z_SPR1 - 1)) for xx, yy in lid_holes() if xx > 150]      # standoff clamps the foot
     for sgn in (1, -1):                      # openings in the foot for the rail-switch saddle stations and the pin
         cuts.append(box(x + t + 0.01, H.BAY_X1, sgn * H.SHOE_Y - 13.5, sgn * H.SHOE_Y + 13.5, H.Z_SPR1 - 1, H.Z_SPR1 + 2))
     return cut_all(s, cuts)
@@ -258,7 +303,7 @@ def fence_side(side):
     xa, xb = 79.2, FENCE_FRONT_X - 2.7
     s = fuse_all([box(xa, xb, y, y + t, H.Z_SPR1, FENCE_TOP), box(xa, xb, y, H.SPR_HY - 0.1, H.Z_SPR1, H.Z_SPR1 + t),
                   box(xa, xb, y - 2.5, y + t, FENCE_TOP - t, FENCE_TOP)])
-    s = cut_all(s, [cyl(2.7, 3, (xx, yy, H.Z_SPR1 - 1)) for xx, yy in lid_holes() if abs(yy) > 160])
+    s = cut_all(s, [cyl(1.7, 3, (xx, yy, H.Z_SPR1 - 1)) for xx, yy in lid_holes() if abs(yy) > 160])
     return s if side == 1 else s.mirror("XZ")
 
 
@@ -267,9 +312,9 @@ def fence_rear():
     t, x = H.FENCE_T, FENCE_REAR_X
     hy = FENCE_SIDE_Y + t
     parts = [box(x, x + t, -hy, hy, H.Z_SPR1, FENCE_TOP), box(x, x + 2.0, -hy, hy, FENCE_TOP - t, FENCE_TOP)]
-    edges = [-hy] + [v for yc in sorted(H.SEG_Y) for v in (yc - H.CHIM_HY - 7.5, yc + H.CHIM_HY + 7.5)] + [hy]
+    edges = [-hy] + [v for yc in sorted(H.SEG_Y) for v in (yc - H.CHIM_HY - COMB_CHIM_MARGIN, yc + H.CHIM_HY + COMB_CHIM_MARGIN)] + [hy]
     for ya, yb in zip(edges[0::2], edges[1::2]):                              # feet between the chimneys
-        parts.append(box(x, 79.0, ya, yb, H.Z_SPR1, H.Z_SPR1 + t))
+        parts.append(box(x, COMB_FOOT_X1, ya, yb, H.Z_SPR1, H.Z_SPR1 + t))
     for yc in H.SEG_Y:                                                        # chimney liners (rear + two sides)
         parts.append(box(x, x + t, yc - H.CHIM_HY + 0.2, yc + H.CHIM_HY - 0.2, H.CHIM_FLOOR_REAR + 0.5, H.Z_SPR1 + 0.01))
         for s in (1, -1):
@@ -278,8 +323,11 @@ def fence_rear():
     s = fuse_all(parts)
     cuts = [box(x - 1, x + 3, sg * H.SHOE_Y - H.PORT_SLOT_HY, sg * H.SHOE_Y + H.PORT_SLOT_HY, H.PORT_SLOT_Z0, 50) for sg in (1, -1)]
     cuts += [cyl(2.5, 4, (x - 1, H.VENT[1], H.VENT[2]), (1, 0, 0))]
-    cuts += [cyl(2.7, 3, (xx, yy, H.Z_SPR1 - 1)) for xx, yy in lid_holes() if xx < 90]
-    cuts += [cyl(3.6, 3, (H.THEAD_SCREW_X, sg * H.SHOE_Y + dy, H.Z_SPR1 - 1)) for sg in (1, -1) for dy in H.THEAD_SCREW_DY]
+    cuts += [cyl(1.7, 3, (xx, yy, H.Z_SPR1 - 1)) for xx, yy in lid_holes() if xx < 90]                     # standoffs clamp the feet
+    cuts += [cyl(1.45, 3, (H.REAR_SCREW_X, sg * yy, H.Z_SPR1 - 1)) for sg in (1, -1) for yy in H.REAR_SCREW_Y]  # rear spreader screws clamp the feet
+    cuts += [cyl(3.3, 3, (H.THEAD_SCREW_X, sg * H.SHOE_Y + dy, H.Z_SPR1 - 1)) for sg in (1, -1) for dy in H.THEAD_SCREW_DY]   # insulating washer clearance
+    a = bounds(thermal_cutout())
+    cuts.append(box(a[0] - 0.3, a[3] + 0.3, a[1] - 0.3, a[4] + 0.3, H.Z_SPR1 - 1, H.Z_SPR1 + 1))                      # window: cut-out on the spreader
     return cut_all(s, cuts)
 
 
@@ -297,8 +345,10 @@ def fence_gaskets():
     return compound(out)
 
 
-def lid_standoffs():
-    return compound([cyl(H.LID_STANDOFF_D / 2, H.Z_LID0 - H.Z_SPR1, (x, y, H.Z_SPR1)) for x, y in lid_holes()])
+def lid_standoffs(on_fence_feet=False):
+    """Prototype: every standoff stands on (and clamps) an EMI fence foot -> 10.5 mm. Production: on the spreader -> 11 mm."""
+    z0 = H.Z_SPR1 + (H.FENCE_T if on_fence_feet else 0.0)
+    return compound([cyl(H.LID_STANDOFF_D / 2, H.Z_LID0 - z0, (x, y, z0)) for x, y in lid_holes()])
 
 
 def board_standoffs():
@@ -510,12 +560,14 @@ def lid_switch():
 
 
 # =============================================================================================== rails: side zones
-def side_rail(side, travel=0.0):
-    """L-shaped stainless strip (side strip + wing-tip return + three guide tabs). travel = slide along the 45 deg guide."""
+def side_rail(side, travel=0.0, projection=3.0):
+    """L-shaped stainless strip (side strip + wing-tip return + three guide tabs). travel = slide along the 45 deg guide.
+    projection 3 mm -> RR-HD-S-431/432 (strip 13 mm tall), 5 mm -> RR-HD-S-433/434 (15 mm tall, same tabs and holes)."""
     d = travel / math.sqrt(2)
     t = H.SIDE_T
+    z0 = H.rail_underside(projection)
     xr1, xr0 = H.RET_X1, H.RET_X1 - t
-    parts = [box(xr0, 187.6, H.SIDE_Y0, H.SIDE_Y0 + t, H.SIDE_Z0, H.SIDE_Z1), box(xr0, xr1, H.RET_Y0, H.SIDE_Y0 + t, H.SIDE_Z0, H.SIDE_Z1)]
+    parts = [box(xr0, 187.6, H.SIDE_Y0, H.SIDE_Y0 + t, z0, H.SIDE_Z1), box(xr0, xr1, H.RET_Y0, H.SIDE_Y0 + t, z0, H.SIDE_Z1)]
     zt = (H.SLIT_Z[0] + 0.3, H.SLIT_Z[0] + 0.3 + t)
     (x1, y1), (x3, y3), (x2, y2) = H.GUIDE_PINS
     parts += [box(xr0, xr1, 165.0, 172.0, H.SIDE_Z1 - 0.01, zt[1]), box(xr1 - 0.01, 77.0, 165.0, 172.0, *zt),
@@ -593,12 +645,21 @@ def vent():
     return fuse_all([cyl(4.5, 2.5, (H.XR - 2.5, H.VENT[1], H.VENT[2]), (1, 0, 0)), cyl(2.9, 2.6, (H.XR - 0.01, H.VENT[1], H.VENT[2]), (1, 0, 0))])
 
 
+DESICCANT_Y = ((9.8, 31.2), (45.0, 66.8))
+
+
 def desiccant():
-    return box(75.3, 82.3, -28.0, 28.0, H.Z_SPR1 + 2.0, H.Z_SPR1 + 9.5)      # two 2 g bags (about 2.9 cm3 available)
+    """Four 0.5-0.6 g silica pouches in the front strip between the lid bosses (above the fence-foot screws), 3.0 cm3 in total."""
+    return compound([box(181.0, 185.4, s * a, s * b, H.Z_SPR1 + 2.5, H.Z_SPR1 + 9.5) for a, b in DESICCANT_Y for s in (1, -1)])
+
+
+def ntc():
+    """Heater-control NTC (10 k, epoxy bead in a ring lug) screwed / bonded to the spreader top beside the cut-out."""
+    return box(80.4, 82.6, 107.8, 110.2, H.Z_SPR1, H.Z_SPR1 + 1.6)
 
 
 def thermal_cutout():
-    return box(77.0, 81.6, H.SHOE_Y + 26.5, H.SHOE_Y + 33.0, H.Z_SPR1 + 0.6, H.Z_SPR1 + 4.0).translate(V(0, -0.2, 0))
+    return box(77.0, 81.6, H.SHOE_Y + 28.0, H.SHOE_Y + 34.5, H.Z_SPR1, H.Z_SPR1 + 3.4)      # on the spreader through a window in the comb foot
 
 
 LINER_T = 0.5
@@ -687,4 +748,45 @@ def gauge_parts():
         out.append((name, fuse_all(steps + [box(-25, 0.01, 0, 20, 0, 4.0)]), "AL6061", "fab", f"stepped go/no-go wedge {lo:g}..{lo + 6:g} mm in 0.5 mm steps, 9 mm lands, handle"))
     for t in (1.5, 3.0, 5.0):
         out.append((f"gauge_shim_{t:g}".replace(".", "p"), box(0, 60, 0, 30, 0, t), "STEEL", "fab", f"{t:g} mm ground shim (floor-feature simulation)"))
+    return out
+
+
+# =============================================================================================== fastener heads (interference check only)
+HEADS = {"M2.5_pan": (2.25, 1.65), "M3_button": (2.85, 1.65), "M3_bonded_washer": (3.6, 1.0), "M3_low": (2.75, 2.0), "M3_iso_washer": (3.0, 0.8), "M3_washer": (3.5, 0.5)}
+
+
+def _head(x, y, z, *stack):
+    out, zz = [], z
+    for k in stack:
+        r, h = HEADS[k]
+        out.append(cyl(r, h, (x, y, zz)))
+        zz += h
+    return fuse_all(out) if len(out) > 1 else out[0]
+
+
+def fastener_heads(build):
+    """(name, pn, shape, desc) for every screw head that stands proud of a surface. Countersunk heads (spreader rib screws ISO 10642,
+    cassette screws, lid-standoff screws from below) are flush and not modelled. Dimensions are ISO nominal maxima (UNVERIFIED vs supplier)."""
+    proto = build == "prototype"            # EMI fences only in the prototype (production: the CNC frame is the enclosure)
+    foot = H.FENCE_T if proto else 0.0
+    out = []
+    for s in (1, -1):
+        for y in H.REAR_SCREW_Y:
+            out.append((f"hd_rear_{s * y:+.0f}", "PUR-M2.5x8-PAN", _head(H.REAR_SCREW_X, s * y, H.Z_SPR1 + foot, "M2.5_pan"), "ISO 7045 M2.5 x 8 A2, spreader to rear-zone insert"))
+        for dy in H.THEAD_SCREW_DY:
+            y = s * H.SHOE_Y + dy
+            st = ("M3_iso_washer", "M3_low") if build != "production" else ("M3_washer", "M3_low")
+            out.append((f"hd_thead_{y:+.0f}", "PUR-M3x8-LOW", _head(H.THEAD_SCREW_X, y, H.Z_SPR1, *st), "DIN 7984 M3 x 8 A2 + insulating shoulder washer (prototype) / plain washer"))
+        if proto:
+            for y in FENCE_FRONT_Y:
+                out.append((f"hd_ffoot_{s * y:+.0f}", "PUR-M2.5x5-PAN", _head(183.0, s * y, H.Z_SPR1 + foot, "M2.5_pan"), "ISO 7045 M2.5 x 5, front fence foot into tapped spreader"))
+            for x in FENCE_SIDE_X:
+                out.append((f"hd_sfoot_{x:.0f}_{s:+d}", "PUR-M2.5x5-PAN", _head(x, s * 166.9, H.Z_SPR1 + foot, "M2.5_pan"), "ISO 7045 M2.5 x 5, side fence foot"))
+    pcb_top = H.ACQ["origin"][2] + (2.0 if build == "dummy" else H.ACQ["thickness"])
+    for k, (x, y, _) in enumerate(board_holes()):
+        out.append((f"hd_board_{k}", "PUR-M2.5x5-PAN", _head(x, y, pcb_top, "M2.5_pan"), "ISO 7045 M2.5 x 5 + serrated washer, board to standoff (FRAME bond)"))
+    a, b, c, d = blister_rect()
+    for x, y in lid_all_holes():
+        z = H.Z_LID1 + (1.0 if a < x < b and c < y < d else 0.0)
+        out.append((f"hd_lid_{x:.0f}_{y:+.0f}", "PUR-M3x8-BUT", _head(x, y, z, "M3_bonded_washer", "M3_button"), "ISO 7380 M3 button head + bonded sealing washer, lid"))
     return out

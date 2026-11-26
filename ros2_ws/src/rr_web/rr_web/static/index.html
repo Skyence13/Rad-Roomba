@@ -12,6 +12,7 @@
 <section id="login" class="card"><h2>Sign in</h2>
   <input id="user" placeholder="user" autocomplete="username"> <input id="pass" type="password" placeholder="password" autocomplete="current-password">
   <button id="dologin">Sign in</button> <span id="loginmsg"></span>
+  <p class="small warn">Simulator / demo build: the packaged accounts are DEMONSTRATION accounts (viewer/viewer, operator/operator, operator2/operator2, rp/rp) over plain HTTP. TLS and real authentication are required before field use.</p>
   <p class="small">Roles: viewer (read only), operator (mission commands, one controller at a time), rp (profiles and disposition).</p></section>
 <main id="main" hidden>
 <nav><button data-tab="scan" class="on">Scan</button><button data-tab="review">Review flagged areas</button><button data-tab="service">Reports &amp; settings</button></nav>

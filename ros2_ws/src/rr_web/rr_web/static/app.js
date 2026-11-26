@@ -48,7 +48,9 @@ async function loadSettings() {
 function row(k, v) { return `<tr><td>${k}</td><td>${v ?? "—"}</td></tr>`; }
 function render() {
   const s = state, c = s.control, ch = s.chassis, sf = s.safety, m = s.mission;
-  $("banner").hidden = !s.banner; $("banner").textContent = s.banner || "";
+  const demo = c.demo_accounts ? "DEMO ACCOUNTS (trivial passwords, plain HTTP, no TLS) - not for field use" : "";
+  const bn = [s.banner, demo].filter(Boolean).join(" · ");
+  $("banner").hidden = !bn; $("banner").textContent = bn;
   $("robot").textContent = `${s.robot_id} · run ${s.run_id.slice(-8)} · ${s.trailer.id}`;
   $("frame").textContent = s.localization.frame;
   $("owner").textContent = c.holder ? `control: ${c.holder}` : "control: nobody";

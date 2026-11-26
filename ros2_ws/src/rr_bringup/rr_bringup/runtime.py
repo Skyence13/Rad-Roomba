@@ -19,11 +19,24 @@ from .app import RobotApp
 from .geometry_config import CONFIG, load_robot_geometry
 
 
-def load_users(path=None):
+DEMO_ACCOUNTS_WARNING = ("WARNING: DEMONSTRATION ACCOUNTS loaded ({names}); passwords are trivial or stored in plain "
+                         "text and the operator interface is plain HTTP without TLS. NOT for field use: replace the "
+                         "accounts (password_hash only) and put TLS + real authentication in front of the service first.")
+
+
+def load_users(path=None, warn=True):
+    """Accounts file -> {name: {role, password_hash, demo}}.  A file marked `demo: true`, or any
+    account given with a plain-text `password`, is a DEMO account set: every account is flagged
+    `demo`, and a warning is printed on stderr at load (i.e. at service start-up)."""
+    import sys
     doc = yaml.safe_load(Path(path or CONFIG / "users_demo.yaml").read_text())
+    demo = bool(doc.get("demo")) or any("password" in u for u in doc["users"].values())
     users = {}
     for name, u in doc["users"].items():
-        users[name] = {"role": u["role"], "password_hash": u.get("password_hash") or hash_password(u["password"], name)}
+        users[name] = {"role": u["role"], "password_hash": u.get("password_hash") or hash_password(u["password"], name),
+                       "demo": demo}
+    if demo and warn:
+        print(DEMO_ACCOUNTS_WARNING.format(names=", ".join(sorted(users))), file=sys.stderr, flush=True)
     return users
 
 

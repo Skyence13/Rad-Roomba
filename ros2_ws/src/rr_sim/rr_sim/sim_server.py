@@ -15,6 +15,7 @@ from pathlib import Path
 from aiohttp import web
 
 from rr_bringup.runtime import load_users
+from rr_core.transport import Clock
 from rr_sim.harness import SimSystem
 from rr_sim.sim_node import sim_action
 from rr_web.control import ControlCenter
@@ -35,7 +36,8 @@ def build(run_dir, method="CONTINUOUS_SCAN", speed=0.10, length=3.0, width=1.2, 
         ya = sim.app.plan["tasks"][0]["y"]
         sim.world.add_patch(1.50, 1.59, ya - 0.03, ya + 0.03, 3.0)
     lock = threading.RLock()
-    cc = ControlCenter(sim.clock, load_users(), lease_ttl_s=5.0)
+    # sessions and the control lease are human-time concepts: wall clock, not the (sped-up) sim clock
+    cc = ControlCenter(Clock(), load_users(), lease_ttl_s=5.0)
     sim.app.control_ok = cc.control_ok
     backend = AppBackend(sim.app, lock)
     hooks = lambda body: sim_action(sim.world, sim.chassis, sim.head, body, sim.truth())   # noqa: E731

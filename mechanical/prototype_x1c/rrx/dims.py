@@ -86,7 +86,6 @@ KEY_RIB_Y = 50.5                               # off-centre key (left side only)
 
 # ---- wheels: printed hub on a purchased 6 mm clamping hub + printed TPU tyre
 TYRE_T = 9.0
-HUB_FLANGE_BCD = 19.05                         # Pololu #1999 universal hub: 4-40 on 0.75 in (UNVERIFIED) -> M3 clearance used
 
 # ---- bumper
 BUMPER_Z = (56.0, 76.0)

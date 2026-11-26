@@ -336,10 +336,10 @@ were running, so times are upper bounds):
 | step | RR-TOF-A (10 parts, 2 layers) | STRESS-150 (150 parts, 4 layers) | STRESS-150-6L (6 layers) |
 |---|---|---|---|
 | schematic + netlist check + PCB + auto-arrange + fan-out + DSN | ~5 s | ~25 s | ~25 s |
-| Freerouting, first run | 7-33 s, complete | @@R4@@ | @@R6@@ |
-| automatic continue runs | not needed | @@C4@@ | @@C6@@ |
+| Freerouting, first run | 7-33 s, complete | 607 s (stopped by the 600 s limit after 20 passes), 7 open | @@R6@@ (previous run, before the 25 um clearance margin: 607 s, 6 open) |
+| automatic continue runs | not needed | 2 runs, 494 s + 227 s, 7 -> 6 open | @@C6@@ (previous run: 279 s + 269 s, 6 -> 4 open) |
 | SES import, fill, ERC, DRC, all outputs | ~8 s | ~30 s | ~30 s |
-| result | **PASS**: ERC 0, DRC 0, unconnected 0, parity 0 | @@S4@@ | @@S6@@ |
+| result | **PASS**: ERC 0, DRC 0, unconnected 0, parity 0 | **FAIL**: ERC 0, DRC 0 errors / 0 warnings, parity 0, **6 of 377 connections open** (25 min total) | @@S6@@ (previous run: **FAIL**, 4 open, 6 clearance errors of 10-20 um, 21 min) |
 
 **STRESS-150 does not reach zero unconnected with fully automatic placement + routing**,
 on 4 or on 6 layers. What works and what does not:

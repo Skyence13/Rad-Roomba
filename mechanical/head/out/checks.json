@@ -4,9 +4,9 @@
  "checks": [
   {
    "check": "no interference, prototype assembly, rails at rest",
-   "status": "fail",
+   "status": "pass",
    "evidence": "tool-checked",
-   "detail": "290 candidate pairs intersected; overlaps: [('fence_side_L', 'fence_rear', 0.98), ('fence_side_R', 'fence_rear', 0.98)]"
+   "detail": "290 candidate pairs intersected; overlaps: none"
   },
   {
    "check": "no interference, production assembly, rails at rest",
@@ -94,15 +94,15 @@
   },
   {
    "check": "head without the leading-rail stroke system inside the contract envelope (prototype)",
-   "status": "fail",
+   "status": "pass",
    "evidence": "tool-checked",
-   "detail": "x 66.20..192.20 (66.0..192.2), y -175.00..175.00 (+-175), z 7.00..62.00 (5..50; lid top 45.0, J1 blister 46.0, keeper hook 62.0)"
+   "detail": "x 66.20..192.20 (66.0..192.2), y -175.00..175.00 (+-175), z 7.00..49.80 (5..50; lid top 45.0, J1 blister 46.0, keeper hook 49.8)"
   },
   {
    "check": "head without the leading-rail stroke system inside the contract envelope (production)",
-   "status": "fail",
+   "status": "pass",
    "evidence": "tool-checked",
-   "detail": "x 66.20..192.20 (66.0..192.2), y -175.00..175.00 (+-175), z 7.00..62.00 (5..50; lid top 45.0, J1 blister 46.0, keeper hook 62.0)"
+   "detail": "x 66.20..192.20 (66.0..192.2), y -175.00..175.00 (+-175), z 7.00..49.80 (5..50; lid top 45.0, J1 blister 46.0, keeper hook 49.8)"
   },
   {
    "check": "leading rail inside the contract envelope x <= 192.2",
@@ -168,7 +168,7 @@
    "check": "dummy head mass and CG representative of the prototype head (+-10 g, +-3 mm x/y, +-5 mm z)",
    "status": "pass",
    "evidence": "calculated from model volumes x handbook densities",
-   "detail": "dummy 1843 g vs 1842 g; CG offset +0.3 / +0.5 / -1.9 mm; steel ballast 1.65 mm per lane"
+   "detail": "dummy 1842 g vs 1842 g; CG offset +0.3 / +0.5 / -1.9 mm; steel ballast 1.65 mm per lane"
   },
   {
    "check": "head mass vs the 1.67 kg (prototype) / 2.10 kg (production) used in mech_calcs.md",
@@ -391,13 +391,13 @@
    }
   ],
   "mass_prototype": {
-   "mass_g": 1842.4,
+   "mass_g": 1842.2,
    "cg_mm": [
-    118.0,
+    118.01,
     0.32,
     34.39
    ],
-   "mass_without_pigtails_g": 1722.4,
+   "mass_without_pigtails_g": 1722.2,
    "cg_without_pigtails_mm": [
     126.31,
     0.06,
@@ -447,13 +447,13 @@
    }
   },
   "mass_dummy": {
-   "mass_g": 1842.6,
+   "mass_g": 1842.4,
    "cg_mm": [
     118.35,
     0.8,
-    32.44
+    32.45
    ],
-   "mass_without_pigtails_g": 1722.6,
+   "mass_without_pigtails_g": 1722.4,
    "cg_without_pigtails_mm": [
     126.67,
     0.58,
@@ -463,8 +463,8 @@
     "lid": 213.5,
     "spreader": 200.2,
     "dummy_board": 168.7,
-    "S0_ballast": 101.8,
     "S3_ballast": 101.8,
+    "S0_ballast": 101.8,
     "S1_ballast": 101.8,
     "S2_ballast": 101.8,
     "frame_L": 95.5,
@@ -499,19 +499,19 @@
     },
     "roll_if_joint_rigid": 0.01611120290691253,
     "modes_hz": {
-     "pitch on the mount": 79.65570081300348,
-     "roll on the mount": 248.73499396879336,
-     "halves rocking about the y = 0 joint": 133.72286782588807,
-     "wing bending": 3397.063164915908
+     "pitch on the mount": 79.65997677654586,
+     "roll on the mount": 248.74834620542015,
+     "halves rocking about the y = 0 joint": 133.73004614585474,
+     "wing bending": 3397.2455212080013
     },
-    "f1_hz": 79.65570081300348,
+    "f1_hz": 79.65997677654586,
     "joint_terms_Nm_per_rad": {
      "spreader alone (2 mm)": 38.413876543209874,
      "lid alone (2 mm)": 39.94498765432098,
      "spreader + lid as a couple through the standoffs (slip model)": 422.6287784822846,
      "rear bridge plate (3 x 13 on edge, T-head to T-head)": 280.3209259259259
     },
-    "mass_kg": 1.8423790989503062
+    "mass_kg": 1.8421813149503061
    },
    "prototype, split PA-CF (conditioned, E x 0.5)": {
     "lid fitted (10 screws)": {
@@ -536,19 +536,19 @@
     },
     "roll_if_joint_rigid": 0.01611120290691253,
     "modes_hz": {
-     "pitch on the mount": 79.65570081300348,
-     "roll on the mount": 248.73499396879336,
-     "halves rocking about the y = 0 joint": 133.72286782588807,
-     "wing bending": 3125.2777302337668
+     "pitch on the mount": 79.65997677654586,
+     "roll on the mount": 248.74834620542015,
+     "halves rocking about the y = 0 joint": 133.73004614585474,
+     "wing bending": 3125.445496928403
     },
-    "f1_hz": 79.65570081300348,
+    "f1_hz": 79.65997677654586,
     "joint_terms_Nm_per_rad": {
      "spreader alone (2 mm)": 38.413876543209874,
      "lid alone (2 mm)": 39.94498765432098,
      "spreader + lid as a couple through the standoffs (slip model)": 422.6287784822846,
      "rear bridge plate (3 x 13 on edge, T-head to T-head)": 280.3209259259259
     },
-    "mass_kg": 1.8423790989503062
+    "mass_kg": 1.8421813149503061
    },
    "prototype, split PETG-CF frame": {
     "lid fitted (10 screws)": {
@@ -573,19 +573,19 @@
     },
     "roll_if_joint_rigid": 0.01611120290691253,
     "modes_hz": {
-     "pitch on the mount": 79.65570081300348,
-     "roll on the mount": 248.73499396879336,
-     "halves rocking about the y = 0 joint": 133.72286782588807,
-     "wing bending": 3233.431157018626
+     "pitch on the mount": 79.65997677654586,
+     "roll on the mount": 248.74834620542015,
+     "halves rocking about the y = 0 joint": 133.73004614585474,
+     "wing bending": 3233.6047294510204
     },
-    "f1_hz": 79.65570081300348,
+    "f1_hz": 79.65997677654586,
     "joint_terms_Nm_per_rad": {
      "spreader alone (2 mm)": 38.413876543209874,
      "lid alone (2 mm)": 39.94498765432098,
      "spreader + lid as a couple through the standoffs (slip model)": 422.6287784822846,
      "rear bridge plate (3 x 13 on edge, T-head to T-head)": 280.3209259259259
     },
-    "mass_kg": 1.8423790989503062
+    "mass_kg": 1.8421813149503061
    },
    "production, one-piece 6061 frame": {
     "lid fitted (10 screws)": {
@@ -611,9 +611,9 @@
     "roll_if_joint_rigid": 0.004061785266769044,
     "modes_hz": {
      "pitch on the mount": 150.8913999098501,
-     "roll on the mount": 471.177468322423,
+     "roll on the mount": 471.17746832242307,
      "halves rocking about the y = 0 joint": 516.0058005762721,
-     "wing bending": 5856.414336945774
+     "wing bending": 5856.414336945775
     },
     "f1_hz": 150.8913999098501,
     "joint_terms_Nm_per_rad": {
@@ -623,7 +623,7 @@
      "rear bridge plate (3 x 13 on edge, T-head to T-head)": 280.3209259259259,
      "one-piece aluminium frame walls": 12590.197952071221
     },
-    "mass_kg": 2.053731856406625
+    "mass_kg": 2.0537318564066243
    }
   },
   "rails": {
@@ -1136,9 +1136,9 @@
   }
  },
  "summary": {
-  "pass": 26,
-  "fail": 3,
+  "pass": 29,
+  "fail": 0,
   "deviation": 5
  },
- "runtime_s": 45.1
+ "runtime_s": 39.1
 }

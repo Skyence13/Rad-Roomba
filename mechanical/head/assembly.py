@@ -11,7 +11,7 @@ from . import parts as T
 from .geom import Part, box, mass_cg
 
 COL = {"frame": "#344c51", "receiver": "#b5c6ca", "deck": "#c9d2d6", "emi": "#d9a441", "lane": "#278981", "optic": "#71acbb",
-       "window": "#5d6f75", "rail": "#24393e", "switch": "#c0392b", "elec": "#2e7d32", "cable": "#222222", "seal": "#111111", "aux": "#8e6bbf"}
+       "window": "#5d6f75", "rail": "#24393e", "switch": "#c0392b", "elec": "#2e7d32", "cable": "#222222", "seal": "#111111", "aux": "#8e6bbf", "fastener": "#9aa3a8"}
 PRINT_MAT = {"frame": "PA-CF", "small": "PA-CF", "window": "PETG-CF", "cover": "PETG-CF", "insert": "PA-CF"}
 
 
@@ -43,7 +43,11 @@ def build(build="prototype", projection=3.0, travel=0.0):
     _p(P, "lid", "RR-HD-S-122", T.lid(), "AL6061", "fab", "deck", "2 mm aluminium lid (shear panel, EMI top), 10 captive M3", proc="laser cut 2.0 mm, DXF")
     _p(P, "j1_blister", "RR-HD-S-123", T.j1_blister(), "AL6061", "fab", "deck", "1 mm blister plate over the J1 landing opening (8.9 mm internal height)", proc="laser cut 1.0 mm, conductive-bonded + 4 rivets")
     _p(P, "lid_gasket", "PUR-GSK-LID", T.lid_gasket(), "SIL-FOAM", "purchased", "seal", "lid perimeter gasket, closed-cell silicone 1.2 mm (0.8 installed)", hard=False)
-    _p(P, "lid_standoffs", "PUR-SO-M3x11", T.lid_standoffs(), "AL6061", "purchased", "deck", "10 x M3 x 11 round threaded spacer (lid hard seats, lid-to-spreader tie)")
+    nso = len(T.lid_holes())
+    if proto:
+        _p(P, "lid_standoffs", "PUR-SO-M3x10.5", T.lid_standoffs(True), "AL6061", "purchased", "deck", f"{nso} x M3 x 10.5 round female spacer on the fence feet (lid hard seats, lid-spreader tie, fence bond)")
+    else:
+        _p(P, "lid_standoffs", "PUR-SO-M3x11", T.lid_standoffs(False), "AL6061", "purchased", "deck", f"{nso} x M3 x 11 round female spacer (lid hard seats, lid-spreader tie)")
     _p(P, "board_standoffs", "PUR-SO-M2.5x2.5", T.board_standoffs(), "BRASS", "purchased", "deck", "8 x M2.5 x 2.5 clinch standoff (FRAME net)")
     _p(P, "rib_gaskets", "PUR-GSK-RIB", T.rib_gaskets(), "SIL-FOAM", "purchased", "seal", "rib-top light gasket strips 5.4 x 1.0 (0.6 installed)", hard=False)
     if not dummy:
@@ -96,7 +100,9 @@ def build(build="prototype", projection=3.0, travel=0.0):
        "lid switch riser saddle", allow={"sw_lid"})
     # ---------------- side zones
     for s, tag in ((1, "L"), (-1, "R")):
-        _p(P, f"side_rail_{tag}", "RR-HD-S-431" if s == 1 else "RR-HD-S-432", T.side_rail(s), "SS301", "fab", "rail", "side contact rail + wing-tip return + guide tabs (0.8 mm 301 half hard, laser cut, 4 bends)")
+        pn = {3.0: ("RR-HD-S-431", "RR-HD-S-432"), 5.0: ("RR-HD-S-433", "RR-HD-S-434")}[projection][0 if s == 1 else 1]
+        _p(P, f"side_rail_{tag}", pn, T.side_rail(s, 0.0, projection), "SS301", "fab", "rail",
+           f"side contact rail + wing-tip return + guide tabs (0.8 mm 301 half hard, laser cut, 4 bends), {projection:g} mm projection")
         _p(P, f"guide_pins_{tag}", "PUR-M3x16-SHCS", T.guide_pins(s), "SS304", "purchased", "rail", "3 x M3 guide pins for the 45 deg slots", allow={f"side_rail_{tag}"})
         b, pl = T.side_switch(s)
         _p(P, f"sw_side_{tag}", "PUR-D2HW", b.fuse(pl), "MIXED", "purchased", "switch", "Omron D2HW-C201M, side zone", mass_g=4.0)
@@ -109,7 +115,8 @@ def build(build="prototype", projection=3.0, travel=0.0):
         for i in range(4):
             _p(P, f"S{i}_shield_can", "RR-HEAD-SHLD-A", T.shield_can(i), "STEEL", "fab", "emi", "lane shield can 36 x 32 x 5, 0.2 mm tin-plated steel", allow={"pcb"})
         _p(P, "thermal_cutout", "PUR-TCO", T.thermal_cutout(), "MIXED", "purchased", "elec", "bimetal thermal cut-out in series with the heater, on the spreader tab", mass_g=1.5)
-        _p(P, "desiccant", "PUR-DES-5G", T.desiccant(), "MIXED", "purchased", "elec", "2 x 2 g desiccant bags with indicator card, rear strip", mass_g=5.0, hard=False)
+        _p(P, "desiccant", "PUR-DES-1G", T.desiccant(), "MIXED", "purchased", "elec", "4 desiccant pouches (about 0.5 g each) + indicator card, front strip between the lid bosses", mass_g=3.0, hard=False)
+        _p(P, "ntc", "PUR-NTC-10K", T.ntc(), "MIXED", "purchased", "elec", "10 k NTC ring-lug sensor on the spreader (heater regulation, board J-heater connector)", mass_g=0.5)
     for nm in ("J1", "J2"):
         _p(P, f"grommet_{nm}", f"RR-HD-{X}-51{1 if nm == 'J1' else 2}", T.grommet(nm), "TPU", "printed" if printed_frame else "fab", "cable", "split strain-relief grommet (compressed by the lid)", hard=False)
         c, plug = T.pigtail(nm)
@@ -117,6 +124,8 @@ def build(build="prototype", projection=3.0, travel=0.0):
         _p(P, f"plug_{nm}", "PUR-" + ("M16-8" if nm == "J1" else "M12-8"), plug, "MIXED", "purchased", "cable", f"{nm} cable plug envelope", mass_g=40.0 if nm == "J1" else 30.0)
     _p(P, "vent", "PUR-VENT-M6", T.vent(), "MIXED", "purchased", "seal", "ePTFE breather vent M6 with internal light baffle", mass_g=1.0)
     # ---------------- lumped small items (mass only, at the head centre)
+    for nm, pn, shape, desc in T.fastener_heads(build):
+        _p(P, nm, pn, shape, "SS304", "purchased", "fastener", desc, mass_g=0.0)
     _p(P, "fasteners_lumped", "-", box(H.ROW_X - 1, H.ROW_X + 1, -1, 1, 60, 62), "MIXED", "purchased", "deck", "screws, inserts, washers, wiring (lumped mass estimate)", mass_g=48.0 if printed_frame else 40.0)
     return P
 

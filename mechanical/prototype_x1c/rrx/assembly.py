@@ -9,7 +9,7 @@ from mechanical.common import params as P
 from mechanical.common.purchased import library as L
 
 from . import battery, dims as D, running, shells, structure
-from .util import Part, box, cyl, fuse, place
+from .util import Part, bounds, box, cyl, fuse, place
 
 Z1 = D.PLATE_Z[1]
 
@@ -114,6 +114,14 @@ def build(verbose=True):
     def add(p):
         if p.shape is None:
             raise ValueError(f"no shape: {p.name}")
+        if p.kind in ("printed", "fabricated") and len(p.shape.Solids()) > 1:
+            # boolean slivers: keep the main body, record what was dropped (checked: must stay below SLIVER_MAX)
+            sol = sorted(p.shape.Solids(), key=lambda q: -q.Volume())
+            p.dropped = [round(q.Volume(), 1) for q in sol[1:]]
+            p.shape = sol[0]
+            p.bb = bounds(p.shape)
+            if p.local is not None and len(p.local.Solids()) > 1:
+                p.local = max(p.local.Solids(), key=lambda q: q.Volume())
         parts.append(p)
 
     for mod in (structure, battery, shells, running):

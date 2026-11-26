@@ -5,6 +5,46 @@ All calibration and profile data are synthetic (`field_use_approved: false`); th
 profile is present and unconfigured. Observed results are in `README.md` §"Observed results"
 and in `evidence/*/evidence.json`; this file says what exists, what is thin and what is missing.
 
+## Verification log (close-out, 2026-11-26; filled in as runs complete)
+
+Observed by the close-out engineer, not copied from earlier notes. "simulated" = deterministic
+Python fakes or real-time emulators; "tool-checked" = headless browser / unit tooling.
+
+| Group | Command | Observed |
+|---|---|---|
+| Unit | `tools/test.sh unit` | **46 passed** (rr_core: wire/descriptor 12, estimator 9, head link 9, processing 7, clock fit 5; rr_web 4 incl. 2 added at close-out: server-side motion interlock, demo-account marking). Before the close-out additions: 44 passed. |
+| Scenarios (Python fakes, simulated, deterministic) | `tools/test.sh scenarios` | **14 passed** in 11 min 42 s (s01, s02, s03, s04a/b, s05, s06, s07, s08, s09, s10, s11 INLINE/DEFERRED, s12). Key numbers (3.0 × 1.2 m section): s01 at 0.03 m/s — flag 20 mm from the injected patch, revisit error 1.7 mm estimated / **2.1 mm true**, Expose reverse 0.350 m, park error 0.9 mm, valid exposure 0.646 of the floor (wall/end strips are a large share of a 1.2 m floor), acceptable 0.377, **median D# 0.201 Bq/cm², best 0.172** (goal 0.20: met by the median only marginally); localisation error vs truth ≤ 1.1 mm (x) / 1.2 mm (y). s09 — true time error never exceeded the reported bound in 4 cases (0.2 ms: bound ≤ 0.82 ms; 3 ms + 80 ppm: ≤ 3.8 ms; asymmetric 0.2/6 ms: error 3.3 ms ≤ bound 3.8 ms; 12 ms: bound 12.8 ms → all 31 gates rejected, arming refused HEAD_CLOCK); moving hotspot mapped within 2.7 mm along track. s10 step-and-count (3 s preset) — interrupted station invalidated and repeated, only static gates credited, median D# 0.247. s08 — two replays bit-identical to the live export. |
+| Native emulators | `tools/test.sh native` | pending |
+| ROS graph smoke | `tools/test.sh ros` | pending |
+| UI (Playwright, tool-checked) | `tools/run_sim.sh --port 8090 --auto --method SEARCH_THEN_COUNT --speedup 6` + `node tools/ui_screenshots.js http://127.0.0.1:8090` | **14/14 checks passed** (2nd run; 1st run failed: lease lost under `--speedup`, fixed — change 3). 14 PNGs in `evidence/ui/` (desktop 1280 px `d01–d10`: login, status + coverage layer, activity layer, detection-limit layer, ratemeter/scaler, review queue, Next at spot, Expose spot, parked, Charge/Service + reports; phone 390 px `p01–p04`: viewer status, viewer review queue, viewer Charge/Service, second operator seeing control held), `ui_checks.json`. Observed: 27 review items on the 3.0 × 1.2 m section with one injected patch — the patch (INVESTIGATION_LEVEL, scaler-counted) plus `UNRESOLVED_EXCEEDANCE` cells whose search-stage D# (≈ 0.57–0.62 Bq/cm²) exceeds the 0.3 investigation level, so they cannot be cleared; expected with the synthetic calibration at 0.10 m/s, but a field queue would be long. |
+
+### Changes made at close-out (small defects / hygiene only, no new features)
+
+1. **Web: server-side motion interlock.** `rr_web/server.py` `interlock_refusal`: the web service
+   itself refuses `start/resume/next/expose/park/repeat` (and in Charge/Service also `preflight/arm`)
+   from the backend's reported chassis mode / safety state, independent of the backend's own checks.
+   Before, the refusal in Charge/Service came only from `RobotApp`/the supervisor and the web test
+   exercised it through a fake backend that refused by itself. New test
+   `test_web_refuses_motion_in_charge_service_and_while_inhibited` uses a backend that accepts
+   everything. Pause, abort, re-arm and export still pass.
+2. **Demo accounts marked.** `users_demo.yaml` has `demo: true`; `rr_bringup.runtime.load_users`
+   flags every account `demo` (also if any plain-text `password` is present) and prints
+   `WARNING: DEMONSTRATION ACCOUNTS …` on stderr at start-up; the UI shows a DEMO ACCOUNTS banner
+   and a sign-in note. Test `test_demo_accounts_are_marked_and_warned`.
+3. **Stand-alone simulator lease clock.** `rr_sim/sim_server.py` ran the web sessions and control
+   lease on the simulated clock; with `--speedup 6` the 5 s lease lasted < 1 s of wall time and was
+   lost between two event-stream heartbeats (observed: `control_lost HEARTBEAT_LOST` 12 sim-s after
+   Start, then Next refused in review). Sessions/lease now use the wall clock.
+4. **Process finding (not a code defect): never edit `tools/test.sh` while it runs.** bash reads
+   the script incrementally; an edit during a run made the running instance execute fragments
+   (it launched the `ros` smoke test on TCP 5540/5550 while a `native` run was starting on the same
+   ports — both failed: head stuck in `QUIET`, `link_down TRANSPORT:peer closed`). The previous
+   engineer's `evidence/native_run.log` ("line 29: syntax error") shows the same thing. Those runs
+   are discarded; results below are from clean runs.
+5. Tooling: `tools/replay.sh`, `tools/plan_report.py` (`tools/test.sh plan`),
+   `tools/ui_screenshots.js`; `tools/ros_smoke.py` now records every transition into HOLD with
+   its reason and appends each run to `evidence/ros_smoke/runs.ndjson`.
+
 ## Implemented and tested
 
 | Area | Where | Tested by |

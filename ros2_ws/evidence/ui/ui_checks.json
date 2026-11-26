@@ -1,0 +1,71 @@
+{
+ "evidence_class": "simulated / tool-checked (headless Chromium, Playwright)",
+ "base": "http://127.0.0.1:8090",
+ "method": "SEARCH_THEN_COUNT",
+ "generated": "2026-11-26T19:46:23.973Z",
+ "checks": [
+  {
+   "check": "login page states demo accounts / TLS needed",
+   "ok": true
+  },
+  {
+   "check": "operator holds the control lease",
+   "ok": true
+  },
+  {
+   "check": "demo-account banner shown",
+   "ok": true
+  },
+  {
+   "check": "Start acknowledged",
+   "ok": true,
+   "ack": "start: ACCEPTED (receipt 3)"
+  },
+  {
+   "check": "scaler count with result shown (SEARCH_THEN_COUNT)",
+   "ok": true,
+   "obs": "OBS-0001"
+  },
+  {
+   "check": "viewer: Start disabled, ownership visible",
+   "ok": true,
+   "owner": "control: operator",
+   "start_disabled": true
+  },
+  {
+   "check": "mission reached REVIEW",
+   "ok": true,
+   "items": 27
+  },
+  {
+   "check": "operator still holds the lease at REVIEW",
+   "ok": true,
+   "holder": "operator"
+  },
+  {
+   "check": "Next: lane at the spot (AT_SPOT)",
+   "ok": true,
+   "current": "HS-0001"
+  },
+  {
+   "check": "Expose spot acknowledged",
+   "ok": true,
+   "ack": "expose: ACCEPTED (receipt 6)"
+  },
+  {
+   "check": "Park: robot parked",
+   "ok": true
+  },
+  {
+   "check": "Charge/Service shown, drive locked out",
+   "ok": true
+  },
+  {
+   "check": "server refuses Next in Charge/Service",
+   "ok": true,
+   "reason": "CHARGE_SERVICE: drive requests are refused while the charger is connected",
+   "refused_by": "web"
+  }
+ ],
+ "passed": true
+}
