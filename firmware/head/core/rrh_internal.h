@@ -5,7 +5,7 @@
 
 /* rrh_setup.c */
 bool rrh_setup_valid(const rrh_setup_t *s);
-void rrh_setup_compute_id(const rrh_setup_t *s, const char *firmware, const char *bitstream, char out[24]);
+void rrh_setup_compute_id(const rrh_setup_t *s, const char *firmware, char out[24]);
 size_t rrh_setup_pack(const rrh_setup_t *s, uint8_t *buf, size_t cap);
 bool rrh_setup_unpack(rrh_setup_t *s, const uint8_t *buf, size_t len);
 void rrh_setup_to_json(const rrh_setup_t *s, rrc_jw_t *w);

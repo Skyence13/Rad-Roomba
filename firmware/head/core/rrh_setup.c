@@ -160,10 +160,10 @@ bool rrh_setup_unpack(rrh_setup_t *s, const uint8_t *buf, size_t len)
     return true;
 }
 
-/* setup_id = "S1-" + first 16 hex digits of SHA-256(domain | setup image | firmware | bitstream).
- * Any change of a threshold, trim, bias law, pulser, heater law, chain enable, firmware version
- * or event-logic bitstream therefore changes the id the host bound to. */
-void rrh_setup_compute_id(const rrh_setup_t *s, const char *firmware, const char *bitstream, char out[24])
+/* setup_id = "S1-" + first 16 hex digits of SHA-256(domain | setup image | firmware id).
+ * Any change of a threshold, trim, bias law, pulser, heater law, chain enable or firmware
+ * version therefore changes the id the host bound to. (DEC-037: there is no bitstream.) */
+void rrh_setup_compute_id(const rrh_setup_t *s, const char *firmware, char out[24])
 {
     static const char domain[] = "RRH-SETUP-1";
     uint8_t image[SETUP_IMAGE_LEN];
@@ -175,7 +175,6 @@ void rrh_setup_compute_id(const rrh_setup_t *s, const char *firmware, const char
     rrc_sha256_update(&ctx, domain, sizeof domain); /* includes the NUL as a separator */
     rrc_sha256_update(&ctx, image, n);
     rrc_sha256_update(&ctx, firmware, strlen(firmware) + 1u);
-    rrc_sha256_update(&ctx, bitstream, strlen(bitstream) + 1u);
     rrc_sha256_final(&ctx, dg);
     rrc_hex_lower(dg, sizeof dg, hex);
     out[0] = 'S';
@@ -543,7 +542,7 @@ bool rrh_descriptor_rebuild(rrh_core_t *c)
     if (c->ident.setup_id_override != NULL) {
         copy_str(c->setup_id, sizeof c->setup_id, c->ident.setup_id_override);
     } else {
-        rrh_setup_compute_id(&c->setup, rrh_firmware_id(c), rrh_hal_bitstream_id(), c->setup_id);
+        rrh_setup_compute_id(&c->setup, rrh_firmware_id(c), c->setup_id);
     }
     if ((c->ident.descriptor_override != NULL) && (c->ident.descriptor_override_len > 0u)) {
         c->descriptor = c->ident.descriptor_override;

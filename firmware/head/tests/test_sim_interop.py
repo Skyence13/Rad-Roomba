@@ -261,14 +261,14 @@ class Acquisition(SimCase):
                 self.assertEqual(seg["beta_window"]["counts"], tl["beta"])
                 self.assertEqual(seg["photon_ref"]["counts"], tl["ref"])
                 self.assertEqual(seg["alpha"]["live_us"], seg["beta_window"]["live_us"])   # shared floor gate
-                self.assertEqual(seg["alpha"]["live_us"], tl["floor_live_ticks"] // 48)
-                self.assertEqual(seg["photon_ref"]["live_us"], tl["ref_live_ticks"] // 48)
+                self.assertEqual(seg["alpha"]["live_us"], tl["floor_live_ticks"] // 144)
+                self.assertEqual(seg["photon_ref"]["live_us"], tl["ref_live_ticks"] // 144)
                 for ch in READOUTS:
                     self.assertTrue(1 <= seg[ch]["live_us"] <= f["span_us"])
-                # non-paralyzable model: live = span - tau * recorded events (6 us floor, 3 us reference)
+                # non-paralyzable model: live = span - tau * recorded events (10 us per event on both chains)
                 floor_events = tl["alpha"] + tl["beta"] + tl["floor_reject"]
-                self.assertEqual(tl["floor_live_ticks"], 4800000 - floor_events * 288)
-                self.assertEqual(tl["ref_live_ticks"], 4800000 - (tl["ref"] + tl["ref_reject"]) * 144)
+                self.assertEqual(tl["floor_live_ticks"], 14400000 - floor_events * 1440)
+                self.assertEqual(tl["ref_live_ticks"], 14400000 - (tl["ref"] + tl["ref_reject"]) * 1440)
                 sums["alpha"][seg["id"]] += seg["alpha"]["counts"]
                 sums["beta"][seg["id"]] += seg["beta_window"]["counts"]
                 sums["ref"][seg["id"]] += seg["photon_ref"]["counts"]
@@ -278,16 +278,16 @@ class Acquisition(SimCase):
             self.assertEqual(sums[name], stats["drawn"][name])   # conservation over the whole run
         # sanity of the physics: mean rates, and the dead-time loss at 20 kcps (n / (1 + n tau))
         self.assertAlmostEqual(sums["beta"][0] / 12.0, 80, delta=12)
-        expect = 20000 / (1 + 20054 * 6e-6)
+        expect = 20000 / (1 + 20054 * 10e-6)
         self.assertAlmostEqual(sums["beta"][3] / 12.0, expect, delta=expect * 0.02)
         live3 = [f["segments"][3]["beta_window"]["live_us"] for f in frames]
-        self.assertAlmostEqual(sum(live3) / len(live3), 100000 - expect * 0.1 * 6.0, delta=300)
+        self.assertAlmostEqual(sum(live3) / len(live3), 100000 - expect * 0.1 * 10.0, delta=400)
         # DIAG carries the reject counters and raw ticks of the same gate
         diag = self.link.ok("DIAG", {"seq": 7})
         t = truth[frames[7]["start_us"]]
         self.assertEqual([l["floor_reject"] for l in diag["lanes"]], [l["floor_reject"] for l in t["lanes"]])
         self.assertEqual([l["ref_reject"] for l in diag["lanes"]], [l["ref_reject"] for l in t["lanes"]])
-        self.assertEqual(diag["gate_ticks"], 4800000)
+        self.assertEqual(diag["gate_ticks"], 14400000)
         self.assertEqual(diag["sequence"], 7)
         RESULTS["diag_reply_bytes"] = len(self.link.last_rx)
 
@@ -523,8 +523,8 @@ class Acquisition(SimCase):
         self.start(alpha=0, beta=0, ref=0)
         self.sim.advance(2000 + 100_000 * 2)
         now = self.sim.ctl(cmd="ping")["head_us"]
-        # gates start at 2000 + n * 100000: switch 100 kcps on for exactly gate 5 and half of gate 6
-        self.sim.ctl(cmd="rates", from_us=502_000, beta=[100000, 0, 0, 0])
+        # gates start at 2000 + n * 100000: switch 20 kcps on for exactly gate 5 and half of gate 6
+        self.sim.ctl(cmd="rates", from_us=502_000, beta=[20000, 0, 0, 0])
         self.sim.ctl(cmd="rates", from_us=652_000, beta=0)
         self.assertEqual(self.sim.ctl(cmd="stats")["pending_rate_changes"], 2)
         self.assertLess(now, 502_000)
@@ -533,8 +533,8 @@ class Acquisition(SimCase):
         beta = [f["segments"][0]["beta_window"]["counts"] for f in frames[:9]]
         self.assertEqual(beta[:5], [0] * 5)
         self.assertEqual(beta[7:], [0] * 2)
-        self.assertAlmostEqual(beta[5], 10000 / 1.6, delta=400)           # dead-time corrected mean
-        self.assertAlmostEqual(beta[6] / beta[5], 0.5 * 1.6 / 1.3, delta=0.08)   # half a gate at the lower loss
+        self.assertAlmostEqual(beta[5], 2000 / 1.2, delta=170)             # n / (1 + n tau) at 20 kcps, tau 10 us
+        self.assertAlmostEqual(beta[6] / beta[5], 0.5 * 1.2 / 1.1, delta=0.08)   # half a gate at the lower loss
 
 
 class LinkFaults(SimCase):

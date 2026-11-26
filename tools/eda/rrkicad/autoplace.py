@@ -208,7 +208,7 @@ class Placer:
     # ------------------------------------------------------------------- run
     def run(self):
         b = self.b
-        todo = [p for p in b.parts if not p.placed]
+        todo = [p for p in b.parts if not p.placed and not p.replica_of]
         # occupancy of explicitly placed parts
         for part in b.parts:
             if part.placed:

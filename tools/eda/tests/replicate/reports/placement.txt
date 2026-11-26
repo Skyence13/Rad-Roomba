@@ -1,0 +1,12 @@
+# REPL-TEST placement (board frame: X right, Y up, mm; rot = KiCad orientation).
+# Lines marked [auto] were auto-arranged; copy the at=(...) value into board.py to freeze them.
+U1       at=(8.0, 10.0, 0, "F")
+C1       at=(11.5, 11.0, 0, "F")   [auto]
+R1       at=(7.25, 6.75, 270, "F")   [auto]
+R11      at=(11.5, 6.25, 0, "F")   [auto]
+R21      at=(8.25, 13.25, 90, "F")   [auto]
+U2       at=(28.0, 10.0, 0, "F")
+C2       at=(31.5, 11.0, 0, "F")
+R2       at=(27.25, 6.75, 270, "F")
+R12      at=(31.5, 6.25, 0, "F")
+R22      at=(28.25, 13.25, 90, "F")

@@ -8,7 +8,7 @@
 
 #include "rrh_core.h"
 
-#define SIM_TICK_HZ 48000000u /* gateware/head_evt: HEVT_TICK_HZ */
+#define SIM_TICK_HZ 144000000u /* same tick as the capture timers of the target port */
 #define SIM_CH 5u             /* alpha, beta, ref, floor_reject, ref_reject */
 #define SIM_SCHED_MAX 2048u
 
@@ -67,7 +67,6 @@ typedef struct {
     uint64_t gates_total;
     uint64_t drawn[RRH_LANES][SIM_CH];
     FILE *truth;
-    const char *bitstream_id;
     bool have_forced_boot_id;
     uint8_t forced_boot_id[16];
 } sim_t;

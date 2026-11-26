@@ -57,30 +57,36 @@ static void clock_init(void)
     RCC->CR |= RCC_CR_HSEON;
     g_tcxo_ok = wait_set(&RCC->CR, RCC_CR_HSERDY, 400000u);
 
-    /* One wait state for 48 MHz in range 1 normal mode (RM0440 table, UNVERIFIED). */
-    FLASH->ACR = (FLASH->ACR & ~FLASH_ACR_LATENCY) | FLASH_ACR_LATENCY_1WS;
+    /* Four wait states for 144 MHz in range 1 normal mode (RM0440 table, UNVERIFIED). */
+    FLASH->ACR = (FLASH->ACR & ~FLASH_ACR_LATENCY) | FLASH_ACR_LATENCY_4WS;
 
-    /* PLL input 8 MHz, VCO 96 MHz, R = /2 -> 48 MHz SYSCLK, Q = /2 -> 48 MHz for the RNG. */
-    uint32_t cfg = (12uL << RCC_PLLCFGR_PLLN_Pos) | RCC_PLLCFGR_PLLREN | RCC_PLLCFGR_PLLQEN;
+    /* VCO 288 MHz, R = /2 -> 144 MHz SYSCLK, Q = /6 -> 48 MHz for the RNG. */
+    uint32_t cfg = RCC_PLLCFGR_PLLREN | RCC_PLLCFGR_PLLQEN | (2uL << RCC_PLLCFGR_PLLQ_Pos);
     if (g_tcxo_ok) {
-        cfg |= RCC_PLLCFGR_PLLSRC_HSE | (2uL << RCC_PLLCFGR_PLLM_Pos); /* 24 MHz / 3 */
+        cfg |= RCC_PLLCFGR_PLLSRC_HSE | (1uL << RCC_PLLCFGR_PLLM_Pos) | (24uL << RCC_PLLCFGR_PLLN_Pos); /* 24 / 2 x 24 */
     } else {
-        cfg |= RCC_PLLCFGR_PLLSRC_HSI | (1uL << RCC_PLLCFGR_PLLM_Pos); /* HSI16 / 2: degraded, flagged */
+        cfg |= RCC_PLLCFGR_PLLSRC_HSI | (3uL << RCC_PLLCFGR_PLLM_Pos) | (72uL << RCC_PLLCFGR_PLLN_Pos); /* 16 / 4 x 72: degraded, flagged */
     }
     RCC->PLLCFGR = cfg;
     RCC->CR |= RCC_CR_PLLON;
     (void)wait_set(&RCC->CR, RCC_CR_PLLRDY, 400000u);
+    /* Switching to more than 80 MHz: run the AHB at half speed across the switch (RM0440
+     * recommendation, UNVERIFIED), then return to /1. */
+    RCC->CFGR = (RCC->CFGR & ~RCC_CFGR_HPRE) | RCC_CFGR_HPRE_DIV2;
     RCC->CFGR = (RCC->CFGR & ~RCC_CFGR_SW) | RCC_CFGR_SW_PLL;
     (void)wait_set(&RCC->CFGR, RCC_CFGR_SWS_PLL, 400000u);
+    for (volatile uint32_t i = 0u; i < 200u; i++) {
+    }
+    RCC->CFGR &= ~RCC_CFGR_HPRE;
     SystemCoreClock = BSP_SYSCLK_HZ;
 
     RCC->CCIPR = (RCC->CCIPR & ~(RCC_CCIPR_CLK48SEL | RCC_CCIPR_ADC12SEL)) | RCC_CCIPR_CLK48SEL_1 | RCC_CCIPR_ADC12SEL_1;
     RCC->CSR |= RCC_CSR_LSION; /* IWDG clock */
 
     RCC->AHB2ENR |= RCC_AHB2ENR_GPIOAEN | RCC_AHB2ENR_GPIOBEN | RCC_AHB2ENR_GPIOCEN | RCC_AHB2ENR_GPIODEN |
-                    RCC_AHB2ENR_GPIOFEN | RCC_AHB2ENR_ADC12EN | RCC_AHB2ENR_RNGEN;
-    RCC->APB1ENR1 |= RCC_APB1ENR1_TIM2EN | RCC_APB1ENR1_SPI3EN | RCC_APB1ENR1_I2C3EN | RCC_APB1ENR1_PWREN;
-    RCC->APB1ENR2 |= RCC_APB1ENR2_LPUART1EN;
+                    RCC_AHB2ENR_GPIOEEN | RCC_AHB2ENR_GPIOFEN | RCC_AHB2ENR_ADC12EN | RCC_AHB2ENR_RNGEN;
+    RCC->APB1ENR1 |= RCC_APB1ENR1_TIM2EN | RCC_APB1ENR1_TIM3EN | RCC_APB1ENR1_TIM5EN | RCC_APB1ENR1_TIM6EN |
+                     RCC_APB1ENR1_UART4EN | RCC_APB1ENR1_I2C3EN | RCC_APB1ENR1_PWREN;
     RCC->APB2ENR |= RCC_APB2ENR_USART1EN | RCC_APB2ENR_SPI1EN | RCC_APB2ENR_SYSCFGEN;
     (void)RCC->APB2ENR;
     /* PB4 / PB6 are UCPD CC pins: switch their dead-battery pull-downs off (UNVERIFIED need). */
@@ -92,64 +98,87 @@ bool bsp_clock_from_tcxo(void)
     return g_tcxo_ok;
 }
 
-/* ---- head clock: TIM2, 1 MHz, 32 bit, extended to 64 bit ------------------------------------------ */
-static volatile uint32_t g_tim_high;
-static volatile uint32_t g_gate_edges;
-static volatile uint32_t g_gate_last_capture;
+/* ---- head clock: TIM2 free running at 144 MHz, extended to 64 bit ----------------------------------
+ * The 100 kHz service interrupt calls bsp_tick_isr_update() far more often than the 29.8 s wrap
+ * period, so no overflow interrupt is needed. Head microseconds = ticks / 144. */
+static volatile uint32_t g_tick_high;
+static volatile uint32_t g_tick_last;
 
-uint64_t bsp_now_us(void)
+void bsp_tick_isr_update(void)
+{
+    const uint32_t primask = __get_PRIMASK();
+    __disable_irq(); /* the USART interrupt (higher priority) reads the pair */
+    const uint32_t cnt = TIM2->CNT;
+    if (cnt < g_tick_last) {
+        g_tick_high++;
+    }
+    g_tick_last = cnt;
+    __set_PRIMASK(primask);
+}
+
+uint64_t bsp_now_ticks(void)
 {
     const uint32_t primask = __get_PRIMASK();
     __disable_irq();
-    uint32_t high = g_tim_high;
-    uint32_t cnt = TIM2->CNT;
-    if (((TIM2->SR & TIM_SR_UIF) != 0u)) {
-        cnt = TIM2->CNT; /* the counter wrapped and the interrupt has not run yet */
-        high++;
+    const uint32_t cnt = TIM2->CNT;
+    uint32_t high = g_tick_high;
+    if (cnt < g_tick_last) {
+        high++; /* wrapped since the last service interrupt */
     }
     __set_PRIMASK(primask);
     return ((uint64_t)high << 32) | cnt;
 }
 
+uint64_t bsp_now_us(void)
+{
+    return bsp_now_ticks() / BSP_TICKS_PER_US;
+}
+
 void bsp_delay_us(uint32_t us)
 {
     const uint32_t start = TIM2->CNT;
-    while ((TIM2->CNT - start) < us) {
+    while ((TIM2->CNT - start) < (us * BSP_TICKS_PER_US)) {
     }
 }
 
 static void timebase_init(void)
 {
-    TIM2->PSC = (BSP_SYSCLK_HZ / 1000000u) - 1u;
-    TIM2->ARR = 0xFFFFFFFFu;
-    TIM2->EGR = TIM_EGR_UG;
-    TIM2->SR = 0u;
-    /* CH3: input capture of the FPGA GATE_SYNC toggle (both edges). */
-    TIM2->CCMR2 = TIM_CCMR2_CC3S_0;
-    TIM2->CCER = TIM_CCER_CC3E | TIM_CCER_CC3P | TIM_CCER_CC3NP;
-    TIM2->DIER = TIM_DIER_UIE | TIM_DIER_CC3IE;
+    /* TIM2 and TIM5: 32-bit, no prescaler, free running; all four channels capture rising edges
+     * of the BUSY latches (configured here, used by evt_port.c). */
+    TIM_TypeDef *const timers[2] = {TIM2, TIM5};
+    for (uint32_t i = 0u; i < 2u; i++) {
+        TIM_TypeDef *t = timers[i];
+        t->PSC = 0u;
+        t->ARR = 0xFFFFFFFFu;
+        t->CCMR1 = TIM_CCMR1_CC1S_0 | TIM_CCMR1_CC2S_0;
+        t->CCMR2 = TIM_CCMR2_CC3S_0 | TIM_CCMR2_CC4S_0;
+        t->CCER = TIM_CCER_CC1E | TIM_CCER_CC2E | TIM_CCER_CC3E | TIM_CCER_CC4E;
+        t->EGR = TIM_EGR_UG;
+        t->SR = 0u;
+    }
     TIM2->CR1 = TIM_CR1_CEN;
-    NVIC_SetPriority(TIM2_IRQn, 1);
-    NVIC_EnableIRQ(TIM2_IRQn);
+    TIM5->CR1 = TIM_CR1_CEN;
 }
 
 /* ---- RS-485 on USART1 with hardware driver enable ---------------------------------------------- */
 static uint8_t g_rx_store[1024];
 static rrc_ring_t g_rx_ring;
-static volatile uint64_t g_lf_us;
+static volatile uint64_t g_lf_ticks;
+static volatile uint64_t g_tx_at_ticks;
+static volatile bool g_tx_armed;
 static const uint8_t *volatile g_tx_data;
 static volatile size_t g_tx_len, g_tx_pos;
 
 static void rs485_init(void)
 {
     (void)rrc_ring_init(&g_rx_ring, g_rx_store, sizeof g_rx_store);
-    USART1->BRR = BSP_SYSCLK_HZ / 1000000u; /* 1 Mbaud, oversampling 16, exact */
+    USART1->BRR = BSP_SYSCLK_HZ / 1000000u; /* 144: 1 Mbaud, oversampling 16, exact */
     USART1->CR3 = USART_CR3_DEM;            /* DE active high, driven by the USART */
     /* DE asserted 8/16 bit before the start bit and held 8/16 bit after the stop bit (5 us). */
     USART1->CR1 = (8uL << USART_CR1_DEAT_Pos) | (8uL << USART_CR1_DEDT_Pos) | USART_CR1_RE | USART_CR1_TE |
                   USART_CR1_RXNEIE;
     USART1->CR1 |= USART_CR1_UE;
-    NVIC_SetPriority(USART1_IRQn, 0); /* highest: receive timestamps */
+    NVIC_SetPriority(USART1_IRQn, 0); /* highest: receive timestamps (short handler) */
     NVIC_EnableIRQ(USART1_IRQn);
 }
 
@@ -164,7 +193,7 @@ void USART1_IRQHandler(void)
         if (b == (uint8_t)'\n') {
             /* Receipt time of a request = time its LF was received (ISR entry, about half a
              * bit after the middle of the stop bit plus interrupt latency; UNVERIFIED offset). */
-            g_lf_us = bsp_now_us();
+            g_lf_ticks = bsp_now_ticks();
         }
         (void)rrc_ring_push(&g_rx_ring, b);
     }
@@ -178,21 +207,13 @@ void USART1_IRQHandler(void)
     }
 }
 
-void TIM2_IRQHandler(void)
+/* Called from the 100 kHz service interrupt: releases a reply whose start time has come.
+ * The start is therefore at most one service period (10 us) after the requested time. */
+void bsp_rs485_tx_service(uint64_t now_ticks)
 {
-    const uint32_t sr = TIM2->SR;
-    if ((sr & TIM_SR_UIF) != 0u) {
-        TIM2->SR = ~TIM_SR_UIF;
-        g_tim_high++;
-    }
-    if (((sr & TIM_SR_CC1IF) != 0u) && ((TIM2->DIER & TIM_DIER_CC1IE) != 0u)) {
-        TIM2->DIER &= ~TIM_DIER_CC1IE;
-        TIM2->SR = ~TIM_SR_CC1IF;
-        USART1->CR1 |= USART_CR1_TXEIE; /* scheduled start of a reply */
-    }
-    if ((sr & TIM_SR_CC3IF) != 0u) {
-        g_gate_last_capture = TIM2->CCR3; /* reading CCR3 clears the flag */
-        g_gate_edges++;
+    if (g_tx_armed && (now_ticks >= g_tx_at_ticks)) {
+        g_tx_armed = false;
+        USART1->CR1 |= USART_CR1_TXEIE;
     }
 }
 
@@ -201,32 +222,22 @@ bool bsp_rs485_pop(uint8_t *byte, uint64_t *rx_us)
     if (!rrc_ring_pop(&g_rx_ring, byte)) {
         return false;
     }
-    *rx_us = (*byte == (uint8_t)'\n') ? g_lf_us : bsp_now_us();
+    *rx_us = ((*byte == (uint8_t)'\n') ? g_lf_ticks : bsp_now_ticks()) / BSP_TICKS_PER_US;
     return true;
-}
-
-uint64_t bsp_rs485_last_lf_us(void)
-{
-    return g_lf_us;
 }
 
 void bsp_rs485_send(const uint8_t *data, size_t len, uint64_t at_us)
 {
     USART1->CR1 &= ~USART_CR1_TXEIE;
+    g_tx_armed = false;
     g_tx_data = data;
     g_tx_len = len;
     g_tx_pos = 0u;
-    if (at_us == 0u) {
-        at_us = g_lf_us + BSP_RS485_TURNAROUND_US;
-    }
-    const uint64_t now = bsp_now_us();
-    if (at_us <= (now + 20u)) {
-        USART1->CR1 |= USART_CR1_TXEIE;
-    } else {
-        TIM2->CCR1 = (uint32_t)at_us;
-        TIM2->SR = ~TIM_SR_CC1IF;
-        TIM2->DIER |= TIM_DIER_CC1IE;
-    }
+    /* at_us == 0: as soon as the bus turnaround allows. Either way the service interrupt starts
+     * the transmission, so the driver is never enabled inside the turnaround time. */
+    g_tx_at_ticks = (at_us != 0u) ? (at_us * BSP_TICKS_PER_US)
+                                  : (g_lf_ticks + ((uint64_t)BSP_RS485_TURNAROUND_US * BSP_TICKS_PER_US));
+    g_tx_armed = true;
 }
 
 /* ---- SPI ------------------------------------------------------------------------------------------ */
@@ -247,14 +258,24 @@ static uint8_t spi_xfer(SPI_TypeDef *spi, uint8_t b)
     return *(volatile uint8_t *)&spi->DR;
 }
 
-void bsp_spi_fpga_mode(bool config_phase)
-{
-    /* Configuration: mode 3, 48/4 = 12 MHz. Register interface: mode 0, 48/16 = 3 MHz (<= 4 MHz). */
-    spi_setup(SPI3, config_phase ? 1u : 3u, config_phase, config_phase);
-}
-
 uint8_t bsp_spi_dac_xfer(uint8_t b) { return spi_xfer(SPI1, b); }
-uint8_t bsp_spi_fpga_xfer(uint8_t b) { return spi_xfer(SPI3, b); }
+
+/* Test pulser strobe: TIM3_CH1, 1 kHz, 2 us wide, PWM mode 1. Amplitude comes from a DAC output. */
+void bsp_pulser(bool enable)
+{
+    TIM3->CR1 = 0u;
+    if (!enable) {
+        TIM3->CCER = 0u;
+        return;
+    }
+    TIM3->PSC = BSP_TICKS_PER_US - 1u; /* 1 MHz */
+    TIM3->ARR = 999u;
+    TIM3->CCR1 = 2u;
+    TIM3->CCMR1 = (6uL << TIM_CCMR1_OC1M_Pos) | TIM_CCMR1_OC1PE;
+    TIM3->CCER = TIM_CCER_CC1E;
+    TIM3->EGR = TIM_EGR_UG;
+    TIM3->CR1 = TIM_CR1_CEN;
+}
 
 /* ---- DAC60508 (register map recalled from the TI datasheet: UNVERIFIED) ----------------------------- */
 #define DAC_REG_DEVICE_ID 0x01u
@@ -301,7 +322,7 @@ bool bsp_dac_init(void)
     return ok;
 }
 
-/* ---- I2C3 (100 kHz; TIMINGR for 48 MHz from the RM0440 example table, UNVERIFIED) ------------------- */
+/* ---- I2C3 (100 kHz; TIMINGR calculated for a 144 MHz kernel clock, UNVERIFIED on hardware) ----------- */
 static bool i2c_wait(uint32_t flag)
 {
     for (uint32_t i = 0u; i < 200000u; i++) {
@@ -378,7 +399,7 @@ static void adc_init(void)
     ADC1->CR &= ~ADC_CR_DEEPPWD;
     ADC1->CR |= ADC_CR_ADVREGEN;
     bsp_delay_us(50u);
-    ADC12_COMMON->CCR = (2uL << ADC_CCR_PRESC_Pos); /* kernel clock 48 MHz / 4 = 12 MHz */
+    ADC12_COMMON->CCR = (6uL << ADC_CCR_PRESC_Pos); /* kernel clock 144 MHz / 12 = 12 MHz (code 6, UNVERIFIED) */
     ADC1->CR |= ADC_CR_ADCAL;
     for (uint32_t i = 0u; (i < 400000u) && ((ADC1->CR & ADC_CR_ADCAL) != 0u); i++) {
     }
@@ -559,8 +580,8 @@ void bsp_led(bool status_on, bool fault_on)
 void bsp_dbg_puts(const char *s)
 {
     while (*s != '\0') {
-        (void)wait_set(&LPUART1->ISR, USART_ISR_TXE, 100000u);
-        LPUART1->TDR = (uint8_t)*s;
+        (void)wait_set(&UART4->ISR, USART_ISR_TXE, 100000u);
+        UART4->TDR = (uint8_t)*s;
         s++;
     }
 }
@@ -570,11 +591,18 @@ void bsp_init(void)
     reset_cause_capture();
     clock_init();
 
-    /* Safe levels first: heater and bias off, FPGA held in reset, chip selects idle. */
+    /* Safe levels first: heater and bias off, latches held cleared, chip selects idle. */
     CFG_OUT(HTR_EN, false);
     CFG_OUT(HV_EN, false);
-    CFG_OUT(FPGA_CRESET_N, false);
-    CFG_OUT(FPGA_SS_N, false);
+    CFG_OUT(CLR_F0_N, false);
+    CFG_OUT(CLR_F1_N, false);
+    CFG_OUT(CLR_F2_N, false);
+    CFG_OUT(CLR_F3_N, false);
+    CFG_OUT(CLR_R0_N, false);
+    CFG_OUT(CLR_R1_N, false);
+    CFG_OUT(CLR_R2_N, false);
+    CFG_OUT(CLR_R3_N, false);
+    CFG_OUT(LATCH_TEST, false);
     CFG_OUT(DAC_CS0_N, true);
     CFG_OUT(DAC_CS1_N, true);
     CFG_OUT(DAC_CS2_N, true);
@@ -584,16 +612,35 @@ void bsp_init(void)
     CFG_OUT(MON_MUX_A0, false);
     CFG_OUT(MON_MUX_A1, false);
     CFG_OUT(MON_MUX_A2, false);
-#ifndef RRH_BOARD_NUCLEO
     CFG_OUT(MON_MUX_A3, false);
+    /* Latch read-backs and comparator states: all of port D, PE0..PE3. */
+    for (uint32_t pin = 0u; pin < 16u; pin++) {
+        gpio_cfg(GPIOD, pin, MODE_IN, 0u, PULL_DOWN);
+    }
+    for (uint32_t pin = 0u; pin < 4u; pin++) {
+        gpio_cfg(GPIOE, pin, MODE_IN, 0u, PULL_DOWN);
+    }
+    CFG_IN(SPARE_PE15, PULL_DOWN);
+    CFG_IN(SPARE_PC12, PULL_DOWN);
+    CFG_IN(SPARE_PF2, PULL_DOWN);
+    CFG_IN(SPARE_PF9, PULL_DOWN);
+    CFG_IN(SPARE_PF10, PULL_DOWN);
+#ifndef RRH_BOARD_NUCLEO
+    CFG_IN(SPARE_PF1, PULL_DOWN);
 #endif
-    CFG_IN(FPGA_CDONE, PULL_UP);
-    CFG_IN(FPGA_MON_TRIG, PULL_DOWN);
-    CFG_IN(FPGA_IRQ, PULL_DOWN);
     CFG_IN(HTR_CUTOUT_OK, PULL_DOWN);
     CFG_IN(BUMP_ZONE_F_N, PULL_UP);
     CFG_IN(BUMP_ZONE_L_N, PULL_UP);
     CFG_IN(BUMP_ZONE_R_N, PULL_UP);
+    CFG_AF(BUSY_F0, PULL_DOWN);
+    CFG_AF(BUSY_F1, PULL_DOWN);
+    CFG_AF(BUSY_F2, PULL_DOWN);
+    CFG_AF(BUSY_F3, PULL_DOWN);
+    CFG_AF(BUSY_R0, PULL_DOWN);
+    CFG_AF(BUSY_R1, PULL_DOWN);
+    CFG_AF(BUSY_R2, PULL_DOWN);
+    CFG_AF(BUSY_R3, PULL_DOWN);
+    CFG_AF(PULSER_STROBE, PULL_DOWN);
     CFG_AF(RS485_TX, PULL_NONE);
     CFG_AF(RS485_RX, PULL_UP);
     CFG_AF(RS485_DE, PULL_DOWN);
@@ -602,11 +649,6 @@ void bsp_init(void)
     CFG_AF(DAC_SCK, PULL_NONE);
     CFG_AF(DAC_MISO, PULL_UP);
     CFG_AF(DAC_MOSI, PULL_NONE);
-    CFG_AF(FPGA_SCK, PULL_NONE);
-    CFG_AF(FPGA_MISO, PULL_DOWN);
-    CFG_AF(FPGA_MOSI, PULL_NONE);
-    CFG_AF(FPGA_GATE, PULL_DOWN);
-    CFG_AF(FPGA_SYNC, PULL_NONE);
     CFG_AF(I2C_SCL, PULL_NONE);
     CFG_AF(I2C_SDA, PULL_NONE);
     PIN_I2C_SCL_PORT->OTYPER |= 1uL << PIN_I2C_SCL_PIN; /* open drain */
@@ -625,11 +667,11 @@ void bsp_init(void)
 
     timebase_init();
     watchdog_init();
-    LPUART1->BRR = (uint32_t)((256uLL * BSP_SYSCLK_HZ) / 115200u);
-    LPUART1->CR1 = USART_CR1_TE | USART_CR1_UE;
-    spi_setup(SPI1, 2u, false, true); /* DACs: mode 1, 48/8 = 6 MHz */
-    bsp_spi_fpga_mode(true);
-    I2C3->TIMINGR = 0xB0420F13u;
+    UART4->BRR = BSP_SYSCLK_HZ / 115200u;
+    UART4->CR1 = USART_CR1_TE | USART_CR1_UE;
+    spi_setup(SPI1, 4u, false, true); /* DACs: mode 1, 144/32 = 4.5 MHz */
+    /* 100 kHz: PRESC 8 (62.5 ns), SCLL 80, SCLH 64, SDADEL 2, SCLDEL 4 (calculated). */
+    I2C3->TIMINGR = 0x80423F4Fu;
     I2C3->CR1 = I2C_CR1_PE;
     adc_init();
     rs485_init();

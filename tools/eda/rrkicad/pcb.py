@@ -293,7 +293,9 @@ class Builder:
         # keep-outs before auto-placement (they block it)
         for ko in b.keepouts:
             self._add_keepout(ko)
+        self._replicas()                 # copies of explicitly placed sources (block the auto-arranger)
         placed = autoplace(self)
+        self._replicas()                 # copies of auto-arranged sources
         for part in b.parts:
             if not part.placed:
                 raise DefinitionError("%s could not be placed" % part.ref)
@@ -468,6 +470,19 @@ class Builder:
         fp.SetPosition(pos)
         fp.SetOrientationDegrees(rot)
         part.x, part.y, part.rot, part.side = x, y, rot, side
+
+    def _replicas(self):
+        for _ in range(8):               # chains: a copy of a copy
+            done = True
+            for part in self.b.parts:
+                if part.replica_of and not part.placed:
+                    src = self.b.part(part.replica_of[0])
+                    if src.placed:
+                        self.place(part, round(src.x + part.replica_of[1], 4), round(src.y + part.replica_of[2], 4),
+                                   src.rot, src.side)
+                        done = False
+            if done:
+                break
 
     def _add_hole(self, h):
         fp = self._load_fp("%s:%s" % (locallib.NICK, h["footprint"]))

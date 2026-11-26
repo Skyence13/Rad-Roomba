@@ -109,6 +109,7 @@ class Part:
         self.pin_net = {}        # pin number -> net name | None (no-connect)
         self.pin_name = {}       # pin number -> pin name
         self.auto_placed = False
+        self.replica_of = None   # (src_ref, dx, dy) set by Board.replicate()
 
     @property
     def placed(self):
@@ -360,6 +361,26 @@ class Board:
             if k not in self.autoplace:
                 raise DefinitionError("unknown autoplace option '%s'" % k)
         self.autoplace.update(kw)
+
+    def replicate(self, pairs, dx=0.0, dy=0.0):
+        """Copy placement: every destination part gets the position of its source part
+        shifted by (dx, dy), same rotation and side.  *pairs*: {src_ref: dst_ref} or a
+        (src_group, dst_group) tuple of Group objects with the same number of parts in
+        the same order.  Sources may be explicit (at=) or auto-arranged; destinations
+        must not have at=.  Overlaps with other parts are caught by DRC (courtyards)."""
+        if isinstance(pairs, tuple):
+            a, b = pairs
+            if len(a.parts) != len(b.parts):
+                raise DefinitionError("replicate: groups %s and %s differ in part count" % (a.name, b.name))
+            pairs = {p.ref: q.ref for p, q in zip(a.parts, b.parts)}
+        for src, dst in pairs.items():
+            if src not in self._refs or dst not in self._refs:
+                raise DefinitionError("replicate: unknown reference in %s -> %s" % (src, dst))
+            if self._refs[dst].placed:
+                raise DefinitionError("replicate: destination %s already has at=" % dst)
+            if self._refs[dst].footprint != self._refs[src].footprint:
+                raise DefinitionError("replicate: %s and %s have different footprints" % (src, dst))
+            self._refs[dst].replica_of = (src, float(dx), float(dy))
 
     def fab_note(self, text):
         """Extra numbered note on the fabrication drawing."""

@@ -1,4 +1,4 @@
-/* Board support for RR-HEAD-ACQ (STM32G474RET6). Thin register-level drivers; no logic that
+/* Board support for RR-HEAD-ACQ (STM32G474VET6, LQFP100; DEC-037: no FPGA). Thin register-level drivers; no logic that
  * belongs in the core. NOT TESTED ON HARDWARE: compiled and linked only. */
 #ifndef RRH_BSP_H
 #define RRH_BSP_H
@@ -11,7 +11,9 @@
 #include "rrh_hal.h"
 #include "rrh_pins.h"
 
-#define BSP_SYSCLK_HZ 48000000u
+#define BSP_SYSCLK_HZ 144000000u
+#define BSP_TICK_HZ BSP_SYSCLK_HZ    /* TIM2 / TIM5 capture timers run at the system clock */
+#define BSP_TICKS_PER_US (BSP_TICK_HZ / 1000000u)
 #define BSP_VREF_MV 3000u           /* external ADC reference (pinmap.yaml VREF+) */
 #define BSP_RS485_TURNAROUND_US 200u /* minimum silence between the request's LF and our first bit */
 #define BSP_TIME_REPLY_DELAY_US 1000u /* TIME: reply starts exactly this long after the request ended */
@@ -19,7 +21,9 @@
 /* ---- bsp.c ---- */
 void bsp_init(void);
 bool bsp_clock_from_tcxo(void); /* false: running on the HSI16 fallback */
+uint64_t bsp_now_ticks(void); /* 64-bit extension of TIM2, 144 ticks per microsecond */
 uint64_t bsp_now_us(void);
+void bsp_tick_isr_update(void); /* called by the 100 kHz service interrupt */
 void bsp_delay_us(uint32_t us);
 rrh_reset_cause_t bsp_reset_cause(void);
 void bsp_watchdog_kick(void);
@@ -41,12 +45,11 @@ static inline bool bsp_gpio_read(const GPIO_TypeDef *port, uint32_t pin)
 /* RS-485 link */
 bool bsp_rs485_pop(uint8_t *byte, uint64_t *rx_us);
 void bsp_rs485_send(const uint8_t *data, size_t len, uint64_t at_us);
-uint64_t bsp_rs485_last_lf_us(void);
+void bsp_rs485_tx_service(uint64_t now_ticks); /* from the service interrupt: start a scheduled reply */
 
-/* SPI: bus 0 = DACs (SPI1, mode 1), bus 1 = FPGA (SPI3) */
-void bsp_spi_fpga_mode(bool config_phase);
+/* SPI1: DACs (mode 1) */
 uint8_t bsp_spi_dac_xfer(uint8_t b);
-uint8_t bsp_spi_fpga_xfer(uint8_t b);
+void bsp_pulser(bool enable); /* 1 kHz test-pulser strobe on TIM3_CH1 */
 
 /* DAC60508 x4 */
 bool bsp_dac_init(void);
@@ -72,16 +75,15 @@ int32_t bsp_ntc_mc(uint16_t code);
 bool bsp_nv_load(uint8_t *buf, size_t cap, size_t *len);
 bool bsp_nv_save(const uint8_t *buf, size_t len);
 
-/* ---- fpga.c ---- */
-bool fpga_configure(void);            /* load the embedded bitstream, check ID/version */
-bool fpga_ready(void);
-const char *fpga_bitstream_id(void);
-bool fpga_acq_start(uint32_t span_us, rrh_epoch_t *epoch);
-bool fpga_acq_stop(void);
-void fpga_acq_abort(void);
-bool fpga_acq_running(void);
-bool fpga_acq_poll(rrh_gate_record_t *rec);
-bool fpga_frontend(uint8_t chain_enable, bool pulser_enable);
-void fpga_heater_request(bool on);
+/* ---- evt_port.c: event capture on TIM2/TIM5 + 100 kHz service interrupt (TIM6) ---- */
+void evt_port_init(void);
+bool evt_port_start(uint32_t span_us, rrh_epoch_t *epoch);
+bool evt_port_stop(void);
+void evt_port_abort(void);
+bool evt_port_running(void);
+bool evt_port_poll(rrh_gate_record_t *rec);
+void evt_port_chain_enable(uint8_t mask);
+void evt_port_heater_request(bool on);
+bool evt_port_selftest(void); /* LATCH_TEST line: every latch sets and clears */
 
 #endif

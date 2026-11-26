@@ -99,7 +99,6 @@ bool rrh_hal_acq_poll(rrh_gate_record_t *rec)
 }
 bool rrh_hal_frontend_apply(const rrh_frontend_cfg_t *cfg) { m.fe = *cfg; m.fe_applies++; return true; }
 void rrh_hal_bias_set(uint32_t mv, bool enable) { m.bias_mv = mv; m.bias_on = enable; }
-const char *rrh_hal_bitstream_id(void) { return "mock-bitstream"; }
 void rrh_hal_analog_read(rrh_analog_t *out)
 {
     *out = m.analog;

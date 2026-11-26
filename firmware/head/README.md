@@ -1,3 +1,161 @@
+# Rad Roomba detector-head firmware (`firmware/head`)
+
+Firmware of the head MCU on board **RR-HEAD-ACQ** (STM32G474VET6, DEC-037: event capture by MCU
+timers and discrete latches, no FPGA) and the **emulated head** `rr_head_sim`, which is the same
+core compiled for Linux. It speaks head protocol 2.0 (`interface/head_icd.md`) plus the additive
+0.4 ops (`interface/head_icd_addendum_0.4.md`).
+
+**Evidence status.** Everything here is `tool-checked` (compiled, unit-tested, run against the
+baseline host tools on the emulator) or `calculated`. **Nothing has run on hardware**: the STM32
+image is compiled and linked only. Statements recalled from data sheets or reference manuals that
+could not be checked on the build host are marked UNVERIFIED where they occur.
+
+## Layout
+
+| Path | Content |
+|---|---|
+| `../common/` | Portable C11 library shared with the chassis firmware: framing, CRC-32, JSON, envelope + reply cache, SHA-256, base64, UUID, ring buffer. Own README. |
+| `core/rrh_core.c` | Protocol 2.0 state machine: HELLO, GET_DESCRIPTOR, BIND, TIME, SYNC, ARM, READ, DISARM; binding rules; reply cache. Read this file to audit binding/unbinding. |
+| `core/rrh_acq.c` | `head_gate_record` → ACQ 2.0 frame mapping (null + flag rules), 160-frame buffer, sync-quality records, ACQ/DIAG serialisation. |
+| `core/rrh_evtcap.c` | Event capture logic (classification, counters, measured live time, gate snapshots). Pure logic, used by the STM32 port and by host tests. |
+| `core/rrh_setup.c` | Setup (thresholds, trims, bias law, heater law), `setup_id` hash, descriptor builder (Rev E concept geometry from `contract.yaml`). |
+| `core/rrh_control.c` | Health and fault latching, bias temperature compensation, gate-aligned heater control. |
+| `core/rrh_eng.c` | Additive ops: DIAG, STATUS, FAULT_CLEAR, ENG_FAULT, ENG_SETUP_GET/SET, ENG_WAVE_ARM/READ. |
+| `hal/rrh_hal.h` | The only boundary between core and hardware (about 20 functions). |
+| `port/host/` | `rr_head_sim`: HAL on a seeded Poisson source + sockets + fault injection. |
+| `port/stm32g474/` | Target port: clocks, TIM2/TIM5 capture + 100 kHz service interrupt, RS-485 USART, DACs, ADC, I2C, flash, IWDG. |
+| `tests/` | `test_core.c`, `test_evtcap.c` (host unit tests), `test_sim_interop.py` + `headsim.py` (emulator driven by the baseline tools). |
+| `tools/` | `check_pinmap.py`, `gen_pinmap.py`, ST pin-database subset, PlatformIO helper. |
+| `pinmap.yaml` | Pin map proposal for the electronics lead (source of the table below). |
+| `check.sh` | Builds and runs everything; non-zero exit on any failure. |
+
+## Toolchain (pinned)
+
+| Tool | Version used | Install |
+|---|---|---|
+| Host compiler | gcc 13.3.0 (Ubuntu 24.04) | `apt install build-essential` |
+| CMake / Ninja | 3.28 / 1.11 (any CMake ≥ 3.16) | `apt install cmake ninja-build` |
+| Python | 3.13 (≥ 3.9) with `jsonschema` ≥ 4.18, `PyYAML` | `pip install jsonschema pyyaml` |
+| PlatformIO Core | 6.x | `pip install platformio` |
+| PlatformIO platform | `platformio/ststm32@19.4.0` | fetched by `pio run` |
+| ARM toolchain | `toolchain-gccarmnoneeabi@1.120301.0` (GCC 12.3.1) | fetched by `pio run` |
+| CMSIS | `framework-cmsis@2.50501.200527`, `framework-cmsis-stm32g4@1.2.5`, `tool-ldscripts-ststm32@0.2.0` | fetched by `pio run` |
+
+The versions are fixed in `platformio.ini`; the registry (`registry.platformio.org`,
+`dl.registry.platformio.org`) must be reachable for the first target build.
+
+## Build and test
+
+```sh
+firmware/head/check.sh               # everything (host build + all tests + STM32 image)
+firmware/head/check.sh --no-target   # host only
+
+# by hand
+cmake -S firmware/head -B firmware/head/build/host -G Ninja      # ASan + UBSan, -Werror -Wconversion
+cmake --build firmware/head/build/host -j2
+ctest --test-dir firmware/head/build/host --output-on-failure    # 5 test programs
+cd firmware/head && pio run -e rr_head_acq                       # .pio/build/rr_head_acq/firmware.{elf,bin}
+```
+
+Tests (all on the host):
+
+- `common_unit`, `common_python_interop` — see `../common/README.md`.
+- `head_core_unit` (`tests/test_core.c`, mock HAL): unbound answers, handshake rules, reset →
+  fresh boot id + UNBOUND, reply cache, garbage on the link, frame mapping and every null rule,
+  GAP/EMPTY and sequence continuity across DISARM/ARM, setup change invalidates the binding,
+  LOCKED/HOLDOVER/UNSYNCED, heater control and fault latches, bias compensation, lost/bad gates.
+- `head_evtcap_unit` (`tests/test_evtcap.c`): single events of each class, non-retriggering,
+  acceptance window, forced clear, event straddling a gate boundary, Poisson rate sweep
+  10 – 20000 s⁻¹, service-interrupt jitter, heater switching on boundaries, stop, FIFO overflow.
+  Every gate record is compared exactly with an independent hardware model.
+- `head_sim_interop` (`tests/test_sim_interop.py`): launches `rr_head_sim` and drives it with the
+  unmodified `interface/wire_codec.py`, `head_discovery.py`, `check_frames.py`: byte-exact
+  reproduction of the 0.3 example handshake, descriptor chunking + SHA-256, BIND, TIME/SYNC, ARM,
+  READ stream against the baseline schema, retry idempotence, CRC error retry, GAP with exact
+  oldest/newest, EMPTY, UNBOUND after reset, reset between HELLO and BIND, stale BIND, head swap,
+  null channel + flag, measured zero, counts conservation, equal gates, live ≤ span, determinism,
+  real-clock mode, PTY, clean SIGTERM.
+
+## Target image
+
+| | |
+|---|---|
+| MCU | STM32G474VET6, 512 kB flash, 128 kB RAM (SRAM1 + SRAM2 + CCM mapped contiguously at 0x2000 0000 by the ST linker script) |
+| Clock | 24 MHz TCXO → HSE bypass → PLL → 144 MHz SYSCLK (falls back to HSI16 and latches health `SOURCE` if the TCXO is absent) |
+| Size (`rr_head_acq`, `-Os`, GCC 12.3.1) | flash 34 480 bytes (6.6 %), static RAM 74 884 bytes (57 %) — tool-checked with `arm-none-eabi-size` |
+
+Memory map (default ST script `STM32G474RETX_FLASH.ld`; the RE and VE parts share die and memory):
+
+| Region | Address | Use |
+|---|---|---|
+| Flash | 0x0800 0000 … | vector table, code, constants (image ends near 0x0800 86B0) |
+| Flash, last 2 kB | 0x0807 F800 – 0x0807 FFFF | persisted setup (`ENG_SETUP_SET {"persist":true}`): magic, length, image + CRC-32. `bsp_nv_save()` refuses to write if the program image reaches this page. Page numbering for erase is recalled from RM0440 (UNVERIFIED). |
+| RAM | 0x2000 0000 – 0x2001 FFFF | `.data/.bss` 75 kB of which `rrh_core_t` 66 kB (160 retained frames 40 kB, 8 kB receive buffer, 4 kB transmit/reply cache, 4 kB descriptor, 4 kB sync records); stack from the top |
+
+Interrupts: `USART1` (priority 0: byte receive, LF timestamp, transmit) and `TIM6` (priority 1:
+100 kHz event-capture service, gate boundaries, heater switching, release of scheduled replies).
+Everything else runs in the main loop. The independent watchdog (≈ 1 s) is serviced by
+`rrh_core_poll()`; the reset cause is captured at boot and reported by `STATUS`.
+
+There is no bitstream any more (DEC-037): the image is a single artefact, and `setup_id` is the
+hash of the setup image and the firmware version only.
+
+### Flash and debug
+
+SWD on PA13/PA14 + NRST (PG10); BOOT0 (PB8) strapped low. SWO is not available (PB3 is a BUSY
+capture input). None of the commands below has been run against hardware.
+
+```sh
+cd firmware/head
+pio run -e rr_head_acq -t upload            # ST-LINK/V2 or V3 via OpenOCD (upload_protocol = stlink)
+# or, with the ST tool:  STM32_Programmer_CLI -c port=SWD -w .pio/build/rr_head_acq/firmware.bin 0x08000000 -v -rst
+pio debug -e rr_head_acq --interface=gdb    # GDB through the ST-LINK
+```
+
+Debug console: UART4 on PC10 (TX) / PC11 (RX), 115200 8N1: prints the firmware version and the
+boot id at start-up.
+
+**NUCLEO-G474RE bring-up path** (64-pin part, protocol/link/housekeeping only): build
+`-e nucleo_bringup` (`-DRRH_BOARD_NUCLEO`: HSE crystal instead of bypass), flash through the
+on-board ST-LINK (`pio run -e nucleo_bringup -t upload`), connect a 3.3 V RS-485 transceiver to
+PA9 (DI), PA10 (RO), PA12 (DE) and a USB-UART to PC10/PC11. Ports D and E do not exist on that
+package: the latch read-backs read zero, so the start-up latch self-test fails and health shows
+`SOURCE` — expected there. Jumper a pulse generator to PA15 (BUSY_F0) to see beta counts.
+Nucleo solder-bridge details are not checked (UNVERIFIED).
+
+## Event capture on the target
+
+Per chain: BUSY latch → 32-bit timer input capture (TIM2 CH1-4 floor, TIM5 CH1-4 reference, both
+at 144 MHz = 6.94 ns per tick). The 100 kHz TIM6 interrupt reads the capture flags, GPIOD and
+GPIOE once, calls `rrh_evtcap_service()`, which for every chain that has been BUSY for ≥ 4 µs and
+whose LLD comparator is low again classifies it, asks the port to pulse CLR and takes the timer
+reading of that moment as the end of the event's dead time. Gate boundaries are computed
+arithmetically (`g0 + n · gate_ticks`), busy intervals are split at them exactly, and an event
+is counted in the gate that contains its clear time. A chain BUSY for more than 1 ms, or with its
+comparator high while the latch is clear, is flagged saturated (→ `SATURATED`, null counts).
+
+Measured on the host model (`head_evtcap_unit`, simulated, 8 chains):
+
+| true rate s⁻¹ | counted s⁻¹ | live-time-corrected s⁻¹ | dead |
+|---:|---:|---:|---:|
+| 10 | 10.01 | 10.01 | 0.010 % |
+| 100 | 100.41 | 100.51 | 0.098 % |
+| 1000 | 990.15 | 999.87 | 0.972 % |
+| 5000 | 4772.5 | 5006.4 | 4.67 % |
+| 20000 | 16738.6 | 19994.2 | 16.3 % |
+
+i.e. about 9.7 µs of measured dead time per event. With ±6 µs service jitter and 0.1 % of the
+services 50 µs late the corrected rate stays unbiased (5003 s⁻¹ at 5000 s⁻¹); only the dead time
+grows. Deviation from the contract wording: the gate snapshot is taken by the service interrupt
+that follows the boundary (≤ 10 µs later) with exact arithmetic splitting, not by a separate
+compare interrupt; the result is the same and one interrupt source is saved.
+
+## Hardware mapping (generated from `pinmap.yaml`)
+
+`tools/check_pinmap.py` verifies every pin number, alternate function and ADC channel against
+ST's open pin database (`tools/stm32g474ve_lqfp100_pindb.json`); `tools/gen_pinmap.py` writes this
+table and `port/stm32g474/rrh_pins.h`.
+
 <!-- BEGIN PINMAP (generated by tools/gen_pinmap.py) -->
 | LQFP100 | Pin | Signal | Peripheral | AF | Dir | Electrical note |
 |---:|---|---|---|---|---|---|
@@ -94,3 +252,68 @@
 | 97 | PE0 | `LLD_R0` | GPIO | - | in | REF_LLD comparator output (live state), reference lane 0. 100 k ext PD. |
 | 98 | PE1 | `LLD_R1` | GPIO | - | in | REF_LLD comparator output (live state), reference lane 1. 100 k ext PD. |
 <!-- END PINMAP -->
+
+## Emulator: `rr_head_sim`
+
+```sh
+firmware/head/build/host/rr_head_sim --seed 1                      # TCP 127.0.0.1:5540, UDP 127.0.0.1:5541
+firmware/head/build/host/rr_head_sim --pty /tmp/rr-head --gate-range 10000,1000000 --truth-log gates.ndjson
+```
+
+It prints `rr_head_sim ready tcp=… stim=… seed=…` on stdout when it is listening and exits with
+status 0 on SIGTERM/SIGINT (or `{"cmd":"quit"}`).
+
+| Option | Meaning |
+|---|---|
+| `--tcp HOST:PORT` | Serial side: exactly the RS-485 bytes (records of ICD §4). One client; a new connection replaces the old one. Default `127.0.0.1:5540`. |
+| `--pty PATH` | Additionally serve the same byte stream on a pseudo-terminal; `PATH` becomes a symlink to it. |
+| `--stim HOST:PORT` | Physics / fault-injection socket, UDP, one JSON object per datagram, one JSON reply per datagram. Default `127.0.0.1:5541`. |
+| `--seed N` | Seeds counts and boot ids → byte-identical runs. Without it a random seed is used and printed. |
+| `--clock real\|manual` | `real` (default): head clock = CLOCK_MONOTONIC since start. `manual`: the head clock moves only on `{"cmd":"advance","us":N}` (deterministic tests, faster than real time). |
+| `--serial S`, `--variant concept-e\|concept-e-5mm` | Identity of the emulated head (3 mm or 5 mm rail projection in the descriptor). |
+| `--gate-range MIN,MAX` | Accepted `ARM.span_us` and descriptor `gate_range_us` (default `100000,100000`). |
+| `--descriptor-file F --descriptor-id S --setup-id S --firmware S --boot-id UUID` | Baseline replica: serve the given descriptor bytes and identifiers (used to reproduce `examples/head_transactions.ndjson` byte for byte). |
+| `--tau-floor-us X`, `--tau-ref-us X` | Dead time per recorded event (default 10 µs each, the figure measured for the event-capture logic). |
+| `--truth-log FILE` | One JSON line per generated gate with the drawn counts and live ticks. |
+
+**Physics model.** For each gate and chain the expected counts are the integral of the stimulus
+rate over the gate (rate changes inside a gate are honoured), multiplied by the non-paralyzable
+factor 1/(1 + R·τ) with R the total true rate of the chain; the recorded counts are Poisson draws
+with that mean and the live time is `gate − τ × recorded events`. Floor alpha, beta and reject
+share one chain; each reference chain is separate. The same record type (`head_gate_record`)
+enters the same core as on the target.
+
+**Stimulus and control commands** (`{"cmd": …}`; every reply has `ok`, `cmd`, `head_us`, `boot_count`, and `error` if refused):
+
+| Command | Fields |
+|---|---|
+| `rates` | `alpha`, `beta`, `ref`, `floor_reject`, `ref_reject`: s⁻¹, a number (all lanes) or an array of 4 (lane 0 = robot left). Optional `from_us` (head clock) or `from_mono_ns` (host CLOCK_MONOTONIC, real clock only); default now. Channels not named keep their rate. Up to 2048 pending changes. |
+| `fault` `kind:"mcu_reset"` | `ms` boot time, `cause` `"watchdog"`/`"brownout"`/pin. New boot id, UNBOUND, clock restarts at 0. |
+| `fault` `kind:"link_drop"` | `ms`: bytes in both directions are lost; the head is not reset. |
+| `fault` `kind:"pause_reads"` | `ms`: READ requests get no reply (buffer overflow → GAP afterwards). |
+| `fault` `kind:"corrupt_crc"` / `"delay_reply"` | `count` next replies with one flipped bit / delayed by `ms`. |
+| `fault` `kind:"null_channel"` / `"saturate"` | `lane` 0-3 (omit = all), `chain` `"floor"`/`"ref"` (omit = both), `on` (default true). |
+| `fault` `kind:"thermal"` | `what`: `sipm_open`, `heater_sensor_open`, `cutout`, `overtemp`; `on`. |
+| `fault` `kind:"lost_gates"` / `"source_fail"` | `count` gate records dropped inside the head / ARM answers FAULT. |
+| `analog` | `sipm_c` (number, array or null), `heater_c`, `board_c`, `supply_v`, `bias_ua`, `bumper_zones` (bit mask), `cutout_ok`. |
+| `swap` | `serial`, optional `variant`, `ms`: another head on the same cable (new identity, empty storage, new boot). |
+| `advance` | `us` (manual clock only). |
+| `stats` / `ping` / `quit` | `stats` returns identity, link state, gate count and the totals of drawn counts per lane and channel. |
+
+Python helper for tests and benches: `tests/headsim.py` (`Sim`, `Link`, `Link.handshake()` built on
+the baseline tools).
+
+## Known gaps
+
+- No hardware test of any kind. Analog scale factors in `port/stm32g474/hal_stm32.c` and the DAC
+  transfer function of the bias converter are design placeholders.
+- Monitor waveform capture is implemented in the protocol and the emulator but not in the STM32
+  port (`ENG_WAVE_ARM` answers FAULT there).
+- No per-channel front-end monitor exists on rev A, so `FLOOR_FAULT`/`REFERENCE_FAULT` can only
+  come from a disabled chain or (emulator) injection; `BIAS_OUT_OF_RANGE` is global.
+- The descriptor builder emits `geometry_basis: CONCEPT` only; an as-built descriptor needs
+  measured geometry storage and a provisioning tool.
+- Identity (serial) comes from the EUI EEPROM or the MCU UID; descriptor id, revisions and
+  geometry id are compile-time defaults (`rrh_identity_defaults`) until a factory record exists.
+- Threshold scans are a host procedure over `ENG_SETUP_SET` (every step is a new `setup_id` and
+  needs a new handshake); there is no on-head scan op.

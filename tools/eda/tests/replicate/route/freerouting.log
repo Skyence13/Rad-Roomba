@@ -1,0 +1,23 @@
+
+
+2026-11-26 04:31:31.336 INFO   Freerouting v2.6.0 (build-date: 2026-11-25)
+2026-11-26 04:31:31.671 INFO   Hardware: 4 CPU cores, 401 CPU score, 3072 MB RAM
+2026-11-26 04:31:31.678 WARN   GUI is disabled and you don't have a console available, so the only feedback from Freerouting is in the log.
+2026-11-26 04:31:32.848 WARN   The '-mp' command-line flag is deprecated and will be removed in a future release; use '--router.autorouter.max_passes' instead.
+2026-11-26 04:31:32.848 WARN   The '-mt' command-line flag is deprecated and will be removed in a future release; use '--router.max_threads=<n>' instead.
+2026-11-26 04:31:33.140 INFO   [EEC1B9\072BB8] Loading board file 'REPL-TEST.dsn'...
+2026-11-26 04:31:33.245 INFO   [EEC1B9\072BB8] Job 'EEC1B9\072BB8' started at 2026-11-26T04:31:33.244946292Z.
+2026-11-26 04:31:33.337 INFO   [EEC1B9\072BB8] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=4.
+2026-11-26 04:31:33.379 INFO   [EEC1B9\072BB8] Auto-routing stage started on board 'a9ee0f111292b2700ed83003b3314807' with baseline score 0.00 for 18 unrouted items.
+2026-11-26 04:31:33.931 INFO   [EEC1B9\072BB8] Auto-routing pass #1 on board 'a9ee0f111292b2700ed83003b3314807' was completed in 0.54 seconds with score 1000.00 (0 unrouted and 0 violations).
+2026-11-26 04:31:33.952 INFO   [EEC1B9\072BB8] Auto-routing pass #2 on board '1a970decd47a446f7f68bbd4d979af27' was completed in 0.00 seconds with score 1000.00 (0 unrouted and 0 violations).
+2026-11-26 04:31:33.984 INFO   [EEC1B9\072BB8] Auto-routing stage completed: started with 18 unrouted nets, completed in 0.64 seconds, final score: 1000.00 (0 unrouted and 0 violations), using 0.00 total CPU seconds, 0.00 GB total allocated, and 0.0 MB peak heap usage.
+2026-11-26 04:31:34.059 INFO   [EEC1B9\072BB8] Optimization stage started on board '1a970decd47a446f7f68bbd4d979af27'. Baseline router score: 1000.00, optimizer score: 663.74, incomplete connections: 0, clearance violations: 0.
+2026-11-26 04:31:34.556 INFO   [EEC1B9\072BB8] Optimizer pass #1 on board '53e5955f0df1bfb8ff4603fcc7b0de4b' was completed in 0.48 seconds with the score of 664.32 (0 unrouted and 0 violations).
+2026-11-26 04:31:34.579 INFO   [EEC1B9\072BB8] Optimizer pass #1: optimizer score 663.74 -> 664.32 (IMPROVED, 0.0883%), router score: 1000.00, incomplete connections: 0, clearance violations: 0.
+2026-11-26 04:31:34.579 INFO   [EEC1B9\072BB8] Stopping optimizer because the improvement in this pass (0.0883%) is below the threshold (2.50%).
+2026-11-26 04:31:34.652 INFO   [EEC1B9\072BB8] Step slide: 2 of 30 tried moves kept in 3 passes, trace length 103.32 -> 103.28 mm, bends 26 -> 26, vias 2 -> 2, incomplete connections 0 -> 0, clearance violations 0 -> 0, in 0.07 seconds using 0.05 CPU seconds.
+2026-11-26 04:31:34.660 INFO   [EEC1B9\072BB8] Optimization stage completed:. Baseline router score: 1000.00, baseline optimizer score: 663.74, final router score: 1000.00, final optimizer score: 664.80, completed in 0.60 seconds, using 0.69 total CPU seconds, 0.23 GB total allocated, and 75.5 MB peak heap usage.
+2026-11-26 04:31:34.670 INFO   [EEC1B9\072BB8] Job 'EEC1B9\072BB8' finished with state: COMPLETED (elapsed: 1.42 seconds, finished at UTC: 2026-11-26T04:31:34.665789931Z).
+2026-11-26 04:31:34.707 INFO   Saving output file '/home/user/Rad-Roomba/tools/eda/tests/replicate/route/REPL-TEST.ses' (SES)...
+2026-11-26 04:31:34.709 INFO   Successfully saved output file '/home/user/Rad-Roomba/tools/eda/tests/replicate/route/REPL-TEST.ses' (4933 bytes).

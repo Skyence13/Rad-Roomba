@@ -1,11 +1,10 @@
-# rrkicad tests
+# rrkicad generator tests (not product designs)
 
-`stress/board.py` — synthetic 4-layer 100 x 80 mm board with 150 parts (STM32G474 LQFP-64,
-STM32F103 QFN-48 0.5 mm, 20 SOT-23-5 opamps, SOIC-8 multi-unit opamp, SOT-223 LDO, 110+ 0402/0603/0805
-passives, 2x10 headers, JST GH, screw terminal, local symbol + footprint, DNP part, cut-out, keep-out,
-pre-routed track, split power plane).  146 parts are auto-arranged.  Not a product design.
+| dir | what | run |
+|---|---|---|
+| `stress/` | synthetic 4-layer 100 x 80 mm board, 150 parts, 146 auto-arranged: LQFP-64, QFN-48 0.5 mm, 20 SOT-23-5, multi-unit SOIC-8, local symbol + footprint, DNP, cut-out, keep-out, pre-route, split power plane | `python3 tools/eda/rrkicad.py build tools/eda/tests/stress/board.py` (5-10 min) |
+| `replicate/` | two identical lanes via `board.replicate()`, plus `waive()` / `severity()` | `python3 tools/eda/rrkicad.py build tools/eda/tests/replicate/board.py` (15 s) |
 
-    python3 tools/eda/rrkicad.py build tools/eda/tests/stress/board.py
-
-Results and measured timings: `stress/reports/summary.json` and the "Stress test" section of
-`tools/eda/README.md`.
+Results: `<dir>/reports/summary.json`; measured timings and limits: "Stress test and practical limits"
+in `tools/eda/README.md`. The stress board is expected to FAIL with a few unconnected items unless
+its placement is tuned by hand - that is the honest result of fully automatic placement + routing.

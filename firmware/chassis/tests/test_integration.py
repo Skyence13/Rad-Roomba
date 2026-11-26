@@ -289,7 +289,9 @@ class TestMotion(Base):
         self.wait_mode("ARMED_IDLE")
         # charger cover opened while armed: SERVICE_CHARGE, latch gone, head power forced off, no motion
         self.env.set(chg_cover_open=True)
-        st = self.wait_mode("SERVICE_CHARGE", 1.0)
+        self.wait_mode("SERVICE_CHARGE", 1.0)
+        self.idle(0.1)  # latch relay release time
+        st = self.ok("STATE")
         self.assertEqual((st["hw_latch"], st["chain"]["CHG_COVER"], st["chain"]["ARM_PERMIT"]), (False, False, False))
         self.assertIn("CHARGER", st["hw_inhibit_reasons"])
         self.assertFalse(self.env.latest()["head_pwr"])

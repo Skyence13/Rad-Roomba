@@ -37,7 +37,7 @@ typedef enum {
 rrh_reset_cause_t rrh_hal_reset_cause(void);
 void rrh_hal_watchdog_kick(void);
 
-/* ---- acquisition source (event-logic FPGA or emulator) ------------------------------------ */
+/* ---- acquisition source (event capture: MCU timers + latches, or the emulator) ----------------- */
 #define RRH_GF_FLOOR_SATURATED 0x01u   /* contract flag */
 #define RRH_GF_REF_SATURATED 0x02u     /* contract flag */
 #define RRH_GF_BIAS_OUT_OF_RANGE 0x04u /* contract flag */
@@ -58,16 +58,16 @@ typedef struct {
 
 typedef struct {
     uint32_t sequence;        /* gate index since rrh_hal_acq_start(), starts at 0 */
-    uint64_t gate_start_tick; /* event-logic tick counter at the first tick of the gate */
+    uint64_t gate_start_tick; /* capture-timer tick at the first tick of the gate */
     uint32_t gate_ticks;
     uint32_t tick_hz;
     uint32_t heater_on_ticks;
     bool heater_transition_in_gate;
-    bool source_fault; /* port-detected: record checksum error, FIFO overrun, config CRC changed */
+    bool source_fault; /* port-detected fault of the capture hardware for this gate */
     rrh_gate_lane_t lane[RRH_LANES];
 } rrh_gate_record_t;
 
-/* Relation between the event-logic tick counter and the head clock: tick `tick` happened at
+/* Relation between the capture-timer tick counter and the head clock: tick `tick` happened at
  * head-clock time `us`. Both run from the same TCXO, so one pair per ARM is exact. */
 typedef struct {
     uint64_t tick;
@@ -104,8 +104,6 @@ typedef struct {
 bool rrh_hal_frontend_apply(const rrh_frontend_cfg_t *cfg);
 /* Bias converter: set-point in millivolts and enable. */
 void rrh_hal_bias_set(uint32_t millivolts, bool enable);
-/* Identifier of the loaded event-logic bitstream (short printable string, "none" if absent). */
-const char *rrh_hal_bitstream_id(void);
 
 /* ---- housekeeping inputs ------------------------------------------------------------------ */
 #define RRH_TEMP_INVALID INT32_MIN
@@ -127,8 +125,8 @@ typedef struct {
 void rrh_hal_analog_read(rrh_analog_t *out);
 
 /* ---- heater ------------------------------------------------------------------------------- */
-/* Requested state; the port (event logic) applies it on the next gate boundary while gates
- * run, immediately otherwise. */
+/* Requested state; the port applies it on the next gate boundary while gates run,
+ * immediately otherwise. */
 void rrh_hal_heater_request(bool on);
 
 /* ---- non-volatile storage ----------------------------------------------------------------- */

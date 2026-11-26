@@ -3,7 +3,8 @@
 # DEC-xxx entry in planning/decisions.csv and a line in docs/architecture/CHANGELOG.md.
 # Human-readable rationale: docs/architecture/SYSTEM_ARCHITECTURE.md
 # Units: SI (m, s, rad, V, A, W, kg) unless a key name carries another unit suffix (_mm, _us, _ms, _c).
-contract_version: "0.4.0-draft3"   # draft3: mechanical CCR-04..07 applied, Rev E body proposal recorded as pending owner decision
+contract_version: "0.4.0-draft4"   # draft4: Rev E body adopted (DEC-039), 12 Ah pack (DEC-040), head mount under trade study (DEC-041)
+# previous:   # draft3: mechanical CCR-04..07 applied, Rev E body proposal recorded as pending owner decision
 # previous:   # draft2: FPGA removed (DEC-037), survey methods added (DEC-038)
 baseline: {system_design: "0.3", mechanical: "Rev D", head_protocol: "2.0", baseline_commit: "38d101051d32b47e4b21657e2293ec92c63de9c4"}
 next_revision: {system_design: "0.4", mechanical: "Rev E", head_protocol: "2.0 (unchanged envelope; additive descriptor fields only)", chassis_protocol: "1.0"}
@@ -18,9 +19,10 @@ frames:
   axle_height_mm: 52.0
   wheel:
     nominal_diameter_mm: 104.0
-    track_mm: 220.0            # tyre centre to tyre centre (wheels at y = +/-110)
+    track_mm: 270.0            # Rev E body (DEC-039); Rev D was 220
     encoder_counts_per_wheel_rev: 9600   # Pololu #2828, quadrature edges at gearbox output
-  caster: {swivel_x_mm: -100.0, wheel_x_mm: -116.0, y_mm: 0.0}
+  caster: {swivel_x_mm: -195.0, wheel_x_mm: -204.0, y_mm: 0.0}   # Rev E body (DEC-039); Rev D was -100 / -116
+  head_mount_review: "DEC-041: Morgan opened the neck/receiver for redesign on 2026-11-26. A mount trade study in mechanical/common may change the receiver type and shorten the axle-to-row distance. Until it closes, the values below stand; software and firmware must take head geometry from mechanical/common/frames.yaml and the head descriptor, never from literals."
   head_mount:            # centre of the forward bulkhead mating interface (Rev D datum, preserved)
     xyz_mm: [138.5, 0.0, 32.0]
     rpy_rad: [0, 0, 0]
@@ -30,8 +32,8 @@ frames:
     y: [-175.0, 175.0]
     z: [5.0, 50.0]               # z min 5.0 covers the 5 mm rail-projection trial; z max is a ceiling, not a target
   head_design_top_z_mm: 45.0     # stack-up in mechanical/common/board_envelopes.yaml (CCR-05)
-  body_rev_e_proposal:           # PENDING OWNER DECISION (mechanical D-1/D-2, CCR-01..03). Not yet adopted.
-    status: "proposed 2026-11-26; the Rev D body cannot contain the selected hardware (mechanical/common/out/layout_report.md section 3)"
+  body_rev_e:                    # ADOPTED: accepted by Morgan 2026-11-26 (DEC-039), including the bridge grip and aft LiDAR
+    status: "adopted; the Rev D body cannot contain the selected hardware (mechanical/common/out/layout_report.md section 3). Tail height to grow for the 12 Ah pack (DEC-040); values below are the 9 Ah layout until mechanical/common is rebuilt"
     scale_of_rev_d_section_law: {length: 1.40, width: 1.30, height: 1.30}
     shell_envelope_mm: {x: [-271.9, 102.4], y: [-146.4, 146.4], z: [32.9, 143.0]}
     overall_mm: [537, 350, 216]     # with head, grip bar top z 175, LiDAR top z 216
@@ -84,7 +86,7 @@ timing:
 
 # ---------------------------------------------------------------- power
 power:
-  battery: {chemistry: LiFePO4, cells_series: 4, nominal_v: 12.8, range_v: [10.0, 14.6], capacity_ah_trial: 8.0, alt_capacity_ah: 12.0, layout_candidate: "Power-Sonic PSL-SC-1290, 9 Ah, 151 x 65 x 94/99 mm, 1.0 kg (nearest verified catalogue pack, CCR-07); the 12 Ah PSL-SC-12120 needs 34 mm more bay height"}
+  battery: {chemistry: LiFePO4, cells_series: 4, nominal_v: 12.8, range_v: [10.0, 14.6], capacity_ah_baseline: 12.0, capacity_ah_trial_0_3: 8.0, baseline_pack: "Power-Sonic PSL-SC-12120, 12 Ah, 151 x 99 x 95/101 mm, 1.65 kg (accepted by Morgan 2026-11-26, DEC-040)", earlier_layout_candidate: "Power-Sonic PSL-SC-1290, 9 Ah, 151 x 65 x 94/99 mm, 1.0 kg (nearest verified catalogue pack, CCR-07); the 12 Ah PSL-SC-12120 needs 34 mm more bay height"}
   rails:
     VBAT_RAW:   {desc: "Pack coupler to board, before main protection"}
     VBAT_SW:    {desc: "After main ideal-diode/eFuse and master switch; feeds all branches"}

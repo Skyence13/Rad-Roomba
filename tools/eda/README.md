@@ -110,6 +110,10 @@ g.L("L1", "10u", "SW", "VOUT", pkg="0805", mfr="...", mpn="...")
 g.LED("D1", "green", "LED_A", "GND", pkg="0603", mfr="...", mpn="...")       # anode, cathode
 # R/C/L/FB/LED accept every part() keyword (at=, near=, dnp=, ...).  pkg: 0201 0402 0603 0805 1206 1210 2010 2512
 
+# identical blocks: place (or auto-arrange) one block, copy its placement at an offset
+# board.replicate((lane1_group, lane2_group), dx=80.0, dy=0.0)     # groups with the same parts in the same order
+# board.replicate({"U1": "U101", "C1": "C101"}, dx=80.0)          # or an explicit {source_ref: destination_ref} map
+
 # auto-arrange hints for parts without at=:
 #   near="U1" | near="U1.16" (pad 16 of U1)   edge="left|right|top|bottom"   side="B"   rot=90 (fixed rotation)
 # rail-to-rail capacitors without near= are spread over the supply pins of the ICs in their group.
@@ -231,5 +235,54 @@ optimiser is multi-threaded) — which is why the SES is cached.
   defaults printed on the fab drawing; adjust with `board.fab_note()` / in `pcb.py`.
 * See `tools/eda/tests/stress/` for the scaling test and its measured limits (below).
 
-## Scaling (measured, 4 CPU cores)
-See the "Stress test" section at the end of this file.
+## Stress test and practical limits
+
+`tools/eda/tests/stress/board.py`: synthetic 4-layer 100 x 80 mm board, 150 parts
+(LQFP-64, QFN-48 0.5 mm, 20 SOT-23-5, SOIC-8 multi-unit, SOT-223, 119 passives, 2x10
+headers, JST GH, screw terminal, local symbol + footprint, DNP, cut-out, keep-out,
+pre-route, GND plane + split power plane), 146 parts auto-arranged, 377 connections.
+Measured on 4 cores / 16 GB (KiCad 9.0.9, Freerouting 2.6.0):
+
+| step | RR-TOF-A (10 parts, 2 layers) | STRESS-150 (150 parts, 4 layers) |
+|---|---|---|
+| schematic + netlist check + PCB + auto-arrange + DSN | ~5 s | ~20 s |
+| Freerouting | ~7 s (16 passes, complete) | @@STRESS_ROUTE@@ |
+| SES import, fill, ERC, DRC, all outputs | ~8 s | ~25 s |
+| result | ERC 0, DRC 0, unconnected 0, parity 0 | @@STRESS_RESULT@@ |
+
+What the stress test showed, and what was changed because of it:
+* Schematic: 7 A3 sheets, no label/field collisions, ERC 0 errors / 0 warnings; multi-unit
+  and local symbols work; generation time is negligible.
+* Auto-arrange: first version piled every part around the MCU (courtyard overlap free
+  but unroutable). Now each group gets a board region, parts are spread to ~35 % region
+  fill (`spread`), ICs keep a halo, decoupling capacitors are assigned to supply pins.
+  Result on the stress board: 0 courtyard overlaps, 0 DRC errors before routing.
+* Freerouting: the autorouter pass is single-threaded (threads only help the optimiser).
+  Its SMD fan-out stage gave every pin an escape via (472 vias) and, after stagnating, it
+  silently restarted with another strategy and ran past 25 min. Defaults were changed:
+  fan-out stage only on request for dense plane boards (`board.route(fanout=...)`),
+  `timeout=` is passed to Freerouting as its own job timeout with a hard kill 3 min later,
+  and for boards of this size use `optimizer=False` and a pass limit (25-40).
+* Completion: with auto-arranged placement the router plateaus after ~18 passes with a
+  few connections open (see table). The flow reports them and fails the build; it does not
+  hide them. Closing the last connections needs engineering input: explicit placement
+  of the ICs/connectors, `near=` for decoupling, a pre-routed via or track, or more room.
+
+Practical guidance (measured up to 150 parts; anything larger is an estimate):
+* <= 50 parts, 2 layers: fully automatic builds in well under a minute.
+* ~150 parts, 4 layers, <= 2 fine-pitch ICs: 5-10 min per routing run; expect to iterate
+  on placement a few times to reach zero unconnected. Keep `route/<name>.ses`.
+* ~600 parts (e.g. a 326 x 96 mm 4-layer board with four identical lanes): not measured.
+  Generation and checks scale linearly (expect 1-2 min); Freerouting does not (expect
+  tens of minutes per run and incomplete routing with pure auto-arrange). Recommended:
+  place one lane explicitly, `board.replicate()` it to the others, pre-route the
+  sensitive analogue nets (`board.track`), give high-current nets their own net class
+  and/or polygons (`board.zone(net, layers, polygon)`), raise the Java heap
+  (`RR_FREEROUTING_JAVA_OPTS=-Xmx8g`), and set `passes`/`timeout`. The PCB page grows
+  automatically (A4 -> A1); the schematic adds sheets per group automatically.
+* High-current nets: net-class widths are honoured by the router, but very wide tracks
+  into fine-pitch pads will fail to route; use zones or pre-routes for those. Not tested
+  beyond 0.4 mm classes.
+* Only one build per board directory at a time (a `.rrkicad.lock` file enforces it).
+* Other small generator tests: `tools/eda/tests/replicate/` (placement replication,
+  `waive`, `severity`).

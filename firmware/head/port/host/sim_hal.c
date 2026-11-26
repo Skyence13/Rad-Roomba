@@ -101,12 +101,13 @@ void sim_init(sim_t *s, uint64_t seed, bool manual)
     }
     s->manual = manual;
     s->turnaround_us = 150u;
-    s->tau_floor_us = 6.0; /* FLOOR_WINDOW + FLOOR_HOLDOFF reset values = 288 ticks */
-    s->tau_ref_us = 3.0;   /* REF_WINDOW + REF_HOLDOFF reset values = 144 ticks */
+    /* Dead time per recorded event of the MCU event capture: 4 us acceptance window + wait for
+     * the next 100 kHz service + clear; about 9.7 us in the evtcap rate-sweep test. */
+    s->tau_floor_us = 10.0;
+    s->tau_ref_us = 10.0;
     s->arm_delay_us = 2000u;
     s->tick_offset = 987654321u;
     s->ambient_c = 20.0;
-    s->bitstream_id = "sim-evt-1.0.0";
     s->reset_cause = RRH_RESET_POWER_ON;
     for (uint32_t l = 0u; l < RRH_LANES; l++) {
         s->analog.sipm_mc[l] = 20000;
@@ -384,11 +385,6 @@ void rrh_hal_bias_set(uint32_t millivolts, bool enable)
 {
     g_sim.bias_set_mv = millivolts;
     g_sim.bias_enable = enable;
-}
-
-const char *rrh_hal_bitstream_id(void)
-{
-    return g_sim.bitstream_id;
 }
 
 void rrh_hal_analog_read(rrh_analog_t *out)

@@ -71,6 +71,11 @@ typedef struct {
     uint32_t count[RRH_EVT_CHAINS][3]; /* floor: alpha, beta, reject; reference: count, reject, - */
     uint64_t busy[RRH_EVT_CHAINS];
     uint8_t saturated;
+    /* events cleared a few ticks AFTER the boundary by a service that began before it: they
+     * belong to the next gate and wait here until the current one has been closed */
+    uint32_t next_count[RRH_EVT_CHAINS][3];
+    uint64_t next_busy[RRH_EVT_CHAINS];
+    uint8_t next_saturated;
     bool heater_state, heater_prev, heater_req;
     /* completed gates */
     rrh_gate_record_t fifo[RRH_EVT_FIFO];

@@ -155,12 +155,12 @@ void rrh_control_heater_off(rrh_core_t *c)
 
 /* Called once per completed gate while armed: decide the heater state for the following gates.
  * The port applies a change on a gate boundary only, so each gate is entirely on or off and the
- * gate that contains the (slew-limited) edge is marked by the event logic. */
+ * gate that contains the (slew-limited) edge is marked in its record. */
 void rrh_control_on_gate(rrh_core_t *c, const rrh_gate_record_t *rec)
 {
     const uint16_t heater_faults = RRH_H_HEATER_SENSOR | RRH_H_HEATER_CUTOUT | RRH_H_HEATER_OVERTEMP | RRH_H_HEATER_STUCK;
 
-    /* Commanded off for at least two whole gates but the event logic still saw it on. */
+    /* Commanded off for at least two whole gates but the gate record still shows it on. */
     if (!c->heater_on && (c->heater_dwell >= 2u) && (rec->heater_on_ticks > 0u)) {
         c->health |= RRH_H_HEATER_STUCK;
     }

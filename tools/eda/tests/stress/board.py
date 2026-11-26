@@ -24,13 +24,14 @@ board.zone("+3V3", ["In2.Cu"], connect="solid")
 board.zone("+5V", ["In2.Cu"], polygon=[(0, 0), (30, 0), (30, 30), (0, 30)], priority=1, connect="solid")
 board.zone("GND", ["F.Cu", "B.Cu"])
 board.text("{name} rev {rev} {date}", 50, 2.0, size=1.2)
-board.route(passes=25, timeout=900, fanout=False, optimizer=False)
+board.route(passes=40, timeout=1200, fanout=False, optimizer=False)
+board.autoplace_options(clearance=0.5, ic_halo=3.0)
 
 # ------------------------------------------------------------------- power
 pw = board.group("power", "Power input and 3V3 regulator", notes="Screw terminal 5 V in, LDO to 3V3.")
 pw.part("J1", "Connector:Screw_Terminal_01x02", "5V IN",
         "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2_1x02_P5.00mm_Horizontal",
-        mfr="Phoenix Contact", mpn="1715721", pins={"1": "+5V", "2": "GND"}, at=(10, 20, 270))
+        mfr="Phoenix Contact", mpn="1715721", pins={"1": "+5V", "2": "GND"}, at=(10, 20, 270), height=10.0)
 pw.part("U3", "Regulator_Linear:AMS1117-3.3", "AMS1117-3.3", mfr="AMS", mpn="AMS1117-3.3",
         pins={"VI": "+5V", "GND": "GND", "VO": "+3V3"}, at=(28, 12, 0))
 pw.C("C1", "10u", "+5V", "GND", pkg="0805", mfr="Murata", mpn="GRM21BR61C106KE15L", near="U3.3")

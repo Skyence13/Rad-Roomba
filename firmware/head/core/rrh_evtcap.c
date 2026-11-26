@@ -19,6 +19,9 @@ static void clear_accumulators(rrh_evtcap_t *e)
     memset(e->count, 0, sizeof e->count);
     memset(e->busy, 0, sizeof e->busy);
     e->saturated = 0u;
+    memset(e->next_count, 0, sizeof e->next_count);
+    memset(e->next_busy, 0, sizeof e->next_busy);
+    e->next_saturated = 0u;
 }
 
 bool rrh_evtcap_start(rrh_evtcap_t *e, uint64_t first_gate_tick, uint32_t gate_ticks)
@@ -92,7 +95,7 @@ static uint32_t live_of(const rrh_evtcap_t *e, uint32_t chain)
 static void close_gate(rrh_evtcap_t *e)
 {
     for (uint32_t ch = 0u; ch < RRH_EVT_CHAINS; ch++) {
-        if (((e->pending >> ch) & 1u) != 0u) {
+        if ((((uint32_t)e->pending >> ch) & 1u) != 0u) {
             const uint64_t from = (e->start[ch] > e->g0) ? e->start[ch] : e->g0;
             if (from < e->g1) {
                 e->busy[ch] += e->g1 - from;
@@ -122,24 +125,30 @@ static void close_gate(rrh_evtcap_t *e)
             l->ref_counts = e->count[rc][0];
             l->ref_reject_counts = e->count[rc][1];
             l->ref_live_ticks = live_of(e, rc);
-            if (((e->saturated >> fc) & 1u) != 0u) {
+            if ((((uint32_t)e->saturated >> fc) & 1u) != 0u) {
                 l->flags |= RRH_GF_FLOOR_SATURATED;
             }
-            if (((e->saturated >> rc) & 1u) != 0u) {
+            if ((((uint32_t)e->saturated >> rc) & 1u) != 0u) {
                 l->flags |= RRH_GF_REF_SATURATED;
             }
-            if (((e->chain_enable >> fc) & 1u) == 0u) {
+            if ((((uint32_t)e->chain_enable >> fc) & 1u) == 0u) {
                 l->flags |= RRH_GF_FLOOR_INVALID;
                 l->floor_live_ticks = 0u; /* a disabled chain never reports a valid zero */
             }
-            if (((e->chain_enable >> rc) & 1u) == 0u) {
+            if ((((uint32_t)e->chain_enable >> rc) & 1u) == 0u) {
                 l->flags |= RRH_GF_REF_INVALID;
                 l->ref_live_ticks = 0u;
             }
         }
         e->fifo_head = next;
     }
-    clear_accumulators(e);
+    /* The next gate starts with whatever was already booked for it. */
+    memcpy(e->count, e->next_count, sizeof e->count);
+    memcpy(e->busy, e->next_busy, sizeof e->busy);
+    e->saturated = e->next_saturated;
+    memset(e->next_count, 0, sizeof e->next_count);
+    memset(e->next_busy, 0, sizeof e->next_busy);
+    e->next_saturated = 0u;
     e->heater_prev = e->heater_state;
     e->g0 = e->g1;
     e->g1 += e->gate_ticks;
@@ -157,7 +166,7 @@ void rrh_evtcap_service(rrh_evtcap_t *e, uint64_t now, const rrh_evt_in_t *in)
     /* 1. Adopt events whose BUSY was captured since the last service. */
     const uint8_t fresh = (uint8_t)(in->busy & (uint8_t)~e->pending);
     for (uint32_t ch = 0u; (fresh != 0u) && (ch < RRH_EVT_CHAINS); ch++) {
-        if (((fresh >> ch) & 1u) != 0u) {
+        if ((((uint32_t)fresh >> ch) & 1u) != 0u) {
             uint64_t s = in->start_tick[ch];
             if (s < e->last_clear[ch]) {
                 s = e->last_clear[ch]; /* a capture cannot precede the previous clear */
@@ -176,7 +185,7 @@ void rrh_evtcap_service(rrh_evtcap_t *e, uint64_t now, const rrh_evt_in_t *in)
     /* 3. Blind chains: comparator high with no BUSY means the latch cannot see an edge. */
     const uint8_t idle_high = (uint8_t)(~in->lld_low & ~e->pending & ~in->busy);
     for (uint32_t ch = 0u; ch < RRH_EVT_CHAINS; ch++) {
-        if (((idle_high >> ch) & 1u) != 0u) {
+        if ((((uint32_t)idle_high >> ch) & 1u) != 0u) {
             if (e->blind_count[ch] < RRH_EVT_BLIND_SERVICES) {
                 e->blind_count[ch]++;
             } else {
@@ -211,25 +220,44 @@ void rrh_evtcap_service(rrh_evtcap_t *e, uint64_t now, const rrh_evt_in_t *in)
         if (clear < now) {
             clear = now;
         }
-        /* The boundary may fall between `now` and the clear: the event then belongs to the
-         * next gate and its busy interval is split at the boundary. */
-        while (e->running && (clear >= e->g1)) {
-            close_gate(e);
-        }
         e->pending &= (uint8_t)~bit;
         e->last_clear[ch] = clear;
-        if (e->running && (clear >= e->g0)) {
-            const uint64_t from = (e->start[ch] > e->g0) ? e->start[ch] : e->g0;
+        if (!e->running || (clear < e->g0)) {
+            continue; /* not recording (yet): the chain is kept clear, nothing is counted */
+        }
+        const uint64_t from = (e->start[ch] > e->g0) ? e->start[ch] : e->g0;
+        const bool counted = !forced && ((e->chain_enable & bit) != 0u);
+        if (clear < e->g1) {
             e->busy[ch] += clear - from;
             if (forced) {
                 e->saturated |= bit; /* over-long BUSY: not counted, the gate is flagged */
-                e->total_forced++;
-            } else if ((e->chain_enable & bit) != 0u) {
+            } else if (counted) {
                 e->count[ch][cls]++;
-                e->total_events++;
             } else {
                 /* disabled chain: cleared, never counted */
             }
+        } else {
+            /* The boundary g1 lies between this service's `now` and the clear. The gate cannot be
+             * closed yet (other chains may still start an event before g1), so the event is
+             * split here: busy up to g1 stays in this gate, the rest and the count go to the next. */
+            if (from < e->g1) {
+                e->busy[ch] += e->g1 - from;
+            }
+            e->next_busy[ch] += clear - ((from > e->g1) ? from : e->g1);
+            if (forced) {
+                e->next_saturated |= bit;
+            } else if (counted) {
+                e->next_count[ch][cls]++;
+            } else {
+                /* disabled chain */
+            }
+        }
+        if (forced) {
+            e->total_forced++;
+        } else if (counted) {
+            e->total_events++;
+        } else {
+            /* nothing */
         }
     }
 }

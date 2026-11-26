@@ -174,14 +174,14 @@ static void test_single_events_of_each_class(void)
     rrh_gate_record_t r;
     setup(1000u * US);
     const uint64_t t0 = 2000u * US;
+    run_services(0u, t0);                     /* idle until just before the events */
     pulse(0u, t0 + 7u, 0u, 300u);            /* floor 0: alpha */
     pulse(1u, t0 + 300u, 1u, 100u);          /* floor 1: beta */
     pulse(2u, t0 + 900u, 2u, 100u);          /* floor 2: reject */
     pulse(4u, t0 + 50u, 0u, 100u);           /* ref 0: count */
     pulse(5u, t0 + 1300u, 1u, 100u);         /* ref 1: reject */
-    run_services(0u, 1000u * US + GATE + SERVICE);
+    run_services(t0 + SERVICE, 1000u * US + GATE + SERVICE);
     CHECK(rrh_evtcap_pop(&ec, &r));
-    CHECK(!rrh_evtcap_pop(&ec, &r) || false);
     check_record(&r, 0u);
     CHECK(r.sequence == 0u);
     CHECK((r.lane[0].alpha_counts == 1u) && (r.lane[0].beta_counts == 0u) && (r.lane[0].floor_reject_counts == 0u));
@@ -243,16 +243,18 @@ static void test_event_straddling_a_gate_boundary(void)
 {
     rrh_gate_record_t a, b;
     setup(0u);
-    /* (1) starts 3 us before the boundary; classified by the first service after it */
-    const uint64_t s1 = GATE - 3u * US;
-    pulse(1u, s1, 1u, 100u);
-    /* (2) on another chain: ready at the last service BEFORE the boundary, but the clear itself
-     *     lands after it (clear latency) -> the boundary is crossed inside one service call */
+    run_services(0u, GATE - 2u * SERVICE);
+    /* (1) reference chain 1: ready at the last service BEFORE the boundary, but the clear itself
+     *     lands after it (exaggerated clear latency): the boundary is crossed inside one service */
     const uint64_t s2 = GATE - SERVICE - WINDOW - 5u;
     pulse(5u, s2, 0u, 100u);
-    g_clear_latency = SERVICE + 300u; /* exaggerated latency for this case */
-    run_services(GATE - 3u * SERVICE, GATE - SERVICE);
+    g_clear_latency = SERVICE + 300u;
+    service_at(GATE - SERVICE);
     g_clear_latency = 40u;
+    /* (2) floor chain 1: starts 3 us before the boundary, window still open at the boundary
+     *     service, classified by the next one */
+    const uint64_t s1 = GATE - 3u * US;
+    pulse(1u, s1, 1u, 100u);
     run_services(GATE, 2u * GATE + SERVICE);
     CHECK(rrh_evtcap_pop(&ec, &a) && rrh_evtcap_pop(&ec, &b));
     check_record(&a, 0u);
@@ -262,7 +264,7 @@ static void test_event_straddling_a_gate_boundary(void)
     CHECK((a.lane[1].ref_counts == 0u) && (b.lane[1].ref_counts == 1u));
     /* busy time split exactly at the boundary */
     CHECK(GATE - a.lane[1].floor_live_ticks == 3u * US);
-    CHECK(GATE - b.lane[1].floor_live_ticks == 40u + 20u);          /* boundary .. clear (latency 40 + 20*chain 1) */
+    CHECK(GATE - b.lane[1].floor_live_ticks == SERVICE + 40u + 20u); /* boundary .. clear at the second service */
     CHECK(GATE - a.lane[1].ref_live_ticks == GATE - s2);
     CHECK(GATE - b.lane[1].ref_live_ticks == (GATE - SERVICE + SERVICE + 300u + 100u) - GATE);
     CHECK((a.sequence == 0u) && (b.sequence == 1u));
@@ -287,6 +289,8 @@ static void poisson_run(double rate, double seconds, uint32_t jitter, bool hiccu
     const double mean_gap = (double)TICK_HZ / rate;
     const uint32_t gates = (uint32_t)(seconds * 10.0);
     rrh_gate_record_t r;
+    static rrh_gate_record_t prev;
+    bool have_prev = false;
     setup(SERVICE * 5u);
     for (uint32_t ch = 0; ch < RRH_EVT_CHAINS; ch++) {
         next[ch] = (uint64_t)(-log(rnd()) * mean_gap);
@@ -322,9 +326,14 @@ static void poisson_run(double rate, double seconds, uint32_t jitter, bool hiccu
         service_at(ts);
         while (rrh_evtcap_pop(&ec, &r)) {
             CHECK(r.sequence == popped);
-            if (popped < MAX_GATES) {
-                check_record(&r, (uint32_t)popped); /* exact agreement with the hardware model */
+            /* Exact agreement with the hardware model. A record is compared one gate later, when
+             * every event that was still open at its closing boundary has been cleared and booked
+             * by the model as well. */
+            if (have_prev && (prev.sequence < MAX_GATES)) {
+                check_record(&prev, prev.sequence);
             }
+            prev = r;
+            have_prev = true;
             for (uint32_t l = 0; l < RRH_LANES; l++) {
                 CHECK(r.lane[l].flags == 0u);
                 counts += (uint64_t)r.lane[l].alpha_counts + r.lane[l].beta_counts + r.lane[l].floor_reject_counts +

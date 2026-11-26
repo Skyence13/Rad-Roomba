@@ -510,7 +510,7 @@ static void usage(void)
           "  --gate-range MIN,MAX   accepted ARM span in microseconds (default 100000,100000)\n"
           "  --descriptor-file F    serve these exact descriptor bytes (baseline replica)\n"
           "  --descriptor-id S --setup-id S --firmware S --boot-id UUID   identifiers for the replica\n"
-          "  --tau-floor-us X --tau-ref-us X   dead time per recorded event (default 6, 3)\n"
+          "  --tau-floor-us X --tau-ref-us X   dead time per recorded event (default 10, 10)\n"
           "  --truth-log FILE       append one JSON line per generated gate (drawn counts)\n"
           "  --quiet\n",
           stderr);

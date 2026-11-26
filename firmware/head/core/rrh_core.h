@@ -63,7 +63,7 @@ typedef enum {
 } rrh_link_state_t;
 
 /* ---- latched health bits (cleared only by FAULT_CLEAR with the cause gone, or by a reset) --- */
-#define RRH_H_SOURCE 0x0001u          /* event logic not configured / link or record fault */
+#define RRH_H_SOURCE 0x0001u          /* event capture or front-end configuration fault */
 #define RRH_H_GATE_TIMING 0x0002u     /* gate length or contiguity violated */
 #define RRH_H_RECORD_LOST 0x0004u     /* one or more gate records were lost */
 #define RRH_H_GATE_TIMEOUT 0x0008u    /* armed but no gate arrived in time */
