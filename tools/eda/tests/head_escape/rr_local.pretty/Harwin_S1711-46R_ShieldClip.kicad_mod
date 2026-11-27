@@ -1,0 +1,95 @@
+(footprint "Harwin_S1711-46R_ShieldClip"
+	(version 20241229)
+	(generator "rrkicad")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(descr "Harwin S1711-46R SMT shield-can clip, single pad 4.2 x 1.6 mm, centred on the can wall (geometry FROM MEMORY - verify against the Harwin drawing)")
+	(property "Reference" "REF**"
+		(at 0 -1.85 0)
+		(layer "F.SilkS")
+		(uuid "946a7714-35a6-5065-8977-5ddea1a05ffb")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.12)
+			)
+		)
+	)
+	(property "Value" "Harwin_S1711-46R_ShieldClip"
+		(at 0 1.85 0)
+		(layer "F.Fab")
+		(uuid "80787fa4-8f29-56f7-8c81-1707920a25f9")
+		(effects
+			(font
+				(size 0.6 0.6)
+				(thickness 0.09)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "36c30053-ae31-5b22-8225-53d6b86f3127")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.12)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "75705b23-a5f7-59ab-8ed0-822409f8d61b")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.12)
+			)
+		)
+	)
+	(attr smd)
+	(fp_rect
+		(start -1.95 -0.65)
+		(end 1.95 0.65)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.Fab")
+		(uuid "9a305d40-4739-53b6-8d2e-b032dd63fb90")
+	)
+	(fp_rect
+		(start -2.35 -1.05)
+		(end 2.35 1.05)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "a6b49200-672c-5fbe-8316-94e4976cbd20")
+	)
+	(fp_text user "${REFERENCE}"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(uuid "c3d12869-2af1-50ce-840b-a986a01f8f9b")
+		(effects
+			(font
+				(size 0.5 0.5)
+				(thickness 0.08)
+			)
+		)
+	)
+	(pad "1" smd roundrect
+		(at 0 0 0)
+		(size 4.2 1.6)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.25)
+		(uuid "7ad5dcb4-1380-53fb-8878-8e99ae2bf60c")
+	)
+	(embedded_fonts no)
+)

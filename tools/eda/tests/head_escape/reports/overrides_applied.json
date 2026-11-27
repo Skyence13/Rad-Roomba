@@ -1,0 +1,130 @@
+[
+ {
+  "id": "S2-01",
+  "kind": "RENUM",
+  "mapping": {
+   "EP": "17"
+  },
+  "reason": "HTSSOP-16-1EP: exposed pad is pad 17 in Package_SO:HTSSOP-16-1EP_4.4x5mm (and pin 17 of the stock TPS26600PWP symbol, stacked with RTN pin 8 - same net EF_RTN)",
+  "refs": [
+   "U2001"
+  ]
+ },
+ {
+  "id": "S2-01",
+  "kind": "RENUM",
+  "mapping": {
+   "EP": "7"
+  },
+  "reason": "WSON-6-1EP 2x2: exposed pad is pad 7",
+  "refs": [
+   "U2103",
+   "U2104",
+   "U2402",
+   "U2403"
+  ]
+ },
+ {
+  "id": "S2-01",
+  "kind": "RENUM",
+  "mapping": {
+   "EP": "17"
+  },
+  "reason": "WQFN-16-1EP 3x3: exposed pad is pad 17",
+  "refs": [
+   "U2201",
+   "U2301",
+   "U2302",
+   "U2303",
+   "U2304"
+  ]
+ },
+ {
+  "count": 752,
+  "id": "S2-02",
+  "kind": "GROUP",
+  "reason": "AFE_FLOOR / AFE_REF / LANE split per lane: LANEk_FLOOR, LANEk_REF, LANEk_LOGIC (k = 0..3)"
+ },
+ {
+  "id": "S2-03",
+  "kind": "NOTE",
+  "reason": "IB-21 lead decision path: keep the footprints, mark the function unavailable",
+  "refs": [
+   "J2002",
+   "J2003",
+   "J2004"
+  ],
+  "text": "IB-21: zone identification (pins 3/4 AUX_N/AUX_GND -> BUMP_ZONE_x_N) NOT AVAILABLE IN REV A: the single-pole rail switches have no potential-free auxiliary contact; the inputs read 'not actuated'. Footprints and parts kept."
+ },
+ {
+  "id": "S2-03",
+  "kind": "NOTE",
+  "reason": "IB-21",
+  "refs": [
+   "R2013",
+   "R2014",
+   "C2008",
+   "D2002",
+   "R2015",
+   "R2016",
+   "C2009",
+   "D2003",
+   "R2017",
+   "R2018",
+   "C2010",
+   "D2004"
+  ],
+  "text": "IB-21: zone identification input - function not available in rev A (part fitted, input idles high)."
+ },
+ {
+  "id": "S2-04",
+  "kind": "NOTE",
+  "reason": "IB-38 supersedes CCR-HE-03 and the bonded-shoe text in mechanical/head/production/README.md",
+  "refs": [
+   "R2801"
+  ],
+  "text": "IB-38 (lead decision 2026-11-26): R2801 is FITTED IN BOTH BUILDS (prototype and production heads keep the frame isolated from the chassis; this is the single DC frame bond)."
+ },
+ {
+  "id": "S2-05",
+  "kind": "NOTE",
+  "reason": "IB-25 decision: 2.0 V",
+  "refs": [
+   "U2304"
+  ],
+  "text": "IB-25: TRIM DAC range 0.10-2.50 V = 2.4 V per channel; 0.4 V of it is reserved for the per-lane temperature difference and the I x 4.99 k floor, so the SiPM breakdown spread within one head must be <= 2.0 V (the RFQ value, CCR-HE-06 c)."
+ },
+ {
+  "footprint_by_mpn": {
+   "ACM4520-901-2P-T000": "rr_local:L_CommonMode_TDK_ACM4520",
+   "RR-HEAD-SHLD-A": "rr_local:RR-HEAD-SHLD-A_LaneShieldCan",
+   "S1711-46R": "rr_local:Harwin_S1711-46R_ShieldClip"
+  },
+  "id": "S2-06",
+  "kind": "LIB",
+  "reason": "CAD library choices for the rejected symbol hints and the parts without a footprint",
+  "symbol_by_mpn": {
+   "BZX84-C12,215": "Diode:BZX84Cxx",
+   "DAC60508ZRTER": "rr_local:DAC60508_RTE",
+   "ECS-TXO-2520MV-240-AN-TR": "Oscillator:ASE-xxxMHz",
+   "ISO1430BDWR": "rr_local:ISO1430_DW",
+   "ISO7710DR": "rr_local:ISO7710_D",
+   "LMR51606YFDBVR": "rr_local:LMR51606_DBV",
+   "OPA836IDBVR": "Amplifier_Operational:OPA690xDBV",
+   "OPA838IDBVR": "Amplifier_Operational:OPA690xDBV",
+   "RR-HEAD-SHLD-A": "rr_local:RR-HEAD-SHLD-A",
+   "S1711-46R": "Device:RFShield_OnePiece",
+   "SMBJ16A": "Device:D_Zener",
+   "SN74LVC2G53DCUR": "74xGxx:74LVC2G53",
+   "SUD50P04-08-GE3": "Transistor_FET:SUD50P04-08",
+   "TCA9534PWR": "Interface_Expansion:TCA9534",
+   "TLV3501AIDBVR": "Comparator:TLV3501AIDBV",
+   "TLV3502AIDCNR": "rr_local:TLV3502_DCN",
+   "TLV7021DBVR": "Comparator:TLV7041DBV",
+   "TLV76733DRVR": "Regulator_Linear:TLV76733DRVx",
+   "TMP117AIDRVR": "rr_local:TMP117_DRV_EP",
+   "TPS61391RTER": "rr_local:TPS61391_RTE",
+   "TPS7A2050PDBVR": "Regulator_Linear:TPS7A0530PDBV"
+  }
+ }
+]

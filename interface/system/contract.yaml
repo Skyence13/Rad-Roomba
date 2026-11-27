@@ -270,4 +270,10 @@ survey_methods:
   CONTINUOUS_SCAN:
     desc: "Constant-speed scan with no stops; speed chosen so the aperture dwell meets the detection goal."
     params: {speed_mps: [0.02, 0.20]}
+  review_queue_policy:
+    desc: "What enters the review queue (owner decision 2026-11-27). A site-profile setting."
+    options:
+      ALARM_ONLY: "Default. Only cells whose statistic exceeds the decision threshold at the profile's scan-stage false-alarm rate (alpha_scan) are queued (and, in SEARCH_THEN_COUNT, trigger the scaler count). Cells that do not alarm but whose detection limit is above the profile's detection goal are shown on the map as 'sensitivity insufficient' and counted in the residual area; they are not queued."
+      ALL_UNRESOLVED: "Every cell that cannot be cleared at the investigation level is queued (the behaviour before this decision)."
+    default: ALARM_ONLY
   common: "All methods record raw gates identically; the method, its parameters and the stage that produced each cell's decision are stored with the result. A scaler count is valid only while both wheel encoders and the gyro confirm zero motion and no stop/inhibit transition occurred inside it."
