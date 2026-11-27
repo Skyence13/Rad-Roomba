@@ -118,9 +118,11 @@ int main(void)
         th_run_silent(t, 300);
         CHECK(!t->sim.latch);
     }
-    SECTION("M1: C_SET back-feed - brake test long after REARM and contact openings give no false fault");
+    SECTION("M1: stage-2 board (C_SET back-feed, chain.backfeed_ms 12 s) - brake test long after REARM and openings give no false fault");
     {
         th_t *t = th_new(905);
+        t->sim.cset_diode = false;
+        t->sim.core.cfg.v[RRCH_CFG_CHAIN_BACKFEED_MS] = 12000.0f;
         CHECK(th_arm(t, OPM));
         th_run(t, 4300);
         CHECK(th_req(t, "BRAKE_TEST", "{}") && th_true(t, "passed"));

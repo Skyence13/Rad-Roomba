@@ -477,7 +477,7 @@ static void op_state(ctx_t *x, int level)
     rrc_jw_ku64(w, "rearm_nonce", c->rearm_nonce);
     if (level < 2) {
         rrc_jw_kbool(w, "rearm_ready", !ch->latch && c->boot_done && ch->hw_live == 0u && c->out.arm_permit && ch->el[RRCH_EL_ARM_PERMIT] == RRCH_ELS_CLOSED &&
-                                       ch->el[RRCH_EL_ESTOP] == RRCH_ELS_CLOSED);
+                                       ch->el[RRCH_EL_ESTOP] == RRCH_ELS_CLOSED && ch->ce_high_ms >= 2000u /* C_SET recharged (stage 3 F12) */);
         kmask(w, "hold", c->hold, hold_names, 2);
         rrc_jw_ku64(w, "event_seq", c->ev_newest);
         rrc_jw_ku64(w, "uptime_us", c->now_us);

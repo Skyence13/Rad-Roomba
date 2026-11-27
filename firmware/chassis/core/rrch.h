@@ -267,9 +267,9 @@ typedef struct {
     X(HTR_DISAGREE_C, "heater.disagree_c", 15, 2, 40, "C") \
     X(CHAIN_CLOSE_DEBOUNCE_MS, "chain.close_debounce_ms", 50, 5, 500, "ms") \
     X(CHAIN_PRES_SETTLE_MS, "chain.pres_settle_ms", 20, 5, 500, "ms") \
-    /* review M1: C_SET back-feeds CHAIN_END through R_SET (rev A, no diode): readbacks behind an open element can read \
-     * live for up to ~10 s after CHAIN_END was last really live. 0 once the stage-3 R_SET diode is fitted. */ \
-    X(CHAIN_BACKFEED_MS, "chain.backfeed_ms", 12000, 0, 20000, "ms") \
+    /* review M1: without the stage-3 diode D_RSET, C_SET back-feeds CHAIN_END through R_SET and readbacks behind an \
+     * open element can read live for ~10 s. The current netlist (S3, F12) has D_RSET: 0. 12000 for a stage-2 board. */ \
+    X(CHAIN_BACKFEED_MS, "chain.backfeed_ms", 0, 0, 20000, "ms") \
     X(BRK_LATCH_DROP_MAX_MS, "brake.latch_drop_max_ms", 50, 5, 500, "ms") \
     X(BRK_VMOT_MIN_V, "brake.vmot_min_v", 9.0, 5, 12, "V") \
     X(BRK_VMOT_OFF_V, "brake.vmot_off_v", 1.0, 0.2, 5, "V") \
@@ -348,6 +348,7 @@ typedef struct {
     uint32_t rearm_held_ms;
     uint16_t t_no_drop, t_latch_boot, t_loop_ana, t_loop_fail;
     bool loop_disc_latched;
+    uint16_t ce_high_ms;        /* CHAIN_END_RB continuously high (stage 3 F12: REARM sets only after ~1-2 s) */
     uint16_t drop_ms;           /* since the latch readback last fell (ARM_PERMIT held low for 50 ms after it) */
     uint8_t ana3;               /* analog loop: 0 OK, 1 OPEN, 2 SHORT, 3 marginal (between the bands) */
     uint64_t ce_live_us;        /* last time CHAIN_END was really live (permit high, CH_N9 live): C_SET charged */

@@ -83,6 +83,14 @@ class Base(unittest.TestCase):
                 self.fail("mode %s not reached, still %s (hw %s sw %s)" % (mode, st["mode"], st["hw_inhibit_reasons"], st["protective_stop_reasons"]))
             time.sleep(0.01)
 
+    def wait_rearm_ready(self, timeout=4.0):
+        end = time.monotonic() + timeout / self.speed + 1.0
+        while time.monotonic() < end:
+            if self.ok("STATE").get("rearm_ready"):
+                return
+            time.sleep(0.02)
+        self.fail("rearm_ready not reached")
+
     def arm(self, op_mode=OPM):
         self.idle(0.4)
         hello = self.ok("HELLO")
@@ -92,6 +100,7 @@ class Base(unittest.TestCase):
         bt = self.ok("BRAKE_TEST", timeout=5.0)
         self.assertTrue(bt["passed"], bt)
         self.wait_mode("STANDBY")
+        self.wait_rearm_ready()  # a REARM pressed before the chain reads closed is refused (review m3)
         self.env.set(press="REARM")
         self.wait_mode("ARMED_IDLE")
         # geometry comes from the chassis, never from literals in the host
@@ -265,7 +274,7 @@ class TestMotion(Base):
         self.assertTrue(any(e["kind"] == "HW_LATCH" and e["detail"]["set"] is False and "BODY_BUMPER" in e["detail"]["reasons"] for e in ev))
         # released: stays inhibited; software re-arm cannot set the latch; the local button can
         self.env.set(bumper_l=False)
-        self.idle(0.5)
+        self.idle(2.3)  # rearm_ready after 2 s of CHAIN_END live (C_SET recharge, stage 3 F12)
         st = self.ok("STATE")
         self.assertEqual((st["mode"], st["hw_inhibit_reasons"], st["rearm_ready"]), ("HW_INHIBIT", ["BODY_BUMPER"], True))
         status, b = self.link.rearm_sw()
@@ -339,7 +348,7 @@ class TestMotion(Base):
         self.idle(0.3)
         # ARM_PERMIT element that does not close: warning, no re-arm possible
         self.env.set(permit_open=True)
-        self.idle(11.0)  # rev A: C_SET holds CHAIN_END up through R_SET for up to ~10 s (review M1)
+        self.idle(0.3)
         st = self.ok("STATE")
         self.assertIn("PERMIT_STUCK_OFF", st["faults"])
         self.assertEqual((st["chain"]["ARM_PERMIT"], st["rearm_ready"]), (False, False))

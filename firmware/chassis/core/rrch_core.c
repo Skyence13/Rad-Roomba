@@ -620,7 +620,7 @@ static void panel_step(rrch_t *c)
     }
     c->out.buzzer = bz;
     bool ready = !c->chain.latch && c->boot_done && c->chain.hw_live == 0u && c->out.arm_permit && c->chain.el[RRCH_EL_ARM_PERMIT] == RRCH_ELS_CLOSED &&
-                 c->chain.el[RRCH_EL_ESTOP] == RRCH_ELS_CLOSED;
+                 c->chain.el[RRCH_EL_ESTOP] == RRCH_ELS_CLOSED && c->chain.ce_high_ms >= 2000u /* C_SET recharged (stage 3 F12) */;
     bool clearable = (c->sw_latched || c->hold) && !(c->sw_active & c->sw_latched);
     c->out.lamp_rearm = (ready || clearable) && (c->ms % 500u) < 250u;
     c->out.lamp_pause = c->mode == RRCH_MODE_MOVING;

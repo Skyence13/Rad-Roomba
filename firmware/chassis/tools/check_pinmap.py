@@ -93,7 +93,10 @@ def check(pm, facts):
 
 NETLIST = os.path.join(ROOT, "..", "..", "electronics", "chassis_main", "out", "pinmap.json")
 EXPANDER_REF = {"IOX_A": "U43", "IOX_B": "U44", "IOX_C": "U45"}
-NET_ALIAS = {"SENTINEL": "WDG_STROBE"}  # IOX_A GPB7 is wired to the strobe net on purpose
+# IOX_A GPB7 is wired to the strobe net on purpose; stage 3 (S3 F7/F8) puts 47 k series resistors in front of
+# GPA5/GPA7/GPB7, so the expander pins then sit on *_IO nets
+NET_ALIAS = {"SENTINEL": ("WDG_STROBE", "WDG_STROBE_IO"), "HEAD_LOOP_OK_RB": ("HEAD_LOOP_OK_RB", "HEAD_LOOP_OK_IO"),
+             "LAB_KEY_N_RB": ("LAB_KEY_N_RB", "LAB_KEY_N_IO")}
 
 
 def check_netlist(pm):
@@ -107,8 +110,10 @@ def check_netlist(pm):
     errors, n = [], 0
 
     def net_ok(sig, net):
-        want = NET_ALIAS.get(sig, sig)
-        return net in (want, want + "_ADC", "MCU_" + want)
+        for want in NET_ALIAS.get(sig, (sig,)):
+            if net in (want, want + "_ADC", "MCU_" + want):
+                return True
+        return False
 
     mcu = {x["pin"]: x for x in parts["U20M"]["pins"]}
     for p in pm["pins"]:

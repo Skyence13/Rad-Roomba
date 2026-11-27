@@ -39,7 +39,9 @@ static void test_boot_and_hello(void)
     CHECK(!th_drive(t, 0, 0, 200, OPM) && th_is(t, "reject_reason", "NO_SESSION"));
     CHECK(!th_req(t, "SET_OP_MODE", "{\"op_mode\":\"GUIDED\"}") && th_status(t, "REJECTED") && th_is(t, "reason", "NO_SESSION"));
     th_run_silent(t, 300);
-    CHECK(th_mode(t, "STANDBY") && th_true(t, "rearm_ready") && th_true(t, "chain.ARM_PERMIT") && !th_true(t, "hw_latch"));
+    CHECK(th_mode(t, "STANDBY") && !th_true(t, "rearm_ready") && th_true(t, "chain.ARM_PERMIT") && !th_true(t, "hw_latch"));
+    th_run_silent(t, 2000); /* "ready" only after 2 s of CHAIN_END live: C_SET recharged (stage 3 F12) */
+    CHECK(th_mode(t, "STANDBY") && th_true(t, "rearm_ready"));
     CHECK(th_is(t, "op_mode", "SERVICE"));
     CHECK(th_req(t, "HELLO", "{}"));
     CHECK(th_is(t, "proto", "RR-CHS 1.0") && th_num(t, "caps.encoder_cpr") == 9600 && th_num(t, "caps.max_v_mps") == 0.2 && th_num(t, "caps.track_nom_m") == 0.27 && th_num(t, "caps.wheel_radius_nom_m") == 0.052 && th_num(t, "session") == 1);
@@ -82,7 +84,7 @@ static void chain_case(const char *open_env, const char *close_env, const char *
     CHECK(fabs(t->sim.v) < 1e-3 && !t->sim.core.out.bridge_awake);
     /* cause removed: nothing clears by itself */
     th_env(t, close_env);
-    th_run(t, 1500);
+    th_run(t, 2500);
     CHECK(th_req(t, "STATE", "{}") && th_is(t, "mode", "HW_INHIBIT") && th_has(t, "hw_inhibit_reasons", reason));
     CHECK(th_true(t, "rearm_ready") && !th_true(t, "hw_latch"));
     CHECK(!diag_has(t, "hw_active", reason));
@@ -189,7 +191,7 @@ static void test_chain_elements(void)
         CHECK(!t->sim.latch);
         th_run(t, 200);
         CHECK(th_mode(t, "HW_INHIBIT") && th_has(t, "hw_inhibit_reasons", "MCU_NOT_READY") && th_has(t, "protective_stop_reasons", "ENCODER_FAULT"));
-        th_run(t, 1500);
+        th_run(t, 3500);
         CHECK(th_req(t, "STATE", "{}") && th_true(t, "chain.ARM_PERMIT") && th_true(t, "rearm_ready")); /* permit returns once at rest */
         th_env(t, "{\"press\":\"REARM\"}");
         th_run(t, 400);

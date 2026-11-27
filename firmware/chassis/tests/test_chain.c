@@ -223,12 +223,12 @@ int main(void)
         static const char *const env[3] = {"{\"hands_on\":true,\"chain_short\":\"CH_N4A\"}", "{\"loop_ohm\":1e9,\"chain_short\":\"CH_N6\"}", "{\"bumper_l\":true,\"chain_short\":\"CH_N8\"}"};
         for (int k = 0; k < 6; k++) {
             /* k < 3: board with the stage-3 R_SET diode (no back-feed, chain.backfeed_ms = 0): detected in 20 ms.
-             * k >= 3: rev A as built: C_SET may hold the nodes behind an opened element for ~10 s, so the check
+             * k >= 3: stage-2 board (no D_RSET): C_SET may hold the nodes behind an opened element for ~10 s, so the check
              * waits chain.backfeed_ms after CHAIN_END was last really live (review M1) */
             th_t *t = th_new(22 + (uint64_t)k);
-            if (k < 3) {
-                t->sim.cset_diode = true;
-                t->sim.core.cfg.v[RRCH_CFG_CHAIN_BACKFEED_MS] = 0.0f;
+            if (k >= 3) { /* stage-2 board: no D_RSET, back-feed window configured */
+                t->sim.cset_diode = false;
+                t->sim.core.cfg.v[RRCH_CFG_CHAIN_BACKFEED_MS] = 12000.0f;
             }
             th_run_silent(t, 400);
             th_env(t, env[k % 3]);

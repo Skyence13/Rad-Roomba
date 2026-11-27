@@ -126,6 +126,7 @@ static void chain_end_step(rrch_t *c)
     bool fresh = b->t_us != 0u && b->t_us <= c->now_us && c->now_us - b->t_us <= 50000u && (ch->latch || b->fail_n == 0u);
     ch->chain_end_known = fresh;
     ch->chain_end = fresh && b->chain_end;
+    ch->ce_high_ms = ch->chain_end ? (uint16_t)(ch->ce_high_ms < 60000u ? ch->ce_high_ms + 1u : 60000u) : 0u;
     rrch_fault_set(c, RRCH_FLT(IOX_B), c->boot_done && !fresh);
     if (b->t_us == 0u || b->t_us == ch->iox_b_seen_us || b->t_us > c->now_us) {
         return;

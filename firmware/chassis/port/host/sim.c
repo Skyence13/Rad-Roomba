@@ -322,6 +322,7 @@ void sim_init(sim_t *s, uint64_t seed)
     s->rng = seed * 2654435761u + 0x9E3779B97F4A7C15ull;
     sim_params_nominal(&s->p);
     s->vmot_tau_s = 0.81;
+    s->cset_diode = true; /* current netlist: stage 3 D_RSET (F12); false = stage-2 board with C_SET back-feed */
     s->mode_run = true;
     s->head_docked = true;
     s->j2 = true;
@@ -362,6 +363,8 @@ static void plant_ms(sim_t *s)
         s->vc -= s->vc * (1.0 - exp(-1e-3 / 0.1028));
     } else if (s->node[SIM_NEND]) {
         s->vc += (s->vbat - 0.4 - s->vc) * (1.0 - exp(-1e-3 / 2.2));
+    } else if (s->cset_diode) {
+        s->vc -= s->vc * (1.0 - exp(-1e-3 / 0.1)); /* stage 3 Q_SDIS: C_SET emptied within ~0.3 s while CHAIN_END is dead */
     } else if (s->v_held > 0.0) {
         double i = s->v_held > 0.0 ? (s->vc - s->v_held) / 22e3 : 0.0; /* current into the held nodes */
         s->vc -= i * 1e-3 / 100e-6;

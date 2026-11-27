@@ -1,6 +1,6 @@
 # Chassis link interface control document — RR-CHS 1.0
 
-**Status: draft for design 0.4 (written against contract 0.4.0-draft4; IB-34 look-sensor set and the 0.290 m tail swept radius of 0.4.0-draft7 applied, the draft7 enum additions `LATCH_UNEXPLAINED` / `STOP_ESCALATED` not yet used). Owner: chassis firmware lead.** Board facts are those of RR-CHS-MAIN rev A stage 2 (`electronics/chassis_main/design/CONTRACT_CHANGE_REQUESTS.md` CCR-E02/E03, `electronics/analysis/chassis_safety_chain.md`), cross-checked against the netlist export by `firmware/chassis/tools/check_pinmap.py`. Expands `interface/system/contract.yaml › chassis_link`. Where this document and the contract disagree, the contract wins and the disagreement is a defect to report. Machine-readable companion: [`chassis_link.schema.json`](chassis_link.schema.json). Reference implementation: `firmware/chassis/core/` (the same code runs in the emulator `rr_chassis_sim` and on the STM32G474).
+**Status: draft for design 0.4 (written against contract 0.4.0-draft4; IB-34 look-sensor set and the 0.290 m tail swept radius of 0.4.0-draft7 applied, the draft7 enum additions `LATCH_UNEXPLAINED` / `STOP_ESCALATED` used since the traction-inhibit review fixes). Owner: chassis firmware lead.** Board facts are those of RR-CHS-MAIN rev A stage 2 (`electronics/chassis_main/design/CONTRACT_CHANGE_REQUESTS.md` CCR-E02/E03, `electronics/analysis/chassis_safety_chain.md`), cross-checked against the netlist export by `firmware/chassis/tools/check_pinmap.py`. Expands `interface/system/contract.yaml › chassis_link`. Where this document and the contract disagree, the contract wins and the disagreement is a defect to report. Machine-readable companion: [`chassis_link.schema.json`](chassis_link.schema.json). Reference implementation: `firmware/chassis/core/` (the same code runs in the emulator `rr_chassis_sim` and on the STM32G474).
 
 Evidence classes: every behaviour described here is implemented in the firmware core and exercised against the emulator (`simulated`, see `firmware/chassis/tests/`). **Nothing has run on hardware.** All distances, times and thresholds are design values pending the physical braking and protection trials (VT-003/004/005/035).
 
@@ -20,7 +20,7 @@ Fields marked **(+)** are additive to the contract op table (present in 1.0, saf
 | Maximum record | 2048 bytes including TAB, CRC and LF, both directions. |
 | Discard rules | Malformed JSON, duplicate keys, bad CRC, wrong trailer, oversize: the record is discarded **without a reply**. An oversized/unfinished record is discarded through the next LF. |
 | Dialogue | The host polls. One transaction outstanding. The chassis never transmits unsolicited records. |
-| Reply time | Design target ≤ 5 ms from the LF of the request to the first byte of the reply for every op except `BRAKE_TEST` (≤ 3 s) and `CONFIG_SET` (≤ 100 ms, flash write); not yet measured on hardware. Host timeout recommendation: 50 ms (cyclic ops), then retry with the same `id`. |
+| Reply time | Design target ≤ 5 ms from the LF of the request to the first byte of the reply for every op except `BRAKE_TEST` (≤ 4 s) and `CONFIG_SET` (≤ 100 ms, flash write); not yet measured on hardware. Host timeout recommendation: 50 ms (cyclic ops), then retry with the same `id`. |
 
 ### 1.1 Envelope
 
@@ -319,7 +319,7 @@ Keys are listed in §8.
 
 ### 3.13 BRAKE_TEST
 
-Args: `{}`. Runs the stationary brake-relay and VMOT-drop self-test (§6.8) and replies when it has finished (typically 2.2 s — VMOT decays through the 1 kΩ bleed on 810 µF, τ 0.8 s, to 1 V — at most 2.7 s). The host keeps polling meanwhile (answers `BUSY`), which also keeps the link supervision of §5.3 satisfied. While it runs, any other request is answered `BUSY`; a retry of the `BRAKE_TEST` request itself with the same `id` returns the result when available.
+Args: `{}`. Runs the stationary brake-relay and VMOT-drop self-test (§6.8) and replies when it has finished (typically 2.2 s — VMOT decays through the 1 kΩ bleed on 810 µF, τ 0.8 s, to 1 V — at most 3.7 s). The host keeps polling meanwhile (answers `BUSY`), which also keeps the link supervision of §5.3 satisfied. While it runs, any other request is answered `BUSY`; a retry of the `BRAKE_TEST` request itself with the same `id` returns the result when available.
 
 Precondition: mode `ARMED_IDLE` (hardware latch set, at rest), or `PROTECTIVE_STOP` whose only latched reason is `BRAKE_TEST_FAIL` with the hardware latch set. Otherwise `REJECTED / NOT_ARMED_IDLE`.
 
@@ -337,6 +337,8 @@ Precondition: mode `ARMED_IDLE` (hardware latch set, at rest), or `PROTECTIVE_ST
 | `mode` | Mode after the test |
 
 A failed test latches `PROTECTIVE_STOP / BRAKE_TEST_FAIL`; the cause stays active until a later test passes. If the latch does not drop with ARM_PERMIT low, the chassis additionally enters `FAULT` (`LATCH_STUCK`).
+
+**What the test can and cannot show (review C1).** `HW_LATCH_RB` is the tap on RUN_12V, and RUN_12V is CHAIN_END switched by K1 pole B, so dropping ARM_PERMIT removes it whether or not K1 is welded: the test **cannot** see a welded K1 or a K1_SET short. It shows: the chain opens through U24 and RUN_12V goes (a stuck U24 or RUN_12V/CHAIN_END fed from elsewhere → `LATCH_STUCK`), both brake relays release (both NO contacts open), VMOT is removed, the probe moves nothing. A welded K1 is caught when ARM_PERMIT returns high after the test (and after every boot, the first time ARM_PERMIT goes high): the latch must then stay down until a qualified REARM, otherwise `LATCH_NO_REARM`.
 
 ```json
 {"type":"REQ","v":"1.0","id":99,"op":"BRAKE_TEST","args":{}}
@@ -426,7 +428,23 @@ The hardware window comparator (healthy 600–1600 Ω) is in the chain. The firm
 | `BODY_BUMPER` | Either body bumper switch open |
 | `WATCHDOG` | External watchdog output not OK |
 | `MCU_NOT_READY` | Firmware is withholding `ARM_PERMIT` (boot, fault, charge/LAB mode, stop escalation, brake test, presence `FAULT`, `CHAIN_END_RB` unreadable), or the ARM_PERMIT element does not close (`PERMIT_STUCK_OFF`) |
-| `VMOT_FAULT` | Latch set but VMOT below `brake.vmot_min_v` for > 100 ms; latch dropped but VMOT still present after the decay time; brake-relay readback (while valid, §4.1a) inconsistent with the latch for > 200 ms; or the latch dropped with no readback explaining it. While the condition is present the firmware also withholds ARM_PERMIT. |
+| `VMOT_FAULT` | Latch set but VMOT below `brake.vmot_min_v` for > 100 ms; latch dropped but VMOT still present after the decay time (`brake.vmot_decay_max_ms`, 3500 ms); brake-relay readback (while valid, §4.1a) inconsistent with the latch for > 200 ms. While the condition is present the firmware also withholds ARM_PERMIT. |
+| `LATCH_UNEXPLAINED` | (latched only) the latch dropped with no readback explaining it (contract draft7; was reported as `VMOT_FAULT`) |
+
+### 4.6 Latch, REARM and head-loop rules after the traction-inhibit review (C1, C2, M1, m3, m4, m7)
+
+Review: `docs/reviews/REVIEW_traction_inhibit.md`. All behaviour below is `simulated` (`tests/test_review.c`) on the emulator's netlist-aligned chain model.
+
+- **Qualified REARM.** A rise of `HW_LATCH_RB` (RUN_12V) is accepted only within 250 ms (+ the 50 ms close debounce) after a `REARM_BTN` rising edge that the firmware saw while every chain element read `CLOSED` (§4.1a), ARM_PERMIT was high and the latch was down. Any other rise — latch set with no REARM (welded K1 seal-in, K1_SET shorted to V12_AUX or LAMP_REARM_K in W-018), latch high at boot, RUN_12V fed from a supply — is `FAULT` `LATCH_NO_REARM`: ARM_PERMIT low (U24 is upstream of K1 pole B, so RUN_12V goes even with K1 welded), strobe stopped (§5.5), latched hardware reasons kept.
+- **Early or held REARM is refused.** A REARM edge seen while the chain is not closed (and the latch down) holds ARM_PERMIT low for 300 ms, longer than the C_SET set pulse can hold K1 (≈ 245 ms above must-release), so pressing REARM just before releasing a bumper or HANDS-ON does not latch. REARM held > 2 s (`REARM_HELD`) withholds ARM_PERMIT while the latch is down, until released.
+- **Latch that does not drop.** An element known `OPEN` while the latch still reads set for 30 ms (K1 needs 4 ms) is `FAULT` `LATCH_NO_DROP`.
+- **Short openings are completed.** Any fall of the latch readback holds ARM_PERMIT low for 50 ms, and every firmware permit withdrawal lasts at least 50 ms: an opening shorter than K1's release time (it removes RUN_12V at once but K1 may hold) cannot let RUN_12V come back without REARM.
+- **Head-rail loop (C2).** The analog copy is decoded with bands around the U30 window (0.59–1.55 kΩ): OK 620–1500 Ω, OPEN > 1650 Ω, SHORT < 560 Ω, marginal in between. While the latch is set, an opening or short seen by either channel (analog: two consecutive 1 kHz samples, i.e. 2 ms; comparator: first sample) withdraws ARM_PERMIT and latches `STOP_ESCALATED` — no longer filter, so a real rail press is never filtered out. A comparator/analog disagreement that began while latched and lasts 5 ms (the comparator lags the analog copy by about 1.5 ms) is `FAULT` `LOOP_FAIL`. With the latch down a disagreement for 200 ms is `LOOP_DISCREPANCY`, which withholds ARM_PERMIT.
+- **C_SET back-feed (M1).** The current netlist (stage 3, F12) has the diode D_RSET in series with R_SET and the C_SET discharge Q_SDIS: no back-feed, so `chain.backfeed_ms` = 0 and `PERMIT_STUCK_ON`/`CHAIN_IMPLAUSIBLE` act at once, including at boot. On a stage-2 board without D_RSET, C_SET holds CHAIN_END and the nodes behind an opened element up for up to ≈ 10 s; set `chain.backfeed_ms` = 12 000: those two checks are then suspended for that time after CHAIN_END was last really live, and after every boot. During that window a stuck U24 is still caught when it matters: a latch rise with ARM_PERMIT low is `LATCH_STUCK`/`LATCH_NO_REARM` at once, and the mandatory brake test fails `LATCH_STUCK`. Because Q_SDIS empties C_SET whenever the chain is open, REARM can set only after the chain has been closed for about 1–2 s; `rearm_ready` (and the REARM lamp) therefore wait for 2 s of continuous `CHAIN_END_RB` high.
+- **IOX_B reads (m7).** One or a few failed I²C reads of `CHAIN_END_RB` do not drop the latch while it is set: the last good sample is used up to 50 ms old (≥ 4 consecutive failures at 100 Hz). Arming needs the last read to have succeeded. The port re-initialises I²C2 after three consecutive failures.
+- **Configuration read-back (M2, M3).** The chain-tap pins carry no internal pull resistors; every 100 ms the port reads back their GPIO mode/pull registers (PD2 must be the TIM8_BKIN alternate function, the rest plain inputs) and the IOX_A IODIRA/IODIRB registers (must be 0xFF: GPA5/GPA7 are the U21/U22 gate nodes); any difference is `FAULT` `PIN_CONFIG`.
+- **Watchdog strobe (m2).** WDI is a 5 ms high pulse every 10 ms (raised by the supervisor, lowered by the control tick): falling edges every 10 ms (the TPS3430 is falling-edge triggered, tWDL ≤ 2.22 ms, tWDU ≥ 23.375 ms, stage 3 F9 [D]); also safe if both edges counted (5 ms apart). A hung MCU is caught ≤ 31.6 ms after the last falling edge.
+- **What the firmware still cannot see**: a welded K1 while the robot stays armed (it shows at the next drop/re-close); a brake path that is open or degraded (no dynamic deceleration check); U23 failing closed (no boot watchdog test); a short of CHAIN_END/RUN_12V to a supply when the latch is legitimately set (it shows at the next drop as `LATCH_NO_DROP`); a welded head-rail switch or head-internal bypass.
 
 ### 4.5 Board constants behind the readings (IB-02)
 
@@ -506,9 +524,9 @@ If, after any stop was demanded (protective stop, hold, command timeout, hardwar
 
 ### 5.5 FAULT
 
-Entered on: E-stop pole discrepancy > 200 ms while CH_N1 is live (`ESTOP_DISCREPANCY`), ARM_PERMIT element closed while commanded open (`PERMIT_STUCK_ON`, §4.1a), a chain node live behind a dead one (`CHAIN_IMPLAUSIBLE`), latch readback high while ARM_PERMIT has been low > 100 ms (`LATCH_STUCK`, also the result of a brake test whose latch does not drop), expander read path dead for 5 ms (`IOX_A`), ADC not converting for 5 ms (`ADC`), supervision task not seen by the control tick for 50 ms (`TIMING`). Left only by an MCU reset (power cycle or NRST). In `FAULT` the chassis keeps answering the protocol and keeps strobing the watchdog (ARM_PERMIT low already holds the chain open), so the host can read the cause; only `TIMING` and `PERMIT_STUCK_ON` stop the strobe, and the watchdog then opens the chain and resets the MCU. `faults` lists the active flags.
+Entered on: latch readback rising without a qualified local REARM, or high at boot (`LATCH_NO_REARM`, §4.6); an element known open while the latch still reads set for 30 ms (`LATCH_NO_DROP`); head-loop comparator and analog copy disagreeing for 5 ms while latched (`LOOP_FAIL`, §4.6); a chain-tap pin or an expander pin not configured as a plain input (`PIN_CONFIG`); E-stop pole discrepancy > 200 ms while CH_N1 is live (`ESTOP_DISCREPANCY`), ARM_PERMIT element closed while commanded open (`PERMIT_STUCK_ON`, §4.1a), a chain node live behind a dead one (`CHAIN_IMPLAUSIBLE`), latch readback high while ARM_PERMIT has been low > 100 ms (`LATCH_STUCK`, also the result of a brake test whose latch does not drop), expander read path dead for 5 ms (`IOX_A`), ADC not converting for 5 ms (`ADC`), supervision task not seen by the control tick for 50 ms (`TIMING`). Left only by an MCU reset (power cycle or NRST). In `FAULT` the chassis keeps answering the protocol and keeps strobing the watchdog (ARM_PERMIT low already holds the chain open), so the host can read the cause; `TIMING`, `PERMIT_STUCK_ON`, `LATCH_STUCK`, `LATCH_NO_REARM` and `LATCH_NO_DROP` stop the strobe, and the watchdog then opens the chain at WDG_OK (upstream of K1 and of the ARM_PERMIT element) and, with JP1 closed, resets the MCU; a persistent hardware fault then shows again after each reset. `faults` lists the active flags.
 
-Warnings that do **not** enter `FAULT` (also listed in `faults`): `PERMIT_STUCK_OFF`, `IOX_B` (both withhold ARM_PERMIT), `CONFIG_DEFAULTED`, `LOOP_DISCREPANCY`, `J1_PRES_FAULT`, `CHARGER_COMM`, `PMON_COMM`, `TOF_BUS`, `HEATER_SENSOR`, `EFUSE_HEAD_PWR`, `EFUSE_HEAD_HTR`, `EFUSE_CHS_HTR`, `EFUSE_LIDAR`, `EFUSE_V5`, `BRIDGE_L`, `BRIDGE_R`, `BUS_CLAMP`, `BATTERY_WARN`.
+Warnings that do **not** enter `FAULT` (also listed in `faults`): `PERMIT_STUCK_OFF`, `IOX_B`, `REARM_HELD`, `LOOP_DISCREPANCY` (all four withhold ARM_PERMIT while present), `CONFIG_DEFAULTED`, `LOOP_DISCREPANCY`, `J1_PRES_FAULT`, `CHARGER_COMM`, `PMON_COMM`, `TOF_BUS`, `HEATER_SENSOR`, `EFUSE_HEAD_PWR`, `EFUSE_HEAD_HTR`, `EFUSE_CHS_HTR`, `EFUSE_LIDAR`, `EFUSE_V5`, `BRIDGE_L`, `BRIDGE_R`, `BUS_CLAMP`, `BATTERY_WARN`.
 
 ### 5.6 Transition table
 
@@ -640,7 +658,7 @@ Default off. With a set-point: time-proportional output (2 s period) from a prop
 ### 6.8 Stationary brake test
 
 1. Preconditions: at rest, latch set, VMOT ≥ `brake.vmot_min_v`, both brake relays read "driving".
-2. ARM_PERMIT low. Measure the time to latch readback low (limit `brake.latch_drop_max_ms`, 50), to both relay readbacks "braked" (same limit; the readback is valid because the bridges are asleep) and to VMOT < `brake.vmot_off_v` (1.0 V; limit `brake.vmot_decay_max_ms`, 2500). The ARM_PERMIT low phase also exercises the `CHAIN_END_RB` check (§4.1a).
+2. ARM_PERMIT low. Measure the time to latch readback low (limit `brake.latch_drop_max_ms`, 50), to both relay readbacks "braked" (same limit; the readback is valid because the bridges are asleep) and to VMOT < `brake.vmot_off_v` (1.0 V; limit `brake.vmot_decay_max_ms`, 3500). The ARM_PERMIT low phase also exercises the `CHAIN_END_RB` check (§4.1a).
 3. With the latch down, command the bridges awake (the board's U9 gate keeps them asleep without RUN_12V) and apply `brake.probe_duty_pct` (10 %) to each side for 100 ms. Motor current must stay below `brake.probe_i_max_a` (0.1 A) and the wheels must not move (< 10 ticks): the bridges are isolated from the motors and from VMOT.
 4. Bridges asleep, ARM_PERMIT high again, result logged as `BRAKE_TEST` event.
 
@@ -648,7 +666,7 @@ The test proves the switching elements, not the braking torque; the stopping dis
 
 ### 6.9 Watchdog
 
-The external window watchdog is strobed only by the 100 Hz supervision task, and only when, since its previous run, (a) the 1 kHz control tick ran 10 ± 2 times, (b) the control tick passed all of its program-flow checkpoints, (c) the control tick itself reports that the supervisor is on time, (d) the background loop (protocol, sensor buses) made progress within 500 ms, (e) no `TIMING` fault is latched. A stopped or runaway control loop, a stopped supervisor or a stalled background loop therefore stops the strobe, the watchdog opens `WDG_OK`, the latch drops and the MCU is reset (the reset path through NRST is a board decision).
+The external window watchdog is strobed only by the 100 Hz supervision task (WDI 5 ms high pulse every 10 ms, §4.6; the STM32 port also refreshes the MCU's own IWDG, ≈ 250 ms, with it), and only when, since its previous run, (a) the 1 kHz control tick ran 10 ± 2 times, (b) the control tick passed all of its program-flow checkpoints, (c) the control tick itself reports that the supervisor is on time, (d) the background loop (protocol, sensor buses) made progress within 500 ms, (e) no `TIMING` fault is latched. A stopped or runaway control loop, a stopped supervisor or a stalled background loop therefore stops the strobe, the watchdog opens `WDG_OK`, the latch drops and the MCU is reset (the reset path through NRST is a board decision).
 
 ### 6.10 Stationarity evidence for scaler counts
 
@@ -782,13 +800,24 @@ Stored as 32-bit values in flash with CRC. `rw` = settable with `CONFIG_SET`. Ca
 | `brake.latch_drop_max_ms` | 50 | 5 | 500 | ms | |
 | `brake.vmot_min_v` | 9.0 | 5 | 12 | V | |
 | `brake.vmot_off_v` | 1.0 | 0.2 | 5 | V | |
-| `brake.vmot_decay_max_ms` | 2500 | 50 | 5000 | ms | 1 kΩ bleed on 810 µF: τ 0.8 s, 1 V reached after ≈ 2.1 s from 13 V (`chassis_safety_chain.md` §7: the window must allow 3 τ) |
+| `brake.vmot_decay_max_ms` | 3500 | 50 | 6000 | ms | 1 kΩ bleed on 3 × 270 µF: nominal τ 0.83 s (≈ 2.1 s to 1 V from 13 V); with +20 % capacitance and 14.6 V ≈ 2.66 s (review m1) |
+| `chain.backfeed_ms` | 0 | 0 | 20000 | ms | C_SET back-feed window (§4.6): 0 with the stage-3 diode D_RSET (current netlist), 12 000 for a stage-2 board |
 | `brake.probe_duty_pct` | 10 | 2 | 30 | % | |
 | `brake.probe_i_max_a` | 0.1 | 0.02 | 1.0 | A | |
 
 ---
 
 ## 9. Host obligations (summary)
+
+**After any hardware inhibit, FAULT or MCU reset the host must not resume motion by itself.** When the mode returns from `HW_INHIBIT`/`STANDBY`/`FAULT` to `ARMED_IDLE`, the host treats the previous mission segment as aborted: it does not re-send the interrupted `DRIVE` stream, it waits for an explicit operator decision in the host UI (in addition to the local REARM that set the latch), and it re-plans from the current pose. A stop caused by a contact element (bumper, head rail, HANDS-ON) is a person or object at the robot; resuming automatically drives into it again (review C1).
+
+| Condition | Needs |
+|---|---|
+| Hardware inhibit (`HW_INHIBIT`, any `hw_inhibit_reasons`) | Cause removed, then the **local REARM** button (no network op can set the latch), pressed after `rearm_ready` is true: a press before the chain reads closed is refused (§4.6) |
+| Software protective stop / hold | `REARM_SW` with the current nonce, or the local REARM button, causes clear |
+| `FAULT` with `ESTOP_DISCREPANCY`, `LATCH_STUCK`, `LATCH_NO_REARM`, `LATCH_NO_DROP`, `LOOP_FAIL`, `PERMIT_STUCK_ON`, `CHAIN_IMPLAUSIBLE`, `PIN_CONFIG`, `IOX_A`, `ADC`, `TIMING` | A **power cycle** (or NRST) and an inspection of the chain hardware before use; for the latch, loop and permit flags do not return to service until the hardware fault is found (review C1/C2). With JP1 closed the five strobe-stopping flags reset the MCU repeatedly; the host sees new `boot_id`s and `BOOT` events with `prev_mode` `FAULT` |
+| `REARM_HELD`, `LOOP_DISCREPANCY`, `PERMIT_STUCK_OFF`, `IOX_B` | Local action: release the button / fix the loop or wiring; they clear when the condition goes |
+
 
 1. `HELLO` after every connect; compare `boot_id`; discard clock fit, sequence state and transaction ids when it changes.
 2. Fresh `id` for every request; fresh, increasing `seq` for every `DRIVE`.
@@ -805,4 +834,4 @@ Stored as 32-bit values in flash with CRC. `rw` = settable with `CONFIG_SET`. Ca
 - A local PAUSE can at present be released remotely by `REARM_SW`; whether local pauses should require local release is an operating-procedure decision.
 - All field distances and the stop-model inputs are design values; VT-003/004/005/035 replace them.
 - Contract 0.4.0-draft7 adds `LATCH_UNEXPLAINED` (hw) and `STOP_ESCALATED` (sw); this revision still reports an unexplained drop as `VMOT_FAULT` and an escalation as `MCU_NOT_READY` (+ `PERMIT` event), see CCR-CHS-08.
-- The boot-time watchdog self-test of `chassis_safety_chain.md` §7 step 2 (withhold the strobe, expect WDG_OK to fall) is not implemented: with JP1 closed it resets the MCU and needs a reset-surviving test record.
+- The boot-time watchdog self-test of `chassis_safety_chain.md` §7 step 2 (withhold the strobe, expect WDG_OK to fall) is not implemented: with JP1 closed it resets the MCU and needs a persistent test record and a verified boot timing (the port does not yet guarantee the first WDI edge within 23 ms of reset release on every boot path).

@@ -739,6 +739,9 @@ static bool io_cfg_check(void)
               pin_is(P(BRAKE_R_RB), 0u) && pin_is(P(J2_PRES_RB), 0u) && pin_is(P(HW_LATCH_RB), 2u);
     uint8_t tx[4] = {0x41, 0x00, 0, 0}, rx[4] = {0}; /* UNVERIFIED MCP23S17: read IODIRA, IODIRB (sequential) */
     ok = ok && spi_xfer(P(IOX_A_CS_N), tx, rx, 4) && rx[2] == 0xFFu && rx[3] == 0xFFu;
+    /* stage 3 F7/F8/F11: GPPUA/GPPUB (0x0C/0x0D, UNVERIFIED) must stay 0x00 behind the 47 k series resistors */
+    uint8_t tp[4] = {0x41, 0x0C, 0, 0}, rp[4] = {0xFF, 0xFF, 0xFF, 0xFF};
+    ok = ok && spi_xfer(P(IOX_A_CS_N), tp, rp, 4) && rp[2] == 0x00u && rp[3] == 0x00u;
     return ok;
 }
 
