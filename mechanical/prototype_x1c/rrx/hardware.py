@@ -74,7 +74,6 @@ def rows():
     add("E bridge", "thermal gap pad", "60 x 40 x 2 mm, >= 3 W/mK", 1, "board underside zone u 50..110, v 30..70 -> tray", "UNVERIFIED")
     add("E bridge", "countersunk screw", "M3 x 8 ISO 10642 A2", 4, "plate -> CM5 tray inserts", torque="0.6")
     add("E bridge", "pan head screw", "M2.5 x 6 ISO 7045 A2", 4, "CM5 carrier -> tray inserts", "UNVERIFIED", "0.3", "carrier hole pattern UNVERIFIED")
-    add("E bridge", "pan head screw", "M3 x 8 ISO 7045 A2", 2, "bus clamp resistor -> tapped plate", "UNVERIFIED", "0.6")
     # F  grip
     add("F grip", "countersunk screw + nyloc nut + washer", "M5 x 16 ISO 10642 A2-70", 4, "plate (from below) -> angle feet", torque="4.0", note="proof-load path, through-bolted")
     add("F grip", "socket cap screw + nyloc nut + 2 washers", "M5 x 16 ISO 4762 A2-70", 4, "side plates -> angle feet", torque="4.0", note="proof-load path")

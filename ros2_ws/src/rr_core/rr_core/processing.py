@@ -527,7 +527,9 @@ class SurveyProcessor:
         wall = self.cfg.wall_names[0] if y >= 0 else self.cfg.wall_names[1]
         flag.update({
             "peak_cell": list(peak), "D": d.D, "u_stat": d.u_stat, "u_total": d.u_total, "D_star": d.D_star,
-            "D_hash": d.D_hash, "method": d.method, "x_m": x, "y_m": y, "heading_rad": yaw,
+            "D_hash": d.D_hash, "method": d.method, "m": d.m, "alpha_lane": d.alpha_lane,
+            "flagged_lanes": list(d.flagged_lanes), "decision_rule": d.rule,
+            "lane_thresholds": [{k: l[k] for k in ("lane", "D_star", "D_hash", "method", "flagged")} for l in d.lanes], "x_m": x, "y_m": y, "heading_rad": yaw,
             "source_lane": lane, "footprint": poly,
             "location": {"distance_from_door_m": round(x, 3), "wall": wall,
                          "distance_from_wall_m": round(half_w - abs(y), 3),
@@ -579,7 +581,7 @@ class SurveyProcessor:
             d = est.combine([LaneStat(lane, N_F, T_F, N_U, T_U, U0, how, self.cal.cal(lane, channel), ok, why)],
                             self.params["alpha_recount"], self.params["beta"], exact_detection_limit=True)
             lanes_out.append({"lane": lane, **{k: getattr(d, k) for k in
-                              ("D", "u_stat", "u_total", "D_star", "D_hash", "T_F", "detected", "method")},
+                              ("D", "u_stat", "u_total", "D_star", "D_hash", "T_F", "detected", "method", "m", "alpha_lane")},
                               "N_F": N_F, "N_U": N_U, "U0": U0, "u0_method": how, "envelope_ok": ok})
             if lane == target:
                 decision = d
@@ -605,7 +607,7 @@ class SurveyProcessor:
                "target_xy": mark.get("target_xy"), "achieved_xy": mark.get("achieved_xy"),
                "t_end_us": mark.get("t_us"), "lanes": lanes_out,
                "result": None if decision is None else {k: getattr(decision, k) for k in
-                                                         ("D", "u_stat", "u_total", "D_star", "D_hash", "T_F", "detected", "method")}}
+                                                         ("D", "u_stat", "u_total", "D_star", "D_hash", "T_F", "detected", "method", "m", "alpha_lane")}}
         self.observations[obs_id] = obs
         for flag in self.flags:
             if flag["id"] == mark.get("flag"):
@@ -709,6 +711,13 @@ class SurveyProcessor:
                     row[f"{p}.detected"] = d.detected if d else None
                     row[f"{p}.threshold_method"] = d.method if d else ""
                     row[f"{p}.u0_method"] = "|".join(d.u0_methods) if d else ""
+                    # MODEL.md rev 3 section 6 (IB-31): per-cell decision record
+                    row[f"{p}.decision_rule"] = d.rule if d and d.m else ""
+                    row[f"{p}.m_lanes"] = d.m if d and d.m else None
+                    row[f"{p}.alpha_lane"] = d.alpha_lane if d and d.m else None
+                    row[f"{p}.lane_thresholds"] = ";".join(
+                        f"L{l['lane']}:D*={l['D_star']:.4g}:D#={l['D_hash']:.4g}:{l['method']}" for l in d.lanes) if d and d.m else ""
+                    row[f"{p}.flagged_lanes"] = "|".join(f"L{l}" for l in d.flagged_lanes) if d and d.m else ""
                     row[f"{p}.sensitivity_sufficient"] = bool(self.sensitivity_ok(d)) if d and d.D is not None else None
                     row[f"{p}.envelope"] = (d.envelope_reason or "ok") if d and d.D is not None else ""
                 flag = self._flag_of_cell.get((cy, cx))

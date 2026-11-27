@@ -171,12 +171,12 @@ STEPS = [
     ("02_lower_hull", "Stage 2: lower hull (four pieces) lowered onto the plate, front bulkhead", ["lower_hull_*", "front_bulkhead", "tof_cliff_r?", "tof_window_cliff_r?", "tof_clip_cliff_r?"], (-58.0, 30.0)),
     ("03_drive", "Stage 3: motor pods, gearmotors, screw rings, hubs, wheels and tyres", ["motor_*", "screw_ring_*", "wheel_*", "tyre_*"], (-58.0, 30.0)),
     ("04_battery_bay", "Stage 4: battery tunnel, floor plug with heater, fixed coupler half, hatch frame", ["battery_tunnel", "floor_plug", "chassis_heater_pad", "coupler_fixed", "hatch_frame"], (-58.0, 38.0)),
-    ("05_bridge_grip", "Stage 5: grip feet and side plates, bridge posts, tray, RR-CHS-MAIN, CM5 tray, clamp resistor",
-     ["grip_foot_*", "grip_side_plate_*", "bridge_*", "board_standoff_*", "RR-CHS-MAIN_pcb", "cm5_tray", "CM5_carrier_assembly", "bus_clamp_resistor"], (-58.0, 38.0)),
+    ("05_bridge_grip", "Stage 5: grip feet and side plates, bridge posts, tray, RR-CHS-MAIN, CM5 tray",
+     ["grip_foot_*", "grip_side_plate_*", "bridge_*", "board_standoff_*", "RR-CHS-MAIN_pcb", "cm5_tray", "CM5_carrier_assembly"], (-58.0, 38.0)),
     ("06_nose", "Stage 6: latch arm, nose cowl (slid on rearward), J1/J2 receptacles, head latch", ["latch_arm", "nose_cowl", "J?_receptacle", "head_latch"], (-40.0, 26.0)),
     ("07_lid", "Stage 7: lid (shoulders, rear decks, hump) with controls, sensors, LiDAR, charge inlet",
-     ["shoulder_*", "rear_deck_*", "battery_hump", "*_operator", "*_body", "lidar", "charge_inlet", "inlet_cover", "RR-PANEL", "panel_tray", "tof_*r?", "bumper_sw_*", "door_peg_*", "hatch_latch"], (-58.0, 30.0)),
-    ("08_grip_cover", "Stage 8: cheek fairings, grip bar, sleeve, saddle service cover", ["cheek_fairing_*", "grip_bar", "grip_screw_*", "grip_sleeve", "saddle_cover", "tof_look_f?", "tof_window_look_f?", "tof_clip_look_f?"], (-58.0, 30.0)),
+     ["shoulder_*", "rear_deck_*", "battery_hump", "*_operator", "*_body", "lidar", "charge_inlet", "inlet_cover", "RR-PANEL", "panel_tray", "tof_look_rev_*", "tof_prox_*", "tof_window_look_rev_*", "tof_window_prox_*", "tof_clip_look_rev_*", "tof_clip_prox_*", "bumper_sw_*", "door_peg_*", "hatch_latch"], (-58.0, 30.0)),
+    ("08_grip_cover", "Stage 8: cheek fairings, grip bar, sleeve, saddle service cover", ["cheek_fairing_*", "grip_bar", "grip_screw_*", "grip_sleeve", "saddle_cover", "tof_look_fwd_*", "tof_window_look_fwd_*", "tof_clip_look_fwd_*"], (-58.0, 30.0)),
     ("09_cassette_door", "Stage 9: battery cassette with fold-flat handle, index-plunger latch, tail-cap door, three-segment bumper",
      ["battery_cassette", "battery_pack", "cassette_lid", "coupler_carrier", "coupler_cassette", "cassette_handle", "cassette_plunger", "hatch_door", "bumper_side_*", "bumper_centre"], (-140.0, 24.0)),
     ("10_head_tray", "Stage 10: head docked (placeholder envelope) and the robot on the transport tray", ["head_*", "J?_mated_plug", "tray_*"], (-50.0, 28.0)),
@@ -221,7 +221,7 @@ STAGE_TEXT = {   # hand-written work instructions per stage: (do, inserts / torq
     "05_bridge_grip": (
         ["Grip feet (angle) on the plate: 2 x M5 x 16 countersunk from below + nyloc above each; side plates to the feet (2 x M5 x 16 cap + nyloc).",
          "Four bridge posts (M4 from below), bridge tray on top (M4 x 8), gap pad on the tray under the bridge zone, RR-CHS-MAIN on 3 mm spacers (6 x M3 + nyloc under the tray; H1 and H3 bond to chassis).",
-         "CM5 tray (4 x M3 from below), CM5 carrier (4 x M2.5), clamp resistor (2 x M3 into the tapped plate, thermal paste)."],
+         "CM5 tray (4 x M3 from below), CM5 carrier (4 x M2.5). No bolt-on clamp resistor (RR-CHS-MAIN carries its own, IB-26)."],
         "Torques: M5 grip 4.0 N m (proof-load path: no thread-lock substitutes for the nyloc), M4 1.5 N m, M3 0.5-0.6 N m.",
         "Now connect in this order: (1) J_PWR (right rear edge, the only Mini-Fit) -- 12 mm clear height over the inboard top-entry headers must be kept free of loom; (2) motor connectors J_MOT_L/R from the gutters; "
         "(3) cliff and dock leads from the grommets via front_bay; (4) CM5 USB x2 + Ethernet over left_bay_over_cm5; (5) rear-left corner headers (panel, mode, buttons, bumper, rear ToF) via hump_side_left; (6) rear-right corner headers (E-stop, HANDS-ON, cover, NTC, heater). Every lead tie-wrapped within 40 mm of its header.",
@@ -242,7 +242,7 @@ STAGE_TEXT = {   # hand-written work instructions per stage: (do, inserts / torq
         "Perimeter land gap even all round (1.5-2.0 mm compressed gasket visible); every control actuates without touching the skin; E-stop latches and resets."),
     "08_grip_cover": (
         ["On the bench: look-ahead ToF board, foam blocker and window into each fairing nose, shallow clip from behind (2 x M2). Then the fairings over the side plates (2 x M3 x 20 through each).",
-         "Printed sleeve onto the 14 mm bar, bar between the side plates, one M6 x 16 cap screw + washer through each plate and fairing pocket into the tapped bar ends (thread-lock); push-in caps.",
+         "Printed sleeve onto the 14 mm bar (bar centre x -25, sleeve centre x -30 after CR-04), bar between the side plates, one M6 x 16 cap screw + washer through each plate and fairing pocket into the tapped bar ends (thread-lock); push-in caps.",
          "Saddle cover on its gasket ledge, 9 captive M3 screws."],
         "Torque M6 into the 6061 bar 6.0 N m (medium thread-lock); captive cover screws 0.5 N m.",
         "Look-ahead ToF leads down the fairing channel into the gutters.",
@@ -286,7 +286,7 @@ def write_assembly(parts, log=print):
         A.append(f"\n**Inserts / torques:** {ins}\n\n**Harness:** {harness}\n\n**Check before the next stage:** {check}\n")
     g = grip_proof()
     A.append("## Harness routing order (summary)\n")
-    A.append("Corridors are the reserved boxes of `mechanical/common/layout.py` (checked free in `out/prototype_report.md`): front_bay (J1/J2, front cliff, dock switch, clamp resistor), left/right gutter "
+    A.append("Corridors are the reserved boxes of `mechanical/common/layout.py` (checked free in `out/prototype_report.md`): front_bay (J1/J2, front cliff, dock switch), left/right gutter "
              "(motors, look-ahead ToF, CM5 power; pack and charge feed on the right), under_bridge_right (pack feed between the motor ends), left_bay_over_cm5 (CM5 USB/Ethernet), hump_side_left "
              "(LiDAR, RR-PANEL, rear ToF, deck controls), right_bay (charge inlet, HANDS-ON/Pause, right rear ToF, bumper). Order: plate-level leads (stage 1-4) -> board connectors in the stage 5 order "
              "-> nose (stage 6) -> lid (stage 7) -> grip ToF (stage 8). Strain relief: P-clip or tie-wrap within 40 mm of every board header, grommet at every plate pass-through, "
@@ -327,11 +327,11 @@ def write_images(parts, log=print):
 JOINTS = [
     ("J01_perimeter_lap", "x", -122.0, (120, 152, 48, 80), "Lid / lower hull perimeter lap joint at a screw station",
      ["4 x 2.5 silicone foam on the 1.78 mm land gap (z 61.9..63.68)", "tongue 3 mm inside the lid skirt, 9 mm high: shingled, water cannot climb", "radial M3 x 10 + bonded washer into the tongue insert"]),
-    ("J02_lid_flange_x-36", "z", 100.0, (-54, -18, 96, 130), "Shoulder / rear deck bolted flange joint (x = -36)",
+    ("J02_lid_flange_x-38", "z", 100.0, (-56, -20, 96, 130), "Shoulder / rear deck bolted flange joint (x = -38)",
      ["4 mm flanges, 9 mm deep, faces set back 0.25 mm each for the 1 mm gasket", "M3 x 12 into insert bosses at z 100 / 116 and on the roof; 3 mm dowels at z 108 and on the roof", "flanges start above the hull tongue and stop at the wheel arch"]),
     ("J03_nose_flange_x47", "z", 74.0, (30, 64, 66, 98), "Nose cowl / shoulder flange joint (x = 47)", ["nose is one piece across the centre line: no joint on the nose top", "M3 x 12 + 3 mm dowel per side"]),
     ("J04_hump_curb", "x", -124.0, (44, 80, 104, 154), "Hump wall / rear deck coaming joint", ["hump wall passes down through the deck opening; deck curb 6 mm bolted to it (M3 x 8 countersunk from inside)", "1 mm gasket between wall and curb + sealant fillet outside"]),
-    ("J05_saddle_cover_side", "x", -11.0, (66, 106, 90, 180), "Saddle well wall, cover ledge, grip side plate through the shoulder slot, cheek fairing on the roof, grip bar",
+    ("J05_saddle_cover_side", "x", -25.0, (66, 106, 90, 180), "Saddle well wall, cover ledge, grip side plate through the shoulder slot, cheek fairing on the roof, grip bar",
      ["cover 3 mm PAHT-CF on a 6 x 2 gasket (no side screws: the board's 18 mm envelope reaches the ledge)", "side plate passes through a slot covered and RTV-sealed by the fairing; ToF lead slot beside it"]),
     ("J06_cover_rear_corner", "x", -65.5, (56, 92, 80, 115), "Saddle cover rear-corner captive screw into the rear-deck ledge boss over the board corner",
      ["boss underside z 97.6 = 13.0 mm above the PCB (CCR-E08 rear-corner zone 12 mm)", "board, bridge tray and top-part envelope shown"]),
@@ -441,15 +441,14 @@ def write_report(R, table, parts, timing):
         w(f"| {k} | {v['mass_kg']:.3f} | {v['x']} | {v['z']} |")
     b = M["base_without_head"]
     w(f"| **Base with the 12 Ah pack, no head** | **{b['mass']:.2f}** | {b['x']:.1f} | {b['z']:.1f} |")
-    w("\n| Head | Mass (kg) | Margin to 12 kg | CG x | CG z | Caster N (fraction) | Each wheel N | Tip margin forward (0.4 m/s2 braking, 5 deg) | rearward | lateral | Hang angle at the grip x -11 (deg, - = tail down) | Hang angle with CR-04 bar x -30 |\n|---|---|---|---|---|---|---|---|---|---|---|---|")
+    w("\n| Head | Mass (kg) | Margin to 12 kg | CG x | CG z | Caster N (fraction) | Each wheel N | Tip margin forward (0.4 m/s2 braking, 5 deg) | rearward | lateral | Hang angle at the grip x -30 (deg, - = tail down) | (before CR-04, bar at x -11) |\n|---|---|---|---|---|---|---|---|---|---|---|---|")
     for c in M["configurations"]:
         w(f"| {c['head']} | {c['mass_kg']} | {M['mass_goal_kg'] - c['mass_kg']:.2f} | {c['cg_x']} | {c['cg_z']} | {c['caster_N']} ({c['caster_fraction']:.2f}) | {c['each_wheel_N']} | {c['tip_margin_forward_mm']} | "
-          f"{c['tip_margin_rearward_mm']} | {c['tip_margin_lateral_mm']} | {c['hang_angle_deg']} | {c['hang_angle_deg_CR04_bar_x-30']} |")
+          f"{c['tip_margin_rearward_mm']} | {c['tip_margin_lateral_mm']} | {c['hang_angle_deg']} | {c['hang_angle_deg_old_bar_x-11']} |")
     w("\nHead masses and CGs are the head engineer's calculated values (`mechanical/head/out/head_report.md` section 3, incl. pigtails). The 9 Ah pack variant is 0.65 kg lighter at x = -152 (spacer +0.05 kg).\n")
     w("\nLayout budget for comparison (`mech_calcs.md`, prototype, 12 Ah): 6.90 kg / CG x -86.3 / z 82.0 without head; 8.57 kg / -46.5 / 71.6 with the printed head (tip margin 37.3 mm, hang -19.6 deg).\n")
-    w("**IB-10 (carry attitude).** Inside the fixed interfaces the bar cannot move aft: the 45 mm hand zone behind and below the bar ends at the hump front wall (bar centre x >= -13). "
-      "The last column shows the calculated hang angle if the bar centre moves to x = -30 with the hand zone behind the bar reduced to 25 mm below z 153 (fingertips; the palm is above the hump top z 150): "
-      "CHANGE_REQUESTS.md CR-04. Ballast is not a remedy (about 1.9 kg in the nose for 10 deg).\n")
+    w("**IB-10 (carry attitude), CR-04 applied:** the grip bar centre moved from x -11 to x -30 with the hand zone reduced to 25 mm behind the bar below it (fingertips; the palm is above the hump top z 150). "
+      "The last column shows the hang angle the old position gave.\n")
     w("## 8. Carry-grip proof load (calculated)\n\n| Item | Value | Unit | Assessment |\n|---|---|---|---|")
     for item, val, unit, note in R["grip"]["rows"]:
         w(f"| {item} | {val} | {unit} | {note} |")

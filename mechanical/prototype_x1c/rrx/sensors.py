@@ -29,7 +29,7 @@ CLIP_W, CLIP_T, SCREW_X = 8.0, 1.6, 11.6
 
 
 def seat_kind(name):
-    return "look_f" if name.startswith("tof_look_f") else ("look_r" if name.startswith("tof_look_r") else "std")
+    return "look_f" if name.startswith("tof_look_fwd") else ("look_r" if name.startswith("tof_look_rev") else "std")
 
 
 def seat_xdir(d, kind):
@@ -96,7 +96,7 @@ def panel_tray():
     e = L.env("panel_board")
     zt = pc[2] - P.PANEL_BOARD["below_skin"]
     zb = zt - e["h"]
-    t = box(pc[0] - e["l"] / 2 - 1.5, pc[0] + e["l"] / 2 + 2.5, pc[1] - e["w"] / 2 - 2.5, pc[1] + e["w"] / 2 + 2.5, zb - 2.0, zb + 6.0)
+    t = box(pc[0] - e["l"] / 2 - 1.5, pc[0] + e["l"] / 2 + 1.0, pc[1] - e["w"] / 2 - 2.5, pc[1] + e["w"] / 2 + 2.5, zb - 2.0, zb + 6.0)
     t = t.cut(box(pc[0] - e["l"] / 2 - 0.3, pc[0] + e["l"] / 2 + 0.3, pc[1] - e["w"] / 2 - 0.3, pc[1] + e["w"] / 2 + 0.3, zb, zb + 10))
     t = t.cut(box(pc[0] - e["l"] / 2 + 4, pc[0] + e["l"] / 2 - 4, pc[1] - e["w"] / 2 + 3, pc[1] + e["w"] / 2 - 3, zb - 3, zb + 1))
     for sy in (-1, 1):

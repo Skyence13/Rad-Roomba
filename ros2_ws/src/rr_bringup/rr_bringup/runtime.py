@@ -107,6 +107,7 @@ class Runtime:
         self.clock = Clock()
         self.lock = threading.RLock()
         cfg = dict(config or {})
+        cfg.setdefault("chassis_thread", True)                  # IB-46: keep-alive on its own thread in real time
         if head_url.startswith("tcp://"):
             cfg.setdefault("link", {}).setdefault("byte_time_us", 0.0)       # emulator: no UART serialisation
         self.app = RobotApp(self.clock, open_transport(head_url), open_transport(chassis_url), run_dir, registry, cfg,
@@ -132,6 +133,7 @@ class Runtime:
         self._stop.set()
         time.sleep(0.05)
         with self.lock:
+            self.app.shutdown()
             self.app.archive.close()
 
     def _loop(self):

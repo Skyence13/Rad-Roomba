@@ -107,7 +107,8 @@ def run():
     md.append(f"\nWith the 5 mm liner UA = {uab:.2f} W/K (still air), time constant {C_BODY / uab / 60:.0f} min; the {P_CHS_TYP:.1f} W typical self-heat holds the bay {P_CHS_TYP / uab:.0f} K above ambient by itself. "
               f"Bay heater to hold the pack skin at +{T_SET_C:.0f} C: **{key['chs_htr_m20']:.0f} W at -20 C, {key['chs_htr_m25']:.0f} W at -25 C** in still air "
               f"({key['chs_htr_m25_moving']:.0f} W at -25 C in moving air). The fitted 20 W, 12 V polyimide pad (90 x 70 mm) with a bay NTC and an independent bimetal cut-out "
-              + ("covers the still-air cases" if key["chs_htr_m25"] <= 20 else "does NOT cover the -25 C still-air case: raise the pad rating (branch limit 36 W)") + "; without the liner the bay needs more in moving air.")
+              + ("covers the still-air cases" if key["chs_htr_m25"] <= 20 else ("does NOT cover the -25 C still-air case" if key["chs_htr_m20"] <= 20 else "does NOT cover either still-air case")
+                 + f": a {math.ceil(key['chs_htr_m25'] / 5) * 5:.0f} W pad (branch limit {P_CHS_HTR_LIMIT:.0f} W) or a lower pack set-point is needed (lead / power-budget decision)") + "; without the liner the bay needs more in moving air.")
     ref = head_reference()
     md.append("\n### Head (reference only)\n")
     if ref:

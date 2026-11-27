@@ -17,7 +17,7 @@ ALIASES = {"HEAD_PWR_N": "GND", "BUS_GND": "GND", "PACK_N": "GND", "NC_RESERVED"
 FAM = {
     "MINIFIT": dict(seal="none stated: unsealed board header inside the shell (no IP rating in sources)",
                     temp="-40 C family (CCR-E05: 'All power and safety connectors are -40 C families'); no datasheet figure in sources",
-                    tstat="UNVERIFIED", keying="polarised housing; the 8-circuit Mini-Fit is the only one on the board so it cannot be cross-mated (circuit.py)", geom="dual"),
+                    tstat="UNVERIFIED", keying="polarised housing; two Mini-Fit Jr headers on the board with different circuit counts (J_PWR 8, J_HEAD1 10, stage 2 S2-02), so they cannot be cross-mated", geom="dual"),
     "MICROFIT": dict(seal="none stated: unsealed board header inside the shell (no IP rating in sources)",
                      temp="-40 C family (CCR-E05); no datasheet figure in sources", tstat="UNVERIFIED",
                      keying="polarised housing; families cannot cross-mate, same-circuit-count housings can be swapped (see same_count_as)", geom="dual"),
@@ -53,6 +53,13 @@ def board_chassis():
             awg_rec={str(k): v["awg"] for k, v in c["pins"].items()}, max_current_a=c["max_current_a"],
             same_count_as=c.get("same_count_as"), source="electronics/chassis_main/design/connectors.yaml + circuit.py", notes=c["detail"])
     return out
+
+
+def _head_loc(ref):
+    S = src()
+    from hsrc import _pinmap_centres
+    c = _pinmap_centres(S["hd_pinmap"]).get(ref)
+    return "RR-HEAD-ACQ (head), stage-2 placement: centre (u, v) = %s mm (out/pinmap.json)" % ("(%.1f, %.1f)" % c if c else "n/a")
 
 
 def board_head():
@@ -95,7 +102,7 @@ def board_head():
         else:
             raise SystemExit("unclassified head connector %s %s" % (ref, p["package"]))
         out["HEAD." + ref] = dict(
-            id="HEAD." + ref, board="RR-HEAD-ACQ", ref=ref, location="RR-HEAD-ACQ (head), see board_envelopes.yaml zones", function=info["description"],
+            id="HEAD." + ref, board="RR-HEAD-ACQ", ref=ref, location=_head_loc(ref), function=info["description"],
             kind=kind, mpn=("%s %s" % (info["manufacturer"], info["mpn"])), mpn_status="UNVERIFIED" if p["verify"] else "verified (not flagged in source)",
             mating=mating, mating_status="UNVERIFIED" if p["verify"] or "Micro-Fit" in p["package"] else ("TBD" if mating.startswith(TBD) else "verified (not flagged in source)"),
             contacts=contacts, seal=seal, temp=temp, temp_status=tstat, keying=keying, geom=geom, family=p["package"], pins=pins,
@@ -119,10 +126,10 @@ def board_panel_tof():
             m, c = gh_mating(n)
             pins = {str(k): v[1] for k, v in p["pins"].items() if k != "MP"}
             out["PNL." + p["ref"]] = dict(
-                id="PNL." + p["ref"], board="RR-PANEL", ref=p["ref"], location="RR-PANEL (70 x 24 mm) under the annunciator skin at (-80, 97, ~110) mm base_link",
-                function=p["description"], kind="board_header", mpn="%s %s" % (p["manufacturer"], p["mpn"]), mpn_status="verified (not flagged in source)",
+                id="PNL." + p["ref"], board="RR-PANEL", ref=p["ref"], location="RR-PANEL (70 x 24 mm) under the annunciator skin at (-80, 97, ~110) mm base_link; %s, top side (stage 2, P1)" % ("J1 at board (u, v) = (30, 20.6)" if p["ref"] == "J1" else "J2 at board (u, v) = (49.5, 20.6)"),
+                function=p["description"] + " (stage 2, P1: fitted on the TOP side, mating face toward the v = 24 edge)", kind="board_header", mpn="%s %s" % (p["manufacturer"], p["mpn"]), mpn_status="verified (not flagged in source)",
                 mating=m, mating_status="verified (not flagged in source)", contacts=c, seal=FAM["GH"]["seal"], temp="-25..+85 C [U] (panel circuit.py note)",
-                temp_status="UNVERIFIED", keying=FAM["GH"]["keying"], geom="single", family="JST GH side entry", pins=pins,
+                temp_status="UNVERIFIED", keying=FAM["GH"]["keying"], geom="single", family="JST GH side entry (top side, stage 2)", pins=pins,
                 awg_rec={}, max_current_a=0.15 if p["ref"] == "J1" else 0.1, same_count_as=None, source="electronics/panel/design/circuit.py", notes=p["notes"])
     tof = S["tof"]
     j1 = [p for p in tof["parts"] if p["ref"] == "J1"][0]
@@ -141,7 +148,11 @@ def board_panel_tof():
 def _tof_names():
     S = src()
     m = S["fw_chs"]["i2c"]["I2C_TOF"]["mux_channels"]
-    return {int(k): (v["id"], v["mux"], v["ch"]) for k, v in m.items()}
+    out = {int(k): (v["id"], v["mux"], v["ch"]) for k, v in m.items()}
+    import hdata_cables as hk      # IB-34 (lead decision): harness names of ids 4..7 (firmware pinmap still carries the old LOOK_LO/LI/RI/RO names)
+    for i, (nm, zone, keys) in hk.LOOK_MAP.items():
+        out[i] = (nm, out[i][1], out[i][2])
+    return out
 
 
 # ---------------------------------------------------------------- non-board connectors / device ends
@@ -247,7 +258,7 @@ def others():
                         TBD, "IP65 unit; pigtail connector TBD", "-25..+60 C unit", "verified", TBD, "list", {"TXP": "ETH_TXP", "TXN": "ETH_TXN", "RXP": "ETH_RXP", "RXN": "ETH_RXN"},
                         "Pigtail wire colours and connector are not in the sources; pins named by 100BASE-TX function.", "lidar.md: 'Scanner RJ45/M12 pigtail directly to the carrier RJ45'", "")
     o["CM5-HDR"] = _c("CM5-HDR", "Waveshare CM5-IO-BASE-A, left rear bay (x -154..-69, y 59..115, pcb z 55)", "CM5 carrier 40-pin header: 5 V pins 2 and 4, GND pins 6 and 9 (feed point proposal)", "module",
-                      "Waveshare CM5-IO-BASE-A 40-pin header", "UNVERIFIED (modules sheet: whether the carrier back-feeds/protects the header input is [U])", TBD + " (socket/crimp for 2 x AWG 18 per pole)", "TBD", TBD, "none", "carrier temperature rating not published (UNVERIFIED)", "UNVERIFIED",
+                      "Waveshare CM5-IO-BASE-A 40-pin header", "UNVERIFIED (modules sheet: whether the carrier back-feeds/protects the header input is [U])", TBD + " (socket/crimp for 2 x AWG 20 per pole)", "TBD", TBD, "none", "carrier temperature rating not published (UNVERIFIED)", "UNVERIFIED",
                       "2x20 header, pin 1 square pad", "list", {"2": "V5_CM5", "4": "V5_CM5", "6": "GND", "9": "GND"},
                       "Alternative in the modules sheet: USB-C power-only pigtail. Check on the bench before the harness is drawn.", "cm5_and_carrier.md", "")
     for k, nm, pins in (("CM5-USB1", "USB-A 1: chassis link (MCU CDC)", {"1": "NC", "2": "MCUC_USB_DM", "3": "MCUC_USB_DP", "4": "GND", "SH": "USB_SHLD"}),
@@ -274,7 +285,7 @@ def others():
                          "NO 1 closes the latch set path. NO 2 is electrically independent.", "estop_and_operator_switches.md", "")
     o["PAUSE-DEV"] = _c("PAUSE-DEV", "Right deck (-84.0, -112.0, 122.0), axis (0.049, -0.521, 0.852)", "PAUSE/Stop projecting momentary, 1 NO, 12 V LED block", "device",
                         "Schneider Harmony XB5 projecting momentary 1 NO + 12 V LED block (reference TBD)", "UNVERIFIED", "n/a", "TBD", xb, "IP rating not in sources", "-40..+70 C (UNVERIFIED)", "UNVERIFIED",
-                        "22 mm panel", "list", {"NO-a": "BTN_3V3", "NO-b": "PAUSE_BTN_RAW", "LAMP+": "V12_AUX", "LAMP-": "LAMP_PAUSE_K"}, "", "estop_and_operator_switches.md", "")
+                        "22 mm panel", "list", {"NO-a": "PAUSE_3V3", "NO-b": "PAUSE_BTN_RAW", "LAMP+": "V12_AUX", "LAMP-": "LAMP_PAUSE_K"}, "Contact supply is PAUSE_3V3 (1 kohm from 3V3 on the chassis board, S2-01f).", "estop_and_operator_switches.md; STAGE2_CHANGE_REQUESTS.md S2-01", "")
     d2 = "Omron D2HW-C201M sealed SPDT, pin plunger, lead wires, M3 screw mount"
     for k, loc, fn, pins in (
             ("BUMP-L-DEV", "Left rear quarter (-236.6, 103.0, 66.0)", "Body bumper switch left, wired NC", {"COM": "CH_N7", "NC": "CH_N8A", "NO": "UNUSED"}),
@@ -295,14 +306,10 @@ def others():
     o["NTC-BAY"] = _c("NTC-BAY", "Battery bay beside the heater", "Bay air NTC 10 kohm B3435", "device", TBD + " (10 kohm NTC, B3435)", "TBD", "n/a", "TBD", TBD, "TBD", TBD, "TBD", "n/a", "leads", {"a": "NTC_BAY", "b": "GND"}, "", "circuit.py J_NTC; modules", "")
     o["NTC-PACKSURF"] = _c("NTC-PACKSURF", "Pack surface (bay wall against the cassette)", "Pack-surface NTC 10 kohm B3435 (heater plausibility, battery.temp_c[1])", "device", TBD + " (10 kohm NTC, B3435)", "TBD", "n/a", "TBD", TBD, "TBD", TBD, "TBD", "n/a", "leads",
                            {"a": "NTC_PACK", "b": "GND"}, "", "circuit.py J_NTC; firmware pinmap", "")
-    o["CLAMP-EXT"] = _c("CLAMP-EXT", "Chassis plate, front bay (parts.yaml); OR rear-right (board_envelopes.yaml): sources disagree", "OPTIONAL external bus-clamp / braking-energy resistor in parallel with the on-board 2 x 9.1 ohm", "device",
-                        "Aluminium-housed wirewound 50 W (Arcol HS50 class); value TBD - not in sources", "UNVERIFIED", "n/a", "TBD", TBD, "TBD", "-55..+200 C (parts.yaml, UNVERIFIED)", "UNVERIFIED", "n/a", "leads", {"1": "CLAMP_F", "2": "CLAMP_R"},
-                        "Wired to the DNP pads CHS.W1. Value must be chosen with the electronics lead: on-board pair is 4.55 ohm and the F_CLAMP PTC (1.1 A hold) is in series with CLAMP_F.", "circuit.py W1; parts.yaml clamp_resistor", "")
-    o["CHS.W1"] = _c("CHS.W1", "RR-CHS-MAIN, near the clamp circuit (DNP)", "Two 2.5 mm wire pads for the optional external clamp resistor: 1 CLAMP_F, 2 CLAMP_R", "board_pad", "2 x TestPoint_Pad_2.5x2.5mm (pcb feature, DNP)", "verified (not flagged)",
-                     "wire soldered to the pad", "n/a", "-", "n/a", "n/a", "n/a", "n/a", "list", {"1": "CLAMP_F", "2": "CLAMP_R"}, "DNP in rev A.", "chassis circuit.py W1", "")
+    o["CHS.W1"] = _c("CHS.W1", "RR-CHS-MAIN, near the clamp circuit (DNP)", "Two 2.5 mm DNP wire pads W1 (1 CLAMP_F, 2 CLAMP_R): NO cable, NO bolt-on resistor (the board carries its own 2 x 9.1 ohm clamp resistors, IB-26 / IB-36)", "board_pad", "2 x TestPoint_Pad_2.5x2.5mm (pcb feature, DNP)", "verified (not flagged)",
+                     "none: not wired", "n/a", "-", "n/a", "n/a", "n/a", "n/a", "list", {"1": "CLAMP_F", "2": "CLAMP_R"}, "DNP in rev A; no harness wire (decision: no bolt-on clamp resistor; a 50 W part listed in parts.yaml is stale, IB-26).", "chassis circuit.py W1 and the on-board clamp R (9.1 ohm 2512 x 2)", "")
     # --- splices
     for k, net1, nm in (("SPL-P", "VBAT_RAW", "pack positive 1-to-2 crimp splice (AWG 14 trunk to 2 x AWG 16)"), ("SPL-N", "GND", "pack negative 1-to-2 crimp splice (AWG 14 trunk to 2 x AWG 16)"),
-                        ("SPL-BTN3", "BTN_3V3", "REARM/PAUSE shared BTN_3V3 (J_BTN pin 3) 1-to-2 splice"), ("SPL-BTN6", "V12_AUX", "REARM/PAUSE shared lamp supply (J_BTN pin 6) 1-to-2 splice"),
                         ("SPL-HCUT", "HTR_CUT", "head heater: element end / cut-out / J2601 pin 3 sense junction")):
         o[k] = _c(k, "In the loom", nm, "splice", TBD + " (sealed wire-to-wire splice)", "TBD", "n/a", "TBD", TBD, "TBD", TBD, "TBD", "n/a", "list", {"1": net1, "2": net1, "3": net1}, "Splice resistance not in power_budget.md: measure on the first harness.", "harness decision", "")
     # --- head devices

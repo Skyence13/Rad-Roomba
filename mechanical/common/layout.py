@@ -157,6 +157,9 @@ def build(rail_projection=3.0):
     RC = P.RECEIVER
     fb = RC["front_beam"]
     plate = plate.fuse(L.box(fb[0], fb[1], fb[2], fb[3], z0, z1)).cut(L.box(fb[1], 200, -200, 200, z0 - 1, z1 + 1)).clean()
+    for name in ("tof_cliff_fl", "tof_cliff_fr"):          # cliff ToF windows in the widened front beam (CR-01)
+        tx, ty, _ = P.TOF_SENSORS[name]["xyz"]
+        plate = plate.cut(L.box(tx - 10.75, tx + 10.75, ty - 10.75, ty + 10.75, z0 - 1, z1 + 1))
     add("chassis_plate", plate, "chassis", "struct", internal=False)
     for tag, s in (("L", 1), ("R", -1)):
         yc = s * RC["shoe_y"]
@@ -202,9 +205,10 @@ def build(rail_projection=3.0):
     for tag, s in (("L", 1), ("R", -1)):
         ya, yb = sorted((s * G["cheek_y"][0], s * G["cheek_y"][1]))
         add(f"grip_cheek_{tag}", L.box(gx0, gx1, ya, yb, S["floor_z"][0], G["bar_top_z"]), "grip", "struct", 0.06, internal=False)
-        add(f"grip_leg_{tag}", L.box(gx0 - 7.5, gx0 + 1.5, ya, yb, 46.0, S["floor_z"][0]), "grip", "struct", 0.03)
-        yc, yd = sorted((s * 60.0, s * 90.0))
-        add(f"grip_yoke_{tag}", L.box(gx0 - 7.5, gx0 + 1.5, yc, yd, z1, 46.0), "grip", "struct", 0.02)
+        lx0, lx1 = gx1 - 14.5, gx1 - 1.5          # legs under the front half of the bar (clear of RR-PANEL, which ends at x -45, and of the motor cans), as in the prototype body
+        add(f"grip_leg_{tag}", L.box(lx0, lx1, ya, yb, 46.0, S["floor_z"][0]), "grip", "struct", 0.03)
+        yc, yd = sorted((s * 63.0, s * 88.0))
+        add(f"grip_yoke_{tag}", L.box(gx1 - 38.5, gx1 - 4.5, yc, yd, z1, 46.0), "grip", "struct", 0.02)     # angle feet through-bolted to the plate
         lf = P.TOF_SENSORS["tof_look_fwd_left"]["xyz"]                 # forward fairing nose carrying the look-ahead ToF (CR-04)
         add(f"grip_cheek_nose_{tag}", L.box(gx1, lf[0] - 7.5, ya, yb, 148.0, G["bar_top_z"]), "grip", "struct", 0.01, internal=False)
 
@@ -301,7 +305,7 @@ def build(rail_projection=3.0):
     add("head_cover_E", cover, "head_cover", "shell", internal=False)
     # finished-head additions (IB-40): standard 3 mm insulating jacket cap (top z 48.0, front band to x 191.2) and the
     # sprung leading rail bar (front face x 212.2 unloaded, z up to 22), mechanical/head/out/head_report.md
-    add("head_jacket_E", L.box(xa, 191.2, -175.0, 175.0, cz1, 48.0), "head_cover", "shell", internal=False)
+    add("head_jacket_E", L.box(xa, 191.2, -175.0, 175.0, cz1, 48.0).cut(L.box(lb[0] - 1, lb[1] + 1, lb[2] - 1, lb[3] + 1, cz1 - 1, 50)), "head_cover", "shell", internal=False)   # keeper / latch cut-out
     lr = P.HEAD_LEAD_RAIL
     add("head_leading_rail_sprung", L.box(lr["x"][1] - 3.0, lr["x"][1], -lr["half_y"], lr["half_y"], P.FILM_Z - proj, lr["z"][1]), "head_rails", "head", internal=False)
 

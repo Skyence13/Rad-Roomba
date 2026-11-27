@@ -58,11 +58,11 @@ Keying / coding: polarised housing; SAFETY family, yellow wire; cannot mate GH/M
 | 1 | SET_CAP | W-018.1 |
 | 2 | K1_SET | W-018.2 |
 | 3 | BTN_3V3 | W-018.3 |
-| 4 | REARM_BTN_RAW | W-018.5 |
-| 5 | PAUSE_BTN_RAW | W-019.2 |
-| 6 | V12_AUX | W-018.6 |
-| 7 | LAMP_REARM_K | W-018.8 |
-| 8 | LAMP_PAUSE_K | W-019.4 |
+| 4 | REARM_BTN_RAW | W-018.4 |
+| 5 | NC | - |
+| 6 | V12_AUX | W-018.5 |
+| 7 | LAMP_REARM_K | W-018.6 |
+| 8 | NC | - |
 
 ## CHS.J_BUMP_L
 
@@ -263,23 +263,23 @@ Keying / coding: polarised housing; SAFETY family, yellow wire; cannot mate GH/M
 
 ## CHS.J_HEAD1
 
-J1 landing (HEAD POWER / INTERLOCK). Part: Molex 43045-0800 [UNVERIFIED]. Mating half: 43025-0800 [UNVERIFIED].
+J1 landing (HEAD POWER / INTERLOCK). Part: Molex 39-30-1100 [UNVERIFIED]. Mating half: 39-01-2100 [UNVERIFIED].
 
 **MATING FACE view** (cable-side housing, looking at the face that meets the board header / receptacle)
 ```
-  +-------------------------+
-  |   5     6     7     8   |
-  |   1     2     3     4   |
-  +-------------------------+
+  +-------------------------------+
+  |   6     7     8     9     10  |
+  |   1     2     3     4     5   |
+  +-------------------------------+
 ```
 **WIRE-ENTRY view** (looking at the rear of the housing, where the crimped wires go in; mirror image)
 ```
-  +-------------------------+
-  |   8     7     6     5   |
-  |   4     3     2     1   |
-  +-------------------------+
+  +-------------------------------+
+  |   10    9     8     7     6   |
+  |   5     4     3     2     1   |
+  +-------------------------------+
 ```
-Keying / coding: polarised housing; families cannot cross-mate, same-circuit-count housings can be swapped (see same_count_as). Geometry: latch/polarising side shown UP; circuits 1..4 bottom row, 5..8 top row, pin 1 at the left of the MATING view (convention) [UNVERIFIED].
+Keying / coding: polarised housing; two Mini-Fit Jr headers on the board with different circuit counts (J_PWR 8, J_HEAD1 10, stage 2 S2-02), so they cannot be cross-mated. Geometry: latch/polarising side shown UP; circuits 1..5 bottom row, 6..10 top row, pin 1 at the left of the MATING view (convention) [UNVERIFIED].
 
 | Pin | Net | Wire(s) |
 |---|---|---|
@@ -291,6 +291,8 @@ Keying / coding: polarised housing; families cannot cross-mate, same-circuit-cou
 | 6 | HEAD_LOOP_RET | W-008.6 |
 | 7 | HEAD_PRES_ID | W-008.7 |
 | 8 | NC | - |
+| 9 | NC | - |
+| 10 | NC | - |
 
 ## CHS.J_HEAD2
 
@@ -512,6 +514,32 @@ Keying / coding: polarised housing (JST GH); 4/5/6-pin same-count housings can b
 | 9 | BUZ_N | W-023.9 |
 | 10 | GND | W-023.10 |
 
+## CHS.J_PAUSE
+
+PAUSE button and lamp (right deck). Part: JST BM05B-GHS-TBT(LF)(SN) [verified (not flagged in source)]. Mating half: GHR-05V-S [verified (not flagged in source)].
+
+**MATING FACE view** (cable-side housing, looking at the face that meets the board header / receptacle)
+```
+  +-------------------------------+
+  |   1     2     3     4     5   |
+  +-------------------------------+
+```
+**WIRE-ENTRY view** (looking at the rear of the housing, where the crimped wires go in; mirror image)
+```
+  +-------------------------------+
+  |   5     4     3     2     1   |
+  +-------------------------------+
+```
+Keying / coding: polarised housing (JST GH); 4/5/6-pin same-count housings can be swapped (see same_count_as). Geometry: polarised housing profile; latch/key side shown UP (convention) [UNVERIFIED].
+
+| Pin | Net | Wire(s) |
+|---|---|---|
+| 1 | PAUSE_3V3 | W-019.1 |
+| 2 | PAUSE_BTN_RAW | W-019.2 |
+| 3 | V12_AUX | W-019.3 |
+| 4 | LAMP_PAUSE_K | W-019.4 |
+| 5 | NC | - |
+
 ## CHS.J_PAUX
 
 Pack NTC and presence (coupler auxiliary contacts). Part: JST BM04B-GHS-TBT(LF)(SN) [verified (not flagged in source)]. Mating half: GHR-04V-S [verified (not flagged in source)].
@@ -555,7 +583,7 @@ Pack feed + charge inlet feed + plug link. Part: Molex 39-30-1080 [UNVERIFIED]. 
   |   4     3     2     1   |
   +-------------------------+
 ```
-Keying / coding: polarised housing; the 8-circuit Mini-Fit is the only one on the board so it cannot be cross-mated (circuit.py). Geometry: latch/polarising side shown UP; circuits 1..4 bottom row, 5..8 top row, pin 1 at the left of the MATING view (convention) [UNVERIFIED].
+Keying / coding: polarised housing; two Mini-Fit Jr headers on the board with different circuit counts (J_PWR 8, J_HEAD1 10, stage 2 S2-02), so they cannot be cross-mated. Geometry: latch/polarising side shown UP; circuits 1..4 bottom row, 5..8 top row, pin 1 at the left of the MATING view (convention) [UNVERIFIED].
 
 | Pin | Net | Wire(s) |
 |---|---|---|
@@ -1517,7 +1545,7 @@ Device / module / pad: no standard pin geometry in the sources. Terminal table b
 
 ## PNL.J1
 
-To RR-CHS-MAIN J_PANEL, straight 1:1 cable (bottom side, cable leaves along the long axis). Part: JST SM10B-GHS-TB(LF)(SN) [verified (not flagged in source)]. Mating half: GHR-10V-S [verified (not flagged in source)].
+To RR-CHS-MAIN J_PANEL, straight 1:1 cable (bottom side, cable leaves along the long axis) (stage 2, P1: fitted on the TOP side, mating face toward the v = 24 edge). Part: JST SM10B-GHS-TB(LF)(SN) [verified (not flagged in source)]. Mating half: GHR-10V-S [verified (not flagged in source)].
 
 **MATING FACE view** (cable-side housing, looking at the face that meets the board header / receptacle)
 ```
@@ -1548,7 +1576,7 @@ Keying / coding: polarised housing (JST GH); 4/5/6-pin same-count housings can b
 
 ## PNL.J2
 
-Optional external 22 mm panel sounder, 12 V self-driven, <= 100 mA (firmware then drives BUZZER as a level, not a tone). Part: JST SM02B-GHS-TB(LF)(SN) [verified (not flagged in source)]. Mating half: GHR-02V-S [verified (not flagged in source)].
+Optional external 22 mm panel sounder, 12 V self-driven, <= 100 mA (firmware then drives BUZZER as a level, not a tone) (stage 2, P1: fitted on the TOP side, mating face toward the v = 24 edge). Part: JST SM02B-GHS-TB(LF)(SN) [verified (not flagged in source)]. Mating half: GHR-02V-S [verified (not flagged in source)].
 
 **MATING FACE view** (cable-side housing, looking at the face that meets the board header / receptacle)
 ```
@@ -1679,7 +1707,7 @@ Keying / coding: polarised housing (JST GH); 4/5/6-pin same-count housings can b
 
 ## TOF4.J1
 
-ToF carrier LOOK_LO harness connector. Part: JST SM06B-GHS-TB(LF)(SN) [verified (not flagged in source)]. Mating half: GHR-06V-S [verified (not flagged in source)].
+ToF carrier LOOK_FL harness connector. Part: JST SM06B-GHS-TB(LF)(SN) [verified (not flagged in source)]. Mating half: GHR-06V-S [verified (not flagged in source)].
 
 **MATING FACE view** (cable-side housing, looking at the face that meets the board header / receptacle)
 ```
@@ -1706,7 +1734,7 @@ Keying / coding: polarised housing (JST GH); 4/5/6-pin same-count housings can b
 
 ## TOF5.J1
 
-ToF carrier LOOK_LI harness connector. Part: JST SM06B-GHS-TB(LF)(SN) [verified (not flagged in source)]. Mating half: GHR-06V-S [verified (not flagged in source)].
+ToF carrier LOOK_FR harness connector. Part: JST SM06B-GHS-TB(LF)(SN) [verified (not flagged in source)]. Mating half: GHR-06V-S [verified (not flagged in source)].
 
 **MATING FACE view** (cable-side housing, looking at the face that meets the board header / receptacle)
 ```
@@ -1733,7 +1761,7 @@ Keying / coding: polarised housing (JST GH); 4/5/6-pin same-count housings can b
 
 ## TOF6.J1
 
-ToF carrier LOOK_RI harness connector. Part: JST SM06B-GHS-TB(LF)(SN) [verified (not flagged in source)]. Mating half: GHR-06V-S [verified (not flagged in source)].
+ToF carrier LOOK_RL harness connector. Part: JST SM06B-GHS-TB(LF)(SN) [verified (not flagged in source)]. Mating half: GHR-06V-S [verified (not flagged in source)].
 
 **MATING FACE view** (cable-side housing, looking at the face that meets the board header / receptacle)
 ```
@@ -1760,7 +1788,7 @@ Keying / coding: polarised housing (JST GH); 4/5/6-pin same-count housings can b
 
 ## TOF7.J1
 
-ToF carrier LOOK_RO harness connector. Part: JST SM06B-GHS-TB(LF)(SN) [verified (not flagged in source)]. Mating half: GHR-06V-S [verified (not flagged in source)].
+ToF carrier LOOK_RR harness connector. Part: JST SM06B-GHS-TB(LF)(SN) [verified (not flagged in source)]. Mating half: GHR-06V-S [verified (not flagged in source)].
 
 **MATING FACE view** (cable-side housing, looking at the face that meets the board header / receptacle)
 ```
@@ -2364,7 +2392,7 @@ Device / module / pad: no standard pin geometry in the sources. Terminal table b
 
 ## CM5-HDR
 
-CM5 carrier 40-pin header: 5 V pins 2 and 4, GND pins 6 and 9 (feed point proposal). Part: Waveshare CM5-IO-BASE-A 40-pin header [UNVERIFIED (modules sheet: whether the carrier back-feeds/protects the header input is [U])]. Mating half: TBD - not in sources (socket/crimp for 2 x AWG 18 per pole) [TBD].
+CM5 carrier 40-pin header: 5 V pins 2 and 4, GND pins 6 and 9 (feed point proposal). Part: Waveshare CM5-IO-BASE-A 40-pin header [UNVERIFIED (modules sheet: whether the carrier back-feeds/protects the header input is [U])]. Mating half: TBD - not in sources (socket/crimp for 2 x AWG 20 per pole) [TBD].
 
 Device / module / pad: no standard pin geometry in the sources. Terminal table below.
 
@@ -2487,10 +2515,10 @@ Device / module / pad: no standard pin geometry in the sources. Terminal table b
 
 | Pin | Net | Wire(s) |
 |---|---|---|
-| AUX-a | BTN_3V3 | W-018.4 |
-| AUX-b | REARM_BTN_RAW | W-018.5 |
-| LAMP+ | V12_AUX | W-018.7 |
-| LAMP- | LAMP_REARM_K | W-018.8 |
+| AUX-a | BTN_3V3 | W-018.3 |
+| AUX-b | REARM_BTN_RAW | W-018.4 |
+| LAMP+ | V12_AUX | W-018.5 |
+| LAMP- | LAMP_REARM_K | W-018.6 |
 | SET-a | SET_CAP | W-018.1 |
 | SET-b | K1_SET | W-018.2 |
 
@@ -2504,7 +2532,7 @@ Device / module / pad: no standard pin geometry in the sources. Terminal table b
 |---|---|---|
 | LAMP+ | V12_AUX | W-019.3 |
 | LAMP- | LAMP_PAUSE_K | W-019.4 |
-| NO-a | BTN_3V3 | W-019.1 |
+| NO-a | PAUSE_3V3 | W-019.1 |
 | NO-b | PAUSE_BTN_RAW | W-019.2 |
 
 ## BUMP-L-DEV
@@ -2610,27 +2638,16 @@ Device / module / pad: no standard pin geometry in the sources. Terminal table b
 | a | NTC_PACK | W-042.3 |
 | b | GND | W-042.4 |
 
-## CLAMP-EXT
-
-OPTIONAL external bus-clamp / braking-energy resistor in parallel with the on-board 2 x 9.1 ohm. Part: Aluminium-housed wirewound 50 W (Arcol HS50 class); value TBD - not in sources [UNVERIFIED]. Mating half: n/a [TBD].
-
-Device / module / pad: no standard pin geometry in the sources. Terminal table below.
-
-| Pin | Net | Wire(s) |
-|---|---|---|
-| 1 | CLAMP_F | W-044.1 |
-| 2 | CLAMP_R | W-044.2 |
-
 ## CHS.W1
 
-Two 2.5 mm wire pads for the optional external clamp resistor: 1 CLAMP_F, 2 CLAMP_R. Part: 2 x TestPoint_Pad_2.5x2.5mm (pcb feature, DNP) [verified (not flagged)]. Mating half: wire soldered to the pad [n/a].
+Two 2.5 mm DNP wire pads W1 (1 CLAMP_F, 2 CLAMP_R): NO cable, NO bolt-on resistor (the board carries its own 2 x 9.1 ohm clamp resistors, IB-26 / IB-36). Part: 2 x TestPoint_Pad_2.5x2.5mm (pcb feature, DNP) [verified (not flagged)]. Mating half: none: not wired [n/a].
 
 Device / module / pad: no standard pin geometry in the sources. Terminal table below.
 
 | Pin | Net | Wire(s) |
 |---|---|---|
-| 1 | CLAMP_F | W-044.1 |
-| 2 | CLAMP_R | W-044.2 |
+| 1 | CLAMP_F | - |
+| 2 | CLAMP_R | - |
 
 ## SPL-P
 
@@ -2655,30 +2672,6 @@ Device / module / pad: no standard pin geometry in the sources. Terminal table b
 | 1 | GND | W-001.5 |
 | 2 | GND | W-001.6 |
 | 3 | GND | W-001.7 |
-
-## SPL-BTN3
-
-REARM/PAUSE shared BTN_3V3 (J_BTN pin 3) 1-to-2 splice. Part: TBD - not in sources (sealed wire-to-wire splice) [TBD]. Mating half: n/a [TBD].
-
-Device / module / pad: no standard pin geometry in the sources. Terminal table below.
-
-| Pin | Net | Wire(s) |
-|---|---|---|
-| 1 | BTN_3V3 | W-018.3 |
-| 2 | BTN_3V3 | W-018.4 |
-| 3 | BTN_3V3 | W-019.1 |
-
-## SPL-BTN6
-
-REARM/PAUSE shared lamp supply (J_BTN pin 6) 1-to-2 splice. Part: TBD - not in sources (sealed wire-to-wire splice) [TBD]. Mating half: n/a [TBD].
-
-Device / module / pad: no standard pin geometry in the sources. Terminal table below.
-
-| Pin | Net | Wire(s) |
-|---|---|---|
-| 1 | V12_AUX | W-018.6 |
-| 2 | V12_AUX | W-018.7 |
-| 3 | V12_AUX | W-019.3 |
 
 ## SPL-HCUT
 

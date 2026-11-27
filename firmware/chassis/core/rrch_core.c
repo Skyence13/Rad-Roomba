@@ -619,7 +619,8 @@ static void panel_step(rrch_t *c)
         bz = (c->ms % 250u) < 125u;
     }
     c->out.buzzer = bz;
-    bool ready = !c->chain.latch && c->boot_done && c->chain.hw_live == 0u && c->out.arm_permit;
+    bool ready = !c->chain.latch && c->boot_done && c->chain.hw_live == 0u && c->out.arm_permit && c->chain.el[RRCH_EL_ARM_PERMIT] == RRCH_ELS_CLOSED &&
+                 c->chain.el[RRCH_EL_ESTOP] == RRCH_ELS_CLOSED;
     bool clearable = (c->sw_latched || c->hold) && !(c->sw_active & c->sw_latched);
     c->out.lamp_rearm = (ready || clearable) && (c->ms % 500u) < 250u;
     c->out.lamp_pause = c->mode == RRCH_MODE_MOVING;
@@ -705,8 +706,11 @@ void rrch_tick_1khz(rrch_t *c)
             c->permit_rest_ms = 0;
         }
     }
+    /* IB-01: no permit while its readback (CHAIN_END_RB on IOX_B) cannot be read, so the ARM_PERMIT
+     * element is never closed unsupervised */
     bool permit = c->boot_done && m != RRCH_MODE_FAULT && m != RRCH_MODE_BOOT && m != RRCH_MODE_SERVICE_CHARGE && m != RRCH_MODE_LAB &&
-                  !c->permit_withdrawn && bt_permit && c->chain.pres != RRCH_PRES_FAULT && !(c->chain.hw_live & RRCH_HW(VMOT_FAULT));
+                  !c->permit_withdrawn && bt_permit && c->chain.pres != RRCH_PRES_FAULT && !(c->chain.hw_live & RRCH_HW(VMOT_FAULT)) &&
+                  c->chain.chain_end_known;
     if (permit != c->out.arm_permit) {
         if (permit || !c->permit_withdrawn) {
             rrch_event(c, RRCH_EV_PERMIT, permit, permit ? 0 : (bt_permit ? 4 : 3), 0);
@@ -751,8 +755,8 @@ void rrch_supervise_100hz(rrch_t *c)
     bool first = c->wd_sup_count == 0u;
     c->wd_sup_count++;
     bool ok = first || (n >= 8u && n <= 12u && flow && c->wd_bg_age <= 50u);
-    if (c->faults & RRCH_FLT(TIMING)) {
-        ok = false;
+    if (c->faults & RRCH_FLT_NO_STROBE_MASK) {
+        ok = false; /* TIMING; PERMIT_STUCK_ON: open the chain at WDG_OK, upstream of the suspect ARM_PERMIT element */
     }
     if (ok && !c->wd_inhibit_strobe) {
         c->hal.wdg_strobe(c->hal.ctx);

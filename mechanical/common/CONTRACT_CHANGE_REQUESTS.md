@@ -7,6 +7,18 @@ Owner of `interface/system/contract.yaml`: integration lead. All numbers are des
 `out/head_mount_trade_study.md`). `params.py` already carries the requested values next to the loaded contract values; `frames.yaml`,
 `board_envelopes.yaml`, the layout and all calculations are built with them.
 
+## Requests from the 2026-11-27 common update (IB-26, IB-34, IB-39, IB-40, IB-52, prototype CR-01..CR-09)
+
+Checked against contract 0.4.0-draft7 (already carries the 0.290 m tail swept radius, the grip at x -30 and the look-ahead set).
+
+| ID | Key | Contract now (draft7) | Requested | Why | Who is affected |
+|---|---|---|---|---|---|
+| CCR-15 | `boards.RR-TOF.desc` / tf names | look sensors named LOOK_FL / LOOK_FR / LOOK_RL / LOOK_RR | state the frame names: LOOK_FL = `tof_look_fwd_left`, LOOK_FR = `tof_look_fwd_right`, LOOK_RL = `tof_look_rev_left`, LOOK_RR = `tof_look_rev_right` (frames.yaml renamed from tof_look_fl/fr/rl/rr) | IB-34: unambiguous forward/rearward names; firmware pinmap still says LOOK_LO/LI/RI/RO (four forward) | chassis firmware, harness, robot software |
+| CCR-16 | `power.head_allocation_w.electronics_target` and the heater budget | 5 W electronics target; heater figures from the old head model | record the head electronics typical 1.2 W / max 2.1 W (`electronics/analysis/head_afe_budget.md`) as the value thermal sizing credits; head heater figure = head report (pending recalculation), bay heater = `mech_calcs.md` section 7 (+10 C pack-skin set-point) | IB-39: one assumption set | power-budget owner, head mechanical |
+| CCR-17 | `safety_chain` / switch count | HEAD_LOOP through three head rail switches | add the head lid interlock switch (mechanical/head LID_SW) to the safety-chain description if it is wired into a chain element; parts.yaml now counts 8 D2HW | IB-26 | registers, chassis electronics |
+| CCR-18 | (no contract key) caster | -- | note that the TENTE Compacta caster has a plain bearing rated -20 C and does not meet the -25 C objective / W13 sealed-bearing baseline; no verified replacement of <= 36 mm height | IB-26 | lead (caster decision) |
+| CCR-19 | (no contract key) panel positions | -- | Pause/Stop moved to (-84, -122) on the deck (was -112), CR-08: its body (depth 50 mm UNVERIFIED + 3) now clears the IB-12 rear-right connector space | IB-12 / CCR-E08 | chassis electronics (harness length +10 mm) |
+
 ## Open requests (2026-11-26)
 
 | ID | Key | Contract now (0.4.0-draft4) | Requested (exact values) | Why | Who is affected |

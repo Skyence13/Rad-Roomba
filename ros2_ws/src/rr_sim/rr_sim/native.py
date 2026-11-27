@@ -121,7 +121,7 @@ class NativeSystem:
         self.clock = Clock()
         registry = provision_registry_from_head("tcp://127.0.0.1:5540")       # simulation-only provisioning
         self.registry = registry
-        cfg = merge({"link": {"byte_time_us": 0.0, "reply_timeout_us": 60_000}}, config)
+        cfg = merge({"link": {"byte_time_us": 0.0, "reply_timeout_us": 60_000}, "chassis_thread": True}, config)
         self.app = RobotApp(self.clock, open_transport("tcp://127.0.0.1:5540"), open_transport("tcp://127.0.0.1:5550"),
                             run_dir, registry, cfg)
         self.head, self.chassis = NativeHead(), NativeChassis()
@@ -205,6 +205,7 @@ class NativeSystem:
 
     def close(self):
         try:
+            self.app.shutdown()
             self.app.archive.close()
         except Exception:
             pass

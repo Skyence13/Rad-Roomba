@@ -1,17 +1,21 @@
 /* Setup (thresholds, trims, bias, heater), setup_id derivation and the descriptor builder. */
 #include <string.h>
 
+#include "rrh_board.h"
 #include "rrh_internal.h"
 
 /* ---- Rev E concept geometry, micrometres in the head_mount frame ------------------------------
  * Source: interface/system/contract.yaml (frames.head_mount, head_envelope_rev_e_mm, optics).
- *   head_mount = (138.5, 0, 32) mm in base_link; envelope x 138.8..265, y +-175, z 5..50;
- *   optics row centre x = 204, entrance film z = 10, active 100 (x) by 80 (y),
- *   lane centres y = +131.25, +43.75, -43.75, -131.25. */
+ *   head_mount = (65.7, 0, 32) mm in base_link (option C, DEC-041); envelope x 66.0..212.5 (sprung
+ *   leading rail front face at 212.2 unloaded), y +-175, z 5..50;
+ *   optics row centre x = 131.2, entrance film z = 10, active 100 (x) by 80 (y),
+ *   lane centres y = +131.25, +43.75, -43.75, -131.25.
+ * firmware 0.4 carried the pre-IB-11 envelope x max 192.2 (126500 um); the contract has moved to
+ * 212.5, which the baseline test test_descriptor_rev_e_concept reads from contract.yaml. */
 #define GEO_ENV_MIN_X 300
 #define GEO_ENV_MIN_Y (-175000)
 #define GEO_ENV_MIN_Z (-27000)
-#define GEO_ENV_MAX_X 126500
+#define GEO_ENV_MAX_X 146800
 #define GEO_ENV_MAX_Y 175000
 #define GEO_ENV_MAX_Z 18000
 #define GEO_CENTER_X 65500
@@ -24,20 +28,33 @@ static const int32_t k_lane_y[RRH_LANES] = {131250, 43750, -43750, -131250};
 void rrh_setup_defaults(rrh_setup_t *s)
 {
     memset(s, 0, sizeof *s);
+    /* Thresholds are voltages ABOVE the 0.600 V baseline (R2310/R2311): a DAC code below the
+     * baseline (firmware 0.4 used 200 = 0.12 V) leaves the comparator permanently high. Levels in
+     * photo-electrons use the FAST path gain of a 6 mm onsemi J-series device at low overvoltage
+     * (6.9 mV per p.e., budget 2.2, ASSUMED until the SiPM is chosen). */
+    const uint16_t lld = rrh_board_threshold_code(RRH_DEFAULT_LLD_PE * RRH_FAST_UV_PER_PE);
+    const uint16_t uld = rrh_board_threshold_code(RRH_DEFAULT_ULD_PE * RRH_FAST_UV_PER_PE);
+    const uint16_t alpha = rrh_board_threshold_code(RRH_DEFAULT_ALPHA_UV);
     for (uint32_t lane = 0u; lane < RRH_LANES; lane++) {
-        s->fe.threshold[(lane * 3u) + 0u] = 200u;  /* BETA_LLD */
-        s->fe.threshold[(lane * 3u) + 1u] = 1800u; /* BETA_ULD */
-        s->fe.threshold[(lane * 3u) + 2u] = 1200u; /* ALPHA (slow path) */
-        s->fe.threshold[12u + (lane * 2u) + 0u] = 200u;  /* REF_LLD */
-        s->fe.threshold[12u + (lane * 2u) + 1u] = 2400u; /* REF_ULD */
+        s->fe.threshold[(lane * 3u) + 0u] = lld;   /* BETA_LLD */
+        s->fe.threshold[(lane * 3u) + 1u] = uld;   /* BETA_ULD */
+        s->fe.threshold[(lane * 3u) + 2u] = alpha; /* ALPHA (slow path) */
+        s->fe.threshold[12u + (lane * 2u) + 0u] = lld; /* REF_LLD */
+        s->fe.threshold[12u + (lane * 2u) + 1u] = uld; /* REF_ULD */
     }
     for (uint32_t i = 0u; i < RRH_N_TRIMS; i++) {
-        s->fe.trim[i] = 2048u;
+        s->fe.trim[i] = 2048u; /* 1.25 V of the usable 0.10 ... 2.50 V */
     }
     s->fe.pulser_code = 0u;
     s->fe.pulser_enable = false;
+    s->fe.pulser_channel = 0u;
+    s->fe.pulser_width_us = 2u;
+    s->fe.led_code = 0u;
+    s->fe.led_enable = false;
+    s->fe.alpha_hold_us = RRH_ALPHA_HOLD_DEFAULT_US;
     s->fe.chain_enable = 0xFFu;
-    /* Placeholders until the SiPM type is known (design range 20-60 V). */
+    /* Placeholders until the SiPM type is known: 30.0 V at 25 degC is below the fitted 31.5 V
+     * over-voltage trip (rev A, onsemi J/C strap); 21.5 mV/degC is the onsemi J-series value. */
     s->bias_ref_mv = 30000u;
     s->bias_tc_uv_per_c = 21500;
     s->t_ref_mc = 25000;
@@ -66,15 +83,20 @@ bool rrh_setup_valid(const rrh_setup_t *s)
             return false;
         }
     }
-    return (s->fe.pulser_code <= 4095u) && (s->bias_ref_mv >= RRH_BIAS_MIN_MV) && (s->bias_ref_mv <= RRH_BIAS_MAX_MV) &&
+    if ((s->fe.pulser_channel > 7u) || (s->fe.pulser_width_us < 1u) || (s->fe.pulser_width_us > 100u) ||
+        (s->fe.led_code > 4095u) || (s->fe.alpha_hold_us > RRH_ALPHA_HOLD_MAX_US)) {
+        return false;
+    }
+    return (s->fe.pulser_code <= 4095u) && (s->bias_ref_mv >= RRH_BIAS_MIN_MV) &&
+           (s->bias_ref_mv <= rrh_board_bias_limit_mv()) &&
            (s->bias_tc_uv_per_c >= -200000) && (s->bias_tc_uv_per_c <= 200000) && (s->t_ref_mc >= -40000) &&
            (s->t_ref_mc <= 85000) && (s->heater_setpoint_mc >= -20000) && (s->heater_setpoint_mc <= 40000) &&
            (s->heater_max_duty_pct <= 100u);
 }
 
 /* ---- canonical byte image (non-volatile storage and setup hash) ------------------------------ */
-#define SETUP_IMAGE_VERSION 1u
-#define SETUP_IMAGE_LEN (1u + (2u * RRH_N_THRESHOLDS) + (2u * RRH_N_TRIMS) + 2u + 1u + 1u + 4u + 4u + 4u + 1u + 4u + 1u)
+#define SETUP_IMAGE_VERSION 2u
+#define SETUP_IMAGE_LEN (1u + (2u * RRH_N_THRESHOLDS) + (2u * RRH_N_TRIMS) + 2u + 1u + 1u + 4u + 4u + 4u + 1u + 4u + 1u + 1u + 1u + 1u + 2u + 2u)
 
 static size_t put_be(uint8_t *buf, size_t pos, uint32_t v, size_t bytes)
 {
@@ -113,6 +135,11 @@ static size_t pack_image(const rrh_setup_t *s, uint8_t *buf)
     n = put_be(buf, n, s->heater_enable ? 1u : 0u, 1u);
     n = put_be(buf, n, (uint32_t)s->heater_setpoint_mc, 4u);
     n = put_be(buf, n, s->heater_max_duty_pct, 1u);
+    n = put_be(buf, n, s->fe.pulser_channel, 1u);
+    n = put_be(buf, n, s->fe.pulser_width_us, 1u);
+    n = put_be(buf, n, s->fe.led_enable ? 1u : 0u, 1u);
+    n = put_be(buf, n, s->fe.led_code, 2u);
+    n = put_be(buf, n, s->fe.alpha_hold_us, 2u);
     return n;
 }
 
@@ -153,6 +180,11 @@ bool rrh_setup_unpack(rrh_setup_t *s, const uint8_t *buf, size_t len)
     t.heater_enable = get_be(buf, &pos, 1u) != 0u;
     t.heater_setpoint_mc = (int32_t)get_be(buf, &pos, 4u);
     t.heater_max_duty_pct = (uint8_t)get_be(buf, &pos, 1u);
+    t.fe.pulser_channel = (uint8_t)get_be(buf, &pos, 1u);
+    t.fe.pulser_width_us = (uint8_t)get_be(buf, &pos, 1u);
+    t.fe.led_enable = get_be(buf, &pos, 1u) != 0u;
+    t.fe.led_code = (uint16_t)get_be(buf, &pos, 2u);
+    t.fe.alpha_hold_us = (uint16_t)get_be(buf, &pos, 2u);
     if (!rrh_setup_valid(&t)) {
         return false;
     }
@@ -227,6 +259,14 @@ void rrh_setup_to_json(const rrh_setup_t *s, rrc_jw_t *w)
     rrc_jw_obj_begin(w);
     rrc_jw_kbool(w, "enable", s->fe.pulser_enable);
     rrc_jw_ku64(w, "code", s->fe.pulser_code);
+    rrc_jw_ku64(w, "channel", s->fe.pulser_channel);
+    rrc_jw_ku64(w, "width_us", s->fe.pulser_width_us);
+    rrc_jw_kbool(w, "led_enable", s->fe.led_enable);
+    rrc_jw_ku64(w, "led_code", s->fe.led_code);
+    rrc_jw_obj_end(w);
+    rrc_jw_key(w, "afterglow");
+    rrc_jw_obj_begin(w);
+    rrc_jw_ku64(w, "alpha_hold_us", s->fe.alpha_hold_us);
     rrc_jw_obj_end(w);
     rrc_jw_key(w, "heater");
     rrc_jw_obj_begin(w);
@@ -339,7 +379,7 @@ bool rrh_setup_from_json(rrh_setup_t *s, const rrc_json_t *d, int obj)
     if (sub >= 0) {
         n = 0u;
         v = (int64_t)t.bias_ref_mv;
-        if (!get_int(d, sub, "ref_mv", RRH_BIAS_MIN_MV, RRH_BIAS_MAX_MV, &v, &n)) {
+        if (!get_int(d, sub, "ref_mv", RRH_BIAS_MIN_MV, rrh_board_bias_limit_mv(), &v, &n)) {
             return false;
         }
         t.bias_ref_mv = (uint32_t)v;
@@ -360,11 +400,36 @@ bool rrh_setup_from_json(rrh_setup_t *s, const rrc_json_t *d, int obj)
     if (sub >= 0) {
         n = 0u;
         v = t.fe.pulser_code;
-        if (!get_flag(d, sub, "enable", &t.fe.pulser_enable, &n) || !get_int(d, sub, "code", 0, 4095, &v, &n) ||
-            (n != rrc_json_size(d, sub))) {
+        if (!get_flag(d, sub, "enable", &t.fe.pulser_enable, &n) || !get_int(d, sub, "code", 0, 4095, &v, &n)) {
             return false;
         }
         t.fe.pulser_code = (uint16_t)v;
+        v = t.fe.pulser_channel;
+        if (!get_int(d, sub, "channel", 0, 7, &v, &n)) {
+            return false;
+        }
+        t.fe.pulser_channel = (uint8_t)v;
+        v = t.fe.pulser_width_us;
+        if (!get_int(d, sub, "width_us", 1, 100, &v, &n) || !get_flag(d, sub, "led_enable", &t.fe.led_enable, &n)) {
+            return false;
+        }
+        t.fe.pulser_width_us = (uint8_t)v;
+        v = t.fe.led_code;
+        if (!get_int(d, sub, "led_code", 0, 4095, &v, &n) || (n != rrc_json_size(d, sub))) {
+            return false;
+        }
+        t.fe.led_code = (uint16_t)v;
+    }
+    if (!sub_object(d, obj, "afterglow", &sub, &top)) {
+        return false;
+    }
+    if (sub >= 0) {
+        n = 0u;
+        v = t.fe.alpha_hold_us;
+        if (!get_int(d, sub, "alpha_hold_us", 0, RRH_ALPHA_HOLD_MAX_US, &v, &n) || (n != rrc_json_size(d, sub))) {
+            return false;
+        }
+        t.fe.alpha_hold_us = (uint16_t)v;
     }
     if (!sub_object(d, obj, "heater", &sub, &top)) {
         return false;

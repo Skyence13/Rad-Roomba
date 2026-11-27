@@ -1,6 +1,6 @@
 # Rad Roomba static frames for the robot software (base_link -> sensors, head, controls, connectors).
 generated_by: mechanical/common/gen_interfaces.py from params.py -- do not edit by hand
-contract_version: 0.4.0-draft4
+contract_version: 0.4.0-draft7
 parent: base_link
 units:
   xyz: m
@@ -156,7 +156,7 @@ tof:
     - -1.0
     purpose: downward cliff, rear right of the caster (reverse and pivot)
     fov_full_deg: 18.0
-  tof_look_fl:
+  tof_look_fwd_left:
     xyz:
     - 0.0015
     - 0.091
@@ -165,9 +165,9 @@ tof:
     - 0.94585
     - 0.09941
     - -0.30902
-    purpose: 'oblique look-ahead over the head, left: floor/drop-off ahead of the leading rail'
+    purpose: 'oblique look-ahead (forward), left: floor/drop-off ahead of the leading rail; on the grip cheek fairing nose'
     fov_full_deg: 18.0
-  tof_look_fr:
+  tof_look_fwd_right:
     xyz:
     - 0.0015
     - -0.091
@@ -176,9 +176,9 @@ tof:
     - 0.94585
     - -0.09941
     - -0.30902
-    purpose: oblique look-ahead over the head, right
+    purpose: oblique look-ahead (forward), right
     fov_full_deg: 18.0
-  tof_look_rl:
+  tof_look_rev_left:
     xyz:
     - -0.24763
     - 0.0656
@@ -187,9 +187,9 @@ tof:
     - -0.9131
     - 0.161
     - -0.37461
-    purpose: 'oblique look-behind, left: floor/drop-off behind the tail before reverse'
+    purpose: 'oblique look-ahead (rearward), left: floor/drop-off behind the tail before reverse'
     fov_full_deg: 18.0
-  tof_look_rr:
+  tof_look_rev_right:
     xyz:
     - -0.24763
     - -0.0656
@@ -198,7 +198,7 @@ tof:
     - -0.9131
     - -0.161
     - -0.37461
-    purpose: oblique look-behind, right
+    purpose: oblique look-ahead (rearward), right
     fov_full_deg: 18.0
   tof_prox_rc:
     xyz:
@@ -277,13 +277,14 @@ panel_controls:
   pause_stop:
     xyz:
     - -0.084
-    - -0.112
-    - 0.12197
+    - -0.122
+    - 0.11402
     normal:
-    - 0.0491
-    - -0.5205
-    - 0.8524
-    desc: Pause / Stop momentary
+    - 0.0622
+    - -0.6579
+    - 0.7506
+    desc: 'Pause / Stop momentary (moved 10 mm outboard from y -112, CR-08: its body, 50 mm deep UNVERIFIED + 3 mm, now clears the IB-12 rear-right connector space;
+      an aft move would have closed the gap to the E-stop mushroom)'
   annunciator:
     xyz:
     - -0.08
@@ -351,7 +352,7 @@ footprint:
   head_envelope_m:
     x:
     - 0.066
-    - 0.1922
+    - 0.2125
     y:
     - -0.175
     - 0.175

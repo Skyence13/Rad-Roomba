@@ -20,6 +20,7 @@
 
 #include "rr_common.h"
 #include "rrh_config.h"
+#include "rrh_board.h"
 #include "rrh_hal.h"
 #ifdef __cplusplus
 extern "C" {
@@ -76,7 +77,9 @@ typedef enum {
 #define RRH_H_ENTROPY 0x0400u         /* entropy source failed at boot (boot id still unique) */
 #define RRH_H_STORAGE 0x0800u         /* stored setup unreadable: defaults in use */
 #define RRH_H_WATCHDOG_RESET 0x1000u  /* this boot followed a watchdog reset */
-#define RRH_H_ALL 0x1FFFu
+#define RRH_H_BIAS_PERMIT 0x2000u     /* bias permit latch tripped: HV_EN high but no bias (OVP, +5V_A low, lid open) */
+#define RRH_H_ALL 0x3FFFu
+#define RRH_H_COUNT 14u
 
 /* ---- retained frame (ACQ + DIAG source data for one gate) --------------------------------- */
 #define RRH_SYNC_UNSYNCED 0u
@@ -109,8 +112,11 @@ typedef struct {
     uint32_t floor_live_ticks, ref_live_ticks;
     uint8_t null_mask;                  /* RRH_CH_*: channel reported as null */
     uint8_t seg_flags;                  /* RRH_SF_* */
-    uint8_t gate_flags;                 /* RRH_GF_* as delivered (DIAG) */
+    uint8_t gate_flags;                 /* RRH_GF_* as delivered (DIAG), plus BIAS_OUT_OF_RANGE from the anode monitor */
+    uint32_t alpha_idle_clears;         /* DIAG */
+    uint32_t imon_na[2];                /* DIAG: anode current of the floor and reference chain, RRH_IMON_NA_INVALID = not measured */
 } rrh_frame_lane_t;
+#define RRH_IMON_NA_INVALID UINT32_MAX
 
 typedef struct {
     uint64_t sequence;
@@ -136,7 +142,9 @@ typedef struct {
     int32_t sipm_mc[RRH_LANES];
     int32_t heater_plate_mc, board_mc;
     uint32_t supply_mv;
-    uint8_t bumper_zones; /* zones seen closed at any poll during the gate */
+    uint8_t bumper_zones; /* zones seen closed at any poll during the gate (meaningful only if zones_available) */
+    bool zones_available; /* false on rev A: no rail-zone identification, DIAG reports null */
+    uint8_t imon_fault;   /* chains whose anode current monitor was out of window in this gate (bit n = chain n) */
     uint8_t width_mask;   /* chains with a pulse-width histogram (0 = port does not measure widths) */
     uint16_t width_hist[2u * RRH_LANES][RRH_WIDTH_BINS]; /* saturating at 65535 */
 } rrh_frame_t;
@@ -205,9 +213,17 @@ typedef struct {
     uint8_t bumper_latched;   /* zones seen since the last HELLO / STATUS clear */
     uint8_t bumper_gate;      /* zones seen during the gate in progress */
     uint32_t width_edges_ns[RRH_WIDTH_BINS - 1u]; /* histogram bin edges of the last gate record */
-    uint32_t bias_cmd_mv;     /* commanded bias set-point */
+    uint32_t bias_cmd_mv;     /* commanded bias set-point (target after temperature compensation) */
+    uint32_t bias_out_mv;     /* what the port was told: ramps from 0 to bias_cmd_mv after bias-on */
     bool bias_on;
     uint32_t bias_settle;     /* control periods since the last set-point change */
+    uint32_t bias_on_age;     /* control periods since HV_EN was raised */
+    rrh_imon_t imon;          /* per-chain anode monitor, latest scan */
+    rrh_expander_t exp;       /* TCA9534 read-back, latest */
+    uint32_t imon_na[RRH_CHAINS]; /* anode current per chain (nA), RRH_IMON_NA_INVALID = not measured */
+    uint8_t imon_fault;       /* bit n: chain n out of window for RRH_IMON_HOLD_US */
+    uint8_t imon_pending;     /* bit n: chain n out of window, hold time running */
+    uint64_t imon_since_us[RRH_CHAINS];
     bool heater_on;           /* state requested from the port */
     uint32_t heater_dwell;    /* gates spent in the current state */
     uint32_t heater_history;  /* bit n: heater requested on n gates ago */

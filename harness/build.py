@@ -9,6 +9,7 @@ sys.dont_write_bytecode = True
 import yaml
 import hdata_conn as hc
 import hdata_cables as hk
+import hdata_parts as hp
 
 TBD = hc.TBD
 CONN = hc.build_all()
@@ -35,7 +36,7 @@ NET_PAIRS = [
     dict(a="EN_SRC", b="EN_SYS", via="MODE-DEV EN contact", why="master enable contact"),
     dict(a="SET_CAP", b="K1_SET", via="REARM-DEV NO 1", why="latch set contact (momentary)"),
     dict(a="BTN_3V3", b="REARM_BTN_RAW", via="REARM-DEV NO 2", why="REARM_BTN contact"),
-    dict(a="BTN_3V3", b="PAUSE_BTN_RAW", via="PAUSE-DEV NO", why="PAUSE contact"),
+    dict(a="PAUSE_3V3", b="PAUSE_BTN_RAW", via="PAUSE-DEV NO", why="PAUSE contact (own supply through R_PAUSE 1 kohm, stage 2 S2-01f)"),
     dict(a="HEAD_LOOP_OUT", b="LOOP_A", via="RAIL-F NC", why="head rail switch front"),
     dict(a="LOOP_A", b="LOOP_B", via="RAIL-L NC", why="head rail switch left"),
     dict(a="LOOP_B", b="LOOP_C", via="RAIL-R NC", why="head rail switch right"),
@@ -52,9 +53,9 @@ MATES = [
     dict(a="J1X-P", b="J1R", config="LAB"), dict(a="J1X-S", b="J1P", config="LAB"), dict(a="J2X-P", b="J2R", config="LAB"), dict(a="J2X-S", b="J2P", config="LAB"),
 ]
 SERVICE = {"CHS.J_AUX": "spare fan/spare connector: no cable in rev A", "CHS.J_DBG": "debug UART service port: plug a lead when needed", "CHS.J_SWD": "SWD service port: ribbon only when programming",
-           "HEAD.J2401": "SWD pads (no component fitted): Tag-Connect cable only when programming", "HEAD.J2402": "debug UART service port", "HEAD.J2701": "monitor output test port: coax only on the bench",
+           "CHS.W1": "DNP wire pads of the on-board clamp circuit: NO cable by decision (the board carries its own 2 x 9.1 ohm clamp resistors; no bolt-on 50 W part, IB-26 / IB-36)", "HEAD.J2401": "SWD pads (no component fitted): Tag-Connect cable only when programming", "HEAD.J2402": "debug UART service port", "HEAD.J2701": "monitor output test port: coax only on the bench",
            "HEAD.JP2201": "solder jumper (lid bypass): bench only", "CHGPLUG": "supply-side plug: belongs to the external 24 V supply, not to the robot harness"}
-UNWIRED = {("CHS.J_PAUX", "3"): "no wire by decision: NTC and presence return to pack negative inside the cassette (W-003)", ("CHS.J_PAUX", "4"): "no wire by decision (as pin 3)",
+UNWIRED = {("CHS.J_PAUX", "3"): "no wire by decision (IB-37, chassis stage 2): NTC and presence return to pack negative inside the cassette (W-002/W-003); the accepted offset is about 0.1 V at full load (NTC about 3.4 K warm on discharge, about 0.7 K cold on charge, safe side). Wire pins 3/4 only if the cassette gets an isolated sense return", ("CHS.J_PAUX", "4"): "no wire by decision (IB-37, as pin 3)",
            ("HEAD.J2002", "3"): "no wire by decision: CCR-HE-04 (single-pole switch, NO throw not potential-free)", ("HEAD.J2002", "4"): "as pin 3",
            ("HEAD.J2003", "3"): "as J2002 pin 3", ("HEAD.J2003", "4"): "as J2002 pin 3", ("HEAD.J2004", "3"): "as J2002 pin 3", ("HEAD.J2004", "4"): "as J2002 pin 3",
            ("CM5-USB1", "1"): "VBUS left open: board pin J_USB_MCU 1 is NC", ("INLET", "FE"): "chassis bond through the receptacle flange (no wire)",
@@ -287,7 +288,7 @@ def resist_awg(a):
 def write_cables_md(un):
     L = ["# Cable assemblies", "",
          "GENERATED tables (by `harness/build.py` from `hdata_cables.py`) plus fixed text. One numbered item per assembly (W-xxx); each wire is W-xxx.n. Machine-readable form: `cables.csv`.", "",
-         "**Every length in this document is estimated from layout, confirm on first build.** Boards are not yet placed (stage 2): inboard connectors use the nominal corner positions of `board_envelopes.yaml` (+-20 mm).", "",
+         "**Every length in this document is estimated from layout, confirm on first build.** Board connector positions are the stage-2 PLACED positions (`out/pinmap.json` of the chassis and head boards, +-20 mm until the boards are routed and the shell is built); sensor and device positions are from `frames.yaml` / `mechanical_interfaces.md`.", "",
          "## 1. Rules for every assembly", "",
          "### Colour scheme (colour is a class aid, not an identifier)", "", "| Code | Colour | Used for |", "|---|---|---|"]
     for code, name, use in hk.COLOUR_SCHEME:
@@ -301,7 +302,7 @@ def write_cables_md(un):
           "| DEV | %s | motor pigtails, device leads |" % hk.INS["DEV"], "",
           "No source names a specific cable or wire part number; the class values are generic, UNVERIFIED, and the technician needs a supplier datasheet showing the rating at -40 C before purchase (open item OI-01). The outer jacket of external multicores is PUR or TPE rated to <= -40 C (type TBD). **PVC is excluded.** `power_budget.md` assumed 'PVC-free, 105 C' AWG 14: that rating is not a cold rating.", "",
           "### Length method", "",
-          "Routed path along the reserved corridors (`layout_report.md` section 7) between the nominal connector positions and the device positions in `frames.yaml` / `mechanical_interfaces.md`; plus 2 x end allowance for termination and strain relief (25 mm, 30 mm on large connectors, 15 mm on ToF) plus a service loop (50 mm, 30 mm on ToF), rounded up to 10 mm. Panel devices are reached at 45 mm behind the skin along the control axis. The path points are in `hdata_cables.py` (`path=`). Where the power budget assumed a length, it is shown for comparison.", "",
+          "Routed path along the reserved corridors (`layout_report.md` section 7) between the placed connector positions (stage 2) and the device positions in `frames.yaml` / `mechanical_interfaces.md`; plus 2 x end allowance for termination and strain relief (25 mm, 30 mm on large connectors, 15 mm on ToF) plus a service loop (50 mm, 30 mm on ToF), rounded up to 10 mm. Panel devices are reached at 45 mm behind the skin along the control axis. The path points are in `hdata_cables.py` (`path=`). Where the power budget assumed a length, it is shown for comparison.", "",
           "### Labels", "",
           "At **both ends** of every cable, within 30 mm of the connector: a sleeve with `W-xxx`, the connector ID (as in `connectors.yaml`) and pin 1 marker; on every conductor the wire number `W-xxx.n` and the net (`label_from_end` / `label_to_end` columns of `cables.csv` give the exact text). Chain (yellow) looms additionally carry a SAFETY CHAIN sleeve every 150 mm. LAB items carry a LAB ONLY sleeve (see `lab_extension.md`).", ""]
     L += ["## 2. Summary", "", "| Cable | Title | Wires | Length (mm) | Budget assumed (mm) | Flag |", "|---|---|---|---|---|---|"]
@@ -321,8 +322,8 @@ def write_cables_md(un):
     L += ["### Lengths that exceed a limit", "", "| Cable | Length (mm) | Why flagged |", "|---|---|---|"]
     for f in flags:
         L.append("| %s | %d | %s |" % f)
-    L += ["", "Routing causes: (a) five rear ToF connectors (J_TOF2/3/8/9/10) and both body-bumper connectors are allocated to the **rear-left** corner (`board_envelopes.yaml`), while CLIFF_RR, REAR_R and the right bumper are on the **right** side, so those cables cross the board top; (b) `frames.yaml` has only two look-AHEAD sensors per side pair while the contract/firmware define four, see W-035/W-036; (c) W-004 is 10 mm over the 250 mm of the power budget (about 0.4 mohm: no consequence).", "",
-          "Recommendation to the board layout (stage 2): put J_TOF3, J_TOF10, J_BUMP_R and a separate PAUSE connector in the rear-RIGHT cluster; cables W-022, W-033, W-040 and W-019 then fall to about 200 mm or less.", ""]
+    L += ["", "Where lengths come from (stage 2): the board connector positions are the PLACED positions in `electronics/chassis_main/out/pinmap.json` (rear-right cluster J_PAUSE, J_TOF3, J_TOF10, J_BUMP_R, J_TOF6; J_PWR at u 142.5, v 24.1; J_HEAD1 Mini-Fit Jr at u 26.1, v 82.5), the head connector positions are those of `electronics/head_acq/out/pinmap.json`, the sensor positions are those of `mechanical/common/frames.yaml` read at the time of the build. The stage-1 rear-left allocation of the right-hand cables (W-022 430 mm, W-033 400 mm, W-040 400 mm, W-019 290 mm) is gone.", "",
+          "Open length items: (a) **IB-34 mapping**: with J_TOF4 = LOOK_FL, J_TOF5 = LOOK_FR, J_TOF6 = LOOK_RL, J_TOF7 = LOOK_RR (lead decision) the connectors J_TOF6 (rear-right) and J_TOF7 (front-right edge) are on the wrong side for their tail sensors, so W-036 and W-037 exceed 300 mm. The mapping J_TOF5 = LOOK_RL, J_TOF6 = LOOK_RR, J_TOF7 = LOOK_FR (same four connectors, different names) would give W-035 270, W-036 290, W-037 150 mm: see README open decision OD-1. (b) W-004 is 30 mm over the 250 mm of the power budget (about 1 mohm: no consequence). (c) The eight SiPM coax pairs (W-112..W-119) are 45-50 mm against the 35 mm of `board_envelopes.yaml` because the stage-2 translated channel layout (S2-L3) moved the U.FL jacks (bias at du -15.47 / +6.78, anode at -10.38 / +11.87).", ""]
     L += ["## 3. Per-assembly detail", ""]
     for c in CABLES:
         L.append("### %s  %s" % (c["id"], c["title"]))
@@ -383,7 +384,7 @@ def write_parts_status():
             if mpn in ("-", "n/a", "") or str(mpn).startswith("n/a"):
                 continue
             by.setdefault((mpn, kind, st), []).append(cid)
-    L = ["# Part-number status (generated)", "", "GENERATED by `harness/build.py`. Status: verified = not flagged in its source; UNVERIFIED = the source flags it as recalled/unconfirmed; TBD = no source gives it (open item).", "",
+    L = ["# Part-number status (generated)", "", "GENERATED by `harness/build.py` (connector tables) and `hdata_parts.py` (the rest). Status words: \"verified (not flagged in source)\" means only that no source flags the number as recalled; it was NOT checked against a manufacturer document. UNVERIFIED = recalled/unconfirmed. TBD / \"no part number in any source - to be selected\" = open.", "",
          "| Part number / description | Role | Status | Used at |", "|---|---|---|---|"]
     for (mpn, kind, st), ids in sorted(by.items(), key=lambda kv: (0 if kv[0][2].startswith("TBD") or "TBD" in kv[0][0] else 1 if kv[0][2] == "UNVERIFIED" else 2, kv[0][0])):
         tag = "TBD" if mpn.startswith(TBD) or st == "TBD" else ("UNVERIFIED" if "UNVERIFIED" in st else "verified")
@@ -392,6 +393,18 @@ def write_parts_status():
     for c in CONN.values():
         cnt["mpn " + ("TBD" if c["mpn"].startswith(TBD) or c["mpn_status"] == "TBD" else "UNVERIFIED" if "UNVERIFIED" in c["mpn_status"] else "verified")] += 1
     L += ["", "Connector rows by status of the fixed-half part: " + ", ".join("%s = %d" % kv for kv in sorted(cnt.items())) + "."]
+    def tab(title, rows, hdr="| Item | Used at | Part number | Source document | Flag |\n|---|---|---|---|---|"):
+        L.extend(["", "## " + title, "", hdr])
+        for r in rows:
+            L.append("| " + " | ".join(str(x).replace("|", "/") for x in r) + " |")
+    L.extend(["", "## Web check of the highest-consequence items (what could and could not be verified)", "",
+              "Outbound access was limited. Attempts made (three, no more): molex.com part page for 39-00-0038 (HTTP 503), JST GH catalogue PDF eGH.pdf (downloaded, no readable text: fonts missing), Anderson SBS50 product page (HTTP 404). **Not verified, therefore all still open:** M16 8-pole J1 contact wire range against 0.75 mm2 (heater pair); M12 A-coded 8-pole contact; Mini-Fit Jr and Micro-Fit terminal wire ranges and temperature range; JST GH temperature range for the -25 C objective (IB-08, recalled as -25..+85 C); Anderson SBS50 temperature range (parts.yaml -20..+105 C, UNVERIFIED). No recalled figure in this repository has been confirmed by the harness engineer.", ""])
+    tab("Cables and wire", hp.CABLES)
+    tab("Contacts, housings, splices", hp.CONTACTS)
+    tab("Protection devices", hp.PROTECT)
+    tab("Devices", hp.DEVICES)
+    tab("Tools (no source names any tool or tool part number)", [(a, b, hp.NONE, "none", "TBD") for a, b in hp.TOOLS])
+    tab("Consumables", [(a, b, hp.NONE, "none", "TBD") for a, b in hp.CONSUMABLES])
     open(os.path.join(HERE, "parts_status.md"), "w").write("\n".join(L) + "\n")
 
 

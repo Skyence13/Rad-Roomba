@@ -517,7 +517,8 @@ void rrch_drive_step(rrch_t *c)
     }
     c->out.duty[0] = d->duty[0];
     c->out.duty[1] = d->duty[1];
-    c->out.bridge_awake = armed && c->bt.state != RRCH_BT_RUNNING;
+    /* bridges wake only after both brake relays have been read back "connected" with the bridges asleep (CCR-E03 e) */
+    c->out.bridge_awake = armed && c->chain.relays_ok && c->bt.state != RRCH_BT_RUNNING;
 
     /* --- odometry sample, 100 Hz --- */
     if (c->ms % 10u == 0u) {

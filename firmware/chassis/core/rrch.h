@@ -36,11 +36,14 @@
 #define RRCH_OPMODE_LIST(X) X(COMMISSIONING) X(SURVEY_SHARED) X(SURVEY_UNATTENDED) X(GUIDED) X(LAB) X(SERVICE)
 #define RRCH_PRES_LIST(X) X(ABSENT) X(HEAD_DIRECT) X(HEAD_VIA_LAB_EXTENSION) X(LAB_EXTENSION_ONLY) X(FAULT)
 #define RRCH_FLT_LIST(X) /* first group enters FAULT mode */ \
-    X(ESTOP_DISCREPANCY) X(LATCH_STUCK) X(IOX_A) X(ADC) X(TIMING) \
-    X(CONFIG_DEFAULTED) X(LOOP_DISCREPANCY) X(J1_PRES_FAULT) X(CHARGER_COMM) X(PMON_COMM) X(TOF_BUS) X(HEATER_SENSOR) \
+    X(ESTOP_DISCREPANCY) X(LATCH_STUCK) X(IOX_A) X(ADC) X(TIMING) X(PERMIT_STUCK_ON) X(CHAIN_IMPLAUSIBLE) \
+    X(PERMIT_STUCK_OFF) X(IOX_B) X(CONFIG_DEFAULTED) X(LOOP_DISCREPANCY) X(J1_PRES_FAULT) X(CHARGER_COMM) X(PMON_COMM) X(TOF_BUS) X(HEATER_SENSOR) \
     X(EFUSE_HEAD_PWR) X(EFUSE_HEAD_HTR) X(EFUSE_CHS_HTR) X(EFUSE_LIDAR) X(EFUSE_V5) X(BRIDGE_L) X(BRIDGE_R) X(BUS_CLAMP) \
     X(EVENT_OVERFLOW) X(BATTERY_WARN)
-#define RRCH_TOF_LIST(X) X(CLIFF_FL) X(CLIFF_FR) X(CLIFF_RL) X(CLIFF_RR) X(LOOK_LO) X(LOOK_LI) X(LOOK_RI) X(LOOK_RO) X(REAR_L) X(REAR_C) X(REAR_R)
+/* IB-34 (lead decision, corrected mapping): two forward-looking (grip cheeks, over the head) and two rearward-looking
+ * (tail) oblique sensors. Index 4 LOOK_FL (J_TOF4, mux 0 ch 2), 5 LOOK_RL (J_TOF5, mux 1 ch 2), 6 LOOK_RR (J_TOF6,
+ * mux 0 ch 3), 7 LOOK_FR (J_TOF7, mux 1 ch 3): each pair is split across the two muxes. */
+#define RRCH_TOF_LIST(X) X(CLIFF_FL) X(CLIFF_FR) X(CLIFF_RL) X(CLIFF_RR) X(LOOK_FL) X(LOOK_RL) X(LOOK_RR) X(LOOK_FR) X(REAR_L) X(REAR_C) X(REAR_R)
 
 #define X(n) RRCH_MODE_##n,
 typedef enum { RRCH_MODE_LIST(X) RRCH_MODE_N } rrch_mode_t;
@@ -66,7 +69,10 @@ typedef enum { RRCH_TOF_LIST(X) RRCH_TOF_COUNT } rrch_tof_id_t;
 #define RRCH_HW(n) (1u << RRCH_HWI_##n)
 #define RRCH_SW(n) (1u << RRCH_SWI_##n)
 #define RRCH_FLT(n) (1u << RRCH_FLTI_##n)
-#define RRCH_FLT_FATAL_MASK (RRCH_FLT(ESTOP_DISCREPANCY) | RRCH_FLT(LATCH_STUCK) | RRCH_FLT(IOX_A) | RRCH_FLT(ADC) | RRCH_FLT(TIMING))
+#define RRCH_FLT_FATAL_MASK (RRCH_FLT(ESTOP_DISCREPANCY) | RRCH_FLT(LATCH_STUCK) | RRCH_FLT(IOX_A) | RRCH_FLT(ADC) | RRCH_FLT(TIMING) | RRCH_FLT(PERMIT_STUCK_ON) | RRCH_FLT(CHAIN_IMPLAUSIBLE))
+/* fatal flags after which the supervisor stops the watchdog strobe (the chain is then opened at WDG_OK, upstream of a
+ * suspect ARM_PERMIT element): electronics/analysis/chassis_safety_chain.md section 6, row 38 */
+#define RRCH_FLT_NO_STROBE_MASK (RRCH_FLT(TIMING) | RRCH_FLT(PERMIT_STUCK_ON))
 
 extern const char *const rrch_mode_names[RRCH_MODE_N];
 extern const char *const rrch_hw_names[RRCH_HW_N];
@@ -88,7 +94,20 @@ typedef enum { RRCH_DI_LIST(X) RRCH_DI_N } rrch_di_idx_t;
 #define RRCH_DI_CHAIN_EVENT_N (RRCH_DII_BRAKE_R + 1)
 extern const char *const rrch_di_names[RRCH_DI_N];
 /* CHG_PLUG_LINK = 1 means the chain contact is closed, i.e. the charge plug link is ABSENT.
- * HEAD_LOOP_SHORT = 1 means the comparator reports a short. BRAKE_x = 1: motor connected to bridge. */
+ * HEAD_LOOP_SHORT = 1 means the comparator reports a short. BRAKE_x = 1: motor connected to bridge.
+ * IB-02 / CCR-E03 (d): MODE_RUN, ESTOP_A, HANDS_ON, CHG_COVER, CHG_PLUG_LINK, HEAD_DOCK, BODY_BUMPER_L, BODY_BUMPER_R and
+ * WDG_OK are NODE voltages of the series chain (electronics/analysis/chassis_safety_chain.md 2.3: "the chain is live up to
+ * and including this element"); an element behind an open one is UNKNOWN, not closed. HEAD_LOOP_OK/SHORT and LAB_KEY_N are
+ * comparator outputs (the input condition of U21/U22), ESTOP_B is the separate COIL_RTN detector. CCR-E03 (e): BRAKE_x is an
+ * OR over both relay poles and valid only while the bridges are asleep. */
+
+/* chain elements in contract order (safety_chain.series_elements) and their decoded state */
+#define RRCH_EL_LIST(X) X(MODE_RUN) X(ESTOP) X(HANDS_ON) X(CHG_COVER) X(HEAD_DOCK) X(HEAD_LOOP) X(LAB_KEY_N) X(BODY_BUMPER) X(WDG_OK) X(ARM_PERMIT)
+#define X(n) RRCH_EL_##n,
+typedef enum { RRCH_EL_LIST(X) RRCH_EL_N } rrch_el_t;
+#undef X
+extern const char *const rrch_el_names[RRCH_EL_N];
+typedef enum { RRCH_ELS_UNKNOWN = 0, RRCH_ELS_CLOSED, RRCH_ELS_OPEN } rrch_el_state_t;
 
 typedef enum { RRCH_TOF_ST_OK = 0, RRCH_TOF_ST_NO_TARGET, RRCH_TOF_ST_INVALID, RRCH_TOF_ST_STALE, RRCH_TOF_ST_OFFLINE } rrch_tof_status_t;
 typedef enum { RRCH_CHG_NONE = 0, RRCH_CHG_PRECHARGE, RRCH_CHG_CC, RRCH_CHG_CV, RRCH_CHG_DONE, RRCH_CHG_TEMP_INHIBIT, RRCH_CHG_FAULT, RRCH_CHG_UNKNOWN } rrch_chg_state_t;
@@ -138,7 +157,16 @@ typedef struct {            /* slow telemetry pushed by the port's background dr
     float i_head_a, i_head_htr_a, i_chs_htr_a; /* NAN if unknown */
     uint8_t efuse_fault;    /* bit0 HEAD_PWR, 1 HEAD_HTR, 2 CHS_HTR, 3 LIDAR, 4 V5 */
     bool tof_bus_ok;
+    bool chg_input;         /* charger reports input power (needs charger_ok); used when the chain nodes of the
+                             * cover/plug elements are dead upstream (selector in SERVICE) */
+    float vbat_pmon_v;      /* INA228 bus voltage, NAN if unknown */
 } rrch_power_t;
+
+typedef struct {            /* IOX_B input P17 = CHAIN_END_RB (CCR-E02), pushed by the port's background I2C driver */
+    bool ok;                /* read succeeded */
+    bool chain_end;         /* node after the ARM_PERMIT element is live */
+    uint64_t t_us;          /* chassis time of the read */
+} rrch_iox_b_t;
 
 typedef struct {
     void *ctx;
@@ -183,11 +211,11 @@ typedef struct {
     X(DRV_YAW_ACCEL, "drive.yaw_accel_radps2", 1.5, 0.2, 3.0, "rad/s2") \
     X(DRV_KP, "drive.kp", 0.12, 0, 2.0, "duty.s/rad") \
     X(DRV_KI, "drive.ki", 2.5, 0, 50, "duty/rad") \
-    X(DRV_I_LIMIT, "drive.i_limit_a", 2.5, 0.5, 5.0, "A") \
+    X(DRV_I_LIMIT, "drive.i_limit_a", 2.5, 0.5, 2.6, "A") /* bridges chop in hardware at 2.68 A (CCR-E03 b) */ \
     X(DRV_STALL_MS, "drive.stall_ms", 500, 100, 2000, "ms") \
     X(DRV_ENC_FAULT_MS, "drive.enc_fault_ms", 100, 20, 500, "ms") \
     X(DRV_UNCMD_TICKS, "drive.uncmd_ticks", 600, 50, 5000, "ticks") \
-    X(DRV_MOTOR_R, "drive.motor_r_ohm", 2.2, 0.5, 10, "ohm") \
+    X(DRV_MOTOR_R, "drive.motor_r_ohm", 2.18, 0.5, 10, "ohm") /* 12 V / 5.5 A, chassis_braking_tables.md T1 */ \
     X(DRV_MOTOR_KE, "drive.motor_ke", 1.65, 0.5, 5, "V.s/rad") \
     X(LINK_TIMEOUT_MS, "link.timeout_ms", 1000, 300, 5000, "ms") \
     X(ALERT_PREMOTION_MS, "alert.premotion_ms", 1500, 500, 5000, "ms") \
@@ -199,11 +227,17 @@ typedef struct {
     X(CLIFF_DROP_MM, "cliff.drop_mm", 60, 20, 200, "mm") \
     X(CLIFF_FLOOR_MIN_MM, "cliff.floor_min_mm", 8, 0, 50, "mm") \
     X(CLIFF_CONFIRM_N, "cliff.confirm_n", 3, 1, 10, "samples") \
-    X(LOOK_NOMINAL_MM, "look.nominal_mm", 150, 50, 600, "mm") \
-    X(LOOK_TOL_MM, "look.tol_mm", 40, 10, 200, "mm") \
-    X(LOOK_AHEAD_M, "look.ahead_m", 0.12, 0.03, 0.50, "m") \
-    X(LOOK_COS_FWD, "look.cos_fwd", 0.80, 0.3, 1.0, "") \
-    X(LOOK_PAIR_TOL_MM, "look.pair_tol_mm", 60, 10, 300, "mm") \
+    /* look-ahead geometry (IB-34): defaults computed from mechanical/common/frames.yaml by tools/look_geometry.py, which \
+     * check.sh runs to catch drift. fwd = grip-cheek pair LOOK_FL/FR, rev = tail pair LOOK_RL/RR. ahead = horizontal \
+     * distance of the nominal floor intersection beyond the leading rail (fwd) / the 0.290 m tail swept radius (rev). */ \
+    X(LOOK_FWD_NOMINAL_MM, "look.fwd_nominal_mm", 524, 50, 1000, "mm") \
+    X(LOOK_FWD_TOL_MM, "look.fwd_tol_mm", 60, 10, 200, "mm") \
+    X(LOOK_FWD_AHEAD_M, "look.fwd_ahead_m", 0.285, 0.03, 0.60, "m") \
+    X(LOOK_FWD_COS, "look.fwd_cos", 0.946, 0.3, 1.0, "") \
+    X(LOOK_REV_NOMINAL_MM, "look.rev_nominal_mm", 267, 50, 1000, "mm") \
+    X(LOOK_REV_TOL_MM, "look.rev_tol_mm", 40, 10, 200, "mm") \
+    X(LOOK_REV_AHEAD_M, "look.rev_ahead_m", 0.201, 0.03, 0.60, "m") \
+    X(LOOK_REV_COS, "look.rev_cos", 0.913, 0.3, 1.0, "") \
     X(REAR_STOP_MM, "rear.stop_mm", 120, 40, 500, "mm") \
     X(REAR_SLOW_MM, "rear.slow_mm", 300, 60, 1000, "mm") \
     X(STOP_T_DELAY_MS, "stop.t_delay_ms", 150, 20, 500, "ms") \
@@ -230,7 +264,7 @@ typedef struct {
     X(BRK_LATCH_DROP_MAX_MS, "brake.latch_drop_max_ms", 50, 5, 500, "ms") \
     X(BRK_VMOT_MIN_V, "brake.vmot_min_v", 9.0, 5, 12, "V") \
     X(BRK_VMOT_OFF_V, "brake.vmot_off_v", 1.0, 0.2, 5, "V") \
-    X(BRK_VMOT_DECAY_MAX_MS, "brake.vmot_decay_max_ms", 1000, 50, 2500, "ms") \
+    X(BRK_VMOT_DECAY_MAX_MS, "brake.vmot_decay_max_ms", 2500, 50, 5000, "ms") /* 1 kOhm bleed on 810 uF: tau 0.8 s, 3 tau (safety_chain 7.4) */ \
     X(BRK_PROBE_DUTY, "brake.probe_duty_pct", 10, 2, 30, "%") \
     X(BRK_PROBE_I_MAX, "brake.probe_i_max_a", 0.1, 0.02, 1.0, "A")
 
@@ -289,6 +323,19 @@ typedef struct {
     bool latch;                 /* debounced HW latch readback */
     uint16_t t_estop_disc, t_loop_disc, t_vmot_low, t_vmot_high, t_latch_stuck, t_brake_rb, t_iox, t_adc;
     bool primed;
+    /* IB-02: node decode */
+    uint8_t el[RRCH_EL_N];      /* rrch_el_state_t per chain element */
+    uint32_t rb_known;          /* DI bits whose element state is known (upstream node live) */
+    uint32_t rb_reported;       /* last reported (CHAIN event) known state per DI bit */
+    uint16_t t_implausible;
+    uint16_t asleep_ms;         /* bridges commanded asleep (or latch readback low) for this long: BRAKE_x valid */
+    bool relays_ok;             /* both brake relays read "connected" since the latch was set (bridges may wake) */
+    /* IB-01: ARM_PERMIT readback through CHAIN_END_RB (IOX_B P17) */
+    rrch_iox_b_t iox_b;
+    uint64_t iox_b_seen_us;
+    uint32_t permit_hist, n9_hist; /* bit k: ARM_PERMIT output / raw CH_N9 readback k ms ago */
+    uint8_t n_stuck_on, n_stuck_off, n_end_impl;
+    bool chain_end_known, chain_end;
 } rrch_chain_t;
 
 typedef struct {
@@ -314,7 +361,7 @@ typedef struct {
     bool look_active[4];
     float look_dist0[4];        /* distance available at detection */
     double look_s0[4];          /* odometer at detection */
-    uint16_t t_disagree[2], t_blocked[4];
+    uint16_t t_blocked[4];
 } rrch_fields_t;
 
 typedef struct {
@@ -464,6 +511,7 @@ void rrch_supervise_100hz(rrch_t *c);  /* supervision context: the only caller o
 void rrch_background(rrch_t *c);       /* main loop: protocol server */
 void rrch_tof_update(rrch_t *c, int idx, int32_t range_mm, rrch_tof_status_t st, uint64_t t_us);
 void rrch_power_update(rrch_t *c, const rrch_power_t *p);
+void rrch_iox_b_update(rrch_t *c, bool ok, bool chain_end, uint64_t t_us); /* background context, ~100 Hz */
 
 /* ---- internal, shared between core files (also used by unit tests) ---- */
 rrch_pres_t rrch_pres_classify(uint32_t ohm);

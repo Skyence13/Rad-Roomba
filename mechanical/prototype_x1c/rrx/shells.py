@@ -18,7 +18,7 @@ from mechanical.common.purchased import library as L
 
 from . import dims as D
 from . import sensors as S
-from .structure import LATCH_ARM_X1, LATCH_ARM_Z, LATCH_SCREW_X, plate_blank, plate_outline, sole_screw_xy
+from .structure import CHEEK_X0, LATCH_ARM_X1, LATCH_ARM_Z, LATCH_SCREW_X, plate_blank, plate_outline, sole_screw_xy
 from .util import Part, V, biggest, box, cached, cut, cyl, fuse, inset_rows, loft, mirror_y, place, prism
 
 R = P.BODY_ROWS
@@ -169,9 +169,9 @@ def upper_master():
                  box(HUMP_X[0] - 3.3, SAD["x"][0], -B["hump_half_y"] - 0.3, B["hump_half_y"] + 0.3, 90, 300),
                  box(-400, B["hatch_x"][1], -B["hatch_half_y"], B["hatch_half_y"], B["hatch_z"][0], 200))
         for s in (1, -1):                                          # slots for the grip side plates through the shoulder roof
-            sh = sh.cut(box(-21.5, -0.5, s * D.GRIP_PLATE_Y[0] - 0.4 * s, s * D.GRIP_PLATE_Y[1] + 0.4 * s, 90, 220))
+            sh = sh.cut(box(CHEEK_X0 - 0.5, D.GRIP_PLATE_FRONT_X + 0.5, s * D.GRIP_PLATE_Y[0] - 0.4 * s, s * D.GRIP_PLATE_Y[1] + 0.4 * s, 90, 220))
         return sh.clean()
-    return cached(["upper_master", 8, R, SAD, B, D.GRIP_PLATE_Y, LEDGE_Z, D.HATCH_JAMB, P.DRIVE_POD, P.WHEEL_ARCH_INNER_Y], b)
+    return cached(["upper_master", 9, CHEEK_X0, D.GRIP_PLATE_FRONT_X, R, SAD, B, D.GRIP_PLATE_Y, LEDGE_Z, D.HATCH_JAMB, P.DRIVE_POD, P.WHEEL_ARCH_INNER_Y], b)
 
 
 def lower_master():
@@ -230,7 +230,7 @@ def insert_boss_x(x_face, y, z, side, m="M3"):
 
 
 DOWELS = {"nose": {"zs_side": (81.0,)}, "deck": {"zs_side": (108.0,), "ys_roof": (95.0,)}}
-DECK_JOINT = {"zs_side": (100.0, 116.0), "ys_roof": (104.0,)}      # x = X_DECK screws: above the wheel arch (r 56 reaches z 95 at x -36)
+DECK_JOINT = {"zs_side": (100.0, 116.0), "ys_roof": (104.0,)}      # x = X_DECK screws: above the wheel arch (r 56 reaches z 93 at x -38)
 
 
 def dowel_bores(x, key, sgn=1):
@@ -299,7 +299,7 @@ def nose_cowl():
         n = perim_screws(n, "nose").cut(tongue_keepout())
         n = n.cut(cyl(4.0, 12, (58.0, 0.0, LEDGE_Z[0] + 8.0), (1, 0, 0)))                                   # J1/J2 lead pass to the board front edge
         return n
-    return cached(["nose_cowl", 15, DOWELS, R, D.X_NOSE, P.J_RECEPTACLES, LATCH_ARM_Z, PERIM_DEG, LATCH_ARM_X1, LATCH_SCREW_X], b)
+    return cached(["nose_cowl", 16, DOWELS, R, D.X_NOSE, P.J_RECEPTACLES, LATCH_ARM_Z, PERIM_DEG, LATCH_ARM_X1, LATCH_SCREW_X], b)
 
 
 def shoulder(s):
@@ -315,10 +315,10 @@ def shoulder(s):
             p = p.fuse(bo.intersect(UI())).cut(br)
         a, c = cover_bosses(reg)
         p = p.fuse(a).cut(c).cut(dowel_bores(D.X_NOSE, "nose")).cut(dowel_bores(D.X_DECK, "deck"))
-        p = p.cut(box(-21.0, -2.0, D.GRIP_PLATE_Y[0] - 3.4, D.GRIP_PLATE_Y[0] - 0.3, 90, 220))     # look-ahead ToF lead slot beside the side plate (under the fairing)
+        p = p.cut(box(CHEEK_X0, D.GRIP_PLATE_FRONT_X, D.GRIP_PLATE_Y[0] - 3.4, D.GRIP_PLATE_Y[0] - 0.3, 90, 220))     # look-ahead ToF lead slot beside the side plate (under the fairing)
         p = p.cut(tongue_keepout())
         return perim_screws(p, "shoulder", (1,))
-    p = cached(["shoulder", 15, DECK_JOINT, DOWELS, R, D.X_NOSE, D.X_DECK, PERIM_DEG, COVER_SCREWS], b)
+    p = cached(["shoulder", 16, DECK_JOINT, DOWELS, R, D.X_NOSE, D.X_DECK, PERIM_DEG, COVER_SCREWS], b)
     return p if s > 0 else mirror_y(p)
 
 
@@ -345,10 +345,10 @@ def rear_deck(s):
         return perim_screws(p, "deck", (1,))
 
     def b():
-        p = cached(["rear_deck_base", 14, DECK_JOINT, DOWELS, R, D.X_DECK, HUMP_X, PERIM_DEG, COVER_SCREWS], base)
+        p = cached(["rear_deck_base", 15, DECK_JOINT, DOWELS, R, D.X_DECK, HUMP_X, PERIM_DEG, COVER_SCREWS], base)
         p = p if s > 0 else mirror_y(p)
         feats = []
-        for name in ("tof_look_r" + tag, "tof_prox_r" + tag):
+        for name in ("tof_look_rev_" + {"l": "left", "r": "right"}[tag], "tof_prox_r" + tag):
             t = P.TOF_SENSORS[name]
             k = S.seat_kind(name)
             feats.append((S.tof_boss(t["xyz"], t["dir"], k), S.tof_pocket(t["xyz"], t["dir"], kind=k), False))
@@ -377,7 +377,7 @@ def rear_deck(s):
         feats.append((box(DOOR_PEG[0] - 5, DOOR_PEG[0] + 3.5, s * D.HATCH_JAMB[0], s * (D.HATCH_JAMB[1] + 6.5), DOOR_PEG[1] - 5.5, DOOR_PEG[1] + 5.5),
                       cyl(D.INSERT["M4"][0] / 2, D.INSERT["M4"][1] + 1.0, (DOOR_PEG[0], s * D.HATCH_JAMB[0], DOOR_PEG[1]), (0, s, 0))))
         return _features(p, feats).cut(tongue_keepout())                 # features (ToF seats) must clear the hull tongue too
-    key = ["rear_deck", tag, 18, COVER_SCREWS, S.SEAT, R, D.X_DECK, HUMP_X, PERIM_DEG, P.TOF_SENSORS, P.PANEL_CONTROLS, P.CHARGE_INLET, D.BUMPER_DIR]
+    key = ["rear_deck", tag, 19, COVER_SCREWS, S.SEAT, R, D.X_DECK, HUMP_X, PERIM_DEG, P.TOF_SENSORS, P.PANEL_CONTROLS, P.CHARGE_INLET, D.BUMPER_DIR]
     if tag == "r":
         key.append(("inlet_seat", S.INLET_COVER_T, 2))
     return cached(key, b)
@@ -411,7 +411,7 @@ def hump():
         for s in (1, -1):                                                                      # latch (top) + frame screws
             h = h.cut(cyl(D.INSERT["M3"][0] / 2, D.INSERT["M3"][1], (x0 - 0.01, s * (hy - 1.5), 138.0), (1, 0, 0)))
         return h
-    return cached(["hump", 11, S.SEAT, B, HUMP_X, LEDGE_Z, P.LIDAR_POSE, P.TOF_SENSORS["tof_prox_rc"], HUMP_SCREW_X], b)
+    return cached(["hump", 12, S.SEAT, B, HUMP_X, LEDGE_Z, P.LIDAR_POSE, P.TOF_SENSORS["tof_prox_rc"], HUMP_SCREW_X], b)
 
 
 # Captive cover screws: four at the front ledge (ahead of the board edge x 33) and two at the rear corners, where the boss
@@ -512,7 +512,7 @@ def door():
         for s in (1, -1):                                                # hook-and-swing: the door is lowered onto the jamb pegs tilted back, then swung shut
             slot = box(DOOR_PEG[0] - 2.3, DOOR_PEG[0] + 2.3, s * 54.0, s * 58.5, 80.0, DOOR_PEG[1] + 2.3)   # hook slots, open downward
             d = d.cut(slot)
-        for name in ("tof_look_rl", "tof_look_rr"):                       # relief round the look-behind seats of the decks
+        for name in ("tof_look_rev_left", "tof_look_rev_right"):          # relief round the look-behind seats of the decks
             t = P.TOF_SENSORS[name]
             d = d.cut(S.tof_boss(t["xyz"], t["dir"], "look_r", grow=0.4, back=4.0))
         for y in (-30.0, 30.0):                                           # bushings for the centre bumper guide pins
@@ -520,7 +520,7 @@ def door():
         d = d.cut(cyl(D.CLEAR["M4"] / 2, 8, (FRAME_X[0] - 4.3, 35.0, 141.0), (1, 0, 0)))            # latch catch plate screws
         d = d.cut(cyl(D.CLEAR["M4"] / 2, 8, (FRAME_X[0] - 4.3, 35.0, 131.0), (1, 0, 0)))
         return d
-    return cached(["door", 13, S.SEAT, R, B, FRAME_X], b)
+    return cached(["door", 14, S.SEAT, R, B, FRAME_X], b)
 
 
 def build(add):
@@ -537,7 +537,7 @@ def build(add):
     for tag, s in (("L", 1), ("R", -1)):
         sh = shoulder(s)
         add(Part(f"RRX-P23{tag}", f"shoulder_{tag}", sh, "printed", "ASA", "lid", color=ASA, internal=False, orient=(0, -90, 0),
-                 print_note="standing on the rear joint face (x = -36 plane on the bed); supports under the well ledge", mates={"*"}))
+                 print_note="standing on the rear joint face (x = -38 plane on the bed); supports under the well ledge", mates={"*"}))
         add(Part(f"RRX-P24{tag}", f"rear_deck_{tag}", rear_deck(s), "printed", "ASA", "lid", color=ASA, internal=False, orient=(0, 0, 0),
                  print_note="as fitted (perimeter land on the bed); tree supports inside under the deck roof and sensor bosses", mates={"*"}))
     add(Part("RRX-P25", "battery_hump", hump(), "printed", "ASA", "lid", color=ASA, internal=False, orient=(0, 90, 0),

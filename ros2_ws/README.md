@@ -150,7 +150,7 @@ TF `map → base_link`; subscribes `scan`; services `mission/command`, `mission/
 | `src/rr_bringup/rr_bringup/config/sim.yaml` | simulation RobotApp config: trailer, profile id, mode (COMMISSIONING), survey grid, **mission method/speed**, mover, link, LiDAR |
 | `src/rr_bringup/rr_bringup/config/hardware.yaml` | hardware template; every `SITE` value must be entered/confirmed (default trailer 16.0 × 2.5 m) |
 | `src/rr_bringup/rr_bringup/config/users_demo.yaml` | demonstration accounts (replace before use; `users:=` launch argument) |
-| `src/rr_bringup/rr_bringup/config/contract_snapshot.yaml`, `frames_snapshot.yaml` | snapshots of `interface/system/contract.yaml` and `mechanical/common/frames.yaml` used for geometry (outline, mount transform) |
+| `src/rr_bringup/rr_bringup/config/contract_snapshot.yaml`, `frames_snapshot.yaml` | snapshots of `interface/system/contract.yaml` and `mechanical/common/frames.yaml` used for geometry (outline, mount transform). The contract snapshot is **generated** (`tools/test.sh snapshot`, i.e. `tools/snapshot_contract.py`; `--check` reports staleness) and `rr_bringup/test/test_config.py` fails when any of its fields differs from the contract; the frames snapshot is still a plain copy (byte-identical to `mechanical/common/frames.yaml` at 2026-11-27; its header says draft4, as does the repository file) |
 | `src/rr_core/rr_core/data/` | demo head descriptor, synthetic calibration, site profiles (ore demo profile; yellowcake present and unconfigured) |
 | launch args | `head_url`, `chassis_url`, `config`, `registry`, `users`, `run_dir`, `resume`, `web_port`, `native` |
 
@@ -177,15 +177,15 @@ Set it in the config YAML (`config:=` launch argument) or, for the stand-alone s
 
 From `rr_coverage/planner.py` with the demo descriptor geometry (4 lanes, 80 mm wide, pitch
 87.5 mm, position allowance e = 10 mm) and the frames.yaml / contract outline (body half-width
-0.146 m, head half-width 0.175 m, in-place turn radius 0.278 m):
+0.146 m, head half-width 0.175 m, in-place turn radius 0.290 m, contract 0.4.0-draft7 `swept_radii_m.tail_corner`):
 
 | Quantity | Value |
 |---|---|
 | Interior passes | 7 pairs; each pair = pass A (+x) and pass B (−x) offset by half a lane pitch **0.04375 m**, so every eroded seam of A lies under a lane centre of B; plus short end-cap passes (28 tasks) |
 | Seam overlap | 16.25 mm per side (eroded lane 60 mm vs eroded seam 27.5 mm) |
-| Pair stride / overlap | 0.310 m stride, 56 mm overlap between neighbouring pairs |
-| Pivot-clear band | \|y\| ≤ 0.952 m (turn radius + 20 mm from the wall); every in-place pivot happens inside it |
-| Wall tracks (`wall_track_entry: reverse_entry`, default) | per wall one more pair at \|y\| = **1.045 m** (outer, +x) and 1.001 m (inner, −x): head half-width 0.175 + wall margin 0.030 + tracking tolerance 0.005 m from the wall. Entered by **reversing along a 0.09 rad diagonal** from the band (0.98 m / 0.49 m long), small align pivot, pass, back-off, small peel pivot, forward diagonal back to the band. Every primitive is checked in the planner with the swept rectangle outline (body + head + tail) against the floor less the margins; min clearance 0.0 m by construction (the 5 mm tracking tolerance is reserved on top). No credit on the manoeuvre. |
+| Pair stride / overlap | 0.306 m stride, 60 mm overlap between neighbouring pairs |
+| Pivot-clear band | \|y\| ≤ 0.940 m (turn radius + 20 mm from the wall); every in-place pivot happens inside it |
+| Wall tracks (`wall_track_entry: reverse_entry`, default) | per wall one more pair at \|y\| = **1.045 m** (outer, +x) and 1.001 m (inner, −x): head half-width 0.175 + wall margin 0.030 + tracking tolerance 0.005 m from the wall. Entered by **reversing along a 0.09 rad diagonal** from the band (about 1.0 m / 0.5 m long), small align pivot, pass, back-off, small peel pivot, forward diagonal back to the band. Every primitive is checked in the planner with the swept rectangle outline (body + head + tail) against the floor less the margins; min clearance 0.0 m by construction (the 5 mm tracking tolerance is reserved on top). No credit on the manoeuvre. |
 | Residual strips | **left / right wall 0.049 m** each (0.137 m with `in_place`), door end 0.121 m, bulkhead end 0.051 m → predicted covered fraction **0.951** (0.881 with `in_place`); strips reported as residual rectangles |
 
 Estimated mission time (planner estimate: passes + turns + retreats + lateral shifts + wall-track
@@ -276,16 +276,26 @@ Carried from `STATUS.md` (read that file for the current, complete list):
   `robot_node`. The stand-alone `rr_head_driver` / `rr_chassis_bridge` nodes and the `GuidedVisit`
   action server are built but not exercised by any test. No lifecycle nodes.
 - Wall strips: ~0.049 m per wall with the default reverse-entry wall tracks (CR-06 / IB-29, owner
-  decision 2026-11-26), ~0.137 m with `in_place`. A stopped reverse entry leaves the track as a residual.
+  decision 2026-11-26), ~0.149 m with `in_place` (0.137 m at the old 0.278 m radius). A stopped reverse entry leaves the track as a residual.
   Flags seen only by a wall track may be UNREACHABLE for guided revisit / deferred counts (approaches
   are planned inside the pivot band only). Keep-outs are not planned around; blocked strips are deferred
-  and retried once, no path search. In-place pivots are planned with the contract swept radius 0.278 m
-  (rounded tail); the rectangle outline reaches 0.309 m — the rounded-tail assumption is not verified
-  against the as-built tail.
+  and retried once, no path search. In-place pivots are planned with the contract swept radius 0.290 m
+  (as-built tail incl. rear bumper 0.2892 m, tool-checked on nominal CAD, rounded up; contract draft7); the rectangle
+  outline used for route holds and the wall-track checks reaches 0.309 m. Not measured on a built robot.
 - Continuous scan at 0.10 m/s does not meet the 0.20 Bq/cm² goal with the demo calibration.
-- Cell statistics (CR-08/CR-09, **IB-31**, MODEL.md owner to decide): footprint-weighted sums use the Poisson
-  form, which is conservative; lane combinations use the exact per-lane threshold combined in normal form
-  (method string `poisson-exact-per-lane/normal-combination` stored per cell).
+- Cell statistics (CR-08/CR-09, IB-31 **closed by MODEL.md revision 3**, implemented): footprint-weighted sums keep
+  the Poisson form (conservative; manifest `assumptions.weighted_sum_variance: poisson_form_conservative`). A cell is
+  flagged when ANY contributing lane exceeds its own threshold at alpha/m (m = lanes with a gate of weight >= 0.10 in
+  the cell; per-lane method normal / poisson-exact from MODEL.md §3); the quoted D* and D# are the minima over the
+  lanes of the per-lane values solved at (alpha/m, beta); D and its uncertainties stay the inverse-variance
+  combination. Stored per cell in `cells.csv` (`*.decision_rule` = `per-lane-exact/any-lane/alpha-over-m`,
+  `*.m_lanes`, `*.alpha_lane`, `*.lane_thresholds`, `*.flagged_lanes`), on flags and in scaler observations
+  (m = 1). **Monte Carlo (simulated, `rr_core/test/test_cell_decision.py`, seed 20261127, 400 000 trials, tolerance
+  4 binomial SE = 0.0014 at alpha 0.05): clean-cell false-alarm / alpha = 0.26-0.39 for m = 2 and 4, normal and
+  poisson-exact, weights uniform in 0.1-1. The check MODEL.md leaves open for poisson-exact with weighted sums is
+  NOT clean: with weights 1 except one 0.1 gate per lane and low counts (U = 3 /s) the ratio reached 1.16 (m = 2) and
+  1.24 (m = 4); the normal method at unit weights gave up to 1.035 (finite-count skew, not a weight effect). This is
+  an `xfail` test, reported to the radiometry owner.**
 - TF: the robot node publishes `map → base_link` only, no separate continuous `odom` frame (CR-11, logged by
   the lead for a later decision).
 - LiDAR: no de-skew; 12 m range and noise are assumptions. Along-trailer (x) position comes only from an end
@@ -299,6 +309,10 @@ Carried from `STATUS.md` (read that file for the current, complete list):
 - Real-time tests (`ros`, `native`) are timing-sensitive: on a host with load average ~9–10 native_s02
   failed 3 times with a chassis CMD_TIMEOUT (DRIVE cadence missed by the single-threaded loop) and
   passed 3 times at low load; the final `tools/test.sh all` under load therefore exited non-zero.
+  IB-46 fix: the real-time hosts (`rr_bringup.runtime.Runtime`, `rr_sim.native.NativeSystem`) now run the chassis link
+  on its own thread (`config chassis_thread`, `ChassisLink.start_thread`); the virtual-time harness is unchanged.
+  Reproduced deterministically by an injected 0.5 s head stall (`rr_bringup/test/test_chassis_thread.py`); the native
+  run under load has not been repeated enough to claim the flake is gone.
   Run them on an unloaded host; see STATUS "Failed or flaky".
 - Never edit `tools/test.sh` while it is running (bash reads it incrementally; see STATUS).
 

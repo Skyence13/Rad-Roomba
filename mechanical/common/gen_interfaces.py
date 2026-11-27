@@ -178,6 +178,12 @@ def frames_doc():
                        for k, v in P.J_RECEPTACLES.items()}
     f["connectors"]["charge_inlet"] = {"xyz": m(P.CHARGE_INLET["xyz"]), "mating_axis": [round(c, 4) for c in P.CHARGE_INLET["normal"]], "desc": P.CHARGE_INLET["desc"]}
     f["connectors"]["head_pigtail_exits"] = {k: m(v) for k, v in P.HEAD_PIGTAIL_EXIT.items()}
+    f["head_switches"] = {**{k: m(v) for k, v in P.HEAD_RAIL_SWITCHES.items()},
+                          "lid_interlock_xy": m(P.HEAD_LID_SWITCH), "head_dock_switch_body": m(P.HEAD_DOCK_SWITCH),
+                          "note": "rail and lid switches as designed in mechanical/head (IB-40); HEAD_DOCK is on the body"}
+    f["head"] = {"envelope_x_m": m(P.HEAD_ENV_E["x"]), "leading_rail_front_x_m": {"unloaded": P.HEAD_LEAD_RAIL["x"][1] / 1000, "fully_stroked": 0.1952},
+                 "mass_cg": {b: {"mass_kg": v[0], "cg_xz_m": m(v[1:])} for b, v in P.HEAD_MASS.items()},
+                 "source": "mechanical/head/out/head_report.md (calculated by the head engineer)"}
     f["kinematics"] = {"track_m": P.TRACK / 1000, "wheel_radius_m": P.WHEEL_R / 1000, "axle_height_m": P.AXLE_Z / 1000,
                        "caster_swivel_xy_m": m(P.CASTER_SWIVEL + (0,))[:2],
                        "note": "track and caster are the contract values (0.4.0-draft4)"}

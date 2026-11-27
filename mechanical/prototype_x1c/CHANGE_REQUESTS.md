@@ -19,9 +19,25 @@ lead's decision. Numbers are design values, *calculated* or *tool-checked* as ma
 | D-08 | Saddle-cover fixing | "gasketed, captive screws" | 6 captive M3: 4 on the front ledge (ahead of the board edge x 33) and 2 in the rear corners | the RR-CHS-MAIN 18 mm top envelope reaches the ledge underside (z 102.6): screw bosses can only hang below the ledge where the board is limited to 12 mm (rear corners, CCR-E08) or outside the board. See CR-06. |
 | D-10 | Battery tunnel at the tail | bay guide walls \|y\| 55.5..58 from the plate to z 100, x -230..-73.5 | walls, feet and gate trimmed to the Rev E inner skin; the hull keeps its full skin there | tool-checked: the wall corner at (-230, +-58, 37) lies 5.8 mm outside the inner skin (half-breadth 52.2 at that height). The common layout's containment tool clamps z to the floor and did not see it. Cassette envelope and removal path unaffected (sweep checked). |
 | D-11 | Lid perimeter screws | -- | 7 radial M3 per side (nose 20/40 deg, shoulder 50 deg, deck 85/100/120/140 deg); no station in the tail quarter | stations at 150..160 deg collided with the rear proximity ToF seat or reached into the hatch opening; the tail is held by the hatch frame, jambs and hump. |
-| D-09 | Shell split stations (design values, not interface) | -- | lid: nose cowl x >= 47, shoulders x -36..47, rear decks x <= -36, hump; lower hull split at x = -71 and y = 0 | the -45 station of the first engineer cut through the RR-PANEL tray; -36 is between the grip slots (x -21.5) and the tray (x -42.5). |
+| D-09 | Shell split stations (design values, not interface) | -- | lid: nose cowl x >= 47, shoulders x -38..47, rear decks x <= -38, hump; lower hull split at x = -71 and y = 0 | the -45 station of the first engineer cut through the RR-PANEL tray; after CR-04 -38 lies between the grip slots (x -32.5..-17.5) and the tray (ends x -44.0). |
 
-## Requests to the lead
+## Status of the requests (lead decisions 2026-11-27)
+
+| ID | Decision | Applied |
+|---|---|---|
+| CR-01 | accepted | `params.RECEIVER` channel_x (2.0, 65.7) and front_beam \|y\| 119.5; interfaces text regenerated |
+| CR-02 | accepted | parts.yaml wheel hub_l 9.2 (Pololu #1999 M3) |
+| CR-03 | accepted | parts.yaml charge-inlet cover 36 x 36 x 5 |
+| CR-04 | accepted | `P.GRIP` center_x -30, hand zone 45 front/below, 25 behind below the bar, 45 behind at bar height; common layout and prototype rebuilt (bar sleeve x -42.5..-17.5, bar screw x -25, side-plate cheek x -32..-18, shoulder/deck split moved to x -38, look-ahead ToF kept at x 1.5 on a forward fairing nose) |
+| CR-05 | recorded | no geometry change |
+| CR-06 | accepted | board_envelopes.yaml RR-CHS-MAIN zone REAR_CORNER_LOW (12 mm) |
+| CR-07 | accepted | mechanical_interfaces.md section 5 note |
+| CR-08 | accepted with a change | Pause/Stop moved 10 mm OUTBOARD to (-84, -122), not aft: an aft move of >= 6 mm clears the IB-12 space but closes the gap to the E-stop mushroom to below zero (calculated); body depth stays 50 mm UNVERIFIED (+3 mm checked) |
+| CR-09 | accepted | contract tail swept radius 0.290 m (lead); bumper unchanged |
+
+All closed.
+
+## Requests to the lead (as submitted)
 
 | ID | Request | Why (evidence) | Affects |
 |---|---|---|---|

@@ -14,6 +14,11 @@ void rrh_evtcap_set_chain_enable(rrh_evtcap_t *e, uint8_t mask)
     e->chain_enable = mask;
 }
 
+void rrh_evtcap_set_alpha_hold(rrh_evtcap_t *e, uint32_t ticks)
+{
+    e->alpha_hold_ticks = ticks;
+}
+
 static void clear_accumulators(rrh_evtcap_t *e)
 {
     memset(e->count, 0, sizeof e->count);
@@ -24,6 +29,8 @@ static void clear_accumulators(rrh_evtcap_t *e)
     memset(e->next_busy, 0, sizeof e->next_busy);
     memset(e->next_width_hist, 0, sizeof e->next_width_hist);
     e->next_saturated = 0u;
+    memset(e->idle_clears, 0, sizeof e->idle_clears);
+    memset(e->next_idle_clears, 0, sizeof e->next_idle_clears);
 }
 
 bool rrh_evtcap_start(rrh_evtcap_t *e, uint64_t first_gate_tick, uint32_t gate_ticks)
@@ -127,6 +134,7 @@ static void close_gate(rrh_evtcap_t *e)
             l->ref_counts = e->count[rc][0];
             l->ref_reject_counts = e->count[rc][1];
             l->ref_live_ticks = live_of(e, rc);
+            l->alpha_idle_clears = e->idle_clears[lane];
             if ((((uint32_t)e->saturated >> fc) & 1u) != 0u) {
                 l->flags |= RRH_GF_FLOOR_SATURATED;
             }
@@ -154,6 +162,8 @@ static void close_gate(rrh_evtcap_t *e)
     memset(e->next_width_hist, 0, sizeof e->next_width_hist);
     memcpy(e->count, e->next_count, sizeof e->count);
     memcpy(e->busy, e->next_busy, sizeof e->busy);
+    memcpy(e->idle_clears, e->next_idle_clears, sizeof e->idle_clears);
+    memset(e->next_idle_clears, 0, sizeof e->next_idle_clears);
     e->saturated = e->next_saturated;
     memset(e->next_count, 0, sizeof e->next_count);
     memset(e->next_busy, 0, sizeof e->next_busy);
@@ -168,6 +178,71 @@ static void close_gate(rrh_evtcap_t *e)
         e->heater_req = false; /* the heater goes off with the final gate */
     }
     heater_apply(e, e->heater_req);
+}
+
+/* Book the busy interval [from, to) of a chain into the gate in progress and, beyond g1, into the
+ * next gate. Both ends are timer readings; the split at g1 is arithmetic. */
+static void book_busy(rrh_evtcap_t *e, uint32_t ch, uint64_t from, uint64_t to)
+{
+    if (from < e->g0) {
+        from = e->g0;
+    }
+    if (to <= from) {
+        return;
+    }
+    if (from < e->g1) {
+        e->busy[ch] += ((to < e->g1) ? to : e->g1) - from;
+    }
+    if (to > e->g1) {
+        e->next_busy[ch] += to - ((from > e->g1) ? from : e->g1);
+    }
+}
+
+static uint32_t width_bin(const rrh_evtcap_t *e, const rrh_evt_in_t *in, uint32_t ch, bool counted)
+{
+    uint32_t wbin = RRH_WIDTH_BINS;
+    if (counted && (((uint32_t)e->cfg.width_mask & (uint32_t)in->width_valid & (1u << ch)) != 0u)) {
+        wbin = 0u;
+        while ((wbin < (RRH_WIDTH_BINS - 1u)) && (in->width_ticks[ch] >= e->cfg.width_edges_ticks[wbin])) {
+            wbin++;
+        }
+    }
+    return wbin;
+}
+
+/* ALPHA latch set on an idle floor chain (slow light below BETA_LLD, budget 4 note 1): without
+ * this it would be read with the next beta event. Cleared after RRH_IDLE_ALPHA_SERVICES services
+ * in a row; one service is not enough because the capture flag of a real event can lag the latch
+ * read-back by one service (the flags are sampled before the latch levels). */
+static void idle_alpha_service(rrh_evtcap_t *e, uint64_t now, const rrh_evt_in_t *in)
+{
+    for (uint32_t lane = 0u; lane < RRH_LANES; lane++) {
+        const uint8_t bit = (uint8_t)(1u << lane);
+        const bool idle_alpha = ((in->alpha & bit) != 0u) && ((e->pending & bit) == 0u);
+        if (!idle_alpha) {
+            e->idle_alpha_seen[lane] = 0u;
+            continue;
+        }
+        if (++e->idle_alpha_seen[lane] < RRH_IDLE_ALPHA_SERVICES) {
+            continue;
+        }
+        e->idle_alpha_seen[lane] = 0u;
+        uint64_t clear = e->cfg.clear(e->cfg.ctx, (uint8_t)lane);
+        if (clear < now) {
+            clear = now;
+        }
+        e->last_clear[lane] = clear;
+        e->total_idle_alpha_clears++;
+        if (e->running && (clear >= e->g0)) {
+            const uint64_t blind = e->cfg.clear_blind_ticks;
+            book_busy(e, lane, (clear > blind) ? (clear - blind) : 0u, clear);
+            if (clear < e->g1) {
+                e->idle_clears[lane]++;
+            } else {
+                e->next_idle_clears[lane]++;
+            }
+        }
+    }
 }
 
 void rrh_evtcap_service(rrh_evtcap_t *e, uint64_t now, const rrh_evt_in_t *in)
@@ -185,6 +260,7 @@ void rrh_evtcap_service(rrh_evtcap_t *e, uint64_t now, const rrh_evt_in_t *in)
             }
             e->start[ch] = s;
             e->pending |= (uint8_t)(1u << ch);
+            e->holding &= (uint8_t)~(1u << ch);
         }
     }
     /* 2. Gate boundaries that have passed. */
@@ -205,76 +281,86 @@ void rrh_evtcap_service(rrh_evtcap_t *e, uint64_t now, const rrh_evt_in_t *in)
         }
     }
     /* 4. Classify and clear. */
-    if (e->pending == 0u) {
-        return;
-    }
     for (uint32_t ch = 0u; ch < RRH_EVT_CHAINS; ch++) {
         const uint8_t bit = (uint8_t)(1u << ch);
         if ((e->pending & bit) == 0u) {
             continue;
         }
         const uint64_t age = now - e->start[ch];
-        const bool ready = (age >= e->cfg.window_ticks) && ((in->lld_low & bit) != 0u);
-        const bool forced = !ready && (age >= e->cfg.max_hold_ticks);
+        const bool in_hold = (e->holding & bit) != 0u;
+        bool ready;
+        bool forced;
+        uint32_t cls;
+        uint32_t wbin;
+        if (in_hold) {
+            /* class and width were decided when the event first became ready */
+            ready = (now >= e->hold_until[ch]) && ((in->lld_low & bit) != 0u);
+            forced = !ready && (age >= (e->cfg.max_hold_ticks + e->alpha_hold_ticks));
+            cls = e->held_cls[ch];
+            wbin = e->held_wbin[ch];
+        } else {
+            ready = (age >= e->cfg.window_ticks) && ((in->lld_low & bit) != 0u);
+            forced = !ready && (age >= e->cfg.max_hold_ticks);
+            if (!ready && !forced) {
+                continue;
+            }
+            if (ch < 4u) {
+                cls = ((in->alpha & bit) != 0u) ? 0u : (((in->uld & bit) != 0u) ? 2u : 1u);
+            } else {
+                cls = ((in->uld & bit) != 0u) ? 1u : 0u;
+            }
+            /* Pulse width of the triggering pulse, if the port measured it: engineering histogram
+             * only, the class decision above does not use it. */
+            wbin = width_bin(e, in, ch, !forced && ((e->chain_enable & bit) != 0u));
+            if (ready && (ch < 4u) && (cls == 0u) && (e->alpha_hold_ticks != 0u)) {
+                /* afterglow hold: keep the chain BUSY, decide nothing more */
+                e->holding |= bit;
+                e->hold_until[ch] = now + e->alpha_hold_ticks;
+                e->held_cls[ch] = (uint8_t)cls;
+                e->held_wbin[ch] = (uint8_t)wbin;
+                e->total_held++;
+                continue;
+            }
+        }
         if (!ready && !forced) {
             continue;
-        }
-        uint32_t cls;
-        if (ch < 4u) {
-            cls = ((in->alpha & bit) != 0u) ? 0u : (((in->uld & bit) != 0u) ? 2u : 1u);
-        } else {
-            cls = ((in->uld & bit) != 0u) ? 1u : 0u;
         }
         uint64_t clear = e->cfg.clear(e->cfg.ctx, (uint8_t)ch);
         if (clear < now) {
             clear = now;
         }
         e->pending &= (uint8_t)~bit;
+        e->holding &= (uint8_t)~bit;
         e->last_clear[ch] = clear;
         if (!e->running || (clear < e->g0)) {
             continue; /* not recording (yet): the chain is kept clear, nothing is counted */
         }
-        const uint64_t from = (e->start[ch] > e->g0) ? e->start[ch] : e->g0;
         const bool counted = !forced && ((e->chain_enable & bit) != 0u);
-        /* Pulse width of the triggering pulse, if the port measured it: engineering histogram
-         * only, the class decision above does not use it. */
-        uint32_t wbin = RRH_WIDTH_BINS;
-        if (counted && ((e->cfg.width_mask & in->width_valid & bit) != 0u)) {
-            wbin = 0u;
-            while ((wbin < (RRH_WIDTH_BINS - 1u)) && (in->width_ticks[ch] >= e->cfg.width_edges_ticks[wbin])) {
-                wbin++;
-            }
-        }
-        if (clear < e->g1) {
-            e->busy[ch] += clear - from;
-            if (forced) {
+        book_busy(e, ch, e->start[ch], clear);
+        /* An event belongs to the gate that contains its clear time. If the boundary g1 lies
+         * between this service's `now` and the clear, the gate cannot be closed yet (other chains
+         * may still start an event before g1): the busy time was split by book_busy, the count
+         * goes to the next gate. */
+        if (forced) {
+            if (clear < e->g1) {
                 e->saturated |= bit; /* over-long BUSY: not counted, the gate is flagged */
-            } else if (counted) {
+            } else {
+                e->next_saturated |= bit;
+            }
+        } else if (counted) {
+            if (clear < e->g1) {
                 e->count[ch][cls]++;
                 if (wbin < RRH_WIDTH_BINS) {
                     e->width_hist[ch][wbin]++;
                 }
             } else {
-                /* disabled chain: cleared, never counted */
-            }
-        } else {
-            /* The boundary g1 lies between this service's `now` and the clear. The gate cannot be
-             * closed yet (other chains may still start an event before g1), so the event is
-             * split here: busy up to g1 stays in this gate, the rest and the count go to the next. */
-            if (from < e->g1) {
-                e->busy[ch] += e->g1 - from;
-            }
-            e->next_busy[ch] += clear - ((from > e->g1) ? from : e->g1);
-            if (forced) {
-                e->next_saturated |= bit;
-            } else if (counted) {
                 e->next_count[ch][cls]++;
                 if (wbin < RRH_WIDTH_BINS) {
                     e->next_width_hist[ch][wbin]++;
                 }
-            } else {
-                /* disabled chain */
             }
+        } else {
+            /* disabled chain: cleared, never counted */
         }
         if (forced) {
             e->total_forced++;
@@ -284,6 +370,8 @@ void rrh_evtcap_service(rrh_evtcap_t *e, uint64_t now, const rrh_evt_in_t *in)
             /* nothing */
         }
     }
+    /* 5. ALPHA latches on idle floor chains. */
+    idle_alpha_service(e, now, in);
 }
 
 bool rrh_evtcap_pop(rrh_evtcap_t *e, rrh_gate_record_t *rec)

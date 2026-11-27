@@ -3,7 +3,7 @@
 #ifndef RRH_CONFIG_H
 #define RRH_CONFIG_H
 
-#define RRH_FW_VERSION "rr-head-0.4.0"
+#define RRH_FW_VERSION "rr-head-0.5.0"
 #define RRH_PROTO_VERSION "2.0"
 #define RRH_ACQ_FORMAT "2.0"
 #define RRH_HEAD_TYPE "FOUR_LANE_ZNS_PLASTIC_WITH_REFERENCE"
@@ -47,13 +47,58 @@
 #define RRH_HEAD_TEMP_MIN_MC (-30000)
 #define RRH_HEAD_TEMP_MAX_MC 50000
 #define RRH_HEATER_PLATE_MAX_MC 70000    /* software over-temperature limit of the heater plate */
-#define RRH_BIAS_MIN_MV 20000u
-#define RRH_BIAS_MAX_MV 60000u
-#define RRH_BIAS_TOLERANCE_MV 500u
-#define RRH_BIAS_CURRENT_MAX_UA 500u
-#define RRH_BIAS_STEP_MV 20u             /* slew limit per control period */
+#define RRH_BIAS_MIN_MV 20000u           /* qualified range 20 ... 60 V (budget 5); lower bound of a set-point */
+/* The upper bound is the fitted over-voltage trip less a margin (rrh_board_bias_limit_mv()):
+ * 31.5 V trip on rev A (R2222/R2223 strap for onsemi J/C) -> 30.5 V. A set-point above the trip
+ * would be cut off by the hardware permit latch, so the firmware refuses it instead. */
+#define RRH_BIAS_OVP_MARGIN_MV 1000u     /* margin below the nominal trip: R2217/R2218 are 1 % parts (+-0.3 V at 31 V),
+                                          * comparator offset and VREF accuracy are datasheet figures (UNVERIFIED) */
+#define RRH_BIAS_TOLERANCE_MV 500u       /* tracking window of BIAS_VMON against the set-point; the divider alone is +-1 % */
+/* Total bias current limit: the TPS61391 mirror monitor (BIAS_IMON, 8.0 mV/uA) is specified to 250 uA
+ * (2.0 V, budget 5.1; MON1 compliance is an open datasheet item B2), so a limit of 500 uA as in
+ * firmware 0.3 could never be reached. 200 uA = 80 % of the monitor range, 2x the budget's worst
+ * case (SiPM dark 70 uA + dividers 15 uA). */
+#define RRH_BIAS_CURRENT_MAX_UA 200u
+#define RRH_BIAS_STEP_MV 20u             /* slew limit per control period while tracking temperature */
 #define RRH_BIAS_DEADBAND_MV 5u
 #define RRH_BIAS_SETTLE_PERIODS 5u
+/* Bias-on sequence (CCR-HE-09): HV_SET starts at 0 and rises at most 5 V/s at the DAC output
+ * (the request says "HV_SET <= 5 V/s"; at HV_BUS that is 25 x 5 = 125 V/s, 12.5 V per 100 ms
+ * period. If electronics meant 5 V/s at HV_BUS this constant becomes 500 - see CONTRACT_CHANGE_REQUESTS). */
+#define RRH_BIAS_RAMP_STEP_MV 12500u
+/* HV_EN high and BIAS_VMON below this once the ramp has finished: the permit latch is tripped
+ * (CCR-HE-09); the commanded set-point is at least RRH_BIAS_MIN_MV. */
+#define RRH_BIAS_PERMIT_TRIP_MV 1000u
+
+/* Per-chain anode current monitor IMON_CH (PE15 = ADC4_IN2, mux TMUX1108 U2703, MON_MUX_A[2:0]).
+ * Window thresholds ("configuration"): numbers from electronics/analysis/head_afe_budget.md 5.1 and 6. */
+#define RRH_IMON_SETTLE_US 10000u  /* 10 x (R108 10 k x C2704 100 nF = 1 ms): settle after a mux step to < 0.1 LSB of a 3 V step */
+#define RRH_IMON_MAX_NA 200000u    /* per-channel soft limit 0.2 - 0.5 mA (budget 5.1: trim buffer runs out of range); low end */
+#define RRH_IMON_SAT_UV 50000u     /* V(TRIMDRV) below this with a trim of >= 2 x this: buffer at its rail, overvoltage collapses; UNVERIFIED (TLV9062 output swing) */
+#define RRH_IMON_MIN_NA 0u         /* low-side window DISABLED: dark current of a healthy SiPM at -25 C (~10 nA, calculated) is below the 147 nA
+                                    * monitor resolution and the +-0.3 uA op-amp offset; a disconnected channel is not detectable. UNVERIFIED placeholder */
+#define RRH_IMON_HOLD_US 200000u   /* out-of-window condition must persist this long (two control periods) before a chain is flagged */
+#define RRH_IMON_MAX_AGE_US 1000000u /* a chain not converted within this long is reported as not measured */
+#ifndef RRH_IMON_SCAN_WHILE_ARMED
+#define RRH_IMON_SCAN_WHILE_ARMED 1 /* MON_MUX_A[2:0] also address the lane monitor decoder (U2701); see README "Open electronics questions" */
+#endif
+
+/* Default thresholds above the 0.600 V baseline (rrh_setup_defaults): levels in p.e. of the FAST path
+ * of a 6 mm onsemi J-series device (6.9 mV per p.e., budget 2.2) - ASSUMED, replace when the SiPM is chosen. */
+#define RRH_FAST_UV_PER_PE 6900u
+#define RRH_DEFAULT_LLD_PE 8u        /* inside the dark-limited 7 ... 10 p.e. (budget 1; IB-22) */
+#define RRH_DEFAULT_ULD_PE 150u      /* above the assumed beta maximum of 120 p.e. */
+#define RRH_DEFAULT_ALPHA_UV 30000u  /* ALPHA (slow path): just below the assumed alpha minimum of 33 mV; a beta above ~80 p.e. (0.37 mV/p.e.)
+                                      * also crosses it - the budget 2.3 ranges overlap (beta maximum 44 mV). ASSUMED */
+
+/* Afterglow hold after an alpha event (IB-18, budget 4): ZnS(Ag) afterglow / slow-baseline undershoot. */
+#define RRH_ALPHA_HOLD_DEFAULT_US 150u
+#define RRH_ALPHA_HOLD_MAX_US 500u
+
+/* ALPHA latch set on a chain whose BUSY latch is not (slow light below BETA_LLD): cleared after
+ * it has been seen on this many consecutive services (one service is not enough: the capture
+ * flag of a real event can lag the latch read-back by one service). */
+#define RRH_IDLE_ALPHA_SERVICES 2u
 
 /* Control loop period when no gates are running, and stale-gate watchdog */
 #define RRH_CONTROL_PERIOD_US 100000u

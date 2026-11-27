@@ -41,6 +41,7 @@ DEFAULTS = {
     "auto_head_power": True,
     "start_pose": None,                  # default: first pass start
     "simulated": True,
+    "chassis_thread": False,             # real-time hosts: chassis link on its own thread (IB-46); the virtual-time harness keeps False
 }
 
 
@@ -190,8 +191,14 @@ class RobotApp:
         self.log_event({"ev": "plan", "n_tasks": len(self.plan["tasks"]), "estimated_time_s": self.plan["estimated_time_s"]})
 
     # ------------------------------------------------------------------- step
+    def shutdown(self):
+        """Stop the chassis link thread (if any) and flush its archive entries; call before closing the archive."""
+        self.chassis.stop_thread()
+
     def step(self):
         now = self.clock.now_us()
+        if self.cfg["chassis_thread"]:
+            self.chassis.start_thread()           # idempotent; a real-time clock is required
         self.head.step()
         evs = self.head.drain_events()
         if evs:

@@ -53,6 +53,7 @@ typedef struct {
     uint32_t ref_counts;
     uint32_t ref_reject_counts;
     uint32_t ref_live_ticks;
+    uint32_t alpha_idle_clears; /* ALPHA latch found set on the idle floor chain and cleared (engineering, DIAG only) */
     uint8_t flags; /* RRH_GF_* */
 } rrh_gate_lane_t;
 
@@ -102,12 +103,17 @@ bool rrh_hal_acq_poll(rrh_gate_record_t *rec);
 typedef struct {
     uint16_t threshold[RRH_N_THRESHOLDS]; /* 12-bit DAC codes */
     uint16_t trim[RRH_N_TRIMS];           /* 12-bit DAC codes, SiPM anode trim */
-    uint16_t pulser_code;                 /* 12-bit test-pulser amplitude */
-    bool pulser_enable;
+    uint16_t pulser_code;                 /* 12-bit test-pulser amplitude (U_DAC1 output 6 = PULSER_AMPL) */
+    bool pulser_enable;                   /* periodic strobe on PC6 (TIM8_CH1), 1 kHz */
+    uint8_t pulser_channel;               /* 0..7 = F0..F3, R0..R3: chain that receives the test pulse (PULSER_A[2:0] on PF2/PF9/PF10) */
+    uint8_t pulser_width_us;              /* strobe width, 1..100 us (alpha-scale tests need >= 20 us, budget 7) */
+    uint16_t led_code;                    /* 12-bit LED pulser amplitude (U_DAC0 output 7 = LED_AMPL, V_LED = 2 x) */
+    bool led_enable;                      /* strobe LED_STROBE (PC12) with the pulser period */
+    uint16_t alpha_hold_us;               /* afterglow hold after an alpha event, 0 = off (IB-18) */
     uint8_t chain_enable; /* bit n: floor lane n; bit 4+n: reference lane n */
 } rrh_frontend_cfg_t;
 
-/* Write thresholds, trims, pulser and chain enables. Only called while not recording. */
+/* Write thresholds, trims, pulser, LED, hold and chain enables. Only called while not recording. */
 bool rrh_hal_frontend_apply(const rrh_frontend_cfg_t *cfg);
 /* Bias converter: set-point in millivolts and enable. */
 void rrh_hal_bias_set(uint32_t millivolts, bool enable);
@@ -125,11 +131,33 @@ typedef struct {
     uint32_t supply_mv;
     bool supply_valid;
     bool heater_cutout_ok;  /* independent hardware thermal cut-out closed / heater feed present */
-    uint8_t bumper_zones;   /* bit0 front, bit1 left, bit2 right: auxiliary contact closed */
+    /* Rail-zone identification. Rev A has NO zone identification (IB-21 closed: single-pole rail
+     * switches, the inputs are idle): the port sets zones_available = false and bumper_zones then
+     * means nothing ("not available", not "not actuated"). */
+    bool zones_available;
+    uint8_t bumper_zones;   /* bit0 front, bit1 left, bit2 right: auxiliary contact closed (only if zones_available) */
     uint8_t frontend_fault; /* bit n: floor chain n; bit 4+n: reference chain n not usable */
 } rrh_analog_t;
 
 void rrh_hal_analog_read(rrh_analog_t *out);
+
+/* ---- per-chain anode current monitor (IMON_CH on PE15 = ADC4_IN2, mux MON_MUX_A[2:0]) ---------- */
+/* The port scans the eight chains in the background (select, wait RRH_IMON_SETTLE_US, convert).
+ * uv[n] is the voltage seen at the ADC pin for chain n, i.e. V(TRIMDRV) of that chain in
+ * microvolts; the core turns it into a current with the trim code (I = (V_trim - V)/4.99 k).
+ * valid bit n = chain n has a conversion not older than RRH_IMON_MAX_AGE_US. */
+typedef struct {
+    uint8_t valid;
+    uint32_t uv[8];
+} rrh_imon_t;
+void rrh_hal_imon_read(rrh_imon_t *out);
+
+/* ---- optional I2C expander TCA9534 at 0x20 (bias permit / inhibit / lid / eFuse fault) -------- */
+typedef struct {
+    bool present;    /* the device answered on the last read */
+    uint8_t inputs;  /* raw input port, bit assignment RRH_EXP_* in rrh_board.h */
+} rrh_expander_t;
+void rrh_hal_expander_read(rrh_expander_t *out);
 
 /* ---- heater ------------------------------------------------------------------------------- */
 /* Requested state; the port applies it on the next gate boundary while gates run,

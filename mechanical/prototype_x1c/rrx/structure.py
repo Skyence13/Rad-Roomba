@@ -52,8 +52,6 @@ def plate_holes():
             H.append((x, s * 64.0, D.CLEAR["M3"], "csk_bottom", "battery tunnel foot M3"))
     for x, y in ((-140.0, 76.0), (-140.0, 88.0), (-83.0, 76.0), (-83.0, 88.0)):
         H.append((x, y, D.CLEAR["M3"], "csk_bottom", "CM5 tray M3"))
-    for y in (-18.0, 18.0):
-        H.append((34.5, y, D.TAP["M3"], "tap", "bus clamp resistor M3"))
     for x in (-60.0, -20.0):
         H.append((x, 0.0, D.CLEAR["M3"], "csk_bottom", "coupler cradle M3"))
     H.append((-215.0, 30.0, 3.0, "thru", "bay drain with duck-bill valve"))
@@ -236,15 +234,16 @@ def grip_side_plate(s):
     G = P.GRIP
     top = G["bar_top_z"]
     fx = D.GRIP_PLATE_FRONT_X
-    pts = [(D.FOOT_X[0], Z1), (D.FOOT_X[1], Z1), (D.FOOT_X[1], 78.0), (-1.0, 104.0), (-1.0, 145.0), (fx, 150.0), (fx, top - 1.0),
-           (-21.0, top - 1.0), (-21.0, 112.0), (-31.0, 98.0), (-31.0, Z1 + 26.0), (D.FOOT_X[0], Z1 + 26.0)]
+    cx0 = CHEEK_X0                                                     # cheek x -32..-18 round the bar screw at x -25 (CR-04)
+    pts = [(D.FOOT_X[0], Z1), (D.FOOT_X[1], Z1), (D.FOOT_X[1], 85.0), (fx, 92.0), (fx, top - 1.0),
+           (cx0, top - 1.0), (cx0, 92.0), (-31.0, 85.0), (-31.0, Z1 + 26.0), (D.FOOT_X[0], Z1 + 26.0)]
     y0, y1 = D.GRIP_PLATE_Y
     pl = prism_xz(pts, y0, y1)
     pl = pl.cut(cyl(D.CLEAR[D.GRIP_BAR_SCREW] / 2, 10, (D.GRIP_BAR_X, y0 - 1, D.GRIP_BAR_Z), (0, 1, 0)))
+    for z in FAIRING_SCREW_Z:
+        pl = pl.cut(cyl(D.CLEAR["M3"] / 2, 10, (D.GRIP_BAR_X, y0 - 1, z), (0, 1, 0)))
     for x in (-48.0, -30.0):
         pl = pl.cut(cyl(D.CLEAR["M5"] / 2, 10, (x, y0 - 1, Z1 + 16.0), (0, 1, 0)))
-    for z in FAIRING_SCREW_Z:
-        pl = pl.cut(cyl(D.CLEAR["M3"] / 2, 10, (-11.0, y0 - 1, z), (0, 1, 0)))
     return pl if s > 0 else mirror_y(pl)
 
 
@@ -282,7 +281,7 @@ def grip_sleeve():
     sl = cq.Workplane("XZ", origin=((x0 + x1) / 2, hy, D.GRIP_BAR_Z)).rect(G["bar_x"], G["bar_z"]).extrude(2 * hy).edges("|Y").fillet(8.0).val()
     sl = sl.cut(cyl(D.GRIP_BAR_D / 2 + 0.2, 2 * hy + 2, (D.GRIP_BAR_X, -hy - 1, D.GRIP_BAR_Z), (0, 1, 0)))
     from .sensors import tof_boss
-    for name in ("tof_look_fl", "tof_look_fr"):
+    for name in ("tof_look_fwd_left", "tof_look_fwd_right"):
         t = P.TOF_SENSORS[name]
         sl = sl.cut(tof_boss(t["xyz"], t["dir"], "look_f", grow=0.4, back=2.0))
     return sl
@@ -294,22 +293,22 @@ def cheek_fairing(s):
     y0, y1 = G["cheek_y"]
     x0, x1 = G["center_x"] - G["bar_x"] / 2, G["center_x"] + G["bar_x"] / 2
     zb = 109.0
-    f = cq.Workplane("XY").add(box(x0, x1, y0, y1, zb, G["bar_top_z"] + 2.0)).edges("|Z").fillet(3.0).val()
-    t = P.TOF_SENSORS["tof_look_fl"]
+    t = P.TOF_SENSORS["tof_look_fwd_left"]
+    nose_x1 = t["xyz"][0]                                                                    # forward nose to the look-ahead aperture (x 1.5)
+    f = cq.Workplane("XY").add(box(x0, nose_x1, y0, y1, zb, G["bar_top_z"] + 2.0)).edges("|Z").fillet(3.0).val()
     from .sensors import tof_boss, tof_pocket
     f = f.fuse(tof_boss(t["xyz"], t["dir"], "look_f")).clean()
     gap = 0.3
     fx = D.GRIP_PLATE_FRONT_X
-    f = f.cut(box(-21.0 - gap - 0.1, -1.0 + gap + 0.1, D.GRIP_PLATE_Y[0] - gap, D.GRIP_PLATE_Y[1] + gap, zb - 1, 150.5))     # slot for the plate cheek
-    f = f.cut(box(-21.0 - gap - 0.1, fx + gap + 0.1, D.GRIP_PLATE_Y[0] - gap, D.GRIP_PLATE_Y[1] + gap, 145.0, G["bar_top_z"] - 0.6))
+    f = f.cut(box(CHEEK_X0 - gap - 0.1, fx + gap + 0.1, D.GRIP_PLATE_Y[0] - gap, D.GRIP_PLATE_Y[1] + gap, zb - 1, G["bar_top_z"] - 0.6))   # slot for the plate cheek
     f = f.cut(cyl(D.GRIP_BAR_D / 2 + 0.3, 6, (D.GRIP_BAR_X, y0 - 1, D.GRIP_BAR_Z), (0, 1, 0)))       # bar enters the inner wall
     f = f.cut(cyl(5.6, 5, (D.GRIP_BAR_X, y1 - 4.5, D.GRIP_BAR_Z), (0, 1, 0)))                          # screw-head pocket (push-in cap)
     f = f.cut(cyl(D.CLEAR["M6"] / 2, 20, (D.GRIP_BAR_X, y0, D.GRIP_BAR_Z), (0, 1, 0)))
     for z in FAIRING_SCREW_Z:
-        f = f.cut(cyl(D.CLEAR["M3"] / 2, 20, (-11.0, y0 - 1, z), (0, 1, 0)))
-        f = f.cut(cyl(3.2, 2.2, (-11.0, y1 - 2.0, z), (0, 1, 0)))
+        f = f.cut(cyl(D.CLEAR["M3"] / 2, 20, (D.GRIP_BAR_X, y0 - 1, z), (0, 1, 0)))
+        f = f.cut(cyl(3.2, 2.2, (D.GRIP_BAR_X, y1 - 2.0, z), (0, 1, 0)))
     f = f.cut(tof_pocket(t["xyz"], t["dir"], kind="look_f"))
-    f = f.cut(box(-7.0, -2.0, y0 + 0.8, D.GRIP_PLATE_Y[0] - gap - 0.6, 100.0, 156.0))                 # ToF lead channel inboard of the plate
+    f = f.cut(box(CHEEK_X0 + 2.0, -2.0, y0 + 0.8, D.GRIP_PLATE_Y[0] - gap - 0.6, 100.0, 156.0))       # ToF lead channel inboard of the plate, back to the roof slot
     uo = cached(["UO", P.BODY_ROWS["upper_outer"]], lambda: loft(P.BODY_ROWS["upper_outer"]))
     f = f.cut(uo)                                                                                      # sits on the shoulder roof, covers the plate slot
     return f if s > 0 else mirror_y(f)
@@ -334,7 +333,8 @@ def caster_shim():
 
 
 LATCH_ARM_Z = (52.0, 56.0)
-FAIRING_SCREW_Z = (131.0, 146.0)   # cheek fairing -> side plate screws, above the shoulder roof (z 119..127 at the cheek)
+FAIRING_SCREW_Z = (131.0, 146.0)   # cheek fairing -> side plate screws (at the bar screw x), above the shoulder roof
+CHEEK_X0 = -32.0                   # rear edge of the side-plate cheek (front edge D.GRIP_PLATE_FRONT_X = -18)
 LATCH_ARM_X1 = 95.5                # front end stays 2.4 mm inside the nose outer skin at z 52..56 (outer skin x 97.9 at z 52)
 LATCH_SCREW_X = (85.0, 92.0)       # draw-latch base screws through the chin floor into the arm (latch hole pattern UNVERIFIED)
 
@@ -393,7 +393,7 @@ def build(add):
                  note="25 x 25 x 3 6060 angle cut to 34 mm, 4 holes", mates={f"grip_side_plate_{tag}", "chassis_plate"}))
         add(Part(f"RRX-P03{tag}", f"cheek_fairing_{tag}", cheek_fairing(s), "printed", "ASA", "grip", color=D.MAT["ASA"]["color"], internal=False,
                  orient=(0, 0, 0), print_note="upright as fitted; supports only under the ToF nose",
-                 mates={f"tof_look_f{tag.lower()}"}))
+                 mates={"tof_look_fwd_" + ("left" if tag == "L" else "right")}))
     add(Part("RRX-P04", "dock_switch_bracket", dock_switch_bracket(), "printed", "PAHT-CF", "receiver", color=D.MAT["PAHT-CF"]["color"], internal=False,
              orient=(180, 0, 0), print_note="plate face on the bed", mates={"chassis_plate", "receiver_channel_L", "head_dock_switch"}))
     add(Part("RRX-F04", "bridge_tray", bridge_tray(), "fabricated", "AL5052", "bridge", color=AL, note="2 mm 5052 laser cut; gap pad zone u 50..110, v 30..70",

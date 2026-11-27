@@ -501,6 +501,10 @@ def s08_replay(tmp, seed=18):
     diff1, diff2 = compare_exports(live, r1), compare_exports(r1, r2)
     c.add("replay of the raw archive reproduces every product bit-for-bit", diff1 == [], differing=diff1)
     c.add("second replay identical to the first", diff2 == [])
+    asm = live["manifest"]["assumptions"]
+    c.add("manifest records weighted_sum_variance and the cell decision rule (MODEL.md rev 3, IB-31)",
+          asm.get("weighted_sum_variance") == "poisson_form_conservative" and "per-lane-exact/any-lane/alpha-over-m" in asm.get("cell_decision", ""),
+          assumptions=asm)
     c.add("products compared", len([k for k in r1["files"]]) >= 18, n=len(r1["files"]))
     n = sum(1 for _ in read_journal(app.run_dir))
     idx = [json.loads(l) for l in (app.run_dir / "journal" / "index.ndjson").read_text().splitlines()]
@@ -789,7 +793,7 @@ def _outline_clearance(sim, outside_band_only=True):
     shrunk by the wall / door / front margins, over every recorded true pose outside the
     pivot-clear band (|y| > band edge + 3 mm), i.e. wherever the wall-track manoeuvre operates.
     Inside the band the in-place pivots are planned with the contract swept radius (rounded tail,
-    0.278 m); the rectangle model's corner radius is larger (0.309 m), so the rectangle check is not
+    0.290 m since contract draft7); the rectangle model's corner radius is larger (0.309 m), so the rectangle check is not
     applied there (reported separately as `band_rectangle_clearance_m`)."""
     app = sim.app
     y_band = app.plan["pivot_region"]["y"][1]

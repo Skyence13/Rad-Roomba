@@ -2,7 +2,7 @@
  "summary": {
   "volumetric interference": "PASS -- none",
   "containment in Rev E cavity": "PASS -- all internal parts inside",
-  "head inside the proposed envelope (CCR-11) and the contract z ceiling": "PASS -- x 68.8..192.2, z 7.0..45.0; shoes reach back to x 4.0",
+  "head inside the proposed envelope (CCR-11) and the contract z ceiling": "PASS -- x 68.8..212.2, z 7.0..48.0; shoes reach back to x 4.0",
   "wheel and caster on the floor plane": "PASS -- z = 0 +- 0.05",
   "ToF centre rays": "PASS -- all 11 clear",
   "LiDAR scan plane": "PASS -- clear",
@@ -11,13 +11,13 @@
   "cable corridors": "PASS -- free"
  },
  "extents": {
-  "overall x (tail .. leading rail)": "-271.9 .. 192.2  (length 464.1)",
+  "overall x (tail .. leading rail)": "-271.9 .. 212.2  (length 484.1)",
   "overall y": "-175.0 .. 175.0  (width 350.0)",
   "overall z": "0.0 .. 230.0",
   "body shell x / y / z": "-271.9..102.4 / -146.4..146.4 / 32.9..166.0  (Rev D: -165.0..102.3 / +-112.6 / 32.9..117.6)",
   "width across tyres": "295.0",
-  "head envelope x / y / z": "68.8..192.2 / -175.0..175.0 / 7.0..45.0; shoes to x 4.0  (contract ceiling z (5.0, 50.0))",
-  "swept radius about base_link: tail / head outer corner": "278 / 260",
+  "head envelope x / y / z": "68.8..212.2 / -175.0..175.0 / 7.0..48.0; shoes to x 4.0  (contract ceiling z (5.0, 50.0))",
+  "swept radius about base_link: tail / head outer corner": "278 / 275",
   "ground clearance: body underside / receiver channels / head rail": "32.9 / 12.0 / 7.0",
   "lowest non-running-gear solids": "head_frame_E 9.6; S0_Guard_webs 9.6; S1_Guard_webs 9.6; S2_Guard_webs 9.6",
   "caster contact / wheel contact z": "0.00 / 0.00",
@@ -48,12 +48,12 @@
   [
    "chassis_plate",
    "tof_cliff_fl",
-   1.0
+   1.75
   ],
   [
    "chassis_plate",
    "tof_cliff_fr",
-   1.0
+   1.75
   ],
   [
    "receiver_channel_L",
@@ -81,6 +81,11 @@
    1.0
   ],
   [
+   "head_latch_envelope",
+   "head_jacket_E",
+   1.0
+  ],
+  [
    "caster_bracket",
    "battery_cassette",
    1.0
@@ -101,6 +106,11 @@
    0.5
   ],
   [
+   "motor_L",
+   "grip_leg_L",
+   0.5
+  ],
+  [
    "motor_R",
    "wheel_R",
    1.0
@@ -108,6 +118,11 @@
   [
    "motor_R",
    "electronics_bridge",
+   0.5
+  ],
+  [
+   "motor_R",
+   "grip_leg_R",
    0.5
   ],
   [
@@ -319,7 +334,7 @@
    "blocked_by": []
   },
   "grip_hand_zone": {
-   "box": "45 mm in front of, behind and below the bar, 130 mm wide",
+   "box": "45 mm in front of the bar and below it, 25 mm behind it below the bar (fingertips), 45 mm behind it at bar height and above; 130 mm wide (CR-04)",
    "blocked_by": []
   },
   "J1_coupling_nut_clearance": {
@@ -446,7 +461,7 @@
     56,
     90
    ],
-   "use": "J1/J2 feeds, front cliff ToF, dock switch, clamp resistor leads",
+   "use": "J1/J2 feeds, front cliff ToF, dock switch",
    "blocked_by": []
   },
   "under_bridge_right": {
@@ -568,7 +583,7 @@
    "cone_edge_hits": {}
   },
   {
-   "sensor": "tof_look_fl",
+   "sensor": "tof_look_fwd_left",
    "start": [
     1.5,
     91.0,
@@ -588,7 +603,7 @@
    "cone_edge_hits": {}
   },
   {
-   "sensor": "tof_look_fr",
+   "sensor": "tof_look_fwd_right",
    "start": [
     1.5,
     -91.0,
@@ -608,7 +623,7 @@
    "cone_edge_hits": {}
   },
   {
-   "sensor": "tof_look_rl",
+   "sensor": "tof_look_rev_left",
    "start": [
     -247.6,
     65.6,
@@ -628,7 +643,7 @@
    "cone_edge_hits": {}
   },
   {
-   "sensor": "tof_look_rr",
+   "sensor": "tof_look_rev_right",
    "start": [
     -247.6,
     -65.6,
@@ -704,9 +719,9 @@
   4.0,
   -175.0,
   7.0,
-  192.20000000000002,
+  212.2,
   175.0,
-  45.0
+  48.0
  ],
  "body_bounds": [
   -271.8530617169119,

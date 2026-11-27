@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
-"""Harness cross-check.  Loads the chassis, head and panel circuit definitions, the chassis connectors.yaml, the ToF pinmap, both
-firmware pin maps, the system contract, and the harness connectors.yaml / cables.csv, and checks them against each other.
+"""Harness cross-check.  Loads the chassis circuit WITH THE STAGE-2 OVERRIDES APPLIED (electronics/chassis_main/overrides.py on design/circuit.py),
+the head and panel circuit definitions, the placed-board pinmaps (out/pinmap.json of chassis, head and panel), the chassis stage-1
+connectors.yaml (compared with the stage-2 data), the ToF pinmap, both firmware pin maps, the system contract, mechanical/common/frames.yaml
+and the harness connectors.yaml / cables.csv, and checks them against each other.
 Writes harness/cross_check_report.md and exits non-zero when any ERROR (real mismatch) is found.
 
     python3 harness/cross_check.py
@@ -91,17 +93,98 @@ for cid, c in HC.items():
     n_ok += 0 if bad else 1
 count("A. board connectors: every pin net in connectors.yaml equals the circuit/pinmap definition", n_ok, n_tot)
 
-# chassis connectors.yaml (the source table) vs circuit.py
+# stage-2 connector data (stage-1 connectors.yaml + overrides, hsrc._chs_conn_stage2) vs the stage-2 circuit
 n_ok = n_tot = 0
 for c in S["chs_conn_yaml"]["connectors"]:
     n_tot += 1
     cp = circuit_pins("CHS." + c["ref"])
     sp = {str(k): v["net"] for k, v in c["pins"].items()}
     if {k: norm(v) for k, v in cp.items()} != {k: norm(v) for k, v in sp.items()}:
-        err("A connector pins", "chassis connectors.yaml %s differs from circuit.py" % c["ref"])
+        err("A connector pins", "chassis stage-2 connector table %s differs from the stage-2 circuit" % c["ref"])
     else:
         n_ok += 1
-count("A2. chassis connectors.yaml (source table) equals chassis circuit.py", n_ok, n_tot)
+count("A2. chassis stage-2 connector table (design/connectors.yaml + overrides.py) equals the stage-2 circuit", n_ok, n_tot)
+
+# the stage-1 connectors.yaml is stale where stage 2 overrides: list every difference (information), error if a difference is NOT an override
+OV_REFS = {e.get("ref") for e in S["ov_log"] if e.get("ref")} | {r for e in S["ov_log"] for r in (e.get("refs") or [])}
+y1 = {c["ref"]: c for c in S["chs_conn_yaml_stage1"]["connectors"]}
+y2 = {c["ref"]: c for c in S["chs_conn_yaml"]["connectors"]}
+n_ok = n_tot = 0
+for ref in sorted(set(y1) | set(y2)):
+    n_tot += 1
+    a_, b_ = y1.get(ref), y2.get(ref)
+    if a_ is None:
+        INFO.append(("A stage 2 vs stage 1", "%s is NEW in stage 2 (%s)" % (ref, b_["board_mpn"])))
+        n_ok += 1
+        continue
+    d = []
+    if a_["board_mpn"] != b_["board_mpn"]:
+        d.append("part %s -> %s" % (a_["board_mpn"], b_["board_mpn"]))
+    pa = {str(k): v["net"] for k, v in a_["pins"].items()}
+    pb = {str(k): v["net"] for k, v in b_["pins"].items()}
+    for k in sorted(set(pa) | set(pb), key=lambda k: int(k)):
+        if pa.get(k) != pb.get(k):
+            d.append("pin %s %s -> %s" % (k, pa.get(k), pb.get(k)))
+    if d:
+        INFO.append(("A stage 2 vs stage 1", "%s: %s" % (ref, "; ".join(d))))
+        if ref not in OV_REFS and ref not in ("J_PAUSE",):
+            err("A connector pins", "%s differs between stage-1 connectors.yaml and the stage-2 data but no override in overrides.py touches it" % ref)
+            continue
+    n_ok += 1
+count("A2b. every difference between the stage-1 connectors.yaml and the stage-2 data is an override of overrides.py (S2-xx)", n_ok, n_tot)
+
+# placed boards: pinmap.json (generated from the KiCad boards) vs the circuit definitions, every connector pin
+def pinmap_nets(pm, ref):
+    for p in pm["parts"]:
+        if p["ref"] == ref:
+            return {q["pin"]: q["net"] for q in p["pins"] if q["pin"] != "MP"}
+    return None
+
+
+n_ok = n_tot = 0
+for pmk, pref, mod in (("chs_pinmap", "CHS.", None), ("hd_pinmap", "HEAD.", None), ("pn_pinmap", "PNL.", None)):
+    for cid in sorted(HC):
+        if not cid.startswith(pref):
+            continue
+        nets = pinmap_nets(S[pmk], cid[len(pref):])
+        if nets is None:
+            continue
+        n_tot += 1
+        hp_ = {k: v["net"] for k, v in HC[cid]["pins"].items()}
+        bad = False
+        for k in set(hp_) | set(nets):
+            a_ = norm(hp_.get(k) or "NC")
+            b_ = norm(nets.get(k) or "NC")
+            if a_ != b_ and not (b_ == "NC" and a_ in ("NC", "UNUSED")):
+                err("A placed board", "%s pin %s: harness %s but the placed board (pinmap.json) has %s" % (cid, k, hp_.get(k), nets.get(k)))
+                bad = True
+        n_ok += 0 if bad else 1
+count("A2c. harness connector pins equal the PLACED boards' pinmap.json (chassis, head, panel)", n_ok, n_tot)
+
+# parts the stage-2 note says changed, read back from the placed board
+chk = {"J_HEAD1": ("39-30-1100", 10), "J_PAUSE": ("BM05B-GHS-TBT(LF)(SN)", 5)}
+ok2 = True
+for ref, (mpn, npins) in chk.items():
+    pp = [p for p in S["chs_pinmap"]["parts"] if p["ref"] == ref]
+    if not pp or pp[0]["mpn"] != mpn or len([q for q in pp[0]["pins"] if q["pin"] != "MP"]) != npins:
+        err("A placed board", "%s: placed board does not carry %s with %d pins (stage-2 decision S2-01/S2-02)" % (ref, mpn, npins))
+        ok2 = False
+if (HC["CHS.J_HEAD1"]["pins"]["9"]["net"], HC["CHS.J_HEAD1"]["pins"]["10"]["net"]) != ("NC", "NC"):
+    err("A placed board", "J_HEAD1 pins 9/10 must be NC (S2-02)")
+    ok2 = False
+if any(HC["CHS.J_BTN"]["pins"][k]["net"] != "NC" for k in ("5", "8")):
+    err("A placed board", "J_BTN pins 5 and 8 must be NC after S2-01a/b (PAUSE moved to J_PAUSE)")
+    ok2 = False
+count("A2d. stage-2 decisions read back from the placed board: J_HEAD1 = 39-30-1100 2x5 (pins 9/10 NC), J_PAUSE = BM05B 5-way, J_BTN pins 5/8 NC", int(ok2), 1)
+
+# panel J1/J2 on the TOP side (P1)
+ok3 = True
+for ref in ("J1", "J2"):
+    sides = {q["side"] for p in S["pn_pinmap"]["parts"] if p["ref"] == ref for q in p["pins"]}
+    if sides != {"F"}:
+        err("A placed board", "RR-PANEL %s is not on the top side (pad sides %s); harness text says top (P1)" % (ref, sides))
+        ok3 = False
+count("A2e. RR-PANEL J1/J2 are on the top side (panel P1)", int(ok3), 1)
 
 # ToF carrier pin order vs the chassis J_TOFn
 n_ok = 0
@@ -183,21 +266,38 @@ count("D. no connector pin used twice (documented shared terminations excepted)"
 
 # ---- E. wire gauge: contact range, ampacity vs the branch limit
 def contact_ranges(cid, pin):
-    c = HC[cid]
-    txt = c.get("contacts", "")
-    if cid == "CHS.J_PWR":
-        return [(16, 16)] if pin in ("1", "2", "5", "6") else [(18, 24)]
-    rs = [(int(a), int(b or a)) for a, b in re.findall(r"AWG (\d+)(?:-(\d+))?", txt)]
-    return rs or None
+    """AWG ranges of the mating contact for this pin, from the connector's 'contacts' text.  'X (AWG a-b) for pins p/q/..; Y (AWG c-d) for the rest'
+    is read per pin.  Returns (ranges, recalled) where recalled=True if the text itself says the range is a recalled 'variant'."""
+    txt = HC[cid].get("contacts", "")
+    recalled = "variant" in txt
+    segs = [x.strip() for x in txt.split(";")]
+    out = []
+    named = set()
+    for sg in segs:
+        m = re.search(r"for pins ([\d/]+)", sg)
+        if m:
+            named |= set(m.group(1).split("/"))
+    for sg in segs:
+        rs = [(int(a), int(b or a)) for a, b in re.findall(r"AWG (\d+)(?:-(\d+))?", sg)]
+        m = re.search(r"for pins ([\d/]+)", sg)
+        if m:
+            if pin in m.group(1).split("/"):
+                out += rs
+        elif "for the rest" in sg:
+            if pin not in named:
+                out += rs
+        else:
+            out += rs
+    return (out or None), recalled
 
 
 AMP = {14: 20.0, 18: 10.0, 20: 5.0, 22: 3.0, 24: 2.0}   # power_budget.md section 5 conductor column ([A] chassis-wiring values; AWG 14 'protected by the 20 A fuse')
 LOADS = {("CHS.J_PWR", "1"): 7.5, ("CHS.J_PWR", "2"): 7.5, ("CHS.J_PWR", "5"): 7.5, ("CHS.J_PWR", "6"): 7.5, ("CHS.J_PWR", "3"): 4.0, ("CHS.J_PWR", "7"): 4.0, ("CHS.J_PWR", "4"): 0.01, ("CHS.J_PWR", "8"): 0.01,
-         ("CHS.J_HEAD1", "1"): 1.5, ("CHS.J_HEAD1", "2"): 1.5, ("CHS.J_HEAD1", "3"): 4.4, ("CHS.J_HEAD1", "4"): 4.4,
+         ("CHS.J_HEAD1", "1"): 1.5, ("CHS.J_HEAD1", "2"): 1.5, ("CHS.J_HEAD1", "3"): 4.35, ("CHS.J_HEAD1", "4"): 4.35,
          ("CHS.J_CM5", "1"): 2.5, ("CHS.J_CM5", "2"): 2.5, ("CHS.J_CM5", "3"): 2.5, ("CHS.J_CM5", "4"): 2.5, ("CHS.J_LIDAR", "1"): 1.5, ("CHS.J_LIDAR", "2"): 1.5,
          ("CHS.J_HTR", "1"): 3.04, ("CHS.J_HTR", "2"): 3.04, ("CHS.J_MOT_L", "1"): 2.7, ("CHS.J_MOT_L", "2"): 2.7, ("CHS.J_MOT_R", "1"): 2.7, ("CHS.J_MOT_R", "2"): 2.7,
-         ("HEAD.J2001", "1"): 1.5, ("HEAD.J2001", "2"): 1.5, ("HEAD.J2001", "3"): 4.4, ("HEAD.J2001", "4"): 4.4, ("HEAD.J2601", "1"): 4.4, ("HEAD.J2601", "2"): 4.4,
-         ("CHS.W1", "1"): 3.4, ("CHS.W1", "2"): 3.4, ("CPL-B", "P"): 15.0, ("CPL-B", "N"): 15.0, ("PACK", "+"): 15.0, ("PACK", "-"): 15.0, ("INLET", "1"): 4.0, ("INLET", "3"): 4.0}
+         ("HEAD.J2001", "1"): 1.5, ("HEAD.J2001", "2"): 1.5, ("HEAD.J2001", "3"): 4.35, ("HEAD.J2001", "4"): 4.35, ("HEAD.J2601", "1"): 4.35, ("HEAD.J2601", "2"): 4.35,
+         ("CPL-B", "P"): 15.0, ("CPL-B", "N"): 15.0, ("PACK", "+"): 15.0, ("PACK", "-"): 15.0, ("INLET", "1"): 4.0, ("INLET", "3"): 4.0}
 n_ok = n_tot = 0
 skipped = collections.Counter()
 for w in WIRES:
@@ -209,11 +309,13 @@ for w in WIRES:
     awg = int(awg)
     for conn, pin in ((w["from_connector"], w["from_pin"]), (w["to_connector"], w["to_pin"])):
         if conn in HC and HC[conn].get("kind") == "board_header" and "contacts" in HC[conn]:
-            rs = contact_ranges(conn, pin)
+            rs, recalled = contact_ranges(conn, pin)
             if rs:
                 n_tot += 1
                 if any(a <= awg <= b for a, b in rs):
                     n_ok += 1
+                    if recalled and awg < 20:    # outside the 43030-0007 range (AWG 20-24) that the chassis tables list: only the recalled variant covers it
+                        warn("E gauge vs contact (recalled)", "%s: AWG %d on %s.%s is inside the range only of a RECALLED terminal variant (%s): the sources do not name a part; treat as OPEN (OD-3)" % (w["wire_id"], awg, conn, pin, HC[conn]["contacts"]))
                 else:
                     err("E gauge vs contact", "%s: AWG %d on %s.%s but the mating contact range is %s (%s)" % (w["wire_id"], awg, conn, pin, "/".join("AWG %d-%d" % r for r in rs), HC[conn]["contacts"]))
 count("E1. wire gauge inside the crimp range of the mating contact (board ends)", n_ok, n_tot)
@@ -469,9 +571,9 @@ CH_EXPECT = {
     "ENC_L_A": [("J_MOT_L", "5")], "ENC_L_B": [("J_MOT_L", "6")], "ENC_R_A": [("J_MOT_R", "5")], "ENC_R_B": [("J_MOT_R", "6")],
     "ESTOP_A_RB": [("J_ESTOP", "2"), ("J_HANDS", "1")], "ESTOP_B_RB": [("J_ESTOP", "3")], "MODE_RUN_RB": [("J_MODE", "4"), ("J_ESTOP", "1")], "HANDS_ON_RB": [("J_HANDS", "2")],
     "CHG_COVER_RB": [("J_COVER", "2")], "CHG_PLUG_LINK_RB": [("J_DOCK", "1")], "HEAD_DOCK_RB": [("J_DOCK", "3")], "HEAD_LOOP_OK_RB": [("J_HEAD1", "6")], "HEAD_LOOP_SHORT_RB": [("J_HEAD1", "6")],
-    "LAB_KEY_N_RB": [("J_HEAD1", "7")], "BODY_BUMPER_L_RB": [("J_BUMP_L", "2")], "BODY_BUMPER_R_RB": [("J_BUMP_R", "2")], "REARM_BTN": [("J_BTN", "4")], "PAUSE_BTN": [("J_BTN", "5")],
+    "LAB_KEY_N_RB": [("J_HEAD1", "7")], "BODY_BUMPER_L_RB": [("J_BUMP_L", "2")], "BODY_BUMPER_R_RB": [("J_BUMP_R", "2")], "REARM_BTN": [("J_BTN", "4")], "PAUSE_BTN": [("J_PAUSE", "2")],
     "J2_PRES_RB": [("J_HEAD2", "7")], "BUZZER": [("J_PANEL", "9")], "LED_READY": [("J_PANEL", "4")], "LED_MOVING": [("J_PANEL", "5")], "LED_HOLD": [("J_PANEL", "6")], "LED_FAULT": [("J_PANEL", "7")],
-    "LED_CHARGE": [("J_PANEL", "8")], "LAMP_REARM": [("J_BTN", "7")], "LAMP_PAUSE": [("J_BTN", "8")], "DBG_TX": [("J_DBG", "2")], "DBG_RX": [("J_DBG", "3")], "USB_DM": [("J_USB_MCU", "2")],
+    "LED_CHARGE": [("J_PANEL", "8")], "LAMP_REARM": [("J_BTN", "7")], "LAMP_PAUSE": [("J_PAUSE", "4")], "DBG_TX": [("J_DBG", "2")], "DBG_RX": [("J_DBG", "3")], "USB_DM": [("J_USB_MCU", "2")],
     "USB_DP": [("J_USB_MCU", "3")], "SWDIO": [("J_SWD", "2")], "SWCLK": [("J_SWD", "4")], "SWO_SPARE": [("J_SWD", "6")],
     "TOF_XSHUT_CLIFF": [("J_TOF%d" % i, "5") for i in (0, 1, 2, 3)], "TOF_XSHUT_LOOK": [("J_TOF%d" % i, "5") for i in (4, 5, 6, 7)], "TOF_XSHUT_REAR": [("J_TOF%d" % i, "5") for i in (8, 9, 10)],
     "I2C_TOF_SDA": [("J_TOF%d" % i, "3") for i in range(11)], "I2C_TOF_SCL": [("J_TOF%d" % i, "4") for i in range(11)],
@@ -590,14 +692,90 @@ for u in live:
     warn("I live net not wired", "%s pin %s carries %s but has no wire: %s" % (u["connector"], u["pin"], u["net"], u["reason"]))
 
 # ---- J. lengths
-for w in {x["cable_id"]: x for x in WIRES}.values():
-    m = re.match(r"W-0(3\d|40)$", w["cable_id"])
-    if m and 30 <= int(w["cable_id"][2:]) <= 40 and int(w["length_mm"]) > 300:
-        warn("J lengths", "%s (ToF) is %s mm > 300 mm" % (w["cable_id"], w["length_mm"]))
+CAB = {}
+for w in WIRES:
+    CAB.setdefault(w["cable_id"], w)
+n_ok = n_tot = 0
+for cid_, w in CAB.items():
+    L_ = int(w["length_mm"])
+    if 30 <= int(cid_[2:]) <= 40 and cid_.startswith("W-0"):
+        n_tot += 1
+        if L_ > 300:
+            err("J ToF cable length", "%s (ToF) is %d mm > 300 mm, the I2C design limit (modules/tof_vl53l4ed.md): %s" % (cid_, L_, "see open decision OD-1 (IB-34 look-sensor mapping against the connector positions)" if cid_ in ("W-035", "W-036", "W-037") else "check the routing"))
+        else:
+            n_ok += 1
+count("J1. every ToF cable is <= 300 mm (I2C design limit; stage-2 connector positions from pinmap.json, sensor positions from frames.yaml)", n_ok, n_tot)
+# robot cables against the length the power budget / mechanical assumed (budget_mm is in the generator; recompute from the summary table of cables.md)
+try:
+    import hdata_cables as hk
+    n_ok = n_tot = 0
+    for c in hk.CABLES:
+        if c["budget_mm"] and c["group"] == "robot" and not (30 <= int(c["id"][2:]) <= 40):
+            n_tot += 1
+            if c["length_mm"] > c["budget_mm"]:
+                warn("J lengths", "%s is %d mm against the %d mm assumed by the source (power_budget.md / mechanical)" % (c["id"], c["length_mm"], c["budget_mm"]))
+            else:
+                n_ok += 1
+    count("J2. robot cables inside the length assumed by the power budget (warning only)", n_ok, n_tot)
+    # the stage-2 board report's own estimate for comparison (electronics/chassis_main/reports/cable_lengths.json): information only
+    import json
+    cl = json.load(open(os.path.join(ROOT, "electronics/chassis_main/reports/cable_lengths.json")))
+    byc = {c["id"]: c["length_mm"] for c in hk.CABLES}
+    for r in cl:
+        if r["cable"] in byc and abs(byc[r["cable"]] - r["stage2_mm"]) >= 40:
+            INFO.append(("J length vs chassis tool", "%s: harness %d mm, electronics/chassis_main/tools/cable_lengths.py says %d mm (the tool takes the FIRST path point as the board connector, which is wrong for cables whose path starts at the device, and assumes the stage-1 look-sensor mapping: compare with OD-1 only after correcting both)" % (r["cable"], byc[r["cable"]], r["stage2_mm"])))
+except ImportError:
+    pass
+
+# ---- K. IB-34 look sensors, IB-37, head stage-2 positions
+import hdata_cables as hk
+fwt = fw["i2c"]["I2C_TOF"]["mux_channels"]
+n_ok = 0
+for i, (nm, zone, keys) in hk.LOOK_MAP.items():
+    fid = fwt[i]["id"] if i in fwt else fwt[str(i)]["id"]
+    sp = hk.FRAMES_TOF and next((k for k in keys if k in hk.FRAMES_TOF), None)
+    if not sp:
+        err("K look sensors", "frames.yaml has none of %s for %s" % (keys, nm))
+        continue
+    if fid != nm:
+        warn("K look sensors", "firmware/chassis/pinmap.yaml still names ToF id %d %s; the harness (IB-34) calls it %s (frames.yaml %s): rename in the firmware and the contract" % (i, fid, nm, sp))
+    else:
+        n_ok += 1
+    fwd = zone.startswith("f")
+    if fwd != (hk.FRAMES_TOF[sp][0] > -100):
+        err("K look sensors", "%s is %s in the harness but frames.yaml %s is at x = %.1f mm" % (nm, "forward" if fwd else "rearward", sp, hk.FRAMES_TOF[sp][0]))
+    if (zone[1] == "l") != (hk.FRAMES_TOF[sp][1] > 0):
+        err("K look sensors", "%s side disagrees with frames.yaml %s (y = %.1f mm)" % (nm, sp, hk.FRAMES_TOF[sp][1]))
+INFO.append(("K look sensors", "IB-34: ids 4..7 = %s; frames.yaml positions %s" % (", ".join(v[0] for v in hk.LOOK_MAP.values()), "; ".join("%s %s" % (v[0], hk.tofpos(v[2])) for v in hk.LOOK_MAP.values()))))
+INFO.append(("K IB-37", "J_PAUX pins 3/4 (GND) are unwired by decision: accepted NTC offset (about 3.4 K warm on discharge, about 0.7 K cold on charge, safe side); wire them only if the cassette provides an isolated sense return"))
+# head stage-2 positions (S2-L5 / S2-L6): J2601 and J2001 side by side, J2004 within the rail-switch harness reach, 4 lane auxiliary GH-6
+hu = {p["ref"]: p for p in S["hd_pinmap"]["parts"]}
+def span(ref):
+    xs = []
+    for q in hu[ref]["pins"]:
+        v = q.get("pad_xy_mm")
+        if v:
+            xs += v if isinstance(v[0], list) else [v]
+    return min(a for a, _ in xs), max(a for a, _ in xs)
+ok4 = True
+if not (span("J2601")[1] < span("J2001")[0]):
+    err("K head stage 2", "J2601 and J2001 overlap in u: %s %s" % (span("J2601"), span("J2001")))
+    ok4 = False
+c2004 = sum(span("J2004")) / 2
+if not (140.0 <= c2004 <= 149.0):
+    err("K head stage 2", "J2004 centre u %.1f is outside the rail-switch harness reach u 140..149 (S2-L6)" % c2004)
+    ok4 = False
+for j in ("J1001", "J1101", "J1201", "J1301"):
+    if hu[j]["mpn"] != "SM06B-GHS-TB(LF)(SN)":
+        err("K head stage 2", "%s is not the lane auxiliary GH-6" % j)
+        ok4 = False
+count("K. head stage 2: J2601 and J2001 side by side at the rear edge, J2004 at u %.1f inside the harness reach u 140..149, four lane auxiliary GH-6" % c2004, int(ok4), 1)
+INFO.append(("K head stage 2", "TP2004 at u %.1f v %.1f and TP2501 at u %.1f v %.1f are 60-100 mm from the J2001 / J2501 landings: the shield drains W-101.S / W-102.S are separate wires of %s / %s mm inside the head" % (
+    *[x for t in ("TP2004", "TP2501") for x in hk.HEAD_UV[t]], W["W-101.S"]["length_mm"], W["W-102.S"]["length_mm"])))
 
 # ================================================================ report
 lines = ["# Harness cross-check report", "", "GENERATED by `python3 harness/cross_check.py`; do not edit by hand.", "",
-         "Inputs: chassis / head / panel `circuit.py`, `electronics/chassis_main/design/connectors.yaml`, `electronics/tof_carrier/out/pinmap.json`, `firmware/chassis/pinmap.yaml`, `firmware/head/pinmap.yaml`, `interface/system/contract.yaml`, `harness/connectors.yaml`, `harness/cables.csv`.", "",
+         "Inputs: chassis circuit.py WITH `electronics/chassis_main/overrides.py` applied (stage 2), head / panel `circuit.py`, `out/pinmap.json` of the chassis, head, panel and ToF boards (placed positions and nets), `electronics/chassis_main/design/connectors.yaml` (stage 1, compared with stage 2), `firmware/chassis/pinmap.yaml`, `firmware/head/pinmap.yaml`, `interface/system/contract.yaml`, `mechanical/common/frames.yaml`, `harness/connectors.yaml`, `harness/cables.csv`.", "",
          "## Result: **%s** (%d errors, %d warnings, %d information lines)" % ("FAIL" if ERR else "PASS", len(ERR), len(WARN), len(INFO)), "",
          "Harness: %d connectors, %d cables, %d wires." % (len(HC), len({w["cable_id"] for w in WIRES}), len(WIRES)), "",
          "## Checks run", "", "| Check | Passed / total |", "|---|---|"]

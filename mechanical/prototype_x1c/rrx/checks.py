@@ -23,10 +23,10 @@ from .util import box, cyl, place
 THROUGH_SKIN = ("*_operator", "*_body", "*_receptacle", "*_mated_plug", "charge_inlet", "tof_*", "bumper_sw_*", "head_dock_switch")
 SHELL_GROUPS = {"lower_hull", "lid", "hatch", "service_cover"}
 INTERNAL = ("battery_tunnel", "battery_cassette", "cassette_lid", "coupler_*", "battery_pack", "cm5_tray", "CM5_carrier_assembly", "bridge_tray", "bridge_post_*",
-            "board_standoff_*", "RR-CHS-MAIN_*", "RR-PANEL", "panel_tray", "grip_foot_*", "chassis_heater_pad", "bus_clamp_resistor", "cassette_handle")
+            "board_standoff_*", "RR-CHS-MAIN_*", "RR-PANEL", "panel_tray", "grip_foot_*", "chassis_heater_pad", "cassette_handle")
 ROBOT_EXCLUDE = {"tray", "cassette_option", "head_placeholder"}
 G = 9.81
-CR04_GRIP_X = -30.0          # requested grip bar centre (CHANGE_REQUESTS.md CR-04), for the comparison column only
+OLD_GRIP_X = -11.0           # grip bar centre before CR-04, for the comparison column only
 SLIVER_MAX = 100.0           # mm3: largest boolean sliver that may be dropped from a printed/fabricated part
 
 
@@ -95,9 +95,9 @@ def sensor_rays(parts):
         it = IntCurvesFace_ShapeIntersector()
         it.Load(p.shape.wrapped, 1e-5)
         probes[p.name] = it
-    s0 = P.TOF_SENSORS["tof_look_fl"]["xyz"]
+    s0 = P.TOF_SENSORS["tof_look_fwd_left"]["xyz"]
     aim = P._unit((P.ROW_X - s0[0], 60.0 - s0[1], 40.0 - s0[2]))
-    st = [h[0] for h in LY.ray_hits(probes, s0, aim, 600.0, skip=("tof_look_fl",))]
+    st = [h[0] for h in LY.ray_hits(probes, s0, aim, 600.0, skip=("tof_look_fwd_left",))]
     if "head_envelope" not in st:
         raise RuntimeError(f"ray tool self-test failed: {st}")
     rows, fail = [], []
@@ -144,8 +144,9 @@ def service(parts):
                                  "blocked_by": LY.box_free(robot, (sx0 + 0.4, sx1 - 0.4, -S["half_y"] + 0.4, S["half_y"] - 0.4, S["floor_z"][1] + 0.1, Gp["bar_bottom_z"] - 0.5))}
     gx0, gx1 = Gp["center_x"] - Gp["bar_x"] / 2, Gp["center_x"] + Gp["bar_x"] / 2
     c = P.GLOVE_CLEARANCE_GRIP
-    out["grip_hand_zone"] = {"what": "45 mm in front of, behind and below the bar, 130 mm wide (same boxes as layout.py)",
-                             "blocked_by": LY.box_free(robot, (gx0 - c, gx1 + c, -65, 65, S["floor_z"][1] + 0.1, Gp["bar_bottom_z"] - 0.1))
+    cb = Gp["hand_behind_below"]
+    out["grip_hand_zone"] = {"what": f"45 mm in front of the bar and below it, {cb:.0f} mm behind it below the bar, 45 mm behind it at bar height and above; 130 mm wide (same boxes as layout.py, CR-04)",
+                             "blocked_by": LY.box_free(robot, (gx0 - cb, gx1 + c, -65, 65, S["floor_z"][1] + 0.1, Gp["bar_bottom_z"] - 0.1))
                              + LY.box_free(robot, (gx0 - c, gx0 - 0.1, -65, 65, Gp["bar_bottom_z"], Gp["bar_top_z"] + 30))
                              + LY.box_free(robot, (gx1 + 0.1, gx1 + c, -65, 65, Gp["bar_bottom_z"], Gp["bar_top_z"] + 30))}
     for jn, key in (("J1", "j1_receptacle"), ("J2", "j2_receptacle")):
@@ -233,10 +234,10 @@ LUMPED = [   # not modelled as solids; values from the common mass budget (estim
     ("foam liner 5 mm + gaskets", 0.150, -97.0, 0.0, 80.0), ("RR-TOF harness ends, NTCs, cut-out, vent, light pipes", 0.040, -120.0, 0.0, 95.0)]
 HEADS = {   # (kg, x, z) incl. pigtails: mechanical/head/out/head_report.md section 3 (calculated by the head engineer, 2026-11-26)
     "none (transport / LAB)": None,
-    "prototype head RR-HD-X (1.864 kg)": (1.864, 118.4, 34.5),
-    "production head (2.083 kg)": (2.083, 119.9, 32.9),
-    "production head + 15 % margin": (2.396, 119.9, 32.9)}
-HEAD_PROTO = "prototype head RR-HD-X (1.864 kg)"
+    "prototype head RR-HD-X (%.3f kg)" % P.HEAD_MASS["prototype"][0]: P.HEAD_MASS["prototype"],
+    "production head (%.3f kg)" % P.HEAD_MASS["production"][0]: P.HEAD_MASS["production"],
+    "production head + 15 % margin": (P.HEAD_MASS["production"][0] * 1.15,) + tuple(P.HEAD_MASS["production"][1:])}
+HEAD_PROTO = "prototype head RR-HD-X (%.3f kg)" % P.HEAD_MASS["prototype"][0]
 
 
 def mass_cg(parts):
@@ -276,7 +277,7 @@ def mass_cg(parts):
         cfg.append({"head": hn, "mass_kg": round(M, 2), "cg_x": round(x, 1), "cg_z": round(z, 1), "caster_N": round(caster, 1), "each_wheel_N": round((M * G - caster) / 2, 1),
                     "caster_fraction": round(caster / (M * G), 3), "tip_margin_forward_mm": round(fwd, 1), "tip_margin_rearward_mm": round(rear, 1), "tip_margin_lateral_mm": round(lat, 1),
                     "hang_angle_deg": round(math.degrees(math.atan2(x - gx, gz - z)), 1),
-                    "hang_angle_deg_CR04_bar_x-30": round(math.degrees(math.atan2(x - CR04_GRIP_X, gz - z)), 1)})
+                    "hang_angle_deg_old_bar_x-11": round(math.degrees(math.atan2(x - OLD_GRIP_X, gz - z)), 1)})
     return {"base_without_head": {k: round(v, 2) for k, v in base.items()}, "groups": {k: {"mass_kg": round(v[0], 3), "x": round(v[1] / v[0], 1), "z": round(v[2] / v[0], 1)} for k, v in sorted(groups.items())},
             "items": items, "configurations": cfg, "mass_goal_kg": P.MASS_GOAL_KG,
             "assumptions": "printed parts: CAD volume x density x effective fill (dims.MAT); purchased: parts.yaml masses; lumped items from the common budget; evidence class: calculated"}
@@ -332,7 +333,8 @@ def grip_proof(M=None):
     leg_w = 9.0
     e = abs(D.GRIP_BAR_X - (-26.5))
     s_leg = Pside / (leg_w * tp) + 6 * Pside * e / (tp * leg_w ** 2)
-    s_cheek = Pside / ((D.GRIP_PLATE_FRONT_X - (-21.0) - D.CLEAR["M6"]) * tp)
+    from .structure import CHEEK_X0
+    s_cheek = Pside / ((D.GRIP_PLATE_FRONT_X - CHEEK_X0 - D.CLEAR["M6"]) * tp)
     bear = Pside / (6.0 * tp)
     tau6 = Pside / 20.1                                     # M6 shank/thread section in shear (friction ignored)
     a_toe, b_bolt = (D.GRIP_PLATE_Y[0] - 1.5) - (D.GRIP_PLATE_Y[0] - 25.0), 71.0 - (D.GRIP_PLATE_Y[0] - 25.0)
@@ -348,7 +350,7 @@ def grip_proof(M=None):
         ("bar 14 mm solid 6061-T6: bending stress (hand 100 mm, span %.0f mm)" % span, round(s_tube, 1), "MPa", "allow 240 (0.2 %% proof, T6) -> SF %.1f" % (240 / s_tube)),
         ("bar mid-span deflection", round(defl, 2), "mm", ""),
         ("side plate leg 9 x 6 6061-T6: tension + bending from the %.1f mm offset" % e, round(s_leg, 1), "MPa", "allow 240 -> SF %.1f" % (240 / s_leg)),
-        ("side plate net section at the M6 bar-screw hole (cheek x -21..%.0f)" % D.GRIP_PLATE_FRONT_X, round(s_cheek, 1), "MPa", "SF %.0f" % (240 / s_cheek)),
+        ("side plate net section at the M6 bar-screw hole (cheek x %.0f..%.0f)" % (CHEEK_X0, D.GRIP_PLATE_FRONT_X), round(s_cheek, 1), "MPa", "SF %.0f" % (240 / s_cheek)),
         ("M6 bar screw bearing on the 6 mm plate", round(bear, 1), "MPa", "allow 300"),
         ("M6 bar screw shear (friction ignored)", round(tau6, 1), "MPa", "A2-70 shear ~ 270 -> SF %.0f" % (270 / tau6)),
         ("M5 through-bolt tension at the foot (prying about the angle toe, 2 bolts)", round(T, 1), "N", "A2-70 proof 450 MPa x 14.2 mm2 = %.0f N -> SF %.0f" % (450 * As5, 450 * As5 / T)),

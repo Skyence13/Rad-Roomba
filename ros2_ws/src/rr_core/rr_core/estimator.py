@@ -1,4 +1,4 @@
-"""Count-processing estimator - analysis/radiometry/MODEL.md REVISION 2 (normative).
+"""Count-processing estimator - analysis/radiometry/MODEL.md REVISION 3 (normative).
 
 Section numbers in comments refer to MODEL.md.  Cross-tested against the
 reference implementation analysis/radiometry/rrrad (tests/test_estimator.py).
@@ -213,20 +213,28 @@ class LaneStat:
     envelope_reason: str = ""
 
 
+RULE = "per-lane-exact/any-lane/alpha-over-m"    # MODEL.md rev 3 section 6 (IB-31, CR-09)
+WEIGHTED_SUM_VARIANCE = "poisson_form_conservative"   # MODEL.md rev 3 section 6 (IB-31, CR-08)
+
+
 @dataclass
 class Decision:
     D: float | None = None
     u_stat: float | None = None
     u_total: float | None = None
-    D_star: float | None = None
-    D_hash: float | None = None
+    D_star: float | None = None       # min over the contributing lanes of r*_i / K_i (each at alpha/m)
+    D_hash: float | None = None       # min over the contributing lanes of D#_i solved at (alpha/m, beta)
     T_F: float = 0.0
-    detected: bool | None = None
-    method: str = ""
+    detected: bool | None = None      # any contributing lane above its own threshold
+    method: str = ""                  # m = 1: the lane method of section 3; m > 1: RULE
+    rule: str = RULE
+    m: int = 0
     alpha: float = 0.0
+    alpha_lane: float = 0.0           # alpha / m
     beta: float = 0.0
+    flagged_lanes: list = field(default_factory=list)
     u0_methods: list = field(default_factory=list)
-    lanes: list = field(default_factory=list)
+    lanes: list = field(default_factory=list)     # per lane: w, r, D, r_star, D_star, D_hash, method, flagged ...
     envelope_ok: bool = True
     envelope_reason: str = ""
 
@@ -234,63 +242,69 @@ class Decision:
         return dict(self.__dict__)
 
 
-def combine(stats: list, alpha: float, beta: float, exact_detection_limit: bool = False) -> Decision:
-    """Section 6: inverse-variance combination of the lanes' D with the common
-    calibration terms added after combination; thresholds per section 3.
+def _lane_limit(s: LaneStat, alpha_lane: float, beta: float, exact_detection_limit: bool):
+    """Threshold r*, method and detection limit D# of ONE lane at (alpha_lane, beta), section 3
+    (all calibration terms of the lane, common ones included, belong to the lane's own test)."""
+    cal = s.cal
+    r_star, method = decision_threshold(s.U0, s.T_F, s.T_U, cal, alpha_lane, parts="all")
+    kb = kappa(beta)
+    den = cal.K * (1.0 - kb ** 2 * cal.u_rel_K ** 2)
+    if method == "poisson-exact" and exact_detection_limit:
+        r_hash = detection_limit_rate(r_star, 0.0, s.T_F, beta, s.U0, s.T_U, cal, "poisson-exact", "all")
+        D_hash = math.inf if den <= 0 else r_hash / den
+    else:
+        sd0 = math.sqrt(u0sq(s.U0, s.T_F, s.T_U, cal, "all"))
+        D_hash = detection_limit_activity(r_star / cal.K, sd0 / cal.K, 1.0 / (cal.K * s.T_F), cal.u_rel_K, beta)
+    return r_star, method, D_hash
 
-    Weights use the NULL variance of each lane (counting + lane-specific
-    calibration at U_null), so they do not depend on the floor counts under test.
-    With one lane and `exact_detection_limit`, D# is solved on the exact
-    distribution; with several lanes the per-lane exact thresholds are combined
-    in normal form (method string says so).
+
+def combine(stats: list, alpha: float, beta: float, exact_detection_limit: bool = True) -> Decision:
+    """Section 6 (revision 3).
+
+    Estimate: inverse-variance combination of the lanes' D with the common calibration terms added
+    after combination (weights use the NULL variance of each lane, so they do not depend on the
+    floor counts under test).  The sums N, T are footprint-weighted and enter the Poisson form
+    unchanged (`WEIGHTED_SUM_VARIANCE`, conservative).
+
+    Decision (IB-31 / CR-09): m = number of contributing lanes.  The cell is flagged when ANY lane
+    exceeds its own threshold evaluated at alpha/m (method per lane from section 3); by the union
+    bound the cell false-alarm probability is <= alpha.  Quoted D* and D# are the minima over the
+    lanes of D*_i and D#_i (solved at alpha/m, beta).  With one lane m = 1 and this is section 3
+    directly.  `exact_detection_limit=False` replaces the numerical exact D# of an exact-method lane
+    by the normal-form solve with the exact threshold (cheaper; used for nothing in production).
     """
     stats = [s for s in stats if s.T_F > 0 and s.T_U > 0]
     if not stats:
         return Decision(alpha=alpha, beta=beta)
-    ka = kappa(alpha)
+    m = len(stats)
+    alpha_lane = alpha / m
     rows = []
     for s in stats:
         est = net_estimate(s.N_F, s.T_F, s.N_U, s.T_U, s.cal)
-        r_star, method = decision_threshold(s.U0, s.T_F, s.T_U, s.cal, alpha, parts="lane")
-        sd0 = r_star / ka                       # effective null s.d. reproducing the lane threshold
-        v0 = u0sq(s.U0, s.T_F, s.T_U, s.cal, "lane")
-        rows.append((s, est, r_star, method, sd0, v0))
-    wsum = sum(s.cal.K ** 2 / v0 for s, _, _, _, _, v0 in rows)
-    D = v_stat = v_lane = common_k = sd0sq = c1 = T = 0.0
-    common_k0 = u_rel = 0.0
-    lanes = []
-    for s, est, r_star, method, sd0, v0 in rows:
+        rows.append((s, est, u0sq(s.U0, s.T_F, s.T_U, s.cal, "lane")) + _lane_limit(s, alpha_lane, beta, exact_detection_limit))
+    wsum = sum(s.cal.K ** 2 / v0 for s, _, v0, *_ in rows)
+    D = v_stat = v_lane = common_k = T = u_rel = 0.0
+    lanes, flagged = [], []
+    for s, est, v0, r_star, method, D_hash in rows:
         w = (s.cal.K ** 2 / v0) / wsum
         D += w * est["D"]
         v_stat += w ** 2 * est["v_stat_r"] / s.cal.K ** 2
         v_lane += w ** 2 * est["v_lane_r"] / s.cal.K ** 2
         common_k += w * est["U"] * s.cal.u_k_common / s.cal.K        # fully correlated: linear sum
-        common_k0 += w * s.U0 * s.cal.u_k_common / s.cal.K
         u_rel += w * s.cal.u_rel_K
-        sd0sq += w ** 2 * sd0 ** 2 / s.cal.K ** 2
-        c1 += w ** 2 / (s.cal.K * s.T_F)
         T += s.T_F
+        hit = bool(est["r"] > r_star)
+        if hit:
+            flagged.append(s.lane)
         lanes.append({"lane": s.lane, "w": w, "N_F": s.N_F, "T_F": s.T_F, "N_U": s.N_U, "T_U": s.T_U,
-                      "U0": s.U0, "r": est["r"], "D": est["D"], "r_star": r_star, "method": method})
-    sd0_D = math.sqrt(sd0sq + common_k0 ** 2)
-    D_star = ka * sd0_D
-    methods = sorted({m for *_, m, _, _ in rows})
-    if len(rows) == 1 and exact_detection_limit and methods == ["poisson-exact"]:
-        s, est, r_star_lane, *_ = rows[0]
-        r_star, _ = decision_threshold(s.U0, s.T_F, s.T_U, s.cal, alpha, parts="all")
-        r_hash = detection_limit_rate(r_star, 0.0, s.T_F, beta, s.U0, s.T_U, s.cal, "poisson-exact", "all")
-        kb = kappa(beta)
-        den = s.cal.K * (1.0 - kb ** 2 * s.cal.u_rel_K ** 2)
-        D_star, D_hash = r_star / s.cal.K, (math.inf if den <= 0 else r_hash / den)
-        method = "poisson-exact"
-    else:
-        D_hash = detection_limit_activity(D_star, sd0_D, c1, u_rel, beta)
-        method = methods[0] if methods == ["normal"] else (
-            "poisson-exact" if len(rows) == 1 else "poisson-exact-per-lane/normal-combination")
+                      "U0": s.U0, "r": est["r"], "D": est["D"], "r_star": r_star, "D_star": r_star / s.cal.K,
+                      "D_hash": D_hash, "method": method, "flagged": hit})
+    methods = sorted({r[4] for r in rows})
     ok = all(s.envelope_ok for s in stats)
     return Decision(
         D=D, u_stat=math.sqrt(v_stat),
         u_total=math.sqrt(v_stat + v_lane + common_k ** 2 + D ** 2 * u_rel ** 2),
-        D_star=D_star, D_hash=D_hash, T_F=T, detected=bool(D > D_star), method=method,
-        alpha=alpha, beta=beta, u0_methods=sorted({s.u0_method for s in stats}), lanes=lanes,
+        D_star=min(l["D_star"] for l in lanes), D_hash=min(l["D_hash"] for l in lanes), T_F=T,
+        detected=bool(flagged), method=methods[0] if m == 1 else RULE, m=m, alpha=alpha, alpha_lane=alpha_lane,
+        beta=beta, flagged_lanes=flagged, u0_methods=sorted({s.u0_method for s in stats}), lanes=lanes,
         envelope_ok=ok, envelope_reason="; ".join(sorted({s.envelope_reason for s in stats if s.envelope_reason})))

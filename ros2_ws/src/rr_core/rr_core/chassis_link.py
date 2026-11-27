@@ -13,10 +13,19 @@ host protective functions.
 The link starts INACTIVE: until `activate()` it sends only v = w = 0 keep-alives.
 A set-point lives for `cmd_valid_us` on the host and is sent with a TTL; when it
 expires the link sends zeros.  No ROS imports.
+
+Real-time hosts call `start_thread()`: the link then runs on its own thread with its own deadline
+(DRIVE every `drive_period_us`), so a slow transaction on another link or a long computation in the
+application loop cannot starve the keep-alive and let the chassis latch CMD_TIMEOUT (IB-46).  Results
+are still read from `samples`, `out_events`, `drive`, `state` (deque / whole-object replacement, safe
+across threads); the archive sink is called from the application thread inside `step()`.  The
+deterministic harness never starts the thread and keeps calling `step()` itself.
 """
 from __future__ import annotations
 
 import math
+import threading
+import time
 from collections import deque
 
 from . import wire
@@ -56,7 +65,12 @@ class ChassisLink:
         self.out_events = deque()
         self.chassis_events = []               # all chassis events (dicts with host time added)
         self._event_seq_read = 0
-        self.stats = {"drive": 0, "rejected": 0, "timeouts": 0, "boots": 0, "event_gaps": 0}
+        self.stats = {"drive": 0, "rejected": 0, "timeouts": 0, "boots": 0, "event_gaps": 0, "drive_gap_max_us": 0}
+        self._last_drive_tx_us = None
+        self._thread = None
+        self._stop_evt = threading.Event()
+        self._log_q = deque()
+        self._thread_error = None
         self.link_state = "DOWN"
         self.last_reject = None
         self.nonzero_reject = (None, 0)        # (reason, host time) of the last refused non-zero command
@@ -91,10 +105,57 @@ class ChassisLink:
         self._ops.appendleft(("STOP", args, callback))
 
     def step(self):
+        """Advance the link once (single-threaded hosts), or, when the link thread runs, hand its
+        archive entries to the sink and re-raise a failure of the thread."""
+        if self._thread is not None:
+            self._drain_log()
+            if self._thread_error is not None:
+                err, self._thread_error = self._thread_error, None
+                raise err
+            return
+        self._advance()
+
+    def _advance(self):
         try:
             next(self._proc)
         except StopIteration:
             self._proc = self._main()
+
+    def start_thread(self, period_s: float = 0.0005):
+        """Run the link on its own thread (real-time hosts only; needs a real-time clock)."""
+        if self._thread is not None:
+            return
+        self._sink_app = self.sink
+        if self.sink is not None:
+            self.sink = self._log_q.append
+        self._stop_evt.clear()
+
+        def run():
+            while not self._stop_evt.is_set():
+                try:
+                    self._advance()
+                except BaseException as err:             # noqa: BLE001 - reported to the application thread
+                    self._thread_error = err
+                    return
+                time.sleep(period_s)
+        self._thread = threading.Thread(target=run, name="rr-chassis-link", daemon=True)
+        self._thread.start()
+
+    def stop_thread(self):
+        if self._thread is None:
+            return
+        self._stop_evt.set()
+        self._thread.join(2.0)
+        self._thread = None
+        self._drain_log()
+        self.sink = self._sink_app
+
+    def _drain_log(self):
+        sink = getattr(self, "_sink_app", None)
+        while self._log_q:
+            entry = self._log_q.popleft()
+            if sink is not None:
+                sink(entry)
 
     def to_host(self, chassis_us):
         return None if self.fit is None or self.fit.current is None else self.fit.current.to_host(chassis_us)
@@ -286,6 +347,9 @@ class ChassisLink:
         if not self.active or now > until:
             v = w = 0.0
         self._seq += 1
+        if self._last_drive_tx_us is not None:
+            self.stats["drive_gap_max_us"] = max(self.stats["drive_gap_max_us"], now - self._last_drive_tx_us)
+        self._last_drive_tx_us = now
         rsp = yield from self._transact("DRIVE", {"seq": self._seq, "v_mps": round(v, 4), "w_radps": round(w, 4),
                                                   "ttl_ms": self.ttl_ms, "op_mode": self.op_mode}, retries=0)
         if rsp is None:

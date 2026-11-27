@@ -1,7 +1,7 @@
 # Rad Roomba board envelopes -- mechanical lead's confirmation of contract.yaml > boards.
 # Positions are in base_link (mm) for the Rev E layout. STEP solids: out/boards/*.step
 generated_by: mechanical/common/gen_interfaces.py from params.py -- do not edit by hand
-contract_version: 0.4.0-draft4
+contract_version: 0.4.0-draft7
 evidence_class: calculated (fit tool-checked by layout.py)
 convention: 'Board frame: origin at the rear-left corner seen from above with robot-forward up; +u toward robot right (= -y of base_link), +v forward (= +x of base_link),
   +w up (= +z); top/component side faces +z. base_link = origin + (v, -u, w). Origin z is the PCB UNDERSIDE. All dimensions mm.'
@@ -48,7 +48,7 @@ head_stack_up:
   head_envelope_rev_e_used_mm:
     x:
     - 66.0
-    - 192.2
+    - 212.5
     y:
     - -175.0
     - 175.0
@@ -58,7 +58,8 @@ head_stack_up:
   order_rationale: 'Spreader between optics and board: it heats the optical modules uniformly, screens the SiPMs from the logic, takes the board''s own dissipation
     and bridges the printed y = 0 split. Board above it stays accessible under the cover.'
 RR-HEAD-ACQ:
-  status: CONFIRMED. Board, holes, zones and height limits unchanged; only the base_link x of the whole head moves with mount option C (origin x 156.0 -> 83.2, CCR-11)
+  status: 'CONFIRMED as built (IB-52): H1 at (75.5, 30.0) [CR-M02], J1 landing u 50..101 with 8 mm local height [CCR-HE-02], shield cans at v 8.25..40.25 [CR-M01];
+    source electronics/head_acq/layout.py HOLES, libs.py, STAGE2_CHANGE_REQUESTS.md. Origin x 83.2 (mount option C, CCR-11)'
   outline_mm:
   - 326.0
   - 96.0
@@ -99,9 +100,9 @@ RR-HEAD-ACQ:
     - id: H1
       board_uv_mm:
       - 75.5
-      - 4.5
+      - 30.0
       base_link_xyz_mm:
-      - 87.7
+      - 113.2
       - 87.5
       - 34.5
     - id: H2
@@ -160,8 +161,8 @@ RR-HEAD-ACQ:
       - 131.2
       - -158.0
       - 34.5
-    rationale: Six holes on the three inactive lane seams (y = +87.5, 0, -87.5) so the four lane circuits stay identical and unbroken; two end holes at mid-height
-      carry the 75 mm end overhangs. Longest unsupported span 87.5 mm.
+    rationale: Holes on the three inactive lane seams (y = +87.5, 0, -87.5) so the four lane circuits stay identical and unbroken; H1 moved to v 30 (CR-M02) because
+      the J1 header sits on the rear edge; two end holes at mid-height carry the 75 mm end overhangs. Longest unsupported span 87.5 mm.
   max_height_top_mm: 6.0
   max_height_bottom_mm: 2.0
   height_headroom_note: Head top is z = 45.0 against the 50.0 ceiling. Each extra mm of top-side height raises the cover 1:1; up to 11 mm top-side is possible before
@@ -187,13 +188,31 @@ RR-HEAD-ACQ:
   - id: J1_LANDING
     u:
     - 50
-    - 100
+    - 101
     v:
     - 0
     - 18
-    top_max: 6.0
-    use: 'J1 pigtail (power, heater pair, interlock loop, PRES_ID) + heater-film tail + spreader NTC. On the S0|S1 seam (y = +87.5): the cable enters through the
-      rear wall at this y. Excludes the H1 pad.'
+    top_max: 8.0
+    use: 'J1 pigtail (8-way J2001, body u 73.0..100.7) + heater/NTC (6-way J2601, body u 50.2..72.0): rear-facing Micro-Fit headers, pin row v 10.57, mating faces
+      v 1.5, mated plugs overhang the rear edge to v -8.4 (electronics/head_acq/layout.py, STAGE2_CHANGE_REQUESTS.md S2-L5, CR-M03). top_max 8.0 under the 8.9 mm
+      head-lid blister (CCR-HE-02 accepted, CR-M05; header seat height <= 6.0 UNVERIFIED). The board centres J2001 on y = 76.2 (u 86.8); CR-M03 asks head mechanical
+      to move the J1 cable port there (head-owned, `HEAD_PIGTAIL_EXIT`).'
+  - id: LANE_SHIELD_CANS
+    u:
+    - - 13.75
+      - 49.75
+    - - 101.25
+      - 137.25
+    - - 188.75
+      - 224.75
+    - - 276.25
+      - 312.25
+    v:
+    - 8.25
+    - 40.25
+    top_max: 5.0
+    use: RR-HEAD-SHLD-A cans 36 x 32 x 5 mm (0.2 mm wall) per lane, rear outer face v 8.25 (+2.75 mm, CR-M01; electronics/head_acq/libs.py CAN_V0/CAN_D); anode mouse
+      holes in the rear wall at du -10.38 / +11.87 (CR-M04).
   - id: J2_LANDING
     u:
     - 226
@@ -349,7 +368,20 @@ RR-CHS-MAIN:
     - 88
     - 100
     top_max: 12.0
-    use: 'Only height restriction: the shell roof closes in on the two front corners.'
+    use: The shell roof closes in on the two front corners.
+  - id: REAR_CORNER_LOW
+    u:
+    - - 0
+      - 45
+    - - 112
+      - 160
+    v:
+    - - 0
+      - 20
+    - - 0
+      - 22
+    top_max: 12.0
+    use: 'Rear corners (chassis electronics CCR-E08 request, CR-06): the saddle-cover rear screw bosses hang to 13.0 mm above the PCB here.'
   - id: THERMAL_TO_BRIDGE
     u:
     - 50
@@ -369,7 +401,7 @@ RR-CHS-MAIN:
     use: 'Reserved BMI088 footprint centred (80, 67): exactly above base_link origin (yaw centre). imu_link in frames.yaml assumes it.'
   connector_edges:
     right_edge_rear  (u = 160, v 4..34): 'POWER ENTRY: pack feed from the blind-mate coupler (under the board, routed around the right side), charge inlet feed (inlet
-      is on the right rear quarter), bus-clamp resistor. Main protection, charger and latch/brake relays belong in this corner.'
+      is on the right rear quarter). Main protection, charger and latch/brake relays belong in this corner.'
     right_edge_front (u = 160, v 72..96): Right motor + encoder, right look-ahead ToF (in the right grip cheek).
     left_edge_front  (u = 0, v 72..96): Left motor + encoder, left look-ahead ToF.
     left_edge_rear   (u = 0, v 4..34): 'HOST: USB to the CM5 and the 5.1 V compute feed (CM5 carrier is in the left rear bay), LiDAR 12 V.'
@@ -382,8 +414,7 @@ RR-CHS-MAIN:
       latch switch if fitted.
   keepouts:
   - 'NO connectors on the rear edge between u = 20 and 140: the battery hump front wall and cassette (top z 144) stand 3.5 to 6.5 mm behind it.'
-  - 'NO connectors on the left/right edges between v = 34 and 70: the grip cheek legs and cheeks (base x -31 .. +1.5, |y| 84..98) stand 4 mm outboard of the board
-    there.'
+  - 'NO connectors on the left/right edges between v = 34 and 70: the grip cheek legs and cheeks (|y| 84..98) stand 4 mm outboard of the board there.'
   - 7.0 mm diameter around every mounting hole, both sides.
   - 'Top-entry plugs are not possible above 18 mm: the saddle cover underside is 20.4 mm above the PCB top. Use right-angle or low-profile vertical headers.'
   cable_exits: Horizontally outward from the named edges; side bays (|y| 80..115) and the front bay (x > 33) are the cable corridors.

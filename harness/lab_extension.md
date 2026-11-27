@@ -62,7 +62,7 @@ At -20 C copper is 16 % lower (`power_budget.md` section 6): AWG 18 wire part 83
 
 The electronics pair at <= 1.5 A (1.0 A typical): AWG 18 gives 0.140 V at 1.5 A; the head supply floor in `power_budget.md` section 6 (needs >= 10.3 V at the pack in LAB at full head load) was computed for AWG 20 and holds with AWG 18 (lower drop).
 
-**Open (CCR-E07, UNVERIFIED): the M16 8-pole contacts must accept 0.75 mm2 (AWG 18).** `power_budget.md`: 'binder 8-pole solder cups may be limited to 0.5 mm2'. If they do not, use the CCR-E07 fallbacks above (1.7 m, or 0.15 ohm budget), or paralleled AWG 20 only after the lead agrees. The robot-side crimp range is also a conflict: the head board source quotes a '43030 18-24 AWG variant' for the heater pair, the chassis table `connectors.yaml` lists 43030-0007 for AWG 20-24 only (see `README.md` open items).
+**Open (CCR-E07, UNVERIFIED): the M16 8-pole contacts must accept 0.75 mm2 (AWG 18).** `power_budget.md`: 'binder 8-pole solder cups may be limited to 0.5 mm2'. If they do not, use the CCR-E07 fallbacks above (1.7 m, or 0.15 ohm budget), or paralleled AWG 20 only after the lead agrees. The chassis-side crimp conflict is closed by stage 2 (J_HEAD1 is a Mini-Fit Jr 2x5, terminals for AWG 18-24 [UNVERIFIED, recalled], S2-02); the head board J2001/J2601 still rely on a recalled '43030 18-24 AWG variant' for the heater pair (see `README.md` OD-3).
 
 PRES_ID and loop pairs (AWG 24): added pin 7 path 2 x 2.0 m x 84.2 mohm = 0.337 ohm in series with a 4.70 kohm source (0.007 %), and 0.337 ohm + 10 mohm on a 1.00 kohm loop (0.03 %): negligible against the windows below.
 

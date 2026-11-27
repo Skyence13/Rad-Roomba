@@ -4,6 +4,7 @@ import base64, math
 import numpy as np
 import pytest
 from rr_core import geometry as geo
+from rr_core import estimator as est
 from rr_core.trajectory import TrajectoryBuffer, PoseUnavailable
 from rr_core.processing import SurveyProcessor, SurveyConfig, REASONS
 from rr_core.profiles import Calibration, ProfileStore, DATA
@@ -172,7 +173,9 @@ def test_cell_estimate_weights_and_hotspot_flag_with_location():
     assert len(top) == 1
     f = top[0]
     assert f["id"].startswith("HS-") and f["source_lane"] == 1
-    assert abs(f["x_m"] - 1.55) < 0.04 and abs(f["y_m"] - 0.04375) < 0.01
+    # IB-31 (rev 3): the per-lane threshold at alpha/m flags fewer edge cells than the combined statistic did, and the
+    # located centroid is taken over the flagged cells only: 69 mm along-track error here (was < 40 mm before rev 3).
+    assert abs(f["x_m"] - 1.55) < 0.09 and abs(f["y_m"] - 0.04375) < 0.01
     assert f["location"]["wall"] == "left wall" and f["location"]["distance_from_door_m"] == pytest.approx(f["x_m"], abs=1e-3)
     assert f["contributing_gates"] and f["footprint"] and f["recommendation"]["action"] == "STATIONARY_COUNT"
     # weights: an interior cell sees ~ (cell area x transit) / aperture area of live time per pass
@@ -180,7 +183,7 @@ def test_cell_estimate_weights_and_hotspot_flag_with_location():
     T = proc.acc["beta"]["T_F"][cy, cx, :].sum()
     assert 0.5 < T < 2.6
     d = proc.decisions["beta"][(cy, cx)]
-    assert d.method.startswith("poisson-exact") and all(m.startswith("lane-window-excluding-test") for m in d.u0_methods)
+    assert d.m >= 1 and d.rule == est.RULE and (d.method == est.RULE if d.m > 1 else d.method.startswith("poisson-exact")) and all(m.startswith("lane-window-excluding-test") for m in d.u0_methods)
     assert d.D_hash > d.D_star > 0 and abs(d.D) < 0.25
     rows = proc.cells_table()
     row = next(q for q in rows if q["ix"] == cx and q["iy"] == cy)

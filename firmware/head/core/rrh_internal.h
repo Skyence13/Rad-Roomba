@@ -33,6 +33,7 @@ void rrh_write_zone_names(uint8_t zones, rrc_jw_t *w);
 /* rrh_control.c */
 void rrh_control_init(rrh_core_t *c);
 void rrh_control_sample(rrh_core_t *c);                        /* analog snapshot + health */
+void rrh_control_refresh_inputs(rrh_core_t *c);                /* analog, anode monitor, expander: read only */
 void rrh_control_periodic(rrh_core_t *c, uint64_t now_us);     /* sample + one bias loop step */
 void rrh_control_on_gate(rrh_core_t *c, const rrh_gate_record_t *rec); /* heater decision */
 void rrh_control_heater_off(rrh_core_t *c);

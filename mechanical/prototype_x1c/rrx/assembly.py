@@ -36,9 +36,7 @@ def purchased(add):
     e = L.env("chassis_heater")
     add(Part("RRX-H44", "chassis_heater_pad", box(-164, -164 + e["l"], -e["w"] / 2, e["w"] / 2, Z1 + 1.0, Z1 + 1.0 + e["h"]), "purchased", "PI", "battery_bay", color=C["heat"], mass=L.mass("chassis_heater"),
              mpn=L.PARTS["chassis_heater"]["mpn"], verified="design value", mates={"floor_plug", "battery_tunnel"}))
-    e = L.env("clamp_resistor")
-    add(Part("RRX-H45", "bus_clamp_resistor", box(20, 20 + e["w"], -e["l"] / 2, e["l"] / 2, Z1, Z1 + e["h"]), "purchased", "AL", "thermal", color=C["heat"], mass=L.mass("clamp_resistor"),
-             mpn=L.PARTS["clamp_resistor"]["mpn"], verified="UNVERIFIED", mates={"chassis_plate"}))
+    # (no bolt-on clamp resistor: RR-CHS-MAIN carries its own clamp resistors, IB-26)
     b = P.CHS_MAIN
     ox, oy, oz = b["origin"]
     w_, h_ = b["outline"]
