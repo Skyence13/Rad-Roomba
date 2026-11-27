@@ -93,6 +93,14 @@ bool rrh_evtcap_running(const rrh_evtcap_t *e)
     return e->running || (e->fifo_head != e->fifo_tail);
 }
 
+/* Over-current / frame fault: the switch opens at once, not at the next boundary. The gate that contains the edge is marked
+ * (heater_prev still holds the state at its start). */
+void rrh_evtcap_heater_force_off(rrh_evtcap_t *e)
+{
+    e->heater_req = false;
+    heater_apply(e, false);
+}
+
 void rrh_evtcap_heater_request(rrh_evtcap_t *e, bool on)
 {
     e->heater_req = on;

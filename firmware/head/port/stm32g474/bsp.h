@@ -61,6 +61,7 @@ void bsp_dac_write(uint8_t device, uint8_t channel, uint16_t code12);
 
 /* I2C3: TMP117 x2, EUI EEPROM, optional TCA9534 expander */
 bool bsp_i2c_xfer(uint8_t addr, const uint8_t *w, size_t wn, uint8_t *r, size_t rn);
+bool bsp_mon_adc_uv(uint32_t *uv); /* MON_ADC in uV (ADC2); false = no conversion */
 bool bsp_expander_read(uint8_t *inputs); /* false = no answer; configures the device on first contact */
 bool bsp_eui64(uint8_t out[8]);
 int32_t bsp_tmp117_mc(uint8_t index); /* RRH_TEMP_INVALID if absent */
@@ -92,6 +93,7 @@ bool evt_port_running(void);
 bool evt_port_poll(rrh_gate_record_t *rec);
 void evt_port_chain_enable(uint8_t mask);
 void evt_port_heater_request(bool on);
+void evt_port_heater_force_off(void);
 void evt_port_set_alpha_hold_us(uint16_t us);
 void evt_port_set_alpha_tot_min_ns(uint16_t ns);
 bool evt_port_selftest(void); /* LATCH_TEST line: every latch sets and clears */

@@ -114,11 +114,33 @@ static void op_status(rrh_core_t *c, const rrc_json_t *d, const rrc_req_t *req, 
     rrc_jw_kbool(w, "on", c->heater_on);
     put_temp_key(w, "plate_c", a->heater_plate_mc);
     rrc_jw_kbool(w, "cutout_ok", a->heater_cutout_ok);
+    if (a->heater_ma_valid) {
+        rrc_jw_ku64(w, "ma", a->heater_ma);
+    } else {
+        rrc_jw_knull(w, "ma");
+    }
+    rrc_jw_ku64(w, "oc_ma", c->setup.heater_oc_ma);
     rrc_jw_obj_end(w);
+    /* Frame potential (stage 3): V(FRAME) in mV from MON_ADC with the lane muxes off; null = not measured */
+    rrc_jw_key(w, "frame");
+    rrc_jw_obj_begin(w);
+    if (c->frame_mv == INT32_MIN) {
+        rrc_jw_knull(w, "mv");
+    } else {
+        rrc_jw_ki64(w, "mv", c->frame_mv);
+    }
+    rrc_jw_kbool(w, "fault", (c->health & RRH_H_FRAME_FAULT) != 0u);
+    rrc_jw_obj_end(w);
+    rrc_jw_kstr(w, "device", (c->setup.device == 0u) ? "NONE" : rrh_devices[c->setup.device - 1u].name);
+    rrc_jw_kbool(w, "thresholds_confirmed", c->setup.thr_confirmed);
+    rrc_jw_ku64(w, "alpha_tot_ns", c->setup.fe.alpha_min_tot_ns);
     rrc_jw_key(w, "bias");
     rrc_jw_obj_begin(w);
     rrc_jw_kbool(w, "on", c->bias_on);
     rrc_jw_kfixed(w, "set_v", c->bias_cmd_mv, 3u, true);
+    rrc_jw_kfixed(w, "out_v", c->bias_out_mv, 3u, true);
+    rrc_jw_ku64(w, "vmon_ratio_e4", c->setup.vmon_ratio_e4);
+    rrc_jw_kstr(w, "vmon", c->setup.vmon_calibrated ? "CALIBRATED" : "UNCALIBRATED");
     if (a->bias_valid) {
         rrc_jw_kfixed(w, "v", a->bias_mv, 3u, true);
         rrc_jw_ku64(w, "ua", a->bias_ua);
@@ -223,7 +245,8 @@ static uint16_t health_bit_by_name(const rrc_json_t *d, int tok)
 {
     static const char *const names[RRH_H_COUNT] = {"SOURCE", "GATE_TIMING", "RECORD_LOST", "GATE_TIMEOUT", "INJECTED",
                                                    "HEATER_SENSOR", "HEATER_CUTOUT", "HEATER_OVERTEMP", "HEATER_STUCK",
-                                                   "BIAS_TRIP", "ENTROPY", "STORAGE", "WATCHDOG_RESET", "BIAS_PERMIT"};
+                                                   "BIAS_TRIP", "ENTROPY", "STORAGE", "WATCHDOG_RESET", "BIAS_PERMIT", "FRAME_FAULT",
+                                                   "HEATER_OVERCURRENT"};
     for (uint32_t i = 0u; i < RRH_H_COUNT; i++) {
         if (rrc_json_str_eq(d, tok, names[i])) {
             return (uint16_t)(1u << i);
@@ -306,8 +329,8 @@ static void op_setup_set(rrh_core_t *c, const rrc_json_t *d, const rrc_req_t *re
     }
     (void)rrc_json_to_bool(d, rrc_json_get(d, req->args, "persist"), &persist);
     /* Compare the canonical images (the same bytes the setup hash covers), not the structs. */
-    const size_t n_before = rrh_setup_pack(&c->setup, before, sizeof before);
-    const size_t n_after = rrh_setup_pack(&next, blob, sizeof blob);
+    const size_t n_before = rrh_setup_pack_image(&c->setup, before, sizeof before);
+    const size_t n_after = rrh_setup_pack_image(&next, blob, sizeof blob);
     const bool changed = (n_before != n_after) || (memcmp(before, blob, n_after) != 0);
     if (changed) {
         /* ORDER MATTERS: the binding is invalidated BEFORE the new settings reach the hardware,
@@ -319,6 +342,8 @@ static void op_setup_set(rrh_core_t *c, const rrc_json_t *d, const rrc_req_t *re
             c->health |= RRH_H_SOURCE;
         }
         c->bias_settle = 0u;
+    } else {
+        c->setup = next; /* the BIAS_VMON calibration is not part of setup_id: no new binding needed */
     }
     if (persist) {
         const size_t n = rrh_setup_pack(&c->setup, blob, sizeof blob);

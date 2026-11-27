@@ -61,6 +61,15 @@ extern "C" {
 #define RRH_R2310_OHM 10000u
 #define RRH_R2311_OHM 3160u
 
+/* Heater current sense: R2601 CRA2512-FZ-R010ELF 10 mohm shunt, U2601 INA180A2 (gain 50 V/V from the A2 suffix, datasheet
+ * UNVERIFIED), 1 k R2602 + 100 nF C2603 to PB12 = ADC1_IN11: 0.5 V per ampere. */
+#define RRH_R2601_MOHM 10u
+#define RRH_INA180_GAIN 50u
+/* Frame-potential monitor (stage 3, S3-03): with all lane monitor muxes off MON_BUS = (VBL + V_FRAME) / 2 through
+ * R2702 (1 M to VBL) and R2802 (1 M to FRAME); MON_ADC = 0.300 V + V_FRAME / 2. */
+#define RRH_R2702_OHM 1000000u
+#define RRH_R2802_OHM 1000000u
+
 /* ---- converters and references ------------------------------------------------------------------ */
 #define RRH_ADC_BITS 12u
 #define RRH_ADC_FS 4095u
@@ -78,7 +87,16 @@ uint32_t rrh_board_hv_mv(uint16_t code);           /* what the code commands (no
 /* ADC pin voltage (mV) -> quantity at the source. */
 uint32_t rrh_board_bias_mv(uint32_t adc_mv);       /* BIAS_VMON x (R2217 + R2218 + R2219) / R2219 */
 uint32_t rrh_board_bias_total_ua(uint32_t adc_mv); /* BIAS_IMON / (0.8 x R2206) (includes both dividers) */
-uint32_t rrh_board_supply_mv(uint32_t adc_mv);     /* VIN_MON x (R2010 + R2011) / R2011 */
+uint32_t rrh_board_supply_mv(uint32_t adc_mv);
+/* BIAS_VMON with an explicit divider ratio x 1e4 (nominal 252233 = 25.2233, per-board calibration); input in uV */
+#define RRH_VMON_RATIO_E4_NOMINAL 252233u
+uint32_t rrh_board_bias_mv_cal(uint32_t adc_uv, uint32_t ratio_e4);
+uint32_t rrh_board_bias_adc_uv(uint32_t bias_mv, uint32_t ratio_e4); /* inverse (emulator / tests) */
+/* Heater current in mA from the sense voltage at the ADC pin (uV): V / (R2601 x 50) */
+uint32_t rrh_board_heater_ma(uint32_t adc_uv);
+/* Frame potential (mV, signed) from MON_ADC (uV) with the lane muxes off: 2 x (V - VBL/2) */
+int32_t rrh_board_frame_mv(uint32_t mon_adc_uv);
+uint32_t rrh_board_frame_nominal_uv(void); /* VBL / 2 */     /* VIN_MON x (R2010 + R2011) / R2011 */
 /* Current that the two bias dividers draw at a bias voltage (nA): V / (R2213 + R2214 + R2215) +
  * V / (R2217 + R2218 + R2219). The total-current monitor includes them (budget 5.1). */
 uint32_t rrh_board_bias_divider_na(uint32_t bias_mv);
@@ -105,6 +123,19 @@ typedef enum {
 } rrh_ntc_t;
 #define RRH_TEMP_NTC_INVALID INT32_MIN
 int32_t rrh_board_ntc_mc(uint16_t adc_code, rrh_ntc_t kind); /* RRH_TEMP_NTC_INVALID if open/short/out of range */
+
+/* ---- SiPM device types (head_afe_budget.md 2.5 / T6 / T13; ASSUMED optics, nothing measured) ---------------------- */
+typedef struct {
+    const char *name;        /* setup JSON "device" */
+    uint16_t tot_cut_ns;     /* alpha time-over-threshold cut, mid-gap between brightest beta (240 p.e.) and weakest alpha (150 p.e.) at LLD 10 */
+    uint8_t lld_pe;          /* default BETA_LLD / REF_LLD in p.e.: dark triggers < 0.05 /s per chain at +10 degC, typical DCR (T6) */
+    uint16_t fast_uv_per_pe; /* FAST output per photo-electron (T2) */
+    uint32_t alpha_uv;       /* default ALPHA level above baseline: 0.9 x the SLOW output of the weakest assumed alpha (150 p.e.; FAST x 0.2117 / T13 ratio) */
+} rrh_device_t;
+#define RRH_DEVICE_COUNT 6u /* device id 1 ... 6; 0 = not set */
+extern const rrh_device_t rrh_devices[RRH_DEVICE_COUNT];
+#define RRH_DEVICE_NONE 0u
+#define RRH_DEVICE_J60035 1u
 
 /* ---- bias protection straps per SiPM family (budget 5.2) ------------------------------------------ */
 typedef struct {
@@ -135,7 +166,8 @@ uint32_t rrh_board_bias_limit_mv(void);
 #define RRH_EXP_EF_FLT_N 0x10u   /* P4 in: TPS26600 eFuse fault, LOW = fault */
 #define RRH_EXP_HWREV0 0x20u     /* P5: board revision strap bit 0 (rev A = 0) */
 #define RRH_EXP_HWREV1 0x40u     /* P6: board revision strap bit 1 (rev A = 0) */
-#define RRH_EXP_DIR_MASK 0xFEu   /* configuration register: P0 output, all others inputs */
+#define RRH_EXP_MON_LANE_EN 0x80u /* P7 output (stage 3, net MON_LANE_EN, 100 k pull-down R2418): 1 = selected lane monitor mux on, 0 = all four off */
+#define RRH_EXP_DIR_MASK 0x7Eu   /* configuration register: P0 and P7 outputs, all others inputs */
 
 #ifdef __cplusplus
 }

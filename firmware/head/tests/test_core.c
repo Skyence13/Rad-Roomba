@@ -131,6 +131,13 @@ void rrh_hal_imon_read(rrh_imon_t *out)
     }
 }
 void rrh_hal_expander_read(rrh_expander_t *out) { *out = m.exp; }
+static uint32_t force_offs;
+void rrh_hal_heater_force_off(void)
+{
+    force_offs++;
+    m.heater_req = false;
+    m.heater_applied = false;
+}
 void rrh_hal_heater_request(bool on)
 {
     m.heater_req = on;
@@ -214,6 +221,7 @@ static void mock_reset(void)
 static void boot(void)
 {
     rrh_identity_defaults(&ident, "UNIT-0001");
+    ident.allow_placeholder_thresholds = true; /* the target refuses; tests that check the refusal clear this */
     ident.gate_min_us = 10000u;
     ident.gate_max_us = 1000000u;
     rrh_core_init(&core, &ident);
@@ -616,7 +624,7 @@ static void test_setup_change_invalidates_binding(void)
     advance(150000u);
     CHECK(send("ENG_SETUP_SET", "{\"bias\":{\"ref_mv\":19000}}") && status_is("BAD_ARG"));
     CHECK(send("ENG_SETUP_SET", "{\"nonsense\":1}") && status_is("BAD_ARG"));
-    CHECK(send("ENG_SETUP_SET", "{\"thresholds\":{\"beta_lld\":[3000,200,200,200]}}") && status_is("BAD_ARG")); /* LLD >= ULD (default ULD 2679) */
+    CHECK(send("ENG_SETUP_SET", "{\"thresholds\":{\"beta_lld\":[4000,200,200,200]}}") && status_is("BAD_ARG")); /* LLD >= ULD (default ULD 3822) */
     CHECK(core.link == RRH_LINK_BOUND);
     CHECK(send("ENG_SETUP_SET", "{\"bias\":{\"ref_mv\":30000}}") && status_is("OK") && has("\"changed\":false"));
     CHECK(core.link == RRH_LINK_BOUND); /* identical values: nothing happens */
@@ -769,7 +777,7 @@ static void test_bias_compensation(void)
     mock_reset();
     boot();
     /* defaults: 30.000 V at 25 degC, +21.5 mV/K */
-    advance(1000000u);
+    advance(7000000u); /* ramp 500 mV per 100 ms */
     CHECK(m.bias_on && (m.bias_mv == 30000u));
     for (uint32_t l = 0; l < RRH_LANES; l++) {
         m.analog.sipm_mc[l] = 5000; /* 20 K colder: target 30000 - 430 = 29570 mV */
@@ -877,7 +885,7 @@ static void test_setup_members_and_defaults(void)
     }
     CHECK(core.setup.fe.alpha_hold_us == 300u);
     handshake();
-    CHECK(send("ENG_SETUP_GET", "{}") && has("\"afterglow\":{\"alpha_hold_us\":300,\"alpha_min_tot_ns\":250}") && has("\"channel\":0,\"width_us\":2"));
+    CHECK(send("ENG_SETUP_GET", "{}") && has("\"afterglow\":{\"alpha_hold_us\":300,\"alpha_min_tot_ns\":0}") && has("\"channel\":0,\"width_us\":2"));
     char old_id[100];
     strcpy(old_id, core.setup_id);
     CHECK(send("ENG_SETUP_SET", "{\"pulser\":{\"enable\":true,\"code\":500,\"channel\":6,\"width_us\":25,\"led_enable\":true,\"led_code\":900},"
@@ -908,10 +916,10 @@ static void test_bias_on_sequence_and_limits(void)
     advance(100000u);
     CHECK(m.bias_on && (m.bias_mv == 0u));           /* HV_EN rises with HV_SET = 0 */
     uint32_t prev = 0u;
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 64; i++) {
         advance(100000u);
         CHECK(m.bias_mv >= prev);
-        CHECK(m.bias_mv - prev <= RRH_BIAS_RAMP_STEP_MV); /* 5 V/s at HV_SET = 12.5 V per 100 ms at HV_BUS */
+        CHECK(m.bias_mv - prev <= RRH_BIAS_RAMP_STEP_MV); /* 5 V/s at HV_BUS = 500 mV per 100 ms */
         prev = m.bias_mv;
     }
     CHECK(m.bias_mv == 30000u);
@@ -934,7 +942,7 @@ static void test_bias_permit_trip_and_recovery(void)
     mock_reset();
     boot();
     m.permit_ok = false; /* hardware permit latch tripped: HV_EN high, BIAS_VMON reads 0 */
-    advance(2000000u);
+    advance(8000000u);
     CHECK(!m.bias_on && ((core.health & RRH_H_BIAS_PERMIT) != 0u));
     handshake();
     CHECK(send("STATUS", "{}") && has("BIAS_PERMIT") && has("\"expander\":{\"present\":false,\"hv_permit\":null"));
@@ -981,7 +989,7 @@ static void test_per_lane_bias_out_of_range(void)
     mock_reset();
     boot();
     handshake();
-    advance(1000000u); /* bias ramped and settled; the scan runs while disarmed */
+    advance(7500000u); /* bias ramped and settled; the scan runs while disarmed */
     CHECK(core.imon_fault == 0u);
     CHECK(core.imon_na[0] > 900u && core.imon_na[0] < 1100u); /* 1 uA programmed in the mock */
     /* a short excursion (< RRH_IMON_HOLD_US) is not flagged */
@@ -1059,7 +1067,7 @@ static void test_alpha_width_setup_and_dac_write_marker(void)
     mock_reset();
     boot();
     handshake();
-    CHECK(core.setup.fe.alpha_min_tot_ns == 250u);
+    CHECK(core.setup.fe.alpha_min_tot_ns == 290u); /* J60035 device cut */
     char old_id[100];
     strcpy(old_id, core.setup_id);
     CHECK(send("ENG_SETUP_SET", "{\"afterglow\":{\"alpha_min_tot_ns\":400}}") && status_is("OK") && has("\"changed\":true"));
@@ -1069,7 +1077,7 @@ static void test_alpha_width_setup_and_dac_write_marker(void)
     CHECK(send("ENG_SETUP_SET", "{\"afterglow\":{\"alpha_min_tot_ns\":0,\"alpha_hold_us\":300}}") && status_is("OK"));
     /* bias tracking while armed: every HV_SET write is counted in the gate (DIAG bias.dac_writes) */
     handshake();
-    advance(1000000u);
+    advance(7500000u);
     arm(100000u);
     advance(300000u);
     for (uint32_t l = 0; l < RRH_LANES; l++) {
@@ -1086,6 +1094,153 @@ static void test_alpha_width_setup_and_dac_write_marker(void)
         }
     }
     CHECK(writes >= 8u && writes <= 12u); /* one write per 100 ms gate while the target moves */
+}
+
+
+static void set_uv_mon(uint32_t frame_mv_x2_uv)
+{
+    m.analog.mon_valid = true;
+    m.analog.mon_adc_uv = rrh_board_frame_nominal_uv() + frame_mv_x2_uv;
+}
+
+static void test_device_type_and_placeholder_refusal(void)
+{
+    mock_reset();
+    boot();
+    ident.allow_placeholder_thresholds = false; /* the target's behaviour */
+    rrh_core_init(&core, &ident);
+    handshake();
+    CHECK(core.setup.device == RRH_DEVICE_J60035 && !core.setup.thr_confirmed);
+    CHECK(send("ARM", "{\"span_us\":100000}") && status_is("FAULT") && has("placeholder_thresholds") && !core.armed);
+    char id0[100];
+    strcpy(id0, core.setup_id);
+    CHECK(send("ENG_SETUP_SET", "{\"thresholds_confirmed\":true}") && status_is("OK") && has("\"changed\":true"));
+    CHECK(strcmp(id0, core.setup_id) != 0); /* the confirmation is part of setup_id */
+    handshake();
+    arm(100000u);
+    CHECK(send("DISARM", "{}") && status_is("OK"));
+    advance(300000u);
+    /* device type unset: refused whatever the thresholds */
+    CHECK(send("ENG_SETUP_SET", "{\"device\":\"NONE\",\"thresholds_confirmed\":true}") && status_is("OK"));
+    handshake();
+    CHECK(send("ARM", "{\"span_us\":100000}") && status_is("FAULT") && has("device_type_unset"));
+    /* a new device type brings its own placeholder defaults and its own TOT cut; writing thresholds confirms them */
+    CHECK(send("ENG_SETUP_SET", "{\"device\":\"J30035\"}") && status_is("OK"));
+    CHECK(core.setup.device == 2u && !core.setup.thr_confirmed && (core.setup.fe.alpha_min_tot_ns == 180u));
+    CHECK(core.setup.fe.threshold[0] == rrh_board_threshold_code(9u * 12200u));
+    handshake();
+    CHECK(send("ARM", "{\"span_us\":100000}") && status_is("FAULT") && has("placeholder_thresholds"));
+    CHECK(send("ENG_SETUP_SET", "{\"thresholds\":{\"beta_lld\":[1300,1300,1300,1300]}}") && status_is("OK") && core.setup.thr_confirmed);
+    /* explicit override of the cut, recorded in setup_id; 0 follows the device again */
+    char id1[100];
+    handshake();
+    strcpy(id1, core.setup_id);
+    CHECK(send("ENG_SETUP_SET", "{\"afterglow\":{\"alpha_min_tot_ns\":220}}") && status_is("OK"));
+    CHECK((core.setup.fe.alpha_min_tot_ns == 220u) && (strcmp(id1, core.setup_id) != 0) && (m.fe.alpha_min_tot_ns == 220u));
+    CHECK(send("ENG_SETUP_SET", "{\"afterglow\":{\"alpha_min_tot_ns\":0}}") && status_is("OK") && (m.fe.alpha_min_tot_ns == 180u));
+    CHECK(send("ENG_SETUP_SET", "{\"device\":\"X\"}") && status_is("BAD_ARG"));
+    handshake();
+    CHECK(send("STATUS", "{}") && has("\"device\":\"J30035\"") && has("\"thresholds_confirmed\":true") && has("\"alpha_tot_ns\":180"));
+}
+
+static void test_bias_calibration_and_ramp_step(void)
+{
+    mock_reset();
+    boot();
+    handshake();
+    CHECK(send("STATUS", "{}") && has("\"vmon\":\"UNCALIBRATED\"") && has("\"vmon_ratio_e4\":252233"));
+    char id0[100];
+    strcpy(id0, core.setup_id);
+    /* the board's real divider is 1 % high: the core reads 1 % low until it is calibrated */
+    m.analog.bias_vmon_adc_uv = rrh_board_bias_adc_uv(30000u, 254755u); /* what a 30.000 V bus shows with a ratio of 25.4755 */
+    advance(7000000u);
+    CHECK(core.analog.bias_mv < 29800u); /* 30000 x 252233/254755 */
+    /* calibration: written once, stored with the setup, not part of setup_id, no new binding */
+    CHECK(send("ENG_SETUP_SET", "{\"bias\":{\"vmon_ratio_e4\":254755},\"persist\":true}") && status_is("OK") &&
+          has("\"changed\":false") && has("\"persisted\":true"));
+    CHECK(strcmp(id0, core.setup_id) == 0 && (core.link == RRH_LINK_BOUND));
+    advance(200000u);
+    CHECK(send("STATUS", "{}") && has("\"vmon\":\"CALIBRATED\"") && has("\"vmon_ratio_e4\":254755"));
+    CHECK(core.analog.bias_mv >= 29990u && core.analog.bias_mv <= 30010u);
+    CHECK(send("ENG_SETUP_SET", "{\"bias\":{\"vmon_ratio_e4\":100}}") && status_is("BAD_ARG"));
+    boot(); /* the calibration survives a reboot */
+    CHECK(core.setup.vmon_calibrated && (core.setup.vmon_ratio_e4 == 254755u));
+}
+
+static void test_frame_potential_check(void)
+{
+    mock_reset();
+    boot();
+    handshake();
+    set_uv_mon(2000u); /* +4 mV at the frame: quiet */
+    advance(300000u);
+    CHECK(((core.health & RRH_H_FRAME_FAULT) == 0u) && core.frame_ref_valid && (core.frame_mv == 4));
+    CHECK(send("STATUS", "{}") && has("\"frame\":{\"mv\":4,\"fault\":false}"));
+    CHECK(send("ENG_SETUP_SET", "{\"heater\":{\"enable\":true,\"setpoint_mc\":5000,\"max_duty_pct\":100}}") && status_is("OK"));
+    handshake();
+    m.analog.heater_plate_mc = -5000;
+    arm(100000u);
+    advance(1500000u);
+    CHECK(m.heater_applied && ((core.health & RRH_H_FRAME_FAULT) == 0u));
+    /* a return-side contact lifts the frame by 40 mV at MON_ADC while the heater runs: heater off at once, code latched */
+    const uint32_t offs = force_offs;
+    set_uv_mon(40000u + 2000u);
+    advance(200000u);
+    CHECK(((core.health & RRH_H_FRAME_FAULT) != 0u) && !m.heater_applied && (force_offs == offs + 1u));
+    CHECK(send("STATUS", "{}") && has("\"fault\":true") && has("FRAME_FAULT"));
+    advance(2000000u);
+    CHECK(!m.heater_req); /* stays off */
+    CHECK(send("FAULT_CLEAR", "{\"codes\":[\"FRAME_FAULT\"]}") && has("\"cleared\":[]")); /* cause still there */
+    set_uv_mon(2000u);
+    CHECK(send("FAULT_CLEAR", "{\"codes\":[\"FRAME_FAULT\"]}") && has("\"cleared\":[\"FRAME_FAULT\"]"));
+    /* open bond / blown F2801: the frame floats towards VBL, MON_ADC = 0.6 V, far outside the window */
+    m.analog.mon_adc_uv = 600304u;
+    advance(200000u);
+    CHECK((core.health & RRH_H_FRAME_FAULT) != 0u);
+    /* below the threshold: not a fault (and not detectable): +20 mV at the frame */
+    set_uv_mon(2000u);
+    CHECK(send("FAULT_CLEAR", "{}") && status_is("OK"));
+    set_uv_mon(10000u + 2000u);
+    advance(300000u);
+    CHECK((core.health & RRH_H_FRAME_FAULT) == 0u);
+}
+
+static void test_heater_overcurrent_cutoff(void)
+{
+    mock_reset();
+    boot();
+    handshake();
+    CHECK(send("ENG_SETUP_SET", "{\"heater\":{\"enable\":true,\"setpoint_mc\":5000,\"max_duty_pct\":100}}") && status_is("OK"));
+    handshake();
+    m.analog.heater_plate_mc = -5000;
+    m.analog.heater_ma_valid = true;
+    m.analog.heater_ma = 3040u; /* normal draw at 14.6 V */
+    arm(100000u);
+    advance(1500000u);
+    CHECK(m.heater_applied && (core.health & RRH_H_HEATER_OVERCURRENT) == 0u);
+    CHECK(send("STATUS", "{}") && has("\"ma\":3040,\"oc_ma\":3200"));
+    /* a 200 ms excursion above 3.2 A (< 300 ms) is ignored */
+    const uint32_t offs = force_offs;
+    m.analog.heater_ma = 3400u;
+    advance(200000u);
+    m.analog.heater_ma = 3040u;
+    advance(300000u);
+    CHECK(m.heater_applied && (force_offs == offs));
+    /* sustained: the switch opens at once (not at the next gate boundary), the code latches, the heater stays off */
+    m.analog.heater_ma = 3400u;
+    advance(500000u);
+    CHECK((core.health & RRH_H_HEATER_OVERCURRENT) != 0u && !m.heater_applied && (force_offs == offs + 1u));
+    m.analog.heater_ma = 0u;
+    advance(2000000u);
+    CHECK(!m.heater_req);
+    CHECK(send("READ", "{\"after_seq\":%d}", (int)core.next_seq - 2) && has("HEATER_FAULT"));
+    CHECK(send("FAULT_CLEAR", "{}") && has("HEATER_OVERCURRENT")); /* current below the limit: clearable */
+    /* configurable */
+    CHECK(send("DISARM", "{}") && status_is("OK"));
+    advance(300000u);
+    CHECK(send("ENG_SETUP_SET", "{\"heater\":{\"oc_ma\":2800,\"oc_ms\":100}}") && status_is("OK"));
+    CHECK(send("ENG_SETUP_SET", "{\"heater\":{\"oc_ma\":400}}") && status_is("BAD_ARG"));
+    CHECK((core.setup.heater_oc_ma == 2800u) && (core.setup.heater_oc_ms == 100u));
 }
 
 int main(void)
@@ -1109,5 +1264,9 @@ int main(void)
     RUN(test_per_lane_bias_out_of_range);
     RUN(test_zones_not_available_and_lid);
     RUN(test_alpha_width_setup_and_dac_write_marker);
+    RUN(test_device_type_and_placeholder_refusal);
+    RUN(test_bias_calibration_and_ramp_step);
+    RUN(test_frame_potential_check);
+    RUN(test_heater_overcurrent_cutoff);
     return TEST_SUMMARY();
 }

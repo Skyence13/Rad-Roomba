@@ -26,6 +26,7 @@
 
 static rrh_core_t g_core;
 static rrh_identity_t g_ident;
+static bool g_strict; /* --strict-placeholders */
 static volatile sig_atomic_t g_stop;
 static bool g_quiet;
 
@@ -313,6 +314,15 @@ static const char *cmd_analog(void)
     if (j_num(rrc_json_get(&g_doc, 0, "imon_offset_uv"), &v)) {
         g_sim.imon_offset_uv = (int32_t)v;
     }
+    if (j_num(rrc_json_get(&g_doc, 0, "frame_mv"), &v)) {
+        g_sim.frame_mv = v;
+    }
+    if (j_num(rrc_json_get(&g_doc, 0, "heater_ma"), &v) && (v >= 0.0)) {
+        g_sim.heater_ma_model = v;
+    }
+    if (j_num(rrc_json_get(&g_doc, 0, "vmon_true_ratio_e4"), &v) && (v > 100000.0)) {
+        g_sim.vmon_true_ratio_e4 = (uint32_t)v;
+    }
     g_sim.exp_present = j_flag("expander", g_sim.exp_present);
     g_sim.lid_open = j_flag("lid_open", g_sim.lid_open);
     g_sim.inhibit = j_flag("inhibit", g_sim.inhibit);
@@ -396,6 +406,7 @@ static const char *cmd_swap(void)
      * connectors are open. Any baseline-replica overrides do not survive a swap. */
     rrh_identity_defaults(&g_ident, serial);
     g_ident.rail_5mm = j_is("variant", "concept-e-5mm");
+    g_ident.allow_placeholder_thresholds = !g_strict;
     g_ident.gate_min_us = g_core.ident.gate_min_us;
     g_ident.gate_max_us = g_core.ident.gate_max_us;
     g_sim.nv_len = 0u;
@@ -570,6 +581,7 @@ static void usage(void)
           "  --descriptor-id S --setup-id S --firmware S --boot-id UUID   identifiers for the replica\n"
           "  --tau-floor-us X --tau-ref-us X   dead time per recorded event (default 10, 10)\n"
           "  --truth-log FILE       append one JSON line per generated gate (drawn counts)\n"
+          "  --strict-placeholders  refuse ARM until the device type is set and the thresholds are confirmed (target behaviour)\n"
           "  --no-width-hist        emulate a head without pulse-width measurement (no DIAG width fields)\n"
           "  --quiet\n",
           stderr);
@@ -598,6 +610,10 @@ int main(int argc, char **argv)
         const char *v = ((i + 1) < argc) ? argv[i + 1] : NULL;
         if (strcmp(a, "--quiet") == 0) {
             g_quiet = true;
+            continue;
+        }
+        if (strcmp(a, "--strict-placeholders") == 0) {
+            g_strict = true; /* refuse ARM with an unset device type or unconfirmed thresholds, as the target does */
             continue;
         }
         if (strcmp(a, "--no-width-hist") == 0) {
@@ -663,6 +679,7 @@ int main(int argc, char **argv)
     }
     rrh_identity_defaults(&g_ident, serial);
     g_ident.rail_5mm = rail5;
+    g_ident.allow_placeholder_thresholds = !g_strict;
     g_ident.gate_min_us = gate_min;
     g_ident.gate_max_us = gate_max;
     if (desc_id[0] != '\0') {

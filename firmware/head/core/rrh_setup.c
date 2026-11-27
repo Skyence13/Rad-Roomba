@@ -25,16 +25,17 @@
 #define GEO_STANDOFF 10000
 static const int32_t k_lane_y[RRH_LANES] = {131250, 43750, -43750, -131250};
 
-void rrh_setup_defaults(rrh_setup_t *s)
+/* Default thresholds of the device type (placeholders): voltages ABOVE the 0.600 V baseline in p.e. of that device's FAST path. */
+void rrh_setup_device_thresholds(rrh_setup_t *s)
 {
-    memset(s, 0, sizeof *s);
-    /* Thresholds are voltages ABOVE the 0.600 V baseline (R2310/R2311): a DAC code below the
-     * baseline (firmware 0.4 used 200 = 0.12 V) leaves the comparator permanently high. Levels in
-     * photo-electrons use the FAST path gain of a 6 mm onsemi J-series device at low overvoltage
-     * (6.9 mV per p.e., budget 2.2, ASSUMED until the SiPM is chosen). */
-    const uint16_t lld = rrh_board_threshold_code(RRH_DEFAULT_LLD_PE * RRH_FAST_UV_PER_PE);
-    const uint16_t uld = rrh_board_threshold_code(RRH_DEFAULT_ULD_PE * RRH_FAST_UV_PER_PE);
-    const uint16_t alpha = rrh_board_threshold_code(RRH_DEFAULT_ALPHA_UV);
+    const rrh_device_t *d = &rrh_devices[(s->device >= 1u && s->device <= RRH_DEVICE_COUNT) ? (s->device - 1u) : 0u];
+    uint32_t uld_uv = RRH_DEFAULT_ULD_PE * (uint32_t)d->fast_uv_per_pe;
+    if (uld_uv > RRH_DEFAULT_ULD_MAX_UV) {
+        uld_uv = RRH_DEFAULT_ULD_MAX_UV;
+    }
+    const uint16_t lld = rrh_board_threshold_code((uint32_t)d->lld_pe * d->fast_uv_per_pe);
+    const uint16_t uld = rrh_board_threshold_code(uld_uv);
+    const uint16_t alpha = rrh_board_threshold_code(d->alpha_uv);
     for (uint32_t lane = 0u; lane < RRH_LANES; lane++) {
         s->fe.threshold[(lane * 3u) + 0u] = lld;   /* BETA_LLD */
         s->fe.threshold[(lane * 3u) + 1u] = uld;   /* BETA_ULD */
@@ -42,6 +43,30 @@ void rrh_setup_defaults(rrh_setup_t *s)
         s->fe.threshold[12u + (lane * 2u) + 0u] = lld; /* REF_LLD */
         s->fe.threshold[12u + (lane * 2u) + 1u] = uld; /* REF_ULD */
     }
+}
+
+/* Effective alpha cut: explicit override, else the device type's mid-gap value (J60035 290 ns when no device is set). */
+void rrh_setup_finalize(rrh_setup_t *s)
+{
+    s->fe.device = s->device;
+    if (s->alpha_tot_override_ns != 0u) {
+        s->fe.alpha_min_tot_ns = s->alpha_tot_override_ns;
+    } else if ((s->device >= 1u) && (s->device <= RRH_DEVICE_COUNT)) {
+        s->fe.alpha_min_tot_ns = rrh_devices[s->device - 1u].tot_cut_ns;
+    } else {
+        s->fe.alpha_min_tot_ns = RRH_ALPHA_MIN_TOT_DEFAULT_NS;
+    }
+}
+
+void rrh_setup_defaults(rrh_setup_t *s)
+{
+    memset(s, 0, sizeof *s);
+    /* Thresholds are voltages ABOVE the 0.600 V baseline (R2310/R2311): a DAC code below the
+     * baseline (firmware 0.4 used 200 = 0.12 V) leaves the comparator permanently high. Levels in
+     * photo-electrons use the FAST path gain of a 6 mm onsemi J-series device at low overvoltage
+     * (6.9 mV per p.e., budget 2.2, ASSUMED until the SiPM is chosen). */
+    s->device = RRH_DEVICE_J60035; /* default device type: the one the budget is written for */
+    rrh_setup_device_thresholds(s);
     for (uint32_t i = 0u; i < RRH_N_TRIMS; i++) {
         s->fe.trim[i] = 2048u; /* 1.25 V of the usable 0.10 ... 2.50 V */
     }
@@ -52,8 +77,14 @@ void rrh_setup_defaults(rrh_setup_t *s)
     s->fe.led_code = 0u;
     s->fe.led_enable = false;
     s->fe.alpha_hold_us = RRH_ALPHA_HOLD_DEFAULT_US;
-    s->fe.alpha_min_tot_ns = RRH_ALPHA_MIN_TOT_DEFAULT_NS;
+    s->alpha_tot_override_ns = 0u;
+    s->thr_confirmed = false; /* placeholders until written or confirmed (ARM is refused on the target) */
+    s->heater_oc_ma = RRH_HEATER_OC_MA_DEFAULT;
+    s->heater_oc_ms = RRH_HEATER_OC_MS_DEFAULT;
+    s->vmon_ratio_e4 = RRH_VMON_RATIO_E4_NOMINAL;
+    s->vmon_calibrated = false;
     s->fe.chain_enable = 0xFFu;
+    rrh_setup_finalize(s);
     /* Placeholders until the SiPM type is known: 30.0 V at 25 degC is below the fitted 31.5 V
      * over-voltage trip (rev A, onsemi J/C strap); 21.5 mV/degC is the onsemi J-series value. */
     s->bias_ref_mv = 30000u;
@@ -86,7 +117,9 @@ bool rrh_setup_valid(const rrh_setup_t *s)
     }
     if ((s->fe.pulser_channel > 7u) || (s->fe.pulser_width_us < 1u) || (s->fe.pulser_width_us > 100u) ||
         (s->fe.led_code > 4095u) || (s->fe.alpha_hold_us > RRH_ALPHA_HOLD_MAX_US) ||
-        (s->fe.alpha_min_tot_ns > RRH_ALPHA_MIN_TOT_MAX_NS)) {
+        (s->alpha_tot_override_ns > RRH_ALPHA_MIN_TOT_MAX_NS) || (s->device > RRH_DEVICE_COUNT) ||
+        (s->heater_oc_ma < 500u) || (s->heater_oc_ma > RRH_HEATER_OC_MA_MAX) || (s->heater_oc_ms < 50u) ||
+        (s->heater_oc_ms > RRH_HEATER_OC_MS_MAX) || (s->vmon_ratio_e4 < 200000u) || (s->vmon_ratio_e4 > 300000u)) {
         return false;
     }
     return (s->fe.pulser_code <= 4095u) && (s->bias_ref_mv >= RRH_BIAS_MIN_MV) &&
@@ -97,8 +130,9 @@ bool rrh_setup_valid(const rrh_setup_t *s)
 }
 
 /* ---- canonical byte image (non-volatile storage and setup hash) ------------------------------ */
-#define SETUP_IMAGE_VERSION 3u
-#define SETUP_IMAGE_LEN (1u + (2u * RRH_N_THRESHOLDS) + (2u * RRH_N_TRIMS) + 2u + 1u + 1u + 4u + 4u + 4u + 1u + 4u + 1u + 1u + 1u + 1u + 2u + 2u + 2u)
+#define SETUP_IMAGE_VERSION 4u
+#define SETUP_TRAILER_LEN 5u /* BIAS_VMON ratio x 1e4 (4) + calibrated flag (1): stored, not hashed */
+#define SETUP_IMAGE_LEN (1u + (2u * RRH_N_THRESHOLDS) + (2u * RRH_N_TRIMS) + 2u + 1u + 1u + 4u + 4u + 4u + 1u + 4u + 1u + 1u + 1u + 1u + 2u + 2u + 1u + 2u + 1u + 2u + 2u)
 
 static size_t put_be(uint8_t *buf, size_t pos, uint32_t v, size_t bytes)
 {
@@ -142,27 +176,40 @@ static size_t pack_image(const rrh_setup_t *s, uint8_t *buf)
     n = put_be(buf, n, s->fe.led_enable ? 1u : 0u, 1u);
     n = put_be(buf, n, s->fe.led_code, 2u);
     n = put_be(buf, n, s->fe.alpha_hold_us, 2u);
-    n = put_be(buf, n, s->fe.alpha_min_tot_ns, 2u);
+    n = put_be(buf, n, s->device, 1u);
+    n = put_be(buf, n, s->alpha_tot_override_ns, 2u);
+    n = put_be(buf, n, s->thr_confirmed ? 1u : 0u, 1u);
+    n = put_be(buf, n, s->heater_oc_ma, 2u);
+    n = put_be(buf, n, s->heater_oc_ms, 2u);
     return n;
 }
 
-/* Stored form: image followed by its CRC-32 (big endian). */
+/* Hashed image only (what the binding and setup_id depend on). */
+size_t rrh_setup_pack_image(const rrh_setup_t *s, uint8_t *buf, size_t cap)
+{
+    return (cap < SETUP_IMAGE_LEN) ? 0u : pack_image(s, buf);
+}
+
+/* Stored form: hashed image, calibration trailer, CRC-32 (big endian) over both. */
 size_t rrh_setup_pack(const rrh_setup_t *s, uint8_t *buf, size_t cap)
 {
-    if (cap < (SETUP_IMAGE_LEN + 4u)) {
+    if (cap < (SETUP_IMAGE_LEN + SETUP_TRAILER_LEN + 4u)) {
         return 0u;
     }
-    const size_t n = pack_image(s, buf);
+    size_t n = pack_image(s, buf);
+    n = put_be(buf, n, s->vmon_ratio_e4, 4u);
+    n = put_be(buf, n, s->vmon_calibrated ? 1u : 0u, 1u);
     return put_be(buf, n, rrc_crc32(buf, n), 4u);
 }
 
 bool rrh_setup_unpack(rrh_setup_t *s, const uint8_t *buf, size_t len)
 {
-    if ((len != (SETUP_IMAGE_LEN + 4u)) || (buf[0] != SETUP_IMAGE_VERSION)) {
+    const size_t body = SETUP_IMAGE_LEN + SETUP_TRAILER_LEN;
+    if ((len != (body + 4u)) || (buf[0] != SETUP_IMAGE_VERSION)) {
         return false;
     }
-    size_t pos = SETUP_IMAGE_LEN;
-    if (get_be(buf, &pos, 4u) != rrc_crc32(buf, SETUP_IMAGE_LEN)) {
+    size_t pos = body;
+    if (get_be(buf, &pos, 4u) != rrc_crc32(buf, body)) {
         return false;
     }
     rrh_setup_t t;
@@ -188,10 +235,17 @@ bool rrh_setup_unpack(rrh_setup_t *s, const uint8_t *buf, size_t len)
     t.fe.led_enable = get_be(buf, &pos, 1u) != 0u;
     t.fe.led_code = (uint16_t)get_be(buf, &pos, 2u);
     t.fe.alpha_hold_us = (uint16_t)get_be(buf, &pos, 2u);
-    t.fe.alpha_min_tot_ns = (uint16_t)get_be(buf, &pos, 2u);
+    t.device = (uint8_t)get_be(buf, &pos, 1u);
+    t.alpha_tot_override_ns = (uint16_t)get_be(buf, &pos, 2u);
+    t.thr_confirmed = get_be(buf, &pos, 1u) != 0u;
+    t.heater_oc_ma = (uint16_t)get_be(buf, &pos, 2u);
+    t.heater_oc_ms = (uint16_t)get_be(buf, &pos, 2u);
+    t.vmon_ratio_e4 = get_be(buf, &pos, 4u);
+    t.vmon_calibrated = get_be(buf, &pos, 1u) != 0u;
     if (!rrh_setup_valid(&t)) {
         return false;
     }
+    rrh_setup_finalize(&t);
     *s = t;
     return true;
 }
@@ -258,6 +312,8 @@ void rrh_setup_to_json(const rrh_setup_t *s, rrc_jw_t *w)
     rrc_jw_ku64(w, "ref_mv", s->bias_ref_mv);
     rrc_jw_ki64(w, "tc_uv_per_c", s->bias_tc_uv_per_c);
     rrc_jw_ki64(w, "t_ref_mc", s->t_ref_mc);
+    rrc_jw_ku64(w, "vmon_ratio_e4", s->vmon_ratio_e4); /* calibration, stored with the setup but not part of setup_id */
+    rrc_jw_kbool(w, "vmon_calibrated", s->vmon_calibrated);
     rrc_jw_obj_end(w);
     rrc_jw_key(w, "pulser");
     rrc_jw_obj_begin(w);
@@ -271,15 +327,19 @@ void rrh_setup_to_json(const rrh_setup_t *s, rrc_jw_t *w)
     rrc_jw_key(w, "afterglow");
     rrc_jw_obj_begin(w);
     rrc_jw_ku64(w, "alpha_hold_us", s->fe.alpha_hold_us);
-    rrc_jw_ku64(w, "alpha_min_tot_ns", s->fe.alpha_min_tot_ns);
+    rrc_jw_ku64(w, "alpha_min_tot_ns", s->alpha_tot_override_ns); /* explicit override, 0 = follow the device type */
     rrc_jw_obj_end(w);
     rrc_jw_key(w, "heater");
     rrc_jw_obj_begin(w);
     rrc_jw_kbool(w, "enable", s->heater_enable);
     rrc_jw_ki64(w, "setpoint_mc", s->heater_setpoint_mc);
     rrc_jw_ku64(w, "max_duty_pct", s->heater_max_duty_pct);
+    rrc_jw_ku64(w, "oc_ma", s->heater_oc_ma);
+    rrc_jw_ku64(w, "oc_ms", s->heater_oc_ms);
     rrc_jw_obj_end(w);
     rrc_jw_ku64(w, "chain_enable", s->fe.chain_enable);
+    rrc_jw_kstr(w, "device", (s->device == 0u) ? "NONE" : rrh_devices[s->device - 1u].name);
+    rrc_jw_kbool(w, "thresholds_confirmed", s->thr_confirmed);
     rrc_jw_obj_end(w);
 }
 
@@ -394,10 +454,23 @@ bool rrh_setup_from_json(rrh_setup_t *s, const rrc_json_t *d, int obj)
         }
         t.bias_tc_uv_per_c = (int32_t)v;
         v = t.t_ref_mc;
-        if (!get_int(d, sub, "t_ref_mc", -40000, 85000, &v, &n) || (n != rrc_json_size(d, sub))) {
+        if (!get_int(d, sub, "t_ref_mc", -40000, 85000, &v, &n)) {
             return false;
         }
         t.t_ref_mc = (int32_t)v;
+        v = t.vmon_ratio_e4;
+        const uint32_t before_ratio = t.vmon_ratio_e4;
+        if (!get_int(d, sub, "vmon_ratio_e4", 200000, 300000, &v, &n)) {
+            return false;
+        }
+        t.vmon_ratio_e4 = (uint32_t)v;
+        if (t.vmon_ratio_e4 != before_ratio) {
+            t.vmon_calibrated = true; /* written = calibrated */
+        }
+        bool ignored_flag = false;
+        if (!get_flag(d, sub, "vmon_calibrated", &ignored_flag, &n) || (n != rrc_json_size(d, sub))) {
+            return false; /* informational on output; accepted so that a GET reply can be sent back */
+        }
     }
     if (!sub_object(d, obj, "pulser", &sub, &top)) {
         return false;
@@ -435,11 +508,11 @@ bool rrh_setup_from_json(rrh_setup_t *s, const rrc_json_t *d, int obj)
             return false;
         }
         t.fe.alpha_hold_us = (uint16_t)v;
-        v = t.fe.alpha_min_tot_ns;
+        v = t.alpha_tot_override_ns;
         if (!get_int(d, sub, "alpha_min_tot_ns", 0, RRH_ALPHA_MIN_TOT_MAX_NS, &v, &n) || (n != rrc_json_size(d, sub))) {
             return false;
         }
-        t.fe.alpha_min_tot_ns = (uint16_t)v;
+        t.alpha_tot_override_ns = (uint16_t)v;
     }
     if (!sub_object(d, obj, "heater", &sub, &top)) {
         return false;
@@ -452,10 +525,20 @@ bool rrh_setup_from_json(rrh_setup_t *s, const rrc_json_t *d, int obj)
         }
         t.heater_setpoint_mc = (int32_t)v;
         v = t.heater_max_duty_pct;
-        if (!get_int(d, sub, "max_duty_pct", 0, 100, &v, &n) || (n != rrc_json_size(d, sub))) {
+        if (!get_int(d, sub, "max_duty_pct", 0, 100, &v, &n)) {
             return false;
         }
         t.heater_max_duty_pct = (uint8_t)v;
+        v = t.heater_oc_ma;
+        if (!get_int(d, sub, "oc_ma", 500, RRH_HEATER_OC_MA_MAX, &v, &n)) {
+            return false;
+        }
+        t.heater_oc_ma = (uint16_t)v;
+        v = t.heater_oc_ms;
+        if (!get_int(d, sub, "oc_ms", 50, RRH_HEATER_OC_MS_MAX, &v, &n) || (n != rrc_json_size(d, sub))) {
+            return false;
+        }
+        t.heater_oc_ms = (uint16_t)v;
     }
     v = t.fe.chain_enable;
     if (!get_int(d, obj, "chain_enable", 0, 255, &v, &top)) {
@@ -466,9 +549,46 @@ bool rrh_setup_from_json(rrh_setup_t *s, const rrc_json_t *d, int obj)
     if (!get_flag(d, obj, "persist", &persist, &top)) {
         return false;
     }
+    /* device type and threshold confirmation */
+    const int dt = rrc_json_get(d, obj, "device");
+    bool device_changed = false;
+    if (dt >= 0) {
+        top++;
+        uint8_t id = 0xFFu;
+        if (rrc_json_str_eq(d, dt, "NONE")) {
+            id = 0u;
+        }
+        for (uint32_t i = 0u; i < RRH_DEVICE_COUNT; i++) {
+            if (rrc_json_str_eq(d, dt, rrh_devices[i].name)) {
+                id = (uint8_t)(i + 1u);
+            }
+        }
+        if (id == 0xFFu) {
+            return false;
+        }
+        device_changed = (id != t.device);
+        t.device = id;
+    }
+    bool confirm = false;
+    const bool has_confirm = rrc_json_get(d, obj, "thresholds_confirmed") >= 0;
+    if (!get_flag(d, obj, "thresholds_confirmed", &confirm, &top)) {
+        return false;
+    }
+    const bool thr_written = rrc_json_get(d, obj, "thresholds") >= 0;
+    if (device_changed && !thr_written) {
+        rrh_setup_device_thresholds(&t); /* a new device type brings its own (placeholder) defaults */
+        t.thr_confirmed = false;
+    }
+    if (thr_written) {
+        t.thr_confirmed = true;
+    }
+    if (has_confirm) {
+        t.thr_confirmed = confirm;
+    }
     if ((top != rrc_json_size(d, obj)) || !rrh_setup_valid(&t)) {
         return false; /* unknown top-level member or inconsistent values */
     }
+    rrh_setup_finalize(&t);
     *s = t;
     return true;
 }

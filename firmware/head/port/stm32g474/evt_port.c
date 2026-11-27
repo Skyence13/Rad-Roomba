@@ -211,6 +211,13 @@ void evt_port_set_alpha_hold_us(uint16_t us)
     service_irq(true);
 }
 
+void evt_port_heater_force_off(void)
+{
+    service_irq(false);
+    rrh_evtcap_heater_force_off(&g_evt);
+    service_irq(true);
+}
+
 void evt_port_set_alpha_tot_min_ns(uint16_t ns)
 {
     service_irq(false);

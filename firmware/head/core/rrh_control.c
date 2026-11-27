@@ -9,6 +9,8 @@
 #include "rrh_internal.h"
 
 static void control_inputs(rrh_core_t *c);
+static void frame_check(rrh_core_t *c);
+static void heater_overcurrent_check(rrh_core_t *c, uint64_t now);
 
 void rrh_control_init(rrh_core_t *c)
 {
@@ -21,6 +23,9 @@ void rrh_control_init(rrh_core_t *c)
     c->bias_on = false;
     c->bias_settle = 0u;
     c->bias_on_age = 0u;
+    c->frame_mv = INT32_MIN;
+    c->frame_ref_valid = false;
+    c->heater_oc_pending = false;
     c->imon_fault = 0u;
     c->imon_pending = 0u;
     for (uint32_t ch = 0u; ch < RRH_CHAINS; ch++) {
@@ -118,7 +123,9 @@ static void bias_loop(rrh_core_t *c, int32_t head_mc)
     if (changed) {
         c->bias_settle = 0u;
         rrh_hal_bias_set(c->bias_out_mv, true);
-        c->bias_writes_gate++; /* review m7: HV_SET write; counted per gate (DIAG bias.dac_writes) */
+        if (c->armed || c->draining) {
+            c->bias_writes_gate++; /* review m7: HV_SET write; counted per gate (DIAG bias.dac_writes) */
+        }
     } else if (c->bias_settle < UINT32_MAX) {
         c->bias_settle++;
     } else {
@@ -130,6 +137,10 @@ static void bias_loop(rrh_core_t *c, int32_t head_mc)
 static void control_inputs(rrh_core_t *c)
 {
     rrh_hal_analog_read(&c->analog);
+    if (c->analog.bias_vmon_adc_uv != 0u) {
+        /* BIAS_VMON divider ratio: nominal 25.2233 until the board is calibrated (STATUS says UNCALIBRATED) */
+        c->analog.bias_mv = rrh_board_bias_mv_cal(c->analog.bias_vmon_adc_uv, c->setup.vmon_ratio_e4);
+    }
     rrh_hal_imon_read(&c->imon);
     rrh_hal_expander_read(&c->exp);
 }
@@ -137,6 +148,63 @@ static void control_inputs(rrh_core_t *c)
 void rrh_control_refresh_inputs(rrh_core_t *c)
 {
     control_inputs(c);
+}
+
+/* Frame potential (S3-03): MON_ADC = 0.300 V + V_FRAME/2 with the lane monitor muxes off (MON_LANE_EN = 0, always, in this
+ * firmware). The reference is the last reading taken while disarmed with no fault, so it is "stored at arm". A fuse F2801 that
+ * has opened (feed-side contact, overload) or a bond that is open lets the frame float: V_FRAME goes towards the heater potential
+ * or VBL (0.6 V at MON_ADC); a return-side contact lifts it by tens of mV while the heater runs. CAN detect: open bond, rise above
+ * the reference by RRH_FRAME_RISE_MV, absolute value outside the nominal window. CANNOT detect: a contact that carries no current
+ * (heater off), a rise below the threshold, a second ground path, or a fault that appears and clears between samples. */
+static void frame_check(rrh_core_t *c)
+{
+    if (!c->analog.mon_valid) {
+        c->frame_mv = INT32_MIN;
+        return;
+    }
+    const uint32_t uv = c->analog.mon_adc_uv;
+    c->frame_mv = rrh_board_frame_mv(uv);
+    bool bad = (c->frame_mv < RRH_FRAME_ABS_MIN_MV) || (c->frame_mv > RRH_FRAME_ABS_MAX_MV);
+    if (c->frame_ref_valid) {
+        const int64_t rise = ((int64_t)uv - (int64_t)c->frame_ref_uv) * 2 / 1000;
+        bad = bad || (rise > RRH_FRAME_RISE_MV);
+    }
+    if (bad) {
+        if ((c->health & RRH_H_FRAME_FAULT) == 0u) {
+            c->health |= RRH_H_FRAME_FAULT;
+            if (c->heater_on) {
+                rrh_hal_heater_force_off();
+                rrh_control_heater_off(c);
+            }
+        }
+    } else if (!c->armed && !c->draining && !c->heater_on && ((c->health & RRH_H_FRAME_FAULT) == 0u)) {
+        c->frame_ref_uv = uv;
+        c->frame_ref_valid = true;
+    } else {
+        /* armed: the reference stays */
+    }
+}
+
+/* Heater over-current on the head's own sense (R2601 x INA180A2 = 0.5 V/A): sustained above heater_oc_ma for heater_oc_ms opens
+ * the switch at once and latches HEATER_OVERCURRENT, so a partial short cannot load the Micro-Fit contact (3.13 A, UNVERIFIED)
+ * between its rating and the chassis eFuse trip (3.56 - 4.35 A). The sense is read at the control period and every gate; the
+ * hold time is judged on head time, so the cut happens at most one sample after it expires. */
+static void heater_overcurrent_check(rrh_core_t *c, uint64_t now)
+{
+    if (!c->analog.heater_ma_valid || (c->analog.heater_ma <= c->setup.heater_oc_ma)) {
+        c->heater_oc_pending = false;
+        return;
+    }
+    if (!c->heater_oc_pending) {
+        c->heater_oc_pending = true;
+        c->heater_oc_since_us = now;
+    }
+    if (((now - c->heater_oc_since_us) >= ((uint64_t)c->setup.heater_oc_ms * 1000u)) &&
+        ((c->health & RRH_H_HEATER_OVERCURRENT) == 0u)) {
+        c->health |= RRH_H_HEATER_OVERCURRENT;
+        rrh_hal_heater_force_off();
+        rrh_control_heater_off(c);
+    }
 }
 
 /* Per-chain anode current from IMON_CH and the trim code: I = (V_trim - V_TRIMDRV) / R105.
@@ -231,6 +299,8 @@ void rrh_control_sample(rrh_core_t *c)
         }
     }
     imon_evaluate(c, rrh_hal_now_us());
+    frame_check(c);
+    heater_overcurrent_check(c, rrh_hal_now_us());
     c->live_flags = live;
 
     /* Heater safety is checked continuously while heating is enabled, not only at gates. */
@@ -246,7 +316,7 @@ void rrh_control_sample(rrh_core_t *c)
             c->health |= RRH_H_HEATER_CUTOUT;
         }
     }
-    if (((c->health & (RRH_H_HEATER_SENSOR | RRH_H_HEATER_CUTOUT | RRH_H_HEATER_OVERTEMP | RRH_H_HEATER_STUCK)) != 0u) &&
+    if (((c->health & RRH_H_HEATER_ANY) != 0u) &&
         c->heater_on) {
         rrh_control_heater_off(c);
     }
@@ -274,7 +344,7 @@ void rrh_control_heater_off(rrh_core_t *c)
  * gate that contains the (slew-limited) edge is marked in its record. */
 void rrh_control_on_gate(rrh_core_t *c, const rrh_gate_record_t *rec)
 {
-    const uint16_t heater_faults = RRH_H_HEATER_SENSOR | RRH_H_HEATER_CUTOUT | RRH_H_HEATER_OVERTEMP | RRH_H_HEATER_STUCK;
+    const uint16_t heater_faults = RRH_H_HEATER_ANY;
 
     /* Commanded off for at least two whole gates but the gate record still shows it on. */
     if (!c->heater_on && (c->heater_dwell >= 2u) && (rec->heater_on_ticks > 0u)) {
@@ -323,7 +393,7 @@ uint8_t rrh_control_acq_flags(const rrh_core_t *c)
     if ((c->health & (RRH_H_SOURCE | RRH_H_GATE_TIMING | RRH_H_RECORD_LOST | RRH_H_GATE_TIMEOUT | RRH_H_INJECTED)) != 0u) {
         f |= RRH_AF_ACQ_FAULT;
     }
-    if ((c->health & (RRH_H_HEATER_SENSOR | RRH_H_HEATER_CUTOUT | RRH_H_HEATER_OVERTEMP | RRH_H_HEATER_STUCK)) != 0u) {
+    if ((c->health & RRH_H_HEATER_ANY) != 0u) {
         f |= RRH_AF_HEATER_FAULT;
     }
     if ((c->health & (RRH_H_HEATER_CUTOUT | RRH_H_HEATER_OVERTEMP)) != 0u) {
@@ -358,6 +428,17 @@ uint16_t rrh_control_clearable(const rrh_core_t *c)
      * is still there). */
     if (!c->exp.present || ((c->exp.inputs & RRH_EXP_HV_INH_N) != 0u)) {
         ok |= RRH_H_BIAS_PERMIT;
+    }
+    /* frame fault: the reading is back in its window and below the reference + threshold; over-current: the sense is below the limit */
+    if (c->analog.mon_valid) {
+        const int32_t fmv = rrh_board_frame_mv(c->analog.mon_adc_uv);
+        const bool rise_ok = !c->frame_ref_valid || ((((int64_t)c->analog.mon_adc_uv - (int64_t)c->frame_ref_uv) * 2 / 1000) <= RRH_FRAME_RISE_MV);
+        if ((fmv >= RRH_FRAME_ABS_MIN_MV) && (fmv <= RRH_FRAME_ABS_MAX_MV) && rise_ok) {
+            ok |= RRH_H_FRAME_FAULT;
+        }
+    }
+    if (!c->analog.heater_ma_valid || (c->analog.heater_ma <= c->setup.heater_oc_ma)) {
+        ok |= RRH_H_HEATER_OVERCURRENT;
     }
     return ok;
 }

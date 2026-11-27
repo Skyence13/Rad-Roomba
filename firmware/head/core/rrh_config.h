@@ -3,7 +3,7 @@
 #ifndef RRH_CONFIG_H
 #define RRH_CONFIG_H
 
-#define RRH_FW_VERSION "rr-head-0.5.1"
+#define RRH_FW_VERSION "rr-head-0.5.2"
 #define RRH_PROTO_VERSION "2.0"
 #define RRH_ACQ_FORMAT "2.0"
 #define RRH_HEAD_TYPE "FOUR_LANE_ZNS_PLASTIC_WITH_REFERENCE"
@@ -14,7 +14,7 @@
 /* Link */
 #define RRH_RX_MAX 8192u          /* ICD section 4: maximum record including trailer */
 #define RRH_TX_MAX 4096u          /* largest reply this firmware produces is < 2 kB */
-#define RRH_JSON_TOKENS 96u       /* largest legal request (ENG_SETUP_SET) needs ~70 */
+#define RRH_JSON_TOKENS 128u      /* largest legal request (a full ENG_SETUP_SET) needs ~110 */
 #define RRH_JSON_DEPTH 6u
 #define RRH_JSON_STRING 256u
 #define RRH_RX_GAP_TIMEOUT_US 5000u /* default idle gap that releases a partial record */
@@ -62,10 +62,9 @@
 #define RRH_BIAS_STEP_MV 20u             /* slew limit per control period while tracking temperature */
 #define RRH_BIAS_DEADBAND_MV 5u
 #define RRH_BIAS_SETTLE_PERIODS 5u
-/* Bias-on sequence (CCR-HE-09): HV_SET starts at 0 and rises at most 5 V/s at the DAC output
- * (the request says "HV_SET <= 5 V/s"; at HV_BUS that is 25 x 5 = 125 V/s, 12.5 V per 100 ms
- * period. If electronics meant 5 V/s at HV_BUS this constant becomes 500 - see CONTRACT_CHANGE_REQUESTS). */
-#define RRH_BIAS_RAMP_STEP_MV 12500u
+/* Bias-on sequence (CCR-HE-09, S3-07): HV_SET starts at 0; the ramp is 5 V/s AT HV_BUS (0.2 V/s at the DAC output): 500 mV per
+ * 100 ms control period, 0 -> 31.5 V in 6.3 s. (~9.8 uF on the bias bus: 49 uA at 5 V/s, 1.2 mA at 125 V/s.) */
+#define RRH_BIAS_RAMP_STEP_MV 500u
 /* HV_EN high and BIAS_VMON below this once the ramp has finished: the permit latch is tripped
  * (CCR-HE-09); the commanded set-point is at least RRH_BIAS_MIN_MV. */
 #define RRH_BIAS_PERMIT_TRIP_MV 1000u
@@ -88,19 +87,37 @@
 /* Default thresholds above the 0.600 V baseline (rrh_setup_defaults): levels in p.e. of the FAST path
  * of a 6 mm onsemi J-series device (6.9 mV per p.e., budget 2.2) - ASSUMED, replace when the SiPM is chosen. */
 #define RRH_FAST_UV_PER_PE 6900u
-#define RRH_DEFAULT_LLD_PE 8u        /* inside the dark-limited 7 ... 10 p.e. (budget 1; IB-22) */
-#define RRH_DEFAULT_ULD_PE 150u      /* above the assumed beta maximum of 120 p.e. */
+/* LLD per device type is in rrh_devices[] (T6, +10 degC, dark triggers < 0.05 /s per chain; J60035: 10 p.e., 11 at maximum DCR). */
+#define RRH_DEFAULT_ULD_PE 250u      /* above the brightest assumed beta (240 p.e., T13), limited to 1.8 V above baseline */
+#define RRH_DEFAULT_ULD_MAX_UV 1800000u
 #define RRH_DEFAULT_ALPHA_UV 30000u  /* ALPHA (slow path): just below the assumed alpha minimum of 33 mV; a beta above ~80 p.e. (0.37 mV/p.e.)
                                       * also crosses it - the budget 2.3 ranges overlap (beta maximum 44 mV). ASSUMED */
 
 /* Afterglow hold after an alpha event (IB-18, budget 4): ZnS(Ag) afterglow / slow-baseline undershoot. */
 #define RRH_ALPHA_HOLD_DEFAULT_US 300u /* review m2: FAST is still ~3 p.e. low 150 us after a large alpha (PZ network passes DC), zero crossing ~314 us */
 #define RRH_ALPHA_HOLD_MAX_US 500u
+/* Hold 300 us kept (S3-04): with the 47 nF C150..C850 in the PZ branch the electronics' T14 gives -0.49 p.e. at 150 us and +0.06 p.e. at
+ * 300 us after a 15 000 p.e. alpha (-3.3 p.e. at 300 us with the stage-1 network). 150 us would now do for the baseline; the afterglow of
+ * ZnS (budget 4: 100 - 200 us) is the other reason and is not removed by the capacitor, so 300 us stays (set 150 on the bench if live time matters). */
+
+/* Heater over-current cut-off on the head's own sense (S3 heater-contact decision): Micro-Fit contact 3.13 A continuous
+ * (UNVERIFIED), normal draw up to 3.04 A at 14.6 V, chassis eFuse trips anywhere from 3.56 to 4.35 A. */
+#define RRH_HEATER_OC_MA_DEFAULT 3200u
+#define RRH_HEATER_OC_MS_DEFAULT 300u   /* sustained: three control periods; the heater switch is opened at once when it expires */
+#define RRH_HEATER_OC_MA_MAX 4500u
+#define RRH_HEATER_OC_MS_MAX 5000u
+
+/* Frame potential check (S3-03): MON_ADC = 0.300 V + V_FRAME/2 with the lane muxes off. */
+#define RRH_FRAME_RISE_MV 30         /* > 15 mV at MON_ADC = 30 mV of frame potential above the stored reference: heater off, FRAME_FAULT */
+#define RRH_FRAME_ABS_MIN_MV (-60)   /* nominal window of the frame potential at boot (VBL +-20 mV -> +-20 mV at the frame term, plus offsets) */
+#define RRH_FRAME_ABS_MAX_MV 60
+#define RRH_MON_GAIN_PCT 98          /* lane monitor tap gain, 10 k into 1 M // 1 M (S3-01); monitor capture is not implemented in the port */
+#define RRH_MON_SETTLE_US 2000u      /* settle after a lane mux change (10 k x 50 - 150 pF bus), S3-01 */
 
 /* Alpha classification (review C1): the ALPHA latch alone is not enough, a bright beta (>= ~81 p.e.) crosses the slow
  * threshold too (SLOW 0.369 mV/p.e. for plastic light against 0.218 for ZnS, head_afe_calc_out.md T2). Alpha needs
  * a raw-LLD time over threshold >= this: bright beta 120 p.e. ~ 160 ns, ZnS alpha 150 p.e. >= 280 ns (calculated). */
-#define RRH_ALPHA_MIN_TOT_DEFAULT_NS 250u
+#define RRH_ALPHA_MIN_TOT_DEFAULT_NS 290u /* only when no device type is set; the cut follows the device (rrh_devices[]) unless overridden */
 #define RRH_ALPHA_MIN_TOT_MAX_NS 5000u
 
 /* ALPHA latch set on a chain whose BUSY latch is not (slow light below BETA_LLD): cleared after

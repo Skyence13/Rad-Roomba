@@ -238,6 +238,11 @@ static void op_arm(rrh_core_t *c, const rrc_json_t *d, const rrc_req_t *req, rrc
         return;
     } else {
         rrh_epoch_t epoch;
+        /* Never count with a device type that is not set or thresholds that are only placeholders (review O6). */
+        if (!c->ident.allow_placeholder_thresholds && ((c->setup.device == RRH_DEVICE_NONE) || !c->setup.thr_confirmed)) {
+            rrh_reply_status(w, req->id, "FAULT", (c->setup.device == RRH_DEVICE_NONE) ? "device_type_unset" : "placeholder_thresholds");
+            return;
+        }
         if (!rrh_hal_acq_start((uint32_t)span, &epoch) || (epoch.tick_hz == 0u)) {
             c->health |= RRH_H_SOURCE;
             rrh_reply_status(w, req->id, "FAULT", "acquisition_source");

@@ -35,6 +35,7 @@ typedef struct {
     char geometry_id[49];
     uint32_t gate_min_us; /* descriptor gate_range_us and ARM limits */
     uint32_t gate_max_us;
+    bool allow_placeholder_thresholds; /* emulator / bench: ARM is not refused for an unset device type or unconfirmed thresholds (false on the target) */
     bool rail_5mm; /* 5 mm bumper-rail projection trial instead of the 3 mm baseline */
     /* Bench/emulator only: serve these exact descriptor bytes and identifiers instead of the
      * built descriptor (used to reproduce the 0.3 baseline examples byte for byte). All NULL on
@@ -54,6 +55,14 @@ typedef struct {
     bool heater_enable;
     int32_t heater_setpoint_mc;
     uint8_t heater_max_duty_pct;
+    uint16_t heater_oc_ma;      /* heater over-current cut-off: sustained above this ... */
+    uint16_t heater_oc_ms;      /* ... for this long opens the heater switch (HEATER_OVERCURRENT) */
+    uint8_t device;             /* SiPM device type (rrh_devices[], 0 = not set): defaults for thresholds and the alpha TOT cut */
+    uint16_t alpha_tot_override_ns; /* explicit alpha TOT cut, 0 = follow the device type */
+    bool thr_confirmed;         /* thresholds written by a person/host (or confirmed); false = placeholders from the device defaults */
+    /* Per-board calibration (non-volatile, NOT part of setup_id: it changes no sample): BIAS_VMON divider ratio x 1e4 */
+    uint32_t vmon_ratio_e4;
+    bool vmon_calibrated;
 } rrh_setup_t;
 
 /* ---- link state --------------------------------------------------------------------------- */
@@ -78,8 +87,10 @@ typedef enum {
 #define RRH_H_STORAGE 0x0800u         /* stored setup unreadable: defaults in use */
 #define RRH_H_WATCHDOG_RESET 0x1000u  /* this boot followed a watchdog reset */
 #define RRH_H_BIAS_PERMIT 0x2000u     /* bias permit latch tripped: HV_EN high but no bias (OVP, +5V_A low, lid open) */
-#define RRH_H_ALL 0x3FFFu
-#define RRH_H_COUNT 14u
+#define RRH_H_FRAME_FAULT 0x4000u     /* frame bond open (F2801) or frame potential out of range: heater off */
+#define RRH_H_HEATER_OVERCURRENT 0x8000u /* heater current above the cut-off for its hold time: switch opened */
+#define RRH_H_ALL 0xFFFFu
+#define RRH_H_COUNT 16u
 
 /* ---- retained frame (ACQ + DIAG source data for one gate) --------------------------------- */
 #define RRH_SYNC_UNSYNCED 0u
@@ -145,6 +156,7 @@ typedef struct {
     uint32_t supply_mv;
     uint8_t bumper_zones; /* zones seen closed at any poll during the gate (meaningful only if zones_available) */
     bool zones_available; /* false on rev A: no rail-zone identification, DIAG reports null */
+    uint8_t imon_steps;   /* IMON mux steps during this gate (non-zero only with RRH_IMON_SCAN_WHILE_ARMED) */
     uint8_t bias_writes;  /* HV_SET writes during this gate (bias temperature tracking while armed), saturating */
     bool imon_paused;     /* per-chain anode monitor not scanning during this gate (armed, RRH_IMON_SCAN_WHILE_ARMED 0) */
     uint8_t imon_fault;   /* chains whose anode current monitor was out of window in this gate (bit n = chain n) */
@@ -220,6 +232,12 @@ typedef struct {
     uint32_t bias_out_mv;     /* what the port was told: ramps from 0 to bias_cmd_mv after bias-on */
     bool bias_on;
     uint32_t bias_settle;     /* control periods since the last set-point change */
+    uint32_t imon_steps_prev;  /* mux steps counted at the previous frame */
+    uint32_t frame_ref_uv;     /* MON_ADC reference (frame potential at the last quiet reading) */
+    bool frame_ref_valid;
+    bool heater_oc_pending;
+    uint64_t heater_oc_since_us;
+    int32_t frame_mv;          /* last frame potential, mV; INT32_MIN = not measured */
     uint32_t bias_writes_gate; /* HV_SET writes since the last frame */
     bool imon_paused;          /* armed with the scan off: readings are held back (reported null), the verdict of the last scan stays */
     uint32_t bias_on_age;     /* control periods since HV_EN was raised */

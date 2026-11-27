@@ -31,7 +31,7 @@ peripherals:
   USART1:  "RS-485 host link, 1 Mbaud 8N1, hardware driver-enable (DEM) on USART1_DE"
   UART4:   "debug console 115200 8N1"
   SPI1:    "threshold/trim DACs, 4 x DAC60508, mode 1, 4.5 MHz, one GPIO chip-select each"
-  I2C3:    "TMP117 x2 (0x48, 0x49), 24AA025E64 EUI EEPROM (0x50) and the OPTIONAL TCA9534 expander (0x20: MON_EXT out, HV_PERMIT / HV_INH_N / LID_G / EF_FLT_N / HWREV in), 100 kHz"
+  I2C3:    "TMP117 x2 (0x48, 0x49), 24AA025E64 EUI EEPROM (0x50) and the OPTIONAL TCA9534 expander (0x20: MON_EXT out, MON_LANE_EN out (P7, stage 3: lane monitor muxes off), HV_PERMIT / HV_INH_N / LID_G / EF_FLT_N / HWREV in), 100 kHz"
   ADC1:    "housekeeping scan: bias V/I, 4 SiPM NTC, heater NTC, board NTC, supply, heater sense"
   ADC2:    "monitor waveform capture (engineering), stopped after the selected chain's BUSY capture (not implemented in the target port)"
   ADC4:    "IMON_CH: per-chain anode current monitor on PE15 = ADC4_IN2, background scan of the eight chains through the TMUX1108 U2703 addressed by MON_MUX_A[2:0] (settle 10 ms per step)"
@@ -108,8 +108,8 @@ pins:
   - {pin: PB0,   lqfp100: 32, signal: "NTC_HTR",       peripheral: ADC1,   af: "-",dir: analog, note: "Heater-plate NTC (same network). Open/short detection in firmware.", channel: 15}
   - {pin: PB14,  lqfp100: 53, signal: "NTC_BOARD",     peripheral: ADC1,   af: "-",dir: analog, note: "Board NTC near the bias converter (same network).", channel: 5}
   - {pin: PB1,   lqfp100: 33, signal: "VIN_MON",       peripheral: ADC1,   af: "-",dir: analog, note: "HEAD_PWR after input protection, divider 1:6.6 (19.8 V full scale at 3.0 V reference), 100 nF.", channel: 12}
-  - {pin: PB12,  lqfp100: 51, signal: "HTR_SENSE",     peripheral: ADC1,   af: "-",dir: analog, note: "Current-sense output of the heater high-side switch (scale by electronics).", channel: 11}
-  - {pin: PC4,   lqfp100: 30, signal: "MON_ADC",       peripheral: ADC2,   af: "-",dir: analog, note: "Buffered monitor mux output, 0-3 V, anti-alias RC ~ 1 MHz.", channel: 5}
+  - {pin: PB12,  lqfp100: 51, signal: "HTR_SENSE",     peripheral: ADC1,   af: "-",dir: analog, note: "Heater current: R2601 10 mohm shunt x INA180A2 (gain 50) = 0.5 V/A, 1 k R2602 + 100 nF C2603 (stage 3: over-current cut-off in firmware).", channel: 11}
+  - {pin: PC4,   lqfp100: 30, signal: "MON_ADC",       peripheral: ADC2,   af: "-",dir: analog, note: "Buffered monitor output (ADC2_IN5). With all lane muxes off (MON_LANE_EN = 0, always) it reads 0.300 V + V(FRAME)/2 (stage 3 S3-03: R2702 1 M to VBL, R2802 1 M to FRAME): frame-potential check. Anti-alias RC ~ 1 MHz.", channel: 5}
   - {pin: PB5,   lqfp100: 92, signal: "MON_MUX_A0",    peripheral: GPIO,   af: "-",dir: out,    note: "Mux select bit 0. Shared: (a) per-chain anode current mux U2703, channel = MON_MUX_A[2:0] (0-3 = F0-F3, 4-7 = R0-R3); (b) lane monitor decoder U2701 A0 (enables lane A[1:0])."}
   - {pin: PB7,   lqfp100: 94, signal: "MON_MUX_A1",    peripheral: GPIO,   af: "-",dir: out,    note: "Mux select bit 1 (same shared use as bit 0)."}
   - {pin: PB9,   lqfp100: 96, signal: "MON_MUX_A2",    peripheral: GPIO,   af: "-",dir: out,    note: "Mux select bit 2: U2703 A2 and the lane mux address A0 of the waveform monitor (shared)."}

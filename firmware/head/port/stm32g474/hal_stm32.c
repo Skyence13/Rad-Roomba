@@ -122,7 +122,11 @@ void rrh_hal_analog_read(rrh_analog_t *out)
     /* heater plate NTC: part not chosen (assumed B3435-class); board NTC RT2201 is B3380 (circuit) */
     out->heater_plate_mc = valid ? ntc_to_hal(bsp_adc_code(BSP_ADC_NTC_HTR), RRH_NTC_B3435) : RRH_TEMP_INVALID;
     out->board_mc = valid ? ntc_to_hal(bsp_adc_code(BSP_ADC_NTC_BOARD), RRH_NTC_B3380) : RRH_TEMP_INVALID;
-    out->bias_mv = rrh_board_bias_mv(bsp_adc_mv(BSP_ADC_BIAS_V));        /* R2217 + R2218 + R2219 over R2219 */
+    out->bias_vmon_adc_uv = rrh_board_adc_uv(bsp_adc_code(BSP_ADC_BIAS_V)); /* the core applies R2217 + R2218 + R2219 over R2219 (calibrated) */
+    out->bias_mv = rrh_board_bias_mv(bsp_adc_mv(BSP_ADC_BIAS_V));        /* nominal, used only if the core gets no pin voltage */
+    out->mon_valid = bsp_mon_adc_uv(&out->mon_adc_uv); /* frame potential: lane muxes are always off (MON_LANE_EN = 0) */
+    out->heater_ma_valid = valid;
+    out->heater_ma = rrh_board_heater_ma(rrh_board_adc_uv(bsp_adc_code(BSP_ADC_HTR_SENSE))); /* R2601 x INA180A2 = 0.5 V/A */
     out->bias_ua = rrh_board_bias_total_ua(bsp_adc_mv(BSP_ADC_BIAS_I)); /* 8.0 mV per uA (0.8 x R2206) */
     out->bias_valid = valid;
     out->supply_mv = rrh_board_supply_mv(bsp_adc_mv(BSP_ADC_VIN));       /* R2010 + R2011 over R2011 */
@@ -146,6 +150,7 @@ void rrh_hal_expander_read(rrh_expander_t *out)
 }
 
 void rrh_hal_heater_request(bool on) { evt_port_heater_request(on); }
+void rrh_hal_heater_force_off(void) { evt_port_heater_force_off(); }
 
 bool rrh_hal_nv_load(uint8_t slot, uint8_t *buf, size_t cap, size_t *len)
 {

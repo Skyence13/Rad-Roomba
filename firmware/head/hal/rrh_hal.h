@@ -112,6 +112,7 @@ typedef struct {
     bool led_enable;                      /* strobe LED_STROBE (PC12) with the pulser period */
     uint16_t alpha_hold_us;               /* afterglow hold after an alpha event, 0 = off (IB-18) */
     uint16_t alpha_min_tot_ns;            /* alpha = ALPHA latch AND raw-LLD time over threshold >= this (C1); 0 = no width condition */
+    uint8_t device;                       /* SiPM device type (informational for models; the thresholds are already codes) */
     uint8_t chain_enable; /* bit n: floor lane n; bit 4+n: reference lane n */
 } rrh_frontend_cfg_t;
 
@@ -127,11 +128,19 @@ typedef struct {
     int32_t sipm_mc[RRH_LANES]; /* milli-degC near each lane's SiPMs, RRH_TEMP_INVALID if unusable */
     int32_t heater_plate_mc;
     int32_t board_mc;
-    uint32_t bias_mv;
+    uint32_t bias_vmon_adc_uv; /* voltage at the BIAS_VMON ADC pin; the core applies the (calibrated) divider ratio */
+    uint32_t bias_mv;          /* port-converted (nominal ratio), kept for ports/tests that cannot supply the pin voltage: used when bias_vmon_adc_uv is 0 */
     uint32_t bias_ua;
     bool bias_valid;
     uint32_t supply_mv;
     bool supply_valid;
+    /* MON_ADC (PC4 = ADC2_IN5) with all lane monitor muxes off: 0.300 V + V_FRAME/2 (stage 3). mon_valid false = not measured
+     * (muxes on for an engineering capture, ADC not ready). */
+    bool mon_valid;
+    uint32_t mon_adc_uv;
+    /* Heater current from the head's own sense (R2601 10 mohm x INA180A2 gain 50 = 0.5 V/A), mA; valid whenever the ADC works */
+    bool heater_ma_valid;
+    uint32_t heater_ma;
     bool heater_cutout_ok;  /* independent hardware thermal cut-out closed / heater feed present */
     /* Rail-zone identification. Rev A has NO zone identification (IB-21 closed: single-pole rail
      * switches, the inputs are idle): the port sets zones_available = false and bumper_zones then
@@ -151,6 +160,7 @@ void rrh_hal_analog_read(rrh_analog_t *out);
 typedef struct {
     uint8_t valid;
     uint32_t uv[8];
+    uint32_t steps; /* cumulative number of mux address changes (marker for gates in which the scan ran, DIAG imon_steps) */
 } rrh_imon_t;
 void rrh_hal_imon_read(rrh_imon_t *out);
 
@@ -165,6 +175,8 @@ void rrh_hal_expander_read(rrh_expander_t *out);
 /* Requested state; the port applies it on the next gate boundary while gates run,
  * immediately otherwise. */
 void rrh_hal_heater_request(bool on);
+/* Open the heater switch NOW (over-current, frame fault), not on the next gate boundary. The gate that contains the edge is marked. */
+void rrh_hal_heater_force_off(void);
 
 /* ---- non-volatile storage ----------------------------------------------------------------- */
 #define RRH_NV_SLOT_SETUP 0u

@@ -78,8 +78,8 @@ static void test_dac_stage_scales(void)
     CHECK(near_u(rrh_board_baseline_uv(), 600304.0, 1.0));
     CHECK(rrh_board_threshold_code(0u) == 983u || rrh_board_threshold_code(0u) == 984u);
     CHECK(rrh_board_threshold_code(1900000u) >= 4094u); /* 1.90 V above baseline = DAC full scale */
-    CHECK(rrh_board_threshold_code(8u * RRH_FAST_UV_PER_PE) == 1074u);
-    CHECK(rrh_board_threshold_code(RRH_DEFAULT_ULD_PE * RRH_FAST_UV_PER_PE) == 2679u);
+    CHECK(rrh_board_threshold_code(10u * 6930u) == 1097u); /* J60035 LLD 10 p.e. */
+    CHECK(rrh_board_threshold_code(250u * 6930u) == 3822u);
     CHECK(rrh_board_threshold_code(RRH_DEFAULT_ALPHA_UV) == 1033u);
 }
 
@@ -139,6 +139,32 @@ static void test_straps_reproduce_the_budget(void)
     CHECK(30000u < rrh_board_bias_limit_mv());
 }
 
+
+static void test_stage3_scales(void)
+{
+    /* heater sense: 10 mohm x gain 50 = 0.5 V/A: 3.04 A -> 1.52 V, 3.2 A -> 1.6 V, ADC full scale 3.0 V = 6 A */
+    CHECK(rrh_board_heater_ma(1520000u) == 3040u);
+    CHECK(rrh_board_heater_ma(1600000u) == 3200u);
+    CHECK(rrh_board_heater_ma(3000000u) == 6000u);
+    /* frame monitor: MON_ADC = VBL/2 + V_FRAME/2, VBL = 0.6003 V (R2310/R2311) */
+    CHECK(near_u(rrh_board_frame_nominal_uv(), 300152.0, 1.0));
+    CHECK(rrh_board_frame_mv(rrh_board_frame_nominal_uv()) == 0);
+    CHECK(rrh_board_frame_mv(rrh_board_frame_nominal_uv() + 40000u) == 80);  /* return-side contact: +35..45 mV at MON_ADC */
+    CHECK(rrh_board_frame_mv(600304u) == 600);                               /* open bond: the frame floats at VBL */
+    CHECK(rrh_board_frame_mv(rrh_board_frame_nominal_uv() - 20000u) == -40);
+    /* BIAS_VMON with a calibration ratio: the inverse pair round-trips */
+    for (uint32_t mv = 20000u; mv <= 31000u; mv += 1000u) {
+        CHECK(labs((long)rrh_board_bias_mv_cal(rrh_board_bias_adc_uv(mv, 252233u), 252233u) - (long)mv) <= 1L);
+        CHECK(labs((long)rrh_board_bias_mv_cal(rrh_board_bias_adc_uv(mv, 255000u), 252233u) - (long)(mv * 252233.0 / 255000.0 + 0.5)) <= 1L);
+    }
+    /* device table: cuts per the electronics' T13 mid-gap values, LLD per T6 (+10 degC, 0.05 /s) */
+    CHECK(rrh_devices[0].tot_cut_ns == 290u && rrh_devices[1].tot_cut_ns == 180u && rrh_devices[2].tot_cut_ns == 215u);
+    CHECK(rrh_devices[3].tot_cut_ns == 190u && rrh_devices[4].tot_cut_ns == 200u && rrh_devices[5].tot_cut_ns == 655u);
+    CHECK(rrh_devices[0].lld_pe == 10u && rrh_devices[0].fast_uv_per_pe == 6930u);
+    CHECK(RRH_BIAS_RAMP_STEP_MV == 500u); /* 5 V/s at HV_BUS */
+    CHECK(RRH_EXP_MON_LANE_EN == 0x80u && RRH_EXP_DIR_MASK == 0x7Eu); /* P7 = MON_LANE_EN, P0 = MON_EXT outputs */
+}
+
 int main(void)
 {
     RUN(test_bias_set_point_law);
@@ -147,5 +173,6 @@ int main(void)
     RUN(test_dac_stage_scales);
     RUN(test_ntc_tables);
     RUN(test_straps_reproduce_the_budget);
+    RUN(test_stage3_scales);
     return TEST_SUMMARY();
 }

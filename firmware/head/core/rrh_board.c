@@ -12,6 +12,10 @@ static const uint16_t k_ntc_tab[2][NTC_N] = {
     {3928u, 3872u, 3802u, 3716u, 3613u, 3492u, 3353u, 3196u, 3024u, 2839u, 2644u, 2445u, 2245u, 2048u, 1857u, 1675u, 1505u,
      1347u, 1203u, 1072u, 954u, 849u, 755u, 672u, 598u, 533u, 476u, 425u, 380u, 341u, 306u, 276u, 249u, 224u}};
 
+const rrh_device_t rrh_devices[RRH_DEVICE_COUNT] = {
+    {"J60035", 290u, 10u, 6930u, 30000u},  {"J30035", 180u, 9u, 12200u, 41500u}, {"S14160", 215u, 10u, 8200u, 31200u},
+    {"S13360", 190u, 7u, 6300u, 23000u},   {"NUVMT", 200u, 23u, 24000u, 95000u}, {"4xJ60035", 655u, 12u, 2800u, 17800u}};
+
 const rrh_strap_t rrh_straps[RRH_STRAP_COUNT] = {
     {"onsemi J/C", 71500u, 7150u}, {"Hamamatsu S14160", 53600u, 13000u}, {"Broadcom NUV-MT", 49900u, 16900u},
     {"Hamamatsu S13360", 40200u, 40200u}};
@@ -38,6 +42,32 @@ uint32_t rrh_board_bias_mv(uint32_t adc_mv)
 }
 
 /* I = V / (0.8 x R2206): mV / (8 mV per uA) with R2206 = 10 k (mirror gain 0.8 is a datasheet figure). */
+uint32_t rrh_board_bias_mv_cal(uint32_t adc_uv, uint32_t ratio_e4)
+{
+    return div_round((uint64_t)adc_uv * ratio_e4, 10000000u);
+}
+
+uint32_t rrh_board_bias_adc_uv(uint32_t bias_mv, uint32_t ratio_e4)
+{
+    return div_round((uint64_t)bias_mv * 10000000u, ratio_e4);
+}
+
+/* V(sense) = I x 10 mohm x 50 = 0.5 V/A: mA = uV / 500 */
+uint32_t rrh_board_heater_ma(uint32_t adc_uv)
+{
+    return div_round((uint64_t)adc_uv * 1000u, (uint64_t)RRH_R2601_MOHM * RRH_INA180_GAIN * 1000u);
+}
+
+uint32_t rrh_board_frame_nominal_uv(void)
+{
+    return rrh_board_baseline_uv() / 2u;
+}
+
+int32_t rrh_board_frame_mv(uint32_t mon_adc_uv)
+{
+    return (int32_t)(((int64_t)mon_adc_uv - (int64_t)rrh_board_frame_nominal_uv()) * 2 / 1000);
+}
+
 uint32_t rrh_board_bias_total_ua(uint32_t adc_mv)
 {
     return div_round((uint64_t)adc_mv * 1000u * 10u, (uint64_t)8u * RRH_R2206_OHM);
@@ -142,6 +172,5 @@ uint32_t rrh_board_bias_limit_mv(void)
 
 /* Compile-time consistency of the derived constants. */
 _Static_assert(RRH_HV_FS_MV == 62500u, "bias full scale is 25 x 2.5 V");
-_Static_assert(RRH_BIAS_RAMP_STEP_MV == ((5000uLL * RRH_HV_GAIN_NUM / RRH_HV_GAIN_DEN) * RRH_CONTROL_PERIOD_US / 1000000u),
-               "bias ramp step = 5 V/s at HV_SET x 25 per control period");
+_Static_assert(RRH_BIAS_RAMP_STEP_MV == (5000uLL * RRH_CONTROL_PERIOD_US / 1000000u), "bias ramp step = 5 V/s at HV_BUS per control period");
 _Static_assert(RRH_IMON_SETTLE_US == (10u * RRH_R108_OHM * RRH_C2704_NF / 1000u), "10 time constants of R108 x C2704");

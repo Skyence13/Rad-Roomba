@@ -69,6 +69,9 @@ typedef struct {
     bool permit;                /* modelled permit latch: set by HV_EN rising edge with no inhibit, cleared by any inhibit */
     bool bias_enable_prev;
     uint8_t hw_rev;
+    double frame_mv;            /* frame potential relative to GND (mV), default 0 */
+    double heater_ma_model;     /* heater current while the switch is on, default 2500 mA */
+    uint32_t vmon_true_ratio_e4; /* the board's real BIAS_VMON ratio x 1e4 (default nominal); the core uses its calibration */
     /* storage */
     uint8_t nv[256];
     size_t nv_len;

@@ -551,14 +551,14 @@ class BoardFunctions(SimCase):
     def arm(self, **rates):
         hello, reader = self.bound_reader()
         self.sim.ctl(cmd="rates", **(rates or {"alpha": 0, "beta": 50, "ref": 50}))
-        self.sim.advance(1_500_000)      # bias ramped (3 control periods) and settled
+        self.sim.advance(7_500_000)      # bias ramped (500 mV per 100 ms) and settled
         self.link.ok("ARM", {"span_us": 100000})
         return reader
 
     def test_per_lane_bias_out_of_range_reaches_the_host(self):
         hello, reader = self.bound_reader()
         self.sim.ctl(cmd="rates", alpha=0, beta=50, ref=50)
-        self.sim.advance(1_500_000)
+        self.sim.advance(7_500_000)
         self.sim.ctl(cmd="analog", imon_ua=[1, 1, 1, 1, 1, 1, 400, 1])   # reference chain of lane 2 over 0.2 mA
         self.sim.advance(800_000)                                         # disarmed: the scan sees it
         self.assertEqual(self.link.ok("STATUS", {})["imon"]["fault"], ["R2"])
@@ -586,13 +586,13 @@ class BoardFunctions(SimCase):
 
     def test_tripped_permit_lid_and_recovery(self):
         hello, reader = self.bound_reader()
-        self.sim.advance(1_500_000)
+        self.sim.advance(7_500_000)
         st = self.link.ok("STATUS", {})
         self.assertTrue(st["bias"]["on"])
         self.assertEqual(st["expander"], {"present": True, "hv_permit": True, "hv_inhibit": False,
                                           "lid_open": False, "efuse_fault": False, "hw_rev": 0})
         self.sim.ctl(cmd="analog", lid_open=True)
-        self.sim.advance(1_500_000)
+        self.sim.advance(2_000_000)
         st = self.link.ok("STATUS", {})
         self.assertIn("BIAS_PERMIT", st["health"])
         self.assertFalse(st["bias"]["on"])
@@ -600,13 +600,13 @@ class BoardFunctions(SimCase):
         self.assertEqual(self.link.ok("FAULT_CLEAR", {})["cleared"], [])        # lid still open
         self.sim.ctl(cmd="analog", lid_open=False)
         self.assertIn("BIAS_PERMIT", self.link.ok("FAULT_CLEAR", {})["cleared"])
-        self.sim.advance(1_500_000)
+        self.sim.advance(7_500_000)
         st = self.link.ok("STATUS", {})
         self.assertTrue(st["bias"]["on"] and "BIAS_PERMIT" not in st["health"])
         self.assertTrue(self.sim.ctl(cmd="stats")["board"]["bias"]["permit"])
         # without the expander the same trip is found from BIAS_VMON
         self.sim.ctl(cmd="analog", expander=False, inhibit=True)
-        self.sim.advance(1_500_000)
+        self.sim.advance(2_000_000)
         st = self.link.ok("STATUS", {})
         self.assertIn("BIAS_PERMIT", st["health"])
         self.assertEqual(st["expander"]["present"], False)
@@ -659,7 +659,7 @@ class BoardFunctions(SimCase):
         self.link.ok("DISARM", {})
         self.sim.advance(300_000)
         hello, reader = self.bound_reader()
-        self.link.ok("ENG_SETUP_SET", {"afterglow": {"alpha_min_tot_ns": 0}})
+        self.link.ok("ENG_SETUP_SET", {"afterglow": {"alpha_min_tot_ns": 1}})   # 1 ns = no width condition (0 = follow the device type)
         hello, reader = self.bound_reader()
         self.link.ok("ARM", {"span_us": 100000})
         self.sim.advance(1_050_000)
@@ -698,6 +698,80 @@ class BoardFunctions(SimCase):
         dead = 14_400_000 - lane["floor_live_ticks"]
         # 10 us + 150 us hold per alpha event (emulator, simulated)
         self.assertAlmostEqual(dead / max(lane["alpha_raw"], 1), (10 + 300) * 144, delta=1)
+
+
+class StrictPlaceholders(SimCase):
+    """Stage 3 / review O6: the target-like head refuses ARM until the device type is set and the thresholds are confirmed."""
+    sim_args = ("--strict-placeholders",)
+
+    def test_arm_refused_until_confirmed(self):
+        hello, reader = self.bound_reader()
+        rsp = self.link.request("ARM", {"span_us": 100000})
+        self.assertEqual(rsp["status"], "FAULT")
+        self.assertEqual(rsp["body"].get("reason"), "placeholder_thresholds")
+        self.link.ok("ENG_SETUP_SET", {"thresholds_confirmed": True})
+        hello, reader = self.bound_reader()
+        self.link.ok("ARM", {"span_us": 100000})
+        self.link.ok("DISARM", {})
+
+    def test_device_types_set_the_alpha_cut_and_the_emulated_pulse_shapes(self):
+        """T13 numbers: J60035 cut 290 ns (alpha 150 p.e. 374 ns, brightest beta 240 p.e. 202 ns); J30035 cut 180 ns
+        (246 / 115 ns). Both must classify the 150 p.e. alpha as alpha and the 240 p.e. beta as a short ALPHA (reject)."""
+        for device, cut in (("J60035", 290), ("J30035", 180), ("S13360", 190), ("4xJ60035", 655)):
+            hello, reader = self.bound_reader()
+            self.link.ok("ENG_SETUP_SET", {"device": device, "thresholds_confirmed": True})
+            hello, reader = self.bound_reader()
+            self.assertEqual(self.link.ok("STATUS", {})["alpha_tot_ns"], cut)
+            self.sim.ctl(cmd="rates", alpha=[50, 0, 0, 0], beta=0, ref=0, bright_beta=[0, 100, 0, 0],
+                         alpha_pe=150, bright_pe=240)
+            self.link.ok("ARM", {"span_us": 100000})
+            self.sim.advance(1_150_000)
+            frames, _ = read_all(self.link)
+            a0 = sum(f["segments"][0]["alpha"]["counts"] for f in frames)
+            a1 = sum(f["segments"][1]["alpha"]["counts"] for f in frames)
+            diag = [self.link.ok("DIAG", {"seq": f["sequence"]}) for f in frames]
+            short1 = sum(d["lanes"][1]["alpha_short"] for d in diag)
+            if device == "4xJ60035":
+                # array: FAST 2.8 mV/p.e. and the LLD at 12 p.e. = 34 mV: a 150 p.e. alpha is 0.12 V, TOT 738 ns > 655 cut
+                self.assertGreater(a0, 20)
+            else:
+                self.assertGreater(a0, 20, device)
+            self.assertEqual(a1, 0, device)
+            self.assertGreater(short1, 20, device)
+            self.link.ok("DISARM", {})
+            self.sim.advance(300_000)
+            self.sim.ctl(cmd="rates", alpha=0, bright_beta=0)
+
+
+class HeaterAndFrame(SimCase):
+    """Stage 3: heater over-current cut-off and the frame-potential check through the emulator."""
+
+    def test_overcurrent_opens_the_heater_and_frame_fault_too(self):
+        hello, reader = self.bound_reader()
+        self.link.ok("ENG_SETUP_SET", {"heater": {"enable": True, "setpoint_mc": 5000, "max_duty_pct": 100}})
+        hello, reader = self.bound_reader()
+        self.sim.ctl(cmd="analog", heater_c=-10, heater_ma=3000)
+        self.sim.ctl(cmd="rates", alpha=0, beta=10, ref=10)
+        self.sim.advance(300_000)
+        self.link.ok("ARM", {"span_us": 100000})
+        self.sim.advance(1_500_000)
+        st = self.link.ok("STATUS", {})
+        self.assertTrue(st["heater"]["on"])
+        self.assertEqual(st["heater"]["ma"], 3000)
+        self.assertEqual(st["frame"], {"mv": 0, "fault": False})
+        self.sim.ctl(cmd="analog", heater_ma=3400)                       # a partial short: 3.4 A against the 3.2 A cut-off
+        self.sim.advance(900_000)
+        st = self.link.ok("STATUS", {})
+        self.assertIn("HEATER_OVERCURRENT", st["health"])
+        self.assertFalse(st["heater"]["on"])
+        self.assertEqual(st["heater"]["ma"], 0)                          # the switch opened (emulator: current gone with it)
+        self.link.ok("FAULT_CLEAR", {})
+        self.sim.ctl(cmd="analog", heater_ma=2500, frame_mv=80)           # frame 80 mV above ground: contact with the heater return
+        self.sim.advance(2_000_000)
+        st = self.link.ok("STATUS", {})
+        self.assertIn("FRAME_FAULT", st["health"])
+        self.assertEqual(st["frame"]["mv"], 80)
+        self.assertFalse(st["heater"]["on"])
 
 
 class NoWidthHistogram(SimCase):

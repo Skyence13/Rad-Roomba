@@ -141,6 +141,7 @@ bool rrh_evtcap_stop(rrh_evtcap_t *e, uint64_t now_tick);
 void rrh_evtcap_abort(rrh_evtcap_t *e);
 bool rrh_evtcap_running(const rrh_evtcap_t *e);
 void rrh_evtcap_heater_request(rrh_evtcap_t *e, bool on);
+void rrh_evtcap_heater_force_off(rrh_evtcap_t *e);
 /* Fixed-rate service. now_tick must not decrease between calls. */
 void rrh_evtcap_service(rrh_evtcap_t *e, uint64_t now_tick, const rrh_evt_in_t *in);
 /* Oldest completed gate; false if none. */

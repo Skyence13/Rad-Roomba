@@ -3,8 +3,14 @@
 #define RRH_INTERNAL_H
 #include "rrh_core.h"
 
+#define RRH_H_HEATER_ANY (RRH_H_HEATER_SENSOR | RRH_H_HEATER_CUTOUT | RRH_H_HEATER_OVERTEMP | RRH_H_HEATER_STUCK | \
+                          RRH_H_FRAME_FAULT | RRH_H_HEATER_OVERCURRENT)
+
 /* rrh_setup.c */
 bool rrh_setup_valid(const rrh_setup_t *s);
+void rrh_setup_device_thresholds(rrh_setup_t *s);
+void rrh_setup_finalize(rrh_setup_t *s);
+size_t rrh_setup_pack_image(const rrh_setup_t *s, uint8_t *buf, size_t cap);
 void rrh_setup_compute_id(const rrh_setup_t *s, const char *firmware, char out[24]);
 size_t rrh_setup_pack(const rrh_setup_t *s, uint8_t *buf, size_t cap);
 bool rrh_setup_unpack(rrh_setup_t *s, const uint8_t *buf, size_t len);

@@ -428,8 +428,10 @@ bool bsp_expander_read(uint8_t *inputs)
 {
     const uint8_t reg_in = 0x00u;
     if (!g_exp_configured) {
+        /* P7 = MON_LANE_EN (all lane monitor muxes off) and P0 = MON_EXT must be written 0 BEFORE they become outputs: the
+         * output register powers up 0xFF (recalled, UNVERIFIED), which would switch the lane muxes on for an instant. */
         const uint8_t out[2] = {0x01u, 0x00u};
-        const uint8_t cfg[2] = {0x03u, 0xFEu};
+        const uint8_t cfg[2] = {0x03u, RRH_EXP_DIR_MASK};
         if (!bsp_i2c_xfer(0x20u, out, 2u, NULL, 0u) || !bsp_i2c_xfer(0x20u, cfg, 2u, NULL, 0u)) {
             return false;
         }
@@ -498,6 +500,7 @@ bool bsp_adc_valid(void) { return g_adc_rounds > 0u; }
  * mux output filter is R108 x C2704 = 1 ms, so each step waits RRH_IMON_SETTLE_US (10 time
  * constants) before the conversion: a full scan of eight chains takes 80 ms plus conversions. The
  * same address lines select the lane monitor decoder; see README (open electronics questions). */
+static uint32_t g_imon_steps;
 static uint32_t g_imon_uv[RRH_CHAINS];
 static uint64_t g_imon_at_us[RRH_CHAINS];
 static uint8_t g_imon_chain;
@@ -520,8 +523,40 @@ static void adc4_init(void)
     ADC4->SMPR1 = (6uL << ADC_SMPR1_SMP2_Pos); /* 247.5 cycles on channel 2 (20 us at 12 MHz, source 1 k) */
 }
 
+/* MON_ADC (PC4 = ADC2_IN5) behind the monitor buffer: with MON_LANE_EN = 0 (always) it reads 0.300 V + V(FRAME)/2 (S3-03). */
+static bool g_adc2_ready;
+
+static void adc2_init(void)
+{
+    ADC2->CR &= ~ADC_CR_DEEPPWD;
+    ADC2->CR |= ADC_CR_ADVREGEN;
+    bsp_delay_us(50u);
+    ADC2->CR |= ADC_CR_ADCAL;
+    for (uint32_t i = 0u; (i < 400000u) && ((ADC2->CR & ADC_CR_ADCAL) != 0u); i++) {
+    }
+    ADC2->ISR = ADC_ISR_ADRDY;
+    ADC2->CR |= ADC_CR_ADEN;
+    g_adc2_ready = wait_set(&ADC2->ISR, ADC_ISR_ADRDY, 400000u);
+    ADC2->SMPR1 = (6uL << ADC_SMPR1_SMP5_Pos);
+}
+
+bool bsp_mon_adc_uv(uint32_t *uv)
+{
+    if (!g_adc2_ready) {
+        return false;
+    }
+    ADC2->SQR1 = (uint32_t)PIN_MON_ADC_ADC_CH << ADC_SQR1_SQ1_Pos;
+    ADC2->CR |= ADC_CR_ADSTART;
+    if (!wait_set(&ADC2->ISR, ADC_ISR_EOC, 20000u)) {
+        return false;
+    }
+    *uv = rrh_board_adc_uv((uint16_t)ADC2->DR);
+    return true;
+}
+
 static void imon_select(uint8_t chain)
 {
+    g_imon_steps++;
     bsp_gpio_write(PIN_MON_MUX_A0_PORT, PIN_MON_MUX_A0_PIN, (chain & 1u) != 0u);
     bsp_gpio_write(PIN_MON_MUX_A1_PORT, PIN_MON_MUX_A1_PIN, (chain & 2u) != 0u);
     bsp_gpio_write(PIN_MON_MUX_A2_PORT, PIN_MON_MUX_A2_PIN, (chain & 4u) != 0u);
@@ -574,6 +609,7 @@ void bsp_imon_get(rrh_imon_t *out)
 {
     const uint64_t now = bsp_now_us();
     memset(out, 0, sizeof *out);
+    out->steps = g_imon_steps;
     for (uint32_t ch = 0u; ch < RRH_CHAINS; ch++) {
         out->uv[ch] = g_imon_uv[ch];
         if ((g_imon_at_us[ch] != 0u) && ((now - g_imon_at_us[ch]) < RRH_IMON_MAX_AGE_US)) {
@@ -811,5 +847,6 @@ void bsp_init(void)
     I2C3->CR1 = I2C_CR1_PE;
     adc_init();
     adc4_init();
+    adc2_init();
     rs485_init();
 }

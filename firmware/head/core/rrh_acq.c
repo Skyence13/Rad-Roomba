@@ -322,6 +322,11 @@ static void on_gate(rrh_core_t *c, const rrh_gate_record_t *rec)
     }
     f->imon_fault = c->imon_fault;
     f->imon_paused = c->imon_paused;
+    {
+        const uint32_t d = c->imon.steps - c->imon_steps_prev;
+        c->imon_steps_prev = c->imon.steps;
+        f->imon_steps = (uint8_t)((d > 255u) ? 255u : d);
+    }
     f->bias_writes = (uint8_t)((c->bias_writes_gate > 255u) ? 255u : c->bias_writes_gate);
     c->bias_writes_gate = 0u;
     f->health = c->health;
@@ -416,7 +421,8 @@ static const char *const k_gate_flags[6] = {"FLOOR_SATURATED", "REF_SATURATED", 
                                             "FLOOR_INVALID", "REF_INVALID"};
 static const char *const k_health[RRH_H_COUNT] = {"SOURCE", "GATE_TIMING", "RECORD_LOST", "GATE_TIMEOUT", "INJECTED",
                                                   "HEATER_SENSOR", "HEATER_CUTOUT", "HEATER_OVERTEMP", "HEATER_STUCK",
-                                                  "BIAS_TRIP", "ENTROPY", "STORAGE", "WATCHDOG_RESET", "BIAS_PERMIT"};
+                                                  "BIAS_TRIP", "ENTROPY", "STORAGE", "WATCHDOG_RESET", "BIAS_PERMIT", "FRAME_FAULT",
+                                                  "HEATER_OVERCURRENT"};
 static const char *const k_zones[3] = {"FRONT", "LEFT", "RIGHT"};
 
 void rrh_write_health_names(uint16_t health, rrc_jw_t *w)
@@ -530,6 +536,7 @@ void rrh_acq_write_diag(const rrh_core_t *c, const rrh_frame_t *f, rrc_jw_t *w)
     rrc_jw_kfixed(w, "v", f->bias_mv, 3u, true);
     rrc_jw_ku64(w, "ua", f->bias_ua);
     rrc_jw_ku64(w, "dac_writes", f->bias_writes);
+    rrc_jw_ku64(w, "imon_steps", f->imon_steps);
     rrc_jw_obj_end(w);
     rrc_jw_key(w, "temps");
     rrc_jw_obj_begin(w);

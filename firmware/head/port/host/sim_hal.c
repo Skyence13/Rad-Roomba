@@ -127,6 +127,8 @@ void sim_init(sim_t *s, uint64_t seed, bool manual)
         s->imon_ua[ch] = 1.0;
     }
     s->imon_valid = 0xFFu;
+    s->heater_ma_model = 2500.0;
+    s->vmon_true_ratio_e4 = RRH_VMON_RATIO_E4_NOMINAL;
     s->exp_present = true;
     s->boot_mono_ns = sim_mono_ns();
 }
@@ -292,25 +294,61 @@ static uint32_t live_ticks(uint32_t gate_ticks, uint64_t events, double tau_us, 
     return gate_ticks - (uint32_t)dead;
 }
 
-/* Pulse-shape model of the two classes that compete for the ALPHA latch (review C1). Amplitudes per
- * photo-electron from head_afe_calc_out.md T2 (J60035 at 2.5 V): FAST 6.93 mV (plastic) / 1.467 mV (ZnS),
- * SLOW 0.369 mV (plastic) / 0.218 mV (ZnS). Time over threshold of the raw LLD: plastic fast pulse
- * Gaussian-like, FWHM 80 ns: w = 80 ns x sqrt(ln(A/T)/ln 2) (120 p.e. at an 8 p.e. threshold: 158 ns);
- * ZnS: 200 ns exponential decay: w = 200 ns x ln(A/T) (150 p.e.: 277 ns, 1500 p.e.: 737 ns). SIMULATED. */
+/* Pulse-shape model of the two classes that compete for the ALPHA latch (review C1), with the electronics' numbers
+ * (head_afe_calc_out.md T2 and T13, stage 3): FAST per p.e. from the device table, ZnS FAST per p.e. = 0.2117 x plastic,
+ * FAST/SLOW per p.e. beta / alpha from T13; time over threshold at the raw LLD interpolated in ln(p.e.) between the T13
+ * points (beta 30 / 120 / 240 p.e., alpha 150 / 300 / 1500 / 15000 p.e.) and linearly in the LLD level between the 8 and
+ * 10 p.e. rows. SIMULATED (calculated by the electronics, ZnS decay 200 ns assumed), not measured. */
 typedef enum { OUT_NONE = 0, OUT_ALPHA, OUT_BETA, OUT_REJECT, OUT_SHORT } outcome_t;
+
+static const double k_beta_pe[3] = {30.0, 120.0, 240.0};
+static const double k_alpha_pe[4] = {150.0, 300.0, 1500.0, 15000.0};
+/* [device 0..5][LLD 8, 10][beta 3 then alpha 4] */
+static const double k_tot[6][2][7] = {
+    {{119, 183, 211, 428, 578, 920, 1360}, {107, 173, 202, 374, 528, 872, 1326}},
+    {{73, 106, 120, 298, 446, 780, 1196}, {66, 101, 115, 246, 396, 732, 1160}},
+    {{88, 128, 145, 342, 492, 832, 1288}, {79, 122, 139, 290, 440, 784, 1250}},
+    {{77, 112, 126, 310, 458, 800, 1262}, {70, 106, 121, 258, 408, 748, 1218}},
+    {{82, 119, 134, 324, 474, 822, 1338}, {74, 113, 129, 272, 424, 770, 1288}},
+    {{296, 510, 600, 798, 972, 1340, 1682}, {256, 477, 571, 738, 916, 1292, 1662}}};
+static const double k_ratio_beta[6] = {18.8, 31.8, 25.1, 28.5, 25.5, 9.0};
+static const double k_ratio_alpha[6] = {6.7, 8.4, 7.5, 7.8, 7.2, 4.5};
+
+static double interp_ln(const double *x, const double *y, uint32_t n, double pe)
+{
+    uint32_t i = 0u;
+    while ((i < (n - 2u)) && (pe > x[i + 1u])) {
+        i++;
+    }
+    const double t = (log(pe) - log(x[i])) / (log(x[i + 1u]) - log(x[i]));
+    return y[i] + (t * (y[i + 1u] - y[i]));
+}
+
+static double tot_ns_model(uint32_t dev, bool zns, double pe, double lld_pe)
+{
+    double v[2];
+    for (uint32_t k = 0u; k < 2u; k++) {
+        v[k] = zns ? interp_ln(k_alpha_pe, &k_tot[dev][k][3], 4u, pe) : interp_ln(k_beta_pe, &k_tot[dev][k][0], 3u, pe);
+    }
+    const double w = (lld_pe - 8.0) / 2.0; /* 0 at LLD 8, 1 at LLD 10; extrapolated linearly outside */
+    const double tot = v[0] + (w * (v[1] - v[0]));
+    return (tot > 20.0) ? tot : 20.0;
+}
 
 static outcome_t shape_outcome(const sim_t *s, bool zns, double pe, uint32_t lane)
 {
+    const uint32_t dev = (s->fe.device >= 1u && s->fe.device <= RRH_DEVICE_COUNT) ? (s->fe.device - 1u) : 0u;
+    const double fast_pe = (double)rrh_devices[dev].fast_uv_per_pe;
     const double base = (double)rrh_board_baseline_uv();
     const double lld = (double)rrh_board_trim_uv(s->fe.threshold[lane * 3u]) - base;
     const double uld = (double)rrh_board_trim_uv(s->fe.threshold[(lane * 3u) + 1u]) - base;
     const double alp = (double)rrh_board_trim_uv(s->fe.threshold[(lane * 3u) + 2u]) - base;
-    const double fast = pe * (zns ? 1467.0 : (double)RRH_FAST_UV_PER_PE);
-    const double slow = pe * (zns ? 218.0 : 369.0);
+    const double fast = pe * fast_pe * (zns ? 0.2117 : 1.0);
+    const double slow = fast / (zns ? k_ratio_alpha[dev] : k_ratio_beta[dev]);
     if ((lld <= 0.0) || (fast < lld)) {
         return OUT_NONE;
     }
-    const double tot_ns = zns ? (200.0 * log(fast / lld)) : (80.0 * sqrt(log(fast / lld) / log(2.0)));
+    const double tot_ns = tot_ns_model(dev, zns, pe, lld / fast_pe);
     if (slow >= alp) {
         const bool long_enough = (s->fe.alpha_min_tot_ns == 0u) || (tot_ns >= (double)s->fe.alpha_min_tot_ns);
         return long_enough ? OUT_ALPHA : OUT_SHORT;
@@ -568,6 +606,18 @@ void rrh_hal_analog_read(rrh_analog_t *out)
     }
     permit_update(s);
     out->bias_mv = (s->bias_enable && s->permit) ? s->bias_set_mv : 0u; /* tripped permit: BIAS_VMON reads ~0 */
+    out->bias_vmon_adc_uv = rrh_board_bias_adc_uv(out->bias_mv, s->vmon_true_ratio_e4);
+    /* MON_ADC with the lane muxes off: VBL/2 + V_FRAME/2; heater sense 0.5 V/A */
+    out->mon_valid = true;
+    out->mon_adc_uv = (uint32_t)((double)rrh_board_frame_nominal_uv() + (s->frame_mv * 500.0));
+    out->heater_ma_valid = true;
+    out->heater_ma = s->heater_applied ? (uint32_t)s->heater_ma_model : 0u;
+}
+
+void rrh_hal_heater_force_off(void)
+{
+    g_sim.heater_req = false;
+    g_sim.heater_applied = false; /* immediately; the next record marks the transition */
 }
 
 void rrh_hal_heater_request(bool on)
