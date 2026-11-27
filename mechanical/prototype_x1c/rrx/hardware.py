@@ -62,7 +62,8 @@ def rows():
     add("D battery bay", "polyimide heater pad", "90 x 70 mm, 12 V 20 W, PSA", 1, "on the floor plug", "UNVERIFIED")
     add("D battery bay", "NTC + bimetal cut-out", "10 k NTC bead x 2, 60 C normally-closed disc thermostat", 1, "beside the pad / on the plate under the tunnel foot", "UNVERIFIED")
     add("D battery bay", "blind-mate coupler", "Anderson SBS50 housing pair, 2 power + 2 auxiliary contacts each", 1, "cradle (fixed) / cassette carrier (floating)", "UNVERIFIED")
-    add("D cassette", "shoulder screw", "M5 thread, 6 mm shoulder x 6", 2, "bail pivots -> M5 inserts in the cassette ears", "UNVERIFIED", "1.5")
+    add("D cassette", "shoulder screw", "M3 thread, 4 mm shoulder x 4", 2, "handle hinges -> M3 inserts in the cassette lugs", "UNVERIFIED", "0.5")
+    add("D cassette", "spring index plunger", "M10 x 1 body, 5 mm pin, pull knob with rest position, stainless + M10 nut + O-ring", 1, "hump roof at x -215 -> hole in the cassette lid", "UNVERIFIED", "4.0", "GN 617 / Kipp K0338 class: confirm pin stroke >= 6 mm and -25 C grease")
     add("D cassette", "pan head screw", "M3 x 8 ISO 7045 A2", 2, "cassette lid", torque="0.5")
     add("D cassette", "shoulder screw", "M3 thread, 4 mm shoulder x 5", 4, "floating coupler carrier (+-1 mm)", "UNVERIFIED", "0.5")
     add("D cassette", "foam pads", "closed-cell EPDM 3 mm, PSA", 1, "pack sides/top inside the cassette (retention under shock)", note="1 sheet 200 x 300")
@@ -100,8 +101,8 @@ def rows():
     add("G bumper", "guide screw + sleeve + spring", "M3 x 25 ISO 4762 + 5 x 0.75 x 14 PTFE-lined sleeve + compression spring 6 OD x 12, ~0.5 N/mm", 6, "2 per bumper segment", "UNVERIFIED", "0.5")
     add("G bumper", "push pin + spring", "3 mm pin x 10 + spring 4 OD x 8", 2, "side segments -> D2HW plungers", "DESIGN")
     # heat-set inserts
-    ins = {"M2": 18 + 8, "M2.5": 4, "M3": N_SOLE + 2 + 12 + 6 + N_PERIM_HULL + (N_PERIM - N_PERIM_HULL) * 0 + 4 + 6 + 2 * len(HUMP_SCREW_X) + len(COVER_SCREWS) + 2 + 2 * len(CLIFF_SCREWS) + 2 + 4 + 2 + 4 + 6,
-           "M4": 8 + 2, "M5": 2}
+    ins = {"M2": 18 + 8, "M2.5": 4, "M3": N_SOLE + 2 + 12 + 6 + N_PERIM_HULL + (N_PERIM - N_PERIM_HULL) * 0 + 4 + 6 + 2 * len(HUMP_SCREW_X) + len(COVER_SCREWS) + 2 + 2 * len(CLIFF_SCREWS) + 2 + 4 + 2 + 4 + 6 + 2,
+           "M4": 8 + 2}
     for m, n in ins.items():
         add("H inserts", "heat-set insert", f"{m} brass, knurled, for {D.INSERT[m][0]} mm hole x {D.INSERT[m][1]} deep", n, "all printed parts", "UNVERIFIED", note="brand to choose; hole sizes in dims.INSERT")
     # gaskets, foam

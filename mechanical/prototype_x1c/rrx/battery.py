@@ -1,5 +1,13 @@
-"""RR-X battery bay: tunnel with guide walls, insulated floor plug (heater carrier), removable cassette with cam bail,
-coupler carrier, 9 Ah spacer.  Interface values come from P.BATTERY_BAY (identical in both builds)."""
+"""RR-X battery bay: tunnel with guide walls, insulated floor plug (heater carrier), removable cassette with a fold-flat
+pull handle, spring index-plunger latch through the hump roof, coupler carrier, 9 Ah spacer.  Interface values come from
+P.BATTERY_BAY (identical in both builds).
+
+Latch concept (replaces the first engineer's cam bail, which collided with the tail-cap door: the tail is only ~11 mm
+deep behind the cassette at |y| 51, z 102): a captive spring index plunger (pull-knob type, M10 body) stands in the hump
+roof at x = PLUNGER_X on the centre line; its 5 mm pin drops into a hole in the cassette lid when the cassette is fully
+home (coupler mated) -> positive latch, released by pulling the knob from outside (gloved).  The door carries a finger
+that stops 0.5 mm behind the home position of the cassette rear face, so the door cannot close unless the cassette is
+home, and the cassette is latched whenever it is home."""
 from __future__ import annotations
 
 import cadquery as cq
@@ -20,13 +28,13 @@ RIB_Y = (44.0, 50.0)                 # floor ribs the cassette runs on (top z = 
 KEY_Y = D.KEY_RIB_Y                  # off-centre key rib on the cassette floor (left of centre)
 FEET_X = (-222.0, -190.0, -150.0, -110.0, -76.0)
 PLUG = (-164.6, -74.0, 42.0)         # flange of the floor plug on the plate top (starts clear of the caster disc, x -165.0)
-EAR_Y = (44.0, 48.5)
-ARM_Y = (49.2, 53.8)
-PIVOT = (-236.0, 80.0)               # bail pivot on the cassette rear ears (x, z)
-BAIL_PIN = (-239.0, 71.0)            # bail cam pin, latched position (9.5 mm from the pivot)
-DOOR_PEG = (-237.0, 100.0)           # fixed pegs in the upper jambs the door hangs on
-CAM_Y = (55.2, 57.5)                 # cam ears on the hatch frame, outside the cassette width
-BAIL_LEN = 46.0
+HANDLE_Y = (32.3, 36.3)               # handle arm |y| (outboard of the hinge lugs)
+LUG_Y = (27.8, 32.0)                  # hinge lugs on the cassette rear face
+HINGE_Z = 128.0                       # handle hinge axis (along y) on the cassette rear face
+HANDLE_X = (CX0 - 4.0, CX0 - 0.5)     # folded handle lies flat 0.5..4.0 mm behind the cassette rear face
+HANDLE_L = 52.0                       # hinge to bar centre: 49 mm clear finger gap when pulled out (>= 45 gloved)
+PLUNGER_X = -215.0                    # index plunger axis (x, y = 0), through the hump roof into the cassette lid
+DOOR_PEG = (-237.0, 100.0)            # fixed pegs in the upper jambs the door hangs on
 CARRIER_HY = 26.0                    # half width of the floating coupler carrier on the cassette nose
 
 
@@ -76,10 +84,9 @@ def cassette():
     px0, px1 = B["pack_x"]
     c = c.cut(box(px0 - 0.0, px1 + 0.5, -CHY + WALL, CHY - WALL, B["pack_z"][0], CZ1 + 1))      # pack pocket, open top
     c = c.fuse(box(CX0, CX1, KEY_Y[0], KEY_Y[1], CZ0 - 1.3, CZ0))                               # key rib (interface)
-    for s in (1, -1):
-        ear = prism_xz([(CX0, PIVOT[1] - 20.0), (CX0 - 12.0, PIVOT[1] - 8.0), (CX0 - 12.0, PIVOT[1] + 8.0), (CX0, PIVOT[1] + 8.0)], EAR_Y[0], EAR_Y[1])
-        ear = ear if s > 0 else ear.mirror("XZ")
-        c = c.fuse(ear)
+    for s in (1, -1):                                                                             # handle hinge lugs
+        lug = prism_xz([(CX0, HINGE_Z - 12.0), (CX0 - 4.5, HINGE_Z - 4.5), (CX0 - 4.5, HINGE_Z + 4.5), (CX0, HINGE_Z + 4.5)], LUG_Y[0], LUG_Y[1])
+        c = c.fuse(lug if s > 0 else lug.mirror("XZ"))
     for x in (px0 + 12.0, px1 - 12.0):                                                           # lid-screw bosses beside the terminals (+y)
         c = c.fuse(box(x - 4.5, x + 4.5, CHY - WALL - 5.5, CHY - WALL, CZ1 - 16.0, CZ1 - 2.5))
     c = c.clean()
@@ -88,7 +95,7 @@ def cassette():
     c = c.cut(box(CX0 + 20.0, CX1 - 20.0, -CHY - 1, -CHY + WALL + 1, CZ1 - 6.0, CZ1 - 2.5))      # slot for the lid tongue (-y)
     c = c.cut(box(CX1 - WALL - 1, CX1 + 1, 24.0, 40.0, 60.0, 76.0))                              # lead exit to the coupler
     for s in (1, -1):
-        c = c.cut(cyl(D.INSERT["M5"][0] / 2, 6.0, (PIVOT[0], s * EAR_Y[0] - (0 if s > 0 else 6.0), PIVOT[1]), (0, 1, 0)))
+        c = c.cut(cyl(D.INSERT["M3"][0] / 2, LUG_Y[1] - LUG_Y[0] + 0.2, (CX0 - 2.25, s * (LUG_Y[1] + 0.1), HINGE_Z), (0, -s, 0)))   # M3 insert, shoulder screw from outboard
         for z in (48.0, 60.0):
             c = c.cut(cyl(D.INSERT["M3"][0] / 2, 4.0, (CX1 - 3.0, s * 12.0, z), (1, 0, 0)))       # coupler carrier screws
     return c
@@ -100,6 +107,7 @@ def cassette_lid():
     lid = lid.fuse(box(CX0 + 21.0, CX1 - 21.0, -CHY + 0.4, -CHY + WALL + 1.5, CZ1 - 5.6, CZ1 - 2.6)).clean()
     for x in (px0 + 12.0, px1 - 12.0):
         lid = lid.cut(cyl(D.CLEAR["M3"] / 2, 5, (x, CHY - WALL - 2.6, CZ1 - 3.5)))
+    lid = lid.cut(cyl(2.8, 6, (PLUNGER_X, 0.0, CZ1 - 4)))                                         # latch hole for the 5 mm plunger pin
     return lid
 
 
@@ -113,21 +121,25 @@ def coupler_carrier():
     return b
 
 
-def bail():
-    """Cam bail (ejector handle).  Folded UP = latched: the two cam pins sit at the bottom of the vertical slots of the
-    hatch-frame cam ears.  Swinging the bar rearward/down by 90 deg lifts the pins 6 mm and jacks the cassette 12 mm
-    rearward (coupler unmated); the pins then leave through the exit legs.  Bar 46 mm from the pivot -> >= 45 mm
-    gloved finger gap when horizontal.  Nominal cam geometry: needs a fit-check print before the latch force is trusted."""
-    px, pz = PIVOT
+def handle():
+    """Fold-flat pull handle (PAHT-CF): two arms on M3 shoulder screws at the rear-face lugs, 10 x 6 grip bar.  Folded down
+    it lies inside the hatch opening behind the cassette; pulled out horizontal it gives a 49 mm finger gap."""
+    hx0, hx1 = HANDLE_X
     out = None
     for s in (1, -1):
-        arm = prism_xz([(px - 5.0, pz - 12.0), (px + 5.0, pz - 12.0), (px + 5.0, pz + BAIL_LEN + 4.0), (px - 5.0, pz + BAIL_LEN + 4.0)], ARM_Y[0], ARM_Y[1])
-        arm = arm.cut(cyl(2.6, 8, (px, ARM_Y[0] - 1, pz), (0, 1, 0)))
-        arm = arm.cut(cyl(1.98, 8, (BAIL_PIN[0], ARM_Y[0] - 1, BAIL_PIN[1]), (0, 1, 0)))        # press fit for the 4 mm cam pin
+        arm = box(hx0, hx1, HANDLE_Y[0], HANDLE_Y[1], HINGE_Z - HANDLE_L, HINGE_Z + 4.5)
+        arm = arm.cut(cyl(1.6, 8, (CX0 - 2.25, HANDLE_Y[0] - 1, HINGE_Z), (0, 1, 0)))
         arm = arm if s > 0 else arm.mirror("XZ")
         out = arm if out is None else out.fuse(arm)
-    bar = cq.Workplane("XZ", origin=(px, ARM_Y[1], pz + BAIL_LEN)).rect(10.0, 8.0).extrude(2 * ARM_Y[1]).edges("|Y").fillet(3.0).val()
+    bar = cq.Workplane("XZ", origin=((hx0 + hx1) / 2, HANDLE_Y[1], HINGE_Z - HANDLE_L)).rect(hx1 - hx0, 8.0).extrude(2 * HANDLE_Y[1]).edges("|Y").fillet(1.5).val()
     return out.fuse(bar).clean()
+
+
+def plunger():
+    """Purchased spring index plunger envelope: M10 body through the hump roof, pull knob above, 5 mm pin into the lid."""
+    top = B["hump_z"][1]
+    return fuse(cyl(2.5, top - B["hump_wall"] - (CZ1 - 2.4) + 0.1, (PLUNGER_X, 0, CZ1 - 2.4)),
+                cyl(5.0, 18.0, (PLUNGER_X, 0, top - 12.0)), cyl(9.0, 12.0, (PLUNGER_X, 0, top + 6.0)))
 
 
 def spacer_9ah():
@@ -147,18 +159,19 @@ def build(add):
     add(Part("RRX-P11", "floor_plug", floor_plug(), "printed", "ASA", "battery_bay", color="#aeb6ba", orient=(180, 0, 0), internal=False,
              print_note="flange on the bed; 15 % gyroid infill (insulation)", mates={"chassis_plate", "battery_tunnel", "chassis_heater_pad"}))
     add(Part("RRX-P12", "battery_cassette", cassette(), "printed", "ASA", "cassette", color="#e0a23a", orient=(0, 0, 0),
-             print_note="open top up; supports under nothing (ears are gusseted)", mates={"battery_pack", "battery_tunnel", "cassette_lid", "coupler_carrier", "bail", "coupler_cassette"}))
+             print_note="open top up; supports only under the two hinge lugs", mates={"battery_pack", "battery_tunnel", "cassette_lid", "coupler_carrier", "cassette_handle", "coupler_cassette"}))
     add(Part("RRX-P13", "cassette_lid", cassette_lid(), "printed", "ASA", "cassette", color="#e0a23a", orient=(180, 0, 0),
              print_note="top face on the bed; tongue prints as a 3 mm ledge", mates={"battery_cassette", "battery_pack"}))
     add(Part("RRX-P14", "coupler_carrier", coupler_carrier(), "printed", "PAHT-CF", "cassette", color=PA, orient=(0, 90, 0),
              print_note="flat", mates={"battery_cassette", "coupler_cassette", "battery_tunnel", "coupler_fixed"}))
-    add(Part("RRX-P15", "bail", bail(), "printed", "PAHT-CF", "cassette", color=PA, orient=(0, 90, 0), internal=False,
-             print_note="lying on its back (bar and arms on the bed)", mates={"battery_cassette", "bail_pin_L", "bail_pin_R", "hatch_frame"}))
+    add(Part("RRX-P15", "cassette_handle", handle(), "printed", "PAHT-CF", "cassette", color=PA, orient=(0, 90, 0), internal=False,
+             print_note="flat (arms and bar on the bed)", mates=set()))
     for tag, s in (("L", 1), ("R", -1)):
-        add(Part("RRX-H10", f"bail_pin_{tag}", cyl(2.0, 7.6, (BAIL_PIN[0], s * ARM_Y[0], BAIL_PIN[1]), (0, s, 0)), "purchased", "STEEL", "cassette", color="#5d6166",
-                 mpn="ISO 8734 4 m6 x 8 hardened dowel pin, pressed into the bail arm", verified="standard part", internal=False, mates={"bail", "hatch_frame"}))
         add(Part("RRX-H11", f"door_peg_{tag}", cyl(2.0, 2.4, (DOOR_PEG[0], s * 57.5, DOOR_PEG[1]), (0, -s, 0)), "purchased", "SS304", "hatch", color="#8f959a",
                  mpn="M4 x 10 A2 dog-point set screw in the M4 insert of the upper jamb boss (dog protrudes 2.4 mm)", verified="standard part", internal=False,
                  mates={"hatch_door", f"rear_deck_{tag}"}))
+    add(Part("RRX-H12", "cassette_plunger", plunger(), "purchased", "STEEL", "battery_bay", color="#5d6166", mass=0.03, internal=False,
+             mpn="spring index plunger M10 x 1, 5 mm pin, pull knob, stainless, with rest (lock-out) position (GN 617 / Kipp K0338 class)",
+             verified="UNVERIFIED selection; envelope assumed", mates={"battery_hump", "cassette_lid", "battery_cassette"}))
     add(Part("RRX-P16", "spacer_9ah", spacer_9ah().translate((0, 0, 0)), "printed", "ASA", "cassette_option", color="#e9cf9a", orient=(0, 0, 0),
              print_note="open side up", hard=False, note="only with the 9 Ah PSL-SC-1290 pack; shown for reference, not in the interference set"))

@@ -379,7 +379,22 @@
       },
       "vias": 101
     },
-    "finisher": null,
+    "finisher": {
+      "failed": [
+        {
+          "ends": [
+            "Track [IO46] on F.Cu, length 0.5418 mm",
+            "Track [IO46] on F.Cu, length 1.0950 mm"
+          ],
+          "net": "IO46",
+          "why": "rip-up undone: could not reconnect ripped net AUX06: no free path even with rip-up (window board, grid 0.10)"
+        }
+      ],
+      "items": 0,
+      "removed": 0,
+      "routed": [],
+      "seconds": 263.9
+    },
     "plane_fanout": {
       "failed": [
         "C40 pad at (57.77, 26.75) [+5V]",

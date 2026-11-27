@@ -444,7 +444,8 @@ def _host_build(a, board_py):
             log("routing: %d connection(s) still open -> continue run %d" % (open_now, n))
             if _container(["_retrydsn", board_py]) != 0:
                 break
-            info = run_freerouting(board_py, rdsn, rses, a)
+            # a different item order per continue run: a run that did not help is not repeated identically
+            info = run_freerouting(board_py, rdsn, rses, a, ["--router.autorouter.item_order_seed=%d" % (n - 1)])
             if info is None:
                 break
             shutil.copyfile(ses, ses + ".prev")
@@ -458,11 +459,10 @@ def _host_build(a, board_py):
             if new_open < open_now:
                 open_now, rc, route_info = new_open, rc2, merged
                 os.remove(ses + ".prev")
-            else:   # not better: restore the previous result and stop
+            else:   # not better: restore the previous result, try the next seed (if any retries are left)
                 shutil.copyfile(ses + ".prev", ses)
                 os.remove(ses + ".prev")
                 rc = _container(["_post", board_py, "--route-info", json.dumps(route_info)])
-                break
         for f in (rdsn, rses):
             if os.path.exists(f):
                 os.remove(f)
@@ -488,7 +488,7 @@ def _host_build(a, board_py):
 
 
 
-def run_freerouting(board_py, dsn, ses, a):
+def run_freerouting(board_py, dsn, ses, a, more_args=()):
     """Run the autorouter container; returns stats dict or None on failure."""
     # routing options come from the board definition via reports/build_state.json
     # (the definition itself is only ever evaluated inside the KiCad container).
@@ -496,7 +496,7 @@ def run_freerouting(board_py, dsn, ses, a):
         opts = json.load(f)["routing"]
     passes = a.passes or opts["passes"]
     threads = a.threads or opts["threads"] or (os.cpu_count() or 2)
-    extra = list(opts.get("extra_args") or [])
+    extra = list(opts.get("extra_args") or []) + list(more_args)
     if not opts.get("optimizer", True):
         extra.append("--router.optimizer.enabled=false")
     fanout = bool(opts.get("fanout"))

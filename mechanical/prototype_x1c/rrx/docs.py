@@ -28,7 +28,7 @@ MATERIAL_WHY = {
     "ASA": "Skins, covers, cassette, trays. UV-stable (outdoor grade), tolerates the wipe-down agents expected (water/detergent, 70 % IPA short contact, dilute hypochlorite; NOT ketones/esters), "
            "glass transition ~100 C so heat-set inserts and a sun-heated trailer are safe, lower density than PETG-CF. Unfilled, so it keeps some ductility at -25 C (notched impact falls to roughly half of the "
            "+23 C value: handbook trend, UNVERIFIED for the spool -> drop/impact coupons at -25 C are a first-article test). Needs the closed chamber and a brim on the tall pieces (warp).",
-    "PAHT-CF": "Load-bearing printed parts (motor pods, wheel rims, bulkhead, hatch frame with the cam ears, bail, cliff pods, service cover). Highest stiffness and creep resistance of the stock X1C "
+    "PAHT-CF": "Load-bearing printed parts (motor pods, wheel rims, bulkhead, hatch frame, cassette handle, cliff pods, service cover). Highest stiffness and creep resistance of the stock X1C "
                "materials, low moisture uptake for a polyamide, keeps strength at -25 C. Carbon-filled: electrically conductive surface -> not used for the cassette or anything touching terminals. "
                "Print dry (80 C / 8 h), layer adhesion in Z is about half of XY -> every part is oriented so the service load is in-plane.",
     "TPU95A": "Tyres only. 95A grips painted steel/plywood when warm; it stiffens markedly below about -10 C and approaches its glass transition near -30 C (polyester grades earlier) -> traction and "
@@ -176,8 +176,8 @@ STEPS = [
     ("07_lid", "Stage 7: lid (shoulders, rear decks, hump) with controls, sensors, LiDAR, charge inlet",
      ["shoulder_*", "rear_deck_*", "battery_hump", "*_operator", "*_body", "lidar", "charge_inlet", "inlet_cover", "RR-PANEL", "panel_tray", "tof_*r?", "bumper_sw_*", "door_peg_*", "hatch_latch"], (-58.0, 30.0)),
     ("08_grip_cover", "Stage 8: cheek fairings, grip bar, sleeve, saddle service cover", ["cheek_fairing_*", "grip_bar", "grip_screw_*", "grip_sleeve", "saddle_cover", "tof_look_f?", "tof_window_look_f?", "tof_clip_look_f?"], (-58.0, 30.0)),
-    ("09_cassette_door", "Stage 9: battery cassette with bail, tail-cap door, three-segment bumper",
-     ["battery_cassette", "battery_pack", "cassette_lid", "coupler_carrier", "coupler_cassette", "bail", "bail_pin_*", "hatch_door", "bumper_side_*", "bumper_centre"], (-140.0, 24.0)),
+    ("09_cassette_door", "Stage 9: battery cassette with fold-flat handle, index-plunger latch, tail-cap door, three-segment bumper",
+     ["battery_cassette", "battery_pack", "cassette_lid", "coupler_carrier", "coupler_cassette", "cassette_handle", "cassette_plunger", "hatch_door", "bumper_side_*", "bumper_centre"], (-140.0, 24.0)),
     ("10_head_tray", "Stage 10: head docked (placeholder envelope) and the robot on the transport tray", ["head_*", "J?_mated_plug", "tray_*"], (-50.0, 28.0)),
 ]
 
@@ -248,11 +248,11 @@ STAGE_TEXT = {   # hand-written work instructions per stage: (do, inserts / torq
         "PROOF LOAD (VT-002): hang 3 x 9 kg = 265 N on the bar centre over 100 mm for 60 s; no permanent set at the side plates, feet or plate (dial gauge on the plate edge < 0.1 mm residual)."),
     "09_cassette_door": (
         ["Pack into the cassette with EPDM pads (terminals +y), leads to the floating SBS50 half on its carrier, lid (2 x M3).",
-         "Cassette in, bail swung up (latched, cam pins at the bottom of the slots).",
+         "Index plunger into the hump roof (O-ring under the flange, nut inside, before the hump is fitted in stage 7). Cassette in until the coupler seats and the plunger pin drops into the lid hole (audible click); handle folded down.",
          "Hook the door onto the jamb pegs tilted back, swing shut, close the hatch draw latch; bumper segments on their guide screws with springs."],
-        "Inserts: cassette lid 2 x M3, bail pivots 2 x M5, carrier 4 x M3, bumper guides 6 x M3.",
+        "Inserts: cassette lid 2 x M3, handle hinge lugs 2 x M3 (shoulder screws), carrier 4 x M3, bumper guides 6 x M3.",
         "None (the cassette harness is self-contained).",
-        "Door will NOT close with the bail down (ribs block it); with the bail up the door closes and the latch pulls it onto the gasket. Each bumper segment trips its D2HW within 2-6 mm and returns by spring; 8 mm free stroke."),
+        "Door will NOT close unless the cassette is fully home (the door finger stops 0.5 mm behind the cassette rear face), and home = latched by the plunger; the draw latch pulls the door onto the gasket. Pull test: cassette does not move at 100 N on the handle with the plunger engaged. Each bumper segment trips its D2HW within 2-6 mm and returns by spring; 8 mm free stroke."),
     "10_head_tray": (
         ["Dock the head: shoes into the channels from the front, push to the x-stops, close the draw latch; plug J1/J2.",
          "For transport: robot onto the tray (wheels into the chocks, caster into the cup), head guards screwed on, straps over saddle and hump."],
@@ -290,7 +290,7 @@ def write_assembly(parts, log=print):
              "(LiDAR, RR-PANEL, rear ToF, deck controls), right_bay (charge inlet, HANDS-ON/Pause, right rear ToF, bumper). Order: plate-level leads (stage 1-4) -> board connectors in the stage 5 order "
              "-> nose (stage 6) -> lid (stage 7) -> grip ToF (stage 8). Strain relief: P-clip or tie-wrap within 40 mm of every board header, grommet at every plate pass-through, "
              "sealed glands at the LiDAR and at the J receptacles (connector seals), service loops where a lid piece must lift.\n")
-    A.append(f"## Removal procedures (checked as sweeps in the report)\n\n- **Battery**: open the hatch latch, lift the door off its pegs, swing the bail down (jacks the cassette 12 mm out of the coupler), pull 165 mm straight back.\n"
+    A.append(f"## Removal procedures (checked as sweeps in the report)\n\n- **Battery**: open the hatch latch, lift the door off its pegs, pull the plunger knob on the hump (twist to its rest position), unfold the handle, pull 165 mm straight back (unmates the coupler).\n"
              "- **Wheel**: 6 x M3 out of the rim web, pull the wheel 60 mm outboard; the hub stays on the shaft.\n- **Head**: open the draw latch (lever forward/up), unplug J1/J2, slide the head 66 mm forward.\n"
              "- **Service cover**: 9 captive screws, lift straight up under the bar, slide forward over the nose. The grip stays in place.\n")
     A.append(f"Grip proof-load design value: {g['rows'][0][1]} N (calculated, see report section 8).\n")

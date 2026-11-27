@@ -23,7 +23,7 @@ from .util import box, cyl, place
 THROUGH_SKIN = ("*_operator", "*_body", "*_receptacle", "*_mated_plug", "charge_inlet", "tof_*", "bumper_sw_*", "head_dock_switch")
 SHELL_GROUPS = {"lower_hull", "lid", "hatch", "service_cover"}
 INTERNAL = ("battery_tunnel", "battery_cassette", "cassette_lid", "coupler_*", "battery_pack", "cm5_tray", "CM5_carrier_assembly", "bridge_tray", "bridge_post_*",
-            "board_standoff_*", "RR-CHS-MAIN_*", "RR-PANEL", "panel_tray", "grip_foot_*", "chassis_heater_pad", "bus_clamp_resistor", "bail", "bail_pin_*")
+            "board_standoff_*", "RR-CHS-MAIN_*", "RR-PANEL", "panel_tray", "grip_foot_*", "chassis_heater_pad", "bus_clamp_resistor", "cassette_handle")
 ROBOT_EXCLUDE = {"tray", "cassette_option", "head_placeholder"}
 G = 9.81
 CR04_GRIP_X = -30.0          # requested grip bar centre (CHANGE_REQUESTS.md CR-04), for the comparison column only
@@ -130,7 +130,7 @@ def service(parts):
     cx0, cx1 = B["cassette_x"]
     out["battery_removal_sweep"] = {"what": "cassette envelope swept 165 mm along -x; door, centre bumper and coupler removed/unmated",
                                     "blocked_by": LY.box_free(robot, (cx0 - B["removal_travel"], cx1, -B["cassette_half_y"], B["cassette_half_y"], B["cassette_z"][0] + 0.05, B["cassette_z"][1]),
-                                                              skip=("cassette", "hatch_door", "bumper_centre", "coupler_fixed", "hatch_latch"))}
+                                                              skip=("cassette", "hatch_door", "bumper_centre", "coupler_fixed", "hatch_latch", "cassette_plunger"))}
     for tag, s in (("L", 1), ("R", -1)):
         y0, y1 = sorted((s * (P.WHEEL_Y + P.TYRE_WIDTH / 2 + 0.5), s * (P.WHEEL_Y + P.TYRE_WIDTH / 2 + 60)))
         out[f"wheel_{tag}_axial_removal"] = {"what": "104 mm disc swept 60 mm outboard", "blocked_by": LY.box_free(robot, (-P.WHEEL_R, P.WHEEL_R, y0, y1, 0.5, P.WHEEL_D))}
@@ -162,9 +162,10 @@ def service(parts):
     out["charge_inlet_glove_zone"] = {"what": "45 mm sphere in front of the opened inlet (cover swung up)", "blocked_by": [(p.name, 0) for p in robot if p.group != "charge" and p.name != "rear_deck_R"
                                                                                                                         and not any(p.bb[i] > LY.bounds(probe)[i + 3] or LY.bounds(probe)[i] > p.bb[i + 3] for i in range(3))
                                                                                                                         and sum(s.Volume() for s in probe.intersect(p.shape).Solids()) > 1.0]}
-    px, pz = -236.0, 80.0
-    out["bail_glove_gap"] = {"what": "finger gap between the raised bail bar and the cassette rear face", "value_mm": 46.0 - 5.0 + (px - P.BATTERY_BAY["cassette_x"][0]) * -1 - 0.0, "required_mm": 45.0}
-    out["bail_glove_gap"]["ok"] = out["bail_glove_gap"]["value_mm"] >= 45.0
+    from .battery import HANDLE_L, HANDLE_X
+    out["handle_glove_gap"] = {"what": "finger gap between the pulled-out handle bar and the cassette rear face (calculated from the model dimensions)",
+                               "value_mm": HANDLE_L - 4.0 - (P.BATTERY_BAY["cassette_x"][0] - HANDLE_X[1]), "required_mm": 45.0}
+    out["handle_glove_gap"]["ok"] = out["handle_glove_gap"]["value_mm"] >= 45.0
     return out
 
 
@@ -431,7 +432,7 @@ def run_all(parts, table, log=print):
         "internals inside the shell cavity": [not R["containment"]["outside"], f"{len(R['containment']['checked'])} parts checked, {len(R['containment']['outside'])} outside"],
         "wheels and caster on the floor": [R["floor"]["ok"], str(R["floor"]["contact_z"])],
         "ToF centre rays and LiDAR plane clear": [R["rays"]["ok"], f"blocked ToF {R['rays']['tof_centre_blocked']}; LiDAR bearings blocked {len(R['rays']['lidar_blocked'])}"],
-        "removal sweeps and glove zones": [not svc_block and R["service"]["bail_glove_gap"]["ok"], "free" if not svc_block else str(svc_block)],
+        "removal sweeps and glove zones": [not svc_block and R["service"]["handle_glove_gap"]["ok"], "free" if not svc_block else str(svc_block)],
         "nothing below z = 50 ahead of x = 62 except latch / datum A": [R["chin_rule"]["ok"], str(R["chin_rule"]["parts_in_the_zone"])],
         "receiver interface matches mechanical_interfaces.md": [R["receiver"]["ok"], f"{sum(r['ok'] for r in R['receiver']['rows'])}/{len(R['receiver']['rows'])} items"],
         "every printed part fits the X1C bed in its print orientation": [not worst_fit, f"{len(R['bed_fit'])} parts; marginal: {[r['part'] for r in R['bed_fit'] if r['verdict'] == 'MARGINAL']}; no-fit: {[r['part'] for r in worst_fit]}"],

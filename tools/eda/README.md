@@ -161,7 +161,8 @@ board.route(passes=100, threads=None, timeout=None, optimizer=True, enabled=True
             escape_track=None,     #   stub width; default Rules.min_track
             escape_layers=None,    #   informational: target layer recorded per via (through vias reach all layers)
             escape_direct=True,    #   short direct pre-route to a nearby two-pad passive instead of a via
-            finisher=True)         # built-in maze router for the last open connections (see Routing notes)
+            finisher=True,         # built-in maze router for the last open connections (see Routing notes)
+            finisher_ripup=True)   #   ... allowed to rip up and reroute autorouter copper of other signal nets
 # per part: g.part(..., escape=None | True | False)   None = decided by pad pitch, True = force, False = never
 board.autoplace_options(clearance=0.3, ic_halo=2.0, edge_margin=0.5, grid=0.25, spread=0.35, rotations=(0, 90, 180, 270),
                         escape_keepaway=2.0)   # free band (mm) around the courtyard of escaped ICs (auto-arranged neighbours)
@@ -262,10 +263,15 @@ classes on top (first matching pattern wins).
   reports, on a clearance-inflated occupancy grid (both net classes' clearance + half the
   track width; vias against copper on every layer, drills, same-net SMD pads; edge,
   cut-outs, keep-outs), in a window that grows 6 mm -> 15 mm -> whole board. Every path is
-  re-checked with exact geometry before it is added; it does not rip up anything, so it
-  only finishes connections that have a free path. Results go to `route/finish.json`
-  (keyed to the SES hash, re-applied on cached builds; keep it under version control with
-  the SES); `summary.json` → `routing.finisher` lists what it routed and what not and why.
+  re-checked with exact geometry before it is added. If there is no free path and
+  `finisher_ripup=True` (default), it searches again allowing to cross *unlocked autorouter
+  copper of other signal nets* at a cost, rips up what the new path violates, and
+  reconnects every ripped net (which may in turn rip up further autorouter copper, never
+  pre-routes, escape/fan-out copper, nets with zones or the finisher's own new copper);
+  at most 30 steps per open connection, and the whole transaction is undone if any ripped
+  net cannot be reconnected. Results go to `route/finish.json`
+  (added items and ripped-up items, keyed to the SES hash, re-applied on cached builds; keep
+  it under version control with the SES); `summary.json` → `routing.finisher` lists what it routed and what not and why.
   DRC checks the result like everything else; nothing is ever marked connected by the
   finisher itself. Slow in Python on large windows (minutes per hopeless connection).
 * Freerouting reports "N pin-to-pin clearance violations" in `route/freerouting.log` for
@@ -284,7 +290,9 @@ classes on top (first matching pattern wins).
 * **Completion strategy.** If connections are still open after the first run, the build
   automatically lets Freerouting *continue from the routed result* (new DSN from the
   routed board; fresh rip-up budget concentrated on the failed nets), up to
-  `retries` times, keeping a run only if it reduces the open count. Freerouting itself
+  `retries` times, keeping a run only if it reduces the open count. Each continue run uses
+  a different Freerouting item-order seed (`--router.autorouter.item_order_seed`); a run
+  that does not improve is discarded and the next seed is tried. Freerouting itself
   also switches strategy when it stagnates (visible in `route/freerouting.log`).
   What is still open afterwards is reported, never hidden: `summary.json` →
   `drc.unrouted` lists every open connection with net, both end items and their board
