@@ -287,7 +287,9 @@ class TestMotion(Base):
         self.assertFalse(st["chain"]["ESTOP"])
         self.idle(0.5)
         self.assertLess(abs(self.env.latest()["v"]), 1e-3)
-        self.env.set(estop=False, press="REARM")
+        self.env.set(estop=False)
+        self.idle(0.3)  # a REARM pressed before the chain reads closed is refused (review m3)
+        self.env.set(press="REARM")
         self.wait_mode("ARMED_IDLE")
         # charger cover opened while armed: SERVICE_CHARGE, latch gone, head power forced off, no motion
         self.env.set(chg_cover_open=True)
@@ -337,7 +339,7 @@ class TestMotion(Base):
         self.idle(0.3)
         # ARM_PERMIT element that does not close: warning, no re-arm possible
         self.env.set(permit_open=True)
-        self.idle(0.3)
+        self.idle(11.0)  # rev A: C_SET holds CHAIN_END up through R_SET for up to ~10 s (review M1)
         st = self.ok("STATE")
         self.assertIn("PERMIT_STUCK_OFF", st["faults"])
         self.assertEqual((st["chain"]["ARM_PERMIT"], st["rearm_ready"]), (False, False))

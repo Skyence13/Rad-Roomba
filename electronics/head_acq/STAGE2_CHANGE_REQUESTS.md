@@ -37,3 +37,26 @@ Mechanical items checked as unchanged: all 35 lid screws, 18 wall bosses, 17 lid
 fences and the desiccant strip lie outside the 326 x 96 board outline (`mechanical/head/hp.py`: rear standoffs x 77.5 <
 board rear edge 83.2; front bosses x 184.2 > front edge 179.2; side bosses |y| 168.4 > 163); the 3 mm external foam
 jacket sits on the lid (no effect on the board).
+
+## Stage 3 (review fixes) - `docs/reviews/REVIEW_head_interference.md`, IB-57/58/61, CR-H9..H16
+
+Owner: head electronics stage 3 (2026-11-27).  Netlist changes are applied by `overrides.py` (IDs S3-xx, kinds NET /
+VALUE / ADD / NOTE, each with an expected-baseline check); `scripts/netcheck.py` now accepts exactly these and nothing else.
+Status of this section: **being implemented - values marked (prov.) may still change; re-read before coding.**
+
+### S3-F: changes the head FIRMWARE must know (pins, polarities, scale factors, new nets)
+
+| ID | Change | Firmware consequence |
+|---|---|---|
+| S3-01 (M2, CR-H10) | Lane-monitor taps moved off the comparator inputs: R125-class (all 8 channels, `Fn/Rn_MFAST`) pin 1 `xn_FCMP` -> `xn_FAST` (op-amp output); R134-class (4 floor channels, `Fn_MSLOW`) pin 1 `Fn_SCMP` -> `Fn_SLOW`; R119-class preamp taps (`xn_MPRE`, all 8) stay on PRE. All three tap classes 1 k -> **10 k**. | Monitor is a baseline / slow monitor only (bandwidth 10 k x 50-150 pF bus = 0.1-0.3 MHz). FAST code 000/001 now shows the op-amp output (before the 330 R / clamp), i.e. not clamped at 3.6 V. Settling after a mux change ~1 ms (allow 2 ms). |
+| S3-02 (M2) | **True off state for the lane monitor**: decoder U2701 E3 (pin 6) moves from +3V3 to new net **`MON_LANE_EN`** = TCA9534 U2405 **P7** (was spare `EXP_P7`; test pad TP2402 stays on it). New pull-down **R2418 100 k** MON_LANE_EN -> GND. | MON_LANE_EN = 1 (P7 output high): selected lane mux on, as before. MON_LANE_EN = 0 or P7 left as input / expander absent / reset: **all four lane muxes off**. Park 0 whenever armed (no engineering capture). TCA9534 output register powers up 0xFF (recalled, UNVERIFIED): write output bit 7 = 0 BEFORE making P7 an output. The IMON mux U2703 (EN = +3V3) is unaffected, so IMON scanning may continue while armed once P7 = 0. |
+| S3-03 (M5) | **Frame-bond fuse + frame-potential monitor**: new fuse **F2801** (Littelfuse 0466.500NR, 0.5 A very fast, 1206; MPN UNVERIFIED) in series with R2801 (FRAME - F2801 - new net `FRAME_F` - R2801 0 R - GND). R2802 (1 M frame bleed) pin 2 moves GND -> **MON_BUS**; monitor-bus bleed **R2702 100 k -> 1 M and its pin 2 GND -> VBL**. | With MON_LANE_EN = 0: **MON_ADC = VBL/2 + V(FRAME)/2 = 0.300 V + 0.5 x V(FRAME - GND)** (nominal 0.300 V; firmware stores the value at arm). Heater-to-frame fault: return-side contact gives V(FRAME) up to ~+70..90 mV (MON_ADC +35..45 mV); feed-side contact blows F2801 and the frame then floats at heater potential (MON_ADC up to ~VBL/2 + 7 V/2, clamped by the BAT54S on MON_ADC). Suggested rule: MON_ADC - stored value > 15 mV in a gate with MON_LANE_EN = 0 -> heater off + new health code (frame fault); compare readings with heater on/off. With a lane mux on the monitor gain is 0.98 (10 k into 1 M // 1 M) and the frame/VBL terms add < 1 %. |
+| S3-04 (m2) | Pole-zero DC path removed: new **C(base+50)** (C150, C250 ... C850) in series with R_PZ (R120-class): R120-class pin 2 `xn_FS` -> new net `xn_PZ`, C xn_PZ -> xn_FS, **47 nF** (prov.) X7R. | No pin change. Post-alpha FAST undershoot reduced (numbers in head_afe_budget.md 2.3); the firmware 300 us alpha hold stays valid (conservative). |
+| S3-05 (IB-58, CR-H12) | BIAS_VMON read-back divider R2217/R2218 stay **1 %** (no 0.1 % 4.99 M part found that I could verify); OVP trip and read-back are +-1.2 % worst case. | Calibrate BIAS_VMON per board against the HV_BUS pad (bring-up step 9), store the factor with the head identity; nominal 25.22. |
+| S3-06 (IB-58, CR-H12) | "ramp HV_SET <= 5 V/s" means **5 V/s at HV_BUS** (= 0.2 V/s at the DAC output). Basis: ~9.8 uF of bias-bus capacitance (1 uF + 8 x (1 uF + 100 nF)) needs 49 uA at 5 V/s but 1.2 mA at 125 V/s (staircase steps of 12.5 V would hit the 2.0 mA ISHORT limit inside the 6 Hz loop). | `RRH_BIAS_RAMP_STEP_MV` 500 per 100 ms period (0 -> 31.5 V in ~6.3 s). |
+| S3-07 (CR-H9, IB-58) | DAC output 7 of U_DAC0 = LED_AMPL, of U_DAC1 = DAC1_SPARE: the stage-1 self-check already maps both to `SPARE` when comparing with `pinmap.yaml`; the stage-3 check of the overridden netlist (`python3 overrides.py`) accepts `SPARE`, `LED_AMPL` and `DAC1_SPARE`. | Either name in `pinmap.yaml dac_map` passes; no rename forced. |
+| S3-08 (C1) | **No new pin for an ALPHA-width / LLD-to-ALPHA capture in rev A** (decision, reasons in head_afe_budget.md 2.5): PF1 has no timer channel (pin DB: ADC2_IN10, COMP3_INM, SPI2_SCK, GPIO); freeing a capture pin means moving PULSER_A0 from PF2 (TIM20_CH3) to PF1 (takes the contract-reserved SYNC_IN pin) plus a 4-lane OR chain of the ALPHA comparator outputs (new board-wide event line, breaks lane identity). Recorded as rev-B request. | Keep TOT >= 250 ns on raw LLD; amplitude-ratio aid with the existing ULD comparator: see head_afe_budget.md 2.5 (firmware rule option, no hardware change). |
+
+### S3-M: changes for HEAD MECHANICAL (`mechanical/head/asbuilt.py` reads the board file)
+
+(filled in as the placement is done - see below)

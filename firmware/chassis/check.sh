@@ -25,6 +25,7 @@ ninja -C "$BUILD" -j "$JOBS"
 step "3/5 unit tests on the plant model"
 "$BUILD/test_chain"
 "$BUILD/test_state_machine"
+"$BUILD/test_review"
 "$BUILD/test_drive" "$BUILD/drive_report.txt"
 echo "drive report written to $BUILD/drive_report.txt"
 

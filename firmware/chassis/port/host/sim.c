@@ -321,6 +321,7 @@ void sim_init(sim_t *s, uint64_t seed)
     memset(s, 0, sizeof *s);
     s->rng = seed * 2654435761u + 0x9E3779B97F4A7C15ull;
     sim_params_nominal(&s->p);
+    s->vmot_tau_s = 0.81;
     s->mode_run = true;
     s->head_docked = true;
     s->j2 = true;
@@ -432,7 +433,7 @@ static void plant_ms(sim_t *s)
             s->relay[k] = s->rstate[k] == 1;
         }
         /* VMOT: eFuse on with RUN_12V (soft start ~5 ms); off: 1 kOhm bleed on 810 uF (tau 0.81 s) */
-        s->vmot += (s->run12 ? (s->vbat - s->vmot) / 0.005 : -s->vmot / 0.81) * DT;
+        s->vmot += (s->run12 ? (s->vbat - s->vmot) / 0.005 : -s->vmot / s->vmot_tau_s) * DT;
         bool awake = s->run12 && o->bridge_awake && !s->mcu_in_reset; /* U9: nSLEEP = DRV_NSLEEP AND RUN_12V */
         double tau[2];
         for (int k = 0; k < 2; k++) {
@@ -659,7 +660,7 @@ bool sim_env_apply(sim_t *s, const char *json, size_t len)
     B("freeze_background", freeze_background) B("nv_fail", nv_fail) B("iox_b_fail", iox_b_fail) B("permit_short", permit_short) B("permit_open", permit_open) B("run12_short", run12_short) B("loop_cmp_stuck", loop_cmp_stuck)
     B("iox_drive_loop", iox_drive_loop) B("io_cfg_fault", io_cfg_fault) B("cset_diode", cset_diode) B("cset_energy", cset_energy) B("jp1_open", jp1_open) B("pmon_fail", pmon_fail) B("branch_fail", branch_fail) B("charger_fail", charger_fail)
     N("pres_ohm", pres_ohm) N("loop_ohm", loop_ohm) N("vbat", vbat) N("soc", soc) N("temp_bay", temp[0]) N("temp_pack", temp[1])
-    N("temp_board", temp[2]) N("tilt_deg", tilt_deg)
+    N("temp_board", temp[2]) N("tilt_deg", tilt_deg) N("vmot_tau_s", vmot_tau_s)
 #undef B
 #undef N
     if ((t = rrc_json_get(&d, 0, "k1_fault")) >= 0) { /* "NONE", "SEAL_WELD", "SET_SHORT" */

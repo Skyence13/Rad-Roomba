@@ -716,7 +716,7 @@ void rrch_tick_1khz(rrch_t *c)
      * element is never closed unsupervised */
     bool permit = c->boot_done && m != RRCH_MODE_FAULT && m != RRCH_MODE_BOOT && m != RRCH_MODE_SERVICE_CHARGE && m != RRCH_MODE_LAB &&
                   !c->permit_withdrawn && bt_permit && c->chain.pres != RRCH_PRES_FAULT && !(c->chain.hw_live & RRCH_HW(VMOT_FAULT)) &&
-                  c->chain.chain_end_known && !rrch_rearm_blocked(c) && !(c->faults & RRCH_FLT(LOOP_DISCREPANCY));
+                  c->chain.chain_end_known && !rrch_rearm_blocked(c) && c->chain.drop_ms >= 50u && !(c->faults & RRCH_FLT(LOOP_DISCREPANCY));
     /* once withdrawn, ARM_PERMIT stays low for at least 50 ms: K1 releases 4 ms after its coil loses
      * CHAIN_END; a shorter dip would let RUN_12V (HW_LATCH_RB) come back without REARM */
     if (!c->out.arm_permit && c->permit_low_ms < 50u) {

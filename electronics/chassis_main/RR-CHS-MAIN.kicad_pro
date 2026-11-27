@@ -496,7 +496,7 @@
       },
       {
         "bus_width": 12,
-        "clearance": 0.2,
+        "clearance": 0.5,
         "diff_pair_gap": 0.25,
         "diff_pair_via_gap": 0.25,
         "diff_pair_width": 0.4,
@@ -623,6 +623,14 @@
       },
       {
         "netclass": "SAFETY_CHAIN",
+        "pattern": "RUN_HD"
+      },
+      {
+        "netclass": "SAFETY_CHAIN",
+        "pattern": "RELAY_RTN"
+      },
+      {
+        "netclass": "SAFETY_CHAIN",
         "pattern": "COIL_RTN"
       },
       {
@@ -632,6 +640,18 @@
       {
         "netclass": "SAFETY_CHAIN",
         "pattern": "SET_CAP"
+      },
+      {
+        "netclass": "SAFETY_CHAIN",
+        "pattern": "SET_OUT"
+      },
+      {
+        "netclass": "SAFETY_CHAIN",
+        "pattern": "SET_DIS"
+      },
+      {
+        "netclass": "SAFETY_CHAIN",
+        "pattern": "RSET_A"
       },
       {
         "netclass": "SAFETY_CHAIN",
@@ -999,6 +1019,10 @@
     [
       "518abdd8-e3c2-5a1e-8416-2d52310ba8a1",
       "chain_3"
+    ],
+    [
+      "449be3ee-7cc1-503b-8052-498462d6d66a",
+      "chain_4"
     ],
     [
       "80fb8bd5-0b28-57a0-8824-560c2664d50b",

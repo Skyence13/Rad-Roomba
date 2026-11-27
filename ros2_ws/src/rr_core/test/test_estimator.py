@@ -65,14 +65,18 @@ def test_exact_threshold_controls_false_alarm(alpha):
     assert p2[r2 > rs].sum() == pytest.approx(0.95, abs=0.01)
 
 
-def test_normal_method_when_counts_large_and_dstar_formula():
+def test_exact_decision_approaches_the_closed_form_at_large_counts():
+    """Revision 4: the exact threshold and detection limit agree with the section 3 closed forms (planning
+    approximations) to a few percent when counts are large; the test of a single lane (m = 1) runs at 0.8 alpha."""
     cal = Cal(k=1.0, b=0.5, K=24.0, u_rel_K=0.15)
     d = est.combine([LaneStat(0, 2020, 20.0, 2000, 20.0, 100.0, "t", cal)], 0.05, 0.05)
-    assert d.method == "normal"
-    kap = est.kappa(0.05)
+    assert d.m == 1 and d.method.startswith("linear-exact/") and d.rule == est.RULE and d.check_ok
+    assert d.alpha_comb == pytest.approx(0.04)
+    kap = est.kappa(0.04)
     v0 = (100.5) / 20 + 100 / 20
-    assert d.D_star == pytest.approx(kap * math.sqrt(v0) / 24)
-    assert d.D_hash == pytest.approx((2 * kap * math.sqrt(v0) + kap**2 / 20) / (24 * (1 - kap**2 * 0.15**2)))
+    assert d.D_star == pytest.approx(kap * math.sqrt(v0) / 24, rel=0.03)
+    kb = est.kappa(0.05)
+    assert d.D_hash == pytest.approx((kap * math.sqrt(v0) + kb * math.sqrt(v0) + kb ** 2 / 40) / (24 * (1 - kb ** 2 * 0.15 ** 2)), rel=0.05)
 
 
 def test_lane_combination_keeps_common_terms():

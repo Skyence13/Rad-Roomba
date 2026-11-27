@@ -57,3 +57,10 @@ All closed.
 IB-10: calculated hang angles are in `out/prototype_report.md` section 7 (with the bar at x = -11, as built, and with the
 CR-04 position). IB-12: the rear-edge connector space of 18 mm each side of the hump is free in this body (tool-checked
 keep-out box behind the board edge, report section 10).
+
+## Requests from the receiver thermal break (2026-11-27, DEC-045 / IB-64)
+
+| Id | Request | Basis | Owner |
+|---|---|---|---|
+| CR-10 | Head `calc.py` `G_BODY_PER_SHOE`: the comment still describes printed PAHT-CF channels. The body now has machined 6061 channels on a G-10 break: 0.081 W/K per channel to the plate (calculated), but the channel's own exposed surface (about 45 cm2 under the plate) adds convection, so the body side per shoe is 0.11 W/K in still air and 0.14 W/K at 25 W/m2K (shoe-to-channel metal contact taken as 0.5 W/K, ASSUMED). Effect on the head heater against the 0.07 case: +1.8 W / +3.3 W at -25 C (calculated from the head's own published cases). Please update the basis text and, if wanted, the sensitivity rows; or ask for a foam boot on the channels (halves the residual, option not built). | `mechanical/common/out/mech_calcs.md` section 9 | head |
+| CR-11 | `mechanical/production/out/cache/*.brep` were captured by the work-in-progress snapshot commit; `mechanical/production/.gitignore` now ignores `out/`. Please untrack them (`git rm -r --cached mechanical/production/out`). | regenerable cache | lead (git) |

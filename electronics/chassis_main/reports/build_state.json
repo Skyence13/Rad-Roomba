@@ -8,9 +8,9 @@
     100.0
   ],
   "counts": {
-    "nets": 432,
-    "parts": 771,
-    "sheets": 18
+    "nets": 470,
+    "parts": 842,
+    "sheets": 19
   },
   "dsn_sha256": "82d417ae83d8b7ac6c6abcc351907a4d66d2db9b219ecc3541e38c7d1647722b",
   "dsn_unchanged": false,
@@ -447,6 +447,7 @@
     "chain.kicad_sch",
     "chain_2.kicad_sch",
     "chain_3.kicad_sch",
+    "chain_4.kicad_sch",
     "charger.kicad_sch",
     "drive.kicad_sch",
     "drive_2.kicad_sch",
@@ -5289,6 +5290,8 @@
   },
   "routed": true,
   "routing": {
+    "budget": null,
+    "chunk": 900,
     "enabled": true,
     "escape": "auto",
     "escape_direct": true,
@@ -5300,13 +5303,20 @@
     "extra_args": [],
     "fanout": false,
     "finisher": true,
+    "finisher_ripup": true,
+    "finisher_seconds": 900,
+    "fr_fallback": "none",
     "layers": 6,
+    "long_fanout_seconds": 600,
     "optimizer": true,
     "passes": 100,
     "plane_fanout": true,
+    "restarts": 1,
     "retries": 0,
+    "stall": 2,
     "threads": 3,
-    "timeout": 780
+    "timeout": 780,
+    "zone_nets": "auto"
   },
   "single_pin_nets": []
 }

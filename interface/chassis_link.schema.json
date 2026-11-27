@@ -40,7 +40,8 @@
     "BODY_BUMPER",
     "WATCHDOG",
     "MCU_NOT_READY",
-    "VMOT_FAULT"
+    "VMOT_FAULT",
+    "LATCH_UNEXPLAINED"
    ]
   },
   "protective_stop_reason": {
@@ -68,7 +69,8 @@
     "HOST_REQUEST",
     "HEAD_LINK",
     "LOCALIZATION",
-    "BRAKE_TEST_FAIL"
+    "BRAKE_TEST_FAIL",
+    "STOP_ESCALATED"
    ]
   },
   "op_mode": {
@@ -655,7 +657,8 @@
          "BODY_BUMPER",
          "WATCHDOG",
          "MCU_NOT_READY",
-         "VMOT_FAULT"
+         "VMOT_FAULT",
+         "LATCH_UNEXPLAINED"
         ]
        }
       },
@@ -686,7 +689,8 @@
          "HOST_REQUEST",
          "HEAD_LINK",
          "LOCALIZATION",
-         "BRAKE_TEST_FAIL"
+         "BRAKE_TEST_FAIL",
+         "STOP_ESCALATED"
         ]
        }
       }
@@ -886,7 +890,8 @@
        "BODY_BUMPER",
        "WATCHDOG",
        "MCU_NOT_READY",
-       "VMOT_FAULT"
+       "VMOT_FAULT",
+       "LATCH_UNEXPLAINED"
       ]
      }
     },
@@ -917,7 +922,8 @@
        "HOST_REQUEST",
        "HEAD_LINK",
        "LOCALIZATION",
-       "BRAKE_TEST_FAIL"
+       "BRAKE_TEST_FAIL",
+       "STOP_ESCALATED"
       ]
      }
     },
@@ -1355,7 +1361,8 @@
        "BODY_BUMPER",
        "WATCHDOG",
        "MCU_NOT_READY",
-       "VMOT_FAULT"
+       "VMOT_FAULT",
+       "LATCH_UNEXPLAINED"
       ]
      }
     },
@@ -1375,7 +1382,8 @@
        "BODY_BUMPER",
        "WATCHDOG",
        "MCU_NOT_READY",
-       "VMOT_FAULT"
+       "VMOT_FAULT",
+       "LATCH_UNEXPLAINED"
       ]
      }
     },
@@ -1406,7 +1414,8 @@
        "HOST_REQUEST",
        "HEAD_LINK",
        "LOCALIZATION",
-       "BRAKE_TEST_FAIL"
+       "BRAKE_TEST_FAIL",
+       "STOP_ESCALATED"
       ]
      }
     },
@@ -1437,7 +1446,8 @@
        "HOST_REQUEST",
        "HEAD_LINK",
        "LOCALIZATION",
-       "BRAKE_TEST_FAIL"
+       "BRAKE_TEST_FAIL",
+       "STOP_ESCALATED"
       ]
      }
     },
@@ -1634,7 +1644,8 @@
        "HOST_REQUEST",
        "HEAD_LINK",
        "LOCALIZATION",
-       "BRAKE_TEST_FAIL"
+       "BRAKE_TEST_FAIL",
+       "STOP_ESCALATED"
       ]
      }
     }
@@ -1761,7 +1772,8 @@
        "HOST_REQUEST",
        "HEAD_LINK",
        "LOCALIZATION",
-       "BRAKE_TEST_FAIL"
+       "BRAKE_TEST_FAIL",
+       "STOP_ESCALATED"
       ]
      }
     },
@@ -1841,7 +1853,8 @@
          "BODY_BUMPER",
          "WATCHDOG",
          "MCU_NOT_READY",
-         "VMOT_FAULT"
+         "VMOT_FAULT",
+         "LATCH_UNEXPLAINED"
         ]
        }
       },
@@ -1872,7 +1885,8 @@
          "HOST_REQUEST",
          "HEAD_LINK",
          "LOCALIZATION",
-         "BRAKE_TEST_FAIL"
+         "BRAKE_TEST_FAIL",
+         "STOP_ESCALATED"
         ]
        }
       }

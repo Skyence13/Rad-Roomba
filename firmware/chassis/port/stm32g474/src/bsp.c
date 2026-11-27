@@ -35,6 +35,23 @@ static rrch_reset_cause_t reset_cause = RRCH_RST_UNKNOWN;
 static rrch_retained_t retained __attribute__((section(".noinit"))); /* UNVERIFIED: must not be zeroed by the startup code */
 volatile uint32_t bsp_clock_fallback;
 extern rrch_t g_core;
+static bool io_cfg_check(void);
+
+/* Boot-time WDI toggling (CCR-E11: with JP1 closed the first counted WDI edge is due within 23 ms of
+ * reset release). Each call toggles the pin; calls are >= 2.5 ms apart where it matters. Not all of
+ * the boot path is covered (HSE start-up timeout, I2C probes): see README "Known gaps". */
+static void wdg_boot_toggle(void)
+{
+    HAL_GPIO_TogglePin(P(WDG_STROBE));
+}
+
+static void delay_kicking(uint32_t ms)
+{
+    for (uint32_t t = 0; t < ms; t += 5u) {
+        HAL_Delay(5);
+        wdg_boot_toggle();
+    }
+}
 
 /* ------------------------------------------------------------------ clock */
 static void clock_init(void)
@@ -124,14 +141,17 @@ static void gpio_init(void)
     gpio(P(IOX_A_CS_N), GPIO_MODE_OUTPUT_PP, GPIO_NOPULL, 0);
     gpio(P(BOOT0_LED_STAT), GPIO_MODE_OUTPUT_PP, GPIO_NOPULL, 0);
 
-    /* readbacks: pull-down so that an open wire reads "not healthy" */
-    gpio(P(ESTOP_A_RB), GPIO_MODE_INPUT, GPIO_PULLDOWN, 0);
-    gpio(P(ESTOP_B_RB), GPIO_MODE_INPUT, GPIO_PULLDOWN, 0);
-    gpio(P(HW_LATCH_RB), GPIO_MODE_INPUT, GPIO_PULLDOWN, 0);
-    gpio(P(BRAKE_L_RB), GPIO_MODE_INPUT, GPIO_NOPULL, 0); /* PC14/PC15: external pull-downs */
+    /* readbacks: NO internal pulls (review M3). The chain taps are 100k/56k dividers whose 56 k already
+     * defines the open-wire level; an internal pull-down (25-55 k) loads them below VIH at normal pack
+     * voltage. ESTOP_B/J2 have 10 k pull-downs (R121/R124), PC14/PC15 10 k pull-ups + Q41/Q42 inverters.
+     * PD2 (HW_LATCH_RB) is also U9.B: it is TIM8_BKIN (AF, input-only function) and never an output. */
+    gpio(P(ESTOP_A_RB), GPIO_MODE_INPUT, GPIO_NOPULL, 0);
+    gpio(P(ESTOP_B_RB), GPIO_MODE_INPUT, GPIO_NOPULL, 0);
+    gpio(P(HW_LATCH_RB), GPIO_MODE_AF_PP, GPIO_NOPULL, PIN_HW_LATCH_RB_ALT_AF);
+    gpio(P(BRAKE_L_RB), GPIO_MODE_INPUT, GPIO_NOPULL, 0);
     gpio(P(BRAKE_R_RB), GPIO_MODE_INPUT, GPIO_NOPULL, 0);
     gpio(P(WDG_OK_RB), GPIO_MODE_INPUT, GPIO_NOPULL, 0);
-    gpio(P(J2_PRES_RB), GPIO_MODE_INPUT, GPIO_PULLDOWN, 0);
+    gpio(P(J2_PRES_RB), GPIO_MODE_INPUT, GPIO_NOPULL, 0);
 
     /* analog */
     gpio(P(IPROPI_L), GPIO_MODE_ANALOG, GPIO_NOPULL, 0);
@@ -200,8 +220,10 @@ static void timers_init(void)
     (void)HAL_TIM_Encoder_Start(&htim_enc_r, TIM_CHANNEL_ALL);
     (void)HAL_TIM_Encoder_Start(&htim_enc_l, TIM_CHANNEL_ALL);
 
-    /* bridge PWM: centre aligned 20 kHz, four channels. Break input (PD2) is left disabled so
-     * that the brake test can probe the bridges with the latch dropped. */
+    /* bridge PWM: centre aligned 20 kHz, four channels. TIM8 break on PD2 = HW_LATCH_RB (RUN_12V tap),
+     * active low, automatic output re-enable: PWM is forced to its idle (low) state in hardware whenever
+     * the latch readback is low - the fourth path of safety_chain.md 2.1 (review M4). UNVERIFIED on a board.
+     * The brake-test probe then applies nothing, which is consistent: U9 holds the bridges asleep anyway. */
     TIM_OC_InitTypeDef oc = {0};
     htim_pwm.Instance = TIM8;
     htim_pwm.Init.CounterMode = TIM_COUNTERMODE_CENTERALIGNED1;
@@ -215,6 +237,17 @@ static void timers_init(void)
         (void)HAL_TIM_PWM_ConfigChannel(&htim_pwm, &oc, chs[i]);
         (void)HAL_TIM_PWM_Start(&htim_pwm, chs[i]);
     }
+    TIM_BreakDeadTimeConfigTypeDef bk = {0};
+    bk.OffStateRunMode = TIM_OSSR_DISABLE;
+    bk.OffStateIDLEMode = TIM_OSSI_DISABLE;
+    bk.LockLevel = TIM_LOCKLEVEL_OFF;
+    bk.DeadTime = 0;
+    bk.BreakState = TIM_BREAK_ENABLE;
+    bk.BreakPolarity = TIM_BREAKPOLARITY_LOW;
+    bk.BreakFilter = 2;
+    bk.Break2State = TIM_BREAK2_DISABLE;
+    bk.AutomaticOutput = TIM_AUTOMATICOUTPUT_ENABLE;
+    (void)HAL_TIMEx_ConfigBreakDeadTime(&htim_pwm, &bk);
 
     /* control tick 1 kHz and supervision tick 100 Hz from two separate timers */
     htim_ctl.Instance = TIM6;
@@ -397,13 +430,13 @@ static void spi_dev_init(void)
     /* BMI088 */
     tx[0] = 0x80;
     (void)spi_xfer(P(IMU_CS_ACC_N), tx, rx, 3); /* first access switches the accelerometer to SPI */
-    HAL_Delay(2);
+    delay_kicking(5);
     bool acc = spi_xfer(P(IMU_CS_ACC_N), tx, rx, 3) && rx[2] == 0x1Eu;
     bool gyr = spi_xfer(P(IMU_CS_GYR_N), tx, rx, 2) && rx[1] == 0x0Fu;
     if (acc && gyr) {
         bmi088_wr(P(IMU_CS_ACC_N), 0x7C, 0x00); /* active mode */
         bmi088_wr(P(IMU_CS_ACC_N), 0x7D, 0x04); /* accelerometer on */
-        HAL_Delay(50);
+        delay_kicking(50);
         bmi088_wr(P(IMU_CS_ACC_N), 0x41, 0x00); /* +-3 g */
         bmi088_wr(P(IMU_CS_ACC_N), 0x40, 0xAB); /* 800 Hz, normal filter */
         bmi088_wr(P(IMU_CS_GYR_N), 0x0F, 0x02); /* +-500 deg/s */
@@ -574,9 +607,15 @@ static void h_read(void *ctx, rrch_in_t *in)
     SET(J2_PRES, RD(J2_PRES_RB))
 #undef SET
 #undef XB
+    static uint32_t n_cfg;
+    static bool cfg_ok = true;
+    if (n_cfg++ % 100u == 0u) {
+        cfg_ok = io_cfg_check();
+    }
     memset(in, 0, sizeof *in);
     in->di = di;
     in->iox_ok = xok;
+    in->io_cfg_ok = cfg_ok;
     /* ADC liveness: each ADC must have finished at least one sequence since the previous tick */
     in->adc_ok = __HAL_ADC_GET_FLAG(&hadc1, ADC_FLAG_EOS) && __HAL_ADC_GET_FLAG(&hadc2, ADC_FLAG_EOS);
     __HAL_ADC_CLEAR_FLAG(&hadc1, ADC_FLAG_EOS);
@@ -653,10 +692,54 @@ static void h_write(void *ctx, const rrch_out_t *o)
     iox_b_want = w;
 }
 
+/* WDI: 5 ms high pulse every 10 ms (core: supervisor raises, control tick lowers): one counted edge per
+ * 10 ms whichever edge the TPS3430 counts (review m2). The MCU's own IWDG is refreshed with it (M4). */
 static void h_strobe(void *ctx)
 {
     (void)ctx;
-    HAL_GPIO_TogglePin(P(WDG_STROBE));
+    HAL_GPIO_WritePin(P(WDG_STROBE), GPIO_PIN_SET);
+    IWDG->KR = 0xAAAAu;
+}
+
+static void h_wdg_low(void *ctx)
+{
+    (void)ctx;
+    HAL_GPIO_WritePin(P(WDG_STROBE), GPIO_PIN_RESET);
+}
+
+/* Independent watchdog (review M4, safety_chain.md row 37): LSI ~32 kHz / 64 / 125 -> about 250 ms, longer
+ * than the external window (23.4-31.6 ms) so the TPS3430 normally acts first; it is the reset path when
+ * JP1 is open (CCR-E11). Frozen while a debugger halts the core. Register values UNVERIFIED on a board. */
+static void iwdg_start(void)
+{
+    DBGMCU->APB1FZR1 |= DBGMCU_APB1FZR1_DBG_IWDG_STOP;
+    IWDG->KR = 0xCCCCu;
+    IWDG->KR = 0x5555u;
+    IWDG->PR = 4u;      /* /64 */
+    IWDG->RLR = 125u;
+    while (IWDG->SR != 0u) {
+    }
+    IWDG->KR = 0xAAAAu;
+}
+
+/* review M2/M3: every chain-tap pin must be an input without pull (PD2: TIM8_BKIN AF), and both IOX_A
+ * ports must be inputs (IODIR = 0xFF: GPA5/GPA7 sit on the U21/U22 gate nodes). Read back periodically. */
+static bool pin_is(GPIO_TypeDef *port, uint16_t pin, uint32_t mode)
+{
+    uint32_t n = 0;
+    while (((uint32_t)pin >> n) > 1u) {
+        n++;
+    }
+    return ((port->MODER >> (2u * n)) & 3u) == mode && ((port->PUPDR >> (2u * n)) & 3u) == 0u;
+}
+
+static bool io_cfg_check(void)
+{
+    bool ok = pin_is(P(ESTOP_A_RB), 0u) && pin_is(P(ESTOP_B_RB), 0u) && pin_is(P(WDG_OK_RB), 0u) && pin_is(P(BRAKE_L_RB), 0u) &&
+              pin_is(P(BRAKE_R_RB), 0u) && pin_is(P(J2_PRES_RB), 0u) && pin_is(P(HW_LATCH_RB), 2u);
+    uint8_t tx[4] = {0x41, 0x00, 0, 0}, rx[4] = {0}; /* UNVERIFIED MCP23S17: read IODIRA, IODIRB (sequential) */
+    ok = ok && spi_xfer(P(IOX_A_CS_N), tx, rx, 4) && rx[2] == 0xFFu && rx[3] == 0xFFu;
+    return ok;
 }
 
 static size_t h_link_read(void *ctx, uint8_t *buf, size_t cap)
@@ -715,7 +798,7 @@ static void h_unlock(void *ctx)
 
 void bsp_fill_hal(rrch_hal_t *hal)
 {
-    rrch_hal_t h = {NULL, h_now, h_read, h_write, h_strobe, h_link_read, h_link_write, h_link_up, nv_read, nv_write, h_retained, h_entropy, h_reset_cause, h_lock, h_unlock};
+    rrch_hal_t h = {NULL, h_now, h_read, h_write, h_strobe, h_link_read, h_link_write, h_link_up, nv_read, nv_write, h_retained, h_entropy, h_reset_cause, h_lock, h_unlock, h_wdg_low};
     *hal = h;
 }
 
@@ -753,10 +836,15 @@ void bsp_init(void)
     __HAL_RCC_RNG_CLK_ENABLE();
     hrng.Instance = RNG;
     (void)HAL_RNG_Init(&hrng);
+    wdg_boot_toggle();
     timers_init();
     adc_init();
+    delay_kicking(5);
     spi_dev_init();
+    delay_kicking(5);
     i2c_init();
+    delay_kicking(5);
+    iwdg_start();
 }
 
 void bsp_background(rrch_t *core)
@@ -795,7 +883,13 @@ void bsp_background(rrch_t *core)
     if (now - t_iox_b >= 10u) {
         t_iox_b = now;
         uint8_t hi = 0;
+        static uint32_t n_fail;
         bool ok = i2c_rd_reg(&hi2c_sys, IOX_B_I2C_ADDR, 0x01, &hi, 1);
+        n_fail = ok ? 0u : n_fail + 1u;
+        if (n_fail == 3u) { /* review m7: re-initialise the bus after three failed reads (no SCL toggling, UNVERIFIED) */
+            (void)HAL_I2C_DeInit(&hi2c_sys);
+            (void)HAL_I2C_Init(&hi2c_sys);
+        }
         uint64_t t = bsp_now_us();
         core->hal.irq_lock(NULL);
         rrch_iox_b_update(core, ok, ok && ((hi >> (IOX_B_BIT_CHAIN_END_RB - 8u)) & 1u) != 0u, t);

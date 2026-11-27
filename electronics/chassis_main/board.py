@@ -131,7 +131,9 @@ with open(os.path.join(HERE, "reports", "overrides_applied.json"), "w") as f:
 
 NOTES = {
     "chain": "NOT A SAFETY-RATED CIRCUIT. Element order: F_CHAIN - J_MODE - J_ESTOP - J_HANDS - J_COVER - U20 - J_DOCK - U21 - U22 -\n"
-             "J_BUMP_L - J_BUMP_R - U23 - U24 - K1. S2-01: PAUSE moved from J_BTN pins 5/8 to J_PAUSE (rear-right cluster).",
+             "J_BUMP_L - J_BUMP_R - U23 - U24 - K1. S2-01: PAUSE moved from J_BTN pins 5/8 to J_PAUSE (rear-right cluster).\n"
+             "Stage 3 (review fixes): HEAD_LOOP = U21 (channel A, U30) + U21B (channel B, U46); latch = K1 AND U_HOLD (set only by the\n"
+             "on-board REARM set stage U_SET: set-contact edge AND aux-contact level); D_RUN; K2/K3 coil return through U_LS; D_RSET.",
     "head_link": "S2-02: J_HEAD1 is a Mini-Fit Jr 2x5 (AWG 18 contacts for the heater pair); pins 1-8 = J1 pins 1-8, pins 9/10 NC.",
     "mcu": "S2-05: U42 (BMI088) GNDA on pins 2 and 4 (stock symbol). Pin use = firmware/chassis/pinmap.yaml.",
     "branches": "S2-04: R46 (U17 ILM) 845 ohm -> HEAD_HTR limit 3.96 A nominal (contract 4.0 A).",
@@ -155,3 +157,9 @@ for p in board.parts:
 # ----------------------------------------------------------------- rails, classes, outline, copper, placement
 placement.setup(board)
 placement.routing(board)
+
+# ----------------------------------------------------------------- custom DRC rules (stage 3, review M6)
+# rrkicad has no custom-rule API; KiCad (kicad-cli pcb drc, used by the tool's DRC step) loads <project>.kicad_dru from the
+# project directory, so the functional clearances of layout_guidance.md section 5 are written here and checked by DRC.
+with open(os.path.join(HERE, "RR-CHS-MAIN.kicad_dru"), "w") as f:
+    f.write(placement.chain_rules())

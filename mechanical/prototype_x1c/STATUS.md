@@ -24,6 +24,19 @@ y -122 (from `mechanical/common`); IB-26 bolt-on clamp resistor removed; IB-34 T
 tof_look_rev_left/right); head masses and envelope taken from `mechanical/common` (P.HEAD_MASS, x 212.5).
 `mechanical/common` was updated in the same pass (owner of that pass: this engineer).
 
+## Follow-on 2026-11-27 (2): receiver thermal break (DEC-045, IB-64) -- built, checked
+
+Each receiver channel hangs on a ground 4.0 mm G-10 shim under its ears (RRX-F12 inboard / RRX-F13 outboard strips); no metal
+crosses the shim: M4 x 18 A2-70 in G-10 top-hat bushings with DIN 6796 + ISO 7089 (1500 N, 1.2 N m); lower 4 m6 x 8 pins in the
+ear engage only the shim, upper pins pressed in the plate end in an ear relief; the roof exists only as two bridges at the
+land stations, standing in 1.5 mm plate pockets (1.5 mm air gap). Ears and walls stop at z 29.0; datum C and the land pins
+unchanged. Tool-checked: receiver interface 41/41 (incl. shim thickness, ear top z, min channel-to-plate gap >= 1.0 mm, pins
+clear of the far part), 0 clashes, build exit 0. Calculated (`mechanical/common/out/mech_calcs.md` section 9): 0.081 W/K per
+channel (target 0.10), datum-C stack +-0.057 -> +-0.093 worst case, 20 N corner deflection +1.6 % (printed head) / +7 %
+(aluminium head), first mode -1 % / -4 %, preload loss 6 % with the spring washer (57 % without), engagement 7.1 mm = 1.8 d.
+Joint section J17 added; stage 1 work instructions, hardware and tolerance table updated. The same parametric code now has a
+build switch (`RR_BUILD=production`, `rrx/production.py`) used by `mechanical/production`; the default build is unchanged.
+
 ## Run times (shared 4-core machine)
 
 Warm BREP cache: about 4-6 min for everything. Cold (empty `out/cache`): the shell pieces take 20-25 min on the shared CPU

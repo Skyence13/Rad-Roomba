@@ -268,7 +268,12 @@ void rrch_chain_step(rrch_t *c)
         }
         rrch_pstop(c, RRCH_SW(STOP_ESCALATED));
     }
-    if (timer_run(&ch->t_loop_fail, latched_now && disagree, 5)) {
+    if (!disagree) {
+        ch->loop_disc_latched = false;
+    } else if (ch->t_loop_fail == 0u) {
+        ch->loop_disc_latched = latched_now; /* latched when the disagreement began */
+    }
+    if (timer_run(&ch->t_loop_fail, ch->loop_disc_latched && disagree, 5)) {
         rrch_fault_set(c, RRCH_FLT(LOOP_FAIL), true);
     }
     bool lab_code = ch->pres == RRCH_PRES_HEAD_VIA_LAB_EXTENSION || ch->pres == RRCH_PRES_LAB_EXTENSION_ONLY;
@@ -382,7 +387,8 @@ void rrch_chain_step(rrch_t *c)
         hw |= RRCH_HW(WATCHDOG);
     }
     bool bt_running = c->bt.state == RRCH_BT_RUNNING;
-    if (!c->out.arm_permit && c->boot_done && !bt_running && c->mode != RRCH_MODE_SERVICE_CHARGE && c->mode != RRCH_MODE_LAB) {
+    /* (the 50 ms permit hold after a latch fall is a consequence of the drop, not a cause) */
+    if (!c->out.arm_permit && c->boot_done && !bt_running && c->mode != RRCH_MODE_SERVICE_CHARGE && c->mode != RRCH_MODE_LAB && ch->drop_ms >= 60u) {
         hw |= RRCH_HW(MCU_NOT_READY);
     }
     if (c->faults & RRCH_FLT(PERMIT_STUCK_OFF)) {
@@ -445,6 +451,14 @@ void rrch_chain_step(rrch_t *c)
     }
     if (timer_run(&ch->t_no_drop, latch && open_el && c->boot_done, 30)) {
         rrch_fault_set(c, RRCH_FLT(LATCH_NO_DROP), true);
+    }
+
+    /* any fall of the latch readback is made a complete drop: an opening shorter than K1's release time
+     * (4 ms) removes RUN_12V for a moment but would let K1 hold and RUN_12V return with no REARM (review m4) */
+    if (!latch && ch->latch) {
+        ch->drop_ms = 0;
+    } else if (ch->drop_ms < 60000u) {
+        ch->drop_ms++;
     }
 
     /* --- latched hardware reasons --- */

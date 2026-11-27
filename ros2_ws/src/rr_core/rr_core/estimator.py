@@ -1,4 +1,8 @@
-"""Count-processing estimator - analysis/radiometry/MODEL.md REVISION 3 (normative).
+"""Count-processing estimator - analysis/radiometry/MODEL.md REVISION 4 (normative).
+
+The closed-form / revision-2 functions (decision_threshold, detection_limit_*) are kept as planning
+approximations and for cross-tests; the decisions of a survey come from `combine` (revision 4: exact
+linear statistics, rr_core.linstat).
 
 Section numbers in comments refer to MODEL.md.  Cross-tested against the
 reference implementation analysis/radiometry/rrrad (tests/test_estimator.py).
@@ -9,10 +13,13 @@ No ROS imports.  Runtime dependencies: numpy, scipy.special.
 from __future__ import annotations
 
 import math
+import time
 from dataclasses import dataclass, field
 
 import numpy as np
 from scipy.special import gammaln, ndtr, ndtri
+
+from .linstat import Evaluator, LinStat
 
 EXACT_ALPHA_BELOW = 1e-3      # section 3 (R2): exact thresholds for alpha below this ...
 EXACT_COUNTS_BELOW = 30.0     # ... or expected floor counts in the dwell below this
@@ -197,114 +204,264 @@ def u_k_floor(U, cal: Cal, alpha: float, beta: float) -> float:
     return math.inf if den <= 0 else (ka + kb) * U * cal.u_k / den
 
 
-# ------------------------------------------------------------- lane combination
-@dataclass
-class LaneStat:
-    """Weighted sums for one lane and class over a gate set (sections 1, 6)."""
-    lane: int
-    N_F: float
-    T_F: float
-    N_U: float
-    T_U: float
-    U0: float                 # U_null (section 3, R1)
-    u0_method: str
-    cal: Cal
-    envelope_ok: bool = True
-    envelope_reason: str = ""
+# ------------------------------------------------------------- revision 4: exact linear statistics
+RULE = "linear-exact/combined+per-lane/0.8-0.2"
+ALPHA_SPLIT_COMBINED = 0.8                      # combined test at 0.8 alpha; each lane at 0.2 alpha / m
+WEIGHTED_SUM_VARIANCE = "exact_coefficients"
+NO_DECISION_REF = "no decision \u2014 null reference unavailable"
+NO_DECISION_EVAL = "no decision \u2014 evaluator check failed"
+WEIGHT_STEP = 0.05                              # footprint weights are rounded to this lattice (rule and statistic)
 
 
-RULE = "per-lane-exact/any-lane/alpha-over-m"    # MODEL.md rev 3 section 6 (IB-31, CR-09)
-WEIGHTED_SUM_VARIANCE = "poisson_form_conservative"   # MODEL.md rev 3 section 6 (IB-31, CR-08)
+class LaneGates:
+    """Gates of one lane contributing to a decision cell (or one stationary count, w = 1)."""
+
+    def __init__(self, lane, w, tf, N_F, tu, N_U, U0, u0_method, cal: Cal, envelope_ok=True, envelope_reason="",
+                 u0_window_s=None, u0_window_counts=None):
+        self.lane, self.cal = lane, cal
+        self.w, self.tf, self.N_F = (np.asarray(x, float) for x in (w, tf, N_F))
+        self.tu, self.N_U = np.asarray(tu, float), np.asarray(N_U, float)
+        self.U0, self.u0_method = U0, u0_method
+        self.envelope_ok, self.envelope_reason = envelope_ok, envelope_reason
+        self.u0_window_s, self.u0_window_counts = u0_window_s, u0_window_counts
+
+    @property
+    def T_F(self): return float(np.dot(self.w, self.tf))
+
+    @property
+    def T_U(self): return float(np.dot(self.w, self.tu))
 
 
-@dataclass
+def LaneStat(lane, N_F, T_F, N_U, T_U, U0, u0_method, cal, envelope_ok=True, envelope_reason=""):
+    """One gate of weight 1 (a stationary count or a test case)."""
+    return LaneGates(lane, [1.0], [T_F], [N_F], [T_U], [N_U], U0, u0_method, cal, envelope_ok, envelope_reason)
+
+
 class Decision:
-    D: float | None = None
-    u_stat: float | None = None
-    u_total: float | None = None
-    D_star: float | None = None       # min over the contributing lanes of r*_i / K_i (each at alpha/m)
-    D_hash: float | None = None       # min over the contributing lanes of D#_i solved at (alpha/m, beta)
-    T_F: float = 0.0
-    detected: bool | None = None      # any contributing lane above its own threshold
-    method: str = ""                  # m = 1: the lane method of section 3; m > 1: RULE
-    rule: str = RULE
-    m: int = 0
-    alpha: float = 0.0
-    alpha_lane: float = 0.0           # alpha / m
-    beta: float = 0.0
-    flagged_lanes: list = field(default_factory=list)
-    u0_methods: list = field(default_factory=list)
-    lanes: list = field(default_factory=list)     # per lane: w, r, D, r_star, D_star, D_hash, method, flagged ...
-    envelope_ok: bool = True
-    envelope_reason: str = ""
+    def __init__(self, **kw):
+        self.D = self.u_stat = self.u_total = self.D_star = None
+        self.T_F = 0.0
+        self.detected = None
+        self.method = ""
+        self.rule = RULE
+        self.status = "OK"
+        self.status_text = ""
+        self.m = 0
+        self.alpha = self.beta = self.alpha_comb = self.alpha_lane = 0.0
+        self.c = []
+        self.flagged_by = []
+        self.flagged_lanes = []
+        self.u0_methods = []
+        self.lanes = []
+        self.excluded_lanes = []
+        self.check_ok = True
+        self.envelope_ok = True
+        self.envelope_reason = ""
+        self._D_hash = None
+        self._hash_fn = None
+        self.__dict__.update(kw)
+
+    @property
+    def D_hash(self):
+        if self._D_hash is None and self._hash_fn is not None:
+            self._D_hash = self._hash_fn()
+            self._hash_fn = None
+        return self._D_hash
+
+    @D_hash.setter
+    def D_hash(self, v):
+        self._D_hash = v
 
     def as_dict(self):
-        return dict(self.__dict__)
+        d = {k: v for k, v in self.__dict__.items() if k not in ("_hash_fn", "_D_hash")}
+        d["D_hash"] = self.D_hash
+        return d
 
 
-def _lane_limit(s: LaneStat, alpha_lane: float, beta: float, exact_detection_limit: bool):
-    """Threshold r*, method and detection limit D# of ONE lane at (alpha_lane, beta), section 3
-    (all calibration terms of the lane, common ones included, belong to the lane's own test)."""
-    cal = s.cal
-    r_star, method = decision_threshold(s.U0, s.T_F, s.T_U, cal, alpha_lane, parts="all")
-    kb = kappa(beta)
-    den = cal.K * (1.0 - kb ** 2 * cal.u_rel_K ** 2)
-    if method == "poisson-exact" and exact_detection_limit:
-        r_hash = detection_limit_rate(r_star, 0.0, s.T_F, beta, s.U0, s.T_U, cal, "poisson-exact", "all")
-        D_hash = math.inf if den <= 0 else r_hash / den
+class Decider:
+    """Thresholds and detection limits of the exact linear statistics, with a cache.
+
+    The statistic under the null depends only on the null means (U_null, weights, live times), not on the
+    counts, so thresholds repeat between cells of equal footprint pattern.  With `quantise` the inputs of the
+    NULL statistic (U_null on a 0.25 % log grid, live time per weight bin to 1 ms) are rounded before it is
+    built, so a cache hit gives exactly the value a miss would compute (results do not depend on evaluation
+    order; replay is bit-identical).  quantise = False uses the inputs as they are (cross-checks)."""
+
+    def __init__(self, quantise=True, u0_step=0.0025, t_step=1e-3, max_entries=20000):
+        self.quantise, self.u0_step, self.t_step, self.max_entries = quantise, u0_step, t_step, max_entries
+        self._ev, self._thr, self._lim = {}, {}, {}
+        self.stats = {"threshold_calls": 0, "threshold_computed": 0, "limit_calls": 0, "limit_computed": 0,
+                      "seconds_threshold": 0.0, "seconds_limit": 0.0}
+
+    def _q_u0(self, u):
+        if not self.quantise or u <= 0:
+            return float(u)
+        return math.exp(round(math.log(u) / self.u0_step) * self.u0_step)
+
+    def _lane_key(self, g: LaneGates):
+        bins = {}
+        for w, tf, tu in zip(g.w, g.tf, g.tu):
+            b = bins.setdefault(round(float(w), 9), [0.0, 0.0])
+            b[0] += tf
+            b[1] += tu
+        q = (lambda x: round(x / self.t_step) * self.t_step) if self.quantise else (lambda x: x)
+        return (g.cal, self._q_u0(g.U0), tuple(sorted((w, q(a), q(b)) for w, (a, b) in bins.items())))
+
+    @staticmethod
+    def _family(keys):
+        """c_i, and stat_at(D) for the lanes given by their keys (all with a reference)."""
+        parts = []
+        for cal, U0, bins in keys:
+            w = np.array([b[0] for b in bins])
+            tf = np.array([b[1] for b in bins])
+            tu = np.array([b[2] for b in bins])
+            T_F, T_U = float(np.dot(w, tf)), float(np.dot(w, tu))
+            var = ((cal.k * U0 + cal.b) * float(np.dot(w * w, tf)) / T_F ** 2
+                   + cal.k ** 2 * U0 * float(np.dot(w * w, tu)) / T_U ** 2
+                   + max(U0 * U0 * cal.u_k_lane ** 2 + cal.u_b ** 2 + 2.0 * U0 * cal.cov_kb, 0.0)) / cal.K ** 2
+            parts.append((cal, U0, w, tf, tu, T_F, T_U, var))
+        inv = np.array([1.0 / p[7] for p in parts])
+        c = inv / inv.sum()
+        mu = -sum(ci / p[0].K * p[0].b for ci, p in zip(c, parts))
+        var_lane = sum((ci / p[0].K) ** 2 * max(p[1] ** 2 * p[0].u_k_lane ** 2 + p[0].u_b ** 2 + 2.0 * p[1] * p[0].cov_kb, 0.0)
+                       for ci, p in zip(c, parts))
+        common = sum(ci / p[0].K * p[1] * p[0].u_k_common for ci, p in zip(c, parts))
+        sig0 = math.sqrt(var_lane + common ** 2)
+        u_rel = float(sum(ci * p[0].u_rel_K for ci, p in zip(c, parts)))
+
+        def stat_at(D):
+            a, lam = [], []
+            for ci, (cal, U0, w, tf, tu, T_F, T_U, _v) in zip(c, parts):
+                cp = ci / cal.K
+                a += [cp * w / T_F, -cp * cal.k * w / T_U]
+                lam += [(cal.k * U0 + cal.b + cal.K * D) * tf, U0 * tu]
+            return LinStat(np.concatenate(a), np.concatenate(lam), mu, math.hypot(sig0, u_rel * D))
+        return c, stat_at
+
+    def _evaluator(self, keys):
+        ev = self._ev.get(keys)
+        if ev is None:
+            if len(self._ev) > self.max_entries:
+                self._ev.clear(); self._thr.clear(); self._lim.clear()
+            c, stat_at = self._family(keys)
+            ev = (c, Evaluator(stat_at))
+            self._ev[keys] = ev
+        return ev
+
+    def threshold(self, keys, alpha):
+        self.stats["threshold_calls"] += 1
+        k = (keys, alpha)
+        r = self._thr.get(k)
+        if r is None:
+            t0 = time.perf_counter()
+            c, ev = self._evaluator(keys)
+            t, ok, _ach = ev.threshold(alpha)
+            r = (c, t, ok, ev.method + ("(regularised)" if ev.regularised else ""))
+            self._thr[k] = r
+            self.stats["threshold_computed"] += 1
+            self.stats["seconds_threshold"] += time.perf_counter() - t0
+        return r
+
+    def limit(self, keys, alpha, beta):
+        self.stats["limit_calls"] += 1
+        k = (keys, alpha, beta)
+        r = self._lim.get(k)
+        if r is None:
+            t0 = time.perf_counter()
+            c, t, ok, _m = self.threshold(keys, alpha)
+            ev = self._evaluator(keys)[1]
+            s0 = ev.stat_at(0.0)
+            seed = max(t + kappa(beta) * math.sqrt(s0.var), 1e-6)
+            r = ev.detection_limit(t, beta, seed)
+            self._lim[k] = r
+            self.stats["limit_computed"] += 1
+            self.stats["seconds_limit"] += time.perf_counter() - t0
+        return r
+
+
+DEFAULT_DECIDER = Decider()
+
+
+def _lane_estimate(g: LaneGates):
+    cal = g.cal
+    T_F, T_U = g.T_F, g.T_U
+    NF, NU = float(np.dot(g.w, g.N_F)), float(np.dot(g.w, g.N_U))
+    F, U = NF / T_F, NU / T_U
+    r = F - cal.k * U - cal.b
+    w2 = g.w ** 2
+    if g.U0 is not None:       # low counts: max(sum w^2 N, sum w^2 lambda0), never N + 1
+        sf = max(float(np.dot(w2, g.N_F)), float(np.dot(w2, (cal.k * g.U0 + cal.b) * g.tf)))
+        su = max(float(np.dot(w2, g.N_U)), float(np.dot(w2, g.U0 * g.tu)))
     else:
-        sd0 = math.sqrt(u0sq(s.U0, s.T_F, s.T_U, cal, "all"))
-        D_hash = detection_limit_activity(r_star / cal.K, sd0 / cal.K, 1.0 / (cal.K * s.T_F), cal.u_rel_K, beta)
-    return r_star, method, D_hash
+        sf, su = float(np.dot(w2, g.N_F)), float(np.dot(w2, g.N_U))
+    v_stat = sf / T_F ** 2 + cal.k ** 2 * su / T_U ** 2
+    v_lane = max(U * U * cal.u_k_lane ** 2 + cal.u_b ** 2 + 2.0 * U * cal.cov_kb, 0.0)
+    return {"r": r, "D": r / cal.K, "U": U, "v_stat_r": v_stat, "v_lane_r": v_lane, "T_F": T_F, "T_U": T_U,
+            "NF": NF, "NU": NU}
 
 
-def combine(stats: list, alpha: float, beta: float, exact_detection_limit: bool = True) -> Decision:
-    """Section 6 (revision 3).
+def combine(stats: list, alpha: float, beta: float, decider: Decider | None = None, **_unused) -> Decision:
+    """MODEL.md revision 4, sections 3 and 6.
 
-    Estimate: inverse-variance combination of the lanes' D with the common calibration terms added
-    after combination (weights use the NULL variance of each lane, so they do not depend on the
-    floor counts under test).  The sums N, T are footprint-weighted and enter the Poisson form
-    unchanged (`WEIGHTED_SUM_VARIANCE`, conservative).
-
-    Decision (IB-31 / CR-09): m = number of contributing lanes.  The cell is flagged when ANY lane
-    exceeds its own threshold evaluated at alpha/m (method per lane from section 3); by the union
-    bound the cell false-alarm probability is <= alpha.  Quoted D* and D# are the minima over the
-    lanes of D*_i and D#_i (solved at alpha/m, beta).  With one lane m = 1 and this is section 3
-    directly.  `exact_detection_limit=False` replaces the numerical exact D# of an exact-method lane
-    by the normal-form solve with the exact threshold (cheaper; used for nothing in production).
-    """
-    stats = [s for s in stats if s.T_F > 0 and s.T_U > 0]
-    if not stats:
-        return Decision(alpha=alpha, beta=beta)
-    m = len(stats)
-    alpha_lane = alpha / m
-    rows = []
-    for s in stats:
-        est = net_estimate(s.N_F, s.T_F, s.N_U, s.T_U, s.cal)
-        rows.append((s, est, u0sq(s.U0, s.T_F, s.T_U, s.cal, "lane")) + _lane_limit(s, alpha_lane, beta, exact_detection_limit))
-    wsum = sum(s.cal.K ** 2 / v0 for s, _, v0, *_ in rows)
-    D = v_stat = v_lane = common_k = T = u_rel = 0.0
-    lanes, flagged = [], []
-    for s, est, v0, r_star, method, D_hash in rows:
-        w = (s.cal.K ** 2 / v0) / wsum
-        D += w * est["D"]
-        v_stat += w ** 2 * est["v_stat_r"] / s.cal.K ** 2
-        v_lane += w ** 2 * est["v_lane_r"] / s.cal.K ** 2
-        common_k += w * est["U"] * s.cal.u_k_common / s.cal.K        # fully correlated: linear sum
-        u_rel += w * s.cal.u_rel_K
-        T += s.T_F
-        hit = bool(est["r"] > r_star)
+    Estimate D, u_stat, u_total: inverse-null-variance combination of the lanes (exact coefficients,
+    common calibration terms added after combination).  Decision: S = sum_i c_i r_i / K_i (c_i from the null
+    variances at U_null) is flagged at 0.8 alpha, or any lane's own statistic (m = 1) at 0.2 alpha / m;
+    thresholds from the exact distribution (rr_core.linstat).  D* and D# are those of the combined test
+    (D# solved lazily on first use).  Lanes without a U_null are not used for the decision; none left:
+    status NO_DECISION_REF.  A failed numerical check gives NO_DECISION_EVAL."""
+    decider = decider or DEFAULT_DECIDER
+    lanes = [g for g in stats if g.T_F > 0 and g.T_U > 0]
+    if not lanes:
+        return Decision(alpha=alpha, beta=beta, status="NO_DATA", status_text="no gates")
+    est = [_lane_estimate(g) for g in lanes]
+    # estimate weights: null variances at U_null (the lane's own N_U/T_U where none is available: weights only)
+    keys_w = []
+    for g, e in zip(lanes, est):
+        gg = g if g.U0 is not None else LaneGates(g.lane, g.w, g.tf, g.N_F, g.tu, g.N_U, e["U"], "estimate-only", g.cal)
+        keys_w.append(decider._lane_key(gg))
+    cw, _ = Decider._family(keys_w)
+    D = float(sum(ci * e["D"] for ci, e in zip(cw, est)))
+    v_stat = sum(ci ** 2 * e["v_stat_r"] / g.cal.K ** 2 for ci, e, g in zip(cw, est, lanes))
+    v_lane = sum(ci ** 2 * e["v_lane_r"] / g.cal.K ** 2 for ci, e, g in zip(cw, est, lanes))
+    common = sum(ci * e["U"] * g.cal.u_k_common / g.cal.K for ci, e, g in zip(cw, est, lanes))
+    u_rel = sum(ci * g.cal.u_rel_K for ci, g in zip(cw, lanes))
+    dec = Decision(D=D, u_stat=math.sqrt(v_stat), u_total=math.sqrt(v_stat + v_lane + common ** 2 + D * D * u_rel * u_rel),
+                   T_F=float(sum(e["T_F"] for e in est)), alpha=alpha, beta=beta,
+                   u0_methods=sorted({g.u0_method for g in lanes}),
+                   envelope_ok=all(g.envelope_ok for g in lanes),
+                   envelope_reason="; ".join(sorted({g.envelope_reason for g in lanes if g.envelope_reason})))
+    use = [(g, e) for g, e in zip(lanes, est) if g.U0 is not None]
+    dec.excluded_lanes = [g.lane for g in lanes if g.U0 is None]
+    if not use:
+        dec.status, dec.status_text = "NO_DECISION_REF", NO_DECISION_REF
+        return dec
+    m = len(use)
+    dec.m = m
+    dec.alpha_comb = ALPHA_SPLIT_COMBINED * alpha
+    dec.alpha_lane = (1.0 - ALPHA_SPLIT_COMBINED) * alpha / m
+    keys = tuple(decider._lane_key(g) for g, _ in use)
+    c, t_c, ok_c, meth_c = decider.threshold(keys, dec.alpha_comb)
+    dec.c, dec.D_star, dec.method, dec.check_ok = [float(x) for x in c], float(t_c), meth_c, bool(ok_c)
+    S = float(sum(ci / g.cal.K * e["r"] for ci, (g, e) in zip(c, use)))
+    flagged = ["combined"] if S > t_c else []
+    lane_rows = []
+    for ci, (g, e), key in zip(c, use, keys):
+        _c1, t_i, ok_i, meth_i = decider.threshold((key,), dec.alpha_lane)
+        dec.check_ok = dec.check_ok and bool(ok_i)
+        hit = e["D"] > t_i
         if hit:
-            flagged.append(s.lane)
-        lanes.append({"lane": s.lane, "w": w, "N_F": s.N_F, "T_F": s.T_F, "N_U": s.N_U, "T_U": s.T_U,
-                      "U0": s.U0, "r": est["r"], "D": est["D"], "r_star": r_star, "D_star": r_star / s.cal.K,
-                      "D_hash": D_hash, "method": method, "flagged": hit})
-    methods = sorted({r[4] for r in rows})
-    ok = all(s.envelope_ok for s in stats)
-    return Decision(
-        D=D, u_stat=math.sqrt(v_stat),
-        u_total=math.sqrt(v_stat + v_lane + common_k ** 2 + D ** 2 * u_rel ** 2),
-        D_star=min(l["D_star"] for l in lanes), D_hash=min(l["D_hash"] for l in lanes), T_F=T,
-        detected=bool(flagged), method=methods[0] if m == 1 else RULE, m=m, alpha=alpha, alpha_lane=alpha_lane,
-        beta=beta, flagged_lanes=flagged, u0_methods=sorted({s.u0_method for s in stats}), lanes=lanes,
-        envelope_ok=ok, envelope_reason="; ".join(sorted({s.envelope_reason for s in stats if s.envelope_reason})))
+            flagged.append(f"lane{g.lane}")
+            dec.flagged_lanes.append(g.lane)
+        lane_rows.append({"lane": g.lane, "c": float(ci), "N_F": float(e["NF"]), "T_F": e["T_F"], "N_U": float(e["NU"]),
+                          "T_U": e["T_U"], "U0": g.U0, "u0_method": g.u0_method, "u0_window_s": g.u0_window_s,
+                          "u0_window_counts": g.u0_window_counts, "r": e["r"], "D": e["D"], "D_star": float(t_i),
+                          "method": meth_i, "flagged": bool(hit)})
+    dec.lanes, dec.flagged_by = lane_rows, flagged
+    dec.S = S
+    if not dec.check_ok:
+        dec.status, dec.status_text, dec.detected = "NO_DECISION_EVAL", NO_DECISION_EVAL, None
+        dec.D_star = None
+        return dec
+    dec.detected = bool(flagged)
+    dec._hash_fn = lambda: float(decider.limit(keys, dec.alpha_comb, beta))
+    return dec

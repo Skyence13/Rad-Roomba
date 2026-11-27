@@ -43,6 +43,7 @@ typedef struct {
     bool iox_drive_loop;            /* IOX_A GPA5 configured as an output driving HEAD_LOOP_OK_RB high (M2) */
     bool io_cfg_fault;              /* a tap pin / expander direction reads back wrong (M2/M3) */
     bool cset_diode;                /* stage-3 option: diode in series with R_SET, no back-feed */
+    double vmot_tau_s;              /* VMOT bleed time constant (1 kOhm x bulk capacitance), default 0.81 s */
     bool cset_energy;               /* REARM sets K1 only with C_SET above 9 V (off by default: tests arm right after boot) */
     /* TPS3430 window watchdog: WDI edges counted per wdi_mode (0 falling, 1 rising, 2 both); a counted edge
      * closer than 2.2 ms to the previous one or none for 23.4 ms (tWDU min) asserts WDO for 200 ms; with

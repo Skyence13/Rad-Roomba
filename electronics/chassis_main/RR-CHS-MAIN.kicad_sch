@@ -1465,7 +1465,7 @@
 		)
 		(uuid "1900bf06-533d-5f3b-8f33-1c7ee1339f79")
 	)
-	(text "Revision A    Date 2026-11-26    Doc No RR-EL-0100\n\nChassis main board: pack entry and switch, LiFePO4 charger and power path, 5.12 V / 3.3 V / 5 V rails,\neFuse branches (head power, head heater, chassis heater, LiDAR, bus 5 V), hardwired traction safety chain\nwith latch relay, VMOT eFuse, two DRV8874 H-bridges with DPDT brake relays, STM32G474 motion MCU with IMU,\nexpanders, 11 ToF branches, USB/RS-485 head link and panel drivers.\nNetlist: design/circuit.py (stage 1) + overrides.py (stage 2 deviations S2-xx, see STAGE2_CHANGE_REQUESTS.md).\nNOT A SAFETY-RATED CIRCUIT.\n\nLayers: 6    Thickness: 1.60 mm\nRails: 3V3, 3V3A, GND, V12_AUX, V5_AUX, V5_BUCK, V5_CM5, VBAT_SW, VMOT, VREF_3V0, VSYS\nNet class SAFETY_CHAIN: track 0.40 mm, clearance 0.20 mm, via 0.80/0.40 mm  [CH_N*, CHAIN_END, RUN_12V, COIL_RTN, K1_*, SET_CAP, K?_CL, HANDS_LAMP_*]\nNet class HC_PACK: track 1.00 mm, clearance 0.15 mm, via 0.80/0.40 mm  [VBAT_RAW, PSW_SRC, VBAT_PROT, VBAT_SW]\nNet class HC_VMOT: track 0.80 mm, clearance 0.15 mm, via 0.80/0.40 mm  [VMOT, OUT1_L, OUT2_L, OUT1_R, OUT2_R, MOT_L_A, MOT_L_B, MOT_R_A, MOT_R_B, MOTC_*, BRK_*, CLAMP_F, CLAMP_R]\nNet class HC_BRANCH: track 0.80 mm, clearance 0.15 mm, via 0.80/0.40 mm  [HEAD_HTR_F, HEAD_HTR_P, HEAD_HTR_N, CHS_HTR_F, CHS_HTR_P, V5_BUCK, V5_CM5, VSYS, CHG_IN, CHG_F, CHG_VIN, U3_CLP, U3_CSP, U3_SW, U10_SW]\nNet class PWR_1A5: track 0.40 mm, clearance 0.15 mm, via 0.60/0.30 mm  [HEAD_PWR_F, HEAD_PWR_E, HEAD_PWR_P, V12_LIDAR, 3V3, V5_AUX, 3V3A, V12_AUX, BUS_5V, TOF*_3V3, ENC_*_5V, U11_SW, U12_SW]\nNet class SIG: track 0.20 mm, clearance 0.15 mm, via 0.60/0.30 mm  [*]\n\nThis schematic is generated from board.py by tools/eda (rrkicad).\nAll nets are connected by name (global labels / power symbols); there are no drawn wires between symbols."
+	(text "Revision A    Date 2026-11-26    Doc No RR-EL-0100\n\nChassis main board: pack entry and switch, LiFePO4 charger and power path, 5.12 V / 3.3 V / 5 V rails,\neFuse branches (head power, head heater, chassis heater, LiDAR, bus 5 V), hardwired traction safety chain\nwith latch relay, VMOT eFuse, two DRV8874 H-bridges with DPDT brake relays, STM32G474 motion MCU with IMU,\nexpanders, 11 ToF branches, USB/RS-485 head link and panel drivers.\nNetlist: design/circuit.py (stage 1) + overrides.py (stage 2 deviations S2-xx, see STAGE2_CHANGE_REQUESTS.md).\nNOT A SAFETY-RATED CIRCUIT.\n\nLayers: 6    Thickness: 1.60 mm\nRails: 3V3, 3V3A, GND, V12_AUX, V5_AUX, V5_BUCK, V5_CM5, VBAT_SW, VMOT, VREF_3V0, VSYS\nNet class SAFETY_CHAIN: track 0.40 mm, clearance 0.50 mm, via 0.80/0.40 mm  [CH_N*, CHAIN_END, RUN_12V, RUN_HD, RELAY_RTN, COIL_RTN, K1_*, SET_CAP, SET_OUT, SET_DIS, RSET_A, K?_CL, HANDS_LAMP_*]\nNet class HC_PACK: track 1.00 mm, clearance 0.15 mm, via 0.80/0.40 mm  [VBAT_RAW, PSW_SRC, VBAT_PROT, VBAT_SW]\nNet class HC_VMOT: track 0.80 mm, clearance 0.15 mm, via 0.80/0.40 mm  [VMOT, OUT1_L, OUT2_L, OUT1_R, OUT2_R, MOT_L_A, MOT_L_B, MOT_R_A, MOT_R_B, MOTC_*, BRK_*, CLAMP_F, CLAMP_R]\nNet class HC_BRANCH: track 0.80 mm, clearance 0.15 mm, via 0.80/0.40 mm  [HEAD_HTR_F, HEAD_HTR_P, HEAD_HTR_N, CHS_HTR_F, CHS_HTR_P, V5_BUCK, V5_CM5, VSYS, CHG_IN, CHG_F, CHG_VIN, U3_CLP, U3_CSP, U3_SW, U10_SW]\nNet class PWR_1A5: track 0.40 mm, clearance 0.15 mm, via 0.60/0.30 mm  [HEAD_PWR_F, HEAD_PWR_E, HEAD_PWR_P, V12_LIDAR, 3V3, V5_AUX, 3V3A, V12_AUX, BUS_5V, TOF*_3V3, ENC_*_5V, U11_SW, U12_SW]\nNet class SIG: track 0.20 mm, clearance 0.15 mm, via 0.60/0.30 mm  [*]\n\nThis schematic is generated from board.py by tools/eda (rrkicad).\nAll nets are connected by name (global labels / power symbols); there are no drawn wires between symbols."
 		(exclude_from_sim no)
 		(at 20 29 0)
 		(effects
@@ -1533,7 +1533,7 @@
 		)
 		(uuid "36f8ac00-b30f-500f-8e34-8e4d7c6ee7df")
 	)
-	(text "Hardwired safety chain, latch K1, readback taps, watchdog (1/3)"
+	(text "Hardwired safety chain, latch K1, readback taps, watchdog (1/4)"
 		(exclude_from_sim no)
 		(at 22.32 168.64 0)
 		(effects
@@ -1544,7 +1544,7 @@
 		)
 		(uuid "66645b74-5868-5669-87c8-f91e7b329bb7")
 	)
-	(text "Hardwired safety chain, latch K1, readback taps, watchdog (2/3)"
+	(text "Hardwired safety chain, latch K1, readback taps, watchdog (2/4)"
 		(exclude_from_sim no)
 		(at 207.74 168.64 0)
 		(effects
@@ -1555,7 +1555,7 @@
 		)
 		(uuid "e8dbd8d5-128f-55bb-89e5-dd39802c898b")
 	)
-	(text "Hardwired safety chain, latch K1, readback taps, watchdog (3/3)"
+	(text "Hardwired safety chain, latch K1, readback taps, watchdog (3/4)"
 		(exclude_from_sim no)
 		(at 22.32 196.58 0)
 		(effects
@@ -1566,9 +1566,20 @@
 		)
 		(uuid "0c53f0cc-8912-5c7a-8705-3662e344fd65")
 	)
-	(text "Drive: VMOT eFuse, H-bridges, brake relays, bus clamp, encoders (1/2)"
+	(text "Hardwired safety chain, latch K1, readback taps, watchdog (4/4)"
 		(exclude_from_sim no)
 		(at 207.74 196.58 0)
+		(effects
+			(font
+				(size 1.8 1.8)
+			)
+			(justify left bottom)
+		)
+		(uuid "32fe8c66-8d3b-53e3-8c8e-b3d5ca3d69e7")
+	)
+	(text "Drive: VMOT eFuse, H-bridges, brake relays, bus clamp, encoders (1/2)"
+		(exclude_from_sim no)
+		(at 22.32 224.52 0)
 		(effects
 			(font
 				(size 1.8 1.8)
@@ -1579,7 +1590,7 @@
 	)
 	(text "Drive: VMOT eFuse, H-bridges, brake relays, bus clamp, encoders (2/2)"
 		(exclude_from_sim no)
-		(at 22.32 224.52 0)
+		(at 207.74 224.52 0)
 		(effects
 			(font
 				(size 1.8 1.8)
@@ -1590,7 +1601,7 @@
 	)
 	(text "Motion MCU STM32G474, IMU, expanders, USB, debug (1/2)"
 		(exclude_from_sim no)
-		(at 207.74 224.52 0)
+		(at 22.32 252.46 0)
 		(effects
 			(font
 				(size 1.8 1.8)
@@ -1601,7 +1612,7 @@
 	)
 	(text "Motion MCU STM32G474, IMU, expanders, USB, debug (2/2)"
 		(exclude_from_sim no)
-		(at 22.32 252.46 0)
+		(at 207.74 252.46 0)
 		(effects
 			(font
 				(size 1.8 1.8)
@@ -1612,7 +1623,7 @@
 	)
 	(text "ToF branches (2 x TCA9548A, 11 connectors) (1/2)"
 		(exclude_from_sim no)
-		(at 207.74 252.46 0)
+		(at 22.32 280.4 0)
 		(effects
 			(font
 				(size 1.8 1.8)
@@ -1623,7 +1634,7 @@
 	)
 	(text "ToF branches (2 x TCA9548A, 11 connectors) (2/2)"
 		(exclude_from_sim no)
-		(at 22.32 280.4 0)
+		(at 207.74 280.4 0)
 		(effects
 			(font
 				(size 1.8 1.8)
@@ -1634,7 +1645,7 @@
 	)
 	(text "Head link: FT230X, RS-485, J1/J2 landings"
 		(exclude_from_sim no)
-		(at 207.74 280.4 0)
+		(at 22.32 308.34 0)
 		(effects
 			(font
 				(size 1.8 1.8)
@@ -1645,7 +1656,7 @@
 	)
 	(text "Panel LED / lamp / sounder drivers"
 		(exclude_from_sim no)
-		(at 22.32 308.34 0)
+		(at 207.74 308.34 0)
 		(effects
 			(font
 				(size 1.8 1.8)
@@ -1656,7 +1667,7 @@
 	)
 	(text "Test points"
 		(exclude_from_sim no)
-		(at 207.74 308.34 0)
+		(at 22.32 336.28 0)
 		(effects
 			(font
 				(size 1.8 1.8)
@@ -1667,7 +1678,7 @@
 	)
 	(text "Mounting holes, chassis bonds, fiducials"
 		(exclude_from_sim no)
-		(at 22.32 336.28 0)
+		(at 207.74 336.28 0)
 		(effects
 			(font
 				(size 1.8 1.8)
@@ -1884,7 +1895,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "46c455b3-7b54-5eae-8e55-f643c5de45aa")
-		(property "Reference" "#PWR0763"
+		(property "Reference" "#PWR0814"
 			(at 38.1 375.92 0)
 			(effects
 				(font
@@ -1934,7 +1945,7 @@
 		(instances
 			(project "RR-CHS-MAIN"
 				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63"
-					(reference "#PWR0763")
+					(reference "#PWR0814")
 					(unit 1)
 				)
 			)
@@ -2014,7 +2025,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "e9d33a2c-5eb3-57c9-80ab-26e77cd395a4")
-		(property "Reference" "#PWR0764"
+		(property "Reference" "#PWR0815"
 			(at 71.12 375.92 0)
 			(effects
 				(font
@@ -2064,7 +2075,7 @@
 		(instances
 			(project "RR-CHS-MAIN"
 				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63"
-					(reference "#PWR0764")
+					(reference "#PWR0815")
 					(unit 1)
 				)
 			)
@@ -2144,7 +2155,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "11f3f9f3-4c6a-5fd4-8821-713eeba92b7b")
-		(property "Reference" "#PWR0765"
+		(property "Reference" "#PWR0816"
 			(at 104.14 375.92 0)
 			(effects
 				(font
@@ -2194,7 +2205,7 @@
 		(instances
 			(project "RR-CHS-MAIN"
 				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63"
-					(reference "#PWR0765")
+					(reference "#PWR0816")
 					(unit 1)
 				)
 			)
@@ -2274,7 +2285,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "f02a782f-362b-56b2-875f-dcee29782169")
-		(property "Reference" "#PWR0766"
+		(property "Reference" "#PWR0817"
 			(at 137.16 375.92 0)
 			(effects
 				(font
@@ -2324,7 +2335,7 @@
 		(instances
 			(project "RR-CHS-MAIN"
 				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63"
-					(reference "#PWR0766")
+					(reference "#PWR0817")
 					(unit 1)
 				)
 			)
@@ -2404,7 +2415,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "c85e87a4-91e4-518a-8e64-4d49ba2bd594")
-		(property "Reference" "#PWR0767"
+		(property "Reference" "#PWR0818"
 			(at 170.18 375.92 0)
 			(effects
 				(font
@@ -2454,7 +2465,7 @@
 		(instances
 			(project "RR-CHS-MAIN"
 				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63"
-					(reference "#PWR0767")
+					(reference "#PWR0818")
 					(unit 1)
 				)
 			)
@@ -2534,7 +2545,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "697b6a53-3696-581e-8771-2cebfeaa468a")
-		(property "Reference" "#PWR0768"
+		(property "Reference" "#PWR0819"
 			(at 203.2 375.92 0)
 			(effects
 				(font
@@ -2584,7 +2595,7 @@
 		(instances
 			(project "RR-CHS-MAIN"
 				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63"
-					(reference "#PWR0768")
+					(reference "#PWR0819")
 					(unit 1)
 				)
 			)
@@ -2664,7 +2675,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "0e4e34a6-8008-5b39-8967-06674070131b")
-		(property "Reference" "#PWR0769"
+		(property "Reference" "#PWR0820"
 			(at 236.22 375.92 0)
 			(effects
 				(font
@@ -2714,7 +2725,7 @@
 		(instances
 			(project "RR-CHS-MAIN"
 				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63"
-					(reference "#PWR0769")
+					(reference "#PWR0820")
 					(unit 1)
 				)
 			)
@@ -2794,7 +2805,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "28ed0fc4-d8d9-57a8-8266-248910714151")
-		(property "Reference" "#PWR0770"
+		(property "Reference" "#PWR0821"
 			(at 269.24 375.92 0)
 			(effects
 				(font
@@ -2844,7 +2855,7 @@
 		(instances
 			(project "RR-CHS-MAIN"
 				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63"
-					(reference "#PWR0770")
+					(reference "#PWR0821")
 					(unit 1)
 				)
 			)
@@ -2924,7 +2935,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "8ac2c46f-d4cf-5223-8b86-e2c1a4a6d1ca")
-		(property "Reference" "#PWR0771"
+		(property "Reference" "#PWR0822"
 			(at 302.26 375.92 0)
 			(effects
 				(font
@@ -2974,7 +2985,7 @@
 		(instances
 			(project "RR-CHS-MAIN"
 				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63"
-					(reference "#PWR0771")
+					(reference "#PWR0822")
 					(unit 1)
 				)
 			)
@@ -3054,7 +3065,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "fdce8aeb-f1bc-53c7-839f-18d79c435236")
-		(property "Reference" "#PWR0772"
+		(property "Reference" "#PWR0823"
 			(at 335.28 375.92 0)
 			(effects
 				(font
@@ -3104,7 +3115,7 @@
 		(instances
 			(project "RR-CHS-MAIN"
 				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63"
-					(reference "#PWR0772")
+					(reference "#PWR0823")
 					(unit 1)
 				)
 			)
@@ -3484,8 +3495,8 @@
 		(fill
 			(color 0 0 0 0.0000)
 		)
-		(uuid "80fb8bd5-0b28-57a0-8824-560c2664d50b")
-		(property "Sheetname" "drive"
+		(uuid "449be3ee-7cc1-503b-8052-498462d6d66a")
+		(property "Sheetname" "chain_4"
 			(at 205.74 187.26 0)
 			(effects
 				(font
@@ -3494,7 +3505,7 @@
 				(justify left bottom)
 			)
 		)
-		(property "Sheetfile" "drive.kicad_sch"
+		(property "Sheetfile" "chain_4.kicad_sch"
 			(at 205.74 203.8 0)
 			(effects
 				(font
@@ -3526,8 +3537,8 @@
 		(fill
 			(color 0 0 0 0.0000)
 		)
-		(uuid "ecaf4444-fd22-55de-85ff-268207b5b0f0")
-		(property "Sheetname" "drive_2"
+		(uuid "80fb8bd5-0b28-57a0-8824-560c2664d50b")
+		(property "Sheetname" "drive"
 			(at 20.32 215.2 0)
 			(effects
 				(font
@@ -3536,7 +3547,7 @@
 				(justify left bottom)
 			)
 		)
-		(property "Sheetfile" "drive_2.kicad_sch"
+		(property "Sheetfile" "drive.kicad_sch"
 			(at 20.32 231.74 0)
 			(effects
 				(font
@@ -3568,8 +3579,8 @@
 		(fill
 			(color 0 0 0 0.0000)
 		)
-		(uuid "709a8a87-6c8e-5bfc-8881-088b224c07d9")
-		(property "Sheetname" "mcu"
+		(uuid "ecaf4444-fd22-55de-85ff-268207b5b0f0")
+		(property "Sheetname" "drive_2"
 			(at 205.74 215.2 0)
 			(effects
 				(font
@@ -3578,7 +3589,7 @@
 				(justify left bottom)
 			)
 		)
-		(property "Sheetfile" "mcu.kicad_sch"
+		(property "Sheetfile" "drive_2.kicad_sch"
 			(at 205.74 231.74 0)
 			(effects
 				(font
@@ -3610,8 +3621,8 @@
 		(fill
 			(color 0 0 0 0.0000)
 		)
-		(uuid "ad1b51a3-a2d2-527c-8b83-bbbf2712daf6")
-		(property "Sheetname" "mcu_2"
+		(uuid "709a8a87-6c8e-5bfc-8881-088b224c07d9")
+		(property "Sheetname" "mcu"
 			(at 20.32 243.14 0)
 			(effects
 				(font
@@ -3620,7 +3631,7 @@
 				(justify left bottom)
 			)
 		)
-		(property "Sheetfile" "mcu_2.kicad_sch"
+		(property "Sheetfile" "mcu.kicad_sch"
 			(at 20.32 259.68 0)
 			(effects
 				(font
@@ -3652,8 +3663,8 @@
 		(fill
 			(color 0 0 0 0.0000)
 		)
-		(uuid "9a4ab980-7a30-5b63-8662-0f41a888fa2c")
-		(property "Sheetname" "tof"
+		(uuid "ad1b51a3-a2d2-527c-8b83-bbbf2712daf6")
+		(property "Sheetname" "mcu_2"
 			(at 205.74 243.14 0)
 			(effects
 				(font
@@ -3662,7 +3673,7 @@
 				(justify left bottom)
 			)
 		)
-		(property "Sheetfile" "tof.kicad_sch"
+		(property "Sheetfile" "mcu_2.kicad_sch"
 			(at 205.74 259.68 0)
 			(effects
 				(font
@@ -3694,8 +3705,8 @@
 		(fill
 			(color 0 0 0 0.0000)
 		)
-		(uuid "6bc79d28-bbc2-5629-8680-9be46f2b0dca")
-		(property "Sheetname" "tof_2"
+		(uuid "9a4ab980-7a30-5b63-8662-0f41a888fa2c")
+		(property "Sheetname" "tof"
 			(at 20.32 271.08 0)
 			(effects
 				(font
@@ -3704,7 +3715,7 @@
 				(justify left bottom)
 			)
 		)
-		(property "Sheetfile" "tof_2.kicad_sch"
+		(property "Sheetfile" "tof.kicad_sch"
 			(at 20.32 287.62 0)
 			(effects
 				(font
@@ -3736,8 +3747,8 @@
 		(fill
 			(color 0 0 0 0.0000)
 		)
-		(uuid "e6addf30-2f82-5ead-8ce5-e912c2501cb1")
-		(property "Sheetname" "head_link"
+		(uuid "6bc79d28-bbc2-5629-8680-9be46f2b0dca")
+		(property "Sheetname" "tof_2"
 			(at 205.74 271.08 0)
 			(effects
 				(font
@@ -3746,7 +3757,7 @@
 				(justify left bottom)
 			)
 		)
-		(property "Sheetfile" "head_link.kicad_sch"
+		(property "Sheetfile" "tof_2.kicad_sch"
 			(at 205.74 287.62 0)
 			(effects
 				(font
@@ -3778,8 +3789,8 @@
 		(fill
 			(color 0 0 0 0.0000)
 		)
-		(uuid "36e5dbb7-892a-545a-8388-be451f414c48")
-		(property "Sheetname" "panel_io"
+		(uuid "e6addf30-2f82-5ead-8ce5-e912c2501cb1")
+		(property "Sheetname" "head_link"
 			(at 20.32 299.02 0)
 			(effects
 				(font
@@ -3788,7 +3799,7 @@
 				(justify left bottom)
 			)
 		)
-		(property "Sheetfile" "panel_io.kicad_sch"
+		(property "Sheetfile" "head_link.kicad_sch"
 			(at 20.32 315.56 0)
 			(effects
 				(font
@@ -3820,8 +3831,8 @@
 		(fill
 			(color 0 0 0 0.0000)
 		)
-		(uuid "ceae78a1-e090-59f6-87b2-a274c07d1163")
-		(property "Sheetname" "test"
+		(uuid "36e5dbb7-892a-545a-8388-be451f414c48")
+		(property "Sheetname" "panel_io"
 			(at 205.74 299.02 0)
 			(effects
 				(font
@@ -3830,7 +3841,7 @@
 				(justify left bottom)
 			)
 		)
-		(property "Sheetfile" "test.kicad_sch"
+		(property "Sheetfile" "panel_io.kicad_sch"
 			(at 205.74 315.56 0)
 			(effects
 				(font
@@ -3862,8 +3873,8 @@
 		(fill
 			(color 0 0 0 0.0000)
 		)
-		(uuid "37b501fa-93e0-524f-87cd-249f9ecfa82d")
-		(property "Sheetname" "mech"
+		(uuid "ceae78a1-e090-59f6-87b2-a274c07d1163")
+		(property "Sheetname" "test"
 			(at 20.32 326.96 0)
 			(effects
 				(font
@@ -3872,7 +3883,7 @@
 				(justify left bottom)
 			)
 		)
-		(property "Sheetfile" "mech.kicad_sch"
+		(property "Sheetfile" "test.kicad_sch"
 			(at 20.32 343.5 0)
 			(effects
 				(font
@@ -3885,6 +3896,48 @@
 			(project "RR-CHS-MAIN"
 				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63"
 					(page "18")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 205.74 327.66)
+		(size 172.72 15.24)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "37b501fa-93e0-524f-87cd-249f9ecfa82d")
+		(property "Sheetname" "mech"
+			(at 205.74 326.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "mech.kicad_sch"
+			(at 205.74 343.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "RR-CHS-MAIN"
+				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63"
+					(page "19")
 				)
 			)
 		)

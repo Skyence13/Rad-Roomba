@@ -157,7 +157,7 @@ def test_invalid_lane_and_uncertain_pose_earn_no_credit():
 
 
 def test_cell_estimate_weights_and_hotspot_flag_with_location():
-    proc, traj, cal = make()
+    proc, traj, cal = make(u0_window_factor=3.0)   # short synthetic run: the 200 T_F window of rev 4 is tested separately
     rng = np.random.default_rng(3)
     hot = (1.55, 0.04375, 2.4)                 # Bq/cm2 under lane 1 on the first pass
     t1 = drive(traj, 1_000_000, 0.3, 2.5, 0.0)
@@ -183,7 +183,8 @@ def test_cell_estimate_weights_and_hotspot_flag_with_location():
     T = proc.acc["beta"]["T_F"][cy, cx, :].sum()
     assert 0.5 < T < 2.6
     d = proc.decisions["beta"][(cy, cx)]
-    assert d.m >= 1 and d.rule == est.RULE and (d.method == est.RULE if d.m > 1 else d.method.startswith("poisson-exact")) and all(m.startswith("lane-window-excluding-test") for m in d.u0_methods)
+    assert d.m >= 1 and d.rule == est.RULE and d.method.startswith("linear-exact/") and d.status == "OK" and all(
+        m.startswith(("lane-window-excluding-test", "four-lane-pooled-window-excluding-test")) for m in d.u0_methods)
     assert d.D_hash > d.D_star > 0 and abs(d.D) < 0.25
     rows = proc.cells_table()
     row = next(q for q in rows if q["ix"] == cx and q["iy"] == cy)
@@ -193,21 +194,25 @@ def test_cell_estimate_weights_and_hotspot_flag_with_location():
 
 
 def test_scaler_observation_two_stage():
-    proc, traj, cal = make()
+    proc, traj, cal = make(u0_window_factor=3.0)
     rng = np.random.default_rng(4)
-    for i in range(0, 1600):
+    t0, t1 = 121_000_000, 151_000_000
+    for i in range(0, 7600):
         traj.add(1_000_000 + i * 20_000, 1.0, 0.0, 0.0)
-    proc.add_mark(1_000_000, stage="COUNT", obs="OBS-1", tag="count")
-    gates(proc, cal, 1_000_000, 31_000_000, 0, rng, hot=(1.204, 0.04375, 0.6))
-    proc.advance(31_000_000)
-    live = proc.live_count_state("OBS-1", 1, 31_000_000)
+    # reference data before the count (the U_null window excludes the gates under test, MODEL 3 rev 4)
+    seq0 = gates(proc, cal, 1_000_000, t0, 0, rng)
+    proc.add_mark(t0, stage="COUNT", obs="OBS-1", tag="count")
+    gates(proc, cal, t0, t1, seq0, rng, hot=(1.204, 0.04375, 0.6))
+    proc.advance(t1)
+    live = proc.live_count_state("OBS-1", 1, t1)
     assert live.T_F == pytest.approx(30.0, rel=0.01)
-    proc.add_mark(31_000_000, stage=None, reason="COUNT_DONE", count_end=True, obs="OBS-1", lane=1, valid=True, mode="PRESET_TIME")
+    proc.add_mark(t1, stage=None, reason="COUNT_DONE", count_end=True, obs="OBS-1", lane=1, valid=True, mode="PRESET_TIME")
     o = proc.observations["OBS-1"]
-    assert o["valid"] and o["outcome"] == "EXCEEDS_INVESTIGATION_LEVEL" and o["result"]["method"] == "poisson-exact"
+    assert o["valid"] and o["outcome"] == "EXCEEDS_INVESTIGATION_LEVEL" and o["result"]["method"].startswith("linear-exact/")
+    assert o["result"]["m"] == 1 and o["result"]["status"] == "OK"
     assert o["alpha"] < 1e-3 and abs(o["result"]["D"] - 0.6) < 0.15
     assert next(l for l in o["lanes"] if l["lane"] == 3)["D"] < 0.2
     # an invalidated count (motion/stop inside) never yields an outcome
-    proc.add_mark(31_100_000, stage="COUNT", obs="OBS-2")
-    proc.add_mark(31_200_000, stage=None, count_end=True, obs="OBS-2", lane=1, valid=False, reason="NOT_STATIONARY")
+    proc.add_mark(t1 + 100_000, stage="COUNT", obs="OBS-2")
+    proc.add_mark(t1 + 200_000, stage=None, count_end=True, obs="OBS-2", lane=1, valid=False, reason="NOT_STATIONARY")
     assert proc.observations["OBS-2"]["outcome"] == "INVALID"

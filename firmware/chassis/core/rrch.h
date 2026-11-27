@@ -347,6 +347,8 @@ typedef struct {
     uint64_t rearm_edge_us, rearm_block_until_us;
     uint32_t rearm_held_ms;
     uint16_t t_no_drop, t_latch_boot, t_loop_ana, t_loop_fail;
+    bool loop_disc_latched;
+    uint16_t drop_ms;           /* since the latch readback last fell (ARM_PERMIT held low for 50 ms after it) */
     uint8_t ana3;               /* analog loop: 0 OK, 1 OPEN, 2 SHORT, 3 marginal (between the bands) */
     uint64_t ce_live_us;        /* last time CHAIN_END was really live (permit high, CH_N9 live): C_SET charged */
     bool backfeed;              /* readbacks behind an open element may be held up by C_SET */

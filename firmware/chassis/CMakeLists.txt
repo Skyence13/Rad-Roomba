@@ -33,7 +33,7 @@ target_compile_options(rr_chassis_sim PRIVATE -Wall -Wextra -Werror)
 
 enable_testing()
 set(RR_CHASSIS_TESTS "")
-foreach(cand test_state_machine test_drive test_chain)
+foreach(cand test_state_machine test_drive test_chain test_review)
   if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/tests/${cand}.c)
     list(APPEND RR_CHASSIS_TESTS ${cand})
   endif()

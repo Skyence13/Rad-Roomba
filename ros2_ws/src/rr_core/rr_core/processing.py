@@ -55,14 +55,14 @@ def classify_cell(d, level, policy="ALARM_ONLY"):
 class SurveyConfig:
     def __init__(self, length_m, width_m, keepouts=(), sub_res=0.005, cell_m=0.10,
                  position_allowance_m=0.010, min_cell_coverage=0.5, speed_ref_mps=0.10,
-                 u0_window_factor=20.0, wall_names=("left wall", "right wall"), door_name="door threshold"):
+                 u0_window_factor=200.0, wall_names=("left wall", "right wall"), door_name="door threshold"):
         self.length_m, self.width_m = float(length_m), float(width_m)
         self.keepouts = [tuple(k) for k in keepouts]           # (x0, x1, y0, y1) excluded from the target
         self.sub_res, self.cell_m = sub_res, cell_m
         self.position_allowance_m = position_allowance_m       # erosion of the credited footprint
         self.min_cell_coverage = min_cell_coverage
         self.speed_ref_mps = speed_ref_mps
-        self.u0_window_factor = u0_window_factor               # MODEL 3 (R1): window >= 20 T_F
+        self.u0_window_factor = u0_window_factor               # MODEL 3 (R1, rev 4): window >= 200 T_F
         self.wall_names, self.door_name = tuple(wall_names), door_name
 
     def as_dict(self):
@@ -95,6 +95,7 @@ class SurveyProcessor:
         self.dirty = set()
         self.decisions = {ch: {} for ch in CHANNELS}
         self.params = decision_parameters(profile, self._count_target_cells())
+        self.decider = est.Decider()
         self.sessions = []             # manifests in open order
         self._geom = {}                # a_idx -> (polys_base, eroded_base, centers_base)
         self._ref = {}                 # a_idx -> [dict seq -> (N_U, T_U)] per lane
@@ -341,6 +342,7 @@ class SurveyProcessor:
             w = per_cell[cid] / total
             if w < est.MIN_LANE_GATE_WEIGHT:      # MODEL 5 (R5): excluded from the decision statistic
                 continue
+            w = round(w / est.WEIGHT_STEP) * est.WEIGHT_STEP      # MODEL 6 rev 4: weights on a 0.05 lattice (rule and statistic)
             cy, cx = divmod(cid, self.ncx)
             self.acc["beta"]["N_F"][cy, cx, n] += w * lane["beta"][0]
             self.acc["beta"]["T_F"][cy, cx, n] += w * tf_b
@@ -370,62 +372,87 @@ class SurveyProcessor:
         return cached[1:]
 
     def _u_null(self, lane, members, T_F, span_s=0.1):
-        """MODEL 3 (R1): windowed mean of the lane's reference rate around the dwell,
-        EXCLUDING the gates under test; fallback: four-lane pooled rate over the same gates."""
-        half = max(100, int(math.ceil(0.5 * self.cfg.u0_window_factor * T_F / span_s)))
-        N = T = 0.0
-        by_a = {}
+        """MODEL 3 (R1, revision 4): U_null = mean reference rate of the lane over a window of at least
+        u0_window_factor * T_F centred on the dwell, EXCLUDING the gates under test; if the lane window is
+        shorter, the four-lane pooled rate over a window of the same length, also excluding the gates under
+        test (all four lanes at those sequences).  Never a same-gate pool.  Returns
+        (U_null | None, method, window live time s, window counts)."""
+        factor = self.cfg.u0_window_factor
+        half = max(100, int(math.ceil(0.5 * factor * T_F / span_s)))
+        under_test = {}
+        for a_idx, seq, _ln, _w in members:
+            under_test.setdefault(a_idx, set()).add(seq)
+        own_by_a = {}
         for a_idx, seq, ln, _w in members:
             if ln == lane:
-                by_a.setdefault(a_idx, set()).add(seq)
-        for a_idx, own in by_a.items():
-            seqs, cn, ct = self._ref_prefix(a_idx, lane)
-            intervals = []
-            for q in sorted(own):
-                lo, hi = q - half, q + half
-                if intervals and lo <= intervals[-1][1]:
-                    intervals[-1][1] = hi
-                else:
-                    intervals.append([lo, hi])
-            for lo, hi in intervals:
-                i, j = bisect.bisect_left(seqs, lo), bisect.bisect_right(seqs, hi)
-                N += cn[j] - cn[i]
-                T += ct[j] - ct[i]
-            series = self._ref[a_idx][lane]
-            for q in own:
-                if q in series:
-                    N -= series[q][0]
-                    T -= series[q][1]
-        if T >= self.cfg.u0_window_factor * T_F and T > 0:
-            return N / T, f"lane-window-excluding-test(+/-{half} gates)"
+                own_by_a.setdefault(a_idx, set()).add(seq)
+
+        def window(ln, excl):
+            N = T = 0.0
+            for a_idx, own in excl.items():
+                seqs, cn, ct = self._ref_prefix(a_idx, ln)
+                intervals = []
+                for q in sorted(own):
+                    lo, hi = q - half, q + half
+                    if intervals and lo <= intervals[-1][1]:
+                        intervals[-1][1] = hi
+                    else:
+                        intervals.append([lo, hi])
+                for lo, hi in intervals:
+                    i0, i1 = bisect.bisect_left(seqs, lo), bisect.bisect_right(seqs, hi)
+                    N += cn[i1] - cn[i0]
+                    T += ct[i1] - ct[i0]
+                series = self._ref[a_idx][ln]
+                for q in own:
+                    if q in series:
+                        N -= series[q][0]
+                        T -= series[q][1]
+            return N, T
+        N, T = window(lane, own_by_a)
+        if T >= factor * T_F and T > 0:
+            return N / T, f"lane-window-excluding-test(+/-{half} gates)", T, N
         N = T = 0.0
-        for a_idx, seq, _ln, _w in members:
-            for other in range(4):
-                v = self._ref[a_idx][other].get(seq)
-                if v:
-                    N += v[0]
-                    T += v[1]
-        return (N / T if T > 0 else 0.0), "four-lane-pooled-same-gates"
+        for ln in range(4):
+            n_, t_ = window(ln, under_test)
+            N += n_
+            T += t_
+        if T >= factor * T_F and T > 0:
+            return N / T, f"four-lane-pooled-window-excluding-test(+/-{half} gates)", T, N
+        return None, "unavailable", T, N
 
     # -------------------------------------------------------------- decisions
+    def _lane_gates(self, lane, keys_w, channel, goal=None, alpha=None, head_c=None, members_all=None, T_F_hint=None):
+        """LaneGates of one lane from (key, weight) gate list; U_null by MODEL 3."""
+        ch = 0 if channel == "beta" else 2
+        w = np.array([w for _k, w in keys_w])
+        cnt = [self._gate_counts[k] for k, _w in keys_w]
+        N_F = np.array([c[ch] for c in cnt])
+        tf = np.array([c[1] for c in cnt])
+        N_U = np.array([c[3] for c in cnt])
+        tu = np.array([c[4] for c in cnt])
+        return w, tf, N_F, tu, N_U
+
     def _cell_decision(self, cy, cx, channel, alpha):
         members = self.members.get((cy, cx), [])
-        stats = []
         temp = self.cell_temp.get((cy, cx))
         head_c = temp[0] / temp[1] if temp and temp[1] else None
         goal = self.profile["detection_goal_Bq_cm2"]
+        stats = []
         for lane in range(4):
             T_F = float(self.acc[channel]["T_F"][cy, cx, lane])
             T_U = float(self.acc_ref["T_U"][cy, cx, lane])
             if T_F <= 0 or T_U <= 0:
                 continue
-            U0, how = self._u_null(lane, members, T_F)
-            ok, why = self.cal.check_envelope(lane, channel, U0, head_c, goal=goal, alpha=alpha,
-                                              beta=self.params["beta"])
-            stats.append(LaneStat(lane, float(self.acc[channel]["N_F"][cy, cx, lane]), T_F,
-                                  float(self.acc_ref["N_U"][cy, cx, lane]), T_U, U0, how,
-                                  self.cal.cal(lane, channel), ok, why))
-        return est.combine(stats, alpha, self.params["beta"])
+            gk = [((a, q, ln), w) for a, q, ln, w in members if ln == lane and (a, q, ln) in self._gate_counts]
+            if not gk:
+                continue
+            w, tf, N_F, tu, N_U = self._lane_gates(lane, gk, channel)
+            U0, how, T_win, N_win = self._u_null(lane, members, float(np.dot(w, tf)))
+            ok, why = (True, "") if U0 is None else self.cal.check_envelope(lane, channel, U0, head_c, goal=goal, alpha=alpha,
+                                                                         beta=self.params["beta"])
+            stats.append(est.LaneGates(lane, w, tf, N_F, tu, N_U, U0, how, self.cal.cal(lane, channel), ok, why,
+                                       u0_window_s=T_win, u0_window_counts=N_win))
+        return est.combine(stats, alpha, self.params["beta"], decider=self.decider)
 
     def cell_coverage(self, cy, cx) -> float:
         s = self.sub_per_cell
@@ -529,7 +556,8 @@ class SurveyProcessor:
             "peak_cell": list(peak), "D": d.D, "u_stat": d.u_stat, "u_total": d.u_total, "D_star": d.D_star,
             "D_hash": d.D_hash, "method": d.method, "m": d.m, "alpha_lane": d.alpha_lane,
             "flagged_lanes": list(d.flagged_lanes), "decision_rule": d.rule,
-            "lane_thresholds": [{k: l[k] for k in ("lane", "D_star", "D_hash", "method", "flagged")} for l in d.lanes], "x_m": x, "y_m": y, "heading_rad": yaw,
+            "flagged_by": list(d.flagged_by), "status": d.status,
+            "lane_thresholds": [{k: l[k] for k in ("lane", "D_star", "method", "flagged")} for l in d.lanes], "x_m": x, "y_m": y, "heading_rad": yaw,
             "source_lane": lane, "footprint": poly,
             "location": {"distance_from_door_m": round(x, 3), "wall": wall,
                          "distance_from_wall_m": round(half_w - abs(y), 3),
@@ -571,18 +599,12 @@ class SurveyProcessor:
             mine = [k for k in keys if k[2] == lane]
             if not mine:
                 continue
-            N_F = sum((self._gate_counts[k][0] if channel == "beta" else self._gate_counts[k][2]) for k in mine)
-            T_F = sum(self._gate_counts[k][1] for k in mine)
-            N_U = sum(self._gate_counts[k][3] for k in mine)
-            T_U = sum(self._gate_counts[k][4] for k in mine)
-            U0, how = self._u_null(lane, [(k[0], k[1], k[2], 1.0) for k in mine], T_F)
-            ok, why = self.cal.check_envelope(lane, channel, U0, None, goal=self.profile["detection_goal_Bq_cm2"],
-                                              alpha=self.params["alpha_recount"], beta=self.params["beta"])
-            d = est.combine([LaneStat(lane, N_F, T_F, N_U, T_U, U0, how, self.cal.cal(lane, channel), ok, why)],
-                            self.params["alpha_recount"], self.params["beta"], exact_detection_limit=True)
+            g = self._count_lane(mine, lane, channel, self.params["alpha_recount"])
+            d = est.combine([g], self.params["alpha_recount"], self.params["beta"], decider=self.decider)
             lanes_out.append({"lane": lane, **{k: getattr(d, k) for k in
-                              ("D", "u_stat", "u_total", "D_star", "D_hash", "T_F", "detected", "method", "m", "alpha_lane")},
-                              "N_F": N_F, "N_U": N_U, "U0": U0, "u0_method": how, "envelope_ok": ok})
+                              ("D", "u_stat", "u_total", "D_star", "D_hash", "T_F", "detected", "method", "m", "alpha_lane", "status")},
+                              "N_F": float(g.N_F.sum()), "N_U": float(g.N_U.sum()), "U0": g.U0, "u0_method": g.u0_method,
+                              "envelope_ok": g.envelope_ok})
             if lane == target:
                 decision = d
         valid = bool(mark.get("valid")) and decision is not None
@@ -607,26 +629,32 @@ class SurveyProcessor:
                "target_xy": mark.get("target_xy"), "achieved_xy": mark.get("achieved_xy"),
                "t_end_us": mark.get("t_us"), "lanes": lanes_out,
                "result": None if decision is None else {k: getattr(decision, k) for k in
-                                                         ("D", "u_stat", "u_total", "D_star", "D_hash", "T_F", "detected", "method", "m", "alpha_lane")}}
+                                                         ("D", "u_stat", "u_total", "D_star", "D_hash", "T_F", "detected", "method", "m", "alpha_lane", "status")}}
         self.observations[obs_id] = obs
         for flag in self.flags:
             if flag["id"] == mark.get("flag"):
                 flag["observations"].append(obs_id)
         return obs
 
+    def _count_lane(self, keys, lane, channel, alpha):
+        """LaneGates of a stationary count (weights 1); U_null from the window excluding these gates."""
+        ch = 0 if channel == "beta" else 2
+        cnt = [self._gate_counts[k] for k in keys]
+        w = np.ones(len(keys))
+        tf = np.array([c[1] for c in cnt])
+        U0, how, T_win, N_win = self._u_null(lane, [(k[0], k[1], k[2], 1.0) for k in keys], float(tf.sum()))
+        ok, why = (True, "") if U0 is None else self.cal.check_envelope(
+            lane, channel, U0, None, goal=self.profile["detection_goal_Bq_cm2"], alpha=alpha, beta=self.params["beta"])
+        return est.LaneGates(lane, w, tf, [c[ch] for c in cnt], [c[4] for c in cnt], [c[3] for c in cnt], U0, how,
+                             self.cal.cal(lane, channel), ok, why, u0_window_s=T_win, u0_window_counts=N_win)
+
     def live_count_state(self, obs_id, lane, t_now_us):
         """Running scaler result for the ADAPTIVE mode (D#, D, D*) from gates so far."""
         keys = [k for k in self._obs_gates.get(obs_id, []) if k[2] == lane]
         if not keys:
             return None
-        channel = self._decision_channel()
-        N_F = sum((self._gate_counts[k][0] if channel == "beta" else self._gate_counts[k][2]) for k in keys)
-        T_F = sum(self._gate_counts[k][1] for k in keys)
-        N_U = sum(self._gate_counts[k][3] for k in keys)
-        T_U = sum(self._gate_counts[k][4] for k in keys)
-        U0, how = self._u_null(lane, [(k[0], k[1], k[2], 1.0) for k in keys], T_F)
-        return est.combine([LaneStat(lane, N_F, T_F, N_U, T_U, U0, how, self.cal.cal(lane, channel))],
-                           self.params["alpha_recount"], self.params["beta"])
+        return est.combine([self._count_lane(keys, lane, self._decision_channel(), self.params["alpha_recount"])],
+                           self.params["alpha_recount"], self.params["beta"], decider=self.decider)
 
     # ---------------------------------------------------------------- outputs
     def classify_subcells(self) -> np.ndarray:
@@ -713,11 +741,17 @@ class SurveyProcessor:
                     row[f"{p}.u0_method"] = "|".join(d.u0_methods) if d else ""
                     # MODEL.md rev 3 section 6 (IB-31): per-cell decision record
                     row[f"{p}.decision_rule"] = d.rule if d and d.m else ""
+                    row[f"{p}.decision_status"] = (d.status_text or "ok") if d and d.D is not None else ""
                     row[f"{p}.m_lanes"] = d.m if d and d.m else None
+                    row[f"{p}.c_weights"] = "|".join(f"{x:.4f}" for x in d.c) if d and d.m else ""
+                    row[f"{p}.alpha_combined"] = d.alpha_comb if d and d.m else None
                     row[f"{p}.alpha_lane"] = d.alpha_lane if d and d.m else None
+                    row[f"{p}.u0_windows"] = ";".join(f"L{l['lane']}:{l['U0']:.4g}/s:{(l['u0_window_s'] or 0):.0f}s:{int(l['u0_window_counts'] or 0)}cnt"
+                                                      for l in d.lanes) if d and d.m else ""
                     row[f"{p}.lane_thresholds"] = ";".join(
-                        f"L{l['lane']}:D*={l['D_star']:.4g}:D#={l['D_hash']:.4g}:{l['method']}" for l in d.lanes) if d and d.m else ""
-                    row[f"{p}.flagged_lanes"] = "|".join(f"L{l}" for l in d.flagged_lanes) if d and d.m else ""
+                        f"L{l['lane']}:t*={l['D_star']:.4g}:{l['method']}" for l in d.lanes) if d and d.m else ""
+                    row[f"{p}.flagged_by"] = "|".join(d.flagged_by) if d and d.m else ""
+                    row[f"{p}.evaluator_check"] = ("ok" if d.check_ok else "FAILED") if d and d.m else ""
                     row[f"{p}.sensitivity_sufficient"] = bool(self.sensitivity_ok(d)) if d and d.D is not None else None
                     row[f"{p}.envelope"] = (d.envelope_reason or "ok") if d and d.D is not None else ""
                 flag = self._flag_of_cell.get((cy, cx))
