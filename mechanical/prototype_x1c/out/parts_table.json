@@ -1340,12 +1340,12 @@
    51.0,
    21.0
   ],
-  "volume_cm3": 19.24,
+  "volume_cm3": 16.24,
   "bed_fit": "OK",
   "bed_note": "",
-  "triangles": 2216,
+  "triangles": 2666,
   "open_edges": 4,
-  "mesh_volume_cm3": 19.24,
+  "mesh_volume_cm3": 16.24,
   "pn": "RRX-P02L",
   "kind": "printed",
   "material": "PAHT-CF",
@@ -1355,7 +1355,7 @@
   ],
   "group": "receiver_option",
   "print_note": "plate face on the bed (upside-down); no supports; FIT CHECK ONLY, the datum part is the machined RRX-F02",
-  "mass_each_g": 17.3,
+  "mass_each_g": 14.6,
   "note": "optional"
  },
  {
@@ -1370,12 +1370,12 @@
    51.0,
    21.0
   ],
-  "volume_cm3": 19.15,
+  "volume_cm3": 16.14,
   "bed_fit": "OK",
   "bed_note": "",
-  "triangles": 2008,
+  "triangles": 2458,
   "open_edges": 4,
-  "mesh_volume_cm3": 19.15,
+  "mesh_volume_cm3": 16.15,
   "pn": "RRX-P02R",
   "kind": "printed",
   "material": "PAHT-CF",
@@ -1385,7 +1385,7 @@
   ],
   "group": "receiver_option",
   "print_note": "plate face on the bed (upside-down); no supports; FIT CHECK ONLY, the datum part is the machined RRX-F02",
-  "mass_each_g": 17.3,
+  "mass_each_g": 14.5,
   "note": "optional"
  },
  {
@@ -1400,7 +1400,7 @@
    239.0,
    4.0
   ],
-  "volume_cm3": 199.22,
+  "volume_cm3": 197.38,
   "bed_fit": "NO",
   "bed_note": "300.0 x 239.0 x 4.0 exceeds 250 x 250 x 253",
   "pn": "RRX-F01",
@@ -1411,8 +1411,8 @@
    "chassis_plate"
   ],
   "group": "chassis",
-  "note": "4 mm 6061-T6 laser/waterjet blank, countersunk and tapped per holes table; DXF in out/dxf",
-  "mass_each_g": 537.9,
+  "note": "4 mm 6061-T6 laser/waterjet blank, countersunk, tapped and reamed per holes table; 4 receiver bridge pockets 1.5 deep milled from below; DXF in out/dxf",
+  "mass_each_g": 532.9,
   "dxf": "out/dxf/chassis_plate.dxf"
  },
  {
@@ -1427,7 +1427,7 @@
    51.0,
    21.0
   ],
-  "volume_cm3": 19.24,
+  "volume_cm3": 16.24,
   "bed_fit": "OK",
   "bed_note": "",
   "pn": "RRX-F02L",
@@ -1438,8 +1438,35 @@
    "receiver_channel_L"
   ],
   "group": "receiver",
-  "note": "machined 6061 (printed PAHT-CF copy RRX-P02x for fit check only)",
-  "mass_each_g": 52.0,
+  "note": "machined 6061 (printed PAHT-CF copy RRX-P02x for fit check only); hangs on the G10 shim, no metal contact with the plate",
+  "mass_each_g": 43.8,
+  "dxf": null
+ },
+ {
+  "name": "receiver_shim_L",
+  "orient_euler_xyz_deg": [
+   0,
+   0,
+   0
+  ],
+  "bbox_print": [
+   48.0,
+   8.5,
+   4.0
+  ],
+  "volume_cm3": 1.26,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "pn": "RRX-F12L",
+  "kind": "fabricated",
+  "material": "G10",
+  "qty": 1,
+  "instances": [
+   "receiver_shim_L"
+  ],
+  "group": "receiver",
+  "note": "G-10 sheet, both faces surface ground 4.00 +-0.02, flatness 0.01; the L/R pair ground together; thermal break (DEC-045)",
+  "mass_each_g": 2.3,
   "dxf": null
  },
  {
@@ -1538,7 +1565,7 @@
    51.0,
    21.0
   ],
-  "volume_cm3": 19.15,
+  "volume_cm3": 16.14,
   "bed_fit": "OK",
   "bed_note": "",
   "pn": "RRX-F02R",
@@ -1549,8 +1576,35 @@
    "receiver_channel_R"
   ],
   "group": "receiver",
-  "note": "machined 6061 (printed PAHT-CF copy RRX-P02x for fit check only)",
-  "mass_each_g": 51.7,
+  "note": "machined 6061 (printed PAHT-CF copy RRX-P02x for fit check only); hangs on the G10 shim, no metal contact with the plate",
+  "mass_each_g": 43.6,
+  "dxf": null
+ },
+ {
+  "name": "receiver_shim_R",
+  "orient_euler_xyz_deg": [
+   0,
+   0,
+   0
+  ],
+  "bbox_print": [
+   48.0,
+   8.5,
+   4.0
+  ],
+  "volume_cm3": 1.26,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "pn": "RRX-F12R",
+  "kind": "fabricated",
+  "material": "G10",
+  "qty": 1,
+  "instances": [
+   "receiver_shim_R"
+  ],
+  "group": "receiver",
+  "note": "G-10 sheet, both faces surface ground 4.00 +-0.02, flatness 0.01; the L/R pair ground together; thermal break (DEC-045)",
+  "mass_each_g": 2.3,
   "dxf": null
  },
  {

@@ -29,5 +29,6 @@ $PY scripts/s2_analytic.py
 $PY scripts/s3_montecarlo.py
 $PY scripts/s4_leakage.py
 $PY scripts/s5_demo_files.py
+$PY scripts/s7_rev3_checks.py
 $PY scripts/s6_report.py
 echo "run_all: OK"

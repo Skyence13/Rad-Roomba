@@ -360,7 +360,7 @@ With the 5 mm liner UA = 1.14 W/K still / 1.36 W/K moving air; time constant 90 
 | moving | 20 W (fitted pad) | 96 min | 264 min |
 | moving | 36 W (branch limit, larger pad) | 39 min | 55 min |
 
-One-node bound (whole body to +5 C with 20 W): steady limit -7.5 C still air, i.e. not reachable; the pad has to sit on the pack with the cassette as the insulation. Recommendation: charge enable at pack skin >= +5 C **and** 20 min after first reaching it (core soak, about one pack time constant 6..59 min order); the pack-body coupling is the critical unknown -- measure it in the cold chamber (VT-0xx) before fixing the firmware threshold.
+One-node bound (whole body to +5 C with 20 W): steady limit -7.5 C still air, i.e. not reachable; the pad has to sit on the pack with the cassette as the insulation. Recommendation: charge enable at pack skin >= +5 C **and** a hold of at least 20 min after first reaching it (the cell core lags the skin; pack-node time constant C/G = 59 min at the assumed coupling); the pack-body coupling is the critical unknown -- measure it in the cold chamber (VT-0xx) before fixing the firmware threshold.
 
 ### Head (reference only)
 

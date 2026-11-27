@@ -33,3 +33,9 @@ Resolving these 663 unfixable violation(s) is the responsibility of the board au
 2026-11-27 11:23:50.449 INFO   [0516F4\B0615E] Exit stubs: 4 fine-pitch pins whose way out meets the clearances exactly get 4 stubs (0 inward to a pad of their net, 2 bent in a fan; U2201 2, U2503 2), router.autorouter.exit_stubs=true.
 2026-11-27 11:23:50.591 INFO   [0516F4\B0615E] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=4.
 2026-11-27 11:23:53.542 INFO   [0516F4\B0615E] Auto-routing stage started on board '3e718b802e64e06b57fdac7523fa693e' with baseline score 544.49 for 837 unrouted items.
+2026-11-27 11:38:48.989 INFO   [0516F4\B0615E] Auto-routing pass #1 on board '3e718b802e64e06b57fdac7523fa693e' was completed in 893.89 seconds with score 592.93 (748 unrouted and 663 violations), using 871.52 CPU seconds and the job allocated 257.03 GB of memory so far.
+2026-11-27 11:38:53.354 INFO   [0516F4\B0615E] Auto-routing stage completed with timeout: started with 837 unrouted nets, completed in 901.44 seconds, final score: 592.93 (748 unrouted and 663 violations), using 871.52 total CPU seconds, 257.03 GB total allocated, and 824.7 MB peak heap usage.
+2026-11-27 11:38:53.373 INFO   [0516F4\B0615E] Exit stubs: 4 released as ordinary copper, 4 split where routes join them, 4 unused pieces removed; 4 connection(s) of their nets open.
+2026-11-27 11:38:53.536 INFO   [0516F4\B0615E] Job '0516F4\B0615E' finished with state: TIMED_OUT (elapsed: 15 minutes 7.24 seconds, finished at UTC: 2026-11-27T11:38:53.535633314Z).
+2026-11-27 11:38:53.547 INFO   Saving output file '/home/user/Rad-Roomba/tools/eda/tests/head_escape/route/RR-HEAD-ACQ.retry.ses' (SES)...
+2026-11-27 11:38:53.555 INFO   Successfully saved output file '/home/user/Rad-Roomba/tools/eda/tests/head_escape/route/RR-HEAD-ACQ.retry.ses' (313739 bytes).

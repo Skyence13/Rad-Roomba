@@ -18,7 +18,7 @@ Cases in the survey grid where a weighted pattern exceeds nominal with U_null ex
 
 {{T:rev3_A_falsify}}
 
-Worst values: `poisson-exact`, U_null exact, weighted patterns: **{{V:rev3_A_ex_or}}** ({{V:rev3_A_ex_or_case}}); with the window: {{V:rev3_A_ex_win}} ({{V:rev3_A_ex_win_case}}). `normal` where section 3 selects it: {{V:rev3_A_no_or}} ({{V:rev3_A_no_or_case}}); `normal` forced outside its domain: {{V:rev3_A_no_all}} ({{V:rev3_A_no_all_case}}; this is R2, not the weights).
+Worst values: `poisson-exact`, U_null exact, weighted patterns: **{{V:rev3_A_ex_or}}** ({{V:rev3_A_ex_or_case}}); with the window: {{V:rev3_A_ex_win}} ({{V:rev3_A_ex_win_case}}). `normal` where section 3 selects it: {{V:rev3_A_no_or}} ({{V:rev3_A_no_or_case}}); `normal` forced outside its domain: {{V:rev3_A_no_all}} ({{V:rev3_A_no_all_case}}; this is R2, not the weights). Note that `normal` with all weights 1 already exceeds nominal by up to 1.16 at α = 1e-3 just above the 30-count switch (0.1 µSv/h, 10 s; 1 µSv/h, 1 s): the R2 switch criterion is too permissive at α = 1e-3; the weights reduce, not cause, those exceedances.
 
 ### 1.2 Dense scan: the lattice effect of `poisson-exact`
 
@@ -53,7 +53,7 @@ Geometry: eroded footprint 80 × 60 mm, 100 mm cells, 0.1 s gates. m = 2: one pa
 {{T:rev3_B_cell}}
 
 - Cell false alarm: worst achieved/nominal {{V:rev3_B_fa_max}}; union bound ÷ α up to {{V:rev3_B_ub_max}}. The union bound holds exactly as stated, but only on top of per-lane tests that hold α/m; where rule A fails per lane (sections 1.1–1.4) the cell fails by the same factor (the processing Monte Carlo case, weights 1×7 + 0.1, U = 3 s⁻¹: exact 1.160 for m = 2 and 1.239 for m = 4, `tests/test_rev3.py`).
-- Activity extending beyond the cell (every footprint fully covered): P(detect) at min D#ᵢ ≥ {{V:rev3_B_pwide_min}}; claim holds.
+- Activity extending beyond the cell (every footprint fully covered): P(detect) at min D#ᵢ above 0.999 in every case (the lanes are tested independently and each lane's quoted D#ᵢ is itself conservative); claim holds.
 - Activity confined to the cell: each gate sees only the fraction wᵢ of its footprint, so the footprint-average D is Σw²t/Σwt of the cell's D: P(detect) at the quoted limit only {{V:rev3_B_pcell_min}}–{{V:rev3_B_pcell_max}}; the true limit is up to {{V:rev3_B_cell_ratio_max}} × the quoted one.
 - Activity over one lane's footprint: P(detect) at that lane's D#ᵢ ≥ {{V:rev3_B_pone_min}}; claim holds.
 - Patch straddling the seam (100 cm² square centred on the seam): P(detect) at maxᵢ D#ᵢ only {{V:rev3_B_pseam_min}}–{{V:rev3_B_pseam_max}}; the true patch limit is up to {{V:rev3_B_seam_ratio}} × maxᵢ D#ᵢ.
@@ -79,6 +79,8 @@ S = Σᵢ cᵢ rᵢ/Kᵢ = Σⱼ aⱼNⱼ + Gaussian, with cᵢ ∝ 1/Var₀(D�
 ### 3.1 Validation of the evaluators
 
 Exact references: one lane (lattice), two lanes combined (outer sum of two lattices), alpha channel (outer sum, k ≪ 1); 0.03 µSv/h gives 1–2 expected floor counts per second, the alpha channel 0.02–5. Gil-Pelaez (GP): worst relative tail error {{V:rev3_C_gp_err}}, worst achieved/nominal with its threshold {{V:rev3_C_gp_ach}}. Continuous Lugannani-Rice (SPA) with the calibration term: worst tail error {{V:rev3_C_sp_err_cont}} ({{V:rev3_C_sp_case_cont}}), worst achieved/nominal {{V:rev3_C_sp_ach_cont}}. Lattice SPA without a Gaussian term (mixed weights): worst error {{V:rev3_C_sp_err_lat}}, worst achieved/nominal {{V:rev3_C_sp_ach_lat}} ({{V:rev3_C_sp_case_lat}}).
+
+Where the saddlepoint breaks down: (i) the alpha channel and any statistic whose expected counts are below about 1 with σ_cal ÷ sd below about 0.1 — the distribution is a set of narrow spikes (counts × weights) that the smooth CGF cannot represent, and the Lugannani-Rice value can be off by a factor of several or negative; (ii) any lattice statistic without a Gaussian term whose weights mix 1 with small values (the lattice span is 0.05 but the mass sits near integers), and all-weights-1 statistics below about 30 counts; (iii) near the mean (ŝ → 0; not relevant for decision thresholds). Beta-window statistics with the declared calibration terms and at least about 1 expected floor count: SPA tail error below 0.7 %, achieved/nominal 0.993–1.000. Gil-Pelaez showed no breakdown anywhere in the grid, including 0.008 expected floor counts.
 
 {{T:rev3_C_validation}}
 

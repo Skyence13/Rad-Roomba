@@ -234,6 +234,15 @@ Each statement holds under the stated condition and for the assumed parameter ra
 7. If alpha results are required, they need stationary dwell of at least 10 s and a measured standoff; at 10 mm the alpha response to ²³⁸U changes by tens of per cent for 2 mm of gap or a 35 K change in air temperature.
 8. If a fraction ε of surface signal reaches the reference, true signal is suppressed by kε; with a matched reference ε must be known to about 1 % absolute for a 1 % activity bias.
 
+### 7.1 MODEL.md revision 3 (section 6, IB-31): weighted sums and the multi-lane cell rule
+
+Full numbers in [`model_rev3_checks.md`](model_rev3_checks.md); verdicts and proposed wording in `../MODEL_REVIEW_rev3.md`. All values `calculated` (exact lattice convolution) or `simulated`, with synthetic coefficients.
+
+- Weighted sums, `poisson-exact`: **not conservative**. Achieved ÷ nominal false-alarm probability up to {{V:rev3_A_scan_max}} in the beta window with U_null exact ({{V:rev3_A_scan_case}}) and {{V:rev3_alpha_max}} in the alpha channel ({{V:rev3_alpha_case}}). Realistic footprint weights in the beta window are conservative, at a sensitivity cost of {{V:rev3_A_loss_real_min}}–{{V:rev3_A_loss_real_max}} in r#.
+- The 20·T_F U_null window of section 3 by itself gives up to {{V:rev3_win20_01_1}} × nominal at mission-level α (0.1 µSv/h, 1 s, all weights 1); 200·T_F gives {{V:rev3_win200_01_1}}. The pooled same-gate fallback gives up to {{V:rev3_B_pooled_max}} per lane.
+- Any lane at α/m: the union bound holds when each lane holds α/m; the quoted min D#ᵢ holds only for activity extending beyond the cell (P(detect) at the quoted limit {{V:rev3_B_pcell_min}}–{{V:rev3_B_pcell_max}} for activity confined to the cell), and maxᵢ D#ᵢ is not a seam-patch limit (P {{V:rev3_B_pseam_min}}–{{V:rev3_B_pseam_max}}). Cost against an exact combined statistic up to {{V:rev3_B_cost_m4}} (m = 4).
+- One exact linear statistic over all lanes (Gil-Pelaez inversion, validated to {{V:rev3_C_gp_err}} relative tail error against exact convolution) gives a median D# of {{V:rev3_s01_C}} Bq/cm² on the s01-like plan, against {{V:rev3_s01_rev3}} for revision 3 and {{V:rev3_s01_rev2}} for revision 2.
+
 ## 8. Measurements that replace the assumptions
 
 | Assumption | Measurement that replaces it | Design choice it drives |

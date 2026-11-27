@@ -166,8 +166,8 @@ def write_bom(parts, table):
 
 # ----------------------------------------------------------------------------------------------- images
 STEPS = [
-    ("01_chassis", "Stage 1: chassis plate, receiver channels with dowel lands, dock switch, cliff pods, caster",
-     ["chassis_plate", "receiver_channel_*", "land_pin_*", "dock_switch_bracket", "head_dock_switch", "cliff_pod_*", "tof_cliff_f?", "tof_window_cliff_f?", "caster*"], (-125.0, -28.0)),
+    ("01_chassis", "Stage 1: chassis plate, receiver channels on G10 thermal-break shims with dowel lands, dock switch, cliff pods, caster",
+     ["chassis_plate", "receiver_channel_*", "receiver_shim_*", "rx_pin_*", "land_pin_*", "dock_switch_bracket", "head_dock_switch", "cliff_pod_*", "tof_cliff_f?", "tof_window_cliff_f?", "caster*"], (-125.0, -28.0)),
     ("02_lower_hull", "Stage 2: lower hull (four pieces) lowered onto the plate, front bulkhead", ["lower_hull_*", "front_bulkhead", "tof_cliff_r?", "tof_window_cliff_r?", "tof_clip_cliff_r?"], (-58.0, 30.0)),
     ("03_drive", "Stage 3: motor pods, gearmotors, screw rings, hubs, wheels and tyres", ["motor_*", "screw_ring_*", "wheel_*", "tyre_*"], (-58.0, 30.0)),
     ("04_battery_bay", "Stage 4: battery tunnel, floor plug with heater, fixed coupler half, hatch frame", ["battery_tunnel", "floor_plug", "chassis_heater_pad", "coupler_fixed", "hatch_frame"], (-58.0, 38.0)),
@@ -185,13 +185,14 @@ STEPS = [
 
 STAGE_TEXT = {   # hand-written work instructions per stage: (do, inserts / torque notes, harness, check after the stage)
     "01_chassis": (
-        ["Deburr the plate; countersink from BELOW and tap per `out/dxf/chassis_plate_holes.csv` (hole table). Ream the four 4 H7 dowel holes of the receiver in one set-up with the hole pattern.",
-         "Press the two 4 m6 x 10 locating dowels into each channel ear; press the two hardened 4 m6 x 24 land pins through each channel (they are the z datum C: flush both sides, no burr on the top line).",
-         "Fit each channel to the plate underside on its dowels; 3 x M4 x 10 cap screws from above, medium thread-lock.",
+        ["Deburr the plate; countersink from BELOW and tap per `out/dxf/chassis_plate_holes.csv` (hole table). Mill the four 1.5 mm receiver bridge pockets from below; ream the four 4 H7 upper-pin holes in one set-up with the hole pattern.",
+         "Receiver thermal break (DEC-045): press the two upper 4 m6 x 8 pins flush into the plate from above. Press the two lower 4 m6 x 8 pins 5.5 mm into each channel ear (2.5 mm stand). Press the two hardened 4 m6 x 24 land pins through each channel (z datum C: flush both sides, no burr on the top line).",
+         "Clean and degrease the G10 shims (ground faces, L/R pair from one grinding set-up, marked); no sealant, no paint on the ground faces. Fit shim on the channel lower pins, channel + shim onto the upper pins under the plate (the slotted shim holes take the pin spacing).",
+         "Per screw from above: M4 x 18 A2-70 + DIN 6796 spring washer (cone up, outer edge on the washer) + ISO 7089 washer + G10 top-hat bushing in the 6.0 plate hole. Medium thread-lock; 1.2 N m in two passes. Check with a 500 V insulation tester or ohmmeter: channel to plate > 1 Mohm (no metal bridge).",
          "Dock switch: D2HW-C201M into the bracket pocket (2 x M2 into inserts), 3 mm push pin into the left channel end wall, bracket to the plate (2 x M3 from above).",
          "Cliff pods: RR-TOF boards with light-blocker foam into the pods, IR window bonded in its recess (clear silicone, no squeeze-out over the aperture); pods to the plate (3 x M3 each).",
          "Caster: 2.5 mm stainless disc on the plate TOP over the 48 mm hole (4 x M3 countersunk into the tapped plate); 1 mm shim and caster from below through the hole, 4 x M4 pan head into the tapped disc (thread-lock)."],
-        "Inserts: dock switch bracket 2 x M3, cliff pods 3 x M3 each (set at 230-245 C tip for PAHT-CF, flush +-0.1). Torques: M4 receiver 2.2 N m, M3 0.6 N m, M4 caster 1.5 N m.",
+        "Inserts: dock switch bracket 2 x M3, cliff pods 3 x M3 each (set at 230-245 C tip for PAHT-CF, flush +-0.1). Torques: M4 receiver 1.2 N m (G10 joint; re-check at the first service), M3 0.6 N m, M4 caster 1.5 N m.",
         "Cliff ToF and dock switch leads up through the two 8 mm grommets at x = -2, y = +-80. Leave 150 mm coiled on top of the plate.",
         "Slide a 16.00 x 14.00 x 70 mm gauge bar (the head-shoe gauge) the full length of each channel: left channel no perceptible y shake, right channel 0.6 mm total y float; 0.06 mm feeler fits under the roof pad, 0.12 mm does not. "
         "X-stop faces coplanar within 0.05 mm (straight edge + feelers). Dock switch clicks in the last 1.5 mm of gauge travel (continuity meter)."),
@@ -343,7 +344,8 @@ JOINTS = [
     ("J09_sole_plate_edge", "x", None, None, "Lower hull sole ring on the chassis plate edge", ["hull wraps the plate edge; M3 countersunk from below into the sole insert", "RTV bead in the corner; plate underside flush with the hull"]),
     ("J10_hull_splice", "z", 52.0, (-88, -54, 90, 148), "Lower hull front / rear butt joint (x = -71) beside the CM5 bay", ["no splice screw (CM5 bay): both pieces screwed to the plate and held by the lid tongue", "butt joint sealed with RTV, 1 mm gasket where the flange exists"]),
     ("J11_nose_bulkhead_latch", "y", 0.0, (26, 112, 28, 72), "Front bulkhead, chin floor of the nose cowl, latch arm and draw latch over the head", ["latch reaction: latch -> arm -> pedestals -> M5 -> plate -> channels", "nothing but the latch below z = 50 ahead of x = 62"]),
-    ("J12_receiver_station", "x", 8.0, (58, 118, 8, 40), "Receiver channel at the rear land station (x = 8) with the head shoe", ["dowel-pin land top = datum C (z 16.0)", "roof pad 14.06 above the land; side pads fit the left shoe, float the right"]),
+    ("J12_receiver_station", "x", 8.0, (58, 118, 8, 40), "Receiver channel at the rear land station (x = 8) with the head shoe", ["dowel-pin land top = datum C (z 16.0)", "roof pad 14.06 above the land on the rear bridge; bridge in a 1.5 mm plate pocket (air gap)", "ears on the 4 mm G10 shim: no metal contact with the plate"]),
+    ("J17_receiver_break", "y", 70.5, (0, 62, 16, 42), "Receiver thermal break, left inboard ear line: M4 in G10 top-hat bushings, lower and upper location pins, G10 shim", ["M4 x 18 + DIN 6796 + ISO 7089 + G10 bushing, 1500 N / 1.2 N m", "lower pins ear -> shim, upper pins plate -> shim; each touches metal on one side only"]),
     ("J13_receiver_long", "y", 87.5, (-16, 74, 8, 40), "Left receiver channel, longitudinal section: lands, x-stop flange, dock switch and push pin", ["x-stop face x = 65.7 (datum A)", "push pin 3 x 6 pressed by the shoe tip in the last 1.5 mm"]),
     ("J14_motor_pod", "x", 0.0, (78, 152, 0, 110), "Motor pod, gearmotor (shaft 7 mm below the can axis), screw ring, hub, wheel, tyre", ["pod base bolted to the plate; pod passes the skin through a sealed notch", "hub fixed on the D shaft first, wheel bolted on from outboard"]),
     ("J15_bumper", "z", 66.0, (-292, -222, 50, 130), "Bumper: side segment on two guide pins with the D2HW, centre segment on the door with overlapping wings", ["stroke 8.5 mm before the bosses reach the skin", "centre wings push both side segments"]),
@@ -417,27 +419,36 @@ def write_report(R, table, parts, timing):
     w("\n### Tolerance-critical dimensions of the receiver (fabrication drawing values)\n")
     w("| Feature | Nominal | Tolerance | Why |\n|---|---|---|---|")
     RC = P.RECEIVER
-    for f in [("Plate underside (z 33.0) to roof pad", f"{RC['channel_z'][1] - RC['shoe_z'][1] - D.RX_FIT_Z:.2f} mm", "+-0.05", "sets the head height: 1:1 into the film gap"),
+    RB = P.RECEIVER_BREAK
+    for f in [("Ear top face to land-pin bore centre (4 H7)", f"{RB['ear_top_z'] - (RC['shoe_z'][0] - D.RX_LAND_PIN_D / 2):.2f} mm", "+-0.03", "with the shim sets the head height: 1:1 into the film gap"),
+              ("G10 shim thickness (L/R pair ground together)", f"{RB['shim_t']:.2f} mm", f"+-{RB['shim_t_tol']:.2f}, flatness {RB['shim_flatness']}, L/R within 0.01", "in the datum-C stack (thermal break)"),
               ("Roof pad to land-pin bore centre (4 H7)", f"{RC['shoe_z'][1] - RC['shoe_z'][0] + D.RX_FIT_Z + D.RX_LAND_PIN_D / 2:.2f} mm", "+0.04 / -0.02", "z fit of the 14.00 mm shoe: 0.04..0.10 mm play -> 0.07..0.19 mm at the row over the 54 mm base"),
               ("Land-pin bores", "4 H7, two per channel at x = 8.0 and 62.0", "+-0.05 on the 54 mm spacing", "datum C base; pins 4 m6 hardened, replaceable"),
               ("Left channel width at the two stations", f"{RC['shoe_width'] + 2 * D.RX_FIT_Y_LEFT:.2f} mm", "+0.05 / 0", "datum B (y) of the head"),
               ("Right channel width at the stations", f"{RC['shoe_width'] + 2 * D.RX_FLOAT_Y_RIGHT:.2f} mm", "+-0.1", "floats +-0.3 mm (thermal growth over 175 mm)"),
-              ("Channel centre distance", f"{2 * RC['shoe_y']:.1f} mm", "+-0.1 (set by the 4 H7 dowel holes in the plate)", "left fixed, right floating"),
-              ("X-stop faces (two channels)", f"x = {RC['x_stop']} from the plate dowel holes", "coplanar within 0.05", "datum A; latch preload 100..200 N seats the head shoulders here"),
-              ("Slot width / roof away from the stations", "17.0 / 30.5", "+-0.2", "0.5 mm running clearance, open underneath for wipe-down")]:
+              ("Channel centre distance", f"{2 * RC['shoe_y']:.1f} mm", "+-0.1 (plate 4 H7 upper-pin holes -> shim -> lower pins)", "left fixed, right floating; two pin fits in the chain"),
+              ("X-stop faces (two channels)", f"x = {RC['x_stop']} from the plate pin holes", "coplanar within 0.05", "datum A; latch preload 100..200 N seats the head shoulders here"),
+              ("Slot width / roof pads", "17.0 / 30.5 at the two bridges, roof open between", "+-0.2", "0.5 mm running clearance, open underneath for wipe-down"),
+              ("Plate pockets over the bridges", f"{RB['plate_pocket_depth']} deep from below, 1.0 margin", "+0.2 / 0 depth", "1.5 mm air gap: no metal contact")]:
         w("| " + " | ".join(f) + " |")
-    w("\n**Printed with metal lands or fabricated aluminium?** Decision: the chassis plate (4 mm 6061, laser cut) with the front beam in one piece, and two **machined 6061 channels** with hardened 4 mm dowel pins as the "
+    w("\n**Printed with metal lands or fabricated aluminium?** Decision: the chassis plate (4 mm 6061, laser cut, two 1.5 mm pockets milled from below per channel) with the front beam in one piece, and two **machined 6061 channels** with hardened 4 mm dowel pins as the "
       "replaceable z lands. Reasons (calculated/handbook): (1) stiffness: the common model assumes 6000 N/mm per aluminium land against 1500 N/mm printed, i.e. four times the pitch stiffness and half the rattle-mode "
       "amplitude at the row; a printed PAHT-CF channel also halves its modulus when moist. (2) wear: aluminium shoes sliding on a printed slot with grit abrade the datum; a steel dowel is a line contact that does not "
       "pick up grit and is replaced by pressing it out. (3) creep: the latch preload sits on the x-stop pads permanently. (4) the part is a prismatic block: one slot milled from below, four reamed cross holes, "
-      "five tapped/doweled holes. A printed copy of the same geometry (`out/step/receiver_channel_fitcheck_*.step`) is exported for a fit check before metal is cut; it is not the datum build.\n")
-    w("**Thermal path to the head (calculated estimate, IB-39 follow-up).** As designed, each receiver channel (RRX-F02L/R, machined 6061-T6) is bolted metal-to-metal under the 4 mm 6061 chassis plate "
-      "(3 x M4 + 2 x 4 mm steel dowels, ear contact about 640 mm2 per channel): its conductance to the plate is of the order of several W/K, so the channel runs at plate temperature and the head's "
-      "'receiver metal at ambient' bound (heater about 43-66 W, `mechanical/head/out/thermal_summary.json`) applies rather than its 0.07 W/K-per-shoe assumption. "
-      "Proposal, not built: a G10 shim under each channel's ears with the channel made shorter by the shim thickness (z datum C unchanged: the land pins stay at z 14 in the channel), "
-      "G10 shoulder bushings on the M4 screws and the locating dowels in G10 sleeves. Conductance estimate: 1.5 mm shim 0.3 W/m K x 640 mm2 / 1.5 mm = 0.13 W/K plus about 0.04 W/K through three A2 screws, "
-      "about 0.17 W/K per channel (0.11 W/K in series with the shoe's 0.3 W/K isolator); a 3 mm shim gives about 0.10 W/K per channel (0.07 W/K in series), matching the head assumption. "
-      "It changes the head datum stack by a compliant layer: re-check the land-height tolerance (+0.04/-0.02 mm) and the latch preload creep before adopting it.\n")
+      "tapped and pinned ears. A printed copy of the same geometry (`out/step/receiver_channel_fitcheck_*.step`) is exported for a fit check before metal is cut; it is not the datum build.\n")
+    rb = {}
+    try:
+        import json as _j
+        rb = _j.loads((P.OUT / "mech_calcs.json").read_text(encoding="utf-8")).get("receiver_break", {})
+    except (OSError, ValueError):
+        pass
+    gtxt = f"{rb['g_per_channel']:.3f} W/K per channel" if rb else "see `mechanical/common/out/mech_calcs.md` section 9"
+    w("**Receiver thermal break (DEC-045 / IB-64, built).** Each channel (RRX-F02L/R) hangs under the plate on a ground 4.0 mm G-10 shim (RRX-F12L/R) under its ears; "
+      "no metal part crosses the shim: the three M4 x 18 screws sit in G-10 top-hat bushings in 6.0 mm plate holes (DIN 6796 spring washer + ISO 7089 washer under the head, 1500 N, 1.2 N m); "
+      "two lower 4 m6 x 8 pins pressed into the ear engage the shim only (top 1.5 mm below the plate); two upper pins pressed flush into the plate pass through the shim and end in a 6.5 x 1.5 relief in the ear. "
+      "The channel ears and walls stop at z 29.0 (plate - shim); the roof exists only as two bridges over the land stations, which stand up into 1.5 mm pockets in the plate underside with a 1.5 mm air gap. "
+      f"Datum C (z 16.0) and the land pins are unchanged (tool-checked, section 5 rows). Conductance channel -> plate (calculated, G-10 0.30 W/m K handbook class, UNVERIFIED): **{gtxt}** "
+      "against the 0.10 W/K target; the joint it replaces was about 6.5 W/K. Tolerance stack, G-10 creep and preload, stiffness and thread engagement: `mechanical/common/out/mech_calcs.md` section 9.\n")
     w("## 6. Bed fit of every printed part in its print orientation (tool-checked bounding boxes)\n\n| Part | Bounding box (mm) | Verdict | Note | Mesh open edges |\n|---|---|---|---|---|")
     for r in R["bed_fit"]:
         w(f"| {r['part']} | {r['bbox_print']} | {r['verdict']} | {r['note']} | {r['open_edges']} |")

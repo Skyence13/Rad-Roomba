@@ -169,20 +169,23 @@ def receiver_channel(s):
     return blk
 
 
-def receiver_shim(s):
-    """Ground G10 shim strips under the two ears of one channel (z = ear top .. plate underside), with screw and pin holes."""
+def receiver_shims(s):
+    """Ground G10 shim strips under the two ears of one channel (z = ear top .. plate underside), with screw and pin holes.
+    Returns (inboard strip, outboard strip); each strip is the same flat part on both sides (flipped)."""
     yc = s * RC["shoe_y"]
     d0, d1 = RB["shim_dy"]
     z0, z1 = EAR_TOP, EAR_TOP + RB["shim_t"]
-    sh = fuse(box(8.0, 56.0, yc - s * d1, yc - s * d0, z0, z1), box(8.0, 24.0, yc + s * d0, yc + s * d1, z0, z1))
-    for x, dy in RX_SCREWS:
-        sh = sh.cut(cyl(2.25, 6, (x, yc + s * dy, z0 - 1)))
-    for i, (x, dy) in enumerate(RX_PINS_LOWER + RX_PINS_UPPER):
-        if i in (1, 3):                                              # second hole of each pin pair: slot along the pair line
-            sh = sh.cut(box(x - 2.3, x + 2.3, yc + s * dy - 2.0, yc + s * dy + 2.0, z0 - 1, z1 + 1))
-        else:
-            sh = sh.cut(cyl(2.0, 6, (x, yc + s * dy, z0 - 1)))
-    return sh.clean()
+    out = []
+    for strip in (box(8.0, 56.0, yc - s * d1, yc - s * d0, z0, z1), box(8.0, 24.0, yc + s * d0, yc + s * d1, z0, z1)):
+        for x, dy in RX_SCREWS:
+            strip = strip.cut(cyl(2.25, 6, (x, yc + s * dy, z0 - 1)))
+        for i, (x, dy) in enumerate(RX_PINS_LOWER + RX_PINS_UPPER):
+            if i in (1, 3):                                          # second hole of each pin pair: slot along the pair line
+                strip = strip.cut(box(x - 2.3, x + 2.3, yc + s * dy - 2.0, yc + s * dy + 2.0, z0 - 1, z1 + 1))
+            else:
+                strip = strip.cut(cyl(2.0, 6, (x, yc + s * dy, z0 - 1)))
+        out.append(strip.clean())
+    return out
 
 
 def location_pins(s):
@@ -419,20 +422,21 @@ def front_bulkhead():
 def build(add):
     AL = D.MAT["AL6061"]["color"]
     add(Part("RRX-F01", "chassis_plate", chassis_plate(), "fabricated", "AL6061", "chassis", color=AL, internal=False,
-             note="4 mm 6061-T6 laser/waterjet blank, countersunk and tapped per holes table; DXF in out/dxf", mates={"*"}))
+             note="4 mm 6061-T6 laser/waterjet blank, countersunk, tapped and reamed per holes table; 4 receiver bridge pockets 1.5 deep milled from below; DXF in out/dxf", mates={"*"}))
     for tag, s in SIDES:
         add(Part(f"RRX-F02{tag}", f"receiver_channel_{tag}", receiver_channel(s), "fabricated", "AL6061", "receiver", color=AL, internal=False,
-                 note="machined 6061 (printed PAHT-CF copy RRX-P02x for fit check only); hangs on the G10 shim, no metal contact with the plate", mates={f"receiver_shim_{tag}", f"rx_pin_lower_{tag}*", f"land_pin_{tag}", "dock_switch_bracket", f"head_shoe_{tag}"}))
-        add(Part(f"RRX-F12{tag}", f"receiver_shim_{tag}", receiver_shim(s), "fabricated", "G10", "receiver", color="#c9c27a", internal=False,
-                 note="G-10 sheet, both faces surface ground 4.00 +-0.02, flatness 0.01; the L/R pair ground together; thermal break (DEC-045)",
-                 mates={"chassis_plate", f"receiver_channel_{tag}", f"rx_pin_*_{tag}*"}))
+                 note="machined 6061 (printed PAHT-CF copy RRX-P02x for fit check only); hangs on the G10 shim, no metal contact with the plate", mates={f"receiver_shim_{tag}_in", f"receiver_shim_{tag}_out", f"rx_pin_lower_{tag}*", f"land_pin_{tag}", "dock_switch_bracket", f"head_shoe_{tag}"}))
+        for pn, suf, sh in zip(("RRX-F12", "RRX-F13"), ("in", "out"), receiver_shims(s)):
+            add(Part(pn, f"receiver_shim_{tag}_{suf}", sh, "fabricated", "G10", "receiver", color="#c9c27a", internal=False,
+                     note=f"G-10 sheet, {'inboard' if suf == 'in' else 'outboard'} ear strip, both faces surface ground 4.00 +-0.02, flatness 0.01; one set ground together; thermal break (DEC-045)",
+                     mates={"chassis_plate", f"receiver_channel_{tag}", f"rx_pin_*_{tag}*"}))
         lo, up = location_pins(s)
         for i, pin in enumerate(lo):
             add(Part("RRX-H13", f"rx_pin_lower_{tag}{i}", pin, "purchased", "STEEL", "receiver", color="#5d6166", internal=False,
-                     mpn="ISO 8734 4 m6 x 8 hardened dowel pin", verified="standard part", mates={f"receiver_channel_{tag}", f"receiver_shim_{tag}"}))
+                     mpn="ISO 8734 4 m6 x 8 hardened dowel pin", verified="standard part", mates={f"receiver_channel_{tag}", f"receiver_shim_{tag}_in"}))
         for i, pin in enumerate(up):
             add(Part("RRX-H13", f"rx_pin_upper_{tag}{i}", pin, "purchased", "STEEL", "receiver", color="#5d6166", internal=False,
-                     mpn="ISO 8734 4 m6 x 8 hardened dowel pin", verified="standard part", mates={"chassis_plate", f"receiver_shim_{tag}"}))
+                     mpn="ISO 8734 4 m6 x 8 hardened dowel pin", verified="standard part", mates={"chassis_plate", f"receiver_shim_{tag}_in"}))
         for i, pin in enumerate(land_pins(s)):
             add(Part("RRX-H01", f"land_pin_{tag}{i}", pin, "purchased", "STEEL", "receiver", color="#5d6166", internal=False,
                      mpn="ISO 8734 4 m6 x 24 hardened dowel pin", verified="standard part", mates={f"receiver_channel_{tag}", f"head_shoe_{tag}"}))
