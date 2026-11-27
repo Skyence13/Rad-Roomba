@@ -353,6 +353,9 @@ class RobotApp:
             "safety": {"hw_latch": st.get("hw_latch"), "hw_inhibit_reasons": d.get("stops", {}).get("hw", []),
                        "protective_stop_reasons": d.get("stops", {}).get("sw", []), "hold": d.get("hold", []),
                        "chain": st.get("chain"), "rearm_ready": st.get("rearm_ready"),
+                       # chassis fault flags exactly as reported (unknown names included, never filtered); chain false = open OR unknown
+                       "faults": [str(x) for x in (st.get("faults") or [])],
+                       "chain_not_closed": [k for k, v in (st.get("chain") or {}).items() if not v],
                        "local_only": ["ESTOP", "HANDS_ON", "hardware latch (REARM button on the robot)"],
                        "remote_clearable": ["software protective stop", "controlled-stop hold", "local Pause"],
                        "traction_inhibited": mode not in ("ARMED_IDLE", "MOVING"),

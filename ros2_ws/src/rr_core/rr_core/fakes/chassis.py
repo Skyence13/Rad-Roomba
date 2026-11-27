@@ -39,7 +39,7 @@ class FakeChassis:
         self.inputs = {"estop": False, "hands_on": False, "bumper_l": False, "bumper_r": False,
                        "mode_run": True, "head_docked": True, "j2": True, "chg_cover_open": False,
                        "chg_plug": False, "pres_ohm": 4700.0, "loop_ohm": 1000.0, "rear_blocked": False,
-                       "cliff": False, "slip": 0.0, "usb_down": False, "tilt_deg": 0.0}
+                       "cliff": False, "slip": 0.0, "usb_down": False, "tilt_deg": 0.0, "faults": []}
         self.config = {"alert.rest_ms": 2000.0, "alert.premotion_ms": 1500.0, "cal.track_m": track_m,
                        "cal.wheel_radius_l_m": wheel_radius_m, "cal.wheel_radius_r_m": wheel_radius_m,
                        "safety.require_brake_test": 1.0, "link.timeout_ms": 1000.0, "stationary.min_ms": 100.0}
@@ -431,12 +431,39 @@ class FakeChassis:
                           "body_l": bool(self.inputs["bumper_l"]), "body_r": bool(self.inputs["bumper_r"]),
                           "head_loop": "OK" if 600 <= self.inputs["loop_ohm"] <= 1600 else "OPEN"},
                       "panel": {"buttons": {"rearm": False, "pause": False}, "pattern": self.panel},
-                      "heater": {"chassis_duty_pct": 0}, "faults": [], "sw_active": self._sw_active(),
+                      "heater": {"chassis_duty_pct": 0}, "faults": list(self.inputs["faults"]), "sw_active": self._sw_active(),
                       "hw_active": self._hw_active(), "stationary": t["stationary"],
                       "rearm_ready": (not self.hw_latch) and all(self._chain().values()),
                       "rearm_nonce": self.nonce, "hold": list(self.hold), "head_power": dict(self.head_power),
                       "brake_test": {"state": "PASSED" if self.brake_passed else "NONE"},
                       "event_seq": self.event_seq, "uptime_us": self.now_us()}
+
+    CHAIN_ORDER = ("MODE_RUN", "ESTOP", "HANDS_ON", "CHG_COVER", "HEAD_DOCK", "HEAD_LOOP", "LAB_KEY_N", "BODY_BUMPER", "WDG_OK", "ARM_PERMIT")
+
+    def _op_DIAG(self, a, rx, tid, raw):
+        """DIAG with the members added by the chassis firmware (ICD 3.14): `chain_state` per element
+        (CLOSED / OPEN / UNKNOWN behind an open element), `chain_end`, a 23-character `readbacks` string and
+        the fault flags as injected (any names)."""
+        chain = self._chain()
+        state, seen_open = {}, False
+        for k in self.CHAIN_ORDER:
+            if seen_open:
+                state[k] = "UNKNOWN"
+            elif chain[k]:
+                state[k] = "CLOSED"
+            else:
+                state[k] = "OPEN"
+                seen_open = True
+        rb = "".join("1" if v else "0" for v in (chain["MODE_RUN"], chain["ESTOP"], chain["ESTOP"], chain["HANDS_ON"], chain["CHG_COVER"],
+                     self.inputs["chg_plug"] is False, chain["HEAD_DOCK"], chain["HEAD_LOOP"], False, chain["LAB_KEY_N"],
+                     not self.inputs["bumper_l"], not self.inputs["bumper_r"], chain["WDG_OK"], False, False, self.hw_latch, True,
+                     self.panel_buttons() if hasattr(self, "panel_buttons") else False, False, False, False, False, False))
+        assert len(rb) == 23
+        return "OK", {"mode": self.mode, "hw_inhibit_reasons": self._hw_active() if not self.hw_latch else [], "hw_active": self._hw_active(),
+                      "protective_stop_reasons": sorted(self.sw_reasons), "sw_active": self._sw_active(),
+                      "faults": list(self.inputs["faults"]), "estop": {"a": chain["ESTOP"], "b": chain["ESTOP"]}, "readbacks": rb,
+                      "chain_state": state, "chain_end": bool(chain["ARM_PERMIT"] and all(chain.values())) if self.mode != "BOOT" else None,
+                      "pres_ohm": int(self.inputs["pres_ohm"])}
 
     def _op_EVENTS(self, a, rx, tid, raw):
         after = a.get("after_seq")
@@ -533,5 +560,5 @@ class FakeChassis:
     def _op_BRAKE_TEST(self, a, rx, tid, raw):
         if self.mode != "ARMED_IDLE":
             return "REJECTED", {"reason": "NOT_ARMED_IDLE", "mode": self.mode}
-        self._brake = (tid, raw, self.clock.now_us() + 800_000)
+        self._brake = (tid, raw, self.clock.now_us() + 2_200_000)      # chassis firmware: BRAKE_TEST takes about 2.2 s (CCR-CHS-10)
         return None

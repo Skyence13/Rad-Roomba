@@ -208,6 +208,13 @@ def _nfet(ref, d, g, s, notes=""):
                 verify=False, height_mm=1.1, area_mm2=9, notes=notes)
 
 
+def _pfet(ref, d, g, s, notes=""):
+    return dict(ref=ref, value="BSS84", mpn="BSS84,215", manufacturer="Nexperia", description="P-MOSFET -50 V 0.13 A",
+                package="SOT-23", symbol_hint="Device:Q_PMOS_GSD", footprint_hint="Package_TO_SOT_SMD:SOT-23",
+                pins={"1": ("G", g), "2": ("S", s), "3": ("D", d)}, block="chain", dnp=False, rating=None, tolerance=None,
+                verify=False, height_mm=1.1, area_mm2=9, notes=notes)
+
+
 def _ssr(ref, a, b, led_a, led_k, what):
     return dict(ref=ref, value="TLP241A", mpn="TLP241A(TP1,F", manufacturer="Toshiba", description="Photo-MOS relay 40 V 2 A, 0.15 ohm, 1 form A: " + what,
                 package="DIP4-SMD", symbol_hint="Relay_SolidState:TLP222A", footprint_hint="Package_DIP:SMDIP-4_W9.53mm",
@@ -314,8 +321,10 @@ S3_ADD = [
                 _nfet("Q_SETA", "U_SET_K", "SET_G", "SET_S", "set coincidence, edge of the set contact"),
                 _nfet("Q_SETB", "SET_S", "REARM_AUX_G", "GND", "set coincidence, level of the aux contact"),
                 _r("R_USA", "470", "V5_AUX", "U_SET_A"),
-                _ssr("U_SET", "SET_CAP", "SET_OUT", "U_SET_A", "U_SET_K", "REARM set switch C_SET -> K1 coil (on-board)"),
-                _d("D_SK", "1N4148W", "SET_OUT", "K1_SET", "set pulse into the coil; the seal-in cannot feed SET_OUT / U_HOLD"),
+                _ssr("U_SET", "SET_CAP", "K1_SET", "U_SET_A", "U_SET_K", "REARM set switch C_SET -> K1 coil (on-board, via R96 0 ohm)"),
+                _r("R_USK", "100k", "V5_AUX", "U_SET_K", "holds Q_HSET off while the set stack is off"),
+                _pfet("Q_HSET", "HSET_D", "U_SET_K", "V5_AUX", "U_HOLD set current from V5_AUX, only while the set stack conducts: "
+                      "nothing on the coil side (seal-in) can reach the U_HOLD LED"),
                 _d("D_RSET", "1N4148W", "CHAIN_END", "RSET_A", "M1: C_SET charges from CHAIN_END but cannot feed it"),
                 _r("R_SDIS", "1k", "SET_CAP", "SET_DIS", "C_SET discharge (tau 0.1 s) while CHAIN_END is dead", pkg="1206"),
                 _nfet("Q_SDIS", "SET_DIS", "SDIS_G", "GND"), _r("R_SDG", "100k", "3V3", "SDIS_G"),
@@ -324,7 +333,7 @@ S3_ADD = [
     # ---- C1 second, diverse hold element and K1 readbacks
     ("S3-C1h", [_ssr("U_HOLD", "K1_RUN", "RUN_HD", "HOLD_A", "GND", "second hold element in series with K1 pole B, self-holding from RUN_HD"),
                 _r("R_HA", "1.5k", "RUN_HD", "HOLD_A", "self-hold LED feed (5.9-8.9 mA at 10-14.6 V)", pkg="1206"),
-                _r("R_HS", "1.5k", "SET_OUT", "HOLD_A", "set feed from the REARM pulse only"),
+                _r("R_HS", "470", "HSET_D", "HOLD_A", "set feed (about 7.8 mA) from Q_HSET during the REARM pulse only"),
                 _d("D_HR", "1N4148W", "GND", "HOLD_A", "LED reverse protection (coil kick)"),
                 _d("D_RUN", "B160", "RUN_HD", "RUN_12V", "RUN_12V cannot back-feed RUN_HD / K1_RUN / CHAIN_END; isolates the K2/K3 kick from the chain", verify=True),
                 _ssr("U_LS", "RELAY_RTN", "COIL_RTN", "LS_A", "GND", "low-side element in the K2/K3 coil return, LED from RUN_HD"),

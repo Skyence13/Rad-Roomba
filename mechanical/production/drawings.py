@@ -112,7 +112,7 @@ def channel_sheets(parts, n0):
                       f"Ear top faces z {RB['ear_top_z']:.2f} = seat on the {RB['shim_t']:.2f} mm G10 shim: FLAT 0.01, PAR 0.01 | C; ear top to cross-bore centre 15.00 +-0.03 (one set-up).",
                       "Roof pads at the two bridges: 14.06 +0.04/-0.02 above datum C (z fit of the 14.00 mm shoe). Bridges 2.5 thick stand 1.5 into the plate pockets (no contact).",
                       "Threads: 3 x M4-6H through the 7.5 mm ears (engagement 7.1 mm); 2 x 4 H7 blind 6 (lower pins); 2 x 6.5 x 1.5 reliefs (upper-pin tips). Cross bores 4 H7 POS 0.02 | A | B | C."])
-    ax = K.sec_ax(fig, (14, 150, 250, 120), [ch.shape], "y", yc, ((0, 70), (8, 36)), "SECTION A-A  y = 87.5 (slot centre)")
+    ax = K.sec_ax(fig, (14, 150, 250, 120), [ch.shape], "y", yc - 10.0, ((0, 70), (8, 36)), "SECTION A-A  y = 77.5 (inboard wall: cross bores, bridges, ear)")
     K.dim(ax, (RC["land_x"][0], 16), (RC["land_x"][1], 16), off=-5, horizontal=True, fmt="{:.2f}", tol=" +-0.02")
     K.dim(ax, (RC["land_x"][1], 16), (RC["x_stop"], 16), off=-8, horizontal=True, fmt="{:.2f}", tol=" +-0.02")
     K.dim(ax, (2, 12), (2, RB["ear_top_z"]), off=-3, horizontal=False, fmt="{:.2f}")
@@ -139,6 +139,10 @@ def plate_sheets(parts, n0):
         f"Receiver: 4 pockets {RB['plate_pocket_depth']} +0.2/0 deep from below over the channel bridges; screw holes dia 6.0 +0.1/0 for the G10 top-hat bushings; 4 H7 upper-pin holes POS 0.02 | A | B | C.",
         "Hole table: sheet(s) following and dxf/RRP-F01_chassis_plate.dxf (+ _holes.csv). Coordinates base_link (x forward, y left)."])
     ax = K.hlr_ax(fig, (14, 60, 392, 200), pl.shape, "plan", "PLAN (from above, forward to the right)")
+    b = pl.bb
+    K.dim(ax, (b[0], b[1]), (b[3], b[1]), off=-8, horizontal=True, fmt="{:.1f}", tol="  (profile +-0.2)")
+    K.dim(ax, (b[3], b[1]), (b[3], b[4]), off=8, horizontal=False, fmt="{:.1f}", tol="  (profile +-0.2)")
+    K.dim(ax, (RC["land_x"][0], RC["shoe_y"]), (RC["land_x"][0], -RC["shoe_y"]), off=-14, horizontal=False, text="175.00", tol=" +-0.05 (channel centres)")
     for x, y, d, kind, why in holes:
         if kind == "ream":
             ax.plot([x], [y], "r+", ms=4)

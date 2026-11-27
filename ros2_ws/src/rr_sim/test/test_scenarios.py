@@ -67,3 +67,7 @@ def test_s13_door_target(tmp_path):
 
 def test_s14_wall_tracks(tmp_path):
     run(sc.s14_wall_tracks, tmp_path)
+
+
+def test_s15_no_automatic_resume(tmp_path):
+    run(sc.s15_no_auto_resume, tmp_path)

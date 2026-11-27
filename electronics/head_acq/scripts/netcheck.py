@@ -4,8 +4,11 @@
 The rrkicad build already compares the KiCad netlist pin by pin with the board definition (= circuit.py +
 overrides.py).  This script closes the loop to the reviewed baseline itself: every part record of circuit.py
 must appear in out/RR-HEAD-ACQ.net with the same value, MPN, manufacturer and DNP state, and every pin must sit
-on the same net.  The only accepted differences are the documented S2-01 RENUM entries of overrides.py
-(exposed pad 'EP' -> footprint pad number; same pin name, same net).
+on the same net.  The only accepted differences are the documented entries of overrides.py:
+  * S2-01 RENUM (exposed pad 'EP' -> footprint pad number; same pin name, same net),
+  * stage 3 (S3-xx): the NET entries (pin moved to the listed new net), VALUE entries (value / MPN as listed) and
+    ADD entries (new part records, checked pin by pin like the baseline parts).
+Any other difference - including an override that did not reach the KiCad netlist - is a problem.
 
     python3 electronics/head_acq/scripts/netcheck.py      (host, plain Python 3; exit 0 = identical)
 Writes reports/netlist_vs_circuit.json.
@@ -52,6 +55,16 @@ def main():
             renum[r] = mapping
     comps, pins = parse(NET)
     problems = []
+    # stage 3: what the overrides are allowed to change, and the overridden record of every changed part
+    new_parts, _log = overrides.apply(base.PARTS)
+    newby = {p["ref"]: p for p in new_parts}
+    moved = {(ref, pin): new for _id, ref, pin, _old, new, _why in overrides.NET}
+    valued = {}
+    for _id, refs, _old, fields, _why in overrides.VALUE:
+        for r in refs:
+            valued[r] = fields
+    added = [rec["ref"] for _id, rec, _why in overrides.ADD]
+    accepted = {"net": 0, "value": 0, "added": 0}
     nets_checked = set()
     npins = 0
     for p in base.PARTS:
@@ -60,7 +73,11 @@ def main():
         if c is None:
             problems.append("%s missing from the KiCad netlist" % ref)
             continue
-        for key, want in (("value", p["value"]), ("mpn", p["mpn"]), ("mfr", p["manufacturer"]), ("dnp", bool(p["dnp"]))):
+        q = p
+        if ref in valued:
+            q = newby[ref]
+            accepted["value"] += 1
+        for key, want in (("value", q["value"]), ("mpn", q["mpn"]), ("mfr", q["manufacturer"]), ("dnp", bool(q["dnp"]))):
             have = c[key]
             if key == "value":
                 have = have.replace('\\"', '"') if have else have
@@ -74,20 +91,46 @@ def main():
                 if have is not None and not have.startswith("unconnected-"):
                     problems.append("%s.%s: NC in circuit.py, on net %s in KiCad" % (ref, num, have))
             else:
-                nets_checked.add(v[1])
-                if have != v[1]:
-                    problems.append("%s.%s (%s): net %r in KiCad, %r in circuit.py" % (ref, num, v[0], have, v[1]))
-    extra = sorted(set(comps) - {p["ref"] for p in base.PARTS})
+                want = v[1]
+                if (ref, num) in moved:
+                    want = moved[(ref, num)][1]
+                    accepted["net"] += 1
+                nets_checked.add(want)
+                if have != want:
+                    problems.append("%s.%s (%s): net %r in KiCad, %r expected (circuit.py %r)" % (ref, num, v[0], have, want, v[1]))
+    for ref in added:
+        c = comps.get(ref)
+        rec = newby[ref]
+        if c is None:
+            problems.append("added part %s missing from the KiCad netlist" % ref)
+            continue
+        accepted["added"] += 1
+        for key, want in (("value", rec["value"]), ("mpn", rec["mpn"]), ("mfr", rec["manufacturer"]), ("dnp", bool(rec["dnp"]))):
+            if c[key] != want:
+                problems.append("%s %s: netlist %r, overrides.py %r" % (ref, key, c[key], want))
+        for num, v in rec["pins"].items():
+            npins += 1
+            have = pins.get((ref, num))
+            nets_checked.add(v[1])
+            if have != v[1]:
+                problems.append("%s.%s: net %r in KiCad, %r in overrides.py ADD" % (ref, num, have, v[1]))
+    extra = sorted(set(comps) - {p["ref"] for p in base.PARTS} - set(added))
     if extra:
         problems.append("parts in KiCad but not in circuit.py: %s" % extra)
     res = {"netlist": os.path.relpath(NET, BOARD), "circuit_parts": len(base.PARTS), "kicad_parts": len(comps),
            "pins_compared": npins, "nets_compared": len(nets_checked), "accepted_renumbering": {k: v for k, v in renum.items()},
            "fitted": sum(1 for p in base.PARTS if not p["dnp"]), "dnp": sum(1 for p in base.PARTS if p["dnp"]),
-           "problems": problems, "result": "IDENTICAL" if not problems else "DIFFERENT"}
+           "accepted_stage3": accepted, "stage3_net_entries": len(moved), "stage3_value_refs": len(valued),
+           "stage3_added": added,
+           "problems": problems,
+           "result": ("IDENTICAL" if not (moved or valued or added) else "IDENTICAL except the listed S3 overrides")
+           if not problems else "DIFFERENT"}
     with open(os.path.join(BOARD, "reports", "netlist_vs_circuit.json"), "w") as f:
         json.dump(res, f, indent=1, sort_keys=True)
-    print("parts: circuit.py %d, KiCad %d; pins compared %d on %d nets; problems: %d -> %s" % (
-        len(base.PARTS), len(comps), npins, len(nets_checked), len(problems), res["result"]))
+    print("parts: circuit.py %d + %d added, KiCad %d; pins compared %d on %d nets; accepted S3 differences: %s "
+          "(of %d NET entries, %d VALUE refs); problems: %d -> %s" % (
+              len(base.PARTS), len(added), len(comps), npins, len(nets_checked), accepted, len(moved), len(valued),
+              len(problems), res["result"]))
     for pr in problems[:40]:
         print("  " + pr)
     return 0 if not problems else 1

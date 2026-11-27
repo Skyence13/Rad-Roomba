@@ -13,7 +13,8 @@ from rr_core import estimator as est
 from rr_core import linstat
 from rr_core.estimator import Cal, Decider, LaneGates
 
-REPO = Path(__file__).resolve().parents[3]
+import os
+REPO = Path(os.environ.get("RR_REPO", Path(__file__).resolve().parents[4]))
 CAL = Cal(k=1.0, b=0.5, u_k_lane=0.003, u_k_common=0.03, u_b=0.054, cov_kb=0.0, K=24.0, u_rel_K=0.15)
 CAL0 = Cal(k=1.0, b=0.5, K=24.0)                      # no calibration terms: lattice evaluator
 
@@ -74,14 +75,14 @@ def test_lattice_evaluator_equals_the_reference_without_calibration_terms():
 # ------------------------------------------------------------------ decisions, statuses, fields
 def test_combine_fields_rule_and_flags():
     w, tf = [1.0, 1.0, 0.5, 0.25], [0.1] * 4
-    lanes = [lane_gates(i, w, tf, 5.0, N=([2] * 4, [1] * 4)) for i in range(3)]
+    lanes = [lane_gates(i, w, tf, 5.0, N=([0.55] * 4, [0.5] * 4)) for i in range(3)]
     d = est.combine(lanes, 0.05, 0.05)
     assert d.m == 3 and d.rule == est.RULE and d.method == "linear-exact/gil-pelaez" and d.check_ok and d.status == "OK"
     assert d.alpha_comb == pytest.approx(0.04) and d.alpha_lane == pytest.approx(0.01 / 3)
     assert sum(d.c) == pytest.approx(1.0) and len(d.lanes) == 3 and {"lane", "c", "D_star", "method", "U0", "u0_window_s"} <= set(d.lanes[0])
     assert d.D_hash > d.D_star > 0 and d.detected is False
     # a clear excess in one lane flags the cell by the lane test and by the combined test
-    big = [lane_gates(0, w, tf, 5.0, N=([40] * 4, [1] * 4))] + lanes[1:]
+    big = [lane_gates(0, w, tf, 5.0, N=([40] * 4, [0.5] * 4))] + lanes[1:]
     d2 = est.combine(big, 0.05, 0.05)
     assert d2.detected and "lane0" in d2.flagged_by and d2.flagged_lanes == [0]
 

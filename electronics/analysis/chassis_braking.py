@@ -42,7 +42,7 @@ def brake(v0, kf, friction, j):
 # ---- timing budget (ms) -----------------------------------------------------
 T = {
     "relay_release":   (5.0, "[D] Omron G2RL-2 release 5 ms max, bare coil"),
-    "clamp_penalty":   (2.5, "[A] diode + 24 V Zener across each coil: +50 % on the bare-coil release time"),
+    "clamp_penalty":   (2.8, "[A] diode + 20 V Zener across each coil (stage 3, was 24 V): +56 % on the bare-coil release time (24 V: +50 %; the 20 V clamp dumps the coil energy about 11 % slower)"),
     "transfer_bounce": (3.0, "[A] NO opens -> NC closes and settles"),
     "k1_release":      (4.0, "[U] Omron G6S-2 release time 4 ms max (recalled, not read)"),
     "efuse_off":       (1.0, "[A] RUN_12V RC (0.1 ms) + TPS25982 turn-off"),
@@ -50,7 +50,7 @@ T = {
     "loop_filter":     (1.5, "[C] 10 k x 100 nF = 1 ms RC to the comparator threshold (1.4 tau worst case)"),
     "ssr_off":         (1.0, "[U] photo-MOS turn-off 1 ms max (TLP241A class; datasheet not reachable)"),
     "mcu_tick":        (2.0, "[A] firmware: 1 kHz supervision tick, worst case 2 ticks to drop ARM_PERMIT"),
-    "wdg_upper":       (31.6, "[D] TPS3430 tWDU max, CWD = NC, SET0 = 0, SET1 = 1 (23.4-31.6 ms)"),
+    "wdg_upper":       (31.6, "[D] TPS3430 tWDU max, CWD = NC, SET0 = 0, SET1 = 1 (23.375-31.625 ms; WDI falling-edge triggered, datasheet read 2026-11-27)"),
     "switch_bounce":   (0.0, "contact opening is the event; no debounce in the chain"),
 }
 def tsum(*k):
@@ -89,7 +89,7 @@ def build():
     for n, t in PATHS:
         pre = t - tsum("relay_release", "clamp_penalty", "transfer_bounce")
         A("| %s | %.1f | %.1f | **%.1f** |" % (n, pre + T["k1_release"][0] + T["efuse_off"][0], pre + T["k1_release"][0] + T["bridge_sleep"][0], t))
-    A("\nVMOT removal waits for K1 (the eFuse enable is taken from the K1-switched RUN_12V node); the brake relays do not wait for K1 because their coils are fed through the chain itself.\n")
+    A("\nK2/K3 coils, the VMOT eFuse enable (RUN_HD) and the nSLEEP gate input are all fed through K1 pole B and U_HOLD from CHAIN_END. They lose their supply as soon as the opened element interrupts CHAIN_END; neither the brake relays nor VMOT removal wait for K1 to release (K1 release only matters for the latch). The K2/K3 coil current additionally loses its return through U_LS. \"No restart without REARM\" rests on K1 AND U_HOLD (stage 3).\n")
     A("### T3. Stopping distance after the initiating event (level floor)\n")
     A("Distance = v0 x (time to brake connected) + braking distance. *Conservative*: force constant %.1f N/A, high rotor inertia, no friction, exponential decay taken to standstill (v0 x tau). "
       "*Nominal*: lossless-gear force constant %.1f N/A, nominal inertia, friction %.1f N.\n" % (KF_DRIVE, KF_IDEAL, F_ROLL + F_GEAR))
@@ -147,10 +147,77 @@ def build():
     c_bulk = 3 * 270e-6 + 200e-6
     A("- Bus capacitance %.0f uF (VMOT 3 x 270 uF + VBAT_SW): absorbing %.2f J alone would lift 14.4 V to %.1f V [C] - so a clamp is required when nothing else takes the energy (BMS open)."
       % (c_bulk * 1e6, e_max, math.sqrt(14.4 ** 2 + 2 * e_max / c_bulk)))
-    A("- Clamp: comparator on VMOT, on at 15.6 V, off at 15.0 V [design], 4.7 ohm -> %.1f A, %.0f W peak at 15.6 V (> %.0f W regenerated). Pulse energy <= %.1f J per stop; a 2512 pulse-withstanding 4.7 ohm pair in parallel (2 x 10 ohm, 2 W each) is ample. [C]"
-      % (15.6 / 4.7, 15.6 ** 2 / 4.7, p_pk, e_max))
+    r_cl = 9.1 / 2
+    A("- Clamp: comparator on VMOT, on at 15.6 V, off at 15.0 V [design], two 9.1 ohm 2512 pulse-rated resistors in parallel (R149/R150 class, %.2f ohm) behind the 1.1 A PTC F_CLAMP -> %.1f A, %.0f W peak at 15.6 V (> %.0f W regenerated). Pulse energy <= %.1f J per stop. [C]"
+      % (r_cl, 15.6 / r_cl, 15.6 ** 2 / r_cl, p_pk, e_max))
     A("- With the pack connected and accepting charge the standing load (>= 15 W) is usually larger than the average regenerated power and the bus does not rise; the clamp is for the BMS-open and full-pack cases. [C]")
-    A("- Stuck-on clamp: 13 V / 4.7 ohm = 2.8 A, 36 W continuous in a 4 W resistor pair -> a 1.1 A-hold PTC in series trips in a few seconds [A]; BUS_CLAMP_ACTIVE readback and the INA228 offset make it visible. [C]")
+    A("- Stuck-on clamp: 13 V / 4.55 ohm = 2.9 A, 37 W continuous in a 4 W resistor pair -> a 1.1 A-hold PTC in series trips in a few seconds [A]; BUS_CLAMP_ACTIVE readback and the INA228 offset make it visible. [C]")
+    A("")
+    A("### T8. Braking on a slope (downhill, braked, conservative constant, 12 kg)\n")
+    A("m_eff dv/dt = m g sin(theta) - F_fric - c v. If m g sin(theta) < F_fric the robot stops; otherwise it never stops and creeps at v_inf = (m g sin(theta) - F_fric) / c. "
+      "Distance from 0.20 m/s includes the %.1f ms contact-element delay; *creep* = distance in the first 2 s after the event. F_fric = %.1f N nominal (rolling + gearboxes [A]) or half. [C]\n" % (PATHS[0][1], F_ROLL + F_GEAR))
+    A("| Slope | Friction | m g sin(theta) (N) | Stops? | Distance from 0.20 m/s (mm) | Creep speed (mm/s) | Distance in 2 s (mm) |\n|---:|---|---:|---|---:|---:|---:|")
+    c_c = 2 * KF_DRIVE * KE / R_TOT
+    m_c = m_eff(J_ROTOR[2])
+    for deg in (0.0, 3.0, 6.0, 10.0):
+        for fr, lab in ((F_ROLL + F_GEAR, "nominal"), ((F_ROLL + F_GEAR) / 2, "half")):
+            g = M_ROBOT * 9.81 * math.sin(math.radians(deg))
+            net = fr - g
+            v0 = 0.20
+            dly = v0 * PATHS[0][1]
+            if net > 0:
+                tau = m_c / c_c
+                d = tau * (v0 - net / c_c * math.log(1 + c_c * v0 / net))
+                A("| %.0f deg | %s | %.1f | yes | %.0f | 0 | %.0f |" % (deg, lab, g, dly + d * 1000, dly + d * 1000))
+            else:
+                vinf = -net / c_c
+                tau = m_c / c_c
+                d2 = vinf * 2.0 + (v0 - vinf) * tau * (1 - math.exp(-2.0 / tau))
+                A("| %.0f deg | %s | %.1f | **no** | never stops | %.0f | %.0f |" % (deg, lab, g, vinf * 1000, dly + d2 * 1000))
+    A("\nThe braked robot holds a downhill slope only through gearbox and rolling friction (assumed, not measured). Trailer door ramps above about 3 deg (half friction) are outside what the chain can hold; the operating envelope must exclude them until the holding angle is measured (o3).\n")
+    A("### T9. Hot windings (stopping distance from 0.20 m/s, contact element, level floor)\n")
+    A("Winding resistance rises 0.393 %%/K [D copper]; R_M = %.2f ohm is the cold (20 C) extrapolated stall value. Magnet flux of a ferrite motor falls about 0.2 %%/K [A] (KE and the force constant together), which reduces the braking coefficient with the square. [C]\n" % R_M)
+    A("| Winding temperature | R_M (ohm) | Brake loop (ohm) | Flux factor | Braking coeff. cons. (N per m/s) | Total nominal (mm) | Total conservative (mm) |\n|---|---:|---:|---:|---:|---:|---:|")
+    for tw, flux_on in ((20.0, False), (60.0, False), (100.0, False), (100.0, True)):
+        rm = R_M * (1 + 0.00393 * (tw - 20.0))
+        rt = rm + R_BRK + R_PATH
+        fx = (1 - 0.002 * (tw - 20.0)) if flux_on else 1.0
+        cc = 2 * KF_DRIVE * fx * KE * fx / rt
+        cn = 2 * KF_IDEAL * fx * KE * fx / rt
+        dly = 0.20 * PATHS[0][1]
+        fr = F_ROLL + F_GEAR
+        mn, mc = m_eff(J_ROTOR[1]), m_eff(J_ROTOR[2])
+        taun = mn / cn
+        dn = taun * (0.20 - fr / cn * math.log(1 + cn * 0.20 / fr))
+        dc = 0.20 * mc / cc
+        A("| %.0f C%s | %.2f | %.2f | %.2f | %.0f | %.1f | %.1f |" % (tw, " + magnet" if flux_on else "", rm, rt, fx, cc, dly + dn * 1000, dly + dc * 1000))
+    A("\nA hot winding (100 C) lengthens the conservative distance by about a quarter; with the magnet derating about two thirds. These are calculated, not measured; the spin-down test (first power-up step 12) should be repeated warm.\n")
+    A("### T10. VMOT decay after a drop (review m1)\n")
+    A("Bleed 1.00 kohm 1 %% (R on VMOT) in parallel with the 47 k + 10 k VMOT_SENSE divider; capacitance 3 x 270 uF (+20 %% tolerance) + 2 x (10 uF + 100 nF) at the bridges. [C]\n")
+    A("| Capacitance | tau (s) | to 1.0 V from 13.4 V (s) | to 1.0 V from 14.6 V (s) | to 0.5 V from 14.6 V (s) |\n|---|---:|---:|---:|---:|")
+    r_b = 1 / (1 / 1010.0 + 1 / 57000.0)
+    for lab, cap in (("nominal 830 uF", 3 * 270e-6 + 20.2e-6), ("+20 %% 992 uF", 3 * 270e-6 * 1.2 + 20.2e-6 * 1.2)):
+        tau = r_b * cap
+        A("| %s | %.2f | %.2f | %.2f | %.2f |" % (lab.replace("%%", "%"), tau, tau * math.log(13.4), tau * math.log(14.6), tau * math.log(29.2)))
+    A("\nFirmware limit `brake.vmot_decay_max_ms` must be >= 3.5 s (worst case 2.7 s); bench procedure step 10 uses 3 s, BRAKE_TEST step 4 uses the firmware threshold. [C]\n")
+    A("### T11. K1 set pulse over supply and temperature (stage 3 set stage, review M1)\n")
+    A("C_SET 100 uF (-20 %%) charged from CHAIN_END through D_RSET (1N4148W, 0.4 V at the end of charge [A]) and R_SET 22 k (tau 2.2 s), dumped through U_SET (0.15 ohm) and D_SK (1N4148W, 0.75 V at 10 mA [A]) "
+      "into the K1 coil (1028 ohm at 23 C, +0.393 %%/K) with the U_HOLD set branch (1.5 k + LED) in parallel. K1 operates when the coil current exceeds the must-operate current 9 V / 1028 ohm = 8.75 mA "
+      "(75 %% of rated at 23 C [D family, G6S]; ampere-turns, so the same current at any temperature [C]); operate time 4 ms max [U]. Full charge assumed (chain closed >= 10 s); after 2 s closed the charge is 60 %%. [C]\n")
+    A("| Pack (V) | Coil temp | C_SET | Initial coil current (mA) | Time above must-operate (ms) | Sets? |\n|---:|---|---|---:|---:|---|")
+    for vb in (10.0, 12.0, 12.8, 14.6):
+        for tc in (-25.0, 23.0, 85.0):
+            for cf in (1.0, 0.8):
+                rc = 1028.0 * (1 + 0.00393 * (tc - 23.0))
+                vc = vb - 0.4
+                v0 = vc - 0.75
+                r_par = 1 / (1 / rc + 1 / (1500.0 + 1300.0 / 0.0065 * 0 + 200.0))
+                tau = 100e-6 * cf * r_par
+                i0 = v0 / rc
+                t_on = tau * math.log(i0 / 8.75e-3) * 1000 if i0 > 8.75e-3 else 0.0
+                if cf == 0.8 or tc == 23.0:
+                    A("| %.1f | %+.0f C | %s | %.1f | %.1f | %s |" % (vb, tc, "100 uF" if cf == 1.0 else "80 uF", i0 * 1000, t_on, "yes" if t_on >= 6.0 else ("marginal" if t_on > 4.0 else "**no** (fail-safe: cannot arm)")))
+    A("\nAt a pack below about 11 V with a hot coil the latch cannot be set: fail-safe (the operator sees REARM refused). In normal operation (12.8-13.4 V) the margin is >= 3x the operate time. A held or welded REARM (or a shorted U_SET) passes CHAIN_END x 1028 / 23 028 <= 0.65 V to the coil, below the 1.2 V must-release, and never charges C_SET. [C]\n")
     return "\n".join(o) + "\n", out
 
 if __name__ == "__main__":

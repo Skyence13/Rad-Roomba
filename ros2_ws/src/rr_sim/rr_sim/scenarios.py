@@ -208,6 +208,100 @@ def s02_head_reset_and_disconnect(tmp, seed=12):
     return _finish("s02_head_reset_disconnect", sim, c, extra)
 
 
+# ------------------------------------------------------------------ scenario 15: no automatic resume (safety review follow-up)
+def s15_no_auto_resume(tmp, seed=29):
+    """Traction inhibit / stop / link loss clears: the host sends no non-zero DRIVE until an explicit `resume`
+    (docs/reviews/REVIEW_traction_inhibit.md, "Not assessable").  Every non-zero DRIVE the chassis fake receives is
+    recorded with its time.  Cases: body bumper (hardware inhibit) cleared and re-armed locally; remote PAUSE with a
+    hardware inhibit inside the pause; link outage with the chassis' HOST_LINK_LOST stop.  After each, the same
+    task resumes only on the deliberate command."""
+    sim = SimSystem(_run_dir("s15", tmp), _cfg(), seed=seed)
+    c = Checks()
+    sim.bringup()
+    app = sim.app
+    drives = []
+    orig = sim.chassis._op_DRIVE
+
+    def rec(a, rx, tid, raw):
+        if a.get("v_mps") or a.get("w_radps"):
+            drives.append(sim.clock.now_us())
+        return orig(a, rx, tid, raw)
+    sim.chassis._op_DRIVE = rec
+
+    def moving_since(t_us):
+        return sum(1 for t in drives if t > t_us)
+
+    def task_name():
+        return app.mission.task["name"] if app.mission.task else None
+    app.command("start")
+    _wait(sim, lambda: app.mission.phase == "PASS" and task_name() == "pair0:A+" and sim.truth()[0] > 1.3, 300)
+    # --- (a) hardware inhibit (body bumper), cleared, locally re-armed
+    name0 = task_name()
+    sim.chassis.env("bumper_l", True)
+    sim.run(0.3)
+    sim.chassis.env("bumper_l", False)
+    _wait(sim, lambda: app.mission.state == "HOLD", 3)
+    t_hold = sim.clock.now_us()
+    c.add("bumper: HOLD with a hardware inhibit", app.mission.state == "HOLD" and "BODY_BUMPER" in app.chassis.drive["stops"]["hw"])
+    sim.chassis.press("REARM")
+    sim.run(5.0)
+    c.add("bumper: chassis back in ARMED_IDLE, mission still in HOLD", app.chassis.drive["mode"] == "ARMED_IDLE" and app.mission.state == "HOLD")
+    c.add("bumper: zero non-zero DRIVE for 5 s after the inhibit cleared and the latch was re-armed", moving_since(t_hold) == 0, n=moving_since(t_hold))
+    t_res = sim.clock.now_us()
+    c.add("bumper: explicit resume accepted", app.command("resume")["accepted"])
+    sim.run(2.0)
+    c.add("bumper: motion resumes only after the command, on the same task", moving_since(t_res) > 0 and task_name() == name0,
+          task=task_name(), n=moving_since(t_res))
+    # --- (b) remote pause with a hardware inhibit inside it
+    _wait(sim, lambda: app.mission.phase == "PASS" and sim.truth()[0] < 2.6 and sim.truth()[0] > 0.9, 300)
+    name1 = task_name()
+    c.add("pause accepted", app.command("pause", actor="op1")["accepted"])
+    t_pause = sim.clock.now_us()
+    sim.run(1.0)
+    sim.chassis.env("bumper_r", True)
+    sim.run(0.3)
+    sim.chassis.env("bumper_r", False)
+    sim.run(1.0)
+    sim.chassis.press("REARM")
+    sim.run(4.0)
+    c.add("pause + inhibit cleared + re-armed: zero non-zero DRIVE, still HOLD", moving_since(t_pause + 300_000) == 0 and app.mission.state == "HOLD",
+          n=moving_since(t_pause + 300_000))
+    t_res = sim.clock.now_us()
+    c.add("explicit resume accepted after the pause", app.command("resume", actor="op1")["accepted"])
+    sim.run(2.0)
+    c.add("resumes the paused task only", moving_since(t_res) > 0 and task_name() == name1, task=task_name(), paused=name1)
+    # --- (c) link outage (chassis HOST_LINK_LOST protective stop), link restored
+    _wait(sim, lambda: app.mission.phase == "PASS" and sim.truth()[0] > 0.9 and sim.truth()[0] < 2.4, 300)
+    name2 = task_name()
+    sim.clink.connected = False
+    sim.run(1.6)
+    t_out = sim.clock.now_us()
+    sim.clink.connected = True
+    sim.run(6.0)
+    c.add("link restored: mission in HOLD", app.mission.state == "HOLD", state=app.mission.state, reason=app.mission.hold_reason)
+    c.add("link restored: zero non-zero DRIVE after the restore", moving_since(t_out) == 0, n=moving_since(t_out))
+    app.command("rearm", actor="op1")
+    sim.run(3.0)
+    c.add("software re-arm after the link loss still moves nothing", moving_since(t_out) == 0, n=moving_since(t_out))
+    t_res = sim.clock.now_us()
+    c.add("explicit resume accepted after the link loss", app.command("resume", actor="op1")["accepted"])
+    sim.run(2.0)
+    c.add("resumes the interrupted task", moving_since(t_res) > 0 and task_name() == name2, task=task_name(), was=name2)
+    # --- chassis firmware additions (CCR-CHS-10): unknown fault flags are shown raw and archived; DIAG members are tolerated
+    got = []
+    sim.chassis.inputs["faults"] = ["PERMIT_STUCK_ON", "CHAIN_IMPLAUSIBLE", "SOME_FLAG_FROM_A_NEWER_FIRMWARE"]
+    app.chassis.request("DIAG", {}, got.append)
+    sim.run(1.5)
+    shown = app.snapshot()["safety"]["faults"]
+    c.add("fault flags, including a name this software does not know, are shown as reported",
+          shown == ["PERMIT_STUCK_ON", "CHAIN_IMPLAUSIBLE", "SOME_FLAG_FROM_A_NEWER_FIRMWARE"], shown=shown)
+    body = got[0]["body"] if got else {}
+    c.add("DIAG reply with chain_state, chain_end and a 23-character readbacks string is received and archived",
+          bool(got) and got[0]["status"] == "OK" and len(body.get("readbacks", "")) == 23 and "chain_state" in body and "chain_end" in body)
+    sim.chassis.inputs["faults"] = []
+    return _finish("s15_no_auto_resume", sim, c, {"nonzero_drives_total": len(drives)})
+
+
 # ------------------------------------------------------------------ scenario 3
 def s03_protective_stop(tmp, seed=13):
     sim = SimSystem(_run_dir("s03", tmp), _cfg(), seed=seed)

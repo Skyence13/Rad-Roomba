@@ -21,7 +21,7 @@
 | Step | Time (ms) | Basis |
 |---|---:|---|
 | relay_release | 5.0 | [D] Omron G2RL-2 release 5 ms max, bare coil |
-| clamp_penalty | 2.5 | [A] diode + 24 V Zener across each coil: +50 % on the bare-coil release time |
+| clamp_penalty | 2.8 | [A] diode + 20 V Zener across each coil (stage 3, was 24 V): +56 % on the bare-coil release time (24 V: +50 %; the 20 V clamp dumps the coil energy about 11 % slower) |
 | transfer_bounce | 3.0 | [A] NO opens -> NC closes and settles |
 | k1_release | 4.0 | [U] Omron G6S-2 release time 4 ms max (recalled, not read) |
 | efuse_off | 1.0 | [A] RUN_12V RC (0.1 ms) + TPS25982 turn-off |
@@ -29,18 +29,18 @@
 | loop_filter | 1.5 | [C] 10 k x 100 nF = 1 ms RC to the comparator threshold (1.4 tau worst case) |
 | ssr_off | 1.0 | [U] photo-MOS turn-off 1 ms max (TLP241A class; datasheet not reachable) |
 | mcu_tick | 2.0 | [A] firmware: 1 kHz supervision tick, worst case 2 ticks to drop ARM_PERMIT |
-| wdg_upper | 31.6 | [D] TPS3430 tWDU max, CWD = NC, SET0 = 0, SET1 = 1 (23.4-31.6 ms) |
+| wdg_upper | 31.6 | [D] TPS3430 tWDU max, CWD = NC, SET0 = 0, SET1 = 1 (23.375-31.625 ms; WDI falling-edge triggered, datasheet read 2026-11-27) |
 | switch_bounce | 0.0 | contact opening is the event; no debounce in the chain |
 
 | Initiating event | Time to VMOT eFuse off (ms) | Time to bridges asleep (ms) | Time to brake resistor connected (ms) |
 |---|---:|---:|---:|
-| Contact element opens (E-stop, HANDS-ON, bumper, dock, cover, selector) | 5.0 | 5.0 | **10.5** |
-| HEAD_LOOP or LAB_KEY (comparator + photo-MOS) | 7.5 | 7.5 | **13.0** |
-| ARM_PERMIT withdrawn by firmware | 8.0 | 8.0 | **13.5** |
-| Watchdog (MCU stopped strobing) | 37.6 | 37.6 | **43.1** |
-| Total loss of pack power | 5.0 | 5.0 | **10.5** |
+| Contact element opens (E-stop, HANDS-ON, bumper, dock, cover, selector) | 5.0 | 5.0 | **10.8** |
+| HEAD_LOOP or LAB_KEY (comparator + photo-MOS) | 7.5 | 7.5 | **13.3** |
+| ARM_PERMIT withdrawn by firmware | 8.0 | 8.0 | **13.8** |
+| Watchdog (MCU stopped strobing) | 37.6 | 37.6 | **43.4** |
+| Total loss of pack power | 5.0 | 5.0 | **10.8** |
 
-VMOT removal waits for K1 (the eFuse enable is taken from the K1-switched RUN_12V node); the brake relays do not wait for K1 because their coils are fed through the chain itself.
+K2/K3 coils, the VMOT eFuse enable (RUN_HD) and the nSLEEP gate input are all fed through K1 pole B and U_HOLD from CHAIN_END. They lose their supply as soon as the opened element interrupts CHAIN_END; neither the brake relays nor VMOT removal wait for K1 to release (K1 release only matters for the latch). The K2/K3 coil current additionally loses its return through U_LS. "No restart without REARM" rests on K1 AND U_HOLD (stage 3).
 
 ### T3. Stopping distance after the initiating event (level floor)
 
@@ -48,11 +48,11 @@ Distance = v0 x (time to brake connected) + braking distance. *Conservative*: fo
 
 | v0 (m/s) | Event | Delay travel (mm) | Braking, nominal (mm) | Braking, conservative (mm) | **Total nominal (mm)** | **Total conservative (mm)** | Peak brake current (A) | Time const. cons. (ms) |
 |---:|---|---:|---:|---:|---:|---:|---:|---:|
-| 0.20 | Contact element opens | 2.1 | 6.6 | 26.4 | **8.7** | **28.5** | 1.97 | 132 |
-| 0.20 | HEAD_LOOP or LAB_KEY | 2.6 | 6.6 | 26.4 | **9.2** | **29.0** | 1.97 | 132 |
+| 0.20 | Contact element opens | 2.2 | 6.6 | 26.4 | **8.8** | **28.6** | 1.97 | 132 |
+| 0.20 | HEAD_LOOP or LAB_KEY | 2.7 | 6.6 | 26.4 | **9.3** | **29.1** | 1.97 | 132 |
 | 0.10 | Contact element opens | 1.1 | 2.7 | 13.2 | **3.8** | **14.3** | 0.98 | 132 |
 | 0.10 | HEAD_LOOP or LAB_KEY | 1.3 | 2.7 | 13.2 | **4.0** | **14.5** | 0.98 | 132 |
-| 0.05 | Contact element opens | 0.5 | 1.0 | 6.6 | **1.5** | **7.1** | 0.49 | 132 |
+| 0.05 | Contact element opens | 0.5 | 1.0 | 6.6 | **1.6** | **7.1** | 0.49 | 132 |
 | 0.05 | HEAD_LOOP or LAB_KEY | 0.7 | 1.0 | 6.6 | **1.7** | **7.3** | 0.49 | 132 |
 
 ### T4. Degraded cases
@@ -63,7 +63,7 @@ Distance = v0 x (time to brake connected) + braking distance. *Conservative*: fo
 | Coast only, half that friction, high inertia | 114 | 29 | 8 | same |
 | Coast only, rolling resistance alone (gearbox friction ignored) | 261 | 66 | 17 | bound, not expected |
 | One motor braked, the other coasting without friction (robot also yaws) | 55 | 27 | 14 | conservative constant, single motor |
-| MCU fails with the bridges driving full torque until the watchdog opens the chain (43 ms, accel 3.2 m/s2 traction-limited) | 56 | 39 | 30 | conservative |
+| MCU fails with the bridges driving full torque until the watchdog opens the chain (43 ms, accel 3.2 m/s2 traction-limited) | 57 | 39 | 30 | conservative |
 
 ### T5. Slope and holding
 
@@ -79,6 +79,73 @@ Dynamic braking produces force only while moving: braking coefficient 343 N per 
 
 - Largest energy the drive can return in a controlled stop from 0.20 m/s: 0.91 J (all kinetic energy, no losses) [C]. Peak regenerated power if both bridges brake at the current limit: 2 x 2.68 A x 6.3 V = 34 W for a few tens of ms [C].
 - Bus capacitance 1010 uF (VMOT 3 x 270 uF + VBAT_SW): absorbing 0.91 J alone would lift 14.4 V to 44.7 V [C] - so a clamp is required when nothing else takes the energy (BMS open).
-- Clamp: comparator on VMOT, on at 15.6 V, off at 15.0 V [design], 4.7 ohm -> 3.3 A, 52 W peak at 15.6 V (> 34 W regenerated). Pulse energy <= 0.9 J per stop; a 2512 pulse-withstanding 4.7 ohm pair in parallel (2 x 10 ohm, 2 W each) is ample. [C]
+- Clamp: comparator on VMOT, on at 15.6 V, off at 15.0 V [design], two 9.1 ohm 2512 pulse-rated resistors in parallel (R149/R150 class, 4.55 ohm) behind the 1.1 A PTC F_CLAMP -> 3.4 A, 53 W peak at 15.6 V (> 34 W regenerated). Pulse energy <= 0.9 J per stop. [C]
 - With the pack connected and accepting charge the standing load (>= 15 W) is usually larger than the average regenerated power and the bus does not rise; the clamp is for the BMS-open and full-pack cases. [C]
-- Stuck-on clamp: 13 V / 4.7 ohm = 2.8 A, 36 W continuous in a 4 W resistor pair -> a 1.1 A-hold PTC in series trips in a few seconds [A]; BUS_CLAMP_ACTIVE readback and the INA228 offset make it visible. [C]
+- Stuck-on clamp: 13 V / 4.55 ohm = 2.9 A, 37 W continuous in a 4 W resistor pair -> a 1.1 A-hold PTC in series trips in a few seconds [A]; BUS_CLAMP_ACTIVE readback and the INA228 offset make it visible. [C]
+
+### T8. Braking on a slope (downhill, braked, conservative constant, 12 kg)
+
+m_eff dv/dt = m g sin(theta) - F_fric - c v. If m g sin(theta) < F_fric the robot stops; otherwise it never stops and creeps at v_inf = (m g sin(theta) - F_fric) / c. Distance from 0.20 m/s includes the 10.8 ms contact-element delay; *creep* = distance in the first 2 s after the event. F_fric = 16.2 N nominal (rolling + gearboxes [A]) or half. [C]
+
+| Slope | Friction | m g sin(theta) (N) | Stops? | Distance from 0.20 m/s (mm) | Creep speed (mm/s) | Distance in 2 s (mm) |
+|---:|---|---:|---|---:|---:|---:|
+| 0 deg | nominal | 0.0 | yes | 18 | 0 | 18 |
+| 0 deg | half | 0.0 | yes | 22 | 0 | 22 |
+| 3 deg | nominal | 6.2 | yes | 21 | 0 | 21 |
+| 3 deg | half | 6.2 | yes | 26 | 0 | 26 |
+| 6 deg | nominal | 12.3 | yes | 24 | 0 | 24 |
+| 6 deg | half | 12.3 | **no** | never stops | 12 | 52 |
+| 10 deg | nominal | 20.4 | **no** | never stops | 12 | 52 |
+| 10 deg | half | 20.4 | **no** | never stops | 36 | 96 |
+
+The braked robot holds a downhill slope only through gearbox and rolling friction (assumed, not measured). Trailer door ramps above about 3 deg (half friction) are outside what the chain can hold; the operating envelope must exclude them until the holding angle is measured (o3).
+
+### T9. Hot windings (stopping distance from 0.20 m/s, contact element, level floor)
+
+Winding resistance rises 0.393 %/K [D copper]; R_M = 2.18 ohm is the cold (20 C) extrapolated stall value. Magnet flux of a ferrite motor falls about 0.2 %/K [A] (KE and the force constant together), which reduces the braking coefficient with the square. [C]
+
+| Winding temperature | R_M (ohm) | Brake loop (ohm) | Flux factor | Braking coeff. cons. (N per m/s) | Total nominal (mm) | Total conservative (mm) |
+|---|---:|---:|---:|---:|---:|---:|
+| 20 C | 2.18 | 3.22 | 1.00 | 343 | 8.8 | 28.6 |
+| 60 C | 2.52 | 3.56 | 1.00 | 310 | 9.3 | 31.4 |
+| 100 C | 2.87 | 3.91 | 1.00 | 283 | 9.8 | 34.2 |
+| 100 C + magnet | 2.87 | 3.91 | 0.84 | 200 | 12.0 | 47.5 |
+
+A hot winding (100 C) lengthens the conservative distance by about a quarter; with the magnet derating about two thirds. These are calculated, not measured; the spin-down test (first power-up step 12) should be repeated warm.
+
+### T10. VMOT decay after a drop (review m1)
+
+Bleed 1.00 kohm 1 %% (R on VMOT) in parallel with the 47 k + 10 k VMOT_SENSE divider; capacitance 3 x 270 uF (+20 %% tolerance) + 2 x (10 uF + 100 nF) at the bridges. [C]
+
+| Capacitance | tau (s) | to 1.0 V from 13.4 V (s) | to 1.0 V from 14.6 V (s) | to 0.5 V from 14.6 V (s) |
+|---|---:|---:|---:|---:|
+| nominal 830 uF | 0.82 | 2.14 | 2.21 | 2.78 |
+| +20 % 992 uF | 0.99 | 2.57 | 2.65 | 3.34 |
+
+Firmware limit `brake.vmot_decay_max_ms` must be >= 3.5 s (worst case 2.7 s); bench procedure step 10 uses 3 s, BRAKE_TEST step 4 uses the firmware threshold. [C]
+
+### T11. K1 set pulse over supply and temperature (stage 3 set stage, review M1)
+
+C_SET 100 uF (-20 %%) charged from CHAIN_END through D_RSET (1N4148W, 0.4 V at the end of charge [A]) and R_SET 22 k (tau 2.2 s), dumped through U_SET (0.15 ohm) and D_SK (1N4148W, 0.75 V at 10 mA [A]) into the K1 coil (1028 ohm at 23 C, +0.393 %%/K) with the U_HOLD set branch (1.5 k + LED) in parallel. K1 operates when the coil current exceeds the must-operate current 9 V / 1028 ohm = 8.75 mA (75 %% of rated at 23 C [D family, G6S]; ampere-turns, so the same current at any temperature [C]); operate time 4 ms max [U]. Full charge assumed (chain closed >= 10 s); after 2 s closed the charge is 60 %%. [C]
+
+| Pack (V) | Coil temp | C_SET | Initial coil current (mA) | Time above must-operate (ms) | Sets? |
+|---:|---|---|---:|---:|---|
+| 10.0 | -25 C | 80 uF | 10.6 | 8.6 | yes |
+| 10.0 | +23 C | 100 uF | 8.6 | 0.0 | **no** (fail-safe: cannot arm) |
+| 10.0 | +23 C | 80 uF | 8.6 | 0.0 | **no** (fail-safe: cannot arm) |
+| 10.0 | +85 C | 80 uF | 6.9 | 0.0 | **no** (fail-safe: cannot arm) |
+| 12.0 | -25 C | 80 uF | 13.0 | 17.8 | yes |
+| 12.0 | +23 C | 100 uF | 10.6 | 12.0 | yes |
+| 12.0 | +23 C | 80 uF | 10.6 | 9.6 | yes |
+| 12.0 | +85 C | 80 uF | 8.5 | 0.0 | **no** (fail-safe: cannot arm) |
+| 12.8 | -25 C | 80 uF | 14.0 | 20.9 | yes |
+| 12.8 | +23 C | 100 uF | 11.3 | 16.6 | yes |
+| 12.8 | +23 C | 80 uF | 11.3 | 13.3 | yes |
+| 12.8 | +85 C | 80 uF | 9.1 | 2.4 | **no** (fail-safe: cannot arm) |
+| 14.6 | -25 C | 80 uF | 16.1 | 27.4 | yes |
+| 14.6 | +23 C | 100 uF | 13.1 | 25.8 | yes |
+| 14.6 | +23 C | 80 uF | 13.1 | 20.6 | yes |
+| 14.6 | +85 C | 80 uF | 10.5 | 10.8 | yes |
+
+At a pack below about 11 V with a hot coil the latch cannot be set: fail-safe (the operator sees REARM refused). In normal operation (12.8-13.4 V) the margin is >= 3x the operate time. A held or welded REARM (or a shorted U_SET) passes CHAIN_END x 1028 / 23 028 <= 0.65 V to the coil, below the 1.2 V must-release, and never charges C_SET. [C]
+

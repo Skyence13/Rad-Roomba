@@ -549,7 +549,7 @@ def door():
 # perimeter screw stations (lid -> hull), the cover / hatch / door interfaces are the prototype features unchanged.
 def lower_hull_one_piece():
     def base():
-        p = lower_master()
+        p = lower_master().intersect(box(-400, P.RECEIVER["chin_cut"][0] - GAP, -200, 200, 0, 300))   # nose lip / chin belong to the lid
         for x, yy in sole_screw_xy():                                    # M3 inserts in the sole ring (screws from below)
             p = p.cut(cyl(D.INSERT["M3"][0] / 2, 4.0, (x, yy, Z1 - 0.01)))
         for g, sgn, pt, n in perim_stations():                           # insert bosses on the tongue (lid perimeter screws)
@@ -559,7 +559,7 @@ def lower_hull_one_piece():
         return p.clean()
 
     def b():
-        p = cached(["lower_one_base", 1, R, PERIM_DEG, D.TONGUE, D.POSTS, P.CM5_POSE], base)
+        p = cached(["lower_one_base", 2, R, PERIM_DEG, D.TONGUE, D.POSTS, P.CM5_POSE], base)
         for s in (1, -1):
             tag = "L" if s > 0 else "R"
             blk, hole = bumper_switch_seat(s)
@@ -569,7 +569,7 @@ def lower_hull_one_piece():
         pt, n = skin_frame(-136.0, 55.0, "outer", "lower")              # membrane breather (M12 x 1.5 ePTFE vent), right rear quarter
         a, c, _ = S.device_seat(pt, n, hole_d=12.2, face_d=20.0, boss_d=24.0, notch=False, panel_t=4.0)
         return p.fuse(a.intersect(LO())).cut(c).clean()
-    return cached(["lower_one", 1, S.SEAT, R, PERIM_DEG, P.TOF_SENSORS, D.HATCH_JAMB], b)
+    return cached(["lower_one", 2, S.SEAT, R, PERIM_DEG, P.TOF_SENSORS, D.HATCH_JAMB], b)
 
 
 def upper_shell_one_piece():
@@ -578,8 +578,9 @@ def upper_shell_one_piece():
         lip, chin = _nose_lip_chin()
         hy = B["hump_half_y"]
         x0, x1 = HUMP_X
-        opening = box(HUMP_X[0] - 3.3, SAD["x"][0], -hy - 0.3, hy + 0.3, 90, 300)
+        opening = box(HUMP_X[0], SAD["x"][0], -hy - 0.3, hy + 0.3, 90, 300)          # behind x0 the hatch frame owns the 3.3 mm gap
         ring = UO().cut(UI()).intersect(opening).cut(box(x0, x1, -hy, hy, 0, 300))     # skin strip between the hump walls and the deck opening
+        ring = ring.cut(box(-400, B["hatch_x"][1], -B["hatch_half_y"], B["hatch_half_y"], B["hatch_z"][0], 200))
         n = _union([up, lip, chin, ring, hump()])
         n = _nose_details(n)
         a, c = cover_bosses(box(-400, 200, -200, 200, 0, 300))
@@ -592,12 +593,12 @@ def upper_shell_one_piece():
         return n.cut(tongue_keepout()).clean()
 
     def b():
-        p = cached(["upper_one_base", 1, R, SAD, B, HUMP_X, LEDGE_Z, PERIM_DEG, COVER_SCREWS, P.J_RECEPTACLES, LATCH_ARM_Z, LATCH_ARM_X1, LATCH_SCREW_X], base)
+        p = cached(["upper_one_base", 2, R, SAD, B, HUMP_X, LEDGE_Z, PERIM_DEG, COVER_SCREWS, P.J_RECEPTACLES, LATCH_ARM_Z, LATCH_ARM_X1, LATCH_SCREW_X], base)
         for s in (1, -1):
             p, feats = _deck_feats(p, s)
             p = _features(p, feats)
         return p.cut(tongue_keepout()).clean()
-    return cached(["upper_one", 1, S.SEAT, R, P.TOF_SENSORS, P.PANEL_CONTROLS, P.CHARGE_INLET, D.BUMPER_DIR, ("inlet_seat", S.INLET_COVER_T, 2)], b)
+    return cached(["upper_one", 2, S.SEAT, R, P.TOF_SENSORS, P.PANEL_CONTROLS, P.CHARGE_INLET, D.BUMPER_DIR, ("inlet_seat", S.INLET_COVER_T, 2)], b)
 
 
 def build(add):

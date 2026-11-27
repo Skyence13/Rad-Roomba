@@ -79,6 +79,9 @@ CIR = dict(
     R_SER=22.0,         # series protection resistor at preamp input
     R_F1=499.0, R_G1=24.9, G1=1 + 499.0 / 24.9, GBW1=300e6,     # OPA838 preamp
     C_D=220e-12, R_D=100.0, R_PZ=None,   # fast CR; R_PZ fitted at bring-up = trec/C_D
+    C_PZ=47e-9,                          # stage 3 (S3-04): DC block in series with R_PZ (None = stage-1 network)
+    R_PIN=1000.0, C_AC=100e-9, C_G1=10e-6,   # input AC coupling to VBL, preamp R_G AC ground (low-frequency poles)
+    C_TRIM=4.8e-6, R_TRIMS=4990.0,       # trim node AC ground and sense resistor (slow anode-node step after big pulses)
     G2=1 + 499.0 / 24.9, GBW2=300e6, R_F2=499.0, C_F2=10e-12,
     R_S1=1000.0, C_S1=1e-9,              # slow integrator 1 us
     C_S2=4.7e-9, R_S3=10e3,              # slow baseline CR
@@ -105,12 +108,28 @@ def tf_lp(tau):
     return signal.TransferFunction([1.0], [tau, 1.0])
 
 
+class Chain:
+    """Series connection of low-order stages, evaluated stage by stage (a single high-order polynomial is badly
+    conditioned once the poles span nanoseconds to tens of microseconds, e.g. with the S3-04 C_PZ)."""
+
+    def __init__(self, stages):
+        self.stages = []
+        for t in stages:
+            self.stages += t.stages if isinstance(t, Chain) else [t]
+
+    def freq(self, w):
+        h = np.ones_like(w, dtype=complex)
+        for t in self.stages:
+            h = h * signal.freqresp(t, w)[1]
+        return h
+
+
 def cascade(*tfs):
-    num, den = np.array([1.0]), np.array([1.0])
-    for t in tfs:
-        num = np.polymul(num, t.num)
-        den = np.polymul(den, t.den)
-    return signal.TransferFunction(num, den)
+    return Chain(tfs)
+
+
+def freq(tf, w):
+    return tf.freq(w) if isinstance(tf, Chain) else signal.freqresp(tf, w)[1]
 
 
 def chain_tfs(cd, trec, r_in=None, r_pz="match"):
@@ -125,9 +144,14 @@ def chain_tfs(cd, trec, r_in=None, r_pz="match"):
         r_pz = trec / c["C_D"]
     if r_pz is None:
         cr = signal.TransferFunction([c["R_D"] * c["C_D"], 0.0], [c["R_D"] * c["C_D"], 1.0])
-    else:
+    elif c.get("C_PZ") is None:
         cr = signal.TransferFunction([c["R_D"] * r_pz * c["C_D"], c["R_D"]],
                                      [c["R_D"] * r_pz * c["C_D"], c["R_D"] + r_pz])
+    else:
+        # S3-04: (R_PZ + 1/(s C_PZ)) || C_D from PRE to FS, R_D to the baseline: no DC transmission
+        cp, cd_, rd = c["C_PZ"], c["C_D"], c["R_D"]
+        cr = signal.TransferFunction([rd * cd_ * cp * r_pz, rd * (cp + cd_), 0.0],
+                                     [rd * cd_ * cp * r_pz, rd * (cp + cd_) + cp * r_pz, 1.0])
     g2 = signal.TransferFunction([c["G2"]], [c["R_F2"] * c["C_F2"], 1.0])
     g2bw = tf_lp(c["G2"] / (2 * math.pi * c["GBW2"]))
     fast = cascade(zin, pre, cr, g2, g2bw)
@@ -148,17 +172,28 @@ def sipm_current(t, q, trec, light):
     for frac, tau in light:
         emit += frac * np.exp(-t / tau) / tau
     emit /= emit.sum() * dt
-    i = np.convolve(emit, cell)[: len(t)] * dt
+    i = signal.fftconvolve(emit, cell)[: len(t)] * dt
     return q * i / (i.sum() * dt) if False else q * i   # area of i is ~1 over a long window
 
 
 def respond(tf, t, x):
-    _, y, _ = signal.lsim(tf, U=x, T=t)
-    return y
+    for st in (tf.stages if isinstance(tf, Chain) else [tf]):
+        _, x, _ = signal.lsim(st, U=x, T=t)
+    return x
+
+
+_PM_CACHE = {}
 
 
 def pulse_metrics(s, kind):
-    """Peak volts per photo-electron at each node, shapes for beta (plastic) or alpha (ZnS)."""
+    """Peak volts per photo-electron at each node, shapes for beta (plastic) or alpha (ZnS) (cached)."""
+    key = (id(s), kind, CIR.get("C_PZ"), CIR["R_IN"])
+    if key not in _PM_CACHE:
+        _PM_CACHE[key] = _pulse_metrics(s, kind)
+    return _PM_CACHE[key]
+
+
+def _pulse_metrics(s, kind):
     tfs = chain_tfs(s["cd"], s["trec"])
     q1 = s["gain"] * Q_E
     if kind == "beta":
@@ -191,8 +226,8 @@ def enc_pe(s):
     f = np.logspace(3, 9, 4000)
     w = 2 * math.pi * f
     # transfer from a voltage at the preamp + input to the fast output = fast / zin
-    _, h_fast = signal.freqresp(tfs["fast"], w)
-    _, h_zin = signal.freqresp(tfs["node_a"], w)
+    h_fast = freq(tfs["fast"], w)
+    h_zin = freq(tfs["node_a"], w)
     h_v = h_fast / h_zin
     rp = c["R_F1"] * c["R_G1"] / (c["R_F1"] + c["R_G1"])
     en2_amp = c["EN_AMP"] ** 2 + 4 * K_B * T_K * (c["R_SER"] + rp) + (c["IN_AMP"] * (rp + c["R_SER"])) ** 2
@@ -270,10 +305,13 @@ def check_against_circuit():
     """Compare the values used here with electronics/head_acq/design/circuit.py (channel F0)."""
     import importlib.util
     import os
-    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "head_acq", "design", "circuit.py")
-    spec = importlib.util.spec_from_file_location("rr_head_circuit", path)
-    cir = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(cir)
+    import sys as _sys
+    import types
+    board_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "head_acq")
+    _sys.path.insert(0, board_dir)
+    import overrides                       # stage-1 circuit.py + the stage-2/3 override layer = the board as built
+    parts, _log = overrides.apply(overrides.load_circuit().PARTS)
+    cir = types.SimpleNamespace(PARTS=parts)
 
     def between(a, b, kind):
         out = []
@@ -305,10 +343,97 @@ def check_against_circuit():
         "R_S1": rpar("F0_PRE", "F0_SI"), "C_S1": cap("F0_SI", "GND"), "C_S2": cap("F0_SI", "F0_SS"),
         "R_S3": rpar("F0_SS", "F0_VBL"), "G3": 1 + rpar("F0_SLOW", "F0_SFB") / rpar("F0_SFB", "F0_VBL"),
         "C_INJ": cap("F0_TPI", "F0_A"),
+        "R_PIN": rpar("F0_PIN", "F0_VBL"), "C_AC": cap("F0_PINA", "F0_PIN"), "C_G1": cap("F0_PG", "GND"),
     }
+    if c.get("C_PZ") is not None:
+        got["C_PZ"] = cap("F0_PZ", "F0_FS")
     bad = {k: (v, c[k]) for k, v in got.items() if abs(v - c[k]) > 1e-3 * abs(c[k])}
-    rpz = rpar("F0_PRE", "F0_FS")
-    return bad, rpz
+    rpz = rpar("F0_PRE", "F0_PZ") if c.get("C_PZ") is not None else rpar("F0_PRE", "F0_FS")
+    taps = {n: rpar(a, b) for n, (a, b) in (("FAST tap", ("F0_FAST", "F0_MFAST")), ("SLOW tap", ("F0_SLOW", "F0_MSLOW")),
+                                            ("PRE tap", ("F0_PRE", "F0_MPRE")))}
+    return bad, rpz, taps
+
+
+# ----------------------------------------------------------------------------- stage 3 (review REVIEW_head_interference.md)
+def tot_ns(y, t, thr):
+    """Time over threshold (first to last sample above thr) [ns]."""
+    a = np.where(y > thr)[0]
+    return (a[-1] - a[0]) * (t[1] - t[0]) * 1e9 if len(a) else 0.0
+
+
+def tot_rows(thr_pe=(8, 10), betas=(30, 120, 240), alphas=(150, 300, 1500, 15000)):
+    """TOT of the FAST pulse at the LLD (in units of the beta single-p.e. amplitude, as the thresholds are set),
+    clamped at the comparator clamp, for beta (plastic) and alpha (ZnS) pulses of each candidate device."""
+    lim = CIR["V_CLAMP"] - CIR["V_BL"]
+    rows = []
+    for k, s in SIPM.items():
+        mb, ma = pulse_metrics(s, "beta"), pulse_metrics(s, "alpha")
+        u = mb["fast_pk"]
+        for thr in thr_pe:
+            tb = [tot_ns(np.minimum(n * mb["fast"], lim) / u, mb["t"], thr - 0.5) for n in betas]
+            ta = [tot_ns(np.minimum(n * ma["fast"], lim) / u, ma["t"], thr - 0.5) for n in alphas]
+            rows.append((k, thr, tb, ta, mb["fast_pk"] / mb["slow_pk"], ma["fast_pk"] / ma["slow_pk"]))
+    return rows
+
+
+def lf_tail(npe, cpz, trim=True, s=None, t_end=700e-6, dt=10e-9):
+    """Low-frequency FAST tail after an alpha of npe p.e. (J60035 unless s given), in p.e. of the beta FAST amplitude.
+    Model (t >> 100 ns, fast poles dropped): anode node = R_IN + trim node (C_TRIM to a 4.99 k / C_TRIM recovery),
+    input coupling C_AC into R_PIN (+22 ohm), preamp G1(s) with R_G to C_G1, PZ branch with or without C_PZ, G2."""
+    c = CIR
+    s = s or SIPM["J60035@2.5V"]
+    rin, ct, tt = c["R_IN"], c["C_TRIM"], c["R_TRIMS"] * c["C_TRIM"]
+    za = ([rin * ct, rin * ct / tt + 1.0], [ct, ct / tt]) if trim else ([rin], [1.0])
+    tc = (c["R_PIN"] + c["R_SER"]) * c["C_AC"]
+    hp = ([tc, 0.0], [tc, 1.0])
+    g1 = ([c["C_G1"] * (c["R_G1"] + c["R_F1"]), 1.0], [c["C_G1"] * c["R_G1"], 1.0])
+    rpz = s["trec"] / c["C_D"]
+    pz = ([c["R_D"] / (c["R_D"] + rpz)], [1.0]) if cpz is None else ([cpz * c["R_D"], 0.0], [cpz * (c["R_D"] + rpz), 1.0])
+    num, den = np.array([c["G2"]]), np.array([1.0])
+    for n_, d_ in (za, hp, g1, pz):
+        num, den = np.polymul(num, n_), np.polymul(den, d_)
+    t = np.arange(0, t_end, dt)
+    q = npe * s["gain"] * Q_E
+    i = q * sum(f / tau * np.exp(-t / tau) for f, tau in ZNS)
+    _, y, _ = signal.lsim(signal.TransferFunction(num, den), i, t)
+    return t, y / pulse_metrics(s, "beta")["fast_pk"]
+
+
+def mutual(a1, a2, r):
+    """Coaxial-dipole mutual inductance (most favourable orientation), SI units."""
+    return 4e-7 * math.pi * a1 * a2 / (2 * math.pi * r ** 3)
+
+
+def emf_pe(emf, t_edge, s=None):
+    """FAST response [p.e.] to a series EMF of amplitude emf lasting t_edge in the SiPM loop: Norton current
+    i = C_d de/dt (two opposite impulses) into the input node; peak of the FAST response / FAST per p.e."""
+    s = s or SIPM["J60035@2.5V"]
+    tfs = chain_tfs(s["cd"], s["trec"])
+    t = np.arange(0, 2e-6, 0.2e-9)
+    x = np.zeros_like(t)
+    x[0] = 1.0 / (t[1] - t[0])
+    h = respond(tfs["fast"], t, x)
+    n = int(round(t_edge / (t[1] - t[0])))
+    y = s["cd"] * emf * (h - np.concatenate([np.zeros(n), h[:-n]]))
+    return np.abs(y).max() / pulse_metrics(s, "beta")["fast_pk"]
+
+
+def efficiency(mu_mpv, n_thr, scale=0.34, ngrid=4000):
+    """P(N >= n_thr) for a MIP-class deposit: x = E/E_MPV ~ Moyal(1, scale) (scale 0.34 -> MPV = 0.70 x mean, assumed),
+    N ~ Poisson(mu_mpv x)."""
+    from scipy import stats
+    x = np.linspace(0.05, 12, ngrid)
+    w = stats.moyal.pdf(x, loc=1.0, scale=scale)
+    w /= w.sum()
+    return float(np.sum(w * stats.poisson.sf(n_thr - 1, mu_mpv * x)))
+
+
+def mu_required(n_thr, eff=0.9):
+    lo, hi = 0.5, 200.0
+    for _ in range(60):
+        m = 0.5 * (lo + hi)
+        lo, hi = (m, hi) if efficiency(m, n_thr) < eff else (lo, m)
+    return hi
 
 
 # ----------------------------------------------------------------------------- report helpers
@@ -434,7 +559,8 @@ def main():
             "resolving time of T2 x %.2f (factor fitted to the Monte-Carlo below); DCR(T) = DCR(25 C) * 2^((T-25)/%.0f C) "
             "assumed, range %.0f..%.0f C)" % (F_CAL, T_HALF_C, *T_HALF_RANGE))
     temps = (25, 10, 0, -20)
-    hdr = ["device", "DCR case"] + ["%+d C: LLD p.e. for <1/s (<0.1/s)" % t for t in temps]
+    hdr = ["device", "DCR case"] + ["%+d C: LLD p.e. for <1/s (<0.1/s) [<0.05/s]" % t for t in temps]
+    LLD005 = {}
     rows = []
     for k, s in SIPM.items():
         mb = met[k][0]
@@ -444,11 +570,14 @@ def main():
                 rate = d * 2 ** ((t - 25) / T_HALF_C)
                 n1 = lowest_lld(rate, F_CAL * mb["fast_area_over_peak"], s["ct"], 1.0)
                 n01 = lowest_lld(rate, F_CAL * mb["fast_area_over_peak"], s["ct"], 0.1)
-                r.append("%s (%s)  [DCR %.2g/s]" % (n1, n01, rate))
+                n005 = lowest_lld(rate, F_CAL * mb["fast_area_over_peak"], s["ct"], 0.05)
+                LLD005[(k, case, t)] = n005
+                r.append("%s (%s) [%s]  DCR %.2g/s" % (n1, n01, n005, rate))
             rows.append(r)
     print(md_table(hdr, rows))
     print("\nThe table gives the integer n such that a threshold at (n - 0.5) p.e. has a dark trigger rate below the "
-          "target.  Sensitivity to the assumed halving temperature (J60035@2.5V typ, -20 C): " +
+          "target.  Stage 3 design criterion (review M1): dark triggers <= 0.05 1/s per chain = 10 %% of the radiometry "
+          "beta-window background b_beta = 0.5 1/s, i.e. the [square-bracket] column.  Sensitivity to the assumed halving temperature (J60035@2.5V typ, -20 C): " +
           ", ".join("T_half %.0f C -> %s p.e." % (th, lowest_lld(SIPM["J60035@2.5V"]["dcr"] * 2 ** (-45 / th),
                                                                  F_CAL * met["J60035@2.5V"][0]["fast_area_over_peak"],
                                                                  0.08, 1.0)) for th in (7, 8, 10)))
@@ -593,10 +722,100 @@ def main():
     print(md_table(["device", "Q per p.e. pC", "full-scale injection p.e. (100 pF x 2.5 V = 250 pC)",
                     "step per DAC LSB p.e."], rows))
 
+    # ================================================================== stage 3 tables (review fixes)
+    section("T13 Time over threshold at the raw LLD (C1): FAST pulse clamped at %.1f V above baseline, threshold in "
+            "beta-p.e. units (as the LLD is set); TOT in ns (calculated, pulse model of T2, C_PZ = %s)" %
+            (CIR["V_CLAMP"] - CIR["V_BL"], eng(CIR.get("C_PZ"), "F")))
+    rows = []
+    for k, thr, tb, ta, rb, ra in tot_rows():
+        rows.append([k, "%d" % thr, " / ".join("%.0f" % x for x in tb), " / ".join("%.0f" % x for x in ta),
+                     "%.0f" % (min(ta) - max(tb)), "%.1f / %.1f" % (rb, ra)])
+    print(md_table(["device", "LLD p.e.", "beta 30 / 120 / 240 p.e. TOT ns", "alpha 150 / 300 / 1500 / 15000 p.e. TOT ns",
+                    "gap: weakest alpha - brightest beta ns", "FAST/SLOW per p.e. beta / alpha"], rows))
+    print("\nCapture tick 6.94 ns on each edge (two timers): TOT uncertainty +-7 ns, i.e. a cut must sit >= 2 ticks from "
+          "both populations.  The alpha TOT is set by the ZnS decay (assumed 200 ns) and the beta TOT by R_IN*Ct and the "
+          "fast CR; the cut has to be chosen per device type from this table and confirmed with Sr-90 and Am-241.")
+
+    section("T14 Low-frequency FAST tail after a large alpha (m2; calculated, J60035, values in p.e. at FAST)")
+    rows = []
+    pts = (5, 50, 100, 150, 200, 300, 500)
+    for label, cpz, trim in (("stage-1 PZ (DC 0.307), no trim node (review model)", None, False),
+                             ("stage-1 PZ, with trim-node step", None, True),
+                             ("S3-04: C_PZ 47 nF, with trim-node step", 47e-9, True),
+                             ("C_PZ 100 nF, with trim-node step", 100e-9, True)):
+        for npe in (15000, 1500):
+            t, y = lf_tail(npe, cpz, trim)
+            k0 = int(2e-6 / (t[1] - t[0]))
+            rows.append([label, npe] + ["%.2f" % y[int(p * 1e-6 / (t[1] - t[0]))] for p in pts] +
+                        ["%.1f at %.0f us" % (y[k0:].min(), t[k0 + y[k0:].argmin()] * 1e6)])
+    print(md_table(["network", "alpha p.e."] + ["%d us" % p for p in pts] + ["minimum after 2 us"], rows))
+    print("\nThe trim node (4.8 uF, recovering through 4.99 k in ~24 ms) takes the alpha charge as a slow step at the anode; "
+          "the input coupling turns it into a long negative tail that the review's model (first row) does not contain.")
+
+    section("T15 Lane-monitor tap loading and switching charge at the comparator input (M2; calculated, J60035 "
+            "6.56 mV/p.e. at FCMP; C_bus 50-150 pF, source node 10 pF, switch charge 0.3-3 pC, OPA838 |Z_out| <= 30 ohm "
+            "at 20 MHz - all assumed)")
+    zo, cs, vpe, dv = 30.0, 10e-12, 6.93e-3, 0.040
+    g_pre = pulse_metrics(SIPM["J60035@2.5V"], "beta")["fast_pk"] / pulse_metrics(SIPM["J60035@2.5V"], "beta")["pre_pk"]
+    rows = [["1 k at FCMP (stage 1), review mux.py", "-14 / -18 %", "+1.3 (40 mV)", "+0.7 / +7.1", "1-3 MHz"]]
+    for rt in (4.99e3, 10e3):
+        for node, gain in (("FAST", 1.0), ("PRE (x FAST/PRE gain %.1f)" % g_pre, g_pre)):
+            load = zo / rt * gain
+            share = dv / rt * zo * gain / vpe
+            inj = ["%.3f" % (q / (rt * cs) * zo * gain / vpe) for q in (0.3e-12, 3e-12)]
+            rows.append(["%.2f k at %s (op-amp output)" % (rt / 1e3, node), "-%.2f %%" % (100 * load),
+                         "+%.3f" % share, "+" + " / +".join(inj),
+                         "%.0f-%.0f kHz" % (1e-3 / (2 * math.pi * rt * 150e-12), 1e-3 / (2 * math.pi * rt * 50e-12))])
+    print(md_table(["tap", "amplitude loss while connected (C_bus 50 / 150 pF)", "charge sharing at closure, p.e.",
+                    "switch charge 0.3 / 3 pC, p.e.", "monitor bandwidth (C_bus 150 / 50 pF)"], rows))
+    print("\nWith MON_LANE_EN = 0 (S3-02) no lane switch is closed or toggled while armed: all three effects are zero. "
+          "The 10 k numbers apply only to engineering captures with the monitor enabled.")
+
+    section("T16 Motor pickup into the SiPM loop (M4; calculated, J60035; coaxial-dipole mutual inductance; aggressor "
+            "values assumed as stated)")
+    cases = [("budget case: 1 A in 100 ns, 10 cm2 lead loop at 65 mm", 1.0, 100e-9, 10e-4, 0.065),
+             ("same with 150 ns edges (DRV8874)", 1.0, 150e-9, 10e-4, 0.065),
+             ("real differential lead ripple 60 mA p-p (L = 2.5 mH) in 150 ns", 0.06, 150e-9, 10e-4, 0.065),
+             ("bridge hot loop on RR-CHS-MAIN: 2.68 A / 150 ns, 2 cm2 at 90 mm", 2.68, 150e-9, 2e-4, 0.090),
+             ("common-mode lead current 80 mA (80 V/us x 1 nF) / 150 ns, 10 cm2 at 74 mm", 0.08, 150e-9, 10e-4, 0.074),
+             ("brush commutation arc ~0.1 A common mode in ~5 ns, 10 cm2 at 74 mm", 0.1, 5e-9, 10e-4, 0.074)]
+    rows = []
+    for label, di, te, a1, r in cases:
+        cells = [label]
+        for a2, rr in ((0.5e-4, r), (0.68e-4, r), (2e-6, r)):
+            e = mutual(a1, a2, rr) * di / te
+            cells.append("%.3g uV / %.2f" % (e * 1e6, emf_pe(e, te)))
+        rows.append(cells)
+    print(md_table(["aggressor", "open pigtail 0.5 cm2 (35 mm): EMF / FAST p.e.", "open pigtail 0.68 cm2 (47.5 mm)",
+                    "coax, 2 mm2 launch"], rows))
+    print("\nThe coax column does not depend on the pigtail length (only the launch loop at the U.FL and the carrier pads "
+          "remains); the shield-loop term of review m1 (~0.3 p.e.) comes on top.  The band that matters is 1-100 MHz "
+          "(edges of 5-150 ns): the FAST shaper passes 1-30 MHz with full gain.")
+
+    section("T17 Beta efficiency vs photoelectron yield and the minimum yield for the optics RFQ (M1; calculated: "
+            "Poisson photostatistics x Moyal energy loss, MPV = 0.70 x mean, assumed)")
+    s0_ = SIPM["J60035@2.5V"]
+    n_typ = LLD005[("J60035@2.5V", "typ", 10)]
+    n_max = LLD005[("J60035@2.5V", "max", 10)]
+    rows = []
+    for mu in (4, 8, 10, 15, 20, 25, 30, 45):
+        rows.append([mu] + ["%.2f" % efficiency(mu, n) for n in (8, n_typ, n_max, 12)])
+    print(md_table(["p.e. at the MPV deposit (one point of the plate)", "eff. LLD 8", "eff. LLD %d (J60035 typ, +10 C, "
+                    "0.05/s)" % n_typ, "eff. LLD %d (J60035 max DCR, +10 C, 0.05/s)" % n_max, "eff. LLD 12"], rows))
+    req = {n: mu_required(n) for n in (n_typ, n_max)}
+    print("\nMinimum yield so that the WORST point of the plate keeps >= 90 %% efficiency: LLD %d -> %.1f p.e. at the MPV "
+          "deposit; LLD %d -> %.1f p.e.  With the +-50 %% light-collection variation (assumed) the plate average at the "
+          "MPV is then 2 x / 1.5 x that, and the plate-average MEAN yield 1/0.70 x higher." %
+          (n_typ, req[n_typ], n_max, req[n_max]))
+    REQ_YIELD = req
+
     section("T12 Cross-check against circuit.py (channel F0)")
-    bad, rpz = check_against_circuit()
-    print("Values in this script that differ from circuit.py: %s.  Pole-zero resistor fitted in circuit.py: %.0f ohm "
-          "(matched value for a 50 ns recharge time: %.0f ohm)." % (bad or "none", rpz, 50e-9 / c["C_D"]))
+    bad, rpz, taps = check_against_circuit()
+    print("Board netlist = design/circuit.py + electronics/head_acq/overrides.py (stage 2/3).  Values in this script that "
+          "differ from it: %s.  Pole-zero resistor fitted: %.0f ohm (matched value for a 50 ns recharge time: %.0f ohm), "
+          "in series with C_PZ = %s.  Lane-monitor taps: %s (all at op-amp outputs)." %
+          (bad or "none", rpz, 50e-9 / c["C_D"], eng(c.get("C_PZ"), "F"),
+           ", ".join("%s %.0f ohm" % kv for kv in taps.items())))
 
     if plots:
         import matplotlib

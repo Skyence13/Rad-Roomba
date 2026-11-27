@@ -360,7 +360,7 @@ def _content(parts, kind_fn):
 def write_comparison(parts, made, R, hw, proto):
     rob = robot(parts)
     made_rob = [p for p in rob if p.kind in ("printed", "fabricated")]
-    pr_tab = [r for r in proto.get("table", []) if r.get("group") not in ROBOT_EXCLUDE]
+    pr_tab = [r for r in proto.get("table", []) if r.get("group") not in ROBOT_EXCLUDE | {"tray", "receiver_option"}]   # fit-check copies are optional
     pr_made_pieces = sum(r["qty"] for r in pr_tab)
     pr_unique = len(pr_tab)
     pr_skin = sum(r["qty"] for r in pr_tab if r.get("group") in ("lower_hull", "lid"))
@@ -404,7 +404,7 @@ def write_comparison(parts, made, R, hw, proto):
         q[1] += r.get("volume_cm3", 0.0) * r["qty"]
     md += ["**X1C prototype:**\n", "| Process | Pieces | Material volume (cm3) |", "|---|---|---|"]
     md += [f"| {k} | {v[0]} | {v[1]:.0f} |" for k, v in cp.items()]
-    plates = len((PROTO / "plates.yaml").read_text(encoding="utf-8").split("- plate:")) - 1 if (PROTO / "plates.yaml").exists() else "n/a"
+    plates = sum(1 for ln in (PROTO / "plates.yaml").read_text(encoding="utf-8").splitlines() if ln.startswith("- id:")) if (PROTO / "plates.yaml").exists() else "n/a"
     md.append(f"\nPrint plates: {plates} (prototype `plates.yaml`); heat-set inserts set by hand: {fc_p['heat-set inserts']}.")
     cr = _content(parts, lambda p: p.process_class)
     md += ["\n**Production:**\n", "| Process | Pieces | Material volume (cm3) | Bounding-box volume (cm3, SLS packing / stock proxy) |", "|---|---|---|---|"]
