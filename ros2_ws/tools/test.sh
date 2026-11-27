@@ -6,6 +6,7 @@
 #   tools/test.sh scenarios [pytest args...]   # end-to-end scenarios (evidence/ is rewritten)
 #   tools/test.sh native [n01|n02]       # scenarios 1 and 2 against the native firmware emulators (real time)
 #   tools/test.sh ros                    # ROS graph smoke test (needs tools/build.sh)
+#   tools/test.sh snapshot [--check]     # regenerate (or check) the packaged contract snapshot from interface/system/contract.yaml
 #   tools/test.sh plan                   # calculated coverage plan / mission times for 16 x 2.5 m -> evidence/plan_2.5x16.json
 #   tools/test.sh colcon          # colcon test on the built workspace (needs tools/build.sh)
 #   tools/test.sh all             # unit + scenarios + native (if built) + ros (if built); non-zero exit on any failure
@@ -19,6 +20,7 @@ case "$what" in
   scenarios) rr_docker_run -- "${PYT[@]}" "$RR_WS/src/rr_sim/test" "$@" ;;
   native)    PP="$(ls -d "$RR_WS"/src/*/ | tr '\n' ':')"
              rr_docker_run -e PYTHONPATH="$PP" -- python3 -m rr_sim.native_scenarios "$@" ;;
+  snapshot)  rr_docker_run -- python3 "$RR_WS/tools/snapshot_contract.py" "$@" ;;
   plan)      rr_docker_run -- python3 "$RR_WS/tools/plan_report.py" "$@" > "$RR_WS/evidence/plan_2.5x16.json.tmp" \
                && mv "$RR_WS/evidence/plan_2.5x16.json.tmp" "$RR_WS/evidence/plan_2.5x16.json" && echo "wrote evidence/plan_2.5x16.json" ;;
   ros)       rr_docker_run -- python3 "$RR_WS/tools/ros_smoke.py" "$@" ;;
@@ -34,5 +36,5 @@ case "$what" in
              else echo "SKIPPED ros: workspace not built (tools/build.sh)"; fi
              [ "$rc" = 0 ] && echo "ALL TEST GROUPS PASSED" || echo "AT LEAST ONE TEST GROUP FAILED"
              exit "$rc" ;;
-  *) echo "usage: tools/test.sh [unit|scenarios|native|ros|plan|colcon|all] [pytest args]" >&2; exit 2 ;;
+  *) echo "usage: tools/test.sh [unit|scenarios|native|ros|plan|snapshot|colcon|all] [pytest args]" >&2; exit 2 ;;
 esac

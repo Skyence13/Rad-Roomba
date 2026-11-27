@@ -35,7 +35,7 @@ def main():
                       "ballast_kg": mk["ballast_kg"], "cg_range_mm": [round(v, 1) for v in mk["cg_range_mm"]],
                       "gap_band": [round(keys["gap"]["band_lo"], 1), round(keys["gap"]["band_hi"], 1)],
                       "touch_3mm": round(keys["gap"]["touch_3mm"], 1), "touch_5mm": round(keys["gap"]["touch_5mm"], 1),
-                      "head_htr": [round(keys["thermal"]["head_htr_m20"]), round(keys["thermal"]["head_htr_m25"])],
+                      "head_htr": keys["thermal"]["head_htr"],
                       "chs_htr": [round(keys["thermal"]["chs_htr_m20"]), round(keys["thermal"]["chs_htr_m25"])]}, indent=1))
     if mk["worst_fwd_tip_mm"] <= 0:
         print("WARNING (finding, not a build failure): forward tip margin <= 0 without ballast -- see mech_calcs.md section 1")

@@ -3,7 +3,8 @@
 # DEC-xxx entry in planning/decisions.csv and a line in docs/architecture/CHANGELOG.md.
 # Human-readable rationale: docs/architecture/SYSTEM_ARCHITECTURE.md
 # Units: SI (m, s, rad, V, A, W, kg) unless a key name carries another unit suffix (_mm, _us, _ms, _c).
-contract_version: "0.4.0-draft6"   # draft6: head envelope extended forward for the sprung leading rail (15.6 mm stroke); head grounding and insulation decisions
+contract_version: "0.4.0-draft7"   # draft7: tail swept radius 0.290 m (rear bumper included, prototype body CR-09); grip bar moved aft to x = -30 (CR-04); look-ahead ToF set = 2 forward + 2 rearward (IB-34); branch limits reconciled with the stage-2 board (IB-28)
+# previous:   # draft6: head envelope extended forward for the sprung leading rail (15.6 mm stroke); head grounding and insulation decisions
 # previous:   # draft5: head mount option C adopted (DEC-041 closed): mount datum and optics row moved 72.8 mm aft; 12 Ah layout
 # previous:   # draft4: Rev E body adopted (DEC-039), 12 Ah pack (DEC-040), head mount under trade study (DEC-041)
 # previous:   # draft3: mechanical CCR-04..07 applied, Rev E body proposal recorded as pending owner decision
@@ -41,11 +42,11 @@ frames:
     shell_envelope_mm: {x: [-271.9, 102.4], y: [-146.4, 146.4], z: [32.9, 143.0]}
     overall_mm: [464, 350, 230]     # option C mount + 12 Ah hump (CCR-12): LiDAR top z 230, grip bar top z 175; was [537, 350, 216] with the neck
     battery_hump_mm: {x: [-233.0, -70.5], half_width_y: 60.5, top_z: 150.0, sensor_brow_top_z: 166.0}
-    swept_radii_m: {head_outer_corner: 0.275, tail_corner: 0.278}   # head corner at the unloaded rail face (212.2, 175); tail still sets the swept circle
+    swept_radii_m: {head_outer_corner: 0.275, tail_corner: 0.290}   # head corner at the unloaded rail face (212.2, 175); tail: shell 0.2718, rear bumper centre segment 0.2892 (prototype body, tool-checked on nominal CAD), rounded up; the tail sets the swept circle
     overall_with_sprung_rail_mm: [484, 350, 230]
     track_mm: 270.0
     caster: {swivel_x_mm: -195.0, wheel_x_mm: -204.0}
-    top_side: "transverse bridge grip over the CG (its saddle is the main-board service cover); LiDAR moved aft above the battery tunnel"
+    top_side: "transverse bridge grip, bar centre x = -30 mm (moved aft from -11 for carry attitude, prototype CR-04; calculated hang about 10 deg tail-down with a head fitted); its saddle is the main-board service cover; LiDAR aft above the battery tunnel"
   optics:
     row_center_x_mm: 131.2         # option C (CCR-11b); Rev D was 204.0
     entrance_film_z_mm: 10.0
@@ -65,7 +66,7 @@ motion:
   survey_speed_mps: 0.10
   max_forward_speed_mps: 0.20
   max_reverse_speed_mps: 0.05
-  max_yaw_rate_radps: 0.30          # outer head corner r = 0.275 m -> 0.083 m/s; tail corner r = 0.278 m -> 0.083 m/s
+  max_yaw_rate_radps: 0.30          # outer head corner r = 0.275 m -> 0.083 m/s; tail (bumper) r = 0.290 m -> 0.087 m/s
   max_accel_mps2: 0.30
   controlled_decel_mps2: 0.40
   command_ttl_ms_max: 250
@@ -97,14 +98,14 @@ power:
   rails:
     VBAT_RAW:   {desc: "Pack coupler to board, before main protection"}
     VBAT_SW:    {desc: "After main ideal-diode/eFuse and master switch; feeds all branches"}
-    VMOT:       {desc: "Traction supply; exists only while the hardwired safety chain is latched", limit_a: 12.0}
+    VMOT:       {desc: "Traction supply; exists only while the hardwired safety chain is latched", limit_a: 12.0, as_built_a: 6.5, note: "limit_a is a ceiling; rev A eFuse 6.5 A +-8 %, each bridge chops at 2.68 A"}
     V5_CM5:     {desc: "5.1 V compute rail", limit_a: 5.0}
     V12_LIDAR:  {desc: "Switched VBAT to LiDAR (9-36 V input device)", limit_a: 1.5}
     V3V3_CHS:   {desc: "Chassis logic 3.3 V", limit_a: 1.0}
     HEAD_PWR:   {desc: "J1 pins 1/2. Head electronics supply, VBAT-derived 10-15 V", limit_a: 1.5}
-    HEAD_HTR:   {desc: "J1 pins 3/4. Head heater supply, switched by chassis, modulated by head", limit_a: 4.0}
+    HEAD_HTR:   {desc: "J1 pins 3/4. Head heater supply, switched by chassis, modulated by head", limit_a: 4.0, as_built_a: 3.96, note: "nominal trip; tolerance band 3.56-4.35 A (stage-2 S2-04), heater draw <= 3.04 A"}
     CHS_HTR:    {desc: "Chassis/battery-bay heater branch", limit_a: 3.0}
-    BUS_5V:     {desc: "J2 pin 3/4. 5 V for the bus side of the head's isolated RS-485 transceiver", limit_a: 0.15}
+    BUS_5V:     {desc: "J2 pin 3/4. 5 V for the bus side of the head's isolated RS-485 transceiver", limit_a: 0.15, protection_max_a: 0.20, note: "0.15 A is the load limit; the branch switch may trip anywhere up to 0.20 A. Rev A current-limit resistor value is UNVERIFIED against the TPS2553 datasheet (IB-28)"}
   head_allocation_w: {electronics_max: 10.0, electronics_target: 5.0, heater_peak_at_12v: 30.0}
   average_budget_w:        # planning values at the pack terminals; electronics lead refines in electronics/analysis/power_budget.md
     drive: 15.0
@@ -160,7 +161,7 @@ boards:
     max_height_top_mm: 18.0
     max_height_bottom_mm: 3.0
   RR-TOF:
-    desc: "VL53L4ED carrier, 11 per robot (4 cliff, 4 oblique look-ahead, 3 rear proximity)"
+    desc: "VL53L4ED carrier, 11 per robot (4 cliff; 4 oblique look sensors: LOOK_FL/LOOK_FR forward over the head from the grip cheeks, LOOK_RL/LOOK_RR rearward from the tail; 3 rear proximity)"
     outline_mm: [18.0, 14.0]
     layers: 2
   RR-PANEL:

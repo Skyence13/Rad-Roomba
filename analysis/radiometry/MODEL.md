@@ -2,6 +2,8 @@
 
 Owner: integration lead. Status: design definition, `calculated`; no coefficient here is measured. Carries forward design 0.3 §5 "Photon compensation and uncertainty" and makes the decision quantities explicit. Symbols follow the 0.3 text; the transfer coefficient is *k* and coverage quantiles are κ (κ_α = z_{1−α}, κ_β = z_{1−β}).
 
+**Revision 3 (2026-11-27).** Closes the two questions raised by the processing software (integration backlog IB-31): the variance of footprint-weighted sums (§6, new paragraph "Weighted sums") and the decision rule for a cell fed by several lanes (§6, new paragraph "Cell decision with several lanes"). No formula of revision 2 changes.
+
 **Revision 2 (2026-11-25).** Incorporates the independent review in `MODEL_REVIEW.md` (items R1–R9): where the null variance is evaluated, Poisson thresholds at small α, the meaning of the mission allowance, the patch statistic, the calibration-source definition of K, the split of u(k), and reference leakage ε. Revision 1 is in git history.
 
 ## 1. Quantities per lane *i* and class *w* (alpha-like, beta-window)
@@ -80,6 +82,17 @@ with a uniform (top-hat) response used until a measured spatial response exists;
 ## 6. Map cell estimate
 
 For cell *c*, lane *i*: sum N and t over gates weighted by the fraction of the gate's eroded aperture footprint lying in *c* (weights applied to **live time and counts together**, so rates are footprint averages, never divided by pixel area again). Lanes are combined by inverse-variance weighting of D with the common calibration terms added after combination. Each cell stores: D, u_stat, u_total, D*, D#, T_F, coverage fraction, contributing gate keys (attachment, sequence, lane), reason codes.
+
+**Weighted sums (IB-31, first part).** With footprint weights 0 < w ≤ 1 the statistic actually computed is S = Σ wᵢNᵢ, whose variance is Σ wᵢ²λᵢ, not Σ wᵢλᵢ. Revision 3 keeps the Poisson form of §2–§3 evaluated with the weighted sums (variance taken as Σ wᵢNᵢ) **on purpose**: it over-states the counting variance by the factor Σwᵢλᵢ / Σwᵢ²λᵢ (between 1 and 1/w_min = 10, and close to 1 when most contributing gates lie wholly inside the cell), so with the normal quantile the achieved false-alarm probability is at or below nominal and every quoted D* and D# is at or above the true value for the statistic. With the `poisson-exact` method the same direction is expected, because S is smaller in convex order than the Poisson variable of equal mean that the method assumes (wN is the conditional mean of a binomially thinned N), but convex order does not by itself bound a tail probability at every threshold; this case is **to be confirmed by Monte Carlo in `analysis/radiometry` before the rule is relied on at mission-level α** (status: not yet run). Subject to that check the statement "sensitivity sufficient" stays valid; the cost is some lost sensitivity in cells built mostly from partial footprints. The export manifest records `weighted_sum_variance: poisson_form_conservative`. A moment-matched (scaled-Poisson, N_eff = (Σw)²/Σw²) treatment is the intended refinement once a measured spatial response replaces the top-hat; it is not used in 0.4 because the weights themselves are then uncertain by about one standoff at the aperture edge (§5).
+
+**Cell decision with several lanes (IB-31, second part).** The exact threshold of §3 is defined for one lane. Lanes have different k, b and K, so the exact distribution of an inverse-variance combination is not a difference of two scaled Poisson variables, and the normal form is not adequate at mission-level α (R2). The rule is therefore:
+
+- *Decision.* A cell is flagged when **any** contributing lane (decision weight ≥ 0.10 in that cell) exceeds its own threshold evaluated at α/m, where m is the number of contributing lanes and the per-lane method (`normal` or `poisson-exact`) follows §3. By the union bound the cell-level false-alarm probability is at most α whatever the correlation between lanes.
+- *Detection limit.* Each contributing lane's D#ᵢ is solved at (α/m, β). The cell's quoted D# is minᵢ D#ᵢ: for activity uniform over the cell every contributing lane sees the same D, the probability that at least one lane flags is at least that of the most sensitive lane, so minᵢ D#ᵢ is an upper bound on the true cell detection limit. For a patch confined to one lane the limit is that lane's D#ᵢ (§5, least favourable alignment), and "sensitivity sufficient" for patch claims uses maxᵢ D#ᵢ over the lanes the patch can fall in.
+- *Estimate.* The reported cell value D and its u_stat, u_total remain the inverse-variance combination of the first paragraph of this section (an estimate, not a test), with the common calibration terms added after combination.
+- Stored per cell: m, the per-lane thresholds and methods, which lane(s) flagged, and the method string `per-lane-exact/any-lane/alpha-over-m`.
+
+A stationary scaler recount is made with the head positioned so that one lane is centred on the flagged spot; it is a single-lane decision (m = 1) and uses §3 directly.
 
 ## 7. Demonstration coefficients
 

@@ -78,7 +78,7 @@ def test_clip_and_sweep():
     parts = geo.swept_parts(out, (0, 0, 0), {"kind": "pivot", "angle": math.pi / 2}, 0.03)
     assert geo.points_in_parts(parts, [[0.0, 0.25]])[0] and not geo.points_in_parts(parts, [[0.36, -0.2]])[0]
     assert out.turn_radius == pytest.approx(math.hypot(0.265, 0.175), abs=1e-3)
-    assert geo.RobotOutline((-0.27, 0.07), 0.146, (0.07, 0.19), 0.175, turn_radius=0.278).turn_radius == 0.278
+    assert geo.RobotOutline((-0.27, 0.07), 0.146, (0.07, 0.19), 0.175, turn_radius=0.301).turn_radius == 0.301   # arbitrary value: the parameter is passed through
 
 
 def test_trajectory_epochs_and_gaps():

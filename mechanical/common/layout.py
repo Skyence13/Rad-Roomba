@@ -205,6 +205,8 @@ def build(rail_projection=3.0):
         add(f"grip_leg_{tag}", L.box(gx0 - 7.5, gx0 + 1.5, ya, yb, 46.0, S["floor_z"][0]), "grip", "struct", 0.03)
         yc, yd = sorted((s * 60.0, s * 90.0))
         add(f"grip_yoke_{tag}", L.box(gx0 - 7.5, gx0 + 1.5, yc, yd, z1, 46.0), "grip", "struct", 0.02)
+        lf = P.TOF_SENSORS["tof_look_fwd_left"]["xyz"]                 # forward fairing nose carrying the look-ahead ToF (CR-04)
+        add(f"grip_cheek_nose_{tag}", L.box(gx1, lf[0] - 7.5, ya, yb, 148.0, G["bar_top_z"]), "grip", "struct", 0.01, internal=False)
 
     # ---- battery bay
     B = P.BATTERY_BAY
@@ -257,14 +259,13 @@ def build(rail_projection=3.0):
 
     # ---- sensors and switches
     for name, t in P.TOF_SENSORS.items():
-        host = {"tof_look_fl": {"grip_cheek_L", "grip_bar"}, "tof_look_fr": {"grip_cheek_R", "grip_bar"}}.get(name, set())
+        host = {"tof_look_fwd_left": {"grip_cheek_nose_L"}, "tof_look_fwd_right": {"grip_cheek_nose_R"}}.get(name, set())
         add(name, place(L.tof(), t["xyz"], t["dir"]), "tof", "sensor", L.mass("tof_board"), internal=False, mates=host)
     sw = L.switch()
     for name, xyz in {**P.BODY_BUMPER_SWITCHES, "head_dock_switch": P.HEAD_DOCK_SWITCH}.items():
         rear = xyz[0] < -100
         add(name, sw.moved(cq.Location(cq.Vector(xyz[0] + (8 if rear else 0), xyz[1] * (0.9 if rear else 1), xyz[2]))), "switches", "sensor", L.mass("bumper_switch"), internal=False, hard=False)
-    e = L.env("clamp_resistor")
-    add("bus_clamp_resistor", L.box(20, 20 + e["w"], -e["l"] / 2, e["l"] / 2, z1, z1 + e["h"]), "thermal", "heat", L.mass("clamp_resistor"))
+    # (no bolt-on clamp resistor any more: RR-CHS-MAIN carries its own clamp resistors, IB-26)
 
     # ---- detector head, Rev E
     proj = rail_projection
@@ -298,6 +299,11 @@ def build(rail_projection=3.0):
     skirt = L.box(xa, xb, -hy, hy, P.HEAD_FRAME_TOP_Z, cz0).cut(L.box(xa + 2.5, xb - 2.5, -hy + 2.5, hy - 2.5, P.HEAD_FRAME_TOP_Z - 1, cz0 + 1))
     cover = L.box(xa, xb, -hy, hy, cz0, cz1).fuse(skirt).clean()
     add("head_cover_E", cover, "head_cover", "shell", internal=False)
+    # finished-head additions (IB-40): standard 3 mm insulating jacket cap (top z 48.0, front band to x 191.2) and the
+    # sprung leading rail bar (front face x 212.2 unloaded, z up to 22), mechanical/head/out/head_report.md
+    add("head_jacket_E", L.box(xa, 191.2, -175.0, 175.0, cz1, 48.0), "head_cover", "shell", internal=False)
+    lr = P.HEAD_LEAD_RAIL
+    add("head_leading_rail_sprung", L.box(lr["x"][1] - 3.0, lr["x"][1], -lr["half_y"], lr["half_y"], P.FILM_Z - proj, lr["z"][1]), "head_rails", "head", internal=False)
 
     pods = [L.cyl(P.DRIVE_POD["inner_r"], 2 * (P.WHEEL_Y + 5), (0, -(P.WHEEL_Y + 5), P.MOTOR_AXIS_Z), (0, 1, 0)),  # pod bore + shaft exit
             L.box(hx[0] - 10, hx[1] - hw, -hy + hw, hy - hw, hz[0] - 5, hz[1] - hw)]                                  # battery hump interior
@@ -394,9 +400,9 @@ def sensor_rays(parts):
         probes[p.name] = it
     rows, fail = [], []
     # self-test of the ray tool: a ray aimed from the left look-ahead sensor into the head MUST report the head cover
-    s0 = P.TOF_SENSORS["tof_look_fl"]["xyz"]
+    s0 = P.TOF_SENSORS["tof_look_fwd_left"]["xyz"]
     aim = P._unit((P.ROW_X - s0[0], 60.0 - s0[1], 40.0 - s0[2]))
-    probe = [h[0] for h in ray_hits(probes, s0, aim, 600.0, skip=("tof_look_fl",))]
+    probe = [h[0] for h in ray_hits(probes, s0, aim, 600.0, skip=("tof_look_fwd_left",))]
     if "head_cover_E" not in probe:
         raise RuntimeError(f"ray tool self-test failed: {probe}")
     for name, t in P.TOF_SENSORS.items():
@@ -467,8 +473,9 @@ def service_checks(parts, extra):
                                     "blocked_by": box_free(parts, sweep, skip=("battery", "battery_hatch_tail_cap", "battery_coupler"))}
     gx0, gx1 = G["center_x"] - G["bar_x"] / 2, G["center_x"] + G["bar_x"] / 2
     c = P.GLOVE_CLEARANCE_GRIP
-    out["grip_hand_zone"] = {"box": "45 mm in front of, behind and below the bar, 130 mm wide",
-                             "blocked_by": box_free(parts, (gx0 - c, gx1 + c, -65, 65, S["floor_z"][1] + 0.1, G["bar_bottom_z"] - 0.1), skip=())
+    cb = G["hand_behind_below"]
+    out["grip_hand_zone"] = {"box": f"45 mm in front of the bar and below it, {cb:.0f} mm behind it below the bar (fingertips), 45 mm behind it at bar height and above; 130 mm wide (CR-04)",
+                             "blocked_by": box_free(parts, (gx0 - cb, gx1 + c, -65, 65, S["floor_z"][1] + 0.1, G["bar_bottom_z"] - 0.1), skip=())
                              + box_free(parts, (gx0 - c, gx0 - 0.1, -65, 65, G["bar_bottom_z"], G["bar_top_z"] + 30))
                              + box_free(parts, (gx1 + 0.1, gx1 + c, -65, 65, G["bar_bottom_z"], G["bar_top_z"] + 30))}
     for jn, nut in extra["nuts"].items():
@@ -499,7 +506,7 @@ CORRIDORS = {   # name: (x0, x1, y0, y1, z0, z1), what runs there
     "hump_side_left": ((-118, -72, 62, 76, 100, 116), "LiDAR Ethernet/12 V, RR-PANEL, rear ToF and deck controls to the board rear corners"),
     "left_gutter": ((-69, -5, 99, 105, 84, 92), "left motor/encoder, left look-ahead ToF, USB/5 V to CM5"),
     "right_gutter": ((-69, -5, -105, -99, 84, 92), "pack feed from the coupler, charge feed, right motor/encoder, E-stop loop"),
-    "front_bay": ((36, 62, -30, 30, 56, 90), "J1/J2 feeds, front cliff ToF, dock switch, clamp resistor leads"),
+    "front_bay": ((36, 62, -30, 30, 56, 90), "J1/J2 feeds, front cliff ToF, dock switch"),
     "under_bridge_right": ((-12, 20, -41, -20, 40, 76), "pack feed from the coupler between the motor ends to the right gutter"),
     "left_bay_over_cm5": ((-102, -75, 59, 80, 78, 90), "CM5 USB/Ethernet/antenna pigtails, selector and REARM leads"),
     "right_bay": ((-155, -100, -90, -60, 45, 76), "charge inlet feed, HANDS-ON/Pause leads, right rear ToF, bumper switch"),

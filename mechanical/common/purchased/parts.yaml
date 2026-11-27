@@ -18,11 +18,11 @@ wheel:
   mpn: "SELECT TO FIT - no catalogue 104 mm x 25 mm treaded wheel was verified"
   desc: "Drive wheel, nominal diameter 104 (contract), tyre section 25 (Rev D), clamping hub for 6 mm D shaft (candidate hub: Pololu #1999 universal 6 mm hub)"
   qty: 2
-  envelope: {d: 104.0, width: 25.0, hub_d: 25.4, hub_l: 16.0}
+  envelope: {d: 104.0, width: 25.0, hub_d: 25.4, hub_l: 9.2}
   mass_kg: 0.15
   temp_c: null
   source: ["interface/system/contract.yaml frames.wheel", "cad/source/body_chassis.py tire_shape"]
-  verification: {d: "contract value", width: "Rev D model value", hub: UNVERIFIED, mass: UNVERIFIED, temp: UNVERIFIED}
+  verification: {d: "contract value", width: "Rev D model value", hub: "Pololu #1999 (M3 holes): 25.4 x 9.2 mm, six M3 tapped holes, 6.8 g VERIFIED (pololu.com/product/1999/specs, 2026-11-26); bolt circle UNVERIFIED", mass: UNVERIFIED, temp: UNVERIFIED}
   notes: "OPEN ITEM. A 4 in (101.6 mm) wheel would lower the axle 1.2 mm and the film gap with it; any substitution needs the contract diameter updated."
 caster:
   mpn: "TENTE Compacta 1430POI025P60-35x30"
@@ -34,11 +34,13 @@ caster:
   ratings: {load_dynamic_kg: 10, load_static_kg: 20, tread_hardness: "Shore D 65"}
   source: ["https://cdn.tente.com/datasheets/1430POI025P60_35x30_us.pdf"]
   verification: {all_dimensions: VERIFIED, mass: VERIFIED, temp: VERIFIED}
-  notes: "FLAG: wheel has a plain bearing (not sealed) and the rating stops at -20 C (qualification objective -25 C). Overall height 36 mm vs 33 mm Rev D ride height -> mounting face is set at z = 36 through a cut-out in the 4 mm plate (ride height kept). A sealed-bearing caster of <= 36 mm height was not found; supplier search needed."
+  bearing: "plain bearing (not sealed)"
+  meets_cold_objective: false
+  notes: "DOES NOT MEET the -25 C qualification objective: plain (unsealed) wheel bearing, rated -20 C (TENTE datasheet). The baseline W13 asks for a sealed bearing. Overall height 36 mm vs 33 mm Rev D ride height -> mounting face at z = 36 through a cut-out in the 4 mm plate (ride height kept). No verified sealed-bearing caster of <= 36 mm height found: lead decision / supplier search (IB-26)."
 battery_8ah:
   mpn: "Power-Sonic PSL-SC-1290"
-  desc: "12.8 V 9.0 Ah LiFePO4 monobloc with BMS, F2 terminals (nearest catalogue size to the 8 Ah trial)"
-  qty: 1
+  desc: "12.8 V 9.0 Ah LiFePO4 monobloc with BMS, F2 terminals: OPTIONAL alternative in the same cassette with a 34 mm spacer (the 12 Ah pack is the fitted baseline, DEC-040)"
+  qty: 0
   envelope: {l: 151.0, w: 65.0, h: 94.0, h_total: 99.0}
   mass_kg: 1.0
   temp_c: {discharge: [-20, 60], charge: [0, 45]}
@@ -48,15 +50,15 @@ battery_8ah:
   notes: "Discharge limit -20 C equals the operating target with no margin; -25 C is outside the rating -> bay heater and warm start are mandatory, and the BMS low-temperature discharge behaviour must be confirmed with Power-Sonic."
 battery_12ah:
   mpn: "Power-Sonic PSL-SC-12120"
-  desc: "12.8 V 12 Ah LiFePO4 monobloc with BMS, F2 terminals (BOM E01 alternative)"
-  qty: 0
+  desc: "12.8 V 12 Ah LiFePO4 monobloc with BMS, F2 terminals: FITTED BASELINE (DEC-040)"
+  qty: 1
   envelope: {l: 151.0, w: 99.0, h: 95.0, h_total: 101.0}
   mass_kg: 1.65
   temp_c: {discharge: [-20, 60], charge: [0, 45]}
   ratings: {capacity_ah: 12.0, max_continuous_discharge_a: 15.0, over_discharge_trip_a: 25.0}
   source: ["https://www.power-sonic.com/wp-content/uploads/datasheets/psl-sc-12120.pdf"]
   verification: {all_dimensions: VERIFIED, mass: VERIFIED, temp: VERIFIED, max_current: VERIFIED}
-  notes: "Same 151 mm length and terminals as the 9 Ah pack but 34 mm thicker: it needs a 104 mm tall bay (see layout_report 'alternatives')."
+  notes: "Baseline pack (DEC-040). Same 151 mm length and terminals as the 9 Ah pack but 34 mm thicker: lies on its side in the 104 mm tall cassette under the dorsal hump."
 battery_coupler:
   mpn: "Anderson Power SBS50 (candidate), one half on the cassette, one on the bay bulkhead"
   desc: "Keyed, finger-proof blind-mate DC coupler with two auxiliary contacts for pack-presence"
@@ -136,7 +138,7 @@ charge_inlet:
   mpn: "M12 L-coded 4+FE male panel receptacle (candidate) under a printed hinged cover"
   desc: "Keyed charge inlet; spare contacts carry the plug-present link; cover switch = D2HW"
   qty: 1
-  envelope: {body_d: 20.0, depth_behind_panel: 25.0, front_projection: 10.0, cover: [36.0, 36.0, 8.0]}
+  envelope: {body_d: 20.0, depth_behind_panel: 25.0, front_projection: 10.0, cover: [36.0, 36.0, 5.0]}
   mass_kg: 0.03
   temp_c: [-40, 85]
   source: ["recalled; family per IEC 61076-2-111"]
@@ -162,13 +164,13 @@ j2_receptacle:
 bumper_switch:
   mpn: "Omron D2HW-C201M"
   desc: "Sealed ultra-subminiature basic switch, pin plunger, lead wires, M3 screw mount, wired NC"
-  qty: 7
+  qty: 8
   envelope: {l: 13.3, w: 5.3, h: 7.0, plunger: 1.5}
   mass_kg: 0.004
   temp_c: [-40, 85]
   source: ["https://components.omron.com/eu-en/products/switches/D2HW", "https://www.datasheets.com/omron/d2hw-c201m"]
   verification: {temp: VERIFIED, ip67: VERIFIED, dimensions: "PARTIAL - 13.3 / 5.3 / 6.5 seen as drawing fragments", mass: UNVERIFIED}
-  notes: "Quantity 7 = 3 head rail + 2 body bumper (BOM W24) + HEAD_DOCK + CHG_COVER (contract safety_chain). BOM lists 5: raise with the registers owner."
+  notes: "Quantity 8 = 3 head rail + head lid interlock (mechanical/head LID_SW) + 2 body bumper (BOM W24) + HEAD_DOCK + CHG_COVER (contract safety_chain). BOM lists 5: raise with the registers owner (IB-26)."
 tof_board:
   mpn: "RR-TOF (custom) with ST VL53L4ED"
   desc: "ToF carrier 18 x 14 mm behind a 1 mm window"
@@ -196,12 +198,4 @@ chassis_heater:
   temp_c: [-40, 120]
   source: ["sized in calc/thermal.py"]
   verification: {all: "design value"}
-clamp_resistor:
-  mpn: "Aluminium-housed wirewound 50 W (Arcol HS50 class)"
-  desc: "Bus clamp / braking energy resistor bolted to the chassis plate in the front bay"
-  qty: 1
-  envelope: {l: 50.0, w: 29.0, h: 15.0}
-  mass_kg: 0.05
-  temp_c: [-55, 200]
-  source: ["recalled"]
-  verification: {all: UNVERIFIED}
+# clamp_resistor: REMOVED (IB-26) -- RR-CHS-MAIN carries its own clamp resistors; no bolt-on 50 W resistor in either body build.

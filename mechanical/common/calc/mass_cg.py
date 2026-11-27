@@ -76,7 +76,7 @@ def base_items(build, mount="C"):
         ("E-stop, selector, 3 pushbuttons", L.mass("estop") + L.mass("mode_selector") + 3 * L.mass("pushbutton_22"), -135, 110, "UNVERIFIED estimate"),
         ("RR-PANEL, 11 RR-TOF, 4 switches", 0.012 + 11 * 0.002 + 4 * 0.004, -120, 95, "estimate"),
         ("J1/J2 receptacles, charge inlet + cover", 0.035 + 0.04, 0, 105, "UNVERIFIED estimate"),
-        ("bus clamp resistor, chassis heater, NTCs, cut-out", 0.08, -20, 42, "estimate"),
+        ("chassis heater, NTCs, cut-out", 0.03, -120, 40, "estimate (no bolt-on clamp resistor: on RR-CHS-MAIN, IB-26)"),
         ("harness (power, sensor, Ethernet, USB)", 0.45, -60, 85, "estimate: ~9 m of cold-rated wire and connectors"),
         ("bay insulation liner (5 mm closed-cell foam) + gaskets", 0.15, X_BODY, 80, "estimate: 0.25 m2 x 5 mm x 60 kg/m3 + seals"),
         ("fasteners, inserts, standoffs", 0.25, -60, 70, "estimate"),
@@ -114,9 +114,9 @@ PACKS = {"12 Ah PSL-SC-12120 (1.65 kg, baseline)": 1.65, "9 Ah PSL-SC-1290 (1.00
 
 def cases(ballast=0.0, mount="C"):
     base_p, base_q = base_items("prototype", mount), base_items("production", mount)
-    hp, hq = roll_up(head_items("prototype", mount)), roll_up(head_items("production", mount))
-    heads = {"none (transport / LAB)": (0.0, 0.0, 0.0), "prototype printed head": hp, "production Al head": hq,
-             "heaviest / dummy head (production + 15 %)": (hq[0] * 1.15, hq[1], hq[2])}
+    hp, hq = P.HEAD_MASS["prototype"], P.HEAD_MASS["production"]      # finished head (head report), IB-40
+    heads = {"none (transport / LAB)": (0.0, 0.0, 0.0), f"prototype head ({hp[0]:.3f} kg)": hp, f"production head ({hq[0]:.3f} kg)": hq,
+             "heaviest head (production + 15 %)": (hq[0] * 1.15, hq[1], hq[2])}
     out = []
     Lc = -(P.CASTER_SWIVEL[0] - L.env("caster")["offset"])
     for bname, base in (("prototype", base_p), ("production", base_q)):
@@ -158,7 +158,9 @@ def run():
         ("Pack CG x", f(X_PACK), "mm", "params.BATTERY_BAY"), ("Optical row x", P.ROW_X, "mm", "params (mount option C, CCR-11)"),
     ]))
     for build in ("prototype", "production"):
-        b, h = base_items(build), head_items(build)
+        b = base_items(build)
+        hm = P.HEAD_MASS[build]
+        h = [("head assembly incl. J1/J2 pigtails (finished design)", hm[0], hm[1], hm[2], "calculated by the head engineer: mechanical/head/out/head_report.md section 3")]
         mb, xb, zb = roll_up(b)
         mh, xh, zh = roll_up(h)
         md.append(f"\n### {build.capitalize()} build -- item masses\n")
@@ -218,6 +220,8 @@ def run():
             rows.append((cc["head"], f(cc["m"], 2), f(cc["x"]), f(math.degrees(math.atan2(cc["x"] - P.GRIP["center_x"], gz - cc["z"])))))
     md.append("\n## 3. Carry balance at the grip\n")
     md.append(table(["Head", "Mass (kg)", "CG x (mm)", "Hang angle at the grip, + = nose down (deg)"], rows))
-    md.append(f"\nGrip centre x = {P.GRIP['center_x']} mm, z = {gz:.0f} mm. With the 12 Ah pack and the shortened head the centre of gravity is 24 to 33 mm behind the grip, so the robot hangs tail-down with the head raised "
-              "(no head: steeply tail-down, carry with the second hand on the cassette pull). The bar cannot move aft: its 45 mm hand zone already ends at the battery hump.")
+    dxs = [cc["x"] - P.GRIP["center_x"] for cc in cs if cc["build"] == "production" and cc["pack"].startswith("12") and not cc["head"].startswith("none")]
+    md.append(f"\nGrip centre x = {P.GRIP['center_x']} mm, z = {gz:.0f} mm. With the 12 Ah pack and a head fitted the centre of gravity is {min(dxs):+.0f} to {max(dxs):+.0f} mm from the grip in x (negative = behind), "
+              f"(no head: steeply tail-down, carry with the second hand on the cassette pull). The bar was moved aft from x -11 to x {P.GRIP['center_x']} (CR-04, IB-10) with the hand zone reduced to "
+              f"{P.GRIP['hand_behind_below']:.0f} mm behind the bar below it (fingertips; the palm is above the hump top z 150).")
     return "\n".join(md), key

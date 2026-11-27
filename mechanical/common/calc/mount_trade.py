@@ -32,7 +32,7 @@ def option_numbers(opt):
     n["swept_r"] = max(n["corner_r"], 278.0)
     n["length"] = n["head_x"][1] - P.BODY_TAIL_X
     n["corner_speed"] = P.YAW_MAX * n["corner_r"] / 1000
-    s0 = P.TOF_SENSORS["tof_look_fl"]["xyz"]
+    s0 = P.TOF_SENSORS["tof_look_fwd_left"]["xyz"]
     edge = 260.6 + dx
     dep = P.LOOKAHEAD_FWD_DEPRESSION if opt == "C" else 14.0                         # depression used with each head position
     low = dep + P.TOF_FOV_FULL_DEG / 2

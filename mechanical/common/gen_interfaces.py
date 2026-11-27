@@ -36,7 +36,7 @@ def head_acq():
     b = P.HEAD_ACQ
     lane_u = [round(b["origin"][1] - y, 2) for y in P.SEG_Y]
     return {
-        "status": "CONFIRMED. Board, holes, zones and height limits unchanged; only the base_link x of the whole head moves with mount option C (origin x 156.0 -> %.1f, CCR-11)" % b["origin"][0],
+        "status": "CONFIRMED as built (IB-52): H1 at (75.5, 30.0) [CR-M02], J1 landing u 50..101 with 8 mm local height [CCR-HE-02], shield cans at v 8.25..40.25 [CR-M01]; source electronics/head_acq/layout.py HOLES, libs.py, STAGE2_CHANGE_REQUESTS.md. Origin x %.1f (mount option C, CCR-11)" % b["origin"][0],
         "outline_mm": list(b["outline"]), "shape": "rectangle, corner radius <= 1.0",
         "thickness_mm": b["thickness"], "layers": P.BOARDS_C["RR-HEAD-ACQ"]["layers"],
         "origin_base_link_mm": R(b["origin"]), "orientation": "long axis (u) along -y; rpy = (0, 0, -90 deg) from base x to board u",
@@ -44,15 +44,19 @@ def head_acq():
         "corners_base_link_mm": corners(b),
         "mounting": {"screw": "8 x M2.5 into standoffs clinched in the spreader plate (standoff height 2.5 mm)",
                      "hole_diameter_mm": b["hole_d"], "pad_keepout_diameter_mm": b["hole_keepout_d"], "holes": holes(b),
-                     "rationale": "Six holes on the three inactive lane seams (y = +87.5, 0, -87.5) so the four lane circuits stay identical and unbroken; two end holes at mid-height carry the 75 mm end overhangs. Longest unsupported span 87.5 mm."},
+                     "rationale": "Holes on the three inactive lane seams (y = +87.5, 0, -87.5) so the four lane circuits stay identical and unbroken; H1 moved to v 30 (CR-M02) because the J1 header sits on the rear edge; two end holes at mid-height carry the 75 mm end overhangs. Longest unsupported span 87.5 mm."},
         "max_height_top_mm": b["max_top"], "max_height_bottom_mm": b["max_bottom"],
         "height_headroom_note": "Head top is z = 45.0 against the 50.0 ceiling. Each extra mm of top-side height raises the cover 1:1; up to 11 mm top-side is possible before the ceiling, but costs look-ahead sightline margin (see out/mech_calcs.md). Request before using it.",
         "lane_centre_u_mm": {f"S{i}": u for i, u in enumerate(lane_u)},
         "zones_uv_mm": [
             {"id": "AFE_STRIP", "u": [0, 326], "v": [0, 30], "top_max": 6.0, "bottom_max": 2.0,
              "use": "Eight SiPM front ends. Pigtail connector pairs (floor + reference) on the REAR edge centred on each lane centre u (+/-13 mm): the SiPM carriers stand in the rear chimney (9 mm deep, directly behind the spreader) below this edge at z 11..28.5, so the pigtails are < 35 mm long. Per-lane NTC travels in the same pigtail."},
-            {"id": "J1_LANDING", "u": [50, 100], "v": [0, 18], "top_max": 6.0,
-             "use": "J1 pigtail (power, heater pair, interlock loop, PRES_ID) + heater-film tail + spreader NTC. On the S0|S1 seam (y = +87.5): the cable enters through the rear wall at this y. Excludes the H1 pad."},
+            {"id": "J1_LANDING", "u": [50, 101], "v": [0, 18], "top_max": 8.0,
+             "use": "J1 pigtail (8-way J2001, body u 73.0..100.7) + heater/NTC (6-way J2601, body u 50.2..72.0): rear-facing Micro-Fit headers, pin row v 10.57, mating faces v 1.5, mated plugs overhang the rear edge to v -8.4 "
+                    "(electronics/head_acq/layout.py, STAGE2_CHANGE_REQUESTS.md S2-L5, CR-M03). top_max 8.0 under the 8.9 mm head-lid blister (CCR-HE-02 accepted, CR-M05; header seat height <= 6.0 UNVERIFIED). "
+                    "The board centres J2001 on y = 76.2 (u 86.8); CR-M03 asks head mechanical to move the J1 cable port there (head-owned, `HEAD_PIGTAIL_EXIT`)."},
+            {"id": "LANE_SHIELD_CANS", "u": [[lc - 18.0, lc + 18.0] for lc in lane_u], "v": [8.25, 40.25], "top_max": 5.0,
+             "use": "RR-HEAD-SHLD-A cans 36 x 32 x 5 mm (0.2 mm wall) per lane, rear outer face v 8.25 (+2.75 mm, CR-M01; electronics/head_acq/libs.py CAN_V0/CAN_D); anode mouse holes in the rear wall at du -10.38 / +11.87 (CR-M04)."},
             {"id": "J2_LANDING", "u": [226, 276], "v": [0, 18], "top_max": 6.0,
              "use": "J2 pigtail (RS-485, BUS_5V, sync pair, J2_PRES). On the S2|S3 seam (y = -87.5). Isolation barrier belongs here. Excludes the H3 pad."},
             {"id": "RAIL_SWITCH_LANDING", "u": [150, 176], "v": [84, 96], "top_max": 6.0,
@@ -94,13 +98,15 @@ def chs_main():
         "max_height_top_mm": b["max_top"], "max_height_bottom_mm": b["max_bottom"],
         "zones_uv_mm": [
             {"id": "FRONT_CORNER_LOW", "u": [[0, 14], [146, 160]], "v": [88, 100], "top_max": 12.0,
-             "use": "Only height restriction: the shell roof closes in on the two front corners."},
+             "use": "The shell roof closes in on the two front corners."},
+            {"id": "REAR_CORNER_LOW", "u": [[0, 45], [112, 160]], "v": [[0, 20], [0, 22]], "top_max": 12.0,
+             "use": "Rear corners (chassis electronics CCR-E08 request, CR-06): the saddle-cover rear screw bosses hang to 13.0 mm above the PCB here."},
             {"id": "THERMAL_TO_BRIDGE", "u": [50, 110], "v": [30, 70], "bottom_max": 3.0,
              "use": "Preferred place for the H-bridges and the 5 V converter: a 3 mm gap pad on the bottom side couples them to the aluminium bridge tray."},
             {"id": "IMU", "u": [74, 86], "v": [61, 73], "use": "Reserved BMI088 footprint centred (80, 67): exactly above base_link origin (yaw centre). imu_link in frames.yaml assumes it."},
         ],
         "connector_edges": {
-            "right_edge_rear  (u = 160, v 4..34)": "POWER ENTRY: pack feed from the blind-mate coupler (under the board, routed around the right side), charge inlet feed (inlet is on the right rear quarter), bus-clamp resistor. Main protection, charger and latch/brake relays belong in this corner.",
+            "right_edge_rear  (u = 160, v 4..34)": "POWER ENTRY: pack feed from the blind-mate coupler (under the board, routed around the right side), charge inlet feed (inlet is on the right rear quarter). Main protection, charger and latch/brake relays belong in this corner.",
             "right_edge_front (u = 160, v 72..96)": "Right motor + encoder, right look-ahead ToF (in the right grip cheek).",
             "left_edge_front  (u = 0, v 72..96)": "Left motor + encoder, left look-ahead ToF.",
             "left_edge_rear   (u = 0, v 4..34)": "HOST: USB to the CM5 and the 5.1 V compute feed (CM5 carrier is in the left rear bay), LiDAR 12 V.",
@@ -111,7 +117,7 @@ def chs_main():
         },
         "keepouts": [
             "NO connectors on the rear edge between u = 20 and 140: the battery hump front wall and cassette (top z 144) stand 3.5 to 6.5 mm behind it.",
-            "NO connectors on the left/right edges between v = 34 and 70: the grip cheek legs and cheeks (base x -31 .. +1.5, |y| 84..98) stand 4 mm outboard of the board there.",
+            "NO connectors on the left/right edges between v = 34 and 70: the grip cheek legs and cheeks (|y| 84..98) stand 4 mm outboard of the board there.",
             "7.0 mm diameter around every mounting hole, both sides.",
             "Top-entry plugs are not possible above 18 mm: the saddle cover underside is 20.4 mm above the PCB top. Use right-angle or low-profile vertical headers.",
         ],
@@ -227,14 +233,18 @@ def interfaces_md():
     A(f"Board origin {t(cb['origin'])}, 160 (u, along -y) x 100 (v, along +x), on an aluminium bridge tray z {P.ELECTRONICS_BRIDGE_Z[0]}..{P.ELECTRONICS_BRIDGE_Z[1]} spanning x {P.ELECTRONICS_BRIDGE_X[0]}..{P.ELECTRONICS_BRIDGE_X[1]}, |y| <= {S['half_y']}; six M3 standoffs 3.0 mm tall at board (u, v): "
       + ", ".join(f"({u}, {v})" for u, v in cb["holes_uv"]) + f". Free height above the PCB top {S['floor_z'][0] - cb['origin'][2] - cb['thickness']:.1f} mm to the saddle cover underside (z {S['floor_z'][0]}). "
       f"The saddle cover (x {S['x'][0]}..{S['x'][1]}, |y| <= {S['half_y']}, z {S['floor_z'][0]}..{S['floor_z'][1]}) is the service cover: gasketed, captive screws, removable without touching the grip. "
-      f"Grip bar x {G['center_x'] - G['bar_x'] / 2}..{G['center_x'] + G['bar_x'] / 2}, z {G['bar_bottom_z']}..{G['bar_top_z']}, cheeks |y| {G['cheek_y'][0]}..{G['cheek_y'][1]}; lifting load goes cheeks -> legs -> yokes on the chassis plate, never through a shell. "
+      f"Grip bar x {G['center_x'] - G['bar_x'] / 2}..{G['center_x'] + G['bar_x'] / 2}, z {G['bar_bottom_z']}..{G['bar_top_z']}, cheeks |y| {G['cheek_y'][0]}..{G['cheek_y'][1]} (bar moved aft from x -11 by CR-04, IB-10); lifting load goes cheeks -> legs -> yokes on the chassis plate, never through a shell. "
+      f"Hand zone kept free (130 mm wide): {P.GLOVE_CLEARANCE_GRIP:.0f} mm in front of the bar and below it; behind the bar {G['hand_behind_below']:.0f} mm below the bar (fingertips) and {P.GLOVE_CLEARANCE_GRIP:.0f} mm at bar height and above. "
+      "The forward look-ahead ToF pair stays at x 1.5 on a forward nose of the cheek fairings. "
       f"Motor axis z = {P.MOTOR_AXIS_Z} (can clocked {P.MOTOR_SHAFT_OFFSET} mm above the axle, UNVERIFIED eccentricity), gearbox faces at y = +-{P.MOTOR_FACE_Y}; motor mounts stand on the same front beam as the receiver channels.\n")
     A("## 4. Sensor windows (body engineers; RR-TOF 18 x 14 board 6 mm behind a 1 mm window, clear aperture >= 12 x 8 mm)\n")
     A("| Sensor | Aperture xyz | Boresight | Mounted on | Purpose |\n|---|---|---|---|---|")
-    host = {"tof_cliff_f": "chassis front beam, outboard end", "tof_cliff_r": "lower hull, rear quarter", "tof_look_f": "grip cheek front face", "tof_look_r": "upper fairing, tail", "tof_prox_rc": "brow above the battery hatch", "tof_prox_r": "upper fairing, rear quarter"}
+    host = {"tof_cliff_f": "chassis front beam, outboard end", "tof_cliff_r": "lower hull, rear quarter", "tof_look_fwd": "grip cheek fairing nose, front face", "tof_look_r": "upper fairing, tail", "tof_prox_rc": "brow above the battery hatch", "tof_prox_r": "upper fairing, rear quarter"}
     for k, v in P.TOF_SENSORS.items():
         h = next(val for key, val in host.items() if k.startswith(key))
         A(f"| {k} | {t(v['xyz'])} | {t(v['dir'], 3)} | {h} | {v['purpose']} |")
+    A("\nLook-ahead set (IB-34, lead decision): two forward-looking and two rearward-looking oblique sensors. Names changed in this revision (firmware and harness follow these names): "
+      "`tof_look_fl` -> `tof_look_fwd_left`, `tof_look_fr` -> `tof_look_fwd_right`, `tof_look_rl` -> `tof_look_rev_left`, `tof_look_rr` -> `tof_look_rev_right`. Positions and boresights unchanged.")
     lx, ly = P.LIDAR_POSE["xy"]
     A(f"\nLiDAR pad: 60 x 60 mm flat at z = {P.LIDAR_POSE['base_z']} centred {t((lx, ly))} on the battery hump; scan plane assumed z = {P.LIDAR_POSE['base_z'] + P.LIDAR_SCAN_PLANE_ABOVE_BASE} (UNVERIFIED +60 mm); nothing on the robot may rise above z = {P.LIDAR_POSE['base_z'] + P.LIDAR_SCAN_PLANE_ABOVE_BASE - 10:.0f} inside the forward 270 deg. "
       f"Body bumper switches at {t(P.BODY_BUMPER_SWITCHES['bumper_sw_l'])} and mirrored; the bumper band and its stroke are body-engineer design items (>= 8 mm stroke for the 0.05 m/s reverse stop).\n")
@@ -246,6 +256,7 @@ def interfaces_md():
     A(f"| Removal | straight -x through the tail-cap hatch (opening |y| <= {B['hatch_half_y']}, z {B['hatch_z'][0]}..{B['hatch_z'][1]}), {B['removal_travel']:.0f} mm travel; rear pull handle with >= 45 mm glove clearance; positive latch with captive release; hatch cannot close unless the cassette is latched |")
     A(f"| Coupler | keyed, finger-proof blind-mate (candidate Anderson SBS50 with auxiliary pack-presence contacts) on the centre line, mated envelope x {B['coupler_x'][0]}..{B['coupler_x'][1]}, |y| <= {B['coupler_half_y']}, z {B['coupler_z'][0]}..{B['coupler_z'][1]}; fixed half on the bay front bulkhead, cassette half floating +-1 mm; reverse insertion blocked by an off-centre key rib on the cassette floor |")
     A("| 9 Ah alternative | PSL-SC-1290 in the same cassette lying on its side with a 34 mm top spacer; no body change |")
+    A("| Bay walls at the tail | the guide walls and their feet end inside the hull inner skin at the tail corners: at x -230 the inner half-breadth at the floor is 52.2 mm, 5.8 mm inside the wall line (CR-07); cassette envelope and removal path unchanged |")
     A("| Heater | 90 x 70 mm pad on the bay floor x -164..-74, bay NTC beside it, bimetal cut-out on the plate |")
     A(f"| Caster | TENTE Compacta 25 mm on a top-hat bracket, mounting face z = {P.CASTER_MOUNT_Z}, swivel axis {t(P.CASTER_SWIVEL)}; 48 mm clearance hole in the plate; the bracket sits under the cassette floor |")
     A("\n## 6. Panel cut-outs and connectors (body engineers; axis = local skin normal, 22.3 mm holes with anti-rotation notch)\n")

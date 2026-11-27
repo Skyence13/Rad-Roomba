@@ -237,15 +237,22 @@ HEAD_STACK = [   # (name, z_bottom, z_top, note)
 ]
 HEAD_FRAME_TOP_Z = 30.0        # Rev D frame top 32.6 lowered to carry the spreader
 HEAD_TOP_Z = 45.0              # Rev E head ceiling used (contract ceiling 50, Rev D 39 cover / 42 socket)
-HEAD_ENV_E = {"x": (round(HEAD_ENV_D["x"][0] + HEAD_DX, 3), round(HEAD_ENV_D["x"][1] + HEAD_DX, 3)), "y": HEAD_ENV_E_CEILING["y"],
-              "z": (FILM_Z - max(RAIL_PROJECTIONS), HEAD_TOP_Z)}
+HEAD_FRAME_FRONT_X = round(HEAD_ENV_D["x"][1] + HEAD_DX, 3)   # 192.2: front of the head frame (rail bar fully stroked at 195.2)
+HEAD_ENV_E = {"x": (round(HEAD_ENV_D["x"][0] + HEAD_DX, 3), float(HEAD_ENV_E_CEILING["x"][1])), "y": HEAD_ENV_E_CEILING["y"],
+              "z": (FILM_Z - max(RAIL_PROJECTIONS), HEAD_TOP_Z)}   # x max 212.5 (contract draft6): the sprung leading rail (IB-40)
+# Finished head (mechanical/head, IB-40): leading rail bar front face x 212.2 unloaded / 195.2 fully stroked, bar z 8..22
+# (insert to the film projection below), |y| <= 175 (mechanical/head/hp.py RAIL_GAP, BAR_Z0/1, BAR_HY; head_report.md).
+HEAD_LEAD_RAIL = {"x": (HEAD_FRAME_FRONT_X, 212.2), "z": (FILM_Z - min(RAIL_PROJECTIONS), 22.0), "half_y": 175.0}
+# Head mass and CG incl. pigtails (calculated by the head engineer: mechanical/head/out/head_report.md section 3)
+HEAD_JACKET = {"top_z": 48.0, "front_x": 191.2}   # standard 3 mm insulating jacket below 0 C (cap top, front band face), head_report.md section 9
+HEAD_MASS = {"prototype": (1.864, 118.4, 34.5), "production": (2.083, 119.9, 32.9)}   # kg, x, z (base_link mm)
 HEAD_FRAME_X = (round(143.0 + HEAD_DX, 3), round(261.0 + HEAD_DX, 3))  # Rev D frame extents, shifted
 HEAD_FRAME_HALF_Y = 172.5
 HEAD_COVER_X = (round(143.4 + HEAD_DX, 3), round(260.6 + HEAD_DX, 3))
 HEAD_COVER_HALF_Y = 172.1
 HEAD_SPREADER_X = (round(155.0 + HEAD_DX, 3), round(257.5 + HEAD_DX, 3))   # rear edge held back: SiPM pigtail chimney (9 mm deep) behind it
 HEAD_SPREADER_HALF_Y = 168.5
-HEAD_PIGTAIL_EXIT = {"J1": (round(144.5 + HEAD_DX, 3), SEG_PITCH, 39.0), "J2": (round(144.5 + HEAD_DX, 3), -SEG_PITCH, 39.0)}  # strain-relief ports in the rear wall at the inactive seams, cables leave -x/+z
+HEAD_PIGTAIL_EXIT = {"J1": (round(144.5 + HEAD_DX, 3), SEG_PITCH, 39.0), "J2": (round(144.5 + HEAD_DX, 3), -SEG_PITCH, 39.0)}  # J1 move to y 76.2 requested by CR-M03 (IB-52): head mechanical owns the port  # strain-relief ports in the rear wall at the inactive seams, cables leave -x/+z
 
 # --------------------------------------------------------------------------- head / body receiver interface (option C)
 RECEIVER = {
@@ -253,7 +260,7 @@ RECEIVER = {
     "shoe_y": SEG_PITCH,                    # shoe centre lines on the S0|S1 and S2|S3 lane seams (y = +-87.5)
     "shoe_width": 16.0, "shoe_z": (16.0, 30.0),            # head-side rail section (y width, z range)
     "shoe_x": (4.0, HEAD_FRAME_X[0]),                     # shoe tip .. head frame rear face (rail continues into the seam rib)
-    "channel_x": (2.0, 64.0), "channel_width": 24.0, "channel_z": (12.0, 33.0),   # body-side block outer envelope
+    "channel_x": (2.0, HEAD_MOUNT[0]), "channel_width": 24.0, "channel_z": (12.0, 33.0),   # body-side block outer envelope; runs to the x-stop plane (CR-01)
     "channel_clear": 0.5,                                  # running clearance each side before the lands
     "land_x": (8.0, 62.0),                                 # centres of the two bearing lands in each channel -> base e = 54 mm
     "x_stop": HEAD_MOUNT[0],                               # datum A: head shoulders seat on the channel front faces at x = 65.7
@@ -261,7 +268,7 @@ RECEIVER = {
     "z_datum": 16.0,                                       # datum C: shoe undersides on the channel floor lands
     "latch_box": (88.0, 108.0, -12.0, 12.0, 46.0, 60.0),   # one captive over-centre draw latch under the nose tip, lever lifts forward
     "latch_keeper": (104.0, 0.0, HEAD_TOP_Z),              # keeper on the head cover, centre rear
-    "front_beam": (2.0, 62.0, -99.5, 99.5),               # chassis plate front beam/horns (x0, x1, y0, y1) at plate elevation
+    "front_beam": (2.0, 62.0, -119.5, 119.5),             # chassis plate front beam/horns (x0, x1, y0, y1); |y| 119.5 carries the front cliff ToF (CR-01)
     "chin_cut": (62.0, 50.0),                              # lower hull removed for x > 62 below z = 50 (nose overhangs the head by 36 mm)
     "contact_k_printed": 1500.0, "contact_k_aluminium": 6000.0,   # N/mm per bearing land -- STATED ASSUMPTION for all mount options
 }
@@ -279,7 +286,8 @@ HEAD_ACQ = {
     "thickness": 1.6,
     "max_top": float(BOARDS_C["RR-HEAD-ACQ"]["max_height_top_mm"]),    # 6.0 confirmed
     "max_bottom": float(BOARDS_C["RR-HEAD-ACQ"]["max_height_bottom_mm"]),  # 2.0 confirmed
-    "holes_uv": [(75.5, 4.5), (163.0, 4.5), (250.5, 4.5), (75.5, 91.5), (163.0, 91.5), (250.5, 91.5), (5.0, 48.0), (321.0, 48.0)],
+    # as built: electronics/head_acq/layout.py HOLES (H2801..H2808); H1 moved to (75.5, 30.0) by CR-M02 (IB-52)
+    "holes_uv": [(75.5, 30.0), (163.0, 4.5), (250.5, 4.5), (75.5, 91.5), (163.0, 91.5), (250.5, 91.5), (5.0, 48.0), (321.0, 48.0)],
     "hole_d": 2.7, "hole_keepout_d": 6.0, "screw": "M2.5",
 }
 CHS_MAIN = {
@@ -311,9 +319,12 @@ BATTERY_BAY = {            # 8/9 Ah SLA-format pack lying on its side on the cen
 SADDLE = {                 # carry-grip saddle over RR-CHS-MAIN = removable service cover (replaces the Rev D hand well)
     "x": (-69.0, 47.0), "half_y": 82.0, "floor_z": (105.0, 108.0),
 }
-GRIP = {                   # transverse bridge grip above the centre of gravity (lead decision D-2)
-    "center_x": -11.0, "bar_x": 25.0, "bar_z": 22.0, "glove_clearance_below": 45.0, "half_span_y": 84.0,
+GRIP = {                   # transverse bridge grip above the centre of gravity (lead decision D-2; bar moved aft by CR-04 / IB-10)
+    "center_x": -30.0, "bar_x": 25.0, "bar_z": 22.0, "glove_clearance_below": 45.0, "half_span_y": 84.0,
     "cheek_y": (84.0, 98.0),
+    # hand zone (CR-04): 45 mm in front of the bar and below it, 45 mm behind it at bar height and above (palm, above the
+    # hump top z 150), but only 25 mm behind it below the bar (fingertips)
+    "hand_behind_below": 25.0,
 }
 GRIP["bar_bottom_z"] = SADDLE["floor_z"][1] + GRIP["glove_clearance_below"]
 GRIP["bar_top_z"] = GRIP["bar_bottom_z"] + GRIP["bar_z"]
@@ -378,10 +389,13 @@ TOF_SENSORS = {   # id: position of the sensor aperture (mm, base_link), unit bo
     "tof_cliff_fr": {"xyz": (46.0, -109.5, 31.0), "dir": (0.0, 0.0, -1.0), "purpose": "downward cliff on the outboard end of the chassis front beam, right"},
     "tof_cliff_rl": {"xyz": (_cliff_r[0], _cliff_r[1], 41.0), "dir": (0.0, 0.0, -1.0), "purpose": "downward cliff, rear left of the caster (reverse and pivot)"},
     "tof_cliff_rr": {"xyz": (_cliff_r[0], -_cliff_r[1], 41.0), "dir": (0.0, 0.0, -1.0), "purpose": "downward cliff, rear right of the caster (reverse and pivot)"},
-    "tof_look_fl": {"xyz": (GRIP["center_x"] + GRIP["bar_x"] / 2, 91.0, 162.0), "dir": _dir(6.0, LOOKAHEAD_FWD_DEPRESSION), "purpose": "oblique look-ahead over the head, left: floor/drop-off ahead of the leading rail"},
-    "tof_look_fr": {"xyz": (GRIP["center_x"] + GRIP["bar_x"] / 2, -91.0, 162.0), "dir": _dir(-6.0, LOOKAHEAD_FWD_DEPRESSION), "purpose": "oblique look-ahead over the head, right"},
-    "tof_look_rl": {"xyz": (_la_r[0], _la_r[1], 100.0), "dir": _dir(170.0, 22.0), "purpose": "oblique look-behind, left: floor/drop-off behind the tail before reverse"},
-    "tof_look_rr": {"xyz": (_la_r[0], -_la_r[1], 100.0), "dir": _dir(-170.0, 22.0), "purpose": "oblique look-behind, right"},
+    # look-ahead set (IB-34, lead decision): two forward-looking + two rearward-looking oblique sensors.  Renamed for
+    # clarity: tof_look_fl -> tof_look_fwd_left, tof_look_fr -> tof_look_fwd_right, tof_look_rl -> tof_look_rev_left,
+    # tof_look_rr -> tof_look_rev_right (positions unchanged; the forward pair stays at x 1.5 after the grip moved aft, CR-04)
+    "tof_look_fwd_left": {"xyz": (1.5, 91.0, 162.0), "dir": _dir(6.0, LOOKAHEAD_FWD_DEPRESSION), "purpose": "oblique look-ahead (forward), left: floor/drop-off ahead of the leading rail; on the grip cheek fairing nose"},
+    "tof_look_fwd_right": {"xyz": (1.5, -91.0, 162.0), "dir": _dir(-6.0, LOOKAHEAD_FWD_DEPRESSION), "purpose": "oblique look-ahead (forward), right"},
+    "tof_look_rev_left": {"xyz": (_la_r[0], _la_r[1], 100.0), "dir": _dir(170.0, 22.0), "purpose": "oblique look-ahead (rearward), left: floor/drop-off behind the tail before reverse"},
+    "tof_look_rev_right": {"xyz": (_la_r[0], -_la_r[1], 100.0), "dir": _dir(-170.0, 22.0), "purpose": "oblique look-ahead (rearward), right"},
     "tof_prox_rc": {"xyz": (-236.0, 0.0, 158.0), "dir": _dir(180.0, 0.0), "purpose": "rear proximity, centre (in the brow above the battery hatch)"},
     "tof_prox_rl": {"xyz": (_px_s[0], _px_s[1], 80.0), "dir": _dir(145.0, 0.0), "purpose": "rear proximity, left quarter"},
     "tof_prox_rr": {"xyz": (_px_s[0], -_px_s[1], 80.0), "dir": _dir(-145.0, 0.0), "purpose": "rear proximity, right quarter"},
@@ -397,7 +411,7 @@ PANEL_CONTROLS = {   # centre of the control on the outer skin, actuation axis =
     "hands_on": {"xyz": _deck(-172.0, -97.0), "desc": "HANDS-ON maintained illuminated pushbutton (HANDS_ON)"},
     "mode_selector": {"xyz": _deck(-135.0, 98.0), "desc": "master OFF / SERVICE / RUN selector (MODE_RUN)"},
     "rearm_start": {"xyz": _deck(-172.0, 97.0), "desc": "REARM / Start, guarded momentary NO"},
-    "pause_stop": {"xyz": _deck(-84.0, -112.0), "desc": "Pause / Stop momentary"},
+    "pause_stop": {"xyz": _deck(-84.0, -122.0), "desc": "Pause / Stop momentary (moved 10 mm outboard from y -112, CR-08: its body, 50 mm deep UNVERIFIED + 3 mm, now clears the IB-12 rear-right connector space; an aft move would have closed the gap to the E-stop mushroom)"},
     "annunciator": {"xyz": _deck(*PANEL_BOARD["center"]), "desc": "RR-PANEL: five status light pipes + buzzer port, left deck beside the grip, long axis along x"},
 }
 for _c in PANEL_CONTROLS.values():
@@ -416,7 +430,9 @@ IMU_POSE = {"xyz": (0.0, 0.0, CHS_MAIN["origin"][2] + CHS_MAIN["thickness"] + 0.
 LIDAR_SCAN_PLANE_ABOVE_BASE = 60.0   # UNVERIFIED (no Richbeam drawing obtained): confirm before fixing lidar_link z
 _bs = skin_point(143.0, 66.0)
 BODY_BUMPER_SWITCHES = {"bumper_sw_l": (_bs[0], _bs[1], 66.0), "bumper_sw_r": (_bs[0], -_bs[1], 66.0)}
-HEAD_RAIL_SWITCHES = {"rail_sw_front": (257.0 + HEAD_DX, 0.0, 21.0), "rail_sw_left": (ROW_X, 168.5, 21.0), "rail_sw_right": (ROW_X, -168.5, 21.0)}
+# as designed in mechanical/head (head_report.md "rail switch positions", IB-40); D2HW-C201M, plunger axes in the head model
+HEAD_RAIL_SWITCHES = {"rail_sw_front": (182.6, 87.5, 37.3), "rail_sw_left": (73.8, 156.75, 20.75), "rail_sw_right": (73.8, -156.75, 20.75)}
+HEAD_LID_SWITCH = (183.0, -SEG_PITCH)   # head lid interlock switch (x, y), mechanical/head/hp.py LID_SW
 HEAD_DOCK_SWITCH = (-3.0, SEG_PITCH, 23.0)   # body-side D2HW behind the left receiver channel, pressed by the fully seated shoe tip
 
 

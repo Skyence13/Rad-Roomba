@@ -8,29 +8,29 @@
  "continuous_0.10": {
   "n_pairs": 7,
   "offset_m": 0.04375,
-  "pair_stride_m": 0.31004,
-  "pair_overlap_m": 0.05621,
+  "pair_stride_m": 0.30604,
+  "pair_overlap_m": 0.06021,
   "seam_overlap_per_side_m": 0.01625,
-  "track_y_max_m": 0.952,
-  "turn_radius_m": 0.278,
+  "track_y_max_m": 0.94,
+  "turn_radius_m": 0.29,
   "predicted_residual": {
    "left_wall_strip_m": 0.0488,
    "right_wall_strip_m": 0.0488,
    "door_end_strip_m": 0.121,
    "front_end_strip_m": 0.051,
    "end_zone_single_heading_m": {
-    "door": 0.3482,
-    "front": 0.3482
+    "door": 0.3602,
+    "front": 0.3602
    },
    "note": "wall strips: reverse-entry wall tracks (straight-motion outline limit); see README coverage section"
   },
-  "estimated_time_s": 3559.6,
+  "estimated_time_s": 3597.5,
   "time_breakdown_s": {
    "passes": 2170.8,
    "turns": 351.9,
-   "retreats": 115.2,
-   "lateral_shifts": 55.6,
-   "wall_tracks": 864.6
+   "retreats": 122.0,
+   "lateral_shifts": 55.1,
+   "wall_tracks": 896.3
   },
   "method": "CONTINUOUS_SCAN",
   "wall_track_entry": "reverse_entry",
@@ -39,7 +39,7 @@
     "feasible": true,
     "theta_rad": 0.09,
     "y_outer": 1.04,
-    "y_band_edge": 0.952,
+    "y_band_edge": 0.94,
     "clearance_min_m": -0.0,
     "reason": null
    },
@@ -47,12 +47,12 @@
     "feasible": true,
     "theta_rad": 0.09,
     "y_outer": -1.04,
-    "y_band_edge": -0.952,
+    "y_band_edge": -0.94,
     "clearance_min_m": -0.0,
     "reason": null
    }
   },
-  "wall_tracks_extra_time_s": 864.6,
+  "wall_tracks_extra_time_s": 896.3,
   "n_tasks": 32,
   "layout": {
    "centers_y": [
@@ -76,34 +76,34 @@
    "y_hi": 0.16125
   },
   "predicted_covered_fraction": 0.9506,
-  "estimated_time_h": 0.99
+  "estimated_time_h": 1.0
  },
  "continuous_0.03": {
   "n_pairs": 7,
   "offset_m": 0.04375,
-  "pair_stride_m": 0.31004,
-  "pair_overlap_m": 0.05621,
+  "pair_stride_m": 0.30604,
+  "pair_overlap_m": 0.06021,
   "seam_overlap_per_side_m": 0.01625,
-  "track_y_max_m": 0.952,
-  "turn_radius_m": 0.278,
+  "track_y_max_m": 0.94,
+  "turn_radius_m": 0.29,
   "predicted_residual": {
    "left_wall_strip_m": 0.0488,
    "right_wall_strip_m": 0.0488,
    "door_end_strip_m": 0.121,
    "front_end_strip_m": 0.051,
    "end_zone_single_heading_m": {
-    "door": 0.3482,
-    "front": 0.3482
+    "door": 0.3602,
+    "front": 0.3602
    },
    "note": "wall strips: reverse-entry wall tracks (straight-motion outline limit); see README coverage section"
   },
-  "estimated_time_s": 10061.0,
+  "estimated_time_s": 10098.9,
   "time_breakdown_s": {
    "passes": 7235.9,
    "turns": 351.9,
-   "retreats": 115.2,
-   "lateral_shifts": 55.6,
-   "wall_tracks": 2300.9
+   "retreats": 122.0,
+   "lateral_shifts": 55.1,
+   "wall_tracks": 2332.5
   },
   "method": "CONTINUOUS_SCAN",
   "wall_track_entry": "reverse_entry",
@@ -112,7 +112,7 @@
     "feasible": true,
     "theta_rad": 0.09,
     "y_outer": 1.04,
-    "y_band_edge": 0.952,
+    "y_band_edge": 0.94,
     "clearance_min_m": -0.0,
     "reason": null
    },
@@ -120,12 +120,12 @@
     "feasible": true,
     "theta_rad": 0.09,
     "y_outer": -1.04,
-    "y_band_edge": -0.952,
+    "y_band_edge": -0.94,
     "clearance_min_m": -0.0,
     "reason": null
    }
   },
-  "wall_tracks_extra_time_s": 2300.9,
+  "wall_tracks_extra_time_s": 2332.5,
   "n_tasks": 32,
   "layout": {
    "centers_y": [
@@ -149,34 +149,34 @@
    "y_hi": 0.16125
   },
   "predicted_covered_fraction": 0.9506,
-  "estimated_time_h": 2.79
+  "estimated_time_h": 2.81
  },
  "search_then_count_0.10_search_only": {
   "n_pairs": 7,
   "offset_m": 0.04375,
-  "pair_stride_m": 0.31004,
-  "pair_overlap_m": 0.05621,
+  "pair_stride_m": 0.30604,
+  "pair_overlap_m": 0.06021,
   "seam_overlap_per_side_m": 0.01625,
-  "track_y_max_m": 0.952,
-  "turn_radius_m": 0.278,
+  "track_y_max_m": 0.94,
+  "turn_radius_m": 0.29,
   "predicted_residual": {
    "left_wall_strip_m": 0.0488,
    "right_wall_strip_m": 0.0488,
    "door_end_strip_m": 0.121,
    "front_end_strip_m": 0.051,
    "end_zone_single_heading_m": {
-    "door": 0.3482,
-    "front": 0.3482
+    "door": 0.3602,
+    "front": 0.3602
    },
    "note": "wall strips: reverse-entry wall tracks (straight-motion outline limit); see README coverage section"
   },
-  "estimated_time_s": 3559.6,
+  "estimated_time_s": 3597.5,
   "time_breakdown_s": {
    "passes": 2170.8,
    "turns": 351.9,
-   "retreats": 115.2,
-   "lateral_shifts": 55.6,
-   "wall_tracks": 864.6
+   "retreats": 122.0,
+   "lateral_shifts": 55.1,
+   "wall_tracks": 896.3
   },
   "method": "SEARCH_THEN_COUNT",
   "wall_track_entry": "reverse_entry",
@@ -185,7 +185,7 @@
     "feasible": true,
     "theta_rad": 0.09,
     "y_outer": 1.04,
-    "y_band_edge": 0.952,
+    "y_band_edge": 0.94,
     "clearance_min_m": -0.0,
     "reason": null
    },
@@ -193,12 +193,12 @@
     "feasible": true,
     "theta_rad": 0.09,
     "y_outer": -1.04,
-    "y_band_edge": -0.952,
+    "y_band_edge": -0.94,
     "clearance_min_m": -0.0,
     "reason": null
    }
   },
-  "wall_tracks_extra_time_s": 864.6,
+  "wall_tracks_extra_time_s": 896.3,
   "n_tasks": 32,
   "layout": {
    "centers_y": [
@@ -222,34 +222,34 @@
    "y_hi": 0.16125
   },
   "predicted_covered_fraction": 0.9506,
-  "estimated_time_h": 0.99
+  "estimated_time_h": 1.0
  },
  "step_and_count_10s": {
   "n_pairs": 7,
   "offset_m": 0.04375,
-  "pair_stride_m": 0.31004,
-  "pair_overlap_m": 0.05621,
+  "pair_stride_m": 0.30604,
+  "pair_overlap_m": 0.06021,
   "seam_overlap_per_side_m": 0.01625,
-  "track_y_max_m": 0.952,
-  "turn_radius_m": 0.278,
+  "track_y_max_m": 0.94,
+  "turn_radius_m": 0.29,
   "predicted_residual": {
    "left_wall_strip_m": 0.0488,
    "right_wall_strip_m": 0.0488,
    "door_end_strip_m": 0.121,
    "front_end_strip_m": 0.051,
    "end_zone_single_heading_m": {
-    "door": 0.3482,
-    "front": 0.3482
+    "door": 0.3602,
+    "front": 0.3602
    },
    "note": "wall strips: reverse-entry wall tracks (straight-motion outline limit); see README coverage section"
   },
-  "estimated_time_s": 43847.8,
+  "estimated_time_s": 43885.8,
   "time_breakdown_s": {
    "passes": 33579.0,
    "turns": 351.9,
-   "retreats": 115.2,
-   "lateral_shifts": 55.6,
-   "wall_tracks": 9744.7
+   "retreats": 122.0,
+   "lateral_shifts": 55.1,
+   "wall_tracks": 9776.4
   },
   "method": "STEP_AND_COUNT",
   "wall_track_entry": "reverse_entry",
@@ -258,7 +258,7 @@
     "feasible": true,
     "theta_rad": 0.09,
     "y_outer": 1.04,
-    "y_band_edge": 0.952,
+    "y_band_edge": 0.94,
     "clearance_min_m": -0.0,
     "reason": null
    },
@@ -266,12 +266,12 @@
     "feasible": true,
     "theta_rad": 0.09,
     "y_outer": -1.04,
-    "y_band_edge": -0.952,
+    "y_band_edge": -0.94,
     "clearance_min_m": -0.0,
     "reason": null
    }
   },
-  "wall_tracks_extra_time_s": 9744.7,
+  "wall_tracks_extra_time_s": 9776.4,
   "n_tasks": 32,
   "layout": {
    "centers_y": [
@@ -295,33 +295,33 @@
    "y_hi": 0.16125
   },
   "predicted_covered_fraction": 0.9506,
-  "estimated_time_h": 12.18
+  "estimated_time_h": 12.19
  },
  "continuous_0.10_in_place": {
   "n_pairs": 7,
   "offset_m": 0.04375,
-  "pair_stride_m": 0.31004,
-  "pair_overlap_m": 0.05621,
+  "pair_stride_m": 0.30604,
+  "pair_overlap_m": 0.06021,
   "seam_overlap_per_side_m": 0.01625,
-  "track_y_max_m": 0.952,
-  "turn_radius_m": 0.278,
+  "track_y_max_m": 0.94,
+  "turn_radius_m": 0.29,
   "predicted_residual": {
-   "left_wall_strip_m": 0.1367,
-   "right_wall_strip_m": 0.1368,
+   "left_wall_strip_m": 0.1487,
+   "right_wall_strip_m": 0.1488,
    "door_end_strip_m": 0.121,
    "front_end_strip_m": 0.051,
    "end_zone_single_heading_m": {
-    "door": 0.3482,
-    "front": 0.3482
+    "door": 0.3602,
+    "front": 0.3602
    },
    "note": "wall strips are set by the in-place turn radius of the outline; see README coverage section"
   },
-  "estimated_time_s": 2695.0,
+  "estimated_time_s": 2701.2,
   "time_breakdown_s": {
    "passes": 2170.8,
    "turns": 351.9,
-   "retreats": 115.2,
-   "lateral_shifts": 55.6,
+   "retreats": 122.0,
+   "lateral_shifts": 55.1,
    "wall_tracks": 0.0
   },
   "method": "CONTINUOUS_SCAN",
@@ -350,34 +350,34 @@
    "y_lo": -0.16125,
    "y_hi": 0.16125
   },
-  "predicted_covered_fraction": 0.881,
+  "predicted_covered_fraction": 0.8715,
   "estimated_time_h": 0.75
  },
  "continuous_0.03_in_place": {
   "n_pairs": 7,
   "offset_m": 0.04375,
-  "pair_stride_m": 0.31004,
-  "pair_overlap_m": 0.05621,
+  "pair_stride_m": 0.30604,
+  "pair_overlap_m": 0.06021,
   "seam_overlap_per_side_m": 0.01625,
-  "track_y_max_m": 0.952,
-  "turn_radius_m": 0.278,
+  "track_y_max_m": 0.94,
+  "turn_radius_m": 0.29,
   "predicted_residual": {
-   "left_wall_strip_m": 0.1367,
-   "right_wall_strip_m": 0.1368,
+   "left_wall_strip_m": 0.1487,
+   "right_wall_strip_m": 0.1488,
    "door_end_strip_m": 0.121,
    "front_end_strip_m": 0.051,
    "end_zone_single_heading_m": {
-    "door": 0.3482,
-    "front": 0.3482
+    "door": 0.3602,
+    "front": 0.3602
    },
    "note": "wall strips are set by the in-place turn radius of the outline; see README coverage section"
   },
-  "estimated_time_s": 7760.1,
+  "estimated_time_s": 7766.4,
   "time_breakdown_s": {
    "passes": 7235.9,
    "turns": 351.9,
-   "retreats": 115.2,
-   "lateral_shifts": 55.6,
+   "retreats": 122.0,
+   "lateral_shifts": 55.1,
    "wall_tracks": 0.0
   },
   "method": "CONTINUOUS_SCAN",
@@ -406,34 +406,34 @@
    "y_lo": -0.16125,
    "y_hi": 0.16125
   },
-  "predicted_covered_fraction": 0.881,
+  "predicted_covered_fraction": 0.8715,
   "estimated_time_h": 2.16
  },
  "step_and_count_10s_in_place": {
   "n_pairs": 7,
   "offset_m": 0.04375,
-  "pair_stride_m": 0.31004,
-  "pair_overlap_m": 0.05621,
+  "pair_stride_m": 0.30604,
+  "pair_overlap_m": 0.06021,
   "seam_overlap_per_side_m": 0.01625,
-  "track_y_max_m": 0.952,
-  "turn_radius_m": 0.278,
+  "track_y_max_m": 0.94,
+  "turn_radius_m": 0.29,
   "predicted_residual": {
-   "left_wall_strip_m": 0.1367,
-   "right_wall_strip_m": 0.1368,
+   "left_wall_strip_m": 0.1487,
+   "right_wall_strip_m": 0.1488,
    "door_end_strip_m": 0.121,
    "front_end_strip_m": 0.051,
    "end_zone_single_heading_m": {
-    "door": 0.3482,
-    "front": 0.3482
+    "door": 0.3602,
+    "front": 0.3602
    },
    "note": "wall strips are set by the in-place turn radius of the outline; see README coverage section"
   },
-  "estimated_time_s": 34103.2,
+  "estimated_time_s": 34109.4,
   "time_breakdown_s": {
    "passes": 33579.0,
    "turns": 351.9,
-   "retreats": 115.2,
-   "lateral_shifts": 55.6,
+   "retreats": 122.0,
+   "lateral_shifts": 55.1,
    "wall_tracks": 0.0
   },
   "method": "STEP_AND_COUNT",
@@ -462,35 +462,35 @@
    "y_lo": -0.16125,
    "y_hi": 0.16125
   },
-  "predicted_covered_fraction": 0.881,
+  "predicted_covered_fraction": 0.8715,
   "estimated_time_h": 9.47
  },
  "continuous_0.10_no_endcaps": {
   "n_pairs": 7,
   "offset_m": 0.04375,
-  "pair_stride_m": 0.31004,
-  "pair_overlap_m": 0.05621,
+  "pair_stride_m": 0.30604,
+  "pair_overlap_m": 0.06021,
   "seam_overlap_per_side_m": 0.01625,
-  "track_y_max_m": 0.952,
-  "turn_radius_m": 0.278,
+  "track_y_max_m": 0.94,
+  "turn_radius_m": 0.29,
   "predicted_residual": {
    "left_wall_strip_m": 0.0488,
    "right_wall_strip_m": 0.0488,
    "door_end_strip_m": 0.121,
    "front_end_strip_m": 0.051,
    "end_zone_single_heading_m": {
-    "door": 0.3482,
-    "front": 0.3482
+    "door": 0.3602,
+    "front": 0.3602
    },
    "note": "wall strips: reverse-entry wall tracks (straight-motion outline limit); see README coverage section"
   },
-  "estimated_time_s": 3299.0,
+  "estimated_time_s": 3331.9,
   "time_breakdown_s": {
-   "passes": 2156.0,
+   "passes": 2154.3,
    "turns": 175.9,
-   "retreats": 57.6,
-   "lateral_shifts": 43.3,
-   "wall_tracks": 864.6
+   "retreats": 61.0,
+   "lateral_shifts": 42.9,
+   "wall_tracks": 896.3
   },
   "method": "CONTINUOUS_SCAN",
   "wall_track_entry": "reverse_entry",
@@ -499,7 +499,7 @@
     "feasible": true,
     "theta_rad": 0.09,
     "y_outer": 1.04,
-    "y_band_edge": 0.952,
+    "y_band_edge": 0.94,
     "clearance_min_m": -0.0,
     "reason": null
    },
@@ -507,12 +507,12 @@
     "feasible": true,
     "theta_rad": 0.09,
     "y_outer": -1.04,
-    "y_band_edge": -0.952,
+    "y_band_edge": -0.94,
     "clearance_min_m": -0.0,
     "reason": null
    }
   },
-  "wall_tracks_extra_time_s": 864.6,
+  "wall_tracks_extra_time_s": 896.3,
   "n_tasks": 18,
   "layout": {
    "centers_y": [
@@ -536,7 +536,7 @@
    "y_hi": 0.16125
   },
   "predicted_covered_fraction": 0.9506,
-  "estimated_time_h": 0.92
+  "estimated_time_h": 0.93
  },
  "outline": {
   "body_x": [
@@ -549,9 +549,9 @@
    0.1922
   ],
   "head_half_width": 0.175,
-  "turn_radius": 0.278,
+  "turn_radius": 0.29,
   "rect_radius": 0.30872026172572475,
-  "source": "frames.yaml footprint + contract.yaml body_rev_e (contract 0.4.0-draft5)"
+  "source": "frames.yaml footprint + contract.yaml body_rev_e (contract 0.4.0-draft7)"
  },
  "mount": {
   "xyz_m": [
