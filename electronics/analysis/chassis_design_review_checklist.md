@@ -17,22 +17,25 @@ Status of every line at the end of stage 1: **open** unless marked. "Evidence" n
 - [ ] Inrush at selector-on into 500 µF + the VSYS path: < 5 A peak (scope).
 - [ ] Charger: all items of `chassis_design_notes.md` §1.
 - [ ] 5 V rail at the carrier ≥ 4.85 V at 5 A; survives MCU reset.
-- [ ] Each eFuse limit measured: 5.0, 1.5, 4.05, 3.04, 1.5 A (±10 %), VMOT 6.5 A.
+- [ ] Each eFuse limit measured: 5.0, 1.5, 3.96 (HEAD_HTR after S2-04, R46 845 Ω), 3.04, 1.5 A (±10 %), VMOT 6.5 A.
 - [ ] Branch defaults with the MCU held in reset: V5 on, LiDAR on, head and heaters off.
 - [ ] Head branches forced off with 24 V on the inlet; both heaters off with the watchdog unsatisfied.
 - [ ] LAB extension drop at 4 A ≤ 0.5 V with the real cable.
 - [ ] Thermal: U3, U10, U5, U6 case temperatures at the worst sustained state on the gap pad.
 
 ## C. Safety chain (not a certified function)
-- [ ] First power-up procedure, `chassis_safety_chain.md` §8, steps 1–13, with scope records of every drop time.
-- [ ] Each of the 58 single-fault rows reviewed; the undetected ones accepted, or mitigated, by the hazard owner in writing.
-- [ ] REARM cannot hold or re-set the latch (held, shorted, R_SET value).
+- [ ] First power-up procedure, `chassis_safety_chain.md` §8, steps 1–15, with scope records of every drop time.
+- [ ] Each of the 73 single-fault rows reviewed (stage 3 table); the five "no hardware barrier" faults of §6.1 and the latent ones accepted, or mitigated, by the hazard owner in writing.
+- [ ] REARM cannot set, hold or re-set the latch through any single W-018 short or a held/welded contact (§8 step 7 a-f); set margin at 10 V / 12 V pack and hot coil (T11).
+- [ ] K1 weld simulation on both poles (§8 step 9) and RUN_12V-to-supply simulation (§8 step 10).
+- [ ] Head loop: each channel alone opens the chain (§8 step 3); U30 pins 1/7/8, U46 pins, R74 and the loop resistors on the AOI / inspection list.
+- [ ] Firmware has the stage-3 readbacks (IOX_D: LATCH_NC_RB, LATCH_RUN_RB, HEAD_LOOP2_OK_RB, REARM_SET_RB) and the rules F1-F15 of `STAGE2_CHANGE_REQUESTS.md`.
 - [ ] No tap, lamp or test point bridges any chain element (review the routed board, not only the netlist).
-- [ ] Chain-to-supply clearances of `layout_guidance.md` §5 checked on the layout.
+- [ ] Chain-to-supply clearances of `layout_guidance.md` §5: enforced by DRC since stage 3 (`RR-CHS-MAIN.kicad_dru` from `placement.chain_rules()`: 1.0 mm high-side chain to supply, 0.5 mm class, 2.0 mm loop to heater, 10 mm chain test-point spacing); re-run DRC on the routed board with zones filled.
 - [ ] Brake readback thresholds measured (isolated < 0.1 V, connected > 0.4 V with VMOT at 0 V).
 - [ ] Wheel spin-down with and without the brake resistor: rotor inertia and friction replace the assumed values; stopping-distance table regenerated.
 - [ ] Slope holding angle measured.
-- [ ] Watchdog: strobe at 1, 10, 40 ms; JP1 behaviour with SWD and DFU.
+- [ ] Watchdog: falling edge every 1, 10, 40 ms (TPS3430 WDI is falling-edge triggered [D]); JP1 behaviour with SWD and DFU.
 
 ## D. Drive
 - [ ] Current limit 2.68 A, IPROPI scale, stall temperature rise.

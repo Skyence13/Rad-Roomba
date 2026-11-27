@@ -3,7 +3,7 @@
  "evidence_class": "simulated",
  "against": "Python protocol fakes (rr_core.fakes), virtual clock",
  "seed": 15,
- "sim_time_s": 318.08,
+ "sim_time_s": 319.32,
  "checks": [
   {
    "check": "person beside the route: Next accepted",
@@ -13,7 +13,7 @@
    "check": "person beside the route: arrived",
    "ok": true,
    "notes": [
-    "ARRIVED: lane 1 over the saved footprint, offset 1.8 mm (tolerance 10 mm, 2-sigma uncertainty 0.5 mm)"
+    "ARRIVED: lane 1 over the saved footprint, offset 1.7 mm (tolerance 10 mm, 2-sigma uncertainty 0.5 mm)"
    ]
   },
   {
@@ -30,7 +30,7 @@
   {
    "check": "person in the swept path: stopped short of the person",
    "ok": true,
-   "gap_m": 0.16728440000003544
+   "gap_m": 0.16494440000422986
   },
   {
    "check": "item left open",
@@ -63,7 +63,7 @@
   {
    "check": "Expose with a person behind: reverse held before contact",
    "ok": true,
-   "moved_m": 0.07968329999422746,
+   "moved_m": 0.07968329999685554,
    "accepted": true,
    "stops": {
     "hw": [],
@@ -75,12 +75,12 @@
   {
    "check": "rear clearance stayed positive",
    "ok": true,
-   "rear_gap_m": 0.1485167000349334
+   "rear_gap_m": 0.1485167000046928
   },
   {
    "check": "Expose with the person beside the route: completed",
    "ok": true,
-   "back_m": 0.349917898663905,
+   "back_m": 0.34994719913374267,
    "reason": null
   }
  ],
@@ -89,14 +89,14 @@
  "coverage": {
   "target_area_m2": 3.0,
   "areas_m2": {
-   "UNVISITED": 1.13995,
+   "UNVISITED": 1.1394,
    "ACCEPTABLE": 0.0,
-   "INSUFFICIENT_SENSITIVITY": 1.86005,
+   "INSUFFICIENT_SENSITIVITY": 1.8606,
    "INVALID_DATA": 0.0,
    "BLOCKED": 0.0,
    "EXCLUDED": 0.0
   },
-  "valid_exposure_fraction": 0.6200166666666667,
+  "valid_exposure_fraction": 0.6202,
   "acceptable_fraction": 0.0,
   "sub_cell_m": 0.005,
   "decision_cell_m": 0.1,
@@ -106,15 +106,15 @@
   "limit_us": 10000.0,
   "fits": 164,
   "max_gate_bound_us": 838.0520796923137,
-  "median_gate_bound_us": 797.1419392621613
+  "median_gate_bound_us": 796.8741080612946
  },
  "link_stats": {
-  "tx": 15987,
-  "rx": 15983,
+  "tx": 16048,
+  "rx": 16045,
   "bad_lines": 0,
   "stale": 0,
   "duplicates": 0,
-  "gates": 3161,
+  "gates": 3174,
   "gaps": 0,
   "retries": 2,
   "unassigned_frames": 0,
@@ -122,8 +122,8 @@
   "time_exchanges_rejected": 0
  },
  "localization_error_vs_truth_m": {
-  "max_x_m": 0.0017590921294996509,
-  "max_y_m": 0.0011962911860690373
+  "max_x_m": 0.0016531803289970837,
+  "max_y_m": 0.0011794537877675704
  },
  "plan": {
   "n_pairs": 2,
@@ -145,92 +145,84 @@
  },
  "flags": [
   {
-   "id": "HS-0001",
-   "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 2,
-   "x_m": 0.5429843430083998,
-   "y_m": -0.23381919735645443,
-   "D": 0.1396798998071087,
-   "u_total": 0.10346100717353092,
-   "D_star": 0.13800824485943583,
-   "D_hash": 0.34483273441358625,
-   "location": {
-    "distance_from_door_m": 0.543,
-    "wall": "right wall",
-    "distance_from_wall_m": 0.266,
-    "text": "0.54 m from the door threshold, 0.27 m from the right wall"
-   }
-  },
-  {
-   "id": "HS-0002",
-   "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 1,
-   "x_m": 0.9427299229023346,
-   "y_m": -0.14628790231179767,
-   "D": 0.2358481273806174,
-   "u_total": 0.1819579104412706,
-   "D_star": 0.22238438114878084,
-   "D_hash": 0.581185698049057,
-   "location": {
-    "distance_from_door_m": 0.943,
-    "wall": "right wall",
-    "distance_from_wall_m": 0.354,
-    "text": "0.94 m from the door threshold, 0.35 m from the right wall"
-   }
-  },
-  {
-   "id": "HS-0003",
-   "kind": "INVESTIGATION_LEVEL",
-   "source_lane": 1,
-   "x_m": 1.5496467238707916,
-   "y_m": 0.16743360741074198,
-   "D": 1.3954664536360557,
-   "u_total": 0.27710601414007674,
-   "D_star": 0.20695599459234404,
-   "D_hash": 0.4730884741897894,
-   "location": {
-    "distance_from_door_m": 1.55,
-    "wall": "left wall",
-    "distance_from_wall_m": 0.333,
-    "text": "1.55 m from the door threshold, 0.33 m from the left wall"
-   }
-  },
-  {
    "id": "HS-0004",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 3,
-   "x_m": 1.9569451871591719,
-   "y_m": 0.3213386102841991,
-   "D": 0.2216763536027838,
-   "u_total": 0.17789939745023942,
-   "D_star": 0.21583721132302558,
-   "D_hash": 0.642375652464688,
+   "source_lane": 2,
+   "x_m": 0.3540531159322749,
+   "y_m": -0.10251107076209609,
+   "D": 0.17602253313186697,
+   "u_total": 0.0999516847033211,
+   "D_star": 0.14684258862498895,
+   "D_hash": 0.34914686901384884,
    "location": {
-    "distance_from_door_m": 1.957,
-    "wall": "left wall",
-    "distance_from_wall_m": 0.179,
-    "text": "1.96 m from the door threshold, 0.18 m from the left wall"
+    "distance_from_door_m": 0.354,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.397,
+    "text": "0.35 m from the door threshold, 0.40 m from the right wall"
    }
   },
   {
    "id": "HS-0005",
    "kind": "INVESTIGATION_LEVEL",
-   "source_lane": 3,
-   "x_m": 0.5527643612061597,
-   "y_m": 0.32125775645839844,
-   "D": 0.3058667390366547,
-   "u_total": 0.17158188076676978,
-   "D_star": 0.2233261697976544,
-   "D_hash": 0.6120721496889451,
+   "source_lane": 1,
+   "x_m": 1.5418990538356492,
+   "y_m": 0.16782064868579225,
+   "D": 1.2323116109789223,
+   "u_total": 0.23392275106343793,
+   "D_star": 0.11965462030199954,
+   "D_hash": 0.27804285475529,
    "location": {
-    "distance_from_door_m": 0.553,
+    "distance_from_door_m": 1.542,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.332,
+    "text": "1.54 m from the door threshold, 0.33 m from the left wall"
+   }
+  },
+  {
+   "id": "HS-0006",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 0,
+   "x_m": 2.8385939228612025,
+   "y_m": 0.2775304820354677,
+   "D": 0.2141621201408413,
+   "u_total": 0.10615778472950663,
+   "D_star": 0.1526500121131906,
+   "D_hash": 0.3635196072951513,
+   "location": {
+    "distance_from_door_m": 2.839,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.222,
+    "text": "2.84 m from the door threshold, 0.22 m from the left wall"
+   }
+  },
+  {
+   "id": "HS-0007",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 3,
+   "x_m": 2.4533641784076687,
+   "y_m": 0.321307816555622,
+   "D": 0.3131968425816786,
+   "u_total": 0.15246548279540154,
+   "D_star": 0.2139474430680202,
+   "D_hash": 0.5341415382236403,
+   "location": {
+    "distance_from_door_m": 2.453,
     "wall": "left wall",
     "distance_from_wall_m": 0.179,
-    "text": "0.55 m from the door threshold, 0.18 m from the left wall"
+    "text": "2.45 m from the door threshold, 0.18 m from the left wall"
    }
   }
  ],
- "scan_detections": 0,
+ "scan_detections": 3,
  "observations": [],
- "flag": "HS-0003"
+ "decision_status": {
+  "cells_with_gates": 231,
+  "no_decision": 27,
+  "no_decision_text": [
+   "no decision \u2014 null reference unavailable"
+  ],
+  "no_decision_within_0.5m_of_an_end": 7,
+  "cells_within_0.5m_of_an_end": 71
+ },
+ "flag": "HS-0005"
 }

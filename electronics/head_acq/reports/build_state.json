@@ -1,6 +1,6 @@
 {
   "autoplaced": [],
-  "block_copies": 1188,
+  "block_copies": 0,
   "board_bbox": [
     0.0,
     0.0,
@@ -8,8 +8,8 @@
     96.0
   ],
   "counts": {
-    "nets": 581,
-    "parts": 1085,
+    "nets": 597,
+    "parts": 1095,
     "sheets": 31
   },
   "dsn_sha256": "bf4366091db28b6feed9c82ae23f9c5e3c9cc065e3883117cab1a144d935399d",
@@ -114,171 +114,154 @@
     "FID2801: 3D envelope uses the default height 1.0 mm (give height=)",
     "FID2802: 3D envelope uses the default height 1.0 mm (give height=)",
     "FID2803: 3D envelope uses the default height 1.0 mm (give height=)",
-    "plane fan-out: no legal via position for R1317 pad at (292.74, 9.25) [+3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for C1308 pad at (304.23, 23.00) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for C1307 pad at (310.52, 64.50) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for U1307 pad at (311.11, 61.32) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for R1310 pad at (310.25, 55.26) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for C1301 pad at (298.72, 50.70) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for U1301 pad at (296.73, 50.91) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for C822 pad at (299.75, 38.52) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for C822 pad at (299.75, 39.48) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for U804 pad at (308.24, 37.47) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for D802 pad at (300.96, 32.65) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for C807 pad at (310.30, 22.72) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for U801 pad at (310.20, 19.75) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for C427 pad at (291.62, 20.30) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for U406 pad at (295.39, 34.85) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for D403 pad at (290.21, 29.65) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for C422 pad at (287.62, 38.20) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for U404 pad at (285.99, 37.47) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for D402 pad at (278.71, 32.65) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for C413 pad at (302.23, 31.25) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for FB401 pad at (289.49, 24.60) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for C407 pad at (289.52, 19.80) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for U401 pad at (287.95, 19.75) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for R1217 pad at (205.24, 9.25) [+3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for C1208 pad at (216.73, 23.00) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for C1207 pad at (223.02, 64.50) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for U1207 pad at (223.61, 61.32) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for R1210 pad at (222.75, 55.26) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for C1201 pad at (211.22, 50.70) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for U1201 pad at (209.23, 50.91) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for C722 pad at (212.25, 38.52) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for C722 pad at (212.25, 39.48) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for U704 pad at (220.74, 37.47) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for D702 pad at (213.46, 32.65) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for C707 pad at (222.80, 22.72) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for U701 pad at (222.70, 19.75) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for C327 pad at (204.12, 20.30) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for U306 pad at (207.89, 34.85) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for D303 pad at (202.71, 29.65) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for C322 pad at (200.12, 38.20) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for U304 pad at (198.49, 37.47) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for D302 pad at (191.21, 32.65) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for C313 pad at (214.73, 31.25) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for FB301 pad at (201.99, 24.60) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for C307 pad at (202.02, 19.80) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for U301 pad at (200.45, 19.75) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for R1117 pad at (117.74, 9.25) [+3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for C1108 pad at (129.23, 23.00) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for C1107 pad at (135.52, 64.50) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for U1107 pad at (136.11, 61.32) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for R1110 pad at (135.25, 55.26) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for C1101 pad at (123.72, 50.70) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for U1101 pad at (121.72, 50.91) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for C622 pad at (124.75, 38.52) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for C622 pad at (124.75, 39.48) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for U604 pad at (133.24, 37.47) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for D602 pad at (125.96, 32.65) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for C607 pad at (135.30, 22.72) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for U601 pad at (135.20, 19.75) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for C227 pad at (116.62, 20.30) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for U206 pad at (120.39, 34.85) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for D203 pad at (115.21, 29.65) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for C222 pad at (112.62, 38.20) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for U204 pad at (110.99, 37.47) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for D202 pad at (103.71, 32.65) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for C213 pad at (127.23, 31.25) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for FB201 pad at (114.49, 24.60) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for C207 pad at (114.52, 19.80) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for U201 pad at (112.95, 19.75) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for R1017 pad at (30.24, 9.25) [+3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for C1008 pad at (41.73, 23.00) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for C1007 pad at (48.02, 64.50) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for U1007 pad at (48.61, 61.32) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for R1010 pad at (47.75, 55.26) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for C1001 pad at (36.22, 50.70) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for U1001 pad at (34.22, 50.91) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for C522 pad at (37.25, 38.52) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for C522 pad at (37.25, 39.48) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for U504 pad at (45.74, 37.47) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for D502 pad at (38.46, 32.65) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for C507 pad at (47.80, 22.72) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for U501 pad at (47.70, 19.75) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for C127 pad at (29.12, 20.30) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for U106 pad at (32.89, 34.85) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for D103 pad at (27.71, 29.65) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for C122 pad at (25.12, 38.20) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for U104 pad at (23.49, 37.47) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for D102 pad at (16.21, 32.65) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for C113 pad at (39.73, 31.25) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for FB101 pad at (26.99, 24.60) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for C107 pad at (27.02, 19.80) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for U101 pad at (25.45, 19.75) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2503 pad at (234.10, 17.47) [BUS_GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2503 pad at (234.10, 12.53) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2503 pad at (237.90, 12.53) [+3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R2503 pad at (243.20, 27.51) [+3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for C2501 pad at (254.40, 21.62) [+3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2501 pad at (254.44, 19.65) [+3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2403 pad at (240.89, 33.35) [+3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2403 pad at (240.89, 34.00) [+3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2402 pad at (53.89, 39.00) [+3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2401 pad at (175.68, 83.00) [+3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2401 pad at (167.50, 85.18) [+3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for C2706 pad at (186.62, 50.20) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2704 pad at (209.14, 86.00) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2704 pad at (209.14, 86.95) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for C2703 pad at (186.62, 51.50) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2703 pad at (184.86, 51.32) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for C2702 pad at (208.30, 72.98) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2702 pad at (210.14, 73.02) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2702 pad at (215.86, 76.27) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for C2315 pad at (184.30, 62.42) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2306 pad at (184.47, 60.91) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for C2313 pad at (152.60, 62.42) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2305 pad at (152.47, 60.91) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for C2311 pad at (173.18, 46.90) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2304 pad at (172.75, 48.56) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2304 pad at (173.25, 48.56) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for C2308 pad at (164.27, 46.90) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2303 pad at (163.75, 48.56) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2303 pad at (164.25, 48.56) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for C2305 pad at (155.32, 46.90) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2302 pad at (154.75, 48.56) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2302 pad at (155.25, 48.56) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for C2302 pad at (145.98, 46.00) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2301 pad at (146.25, 48.56) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for R2227 pad at (120.76, 88.00) [+3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R2224 pad at (136.69, 83.50) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for Q2204 pad at (117.06, 69.55) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for Q2203 pad at (117.06, 74.05) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for C2214 pad at (137.25, 70.52) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for C2213 pad at (119.10, 86.07) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for D2203 pad at (125.06, 73.05) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for C2209 pad at (134.38, 78.50) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2202 pad at (134.47, 76.91) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for C2208 pad at (120.75, 81.02) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for R2208 pad at (105.90, 74.29) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for C2206 pad at (104.22, 80.50) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for R2205 pad at (105.69, 81.90) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for C2205 pad at (111.50, 78.23) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for C2204 pad at (105.77, 71.00) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for R2203 pad at (111.25, 75.74) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for C2203 pad at (115.98, 86.75) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2201 pad at (108.25, 77.56) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2201 pad at (107.25, 80.44) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2201 pad at (108.00, 79.00) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for C2202 pad at (106.73, 83.25) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for D2603 pad at (56.06, 35.05) [+3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for C2602 pad at (51.50, 12.77) [+3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2601 pad at (83.86, 20.50) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2601 pad at (86.14, 21.45) [+3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for TP2105 pad at (60.90, 59.80) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for TP2104 pad at (71.50, 54.70) [+3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for TP2103 pad at (71.50, 57.00) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for FB2101 pad at (92.21, 58.50) [+3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for C2112 pad at (63.20, 59.55) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2104 pad at (94.61, 51.65) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2104 pad at (94.61, 51.00) [+3V3_EVT] (left to the autorouter)",
-    "plane fan-out: no legal via position for C2110 pad at (68.30, 52.35) [+3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2103 pad at (88.61, 51.65) [+3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2103 pad at (88.61, 51.00) [+3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for C2108 pad at (63.50, 56.23) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2102 pad at (78.64, 51.95) [+5V_A] (left to the autorouter)",
-    "plane fan-out: no legal via position for R2008 pad at (100.00, 29.19) [+3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for U2001 pad at (91.72, 27.22) [GND] (left to the autorouter)"
+    "F2801: 3D envelope uses the default height 1.0 mm (give height=)",
+    "replicate: stored block routes are stale (source placement changed) - copies of C101... are routed by the autorouter; rebuild to refresh",
+    "replicate: stored block routes are stale (source placement changed) - copies of C501... are routed by the autorouter; rebuild to refresh",
+    "replicate: stored block routes are stale (source placement changed) - copies of C1001... are routed by the autorouter; rebuild to refresh",
+    "replicate: stored block routes are stale (source placement changed) - copies of C101... are routed by the autorouter; rebuild to refresh",
+    "replicate: stored block routes are stale (source placement changed) - copies of C501... are routed by the autorouter; rebuild to refresh",
+    "replicate: stored block routes are stale (source placement changed) - copies of C1001... are routed by the autorouter; rebuild to refresh",
+    "replicate: stored block routes are stale (source placement changed) - copies of C101... are routed by the autorouter; rebuild to refresh",
+    "replicate: stored block routes are stale (source placement changed) - copies of C501... are routed by the autorouter; rebuild to refresh",
+    "replicate: stored block routes are stale (source placement changed) - copies of C1001... are routed by the autorouter; rebuild to refresh",
+    "plane fan-out: no legal via position for C1308 pad at (304.23, 23.00) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C1307 pad at (310.52, 64.50) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U1307 pad at (311.11, 61.32) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C1301 pad at (298.72, 50.70) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U1301 pad at (296.73, 50.91) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C822 pad at (299.75, 38.52) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U804 pad at (308.24, 37.47) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for D802 pad at (300.96, 32.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C807 pad at (310.30, 22.72) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U801 pad at (310.20, 19.75) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C427 pad at (291.62, 20.30) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U406 pad at (295.39, 34.85) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for D403 pad at (290.21, 29.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C422 pad at (287.62, 38.20) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U404 pad at (285.99, 37.47) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for D402 pad at (278.71, 32.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C413 pad at (302.23, 31.25) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C407 pad at (289.52, 19.80) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U401 pad at (287.95, 19.75) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C1208 pad at (216.73, 23.00) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C1207 pad at (223.02, 64.50) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U1207 pad at (223.61, 61.32) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C1201 pad at (211.22, 50.70) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U1201 pad at (209.23, 50.91) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C722 pad at (212.25, 38.52) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U704 pad at (220.74, 37.47) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for D702 pad at (213.46, 32.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C707 pad at (222.80, 22.72) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U701 pad at (222.70, 19.75) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C327 pad at (204.12, 20.30) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U306 pad at (207.89, 34.85) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for D303 pad at (202.71, 29.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C322 pad at (200.12, 38.20) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U304 pad at (198.49, 37.47) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for D302 pad at (191.21, 32.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C313 pad at (214.73, 31.25) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C307 pad at (202.02, 19.80) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U301 pad at (200.45, 19.75) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C1108 pad at (129.23, 23.00) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C1107 pad at (135.52, 64.50) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U1107 pad at (136.11, 61.32) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C1101 pad at (123.72, 50.70) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U1101 pad at (121.72, 50.91) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C622 pad at (124.75, 38.52) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U604 pad at (133.24, 37.47) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for D602 pad at (125.96, 32.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C607 pad at (135.30, 22.72) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U601 pad at (135.20, 19.75) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C227 pad at (116.62, 20.30) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U206 pad at (120.39, 34.85) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for D203 pad at (115.21, 29.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C222 pad at (112.62, 38.20) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U204 pad at (110.99, 37.47) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for D202 pad at (103.71, 32.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C213 pad at (127.23, 31.25) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C207 pad at (114.52, 19.80) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U201 pad at (112.95, 19.75) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C1008 pad at (41.73, 23.00) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C1007 pad at (48.02, 64.50) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U1007 pad at (48.61, 61.32) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C1001 pad at (36.22, 50.70) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U1001 pad at (34.22, 50.91) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C522 pad at (37.25, 38.52) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U504 pad at (45.74, 37.47) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for D502 pad at (38.46, 32.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C507 pad at (47.80, 22.72) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U501 pad at (47.70, 19.75) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C127 pad at (29.12, 20.30) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U106 pad at (32.89, 34.85) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for D103 pad at (27.71, 29.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C122 pad at (25.12, 38.20) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U104 pad at (23.49, 37.47) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for D102 pad at (16.21, 32.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C113 pad at (39.73, 31.25) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C107 pad at (27.02, 19.80) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U101 pad at (25.45, 19.75) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U2503 pad at (234.10, 17.47) [BUS_GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U2503 pad at (234.10, 12.53) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U2503 pad at (237.90, 12.53) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R2503 pad at (243.20, 27.51) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C2501 pad at (254.40, 21.62) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U2501 pad at (254.44, 19.65) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U2403 pad at (240.89, 33.35) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U2403 pad at (240.89, 34.00) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U2402 pad at (53.89, 39.00) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C2706 pad at (186.62, 50.20) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U2704 pad at (209.14, 86.00) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U2704 pad at (209.14, 86.95) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C2703 pad at (186.62, 51.50) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U2703 pad at (184.86, 51.32) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C2702 pad at (208.30, 72.98) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U2702 pad at (210.14, 73.02) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U2702 pad at (215.86, 76.27) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C2315 pad at (184.30, 62.42) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U2306 pad at (184.47, 60.91) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C2313 pad at (152.60, 62.42) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U2305 pad at (152.47, 60.91) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C2311 pad at (173.18, 46.90) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U2304 pad at (173.25, 48.56) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C2308 pad at (164.27, 46.90) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U2303 pad at (164.25, 48.56) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C2305 pad at (155.32, 46.90) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U2302 pad at (155.25, 48.56) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C2302 pad at (145.98, 46.00) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U2301 pad at (146.25, 48.56) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R2224 pad at (136.69, 83.50) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for Q2204 pad at (117.06, 69.55) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for Q2203 pad at (117.06, 74.05) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C2213 pad at (119.10, 86.07) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for D2203 pad at (125.06, 73.05) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C2209 pad at (134.38, 78.50) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U2202 pad at (134.47, 76.91) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C2208 pad at (120.75, 81.02) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R2208 pad at (105.90, 74.29) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C2205 pad at (111.50, 78.23) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C2204 pad at (105.77, 71.00) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R2203 pad at (111.25, 75.74) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C2203 pad at (115.98, 86.75) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U2201 pad at (108.25, 77.56) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U2201 pad at (107.25, 80.44) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U2201 pad at (108.00, 79.00) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C2202 pad at (106.73, 83.25) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for D2603 pad at (56.86, 37.65) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C2602 pad at (88.25, 25.02) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U2601 pad at (83.86, 26.00) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U2601 pad at (86.14, 26.95) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for TP2105 pad at (60.90, 59.80) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for TP2104 pad at (71.50, 54.70) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for TP2103 pad at (71.50, 57.00) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for FB2101 pad at (92.21, 58.50) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C2112 pad at (63.20, 59.55) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U2104 pad at (94.61, 51.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U2104 pad at (94.61, 51.00) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C2110 pad at (68.30, 52.35) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U2103 pad at (88.61, 51.65) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U2103 pad at (88.61, 51.00) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C2108 pad at (63.50, 56.23) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U2102 pad at (78.64, 51.95) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)"
   ],
   "generated_files": [
     "BIAS.kicad_sch",
@@ -313,6 +296,7 @@
     "POWER_REG.kicad_sch",
     "RR-HEAD-ACQ.kicad_sch"
   ],
+  "imported_ses_sha256": null,
   "name": "RR-HEAD-ACQ",
   "pcb_page_origin": [
     50.0,
@@ -721,6 +705,12 @@
       90.0,
       "F"
     ],
+    "C150": [
+      25.5,
+      29.75,
+      0.0,
+      "F"
+    ],
     "C2001": [
       97.9,
       32.8,
@@ -734,9 +724,9 @@
       "F"
     ],
     "C2003": [
-      92.6,
-      22.5,
-      180.0,
+      87.25,
+      35.75,
+      270.0,
       "F"
     ],
     "C2004": [
@@ -746,9 +736,9 @@
       "F"
     ],
     "C2005": [
-      99.3,
-      39.0,
-      90.0,
+      91.75,
+      46.5,
+      0.0,
       "F"
     ],
     "C2006": [
@@ -758,9 +748,9 @@
       "F"
     ],
     "C2007": [
-      24.5,
-      68.5,
-      180.0,
+      80.3,
+      29.0,
+      90.0,
       "F"
     ],
     "C2008": [
@@ -1322,8 +1312,8 @@
       "F"
     ],
     "C2411": [
-      193.5,
-      75.6,
+      193.25,
+      75.5,
       0.0,
       "F"
     ],
@@ -1336,6 +1326,12 @@
     "C2413": [
       177.9,
       69.8,
+      0.0,
+      "F"
+    ],
+    "C250": [
+      113.0,
+      29.75,
       0.0,
       "F"
     ],
@@ -1358,20 +1354,20 @@
       "F"
     ],
     "C2504": [
-      250.7,
-      69.6,
+      242.9,
+      6.3,
       90.0,
       "F"
     ],
     "C2601": [
-      74.5,
-      23.25,
-      270.0,
+      85.5,
+      30.5,
+      90.0,
       "F"
     ],
     "C2602": [
-      51.5,
-      13.25,
+      88.25,
+      25.5,
       90.0,
       "F"
     ],
@@ -1382,9 +1378,9 @@
       "F"
     ],
     "C2604": [
-      71.75,
-      23.75,
-      0.0,
+      66.0,
+      22.0,
+      90.0,
       "F"
     ],
     "C2605": [
@@ -1394,9 +1390,9 @@
       "F"
     ],
     "C2606": [
-      65.3,
-      13.8,
-      270.0,
+      55.5,
+      25.0,
+      0.0,
       "F"
     ],
     "C2701": [
@@ -1448,27 +1444,27 @@
       "F"
     ],
     "C2801": [
-      318.9,
-      22.2,
-      0.0,
+      167.6,
+      4.5,
+      90.0,
       "F"
     ],
     "C2802": [
-      321.4,
-      23.9,
+      316.6,
+      48.0,
       90.0,
       "F"
     ],
     "C2803": [
-      316.4,
-      23.9,
-      90.0,
+      160.3,
+      87.1,
+      0.0,
       "F"
     ],
     "C2804": [
-      318.9,
-      27.3,
-      0.0,
+      255.0,
+      91.5,
+      90.0,
       "F"
     ],
     "C301": [
@@ -1630,6 +1626,12 @@
     "C327": [
       204.6,
       20.3,
+      0.0,
+      "F"
+    ],
+    "C350": [
+      200.5,
+      29.75,
       0.0,
       "F"
     ],
@@ -1795,6 +1797,12 @@
       0.0,
       "F"
     ],
+    "C450": [
+      288.0,
+      29.75,
+      0.0,
+      "F"
+    ],
     "C501": [
       34.5,
       15.5,
@@ -1910,9 +1918,9 @@
       "F"
     ],
     "C520": [
-      47.9,
-      37.4,
-      0.0,
+      34.25,
+      33.0,
+      90.0,
       "F"
     ],
     "C521": [
@@ -1924,6 +1932,12 @@
     "C522": [
       37.25,
       39.0,
+      90.0,
+      "F"
+    ],
+    "C550": [
+      35.5,
+      31.0,
       90.0,
       "F"
     ],
@@ -2042,9 +2056,9 @@
       "F"
     ],
     "C620": [
-      135.4,
-      37.4,
-      0.0,
+      121.75,
+      33.0,
+      90.0,
       "F"
     ],
     "C621": [
@@ -2056,6 +2070,12 @@
     "C622": [
       124.75,
       39.0,
+      90.0,
+      "F"
+    ],
+    "C650": [
+      123.0,
+      31.0,
       90.0,
       "F"
     ],
@@ -2174,9 +2194,9 @@
       "F"
     ],
     "C720": [
-      222.9,
-      37.4,
-      0.0,
+      209.25,
+      33.0,
+      90.0,
       "F"
     ],
     "C721": [
@@ -2188,6 +2208,12 @@
     "C722": [
       212.25,
       39.0,
+      90.0,
+      "F"
+    ],
+    "C750": [
+      210.5,
+      31.0,
       90.0,
       "F"
     ],
@@ -2306,9 +2332,9 @@
       "F"
     ],
     "C820": [
-      310.4,
-      37.4,
-      0.0,
+      296.75,
+      33.0,
+      90.0,
       "F"
     ],
     "C821": [
@@ -2320,6 +2346,12 @@
     "C822": [
       299.75,
       39.0,
+      90.0,
+      "F"
+    ],
+    "C850": [
+      298.0,
+      31.0,
       90.0,
       "F"
     ],
@@ -2367,8 +2399,8 @@
     ],
     "D2001": [
       96.0,
-      16.5,
-      90.0,
+      21.85,
+      0.0,
       "F"
     ],
     "D2002": [
@@ -2451,25 +2483,25 @@
     ],
     "D2601": [
       60.5,
-      16.2,
+      21.8,
       0.0,
       "F"
     ],
     "D2602": [
-      64.0,
-      22.5,
+      64.5,
+      27.2,
       0.0,
       "F"
     ],
     "D2603": [
-      57.0,
-      36.0,
+      57.8,
+      38.6,
       0.0,
       "F"
     ],
     "D2604": [
       53.0,
-      22.0,
+      27.6,
       90.0,
       "F"
     ],
@@ -2563,6 +2595,12 @@
       0.0,
       "F"
     ],
+    "F2801": [
+      70.75,
+      30.0,
+      90.0,
+      "F"
+    ],
     "FB101": [
       26.2,
       24.6,
@@ -2612,26 +2650,26 @@
       "F"
     ],
     "FB501": [
-      47.7,
-      28.8,
+      34.0,
+      30.25,
       270.0,
       "F"
     ],
     "FB601": [
-      135.2,
-      28.8,
+      121.5,
+      30.25,
       270.0,
       "F"
     ],
     "FB701": [
-      222.7,
-      28.8,
+      209.0,
+      30.25,
       270.0,
       "F"
     ],
     "FB801": [
-      310.2,
-      28.8,
+      296.5,
+      30.25,
       270.0,
       "F"
     ],
@@ -2739,7 +2777,7 @@
     ],
     "J2001": [
       97.34,
-      10.57,
+      17.57,
       180.0,
       "F"
     ],
@@ -2799,7 +2837,7 @@
     ],
     "J2601": [
       68.58,
-      10.57,
+      17.57,
       180.0,
       "F"
     ],
@@ -2889,13 +2927,13 @@
     ],
     "L2001": [
       96.5,
-      23.0,
-      90.0,
+      26.0,
+      0.0,
       "F"
     ],
     "L2002": [
       95.5,
-      37.0,
+      38.7,
       0.0,
       "F"
     ],
@@ -2979,19 +3017,19 @@
     ],
     "Q2601": [
       73.5,
-      17.0,
+      22.9,
       0.0,
       "F"
     ],
     "Q2602": [
-      62.0,
-      27.0,
+      60.5,
+      31.2,
       0.0,
       "F"
     ],
     "Q2603": [
-      57.0,
-      31.0,
+      56.0,
+      33.9,
       0.0,
       "F"
     ],
@@ -3686,8 +3724,8 @@
       "F"
     ],
     "R2001": [
-      99.25,
-      15.25,
+      91.25,
+      21.5,
       90.0,
       "F"
     ],
@@ -3698,8 +3736,8 @@
       "F"
     ],
     "R2003": [
-      91.9,
-      34.3,
+      92.75,
+      27.25,
       180.0,
       "F"
     ],
@@ -3728,9 +3766,9 @@
       "F"
     ],
     "R2008": [
-      100.0,
-      29.7,
-      90.0,
+      142.0,
+      52.0,
+      180.0,
       "F"
     ],
     "R2009": [
@@ -3758,9 +3796,9 @@
       "F"
     ],
     "R2012": [
-      21.25,
-      68.5,
-      0.0,
+      80.3,
+      32.4,
+      90.0,
       "F"
     ],
     "R2013": [
@@ -4411,6 +4449,12 @@
       0.0,
       "F"
     ],
+    "R2418": [
+      195.5,
+      75.6,
+      0.0,
+      "F"
+    ],
     "R2501": [
       257.4,
       8.4,
@@ -4436,20 +4480,20 @@
       "F"
     ],
     "R2505": [
-      252.7,
-      67.0,
-      270.0,
+      241.0,
+      6.3,
+      90.0,
       "F"
     ],
     "R2506": [
-      245.75,
-      6.5,
-      270.0,
+      236.5,
+      2.3,
+      0.0,
       "F"
     ],
     "R2601": [
       84.0,
-      15.2,
+      21.5,
       0.0,
       "F"
     ],
@@ -4460,14 +4504,14 @@
       "F"
     ],
     "R2603": [
-      70.0,
+      65.75,
       24.75,
-      270.0,
+      0.0,
       "F"
     ],
     "R2604": [
-      68.0,
-      23.75,
+      63.0,
+      24.75,
       180.0,
       "F"
     ],
@@ -4484,14 +4528,14 @@
       "F"
     ],
     "R2607": [
-      79.5,
-      19.25,
-      270.0,
+      80.25,
+      24.75,
+      0.0,
       "F"
     ],
     "R2608": [
-      61.1,
-      13.1,
+      60.75,
+      26.5,
       180.0,
       "F"
     ],
@@ -4502,8 +4546,8 @@
       "F"
     ],
     "R2610": [
-      77.3,
-      22.6,
+      77.75,
+      34.25,
       180.0,
       "F"
     ],
@@ -4550,15 +4594,15 @@
       "F"
     ],
     "R2801": [
-      318.9,
-      23.9,
-      0.0,
+      68.5,
+      30.0,
+      90.0,
       "F"
     ],
     "R2802": [
-      318.9,
-      25.6,
-      0.0,
+      71.4,
+      34.0,
+      90.0,
       "F"
     ],
     "R301": [
@@ -5697,37 +5741,37 @@
     ],
     "SH1007": [
       13.85,
-      15.25,
+      23.5,
       90.0,
       "F"
     ],
     "SH1008": [
       13.85,
-      24.25,
+      29.0,
       90.0,
       "F"
     ],
     "SH1009": [
       13.85,
-      33.25,
+      34.75,
       90.0,
       "F"
     ],
     "SH1010": [
       49.65,
-      15.25,
+      23.5,
       90.0,
       "F"
     ],
     "SH1011": [
       49.65,
-      24.25,
+      29.0,
       90.0,
       "F"
     ],
     "SH1012": [
       49.65,
-      33.25,
+      34.75,
       90.0,
       "F"
     ],
@@ -5775,37 +5819,37 @@
     ],
     "SH1107": [
       101.35,
-      15.25,
+      23.5,
       90.0,
       "F"
     ],
     "SH1108": [
       101.35,
-      24.25,
+      29.0,
       90.0,
       "F"
     ],
     "SH1109": [
       101.35,
-      33.25,
+      34.75,
       90.0,
       "F"
     ],
     "SH1110": [
       137.15,
-      15.25,
+      23.5,
       90.0,
       "F"
     ],
     "SH1111": [
       137.15,
-      24.25,
+      29.0,
       90.0,
       "F"
     ],
     "SH1112": [
       137.15,
-      33.25,
+      34.75,
       90.0,
       "F"
     ],
@@ -5853,37 +5897,37 @@
     ],
     "SH1207": [
       188.85,
-      15.25,
+      23.5,
       90.0,
       "F"
     ],
     "SH1208": [
       188.85,
-      24.25,
+      29.0,
       90.0,
       "F"
     ],
     "SH1209": [
       188.85,
-      33.25,
+      34.75,
       90.0,
       "F"
     ],
     "SH1210": [
       224.65,
-      15.25,
+      23.5,
       90.0,
       "F"
     ],
     "SH1211": [
       224.65,
-      24.25,
+      29.0,
       90.0,
       "F"
     ],
     "SH1212": [
       224.65,
-      33.25,
+      34.75,
       90.0,
       "F"
     ],
@@ -5931,37 +5975,37 @@
     ],
     "SH1307": [
       276.35,
-      15.25,
+      23.5,
       90.0,
       "F"
     ],
     "SH1308": [
       276.35,
-      24.25,
+      29.0,
       90.0,
       "F"
     ],
     "SH1309": [
       276.35,
-      33.25,
+      34.75,
       90.0,
       "F"
     ],
     "SH1310": [
       312.15,
-      15.25,
+      23.5,
       90.0,
       "F"
     ],
     "SH1311": [
       312.15,
-      24.25,
+      29.0,
       90.0,
       "F"
     ],
     "SH1312": [
       312.15,
-      33.25,
+      34.75,
       90.0,
       "F"
     ],
@@ -5996,8 +6040,8 @@
       "F"
     ],
     "TP2004": [
-      23.5,
-      70.5,
+      83.0,
+      29.1,
       0.0,
       "F"
     ],
@@ -6152,20 +6196,20 @@
       "F"
     ],
     "TP2501": [
-      252.7,
-      69.8,
+      241.5,
+      2.5,
       0.0,
       "F"
     ],
     "TP2601": [
-      69.3,
-      21.8,
+      66.0,
+      32.5,
       0.0,
       "F"
     ],
     "TP2602": [
-      71.6,
-      21.8,
+      64.5,
+      30.25,
       0.0,
       "F"
     ],
@@ -6435,7 +6479,7 @@
     ],
     "U2001": [
       94.0,
-      30.0,
+      31.65,
       270.0,
       "F"
     ],
@@ -6627,7 +6671,7 @@
     ],
     "U2601": [
       85.0,
-      20.5,
+      26.0,
       0.0,
       "F"
     ],
@@ -6831,172 +6875,178 @@
     ]
   },
   "plane_fanout": {
+    "extended": [
+      "R1310 [GND] 3.2 mm",
+      "C822 [GND] 1.5 mm",
+      "C815 [GND] 0.8 mm",
+      "FB401 [+5V_A] 2.0 mm",
+      "R1210 [GND] 3.2 mm",
+      "C722 [GND] 1.5 mm",
+      "C715 [GND] 0.8 mm",
+      "FB301 [+5V_A] 2.0 mm",
+      "R1110 [GND] 3.2 mm",
+      "C622 [GND] 1.5 mm",
+      "C615 [GND] 0.8 mm",
+      "FB201 [+5V_A] 2.0 mm",
+      "R1010 [GND] 3.2 mm",
+      "C522 [GND] 1.5 mm",
+      "C515 [GND] 0.8 mm",
+      "FB101 [+5V_A] 2.0 mm",
+      "U2401 [+3V3] 3.3 mm",
+      "U2401 [+3V3] 3.3 mm",
+      "U2304 [GND] 1.8 mm",
+      "U2303 [GND] 1.8 mm",
+      "U2302 [GND] 1.8 mm",
+      "R2227 [+3V3] 3.0 mm",
+      "C2214 [GND] 0.8 mm",
+      "C2206 [GND] 1.5 mm",
+      "R2205 [GND] 4.0 mm"
+    ],
     "failed": [
-      "R1317 pad at (292.74, 9.25) [+3V3]",
-      "C1308 pad at (304.23, 23.00) [GND]",
-      "C1307 pad at (310.52, 64.50) [+5V_A]",
-      "U1307 pad at (311.11, 61.32) [+5V_A]",
-      "R1310 pad at (310.25, 55.26) [GND]",
-      "C1301 pad at (298.72, 50.70) [+5V_A]",
-      "U1301 pad at (296.73, 50.91) [+5V_A]",
-      "C822 pad at (299.75, 38.52) [+3V3_EVT]",
-      "C822 pad at (299.75, 39.48) [GND]",
-      "U804 pad at (308.24, 37.47) [+3V3_EVT]",
-      "D802 pad at (300.96, 32.65) [+3V3_EVT]",
-      "C807 pad at (310.30, 22.72) [+3V3_EVT]",
-      "U801 pad at (310.20, 19.75) [+3V3_EVT]",
-      "C427 pad at (291.62, 20.30) [+3V3_EVT]",
-      "U406 pad at (295.39, 34.85) [+3V3_EVT]",
-      "D403 pad at (290.21, 29.65) [+3V3_EVT]",
-      "C422 pad at (287.62, 38.20) [+3V3_EVT]",
-      "U404 pad at (285.99, 37.47) [+3V3_EVT]",
-      "D402 pad at (278.71, 32.65) [+3V3_EVT]",
-      "C413 pad at (302.23, 31.25) [GND]",
-      "FB401 pad at (289.49, 24.60) [+5V_A]",
-      "C407 pad at (289.52, 19.80) [+3V3_EVT]",
-      "U401 pad at (287.95, 19.75) [+3V3_EVT]",
-      "R1217 pad at (205.24, 9.25) [+3V3]",
-      "C1208 pad at (216.73, 23.00) [GND]",
-      "C1207 pad at (223.02, 64.50) [+5V_A]",
-      "U1207 pad at (223.61, 61.32) [+5V_A]",
-      "R1210 pad at (222.75, 55.26) [GND]",
-      "C1201 pad at (211.22, 50.70) [+5V_A]",
-      "U1201 pad at (209.23, 50.91) [+5V_A]",
-      "C722 pad at (212.25, 38.52) [+3V3_EVT]",
-      "C722 pad at (212.25, 39.48) [GND]",
-      "U704 pad at (220.74, 37.47) [+3V3_EVT]",
-      "D702 pad at (213.46, 32.65) [+3V3_EVT]",
-      "C707 pad at (222.80, 22.72) [+3V3_EVT]",
-      "U701 pad at (222.70, 19.75) [+3V3_EVT]",
-      "C327 pad at (204.12, 20.30) [+3V3_EVT]",
-      "U306 pad at (207.89, 34.85) [+3V3_EVT]",
-      "D303 pad at (202.71, 29.65) [+3V3_EVT]",
-      "C322 pad at (200.12, 38.20) [+3V3_EVT]",
-      "U304 pad at (198.49, 37.47) [+3V3_EVT]",
-      "D302 pad at (191.21, 32.65) [+3V3_EVT]",
-      "C313 pad at (214.73, 31.25) [GND]",
-      "FB301 pad at (201.99, 24.60) [+5V_A]",
-      "C307 pad at (202.02, 19.80) [+3V3_EVT]",
-      "U301 pad at (200.45, 19.75) [+3V3_EVT]",
-      "R1117 pad at (117.74, 9.25) [+3V3]",
-      "C1108 pad at (129.23, 23.00) [GND]",
-      "C1107 pad at (135.52, 64.50) [+5V_A]",
-      "U1107 pad at (136.11, 61.32) [+5V_A]",
-      "R1110 pad at (135.25, 55.26) [GND]",
-      "C1101 pad at (123.72, 50.70) [+5V_A]",
-      "U1101 pad at (121.72, 50.91) [+5V_A]",
-      "C622 pad at (124.75, 38.52) [+3V3_EVT]",
-      "C622 pad at (124.75, 39.48) [GND]",
-      "U604 pad at (133.24, 37.47) [+3V3_EVT]",
-      "D602 pad at (125.96, 32.65) [+3V3_EVT]",
-      "C607 pad at (135.30, 22.72) [+3V3_EVT]",
-      "U601 pad at (135.20, 19.75) [+3V3_EVT]",
-      "C227 pad at (116.62, 20.30) [+3V3_EVT]",
-      "U206 pad at (120.39, 34.85) [+3V3_EVT]",
-      "D203 pad at (115.21, 29.65) [+3V3_EVT]",
-      "C222 pad at (112.62, 38.20) [+3V3_EVT]",
-      "U204 pad at (110.99, 37.47) [+3V3_EVT]",
-      "D202 pad at (103.71, 32.65) [+3V3_EVT]",
-      "C213 pad at (127.23, 31.25) [GND]",
-      "FB201 pad at (114.49, 24.60) [+5V_A]",
-      "C207 pad at (114.52, 19.80) [+3V3_EVT]",
-      "U201 pad at (112.95, 19.75) [+3V3_EVT]",
-      "R1017 pad at (30.24, 9.25) [+3V3]",
-      "C1008 pad at (41.73, 23.00) [GND]",
-      "C1007 pad at (48.02, 64.50) [+5V_A]",
-      "U1007 pad at (48.61, 61.32) [+5V_A]",
-      "R1010 pad at (47.75, 55.26) [GND]",
-      "C1001 pad at (36.22, 50.70) [+5V_A]",
-      "U1001 pad at (34.22, 50.91) [+5V_A]",
-      "C522 pad at (37.25, 38.52) [+3V3_EVT]",
-      "C522 pad at (37.25, 39.48) [GND]",
-      "U504 pad at (45.74, 37.47) [+3V3_EVT]",
-      "D502 pad at (38.46, 32.65) [+3V3_EVT]",
-      "C507 pad at (47.80, 22.72) [+3V3_EVT]",
-      "U501 pad at (47.70, 19.75) [+3V3_EVT]",
-      "C127 pad at (29.12, 20.30) [+3V3_EVT]",
-      "U106 pad at (32.89, 34.85) [+3V3_EVT]",
-      "D103 pad at (27.71, 29.65) [+3V3_EVT]",
-      "C122 pad at (25.12, 38.20) [+3V3_EVT]",
-      "U104 pad at (23.49, 37.47) [+3V3_EVT]",
-      "D102 pad at (16.21, 32.65) [+3V3_EVT]",
-      "C113 pad at (39.73, 31.25) [GND]",
-      "FB101 pad at (26.99, 24.60) [+5V_A]",
-      "C107 pad at (27.02, 19.80) [+3V3_EVT]",
-      "U101 pad at (25.45, 19.75) [+3V3_EVT]",
-      "U2503 pad at (234.10, 17.47) [BUS_GND]",
-      "U2503 pad at (234.10, 12.53) [GND]",
-      "U2503 pad at (237.90, 12.53) [+3V3]",
-      "R2503 pad at (243.20, 27.51) [+3V3]",
-      "C2501 pad at (254.40, 21.62) [+3V3]",
-      "U2501 pad at (254.44, 19.65) [+3V3]",
-      "U2403 pad at (240.89, 33.35) [+3V3]",
-      "U2403 pad at (240.89, 34.00) [+3V3]",
-      "U2402 pad at (53.89, 39.00) [+3V3]",
-      "U2401 pad at (175.68, 83.00) [+3V3]",
-      "U2401 pad at (167.50, 85.18) [+3V3]",
-      "C2706 pad at (186.62, 50.20) [+5V_A]",
-      "U2704 pad at (209.14, 86.00) [+5V_A]",
-      "U2704 pad at (209.14, 86.95) [+5V_A]",
-      "C2703 pad at (186.62, 51.50) [+5V_A]",
-      "U2703 pad at (184.86, 51.32) [+5V_A]",
-      "C2702 pad at (208.30, 72.98) [+3V3_EVT]",
-      "U2702 pad at (210.14, 73.02) [+3V3_EVT]",
-      "U2702 pad at (215.86, 76.27) [+3V3_EVT]",
-      "C2315 pad at (184.30, 62.42) [+5V_A]",
-      "U2306 pad at (184.47, 60.91) [+5V_A]",
-      "C2313 pad at (152.60, 62.42) [+5V_A]",
-      "U2305 pad at (152.47, 60.91) [+5V_A]",
-      "C2311 pad at (173.18, 46.90) [+5V_A]",
-      "U2304 pad at (172.75, 48.56) [GND]",
-      "U2304 pad at (173.25, 48.56) [+5V_A]",
-      "C2308 pad at (164.27, 46.90) [+5V_A]",
-      "U2303 pad at (163.75, 48.56) [GND]",
-      "U2303 pad at (164.25, 48.56) [+5V_A]",
-      "C2305 pad at (155.32, 46.90) [+5V_A]",
-      "U2302 pad at (154.75, 48.56) [GND]",
-      "U2302 pad at (155.25, 48.56) [+5V_A]",
-      "C2302 pad at (145.98, 46.00) [+5V_A]",
-      "U2301 pad at (146.25, 48.56) [+5V_A]",
-      "R2227 pad at (120.76, 88.00) [+3V3]",
-      "R2224 pad at (136.69, 83.50) [+5V_A]",
-      "Q2204 pad at (117.06, 69.55) [GND]",
-      "Q2203 pad at (117.06, 74.05) [GND]",
-      "C2214 pad at (137.25, 70.52) [GND]",
-      "C2213 pad at (119.10, 86.07) [GND]",
-      "D2203 pad at (125.06, 73.05) [+5V_A]",
-      "C2209 pad at (134.38, 78.50) [+5V_A]",
-      "U2202 pad at (134.47, 76.91) [+5V_A]",
-      "C2208 pad at (120.75, 81.02) [GND]",
-      "R2208 pad at (105.90, 74.29) [GND]",
-      "C2206 pad at (104.22, 80.50) [GND]",
-      "R2205 pad at (105.69, 81.90) [GND]",
-      "C2205 pad at (111.50, 78.23) [GND]",
-      "C2204 pad at (105.77, 71.00) [GND]",
-      "R2203 pad at (111.25, 75.74) [GND]",
-      "C2203 pad at (115.98, 86.75) [GND]",
-      "U2201 pad at (108.25, 77.56) [GND]",
-      "U2201 pad at (107.25, 80.44) [GND]",
-      "U2201 pad at (108.00, 79.00) [GND]",
-      "C2202 pad at (106.73, 83.25) [GND]",
-      "D2603 pad at (56.06, 35.05) [+3V3]",
-      "C2602 pad at (51.50, 12.77) [+3V3]",
-      "U2601 pad at (83.86, 20.50) [GND]",
-      "U2601 pad at (86.14, 21.45) [+3V3]",
-      "TP2105 pad at (60.90, 59.80) [+3V3_EVT]",
-      "TP2104 pad at (71.50, 54.70) [+3V3]",
-      "TP2103 pad at (71.50, 57.00) [+5V_A]",
-      "FB2101 pad at (92.21, 58.50) [+3V3]",
-      "C2112 pad at (63.20, 59.55) [+3V3_EVT]",
-      "U2104 pad at (94.61, 51.65) [+3V3_EVT]",
-      "U2104 pad at (94.61, 51.00) [+3V3_EVT]",
-      "C2110 pad at (68.30, 52.35) [+3V3]",
-      "U2103 pad at (88.61, 51.65) [+3V3]",
-      "U2103 pad at (88.61, 51.00) [+3V3]",
-      "C2108 pad at (63.50, 56.23) [+5V_A]",
-      "U2102 pad at (78.64, 51.95) [+5V_A]",
-      "R2008 pad at (100.00, 29.19) [+3V3]",
-      "U2001 pad at (91.72, 27.22) [GND]"
+      "C1308 pad at (304.23, 23.00) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "C1307 pad at (310.52, 64.50) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "U1307 pad at (311.11, 61.32) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "C1301 pad at (298.72, 50.70) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "U1301 pad at (296.73, 50.91) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "C822 pad at (299.75, 38.52) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "U804 pad at (308.24, 37.47) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "D802 pad at (300.96, 32.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "C807 pad at (310.30, 22.72) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "U801 pad at (310.20, 19.75) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "C427 pad at (291.62, 20.30) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "U406 pad at (295.39, 34.85) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "D403 pad at (290.21, 29.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "C422 pad at (287.62, 38.20) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "U404 pad at (285.99, 37.47) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "D402 pad at (278.71, 32.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "C413 pad at (302.23, 31.25) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "C407 pad at (289.52, 19.80) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "U401 pad at (287.95, 19.75) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "C1208 pad at (216.73, 23.00) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "C1207 pad at (223.02, 64.50) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "U1207 pad at (223.61, 61.32) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "C1201 pad at (211.22, 50.70) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "U1201 pad at (209.23, 50.91) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "C722 pad at (212.25, 38.52) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "U704 pad at (220.74, 37.47) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "D702 pad at (213.46, 32.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "C707 pad at (222.80, 22.72) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "U701 pad at (222.70, 19.75) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "C327 pad at (204.12, 20.30) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "U306 pad at (207.89, 34.85) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "D303 pad at (202.71, 29.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "C322 pad at (200.12, 38.20) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "U304 pad at (198.49, 37.47) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "D302 pad at (191.21, 32.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "C313 pad at (214.73, 31.25) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "C307 pad at (202.02, 19.80) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "U301 pad at (200.45, 19.75) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "C1108 pad at (129.23, 23.00) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "C1107 pad at (135.52, 64.50) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "U1107 pad at (136.11, 61.32) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "C1101 pad at (123.72, 50.70) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "U1101 pad at (121.72, 50.91) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "C622 pad at (124.75, 38.52) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "U604 pad at (133.24, 37.47) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "D602 pad at (125.96, 32.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "C607 pad at (135.30, 22.72) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "U601 pad at (135.20, 19.75) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "C227 pad at (116.62, 20.30) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "U206 pad at (120.39, 34.85) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "D203 pad at (115.21, 29.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "C222 pad at (112.62, 38.20) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "U204 pad at (110.99, 37.47) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "D202 pad at (103.71, 32.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "C213 pad at (127.23, 31.25) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "C207 pad at (114.52, 19.80) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "U201 pad at (112.95, 19.75) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "C1008 pad at (41.73, 23.00) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "C1007 pad at (48.02, 64.50) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "U1007 pad at (48.61, 61.32) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "C1001 pad at (36.22, 50.70) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "U1001 pad at (34.22, 50.91) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "C522 pad at (37.25, 38.52) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "U504 pad at (45.74, 37.47) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "D502 pad at (38.46, 32.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "C507 pad at (47.80, 22.72) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "U501 pad at (47.70, 19.75) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "C127 pad at (29.12, 20.30) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "U106 pad at (32.89, 34.85) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "D103 pad at (27.71, 29.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "C122 pad at (25.12, 38.20) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "U104 pad at (23.49, 37.47) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "D102 pad at (16.21, 32.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "C113 pad at (39.73, 31.25) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "C107 pad at (27.02, 19.80) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "U101 pad at (25.45, 19.75) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "U2503 pad at (234.10, 17.47) [BUS_GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "U2503 pad at (234.10, 12.53) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "U2503 pad at (237.90, 12.53) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
+      "R2503 pad at (243.20, 27.51) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
+      "C2501 pad at (254.40, 21.62) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
+      "U2501 pad at (254.44, 19.65) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
+      "U2403 pad at (240.89, 33.35) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
+      "U2403 pad at (240.89, 34.00) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
+      "U2402 pad at (53.89, 39.00) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
+      "C2706 pad at (186.62, 50.20) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "U2704 pad at (209.14, 86.00) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "U2704 pad at (209.14, 86.95) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "C2703 pad at (186.62, 51.50) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "U2703 pad at (184.86, 51.32) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "C2702 pad at (208.30, 72.98) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "U2702 pad at (210.14, 73.02) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "U2702 pad at (215.86, 76.27) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "C2315 pad at (184.30, 62.42) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "U2306 pad at (184.47, 60.91) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "C2313 pad at (152.60, 62.42) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "U2305 pad at (152.47, 60.91) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "C2311 pad at (173.18, 46.90) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "U2304 pad at (173.25, 48.56) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "C2308 pad at (164.27, 46.90) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "U2303 pad at (164.25, 48.56) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "C2305 pad at (155.32, 46.90) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "U2302 pad at (155.25, 48.56) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "C2302 pad at (145.98, 46.00) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "U2301 pad at (146.25, 48.56) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "R2224 pad at (136.69, 83.50) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "Q2204 pad at (117.06, 69.55) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "Q2203 pad at (117.06, 74.05) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "C2213 pad at (119.10, 86.07) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "D2203 pad at (125.06, 73.05) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "C2209 pad at (134.38, 78.50) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "U2202 pad at (134.47, 76.91) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "C2208 pad at (120.75, 81.02) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "R2208 pad at (105.90, 74.29) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "C2205 pad at (111.50, 78.23) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "C2204 pad at (105.77, 71.00) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "R2203 pad at (111.25, 75.74) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "C2203 pad at (115.98, 86.75) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "U2201 pad at (108.25, 77.56) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "U2201 pad at (107.25, 80.44) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "U2201 pad at (108.00, 79.00) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "C2202 pad at (106.73, 83.25) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "D2603 pad at (56.86, 37.65) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
+      "C2602 pad at (88.25, 25.02) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
+      "U2601 pad at (83.86, 26.00) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "U2601 pad at (86.14, 26.95) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
+      "TP2105 pad at (60.90, 59.80) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "TP2104 pad at (71.50, 54.70) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
+      "TP2103 pad at (71.50, 57.00) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "FB2101 pad at (92.21, 58.50) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
+      "C2112 pad at (63.20, 59.55) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "U2104 pad at (94.61, 51.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "U2104 pad at (94.61, 51.00) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "C2110 pad at (68.30, 52.35) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
+      "U2103 pad at (88.61, 51.65) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
+      "U2103 pad at (88.61, 51.00) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
+      "C2108 pad at (63.50, 56.23) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "U2102 pad at (78.64, 51.95) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up"
+    ],
+    "long_fanout": [
+      "R1317 [+3V3] 40.5 mm",
+      "R1217 [+3V3] 41.7 mm",
+      "R1117 [+3V3] 42.2 mm",
+      "R1017 [+3V3] 39.9 mm"
     ],
     "plane_nets": [
       "+3V3",
@@ -7006,7 +7056,7 @@
       "BUS_GND",
       "GND"
     ],
-    "vias": 836
+    "vias": 857
   },
   "pwr_flags": [
     "VIN_CM",
@@ -7021,6 +7071,7 @@
     "TCXO_VDD",
     "BUS_GND",
     "BUS_5VF",
+    "FRAME_H3",
     "F0_V5",
     "R0_V5",
     "F1_V5",
@@ -7028,7 +7079,13 @@
     "F2_V5",
     "R2_V5",
     "F3_V5",
-    "R3_V5"
+    "R3_V5",
+    "FRAME_H2",
+    "FRAME_H4",
+    "FRAME_H5",
+    "FRAME_H6",
+    "FRAME_H7",
+    "FRAME_H8"
   ],
   "route_info": {
     "dsn_sha256": "bf4366091db28b6feed9c82ae23f9c5e3c9cc065e3883117cab1a144d935399d",
@@ -7044,20 +7101,15 @@
     "timed_out": false
   },
   "route_stats": {
-    "dangling_tracks_removed": 0,
-    "finisher_items": null,
-    "necked_tracks_widened": 7,
-    "preroutes": 2111,
-    "preroutes_missing_after_import": 0,
-    "track_length_mm": 18448.69,
-    "tracks": 6882,
-    "unconnected_after_fill": 340,
-    "unconnected_before_cleanup": 340,
-    "unused_escapes_removed": 0,
-    "vias": 2094
+    "track_length_mm": 1583.56,
+    "tracks": 916,
+    "unconnected_after_fill": 1468,
+    "vias": 898
   },
-  "routed": true,
+  "routed": false,
   "routing": {
+    "budget": null,
+    "chunk": 900,
     "enabled": true,
     "escape": false,
     "escape_direct": true,
@@ -7070,13 +7122,22 @@
     "fanout": false,
     "finisher": false,
     "finisher_ripup": true,
+    "finisher_seconds": 900,
+    "fr_fallback": "none",
     "layers": 6,
+    "long_fanout_seconds": 600,
     "optimizer": true,
     "passes": 40,
     "plane_fanout": true,
+    "restarts": 1,
     "retries": 0,
+    "stall": 2,
     "threads": null,
-    "timeout": 540
+    "timeout": 540,
+    "zone_nets": "auto"
   },
-  "single_pin_nets": []
+  "single_pin_nets": [
+    "FRAME_H4",
+    "FRAME_H7"
+  ]
 }

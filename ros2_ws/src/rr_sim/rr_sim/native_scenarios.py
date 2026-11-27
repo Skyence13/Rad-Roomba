@@ -123,7 +123,7 @@ def n03(tmp, preset_s=3.0):
         c.add("every cell records method and stage", all(r["method"] == "STEP_AND_COUNT" and r["stage"] == "SCALER" for r in rows))
         flags = [f for f in proc.flags if f["kind"] == "INVESTIGATION_LEVEL"]
         c.add("hot spot flagged from static counts", any(abs(f["x_m"] - 0.995) < 0.06 for f in flags), flags=[(f["id"], f["x_m"], f["y_m"]) for f in flags])
-        dh = sorted(d.D_hash for d in proc.decisions["beta"].values() if d.D is not None and math.isfinite(d.D_hash))
+        dh = sorted(d.D_hash for d in proc.decisions["beta"].values() if d.D is not None and d.D_hash is not None and math.isfinite(d.D_hash))
         ev = sc._finish("native_s10_step_and_count", sim, c, {"stations": len(stations), "stations_invalid": sum(1 for s in stations if not s["valid"]),
                                                              "station_preset_s": preset_s, "station_pitch_m": app.mission.cfg.station_pitch_m, "D_hash_median": dh[len(dh) // 2] if dh else None})
     finally:

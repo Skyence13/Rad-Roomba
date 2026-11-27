@@ -103,16 +103,25 @@ HOLES = {"H2801": (75.5, 30.0), "H2802": (163.0, 4.5), "H2803": (250.5, 4.5), "H
 # J1 cable port).  All other holes at the envelope positions.
 BOARD = {ref: (x, y, 0, "F") for ref, (x, y) in HOLES.items()}
 BOARD.update({
-    # J1 landing: two rear-facing Micro-Fit headers side by side (pin row at v 10.57, mating faces at v 1.5)
-    "J2001": (97.34, 10.57, 180, "F"),   # J1 pigtail (8-way), pins 1..8 at u 97.34 .. 76.34
-    "J2601": (68.58, 10.57, 180, "F"),   # heater / NTC (6-way), pins 1..6 at u 68.58 .. 53.58
-    # power entry (right part of the J1 landing, near J2001 pins 1/2)
-    "D2001": (96.0, 16.5, 90, "F"), "L2001": (96.5, 23.0, 90, "F"), "U2001": (94.0, 30.0, 270, "F"),
-    "L2002": (95.5, 37.0, 0, "F"),
-    # heater switch (middle of the J1 landing, between J2001 pins 3/4 and J2601 pins 1/2)
-    "R2601": (84.0, 15.2, 0, "F"), "Q2601": (73.5, 17.0, 0, "F"), "D2601": (60.5, 16.2, 0, "F"),
-    "U2601": (85.0, 20.5, 0, "F"), "D2602": (64.0, 22.5, 0, "F"), "Q2602": (62.0, 27.0, 0, "F"),
-    "Q2603": (57.0, 31.0, 0, "F"), "D2603": (57.0, 36.0, 0, "F"), "D2604": (53.0, 22.0, 90, "F"),
+    # J1 landing (stage 3, IB-61): the two rear-facing Micro-Fit headers moved 7.0 mm forward: pin row v 17.57 (was
+    # 10.57), mating faces v 8.5, mated plug backs v -1.4 = 9.0 mm in front of the rear-wall inner face (v -10.4).
+    "J2001": (97.34, 17.57, 180, "F"),   # J1 pigtail (8-way), pins 1..8 at u 97.34 .. 76.34
+    "J2601": (68.58, 17.57, 180, "F"),   # heater / NTC (6-way), pins 1..6 at u 68.58 .. 53.58
+    # power entry: TVS - CM choke - eFuse - pi filter in a column in front of J2001 pins 1/2 (compressed by 7 mm)
+    "D2001": (96.0, 21.85, 0, "F"), "L2001": (96.5, 26.0, 0, "F"), "U2001": (94.0, 31.65, 270, "F"),
+    "L2002": (95.5, 38.7, 0, "F"),
+    # heater switch cell in front of J2001 pins 3/4 and J2601 pins 1/2 (loop confined to u 51..100, v 17..41)
+    "R2601": (84.0, 21.5, 0, "F"), "Q2601": (73.5, 22.9, 0, "F"), "D2601": (60.5, 21.8, 0, "F"),
+    "U2601": (85.0, 26.0, 0, "F"), "D2602": (64.5, 27.2, 0, "F"), "Q2602": (60.5, 31.2, 0, "F"),
+    "Q2603": (56.0, 33.9, 0, "F"), "D2603": (57.8, 38.6, 0, "F"), "D2604": (53.0, 27.6, 90, "F"),
+    # frame bond at H1 (review M3/M5): fuse + 0 R + bleed within 1 mm of the H2801 pad, J1 shield parts right of it
+    "F2801": (70.75, 30.0, 90, "F"), "R2801": (68.5, 30.0, 90, "F"), "R2802": (71.4, 34.0, 90, "F"),
+    "C2007": (80.3, 29.0, 90, "F"), "R2012": (80.3, 32.4, 90, "F"), "TP2004": (83.0, 29.1, 0, "F"),
+    # HF frame bonds at H2 / H5 / H6 / H8 (H3 is inside the isolated island), J2 shield parts at H3 / J2501
+    "C2801": (167.6, 4.5, 90, "F"), "C2803": (160.3, 87.1, 0, "F"), "C2804": (255.0, 91.5, 90, "F"),
+    "C2802": (316.6, 48.0, 90, "F"),
+    "TP2501": (241.5, 2.5, 0, "F"), "R2505": (241.0, 6.3, 90, "F"), "C2504": (242.9, 6.3, 90, "F"),
+    "R2418": (195.5, 75.6, 0, "F"),
     # regulators in front of the trunk
     "U2101": (58.0, 52.0, 0, "F"), "L2101": (64.5, 52.0, 0, "F"), "L2102": (72.0, 51.0, 90, "F"),
     "U2102": (77.5, 51.0, 0, "F"), "L2103": (84.0, 51.0, 90, "F"), "U2103": (89.5, 51.0, 0, "F"),
@@ -198,7 +207,7 @@ def _rules(board):
     board.netclass("HV", hv, track=0.25, clearance=1.0, via_dia=0.6, via_drill=0.3)
     board.netclass("HEATER", ["HEAD_HTR_P", "HEAD_HTR_N", "HTR_PS", "HTR_SW"], track=1.0, clearance=1.0, via_dia=1.0, via_drill=0.5)
     board.netclass("POWER", ["GND", "+5V_A", "+3V3", "+3V3_EVT", "+5V6", "+5V6_A", "+5V6_E", "+3V3A", "+3V3_HV", "VIN_*",
-                             "HEAD_PWR_*", "BK_SW", "TCXO_VDD", "EF_RTN", "[FR]?_V5", "FRAME"],
+                             "HEAD_PWR_*", "BK_SW", "TCXO_VDD", "EF_RTN", "[FR]?_V5", "FRAME", "FRAME_*"],
                    track=0.4, clearance=0.15, via_dia=0.6, via_drill=0.3)
     board.netclass("ISOLATED", ["BUS_*", "J2_PRES", "SYNC_RX_B"], track=0.4, clearance=0.25)
     board.netclass("DIFF", ["RS485_DP", "RS485_DN", "SYNC_P", "SYNC_N"], track=0.25, clearance=0.25, diff_width=0.25, diff_gap=0.25)
@@ -209,6 +218,10 @@ def _rules(board):
                 "GND copper (plane fan-out stubs/vias of the clip pads and of parts next to the wall) under a shield-can "
                 "wall: the can is on GND, so GND copper under it is harmless; the wall keep-outs exist to keep every OTHER "
                 "net off F.Cu under the walls.", match=r"KO_WALL_[^|]*\| (Track|Via) \[GND\]")
+    board.waive("drc", "items_not_allowed",
+                "Frame-bond pre-route (stage 3, review M3) from a bond part to its own mounting-hole pad: the track is on the "
+                "hole's net (FRAME / FRAME_Hx), the same potential as the standoff and screw head the keep-out protects.",
+                match=r"KO_H28\d\d[^|]*\| Track \[FRAME(_H\d)?\]")
     # waiver: pads of ONE component closer than its own net-class clearance (U.FL centre pin to shell 0.45 mm,
     # 0603/0805/1206 HV capacitor and resistor terminals): the spacing is the part's rated spacing, not a layout choice.
     board.waive("drc", "clearance",
@@ -239,12 +252,16 @@ def _keepouts(board):
     for i, (x, y, r) in enumerate(_hv_pad_circles()):
         board.keepout("KO_HVVIA_%d" % i, circle=(x, y, 2 * r), layers=("*.Cu",), tracks=False, vias=True, copper=False,
                       pads=False, footprints=False)
+    # mated Micro-Fit plugs on J2601 / J2001 (stage 3, IB-61): plug bodies over the board from the mating faces (v 8.5)
+    # to the rear edge (keep-out to v 8.0, where the header courtyards begin) - no footprints there (head mechanical keep-out plug_ko_J2001 / plug_ko_J2601)
+    board.keepout("KO_PLUG_J1", polygon=PLUG_KO, layers=("F.Cu",), tracks=False, vias=False, copper=False, footprints=True)
     # HV trunk corridor: no footprints within +-1.5 mm of the trunk (parts kept clear; the trunk is a pre-route)
     board.keepout("KO_TRUNK", polygon=[(12.0, V_TRUNK - 1.6), (314.0, V_TRUNK - 1.6), (314.0, V_TRUNK + 1.6), (12.0, V_TRUNK + 1.6)],
                   layers=("F.Cu",), tracks=False, vias=False, copper=False, footprints=True)
 
 
 ISLAND = [(230.0, 0.0), (272.0, 0.0), (272.0, 13.0), (230.0, 13.0)]
+PLUG_KO = [(50.45, 0.0), (100.9, 0.0), (100.9, 8.0), (50.45, 8.0)]   # header courtyards start at v 8.11
 BARRIER_OUT = [(226.0, 0.0), (276.0, 0.0), (276.0, 17.0), (226.0, 17.0)]
 
 
@@ -252,22 +269,25 @@ def _planes(board):
     W, H = 326.0, 96.0
     # In1 = GND everywhere except the isolated island + barrier (one polygon with a rectangular notch at the rear edge)
     gnd = [(0.0, 0.0), (226.0, 0.0), (226.0, 17.0), (276.0, 17.0), (276.0, 0.0), (W, 0.0), (W, H), (0.0, H)]
+    # stage 3 (M6): In1 AND In4 are solid GND (except the isolated island + barrier); the power split is on In3
     board.zone("GND", ["In1.Cu"], polygon=gnd, connect="solid", name="GND_In1")
     board.zone("BUS_GND", ["In1.Cu"], polygon=ISLAND, connect="solid", name="BUS_GND_In1")
-    # In4 power split (non-overlapping): +5V_A under the AFE strip, +3V3_EVT under the lane logic, +5V6 at J1 / REG,
+    board.zone("GND", ["In4.Cu"], polygon=gnd, connect="solid", name="GND_In4")
+    board.zone("BUS_GND", ["In4.Cu"], polygon=ISLAND, connect="solid", name="BUS_GND_In4")
+    # In3 power split (non-overlapping): +5V_A under the AFE strip, +3V3_EVT under the lane logic, +5V6 at J1 / REG,
     # +3V3 for the rest (MCU, DAC, bias, front strip)
-    board.zone("+5V_A", ["In4.Cu"], polygon=[(0, 0), (49.9, 0), (49.9, 41.5), (0, 41.5)], connect="solid", name="P5VA_0")
-    board.zone("+5V_A", ["In4.Cu"], polygon=[(101.1, 0), (226, 0), (226, 17.0), (276, 17.0), (276, 0), (W, 0), (W, 41.5),
+    board.zone("+5V_A", ["In3.Cu"], polygon=[(0, 0), (49.9, 0), (49.9, 41.5), (0, 41.5)], connect="solid", name="P5VA_0")
+    board.zone("+5V_A", ["In3.Cu"], polygon=[(101.1, 0), (226, 0), (226, 17.0), (276, 17.0), (276, 0), (W, 0), (W, 41.5),
                                              (101.1, 41.5)], connect="solid", name="P5VA_1")
     for k, c in enumerate(LC):
-        board.zone("+3V3_EVT", ["In4.Cu"], polygon=[(c - 18, 41.5), (c + 18, 41.5), (c + 18, 67.5), (c - 18, 67.5)],
+        board.zone("+3V3_EVT", ["In3.Cu"], polygon=[(c - 18, 41.5), (c + 18, 41.5), (c + 18, 67.5), (c - 18, 67.5)],
                    connect="solid", name="P3V3EVT_%d" % k)
-    board.zone("+5V6", ["In4.Cu"], polygon=[(49.9, 0), (101.1, 0), (101.1, 67.5), (49.9, 67.5)], connect="solid", name="P5V6")
+    board.zone("+5V6", ["In3.Cu"], polygon=[(49.9, 0), (101.1, 0), (101.1, 67.5), (49.9, 67.5)], connect="solid", name="P5V6")
     l = LC
     p3 = [(0, 41.5), (l[0] - 18, 41.5), (l[0] - 18, 67.5), (l[1] + 18, 67.5), (l[1] + 18, 41.5), (l[2] - 18, 41.5),
           (l[2] - 18, 67.5), (l[2] + 18, 67.5), (l[2] + 18, 41.5), (l[3] - 18, 41.5), (l[3] - 18, 67.5), (l[3] + 18, 67.5),
           (l[3] + 18, 41.5), (W, 41.5), (W, H), (0, H)]
-    board.zone("+3V3", ["In4.Cu"], polygon=p3, connect="solid", name="P3V3")
+    board.zone("+3V3", ["In3.Cu"], polygon=p3, connect="solid", name="P3V3")
     # outer layers: GND pour (added after routing), BUS_GND in the island; isolation barrier = keep-out on all layers
     board.zone("GND", ["F.Cu", "B.Cu"], polygon=gnd, connect="solid", name="GND_outer", clearance=0.3)
     board.zone("BUS_GND", ["F.Cu", "B.Cu"], polygon=ISLAND, connect="solid", name="BUS_GND_outer")
@@ -481,7 +501,7 @@ def preroutes(board):
             _n, _R, (ax, ay) = bypad[(j1, "1")]
             r3 = bypad[("R%d" % (cb + 3), "1")][2]
             board.track(an, [(ax, ay), (ax, r3[1] - 0.95), (r3[0], r3[1] - 0.33), r3], layer="F.Cu", width=0.2)
-    # trunk: F.Cu along v = V_TRUNK over all drops, plus the riser to the bias block on In3
+    # trunk: F.Cu along v = V_TRUNK over all drops, plus the riser to the bias block on In2 (In3 is the power plane)
     xs = sorted(drops)
     xr = 138.6
     board.track("HV_BUS", [(xs[0], V_TRUNK), (xs[-1], V_TRUNK)], layer="F.Cu", width=0.3)
@@ -499,12 +519,32 @@ def preroutes(board):
         board.track("HV_BUS", [tgt[2], vb], layer="F.Cu", width=0.25)
         board.via("HV_BUS", *vb)
         mid = (xr, vb[1] - (xr - vb[0]) if xr - vb[0] < vb[1] - V_TRUNK else V_TRUNK)
-        board.track("HV_BUS", [(xr, V_TRUNK), mid, vb], layer="In3.Cu", width=0.25)
+        board.track("HV_BUS", [(xr, V_TRUNK), mid, vb], layer="In2.Cu", width=0.25)   # stage 3: In3 is a plane
         RISER[:] = [((xr, V_TRUNK), mid), (mid, vb)]
         vias.append(vb)
     else:
         notes.append("no via position next to C2213")
+    notes += _frame_tracks(board, bypad)
     return notes, vias
+
+
+# (part, pin, hole) of every frame-bond pad: a locked F.Cu track from the pad into its own hole pad (review M3)
+FRAME_PADS = [("F2801", "1", "H2801"), ("R2802", "1", "H2801"), ("C2007", "2", "H2801"), ("R2012", "2", "H2801"),
+              ("C2801", "1", "H2802"), ("C2504", "2", "H2803"), ("R2505", "2", "H2803"), ("C2803", "1", "H2805"),
+              ("C2804", "1", "H2806"), ("C2802", "1", "H2808")]
+
+
+def _frame_tracks(board, bypad):
+    import math
+    notes = []
+    for ref, pin, hole in FRAME_PADS:
+        net, _R, (px, py) = bypad[(ref, pin)]
+        hx, hy = HOLES[hole]
+        d = math.hypot(px - hx, py - hy)
+        ex, ey = hx + (px - hx) * 2.4 / d, hy + (py - hy) * 2.4 / d       # inside the 6 mm hole pad
+        board.track(net, [(round(px, 3), round(py, 3)), (round(ex, 3), round(ey, 3))], layer="F.Cu", width=0.6)
+        notes.append("frame track %s.%s -> %s (%s), %.1f mm" % (ref, pin, hole, net, d - 2.4))
+    return notes
 
 
 def _hv_via_bands(board, vias):

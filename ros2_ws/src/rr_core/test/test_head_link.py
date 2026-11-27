@@ -196,3 +196,26 @@ def test_presence_event_closes_session(examples, demo_registry):
     rig.master.notify_continuity_event("J2_UNPLUG")
     rig.run(0.1)
     assert "CONTINUITY:J2_UNPLUG" in rig.ev("session_close")[0]["reason"]
+
+
+def test_heater_transition_is_derived_from_consecutive_frames_and_after_gaps(examples, demo_registry):
+    """head_icd_addendum_0.4 (firmware 0.5.1): ACQ has no heater-transition member; the host derives it from consecutive
+    frames, and treats the gate after a sequence gap as marked.  DIAG members added by the firmware are archived verbatim
+    and the interpreter hands the DIAG body to the processing (alpha_short per lane)."""
+    rig = Rig(examples, demo_registry)
+    rig.run(3.0)
+    gates = [e["gate"] for e in rig.ev("gate")]
+    assert all(g["marks"] == [] and g["heater_transition"] is False for g in gates)
+    interp = rig.master.interp
+    n0 = len(gates)
+    interp._prev_heater = "ON"                         # the fake head reports OFF: the next gate contains the edge
+    rig.run(0.5)
+    g1 = [e["gate"] for e in rig.ev("gate")][n0]
+    assert g1["marks"] == ["HEATER_TRANSITION"] and g1["heater_transition"] is True
+    n1 = len(rig.ev("gate"))
+    interp._marked_next = True                         # as set by a SEQUENCE_SKIP / BUFFER_EXPIRED / TIME_GAP
+    rig.run(0.5)
+    g2 = [e["gate"] for e in rig.ev("gate")][n1]
+    assert g2["marks"] == ["AFTER_GAP"]
+    diags = rig.ev("diag")
+    assert diags and all(len(d["body"]["lanes"]) == 4 and "alpha_short" in d["body"]["lanes"][0] and d["body"]["bumper_zones"] is None for d in diags)

@@ -47,6 +47,8 @@ class SurveyPipeline:
                 self.proc.add_gate(ev["gate"])
             elif kind == "gap":
                 self.proc.add_gap(ev)
+            elif kind == "diag":
+                self.proc.add_diag(ev)
             elif kind == "fit":
                 self.fits.append(ev["fit"] | {"attachment": ev["attachment"]})
             elif kind == "session_close":

@@ -895,6 +895,39 @@
    ]
   },
   {
+   "ref": "C150",
+   "value": "47nF",
+   "group": "LANE0_FLOOR",
+   "symbol": "Device:C",
+   "footprint": "Capacitor_SMD:C_0402_1005Metric",
+   "mpn": "GRM155R71C473KA01D",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "F0_PZ",
+     "type": "passive",
+     "pad_xy_mm": [
+      25.02,
+      29.75
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "F0_FS",
+     "type": "passive",
+     "pad_xy_mm": [
+      25.98,
+      29.75
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
    "ref": "C201",
    "value": "1uF",
    "group": "LANE1_FLOOR",
@@ -1780,6 +1813,39 @@
      "pad_xy_mm": [
       117.58,
       20.3
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "C250",
+   "value": "47nF",
+   "group": "LANE1_FLOOR",
+   "symbol": "Device:C",
+   "footprint": "Capacitor_SMD:C_0402_1005Metric",
+   "mpn": "GRM155R71C473KA01D",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "F1_PZ",
+     "type": "passive",
+     "pad_xy_mm": [
+      112.52,
+      29.75
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "F1_FS",
+     "type": "passive",
+     "pad_xy_mm": [
+      113.48,
+      29.75
      ],
      "side": "F"
     }
@@ -2677,6 +2743,39 @@
    ]
   },
   {
+   "ref": "C350",
+   "value": "47nF",
+   "group": "LANE2_FLOOR",
+   "symbol": "Device:C",
+   "footprint": "Capacitor_SMD:C_0402_1005Metric",
+   "mpn": "GRM155R71C473KA01D",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "F2_PZ",
+     "type": "passive",
+     "pad_xy_mm": [
+      200.02,
+      29.75
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "F2_FS",
+     "type": "passive",
+     "pad_xy_mm": [
+      200.98,
+      29.75
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
    "ref": "C401",
    "value": "1uF",
    "group": "LANE3_FLOOR",
@@ -3568,6 +3667,39 @@
    ]
   },
   {
+   "ref": "C450",
+   "value": "47nF",
+   "group": "LANE3_FLOOR",
+   "symbol": "Device:C",
+   "footprint": "Capacitor_SMD:C_0402_1005Metric",
+   "mpn": "GRM155R71C473KA01D",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "F3_PZ",
+     "type": "passive",
+     "pad_xy_mm": [
+      287.52,
+      29.75
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "F3_FS",
+     "type": "passive",
+     "pad_xy_mm": [
+      288.48,
+      29.75
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
    "ref": "C501",
    "value": "1uF",
    "group": "LANE0_REF",
@@ -4209,8 +4341,8 @@
      "net": "R0_TL",
      "type": "passive",
      "pad_xy_mm": [
-      47.42,
-      37.4
+      34.25,
+      32.52
      ],
      "side": "F"
     },
@@ -4220,8 +4352,8 @@
      "net": "GND",
      "type": "passive",
      "pad_xy_mm": [
-      48.38,
-      37.4
+      34.25,
+      33.48
      ],
      "side": "F"
     }
@@ -4288,6 +4420,39 @@
      "pad_xy_mm": [
       37.25,
       39.48
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "C550",
+   "value": "47nF",
+   "group": "LANE0_REF",
+   "symbol": "Device:C",
+   "footprint": "Capacitor_SMD:C_0402_1005Metric",
+   "mpn": "GRM155R71C473KA01D",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "R0_PZ",
+     "type": "passive",
+     "pad_xy_mm": [
+      35.5,
+      30.52
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "R0_FS",
+     "type": "passive",
+     "pad_xy_mm": [
+      35.5,
+      31.48
      ],
      "side": "F"
     }
@@ -4935,8 +5100,8 @@
      "net": "R1_TL",
      "type": "passive",
      "pad_xy_mm": [
-      134.92,
-      37.4
+      121.75,
+      32.52
      ],
      "side": "F"
     },
@@ -4946,8 +5111,8 @@
      "net": "GND",
      "type": "passive",
      "pad_xy_mm": [
-      135.88,
-      37.4
+      121.75,
+      33.48
      ],
      "side": "F"
     }
@@ -5014,6 +5179,39 @@
      "pad_xy_mm": [
       124.75,
       39.48
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "C650",
+   "value": "47nF",
+   "group": "LANE1_REF",
+   "symbol": "Device:C",
+   "footprint": "Capacitor_SMD:C_0402_1005Metric",
+   "mpn": "GRM155R71C473KA01D",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "R1_PZ",
+     "type": "passive",
+     "pad_xy_mm": [
+      123.0,
+      30.52
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "R1_FS",
+     "type": "passive",
+     "pad_xy_mm": [
+      123.0,
+      31.48
      ],
      "side": "F"
     }
@@ -5661,8 +5859,8 @@
      "net": "R2_TL",
      "type": "passive",
      "pad_xy_mm": [
-      222.42,
-      37.4
+      209.25,
+      32.52
      ],
      "side": "F"
     },
@@ -5672,8 +5870,8 @@
      "net": "GND",
      "type": "passive",
      "pad_xy_mm": [
-      223.38,
-      37.4
+      209.25,
+      33.48
      ],
      "side": "F"
     }
@@ -5740,6 +5938,39 @@
      "pad_xy_mm": [
       212.25,
       39.48
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "C750",
+   "value": "47nF",
+   "group": "LANE2_REF",
+   "symbol": "Device:C",
+   "footprint": "Capacitor_SMD:C_0402_1005Metric",
+   "mpn": "GRM155R71C473KA01D",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "R2_PZ",
+     "type": "passive",
+     "pad_xy_mm": [
+      210.5,
+      30.52
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "R2_FS",
+     "type": "passive",
+     "pad_xy_mm": [
+      210.5,
+      31.48
      ],
      "side": "F"
     }
@@ -6387,8 +6618,8 @@
      "net": "R3_TL",
      "type": "passive",
      "pad_xy_mm": [
-      309.92,
-      37.4
+      296.75,
+      32.52
      ],
      "side": "F"
     },
@@ -6398,8 +6629,8 @@
      "net": "GND",
      "type": "passive",
      "pad_xy_mm": [
-      310.88,
-      37.4
+      296.75,
+      33.48
      ],
      "side": "F"
     }
@@ -6466,6 +6697,39 @@
      "pad_xy_mm": [
       299.75,
       39.48
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "C850",
+   "value": "47nF",
+   "group": "LANE3_REF",
+   "symbol": "Device:C",
+   "footprint": "Capacitor_SMD:C_0402_1005Metric",
+   "mpn": "GRM155R71C473KA01D",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "R3_PZ",
+     "type": "passive",
+     "pad_xy_mm": [
+      298.0,
+      30.52
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "R3_FS",
+     "type": "passive",
+     "pad_xy_mm": [
+      298.0,
+      31.48
      ],
      "side": "F"
     }
@@ -7872,8 +8136,8 @@
      "net": "VIN_EF",
      "type": "passive",
      "pad_xy_mm": [
-      94.075,
-      22.5
+      87.25,
+      37.225
      ],
      "side": "F"
     },
@@ -7883,8 +8147,8 @@
      "net": "GND",
      "type": "passive",
      "pad_xy_mm": [
-      91.125,
-      22.5
+      87.25,
+      34.275
      ],
      "side": "F"
     }
@@ -7938,8 +8202,8 @@
      "net": "VIN_F",
      "type": "passive",
      "pad_xy_mm": [
-      99.3,
-      37.525
+      90.275,
+      46.5
      ],
      "side": "F"
     },
@@ -7949,8 +8213,8 @@
      "net": "VIN_DMP",
      "type": "passive",
      "pad_xy_mm": [
-      99.3,
-      40.475
+      93.225,
+      46.5
      ],
      "side": "F"
     }
@@ -8004,8 +8268,8 @@
      "net": "SHLD_J1",
      "type": "passive",
      "pad_xy_mm": [
-      25.275,
-      68.5
+      80.3,
+      28.225
      ],
      "side": "F"
     },
@@ -8015,8 +8279,8 @@
      "net": "FRAME",
      "type": "passive",
      "pad_xy_mm": [
-      23.725,
-      68.5
+      80.3,
+      29.775
      ],
      "side": "F"
     }
@@ -10215,8 +10479,8 @@
      "net": "+3V3",
      "type": "passive",
      "pad_xy_mm": [
-      193.02,
-      75.6
+      192.77,
+      75.5
      ],
      "side": "F"
     },
@@ -10226,8 +10490,8 @@
      "net": "GND",
      "type": "passive",
      "pad_xy_mm": [
-      193.98,
-      75.6
+      193.73,
+      75.5
      ],
      "side": "F"
     }
@@ -10413,19 +10677,19 @@
      "net": "SHLD_J2",
      "type": "passive",
      "pad_xy_mm": [
-      250.7,
-      68.825
+      242.9,
+      5.525
      ],
      "side": "F"
     },
     {
      "pin": "2",
      "name": "~",
-     "net": "FRAME",
+     "net": "FRAME_H3",
      "type": "passive",
      "pad_xy_mm": [
-      250.7,
-      70.375
+      242.9,
+      7.075
      ],
      "side": "F"
     }
@@ -10446,8 +10710,8 @@
      "net": "HEAD_HTR_P",
      "type": "passive",
      "pad_xy_mm": [
-      74.5,
-      24.725
+      85.5,
+      29.025
      ],
      "side": "F"
     },
@@ -10457,8 +10721,8 @@
      "net": "HEAD_HTR_N",
      "type": "passive",
      "pad_xy_mm": [
-      74.5,
-      21.775
+      85.5,
+      31.975
      ],
      "side": "F"
     }
@@ -10479,8 +10743,8 @@
      "net": "+3V3",
      "type": "passive",
      "pad_xy_mm": [
-      51.5,
-      12.77
+      88.25,
+      25.02
      ],
      "side": "F"
     },
@@ -10490,8 +10754,8 @@
      "net": "GND",
      "type": "passive",
      "pad_xy_mm": [
-      51.5,
-      13.73
+      88.25,
+      25.98
      ],
      "side": "F"
     }
@@ -10545,8 +10809,8 @@
      "net": "HTR_GATE",
      "type": "passive",
      "pad_xy_mm": [
-      71.27,
-      23.75
+      66.0,
+      21.52
      ],
      "side": "F"
     },
@@ -10556,8 +10820,8 @@
      "net": "HTR_SW",
      "type": "passive",
      "pad_xy_mm": [
-      72.23,
-      23.75
+      66.0,
+      22.48
      ],
      "side": "F"
     }
@@ -10611,8 +10875,8 @@
      "net": "NTC_HTR",
      "type": "passive",
      "pad_xy_mm": [
-      65.3,
-      14.28
+      55.02,
+      25.0
      ],
      "side": "F"
     },
@@ -10622,8 +10886,8 @@
      "net": "GND",
      "type": "passive",
      "pad_xy_mm": [
-      65.3,
-      13.32
+      55.98,
+      25.0
      ],
      "side": "F"
     }
@@ -10905,11 +11169,11 @@
     {
      "pin": "1",
      "name": "~",
-     "net": "FRAME",
+     "net": "FRAME_H2",
      "type": "passive",
      "pad_xy_mm": [
-      318.125,
-      22.2
+      167.6,
+      3.725
      ],
      "side": "F"
     },
@@ -10919,8 +11183,8 @@
      "net": "GND",
      "type": "passive",
      "pad_xy_mm": [
-      319.675,
-      22.2
+      167.6,
+      5.275
      ],
      "side": "F"
     }
@@ -10938,11 +11202,11 @@
     {
      "pin": "1",
      "name": "~",
-     "net": "FRAME",
+     "net": "FRAME_H8",
      "type": "passive",
      "pad_xy_mm": [
-      321.4,
-      23.125
+      316.6,
+      47.225
      ],
      "side": "F"
     },
@@ -10952,8 +11216,8 @@
      "net": "GND",
      "type": "passive",
      "pad_xy_mm": [
-      321.4,
-      24.675
+      316.6,
+      48.775
      ],
      "side": "F"
     }
@@ -10971,11 +11235,11 @@
     {
      "pin": "1",
      "name": "~",
-     "net": "FRAME",
+     "net": "FRAME_H5",
      "type": "passive",
      "pad_xy_mm": [
-      316.4,
-      23.125
+      159.525,
+      87.1
      ],
      "side": "F"
     },
@@ -10985,8 +11249,8 @@
      "net": "GND",
      "type": "passive",
      "pad_xy_mm": [
-      316.4,
-      24.675
+      161.075,
+      87.1
      ],
      "side": "F"
     }
@@ -11004,11 +11268,11 @@
     {
      "pin": "1",
      "name": "~",
-     "net": "FRAME",
+     "net": "FRAME_H6",
      "type": "passive",
      "pad_xy_mm": [
-      318.125,
-      27.3
+      255.0,
+      90.725
      ],
      "side": "F"
     },
@@ -11018,8 +11282,8 @@
      "net": "GND",
      "type": "passive",
      "pad_xy_mm": [
-      319.675,
-      27.3
+      255.0,
+      92.275
      ],
      "side": "F"
     }
@@ -12052,8 +12316,8 @@
      "net": "HEAD_PWR_P",
      "type": "passive",
      "pad_xy_mm": [
-      96.0,
-      14.35
+      93.85,
+      21.85
      ],
      "side": "F"
     },
@@ -12063,8 +12327,8 @@
      "net": "HEAD_PWR_N",
      "type": "passive",
      "pad_xy_mm": [
-      96.0,
-      18.65
+      98.15,
+      21.85
      ],
      "side": "F"
     }
@@ -12449,7 +12713,7 @@
      "type": "passive",
      "pad_xy_mm": [
       58.35,
-      16.2
+      21.8
      ],
      "side": "F"
     },
@@ -12460,7 +12724,7 @@
      "type": "passive",
      "pad_xy_mm": [
       62.65,
-      16.2
+      21.8
      ],
      "side": "F"
     }
@@ -12481,8 +12745,8 @@
      "net": "HTR_GATE",
      "type": "passive",
      "pad_xy_mm": [
-      63.062,
-      23.45
+      63.562,
+      28.15
      ],
      "side": "F"
     },
@@ -12492,8 +12756,8 @@
      "net": null,
      "type": "no_connect",
      "pad_xy_mm": [
-      63.062,
-      21.55
+      63.562,
+      26.25
      ],
      "side": "F"
     },
@@ -12503,8 +12767,8 @@
      "net": "HTR_PS",
      "type": "passive",
      "pad_xy_mm": [
-      64.938,
-      22.5
+      65.438,
+      27.2
      ],
      "side": "F"
     }
@@ -12525,8 +12789,8 @@
      "net": "GND",
      "type": "passive",
      "pad_xy_mm": [
-      56.062,
-      36.95
+      56.862,
+      39.55
      ],
      "side": "F"
     },
@@ -12536,8 +12800,8 @@
      "net": "+3V3",
      "type": "passive",
      "pad_xy_mm": [
-      56.062,
-      35.05
+      56.862,
+      37.65
      ],
      "side": "F"
     },
@@ -12547,8 +12811,8 @@
      "net": "HTR_CUTOUT_OK",
      "type": "passive",
      "pad_xy_mm": [
-      57.938,
-      36.0
+      58.737,
+      38.6
      ],
      "side": "F"
     }
@@ -12570,7 +12834,7 @@
      "type": "passive",
      "pad_xy_mm": [
       53.0,
-      20.95
+      26.55
      ],
      "side": "F"
     },
@@ -12581,7 +12845,7 @@
      "type": "passive",
      "pad_xy_mm": [
       53.0,
-      23.05
+      28.65
      ],
      "side": "F"
     }
@@ -12626,6 +12890,39 @@
      "pad_xy_mm": [
       199.938,
       86.0
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "F2801",
+   "value": "0.5A fast",
+   "group": "MECH",
+   "symbol": "Device:Fuse",
+   "footprint": "Fuse:Fuse_1206_3216Metric",
+   "mpn": "0466.500NR",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "FRAME",
+     "type": "passive",
+     "pad_xy_mm": [
+      70.75,
+      28.6
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "FRAME_F",
+     "type": "passive",
+     "pad_xy_mm": [
+      70.75,
+      31.4
      ],
      "side": "F"
     }
@@ -12778,8 +13075,8 @@
      "net": "+5V_A",
      "type": "passive",
      "pad_xy_mm": [
-      47.7,
-      29.587
+      34.0,
+      31.038
      ],
      "side": "F"
     },
@@ -12789,8 +13086,8 @@
      "net": "R0_V5",
      "type": "passive",
      "pad_xy_mm": [
-      47.7,
-      28.012
+      34.0,
+      29.462
      ],
      "side": "F"
     }
@@ -12811,8 +13108,8 @@
      "net": "+5V_A",
      "type": "passive",
      "pad_xy_mm": [
-      135.2,
-      29.587
+      121.5,
+      31.038
      ],
      "side": "F"
     },
@@ -12822,8 +13119,8 @@
      "net": "R1_V5",
      "type": "passive",
      "pad_xy_mm": [
-      135.2,
-      28.012
+      121.5,
+      29.462
      ],
      "side": "F"
     }
@@ -12844,8 +13141,8 @@
      "net": "+5V_A",
      "type": "passive",
      "pad_xy_mm": [
-      222.7,
-      29.587
+      209.0,
+      31.038
      ],
      "side": "F"
     },
@@ -12855,8 +13152,8 @@
      "net": "R2_V5",
      "type": "passive",
      "pad_xy_mm": [
-      222.7,
-      28.012
+      209.0,
+      29.462
      ],
      "side": "F"
     }
@@ -12877,8 +13174,8 @@
      "net": "+5V_A",
      "type": "passive",
      "pad_xy_mm": [
-      310.2,
-      29.587
+      296.5,
+      31.038
      ],
      "side": "F"
     },
@@ -12888,8 +13185,8 @@
      "net": "R3_V5",
      "type": "passive",
      "pad_xy_mm": [
-      310.2,
-      28.012
+      296.5,
+      29.462
      ],
      "side": "F"
     }
@@ -13125,7 +13422,7 @@
     {
      "pin": "1",
      "name": "1",
-     "net": "FRAME",
+     "net": "FRAME_H2",
      "type": "input",
      "pad_xy_mm": [
       [
@@ -13181,7 +13478,7 @@
     {
      "pin": "1",
      "name": "1",
-     "net": "FRAME",
+     "net": "FRAME_H3",
      "type": "input",
      "pad_xy_mm": [
       [
@@ -13237,7 +13534,7 @@
     {
      "pin": "1",
      "name": "1",
-     "net": "FRAME",
+     "net": "FRAME_H4",
      "type": "input",
      "pad_xy_mm": [
       [
@@ -13293,7 +13590,7 @@
     {
      "pin": "1",
      "name": "1",
-     "net": "FRAME",
+     "net": "FRAME_H5",
      "type": "input",
      "pad_xy_mm": [
       [
@@ -13349,7 +13646,7 @@
     {
      "pin": "1",
      "name": "1",
-     "net": "FRAME",
+     "net": "FRAME_H6",
      "type": "input",
      "pad_xy_mm": [
       [
@@ -13405,7 +13702,7 @@
     {
      "pin": "1",
      "name": "1",
-     "net": "FRAME",
+     "net": "FRAME_H7",
      "type": "input",
      "pad_xy_mm": [
       [
@@ -13461,7 +13758,7 @@
     {
      "pin": "1",
      "name": "1",
-     "net": "FRAME",
+     "net": "FRAME_H8",
      "type": "input",
      "pad_xy_mm": [
       [
@@ -14521,7 +14818,7 @@
      "type": "passive",
      "pad_xy_mm": [
       97.34,
-      10.57
+      17.57
      ],
      "side": "F"
     },
@@ -14532,7 +14829,7 @@
      "type": "passive",
      "pad_xy_mm": [
       94.34,
-      10.57
+      17.57
      ],
      "side": "F"
     },
@@ -14543,7 +14840,7 @@
      "type": "passive",
      "pad_xy_mm": [
       91.34,
-      10.57
+      17.57
      ],
      "side": "F"
     },
@@ -14554,7 +14851,7 @@
      "type": "passive",
      "pad_xy_mm": [
       88.34,
-      10.57
+      17.57
      ],
      "side": "F"
     },
@@ -14565,7 +14862,7 @@
      "type": "passive",
      "pad_xy_mm": [
       85.34,
-      10.57
+      17.57
      ],
      "side": "F"
     },
@@ -14576,7 +14873,7 @@
      "type": "passive",
      "pad_xy_mm": [
       82.34,
-      10.57
+      17.57
      ],
      "side": "F"
     },
@@ -14587,7 +14884,7 @@
      "type": "passive",
      "pad_xy_mm": [
       79.34,
-      10.57
+      17.57
      ],
      "side": "F"
     },
@@ -14598,7 +14895,7 @@
      "type": "passive",
      "pad_xy_mm": [
       76.34,
-      10.57
+      17.57
      ],
      "side": "F"
     }
@@ -15140,7 +15437,7 @@
      "type": "passive",
      "pad_xy_mm": [
       68.58,
-      10.57
+      17.57
      ],
      "side": "F"
     },
@@ -15151,7 +15448,7 @@
      "type": "passive",
      "pad_xy_mm": [
       65.58,
-      10.57
+      17.57
      ],
      "side": "F"
     },
@@ -15162,7 +15459,7 @@
      "type": "passive",
      "pad_xy_mm": [
       62.58,
-      10.57
+      17.57
      ],
      "side": "F"
     },
@@ -15173,7 +15470,7 @@
      "type": "passive",
      "pad_xy_mm": [
       59.58,
-      10.57
+      17.57
      ],
      "side": "F"
     },
@@ -15184,7 +15481,7 @@
      "type": "passive",
      "pad_xy_mm": [
       56.58,
-      10.57
+      17.57
      ],
      "side": "F"
     },
@@ -15195,7 +15492,7 @@
      "type": "passive",
      "pad_xy_mm": [
       53.58,
-      10.57
+      17.57
      ],
      "side": "F"
     }
@@ -15288,8 +15585,8 @@
      "net": "HEAD_PWR_P",
      "type": "passive",
      "pad_xy_mm": [
-      95.9,
-      21.4
+      94.9,
+      26.6
      ],
      "side": "F"
     },
@@ -15299,8 +15596,8 @@
      "net": "VIN_CM",
      "type": "passive",
      "pad_xy_mm": [
-      95.9,
-      24.6
+      98.1,
+      26.6
      ],
      "side": "F"
     },
@@ -15310,8 +15607,8 @@
      "net": "GND",
      "type": "passive",
      "pad_xy_mm": [
-      97.1,
-      24.6
+      98.1,
+      25.4
      ],
      "side": "F"
     },
@@ -15321,8 +15618,8 @@
      "net": "HEAD_PWR_N",
      "type": "passive",
      "pad_xy_mm": [
-      97.1,
-      21.4
+      94.9,
+      25.4
      ],
      "side": "F"
     }
@@ -15344,7 +15641,7 @@
      "type": "passive",
      "pad_xy_mm": [
       94.315,
-      37.0
+      38.7
      ],
      "side": "F"
     },
@@ -15355,7 +15652,7 @@
      "type": "passive",
      "pad_xy_mm": [
       96.685,
-      37.0
+      38.7
      ],
      "side": "F"
     }
@@ -15905,7 +16202,7 @@
      "type": "input",
      "pad_xy_mm": [
       68.46,
-      19.28
+      25.18
      ],
      "side": "F"
     },
@@ -15916,7 +16213,7 @@
      "type": "passive",
      "pad_xy_mm": [
       74.76,
-      17.0
+      22.9
      ],
      "side": "F"
     },
@@ -15927,7 +16224,7 @@
      "type": "passive",
      "pad_xy_mm": [
       68.46,
-      14.72
+      20.62
      ],
      "side": "F"
     }
@@ -15948,8 +16245,8 @@
      "net": "HTR_ENG",
      "type": "input",
      "pad_xy_mm": [
-      61.062,
-      27.95
+      59.562,
+      32.15
      ],
      "side": "F"
     },
@@ -15959,8 +16256,8 @@
      "net": "GND",
      "type": "passive",
      "pad_xy_mm": [
-      61.062,
-      26.05
+      59.562,
+      30.25
      ],
      "side": "F"
     },
@@ -15970,8 +16267,8 @@
      "net": "HTR_GD",
      "type": "passive",
      "pad_xy_mm": [
-      62.938,
-      27.0
+      61.438,
+      31.2
      ],
      "side": "F"
     }
@@ -15992,8 +16289,8 @@
      "net": "HTR_CQB",
      "type": "input",
      "pad_xy_mm": [
-      56.062,
-      31.95
+      55.062,
+      34.85
      ],
      "side": "F"
     },
@@ -16003,8 +16300,8 @@
      "net": "GND",
      "type": "passive",
      "pad_xy_mm": [
-      56.062,
-      30.05
+      55.062,
+      32.95
      ],
      "side": "F"
     },
@@ -16014,8 +16311,8 @@
      "net": "HTR_CX",
      "type": "passive",
      "pad_xy_mm": [
-      57.938,
-      31.0
+      56.938,
+      33.9
      ],
      "side": "F"
     }
@@ -16617,11 +16914,11 @@
   },
   {
    "ref": "R119",
-   "value": "1k",
+   "value": "10k",
    "group": "LANE0_FLOOR",
    "symbol": "Device:R",
    "footprint": "Resistor_SMD:R_0402_1005Metric",
-   "mpn": "RC0402FR-071KL",
+   "mpn": "RC0402FR-0710KL",
    "dnp": false,
    "pins": [
     {
@@ -16671,7 +16968,7 @@
     {
      "pin": "2",
      "name": "~",
-     "net": "F0_FS",
+     "net": "F0_PZ",
      "type": "passive",
      "pad_xy_mm": [
       25.51,
@@ -16815,17 +17112,17 @@
   },
   {
    "ref": "R125",
-   "value": "1k",
+   "value": "10k",
    "group": "LANE0_FLOOR",
    "symbol": "Device:R",
    "footprint": "Resistor_SMD:R_0402_1005Metric",
-   "mpn": "RC0402FR-071KL",
+   "mpn": "RC0402FR-0710KL",
    "dnp": false,
    "pins": [
     {
      "pin": "1",
      "name": "~",
-     "net": "F0_FCMP",
+     "net": "F0_FAST",
      "type": "passive",
      "pad_xy_mm": [
       22.99,
@@ -17112,17 +17409,17 @@
   },
   {
    "ref": "R134",
-   "value": "1k",
+   "value": "10k",
    "group": "LANE0_FLOOR",
    "symbol": "Device:R",
    "footprint": "Resistor_SMD:R_0402_1005Metric",
-   "mpn": "RC0402FR-071KL",
+   "mpn": "RC0402FR-0710KL",
    "dnp": false,
    "pins": [
     {
      "pin": "1",
      "name": "~",
-     "net": "F0_SCMP",
+     "net": "F0_SLOW",
      "type": "passive",
      "pad_xy_mm": [
       34.6,
@@ -17772,11 +18069,11 @@
   },
   {
    "ref": "R219",
-   "value": "1k",
+   "value": "10k",
    "group": "LANE1_FLOOR",
    "symbol": "Device:R",
    "footprint": "Resistor_SMD:R_0402_1005Metric",
-   "mpn": "RC0402FR-071KL",
+   "mpn": "RC0402FR-0710KL",
    "dnp": false,
    "pins": [
     {
@@ -17826,7 +18123,7 @@
     {
      "pin": "2",
      "name": "~",
-     "net": "F1_FS",
+     "net": "F1_PZ",
      "type": "passive",
      "pad_xy_mm": [
       113.01,
@@ -17970,17 +18267,17 @@
   },
   {
    "ref": "R225",
-   "value": "1k",
+   "value": "10k",
    "group": "LANE1_FLOOR",
    "symbol": "Device:R",
    "footprint": "Resistor_SMD:R_0402_1005Metric",
-   "mpn": "RC0402FR-071KL",
+   "mpn": "RC0402FR-0710KL",
    "dnp": false,
    "pins": [
     {
      "pin": "1",
      "name": "~",
-     "net": "F1_FCMP",
+     "net": "F1_FAST",
      "type": "passive",
      "pad_xy_mm": [
       110.49,
@@ -18267,17 +18564,17 @@
   },
   {
    "ref": "R234",
-   "value": "1k",
+   "value": "10k",
    "group": "LANE1_FLOOR",
    "symbol": "Device:R",
    "footprint": "Resistor_SMD:R_0402_1005Metric",
-   "mpn": "RC0402FR-071KL",
+   "mpn": "RC0402FR-0710KL",
    "dnp": false,
    "pins": [
     {
      "pin": "1",
      "name": "~",
-     "net": "F1_SCMP",
+     "net": "F1_SLOW",
      "type": "passive",
      "pad_xy_mm": [
       122.1,
@@ -18927,11 +19224,11 @@
   },
   {
    "ref": "R319",
-   "value": "1k",
+   "value": "10k",
    "group": "LANE2_FLOOR",
    "symbol": "Device:R",
    "footprint": "Resistor_SMD:R_0402_1005Metric",
-   "mpn": "RC0402FR-071KL",
+   "mpn": "RC0402FR-0710KL",
    "dnp": false,
    "pins": [
     {
@@ -18981,7 +19278,7 @@
     {
      "pin": "2",
      "name": "~",
-     "net": "F2_FS",
+     "net": "F2_PZ",
      "type": "passive",
      "pad_xy_mm": [
       200.51,
@@ -19125,17 +19422,17 @@
   },
   {
    "ref": "R325",
-   "value": "1k",
+   "value": "10k",
    "group": "LANE2_FLOOR",
    "symbol": "Device:R",
    "footprint": "Resistor_SMD:R_0402_1005Metric",
-   "mpn": "RC0402FR-071KL",
+   "mpn": "RC0402FR-0710KL",
    "dnp": false,
    "pins": [
     {
      "pin": "1",
      "name": "~",
-     "net": "F2_FCMP",
+     "net": "F2_FAST",
      "type": "passive",
      "pad_xy_mm": [
       197.99,
@@ -19422,17 +19719,17 @@
   },
   {
    "ref": "R334",
-   "value": "1k",
+   "value": "10k",
    "group": "LANE2_FLOOR",
    "symbol": "Device:R",
    "footprint": "Resistor_SMD:R_0402_1005Metric",
-   "mpn": "RC0402FR-071KL",
+   "mpn": "RC0402FR-0710KL",
    "dnp": false,
    "pins": [
     {
      "pin": "1",
      "name": "~",
-     "net": "F2_SCMP",
+     "net": "F2_SLOW",
      "type": "passive",
      "pad_xy_mm": [
       209.6,
@@ -20082,11 +20379,11 @@
   },
   {
    "ref": "R419",
-   "value": "1k",
+   "value": "10k",
    "group": "LANE3_FLOOR",
    "symbol": "Device:R",
    "footprint": "Resistor_SMD:R_0402_1005Metric",
-   "mpn": "RC0402FR-071KL",
+   "mpn": "RC0402FR-0710KL",
    "dnp": false,
    "pins": [
     {
@@ -20136,7 +20433,7 @@
     {
      "pin": "2",
      "name": "~",
-     "net": "F3_FS",
+     "net": "F3_PZ",
      "type": "passive",
      "pad_xy_mm": [
       288.01,
@@ -20280,17 +20577,17 @@
   },
   {
    "ref": "R425",
-   "value": "1k",
+   "value": "10k",
    "group": "LANE3_FLOOR",
    "symbol": "Device:R",
    "footprint": "Resistor_SMD:R_0402_1005Metric",
-   "mpn": "RC0402FR-071KL",
+   "mpn": "RC0402FR-0710KL",
    "dnp": false,
    "pins": [
     {
      "pin": "1",
      "name": "~",
-     "net": "F3_FCMP",
+     "net": "F3_FAST",
      "type": "passive",
      "pad_xy_mm": [
       285.49,
@@ -20577,17 +20874,17 @@
   },
   {
    "ref": "R434",
-   "value": "1k",
+   "value": "10k",
    "group": "LANE3_FLOOR",
    "symbol": "Device:R",
    "footprint": "Resistor_SMD:R_0402_1005Metric",
-   "mpn": "RC0402FR-071KL",
+   "mpn": "RC0402FR-0710KL",
    "dnp": false,
    "pins": [
     {
      "pin": "1",
      "name": "~",
-     "net": "F3_SCMP",
+     "net": "F3_SLOW",
      "type": "passive",
      "pad_xy_mm": [
       297.1,
@@ -21237,11 +21534,11 @@
   },
   {
    "ref": "R519",
-   "value": "1k",
+   "value": "10k",
    "group": "LANE0_REF",
    "symbol": "Device:R",
    "footprint": "Resistor_SMD:R_0402_1005Metric",
-   "mpn": "RC0402FR-071KL",
+   "mpn": "RC0402FR-0710KL",
    "dnp": false,
    "pins": [
     {
@@ -21291,7 +21588,7 @@
     {
      "pin": "2",
      "name": "~",
-     "net": "R0_FS",
+     "net": "R0_PZ",
      "type": "passive",
      "pad_xy_mm": [
       39.6,
@@ -21435,17 +21732,17 @@
   },
   {
    "ref": "R525",
-   "value": "1k",
+   "value": "10k",
    "group": "LANE0_REF",
    "symbol": "Device:R",
    "footprint": "Resistor_SMD:R_0402_1005Metric",
-   "mpn": "RC0402FR-071KL",
+   "mpn": "RC0402FR-0710KL",
    "dnp": false,
    "pins": [
     {
      "pin": "1",
      "name": "~",
-     "net": "R0_FCMP",
+     "net": "R0_FAST",
      "type": "passive",
      "pad_xy_mm": [
       47.5,
@@ -22161,11 +22458,11 @@
   },
   {
    "ref": "R619",
-   "value": "1k",
+   "value": "10k",
    "group": "LANE1_REF",
    "symbol": "Device:R",
    "footprint": "Resistor_SMD:R_0402_1005Metric",
-   "mpn": "RC0402FR-071KL",
+   "mpn": "RC0402FR-0710KL",
    "dnp": false,
    "pins": [
     {
@@ -22215,7 +22512,7 @@
     {
      "pin": "2",
      "name": "~",
-     "net": "R1_FS",
+     "net": "R1_PZ",
      "type": "passive",
      "pad_xy_mm": [
       127.1,
@@ -22359,17 +22656,17 @@
   },
   {
    "ref": "R625",
-   "value": "1k",
+   "value": "10k",
    "group": "LANE1_REF",
    "symbol": "Device:R",
    "footprint": "Resistor_SMD:R_0402_1005Metric",
-   "mpn": "RC0402FR-071KL",
+   "mpn": "RC0402FR-0710KL",
    "dnp": false,
    "pins": [
     {
      "pin": "1",
      "name": "~",
-     "net": "R1_FCMP",
+     "net": "R1_FAST",
      "type": "passive",
      "pad_xy_mm": [
       135.0,
@@ -23085,11 +23382,11 @@
   },
   {
    "ref": "R719",
-   "value": "1k",
+   "value": "10k",
    "group": "LANE2_REF",
    "symbol": "Device:R",
    "footprint": "Resistor_SMD:R_0402_1005Metric",
-   "mpn": "RC0402FR-071KL",
+   "mpn": "RC0402FR-0710KL",
    "dnp": false,
    "pins": [
     {
@@ -23139,7 +23436,7 @@
     {
      "pin": "2",
      "name": "~",
-     "net": "R2_FS",
+     "net": "R2_PZ",
      "type": "passive",
      "pad_xy_mm": [
       214.6,
@@ -23283,17 +23580,17 @@
   },
   {
    "ref": "R725",
-   "value": "1k",
+   "value": "10k",
    "group": "LANE2_REF",
    "symbol": "Device:R",
    "footprint": "Resistor_SMD:R_0402_1005Metric",
-   "mpn": "RC0402FR-071KL",
+   "mpn": "RC0402FR-0710KL",
    "dnp": false,
    "pins": [
     {
      "pin": "1",
      "name": "~",
-     "net": "R2_FCMP",
+     "net": "R2_FAST",
      "type": "passive",
      "pad_xy_mm": [
       222.5,
@@ -24009,11 +24306,11 @@
   },
   {
    "ref": "R819",
-   "value": "1k",
+   "value": "10k",
    "group": "LANE3_REF",
    "symbol": "Device:R",
    "footprint": "Resistor_SMD:R_0402_1005Metric",
-   "mpn": "RC0402FR-071KL",
+   "mpn": "RC0402FR-0710KL",
    "dnp": false,
    "pins": [
     {
@@ -24063,7 +24360,7 @@
     {
      "pin": "2",
      "name": "~",
-     "net": "R3_FS",
+     "net": "R3_PZ",
      "type": "passive",
      "pad_xy_mm": [
       302.1,
@@ -24207,17 +24504,17 @@
   },
   {
    "ref": "R825",
-   "value": "1k",
+   "value": "10k",
    "group": "LANE3_REF",
    "symbol": "Device:R",
    "footprint": "Resistor_SMD:R_0402_1005Metric",
-   "mpn": "RC0402FR-071KL",
+   "mpn": "RC0402FR-0710KL",
    "dnp": false,
    "pins": [
     {
      "pin": "1",
      "name": "~",
-     "net": "R3_FCMP",
+     "net": "R3_FAST",
      "type": "passive",
      "pad_xy_mm": [
       310.0,
@@ -26992,8 +27289,8 @@
      "net": "HEAD_PRES_ID",
      "type": "passive",
      "pad_xy_mm": [
-      99.25,
-      14.425
+      91.25,
+      20.675
      ],
      "side": "F"
     },
@@ -27003,8 +27300,8 @@
      "net": "HEAD_PWR_N",
      "type": "passive",
      "pad_xy_mm": [
-      99.25,
-      16.075
+      91.25,
+      22.325
      ],
      "side": "F"
     }
@@ -27058,8 +27355,8 @@
      "net": "EF_UVLO",
      "type": "passive",
      "pad_xy_mm": [
-      92.41,
-      34.3
+      93.26,
+      27.25
      ],
      "side": "F"
     },
@@ -27069,8 +27366,8 @@
      "net": "EF_OVP",
      "type": "passive",
      "pad_xy_mm": [
-      91.39,
-      34.3
+      92.24,
+      27.25
      ],
      "side": "F"
     }
@@ -27223,8 +27520,8 @@
      "net": "+3V3",
      "type": "passive",
      "pad_xy_mm": [
-      100.0,
-      29.19
+      142.51,
+      52.0
      ],
      "side": "F"
     },
@@ -27234,8 +27531,8 @@
      "net": "EF_FLT_N",
      "type": "passive",
      "pad_xy_mm": [
-      100.0,
-      30.21
+      141.49,
+      52.0
      ],
      "side": "F"
     }
@@ -27355,8 +27652,8 @@
      "net": "SHLD_J1",
      "type": "passive",
      "pad_xy_mm": [
-      20.425,
-      68.5
+      80.3,
+      31.575
      ],
      "side": "F"
     },
@@ -27366,8 +27663,8 @@
      "net": "FRAME",
      "type": "passive",
      "pad_xy_mm": [
-      22.075,
-      68.5
+      80.3,
+      33.225
      ],
      "side": "F"
     }
@@ -29816,6 +30113,39 @@
    ]
   },
   {
+   "ref": "R2418",
+   "value": "100k",
+   "group": "MCU",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0402_1005Metric",
+   "mpn": "RC0402FR-07100KL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "MON_LANE_EN",
+     "type": "passive",
+     "pad_xy_mm": [
+      194.99,
+      75.6
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      196.01,
+      75.6
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
    "ref": "R2501",
    "value": "120R",
    "group": "COMM_ISOLATED",
@@ -29962,19 +30292,19 @@
      "net": "SHLD_J2",
      "type": "passive",
      "pad_xy_mm": [
-      252.7,
-      67.825
+      241.0,
+      5.475
      ],
      "side": "F"
     },
     {
      "pin": "2",
      "name": "~",
-     "net": "FRAME",
+     "net": "FRAME_H3",
      "type": "passive",
      "pad_xy_mm": [
-      252.7,
-      66.175
+      241.0,
+      7.125
      ],
      "side": "F"
     }
@@ -29995,8 +30325,8 @@
      "net": "SYNC_P",
      "type": "passive",
      "pad_xy_mm": [
-      245.75,
-      7.412
+      235.588,
+      2.3
      ],
      "side": "F"
     },
@@ -30006,8 +30336,8 @@
      "net": "SYNC_N",
      "type": "passive",
      "pad_xy_mm": [
-      245.75,
-      5.588
+      237.412,
+      2.3
      ],
      "side": "F"
     }
@@ -30029,7 +30359,7 @@
      "type": "passive",
      "pad_xy_mm": [
       81.037,
-      15.2
+      21.5
      ],
      "side": "F"
     },
@@ -30040,7 +30370,7 @@
      "type": "passive",
      "pad_xy_mm": [
       86.963,
-      15.2
+      21.5
      ],
      "side": "F"
     }
@@ -30094,8 +30424,8 @@
      "net": "HTR_PS",
      "type": "passive",
      "pad_xy_mm": [
-      70.0,
-      25.26
+      65.24,
+      24.75
      ],
      "side": "F"
     },
@@ -30105,8 +30435,8 @@
      "net": "HTR_GATE",
      "type": "passive",
      "pad_xy_mm": [
-      70.0,
-      24.24
+      66.26,
+      24.75
      ],
      "side": "F"
     }
@@ -30127,8 +30457,8 @@
      "net": "HTR_GATE",
      "type": "passive",
      "pad_xy_mm": [
-      68.51,
-      23.75
+      63.51,
+      24.75
      ],
      "side": "F"
     },
@@ -30138,8 +30468,8 @@
      "net": "HTR_GD",
      "type": "passive",
      "pad_xy_mm": [
-      67.49,
-      23.75
+      62.49,
+      24.75
      ],
      "side": "F"
     }
@@ -30226,8 +30556,8 @@
      "net": "HEAD_HTR_P",
      "type": "passive",
      "pad_xy_mm": [
-      79.5,
-      20.075
+      79.425,
+      24.75
      ],
      "side": "F"
     },
@@ -30237,8 +30567,8 @@
      "net": "HTR_SW",
      "type": "passive",
      "pad_xy_mm": [
-      79.5,
-      18.425
+      81.075,
+      24.75
      ],
      "side": "F"
     }
@@ -30259,8 +30589,8 @@
      "net": "HTR_CUT",
      "type": "passive",
      "pad_xy_mm": [
-      61.61,
-      13.1
+      61.26,
+      26.5
      ],
      "side": "F"
     },
@@ -30270,8 +30600,8 @@
      "net": "HTR_CQB",
      "type": "passive",
      "pad_xy_mm": [
-      60.59,
-      13.1
+      60.24,
+      26.5
      ],
      "side": "F"
     }
@@ -30325,8 +30655,8 @@
      "net": "HEAD_HTR_P",
      "type": "passive",
      "pad_xy_mm": [
-      77.81,
-      22.6
+      78.26,
+      34.25
      ],
      "side": "F"
     },
@@ -30336,8 +30666,8 @@
      "net": "HTR_CX",
      "type": "passive",
      "pad_xy_mm": [
-      76.79,
-      22.6
+      77.24,
+      34.25
      ],
      "side": "F"
     }
@@ -30477,11 +30807,11 @@
   },
   {
    "ref": "R2702",
-   "value": "100k",
+   "value": "1M",
    "group": "MONITOR",
    "symbol": "Device:R",
    "footprint": "Resistor_SMD:R_0402_1005Metric",
-   "mpn": "RC0402FR-07100KL",
+   "mpn": "RC0402FR-071ML",
    "dnp": false,
    "pins": [
     {
@@ -30498,7 +30828,7 @@
     {
      "pin": "2",
      "name": "~",
-     "net": "GND",
+     "net": "VBL",
      "type": "passive",
      "pad_xy_mm": [
       200.49,
@@ -30586,11 +30916,11 @@
     {
      "pin": "1",
      "name": "~",
-     "net": "FRAME",
+     "net": "FRAME_F",
      "type": "passive",
      "pad_xy_mm": [
-      318.075,
-      23.9
+      68.5,
+      29.175
      ],
      "side": "F"
     },
@@ -30600,8 +30930,8 @@
      "net": "GND",
      "type": "passive",
      "pad_xy_mm": [
-      319.725,
-      23.9
+      68.5,
+      30.825
      ],
      "side": "F"
     }
@@ -30622,19 +30952,19 @@
      "net": "FRAME",
      "type": "passive",
      "pad_xy_mm": [
-      318.075,
-      25.6
+      71.4,
+      33.175
      ],
      "side": "F"
     },
     {
      "pin": "2",
      "name": "~",
-     "net": "GND",
+     "net": "MON_BUS",
      "type": "passive",
      "pad_xy_mm": [
-      319.725,
-      25.6
+      71.4,
+      34.825
      ],
      "side": "F"
     }
@@ -30821,7 +31151,7 @@
      "type": "passive",
      "pad_xy_mm": [
       13.85,
-      15.25
+      23.5
      ],
      "side": "F"
     }
@@ -30843,7 +31173,7 @@
      "type": "passive",
      "pad_xy_mm": [
       13.85,
-      24.25
+      29.0
      ],
      "side": "F"
     }
@@ -30865,7 +31195,7 @@
      "type": "passive",
      "pad_xy_mm": [
       13.85,
-      33.25
+      34.75
      ],
      "side": "F"
     }
@@ -30887,7 +31217,7 @@
      "type": "passive",
      "pad_xy_mm": [
       49.65,
-      15.25
+      23.5
      ],
      "side": "F"
     }
@@ -30909,7 +31239,7 @@
      "type": "passive",
      "pad_xy_mm": [
       49.65,
-      24.25
+      29.0
      ],
      "side": "F"
     }
@@ -30931,7 +31261,7 @@
      "type": "passive",
      "pad_xy_mm": [
       49.65,
-      33.25
+      34.75
      ],
      "side": "F"
     }
@@ -31095,7 +31425,7 @@
      "type": "passive",
      "pad_xy_mm": [
       101.35,
-      15.25
+      23.5
      ],
      "side": "F"
     }
@@ -31117,7 +31447,7 @@
      "type": "passive",
      "pad_xy_mm": [
       101.35,
-      24.25
+      29.0
      ],
      "side": "F"
     }
@@ -31139,7 +31469,7 @@
      "type": "passive",
      "pad_xy_mm": [
       101.35,
-      33.25
+      34.75
      ],
      "side": "F"
     }
@@ -31161,7 +31491,7 @@
      "type": "passive",
      "pad_xy_mm": [
       137.15,
-      15.25
+      23.5
      ],
      "side": "F"
     }
@@ -31183,7 +31513,7 @@
      "type": "passive",
      "pad_xy_mm": [
       137.15,
-      24.25
+      29.0
      ],
      "side": "F"
     }
@@ -31205,7 +31535,7 @@
      "type": "passive",
      "pad_xy_mm": [
       137.15,
-      33.25
+      34.75
      ],
      "side": "F"
     }
@@ -31369,7 +31699,7 @@
      "type": "passive",
      "pad_xy_mm": [
       188.85,
-      15.25
+      23.5
      ],
      "side": "F"
     }
@@ -31391,7 +31721,7 @@
      "type": "passive",
      "pad_xy_mm": [
       188.85,
-      24.25
+      29.0
      ],
      "side": "F"
     }
@@ -31413,7 +31743,7 @@
      "type": "passive",
      "pad_xy_mm": [
       188.85,
-      33.25
+      34.75
      ],
      "side": "F"
     }
@@ -31435,7 +31765,7 @@
      "type": "passive",
      "pad_xy_mm": [
       224.65,
-      15.25
+      23.5
      ],
      "side": "F"
     }
@@ -31457,7 +31787,7 @@
      "type": "passive",
      "pad_xy_mm": [
       224.65,
-      24.25
+      29.0
      ],
      "side": "F"
     }
@@ -31479,7 +31809,7 @@
      "type": "passive",
      "pad_xy_mm": [
       224.65,
-      33.25
+      34.75
      ],
      "side": "F"
     }
@@ -31643,7 +31973,7 @@
      "type": "passive",
      "pad_xy_mm": [
       276.35,
-      15.25
+      23.5
      ],
      "side": "F"
     }
@@ -31665,7 +31995,7 @@
      "type": "passive",
      "pad_xy_mm": [
       276.35,
-      24.25
+      29.0
      ],
      "side": "F"
     }
@@ -31687,7 +32017,7 @@
      "type": "passive",
      "pad_xy_mm": [
       276.35,
-      33.25
+      34.75
      ],
      "side": "F"
     }
@@ -31709,7 +32039,7 @@
      "type": "passive",
      "pad_xy_mm": [
       312.15,
-      15.25
+      23.5
      ],
      "side": "F"
     }
@@ -31731,7 +32061,7 @@
      "type": "passive",
      "pad_xy_mm": [
       312.15,
-      24.25
+      29.0
      ],
      "side": "F"
     }
@@ -31753,7 +32083,7 @@
      "type": "passive",
      "pad_xy_mm": [
       312.15,
-      33.25
+      34.75
      ],
      "side": "F"
     }
@@ -32026,8 +32356,8 @@
      "net": "SHLD_J1",
      "type": "passive",
      "pad_xy_mm": [
-      23.5,
-      70.5
+      83.0,
+      29.1
      ],
      "side": "F"
     }
@@ -32529,7 +32859,7 @@
     {
      "pin": "1",
      "name": "1",
-     "net": "EXP_P7",
+     "net": "MON_LANE_EN",
      "type": "passive",
      "pad_xy_mm": [
       195.2,
@@ -32576,8 +32906,8 @@
      "net": "SHLD_J2",
      "type": "passive",
      "pad_xy_mm": [
-      252.7,
-      69.8
+      241.5,
+      2.5
      ],
      "side": "F"
     }
@@ -32598,8 +32928,8 @@
      "net": "HTR_SW",
      "type": "passive",
      "pad_xy_mm": [
-      69.3,
-      21.8
+      66.0,
+      32.5
      ],
      "side": "F"
     }
@@ -32620,8 +32950,8 @@
      "net": "HTR_GATE",
      "type": "passive",
      "pad_xy_mm": [
-      71.6,
-      21.8
+      64.5,
+      30.25
      ],
      "side": "F"
     }
@@ -40211,7 +40541,7 @@
      "type": "power_in",
      "pad_xy_mm": [
       96.275,
-      32.775
+      34.425
      ],
      "side": "F"
     },
@@ -40222,7 +40552,7 @@
      "type": "passive",
      "pad_xy_mm": [
       95.625,
-      32.775
+      34.425
      ],
      "side": "F"
     },
@@ -40233,7 +40563,7 @@
      "type": "input",
      "pad_xy_mm": [
       94.975,
-      32.775
+      34.425
      ],
      "side": "F"
     },
@@ -40244,7 +40574,7 @@
      "type": "no_connect",
      "pad_xy_mm": [
       94.325,
-      32.775
+      34.425
      ],
      "side": "F"
     },
@@ -40255,7 +40585,7 @@
      "type": "input",
      "pad_xy_mm": [
       93.675,
-      32.775
+      34.425
      ],
      "side": "F"
     },
@@ -40266,7 +40596,7 @@
      "type": "input",
      "pad_xy_mm": [
       93.025,
-      32.775
+      34.425
      ],
      "side": "F"
     },
@@ -40277,7 +40607,7 @@
      "type": "input",
      "pad_xy_mm": [
       92.375,
-      32.775
+      34.425
      ],
      "side": "F"
     },
@@ -40288,7 +40618,7 @@
      "type": "passive",
      "pad_xy_mm": [
       91.725,
-      32.775
+      34.425
      ],
      "side": "F"
     },
@@ -40299,7 +40629,7 @@
      "type": "power_in",
      "pad_xy_mm": [
       91.725,
-      27.225
+      28.875
      ],
      "side": "F"
     },
@@ -40310,7 +40640,7 @@
      "type": "output",
      "pad_xy_mm": [
       92.375,
-      27.225
+      28.875
      ],
      "side": "F"
     },
@@ -40321,7 +40651,7 @@
      "type": "passive",
      "pad_xy_mm": [
       93.025,
-      27.225
+      28.875
      ],
      "side": "F"
     },
@@ -40332,7 +40662,7 @@
      "type": "passive",
      "pad_xy_mm": [
       93.675,
-      27.225
+      28.875
      ],
      "side": "F"
     },
@@ -40343,7 +40673,7 @@
      "type": "no_connect",
      "pad_xy_mm": [
       94.325,
-      27.225
+      28.875
      ],
      "side": "F"
     },
@@ -40354,7 +40684,7 @@
      "type": "open_collector",
      "pad_xy_mm": [
       94.975,
-      27.225
+      28.875
      ],
      "side": "F"
     },
@@ -40365,7 +40695,7 @@
      "type": "power_out",
      "pad_xy_mm": [
       95.625,
-      27.225
+      28.875
      ],
      "side": "F"
     },
@@ -40376,7 +40706,7 @@
      "type": "passive",
      "pad_xy_mm": [
       96.275,
-      27.225
+      28.875
      ],
      "side": "F"
     },
@@ -40387,7 +40717,7 @@
      "type": "passive",
      "pad_xy_mm": [
       94.0,
-      30.0
+      31.65
      ],
      "side": "F"
     }
@@ -44024,7 +44354,7 @@
     {
      "pin": "12",
      "name": "P7",
-     "net": "EXP_P7",
+     "net": "MON_LANE_EN",
      "type": "bidirectional",
      "pad_xy_mm": [
       192.863,
@@ -44479,7 +44809,7 @@
      "type": "output",
      "pad_xy_mm": [
       83.862,
-      21.45
+      26.95
      ],
      "side": "F"
     },
@@ -44490,7 +44820,7 @@
      "type": "power_in",
      "pad_xy_mm": [
       83.862,
-      20.5
+      26.0
      ],
      "side": "F"
     },
@@ -44501,7 +44831,7 @@
      "type": "input",
      "pad_xy_mm": [
       83.862,
-      19.55
+      25.05
      ],
      "side": "F"
     },
@@ -44512,7 +44842,7 @@
      "type": "input",
      "pad_xy_mm": [
       86.138,
-      19.55
+      25.05
      ],
      "side": "F"
     },
@@ -44523,7 +44853,7 @@
      "type": "power_in",
      "pad_xy_mm": [
       86.138,
-      21.45
+      26.95
      ],
      "side": "F"
     }
@@ -44596,7 +44926,7 @@
     {
      "pin": "6",
      "name": "E3",
-     "net": "+3V3",
+     "net": "MON_LANE_EN",
      "type": "input",
      "pad_xy_mm": [
       200.137,
@@ -45302,7 +45632,6 @@
    "U2501.1",
    "U2503.8",
    "U2601.5",
-   "U2701.6",
    "U2701.16",
    "U2703.2"
   ],
@@ -45912,10 +46241,6 @@
    "R2003.1",
    "U2001.3"
   ],
-  "EXP_P7": [
-   "TP2402.1",
-   "U2405.12"
-  ],
   "F0_A": [
    "C109.2",
    "C110.2",
@@ -45942,12 +46267,12 @@
    "C119.1",
    "R122.1",
    "R124.1",
+   "R125.1",
    "U103.1"
   ],
   "F0_FCMP": [
    "D102.3",
    "R124.2",
-   "R125.1",
    "U104.1",
    "U104.3"
   ],
@@ -45959,7 +46284,7 @@
   ],
   "F0_FS": [
    "C117.2",
-   "R120.2",
+   "C150.2",
    "R121.1",
    "U103.3"
   ],
@@ -46028,10 +46353,13 @@
    "R118.2",
    "TP101.1"
   ],
+  "F0_PZ": [
+   "C150.1",
+   "R120.2"
+  ],
   "F0_SCMP": [
    "D103.3",
    "R133.2",
-   "R134.1",
    "U106.3"
   ],
   "F0_SFB": [
@@ -46047,6 +46375,7 @@
   "F0_SLOW": [
    "R131.1",
    "R133.1",
+   "R134.1",
    "U105.1"
   ],
   "F0_SS": [
@@ -46162,12 +46491,12 @@
    "C219.1",
    "R222.1",
    "R224.1",
+   "R225.1",
    "U203.1"
   ],
   "F1_FCMP": [
    "D202.3",
    "R224.2",
-   "R225.1",
    "U204.1",
    "U204.3"
   ],
@@ -46179,7 +46508,7 @@
   ],
   "F1_FS": [
    "C217.2",
-   "R220.2",
+   "C250.2",
    "R221.1",
    "U203.3"
   ],
@@ -46248,10 +46577,13 @@
    "R218.2",
    "TP201.1"
   ],
+  "F1_PZ": [
+   "C250.1",
+   "R220.2"
+  ],
   "F1_SCMP": [
    "D203.3",
    "R233.2",
-   "R234.1",
    "U206.3"
   ],
   "F1_SFB": [
@@ -46267,6 +46599,7 @@
   "F1_SLOW": [
    "R231.1",
    "R233.1",
+   "R234.1",
    "U205.1"
   ],
   "F1_SS": [
@@ -46382,12 +46715,12 @@
    "C319.1",
    "R322.1",
    "R324.1",
+   "R325.1",
    "U303.1"
   ],
   "F2_FCMP": [
    "D302.3",
    "R324.2",
-   "R325.1",
    "U304.1",
    "U304.3"
   ],
@@ -46399,7 +46732,7 @@
   ],
   "F2_FS": [
    "C317.2",
-   "R320.2",
+   "C350.2",
    "R321.1",
    "U303.3"
   ],
@@ -46468,10 +46801,13 @@
    "R318.2",
    "TP301.1"
   ],
+  "F2_PZ": [
+   "C350.1",
+   "R320.2"
+  ],
   "F2_SCMP": [
    "D303.3",
    "R333.2",
-   "R334.1",
    "U306.3"
   ],
   "F2_SFB": [
@@ -46487,6 +46823,7 @@
   "F2_SLOW": [
    "R331.1",
    "R333.1",
+   "R334.1",
    "U305.1"
   ],
   "F2_SS": [
@@ -46602,12 +46939,12 @@
    "C419.1",
    "R422.1",
    "R424.1",
+   "R425.1",
    "U403.1"
   ],
   "F3_FCMP": [
    "D402.3",
    "R424.2",
-   "R425.1",
    "U404.1",
    "U404.3"
   ],
@@ -46619,7 +46956,7 @@
   ],
   "F3_FS": [
    "C417.2",
-   "R420.2",
+   "C450.2",
    "R421.1",
    "U403.3"
   ],
@@ -46688,10 +47025,13 @@
    "R418.2",
    "TP401.1"
   ],
+  "F3_PZ": [
+   "C450.1",
+   "R420.2"
+  ],
   "F3_SCMP": [
    "D403.3",
    "R433.2",
-   "R434.1",
    "U406.3"
   ],
   "F3_SFB": [
@@ -46707,6 +47047,7 @@
   "F3_SLOW": [
    "R431.1",
    "R433.1",
+   "R434.1",
    "U405.1"
   ],
   "F3_SS": [
@@ -46798,23 +47139,41 @@
   ],
   "FRAME": [
    "C2007.2",
-   "C2504.2",
-   "C2801.1",
-   "C2802.1",
-   "C2803.1",
-   "C2804.1",
+   "F2801.1",
    "H2801.1",
-   "H2802.1",
-   "H2803.1",
-   "H2804.1",
-   "H2805.1",
-   "H2806.1",
-   "H2807.1",
-   "H2808.1",
    "R2012.2",
-   "R2505.2",
-   "R2801.1",
    "R2802.1"
+  ],
+  "FRAME_F": [
+   "F2801.2",
+   "R2801.1"
+  ],
+  "FRAME_H2": [
+   "C2801.1",
+   "H2802.1"
+  ],
+  "FRAME_H3": [
+   "C2504.2",
+   "H2803.1",
+   "R2505.2"
+  ],
+  "FRAME_H4": [
+   "H2804.1"
+  ],
+  "FRAME_H5": [
+   "C2803.1",
+   "H2805.1"
+  ],
+  "FRAME_H6": [
+   "C2804.1",
+   "H2806.1"
+  ],
+  "FRAME_H7": [
+   "H2807.1"
+  ],
+  "FRAME_H8": [
+   "C2802.1",
+   "H2808.1"
   ],
   "GND": [
    "C101.2",
@@ -47255,13 +47614,12 @@
    "R2415.2",
    "R2416.2",
    "R2417.2",
+   "R2418.2",
    "R2504.2",
    "R2606.2",
    "R2609.2",
    "R2612.2",
-   "R2702.2",
    "R2801.2",
-   "R2802.2",
    "RT2201.2",
    "SH1001.1",
    "SH1002.1",
@@ -48139,6 +48497,7 @@
   ],
   "MON_BUS": [
    "R2702.1",
+   "R2802.2",
    "TP2701.1",
    "U1007.8",
    "U1107.8",
@@ -48175,6 +48534,12 @@
    "U1207.15",
    "U1307.15",
    "U2405.4"
+  ],
+  "MON_LANE_EN": [
+   "R2418.1",
+   "TP2402.1",
+   "U2405.12",
+   "U2701.6"
   ],
   "MON_MUX_A0": [
    "U2401.92",
@@ -48314,12 +48679,12 @@
    "C519.1",
    "R522.1",
    "R524.1",
+   "R525.1",
    "U503.1"
   ],
   "R0_FCMP": [
    "D502.3",
    "R524.2",
-   "R525.1",
    "U504.1",
    "U504.3"
   ],
@@ -48331,7 +48696,7 @@
   ],
   "R0_FS": [
    "C517.2",
-   "R520.2",
+   "C550.2",
    "R521.1",
    "U503.3"
   ],
@@ -48390,6 +48755,10 @@
   "R0_PRE_TP": [
    "R518.2",
    "TP501.1"
+  ],
+  "R0_PZ": [
+   "C550.1",
+   "R520.2"
   ],
   "R0_TL": [
    "C520.1",
@@ -48484,12 +48853,12 @@
    "C619.1",
    "R622.1",
    "R624.1",
+   "R625.1",
    "U603.1"
   ],
   "R1_FCMP": [
    "D602.3",
    "R624.2",
-   "R625.1",
    "U604.1",
    "U604.3"
   ],
@@ -48501,7 +48870,7 @@
   ],
   "R1_FS": [
    "C617.2",
-   "R620.2",
+   "C650.2",
    "R621.1",
    "U603.3"
   ],
@@ -48560,6 +48929,10 @@
   "R1_PRE_TP": [
    "R618.2",
    "TP601.1"
+  ],
+  "R1_PZ": [
+   "C650.1",
+   "R620.2"
   ],
   "R1_TL": [
    "C620.1",
@@ -48654,12 +49027,12 @@
    "C719.1",
    "R722.1",
    "R724.1",
+   "R725.1",
    "U703.1"
   ],
   "R2_FCMP": [
    "D702.3",
    "R724.2",
-   "R725.1",
    "U704.1",
    "U704.3"
   ],
@@ -48671,7 +49044,7 @@
   ],
   "R2_FS": [
    "C717.2",
-   "R720.2",
+   "C750.2",
    "R721.1",
    "U703.3"
   ],
@@ -48730,6 +49103,10 @@
   "R2_PRE_TP": [
    "R718.2",
    "TP701.1"
+  ],
+  "R2_PZ": [
+   "C750.1",
+   "R720.2"
   ],
   "R2_TL": [
    "C720.1",
@@ -48824,12 +49201,12 @@
    "C819.1",
    "R822.1",
    "R824.1",
+   "R825.1",
    "U803.1"
   ],
   "R3_FCMP": [
    "D802.3",
    "R824.2",
-   "R825.1",
    "U804.1",
    "U804.3"
   ],
@@ -48841,7 +49218,7 @@
   ],
   "R3_FS": [
    "C817.2",
-   "R820.2",
+   "C850.2",
    "R821.1",
    "U803.3"
   ],
@@ -48900,6 +49277,10 @@
   "R3_PRE_TP": [
    "R818.2",
    "TP801.1"
+  ],
+  "R3_PZ": [
+   "C850.1",
+   "R820.2"
   ],
   "R3_TL": [
    "C820.1",
@@ -49246,6 +49627,7 @@
    "R713.1",
    "R813.1",
    "R2312.2",
+   "R2702.2",
    "TP2302.1"
   ],
   "VBL_DIV": [

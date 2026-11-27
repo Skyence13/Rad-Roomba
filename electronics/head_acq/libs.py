@@ -35,10 +35,14 @@ MOUSE_W, MOUSE_H = 2.0, 1.2                                 # mouse hole in the 
 # anode mouse holes (du about the lane centre) - follow the anode U.FL positions of the lane block (CR-M04)
 MOUSE_DU = (-10.38, 11.87)
 # clip positions (du, v, rot): 3 per side, on the wall centre line
+# Stage 3 (IB-61): the side-wall clips moved from CAN_V0 + 7 / 16 / 25 (v 15.25 / 24.25 / 33.25) to CAN_V0 + 15.25 / 20.75 /
+# 26.5 (v 23.5 / 29.0 / 34.75) - the J1-landing headers moved 7 mm forward now stand beside the lane-0 right and lane-1
+# left can walls up to v 19.1, where the first side clips were.  All four lanes (identical cans); CR-M06.
+CLIP_SIDE_V = (CAN_V0 + 15.25, CAN_V0 + 20.75, CAN_V0 + 26.5)
 CLIPS = ([(du, CAN_V0 + 0.1, 0) for du in (-6.5, 2.5, 15.0)] +
          [(du, CAN_V1 - 0.1, 0) for du in (-12.0, 0.0, 12.0)] +
-         [(-CAN_W / 2 + 0.1, v, 90) for v in (CAN_V0 + 7.0, CAN_V0 + 16.0, CAN_V0 + 25.0)] +
-         [(CAN_W / 2 - 0.1, v, 90) for v in (CAN_V0 + 7.0, CAN_V0 + 16.0, CAN_V0 + 25.0)])
+         [(-CAN_W / 2 + 0.1, v, 90) for v in CLIP_SIDE_V] +
+         [(CAN_W / 2 - 0.1, v, 90) for v in CLIP_SIDE_V])
 
 
 def define(board):
@@ -156,3 +160,60 @@ def install_can_footprint_hook():
         return orig(name, spec)
     locallib.make_footprint = make_footprint
     locallib._rr_head_can_hook = True
+
+
+# ------------------------------------------------------------------------------------- stack-up (stage 3, review M6)
+# F.Cu signal / In1 GND / In2 signal / In3 POWER (split) / In4 GND / B.Cu signal, 1.6 mm:
+#   F.Cu 35 um | prepreg 0.100 | In1 GND 15.2 um | core 0.150 | In2 sig | prepreg 0.969 | In3 PWR | core 0.150 | In4 GND |
+#   prepreg 0.100 | B.Cu 35 um.
+# Every signal layer has a solid GND plane as its nearest neighbour (F->In1 0.10 mm, In2->In1 0.15 mm, B->In4 0.10 mm);
+# there is only one inner signal layer, so no broadside pair; the split power layer is 0.15 mm from the In4 GND plane
+# (plane capacitance ~ 0.27 nF/cm2) and 0.97 mm from In2.  The tool's 6-layer default (In1 GND / In2 sig / In3 sig /
+# In4 PWR, 0.109 mm between In2 and In3) is replaced by the two hooks below (tools/eda is not edited).
+STACK = [("prepreg", 0.100), ("In1.Cu", "GND plane"), ("core", 0.150), ("In2.Cu", "signal"), ("prepreg", 0.9692),
+         ("In3.Cu", "power plane (split)"), ("core", 0.150), ("In4.Cu", "GND plane"), ("prepreg", 0.100)]
+PLANE_LAYERS = ("In1.Cu", "In3.Cu", "In4.Cu")
+
+
+def install_stackup_hook(board):
+    """Tool work-around: the 6-layer stack-up and the plane layers are fixed in rrkicad (model.Board / pcb._stackup).
+    This sets the board's plane layers to In1/In3/In4 (In3 = split power, In1 + In4 = GND; In3 is typed 'power' in
+    KiCad, so the autorouter does not use it) and writes the dielectric thicknesses of STACK."""
+    from rrkicad import pcb as _pcb
+    board.plane_layers = PLANE_LAYERS
+    if getattr(_pcb, "_rr_head_stackup_hook", False):
+        return
+
+    def _stackup(b):
+        L = []
+
+        def lay(name, typ, th=None, extra=""):
+            s = '\t\t\t(layer "%s"\n\t\t\t\t(type "%s")\n' % (name, typ)
+            if th is not None:
+                s += "\t\t\t\t(thickness %s)\n" % (("%.4f" % th).rstrip("0").rstrip("."))
+            s += extra + "\t\t\t)\n"
+            L.append(s)
+        die = '\t\t\t\t(material "FR4")\n\t\t\t\t(epsilon_r 4.5)\n\t\t\t\t(loss_tangent 0.02)\n'
+        lay("F.SilkS", "Top Silk Screen")
+        lay("F.Paste", "Top Solder Paste")
+        lay("F.Mask", "Top Solder Mask", 0.01)
+        lay("F.Cu", "copper", 0.035)
+        desc = ["F.Cu 0.035 (signal, components)"]
+        k = 0
+        for name, val in STACK:
+            if name.endswith(".Cu"):
+                lay(name, "copper", 0.0152)
+                desc.append("%s 0.0152 (%s)" % (name, val))
+            else:
+                k += 1
+                lay("dielectric %d" % k, name, val, die)
+                desc.append("%s FR-4 %.4f" % (name, val))
+        lay("B.Cu", "copper", 0.035)
+        desc.append("B.Cu 0.035 (signal, no components)")
+        lay("B.Mask", "Bottom Solder Mask", 0.01)
+        lay("B.Paste", "Bottom Solder Paste")
+        lay("B.SilkS", "Bottom Silk Screen")
+        text = "\t\t(stackup\n" + "".join(L) + '\t\t\t(copper_finish "ENIG")\n\t\t\t(dielectric_constraints no)\n\t\t)\n'
+        return text, desc
+    _pcb._stackup = _stackup
+    _pcb._rr_head_stackup_hook = True

@@ -63,6 +63,17 @@ NET += [
     ("S3-03", "R2702", "2", ("2", "GND"), ("2", "VBL"),
      "M5: monitor-bus bleed to VBL (0.6 V) so that the frame monitor reads both polarities"),
 ]
+# S3-05 (M3): the frame is ONE conductor only through the spreader; on the board every hole pad and its bond parts are
+# a separate copper island.  Name them per hole so that the board copper is checkable (no false 'unconnected' FRAME):
+# H1 keeps 'FRAME' (DC bond F2801/R2801, bleed R2802, J1 shield parts); C2801/C2803/C2804 at H2/H5/H6; C2802 moves to H8
+# because H3 lies inside the isolated RS-485 island (no GND there); H3 carries the J2 shield parts R2505/C2504.
+FRAME_NET = {"H2802": "FRAME_H2", "H2803": "FRAME_H3", "H2804": "FRAME_H4", "H2805": "FRAME_H5", "H2806": "FRAME_H6",
+             "H2807": "FRAME_H7", "H2808": "FRAME_H8"}
+for _h, _n in sorted(FRAME_NET.items()):
+    NET.append(("S3-05", _h, "1", ("PAD", "FRAME"), ("PAD", _n), "M3: per-hole frame copper island"))
+for _ref, _pin, _n in (("C2801", "1", "FRAME_H2"), ("C2802", "1", "FRAME_H8"), ("C2803", "1", "FRAME_H5"),
+                       ("C2804", "1", "FRAME_H6"), ("C2504", "2", "FRAME_H3"), ("R2505", "2", "FRAME_H3")):
+    NET.append(("S3-05", _ref, _pin, (_pin, "FRAME"), (_pin, _n), "M3: bond part on the copper island of its own hole"))
 
 # ----------------------------------------------------------------------------------------- VALUE
 # (id, refs, expected value, new fields, reason)
@@ -79,6 +90,9 @@ DESC = {
     "R2702": "monitor bus bleed to VBL; with all lane muxes off MON_BUS = VBL/2 + V(FRAME)/2 (frame-fault monitor, S3-03)",
     "R2802": "frame bleed and top of the frame-potential divider onto MON_BUS (S3-03)",
     "R2801": "single-point DC frame bond (0 R) at H1, in series with fuse F2801 (S3-03)",
+    "C2801": "HF frame bond at H2 (FRAME_H2, S3-05)", "C2802": "HF frame bond at H8 (FRAME_H8; H3 is inside the isolated island, S3-05)",
+    "C2803": "HF frame bond at H5 (FRAME_H5, S3-05)", "C2804": "HF frame bond at H6 (FRAME_H6, S3-05)",
+    "C2504": "J2 shield to frame at H3 (FRAME_H3, S3-05)", "R2505": "J2 shield to frame at H3 (FRAME_H3, S3-05)",
 }
 for _c in CH_ALL:
     DESC["R%d" % (CH_BASE[_c] + 25)] = "monitor tap: fast (op-amp output, 10 k, S3-01)"
@@ -311,8 +325,8 @@ def netlist_diff(base_parts, new_parts):
 def self_check_overridden(parts, verbose=True):
     """Re-run the stage-1 self-check of design/circuit.py on the OVERRIDDEN parts (fresh module instance).
 
-    Two documented adaptations, nothing else: (1) the single-pin whitelist entry EXP_P7 is dropped because S3-02 gives
-    that bit a function (renamed MON_LANE_EN); (2) CR-H9: pinmap.yaml may name U_DAC0/U_DAC1 output 7 'LED_AMPL' /
+    Three documented adaptations, nothing else: (1) single-pin whitelist: EXP_P7 dropped because S3-02 gives that bit a
+    function (renamed MON_LANE_EN); FRAME_H4 / FRAME_H7 added (S3-05 hole pads without bond parts); (2) CR-H9: pinmap.yaml may name U_DAC0/U_DAC1 output 7 'LED_AMPL' /
     'DAC1_SPARE' as well as 'SPARE' (the stage-1 check maps the board names to SPARE already); (3) the S2-01 RENUM
     entries are undone for the check (exposed pad back to 'EP', as circuit.py names it)."""
     import types
@@ -332,6 +346,8 @@ def self_check_overridden(parts, verbose=True):
     mod.NETS.clear()
     mod.NETS.update({n: dict(net_class=mod.net_class(n), pins=sorted(v)) for n, v in sorted(raw.items())})
     mod.SINGLE_PIN_WHITELIST.pop("EXP_P7", None)
+    for n in ("FRAME_H4", "FRAME_H7"):
+        mod.SINGLE_PIN_WHITELIST[n] = "S3-05: mounting-hole pad without bond parts (joined to the frame by the spreader)"
     real_yaml = None
     try:
         import yaml as real_yaml

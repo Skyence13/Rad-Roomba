@@ -27,7 +27,7 @@
       "PadToPad": 0.15,
       "PadToTrack": 0.15,
       "TrackToTrack": 0.15,
-      "MinLineWidth": 0.15,
+      "MinLineWidth": 0.2,
       "TrackToRegion": 0.25,
       "RegionToRegion": 0.25
     },
@@ -36,7 +36,7 @@
       "PadToPad": 0.0,
       "PadToTrack": 0.0,
       "TrackToTrack": 0.15,
-      "MinLineWidth": 0.2,
+      "MinLineWidth": 0.25,
       "TrackToRegion": 0.2,
       "RegionToRegion": 0.2
     }
@@ -129,7 +129,7 @@
     },
     {
       "Type": "Dielectric",
-      "Thickness": 0.0994,
+      "Thickness": 0.1,
       "Material": "FR4",
       "Name": "F.Cu/In1.Cu",
       "Notes": "Type: dielectric layer 1 (from F.Cu to In1.Cu)"
@@ -141,7 +141,7 @@
     },
     {
       "Type": "Dielectric",
-      "Thickness": 0.5708,
+      "Thickness": 0.15,
       "Material": "FR4",
       "Name": "In1.Cu/In2.Cu",
       "Notes": "Type: dielectric layer 2 (from In1.Cu to In2.Cu)"
@@ -153,7 +153,7 @@
     },
     {
       "Type": "Dielectric",
-      "Thickness": 0.1088,
+      "Thickness": 0.9692,
       "Material": "FR4",
       "Name": "In2.Cu/In3.Cu",
       "Notes": "Type: dielectric layer 3 (from In2.Cu to In3.Cu)"
@@ -165,7 +165,7 @@
     },
     {
       "Type": "Dielectric",
-      "Thickness": 0.5708,
+      "Thickness": 0.15,
       "Material": "FR4",
       "Name": "In3.Cu/In4.Cu",
       "Notes": "Type: dielectric layer 4 (from In3.Cu to In4.Cu)"
@@ -177,7 +177,7 @@
     },
     {
       "Type": "Dielectric",
-      "Thickness": 0.0994,
+      "Thickness": 0.1,
       "Material": "FR4",
       "Name": "In4.Cu/B.Cu",
       "Notes": "Type: dielectric layer 5 (from In4.Cu to B.Cu)"

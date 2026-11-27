@@ -57,7 +57,7 @@ an AWG 26 wire in parallel with the pack return (≈ 1-2 % of pack current). **R
 either an isolated sense return, or leave J_PAUX 3/4 unwired (as now) and record the accepted offset.
 
 ### IB-12 / IB-33, connector positions (PLACE; board frame (u, v), see README)
-| Connector | Stage 1 zone | Stage 2 position (centre) | Estimated cable (`tools/cable_lengths.py`, harness model) |
+| Connector | Stage 1 zone | Stage 2 position (centre) | Estimated cable (stage-2 estimate; superseded by the harness generator, IB-57) |
 |---|---|---|---|
 | J_TOF3 (CLIFF_RR) | rear-left | rear-right GH row (114.0, 15.2) | W-033 400 → ≈ 290 mm |
 | J_TOF10 (REAR_R) | rear-left | rear-right GH row (127.6, 15.2) | W-040 400 → ≈ 290 mm |
@@ -79,7 +79,7 @@ J_PWR now spans v 14.5..33.6 (allocation v 4..34; stage 1 said v 8..31) so the r
 ### Placement-level deviations from `layout_guidance.md`
 * 6 copper layers (guidance: 4): In1 solid GND, In2/In3 signal, In4 power splits (VBAT_SW, VMOT, VSYS, 3V3). Reason: 771 parts with
   fine-pitch ICs need the two inner routing layers; the planes stay solid. Thickness 1.6 mm unchanged.
-* SAFETY_CHAIN clearance in DRC is 0.2 mm, not the 0.5 mm / 1.0 mm functional clearances of guidance §5 (tool limitation, see README).
+* ~~SAFETY_CHAIN clearance in DRC is 0.2 mm~~ — superseded in stage 3: class clearance 0.5 mm and custom DRC rules for the 1.0 mm / 2.0 mm functional clearances and test-point spacing (section 3.2).
 * The VSYS/rails row (U10, U11, U12) sits on the gap pad next to the VMOT bulk capacitors as in the guidance floor plan; VSYS is
   routed + In4 split only around the charger.
 
@@ -115,7 +115,59 @@ self-check passes. This list is kept current while the work proceeds.
 | F13 | Brake relay coil return (M6) | K2/K3 coils now return through a new low-side photo-MOS **U_LS** (RELAY_RTN -> COIL_RTN -> E-stop pole B), whose LED is fed from RUN_HD (live only with a real latch). A board short of RUN_12V to a supply no longer energises the brake relays | Timing unchanged (clamps are across each coil). K2/K3 clamp Zeners 24 V -> 20 V (U_LS / chain photo-MOS off-state stays below 40 V even with RUN_12V held up): brake relay release assumed about 0.3 ms slower; firmware windows (BRAKE_x_RB low within 25 ms) unaffected | IN NETLIST |
 | F14 | VMOT decay (m1) | Hardware unchanged (1 kOhm bleed on 3 x 270 uF + 20 uF). Worst case to 1 V: 2.66 s from 14.6 V with +20 % capacitors | `brake.vmot_decay_max_ms` >= 3500 ms (rrch.h already shows 3500) | IN NETLIST |
 | F15 | VMOT eFuse enable and nSLEEP gate inputs | U8 EN divider (R133) and the new U9.B tap now on **RUN_HD** (before D_RUN) instead of RUN_12V | None (hardware only); HW_LATCH_RB polarity and pin unchanged | IN NETLIST |
+| F16 | Back-feed window (`CHAIN_BACKFEED_MS`, `chain_end_step` / `rrch_chain_step`) | With D_RSET (F12) C_SET cannot hold CHAIN_END or any node up after an opening | Set `CHAIN_BACKFEED_MS` to 0 for this netlist (hardware revision with S3 overrides): PERMIT_STUCK_ON and CHAIN_IMPLAUSIBLE then have no blind window. Keep the boot-time `ce_live_us` rule only if a rev-A board must still be supported | IN NETLIST |
+| F17 | REARM qualification (`rrch_chain_step`) | Hardware now refuses a REARM pressed while the chain is open (C_SET empty) and needs both contacts | Keep the existing rules (edge seen with all elements closed, 250 ms window, LATCH_NO_REARM); add REARM_SET_RB to the qualification (both contacts' rising edges within 100 ms of each other). The 300 ms ARM_PERMIT hold after an early press is no longer needed but harmless | IN NETLIST |
+| F18 | Watchdog strobe (already in `rrch_supervise_100hz`: 5 ms high pulse every 10 ms) | Matches F9 | No change needed; falling edges are 10 ms apart | IN NETLIST |
 
 Pins that must have pulls disabled: STM32 PB12, PD2, PC13; MCP23S17 GPPUA = GPPUB = 0x00 (all IOX_A inputs are taps, comparator
 nodes behind 47 k, or RC-filtered contact inputs); TCA9535 P17; TCA9534 IOX_C / IOX_D have no pull configuration.
 No MCU pin and no existing expander pin moves. No polarity of an existing signal changes.
+
+### 3.2 Netlist / BOM changes (overrides.py S3-xx; please adopt in circuit.py)
+
+| ID | Type | Item | Change | Finding |
+|---|---|---|---|---|
+| S3-C1a/b | NET | J_BTN pins 1, 2 | SET_CAP / K1_SET → **REARM_SET_SRC** (V5_AUX via R_SSRC 1 k) / **REARM_SET_RAW**: the REARM set contact only signals; the K1 coil node and C_SET stay on the board | C1 |
+| S3-C1g | ADD | set stage: R_SSRC, R_SPD, R_SSER, C_SF, D_SCL, D_SET (PESD15VL2BT), C_SC 1 µF, R_SG, D_SGN, Q_SETA, Q_SETB (BSS138 stack), R_AG, R_AGP, C_AG, R_USA, **U_SET** (TLP241A, SET_CAP → K1_SET), R_USK, **Q_HSET** (BSS84), R_SRB, **D_RSET** (1N4148W), **R_SDIS / Q_SDIS / Q_SDISB / R_SDG** (C_SET discharge while CHAIN_END dead), D_RB | set only on (closing edge of the set contact) AND (level of the aux contact); C_SET charged only from a closed chain and emptied when it opens | C1, M1, m3, m11 |
+| S3-C1c | NET | R129 pin 1 | REARM_BTN_RAW → REARM_BTN_D (through D_RB) | C1/M2 |
+| S3-C1d/h | NET+ADD | K1 pin 8 (NO2) → **K1_RUN**; **U_HOLD** (TLP241A, K1_RUN → RUN_HD, LED self-fed from RUN_HD via R_HA 1.5 k, set via Q_HSET/R_HS 470), D_HR; **D_RUN** (B160, RUN_HD → RUN_12V) | second, diverse hold element; RUN_12V cannot back-feed | C1, M6 |
+| S3-C1e | NET+ADD | K1 pin 3 (NC1) → K1_NC1; D_K1B + R_K1B 47 k (3 V bias on K1_SEAL_A), R_NC1/R_NC2/C_NC/D_NC → LATCH_NC_RB | K1 pole A state readable with the chain dead | C1 |
+| S3-C1h | ADD | tap R_KR1/R_KR2/C_KR/D_KR: K1_RUN → LATCH_RUN_RB; tap R_U9T1/R_U9T2/C_U9T/D_U9T: RUN_HD → HW_LATCH_G | K1 weld detection; U9 own input | C1, M2 |
+| S3-C1f | NET | R133 pin 1 (U8 EN divider) | RUN_12V → RUN_HD | M6 |
+| S3-M2d | NET | U9 pin 2 (B) | HW_LATCH_RB → HW_LATCH_G | M2, M3 |
+| S3-M6a-d, h | NET+ADD | K2.A2, K3.A2, D31.A, D34.A | COIL_RTN → **RELAY_RTN**; **U_LS** (TLP241A, RELAY_RTN → COIL_RTN, LED from RUN_HD via R_LSA 1.5 k), D_LSR | M6 (RUN_12V short) |
+| S3-M6e/f | PART | D32, D35 (K2/K3 clamp Zener) | BZT52C24-7-F → **BZT52C20-7-F** | photo-MOS off-state ≤ 36.5 V in the RUN_12V-short case |
+| S3-M1a | NET | R_SET pin 1 | CHAIN_END → RSET_A (behind D_RSET) | M1 |
+| S3-C2a/b | NET+ADD | U21 pin 4 → **CH_N6A**; channel B: R_LB1, C_LB1, R_LB2 39 k, R_LB3 10 k, C_LB2, **U46** (TLV3201AIDBVR), C_U46, R_LBG, R_LBR 47 k, Q_LB, R_21BA 680, **U21B** (TLP241A, CH_N6A → CH_N6) | second, diverse head-loop channel in series | C2 |
+| S3-M2a/b/c, e | NET+ADD | U43 GPA5, GPA7, GPB7 → HEAD_LOOP_OK_IO, LAB_KEY_N_IO, WDG_STROBE_IO through R_GA5, R_GA7, R_GB7 (47 k); R_WDPD 10 k WDG_STROBE → GND | no logic pin can drive a chain-control node | M2 |
+| S3-M3a-f | PART | R99/R100, R117/R118 100 k/56 k → **22 k/15 k**; R129 10 k → 4.7 k; R130 47 k → 100 k | tap valid with STM32 pull-downs; REARM_BTN level margin | M3 |
+| S3-F1 | ADD | **U47** TCA9534PWR (IOX_D, 0x22), C_U47, R_D4..R_D7 | new readbacks | — |
+| S3-M6g | ADD | TP60 (CH_N6A), TP61 (K1_RUN), TP62 (RELAY_RTN) | test points | — |
+| S3-N1a-d | PART | J_TOF4..7 descriptions | LOOK_LO/LI/RI/RO → LOOK_FL/RL/RR/FR (DEC-043) | IB-34 |
+
+Board definition (no netlist change): SAFETY_CHAIN class clearance 0.2 → **0.5 mm**; In4 VBAT_SW/VMOT/VSYS splits with 1.0 mm zone clearance;
+`RR-CHS-MAIN.kicad_dru` written by `board.py` from `placement.chain_rules()` and checked by DRC: high-side chain nets ≥ 1.0 mm from supply
+nets, loop-sense nets ≥ 2.0 mm from heater nets (J_HEAD1 pin 4/5 pad pair exempt: contract pinout), chain test points ≥ 10 mm from every
+other chain and supply test point; TP8/9/38/39/40/50/60/61/62 placed explicitly to meet it (M6).
+
+### 3.3 Consequences for harness and mechanical owners
+
+* **No connector moves and no pin moves.** J_BTN keeps its housing, pins and wires; only the meaning of W-018.1/.2 changes:
+  W-018.1 = REARM_SET_SRC (5 V through 1 kΩ, ≤ 5 mA), W-018.2 = REARM_SET_RAW (contact output). The coil pulse no longer runs in
+  the cable; the wires stay in the yellow safety loom (a short onto them can no longer set the latch, but keep the pair twisted and
+  apart from V12_AUX: a crush shorting a supply onto both REARM contact lines at once is a residual, `chassis_safety_chain.md` #44).
+  Harness net labels SET_CAP / K1_SET in `harness/` and `cables.md` W-018 should be renamed.
+* Bench step 7 of the safety-chain procedure now applies V12_AUX to J_BTN pin 2: harmless by design.
+* Pause/Stop button moved 10 mm outboard (IB-65, CR-08): **no board effect** — J_PAUSE stays at (101.4, 15.2); W-019 length is the
+  harness's (its generator reads `out/pinmap.json`).
+* New parts are SMD ≤ 4.0 mm (TLP241A SMDIP-4 on top, the rest ≤ 1.6 mm), auto-arranged by the tool in this pass (see README): no part
+  enters the front-corner 12 mm zones or the bottom gap-pad area by rule; the height zones of `board_envelopes.yaml` are unchanged.
+* `tools/cable_lengths.py` (IB-57) rewritten: it no longer estimates lengths, it reports the harness generator's own lengths next to
+  the board connector positions; `reports/cable_lengths.json` keeps its fields for `harness/cross_check.py`.
+
+### 3.4 UNVERIFIED in stage 3
+
+TLV3201 DBV pinout and the TCA9534 pin table (recalled; U45 uses the same); TLP241A ratings, IFT, turn-on/off times (as stage 1);
+B160 Vf and rating; G6S-2 must-operate 75 % / must-release 10 % and 4 ms operate/release (family values); TCA953x and STM32G474 input
+thresholds and pull-down values; Schottky leakage figures used to choose silicon for D_RSET. Verified in stage 3: TPS3430 WDI falling-edge
+trigger, window limits, reset delay and pin table (TI datasheet fetched 2026-11-27).

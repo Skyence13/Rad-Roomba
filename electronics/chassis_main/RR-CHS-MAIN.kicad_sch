@@ -1465,7 +1465,7 @@
 		)
 		(uuid "1900bf06-533d-5f3b-8f33-1c7ee1339f79")
 	)
-	(text "Revision A    Date 2026-11-26    Doc No RR-EL-0100\n\nChassis main board: pack entry and switch, LiFePO4 charger and power path, 5.12 V / 3.3 V / 5 V rails,\neFuse branches (head power, head heater, chassis heater, LiDAR, bus 5 V), hardwired traction safety chain\nwith latch relay, VMOT eFuse, two DRV8874 H-bridges with DPDT brake relays, STM32G474 motion MCU with IMU,\nexpanders, 11 ToF branches, USB/RS-485 head link and panel drivers.\nNetlist: design/circuit.py (stage 1) + overrides.py (stage 2 deviations S2-xx, see STAGE2_CHANGE_REQUESTS.md).\nNOT A SAFETY-RATED CIRCUIT.\n\nLayers: 6    Thickness: 1.60 mm\nRails: 3V3, 3V3A, GND, V12_AUX, V5_AUX, V5_BUCK, V5_CM5, VBAT_SW, VMOT, VREF_3V0, VSYS\nNet class SAFETY_CHAIN: track 0.40 mm, clearance 0.50 mm, via 0.80/0.40 mm  [CH_N*, CHAIN_END, RUN_12V, RUN_HD, RELAY_RTN, COIL_RTN, K1_*, SET_CAP, SET_OUT, SET_DIS, RSET_A, K?_CL, HANDS_LAMP_*]\nNet class HC_PACK: track 1.00 mm, clearance 0.15 mm, via 0.80/0.40 mm  [VBAT_RAW, PSW_SRC, VBAT_PROT, VBAT_SW]\nNet class HC_VMOT: track 0.80 mm, clearance 0.15 mm, via 0.80/0.40 mm  [VMOT, OUT1_L, OUT2_L, OUT1_R, OUT2_R, MOT_L_A, MOT_L_B, MOT_R_A, MOT_R_B, MOTC_*, BRK_*, CLAMP_F, CLAMP_R]\nNet class HC_BRANCH: track 0.80 mm, clearance 0.15 mm, via 0.80/0.40 mm  [HEAD_HTR_F, HEAD_HTR_P, HEAD_HTR_N, CHS_HTR_F, CHS_HTR_P, V5_BUCK, V5_CM5, VSYS, CHG_IN, CHG_F, CHG_VIN, U3_CLP, U3_CSP, U3_SW, U10_SW]\nNet class PWR_1A5: track 0.40 mm, clearance 0.15 mm, via 0.60/0.30 mm  [HEAD_PWR_F, HEAD_PWR_E, HEAD_PWR_P, V12_LIDAR, 3V3, V5_AUX, 3V3A, V12_AUX, BUS_5V, TOF*_3V3, ENC_*_5V, U11_SW, U12_SW]\nNet class SIG: track 0.20 mm, clearance 0.15 mm, via 0.60/0.30 mm  [*]\n\nThis schematic is generated from board.py by tools/eda (rrkicad).\nAll nets are connected by name (global labels / power symbols); there are no drawn wires between symbols."
+	(text "Revision A    Date 2026-11-26    Doc No RR-EL-0100\n\nChassis main board: pack entry and switch, LiFePO4 charger and power path, 5.12 V / 3.3 V / 5 V rails,\neFuse branches (head power, head heater, chassis heater, LiDAR, bus 5 V), hardwired traction safety chain\nwith latch relay, VMOT eFuse, two DRV8874 H-bridges with DPDT brake relays, STM32G474 motion MCU with IMU,\nexpanders, 11 ToF branches, USB/RS-485 head link and panel drivers.\nNetlist: design/circuit.py (stage 1) + overrides.py (stage 2 deviations S2-xx, see STAGE2_CHANGE_REQUESTS.md).\nNOT A SAFETY-RATED CIRCUIT.\n\nLayers: 6    Thickness: 1.60 mm\nRails: 3V3, 3V3A, GND, V12_AUX, V5_AUX, V5_BUCK, V5_CM5, VBAT_SW, VMOT, VREF_3V0, VSYS\nNet class SAFETY_CHAIN: track 0.40 mm, clearance 0.50 mm, via 0.80/0.40 mm  [CH_N*, CHAIN_END, RUN_12V, RUN_HD, RELAY_RTN, COIL_RTN, K1_*, SET_CAP, SET_DIS, RSET_A, K?_CL, HANDS_LAMP_*]\nNet class HC_PACK: track 1.00 mm, clearance 0.15 mm, via 0.80/0.40 mm  [VBAT_RAW, PSW_SRC, VBAT_PROT, VBAT_SW]\nNet class HC_VMOT: track 0.80 mm, clearance 0.15 mm, via 0.80/0.40 mm  [VMOT, OUT1_L, OUT2_L, OUT1_R, OUT2_R, MOT_L_A, MOT_L_B, MOT_R_A, MOT_R_B, MOTC_*, BRK_*, CLAMP_F, CLAMP_R]\nNet class HC_BRANCH: track 0.80 mm, clearance 0.15 mm, via 0.80/0.40 mm  [HEAD_HTR_F, HEAD_HTR_P, HEAD_HTR_N, CHS_HTR_F, CHS_HTR_P, V5_BUCK, V5_CM5, VSYS, CHG_IN, CHG_F, CHG_VIN, U3_CLP, U3_CSP, U3_SW, U10_SW]\nNet class PWR_1A5: track 0.40 mm, clearance 0.15 mm, via 0.60/0.30 mm  [HEAD_PWR_F, HEAD_PWR_E, HEAD_PWR_P, V12_LIDAR, 3V3, V5_AUX, 3V3A, V12_AUX, BUS_5V, TOF*_3V3, ENC_*_5V, U11_SW, U12_SW]\nNet class SIG: track 0.20 mm, clearance 0.15 mm, via 0.60/0.30 mm  [*]\n\nThis schematic is generated from board.py by tools/eda (rrkicad).\nAll nets are connected by name (global labels / power symbols); there are no drawn wires between symbols."
 		(exclude_from_sim no)
 		(at 20 29 0)
 		(effects
@@ -1895,7 +1895,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "46c455b3-7b54-5eae-8e55-f643c5de45aa")
-		(property "Reference" "#PWR0814"
+		(property "Reference" "#PWR0816"
 			(at 38.1 375.92 0)
 			(effects
 				(font
@@ -1945,7 +1945,7 @@
 		(instances
 			(project "RR-CHS-MAIN"
 				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63"
-					(reference "#PWR0814")
+					(reference "#PWR0816")
 					(unit 1)
 				)
 			)
@@ -2025,7 +2025,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "e9d33a2c-5eb3-57c9-80ab-26e77cd395a4")
-		(property "Reference" "#PWR0815"
+		(property "Reference" "#PWR0817"
 			(at 71.12 375.92 0)
 			(effects
 				(font
@@ -2075,7 +2075,7 @@
 		(instances
 			(project "RR-CHS-MAIN"
 				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63"
-					(reference "#PWR0815")
+					(reference "#PWR0817")
 					(unit 1)
 				)
 			)
@@ -2155,7 +2155,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "11f3f9f3-4c6a-5fd4-8821-713eeba92b7b")
-		(property "Reference" "#PWR0816"
+		(property "Reference" "#PWR0818"
 			(at 104.14 375.92 0)
 			(effects
 				(font
@@ -2205,7 +2205,7 @@
 		(instances
 			(project "RR-CHS-MAIN"
 				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63"
-					(reference "#PWR0816")
+					(reference "#PWR0818")
 					(unit 1)
 				)
 			)
@@ -2285,7 +2285,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "f02a782f-362b-56b2-875f-dcee29782169")
-		(property "Reference" "#PWR0817"
+		(property "Reference" "#PWR0819"
 			(at 137.16 375.92 0)
 			(effects
 				(font
@@ -2335,7 +2335,7 @@
 		(instances
 			(project "RR-CHS-MAIN"
 				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63"
-					(reference "#PWR0817")
+					(reference "#PWR0819")
 					(unit 1)
 				)
 			)
@@ -2415,7 +2415,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "c85e87a4-91e4-518a-8e64-4d49ba2bd594")
-		(property "Reference" "#PWR0818"
+		(property "Reference" "#PWR0820"
 			(at 170.18 375.92 0)
 			(effects
 				(font
@@ -2465,7 +2465,7 @@
 		(instances
 			(project "RR-CHS-MAIN"
 				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63"
-					(reference "#PWR0818")
+					(reference "#PWR0820")
 					(unit 1)
 				)
 			)
@@ -2545,7 +2545,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "697b6a53-3696-581e-8771-2cebfeaa468a")
-		(property "Reference" "#PWR0819"
+		(property "Reference" "#PWR0821"
 			(at 203.2 375.92 0)
 			(effects
 				(font
@@ -2595,7 +2595,7 @@
 		(instances
 			(project "RR-CHS-MAIN"
 				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63"
-					(reference "#PWR0819")
+					(reference "#PWR0821")
 					(unit 1)
 				)
 			)
@@ -2675,7 +2675,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "0e4e34a6-8008-5b39-8967-06674070131b")
-		(property "Reference" "#PWR0820"
+		(property "Reference" "#PWR0822"
 			(at 236.22 375.92 0)
 			(effects
 				(font
@@ -2725,7 +2725,7 @@
 		(instances
 			(project "RR-CHS-MAIN"
 				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63"
-					(reference "#PWR0820")
+					(reference "#PWR0822")
 					(unit 1)
 				)
 			)
@@ -2805,7 +2805,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "28ed0fc4-d8d9-57a8-8266-248910714151")
-		(property "Reference" "#PWR0821"
+		(property "Reference" "#PWR0823"
 			(at 269.24 375.92 0)
 			(effects
 				(font
@@ -2855,7 +2855,7 @@
 		(instances
 			(project "RR-CHS-MAIN"
 				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63"
-					(reference "#PWR0821")
+					(reference "#PWR0823")
 					(unit 1)
 				)
 			)
@@ -2935,7 +2935,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "8ac2c46f-d4cf-5223-8b86-e2c1a4a6d1ca")
-		(property "Reference" "#PWR0822"
+		(property "Reference" "#PWR0824"
 			(at 302.26 375.92 0)
 			(effects
 				(font
@@ -2985,7 +2985,7 @@
 		(instances
 			(project "RR-CHS-MAIN"
 				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63"
-					(reference "#PWR0822")
+					(reference "#PWR0824")
 					(unit 1)
 				)
 			)
@@ -3065,7 +3065,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "fdce8aeb-f1bc-53c7-839f-18d79c435236")
-		(property "Reference" "#PWR0823"
+		(property "Reference" "#PWR0825"
 			(at 335.28 375.92 0)
 			(effects
 				(font
@@ -3115,7 +3115,7 @@
 		(instances
 			(project "RR-CHS-MAIN"
 				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63"
-					(reference "#PWR0823")
+					(reference "#PWR0825")
 					(unit 1)
 				)
 			)

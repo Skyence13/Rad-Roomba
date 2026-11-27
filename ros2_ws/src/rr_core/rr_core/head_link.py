@@ -87,6 +87,8 @@ class HeadStreamInterpreter:
         self.fit: ClockFit | None = None
         self.installed_fits = set()
         self.last_seq = None           # last accepted sequence in this session
+        self._prev_heater = None       # head_icd_addendum 0.5.1: heater transition derived from consecutive frames
+        self._marked_next = False      # after a gap the next gate is treated as marked
         self.last_end_us = None
         self.first_seq = None
         self.armed = False
@@ -238,6 +240,7 @@ class HeadStreamInterpreter:
         out = []
         if last_missing >= first_missing:
             self.stats["gaps"] += 1
+            self._marked_next = True
             out.append({"ev": "gap", "t_us": t, "attachment": aid, "kind": "BUFFER_EXPIRED",
                         "first_missing": first_missing, "last_missing": last_missing,
                         "count": last_missing - first_missing + 1,
@@ -271,12 +274,14 @@ class HeadStreamInterpreter:
             return [{"ev": "fault", "t_us": t, "attachment": aid, "fault": "OVERLAPPING_FRAME",
                      "sequence": seq, "raw_index": idx}]
         if self.last_seq is not None and seq > self.last_seq + 1:
+            self._marked_next = True
             self.stats["gaps"] += 1
             out.append({"ev": "gap", "t_us": t, "attachment": aid, "kind": "SEQUENCE_SKIP",
                         "first_missing": self.last_seq + 1, "last_missing": seq - 1,
                         "count": seq - self.last_seq - 1, "after_end_us": self.last_end_us,
                         "before_start_us": frame["start_us"], "raw_index": idx})
         elif self.last_end_us is not None and frame["start_us"] > self.last_end_us:
+            self._marked_next = True
             out.append({"ev": "gap", "t_us": t, "attachment": aid, "kind": "TIME_GAP",
                         "first_missing": None, "last_missing": None, "count": 0,
                         "after_end_us": self.last_end_us, "before_start_us": frame["start_us"],
@@ -311,8 +316,19 @@ class HeadStreamInterpreter:
             lanes.append({"id": lane, "alpha": pair("alpha"), "beta": pair("beta_window"),
                           "ref": pair("photon_ref"), "flags": list(seg["flags"]),
                           "reasons": why + common})
+        # heater transition: ACQ 2.0 has no member for it; the heater switches only on gate boundaries, so a change of
+        # thermal.heater between consecutive gates marks the gate that contains the edge; after a sequence gap the next
+        # gate is treated as marked (head_icd_addendum_0.4, heater transition)
+        heater = frame["thermal"].get("heater")
+        marks = []
+        if self._prev_heater is not None and heater != self._prev_heater:
+            marks.append("HEATER_TRANSITION")
+        if self._marked_next:
+            marks.append("AFTER_GAP")
+        self._prev_heater, self._marked_next = heater, False
         self.stats["gates"] += 1
         out.append({"ev": "gate", "t_us": t, "gate": {
+            "marks": marks, "heater_transition": "HEATER_TRANSITION" in marks,
             "attachment": aid, "sequence": seq, "start_us": frame["start_us"],
             "span_us": frame["span_us"], "t0_us": t0, "t1_us": t1, "bound_us": bound,
             "fit_id": fit_id, "sync": dict(frame["sync"]), "thermal": dict(frame["thermal"]),

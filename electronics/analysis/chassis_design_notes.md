@@ -109,3 +109,21 @@ Bench tests: scope TXDEN against TXD and the bus at 1 Mbaud (enable lead, releas
 5. IMODE strap of the DRV8874.
 6. No electronic current limit at pack level (CCR-E01); no MCU input for pack presence or BUS_5V fault.
 7. Sounder level (RR-PANEL).
+
+## 11. Stage 3 (review fixes): component choices
+
+Circuit and fault analysis are in `chassis_safety_chain.md` §2 and §6; the change list is `electronics/chassis_main/STAGE2_CHANGE_REQUESTS.md` "Stage 3".
+
+| Part | Choice | Reason |
+|---|---|---|
+| D_RSET (C_SET charge diode) | 1N4148W, silicon | blocks C_SET back-feed (M1). A Schottky's reverse leakage at temperature (tens to hundreds of µA [A]) into the 156 kΩ CHAIN_END tap would hold CHAIN_END up again. Reverse ≤ 14.6 V |
+| U_SET, U_HOLD, U_LS, U21B | TLP241A, as U20–U24 | one photo-MOS type on the board; ratings, IFT and switching times [U] (stage-1 note). With D_RUN and the 20 V K2/K3 clamps no photo-MOS sees more than 36.5 V off-state, even with RUN_12V held up by a fault |
+| Q_HSET (U_HOLD set current) | BSS84 from V5_AUX, gate = set-stack node | the U_HOLD LED must be unreachable from the K1 coil side, otherwise a welded K1 seal-in would hold U_HOLD; a diode from the set pulse would have cost 0.75 V of set margin and leaks the seal-in voltage |
+| D_RUN | B160-13-F (60 V, 1 A Schottky, SMA) [U ratings recalled] | 0.3 V at 95 mA [A]; 60 V because the K2/K3 kick (≤ 21.9 V) adds to a live RUN_HD in fault cases |
+| D32, D35 (K2/K3 clamp Zener) | BZT52C24 → BZT52C20 | keeps U_LS off-state ≤ 36.5 V when RUN_12V is held up; release about 0.3 ms slower [A] (T2) |
+| U46 (loop channel B) | TLV3201AIDBVR, CMOS push-pull | diverse from the LM2903B (bipolar, open collector); OUT (pin 1) next to V− (pin 2), so a solder bridge opens the channel. DBV pinout recalled [U] |
+| U47 (IOX_D) | TCA9534PWR at 0x22 | the MCU and IOX_A/B/C have no free pin; same part and pin table as U45 [U] |
+| Readback series resistors | 47 kΩ | 70 µA from a 3.3 V output against a comparator sinking mA; inputs see < 50 mV drop with < 1 µA leakage |
+| Taps on PB12, PD2 | 22 kΩ / 15 kΩ | valid HIGH above 7.7 V even with the STM32 pull-down enabled (M3); clamp current into 3V3 ≤ 0.26 mA per tap at 14.6 V |
+
+K1 set margin over supply and temperature is table T11 of `chassis_braking_tables.md`; VMOT decay with capacitor tolerance T10.

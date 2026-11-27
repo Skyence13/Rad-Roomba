@@ -107,6 +107,7 @@ class SurveyProcessor:
         self._mark_t = [-1]
         self.gate_log = []
         self.gaps = []
+        self.diag = {}                 # (a_idx, seq) -> DIAG members per gate (alpha_short ...)
         self.observations = {}         # obs id -> dict
         self._obs_gates = {}
         self.flags = []
@@ -178,6 +179,25 @@ class SurveyProcessor:
     def mark_at(self, t_us):
         return self.marks[bisect.bisect_right(self._mark_t, t_us) - 1]
 
+    def add_diag(self, ev: dict):
+        """DIAG record of one gate (head ICD addendum): per-lane alpha_short / alpha_idle_clears / imon_na are kept per
+        (attachment, sequence) so gates.csv shows the beta-window loss of short alpha pulses (alpha channel).  Members this
+        software does not know stay in the archived raw record; nothing is dropped here."""
+        body = ev.get("body") or {}
+        seq = body.get("sequence")
+        if type(seq) is not int or not isinstance(body.get("lanes"), list):
+            return
+        a_idx = self.a_index(ev["attachment"])
+        self.diag[(a_idx, seq)] = {
+            "alpha_short": [l.get("alpha_short") for l in body["lanes"]],
+            "alpha_idle_clears": [l.get("alpha_idle_clears") for l in body["lanes"]],
+            "imon_na": [l.get("imon_na") for l in body["lanes"]],
+            "heater_transition": (body.get("heater") or {}).get("transition"),
+            "dac_writes": (body.get("bias") or {}).get("dac_writes"), "bumper_zones": body.get("bumper_zones")}
+        del_old = len(self.diag) - 20000
+        for k in list(self.diag)[:max(0, del_old)]:
+            del self.diag[k]
+
     def add_gap(self, gap: dict):
         self.gaps.append(gap)
 
@@ -208,7 +228,9 @@ class SurveyProcessor:
         a_idx = self.a_index(gate["attachment"])
         seq = gate["sequence"]
         log = {"attachment": gate["attachment"], "sequence": seq, "t0_us": gate["t0_us"], "t1_us": gate["t1_us"],
-               "bound_us": gate["bound_us"], "stage": None, "pose": None, "lanes": []}
+               "bound_us": gate["bound_us"], "stage": None, "pose": None, "lanes": [],
+               "marks": list(gate.get("marks") or []), "head_c": gate["thermal"].get("head_c"),
+               "heater": gate["thermal"].get("heater")}
         self.gate_log.append(log)
         for lane in gate["lanes"]:          # reference series for U_null (independent of pose)
             if lane["ref"] is not None and not any(r.startswith(("HEAD_FLAG", "LANE_FLAG")) for r in lane["reasons"]):

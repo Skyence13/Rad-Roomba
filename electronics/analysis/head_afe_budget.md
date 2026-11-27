@@ -1,6 +1,7 @@
 # RR-HEAD-ACQ analogue front end, bias, timing and power budget — rev A design
 
-Owner: head electronics lead (stage 1). Companion files: `head_afe_calc.py` (regenerates every table),
+Owner: head electronics lead (stage 1); **stage 3 (2026-11-27) corrections after `docs/reviews/REVIEW_head_interference.md`
+are marked "S3" and summarised in section 13.** Companion files: `head_afe_calc.py` (regenerates every table),
 `head_afe_calc_out.md` (its full output, tables T1–T11), `head_afe_pulses.png`,
 `electronics/head_acq/design/circuit.py` (the circuit these numbers describe; table T12 of the calculator output confirms that the two files use the same values).
 
@@ -34,14 +35,14 @@ Design ranges, how each is pinned down, and what it sets on the board (all selec
 | SiPM model, area, count per guide | one 3 × 3 mm device … four 6 × 6 mm in parallel (*assumed*) | supplier drawing; confirm by Ct and dark current below | everything in this table |
 | Terminal capacitance per channel | 0.3 … 17 nF (*assumed* from the table above ×1…×4) | pulser step with SiPM connected vs. disconnected: decay constant = R_IN·Ct at `Fn PRE` pad | R_IN (R102/R103 class: 2 × 20 Ω fitted = 10 Ω; 5…49.9 Ω), pole-zero R_PZ |
 | Breakdown voltage | 24 … 58 V (*datasheet* range of candidates) | I–V sweep per channel using HV_SET and `IMON_CH` (√I vs V intercept) with the lid closed | HV_RAW strap R2207 class (37 / 49 / 53 / 65 V), OVP strap, HV_SET code |
-| Vbr spread between the 8 SiPMs | ≤ 2.4 V (*assumed* = usable anode trim range) | same sweep | TRIM_DAC codes; if the spread is larger (possible with S13360, ±5 V lot spread) the SiPMs must be binned — **not coverable on the board** |
+| Vbr spread between the 8 SiPMs | ≤ **2.0 V** (S2-05: trim range 2.4 V less 0.4 V reserve for the lane temperature difference and the I × 4.99 kΩ floor) | same sweep | TRIM_DAC codes; if the spread is larger (possible with S13360, ±5 V lot spread) the SiPMs must be binned — **not coverable on the board** |
 | Vbr temperature coefficient β | 21.5 … 54 mV/°C (*datasheet*) | repeat the I–V sweep at two head temperatures | firmware coefficient in `setup_id` |
 | Overvoltage | 1 … 12 V (*datasheet* recommended points 2.5–12 V) | chosen from the dark-rate / efficiency scan | HV_SET; gain resistors below |
 | Gain (charge per p.e.) | 0.27 … 1.2 pC (*datasheet*, 1.7e6 … 7.3e6) | single-p.e. peak spacing in a BETA_LLD threshold scan of the dark rate (LED off, lid closed) | preamp/fast gain (R_F 499 Ω / R_G 24.9 Ω in each stage), threshold codes |
 | PDE | 38 … 63 % (*datasheet*) | not measurable separately; folded into p.e. yield | — |
 | Dark count rate vs T | 0.3 … 22 MHz at 25 °C (*datasheet* ×1…×4 devices); halving every 8 °C (*assumed*, range 7–10 °C) | dark threshold scan at +25, +10, 0 °C | lowest BETA_LLD / REF_LLD; head temperature set-point |
 | Recharge time constant | 15 … 100 ns (*datasheet* 15–55 ns for the listed devices; margin *assumed*) | pulse tail at `Fn PRE` with the LED or a source | R_PZ = τ/220 pF (226 Ω fitted for 50 ns) |
-| p.e. per beta event (0.25 mm plastic through the guide) | **4 … 120, typical 15 (*assumed*)**. Basis: 51 keV deposited by a minimum-ionising electron at normal incidence (*calculated*: 2 MeV·cm²/g × 1.02 g/cm³ × 0.025 cm), ~10⁴ photons/MeV for EJ-212-class plastic (*UNVERIFIED*), 0.5–8 % light collection × PDE (*assumed*) | pulse-height spectrum from a Sr-90/Y-90 or Tl-204 source by BETA_LLD scan and on the 50 Ω monitor | fast gain, BETA_LLD/BETA_ULD codes; decides whether the design works at all (see 3.3) |
+| p.e. per beta event (0.25 mm plastic through the guide) | **4 … 120, typical 15 (*assumed*)**. Basis: 51 keV deposited by a minimum-ionising electron at normal incidence (*calculated*: 2 MeV·cm²/g × 1.02 g/cm³ × 0.025 cm), ~10⁴ photons/MeV for EJ-212-class plastic (*UNVERIFIED*), 0.5–8 % light collection × PDE (*assumed*) | pulse-height spectrum from a Sr-90/Y-90 or Tl-204 source by BETA_LLD scan and on the 50 Ω monitor | fast gain, BETA_LLD/BETA_ULD codes; decides whether the design works at all (see 3.2). **S3 RFQ requirement (T17): ≥ 18 p.e. at the most-probable deposit of a normally incident MIP at the worst point of the plate** (section 3.2) |
 | p.e. and time profile of a 5 MeV-class alpha in ZnS(Ag) | 150 … 15 000 p.e. (*assumed*); 70 % with 200 ns decay, 30 % in a µs tail lumped at 5 µs (*assumed*, literature class) | Am-241 at the window: SLOW/FAST ratio and time-over-threshold on the monitor output | slow integrator R/C (1 kΩ / 1 nF), G3 (2.00 k / 499 Ω), ALPHA code, acceptance window W |
 | Reference-tile yield | 10 … 600 p.e. (*assumed*: thicker tile, Compton electrons) | Cs-137 / ambient spectrum by REF_LLD scan | reference-channel gain resistors (same footprints), REF_LLD/REF_ULD |
 | SiPM carrier wiring, temperature sensor | 2 coax + NTC assumed | supplier drawing | connectors J101/J102 class (U.FL), lane auxiliary connector (JST GH-6) |
@@ -90,21 +91,71 @@ Dynamic range between a 5 p.e. beta threshold and the largest alpha: 3000:1 in c
 only the fast stage and (for the largest alphas) the slow stage clip. Per the lead's instruction the alpha channel is a confirmation channel: no further dynamic range was added.
 The NUV-MT at +12 V has 3.5× this gain: beta maximum reaches 2.9 V — reduce the fast gain (R_G 49.9 Ω) or the overvoltage.
 
-**Recovery after a maximum alpha (*calculated* estimates):** OPA838 overdrive recovery 50 ns (*datasheet*); the anode charge leaves through R_IN in ≤ 0.2 µs;
-the 100 nF/1 kΩ input coupling leaves a −0.4 mV undershoot at node A decaying in 100 µs, which the 22 ns fast CR suppresses by ~10⁻⁴ (no effect on the beta path) and which
-depresses the slow baseline by ~30 mV (≈ 140 p.e. of alpha scale) for ~100–200 µs; the trim node moves 7 nC/4.8 µF = 1.5 mV and recovers in ~50 ms (slow, rejected by both shapers).
+**Recovery after a maximum alpha (*calculated* estimates):** OPA838 overdrive recovery 50 ns (*datasheet*); the anode charge leaves through R_IN in ≤ 0.2 µs.
+**S3 correction (review m2):** the stage-1 statement "the 22 ns fast CR suppresses the 100 µs input-coupling undershoot by ~10⁻⁴" was wrong: the pole-zero
+network (R_PZ 226 Ω from PRE to FS, R_D 100 Ω to VBL) passes DC with 100/326 = 0.307, so FAST saw 6.45 × PRE at low frequency. In addition the trim node
+(4.8 µF) takes the alpha charge as a 1.5 mV step that recovers only in ~24 ms; through the 100 µs input coupling it becomes a long negative tail
+that the review's model did not contain. T14 (*calculated*, 15 000 p.e. alpha, J60035): stage-1 network −2.6 p.e. at 150 µs, **−3.3 p.e. at 300 µs, −1.9 p.e. at 500 µs**
+(the 300 µs firmware hold would not have been enough). **Fix S3-04:** 47 nF in series with R_PZ (C150-class, all eight channels): (R_PZ + R_D) × 47 nF = 15 µs,
+1 Ω at 3 MHz, so the pulse and the pole-zero cancellation are unchanged (T2: 6.92 mV/p.e., FWHM 80 ns, undershoot 0.6 %); FAST tail −1.2 / −0.5 / −0.2 / +0.06 p.e.
+at 100 / 150 / 200 / 300 µs, deepest −33 p.e. at 10 µs (inside the hold). After a 1500 p.e. alpha the tail is −0.05 p.e. at 150 µs.
+The slow baseline is depressed by ~30 mV (≈ 140 p.e. of alpha scale) for ~100–200 µs (unchanged, slow path).
 ZnS(Ag) afterglow can keep the LLD comparator busy for tens of µs: the firmware already waits for LLD low before clearing.
 Not covered by any calculation: the real afterglow photo-electron rate — measure with Am-241 (bench test B7).
 
 ### 2.4 Monitor output and waveform capture — what they can and cannot do
 
-* `J2701` (U.FL, 50 Ω): unity-gain OPA836 buffer behind a per-lane 8:1 multiplexer; each tap has 1 kΩ in series, so the monitor bandwidth is about 10–15 MHz (*calculated*: 1 kΩ × ~12–15 pF).
-  It shows FAST (clamped at 3.6 V), SLOW, preamp of the reference channels, preamp of the floor channel (page 2), baseline. A 50 Ω scope sees half amplitude.
+* `J2701` (U.FL, 50 Ω): unity-gain OPA836 buffer behind a per-lane 8:1 multiplexer. **S3 (review M2/m4):** the stage-1 figure "1 kΩ × 12–15 pF → 10–15 MHz"
+  ignored the bus: four TMUX1108 drains + ~300 mm of trace + buffer ≈ 50–150 pF (*assumed*), i.e. 1–3 MHz already in stage 1. The taps are now 10 kΩ at the
+  op-amp OUTPUTS (FAST, SLOW, PRE; S3-01) and the lane muxes are OFF while counting (MON_LANE_EN = 0, S3-02), so **the monitor is a baseline / slow-signal monitor,
+  0.1–0.3 MHz** (T15), gain 0.98 (10 kΩ into the 1 MΩ ∥ 1 MΩ bus bleeds). It shows FAST (op-amp output, not clamped), SLOW, preamp of the reference channels,
+  preamp of the floor channel (page 2), baseline. Single-p.e. spacing and pulse shapes: use the PRE pads or threshold scans, not J2701. With the lane muxes off,
+  MON_BUS carries the frame-potential monitor (0.300 V + V(FRAME)/2, S3-03, section 9).
   Un-multiplexed, full-bandwidth access: the `Fn PRE` / `Rn PRE` pads (453 Ω series = 10:1 into 50 Ω).
 * MCU ADC2 on `MON_ADC` (1 MHz anti-alias): at ≤ 4 MS/s it **can** digitise the SLOW output (0.5 µs peaking, tens of µs tail: 2–4 samples on the rise) and baselines;
   it **cannot** resolve the FAST pulse (80 ns FWHM = one third of a sample period) — fast-pulse shape work needs an oscilloscope/digitiser on J2701 or the PRE pads.
   With the pulser (repetitive, MCU-timed) an equivalent-time scan in 6.9 ns timer steps can reconstruct the pulser response, not random scintillation pulses.
-* Time over threshold of every event is available without any of this from the raw LLD lines on TIM4/TIM3 (section 4).
+* Time over threshold of every event is available without any of this from the raw LLD lines on TIM4/TIM3 (section 4) - it is now the alpha/beta discriminator (2.5).
+
+### 2.5 Alpha / beta separation (S3, review C1)
+
+The ALPHA comparator looks at SLOW, and SLOW responds **more** per p.e. to fast plastic light than to ZnS light (T2: 0.369 vs 0.218 mV/p.e., J60035), so an
+amplitude threshold alone cannot separate a bright beta from a weak alpha: with ALPHA = baseline + 30 mV every beta ≥ 81 p.e. is an "alpha". The
+radiometry alpha background budget (0.01 s⁻¹) against ~33 s⁻¹ beta-window rate per µSv/h means a beta tail of 3 × 10⁻⁴ is already the whole budget.
+
+*Time over threshold of the raw LLD* (firmware 0.5.1: alpha requires ALPHA and TOT ≥ 250 ns). T13 (*calculated*, FAST clamped at 3.0 V, ZnS decay 200 ns *assumed*):
+
+| device | LLD | brightest beta (240 p.e.) TOT | weakest alpha (150 p.e.) TOT | gap | cut (mid-gap) |
+|---|---|---|---|---|---|
+| J60035 @2.5 V | 10 | 202 ns | 374 ns | 172 ns | ≈ 290 ns |
+| J30035 @2.5 V | 10 | 115 ns | 246 ns | 131 ns | ≈ 180 ns |
+| S14160-6050HS | 10 | 139 ns | 290 ns | 151 ns | ≈ 215 ns |
+| S13360-6050 | 10 | 121 ns | 258 ns | 137 ns | ≈ 190 ns |
+| NUV-MT @12 V | 10 | 129 ns | 272 ns | 143 ns | ≈ 200 ns |
+| 4 × J60035 (R_IN 10 Ω) | 10 | 571 ns | 738 ns | 167 ns | ≈ 655 ns |
+
+Conclusions: (1) with the 6.94 ns capture tick (±7 ns per TOT) every candidate has a gap of 130–170 ns = 19–25 ticks: **TOT on the raw LLD is robust, provided the
+cut is a per-device setup value placed mid-gap**; a fixed 250 ns is wrong for two candidates (J30035 and S13360 weakest alphas at 246 / 258 ns would be lost,
+and for a 4-device array every beta would pass as alpha). Recommended firmware defaults per device type: the "cut" column; confirm with Sr-90/Y-90 alone and
+Am-241 alone (T3 extension). (2) This model gives the weakest J60035 alpha 374 ns at LLD 10 (428 ns at LLD 8), not the review's "≥ 280 ns" lower bound,
+so the margin of the 250 ns cut is ~120 ns, not 27 ns as firmware estimated from the review; the cut should still move to ~290 ns for J60035.
+(3) The physics risk is the ZnS(Ag) decay time: every alpha TOT above scales with it; if the OEM's ZnS layer is faster than 200 ns the gap shrinks - measure.
+(4) The C_PZ of S3-04 does not change the TOT (the 200 ns ZnS light is far above the 10 kHz C_PZ corner).
+
+Circuit options considered (decision: **no hardware change in rev A**):
+* ALPHA-width or LLD-to-ALPHA-delay capture: needs a timer-capture input for an OR of the four floor ALPHA comparator outputs. PF1 (the only free pin) has no
+  timer channel (pin DB: ADC2_IN10, COMP3_INM, SPI2_SCK, GPIO); a capture pin can only be freed by moving PULSER_A0 from PF2 (TIM20_CH3) to PF1, which takes the
+  contract-reserved SYNC_IN pin, plus a board-wide 4-lane OR chain (new event line through all four lanes, breaks lane identity). The SLOW width is in any case a
+  weak discriminator (both populations are dominated by the 52 µs baseline CR). Rev-B request (S3-R1).
+* Second slow comparator level: needs four more MCU inputs - none free. Not done.
+* Slow-path shaping: any linear shaper with a positive impulse response gives betas at least as much per p.e. as ZnS alphas (beta light is a delta at this time
+  scale), so no shaping change alone separates them; a bipolar "tail-minus-prompt" shaper would, but its beta cancellation depends on R_IN·Ct (11–166 ns across
+  candidates) and is not robust - not done.
+* Amplitude-ratio aid with existing comparators (firmware option, no hardware): FAST/SLOW per p.e. is 18.8–31.8 for betas and 6.7–8.4 for alphas (T13, single
+  devices). Setting BETA_ULD ≈ 12 × the ALPHA level (FAST mV vs SLOW mV) makes "ALPHA and not ULD" a clean alpha region for the weakest alphas, and "ALPHA and ULD"
+  the TOT-decided region. Cost: ALPHA = ULD/12 raises the lowest detectable alpha (ULD 150 p.e. = 1.04 V → ALPHA 86 mV → 395 alpha p.e.). Offered as option.
+* ALPHA threshold range: up to 1.9 V above baseline (8700 alpha p.e. for J60035) - sufficient; the default must follow SLOW(beta max) × 1.3 only if no TOT rule is used.
+* 4-device arrays: fit R_IN = 5 Ω (2 × 10 Ω) - halves τ_in, restores the single-device TOT gap.
 
 ## 3. Noise budget
 
@@ -127,7 +178,9 @@ A 5 p.e. threshold is ≥ 18 σ of electronic noise for a single device: electro
 Model: dark pulses are Poisson with a Borel-distributed crosstalk multiplicity; a trigger is an upward crossing of (n − 0.5) p.e. when a new pulse lands on the pile-up of
 earlier ones inside the resolving time. The resolving time is 0.50 × (area/peak) of the shaped pulse, the factor fitted to a Monte-Carlo with the real pulse shape
 (agreement within 10 % at n = 3…5 in a 0.2 s Monte-Carlo; the extrapolation to 1 s⁻¹ is model, not Monte-Carlo).
-Integer n such that the dark trigger rate is < 1 s⁻¹ (in brackets < 0.1 s⁻¹):
+Integer n such that the dark trigger rate is < 1 s⁻¹ (in brackets < 0.1 s⁻¹). **S3 (review M1): the design criterion is now ≤ 0.05 s⁻¹ per chain**
+(10 % of the radiometry's total untracked beta-window background b_beta = 0.5 s⁻¹; 1 s⁻¹ alone was twice that budget); the 0.05 s⁻¹ column is in T6
+of `head_afe_calc_out.md` (J60035 typ: 11 / **10** / 9 / 8 p.e. at +25 / +10 / 0 / −20 °C; max DCR: 13 / **11** / 10 / 9).
 
 | device | DCR | +25 °C | +10 °C | 0 °C | −20 °C |
 |---|---|---|---|---|---|
@@ -145,6 +198,16 @@ Reading: **for a single 6 mm device at its low-overvoltage point the lowest usab
 Below about 0 °C the limit is set by crosstalk, not by pile-up, so cooling further buys little; high-overvoltage operation (crosstalk 23–25 %) costs a factor of two or more in threshold.
 Sensitivity to the assumed halving temperature (7–10 °C): ±1 p.e. at −20 °C.
 Consequence against the *assumed* 15 p.e. typical beta signal: the margin is thin, and it does not exist if the real yield is at the low end of the range.
+
+**Minimum photoelectron yield for the optics RFQ (S3, T17, *calculated*).** Model: N ~ Poisson(μ·x), x = E/E_MPV ~ Moyal (MPV = 0.70 × mean, *assumed* for
+0.25 mm plastic), μ = p.e. at the most-probable deposit of a normally incident MIP at one point of the plate. Efficiency at that point: μ = 10 → 0.68,
+15 → 0.88, 20 → 0.95, 30 → 0.99 at LLD 10. **Requirement: ≥ 90 % at the worst point of the plate at LLD(0.05 s⁻¹, +10 °C) gives μ_worst ≥ 16.2 p.e.
+(J60035 typ DCR, LLD 10) and ≥ 17.7 p.e. (max DCR, LLD 11) → RFQ: "guaranteed ≥ 18 p.e. at the MPV deposit of a normally incident MIP at the worst point of
+the 80 × 100 mm plate, at the stated overvoltage and +10 °C, position map ≥ 9 points", equivalently μ_worst ≥ 1.6 × LLD(0.05 s⁻¹, +10 °C, DCR max) for another
+device (T6 gives its LLD).** The plate-average value follows from the OEM's light-collection map; with the *assumed* ±50 % uniform variation it is
+2 × 18 = 36 p.e. at the MPV (mean deposit 36/0.70 ≈ 51 p.e.) - the review's "plate-average mean ≥ ~30" equates MPV and mean and is low by that factor.
+This sharpens IB-22 (thresholds there were at the 1 s⁻¹ criterion). Interaction with C1: optics that bright put the beta tail well above the 30 mV ALPHA level,
+so the alpha decision must use TOT (2.5).
 This is the principal risk of the head (section 11). Electronics cannot remove it; the selectable items that help are overvoltage, head temperature set-point (+10 °C is better than room temperature by 1–2 p.e.), R_IN/pole-zero (shorter resolving time) and the choice of a low-crosstalk SiPM.
 Dark triggers are also a temperature-dependent background term in r = F − kU − b: the radiometry lead should take the dark rate at the chosen threshold as a measured input.
 
@@ -163,10 +226,11 @@ Dark triggers are also a temperature-dependent background term in r = F − kU �
 | Lane-to-lane electrical crosstalk | — | — | a 15 000 p.e. alpha in one channel must stay < 5 p.e. in every other: **≤ −70 dB at FAST** | B6: pulser at full scale on one channel (PULSER_A), all other LLD at 5 p.e.: zero counts in 10⁵ pulses; repeat with C_INJ2 fitted |
 | Comparator / latch edges into another channel's anode | 3.3 V in 1.5 ns | datasheet | stray capacitance to a foreign anode node **< 15 fF** (0.05 pC = 0.1 p.e.) — layout rule | B6 with the aggressor at high rate |
 | Feedback of a channel's own comparator edge | harmless: BUSY is non-retriggerable until CLR | by construction | LLD must not oscillate at threshold | B3: no chatter on raw LLD at the noise edge (hysteresis) |
-| SPI/I²C activity | DACs written only when disarmed (firmware) | by design | I²C temperature reads during gates must not add counts | B8: dark rate at 3 p.e. with housekeeping on/off, ratio 1.00 ± 0.05 |
+| SPI/I²C activity | **S3 (review m7): not true** - bias tracking writes HV_SET (U_DAC0 OUT6) while armed, ≤ 20 mV per 100 ms step; *calculated* ≈ 3 nA at the anode and ≈ 50 µV (0.007 p.e.) DAC glitch on the lane 0/1 thresholds (5 nV·s *assumed*) - harmless, but B8 must run with tracking active | calculated | I²C temperature reads during gates must not add counts | B8: dark rate at 3 p.e. with housekeeping on/off, ratio 1.00 ± 0.05 |
 | MCU 144 MHz, service ISR, CLR pulses | — | — | same criterion | B8 |
 | Heater edge, magnetic | 26 µV for 1.2 ms in a pigtail loop for M = 10 nH (*assumed*) → 7 × 10⁻⁵ p.e. at FAST | calculated (T9) | ≤ 0.1 p.e. | B10 |
 | Heater edge, supply step | 3.1 A in the heater pair only; shared chassis-side impedance gives ≤ 0.3 V step in ≥ 0.6 ms on HEAD_PWR (*assumed*) → buck + LC + LDO: µV on +5V_A | calculated estimate | ≤ 0.1 p.e. | B10: counts in gates with a heater transition vs. without (DIAG marker), 10⁴ transitions, difference < 3 σ; scope +5V_A |
+| Lane-monitor scan while armed (S3, review M2) | stage 1: 1 kΩ tap at FCMP, −14…−18 % amplitude while connected and +0.7…+7 p.e. per switch event, 25 s⁻¹ per channel; S3: taps 10 kΩ at the op-amp outputs and all lane muxes OFF while armed (MON_LANE_EN = 0) → 0; with the monitor enabled for engineering: ≤ 0.13 p.e. at FAST, ≤ 1.2 p.e. at a PRE tap for 3 pC switch charge (T15) | calculated (switch charge, bus C, Z_out *assumed*) | firmware parks MON_LANE_EN = 0 whenever armed | B8 with the IMON scan on/off and MON_LANE_EN 0/1, averaged capture at FCMP triggered on MON_MUX_A0 |
 | Motor PWM conducted on HEAD_PWR | 1 V p-p at 20 kHz, 2 V spikes in 1–30 MHz (*assumed*; chassis lead to supply measured values) | assumed | **required: ≥ 100 dB J1 → +5V_A over 1–30 MHz** (2 V → 20 µV at an op-amp with ~20 dB PSRR at 10 MHz = 0.05 p.e.); at 20 kHz ≥ 40 dB is enough (slow path only, threshold ≥ 100 p.e.). Provided nominally: CM choke + π (10 µH/20 µF), buck, LC 10 µH/22 µF (10.7 kHz), TPS7A20 (95 dB at 1 kHz *datasheet*; MHz PSRR *UNVERIFIED*), per-channel bead + 4.7 µF | calculated (ideal parts > 150 dB; real limit is layout) | B11: inject 1 V p-p 10 kHz–30 MHz onto HEAD_PWR through a LISN/bias-tee: dark rate at 3 p.e. unchanged within 5 %; then with the real motors reversing (ICD §8 item 2) |
 | Radiated / capacitive pickup at the pigtails | not calculable without the mechanical design | — | spreader plate and cover form a closed screen bonded to GND; pigtails < 35 mm coax | B11, B12 (cover off vs. on) |
 
@@ -178,22 +242,35 @@ housing is printed plastic. **No shielding credit is taken from the enclosure**;
 | Coupling path | Assumption | Estimate (*calculated*) | Against threshold |
 |---|---|---|---|
 | Magnetic, PWM ripple at 20 kHz | 1 A ripple in a 10 cm² motor-lead loop at 65 mm → B = μ0·I·A/(2πr³) = 0.73 µT; victim loop 0.5 cm² (an **unshielded** SiPM carrier/pigtail loop) | EMF = ωBA = 4.6 µV at 20 kHz. Fast path rejects 20 kHz by 2.8 × 10⁻³ → nothing. Slow path is in band: ≈ 0.24 mV at SLOW | ALPHA threshold ≥ 20 mV: margin ×80 |
-| Magnetic, PWM edges | 1 A commutated in 100 ns in the same 10 cm² loop; mutual inductance to a 0.5 cm² loop at 65 mm = μ0·A1·A2/(2πr³) = 36 pH | 0.36 mV for 100 ns at the anode node = **≈ 10 p.e. (J60035) at every edge, 80 kHz of them** | **fails by itself** — an open pigtail loop is not acceptable |
-| same, coaxial pigtails | residual loop ≤ 2 mm² (U.FL launch and carrier pads) | 14 µV ≈ 0.4 p.e. | margin ×12 against a 5 p.e. threshold, before any shield |
-| same, with the lane can and a 0.3 mm aluminium cover | edge spectrum ≥ 3 MHz: skin depth in aluminium ≈ 50 µm | ≥ 40 dB more for the part of the loop inside the screen | negligible |
+| Magnetic, PWM edges - **S3 (review M4): the stage-1 aggressor "1 A in 100 ns in a 10 cm² motor-lead loop" does not exist** (the winding inductance keeps the lead current continuous); re-derived with the physical aggressors in T16 (*calculated*, J60035, coaxial-dipole mutual inductance, most favourable orientation; geometry and currents *assumed*) | stage-1 case reproduced: 0.36 mV EMF = 7.1 p.e. open pigtail (stage-1 text said ≈ 10) / 0.28 p.e. coax. Physical terms: differential lead ripple 60 mA p-p in 150 ns 0.28 / 0.01; bridge hot loop on RR-CHS-MAIN (2.68 A / 150 ns, 2 cm² at 90 mm) 0.95 / 0.04; common-mode lead current from 80 V/µs into ~1 nF 0.25 / 0.01; **brush commutation arc (~0.1 A CM in ~5 ns, PWM-independent: present at 100 % duty, coasting, back-driven, brake relay K2/K3) 2.8 / 0.11 p.e.** (open 0.5 cm² at 35 mm / coax 2 mm² launch) | open pigtail: every term is below the LLD but the arc is 3-4 p.e. and adds to dark pile-up - coax mandatory (IB-23 stands); with coax every motor term ≤ 0.3 p.e., plus the shield-loop term of review m1 (~0.3 p.e., not bounded above a few MHz) |
+| same, longer pigtails (IB-57: 45-50 mm instead of 35 mm) | open loop area × 1.36: 0.68 cm² at 47.5 mm | open-loop terms × 1.36 (T16 column 2); **the coax column is independent of the pigtail length** (only the U.FL launch and the carrier pads remain open) | the 35 mm figure is not a requirement for the coax case: the RFQ / budget pigtail-length limit is replaced by "coax, both ends terminated, anode/bias/aux bundle tight" |
+| with the lane can and a 0.3 mm aluminium cover | edge spectrum ≥ 3 MHz: skin depth in aluminium ≈ 50 µm | ≥ 40 dB more for the part of the loop inside the screen | negligible |
 | Capacitive, motor can / leads swinging 12 V in 100 ns | 2 fF from a motor can to an exposed anode node at 65 mm | Q = C·ΔV = 24 fC = 0.05 p.e. | negligible even unshielded; 20 fF would still be 0.5 p.e. |
-| Brush arcing (broadband) | conducted on the motor supply and radiated from the leads; no credible a-priori number | — | covered only by test |
-| Common-mode current on the J1/J2 cables | head-to-chassis capacitance is large when docked; chassis ground bounce at PWM edges 0.1–1 V | flows in the cable shields and through the 1 MΩ ∥ 10 nF shield bonds and the J1 common-mode choke (900 Ω class at 100 MHz); the J2 side is galvanically isolated | covered by test |
+| Brush arcing (broadband) | conducted on the motor supply and radiated from the leads | radiated term in T16 (order of magnitude; the review's ≈ 20 p.e. ignored the 14 MHz preamp and 5 ns integration pole); conducted term: J1 → +5V_A filter chain | coax + motor-terminal suppression (requirement to the harness owner: `electronics/head_acq/STAGE2_CHANGE_REQUESTS.md` Stage 3, H-01); test M7 items 3-4 |
+| Common-mode current on the J1/J2 cables | head-to-chassis capacitance is large when docked; chassis ground bounce at PWM edges 0.1–1 V | flows in the cable shields and through the 1 MΩ ∥ 10 nF shield bonds and the J1 common-mode choke (900 Ω class at 100 MHz). **S3 (review m3): "the J2 side is galvanically isolated" holds at DC only** - above ~1 MHz head GND reaches the chassis through four parallel paths: J1 pin 2 through L2001; J1 shield 10 nF → H1 → spreader → F2801/R2801; J2 shield 10 nF → H3 → spreader → the HF bonds; and the heater films' 9-18 nF to the spreader, closing through J1 pins 3/4 which have no common-mode element (10 nF = 16 Ω at 1 MHz) | covered by test (CM clamp injection 1-30 MHz, M7 item 5); option if sensitive: 4 A CM choke on the heater pair at J2601 or a grounded screen layer in the heater film (OEM) |
 
 What the board provides, with no help from the housing: (1) coaxial connections for both anode and bias of every SiPM (shield = signal return); (2) a clip-on shield can per lane
-over preamp, shapers and comparators (36 × 32 × 5 mm, 12 clips to board ground); (3) an unbroken ground plane on layer 2 under the whole AFE strip and the aluminium spreader plate
-2.5 mm below the board, bonded to board ground at one DC point (R at H1) and by four 10 nF capacitors for RF; (4) 10 Ω anode load impedance; (5) common-mode choke and π filter on the supply.
+over preamp, shapers and comparators (36 × 32 × 5 mm, 12 clips to board ground); (3) S3 stack-up: solid GND planes on In1 AND In4 (every signal layer next to a GND
+plane), the aluminium spreader plate 2.5 mm below the board, bonded to board ground at ONE DC point at H1 (0.5 A fuse F2801 + 0 Ω R2801 within 1 mm of the H2801 pad)
+and by four 10 nF capacitors at H2, H5, H6 and H8 (H3 lies inside the isolated RS-485 island, which has no GND); (4) 10 Ω anode load impedance; (5) common-mode choke and π filter on the supply.
+
+**Common-mode current path after S3 (review M3; placement, not measured).** Stage 2 had R2801 and all four 10 nF frame capacitors auto-placed beside the lane 3
+can (u 316-321) and FRAME had no copper: every shield/ESD current crossed the whole 316 mm spreader under all four lanes and entered GND beside lane 3. Now:
+J1 braid → drain W-101.S → TP2004 (83.0, 29.1), 9 mm in front of J2001 → C2007 ∥ R2012 (80.3, 29.0 / 32.4) → 0.6 mm FRAME track into the H2801 pad
+(75.5, 30.0) → standoff → spreader → back up the same standoff → F2801 → R2801 → GND at H1, 20 mm from J2001 pin 2 (u 94.3) where L2001 returns to the
+chassis: the J1 CM loop closes inside the J1 landing, between lanes 0 and 1, not under any lane. J2 braid → TP2501 (241.5, 2.5) → C2504 ∥ R2505 → H2803 pad →
+spreader → the nearest GND bonds C2801 at H2 (87.5 mm, along the rear edge under lane 2's U.FL strip) and C2804 at H6 (87 mm, along the lane 2|3 seam) - this
+residual path remains because H3 is inside the isolated island (no GND there); HF only (10 nF), and the J2 CM current is the RS-485 pair's, small. Every frame
+bond part is now within its rule distance (`scripts/placecheck.py`).
 What it cannot provide: screening of the SiPM carriers and pigtails in the rear chimney, which are outside the board — the head mechanical EMI cover must close that volume (requirement in `layout_guidance.md` §4).
 
 Bench test B11 (extended): head in the prototype plastic housing on the robot, bias on, lid closed, BETA_LLD at 3 p.e. and at the operating threshold. Record dark rate and the time-over-threshold histogram for:
 motors off; motors at 20 kHz PWM, 0/50/100 % duty, free-running and stalled at the current limit; direction reversal; each with and without the lane cans and the EMI cover.
-Pass: count rate at the operating threshold changes by less than 3 σ of a 100 s count in every motor state, and no excess in the shortest time-over-threshold bin
-(edge pickup produces characteristically short pulses — the new pulse-width histogram is the diagnostic). Fail: fit the cover/cans, then add chassis-side motor filtering (integration backlog).
+Pass (S3, review M7): **averaged, aggressor-synchronised waveform capture at the comparator input** (FCMP with a ≤ 1 pF active probe, or the PRE pad), ≥ 10⁴ triggers on
+each aggressor (bridge output node, HTR_GATE, MON_MUX_A0, PULSER_STROBE, LED_STROBE, a current probe on a motor lead for commutation): coherent pickup < 0.3 p.e. at FAST;
+then the count rate at the operating threshold within 3 σ of a 100 s count in every motor state (DC bench supply at 100 %, back-driven with bridges asleep, brake relay
+transitions, head undocked on the extension). The shortest TOT bin is not a diagnostic (FAST FWHM is 80 ns: every near-threshold dark pulse lands there), and count
+rates at 3 p.e. resolve only ~63 s⁻¹ (3 σ of 4.5 × 10⁴ s⁻¹). Fail: fit the cover/cans, then add chassis-side motor filtering (integration backlog).
 
 Chassis-side facts adopted (from the chassis design, not verified here): electronics feed through a TPS259470 eFuse at 1.5 A (the head's own limit is 1.0 A, so the head trips first);
 heater feed is a slew-limited 4 A branch (the head's slew limit is then the second one in series); BUS_5V limited to 150 mA; host transceiver THVD1450 with 120 Ω termination and the fail-safe bias at the chassis end
@@ -233,10 +310,11 @@ anode returns through R_IN and a 4.99 kΩ sense resistor to the per-channel trim
 
 | Parameter | Value | Evidence |
 |---|---|---|
+| Bias-on ramp (S3, IB-58) | "ramp ≤ 5 V/s" means **5 V/s at HV_BUS** (0.2 V/s at HV_SET, 0.5 V per 100 ms period): charging the ~9.8 µF on the bias bus (1 µF + 8 × 1.1 µF) then takes 49 µA, well inside the 2.0 mA limit and the BIAS_IMON window; at 125 V/s (5 V/s at the DAC output) it would be 1.2 mA and the 12.5 V staircase steps would hit ISHORT | calculated |
 | Set-point law | V(HV_BUS) = 25.0 × V(HV_SET); 0 … 62.5 V in 15.3 mV steps (12-bit DAC60508). DAC80508 in U_DAC0 is the 16-bit drop-in (0.95 mV) if a finer common step is wanted | calculated |
 | Per-channel bias | V(SiPM) = V(HV_BUS) − V(TRIM) − I·1.1 kΩ; trim 0.10 … 2.50 V usable, 0.61 mV steps = 0.024 % gain at 2.5 V overvoltage | calculated |
 | Absolute accuracy before calibration | DAC reference ±0.2 %, divider 0.1 %, op-amp offset negligible → ±0.2 V at 60 V; calibrate once against a DMM at the HV_BUS pad | datasheet + calculated |
-| Independent read-back | second divider 1:25.22 → buffer → BIAS_VMON (ADC, 3.0 V reference of its own) | by design |
+| Independent read-back | second divider 1:25.22 → buffer → BIAS_VMON (ADC, 3.0 V reference of its own). **S3 (IB-58): the tops R2217/R2218 (2 × 4.99 MΩ) are 1 % parts** (only the bottom R2219 412 kΩ is 0.1 %), so the read-back and the OVP trip are ±1.2 % worst case (±0.4 V at 31.5 V), not 0.1 %; firmware calibrates BIAS_VMON per board against the HV_BUS pad at bring-up step 9 (no orderable 4.99 MΩ 0.1 % 0805 thin-film part could be verified from this machine). The regulation divider (2 × 1.2 MΩ + 100 kΩ) is 0.1 % as stated | by design |
 | Loop | integrator 100 kΩ/470 nF, divider node 96 kΩ/470 nF (cancels the integrator zero), stage gain −47, crossover ≈ 6 Hz, phase margin ≈ 70° (*calculated* with an assumed follower gm of ~1 mS; **not simulated** — bench step test B5) | calculated |
 | Load regulation | DC: integrator → zero error at HV_BUS. Per-channel 1.1 kΩ: 1 mV per µA (J60035 dark 0.9 µA → 0.04 % gain; 8 mV at 7.5 µA). Firmware can correct with IMON_CH. Signal current at 2000 s⁻¹ × 15 p.e. is 14 nA — irrelevant | calculated (T8) |
 | Output noise / ripple | section 3.3 | — |
@@ -313,7 +391,7 @@ Test points and expected values (bare 1 mm pads; `circuit.py` lists all 43):
 | BIAS_VMON / BIAS_IMON | HV_BUS/25.22 / 8.0 mV per µA (≈ 0.2–0.4 V with dividers only) |
 | HV_INH_N / HV_PERMIT | high when no inhibit / high after HV_EN rising edge |
 | `Fn PRE`, `Rn PRE` (through 453 Ω) | baseline 0.60–0.63 V; 0.76 mV per p.e. (J60035) |
-| MON_BUS | selected node; FAST baseline 0.60 V ± 20 mV |
+| MON_BUS | MON_LANE_EN = 1: 0.98 × selected node (FAST baseline 0.60 V ± 20 mV); MON_LANE_EN = 0 (S3): 0.300 V + V(FRAME)/2 (frame monitor) |
 | PULSER_AMPL / PULSER_STROBE / LATCH_TEST | DAC code × 0.61 mV / logic |
 | HTR_SW / HTR_GATE | 0 V off (0.26 mA test current into 4.8 Ω), bus voltage on / bus − 7 V on |
 | EF_IMON | eFuse current monitor (scale per datasheet, *UNVERIFIED*) |
@@ -352,6 +430,7 @@ Test points and expected values (bare 1 mm pads; `circuit.py` lists all 43):
 | Gate-synchronous switching | HTR_EN (PB15) is changed by firmware only in the service interrupt after a gate boundary; hardware adds the slew limit | contract |
 | Fault behaviour | MCU reset → off (pull-down); NTC open/short → firmware off + thermal fault; switch shorted → cut-out; over-current → chassis 4 A branch limit (the head has no heater eFuse; the P-FET is not current limited) | by design |
 | Coupling estimate | section 3.3 rows "heater" | calculated with assumed geometry |
+| Heater domain vs frame / ground (S3, review M5, m5) | **Electrical requirement (to head mechanical / BOM):** heater films, the bimetal cut-out (case and terminals) and the regulation NTC (lug) must be insulated from the spreader: cut-out with an electrically isolated case, ≥ 100 MΩ case-to-terminals at 100 V (stated in the BOM line), NTC with an isolated lug or both on a 0.1 mm polyimide pad. Without it, a cut-out case or film edge touching the spreader returns up to ~1.2 A of heater current through the frame bond and the In1 plane (2-4 mV gradient, 0.3-0.6 p.e. threshold steps per heater edge). Circuit measure (S3-03): 0.5 A fuse F2801 in series with the bond (opens on a feed-side fault before L2001 or the plane are overloaded; limits a return-side sneak to ~0.24 A) and a frame-potential monitor on the idle MON_BUS (MON_ADC = 0.300 V + V(FRAME)/2: return-side contact ≈ +35-45 mV, feed-side contact after the fuse opens up to ~3.5 V clamped). Other heater-domain links to ground (m5): gate driver 47 kΩ → Q2602 (≈ 0.2 mA while on), R2610 100 kΩ + R2611 33 kΩ into +3V3 through D2603 (≈ 50 µA whenever the feed is present and the cut-out closed; it back-powers +3V3 when the head is unpowered), and the film capacitance 9-18 nF to the spreader; all harmless for counting. Not a heater-to-frame check: comparing HTR_SENSE with the chassis INA3221 HEAD_HTR channel (review M5 item 3) - both shunts are in the FEED (R2601 before Q2601; chassis R_SH3 high side), so a sneak return changes neither | by design |
 | Bench test B10 | 10⁴ heater transitions while counting dark at 3 p.e. and with the pulser at 10 p.e.: counts in transition gates vs. neighbours agree within 3 σ; +5V_A and FAST monitor scoped, no step > 0.5 mV at FAST | — |
 
 ## 10. Condensation and cold
@@ -375,3 +454,25 @@ B10 heater transitions · B11 conducted susceptibility on HEAD_PWR, motors · B1
 4. **S13360 with V_br > 56.5 V** or NUV-MT above +14 V overvoltage: outside the 60 V range.
 5. **ZnS afterglow** retriggering the beta channel after alphas: handled by firmware hold, magnitude unknown.
 6. **Temperature sensor lag on the supplier's carrier**: sets the residual gain error for the high-β devices.
+
+## 13. Stage 3 corrections (2026-11-27, after `docs/reviews/REVIEW_head_interference.md`)
+
+| Review item | What was wrong here | Now | Where |
+|---|---|---|---|
+| C1 | alpha channel "cannot be confused" | TOT discriminator with per-device cut (gaps 130-170 ns); amplitude-ratio option; no new pin in rev A | 2.5, T13 |
+| M1 | LLD at the 1 s⁻¹ dark criterion | ≤ 0.05 s⁻¹: LLD 10 (typ) / 11 (max) p.e. for J60035 at +10 °C; RFQ ≥ 18 p.e. at the MPV at the worst point | 3.2, T6, T17 |
+| M2 | monitor taps 1 kΩ at the comparator inputs, one lane mux always on | 10 kΩ at op-amp outputs; MON_LANE_EN off state | 2.4, 3.3, T15 |
+| M3 | "bonded at one DC point at H1 and by four 10 nF" - not as placed | placed and pre-routed at H1/H2/H5/H6/H8; CM path stated | 3.4 |
+| M4 | 1 A/100 ns motor-lead aggressor, "≈ 10 p.e." | physical aggressors; coax independent of pigtail length; brush arc 2.8 / 0.11 p.e. | 3.4, T16 |
+| M5 | heater domain links listed incompletely, no frame-fault detection | insulation requirement, fuse + frame monitor | 9 |
+| M6 | (board stack-up) | F / GND / sig / PWR / GND / B | `electronics/head_acq/README.md` |
+| m2 | "suppressed by ~10⁻⁴" | wrong; C_PZ 47 nF; trim-node tail found | 2.3, T14 |
+| m3 | "J2 side galvanically isolated" | DC only; four HF paths | 3.4 |
+| m4 | monitor 10-15 MHz | 0.1-0.3 MHz (baseline monitor) | 2.4 |
+| m5 | heater-ground links | complete list | 9 |
+| m7 | DACs written only when disarmed | HV_SET tracking writes while armed (harmless, B8 with tracking) | 3.3 |
+| IB-58 | read-back divider 0.1 %; ramp meaning | 1 % (calibrate); 5 V/s at HV_BUS | 5.1 |
+
+Where this file and the review disagree (with the calculation): T16 brush arc 2.8 p.e. open / 0.11 coax (review ≈ 20 / 0.6: no preamp bandwidth); T13 weakest
+J60035 alpha 374 ns (review ≥ 280 ns); T14 post-alpha tail lasts beyond 300 µs without C_PZ because of the trim node (review: zero crossing at 314 µs); T17
+plate-average mean ≈ 51 p.e. for the worst-point requirement under ±50 % non-uniformity (review ≈ 30).

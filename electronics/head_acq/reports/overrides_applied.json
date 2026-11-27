@@ -1,5 +1,817 @@
 [
  {
+  "id": "S3-01",
+  "kind": "NET",
+  "new": [
+   "1",
+   "F0_FAST"
+  ],
+  "old": [
+   "1",
+   "F0_FCMP"
+  ],
+  "pin": "1",
+  "reason": "M2: monitor tap at the OPA838 output, not at the comparator input",
+  "ref": "R125"
+ },
+ {
+  "id": "S3-04",
+  "kind": "NET",
+  "new": [
+   "2",
+   "F0_PZ"
+  ],
+  "old": [
+   "2",
+   "F0_FS"
+  ],
+  "pin": "2",
+  "reason": "m2: R_PZ now ends on the new series capacitor C(base+50)",
+  "ref": "R120"
+ },
+ {
+  "id": "S3-01",
+  "kind": "NET",
+  "new": [
+   "1",
+   "F0_SLOW"
+  ],
+  "old": [
+   "1",
+   "F0_SCMP"
+  ],
+  "pin": "1",
+  "reason": "M2: slow monitor tap at the OPA836 output, not at the ALPHA comparator input",
+  "ref": "R134"
+ },
+ {
+  "id": "S3-01",
+  "kind": "NET",
+  "new": [
+   "1",
+   "F1_FAST"
+  ],
+  "old": [
+   "1",
+   "F1_FCMP"
+  ],
+  "pin": "1",
+  "reason": "M2: monitor tap at the OPA838 output, not at the comparator input",
+  "ref": "R225"
+ },
+ {
+  "id": "S3-04",
+  "kind": "NET",
+  "new": [
+   "2",
+   "F1_PZ"
+  ],
+  "old": [
+   "2",
+   "F1_FS"
+  ],
+  "pin": "2",
+  "reason": "m2: R_PZ now ends on the new series capacitor C(base+50)",
+  "ref": "R220"
+ },
+ {
+  "id": "S3-01",
+  "kind": "NET",
+  "new": [
+   "1",
+   "F1_SLOW"
+  ],
+  "old": [
+   "1",
+   "F1_SCMP"
+  ],
+  "pin": "1",
+  "reason": "M2: slow monitor tap at the OPA836 output, not at the ALPHA comparator input",
+  "ref": "R234"
+ },
+ {
+  "id": "S3-01",
+  "kind": "NET",
+  "new": [
+   "1",
+   "F2_FAST"
+  ],
+  "old": [
+   "1",
+   "F2_FCMP"
+  ],
+  "pin": "1",
+  "reason": "M2: monitor tap at the OPA838 output, not at the comparator input",
+  "ref": "R325"
+ },
+ {
+  "id": "S3-04",
+  "kind": "NET",
+  "new": [
+   "2",
+   "F2_PZ"
+  ],
+  "old": [
+   "2",
+   "F2_FS"
+  ],
+  "pin": "2",
+  "reason": "m2: R_PZ now ends on the new series capacitor C(base+50)",
+  "ref": "R320"
+ },
+ {
+  "id": "S3-01",
+  "kind": "NET",
+  "new": [
+   "1",
+   "F2_SLOW"
+  ],
+  "old": [
+   "1",
+   "F2_SCMP"
+  ],
+  "pin": "1",
+  "reason": "M2: slow monitor tap at the OPA836 output, not at the ALPHA comparator input",
+  "ref": "R334"
+ },
+ {
+  "id": "S3-01",
+  "kind": "NET",
+  "new": [
+   "1",
+   "F3_FAST"
+  ],
+  "old": [
+   "1",
+   "F3_FCMP"
+  ],
+  "pin": "1",
+  "reason": "M2: monitor tap at the OPA838 output, not at the comparator input",
+  "ref": "R425"
+ },
+ {
+  "id": "S3-04",
+  "kind": "NET",
+  "new": [
+   "2",
+   "F3_PZ"
+  ],
+  "old": [
+   "2",
+   "F3_FS"
+  ],
+  "pin": "2",
+  "reason": "m2: R_PZ now ends on the new series capacitor C(base+50)",
+  "ref": "R420"
+ },
+ {
+  "id": "S3-01",
+  "kind": "NET",
+  "new": [
+   "1",
+   "F3_SLOW"
+  ],
+  "old": [
+   "1",
+   "F3_SCMP"
+  ],
+  "pin": "1",
+  "reason": "M2: slow monitor tap at the OPA836 output, not at the ALPHA comparator input",
+  "ref": "R434"
+ },
+ {
+  "id": "S3-01",
+  "kind": "NET",
+  "new": [
+   "1",
+   "R0_FAST"
+  ],
+  "old": [
+   "1",
+   "R0_FCMP"
+  ],
+  "pin": "1",
+  "reason": "M2: monitor tap at the OPA838 output, not at the comparator input",
+  "ref": "R525"
+ },
+ {
+  "id": "S3-04",
+  "kind": "NET",
+  "new": [
+   "2",
+   "R0_PZ"
+  ],
+  "old": [
+   "2",
+   "R0_FS"
+  ],
+  "pin": "2",
+  "reason": "m2: R_PZ now ends on the new series capacitor C(base+50)",
+  "ref": "R520"
+ },
+ {
+  "id": "S3-01",
+  "kind": "NET",
+  "new": [
+   "1",
+   "R1_FAST"
+  ],
+  "old": [
+   "1",
+   "R1_FCMP"
+  ],
+  "pin": "1",
+  "reason": "M2: monitor tap at the OPA838 output, not at the comparator input",
+  "ref": "R625"
+ },
+ {
+  "id": "S3-04",
+  "kind": "NET",
+  "new": [
+   "2",
+   "R1_PZ"
+  ],
+  "old": [
+   "2",
+   "R1_FS"
+  ],
+  "pin": "2",
+  "reason": "m2: R_PZ now ends on the new series capacitor C(base+50)",
+  "ref": "R620"
+ },
+ {
+  "id": "S3-01",
+  "kind": "NET",
+  "new": [
+   "1",
+   "R2_FAST"
+  ],
+  "old": [
+   "1",
+   "R2_FCMP"
+  ],
+  "pin": "1",
+  "reason": "M2: monitor tap at the OPA838 output, not at the comparator input",
+  "ref": "R725"
+ },
+ {
+  "id": "S3-04",
+  "kind": "NET",
+  "new": [
+   "2",
+   "R2_PZ"
+  ],
+  "old": [
+   "2",
+   "R2_FS"
+  ],
+  "pin": "2",
+  "reason": "m2: R_PZ now ends on the new series capacitor C(base+50)",
+  "ref": "R720"
+ },
+ {
+  "id": "S3-01",
+  "kind": "NET",
+  "new": [
+   "1",
+   "R3_FAST"
+  ],
+  "old": [
+   "1",
+   "R3_FCMP"
+  ],
+  "pin": "1",
+  "reason": "M2: monitor tap at the OPA838 output, not at the comparator input",
+  "ref": "R825"
+ },
+ {
+  "id": "S3-04",
+  "kind": "NET",
+  "new": [
+   "2",
+   "R3_PZ"
+  ],
+  "old": [
+   "2",
+   "R3_FS"
+  ],
+  "pin": "2",
+  "reason": "m2: R_PZ now ends on the new series capacitor C(base+50)",
+  "ref": "R820"
+ },
+ {
+  "id": "S3-02",
+  "kind": "NET",
+  "new": [
+   "E3",
+   "MON_LANE_EN"
+  ],
+  "old": [
+   "E3",
+   "+3V3"
+  ],
+  "pin": "6",
+  "reason": "M2: lane-monitor decoder enable from the expander, so that all lane muxes can be switched off",
+  "ref": "U2701"
+ },
+ {
+  "id": "S3-02",
+  "kind": "NET",
+  "new": [
+   "P7",
+   "MON_LANE_EN"
+  ],
+  "old": [
+   "P7",
+   "EXP_P7"
+  ],
+  "pin": "12",
+  "reason": "M2: spare expander bit P7 = lane-monitor enable",
+  "ref": "U2405"
+ },
+ {
+  "id": "S3-02",
+  "kind": "NET",
+  "new": [
+   "1",
+   "MON_LANE_EN"
+  ],
+  "old": [
+   "1",
+   "EXP_P7"
+  ],
+  "pin": "1",
+  "reason": "test pad follows the renamed net",
+  "ref": "TP2402"
+ },
+ {
+  "id": "S3-03",
+  "kind": "NET",
+  "new": [
+   "1",
+   "FRAME_F"
+  ],
+  "old": [
+   "1",
+   "FRAME"
+  ],
+  "pin": "1",
+  "reason": "M5: frame bond in series with the new fuse F2801",
+  "ref": "R2801"
+ },
+ {
+  "id": "S3-03",
+  "kind": "NET",
+  "new": [
+   "2",
+   "MON_BUS"
+  ],
+  "old": [
+   "2",
+   "GND"
+  ],
+  "pin": "2",
+  "reason": "M5: frame bleed becomes the top of a 1 M / 1 M frame-potential divider onto the (idle) monitor bus",
+  "ref": "R2802"
+ },
+ {
+  "id": "S3-03",
+  "kind": "NET",
+  "new": [
+   "2",
+   "VBL"
+  ],
+  "old": [
+   "2",
+   "GND"
+  ],
+  "pin": "2",
+  "reason": "M5: monitor-bus bleed to VBL (0.6 V) so that the frame monitor reads both polarities",
+  "ref": "R2702"
+ },
+ {
+  "id": "S3-05",
+  "kind": "NET",
+  "new": [
+   "PAD",
+   "FRAME_H2"
+  ],
+  "old": [
+   "PAD",
+   "FRAME"
+  ],
+  "pin": "1",
+  "reason": "M3: per-hole frame copper island",
+  "ref": "H2802"
+ },
+ {
+  "id": "S3-05",
+  "kind": "NET",
+  "new": [
+   "PAD",
+   "FRAME_H3"
+  ],
+  "old": [
+   "PAD",
+   "FRAME"
+  ],
+  "pin": "1",
+  "reason": "M3: per-hole frame copper island",
+  "ref": "H2803"
+ },
+ {
+  "id": "S3-05",
+  "kind": "NET",
+  "new": [
+   "PAD",
+   "FRAME_H4"
+  ],
+  "old": [
+   "PAD",
+   "FRAME"
+  ],
+  "pin": "1",
+  "reason": "M3: per-hole frame copper island",
+  "ref": "H2804"
+ },
+ {
+  "id": "S3-05",
+  "kind": "NET",
+  "new": [
+   "PAD",
+   "FRAME_H5"
+  ],
+  "old": [
+   "PAD",
+   "FRAME"
+  ],
+  "pin": "1",
+  "reason": "M3: per-hole frame copper island",
+  "ref": "H2805"
+ },
+ {
+  "id": "S3-05",
+  "kind": "NET",
+  "new": [
+   "PAD",
+   "FRAME_H6"
+  ],
+  "old": [
+   "PAD",
+   "FRAME"
+  ],
+  "pin": "1",
+  "reason": "M3: per-hole frame copper island",
+  "ref": "H2806"
+ },
+ {
+  "id": "S3-05",
+  "kind": "NET",
+  "new": [
+   "PAD",
+   "FRAME_H7"
+  ],
+  "old": [
+   "PAD",
+   "FRAME"
+  ],
+  "pin": "1",
+  "reason": "M3: per-hole frame copper island",
+  "ref": "H2807"
+ },
+ {
+  "id": "S3-05",
+  "kind": "NET",
+  "new": [
+   "PAD",
+   "FRAME_H8"
+  ],
+  "old": [
+   "PAD",
+   "FRAME"
+  ],
+  "pin": "1",
+  "reason": "M3: per-hole frame copper island",
+  "ref": "H2808"
+ },
+ {
+  "id": "S3-05",
+  "kind": "NET",
+  "new": [
+   "1",
+   "FRAME_H2"
+  ],
+  "old": [
+   "1",
+   "FRAME"
+  ],
+  "pin": "1",
+  "reason": "M3: bond part on the copper island of its own hole",
+  "ref": "C2801"
+ },
+ {
+  "id": "S3-05",
+  "kind": "NET",
+  "new": [
+   "1",
+   "FRAME_H8"
+  ],
+  "old": [
+   "1",
+   "FRAME"
+  ],
+  "pin": "1",
+  "reason": "M3: bond part on the copper island of its own hole",
+  "ref": "C2802"
+ },
+ {
+  "id": "S3-05",
+  "kind": "NET",
+  "new": [
+   "1",
+   "FRAME_H5"
+  ],
+  "old": [
+   "1",
+   "FRAME"
+  ],
+  "pin": "1",
+  "reason": "M3: bond part on the copper island of its own hole",
+  "ref": "C2803"
+ },
+ {
+  "id": "S3-05",
+  "kind": "NET",
+  "new": [
+   "1",
+   "FRAME_H6"
+  ],
+  "old": [
+   "1",
+   "FRAME"
+  ],
+  "pin": "1",
+  "reason": "M3: bond part on the copper island of its own hole",
+  "ref": "C2804"
+ },
+ {
+  "id": "S3-05",
+  "kind": "NET",
+  "new": [
+   "2",
+   "FRAME_H3"
+  ],
+  "old": [
+   "2",
+   "FRAME"
+  ],
+  "pin": "2",
+  "reason": "M3: bond part on the copper island of its own hole",
+  "ref": "C2504"
+ },
+ {
+  "id": "S3-05",
+  "kind": "NET",
+  "new": [
+   "2",
+   "FRAME_H3"
+  ],
+  "old": [
+   "2",
+   "FRAME"
+  ],
+  "pin": "2",
+  "reason": "M3: bond part on the copper island of its own hole",
+  "ref": "R2505"
+ },
+ {
+  "id": "S3-01",
+  "kind": "VALUE",
+  "new": {
+   "mpn": "RC0402FR-0710KL",
+   "ohms": 10000.0,
+   "value": "10k"
+  },
+  "old": "1k",
+  "reason": "M2: lane-monitor taps 1 k -> 10 k (loading and switch charge absorbed by the op-amp output)",
+  "refs": [
+   "R119",
+   "R125",
+   "R219",
+   "R225",
+   "R319",
+   "R325",
+   "R419",
+   "R425",
+   "R519",
+   "R525",
+   "R619",
+   "R625",
+   "R719",
+   "R725",
+   "R819",
+   "R825",
+   "R134",
+   "R234",
+   "R334",
+   "R434"
+  ]
+ },
+ {
+  "id": "S3-03",
+  "kind": "VALUE",
+  "new": {
+   "mpn": "RC0402FR-071ML",
+   "ohms": 1000000.0,
+   "value": "1M"
+  },
+  "old": "100k",
+  "reason": "M5: monitor-bus bleed 1 M (equal to R2802) = frame divider 1:2; injection into the bus limited to uA",
+  "refs": [
+   "R2702"
+  ]
+ },
+ {
+  "id": "S3-04",
+  "kind": "ADD",
+  "mpn": "GRM155R71C473KA01D",
+  "pins": {
+   "1": [
+    "1",
+    "F0_PZ"
+   ],
+   "2": [
+    "2",
+    "F0_FS"
+   ]
+  },
+  "reason": "m2: post-alpha baseline dip",
+  "ref": "C150",
+  "value": "47nF"
+ },
+ {
+  "id": "S3-04",
+  "kind": "ADD",
+  "mpn": "GRM155R71C473KA01D",
+  "pins": {
+   "1": [
+    "1",
+    "F1_PZ"
+   ],
+   "2": [
+    "2",
+    "F1_FS"
+   ]
+  },
+  "reason": "m2: post-alpha baseline dip",
+  "ref": "C250",
+  "value": "47nF"
+ },
+ {
+  "id": "S3-04",
+  "kind": "ADD",
+  "mpn": "GRM155R71C473KA01D",
+  "pins": {
+   "1": [
+    "1",
+    "F2_PZ"
+   ],
+   "2": [
+    "2",
+    "F2_FS"
+   ]
+  },
+  "reason": "m2: post-alpha baseline dip",
+  "ref": "C350",
+  "value": "47nF"
+ },
+ {
+  "id": "S3-04",
+  "kind": "ADD",
+  "mpn": "GRM155R71C473KA01D",
+  "pins": {
+   "1": [
+    "1",
+    "F3_PZ"
+   ],
+   "2": [
+    "2",
+    "F3_FS"
+   ]
+  },
+  "reason": "m2: post-alpha baseline dip",
+  "ref": "C450",
+  "value": "47nF"
+ },
+ {
+  "id": "S3-04",
+  "kind": "ADD",
+  "mpn": "GRM155R71C473KA01D",
+  "pins": {
+   "1": [
+    "1",
+    "R0_PZ"
+   ],
+   "2": [
+    "2",
+    "R0_FS"
+   ]
+  },
+  "reason": "m2: post-alpha baseline dip",
+  "ref": "C550",
+  "value": "47nF"
+ },
+ {
+  "id": "S3-04",
+  "kind": "ADD",
+  "mpn": "GRM155R71C473KA01D",
+  "pins": {
+   "1": [
+    "1",
+    "R1_PZ"
+   ],
+   "2": [
+    "2",
+    "R1_FS"
+   ]
+  },
+  "reason": "m2: post-alpha baseline dip",
+  "ref": "C650",
+  "value": "47nF"
+ },
+ {
+  "id": "S3-04",
+  "kind": "ADD",
+  "mpn": "GRM155R71C473KA01D",
+  "pins": {
+   "1": [
+    "1",
+    "R2_PZ"
+   ],
+   "2": [
+    "2",
+    "R2_FS"
+   ]
+  },
+  "reason": "m2: post-alpha baseline dip",
+  "ref": "C750",
+  "value": "47nF"
+ },
+ {
+  "id": "S3-04",
+  "kind": "ADD",
+  "mpn": "GRM155R71C473KA01D",
+  "pins": {
+   "1": [
+    "1",
+    "R3_PZ"
+   ],
+   "2": [
+    "2",
+    "R3_FS"
+   ]
+  },
+  "reason": "m2: post-alpha baseline dip",
+  "ref": "C850",
+  "value": "47nF"
+ },
+ {
+  "id": "S3-02",
+  "kind": "ADD",
+  "mpn": "RC0402FR-07100KL",
+  "pins": {
+   "1": [
+    "1",
+    "MON_LANE_EN"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "M2: true off state",
+  "ref": "R2418",
+  "value": "100k"
+ },
+ {
+  "id": "S3-03",
+  "kind": "ADD",
+  "mpn": "0466.500NR",
+  "pins": {
+   "1": [
+    "1",
+    "FRAME"
+   ],
+   "2": [
+    "2",
+    "FRAME_F"
+   ]
+  },
+  "reason": "M5: frame-bond fault protection",
+  "ref": "F2801",
+  "value": "0.5A fast"
+ },
+ {
   "id": "S2-01",
   "kind": "RENUM",
   "mapping": {
@@ -40,7 +852,7 @@
   ]
  },
  {
-  "count": 752,
+  "count": 760,
   "id": "S2-02",
   "kind": "GROUP",
   "reason": "AFE_FLOOR / AFE_REF / LANE split per lane: LANEk_FLOOR, LANEk_REF, LANEk_LOGIC (k = 0..3)"

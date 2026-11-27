@@ -3900,6 +3900,26 @@
 		)
 		(uuid "8ee5d730-cfe8-58a0-8756-41fa33be2e8b")
 	)
+	(wire
+		(pts
+			(xy 38.1 224.79) (xy 38.1 227.33)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0f6df521-bd4e-5234-8249-0ea497410f52")
+	)
+	(wire
+		(pts
+			(xy 38.1 217.17) (xy 38.1 214.63)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c20e9273-87f7-559f-8c34-10e6daef50f7")
+	)
 	(text "Lane 1 reference channel R1: SiPM inputs, bias filter, preamp, fast shaper, comparators"
 		(exclude_from_sim no)
 		(at 20 23 0)
@@ -5436,7 +5456,7 @@
 			)
 		)
 	)
-	(global_label "R1_FS"
+	(global_label "R1_PZ"
 		(shape passive)
 		(at 71.12 173.99 270)
 		(effects
@@ -5856,7 +5876,7 @@
 			)
 		)
 	)
-	(global_label "R1_FCMP"
+	(global_label "R1_FAST"
 		(shape passive)
 		(at 261.62 161.29 90)
 		(effects
@@ -6171,6 +6191,48 @@
 			)
 		)
 	)
+	(global_label "R1_FS"
+		(shape passive)
+		(at 38.1 227.33 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "9674f684-26bd-58c0-8682-2b3f8e1dc5b0")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 38.1 227.33 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "R1_PZ"
+		(shape passive)
+		(at 38.1 214.63 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "3637e73c-d866-5409-8791-ea2d922a6d1f")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 38.1 214.63 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
 	(symbol
 		(lib_id "power:GND")
 		(at 38.1 48.26 0)
@@ -6180,7 +6242,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "e03bf338-4f40-55a4-8b02-4021ab489b00")
-		(property "Reference" "#PWR0552"
+		(property "Reference" "#PWR0551"
 			(at 38.1 48.26 0)
 			(effects
 				(font
@@ -6230,7 +6292,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4"
-					(reference "#PWR0552")
+					(reference "#PWR0551")
 					(unit 1)
 				)
 			)
@@ -6341,7 +6403,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "b9dbb389-1c21-5109-8d6b-74e8552f7c8a")
-		(property "Reference" "#PWR0553"
+		(property "Reference" "#PWR0552"
 			(at 40.64 68.58 0)
 			(effects
 				(font
@@ -6391,7 +6453,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4"
-					(reference "#PWR0553")
+					(reference "#PWR0552")
 					(unit 1)
 				)
 			)
@@ -6589,7 +6651,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "e0ed0466-695a-5543-8ab9-9dc7a0c70bd1")
-		(property "Reference" "#PWR0554"
+		(property "Reference" "#PWR0553"
 			(at 68.58 62.23 0)
 			(effects
 				(font
@@ -6639,7 +6701,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4"
-					(reference "#PWR0554")
+					(reference "#PWR0553")
 					(unit 1)
 				)
 			)
@@ -6828,7 +6890,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "aa8b7a80-43f1-5465-899d-fa2acd566dd5")
-		(property "Reference" "#PWR0555"
+		(property "Reference" "#PWR0554"
 			(at 96.52 62.23 0)
 			(effects
 				(font
@@ -6878,7 +6940,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4"
-					(reference "#PWR0555")
+					(reference "#PWR0554")
 					(unit 1)
 				)
 			)
@@ -6980,7 +7042,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "5d5c362c-0f3a-586f-87cd-2f628ceb1efe")
-		(property "Reference" "#PWR0556"
+		(property "Reference" "#PWR0555"
 			(at 119.38 45.72 0)
 			(effects
 				(font
@@ -7030,7 +7092,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4"
-					(reference "#PWR0556")
+					(reference "#PWR0555")
 					(unit 1)
 				)
 			)
@@ -7045,7 +7107,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "2c6d7878-8c26-5ca4-85e1-6b164721bc1f")
-		(property "Reference" "#PWR0557"
+		(property "Reference" "#PWR0556"
 			(at 139.7 45.72 0)
 			(effects
 				(font
@@ -7095,7 +7157,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4"
-					(reference "#PWR0557")
+					(reference "#PWR0556")
 					(unit 1)
 				)
 			)
@@ -7383,7 +7445,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "6334b764-6c43-5aa9-8e08-6b347c99448f")
-		(property "Reference" "#PWR0558"
+		(property "Reference" "#PWR0557"
 			(at 182.88 62.23 0)
 			(effects
 				(font
@@ -7433,7 +7495,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4"
-					(reference "#PWR0558")
+					(reference "#PWR0557")
 					(unit 1)
 				)
 			)
@@ -7535,7 +7597,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "4c8fc16a-4bab-589b-86a1-8ec87a95f525")
-		(property "Reference" "#PWR0559"
+		(property "Reference" "#PWR0558"
 			(at 200.66 62.23 0)
 			(effects
 				(font
@@ -7585,7 +7647,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4"
-					(reference "#PWR0559")
+					(reference "#PWR0558")
 					(unit 1)
 				)
 			)
@@ -8035,7 +8097,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "aae971f6-1427-508d-835f-71cd298648cf")
-		(property "Reference" "#PWR0560"
+		(property "Reference" "#PWR0559"
 			(at 276.86 64.77 0)
 			(effects
 				(font
@@ -8085,7 +8147,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4"
-					(reference "#PWR0560")
+					(reference "#PWR0559")
 					(unit 1)
 				)
 			)
@@ -8379,7 +8441,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "766a2693-bec6-593a-8452-3651eba918b1")
-		(property "Reference" "#PWR0561"
+		(property "Reference" "#PWR0560"
 			(at 370.84 68.58 0)
 			(effects
 				(font
@@ -8429,7 +8491,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4"
-					(reference "#PWR0561")
+					(reference "#PWR0560")
 					(unit 1)
 				)
 			)
@@ -8444,7 +8506,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "aba4e853-9ff8-544f-86d5-05ea32c196d4")
-		(property "Reference" "#PWR0562"
+		(property "Reference" "#PWR0561"
 			(at 370.84 43.18 0)
 			(effects
 				(font
@@ -8494,7 +8556,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4"
-					(reference "#PWR0562")
+					(reference "#PWR0561")
 					(unit 1)
 				)
 			)
@@ -8608,7 +8670,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "45284da0-caaf-591a-8623-cebe0a7678a8")
-		(property "Reference" "#PWR0563"
+		(property "Reference" "#PWR0562"
 			(at 27.94 113.03 0)
 			(effects
 				(font
@@ -8658,7 +8720,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4"
-					(reference "#PWR0563")
+					(reference "#PWR0562")
 					(unit 1)
 				)
 			)
@@ -8673,7 +8735,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "26de1bc9-7726-5bbf-8a12-72f3919a4270")
-		(property "Reference" "#PWR0564"
+		(property "Reference" "#PWR0563"
 			(at 27.94 100.33 0)
 			(effects
 				(font
@@ -8723,7 +8785,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4"
-					(reference "#PWR0564")
+					(reference "#PWR0563")
 					(unit 1)
 				)
 			)
@@ -8912,7 +8974,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "f113396c-750d-5922-8953-4ec050135d92")
-		(property "Reference" "#PWR0565"
+		(property "Reference" "#PWR0564"
 			(at 58.42 118.11 0)
 			(effects
 				(font
@@ -8962,7 +9024,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4"
-					(reference "#PWR0565")
+					(reference "#PWR0564")
 					(unit 1)
 				)
 			)
@@ -9064,7 +9126,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "a4d6d345-fc4b-5e8d-8b22-a8dcf1d8fdc7")
-		(property "Reference" "#PWR0566"
+		(property "Reference" "#PWR0565"
 			(at 76.2 118.11 0)
 			(effects
 				(font
@@ -9114,7 +9176,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4"
-					(reference "#PWR0566")
+					(reference "#PWR0565")
 					(unit 1)
 				)
 			)
@@ -9303,7 +9365,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "3c43b50a-c3c3-52f2-8b57-68ef588e32ca")
-		(property "Reference" "#PWR0567"
+		(property "Reference" "#PWR0566"
 			(at 106.68 118.11 0)
 			(effects
 				(font
@@ -9353,7 +9415,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4"
-					(reference "#PWR0567")
+					(reference "#PWR0566")
 					(unit 1)
 				)
 			)
@@ -9629,7 +9691,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "ba138f09-8f06-5b9b-88cb-cf95eadfe1bf")
-		(property "Reference" "#PWR0568"
+		(property "Reference" "#PWR0567"
 			(at 157.48 100.33 0)
 			(effects
 				(font
@@ -9679,7 +9741,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4"
-					(reference "#PWR0568")
+					(reference "#PWR0567")
 					(unit 1)
 				)
 			)
@@ -9781,7 +9843,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "5d9ea5a7-b65f-5bf2-80f7-ac5998215f63")
-		(property "Reference" "#PWR0569"
+		(property "Reference" "#PWR0568"
 			(at 180.34 115.57 0)
 			(effects
 				(font
@@ -9831,7 +9893,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4"
-					(reference "#PWR0569")
+					(reference "#PWR0568")
 					(unit 1)
 				)
 			)
@@ -10020,7 +10082,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "87bc597d-23d4-5bba-8820-8953ef388df9")
-		(property "Reference" "#PWR0570"
+		(property "Reference" "#PWR0569"
 			(at 210.82 118.11 0)
 			(effects
 				(font
@@ -10070,7 +10132,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4"
-					(reference "#PWR0570")
+					(reference "#PWR0569")
 					(unit 1)
 				)
 			)
@@ -10172,7 +10234,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "1a33643c-c778-5b58-8f0d-d857789b9766")
-		(property "Reference" "#PWR0571"
+		(property "Reference" "#PWR0570"
 			(at 226.06 118.11 0)
 			(effects
 				(font
@@ -10222,7 +10284,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4"
-					(reference "#PWR0571")
+					(reference "#PWR0570")
 					(unit 1)
 				)
 			)
@@ -10585,7 +10647,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "c57f6c67-232c-53c4-8cc3-9f744c6de7c4")
-		(property "Reference" "#PWR0572"
+		(property "Reference" "#PWR0571"
 			(at 302.26 129.54 0)
 			(effects
 				(font
@@ -10635,7 +10697,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4"
-					(reference "#PWR0572")
+					(reference "#PWR0571")
 					(unit 1)
 				)
 			)
@@ -10758,7 +10820,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "f0b13c77-dfe6-5c47-8573-9e1843a05018")
-		(property "Reference" "#PWR0573"
+		(property "Reference" "#PWR0572"
 			(at 332.74 115.57 0)
 			(effects
 				(font
@@ -10808,7 +10870,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4"
-					(reference "#PWR0573")
+					(reference "#PWR0572")
 					(unit 1)
 				)
 			)
@@ -11084,7 +11146,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "10bfcaf2-a079-5acc-8b37-ebcb3ae480d4")
-		(property "Reference" "#PWR0574"
+		(property "Reference" "#PWR0573"
 			(at 378.46 115.57 0)
 			(effects
 				(font
@@ -11134,7 +11196,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4"
-					(reference "#PWR0574")
+					(reference "#PWR0573")
 					(unit 1)
 				)
 			)
@@ -11425,7 +11487,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "1k"
+		(property "Value" "10k"
 			(at 42.656 168.64 0)
 			(effects
 				(font
@@ -11452,7 +11514,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "monitor tap: preamp"
+		(property "Description" "monitor tap: preamp (10 k, S3-01)"
 			(at 40.64 167.64 0)
 			(effects
 				(font
@@ -11461,7 +11523,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "RC0402FR-071KL"
+		(property "MPN" "RC0402FR-0710KL"
 			(at 40.64 167.64 0)
 			(effects
 				(font
@@ -11626,7 +11688,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "pole-zero R_PZ = t_recharge / C_D (226 R for 50 ns)"
+		(property "Description" "pole-zero R_PZ = t_recharge / C_D (226 R for 50 ns), in series with the 47 nF DC block C650 (S3-04)"
 			(at 71.12 167.64 0)
 			(effects
 				(font
@@ -11773,7 +11835,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "997e6b15-a6ca-595b-8a0f-edf8a804225c")
-		(property "Reference" "#PWR0575"
+		(property "Reference" "#PWR0574"
 			(at 111.76 185.42 0)
 			(effects
 				(font
@@ -11823,7 +11885,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4"
-					(reference "#PWR0575")
+					(reference "#PWR0574")
 					(unit 1)
 				)
 			)
@@ -11946,7 +12008,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "27c34d02-20fe-50aa-88e8-8d2adfc94091")
-		(property "Reference" "#PWR0576"
+		(property "Reference" "#PWR0575"
 			(at 142.24 171.45 0)
 			(effects
 				(font
@@ -11996,7 +12058,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4"
-					(reference "#PWR0576")
+					(reference "#PWR0575")
 					(unit 1)
 				)
 			)
@@ -12446,7 +12508,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "d7c48d8e-52c1-5fb3-8752-25c1249b4235")
-		(property "Reference" "#PWR0577"
+		(property "Reference" "#PWR0576"
 			(at 220.98 157.48 0)
 			(effects
 				(font
@@ -12496,7 +12558,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4"
-					(reference "#PWR0577")
+					(reference "#PWR0576")
 					(unit 1)
 				)
 			)
@@ -12511,7 +12573,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "e9b88444-79af-5103-8efe-7237cc582464")
-		(property "Reference" "#PWR0578"
+		(property "Reference" "#PWR0577"
 			(at 241.3 157.48 0)
 			(effects
 				(font
@@ -12561,7 +12623,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4"
-					(reference "#PWR0578")
+					(reference "#PWR0577")
 					(unit 1)
 				)
 			)
@@ -12675,7 +12737,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "1k"
+		(property "Value" "10k"
 			(at 263.636 168.64 0)
 			(effects
 				(font
@@ -12702,7 +12764,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "monitor tap: fast"
+		(property "Description" "monitor tap: fast (op-amp output, 10 k, S3-01)"
 			(at 261.62 167.64 0)
 			(effects
 				(font
@@ -12711,7 +12773,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "RC0402FR-071KL"
+		(property "MPN" "RC0402FR-0710KL"
 			(at 261.62 167.64 0)
 			(effects
 				(font
@@ -12840,7 +12902,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "7a69fb26-275e-5e83-8e59-931f4fe7a281")
-		(property "Reference" "#PWR0579"
+		(property "Reference" "#PWR0578"
 			(at 287.02 171.45 0)
 			(effects
 				(font
@@ -12890,7 +12952,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4"
-					(reference "#PWR0579")
+					(reference "#PWR0578")
 					(unit 1)
 				)
 			)
@@ -13079,7 +13141,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "84491d01-942c-5ed4-8cd6-ee06428c7bb6")
-		(property "Reference" "#PWR0580"
+		(property "Reference" "#PWR0579"
 			(at 317.5 171.45 0)
 			(effects
 				(font
@@ -13129,7 +13191,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4"
-					(reference "#PWR0580")
+					(reference "#PWR0579")
 					(unit 1)
 				)
 			)
@@ -13231,7 +13293,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "7434a31b-eb56-5d91-8353-bf27581b6dd6")
-		(property "Reference" "#PWR0581"
+		(property "Reference" "#PWR0580"
 			(at 358.14 185.42 0)
 			(effects
 				(font
@@ -13281,7 +13343,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4"
-					(reference "#PWR0581")
+					(reference "#PWR0580")
 					(unit 1)
 				)
 			)
@@ -13296,7 +13358,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "4f0648de-86d6-5a19-881b-e11096a931c2")
-		(property "Reference" "#PWR0582"
+		(property "Reference" "#PWR0581"
 			(at 358.14 154.94 0)
 			(effects
 				(font
@@ -13346,7 +13408,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4"
-					(reference "#PWR0582")
+					(reference "#PWR0581")
 					(unit 1)
 				)
 			)
@@ -13466,7 +13528,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "332129c5-7fc0-589e-8ab1-2c6e5a0d3316")
-		(property "Reference" "#PWR0583"
+		(property "Reference" "#PWR0582"
 			(at 391.16 168.91 0)
 			(effects
 				(font
@@ -13516,7 +13578,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4"
-					(reference "#PWR0583")
+					(reference "#PWR0582")
 					(unit 1)
 				)
 			)
@@ -13531,7 +13593,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "f71ef6e5-1d2d-57d6-88a8-e835ef9939cd")
-		(property "Reference" "#PWR0584"
+		(property "Reference" "#PWR0583"
 			(at 391.16 156.21 0)
 			(effects
 				(font
@@ -13581,7 +13643,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4"
-					(reference "#PWR0584")
+					(reference "#PWR0583")
 					(unit 1)
 				)
 			)
@@ -13756,6 +13818,102 @@
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4"
 					(reference "R628")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 38.1 220.98 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "19d923ff-f67f-5551-801c-c9e837522419")
+		(property "Reference" "C650"
+			(at 41.132 219.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "47nF"
+			(at 41.132 221.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
+			(at 38.1 220.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 38.1 220.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "pole-zero DC block in series with R_PZ: (R_PZ + R_D) x 47 nF = 15 us; 1 ohm at 3 MHz (no effect on the pulse)"
+			(at 38.1 220.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "GRM155R71C473KA01D"
+			(at 38.1 220.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Murata"
+			(at 38.1 220.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Notes" "S3-04 (review m2): removes the DC transmission 0.307 of the PZ divider; post-alpha FAST undershoot at 300 us 0.06 p.e. instead of 3.3 p.e. (head_afe_calc.py T14)"
+			(at 38.1 220.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "2c0dc49e-6f6a-5cad-8b76-6ebe75ba907b")
+		)
+		(pin "2"
+			(uuid "976bffcd-e3d7-5a5a-86d7-90314491c192")
+		)
+		(instances
+			(project "RR-HEAD-ACQ"
+				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4"
+					(reference "C650")
 					(unit 1)
 				)
 			)

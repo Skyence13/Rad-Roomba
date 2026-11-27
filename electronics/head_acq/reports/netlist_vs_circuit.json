@@ -31,13 +31,32 @@
    "EP": "7"
   }
  },
+ "accepted_stage3": {
+  "added": 10,
+  "net": 39,
+  "value": 21
+ },
  "circuit_parts": 1085,
  "dnp": 61,
  "fitted": 1024,
- "kicad_parts": 1085,
+ "kicad_parts": 1095,
  "netlist": "out/RR-HEAD-ACQ.net",
- "nets_compared": 581,
- "pins_compared": 2987,
+ "nets_compared": 597,
+ "pins_compared": 3007,
  "problems": [],
- "result": "IDENTICAL"
+ "result": "IDENTICAL except the listed S3 overrides",
+ "stage3_added": [
+  "C150",
+  "C250",
+  "C350",
+  "C450",
+  "C550",
+  "C650",
+  "C750",
+  "C850",
+  "R2418",
+  "F2801"
+ ],
+ "stage3_net_entries": 39,
+ "stage3_value_refs": 21
 }

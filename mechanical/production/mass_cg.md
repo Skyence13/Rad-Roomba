@@ -2,26 +2,26 @@
 
 Calculated on the production solids (CAD volume x density; SLS PA11 fully dense 1.04, 6061 2.70, cast PU 1.12 g/cm3; purchased masses from parts.yaml; lumped harness / fasteners / foam from the common budget). Heads: `mechanical/head/out/checks.json` (P.HEAD_MASS). Evidence class: calculated.
 
-Body without head: 7.39 kg at x -90.2, z 81.5 mm.
+Body without head: 7.36 kg at x -90.7, z 81.6 mm.
 
 | Head | Mass (kg) | CG x (mm) | CG z (mm) | Caster share | Tip margin fwd / rear / lateral (mm) | Hang angle on the grip (deg) |
 |---|---|---|---|---|---|---|
-| none (transport / LAB) | 7.39 | -90.2 | 81.5 | 44 % | 79.7 / 104.2 / 55.7 | -36.1 |
-| prototype head RR-HD-X (1.862 kg) | 9.25 | -48.2 | 72.1 | 24 % | 39.0 / 147.3 / 79.7 | -11.2 |
-| production head (2.082 kg) | 9.47 | -44.0 | 70.8 | 22 % | 34.9 / 151.6 / 82.1 | -8.5 |
-| production head + 15 % margin | 9.78 | -38.8 | 69.6 | 19 % | 29.8 / 157.0 / 85.1 | -5.3 |
+| none (transport / LAB) | 7.36 | -90.7 | 81.6 | 44 % | 80.2 / 103.7 / 55.4 | -36.4 |
+| prototype head RR-HD-X (1.862 kg) | 9.23 | -48.4 | 72.1 | 24 % | 39.2 / 147.0 / 79.5 | -11.3 |
+| production head (2.082 kg) | 9.44 | -44.2 | 70.9 | 22 % | 35.1 / 151.4 / 82.0 | -8.7 |
+| production head + 15 % margin | 9.76 | -39.0 | 69.6 | 19 % | 30.0 / 156.8 / 85.0 | -5.4 |
 
 ## Mass by group (kg, calculated)
 
 | Group | Mass | x | z |
 |---|---|---|---|
 | cassette | 1.909 | -150.7 | 91.3 |
-| lid | 0.683 | -87.6 | 108.2 |
+| lid | 0.679 | -86.8 | 108.2 |
 | chassis | 0.544 | -65.6 | 35.2 |
 | drive | 0.520 | -0.0 | 58.3 |
 | lumped: harness (power, sensor, Ethernet, USB) | 0.450 | -60.0 | 85.0 |
 | wheel | 0.407 | -0.0 | 52.0 |
-| lower_hull | 0.327 | -105.0 | 46.9 |
+| lower_hull | 0.304 | -119.0 | 46.3 |
 | controls | 0.296 | -130.5 | 103.6 |
 | grip | 0.286 | -28.1 | 134.2 |
 | lumped: fasteners, inserts, standoffs | 0.250 | -60.0 | 70.0 |

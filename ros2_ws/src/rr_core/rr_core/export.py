@@ -156,6 +156,17 @@ def _svg(proc, run, layer: str) -> str:
     return "\n".join(o) + "\n"
 
 
+def _diag_cols(d, lane):
+    """alpha_short, alpha_idle_clears, imon_na of one lane from the gate's DIAG record ('' where no DIAG was read for the gate)."""
+    if not d:
+        return ["", "", "", ""]
+    def pick(key):
+        v = d.get(key)
+        v = v[lane] if isinstance(v, list) and lane < len(v) else None
+        return json.dumps(v) if isinstance(v, (list, dict)) else ("" if v is None else v)
+    return [pick("alpha_short"), pick("alpha_idle_clears"), pick("imon_na"), "" if d.get("dac_writes") is None else d["dac_writes"]]
+
+
 def export_survey(pipe, run: dict, out_dir, run_dir=None) -> dict:
     out = Path(out_dir)
     if out.exists():
@@ -199,14 +210,17 @@ def export_survey(pipe, run: dict, out_dir, run_dir=None) -> dict:
     with open(out / "gates.csv", "w", newline="") as f:
         w = csv.writer(f)
         w.writerow(["attachment", "sequence", "lane", "t0_us", "t1_us", "bound_us", "stage", "tag", "epoch",
-                    "beta_counts", "floor_live_s", "alpha_counts", "ref_counts", "ref_live_s", "credited", "reasons"])
+                    "beta_counts", "floor_live_s", "alpha_counts", "ref_counts", "ref_live_s", "credited", "reasons",
+                    "marks", "heater", "alpha_short", "alpha_idle_clears", "imon_na", "dac_writes"])
         for g in proc.gate_log:
             a_idx = proc.a_index(g["attachment"])
             for lane in g["lanes"]:
                 c = proc._gate_counts.get((a_idx, g["sequence"], lane["id"]), ("", "", "", "", ""))
                 w.writerow([g["attachment"], g["sequence"], lane["id"], repr(g["t0_us"]), repr(g["t1_us"]), repr(g["bound_us"]),
                             g["stage"] or "", g.get("tag") or "", g["pose"][3] if g["pose"] else "",
-                            c[0], repr(c[1]), c[2], c[3], repr(c[4]), int(lane["credited"]), "|".join(lane["reasons"])])
+                            c[0], repr(c[1]), c[2], c[3], repr(c[4]), int(lane["credited"]), "|".join(lane["reasons"]),
+                            "|".join(g.get("marks") or []), g.get("heater") or "",
+                            *_diag_cols(proc.diag.get((a_idx, g["sequence"])), lane["id"])])
     _json(out / "gaps.json", _clean({"gaps": proc.gaps, "session_closes": pipe.closes, "link_notes": pipe.link_notes[:2000],
                                       "blocked_regions": proc.blocked_regions}))
     with open(out / "clock_fits.ndjson", "w") as f:

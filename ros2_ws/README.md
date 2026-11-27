@@ -209,6 +209,21 @@ behind). A refused or stopped reverse puts the mission in HOLD; after re-arm and
 drives back to the entry point along the entry path, the wall track is marked `RESIDUAL`, its strip
 is journaled as a residual rectangle and it is **not retried**.
 
+**Assumptions behind the mission-time figures (calculated by `rr_coverage/planner.py`, `tools/test.sh plan`; for quoting in the architecture document).** Nothing here is measured.
+
+| Input | Value used |
+|---|---|
+| Floor | 16.0 m long (door end x = 0, bulkhead x = 16 m) × 2.5 m wide, empty, no keep-outs, no blocked strips, doors closed |
+| Head | 4 lanes, 80 mm wide, pitch 87.5 mm, aperture 100 mm along travel; credited footprint eroded by the 10 mm position allowance per side (eroded lane 60 mm); passes come in pairs offset by half a pitch (43.75 mm) |
+| Robot outline | body half-width 0.146 m, head half-width 0.175 m, in-place turn radius 0.290 m (contract draft7); margins: wall 0.03 m, turn 0.02 m, front 0.03 m, door 0.10 m, tracking tolerance 0.005 m |
+| Plan | 7 pass pairs (A +x, B −x) with end caps = 28 tasks, plus 4 reverse-entry wall tracks; no re-passes |
+| Speeds | scan 0.10 m/s (or 0.03 m/s as stated); transit 0.10 m/s; reverse 0.05 m/s; yaw 0.25 rad/s (contract maximum 0.30) |
+| Time model | passes at scan speed + one 180° pivot per pair and three half-pitch shifts per pair (π / yaw rate each) + one retreat per pass ((turn radius − front + 0.02 m) / 0.05 m/s + 2 s) + lateral shifts + wall-track manoeuvres + 1.5 s pre-motion alert once |
+| Not in the time | recounts and Expose/Next visits, ratemeter alarm follow-ups, blocked-strip waits, holds and re-arms, charging / pack swaps, set-up, brake test, review |
+| Step and count | station pitch 0.080 m (contract), settle 0.5 s, preset count 10 s, plus 1.0 s per station and pitch / speed travel |
+| Search then count | search stage only (continuous at the search speed); each alarm adds its scaler count (30 s preset, ≤ 100 s adaptive) and a reverse/realign, not included |
+| Results | continuous 0.10 m/s 3598 s (1.0 h); 0.03 m/s 10 099 s (2.8 h); step and count, 10 s preset, 43 886 s (12.2 h); breakdown at 0.10 m/s: passes 2171 s, turns 352 s, retreats 122 s, shifts 55 s, wall tracks 896 s |
+
 ### 8.2 Long trailers with open doors (site rule, IB-30)
 
 The along-trailer (x) reference comes from an end wall seen by the LiDAR. If the trailer is longer

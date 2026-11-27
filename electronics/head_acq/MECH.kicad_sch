@@ -153,6 +153,142 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "Device:Fuse"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "F"
+				(at 2.032 0 90)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "Fuse"
+				(at -1.905 0 90)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at -1.778 0 90)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Fuse"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "fuse"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "*Fuse*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "Fuse_0_1"
+				(rectangle
+					(start -0.762 -2.54)
+					(end 0.762 2.54)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 2.54) (xy 0 -2.54)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "Fuse_1_1"
+				(pin passive line
+					(at 0 3.81 270)
+					(length 1.27)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -3.81 90)
+					(length 1.27)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "Device:R"
 			(pin_numbers
 				(hide yes)
@@ -666,6 +802,713 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "rr_local:FRAME_H2"
+			(power)
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "#PWR"
+				(at 0 -6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Value" "FRAME_H2"
+				(at 0 -3.81 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Power symbol creates a global label with name \"FRAME_H2\""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "global power"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "FRAME_H2_0_1"
+				(polyline
+					(pts
+						(xy 0 0) (xy 0 -1.27) (xy 1.27 -1.27) (xy 0 -2.54) (xy -1.27 -1.27) (xy 0 -1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "FRAME_H2_1_1"
+				(pin power_in line
+					(at 0 0 270)
+					(length 0)
+					(name "FRAME_H2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "rr_local:FRAME_H3"
+			(power)
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "#PWR"
+				(at 0 -6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Value" "FRAME_H3"
+				(at 0 -3.81 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Power symbol creates a global label with name \"FRAME_H3\""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "global power"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "FRAME_H3_0_1"
+				(polyline
+					(pts
+						(xy 0 0) (xy 0 -1.27) (xy 1.27 -1.27) (xy 0 -2.54) (xy -1.27 -1.27) (xy 0 -1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "FRAME_H3_1_1"
+				(pin power_in line
+					(at 0 0 270)
+					(length 0)
+					(name "FRAME_H3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "rr_local:FRAME_H4"
+			(power)
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "#PWR"
+				(at 0 -6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Value" "FRAME_H4"
+				(at 0 -3.81 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Power symbol creates a global label with name \"FRAME_H4\""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "global power"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "FRAME_H4_0_1"
+				(polyline
+					(pts
+						(xy 0 0) (xy 0 -1.27) (xy 1.27 -1.27) (xy 0 -2.54) (xy -1.27 -1.27) (xy 0 -1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "FRAME_H4_1_1"
+				(pin power_in line
+					(at 0 0 270)
+					(length 0)
+					(name "FRAME_H4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "rr_local:FRAME_H5"
+			(power)
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "#PWR"
+				(at 0 -6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Value" "FRAME_H5"
+				(at 0 -3.81 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Power symbol creates a global label with name \"FRAME_H5\""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "global power"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "FRAME_H5_0_1"
+				(polyline
+					(pts
+						(xy 0 0) (xy 0 -1.27) (xy 1.27 -1.27) (xy 0 -2.54) (xy -1.27 -1.27) (xy 0 -1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "FRAME_H5_1_1"
+				(pin power_in line
+					(at 0 0 270)
+					(length 0)
+					(name "FRAME_H5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "rr_local:FRAME_H6"
+			(power)
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "#PWR"
+				(at 0 -6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Value" "FRAME_H6"
+				(at 0 -3.81 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Power symbol creates a global label with name \"FRAME_H6\""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "global power"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "FRAME_H6_0_1"
+				(polyline
+					(pts
+						(xy 0 0) (xy 0 -1.27) (xy 1.27 -1.27) (xy 0 -2.54) (xy -1.27 -1.27) (xy 0 -1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "FRAME_H6_1_1"
+				(pin power_in line
+					(at 0 0 270)
+					(length 0)
+					(name "FRAME_H6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "rr_local:FRAME_H7"
+			(power)
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "#PWR"
+				(at 0 -6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Value" "FRAME_H7"
+				(at 0 -3.81 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Power symbol creates a global label with name \"FRAME_H7\""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "global power"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "FRAME_H7_0_1"
+				(polyline
+					(pts
+						(xy 0 0) (xy 0 -1.27) (xy 1.27 -1.27) (xy 0 -2.54) (xy -1.27 -1.27) (xy 0 -1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "FRAME_H7_1_1"
+				(pin power_in line
+					(at 0 0 270)
+					(length 0)
+					(name "FRAME_H7"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "rr_local:FRAME_H8"
+			(power)
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "#PWR"
+				(at 0 -6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Value" "FRAME_H8"
+				(at 0 -3.81 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Power symbol creates a global label with name \"FRAME_H8\""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "global power"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "FRAME_H8_0_1"
+				(polyline
+					(pts
+						(xy 0 0) (xy 0 -1.27) (xy 1.27 -1.27) (xy 0 -2.54) (xy -1.27 -1.27) (xy 0 -1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "FRAME_H8_1_1"
+				(pin power_in line
+					(at 0 0 270)
+					(length 0)
+					(name "FRAME_H8"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 	)
 	(wire
 		(pts
@@ -749,7 +1592,7 @@
 	)
 	(wire
 		(pts
-			(xy 99.06 54.61) (xy 99.06 57.15)
+			(xy 96.52 59.69) (xy 96.52 62.23)
 		)
 		(stroke
 			(width 0)
@@ -759,7 +1602,7 @@
 	)
 	(wire
 		(pts
-			(xy 99.06 46.99) (xy 99.06 44.45)
+			(xy 96.52 52.07) (xy 96.52 49.53)
 		)
 		(stroke
 			(width 0)
@@ -769,7 +1612,7 @@
 	)
 	(wire
 		(pts
-			(xy 99.06 82.55) (xy 99.06 85.09)
+			(xy 114.3 54.61) (xy 114.3 57.15)
 		)
 		(stroke
 			(width 0)
@@ -779,7 +1622,7 @@
 	)
 	(wire
 		(pts
-			(xy 99.06 74.93) (xy 99.06 72.39)
+			(xy 114.3 46.99) (xy 114.3 44.45)
 		)
 		(stroke
 			(width 0)
@@ -789,7 +1632,7 @@
 	)
 	(wire
 		(pts
-			(xy 116.84 54.61) (xy 116.84 57.15)
+			(xy 132.08 54.61) (xy 132.08 57.15)
 		)
 		(stroke
 			(width 0)
@@ -799,7 +1642,7 @@
 	)
 	(wire
 		(pts
-			(xy 116.84 46.99) (xy 116.84 44.45)
+			(xy 132.08 46.99) (xy 132.08 44.45)
 		)
 		(stroke
 			(width 0)
@@ -809,7 +1652,7 @@
 	)
 	(wire
 		(pts
-			(xy 116.84 82.55) (xy 116.84 85.09)
+			(xy 132.08 82.55) (xy 132.08 85.09)
 		)
 		(stroke
 			(width 0)
@@ -819,7 +1662,7 @@
 	)
 	(wire
 		(pts
-			(xy 116.84 74.93) (xy 116.84 72.39)
+			(xy 132.08 74.93) (xy 132.08 72.39)
 		)
 		(stroke
 			(width 0)
@@ -829,7 +1672,7 @@
 	)
 	(wire
 		(pts
-			(xy 134.62 54.61) (xy 134.62 57.15)
+			(xy 152.4 54.61) (xy 152.4 57.15)
 		)
 		(stroke
 			(width 0)
@@ -839,7 +1682,7 @@
 	)
 	(wire
 		(pts
-			(xy 134.62 46.99) (xy 134.62 44.45)
+			(xy 152.4 46.99) (xy 152.4 44.45)
 		)
 		(stroke
 			(width 0)
@@ -849,7 +1692,7 @@
 	)
 	(wire
 		(pts
-			(xy 134.62 82.55) (xy 134.62 85.09)
+			(xy 152.4 82.55) (xy 152.4 85.09)
 		)
 		(stroke
 			(width 0)
@@ -859,13 +1702,33 @@
 	)
 	(wire
 		(pts
-			(xy 134.62 74.93) (xy 134.62 72.39)
+			(xy 152.4 74.93) (xy 152.4 72.39)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "07f619d5-b9c6-57bf-839d-82359a057fb3")
+	)
+	(wire
+		(pts
+			(xy 190.5 54.61) (xy 190.5 57.15)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "895baf85-2fc0-58bf-823d-b19727bc6854")
+	)
+	(wire
+		(pts
+			(xy 190.5 46.99) (xy 190.5 44.45)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "dd584b39-8240-557a-873c-386c9ab9b590")
 	)
 	(text "Mounting holes (FRAME), frame bond, fiducials"
 		(exclude_from_sim no)
@@ -891,6 +1754,69 @@
 		)
 		(uuid "0c1bc8fb-a68d-599c-8d5a-6d9ca1686c3e")
 	)
+	(global_label "FRAME_F"
+		(shape passive)
+		(at 96.52 49.53 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "95e418bb-e979-5c7b-8b5b-1a60c3b0b555")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 96.52 49.53 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "MON_BUS"
+		(shape passive)
+		(at 114.3 57.15 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "856685cf-4d1f-5ba3-833a-fc289e7ab026")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 114.3 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "FRAME_F"
+		(shape passive)
+		(at 190.5 57.15 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "d8ee07ab-1811-5147-8f1c-91ce7cef3a38")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 190.5 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
 	(symbol
 		(lib_id "rr_local:FRAME")
 		(at 27.94 48.26 0)
@@ -900,7 +1826,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "db691a93-657c-5107-876c-c74f2697f1bc")
-		(property "Reference" "#PWR0967"
+		(property "Reference" "#PWR0966"
 			(at 27.94 48.26 0)
 			(effects
 				(font
@@ -950,7 +1876,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/f3cab475-c5cf-5838-87bb-94bab849015a"
-					(reference "#PWR0967")
+					(reference "#PWR0966")
 					(unit 1)
 				)
 			)
@@ -1041,7 +1967,7 @@
 		)
 	)
 	(symbol
-		(lib_id "rr_local:FRAME")
+		(lib_id "rr_local:FRAME_H2")
 		(at 27.94 68.58 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -1049,7 +1975,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "222b1b89-6b70-5eda-8464-b3716cd9f30a")
-		(property "Reference" "#PWR0968"
+		(property "Reference" "#PWR0967"
 			(at 27.94 68.58 0)
 			(effects
 				(font
@@ -1058,7 +1984,7 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "FRAME"
+		(property "Value" "FRAME_H2"
 			(at 27.94 72.48 0)
 			(effects
 				(font
@@ -1084,7 +2010,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Power symbol creates a global label with name \"FRAME\""
+		(property "Description" "Power symbol creates a global label with name \"FRAME_H2\""
 			(at 27.94 68.58 0)
 			(effects
 				(font
@@ -1099,7 +2025,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/f3cab475-c5cf-5838-87bb-94bab849015a"
-					(reference "#PWR0968")
+					(reference "#PWR0967")
 					(unit 1)
 				)
 			)
@@ -1190,7 +2116,7 @@
 		)
 	)
 	(symbol
-		(lib_id "rr_local:FRAME")
+		(lib_id "rr_local:FRAME_H3")
 		(at 45.72 48.26 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -1198,7 +2124,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "dba9ee84-fb42-5d2e-81c4-04e5b29ef3a7")
-		(property "Reference" "#PWR0969"
+		(property "Reference" "#PWR0968"
 			(at 45.72 48.26 0)
 			(effects
 				(font
@@ -1207,7 +2133,7 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "FRAME"
+		(property "Value" "FRAME_H3"
 			(at 45.72 52.16 0)
 			(effects
 				(font
@@ -1233,7 +2159,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Power symbol creates a global label with name \"FRAME\""
+		(property "Description" "Power symbol creates a global label with name \"FRAME_H3\""
 			(at 45.72 48.26 0)
 			(effects
 				(font
@@ -1248,7 +2174,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/f3cab475-c5cf-5838-87bb-94bab849015a"
-					(reference "#PWR0969")
+					(reference "#PWR0968")
 					(unit 1)
 				)
 			)
@@ -1339,7 +2265,7 @@
 		)
 	)
 	(symbol
-		(lib_id "rr_local:FRAME")
+		(lib_id "rr_local:FRAME_H4")
 		(at 45.72 68.58 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -1347,7 +2273,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "381adecc-e883-5148-83d8-5ff1ed4fdc47")
-		(property "Reference" "#PWR0970"
+		(property "Reference" "#PWR0969"
 			(at 45.72 68.58 0)
 			(effects
 				(font
@@ -1356,7 +2282,7 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "FRAME"
+		(property "Value" "FRAME_H4"
 			(at 45.72 72.48 0)
 			(effects
 				(font
@@ -1382,7 +2308,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Power symbol creates a global label with name \"FRAME\""
+		(property "Description" "Power symbol creates a global label with name \"FRAME_H4\""
 			(at 45.72 68.58 0)
 			(effects
 				(font
@@ -1397,7 +2323,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/f3cab475-c5cf-5838-87bb-94bab849015a"
-					(reference "#PWR0970")
+					(reference "#PWR0969")
 					(unit 1)
 				)
 			)
@@ -1488,7 +2414,7 @@
 		)
 	)
 	(symbol
-		(lib_id "rr_local:FRAME")
+		(lib_id "rr_local:FRAME_H5")
 		(at 63.5 48.26 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -1496,7 +2422,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "32603cad-b170-52c8-88a7-d39aac2977dc")
-		(property "Reference" "#PWR0971"
+		(property "Reference" "#PWR0970"
 			(at 63.5 48.26 0)
 			(effects
 				(font
@@ -1505,7 +2431,7 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "FRAME"
+		(property "Value" "FRAME_H5"
 			(at 63.5 52.16 0)
 			(effects
 				(font
@@ -1531,7 +2457,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Power symbol creates a global label with name \"FRAME\""
+		(property "Description" "Power symbol creates a global label with name \"FRAME_H5\""
 			(at 63.5 48.26 0)
 			(effects
 				(font
@@ -1546,7 +2472,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/f3cab475-c5cf-5838-87bb-94bab849015a"
-					(reference "#PWR0971")
+					(reference "#PWR0970")
 					(unit 1)
 				)
 			)
@@ -1637,7 +2563,7 @@
 		)
 	)
 	(symbol
-		(lib_id "rr_local:FRAME")
+		(lib_id "rr_local:FRAME_H6")
 		(at 63.5 68.58 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -1645,7 +2571,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "1475563f-7040-50d6-8be9-5d8e89099acb")
-		(property "Reference" "#PWR0972"
+		(property "Reference" "#PWR0971"
 			(at 63.5 68.58 0)
 			(effects
 				(font
@@ -1654,7 +2580,7 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "FRAME"
+		(property "Value" "FRAME_H6"
 			(at 63.5 72.48 0)
 			(effects
 				(font
@@ -1680,7 +2606,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Power symbol creates a global label with name \"FRAME\""
+		(property "Description" "Power symbol creates a global label with name \"FRAME_H6\""
 			(at 63.5 68.58 0)
 			(effects
 				(font
@@ -1695,7 +2621,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/f3cab475-c5cf-5838-87bb-94bab849015a"
-					(reference "#PWR0972")
+					(reference "#PWR0971")
 					(unit 1)
 				)
 			)
@@ -1786,7 +2712,7 @@
 		)
 	)
 	(symbol
-		(lib_id "rr_local:FRAME")
+		(lib_id "rr_local:FRAME_H7")
 		(at 81.28 48.26 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -1794,7 +2720,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "e073f30d-b1f5-5118-876c-b779606098aa")
-		(property "Reference" "#PWR0973"
+		(property "Reference" "#PWR0972"
 			(at 81.28 48.26 0)
 			(effects
 				(font
@@ -1803,7 +2729,7 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "FRAME"
+		(property "Value" "FRAME_H7"
 			(at 81.28 52.16 0)
 			(effects
 				(font
@@ -1829,7 +2755,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Power symbol creates a global label with name \"FRAME\""
+		(property "Description" "Power symbol creates a global label with name \"FRAME_H7\""
 			(at 81.28 48.26 0)
 			(effects
 				(font
@@ -1844,7 +2770,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/f3cab475-c5cf-5838-87bb-94bab849015a"
-					(reference "#PWR0973")
+					(reference "#PWR0972")
 					(unit 1)
 				)
 			)
@@ -1935,7 +2861,7 @@
 		)
 	)
 	(symbol
-		(lib_id "rr_local:FRAME")
+		(lib_id "rr_local:FRAME_H8")
 		(at 81.28 68.58 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -1943,7 +2869,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "7e7fe9a2-4a62-502a-8c52-6bdc4805ed5b")
-		(property "Reference" "#PWR0974"
+		(property "Reference" "#PWR0973"
 			(at 81.28 68.58 0)
 			(effects
 				(font
@@ -1952,7 +2878,7 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "FRAME"
+		(property "Value" "FRAME_H8"
 			(at 81.28 72.48 0)
 			(effects
 				(font
@@ -1978,7 +2904,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Power symbol creates a global label with name \"FRAME\""
+		(property "Description" "Power symbol creates a global label with name \"FRAME_H8\""
 			(at 81.28 68.58 0)
 			(effects
 				(font
@@ -1993,7 +2919,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/f3cab475-c5cf-5838-87bb-94bab849015a"
-					(reference "#PWR0974")
+					(reference "#PWR0973")
 					(unit 1)
 				)
 			)
@@ -2085,15 +3011,15 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 99.06 57.15 0)
+		(at 96.52 62.23 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(uuid "9567bb18-3a7a-53fc-84f2-c77c67ecbe7d")
-		(property "Reference" "#PWR0975"
-			(at 99.06 57.15 0)
+		(property "Reference" "#PWR0974"
+			(at 96.52 62.23 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2102,7 +3028,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 99.06 61.05 0)
+			(at 96.52 66.13 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2110,7 +3036,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 99.06 57.15 0)
+			(at 96.52 62.23 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2119,7 +3045,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 99.06 57.15 0)
+			(at 96.52 62.23 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2128,7 +3054,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 99.06 57.15 0)
+			(at 96.52 62.23 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2142,72 +3068,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/f3cab475-c5cf-5838-87bb-94bab849015a"
-					(reference "#PWR0975")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "rr_local:FRAME")
-		(at 99.06 44.45 180)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "bea33649-4b38-5ce7-879b-cfee02799776")
-		(property "Reference" "#PWR0976"
-			(at 99.06 44.45 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "FRAME"
-			(at 99.06 40.55 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 99.06 44.45 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 99.06 44.45 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"FRAME\""
-			(at 99.06 44.45 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "102bb311-4eb4-52e8-8b31-0d2469700789")
-		)
-		(instances
-			(project "RR-HEAD-ACQ"
-				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/f3cab475-c5cf-5838-87bb-94bab849015a"
-					(reference "#PWR0976")
+					(reference "#PWR0974")
 					(unit 1)
 				)
 			)
@@ -2215,7 +3076,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 99.06 50.8 0)
+		(at 96.52 55.88 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -2223,7 +3084,7 @@
 		(dnp no)
 		(uuid "bc8e19f1-250f-595e-8477-a2056afa852a")
 		(property "Reference" "R2801"
-			(at 101.076 49.8 0)
+			(at 98.536 54.88 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2232,7 +3093,7 @@
 			)
 		)
 		(property "Value" "0R"
-			(at 101.076 51.8 0)
+			(at 98.536 56.88 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2241,7 +3102,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 99.06 50.8 0)
+			(at 96.52 55.88 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2250,7 +3111,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 99.06 50.8 0)
+			(at 96.52 55.88 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2258,8 +3119,8 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "single-point DC bond of the spreader/frame to GND (next to H1)"
-			(at 99.06 50.8 0)
+		(property "Description" "single-point DC frame bond (0 R) at H1, in series with fuse F2801 (S3-03)"
+			(at 96.52 55.88 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2268,7 +3129,7 @@
 			)
 		)
 		(property "MPN" "RC0603JR-070RL"
-			(at 99.06 50.8 0)
+			(at 96.52 55.88 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2277,7 +3138,7 @@
 			)
 		)
 		(property "Manufacturer" "Yageo"
-			(at 99.06 50.8 0)
+			(at 96.52 55.88 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2285,8 +3146,8 @@
 				(hide yes)
 			)
 		)
-		(property "Notes" "single-point DC bond of the spreader/frame to GND next to H1. FITTED IN BOTH BUILDS (IB-38). | IB-38 (lead decision 2026-11-26): R2801 is FITTED IN BOTH BUILDS (prototype and production heads keep the frame isolated from the chassis; this is the single DC frame bond)."
-			(at 99.06 50.8 0)
+		(property "Notes" "single-point DC bond of the spreader/frame to GND at H1 (within 3 mm of H2801), in series with the 0.5 A fuse F2801 (S3-03). FITTED IN BOTH BUILDS (IB-38). | IB-38 (lead decision 2026-11-26): R2801 is FITTED IN BOTH BUILDS (prototype and production heads keep the frame isolated from the chassis; this is the single DC frame bond)."
+			(at 96.52 55.88 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2310,81 +3171,16 @@
 		)
 	)
 	(symbol
-		(lib_id "power:GND")
-		(at 99.06 85.09 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "bf51c9bb-7788-5313-8fc2-5d964d6379ab")
-		(property "Reference" "#PWR0977"
-			(at 99.06 85.09 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 99.06 88.99 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 99.06 85.09 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 99.06 85.09 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 99.06 85.09 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "23f67323-8ab5-52fc-8c9d-f714cc886a4f")
-		)
-		(instances
-			(project "RR-HEAD-ACQ"
-				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/f3cab475-c5cf-5838-87bb-94bab849015a"
-					(reference "#PWR0977")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "rr_local:FRAME")
-		(at 99.06 72.39 180)
+		(at 114.3 44.45 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(uuid "a3b95a14-41f4-5907-86b2-3bb7a456bc72")
-		(property "Reference" "#PWR0978"
-			(at 99.06 72.39 0)
+		(property "Reference" "#PWR0975"
+			(at 114.3 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2393,7 +3189,7 @@
 			)
 		)
 		(property "Value" "FRAME"
-			(at 99.06 68.49 0)
+			(at 114.3 40.55 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2401,7 +3197,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 99.06 72.39 0)
+			(at 114.3 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2410,7 +3206,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 99.06 72.39 0)
+			(at 114.3 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2419,7 +3215,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"FRAME\""
-			(at 99.06 72.39 0)
+			(at 114.3 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2433,7 +3229,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/f3cab475-c5cf-5838-87bb-94bab849015a"
-					(reference "#PWR0978")
+					(reference "#PWR0975")
 					(unit 1)
 				)
 			)
@@ -2441,7 +3237,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 99.06 78.74 0)
+		(at 114.3 50.8 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -2449,7 +3245,7 @@
 		(dnp no)
 		(uuid "d0750b61-8c75-5a80-8f98-5363c362e119")
 		(property "Reference" "R2802"
-			(at 101.076 77.74 0)
+			(at 116.316 49.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2458,7 +3254,7 @@
 			)
 		)
 		(property "Value" "1M"
-			(at 101.076 79.74 0)
+			(at 116.316 51.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2467,7 +3263,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 99.06 78.74 0)
+			(at 114.3 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2476,7 +3272,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 99.06 78.74 0)
+			(at 114.3 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2484,8 +3280,8 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "frame bleed"
-			(at 99.06 78.74 0)
+		(property "Description" "frame bleed and top of the frame-potential divider onto MON_BUS (S3-03)"
+			(at 114.3 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2494,7 +3290,7 @@
 			)
 		)
 		(property "MPN" "RC0603FR-071ML"
-			(at 99.06 78.74 0)
+			(at 114.3 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2503,7 +3299,7 @@
 			)
 		)
 		(property "Manufacturer" "Yageo"
-			(at 99.06 78.74 0)
+			(at 114.3 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2528,15 +3324,15 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 116.84 57.15 0)
+		(at 132.08 57.15 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(uuid "88f2c092-394a-5571-85bb-bf0f3e8c65b6")
-		(property "Reference" "#PWR0979"
-			(at 116.84 57.15 0)
+		(property "Reference" "#PWR0976"
+			(at 132.08 57.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2545,7 +3341,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 116.84 61.05 0)
+			(at 132.08 61.05 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2553,7 +3349,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 116.84 57.15 0)
+			(at 132.08 57.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2562,7 +3358,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 116.84 57.15 0)
+			(at 132.08 57.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2571,7 +3367,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 116.84 57.15 0)
+			(at 132.08 57.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2585,23 +3381,23 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/f3cab475-c5cf-5838-87bb-94bab849015a"
-					(reference "#PWR0979")
+					(reference "#PWR0976")
 					(unit 1)
 				)
 			)
 		)
 	)
 	(symbol
-		(lib_id "rr_local:FRAME")
-		(at 116.84 44.45 180)
+		(lib_id "rr_local:FRAME_H2")
+		(at 132.08 44.45 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(uuid "50b4829d-9e5a-58c7-89d5-f4967a027aec")
-		(property "Reference" "#PWR0980"
-			(at 116.84 44.45 0)
+		(property "Reference" "#PWR0977"
+			(at 132.08 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2609,8 +3405,8 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "FRAME"
-			(at 116.84 40.55 0)
+		(property "Value" "FRAME_H2"
+			(at 132.08 40.55 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2618,7 +3414,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 116.84 44.45 0)
+			(at 132.08 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2627,7 +3423,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 116.84 44.45 0)
+			(at 132.08 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2635,8 +3431,8 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Power symbol creates a global label with name \"FRAME\""
-			(at 116.84 44.45 0)
+		(property "Description" "Power symbol creates a global label with name \"FRAME_H2\""
+			(at 132.08 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2650,7 +3446,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/f3cab475-c5cf-5838-87bb-94bab849015a"
-					(reference "#PWR0980")
+					(reference "#PWR0977")
 					(unit 1)
 				)
 			)
@@ -2658,7 +3454,7 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 116.84 50.8 0)
+		(at 132.08 50.8 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -2666,7 +3462,7 @@
 		(dnp no)
 		(uuid "6e87cfbc-f1a8-53fc-8e90-2579c05c5b15")
 		(property "Reference" "C2801"
-			(at 119.872 49.8 0)
+			(at 135.112 49.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2675,7 +3471,7 @@
 			)
 		)
 		(property "Value" "10nF"
-			(at 119.872 51.8 0)
+			(at 135.112 51.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2684,7 +3480,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
-			(at 116.84 50.8 0)
+			(at 132.08 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2693,7 +3489,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 116.84 50.8 0)
+			(at 132.08 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2701,8 +3497,8 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "HF frame bond (one near each of H2, H3, H5, H6)"
-			(at 116.84 50.8 0)
+		(property "Description" "HF frame bond at H2 (FRAME_H2, S3-05)"
+			(at 132.08 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2711,7 +3507,7 @@
 			)
 		)
 		(property "MPN" "GRM188R72A103KA01D"
-			(at 116.84 50.8 0)
+			(at 132.08 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2720,7 +3516,7 @@
 			)
 		)
 		(property "Manufacturer" "Murata"
-			(at 116.84 50.8 0)
+			(at 132.08 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2745,15 +3541,15 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 116.84 85.09 0)
+		(at 132.08 85.09 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(uuid "42625155-dadf-5593-8232-a475ed33dc53")
-		(property "Reference" "#PWR0981"
-			(at 116.84 85.09 0)
+		(property "Reference" "#PWR0978"
+			(at 132.08 85.09 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2762,7 +3558,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 116.84 88.99 0)
+			(at 132.08 88.99 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2770,7 +3566,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 116.84 85.09 0)
+			(at 132.08 85.09 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2779,7 +3575,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 116.84 85.09 0)
+			(at 132.08 85.09 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2788,7 +3584,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 116.84 85.09 0)
+			(at 132.08 85.09 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2802,23 +3598,23 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/f3cab475-c5cf-5838-87bb-94bab849015a"
-					(reference "#PWR0981")
+					(reference "#PWR0978")
 					(unit 1)
 				)
 			)
 		)
 	)
 	(symbol
-		(lib_id "rr_local:FRAME")
-		(at 116.84 72.39 180)
+		(lib_id "rr_local:FRAME_H8")
+		(at 132.08 72.39 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(uuid "14c82cac-8cb2-5e0a-8d18-164fbb3dea32")
-		(property "Reference" "#PWR0982"
-			(at 116.84 72.39 0)
+		(property "Reference" "#PWR0979"
+			(at 132.08 72.39 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2826,8 +3622,8 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "FRAME"
-			(at 116.84 68.49 0)
+		(property "Value" "FRAME_H8"
+			(at 132.08 68.49 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2835,7 +3631,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 116.84 72.39 0)
+			(at 132.08 72.39 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2844,7 +3640,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 116.84 72.39 0)
+			(at 132.08 72.39 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2852,8 +3648,8 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Power symbol creates a global label with name \"FRAME\""
-			(at 116.84 72.39 0)
+		(property "Description" "Power symbol creates a global label with name \"FRAME_H8\""
+			(at 132.08 72.39 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2867,7 +3663,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/f3cab475-c5cf-5838-87bb-94bab849015a"
-					(reference "#PWR0982")
+					(reference "#PWR0979")
 					(unit 1)
 				)
 			)
@@ -2875,7 +3671,7 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 116.84 78.74 0)
+		(at 132.08 78.74 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -2883,7 +3679,7 @@
 		(dnp no)
 		(uuid "4a907e99-4c63-57fc-8b4e-8eaf2f91038b")
 		(property "Reference" "C2802"
-			(at 119.872 77.74 0)
+			(at 135.112 77.74 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2892,7 +3688,7 @@
 			)
 		)
 		(property "Value" "10nF"
-			(at 119.872 79.74 0)
+			(at 135.112 79.74 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2901,7 +3697,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
-			(at 116.84 78.74 0)
+			(at 132.08 78.74 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2910,7 +3706,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 116.84 78.74 0)
+			(at 132.08 78.74 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2918,8 +3714,8 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "HF frame bond (one near each of H2, H3, H5, H6)"
-			(at 116.84 78.74 0)
+		(property "Description" "HF frame bond at H8 (FRAME_H8; H3 is inside the isolated island, S3-05)"
+			(at 132.08 78.74 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2928,7 +3724,7 @@
 			)
 		)
 		(property "MPN" "GRM188R72A103KA01D"
-			(at 116.84 78.74 0)
+			(at 132.08 78.74 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2937,7 +3733,7 @@
 			)
 		)
 		(property "Manufacturer" "Murata"
-			(at 116.84 78.74 0)
+			(at 132.08 78.74 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2962,15 +3758,15 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 134.62 57.15 0)
+		(at 152.4 57.15 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(uuid "0d49878a-0946-50b9-830a-162bd4ae7721")
-		(property "Reference" "#PWR0983"
-			(at 134.62 57.15 0)
+		(property "Reference" "#PWR0980"
+			(at 152.4 57.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2979,7 +3775,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 134.62 61.05 0)
+			(at 152.4 61.05 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2987,7 +3783,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 134.62 57.15 0)
+			(at 152.4 57.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2996,7 +3792,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 134.62 57.15 0)
+			(at 152.4 57.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3005,7 +3801,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 134.62 57.15 0)
+			(at 152.4 57.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3019,23 +3815,23 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/f3cab475-c5cf-5838-87bb-94bab849015a"
-					(reference "#PWR0983")
+					(reference "#PWR0980")
 					(unit 1)
 				)
 			)
 		)
 	)
 	(symbol
-		(lib_id "rr_local:FRAME")
-		(at 134.62 44.45 180)
+		(lib_id "rr_local:FRAME_H5")
+		(at 152.4 44.45 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(uuid "5d963300-ed33-50f9-8ff8-75d49159f818")
-		(property "Reference" "#PWR0984"
-			(at 134.62 44.45 0)
+		(property "Reference" "#PWR0981"
+			(at 152.4 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3043,8 +3839,8 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "FRAME"
-			(at 134.62 40.55 0)
+		(property "Value" "FRAME_H5"
+			(at 152.4 40.55 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3052,7 +3848,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 134.62 44.45 0)
+			(at 152.4 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3061,7 +3857,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 134.62 44.45 0)
+			(at 152.4 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3069,8 +3865,8 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Power symbol creates a global label with name \"FRAME\""
-			(at 134.62 44.45 0)
+		(property "Description" "Power symbol creates a global label with name \"FRAME_H5\""
+			(at 152.4 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3084,7 +3880,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/f3cab475-c5cf-5838-87bb-94bab849015a"
-					(reference "#PWR0984")
+					(reference "#PWR0981")
 					(unit 1)
 				)
 			)
@@ -3092,7 +3888,7 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 134.62 50.8 0)
+		(at 152.4 50.8 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -3100,7 +3896,7 @@
 		(dnp no)
 		(uuid "9b562a45-9bab-5120-8e64-352fc8ccbe0b")
 		(property "Reference" "C2803"
-			(at 137.652 49.8 0)
+			(at 155.432 49.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3109,7 +3905,7 @@
 			)
 		)
 		(property "Value" "10nF"
-			(at 137.652 51.8 0)
+			(at 155.432 51.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3118,7 +3914,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
-			(at 134.62 50.8 0)
+			(at 152.4 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3127,7 +3923,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 134.62 50.8 0)
+			(at 152.4 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3135,8 +3931,8 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "HF frame bond (one near each of H2, H3, H5, H6)"
-			(at 134.62 50.8 0)
+		(property "Description" "HF frame bond at H5 (FRAME_H5, S3-05)"
+			(at 152.4 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3145,7 +3941,7 @@
 			)
 		)
 		(property "MPN" "GRM188R72A103KA01D"
-			(at 134.62 50.8 0)
+			(at 152.4 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3154,7 +3950,7 @@
 			)
 		)
 		(property "Manufacturer" "Murata"
-			(at 134.62 50.8 0)
+			(at 152.4 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3179,15 +3975,15 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 134.62 85.09 0)
+		(at 152.4 85.09 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(uuid "a33ae5a8-aca6-5f69-854f-c12067aac4ac")
-		(property "Reference" "#PWR0985"
-			(at 134.62 85.09 0)
+		(property "Reference" "#PWR0982"
+			(at 152.4 85.09 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3196,7 +3992,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 134.62 88.99 0)
+			(at 152.4 88.99 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3204,7 +4000,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 134.62 85.09 0)
+			(at 152.4 85.09 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3213,7 +4009,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 134.62 85.09 0)
+			(at 152.4 85.09 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3222,7 +4018,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 134.62 85.09 0)
+			(at 152.4 85.09 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3236,23 +4032,23 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/f3cab475-c5cf-5838-87bb-94bab849015a"
-					(reference "#PWR0985")
+					(reference "#PWR0982")
 					(unit 1)
 				)
 			)
 		)
 	)
 	(symbol
-		(lib_id "rr_local:FRAME")
-		(at 134.62 72.39 180)
+		(lib_id "rr_local:FRAME_H6")
+		(at 152.4 72.39 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(uuid "bd292d13-1b5a-51c3-821e-c1d856f2a00e")
-		(property "Reference" "#PWR0986"
-			(at 134.62 72.39 0)
+		(property "Reference" "#PWR0983"
+			(at 152.4 72.39 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3260,8 +4056,8 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "FRAME"
-			(at 134.62 68.49 0)
+		(property "Value" "FRAME_H6"
+			(at 152.4 68.49 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3269,7 +4065,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 134.62 72.39 0)
+			(at 152.4 72.39 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3278,7 +4074,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 134.62 72.39 0)
+			(at 152.4 72.39 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3286,8 +4082,8 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Power symbol creates a global label with name \"FRAME\""
-			(at 134.62 72.39 0)
+		(property "Description" "Power symbol creates a global label with name \"FRAME_H6\""
+			(at 152.4 72.39 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3301,7 +4097,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/f3cab475-c5cf-5838-87bb-94bab849015a"
-					(reference "#PWR0986")
+					(reference "#PWR0983")
 					(unit 1)
 				)
 			)
@@ -3309,7 +4105,7 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 134.62 78.74 0)
+		(at 152.4 78.74 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -3317,7 +4113,7 @@
 		(dnp no)
 		(uuid "6cb29d50-35b0-5726-8871-d1fe54aed792")
 		(property "Reference" "C2804"
-			(at 137.652 77.74 0)
+			(at 155.432 77.74 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3326,7 +4122,7 @@
 			)
 		)
 		(property "Value" "10nF"
-			(at 137.652 79.74 0)
+			(at 155.432 79.74 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3335,7 +4131,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
-			(at 134.62 78.74 0)
+			(at 152.4 78.74 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3344,7 +4140,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 134.62 78.74 0)
+			(at 152.4 78.74 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3352,8 +4148,8 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "HF frame bond (one near each of H2, H3, H5, H6)"
-			(at 134.62 78.74 0)
+		(property "Description" "HF frame bond at H6 (FRAME_H6, S3-05)"
+			(at 152.4 78.74 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3362,7 +4158,7 @@
 			)
 		)
 		(property "MPN" "GRM188R72A103KA01D"
-			(at 134.62 78.74 0)
+			(at 152.4 78.74 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3371,7 +4167,7 @@
 			)
 		)
 		(property "Manufacturer" "Murata"
-			(at 134.62 78.74 0)
+			(at 152.4 78.74 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3396,7 +4192,7 @@
 	)
 	(symbol
 		(lib_id "Mechanical:Fiducial")
-		(at 149.86 40.64 0)
+		(at 170.18 40.64 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
@@ -3404,7 +4200,7 @@
 		(dnp no)
 		(uuid "ac6a7355-c691-5895-87c5-b51f01186bf2")
 		(property "Reference" "FID2801"
-			(at 152.13 39.64 0)
+			(at 172.45 39.64 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3413,7 +4209,7 @@
 			)
 		)
 		(property "Value" "fiducial"
-			(at 152.13 41.64 0)
+			(at 172.45 41.64 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3422,7 +4218,7 @@
 			)
 		)
 		(property "Footprint" "Fiducial:Fiducial_1mm_Mask2mm"
-			(at 149.86 40.64 0)
+			(at 170.18 40.64 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3431,7 +4227,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 149.86 40.64 0)
+			(at 170.18 40.64 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3440,7 +4236,7 @@
 			)
 		)
 		(property "Description" "global fiducial"
-			(at 149.86 40.64 0)
+			(at 170.18 40.64 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3449,7 +4245,7 @@
 			)
 		)
 		(property "MPN" "fiducial"
-			(at 149.86 40.64 0)
+			(at 170.18 40.64 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3458,7 +4254,7 @@
 			)
 		)
 		(property "Manufacturer" "(PCB feature)"
-			(at 149.86 40.64 0)
+			(at 170.18 40.64 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3477,7 +4273,7 @@
 	)
 	(symbol
 		(lib_id "Mechanical:Fiducial")
-		(at 149.86 50.8 0)
+		(at 170.18 50.8 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
@@ -3485,7 +4281,7 @@
 		(dnp no)
 		(uuid "debe744d-8541-584b-8049-8862c9fc8f34")
 		(property "Reference" "FID2802"
-			(at 152.13 49.8 0)
+			(at 172.45 49.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3494,7 +4290,7 @@
 			)
 		)
 		(property "Value" "fiducial"
-			(at 152.13 51.8 0)
+			(at 172.45 51.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3503,7 +4299,7 @@
 			)
 		)
 		(property "Footprint" "Fiducial:Fiducial_1mm_Mask2mm"
-			(at 149.86 50.8 0)
+			(at 170.18 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3512,7 +4308,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 149.86 50.8 0)
+			(at 170.18 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3521,7 +4317,7 @@
 			)
 		)
 		(property "Description" "global fiducial"
-			(at 149.86 50.8 0)
+			(at 170.18 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3530,7 +4326,7 @@
 			)
 		)
 		(property "MPN" "fiducial"
-			(at 149.86 50.8 0)
+			(at 170.18 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3539,7 +4335,7 @@
 			)
 		)
 		(property "Manufacturer" "(PCB feature)"
-			(at 149.86 50.8 0)
+			(at 170.18 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3558,7 +4354,7 @@
 	)
 	(symbol
 		(lib_id "Mechanical:Fiducial")
-		(at 149.86 60.96 0)
+		(at 170.18 60.96 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
@@ -3566,7 +4362,7 @@
 		(dnp no)
 		(uuid "16015336-9807-578f-832f-a9bd600240ca")
 		(property "Reference" "FID2803"
-			(at 152.13 59.96 0)
+			(at 172.45 59.96 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3575,7 +4371,7 @@
 			)
 		)
 		(property "Value" "fiducial"
-			(at 152.13 61.96 0)
+			(at 172.45 61.96 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3584,7 +4380,7 @@
 			)
 		)
 		(property "Footprint" "Fiducial:Fiducial_1mm_Mask2mm"
-			(at 149.86 60.96 0)
+			(at 170.18 60.96 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3593,7 +4389,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 149.86 60.96 0)
+			(at 170.18 60.96 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3602,7 +4398,7 @@
 			)
 		)
 		(property "Description" "global fiducial"
-			(at 149.86 60.96 0)
+			(at 170.18 60.96 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3611,7 +4407,7 @@
 			)
 		)
 		(property "MPN" "fiducial"
-			(at 149.86 60.96 0)
+			(at 170.18 60.96 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3620,7 +4416,7 @@
 			)
 		)
 		(property "Manufacturer" "(PCB feature)"
-			(at 149.86 60.96 0)
+			(at 170.18 60.96 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3632,6 +4428,176 @@
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/f3cab475-c5cf-5838-87bb-94bab849015a"
 					(reference "FID2803")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "rr_local:FRAME")
+		(at 190.5 44.45 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "d3bf1769-da39-5249-8dce-b050b1bd79b9")
+		(property "Reference" "#PWR0984"
+			(at 190.5 44.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "FRAME"
+			(at 190.5 40.55 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 190.5 44.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 190.5 44.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"FRAME\""
+			(at 190.5 44.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "5d2755d1-ed7e-53d8-857a-7fd3691c8e8d")
+		)
+		(instances
+			(project "RR-HEAD-ACQ"
+				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/f3cab475-c5cf-5838-87bb-94bab849015a"
+					(reference "#PWR0984")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:Fuse")
+		(at 190.5 50.8 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "230923f4-5607-53bb-8f0f-319665a396f8")
+		(property "Reference" "F2801"
+			(at 192.262 49.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "0.5A fast"
+			(at 192.262 51.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Fuse:Fuse_1206_3216Metric"
+			(at 190.5 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 190.5 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "frame-bond fuse 0.5 A very fast-acting, 1206: opens on a heater-domain fault into the spreader before the J1 common-mode choke L2001 or the plane is overloaded (S3-03, review M5)"
+			(at 190.5 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "0466.500NR"
+			(at 190.5 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Littelfuse"
+			(at 190.5 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Notes" "Littelfuse 466 series ordering code, I2t and cold resistance (~0.3 ohm) UNVERIFIED; any 0.5 A very fast 1206 chip fuse >= 32 V DC with I2t >= 0.01 A2s fits. Place within 3 mm of H2801."
+			(at 190.5 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Verify" "MPN/part data not verified against manufacturer data"
+			(at 190.5 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "fcf4b779-4500-506f-8b23-a2b8af86488c")
+		)
+		(pin "2"
+			(uuid "2bd7b6b4-d345-50f1-8439-6706c5db7e23")
+		)
+		(instances
+			(project "RR-HEAD-ACQ"
+				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/f3cab475-c5cf-5838-87bb-94bab849015a"
+					(reference "F2801")
 					(unit 1)
 				)
 			)

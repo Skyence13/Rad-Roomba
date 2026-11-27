@@ -24,7 +24,8 @@
 | clamp_penalty | 2.8 | [A] diode + 20 V Zener across each coil (stage 3, was 24 V): +56 % on the bare-coil release time (24 V: +50 %; the 20 V clamp dumps the coil energy about 11 % slower) |
 | transfer_bounce | 3.0 | [A] NO opens -> NC closes and settles |
 | k1_release | 4.0 | [U] Omron G6S-2 release time 4 ms max (recalled, not read) |
-| efuse_off | 1.0 | [A] RUN_12V RC (0.1 ms) + TPS25982 turn-off |
+| efuse_off | 1.0 | [A] U8 EN divider RC on RUN_HD (0.1 ms) + TPS25982 turn-off |
+| u9_tap | 1.2 | [C] U9.B tap on RUN_HD, 100 k / 56 k / 22 nF: tau 0.8 ms, 3.6 V clamp to the 0.8 V VIL in 1.5 tau |
 | bridge_sleep | 1.0 | [D] DRV8874 tSLEEP 1 ms |
 | loop_filter | 1.5 | [C] 10 k x 100 nF = 1 ms RC to the comparator threshold (1.4 tau worst case) |
 | ssr_off | 1.0 | [U] photo-MOS turn-off 1 ms max (TLP241A class; datasheet not reachable) |
@@ -34,11 +35,11 @@
 
 | Initiating event | Time to VMOT eFuse off (ms) | Time to bridges asleep (ms) | Time to brake resistor connected (ms) |
 |---|---:|---:|---:|
-| Contact element opens (E-stop, HANDS-ON, bumper, dock, cover, selector) | 5.0 | 5.0 | **10.8** |
-| HEAD_LOOP or LAB_KEY (comparator + photo-MOS) | 7.5 | 7.5 | **13.3** |
-| ARM_PERMIT withdrawn by firmware | 8.0 | 8.0 | **13.8** |
-| Watchdog (MCU stopped strobing) | 37.6 | 37.6 | **43.4** |
-| Total loss of pack power | 5.0 | 5.0 | **10.8** |
+| Contact element opens (E-stop, HANDS-ON, bumper, dock, cover, selector) | 1.0 | 2.2 | **10.8** |
+| HEAD_LOOP or LAB_KEY (comparator + photo-MOS) | 3.5 | 4.7 | **13.3** |
+| ARM_PERMIT withdrawn by firmware | 4.0 | 5.2 | **13.8** |
+| Watchdog (MCU stopped strobing) | 33.6 | 34.8 | **43.4** |
+| Total loss of pack power | 1.0 | 2.2 | **10.8** |
 
 K2/K3 coils, the VMOT eFuse enable (RUN_HD) and the nSLEEP gate input are all fed through K1 pole B and U_HOLD from CHAIN_END. They lose their supply as soon as the opened element interrupts CHAIN_END; neither the brake relays nor VMOT removal wait for K1 to release (K1 release only matters for the latch). The K2/K3 coil current additionally loses its return through U_LS. "No restart without REARM" rests on K1 AND U_HOLD (stage 3).
 
@@ -85,7 +86,7 @@ Dynamic braking produces force only while moving: braking coefficient 343 N per 
 
 ### T8. Braking on a slope (downhill, braked, conservative constant, 12 kg)
 
-m_eff dv/dt = m g sin(theta) - F_fric - c v. If m g sin(theta) < F_fric the robot stops; otherwise it never stops and creeps at v_inf = (m g sin(theta) - F_fric) / c. Distance from 0.20 m/s includes the 10.8 ms contact-element delay; *creep* = distance in the first 2 s after the event. F_fric = 16.2 N nominal (rolling + gearboxes [A]) or half. [C]
+m_eff dv/dt = m g sin(theta) - F_fric - c v. If m g sin(theta) < F_fric the robot stops; otherwise it never stops and creeps at v_inf = (m g sin(theta) - F_fric) / c. Distance from 0.20 m/s includes the 10.8 ms contact-element delay; *creep* = distance in the first 2 s after the event. F_fric = 16.2 N nominal (rolling + gearboxes [A]) or half; rolling resistance is included because the robot is moving (T5's static holding angle uses the gearbox friction alone). [C]
 
 | Slope | Friction | m g sin(theta) (N) | Stops? | Distance from 0.20 m/s (mm) | Creep speed (mm/s) | Distance in 2 s (mm) |
 |---:|---|---:|---|---:|---:|---:|
@@ -115,7 +116,7 @@ A hot winding (100 C) lengthens the conservative distance by about a quarter; wi
 
 ### T10. VMOT decay after a drop (review m1)
 
-Bleed 1.00 kohm 1 %% (R on VMOT) in parallel with the 47 k + 10 k VMOT_SENSE divider; capacitance 3 x 270 uF (+20 %% tolerance) + 2 x (10 uF + 100 nF) at the bridges. [C]
+Bleed 1.00 kohm 1 % (R on VMOT) in parallel with the 47 k + 10 k VMOT_SENSE divider; capacitance 3 x 270 uF (+20 % tolerance) + 2 x (10 uF + 100 nF) at the bridges. [C]
 
 | Capacitance | tau (s) | to 1.0 V from 13.4 V (s) | to 1.0 V from 14.6 V (s) | to 0.5 V from 14.6 V (s) |
 |---|---:|---:|---:|---:|
@@ -126,26 +127,30 @@ Firmware limit `brake.vmot_decay_max_ms` must be >= 3.5 s (worst case 2.7 s); be
 
 ### T11. K1 set pulse over supply and temperature (stage 3 set stage, review M1)
 
-C_SET 100 uF (-20 %%) charged from CHAIN_END through D_RSET (1N4148W, 0.4 V at the end of charge [A]) and R_SET 22 k (tau 2.2 s), dumped through U_SET (0.15 ohm) and D_SK (1N4148W, 0.75 V at 10 mA [A]) into the K1 coil (1028 ohm at 23 C, +0.393 %%/K) with the U_HOLD set branch (1.5 k + LED) in parallel. K1 operates when the coil current exceeds the must-operate current 9 V / 1028 ohm = 8.75 mA (75 %% of rated at 23 C [D family, G6S]; ampere-turns, so the same current at any temperature [C]); operate time 4 ms max [U]. Full charge assumed (chain closed >= 10 s); after 2 s closed the charge is 60 %%. [C]
+C_SET 100 uF (-20 %) charged from CHAIN_END through D_RSET (1N4148W, 0.4 V at the end of charge [A]) and R_SET 22 k (tau 2.2 s), dumped through U_SET (0.15 ohm) and R96 (0 ohm) into the K1 coil (1028 ohm at 23 C, +0.393 %/K); the U_HOLD set current comes from V5_AUX through Q_HSET and does not load C_SET. Coil temperature = ambient (the coil is not energised before the set). K1 operates when the coil current exceeds the must-operate current 9 V / 1028 ohm = 8.75 mA (75 % of rated at 23 C [D family, G6S]; ampere-turns, so the same current at any temperature [C]); operate time 4 ms max [U]. Full charge assumed (chain closed >= 10 s); after 2 s closed the charge is 60 %. [C]
 
 | Pack (V) | Coil temp | C_SET | Initial coil current (mA) | Time above must-operate (ms) | Sets? |
 |---:|---|---|---:|---:|---|
-| 10.0 | -25 C | 80 uF | 10.6 | 8.6 | yes |
-| 10.0 | +23 C | 100 uF | 8.6 | 0.0 | **no** (fail-safe: cannot arm) |
-| 10.0 | +23 C | 80 uF | 8.6 | 0.0 | **no** (fail-safe: cannot arm) |
-| 10.0 | +85 C | 80 uF | 6.9 | 0.0 | **no** (fail-safe: cannot arm) |
-| 12.0 | -25 C | 80 uF | 13.0 | 17.8 | yes |
-| 12.0 | +23 C | 100 uF | 10.6 | 12.0 | yes |
-| 12.0 | +23 C | 80 uF | 10.6 | 9.6 | yes |
-| 12.0 | +85 C | 80 uF | 8.5 | 0.0 | **no** (fail-safe: cannot arm) |
-| 12.8 | -25 C | 80 uF | 14.0 | 20.9 | yes |
-| 12.8 | +23 C | 100 uF | 11.3 | 16.6 | yes |
-| 12.8 | +23 C | 80 uF | 11.3 | 13.3 | yes |
-| 12.8 | +85 C | 80 uF | 9.1 | 2.4 | **no** (fail-safe: cannot arm) |
-| 14.6 | -25 C | 80 uF | 16.1 | 27.4 | yes |
-| 14.6 | +23 C | 100 uF | 13.1 | 25.8 | yes |
-| 14.6 | +23 C | 80 uF | 13.1 | 20.6 | yes |
-| 14.6 | +85 C | 80 uF | 10.5 | 10.8 | yes |
+| 10.0 | -25 C | 80 uF | 11.5 | 18.3 | yes |
+| 10.0 | +23 C | 100 uF | 9.3 | 6.7 | yes |
+| 10.0 | +23 C | 80 uF | 9.3 | 5.4 | marginal |
+| 10.0 | +50 C | 80 uF | 8.4 | 0.0 | **no** (fail-safe: cannot arm) |
+| 10.0 | +85 C | 80 uF | 7.5 | 0.0 | **no** (fail-safe: cannot arm) |
+| 12.0 | -25 C | 80 uF | 13.9 | 30.9 | yes |
+| 12.0 | +23 C | 100 uF | 11.3 | 26.1 | yes |
+| 12.0 | +23 C | 80 uF | 11.3 | 20.9 | yes |
+| 12.0 | +50 C | 80 uF | 10.2 | 14.0 | yes |
+| 12.0 | +85 C | 80 uF | 9.1 | 3.7 | **no** (fail-safe: cannot arm) |
+| 12.8 | -25 C | 80 uF | 14.9 | 35.4 | yes |
+| 12.8 | +23 C | 100 uF | 12.1 | 33.0 | yes |
+| 12.8 | +23 C | 80 uF | 12.1 | 26.4 | yes |
+| 12.8 | +50 C | 80 uF | 10.9 | 20.0 | yes |
+| 12.8 | +85 C | 80 uF | 9.7 | 10.5 | yes |
+| 14.6 | -25 C | 80 uF | 17.0 | 44.4 | yes |
+| 14.6 | +23 C | 100 uF | 13.8 | 46.9 | yes |
+| 14.6 | +23 C | 80 uF | 13.8 | 37.5 | yes |
+| 14.6 | +50 C | 80 uF | 12.5 | 32.4 | yes |
+| 14.6 | +85 C | 80 uF | 11.1 | 24.4 | yes |
 
-At a pack below about 11 V with a hot coil the latch cannot be set: fail-safe (the operator sees REARM refused). In normal operation (12.8-13.4 V) the margin is >= 3x the operate time. A held or welded REARM (or a shorted U_SET) passes CHAIN_END x 1028 / 23 028 <= 0.65 V to the coil, below the 1.2 V must-release, and never charges C_SET. [C]
+Where the table says no, the latch cannot be set: fail-safe (REARM is refused; the operator re-arms after the pack is charged or the coil has cooled). In normal operation (12.8-13.4 V, up to +50 C ambient) the margin is >= 3x the 4 ms operate time; at +85 C ambient and a 12 V pack it is marginal. D_RSET is a silicon diode on purpose: a Schottky's leakage at temperature (up to about 0.1 mA) into the 156 k CHAIN_END tap could hold CHAIN_END above the discharge threshold (back-feed, M1). A held or welded REARM (or a shorted U_SET) passes CHAIN_END x 1028 / 23 028 <= 0.65 V to the coil, below the 1.2 V must-release, and never charges C_SET. [C]
 

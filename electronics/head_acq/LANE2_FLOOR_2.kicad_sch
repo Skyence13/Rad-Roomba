@@ -654,6 +654,26 @@
 		)
 		(uuid "5e8f30e1-16b9-50c4-8765-3bafcc49fa0b")
 	)
+	(wire
+		(pts
+			(xy 96.52 57.15) (xy 96.52 59.69)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "634c936f-634c-5915-8659-99e6ec2047ef")
+	)
+	(wire
+		(pts
+			(xy 96.52 49.53) (xy 96.52 46.99)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "dce79df0-0648-5e8d-8ffb-8e05b70dbe82")
+	)
 	(text "Lane 2 floor channel F2: SiPM inputs, bias filter, preamp, fast + slow shaper, comparators (2/2)"
 		(exclude_from_sim no)
 		(at 20 23 0)
@@ -730,6 +750,48 @@
 			)
 		)
 	)
+	(global_label "F2_FS"
+		(shape passive)
+		(at 96.52 59.69 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "c6b8a60b-ce0e-5aeb-8151-7f9e28092507")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 96.52 59.69 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "F2_PZ"
+		(shape passive)
+		(at 96.52 46.99 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "2ceb787a-1b82-5f4f-8e9e-fbd7d95c0f99")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 96.52 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
 	(symbol
 		(lib_id "power:GND")
 		(at 43.18 68.58 0)
@@ -739,7 +801,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "8a29f987-7f06-5998-8f40-1d97ccd2362b")
-		(property "Reference" "#PWR0700"
+		(property "Reference" "#PWR0699"
 			(at 43.18 68.58 0)
 			(effects
 				(font
@@ -789,7 +851,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/b20a0997-20b6-5252-8845-612fa8acad85"
-					(reference "#PWR0700")
+					(reference "#PWR0699")
 					(unit 1)
 				)
 			)
@@ -804,7 +866,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "2bc2fd8e-ff2b-53c4-87f6-274c8ab6119c")
-		(property "Reference" "#PWR0701"
+		(property "Reference" "#PWR0700"
 			(at 43.18 48.26 0)
 			(effects
 				(font
@@ -854,7 +916,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/b20a0997-20b6-5252-8845-612fa8acad85"
-					(reference "#PWR0701")
+					(reference "#PWR0700")
 					(unit 1)
 				)
 			)
@@ -869,7 +931,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "da6f0669-d228-51ef-8097-ba8a4ed6ec23")
-		(property "Reference" "#PWR0702"
+		(property "Reference" "#PWR0701"
 			(at 45.72 68.58 0)
 			(effects
 				(font
@@ -919,7 +981,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/b20a0997-20b6-5252-8845-612fa8acad85"
-					(reference "#PWR0702")
+					(reference "#PWR0701")
 					(unit 1)
 				)
 			)
@@ -1042,7 +1104,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "38e7a5df-846a-5ad8-81df-5db11d35290c")
-		(property "Reference" "#PWR0703"
+		(property "Reference" "#PWR0702"
 			(at 78.74 57.15 0)
 			(effects
 				(font
@@ -1092,7 +1154,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/b20a0997-20b6-5252-8845-612fa8acad85"
-					(reference "#PWR0703")
+					(reference "#PWR0702")
 					(unit 1)
 				)
 			)
@@ -1107,7 +1169,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "512ff709-2fd6-5d37-8b8c-6da973bc2401")
-		(property "Reference" "#PWR0704"
+		(property "Reference" "#PWR0703"
 			(at 78.74 44.45 0)
 			(effects
 				(font
@@ -1157,7 +1219,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/b20a0997-20b6-5252-8845-612fa8acad85"
-					(reference "#PWR0704")
+					(reference "#PWR0703")
 					(unit 1)
 				)
 			)
@@ -1245,6 +1307,102 @@
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/b20a0997-20b6-5252-8845-612fa8acad85"
 					(reference "C327")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 96.52 53.34 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "94f63ab4-f3ba-5ce1-8491-e8bc31a06eae")
+		(property "Reference" "C350"
+			(at 99.552 52.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "47nF"
+			(at 99.552 54.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
+			(at 96.52 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 96.52 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "pole-zero DC block in series with R_PZ: (R_PZ + R_D) x 47 nF = 15 us; 1 ohm at 3 MHz (no effect on the pulse)"
+			(at 96.52 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "GRM155R71C473KA01D"
+			(at 96.52 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Murata"
+			(at 96.52 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Notes" "S3-04 (review m2): removes the DC transmission 0.307 of the PZ divider; post-alpha FAST undershoot at 300 us 0.06 p.e. instead of 3.3 p.e. (head_afe_calc.py T14)"
+			(at 96.52 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "5ec373e3-8920-50eb-89be-3d2e2b6bd025")
+		)
+		(pin "2"
+			(uuid "d397bb2c-f5d6-5d03-8f6c-ea873e657cfc")
+		)
+		(instances
+			(project "RR-HEAD-ACQ"
+				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/b20a0997-20b6-5252-8845-612fa8acad85"
+					(reference "C350")
 					(unit 1)
 				)
 			)

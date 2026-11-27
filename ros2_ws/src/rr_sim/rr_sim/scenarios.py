@@ -84,6 +84,15 @@ def _finish(name, sim, checks, extra=None, export=True):
                    "scan_detections": sum(1 for f in sim.app.pipeline.proc.flags if f["kind"] == "SCAN_DETECTION"),
                    "observations": list(sim.app.pipeline.proc.observations.values())})
         ev["_export"] = exp
+        rows = [r for r in sim.app.pipeline.proc.cells_table() if r["n_lane_gates"]]
+        stat_key = next((k for k in rows[0] if k.endswith(".decision_status")), None) if rows else None
+        if stat_key:
+            nd = [r for r in rows if r[stat_key] and r[stat_key] != "ok"]
+            L = sim.app.cfg["trailer"]["length_m"]
+            ev["decision_status"] = {"cells_with_gates": len(rows), "no_decision": len(nd),
+                                     "no_decision_text": sorted({r[stat_key] for r in nd}),
+                                     "no_decision_within_0.5m_of_an_end": sum(1 for r in nd if r["x_m"] < 0.5 or r["x_m"] > L - 0.5),
+                                     "cells_within_0.5m_of_an_end": sum(1 for r in rows if r["x_m"] < 0.5 or r["x_m"] > L - 0.5)}
     ev.update(extra or {})
     (out / "evidence.json").write_text(json.dumps({k: v for k, v in ev.items() if not k.startswith("_")}, indent=1, default=str) + "\n")
     return ev
@@ -118,7 +127,7 @@ def s01_normal_survey_and_revisit(tmp, seed=11, speed=0.03):
     c.add("interior A+B bands fully covered (seams closed)", min(_band_fraction(sim, p) for p in range(app.plan["n_pairs"])) == 1.0)
     c.add("no gate credited without a valid pose/time", proc.stats["lane_gates_credited"] > 0)
     ch = proc._decision_channel()
-    dh = sorted(d.D_hash for d in proc.decisions[ch].values() if d.D is not None and math.isfinite(d.D_hash))
+    dh = sorted(d.D_hash for d in proc.decisions[ch].values() if d.D is not None and d.D_hash is not None and math.isfinite(d.D_hash))
     extra = {"survey_speed_mps": speed, "patch_centre": patch, "D_hash_median": dh[len(dh) // 2] if dh else None,
              "D_hash_best": dh[0] if dh else None, "acceptable_fraction": cov["acceptable_fraction"]}
     c.add("detection goal met on part of the floor at this speed (D# < 0.20)", bool(dh) and dh[0] < 0.20, best=dh[0] if dh else None)
@@ -596,8 +605,8 @@ def s08_replay(tmp, seed=18):
     c.add("replay of the raw archive reproduces every product bit-for-bit", diff1 == [], differing=diff1)
     c.add("second replay identical to the first", diff2 == [])
     asm = live["manifest"]["assumptions"]
-    c.add("manifest records weighted_sum_variance and the cell decision rule (MODEL.md rev 3, IB-31)",
-          asm.get("weighted_sum_variance") == "poisson_form_conservative" and "per-lane-exact/any-lane/alpha-over-m" in asm.get("cell_decision", ""),
+    c.add("manifest records weighted_sum_variance and the cell decision rule (MODEL.md rev 4)",
+          asm.get("weighted_sum_variance") == "exact_coefficients" and "linear-exact/combined+per-lane/0.8-0.2" in asm.get("cell_decision", ""),
           assumptions=asm)
     c.add("products compared", len([k for k in r1["files"]]) >= 18, n=len(r1["files"]))
     n = sum(1 for _ in read_journal(app.run_dir))
@@ -707,7 +716,7 @@ def s10_step_and_count(tmp, seed=20, preset_s=3.0):
     c.add("alert.rest_ms raised for the series and restored afterwards (logged CONFIG_SET)", len(cfgs) == 2
           and sim.chassis.config["alert.rest_ms"] == 2000.0, cfgs=cfgs)
     s = proc.coverage_summary()
-    dh = sorted(d.D_hash for d in proc.decisions["beta"].values() if d.D is not None and math.isfinite(d.D_hash))
+    dh = sorted(d.D_hash for d in proc.decisions["beta"].values() if d.D is not None and d.D_hash is not None and math.isfinite(d.D_hash))
     extra = {"stations": len(stations), "stations_invalid": len(invalid), "station_preset_s": preset_s,
              "D_hash_median": dh[len(dh) // 2] if dh else None,
              "note": "station pitch 0.10 m with a 100 mm aperture eroded by 10 mm per side leaves 20 mm uncredited stripes "

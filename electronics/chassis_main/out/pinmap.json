@@ -5911,6 +5911,204 @@
    ]
   },
   {
+   "ref": "C_AG",
+   "value": "10n",
+   "group": "chain",
+   "symbol": "Device:C",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "mpn": "CC0603KRX7R9BB103",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "REARM_AUX_G",
+     "type": "passive",
+     "pad_xy_mm": [
+      51.475,
+      1.75
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      53.025,
+      1.75
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "C_KR",
+   "value": "22n",
+   "group": "chain",
+   "symbol": "Device:C",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "mpn": "CC0603KRX7R9BB223",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "LATCH_RUN_RB",
+     "type": "passive",
+     "pad_xy_mm": [
+      75.25,
+      6.275
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      75.25,
+      4.725
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "C_LB1",
+   "value": "100n",
+   "group": "chain",
+   "symbol": "Device:C",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "mpn": "CC0603KRX7R9BB104",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "LOOP_FB",
+     "type": "passive",
+     "pad_xy_mm": [
+      18.475,
+      51.25
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      20.025,
+      51.25
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "C_LB2",
+   "value": "100n",
+   "group": "chain",
+   "symbol": "Device:C",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "mpn": "CC0603KRX7R9BB104",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "LOOP_VB",
+     "type": "passive",
+     "pad_xy_mm": [
+      45.025,
+      77.5
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      43.475,
+      77.5
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "C_NC",
+   "value": "10n",
+   "group": "chain",
+   "symbol": "Device:C",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "mpn": "CC0603KRX7R9BB103",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "LATCH_NC_RB",
+     "type": "passive",
+     "pad_xy_mm": [
+      68.0,
+      6.775
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      68.0,
+      5.225
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "C_SC",
+   "value": "1u",
+   "group": "chain",
+   "symbol": "Device:C",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "mpn": "GRM188R71C105KA12D",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "REARM_SET",
+     "type": "passive",
+     "pad_xy_mm": [
+      36.225,
+      7.75
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "SET_G",
+     "type": "passive",
+     "pad_xy_mm": [
+      37.775,
+      7.75
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
    "ref": "C_SET",
    "value": "100u",
    "group": "chain",
@@ -5938,6 +6136,138 @@
      "pad_xy_mm": [
       109.7,
       32.5
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "C_SF",
+   "value": "10n",
+   "group": "chain",
+   "symbol": "Device:C",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "mpn": "CC0603KRX7R9BB103",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "REARM_SET",
+     "type": "passive",
+     "pad_xy_mm": [
+      35.25,
+      3.975
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      35.25,
+      5.525
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "C_U46",
+   "value": "100n",
+   "group": "chain",
+   "symbol": "Device:C",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "mpn": "CC0603KRX7R9BB104",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "V5_AUX",
+     "type": "passive",
+     "pad_xy_mm": [
+      24.0,
+      50.275
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      24.0,
+      48.725
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "C_U47",
+   "value": "100n",
+   "group": "chain",
+   "symbol": "Device:C",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "mpn": "CC0603KRX7R9BB104",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "3V3",
+     "type": "passive",
+     "pad_xy_mm": [
+      82.25,
+      20.025
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      82.25,
+      18.475
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "C_U9T",
+   "value": "22n",
+   "group": "chain",
+   "symbol": "Device:C",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "mpn": "CC0603KRX7R9BB223",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "HW_LATCH_G",
+     "type": "passive",
+     "pad_xy_mm": [
+      81.0,
+      53.025
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      81.0,
+      51.475
      ],
      "side": "F"
     }
@@ -7077,7 +7407,7 @@
     {
      "pin": "2",
      "name": "A",
-     "net": "COIL_RTN",
+     "net": "RELAY_RTN",
      "type": "passive",
      "pad_xy_mm": [
       47.5,
@@ -7089,11 +7419,11 @@
   },
   {
    "ref": "D32",
-   "value": "Z24",
+   "value": "Z20",
    "group": "drive",
    "symbol": "Device:D_Zener",
    "footprint": "Diode_SMD:D_SOD-123",
-   "mpn": "BZT52C24-7-F",
+   "mpn": "BZT52C20-7-F",
    "dnp": false,
    "pins": [
     {
@@ -7176,7 +7506,7 @@
     {
      "pin": "2",
      "name": "A",
-     "net": "COIL_RTN",
+     "net": "RELAY_RTN",
      "type": "passive",
      "pad_xy_mm": [
       10.65,
@@ -7188,11 +7518,11 @@
   },
   {
    "ref": "D35",
-   "value": "Z24",
+   "value": "Z20",
    "group": "drive",
    "symbol": "Device:D_Zener",
    "footprint": "Diode_SMD:D_SOD-123",
-   "mpn": "BZT52C24-7-F",
+   "mpn": "BZT52C20-7-F",
    "dnp": false,
    "pins": [
     {
@@ -8903,6 +9233,171 @@
    ]
   },
   {
+   "ref": "D_HR",
+   "value": "1N4148W",
+   "group": "chain",
+   "symbol": "Device:D",
+   "footprint": "Diode_SMD:D_SOD-123",
+   "mpn": "1N4148W-7-F",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "K",
+     "net": "HOLD_A",
+     "type": "passive",
+     "pad_xy_mm": [
+      103.1,
+      85.5
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "A",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      106.4,
+      85.5
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "D_K1B",
+   "value": "BAT54",
+   "group": "chain",
+   "symbol": "Device:D_Schottky",
+   "footprint": "Diode_SMD:D_SOD-123",
+   "mpn": "BAT54W-7-F",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "K",
+     "net": "K1_BIAS",
+     "type": "passive",
+     "pad_xy_mm": [
+      101.25,
+      19.4
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "A",
+     "net": "3V3",
+     "type": "passive",
+     "pad_xy_mm": [
+      101.25,
+      16.1
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "D_KR",
+   "value": "BAT54",
+   "group": "chain",
+   "symbol": "Device:D_Schottky",
+   "footprint": "Diode_SMD:D_SOD-123",
+   "mpn": "BAT54W-7-F",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "K",
+     "net": "3V3",
+     "type": "passive",
+     "pad_xy_mm": [
+      10.6,
+      5.0
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "A",
+     "net": "LATCH_RUN_RB",
+     "type": "passive",
+     "pad_xy_mm": [
+      13.9,
+      5.0
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "D_LSR",
+   "value": "1N4148W",
+   "group": "chain",
+   "symbol": "Device:D",
+   "footprint": "Diode_SMD:D_SOD-123",
+   "mpn": "1N4148W-7-F",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "K",
+     "net": "LS_A",
+     "type": "passive",
+     "pad_xy_mm": [
+      13.4,
+      95.0
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "A",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      10.1,
+      95.0
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "D_NC",
+   "value": "BAT54",
+   "group": "chain",
+   "symbol": "Device:D_Schottky",
+   "footprint": "Diode_SMD:D_SOD-123",
+   "mpn": "BAT54W-7-F",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "K",
+     "net": "3V3",
+     "type": "passive",
+     "pad_xy_mm": [
+      70.5,
+      3.6
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "A",
+     "net": "LATCH_NC_RB",
+     "type": "passive",
+     "pad_xy_mm": [
+      70.5,
+      6.9
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
    "ref": "D_PAUSE",
    "value": "TPD4E05U06",
    "group": "chain",
@@ -9024,6 +9519,138 @@
    ]
   },
   {
+   "ref": "D_RB",
+   "value": "BAT54",
+   "group": "chain",
+   "symbol": "Device:D_Schottky",
+   "footprint": "Diode_SMD:D_SOD-123",
+   "mpn": "BAT54W-7-F",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "K",
+     "net": "REARM_BTN_D",
+     "type": "passive",
+     "pad_xy_mm": [
+      47.4,
+      3.5
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "A",
+     "net": "REARM_BTN_RAW",
+     "type": "passive",
+     "pad_xy_mm": [
+      44.1,
+      3.5
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "D_RSET",
+   "value": "1N4148W",
+   "group": "chain",
+   "symbol": "Device:D",
+   "footprint": "Diode_SMD:D_SOD-123",
+   "mpn": "1N4148W-7-F",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "K",
+     "net": "RSET_A",
+     "type": "passive",
+     "pad_xy_mm": [
+      78.1,
+      26.5
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "A",
+     "net": "CHAIN_END",
+     "type": "passive",
+     "pad_xy_mm": [
+      81.4,
+      26.5
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "D_RUN",
+   "value": "B160",
+   "group": "chain",
+   "symbol": "Device:D_Schottky",
+   "footprint": "Diode_SMD:D_SMA",
+   "mpn": "B160-13-F",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "K",
+     "net": "RUN_12V",
+     "type": "passive",
+     "pad_xy_mm": [
+      69.25,
+      51.25
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "A",
+     "net": "RUN_HD",
+     "type": "passive",
+     "pad_xy_mm": [
+      69.25,
+      55.25
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "D_SCL",
+   "value": "BAT54",
+   "group": "chain",
+   "symbol": "Device:D_Schottky",
+   "footprint": "Diode_SMD:D_SOD-123",
+   "mpn": "BAT54W-7-F",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "K",
+     "net": "V5_AUX",
+     "type": "passive",
+     "pad_xy_mm": [
+      29.85,
+      2.25
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "A",
+     "net": "REARM_SET",
+     "type": "passive",
+     "pad_xy_mm": [
+      33.15,
+      2.25
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
    "ref": "D_SEAL",
    "value": "BAT54",
    "group": "chain",
@@ -9053,6 +9680,116 @@
       28.25
      ],
      "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "D_SET",
+   "value": "PESD15VL2BT",
+   "group": "chain",
+   "symbol": "Device:D_TVS_Dual_AAC",
+   "footprint": "Package_TO_SOT_SMD:SOT-23",
+   "mpn": "PESD15VL2BT,215",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "A1",
+     "net": "REARM_SET_RAW",
+     "type": "passive",
+     "pad_xy_mm": [
+      32.938,
+      6.45
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "A2",
+     "net": "REARM_SET_SRC",
+     "type": "passive",
+     "pad_xy_mm": [
+      32.938,
+      4.55
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "3",
+     "name": "common",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      31.062,
+      5.5
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "D_SGN",
+   "value": "BAT54",
+   "group": "chain",
+   "symbol": "Device:D_Schottky",
+   "footprint": "Diode_SMD:D_SOD-123",
+   "mpn": "BAT54W-7-F",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "K",
+     "net": "SET_G",
+     "type": "passive",
+     "pad_xy_mm": [
+      66.5,
+      65.35
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "A",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      66.5,
+      68.65
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "D_U9T",
+   "value": "BAT54",
+   "group": "chain",
+   "symbol": "Device:D_Schottky",
+   "footprint": "Diode_SMD:D_SOD-123",
+   "mpn": "BAT54W-7-F",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "K",
+     "net": "3V3",
+     "type": "passive",
+     "pad_xy_mm": [
+      83.75,
+      52.6
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "A",
+     "net": "HW_LATCH_G",
+     "type": "passive",
+     "pad_xy_mm": [
+      83.75,
+      55.9
+     ],
+     "side": "F"
     }
    ]
   },
@@ -10320,7 +11057,7 @@
     {
      "pin": "1",
      "name": "Pin_1",
-     "net": "SET_CAP",
+     "net": "REARM_SET_SRC",
      "type": "passive",
      "pad_xy_mm": [
       37.8,
@@ -10331,7 +11068,7 @@
     {
      "pin": "2",
      "name": "Pin_2",
-     "net": "K1_SET",
+     "net": "REARM_SET_RAW",
      "type": "passive",
      "pad_xy_mm": [
       39.8,
@@ -13151,7 +13888,7 @@
     {
      "pin": "3",
      "name": "~",
-     "net": null,
+     "net": "K1_NC1",
      "type": "passive",
      "pad_xy_mm": [
       89.08,
@@ -13184,7 +13921,7 @@
     {
      "pin": "8",
      "name": "~",
-     "net": "RUN_12V",
+     "net": "K1_RUN",
      "type": "passive",
      "pad_xy_mm": [
       94.16,
@@ -13316,7 +14053,7 @@
     {
      "pin": "A2",
      "name": "~",
-     "net": "COIL_RTN",
+     "net": "RELAY_RTN",
      "type": "passive",
      "pad_xy_mm": [
       20.6,
@@ -13415,7 +14152,7 @@
     {
      "pin": "A2",
      "name": "~",
-     "net": "COIL_RTN",
+     "net": "RELAY_RTN",
      "type": "passive",
      "pad_xy_mm": [
       139.4,
@@ -15384,6 +16121,50 @@
    ]
   },
   {
+   "ref": "Q_HSET",
+   "value": "BSS84",
+   "group": "chain",
+   "symbol": "Transistor_FET:BSS84",
+   "footprint": "Package_TO_SOT_SMD:SOT-23",
+   "mpn": "BSS84,215",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "G",
+     "net": "U_SET_K",
+     "type": "input",
+     "pad_xy_mm": [
+      85.2,
+      61.188
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "S",
+     "net": "V5_AUX",
+     "type": "passive",
+     "pad_xy_mm": [
+      83.3,
+      61.188
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "3",
+     "name": "D",
+     "net": "HSET_D",
+     "type": "passive",
+     "pad_xy_mm": [
+      84.25,
+      59.312
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
    "ref": "Q_J2PRE",
    "value": "BSS84",
    "group": "chain",
@@ -15424,6 +16205,226 @@
       66.062
      ],
      "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "Q_LB",
+   "value": "BSS138",
+   "group": "chain",
+   "symbol": "Transistor_FET:BSS138",
+   "footprint": "Package_TO_SOT_SMD:SOT-23",
+   "mpn": "BSS138",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "G",
+     "net": "HEAD_LOOP2_OK",
+     "type": "input",
+     "pad_xy_mm": [
+      3.938,
+      40.8
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "S",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      3.938,
+      42.7
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "3",
+     "name": "D",
+     "net": "U21B_K",
+     "type": "passive",
+     "pad_xy_mm": [
+      2.062,
+      41.75
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "Q_SDIS",
+   "value": "BSS138",
+   "group": "chain",
+   "symbol": "Transistor_FET:BSS138",
+   "footprint": "Package_TO_SOT_SMD:SOT-23",
+   "mpn": "BSS138",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "G",
+     "net": "SDIS_G",
+     "type": "input",
+     "pad_xy_mm": [
+      72.8,
+      8.562
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "S",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      74.7,
+      8.562
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "3",
+     "name": "D",
+     "net": "SET_DIS",
+     "type": "passive",
+     "pad_xy_mm": [
+      73.75,
+      10.438
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "Q_SDISB",
+   "value": "BSS138",
+   "group": "chain",
+   "symbol": "Transistor_FET:BSS138",
+   "footprint": "Package_TO_SOT_SMD:SOT-23",
+   "mpn": "BSS138",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "G",
+     "net": "CHAIN_END_RB",
+     "type": "input",
+     "pad_xy_mm": [
+      29.688,
+      12.95
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "S",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      29.688,
+      11.05
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "3",
+     "name": "D",
+     "net": "SDIS_G",
+     "type": "passive",
+     "pad_xy_mm": [
+      27.812,
+      12.0
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "Q_SETA",
+   "value": "BSS138",
+   "group": "chain",
+   "symbol": "Transistor_FET:BSS138",
+   "footprint": "Package_TO_SOT_SMD:SOT-23",
+   "mpn": "BSS138",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "G",
+     "net": "SET_G",
+     "type": "input",
+     "pad_xy_mm": [
+      72.312,
+      65.45
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "S",
+     "net": "SET_S",
+     "type": "passive",
+     "pad_xy_mm": [
+      72.312,
+      63.55
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "3",
+     "name": "D",
+     "net": "U_SET_K",
+     "type": "passive",
+     "pad_xy_mm": [
+      74.188,
+      64.5
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "Q_SETB",
+   "value": "BSS138",
+   "group": "chain",
+   "symbol": "Transistor_FET:BSS138",
+   "footprint": "Package_TO_SOT_SMD:SOT-23",
+   "mpn": "BSS138",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "G",
+     "net": "REARM_AUX_G",
+     "type": "input",
+     "pad_xy_mm": [
+      56.8,
+      3.438
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "S",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      58.7,
+      3.438
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "3",
+     "name": "D",
+     "net": "SET_S",
+     "type": "passive",
+     "pad_xy_mm": [
+      57.75,
+      1.562
+     ],
+     "side": "B"
     }
    ]
   },
@@ -18663,11 +19664,11 @@
   },
   {
    "ref": "R99",
-   "value": "100k",
+   "value": "22k",
    "group": "chain",
    "symbol": "Device:R",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "mpn": "RC0603FR-07100KL",
+   "mpn": "RC0603FR-0722KL",
    "dnp": false,
    "pins": [
     {
@@ -18696,11 +19697,11 @@
   },
   {
    "ref": "R100",
-   "value": "56k",
+   "value": "15k",
    "group": "chain",
    "symbol": "Device:R",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "mpn": "RC0603FR-0756KL",
+   "mpn": "RC0603FR-0715KL",
    "dnp": false,
    "pins": [
     {
@@ -19257,11 +20258,11 @@
   },
   {
    "ref": "R117",
-   "value": "100k",
+   "value": "22k",
    "group": "chain",
    "symbol": "Device:R",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "mpn": "RC0603FR-07100KL",
+   "mpn": "RC0603FR-0722KL",
    "dnp": false,
    "pins": [
     {
@@ -19290,11 +20291,11 @@
   },
   {
    "ref": "R118",
-   "value": "56k",
+   "value": "15k",
    "group": "chain",
    "symbol": "Device:R",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "mpn": "RC0603FR-0756KL",
+   "mpn": "RC0603FR-0715KL",
    "dnp": false,
    "pins": [
     {
@@ -19653,17 +20654,17 @@
   },
   {
    "ref": "R129",
-   "value": "10k",
+   "value": "4.7k",
    "group": "chain",
    "symbol": "Device:R",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "mpn": "RC0603FR-0710KL",
+   "mpn": "RC0603FR-074K7L",
    "dnp": false,
    "pins": [
     {
      "pin": "1",
      "name": "~",
-     "net": "REARM_BTN_RAW",
+     "net": "REARM_BTN_D",
      "type": "passive",
      "pad_xy_mm": [
       39.0,
@@ -19686,11 +20687,11 @@
   },
   {
    "ref": "R130",
-   "value": "47k",
+   "value": "100k",
    "group": "chain",
    "symbol": "Device:R",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "mpn": "RC0603FR-0747KL",
+   "mpn": "RC0603FR-07100KL",
    "dnp": false,
    "pins": [
     {
@@ -19795,7 +20796,7 @@
     {
      "pin": "1",
      "name": "~",
-     "net": "RUN_12V",
+     "net": "RUN_HD",
      "type": "passive",
      "pad_xy_mm": [
       56.925,
@@ -25460,6 +26461,765 @@
    ]
   },
   {
+   "ref": "R_21BA",
+   "value": "680",
+   "group": "chain",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "mpn": "RC0603FR-07680RL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "V5_AUX",
+     "type": "passive",
+     "pad_xy_mm": [
+      1.75,
+      37.175
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "U21B_A",
+     "type": "passive",
+     "pad_xy_mm": [
+      1.75,
+      38.825
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "R_AG",
+   "value": "10k",
+   "group": "chain",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "mpn": "RC0603FR-0710KL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "REARM_BTN_RAW",
+     "type": "passive",
+     "pad_xy_mm": [
+      49.425,
+      4.0
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "REARM_AUX_G",
+     "type": "passive",
+     "pad_xy_mm": [
+      51.075,
+      4.0
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "R_AGP",
+   "value": "100k",
+   "group": "chain",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "mpn": "RC0603FR-07100KL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "REARM_AUX_G",
+     "type": "passive",
+     "pad_xy_mm": [
+      53.175,
+      4.0
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      54.825,
+      4.0
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "R_D4",
+   "value": "10k",
+   "group": "chain",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "mpn": "RC0603FR-0710KL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "3V3",
+     "type": "passive",
+     "pad_xy_mm": [
+      61.075,
+      50.5
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "IOXD_P4",
+     "type": "passive",
+     "pad_xy_mm": [
+      59.425,
+      50.5
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "R_D5",
+   "value": "10k",
+   "group": "chain",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "mpn": "RC0603FR-0710KL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "IOXD_P5",
+     "type": "passive",
+     "pad_xy_mm": [
+      56.5,
+      51.925
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      56.5,
+      53.575
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "R_D6",
+   "value": "10k",
+   "group": "chain",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "mpn": "RC0603FR-0710KL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "IOXD_P6",
+     "type": "passive",
+     "pad_xy_mm": [
+      52.0,
+      51.925
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      52.0,
+      53.575
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "R_D7",
+   "value": "10k",
+   "group": "chain",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "mpn": "RC0603FR-0710KL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "IOXD_P7",
+     "type": "passive",
+     "pad_xy_mm": [
+      63.175,
+      50.5
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      64.825,
+      50.5
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "R_GA5",
+   "value": "47k",
+   "group": "chain",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "mpn": "RC0603FR-0747KL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "HEAD_LOOP_OK_RB",
+     "type": "passive",
+     "pad_xy_mm": [
+      5.575,
+      44.75
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "HEAD_LOOP_OK_IO",
+     "type": "passive",
+     "pad_xy_mm": [
+      3.925,
+      44.75
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "R_GA7",
+   "value": "47k",
+   "group": "chain",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "mpn": "RC0603FR-0747KL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "LAB_KEY_N_RB",
+     "type": "passive",
+     "pad_xy_mm": [
+      49.25,
+      53.575
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "LAB_KEY_N_IO",
+     "type": "passive",
+     "pad_xy_mm": [
+      49.25,
+      51.925
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "R_GB7",
+   "value": "47k",
+   "group": "chain",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "mpn": "RC0603FR-0747KL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "WDG_STROBE",
+     "type": "passive",
+     "pad_xy_mm": [
+      76.075,
+      26.75
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "WDG_STROBE_IO",
+     "type": "passive",
+     "pad_xy_mm": [
+      74.425,
+      26.75
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "R_HA",
+   "value": "1.5k",
+   "group": "chain",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_1206_3216Metric",
+   "mpn": "RC1206FR-071K5L",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "RUN_HD",
+     "type": "passive",
+     "pad_xy_mm": [
+      109.0,
+      78.463
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "HOLD_A",
+     "type": "passive",
+     "pad_xy_mm": [
+      109.0,
+      75.537
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "R_HS",
+   "value": "470",
+   "group": "chain",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "mpn": "RC0603FR-07470RL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "HSET_D",
+     "type": "passive",
+     "pad_xy_mm": [
+      110.25,
+      71.675
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "HOLD_A",
+     "type": "passive",
+     "pad_xy_mm": [
+      110.25,
+      73.325
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "R_K1B",
+   "value": "47k",
+   "group": "chain",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "mpn": "RC0603FR-0747KL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "K1_BIAS",
+     "type": "passive",
+     "pad_xy_mm": [
+      101.075,
+      21.5
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "K1_SEAL_A",
+     "type": "passive",
+     "pad_xy_mm": [
+      99.425,
+      21.5
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "R_KR1",
+   "value": "100k",
+   "group": "chain",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "mpn": "RC0603FR-07100KL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "K1_RUN",
+     "type": "passive",
+     "pad_xy_mm": [
+      106.075,
+      29.0
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "LATCH_RUN_RB",
+     "type": "passive",
+     "pad_xy_mm": [
+      104.425,
+      29.0
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "R_KR2",
+   "value": "56k",
+   "group": "chain",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "mpn": "RC0603FR-0756KL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "LATCH_RUN_RB",
+     "type": "passive",
+     "pad_xy_mm": [
+      73.0,
+      6.325
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      73.0,
+      4.675
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "R_LB1",
+   "value": "10k",
+   "group": "chain",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "mpn": "RC0603FR-0710KL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "LOOP_SNS",
+     "type": "passive",
+     "pad_xy_mm": [
+      15.5,
+      69.825
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "LOOP_FB",
+     "type": "passive",
+     "pad_xy_mm": [
+      15.5,
+      68.175
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "R_LB2",
+   "value": "39k",
+   "group": "chain",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "mpn": "RC0603FR-0739KL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "V5_AUX",
+     "type": "passive",
+     "pad_xy_mm": [
+      53.575,
+      78.5
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "LOOP_VB",
+     "type": "passive",
+     "pad_xy_mm": [
+      51.925,
+      78.5
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "R_LB3",
+   "value": "10k",
+   "group": "chain",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "mpn": "RC0603FR-0710KL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "LOOP_VB",
+     "type": "passive",
+     "pad_xy_mm": [
+      52.0,
+      76.325
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      52.0,
+      74.675
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "R_LBG",
+   "value": "100k",
+   "group": "chain",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "mpn": "RC0603FR-07100KL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "HEAD_LOOP2_OK",
+     "type": "passive",
+     "pad_xy_mm": [
+      3.0,
+      35.075
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      3.0,
+      33.425
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "R_LBR",
+   "value": "47k",
+   "group": "chain",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "mpn": "RC0603FR-0747KL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "HEAD_LOOP2_OK",
+     "type": "passive",
+     "pad_xy_mm": [
+      54.25,
+      53.575
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "HEAD_LOOP2_OK_RB",
+     "type": "passive",
+     "pad_xy_mm": [
+      54.25,
+      51.925
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "R_LSA",
+   "value": "1.5k",
+   "group": "chain",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_1206_3216Metric",
+   "mpn": "RC1206FR-071K5L",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "RUN_HD",
+     "type": "passive",
+     "pad_xy_mm": [
+      84.787,
+      96.75
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "LS_A",
+     "type": "passive",
+     "pad_xy_mm": [
+      87.713,
+      96.75
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "R_NC1",
+   "value": "47k",
+   "group": "chain",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "mpn": "RC0603FR-0747KL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "K1_NC1",
+     "type": "passive",
+     "pad_xy_mm": [
+      73.825,
+      29.0
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "LATCH_NC_RB",
+     "type": "passive",
+     "pad_xy_mm": [
+      72.175,
+      29.0
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "R_NC2",
+   "value": "1M",
+   "group": "chain",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "mpn": "RC0603FR-071ML",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "LATCH_NC_RB",
+     "type": "passive",
+     "pad_xy_mm": [
+      68.0,
+      10.575
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      68.0,
+      8.925
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
    "ref": "R_PAUSE",
    "value": "1k",
    "group": "chain",
@@ -25493,6 +27253,72 @@
    ]
   },
   {
+   "ref": "R_SDG",
+   "value": "100k",
+   "group": "chain",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "mpn": "RC0603FR-07100KL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "3V3",
+     "type": "passive",
+     "pad_xy_mm": [
+      70.75,
+      10.575
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "SDIS_G",
+     "type": "passive",
+     "pad_xy_mm": [
+      70.75,
+      8.925
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "R_SDIS",
+   "value": "1k",
+   "group": "chain",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_1206_3216Metric",
+   "mpn": "RC1206FR-071KL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "SET_CAP",
+     "type": "passive",
+     "pad_xy_mm": [
+      97.213,
+      36.0
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "SET_DIS",
+     "type": "passive",
+     "pad_xy_mm": [
+      94.287,
+      36.0
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
    "ref": "R_SET",
    "value": "22k",
    "group": "chain",
@@ -25504,7 +27330,7 @@
     {
      "pin": "1",
      "name": "~",
-     "net": "CHAIN_END",
+     "net": "RSET_A",
      "type": "passive",
      "pad_xy_mm": [
       55.075,
@@ -25522,6 +27348,39 @@
       10.5
      ],
      "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "R_SG",
+   "value": "100k",
+   "group": "chain",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "mpn": "RC0603FR-07100KL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "SET_G",
+     "type": "passive",
+     "pad_xy_mm": [
+      69.0,
+      65.175
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      69.0,
+      66.825
+     ],
+     "side": "F"
     }
    ]
   },
@@ -25720,6 +27579,303 @@
       48.462
      ],
      "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "R_SPD",
+   "value": "47k",
+   "group": "chain",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "mpn": "RC0603FR-0747KL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "REARM_SET_RAW",
+     "type": "passive",
+     "pad_xy_mm": [
+      39.925,
+      1.75
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      41.575,
+      1.75
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "R_SRB",
+   "value": "47k",
+   "group": "chain",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "mpn": "RC0603FR-0747KL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "REARM_SET",
+     "type": "passive",
+     "pad_xy_mm": [
+      44.25,
+      5.925
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "REARM_SET_RB",
+     "type": "passive",
+     "pad_xy_mm": [
+      44.25,
+      7.575
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "R_SSER",
+   "value": "10k",
+   "group": "chain",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "mpn": "RC0603FR-0710KL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "REARM_SET_RAW",
+     "type": "passive",
+     "pad_xy_mm": [
+      37.825,
+      1.75
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "REARM_SET",
+     "type": "passive",
+     "pad_xy_mm": [
+      36.175,
+      1.75
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "R_SSRC",
+   "value": "1k",
+   "group": "chain",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "mpn": "RC0603FR-071KL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "V5_AUX",
+     "type": "passive",
+     "pad_xy_mm": [
+      37.5,
+      5.575
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "REARM_SET_SRC",
+     "type": "passive",
+     "pad_xy_mm": [
+      37.5,
+      3.925
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "R_U9T1",
+   "value": "100k",
+   "group": "chain",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "mpn": "RC0603FR-07100KL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "RUN_HD",
+     "type": "passive",
+     "pad_xy_mm": [
+      78.75,
+      60.575
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "HW_LATCH_G",
+     "type": "passive",
+     "pad_xy_mm": [
+      78.75,
+      58.925
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "R_U9T2",
+   "value": "56k",
+   "group": "chain",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "mpn": "RC0603FR-0756KL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "HW_LATCH_G",
+     "type": "passive",
+     "pad_xy_mm": [
+      78.75,
+      53.075
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      78.75,
+      51.425
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "R_USA",
+   "value": "470",
+   "group": "chain",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "mpn": "RC0603FR-07470RL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "V5_AUX",
+     "type": "passive",
+     "pad_xy_mm": [
+      93.5,
+      59.425
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "U_SET_A",
+     "type": "passive",
+     "pad_xy_mm": [
+      93.5,
+      61.075
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "R_USK",
+   "value": "100k",
+   "group": "chain",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "mpn": "RC0603FR-07100KL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "V5_AUX",
+     "type": "passive",
+     "pad_xy_mm": [
+      87.75,
+      65.325
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "U_SET_K",
+     "type": "passive",
+     "pad_xy_mm": [
+      87.75,
+      63.675
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "R_WDPD",
+   "value": "10k",
+   "group": "chain",
+   "symbol": "Device:R",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "mpn": "RC0603FR-0710KL",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "WDG_STROBE",
+     "type": "passive",
+     "pad_xy_mm": [
+      95.675,
+      21.0
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      97.325,
+      21.0
+     ],
+     "side": "B"
     }
    ]
   },
@@ -25958,8 +28114,8 @@
      "net": "CH_N6",
      "type": "passive",
      "pad_xy_mm": [
-      50.25,
-      76.0
+      68.5,
+      82.0
      ],
      "side": "B"
     }
@@ -25980,8 +28136,8 @@
      "net": "CH_N7",
      "type": "passive",
      "pad_xy_mm": [
-      70.25,
-      27.5
+      114.0,
+      50.5
      ],
      "side": "B"
     }
@@ -26618,8 +28774,8 @@
      "net": "CHAIN_END",
      "type": "passive",
      "pad_xy_mm": [
-      122.0,
-      4.5
+      109.0,
+      10.0
      ],
      "side": "B"
     }
@@ -26640,8 +28796,8 @@
      "net": "RUN_12V",
      "type": "passive",
      "pad_xy_mm": [
-      129.75,
-      18.25
+      106.5,
+      25.5
      ],
      "side": "B"
     }
@@ -26662,8 +28818,8 @@
      "net": "COIL_RTN",
      "type": "passive",
      "pad_xy_mm": [
-      126.25,
-      10.0
+      90.0,
+      3.0
      ],
      "side": "B"
     }
@@ -26882,8 +29038,8 @@
      "net": "CH_N0",
      "type": "passive",
      "pad_xy_mm": [
-      126.25,
-      4.5
+      125.0,
+      3.0
      ],
      "side": "B"
     }
@@ -27082,6 +29238,72 @@
      "pad_xy_mm": [
       120.75,
       19.75
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "TP60",
+   "value": "CH_N6A",
+   "group": "test",
+   "symbol": "Connector:TestPoint",
+   "footprint": "TestPoint:TestPoint_Keystone_5019_Miniature",
+   "mpn": "5019",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "1",
+     "net": "CH_N6A",
+     "type": "passive",
+     "pad_xy_mm": [
+      132.5,
+      78.5
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "TP61",
+   "value": "K1_RUN",
+   "group": "test",
+   "symbol": "Connector:TestPoint",
+   "footprint": "TestPoint:TestPoint_Keystone_5019_Miniature",
+   "mpn": "5019",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "1",
+     "net": "K1_RUN",
+     "type": "passive",
+     "pad_xy_mm": [
+      152.0,
+      53.5
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "TP62",
+   "value": "RELAY_RTN",
+   "group": "test",
+   "symbol": "Connector:TestPoint",
+   "footprint": "TestPoint:TestPoint_Keystone_5019_Miniature",
+   "mpn": "5019",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "1",
+     "net": "RELAY_RTN",
+     "type": "passive",
+     "pad_xy_mm": [
+      137.5,
+      57.5
      ],
      "side": "B"
     }
@@ -28353,7 +30575,7 @@
     {
      "pin": "2",
      "name": "~",
-     "net": "HW_LATCH_RB",
+     "net": "HW_LATCH_G",
      "type": "input",
      "pad_xy_mm": [
       78.862,
@@ -30377,11 +32599,66 @@
     {
      "pin": "4",
      "name": "~",
-     "net": "CH_N6",
+     "net": "CH_N6A",
      "type": "passive",
      "pad_xy_mm": [
       24.765,
       59.27
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "U21B",
+   "value": "TLP241A",
+   "group": "chain",
+   "symbol": "Relay_SolidState:TLP222A",
+   "footprint": "Package_DIP:SMDIP-4_W9.53mm",
+   "mpn": "TLP241A(TP1,F",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "U21B_A",
+     "type": "passive",
+     "pad_xy_mm": [
+      2.23,
+      47.485
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "U21B_K",
+     "type": "passive",
+     "pad_xy_mm": [
+      4.77,
+      47.485
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "3",
+     "name": "~",
+     "net": "CH_N6A",
+     "type": "passive",
+     "pad_xy_mm": [
+      4.77,
+      57.015
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "4",
+     "name": "~",
+     "net": "CH_N6",
+     "type": "passive",
+     "pad_xy_mm": [
+      2.23,
+      57.015
      ],
      "side": "F"
     }
@@ -31652,16 +33929,16 @@
    "ref": "U42",
    "value": "BMI088",
    "group": "mcu",
-   "symbol": "rr_local:BMI088",
+   "symbol": "rr_local:BMI088_SPI",
    "footprint": "rr_local:Bosch_LGA-16_4.5x3mm_P0.5mm_ClockwisePinNumbering",
    "mpn": "BMI088",
    "dnp": false,
    "pins": [
     {
      "pin": "1",
-     "name": "1",
+     "name": "INT2",
      "net": null,
-     "type": "passive",
+     "type": "bidirectional",
      "pad_xy_mm": [
       78.5,
       68.26
@@ -31672,7 +33949,7 @@
      "pin": "2",
      "name": "GNDA",
      "net": "GND",
-     "type": "passive",
+     "type": "power_in",
      "pad_xy_mm": [
       79.0,
       68.26
@@ -31683,7 +33960,7 @@
      "pin": "3",
      "name": "VDD",
      "net": "3V3",
-     "type": "passive",
+     "type": "power_in",
      "pad_xy_mm": [
       79.5,
       68.26
@@ -31694,7 +33971,7 @@
      "pin": "4",
      "name": "GNDA",
      "net": "GND",
-     "type": "passive",
+     "type": "power_in",
      "pad_xy_mm": [
       80.0,
       68.26
@@ -31703,9 +33980,9 @@
     },
     {
      "pin": "5",
-     "name": "CSB2",
+     "name": "~{CSB2}",
      "net": "IMU_CS_GYR_N",
-     "type": "passive",
+     "type": "input",
      "pad_xy_mm": [
       80.5,
       68.26
@@ -31716,7 +33993,7 @@
      "pin": "6",
      "name": "GNDIO",
      "net": "GND",
-     "type": "passive",
+     "type": "power_in",
      "pad_xy_mm": [
       81.0,
       68.26
@@ -31727,7 +34004,7 @@
      "pin": "7",
      "name": "PS",
      "net": "GND",
-     "type": "passive",
+     "type": "input",
      "pad_xy_mm": [
       81.5,
       68.26
@@ -31736,9 +34013,9 @@
     },
     {
      "pin": "8",
-     "name": "SCK",
+     "name": "SCK/SCL",
      "net": "SPI1_SCK",
-     "type": "passive",
+     "type": "input",
      "pad_xy_mm": [
       82.01,
       67.0
@@ -31747,9 +34024,9 @@
     },
     {
      "pin": "9",
-     "name": "SDI",
+     "name": "SDI/SDA",
      "net": "SPI1_MOSI",
-     "type": "passive",
+     "type": "bidirectional",
      "pad_xy_mm": [
       81.5,
       65.74
@@ -31760,7 +34037,7 @@
      "pin": "10",
      "name": "SDO2",
      "net": "IMU_SDO",
-     "type": "passive",
+     "type": "tri_state",
      "pad_xy_mm": [
       81.0,
       65.74
@@ -31771,7 +34048,7 @@
      "pin": "11",
      "name": "VDDIO",
      "net": "3V3",
-     "type": "passive",
+     "type": "power_in",
      "pad_xy_mm": [
       80.5,
       65.74
@@ -31780,9 +34057,9 @@
     },
     {
      "pin": "12",
-     "name": "12",
+     "name": "INT3",
      "net": null,
-     "type": "passive",
+     "type": "bidirectional",
      "pad_xy_mm": [
       80.0,
       65.74
@@ -31791,9 +34068,9 @@
     },
     {
      "pin": "13",
-     "name": "13",
+     "name": "INT4",
      "net": null,
-     "type": "passive",
+     "type": "bidirectional",
      "pad_xy_mm": [
       79.5,
       65.74
@@ -31802,9 +34079,9 @@
     },
     {
      "pin": "14",
-     "name": "CSB1",
+     "name": "~{CSB1}",
      "net": "IMU_CS_ACC_N",
-     "type": "passive",
+     "type": "input",
      "pad_xy_mm": [
       79.0,
       65.74
@@ -31815,7 +34092,7 @@
      "pin": "15",
      "name": "SDO1",
      "net": "IMU_SDO",
-     "type": "passive",
+     "type": "tri_state",
      "pad_xy_mm": [
       78.5,
       65.74
@@ -31824,9 +34101,9 @@
     },
     {
      "pin": "16",
-     "name": "16",
+     "name": "INT1",
      "net": null,
-     "type": "passive",
+     "type": "bidirectional",
      "pad_xy_mm": [
       77.99,
       67.0
@@ -31924,7 +34201,7 @@
     {
      "pin": "8",
      "name": "GPB7",
-     "net": "WDG_STROBE",
+     "net": "WDG_STROBE_IO",
      "type": "bidirectional",
      "pad_xy_mm": [
       14.5,
@@ -32122,7 +34399,7 @@
     {
      "pin": "26",
      "name": "GPA5",
-     "net": "HEAD_LOOP_OK_RB",
+     "net": "HEAD_LOOP_OK_IO",
      "type": "bidirectional",
      "pad_xy_mm": [
       21.5,
@@ -32144,7 +34421,7 @@
     {
      "pin": "28",
      "name": "GPA7",
-     "net": "LAB_KEY_N_RB",
+     "net": "LAB_KEY_N_IO",
      "type": "bidirectional",
      "pad_xy_mm": [
       21.5,
@@ -32613,6 +34890,259 @@
       38.725
      ],
      "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "U46",
+   "value": "TLV3201",
+   "group": "chain",
+   "symbol": "rr_local:TLV3201AIDBVR",
+   "footprint": "Package_TO_SOT_SMD:SOT-23-5",
+   "mpn": "TLV3201AIDBVR",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "OUT",
+     "net": "HEAD_LOOP2_OK",
+     "type": "passive",
+     "pad_xy_mm": [
+      47.362,
+      76.8
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "2",
+     "name": "V-",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      47.362,
+      77.75
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "3",
+     "name": "IN+",
+     "net": "LOOP_FB",
+     "type": "passive",
+     "pad_xy_mm": [
+      47.362,
+      78.7
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "4",
+     "name": "IN-",
+     "net": "LOOP_VB",
+     "type": "passive",
+     "pad_xy_mm": [
+      49.638,
+      78.7
+     ],
+     "side": "B"
+    },
+    {
+     "pin": "5",
+     "name": "V+",
+     "net": "V5_AUX",
+     "type": "passive",
+     "pad_xy_mm": [
+      49.638,
+      76.8
+     ],
+     "side": "B"
+    }
+   ]
+  },
+  {
+   "ref": "U47",
+   "value": "TCA9534",
+   "group": "mcu",
+   "symbol": "Interface_Expansion:TCA9534",
+   "footprint": "Package_SO:TSSOP-16_4.4x5mm_P0.65mm",
+   "mpn": "TCA9534PWR",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "A0",
+     "net": "GND",
+     "type": "input",
+     "pad_xy_mm": [
+      52.225,
+      43.138
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "A1",
+     "net": "3V3",
+     "type": "input",
+     "pad_xy_mm": [
+      52.875,
+      43.138
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "3",
+     "name": "A2",
+     "net": "GND",
+     "type": "input",
+     "pad_xy_mm": [
+      53.525,
+      43.138
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "4",
+     "name": "P0",
+     "net": "LATCH_NC_RB",
+     "type": "bidirectional",
+     "pad_xy_mm": [
+      54.175,
+      43.138
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "5",
+     "name": "P1",
+     "net": "LATCH_RUN_RB",
+     "type": "bidirectional",
+     "pad_xy_mm": [
+      54.825,
+      43.138
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "6",
+     "name": "P2",
+     "net": "HEAD_LOOP2_OK_RB",
+     "type": "bidirectional",
+     "pad_xy_mm": [
+      55.475,
+      43.138
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "7",
+     "name": "P3",
+     "net": "REARM_SET_RB",
+     "type": "bidirectional",
+     "pad_xy_mm": [
+      56.125,
+      43.138
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "8",
+     "name": "GND",
+     "net": "GND",
+     "type": "power_in",
+     "pad_xy_mm": [
+      56.775,
+      43.138
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "9",
+     "name": "P4",
+     "net": "IOXD_P4",
+     "type": "bidirectional",
+     "pad_xy_mm": [
+      56.775,
+      48.862
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "10",
+     "name": "P5",
+     "net": "IOXD_P5",
+     "type": "bidirectional",
+     "pad_xy_mm": [
+      56.125,
+      48.862
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "11",
+     "name": "P6",
+     "net": "IOXD_P6",
+     "type": "bidirectional",
+     "pad_xy_mm": [
+      55.475,
+      48.862
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "12",
+     "name": "P7",
+     "net": "IOXD_P7",
+     "type": "bidirectional",
+     "pad_xy_mm": [
+      54.825,
+      48.862
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "13",
+     "name": "~{INT}",
+     "net": null,
+     "type": "open_collector",
+     "pad_xy_mm": [
+      54.175,
+      48.862
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "14",
+     "name": "SCL",
+     "net": "I2C_SYS_SCL",
+     "type": "input",
+     "pad_xy_mm": [
+      53.525,
+      48.862
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "15",
+     "name": "SDA",
+     "net": "I2C_SYS_SDA",
+     "type": "bidirectional",
+     "pad_xy_mm": [
+      52.875,
+      48.862
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "16",
+     "name": "VDD",
+     "net": "3V3",
+     "type": "power_in",
+     "pad_xy_mm": [
+      52.225,
+      48.862
+     ],
+     "side": "F"
     }
    ]
   },
@@ -33629,6 +36159,171 @@
    ]
   },
   {
+   "ref": "U_HOLD",
+   "value": "TLP241A",
+   "group": "chain",
+   "symbol": "Relay_SolidState:TLP222A",
+   "footprint": "Package_DIP:SMDIP-4_W9.53mm",
+   "mpn": "TLP241A(TP1,F",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "HOLD_A",
+     "type": "passive",
+     "pad_xy_mm": [
+      75.77,
+      61.015
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      73.23,
+      61.015
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "3",
+     "name": "~",
+     "net": "K1_RUN",
+     "type": "passive",
+     "pad_xy_mm": [
+      73.23,
+      51.485
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "4",
+     "name": "~",
+     "net": "RUN_HD",
+     "type": "passive",
+     "pad_xy_mm": [
+      75.77,
+      51.485
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "U_LS",
+   "value": "TLP241A",
+   "group": "chain",
+   "symbol": "Relay_SolidState:TLP222A",
+   "footprint": "Package_DIP:SMDIP-4_W9.53mm",
+   "mpn": "TLP241A(TP1,F",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "LS_A",
+     "type": "passive",
+     "pad_xy_mm": [
+      52.235,
+      68.77
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "GND",
+     "type": "passive",
+     "pad_xy_mm": [
+      52.235,
+      66.23
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "3",
+     "name": "~",
+     "net": "RELAY_RTN",
+     "type": "passive",
+     "pad_xy_mm": [
+      61.765,
+      66.23
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "4",
+     "name": "~",
+     "net": "COIL_RTN",
+     "type": "passive",
+     "pad_xy_mm": [
+      61.765,
+      68.77
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
+   "ref": "U_SET",
+   "value": "TLP241A",
+   "group": "chain",
+   "symbol": "Relay_SolidState:TLP222A",
+   "footprint": "Package_DIP:SMDIP-4_W9.53mm",
+   "mpn": "TLP241A(TP1,F",
+   "dnp": false,
+   "pins": [
+    {
+     "pin": "1",
+     "name": "~",
+     "net": "U_SET_A",
+     "type": "passive",
+     "pad_xy_mm": [
+      90.52,
+      61.015
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "2",
+     "name": "~",
+     "net": "U_SET_K",
+     "type": "passive",
+     "pad_xy_mm": [
+      87.98,
+      61.015
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "3",
+     "name": "~",
+     "net": "SET_CAP",
+     "type": "passive",
+     "pad_xy_mm": [
+      87.98,
+      51.485
+     ],
+     "side": "F"
+    },
+    {
+     "pin": "4",
+     "name": "~",
+     "net": "K1_SET",
+     "type": "passive",
+     "pad_xy_mm": [
+      90.52,
+      51.485
+     ],
+     "side": "F"
+    }
+   ]
+  },
+  {
    "ref": "W1",
    "value": "pads",
    "group": "drive",
@@ -33740,6 +36435,7 @@
    "C153.1",
    "C157.1",
    "C158.1",
+   "C_U47.1",
    "D16.1",
    "D17.1",
    "D18.1",
@@ -33755,6 +36451,10 @@
    "D28.1",
    "D33.2",
    "D36.2",
+   "D_K1B.2",
+   "D_KR.1",
+   "D_NC.1",
+   "D_U9T.1",
    "FB5.1",
    "FB6.1",
    "FB7.1",
@@ -33833,7 +36533,9 @@
    "R273.1",
    "R274.1",
    "R299.1",
+   "R_D4.1",
    "R_PAUSE.1",
+   "R_SDG.1",
    "SW2.1",
    "TP44.1",
    "U2.6",
@@ -33861,6 +36563,8 @@
    "U44.24",
    "U45.1",
    "U45.16",
+   "U47.2",
+   "U47.16",
    "U50.24",
    "U51.1",
    "U51.24"
@@ -33991,16 +36695,17 @@
    "Q58.3"
   ],
   "CHAIN_END": [
+   "D_RSET.2",
    "D_SEAL.2",
    "K1.9",
    "R115.1",
-   "R_SET.1",
    "TP38.1",
    "U24.4"
   ],
   "CHAIN_END_RB": [
    "C96.1",
    "D25.2",
+   "Q_SDISB.1",
    "R115.2",
    "R116.1",
    "U44.20"
@@ -34153,8 +36858,13 @@
   ],
   "CH_N6": [
    "TP8.1",
-   "U21.4",
+   "U21B.4",
    "U22.3"
+  ],
+  "CH_N6A": [
+   "TP60.1",
+   "U21.4",
+   "U21B.3"
   ],
   "CH_N7": [
    "J_BUMP_L.1",
@@ -34217,14 +36927,11 @@
   ],
   "COIL_RTN": [
    "D14.2",
-   "D31.2",
-   "D34.2",
    "J_ESTOP.3",
    "K1.12",
-   "K2.A2",
-   "K3.A2",
    "R119.1",
-   "TP40.1"
+   "TP40.1",
+   "U_LS.4"
   ],
   "COLD_THR": [
    "R86.2",
@@ -34588,7 +37295,16 @@
    "C177.2",
    "C178.2",
    "C179.2",
+   "C_AG.2",
+   "C_KR.2",
+   "C_LB1.2",
+   "C_LB2.2",
+   "C_NC.2",
    "C_SET.2",
+   "C_SF.2",
+   "C_U46.2",
+   "C_U47.2",
+   "C_U9T.2",
    "D1.2",
    "D2.2",
    "D4.2",
@@ -34629,8 +37345,12 @@
    "D49.3",
    "D49.8",
    "D60.3",
+   "D_HR.2",
+   "D_LSR.2",
    "D_PAUSE.3",
    "D_PAUSE.8",
+   "D_SET.3",
+   "D_SGN.2",
    "H1.1",
    "H3.1",
    "J_AUX.2",
@@ -34721,6 +37441,10 @@
    "Q56.2",
    "Q57.2",
    "Q58.2",
+   "Q_LB.2",
+   "Q_SDIS.2",
+   "Q_SDISB.2",
+   "Q_SETB.2",
    "R5.2",
    "R8.2",
    "R12.2",
@@ -34810,6 +37534,18 @@
    "R302.2",
    "R303.2",
    "RT1.2",
+   "R_AGP.2",
+   "R_D5.2",
+   "R_D6.2",
+   "R_D7.2",
+   "R_KR2.2",
+   "R_LB3.2",
+   "R_LBG.2",
+   "R_NC2.2",
+   "R_SG.2",
+   "R_SPD.2",
+   "R_U9T2.2",
+   "R_WDPD.2",
    "SW1.2",
    "TP48.1",
    "TP49.1",
@@ -34889,6 +37625,10 @@
    "U45.2",
    "U45.3",
    "U45.8",
+   "U46.2",
+   "U47.1",
+   "U47.3",
+   "U47.8",
    "U50.1",
    "U50.2",
    "U50.12",
@@ -34902,6 +37642,8 @@
    "U61.13",
    "U62.5",
    "U63.5",
+   "U_HOLD.2",
+   "U_LS.2",
    "Y1.2",
    "Y1.4"
   ],
@@ -34960,12 +37702,26 @@
    "J_HEAD1.3",
    "U17.6"
   ],
+  "HEAD_LOOP2_OK": [
+   "Q_LB.1",
+   "R_LBG.1",
+   "R_LBR.1",
+   "U46.1"
+  ],
+  "HEAD_LOOP2_OK_RB": [
+   "R_LBR.2",
+   "U47.6"
+  ],
+  "HEAD_LOOP_OK_IO": [
+   "R_GA5.2",
+   "U43.26"
+  ],
   "HEAD_LOOP_OK_RB": [
    "Q22.1",
    "R74.2",
+   "R_GA5.1",
    "U30.1",
-   "U30.7",
-   "U43.26"
+   "U30.7"
   ],
   "HEAD_LOOP_OUT": [
    "D10.1",
@@ -35031,6 +37787,16 @@
    "J_HEAD1.1",
    "L5.2"
   ],
+  "HOLD_A": [
+   "D_HR.1",
+   "R_HA.2",
+   "R_HS.2",
+   "U_HOLD.1"
+  ],
+  "HSET_D": [
+   "Q_HSET.3",
+   "R_HS.1"
+  ],
   "HUSBC_DM": [
    "J_USB_HEAD.2",
    "U60.1"
@@ -35052,6 +37818,13 @@
    "J_USB_HEAD.1",
    "U60.5"
   ],
+  "HW_LATCH_G": [
+   "C_U9T.1",
+   "D_U9T.2",
+   "R_U9T1.2",
+   "R_U9T2.1",
+   "U9.2"
+  ],
   "HW_LATCH_RB": [
    "C97.1",
    "D26.2",
@@ -35059,7 +37832,6 @@
    "R117.2",
    "R118.1",
    "TP27.1",
-   "U9.2",
    "U20M.55"
   ],
   "I2C_SYS_SCL": [
@@ -35070,7 +37842,8 @@
    "U15.6",
    "U20M.43",
    "U44.22",
-   "U45.14"
+   "U45.14",
+   "U47.14"
   ],
   "I2C_SYS_SDA": [
    "R211.2",
@@ -35080,7 +37853,8 @@
    "U15.7",
    "U20M.42",
    "U44.23",
-   "U45.15"
+   "U45.15",
+   "U47.15"
   ],
   "I2C_TOF_SCL": [
    "R214.2",
@@ -35114,6 +37888,22 @@
   "IOXA_SO": [
    "R205.1",
    "U43.14"
+  ],
+  "IOXD_P4": [
+   "R_D4.2",
+   "U47.9"
+  ],
+  "IOXD_P5": [
+   "R_D5.1",
+   "U47.10"
+  ],
+  "IOXD_P6": [
+   "R_D6.1",
+   "U47.11"
+  ],
+  "IOXD_P7": [
+   "R_D7.1",
+   "U47.12"
   ],
   "IOX_A_CS_N": [
    "R204.2",
@@ -35159,6 +37949,10 @@
    "R122.2",
    "R123.2"
   ],
+  "K1_BIAS": [
+   "D_K1B.1",
+   "R_K1B.1"
+  ],
   "K1_CL": [
    "D14.1",
    "D15.1"
@@ -35169,13 +37963,24 @@
    "K1.5",
    "R96.2"
   ],
+  "K1_NC1": [
+   "K1.3",
+   "R_NC1.1"
+  ],
+  "K1_RUN": [
+   "K1.8",
+   "R_KR1.1",
+   "TP61.1",
+   "U_HOLD.3"
+  ],
   "K1_SEAL_A": [
    "D_SEAL.1",
-   "K1.4"
+   "K1.4",
+   "R_K1B.2"
   ],
   "K1_SET": [
-   "J_BTN.2",
-   "R96.1"
+   "R96.1",
+   "U_SET.4"
   ],
   "K2_CL": [
    "D31.1",
@@ -35185,12 +37990,16 @@
    "D34.1",
    "D35.1"
   ],
+  "LAB_KEY_N_IO": [
+   "R_GA7.2",
+   "U43.28"
+  ],
   "LAB_KEY_N_RB": [
    "Q28.1",
    "R82.2",
+   "R_GA7.1",
    "U31.1",
-   "U31.7",
-   "U43.28"
+   "U31.7"
   ],
   "LAB_VHI": [
    "C81.1",
@@ -35228,6 +38037,20 @@
   "LAMP_REARM_K": [
    "J_BTN.7",
    "Q55.3"
+  ],
+  "LATCH_NC_RB": [
+   "C_NC.1",
+   "D_NC.2",
+   "R_NC1.2",
+   "R_NC2.1",
+   "U47.4"
+  ],
+  "LATCH_RUN_RB": [
+   "C_KR.1",
+   "D_KR.2",
+   "R_KR1.2",
+   "R_KR2.1",
+   "U47.5"
   ],
   "LED_CHARGE": [
    "Q54.1",
@@ -35301,14 +38124,26 @@
    "U30.6",
    "U32.3"
   ],
+  "LOOP_FB": [
+   "C_LB1.1",
+   "R_LB1.2",
+   "U46.3"
+  ],
   "LOOP_SNS": [
    "R67.2",
    "R68.1",
-   "R69.1"
+   "R69.1",
+   "R_LB1.1"
   ],
   "LOOP_SRC": [
    "R65.2",
    "R66.1"
+  ],
+  "LOOP_VB": [
+   "C_LB2.1",
+   "R_LB2.2",
+   "R_LB3.1",
+   "U46.4"
   ],
   "LOOP_VHI": [
    "C76.1",
@@ -35323,6 +38158,11 @@
    "R72.1",
    "R73.2",
    "U30.2"
+  ],
+  "LS_A": [
+   "D_LSR.1",
+   "R_LSA.2",
+   "U_LS.1"
   ],
   "MCUC_USB_DM": [
    "J_USB_MCU.2",
@@ -35551,16 +38391,57 @@
    "Q3.1",
    "R14.1"
   ],
+  "REARM_AUX_G": [
+   "C_AG.1",
+   "Q_SETB.1",
+   "R_AG.2",
+   "R_AGP.1"
+  ],
   "REARM_BTN": [
    "C100.1",
    "R129.2",
    "R130.1",
    "U43.3"
   ],
+  "REARM_BTN_D": [
+   "D_RB.1",
+   "R129.1"
+  ],
   "REARM_BTN_RAW": [
    "D29.1",
+   "D_RB.2",
    "J_BTN.4",
-   "R129.1"
+   "R_AG.1"
+  ],
+  "REARM_SET": [
+   "C_SC.1",
+   "C_SF.1",
+   "D_SCL.2",
+   "R_SRB.1",
+   "R_SSER.2"
+  ],
+  "REARM_SET_RAW": [
+   "D_SET.1",
+   "J_BTN.2",
+   "R_SPD.1",
+   "R_SSER.1"
+  ],
+  "REARM_SET_RB": [
+   "R_SRB.2",
+   "U47.7"
+  ],
+  "REARM_SET_SRC": [
+   "D_SET.2",
+   "J_BTN.1",
+   "R_SSRC.2"
+  ],
+  "RELAY_RTN": [
+   "D31.2",
+   "D34.2",
+   "K2.A2",
+   "K3.A2",
+   "TP62.1",
+   "U_LS.3"
   ],
   "RS485_DN": [
    "D60.2",
@@ -35571,6 +38452,10 @@
    "D60.1",
    "J_HEAD2.1",
    "L60.2"
+  ],
+  "RSET_A": [
+   "D_RSET.1",
+   "R_SET.1"
   ],
   "RS_A": [
    "R284.1",
@@ -35600,17 +38485,44 @@
   "RUN_12V": [
    "D32.2",
    "D35.2",
-   "K1.8",
+   "D_RUN.1",
    "K2.A1",
    "K3.A1",
    "R117.1",
-   "R133.1",
    "TP39.1"
+  ],
+  "RUN_HD": [
+   "D_RUN.2",
+   "R133.1",
+   "R_HA.1",
+   "R_LSA.1",
+   "R_U9T1.1",
+   "U_HOLD.4"
+  ],
+  "SDIS_G": [
+   "Q_SDIS.1",
+   "Q_SDISB.3",
+   "R_SDG.2"
   ],
   "SET_CAP": [
    "C_SET.1",
-   "J_BTN.1",
-   "R_SET.2"
+   "R_SDIS.1",
+   "R_SET.2",
+   "U_SET.3"
+  ],
+  "SET_DIS": [
+   "Q_SDIS.3",
+   "R_SDIS.2"
+  ],
+  "SET_G": [
+   "C_SC.2",
+   "D_SGN.1",
+   "Q_SETA.1",
+   "R_SG.1"
+  ],
+  "SET_S": [
+   "Q_SETA.2",
+   "Q_SETB.3"
   ],
   "SPARE_IO": [
    "J_AUX.3",
@@ -36238,6 +39150,14 @@
    "Q20.3",
    "U20.2"
   ],
+  "U21B_A": [
+   "R_21BA.2",
+   "U21B.1"
+  ],
+  "U21B_K": [
+   "Q_LB.3",
+   "U21B.2"
+  ],
   "U21_A": [
    "R75.2",
    "U21.1"
@@ -36456,6 +39376,16 @@
    "J_USB_MCU.5",
    "R200.1"
   ],
+  "U_SET_A": [
+   "R_USA.2",
+   "U_SET.1"
+  ],
+  "U_SET_K": [
+   "Q_HSET.1",
+   "Q_SETA.3",
+   "R_USK.2",
+   "U_SET.2"
+  ],
   "V12_AUX": [
    "F_AUX.2",
    "J_AUX.1",
@@ -36490,10 +39420,13 @@
    "C118.1",
    "C130.1",
    "C175.1",
+   "C_U46.1",
+   "D_SCL.1",
    "F1.1",
    "F2.1",
    "J_PANEL.1",
    "L4.2",
+   "Q_HSET.2",
    "R42.1",
    "R62.1",
    "R63.1",
@@ -36506,6 +39439,11 @@
    "R189.1",
    "R282.1",
    "R285.1",
+   "R_21BA.1",
+   "R_LB2.1",
+   "R_SSRC.1",
+   "R_USA.1",
+   "R_USK.1",
    "TP45.1",
    "U14.1",
    "U25.1",
@@ -36515,6 +39453,7 @@
    "U32.8",
    "U35.8",
    "U36.8",
+   "U46.5",
    "U62.8",
    "U63.2",
    "U63.3",
@@ -36723,9 +39662,14 @@
    "JP1.1"
   ],
   "WDG_STROBE": [
+   "R_GB7.1",
+   "R_WDPD.1",
    "TP24.1",
    "U20M.33",
-   "U40.7",
+   "U40.7"
+  ],
+  "WDG_STROBE_IO": [
+   "R_GB7.2",
    "U43.8"
   ]
  }

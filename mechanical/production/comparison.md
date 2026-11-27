@@ -4,8 +4,8 @@ Counts from the two models (prototype: `prototype_x1c/out/parts_table.json`, `ch
 
 | Quantity | X1C prototype | Production | Change |
 |---|---|---|---|
-| Unique made part numbers (robot) | 54 | 44 | -10 |
-| Made pieces per robot | 71 | 61 | -10 |
+| Unique made part numbers (robot) | 52 | 44 | -8 |
+| Made pieces per robot | 69 | 61 | -8 |
 | Skin pieces (lower hull + lid) | 10 | 2 | -8 |
 | Purchased part numbers (envelopes in the model) | 26 | 26 | +0 |
 | Fasteners: threaded fasteners (screws, nuts) | 183 | 167 | -16 |
@@ -13,18 +13,18 @@ Counts from the two models (prototype: `prototype_x1c/out/parts_table.json`, `ch
 | Fasteners: heat-set inserts | 142 | 118 | -24 |
 | Fasteners: washers and bushings | 42 | 42 | +0 |
 | Fasteners: total | 385 | 339 | -46 |
-| Mass with head 'none' (kg) | 6.7 | 7.39 | +0.69 |
-| CG x with head 'none' (mm) | -92.5 | -90.2 | +2.30 |
-| Forward tip margin with head 'none' (mm) | 81.9 | 79.7 | -2.20 |
-| Mass with head 'prototype head RR-HD-X' (kg) | 8.56 | 9.25 | +0.69 |
-| CG x with head 'prototype head RR-HD-X' (mm) | -46.6 | -48.2 | -1.60 |
-| Forward tip margin with head 'prototype head RR-HD-X' (mm) | 37.4 | 39.0 | +1.60 |
-| Mass with head 'production head' (kg) | 8.78 | 9.47 | +0.69 |
-| CG x with head 'production head' (mm) | -42.1 | -44.0 | -1.90 |
-| Forward tip margin with head 'production head' (mm) | 33.1 | 34.9 | +1.80 |
-| Mass with head 'production head + 15 % margin' (kg) | 9.09 | 9.78 | +0.69 |
-| CG x with head 'production head + 15 % margin' (mm) | -36.5 | -38.8 | -2.30 |
-| Forward tip margin with head 'production head + 15 % margin' (mm) | 27.7 | 29.8 | +2.10 |
+| Mass with head 'none' (kg) | 6.7 | 7.36 | +0.66 |
+| CG x with head 'none' (mm) | -92.5 | -90.7 | +1.80 |
+| Forward tip margin with head 'none' (mm) | 81.9 | 80.2 | -1.70 |
+| Mass with head 'prototype head RR-HD-X' (kg) | 8.56 | 9.23 | +0.67 |
+| CG x with head 'prototype head RR-HD-X' (mm) | -46.6 | -48.4 | -1.80 |
+| Forward tip margin with head 'prototype head RR-HD-X' (mm) | 37.4 | 39.2 | +1.80 |
+| Mass with head 'production head' (kg) | 8.78 | 9.44 | +0.66 |
+| CG x with head 'production head' (mm) | -42.1 | -44.2 | -2.10 |
+| Forward tip margin with head 'production head' (mm) | 33.1 | 35.1 | +2.00 |
+| Mass with head 'production head + 15 % margin' (kg) | 9.09 | 9.76 | +0.67 |
+| CG x with head 'production head + 15 % margin' (mm) | -36.5 | -39.0 | -2.50 |
+| Forward tip margin with head 'production head + 15 % margin' (mm) | 27.7 | 30.0 | +2.30 |
 
 ## Per-unit process content (calculated from the solids)
 
@@ -32,17 +32,17 @@ Counts from the two models (prototype: `prototype_x1c/out/parts_table.json`, `ch
 
 | Process | Pieces | Material volume (cm3) |
 |---|---|---|
-| FFF print (X1C) | 49 | 1951 |
+| FFF print (X1C) | 47 | 1919 |
 | fabricated (metal / G10) | 22 | 356 |
 
-Print plates: 0 (prototype `plates.yaml`); heat-set inserts set by hand: 142.
+Print plates: 20 (prototype `plates.yaml`); heat-set inserts set by hand: 142.
 
 **Production:**
 
 | Process | Pieces | Material volume (cm3) | Bounding-box volume (cm3, SLS packing / stock proxy) |
 |---|---|---|---|
 | CNC machined 6061-T6 | 9 | 176 | 685 |
-| SLS PA11 (large-frame laser sintering) | 2 | 971 | 16539 |
+| SLS PA11 (large-frame laser sintering) | 2 | 946 | 16099 |
 | SLS PA11 (nested in the skin builds) | 31 | 702 | 5223 |
 | cast polyurethane (open / two-part mould) | 2 | 132 | 541 |
 | laser / waterjet cut sheet | 6 | 36 | 77 |

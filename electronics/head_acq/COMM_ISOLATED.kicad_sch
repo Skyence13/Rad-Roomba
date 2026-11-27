@@ -1996,7 +1996,7 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "rr_local:FRAME"
+		(symbol "rr_local:FRAME_H3"
 			(power)
 			(pin_numbers
 				(hide yes)
@@ -2017,7 +2017,7 @@
 					(hide yes)
 				)
 			)
-			(property "Value" "FRAME"
+			(property "Value" "FRAME_H3"
 				(at 0 -3.81 0)
 				(effects
 					(font
@@ -2043,7 +2043,7 @@
 					(hide yes)
 				)
 			)
-			(property "Description" "Power symbol creates a global label with name \"FRAME\""
+			(property "Description" "Power symbol creates a global label with name \"FRAME_H3\""
 				(at 0 0 0)
 				(effects
 					(font
@@ -2061,7 +2061,7 @@
 					(hide yes)
 				)
 			)
-			(symbol "FRAME_0_1"
+			(symbol "FRAME_H3_0_1"
 				(polyline
 					(pts
 						(xy 0 0) (xy 0 -1.27) (xy 1.27 -1.27) (xy 0 -2.54) (xy -1.27 -1.27) (xy 0 -1.27)
@@ -2075,11 +2075,11 @@
 					)
 				)
 			)
-			(symbol "FRAME_1_1"
+			(symbol "FRAME_H3_1_1"
 				(pin power_in line
 					(at 0 0 270)
 					(length 0)
-					(name "FRAME"
+					(name "FRAME_H3"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -4111,7 +4111,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "0a01397e-849b-59c0-849e-0a34e8bebf0b")
-		(property "Reference" "#PWR0330"
+		(property "Reference" "#PWR0329"
 			(at 35.56 40.64 0)
 			(effects
 				(font
@@ -4161,7 +4161,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/52c6215f-6a58-55d0-8129-c226dce043b9"
-					(reference "#PWR0330")
+					(reference "#PWR0329")
 					(unit 1)
 				)
 			)
@@ -4176,7 +4176,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "a8c9865e-a494-55b0-8042-cafe3e724a70")
-		(property "Reference" "#PWR0331"
+		(property "Reference" "#PWR0330"
 			(at 43.18 58.42 0)
 			(effects
 				(font
@@ -4226,7 +4226,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/52c6215f-6a58-55d0-8129-c226dce043b9"
-					(reference "#PWR0331")
+					(reference "#PWR0330")
 					(unit 1)
 				)
 			)
@@ -4349,7 +4349,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "755ca703-1f59-5aff-8670-d6d592db5acf")
-		(property "Reference" "#PWR0332"
+		(property "Reference" "#PWR0331"
 			(at 68.58 53.34 0)
 			(effects
 				(font
@@ -4399,7 +4399,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/52c6215f-6a58-55d0-8129-c226dce043b9"
-					(reference "#PWR0332")
+					(reference "#PWR0331")
 					(unit 1)
 				)
 			)
@@ -4414,7 +4414,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "f2a751a4-fe5c-5865-8cde-dfdb72489fd8")
-		(property "Reference" "#PWR0333"
+		(property "Reference" "#PWR0332"
 			(at 68.58 50.8 0)
 			(effects
 				(font
@@ -4464,7 +4464,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/52c6215f-6a58-55d0-8129-c226dce043b9"
-					(reference "#PWR0333")
+					(reference "#PWR0332")
 					(unit 1)
 				)
 			)
@@ -4479,7 +4479,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "b1327da3-e9d7-5b9d-87f0-0bea2ab843f3")
-		(property "Reference" "#PWR0334"
+		(property "Reference" "#PWR0333"
 			(at 68.58 38.1 0)
 			(effects
 				(font
@@ -4529,7 +4529,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/52c6215f-6a58-55d0-8129-c226dce043b9"
-					(reference "#PWR0334")
+					(reference "#PWR0333")
 					(unit 1)
 				)
 			)
@@ -4544,7 +4544,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "65db3029-a4f9-5d83-8ff1-f064c98a71a1")
-		(property "Reference" "#PWR0335"
+		(property "Reference" "#PWR0334"
 			(at 93.98 48.26 0)
 			(effects
 				(font
@@ -4594,7 +4594,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/52c6215f-6a58-55d0-8129-c226dce043b9"
-					(reference "#PWR0335")
+					(reference "#PWR0334")
 					(unit 1)
 				)
 			)
@@ -4609,7 +4609,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "b81756e1-9b41-5540-81f7-db9eab010ec5")
-		(property "Reference" "#PWR0336"
+		(property "Reference" "#PWR0335"
 			(at 93.98 45.72 0)
 			(effects
 				(font
@@ -4659,7 +4659,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/52c6215f-6a58-55d0-8129-c226dce043b9"
-					(reference "#PWR0336")
+					(reference "#PWR0335")
 					(unit 1)
 				)
 			)
@@ -4812,7 +4812,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "8c223683-9198-5e8c-8337-356fc1bf2538")
-		(property "Reference" "#PWR0337"
+		(property "Reference" "#PWR0336"
 			(at 114.3 49.53 0)
 			(effects
 				(font
@@ -4862,7 +4862,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/52c6215f-6a58-55d0-8129-c226dce043b9"
-					(reference "#PWR0337")
+					(reference "#PWR0336")
 					(unit 1)
 				)
 			)
@@ -4877,7 +4877,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "e3e0aee4-8dc7-5b4b-8992-7d871bc1fb67")
-		(property "Reference" "#PWR0338"
+		(property "Reference" "#PWR0337"
 			(at 114.3 36.83 0)
 			(effects
 				(font
@@ -4927,7 +4927,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/52c6215f-6a58-55d0-8129-c226dce043b9"
-					(reference "#PWR0338")
+					(reference "#PWR0337")
 					(unit 1)
 				)
 			)
@@ -5116,7 +5116,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "3afbec1c-b93b-50e7-859f-1043117bbc88")
-		(property "Reference" "#PWR0339"
+		(property "Reference" "#PWR0338"
 			(at 160.02 54.61 0)
 			(effects
 				(font
@@ -5166,7 +5166,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/52c6215f-6a58-55d0-8129-c226dce043b9"
-					(reference "#PWR0339")
+					(reference "#PWR0338")
 					(unit 1)
 				)
 			)
@@ -5268,7 +5268,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "ce0d5aed-75bb-5fa9-81ab-38db75b1b1e6")
-		(property "Reference" "#PWR0340"
+		(property "Reference" "#PWR0339"
 			(at 177.8 54.61 0)
 			(effects
 				(font
@@ -5318,7 +5318,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/52c6215f-6a58-55d0-8129-c226dce043b9"
-					(reference "#PWR0340")
+					(reference "#PWR0339")
 					(unit 1)
 				)
 			)
@@ -5420,7 +5420,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "c18b176b-ca6b-5833-893a-838f3b7d9003")
-		(property "Reference" "#PWR0341"
+		(property "Reference" "#PWR0340"
 			(at 215.9 44.45 0)
 			(effects
 				(font
@@ -5470,7 +5470,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/52c6215f-6a58-55d0-8129-c226dce043b9"
-					(reference "#PWR0341")
+					(reference "#PWR0340")
 					(unit 1)
 				)
 			)
@@ -5662,7 +5662,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "9e3f8bc6-09d2-59d3-80dc-11c61281ec5b")
-		(property "Reference" "#PWR0342"
+		(property "Reference" "#PWR0341"
 			(at 264.16 54.61 0)
 			(effects
 				(font
@@ -5712,7 +5712,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/52c6215f-6a58-55d0-8129-c226dce043b9"
-					(reference "#PWR0342")
+					(reference "#PWR0341")
 					(unit 1)
 				)
 			)
@@ -5814,7 +5814,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "a01a1169-2095-580d-8fe7-f38474007cbb")
-		(property "Reference" "#PWR0343"
+		(property "Reference" "#PWR0342"
 			(at 283.21 73.66 0)
 			(effects
 				(font
@@ -5864,7 +5864,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/52c6215f-6a58-55d0-8129-c226dce043b9"
-					(reference "#PWR0343")
+					(reference "#PWR0342")
 					(unit 1)
 				)
 			)
@@ -5975,7 +5975,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "fb78b506-90a8-5050-819d-51192dbbeaf6")
-		(property "Reference" "#PWR0344"
+		(property "Reference" "#PWR0343"
 			(at 302.26 36.83 0)
 			(effects
 				(font
@@ -6025,7 +6025,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/52c6215f-6a58-55d0-8129-c226dce043b9"
-					(reference "#PWR0344")
+					(reference "#PWR0343")
 					(unit 1)
 				)
 			)
@@ -6127,7 +6127,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "5f328f3e-6d10-592a-882a-1b96991dd2ad")
-		(property "Reference" "#PWR0345"
+		(property "Reference" "#PWR0344"
 			(at 317.5 57.15 0)
 			(effects
 				(font
@@ -6177,7 +6177,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/52c6215f-6a58-55d0-8129-c226dce043b9"
-					(reference "#PWR0345")
+					(reference "#PWR0344")
 					(unit 1)
 				)
 			)
@@ -6364,7 +6364,7 @@
 		)
 	)
 	(symbol
-		(lib_id "rr_local:FRAME")
+		(lib_id "rr_local:FRAME_H3")
 		(at 355.6 54.61 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -6372,7 +6372,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "33bd01a6-e622-5408-8abd-7319a53e3d7c")
-		(property "Reference" "#PWR0346"
+		(property "Reference" "#PWR0345"
 			(at 355.6 54.61 0)
 			(effects
 				(font
@@ -6381,7 +6381,7 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "FRAME"
+		(property "Value" "FRAME_H3"
 			(at 355.6 58.51 0)
 			(effects
 				(font
@@ -6407,7 +6407,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Power symbol creates a global label with name \"FRAME\""
+		(property "Description" "Power symbol creates a global label with name \"FRAME_H3\""
 			(at 355.6 54.61 0)
 			(effects
 				(font
@@ -6422,7 +6422,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/52c6215f-6a58-55d0-8129-c226dce043b9"
-					(reference "#PWR0346")
+					(reference "#PWR0345")
 					(unit 1)
 				)
 			)
@@ -6473,7 +6473,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "J2 shield to frame"
+		(property "Description" "J2 shield to frame at H3 (FRAME_H3, S3-05)"
 			(at 355.6 48.26 0)
 			(effects
 				(font
@@ -6516,7 +6516,7 @@
 		)
 	)
 	(symbol
-		(lib_id "rr_local:FRAME")
+		(lib_id "rr_local:FRAME_H3")
 		(at 373.38 54.61 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -6524,7 +6524,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "62dfea74-60c9-57e9-83ae-3b3a5396fa21")
-		(property "Reference" "#PWR0347"
+		(property "Reference" "#PWR0346"
 			(at 373.38 54.61 0)
 			(effects
 				(font
@@ -6533,7 +6533,7 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "FRAME"
+		(property "Value" "FRAME_H3"
 			(at 373.38 58.51 0)
 			(effects
 				(font
@@ -6559,7 +6559,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Power symbol creates a global label with name \"FRAME\""
+		(property "Description" "Power symbol creates a global label with name \"FRAME_H3\""
 			(at 373.38 54.61 0)
 			(effects
 				(font
@@ -6574,7 +6574,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/52c6215f-6a58-55d0-8129-c226dce043b9"
-					(reference "#PWR0347")
+					(reference "#PWR0346")
 					(unit 1)
 				)
 			)
@@ -6625,7 +6625,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "J2 shield to frame"
+		(property "Description" "J2 shield to frame at H3 (FRAME_H3, S3-05)"
 			(at 373.38 48.26 0)
 			(effects
 				(font
@@ -6676,7 +6676,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "fb36f52b-927a-5a2c-80d0-d79e0b5eb0dd")
-		(property "Reference" "#PWR0348"
+		(property "Reference" "#PWR0347"
 			(at 38.1 124.46 0)
 			(effects
 				(font
@@ -6726,7 +6726,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/52c6215f-6a58-55d0-8129-c226dce043b9"
-					(reference "#PWR0348")
+					(reference "#PWR0347")
 					(unit 1)
 				)
 			)
@@ -6741,7 +6741,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "b7df62c4-566e-52e1-8721-f9b6f74517bc")
-		(property "Reference" "#PWR0349"
+		(property "Reference" "#PWR0348"
 			(at 38.1 119.38 0)
 			(effects
 				(font
@@ -6791,7 +6791,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/52c6215f-6a58-55d0-8129-c226dce043b9"
-					(reference "#PWR0349")
+					(reference "#PWR0348")
 					(unit 1)
 				)
 			)
@@ -6806,7 +6806,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "aadb4281-6baf-57ce-8627-62403b19a5fa")
-		(property "Reference" "#PWR0350"
+		(property "Reference" "#PWR0349"
 			(at 38.1 116.84 0)
 			(effects
 				(font
@@ -6856,7 +6856,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/52c6215f-6a58-55d0-8129-c226dce043b9"
-					(reference "#PWR0350")
+					(reference "#PWR0349")
 					(unit 1)
 				)
 			)
@@ -6871,7 +6871,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "c018b7e6-eef2-5846-865c-02dcfc09fed1")
-		(property "Reference" "#PWR0351"
+		(property "Reference" "#PWR0350"
 			(at 50.8 137.16 0)
 			(effects
 				(font
@@ -6921,7 +6921,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/52c6215f-6a58-55d0-8129-c226dce043b9"
-					(reference "#PWR0351")
+					(reference "#PWR0350")
 					(unit 1)
 				)
 			)
@@ -7050,7 +7050,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "96741bf6-44ab-52e0-81c2-3b1f66571512")
-		(property "Reference" "#PWR0352"
+		(property "Reference" "#PWR0351"
 			(at 91.44 101.6 0)
 			(effects
 				(font
@@ -7100,7 +7100,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/52c6215f-6a58-55d0-8129-c226dce043b9"
-					(reference "#PWR0352")
+					(reference "#PWR0351")
 					(unit 1)
 				)
 			)
@@ -7115,7 +7115,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "6847b77e-f8ba-5294-8be9-d7bd8175c4f3")
-		(property "Reference" "#PWR0353"
+		(property "Reference" "#PWR0352"
 			(at 116.84 101.6 0)
 			(effects
 				(font
@@ -7165,7 +7165,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/52c6215f-6a58-55d0-8129-c226dce043b9"
-					(reference "#PWR0353")
+					(reference "#PWR0352")
 					(unit 1)
 				)
 			)
@@ -7180,7 +7180,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "7369f4cf-c948-508c-83bf-595bf3a65df8")
-		(property "Reference" "#PWR0354"
+		(property "Reference" "#PWR0353"
 			(at 116.84 93.98 0)
 			(effects
 				(font
@@ -7230,7 +7230,7 @@
 		(instances
 			(project "RR-HEAD-ACQ"
 				(path "/9e923294-c438-55d9-8efc-7b5c261ae8f2/52c6215f-6a58-55d0-8129-c226dce043b9"
-					(reference "#PWR0354")
+					(reference "#PWR0353")
 					(unit 1)
 				)
 			)

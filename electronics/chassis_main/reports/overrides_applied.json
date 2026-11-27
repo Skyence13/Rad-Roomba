@@ -467,6 +467,54 @@
  {
   "changes": {
    "description": [
+    "RR-TOF LOOK_LO (mux 0 ch 2), left edge front. Pin order as RR-TOF-A J1",
+    "RR-TOF LOOK_FL (index 4, mux 0 ch 2), left edge front. Pin order as RR-TOF-A J1"
+   ]
+  },
+  "id": "S3-N1a",
+  "kind": "PART",
+  "reason": "IB-34 / DEC-043 sensor names (no electrical change)",
+  "ref": "J_TOF4"
+ },
+ {
+  "changes": {
+   "description": [
+    "RR-TOF LOOK_LI (mux 1 ch 2), left edge front. Pin order as RR-TOF-A J1",
+    "RR-TOF LOOK_RL (index 5, mux 1 ch 2), rear-left GH row (tail, looking behind). Pin order as RR-TOF-A J1"
+   ]
+  },
+  "id": "S3-N1b",
+  "kind": "PART",
+  "reason": "IB-34 / DEC-043 sensor names (no electrical change)",
+  "ref": "J_TOF5"
+ },
+ {
+  "changes": {
+   "description": [
+    "RR-TOF LOOK_RI (mux 0 ch 3), right edge front. Pin order as RR-TOF-A J1",
+    "RR-TOF LOOK_RR (index 6, mux 0 ch 3), rear-right GH row (tail, looking behind). Pin order as RR-TOF-A J1"
+   ]
+  },
+  "id": "S3-N1c",
+  "kind": "PART",
+  "reason": "IB-34 / DEC-043 sensor names (no electrical change)",
+  "ref": "J_TOF6"
+ },
+ {
+  "changes": {
+   "description": [
+    "RR-TOF LOOK_RO (mux 1 ch 3), right edge front. Pin order as RR-TOF-A J1",
+    "RR-TOF LOOK_FR (index 7, mux 1 ch 3), right edge front. Pin order as RR-TOF-A J1"
+   ]
+  },
+  "id": "S3-N1d",
+  "kind": "PART",
+  "reason": "IB-34 / DEC-043 sensor names (no electrical change)",
+  "ref": "J_TOF7"
+ },
+ {
+  "changes": {
+   "description": [
     "Zener 24 V 0.5 W",
     "Zener 20 V 0.5 W"
    ],
@@ -864,7 +912,7 @@
    ],
    "4": [
     "DRAIN2",
-    "SET_OUT"
+    "K1_SET"
    ]
   },
   "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
@@ -875,16 +923,36 @@
   "kind": "ADD",
   "pins": {
    "1": [
-    "K",
-    "K1_SET"
+    "1",
+    "V5_AUX"
    ],
    "2": [
-    "A",
-    "SET_OUT"
+    "2",
+    "U_SET_K"
    ]
   },
   "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
-  "ref": "D_SK"
+  "ref": "R_USK"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "G",
+    "U_SET_K"
+   ],
+   "2": [
+    "S",
+    "V5_AUX"
+   ],
+   "3": [
+    "D",
+    "HSET_D"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "Q_HSET"
  },
  {
   "id": "S3-C1g",
@@ -1020,7 +1088,7 @@
   "pins": {
    "1": [
     "1",
-    "SET_OUT"
+    "HSET_D"
    ],
    "2": [
     "2",

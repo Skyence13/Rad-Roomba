@@ -42,7 +42,7 @@ Files: `electronics/head_acq/design/circuit.py`, `head_afe_budget.md`, `head_afe
 |---|---|---|
 | C1 | Does the board fit? | 7600 mm² of courtyards on 30 000 mm² (25 %); lane block fits ±18 mm × (5.5–62 mm) by estimate, not by placement. The J1 connector height is open (CCR-HE-02). |
 | C2 | 1008 fitted parts on a 4-layer board with a scripted autorouter. | The identical lane block should be placed and routed once and replicated; critical routes are listed for hand-routing (layout guidance §5). Risk for stage 2. |
-| C3 | Is the single-ground rule kept? | J1 pin 2 is the only DC ground entry; frame bond R2801 is conditional (CCR-HE-03); J2 is isolated. |
+| C3 | Is the single-ground rule kept? | J1 pin 2 is the only DC ground entry; frame bond F2801 + R2801 at H1 fitted in both builds (IB-38, S3-03). **S3: J2 is isolated at DC only** - above ~1 MHz the J1/J2 shield 10 nF, the frame bonds and the heater-film capacitance (9-18 nF) bypass L2001 and the J2 isolation (review m3). H3 sits inside the isolated island (FRAME_H3 pad 0.5 mm from BUS_GND copper): the isolation is functional (ground-loop break), not a rated barrier. |
 | C4 | Motor noise in the plastic prototype. | Budget §3.4: coax + lane can + cover are needed; an open pigtail loop fails by calculation. Only test B11 can close it. |
 | C5 | Cold: parts below −25 °C? Condensation? | Board sits at ~+10 °C; JST GH (−25 °C), LEDs, TCXO grade unverified; two SiPM families stop at −20 °C; no humidity sensor. |
 | C6 | Can a dead front end produce authoritative zeros? | Not by hardware alone — firmware must use BIAS_VMON/IMON/rails and the pulser/self-test. The per-channel monitor (PE15) was added for this. |
@@ -51,3 +51,18 @@ Files: `electronics/head_acq/design/circuit.py`, `head_afe_budget.md`, `head_afe
 ## D. Not done at stage 1
 
 No SPICE simulation; no placement; no thermal calculation of the board; no EMC calculation beyond the estimates shown; no check of the eFuse inrush slew; no orderable-suffix verification for 24 part numbers (listed by the self-check).
+
+## E. Stage 3 (review `docs/reviews/REVIEW_head_interference.md`) - requirements and checks added
+
+| # | Item | Requirement / answer |
+|---|---|---|
+| E1 | M5 heater domain vs spreader | **Electrical requirement:** heater films, the bimetal cut-out (case and both terminals) and the regulation NTC lug are insulated from the spreader/frame: cut-out with an electrically isolated case, ≥ 100 MΩ case-to-terminals at 100 V DC, written in the BOM line (PUR-TCO); NTC with an isolated lug (PUR-NTC-10K) or both parts on a 0.1 mm polyimide pad; heater film edges ≥ 1 mm polyimide overlap beyond the foil. Owner: head mechanical / BOM. |
+| E2 | M5 bring-up check (assembled head, NOT the bare board) | With the heater assembly fitted, the spreader bolted to the board and F2801 removed (or before it is fitted): J2601.1 / .2 / .3 to FRAME (H2801 pad) and to GND ≥ 10 MΩ at 100 V; then with F2801 fitted and the heater cycling, MON_ADC (MON_LANE_EN = 0) within ±5 mV of its value with the heater off. Layout_guidance §7 step 0 ("J2001.4 to GND open") is on the bare board and cannot find this. |
+| E3 | M5 circuit measure | F2801 0.5 A very-fast fuse in series with the frame bond (protects L2001 and the plane, limits a return-side sneak to ~0.24 A); frame-potential monitor MON_ADC = 0.300 V + V(FRAME)/2 with the lane muxes off. Firmware rule: > 15 mV above the armed value → heater off + fault. Review item M5(3) (compare HTR_SENSE with the chassis INA3221) does not detect it: both shunts are in the feed. |
+| E4 | M2 monitor injection | taps 10 kΩ at op-amp outputs; MON_LANE_EN = 0 while armed (all lane muxes off); test B8 with MON_LANE_EN 0/1 and an averaged capture at FCMP triggered on MON_MUX_A0. |
+| E5 | M3 frame bond placement | `scripts/placecheck.py` fails if F2801/R2801/R2802 are > 3 mm (R2801 5 mm) from the H2801 pad, any HF frame capacitor or shield R/C > 10 mm from its hole pad, or a drain pad > 10 mm from its connector / cable port. |
+| E6 | M6 stack-up | F sig / In1 GND / In2 sig / In3 PWR / In4 GND / B sig; long event lines on B.Cu over the solid In4 GND; In2 over In1 GND at 0.15 mm. |
+| E7 | m2 post-alpha tail | C_PZ 47 nF in series with R_PZ; verify at bring-up step 8 (pulser at 2.5 nC with C_INJ2 fitted, then 10 p.e. pulses at 20-500 µs delay: FAST baseline within 0.3 p.e. after 150 µs). |
+| E8 | C1 alpha/beta | TOT cut per device type (budget 2.5); test: Sr-90/Y-90 alone, alpha-class events per 10⁶ beta-window events ≤ 10⁻⁴ (radiometry to confirm); Am-241 alone, TOT histogram vs the cut. |
+| E9 | M7 tests | averaged aggressor-synchronised capture at FCMP replaces count-rate deltas as the pass criterion (budget 3.4 B11). |
+| E10 | IB-61 | headers 7 mm forward; 9.0 mm wire-exit space behind the mated plugs (head mechanical to re-check with `asbuilt.py`). |

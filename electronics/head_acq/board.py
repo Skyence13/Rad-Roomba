@@ -41,6 +41,7 @@ board = Board(
 
 libs.define(board)
 libs.install_can_footprint_hook()
+libs.install_stackup_hook(board)          # stage 3 (review M6): F / GND / sig / PWR / GND / B
 
 # ----------------------------------------------------------------------------------- netlist import
 base = overrides.load_circuit()
@@ -103,7 +104,7 @@ with open(os.path.join(HERE, "reports", "overrides_applied.json"), "w") as f:
 
 # ----------------------------------------------------------------------------------- nets
 board.rail("GND", "+3V3", "+5V_A", "+3V3_EVT", "+5V6", "+3V3A", "BUS_GND")
-board.rail("FRAME", style="gnd")
+board.rail("FRAME", *sorted(overrides.FRAME_NET.values()), style="gnd")   # S3-05: per-hole frame islands
 
 board.outline_rect(326.0, 96.0, radius=1.0, origin="corner")
 

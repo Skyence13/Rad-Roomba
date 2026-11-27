@@ -367,5 +367,8 @@ class FakeHead:
             return
         self._reply(tid, "OK", {"type": "DIAG", "diag": "1.0", "sequence": seq,
                                 "heater": {"on_us": 0, "transition": False, "plate_c": None},
-                                "lanes": [{"id": n, "floor_reject": self._reject[n], "ref_reject": 0}
-                                          for n in range(4)]})
+                                "bias": {"set_v": 0.0, "v": 0.0, "ua": 0.0, "dac_writes": 0},
+                                "bumper_zones": None,                  # rev A: not available (null, not an empty list)
+                                "health": [],
+                                "lanes": [{"id": n, "floor_reject": self._reject[n], "ref_reject": 0, "alpha_short": 0,
+                                           "alpha_idle_clears": 0, "imon_na": [None, None]} for n in range(4)]})
