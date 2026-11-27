@@ -14,7 +14,7 @@ typedef struct {
 } sim_params_t;
 
 /* chain nodes of the emulator (electronics/analysis/chassis_safety_chain.md 2.1) */
-enum { SIM_N1 = 1, SIM_N2, SIM_N3, SIM_N4A, SIM_N4, SIM_N5, SIM_N6, SIM_N7, SIM_N8A, SIM_N8, SIM_N9, SIM_NEND, SIM_NODES };
+enum { SIM_N1 = 1, SIM_N2, SIM_N3, SIM_N4A, SIM_N4, SIM_N5, SIM_N6A, SIM_N6, SIM_N7, SIM_N8A, SIM_N8, SIM_N9, SIM_NEND, SIM_NODES };
 
 typedef struct {
     sim_params_t p;
@@ -33,7 +33,13 @@ typedef struct {
     bool held[SIM_NODES];           /* node held up only by C_SET back-feed through R_SET (review M1) */
     double v_held;                  /* voltage of the held nodes */
     bool pole_b;
-    bool run12;                     /* RUN_12V = CHAIN_END through K1 pole B (HW_LATCH_RB taps it) */
+    bool run12;                     /* RUN_12V (HW_LATCH_RB taps it) = RUN_HD through D_RUN, or a short */
+    /* stage 3 (electronics/analysis/chassis_safety_chain.md 2.1): K1 armature, K1_RUN = CHAIN_END through K1 pole B,
+     * U_HOLD (self-holding photo-MOS, set only by the set pulse), RUN_HD = K1_RUN through U_HOLD; s->latch = RUN_HD */
+    bool k1, k1_run, u_hold, run_hd, set_prev, u_set;
+    double set_pulse_s;             /* edge-triggered gate pulse of the set stage (110 ms) */
+    bool rearm_aux_short, rearm_set_short; /* REARM contact lines held closed (welded contact / W-018 short) */
+    bool rail_weld, loop_sns_leak, bumper_l_weld, run_hd_short, k1_run_short, chain_end_short, uhold_short, loop_b_stuck_ok, loop_b_stuck_open, iox_d_fail, iox_d_bad_pattern;
     double vc;                      /* C_SET voltage */
     double k1_on_s, k1_pulse_s;     /* K1 coil energised time (pick-up), time since the REARM press (set pulse) */
     /* review fault models (selectable) */

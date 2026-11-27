@@ -39,6 +39,7 @@ DEFAULTS = {
     "lidar": {"range_max": 12.0},        # xy/yaw come from frames.yaml unless given here
     "outline": {},                       # RobotOutline kwargs; default = frames.yaml + contract (geometry_config)
     "auto_head_power": True,
+    "head_setup": {"device": "J60035"},   # ENG_SETUP_SET before the first ARM (head firmware 0.5.2); add "thresholds_confirmed": true or "thresholds": {...}
     "start_pose": None,                  # default: first pass start
     "simulated": True,
     "chassis_thread": False,             # real-time hosts: chassis link on its own thread (IB-46); the virtual-time harness keeps False
@@ -74,7 +75,7 @@ class RobotApp:
         self.gate_feed = []            # raw gate records for publishers (bounded)
         self.audit = []
         tr = cfg["trailer"]
-        link_cfg = HeadLinkConfig(mode=cfg["mode"], **cfg["link"])
+        link_cfg = HeadLinkConfig(mode=cfg["mode"], setup=cfg.get("head_setup"), **cfg["link"])
         self._uuid = uuid_factory or (lambda: str(uuid.uuid4()))
         self.archive = Archive(self.run_dir)
         if resume and (self.run_dir / "run.json").exists():

@@ -170,6 +170,15 @@
 #define IOX_C_BIT_CHG_NSMBALERT 5u
 #define IOX_C_BIT_PMON_NALERT 6u
 #define IOX_C_BIT_V5_PGOOD 7u
+#define IOX_D_I2C_ADDR 0x22u
+#define IOX_D_BIT_LATCH_NC_RB 0u
+#define IOX_D_BIT_LATCH_RUN_RB 1u
+#define IOX_D_BIT_HEAD_LOOP2_OK_RB 2u
+#define IOX_D_BIT_REARM_SET_RB 3u
+#define IOX_D_BIT_IOXD_P4 4u
+#define IOX_D_BIT_IOXD_P5 5u
+#define IOX_D_BIT_IOXD_P6 6u
+#define IOX_D_BIT_IOXD_P7 7u
 
 #define I2C_ADDR_CHARGER 0x68u
 #define I2C_ADDR_PMON 0x40u

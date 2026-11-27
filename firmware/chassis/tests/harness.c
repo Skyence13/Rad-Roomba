@@ -158,6 +158,17 @@ bool th_has(th_t *t, const char *path, const char *str)
 
 void th_env(th_t *t, const char *json)
 {
+    /* stage 3: REARM sets K1 only from a charged C_SET, i.e. after the chain has been closed for about 2 s.
+     * An operator waits for the REARM lamp; the harness does the same when the chain is live (a REARM pressed
+     * with the chain open is applied at once, so refusal tests stay meaningful). */
+    if (strstr(json, "\"press\":\"REARM\"") && t->sim.cset_energy && !t->sim.latch) {
+        for (int ms = 0; ms < 4000 && t->sim.node[SIM_NEND] && t->sim.vc < 7.7; ms += 50) {
+            th_run_silent(t, 49);
+            if (t->keepalive) {
+                (void)th_req(t, "TIME", "{}");
+            }
+        }
+    }
     if (!sim_env_apply(&t->sim, json, strlen(json))) {
         printf("  harness: bad env json: %s\n", json);
         th_failures++;

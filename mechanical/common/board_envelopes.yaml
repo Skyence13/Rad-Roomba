@@ -1,7 +1,7 @@
 # Rad Roomba board envelopes -- mechanical lead's confirmation of contract.yaml > boards.
 # Positions are in base_link (mm) for the Rev E layout. STEP solids: out/boards/*.step
 generated_by: mechanical/common/gen_interfaces.py from params.py -- do not edit by hand
-contract_version: 0.4.0-draft8
+contract_version: 0.4.0-draft9
 evidence_class: calculated (fit tool-checked by layout.py)
 convention: 'Board frame: origin at the rear-left corner seen from above with robot-forward up; +u toward robot right (= -y of base_link), +v forward (= +x of base_link),
   +w up (= +z); top/component side faces +z. base_link = origin + (v, -u, w). Origin z is the PCB UNDERSIDE. All dimensions mm.'

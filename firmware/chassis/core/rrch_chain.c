@@ -85,6 +85,21 @@ void rrch_iox_b_update(rrch_t *c, bool ok, bool chain_end, uint64_t t_us)
     }
 }
 
+/* stage 3 F1: a read is good only with the fixed pattern P4 = 1, P5..P7 = 0 */
+void rrch_iox_d_update(rrch_t *c, bool ok, uint8_t in, uint64_t t_us)
+{
+    rrch_iox_d_t *d = &c->chain.iox_d;
+    if (ok && (in & 0xF0u) == 0x10u) {
+        d->ok = true;
+        d->val = in;
+        d->t_us = t_us;
+        d->fail_n = 0;
+    } else {
+        d->ok = false;
+        d->fail_n = d->fail_n < 1000000u ? d->fail_n + 1u : d->fail_n;
+    }
+}
+
 static rrch_el_state_t node_el(uint32_t st, uint32_t known, uint32_t bit)
 {
     if (!(known & bit)) {
@@ -245,6 +260,54 @@ void rrch_chain_step(rrch_t *c)
 
     /* --- interlock loop: hardware comparator and analog decode, report the worse --- */
     ch->loop_ohm = in->loop_ohm;
+    /* --- stage 3 IOX_D readbacks (F1-F6). Known only with a fresh, pattern-checked sample: up to 50 ms old
+     * while latched (m7), and the last read good before arming. --- */
+    bool raw_latch = (in->di & RRCH_DI(HW_LATCH)) != 0;
+    const rrch_iox_d_t *xd = &ch->iox_d;
+    ch->iox_d_known = xd->t_us != 0u && xd->t_us <= c->now_us && c->now_us - xd->t_us <= 50000u && (raw_latch || xd->fail_n == 0u);
+    rrch_fault_set(c, RRCH_FLT(IOX_D), c->boot_done && !ch->iox_d_known);
+    bool d_new = ch->iox_d_known && xd->t_us != xd->seen_us;
+    if (ch->iox_d_known) {
+        ch->k1_nc = (xd->val & 1u) != 0;     /* HIGH = K1 pole A released */
+        ch->k1_run = (xd->val & 2u) != 0;    /* HIGH = CHAIN_END live AND K1 pole B closed (before U_HOLD) */
+        ch->loop_b = (xd->val & 4u) != 0;    /* HIGH = loop channel B (U46) sees the loop closed */
+        ch->rearm_set = (xd->val & 8u) != 0; /* HIGH = REARM set contact closed */
+    } else {
+        ch->k1_nc = ch->k1_run = ch->loop_b = ch->rearm_set = false; /* unknown counts as "not healthy" */
+    }
+    if (d_new) {
+        rrch_iox_d_t *xw = &ch->iox_d;
+        xw->seen_us = xd->t_us;
+        if (ch->rearm_set && !ch->rearm_set_prev) {
+            ch->rearm_set_edge_us = xd->t_us;
+        }
+        ch->rearm_set_prev = ch->rearm_set;
+    }
+    /* raw HW_LATCH_RB (RUN_12V tap) level history for the weld / short rules */
+    static const uint64_t settle_us = 10000u;
+    if (raw_latch != ch->raw_latch_prev) {
+        ch->raw_latch_prev = raw_latch;
+        ch->raw_latch_since_us = c->now_us;
+    }
+    bool sample_after = d_new && xd->t_us >= ch->raw_latch_since_us + settle_us && c->now_us - ch->raw_latch_since_us >= 20000u;
+    if (sample_after) {
+        /* F2/F3: latch down but K1 operated (pole A NC open) or K1 pole B passing CHAIN_END: K1 welded (U_HOLD
+         * keeps RUN_HD off, so this is detection, not the barrier). F4: RUN_12V up without K1_RUN: RUN_SHORT. */
+        /* the set pulse (110 ms) may hold K1 for a moment without the hold path: not judged within 300 ms of a REARM edge */
+        uint64_t last_edge = ch->rearm_edge_us > ch->rearm_set_edge_us ? ch->rearm_edge_us : ch->rearm_set_edge_us;
+        bool in_pulse = last_edge != 0u && c->now_us - last_edge < 300000u;
+        bool weld = !raw_latch && (!ch->k1_nc || ch->k1_run) && !in_pulse;
+        bool run_short = raw_latch && !ch->k1_run;
+        ch->n_weld = weld ? (uint8_t)(ch->n_weld + 1u) : 0u;
+        ch->n_run_short = run_short ? (uint8_t)(ch->n_run_short + 1u) : 0u;
+        if (ch->n_weld >= 2u && c->boot_done) {
+            rrch_fault_set(c, RRCH_FLT(K1_WELD), true);
+        }
+        if (ch->n_run_short >= 1u) {
+            rrch_fault_set(c, RRCH_FLT(RUN_SHORT), true);
+        }
+    }
+
     /* The hardware window (U30) passes 0.59-1.55 kOhm (safety_chain.md 2.2). The analog copy uses bands
      * around it so that tolerances do not read as disagreement: OK 620-1500, OPEN > 1650, SHORT < 560,
      * in between "marginal" (follows the comparator). */
@@ -253,7 +316,7 @@ void rrch_chain_step(rrch_t *c)
     uint8_t ana = lo < 560u ? 2u : (lo > 1650u ? 1u : ((lo >= 620u && lo <= 1500u) ? 0u : 3u));
     ch->ana3 = ana;
     uint8_t anaw = ana == 3u ? cmp : ana;
-    ch->loop_state = (cmp == 2u || anaw == 2u) ? 2u : ((cmp == 1u || anaw == 1u) ? 1u : 0u);
+    ch->loop_state = (cmp == 2u || anaw == 2u) ? 2u : ((cmp == 1u || anaw == 1u || (ch->iox_d_known && !ch->loop_b)) ? 1u : 0u);
     bool disagree = ana != 3u && ((cmp == 0u) != (ana == 0u));
     bool latched_now = (st & RRCH_DI(HW_LATCH)) != 0;
     rrch_fault_set(c, RRCH_FLT(LOOP_DISCREPANCY), timer_run(&ch->t_loop_disc, disagree, 200));
@@ -262,12 +325,29 @@ void rrch_chain_step(rrch_t *c)
      * of K1, so the latch drops even if U21 is held closed) and latches STOP_ESCALATED; a disagreement
      * lasting 5 ms while latched (the comparator lags the analog copy by about 1.5 ms) is LOOP_FAIL. */
     bool ana_bad = timer_run(&ch->t_loop_ana, ana == 1u || ana == 2u, 2);
-    if (latched_now && c->boot_done && (ana_bad || cmp != 0u)) {
+    bool b_open = ch->iox_d_known && !ch->loop_b;
+    if (latched_now && c->boot_done && (ana_bad || cmp != 0u || b_open)) {
         if (!c->permit_withdrawn) {
             c->permit_withdrawn = true;
             rrch_event(c, RRCH_EV_PERMIT, 0, 5, 0);
         }
         rrch_pstop(c, RRCH_SW(STOP_ESCALATED));
+    }
+    /* stage 3 F6: channel A (U30, open/short window) and channel B (U46, open only) in series. A/B
+     * disagreement about "open" for 20 ms (A reporting a short is not a disagreement: B cannot see
+     * shorts): the analog copy arbitrates. Analog says open -> the channel that says closed is stuck
+     * healthy, a hardware barrier is lost: LOOP_FAIL (fatal). Analog says OK or marginal -> the channel
+     * that says open is wrong in the safe direction: LOOP_DISCREPANCY (arming withheld, not fatal; that
+     * channel holds the chain open anyway). Without IOX_D the stage-2 rule (A vs analog) stays. */
+    bool ab = ch->iox_d_known && cmp != 2u && ((cmp == 1u) != b_open);
+    bool ab_t = timer_run(&ch->t_loopab, ab, 20);
+    if (ab_t && ana == 1u) {
+        rrch_fault_set(c, RRCH_FLT(LOOP_FAIL), true);
+    }
+    if (ch->iox_d_known) {
+        /* analog alone disagreeing with two agreeing hardware channels is a diagnostic discrepancy only */
+        disagree = false;
+        rrch_fault_set(c, RRCH_FLT(LOOP_DISCREPANCY), ab_t || timer_run(&ch->t_loop_disc, ana != 3u && ((cmp == 0u && !b_open) != (ana == 0u)), 200));
     }
     if (!disagree) {
         ch->loop_disc_latched = false;
@@ -284,7 +364,10 @@ void rrch_chain_step(rrch_t *c)
     bool n4 = st & RRCH_DI(CHG_PLUG_LINK), n5 = st & RRCH_DI(HEAD_DOCK), n8a = st & RRCH_DI(BODY_BUMPER_L), n8 = st & RRCH_DI(BODY_BUMPER_R);
     bool n9 = st & RRCH_DI(WDG_OK);
     bool u21 = (st & RRCH_DI(HEAD_LOOP_OK)) != 0, u22 = (st & RRCH_DI(LAB_KEY_N)) != 0;
-    bool n7 = n5 && u21 && u22; /* CH_N7 inferred: no readback behind the photo-MOS U21/U22 */
+    bool u21b = ch->iox_d_known && ch->loop_b; /* stage 3: U21B (channel B) between CH_N6A and CH_N6 */
+    bool n7a = n5 && u21 && u22;
+    bool n7 = n7a && u21b; /* CH_N7 inferred: no readback behind the photo-MOS U21/U21B/U22 */
+    bool n7_dead = !n7a || (ch->iox_d_known && !ch->loop_b); /* known dead (an unreadable IOX_D proves nothing) */
     uint32_t known = ~RB_NODE_MASK | RRCH_DI(MODE_RUN);
     known |= n1 ? RRCH_DI(ESTOP_A) : 0u;
     known |= n2 ? RRCH_DI(HANDS_ON) : 0u;
@@ -297,7 +380,7 @@ void rrch_chain_step(rrch_t *c)
     ch->rb_known = known;
     /* a node that is live behind a dead upstream node: harness short to a live conductor, readback
      * fault, or a shorted photo-MOS U21/U22 (safety_chain.md section 6 rows 8, 16, 23, 31, 32) */
-    bool impl = (n2 && !n1) || (n3 && !n2) || (n4a && !n3) || (n4 && !n4a) || (n5 && !n4) || (n8a && !n7) || (n8 && !n8a) || (n9 && !n8);
+    bool impl = (n2 && !n1) || (n3 && !n2) || (n4a && !n3) || (n4 && !n4a) || (n5 && !n4) || (n8a && n7_dead) || (n8 && !n8a) || (n9 && !n8);
     float bf_ms = CFG(c, CHAIN_BACKFEED_MS);
     ch->backfeed = bf_ms > 0.0f && (float)(c->now_us - ch->ce_live_us) < bf_ms * 1000.0f;
     if (timer_run(&ch->t_implausible, impl && !ch->backfeed, 20)) { /* back-fed nodes are not a fault (review M1) */
@@ -311,7 +394,7 @@ void rrch_chain_step(rrch_t *c)
     ch->el[RRCH_EL_HANDS_ON] = node_el(st, known, RRCH_DI(HANDS_ON));
     ch->el[RRCH_EL_CHG_COVER] = el_and(node_el(st, known, RRCH_DI(CHG_COVER)), node_el(st, known, RRCH_DI(CHG_PLUG_LINK)));
     ch->el[RRCH_EL_HEAD_DOCK] = node_el(st, known, RRCH_DI(HEAD_DOCK));
-    ch->el[RRCH_EL_HEAD_LOOP] = ch->loop_state == 0u ? RRCH_ELS_CLOSED : RRCH_ELS_OPEN;
+    ch->el[RRCH_EL_HEAD_LOOP] = (ch->loop_state == 0u && u21b) ? RRCH_ELS_CLOSED : RRCH_ELS_OPEN;
     ch->el[RRCH_EL_LAB_KEY_N] = (u22 && !lab_code) ? RRCH_ELS_CLOSED : RRCH_ELS_OPEN;
     ch->el[RRCH_EL_BODY_BUMPER] = el_and(node_el(st, known, RRCH_DI(BODY_BUMPER_L)), node_el(st, known, RRCH_DI(BODY_BUMPER_R)));
     ch->el[RRCH_EL_WDG_OK] = node_el(st, known, RRCH_DI(WDG_OK));
@@ -433,15 +516,24 @@ void rrch_chain_step(rrch_t *c)
     }
     ch->rearm_prev = rb_now;
     ch->rearm_held_ms = rb_now ? (ch->rearm_held_ms < 0x7FFFFFFFu ? ch->rearm_held_ms + 1u : ch->rearm_held_ms) : 0u;
-    rrch_fault_set(c, RRCH_FLT(REARM_HELD), ch->rearm_held_ms > 2000u); /* held / welded REARM: permit withheld */
+    rrch_fault_set(c, RRCH_FLT(REARM_HELD), ch->rearm_held_ms > 2000u || ch->rearm_set_held_ms > 2000u); /* held / welded REARM: permit withheld */
+    /* F5: the two REARM contact lines must agree; F17: both closing edges within 100 ms (+ the 10 ms IOX_D
+     * sampling) and the rise within the window after the later one */
+    rrch_fault_set(c, RRCH_FLT(REARM_DISCREPANCY), timer_run(&ch->t_rearm_disc, ch->iox_d_known && ch->rearm_set != rb_now, 200));
+    ch->rearm_set_held_ms = ch->rearm_set ? ch->rearm_set_held_ms + 1u : 0u;
+    if (ch->rearm_set_held_ms > 2000u) {
+        rrch_fault_set(c, RRCH_FLT(REARM_HELD), true);
+    }
     if (latch && !ch->latch) {
-        bool legit = ch->rearm_edge_ok && c->now_us - ch->rearm_edge_us <= 250000u + 1000u * (uint64_t)CFG(c, CHAIN_CLOSE_DEBOUNCE_MS);
+        uint64_t a = ch->rearm_edge_us, b = ch->rearm_set_edge_us, later = a > b ? a : b;
+        bool both = b != 0u && (a > b ? a - b : b - a) <= 110000u;
+        bool legit = ch->rearm_edge_ok && both && c->now_us - later <= 250000u + 1000u * (uint64_t)CFG(c, CHAIN_CLOSE_DEBOUNCE_MS);
         ch->rearm_edge_ok = false;
         if (!legit) {
             rrch_fault_set(c, RRCH_FLT(LATCH_NO_REARM), true); /* welded K1, K1_SET short, RUN_12V short */
         }
     }
-    if (timer_run(&ch->t_latch_boot, latch && !c->boot_done, 20)) {
+    if (timer_run(&ch->t_latch_boot, latch && !c->boot_done, 40)) {
         rrch_fault_set(c, RRCH_FLT(LATCH_NO_REARM), true); /* latch readback high at boot (ARM_PERMIT is low) */
     }
     /* an element known open while the latch still reads set: the hardware did not drop (K1 takes 4 ms,
@@ -481,5 +573,15 @@ void rrch_chain_step(rrch_t *c)
 
 bool rrch_rearm_blocked(const rrch_t *c)
 {
-    return !c->chain.latch && (c->now_us < c->chain.rearm_block_until_us || c->chain.rearm_held_ms > 2000u);
+    const rrch_chain_t *ch = &c->chain;
+    /* latch down: no arming while a REARM contact is held or the two contacts disagree, while IOX_D cannot
+     * be read, or while K1 pole A does not read released (F1, F2, F5) */
+    bool raw_latch = (c->in.di & RRCH_DI(HW_LATCH)) != 0;
+    if (ch->latch || raw_latch) {
+        return false;
+    }
+    /* K1 must read released before ARM_PERMIT is raised (F2): blocks raising only, never withdraws */
+    bool k1_unproven = !c->out.arm_permit && !(ch->iox_d_known && ch->k1_nc);
+    return c->now_us < ch->rearm_block_until_us || ch->rearm_held_ms > 2000u || ch->rearm_set_held_ms > 2000u ||
+           (c->faults & RRCH_FLT(REARM_DISCREPANCY)) || !ch->iox_d_known || k1_unproven;
 }

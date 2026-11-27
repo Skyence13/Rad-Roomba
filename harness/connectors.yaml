@@ -25,7 +25,7 @@ net_pairs:
   - {a: CH_N7, b: CH_N8A, via: BUMP-L-DEV NC, why: "chain element BODY_BUMPER (left)"}
   - {a: CH_N8A, b: CH_N8, via: BUMP-R-DEV NC, why: "chain element BODY_BUMPER (right)"}
   - {a: EN_SRC, b: EN_SYS, via: MODE-DEV EN contact, why: "master enable contact"}
-  - {a: SET_CAP, b: K1_SET, via: REARM-DEV NO 1, why: "latch set contact (momentary)"}
+  - {a: REARM_SET_SRC, b: REARM_SET_RAW, via: REARM-DEV NO 1, why: "REARM set contact (momentary): a 5 V signal into the on-board set stage (stage 3), no longer the K1 coil pulse"}
   - {a: BTN_3V3, b: REARM_BTN_RAW, via: REARM-DEV NO 2, why: "REARM_BTN contact"}
   - {a: PAUSE_3V3, b: PAUSE_BTN_RAW, via: PAUSE-DEV NO, why: "PAUSE contact (own supply through R_PAUSE 1 kohm, stage 2 S2-01f)"}
   - {a: HEAD_LOOP_OUT, b: LOOP_A, via: RAIL-F NC, why: "head rail switch front"}
@@ -1378,7 +1378,7 @@ connectors:
     mpn_status: UNVERIFIED
     mating_half: 43645-0800 (circuit.py note; mating housing not in the chassis tables)
     mating_status: UNVERIFIED
-    contacts: 43030 'AWG 18-24 variant for the heater pair' (circuit.py note; suffix not in sources)
+    contacts: '43030-0007 (AWG 20-24) (chassis table; stage 3 H-03 / IB-61: heater conductors AWG 20, rating about 3.13 A continuous UNVERIFIED)'
     seal: none stated (inside the head shell)
     temp: -40 C family (CCR-E05); no figure in sources
     temp_status: UNVERIFIED
@@ -1390,8 +1390,8 @@ connectors:
     pins:
       "1": {net: HEAD_PWR_P, wires: [W-101.1]}
       "2": {net: HEAD_PWR_N, wires: [W-101.2]}
-      "3": {net: HEAD_HTR_P, wires: [W-101.3]}
-      "4": {net: HEAD_HTR_N, wires: [W-101.4]}
+      "3": {net: HEAD_HTR_P, wires: [W-101.3H]}
+      "4": {net: HEAD_HTR_N, wires: [W-101.4H]}
       "5": {net: HEAD_LOOP_OUT, wires: [W-101.5]}
       "6": {net: HEAD_LOOP_RET, wires: [W-101.6]}
       "7": {net: HEAD_PRES_ID, wires: [W-101.7]}
@@ -1584,7 +1584,7 @@ connectors:
     mpn_status: UNVERIFIED
     mating_half: 43645-0600 (circuit.py note; mating housing not in the chassis tables)
     mating_status: UNVERIFIED
-    contacts: 43030 'AWG 18-24 variant for the heater pair' (circuit.py note; suffix not in sources)
+    contacts: '43030-0007 (AWG 20-24) (chassis table; stage 3 H-03 / IB-61: heater conductors AWG 20, rating about 3.13 A continuous UNVERIFIED)'
     seal: none stated (inside the head shell)
     temp: -40 C family (CCR-E05); no figure in sources
     temp_status: UNVERIFIED
@@ -2426,6 +2426,46 @@ connectors:
       "4": {net: GND, wires: [W-007.4]}
       "5": {net: ENCC_R_A, wires: [W-007.5]}
       "6": {net: ENCC_R_B, wires: [W-007.6]}
+  - id: MOTSUP-L
+    location: Left gearmotor terminals (soldered on the motor, leads <= 5 mm)
+    function: 'Left motor suppression network: C_X 47-100 nF across the motor terminals; C_Y1 and C_Y2 4.7-10 nF from each terminal to the motor can; can strapped to the chassis plate'
+    kind: assembly
+    mpn: 'no part number in any source - to be selected (class: C_X X7R >= 50 V 1206 or film; C_Y X7R >= 100 V)'
+    mpn_status: TBD
+    mating_half: n/a (soldered)
+    mating_status: TBD
+    contacts: 'solder at the motor terminals; can strap: braid or tab, <= 30 mm, >= 2.5 mm wide'
+    seal: none
+    temp: 'X7R: -55..+125 C class value (EIA code), part TBD'
+    temp_status: UNVERIFIED
+    keying: n/a
+    source: docs/reviews/REVIEW_head_interference.md M4; head_acq/STAGE2_CHANGE_REQUESTS.md S3-H H-01
+    notes: 'Chassis stage / head S3-H H-01 (review M4). Not a wire: no row in cables.csv. Brush arcs 1-100 MHz are not reduced by the BLM31 + 1 nF at the board connector.'
+    pin_geometry_status: UNVERIFIED (no manufacturer drawing in the sources; see pin_views.md, geometry family 'list')
+    pins:
+      "A": {net: MOTC_L_A, wires: []}
+      "B": {net: MOTC_L_B, wires: []}
+      "CAN": {net: MOTOR_CAN_L, wires: []}
+  - id: MOTSUP-R
+    location: Right gearmotor terminals (soldered on the motor, leads <= 5 mm)
+    function: 'Right motor suppression network: C_X 47-100 nF across the motor terminals; C_Y1 and C_Y2 4.7-10 nF from each terminal to the motor can; can strapped to the chassis plate'
+    kind: assembly
+    mpn: 'no part number in any source - to be selected (class: C_X X7R >= 50 V 1206 or film; C_Y X7R >= 100 V)'
+    mpn_status: TBD
+    mating_half: n/a (soldered)
+    mating_status: TBD
+    contacts: 'solder at the motor terminals; can strap: braid or tab, <= 30 mm, >= 2.5 mm wide'
+    seal: none
+    temp: 'X7R: -55..+125 C class value (EIA code), part TBD'
+    temp_status: UNVERIFIED
+    keying: n/a
+    source: docs/reviews/REVIEW_head_interference.md M4; head_acq/STAGE2_CHANGE_REQUESTS.md S3-H H-01
+    notes: 'Chassis stage / head S3-H H-01 (review M4). Not a wire: no row in cables.csv. Brush arcs 1-100 MHz are not reduced by the BLM31 + 1 nF at the board connector.'
+    pin_geometry_status: UNVERIFIED (no manufacturer drawing in the sources; see pin_views.md, geometry family 'list')
+    pins:
+      "A": {net: MOTC_R_A, wires: []}
+      "B": {net: MOTC_R_B, wires: []}
+      "CAN": {net: MOTOR_CAN_R, wires: []}
   - id: LIDAR-PWR
     location: LiDAR base on the battery hump, pad (-150, 0), z 150
     function: LiDAR supply input (Richbeam LakiBeam 1L, 9-36 V)
@@ -2617,7 +2657,7 @@ connectors:
       "NC-b": {net: CH_N3, wires: [W-017.2]}
   - id: REARM-DEV
     location: Left deck (-172.0, 97.0, 125.2), axis (-0.190, 0.415, 0.890)
-    function: REARM/Start guarded flush momentary, 2 NO (NO 1 = capacitor-coupled set path, NO 2 = REARM_BTN to the MCU), 12 V LED block
+    function: REARM/Start guarded flush momentary, 2 NO (NO 1 = set contact into the on-board set stage, a 5 V signal since stage 3; NO 2 = REARM_BTN aux contact to the MCU and the set stage), 12 V LED block
     kind: device
     mpn: Schneider Harmony XB5 guarded flush momentary 2 NO + 12 V LED block (reference TBD)
     mpn_status: UNVERIFIED
@@ -2629,15 +2669,15 @@ connectors:
     temp_status: UNVERIFIED
     keying: 22 mm panel
     source: estop_and_operator_switches.md
-    notes: NO 1 closes the latch set path. NO 2 is electrically independent.
+    notes: NO 1 signals the set stage (<= 5 mA); NO 2 gives the aux level. Both are needed to set (stage 3).
     pin_geometry_status: UNVERIFIED (no manufacturer drawing in the sources; see pin_views.md, geometry family 'list')
     pins:
       "AUX-a": {net: BTN_3V3, wires: [W-018.3]}
       "AUX-b": {net: REARM_BTN_RAW, wires: [W-018.4]}
       "LAMP+": {net: V12_AUX, wires: [W-018.5]}
       "LAMP-": {net: LAMP_REARM_K, wires: [W-018.6]}
-      "SET-a": {net: SET_CAP, wires: [W-018.1]}
-      "SET-b": {net: K1_SET, wires: [W-018.2]}
+      "SET-a": {net: REARM_SET_SRC, wires: [W-018.1]}
+      "SET-b": {net: REARM_SET_RAW, wires: [W-018.2]}
   - id: PAUSE-DEV
     location: Right deck (-84.0, -112.0, 122.0), axis (0.049, -0.521, 0.852)
     function: PAUSE/Stop projecting momentary, 1 NO, 12 V LED block
@@ -2854,6 +2894,44 @@ connectors:
     pins:
       "1": {net: CLAMP_F, wires: []}
       "2": {net: CLAMP_R, wires: []}
+  - id: SPL-JH3
+    location: In the loom
+    function: head pigtail heater pole + wire-to-wire splice AWG 18 (J1 plug side) to AWG 20 (J2001 side), 30 mm outside the head gland
+    kind: splice
+    mpn: TBD - not in sources (sealed wire-to-wire splice)
+    mpn_status: TBD
+    mating_half: n/a
+    mating_status: TBD
+    contacts: TBD - not in sources
+    seal: TBD
+    temp: TBD - not in sources
+    temp_status: TBD
+    keying: n/a
+    source: harness decision
+    notes: 'Splice resistance not in power_budget.md: measure on the first harness.'
+    pin_geometry_status: UNVERIFIED (no manufacturer drawing in the sources; see pin_views.md, geometry family 'list')
+    pins:
+      "1": {net: HEAD_HTR_P, wires: [W-101.3]}
+      "2": {net: HEAD_HTR_P, wires: [W-101.3H]}
+  - id: SPL-JH4
+    location: In the loom
+    function: head pigtail heater pole - wire-to-wire splice AWG 18 to AWG 20, 30 mm outside the head gland, staggered 15 mm from SPL-JH3
+    kind: splice
+    mpn: TBD - not in sources (sealed wire-to-wire splice)
+    mpn_status: TBD
+    mating_half: n/a
+    mating_status: TBD
+    contacts: TBD - not in sources
+    seal: TBD
+    temp: TBD - not in sources
+    temp_status: TBD
+    keying: n/a
+    source: harness decision
+    notes: 'Splice resistance not in power_budget.md: measure on the first harness.'
+    pin_geometry_status: UNVERIFIED (no manufacturer drawing in the sources; see pin_views.md, geometry family 'list')
+    pins:
+      "1": {net: HEAD_HTR_N, wires: [W-101.4]}
+      "2": {net: HEAD_HTR_N, wires: [W-101.4H]}
   - id: SPL-P
     location: In the loom
     function: pack positive 1-to-2 crimp splice (AWG 14 trunk to 2 x AWG 16)
@@ -3382,6 +3460,12 @@ unconnected_pins:   # connector pins with no wire in cables.csv, with the reason
   - {connector: CHGPLUG, pin: "3", net: GND, reason: "supply-side plug: belongs to the external 24 V supply, not to the robot harness"}
   - {connector: CHGPLUG, pin: "4", net: GND, reason: "supply-side plug: belongs to the external 24 V supply, not to the robot harness"}
   - {connector: CHGPLUG, pin: "FE", net: CHASSIS, reason: "supply-side plug: belongs to the external 24 V supply, not to the robot harness"}
+  - {connector: MOTSUP-L, pin: "A", net: MOTC_L_A, reason: "assembly item soldered at the motor terminals (cables.md section 7): not a wire"}
+  - {connector: MOTSUP-L, pin: "B", net: MOTC_L_B, reason: "assembly item soldered at the motor terminals (cables.md section 7): not a wire"}
+  - {connector: MOTSUP-L, pin: "CAN", net: MOTOR_CAN_L, reason: "assembly item soldered at the motor terminals (cables.md section 7): not a wire"}
+  - {connector: MOTSUP-R, pin: "A", net: MOTC_R_A, reason: "as MOTSUP-L"}
+  - {connector: MOTSUP-R, pin: "B", net: MOTC_R_B, reason: "as MOTSUP-L"}
+  - {connector: MOTSUP-R, pin: "CAN", net: MOTOR_CAN_R, reason: "as MOTSUP-L"}
   - {connector: CM5-USB1, pin: "1", net: NC, reason: "NC by design (net NC)"}
   - {connector: BUMP-L-DEV, pin: "NO", net: UNUSED, reason: "NC by design (net UNUSED)"}
   - {connector: BUMP-R-DEV, pin: "NO", net: UNUSED, reason: "NC by design (net UNUSED)"}

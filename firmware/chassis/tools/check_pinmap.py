@@ -73,7 +73,7 @@ def check(pm, facts):
     sigs = {}
     for p in pm["pins"]:
         sigs.setdefault(p["signal"], []).append(p["pin"])
-    for xname in ("IOX_A", "IOX_B", "IOX_C"):
+    for xname in ("IOX_A", "IOX_B", "IOX_C", "IOX_D"):
         for pin, d in pm["expanders"][xname]["pins"].items():
             sigs.setdefault(d["signal"], []).append(f"{xname}.{pin}")
     for s, where in sigs.items():
@@ -92,7 +92,7 @@ def check(pm, facts):
 
 
 NETLIST = os.path.join(ROOT, "..", "..", "electronics", "chassis_main", "out", "pinmap.json")
-EXPANDER_REF = {"IOX_A": "U43", "IOX_B": "U44", "IOX_C": "U45"}
+EXPANDER_REF = {"IOX_A": "U43", "IOX_B": "U44", "IOX_C": "U45", "IOX_D": "U47"}
 # IOX_A GPB7 is wired to the strobe net on purpose; stage 3 (S3 F7/F8) puts 47 k series resistors in front of
 # GPA5/GPA7/GPB7, so the expander pins then sit on *_IO nets
 NET_ALIAS = {"SENTINEL": ("WDG_STROBE", "WDG_STROBE_IO"), "HEAD_LOOP_OK_RB": ("HEAD_LOOP_OK_RB", "HEAD_LOOP_OK_IO"),
@@ -177,7 +177,7 @@ def emit_header(pm, path):
         if "alt" in p:
             lines.append(f"#define PIN_{s}_ALT_AF {str(p['alt']['af'])[2:]}u")
     lines.append("")
-    for xname in ("IOX_A", "IOX_B", "IOX_C"):
+    for xname in ("IOX_A", "IOX_B", "IOX_C", "IOX_D"):
         x = pm["expanders"][xname]
         if "address_7bit" in x:
             lines.append(f"#define {xname}_I2C_ADDR 0x{x['address_7bit']:02X}u")
@@ -222,7 +222,7 @@ def emit_markdown(pm, path):
         if len(note) > 110:
             note = note[:107] + "..."
         out.append(f"| {p['pin']} | {p['lqfp64']} | `{p['signal']}` | {p['function']} | {p['af']} | {p['dir']} | {note} |")
-    for xname in ("IOX_A", "IOX_B", "IOX_C"):
+    for xname in ("IOX_A", "IOX_B", "IOX_C", "IOX_D"):
         x = pm["expanders"][xname]
         out += ["", f"**{xname}** - {x['part']} on {x['bus']}" + (f", address 0x{x['address_7bit']:02X}" if "address_7bit" in x else f", CS {x['cs']}"), "",
                 "| Expander pin | Signal | Note |", "|---|---|---|"]

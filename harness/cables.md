@@ -66,7 +66,7 @@ At **both ends** of every cable, within 30 mm of the connector: a sleeve with `W
 | W-016 | Mode selector OFF/SERVICE/RUN to main board J_MODE | 4 | 190 | - |  |
 | W-017 | HANDS-ON button and lamp to main board J_HANDS | 4 | 250 | - |  |
 | W-018 | REARM/Start button and lamp: main board J_BTN to the REARM button (left deck) | 6 | 240 | - |  |
-| W-019 | PAUSE/Stop button and lamp: main board J_PAUSE (JST GH 5-way) to the PAUSE button (right deck) | 4 | 170 | - |  |
+| W-019 | PAUSE/Stop button and lamp: main board J_PAUSE (JST GH 5-way) to the PAUSE button (right deck) | 4 | 180 | - |  |
 | W-020 | Head dock switch to main board J_DOCK | 2 | 270 | - |  |
 | W-021 | Body bumper left to main board J_BUMP_L | 2 | 330 | - |  |
 | W-022 | Body bumper right to main board J_BUMP_R | 2 | 310 | - |  |
@@ -85,7 +85,7 @@ At **both ends** of every cable, within 30 mm of the connector: a sleeve with `W
 | W-040 | ToF carrier REAR_R (RR-TOF #10): main board J_TOF10 to the carrier J1 | 6 | 290 | 300 |  |
 | W-041 | Chassis/bay heater with its bimetal cut-out: main board J_HTR to the heater plate | 3 | 220 | 300 |  |
 | W-042 | Bay NTC and pack-surface NTC to main board J_NTC | 4 | 220 | - |  |
-| W-101 | Head J1 captive pigtail: head board J2001 to the J1 plug | 8 | 300 | 350 |  |
+| W-101 | Head J1 captive pigtail: head board J2001 to the J1 plug | 10 | 300 | 350 |  |
 | W-102 | Head J2 captive pigtail: head board J2501 to the J2 plug (plug link pin 7 to pin 4) | 9 | 300 | - |  |
 | W-103 | Head heater film, bimetal cut-out and spreader NTC: head board J2601 to the heater assembly | 7 | 110 | 350 |  |
 | W-104 | Head rail switch front (series element of the interlock loop): head board J2002 to the switch | 2 | 90 | - |  |
@@ -107,7 +107,7 @@ At **both ends** of every cable, within 30 mm of the connector: a sleeve with `W
 | W-200 | LAB ONLY: J1X extension, 2 m, M16 plug (robot end) to M16 socket (head end), straight through + 1.50 kohm LAB resistor | 9 | 2000 | 2000 |  |
 | W-201 | LAB ONLY: J2X extension, 2 m, M12 plug (robot end) to M12 socket (head end), straight through | 8 | 2000 | 2000 |  |
 
-Totals: **58 cable assemblies, 284 wires** (179 robot, 88 head, 17 LAB extension wires).
+Totals: **58 cable assemblies, 286 wires** (179 robot, 90 head, 17 LAB extension wires).
 
 ### Lengths that exceed a limit
 
@@ -431,25 +431,25 @@ Open length items: (a) **IB-34 mapping (lead decision, OD-1 closed)**: J_TOF4 = 
 ### W-018  REARM/Start button and lamp: main board J_BTN to the REARM button (left deck)
 
 * **Length:** 240 mm (routed path 138 mm + 2 x 25 mm termination/strain relief + 50 mm service loop = 238 mm, rounded up to 240 mm). *Estimated from layout, confirm on first build.*
-* **Construction:** 6 x AWG 24, direct to the REARM button, no splices (stage 2, S2-01: the Y-loom with SPL-BTN3 / SPL-BTN6 is gone). Yellow safety loom for pins 1-2. J_BTN pins 5 and 8 are not connected on the board any more (the PAUSE signals moved to J_PAUSE): leave those housing cavities empty.
+* **Construction:** 6 x AWG 24, direct to the REARM button, no splices. Three twisted pairs: P1 set contact (pins 1-2, signal 5 V / <= 5 mA), P2 aux contact (3-4), P3 lamp (6-7). Lay the pairs in the order P1, P2, P3 in the bundle and keep the lamp pair (V12_AUX) on the OUTSIDE next to nothing but P3's own return: do not put a supply conductor between the two contact pairs. Yellow safety loom. J_BTN pins 5 and 8 are NC (PAUSE moved to J_PAUSE): leave those cavities empty.
 * **Shield / bonding:** none
-* **Protection upstream:** Chain branch: F_CHAIN PTC 0.20 A hold / 0.40 A trip (circuit.py); relay coils and chain nodes 80 mA when latched; lamps: V12_AUX PTC F_AUX 0.35 A hold (lamps, fan, external sounder)
+* **Protection upstream:** Chain branch: F_CHAIN PTC 0.20 A hold / 0.40 A trip (circuit.py); relay coils and chain nodes 80 mA when latched; lamps: V12_AUX PTC F_AUX 0.35 A hold (lamps, fan, external sounder); set contact line limited to 5 mA by R_SSRC 1 kohm
 * **Strain relief:** Adhesive-lined heat-shrink boot over the housing; P-clip within 50 mm; yellow sleeve/heat-shrink on the whole safety loom; kept in its own loom away from VBAT conductors (chassis_safety_chain.md fault #31); device end: Cable clamped/clipped within 50 mm of the device terminals; drip loop at panel devices; ferrules or the device's own terminal type (TBD)
 * **Labels:** both ends, `W-018` + connector ID + pin-1 mark; per-conductor `W-xxx.n` (see `cables.csv`).
-* **Notes:** A short between J_BTN 1-2 permanently sets the set path: the latch must still not set after an element cycles (chassis_safety_chain.md procedure 7). J_BTN stays an 8-way CLIK-Mate so that its circuit count stays unique among the safety headers (S2-01a/b).
+* **Notes:** STAGE 3 (S3-C1, review C1): the relay coil node no longer leaves the board. CONDUCTOR-TO-CONDUCTOR SHORTS in W-018 by the electronics' analysis (chassis_safety_chain.md section 5 rows 42-46): HARMLESS BY DESIGN: (a) V12_AUX, LAMP_REARM_K, BTN_3V3 or REARM_SET_SRC onto REARM_SET_RAW (row 42): one edge on the set line without the aux level: the set stage needs both, so NO SET; REARM_SET_RB vs REARM_BTN disagreement is detected (firmware F5), further presses give no edge until repaired; (b) the aux contact bridged (pins 3-4, or V12_AUX / BTN_3V3 onto REARM_BTN_RAW) (row 43): aux level always true, set still needs an edge; REARM_HELD after 2 s blocks ARM_PERMIT: cannot arm; bench step 7 (V12_AUX on J_BTN pin 2) is harmless. NOT HARMLESS (residual, row 44, marked as a warning by the electronics): a multi-conductor CRUSH that puts a supply on REARM_SET_RAW (pin 2) and REARM_BTN_RAW (pin 4) AT THE SAME TIME looks exactly like a REARM press and can arm the robot ONCE (chain closed, C_SET charged); every safety element still drops it; it is indistinguishable from a press. Latent two-fault cases (rows 45, 46: Q_SETA / Q_SETB shorted on the board plus a W-018 short) also reduce to one unintended set. Harness consequence: nothing in the cable can remove the crush case; keep the loom clamped clear of edges, with no supply conductor between the contact pairs, and treat W-018 as a safety-loom cable (continuity and insulation check after routing, test label W-018.ISO).
 
 | Wire | From (conn.pin) | To (conn.pin) | Net (from -> to) | AWG | Colour | Insulation | Pair | Length |
 |---|---|---|---|---|---|---|---|---|
-| W-018.1 | REARM-DEV.SET-a | CHS.J_BTN.1 | SET_CAP | 24 | YE | SI | P1 | 240 |
-| W-018.2 | REARM-DEV.SET-b | CHS.J_BTN.2 | K1_SET | 24 | YE | SI | P1 | 240 |
-| W-018.3 | REARM-DEV.AUX-a | CHS.J_BTN.3 | BTN_3V3 | 24 | RD | SI | - | 240 |
-| W-018.4 | REARM-DEV.AUX-b | CHS.J_BTN.4 | REARM_BTN_RAW | 24 | WH | SI | - | 240 |
-| W-018.5 | REARM-DEV.LAMP+ | CHS.J_BTN.6 | V12_AUX | 24 | PK | SI | - | 240 |
-| W-018.6 | REARM-DEV.LAMP- | CHS.J_BTN.7 | LAMP_REARM_K | 24 | BU | SI | - | 240 |
+| W-018.1 | REARM-DEV.SET-a | CHS.J_BTN.1 | REARM_SET_SRC | 24 | YE | SI | P1 | 240 |
+| W-018.2 | REARM-DEV.SET-b | CHS.J_BTN.2 | REARM_SET_RAW | 24 | YE | SI | P1 | 240 |
+| W-018.3 | REARM-DEV.AUX-a | CHS.J_BTN.3 | BTN_3V3 | 24 | RD | SI | P2 | 240 |
+| W-018.4 | REARM-DEV.AUX-b | CHS.J_BTN.4 | REARM_BTN_RAW | 24 | WH | SI | P2 | 240 |
+| W-018.5 | REARM-DEV.LAMP+ | CHS.J_BTN.6 | V12_AUX | 24 | PK | SI | P3 | 240 |
+| W-018.6 | REARM-DEV.LAMP- | CHS.J_BTN.7 | LAMP_REARM_K | 24 | BU | SI | P3 | 240 |
 
 ### W-019  PAUSE/Stop button and lamp: main board J_PAUSE (JST GH 5-way) to the PAUSE button (right deck)
 
-* **Length:** 170 mm (routed path 78 mm + 2 x 20 mm termination/strain relief + 50 mm service loop = 168 mm, rounded up to 170 mm). *Estimated from layout, confirm on first build.*
+* **Length:** 180 mm (routed path 83 mm + 2 x 20 mm termination/strain relief + 50 mm service loop = 173 mm, rounded up to 180 mm). *Estimated from layout, confirm on first build.*
 * **Construction:** 4 x AWG 26 (JST GH contacts take AWG 26-30: was AWG 24 on the CLIK-Mate Y-branch), own cable, no splices, no crossing of the board (stage 2, S2-01e). J_PAUSE pin 5 not connected. PAUSE is program control, not a chain element (CCR-E12), so it is a signal-family connector and the cable is not in the yellow safety loom.
 * **Shield / bonding:** none
 * **Protection upstream:** V12_AUX PTC F_AUX 0.35 A hold (lamps, fan, external sounder); contact supply current-limited by R_PAUSE 1 kohm
@@ -459,10 +459,10 @@ Open length items: (a) **IB-34 mapping (lead decision, OD-1 closed)**: J_TOF4 = 
 
 | Wire | From (conn.pin) | To (conn.pin) | Net (from -> to) | AWG | Colour | Insulation | Pair | Length |
 |---|---|---|---|---|---|---|---|---|
-| W-019.1 | PAUSE-DEV.NO-a | CHS.J_PAUSE.1 | PAUSE_3V3 | 26 | RD | FEP | - | 170 |
-| W-019.2 | PAUSE-DEV.NO-b | CHS.J_PAUSE.2 | PAUSE_BTN_RAW | 26 | WH | FEP | - | 170 |
-| W-019.3 | PAUSE-DEV.LAMP+ | CHS.J_PAUSE.3 | V12_AUX | 26 | PK | FEP | - | 170 |
-| W-019.4 | PAUSE-DEV.LAMP- | CHS.J_PAUSE.4 | LAMP_PAUSE_K | 26 | BU | FEP | - | 170 |
+| W-019.1 | PAUSE-DEV.NO-a | CHS.J_PAUSE.1 | PAUSE_3V3 | 26 | RD | FEP | - | 180 |
+| W-019.2 | PAUSE-DEV.NO-b | CHS.J_PAUSE.2 | PAUSE_BTN_RAW | 26 | WH | FEP | - | 180 |
+| W-019.3 | PAUSE-DEV.LAMP+ | CHS.J_PAUSE.3 | V12_AUX | 26 | PK | FEP | - | 180 |
+| W-019.4 | PAUSE-DEV.LAMP- | CHS.J_PAUSE.4 | LAMP_PAUSE_K | 26 | BU | FEP | - | 180 |
 
 ### W-020  Head dock switch to main board J_DOCK
 
@@ -792,22 +792,24 @@ Open length items: (a) **IB-34 mapping (lead decision, OD-1 closed)**: J_TOF4 = 
 ### W-101  Head J1 captive pigtail: head board J2001 to the J1 plug
 
 * **Length:** 300 mm (inside the head: board J2001 (u 86.8, v 10.6, mating face rearward, stage 2) to the rear-wall port = 17.6 mm path + 2 x 25 mm + 20 mm; outside: 200 mm free length (mechanical_interfaces.md allows 150..200; straight-line port to plug rear is 142 mm, plus bends at 40 mm radius, so 150 mm is too short)). *Estimated from layout, confirm on first build.*
-* **Construction:** Same construction as W-008 (shielded multicore, twisted pairs P1 power, P2 heater, P3 loop), captive: sealed strain relief in the head rear wall at (71.7, 76.2, 39) (CR-M03, moved from y 87.5), cable leaves toward -x/+z, clipped to the shoe root. OD <= 7.5 mm.
+* **Construction:** Same construction as W-008 (shielded multicore, twisted pairs P1 power, P2 heater, P3 loop), captive. WHERE THE HEATER GAUGE CHANGES (stage 3): pins 3/4 are AWG 18 from the M16 plug (contract) to a sealed crimp splice (SPL-JH3 / SPL-JH4: wire-to-wire, 18 -> 20 AWG, adhesive-lined heat-shrink, staggered 15 mm so the two splices do not stack) placed 30 mm OUTSIDE the head gland inside the cable overmould/boot, because there is no room for a splice inside the head (9 mm between the plug backs and the wall, CR-M06); from the splice the conductors are AWG 20 through the gland into the 43030-0007 terminals of J2001. Splice part TBD (none in any source). Sealed strain relief in the head rear wall at (71.7, 76.2, 39) (CR-M03, moved from y 87.5), cable leaves toward -x/+z, clipped to the shoe root. OD <= 7.5 mm.
 * **Shield / bonding:** Braid: 360 degrees to the J1 plug backshell (-> chassis through the mated shell) AND drain wire to the head board pad TP2004. This is the contract: hard bond at the chassis, 1 Mohm || 10 nF at the head.
 * **Protection upstream:** HEAD_PWR eFuse TPS259470 (RILM 2.21 k) 1.51 A; contract limit 1.5 A; head side TPS26600 eFuse 1.0 A (pins 1-2); HEAD_HTR eFuse TPS259470 (RILM 825 ohm) 4.05 A (3.6-4.4 A), contract limit 4.0 A; independent low-side bimetal cut-out on the head heater (pins 3-4); No fuse: signal conductors, series-limited (loop through 1.00 kohm; PRES_ID through the 4.70 kohm pull-up) [circuit.py]
 * **Strain relief:** Sealed strain-relief gland in the rear wall (inside the head wall); plug backshell clamp; clip to the shoe root; head cover 0.9 mm clearance must not trap the cable
 * **Labels:** both ends, `W-101` + connector ID + pin-1 mark; per-conductor `W-xxx.n` (see `cables.csv`).
-* **Notes:** IB-36 (head pigtail length): the harness specifies 200 mm free length outside the head plus about 90 mm inside = 290 mm, against the 2 x 0.35 m of the head power_budget.md (head side calculation); the geometry-based 200 mm follows mechanical_interfaces.md (150..200 mm) and the 142 mm straight-line check: the shorter pigtail lowers the resistance (conservative for the budget). The loop is potential-free: no conductor of pins 5-6 may touch the shield or any other pin. J2001 and J2601 sit side by side at the rear edge (stage 2, S2-L5: J2601 u 50.2..72.0, J2001 u 73.0..100.7) with the mating faces rearward; this needs CR-M02/CR-M03 (not yet accepted by head mechanical, IB-52). CCR-HE-02: J2001 header height 8 mm zone open.
+* **Notes:** IB-36 (head pigtail length): the harness specifies 200 mm free length outside the head plus about 90 mm inside = 290 mm, against the 2 x 0.35 m of the head power_budget.md (head side calculation); the geometry-based 200 mm follows mechanical_interfaces.md (150..200 mm) and the 142 mm straight-line check: the shorter pigtail lowers the resistance (conservative for the budget). The loop is potential-free: no conductor of pins 5-6 may touch the shield or any other pin. J2001 and J2601 sit side by side at the rear edge (stage 2, S2-L5: J2601 u 50.2..72.0, J2001 u 73.0..100.7) with the mating faces rearward; STAGE 3 (IB-61, CR-M06): both headers moved 7 mm forward (pin rows at v 17.57, mated plugs v -1.4..8.5, plug backs 9.0 mm from the rear-wall inner face), so the conductor run inside the head is 7 mm longer; this needs CR-M02/CR-M03/CR-M06 (not yet accepted by head mechanical, IB-52/IB-61). CCR-HE-02: J2001 header height 8 mm zone open.
 
 | Wire | From (conn.pin) | To (conn.pin) | Net (from -> to) | AWG | Colour | Insulation | Pair | Length |
 |---|---|---|---|---|---|---|---|---|
 | W-101.1 | HEAD.J2001.1 | J1P.1 | HEAD_PWR_P | 20 | RD | SI | P1 | 300 |
 | W-101.2 | HEAD.J2001.2 | J1P.2 | HEAD_PWR_N | 20 | BK | SI | P1 | 300 |
-| W-101.3 | HEAD.J2001.3 | J1P.3 | HEAD_HTR_P | 18 | OG | SI | P2 | 300 |
-| W-101.4 | HEAD.J2001.4 | J1P.4 | HEAD_HTR_N | 18 | BN | SI | P2 | 300 |
 | W-101.5 | HEAD.J2001.5 | J1P.5 | HEAD_LOOP_OUT | 24 | GN | SI | P3 | 300 |
 | W-101.6 | HEAD.J2001.6 | J1P.6 | HEAD_LOOP_RET | 24 | GY | SI | P3 | 300 |
 | W-101.7 | HEAD.J2001.7 | J1P.7 | HEAD_PRES_ID | 24 | VT | SI | - | 300 |
+| W-101.3 | SPL-JH3.1 | J1P.3 | HEAD_HTR_P | 18 | OG | SI | P2 | 170 |
+| W-101.3H | HEAD.J2001.3 | SPL-JH3.2 | HEAD_HTR_P | 20 | OG | SI | P2 | 130 |
+| W-101.4 | SPL-JH4.1 | J1P.4 | HEAD_HTR_N | 18 | BN | SI | P2 | 170 |
+| W-101.4H | HEAD.J2001.4 | SPL-JH4.2 | HEAD_HTR_N | 20 | BN | SI | P2 | 130 |
 | W-101.S | HEAD.TP2004.1 | J1P.SH | SHLD_J1 | 24 | bare | SI | - | 70 |
 
 ### W-102  Head J2 captive pigtail: head board J2501 to the J2 plug (plug link pin 7 to pin 4)
@@ -835,20 +837,20 @@ Open length items: (a) **IB-34 mapping (lead decision, OD-1 closed)**: J_TOF4 = 
 ### W-103  Head heater film, bimetal cut-out and spreader NTC: head board J2601 to the heater assembly
 
 * **Length:** 110 mm (routed path 34 mm + 2 x 20 mm termination/strain relief + 30 mm service loop = 104 mm, rounded up to 110 mm). *Estimated from layout, confirm on first build.*
-* **Construction:** Heater circuit AWG 18 pair (supply and return twisted) plus AWG 24 sense and an AWG 26 NTC pair. Assembly (per J2601): HTR_SW -> 4.8 ohm element -> CUTOUT_SENSE -> bimetal cut-out (low side) -> HEAD_HTR_N. Tail comes up the rear chimney at y = +87.5. J2601 pin 6 not wired.
+* **Construction:** Heater circuit AWG 20 pair (supply and return twisted; stage 3 H-03, was AWG 18) plus AWG 24 sense and an AWG 26 NTC pair. Assembly (per J2601): HTR_SW -> 4.8 ohm element -> CUTOUT_SENSE -> bimetal cut-out (low side) -> HEAD_HTR_N. Tail comes up the rear chimney at y = +87.5. J2601 pin 6 not wired.
 * **Shield / bonding:** none inside the shielded head
 * **Protection upstream:** HEAD_HTR eFuse TPS259470 (RILM 825 ohm) 4.05 A (3.6-4.4 A), contract limit 4.0 A; independent low-side bimetal cut-out on the head heater; cut-out status reads 'tripped' when the feed is off (by design)
 * **Strain relief:** Leads clipped to the spreader with Kapton/high-temperature tape within 20 mm of the film tail
 * **Labels:** both ends, `W-103` + connector ID + pin-1 mark; per-conductor `W-xxx.n` (see `cables.csv`).
-* **Notes:** Heater film, cut-out and NTC parts are not in the sources (TBD). CCR-HE-02 (connector height) open.
+* **Notes:** STAGE 3. (1) J2601 moved 7 mm forward (CR-M06): +7 mm in the length. (2) HEATER INSULATION (review M5, L-05): the heater harness inside the head (film leads, thermal cut-out, NTC lug, splice SPL-HCUT) must be INSULATED from the spreader / frame: cut-out with an electrically isolated case (>= 100 MOhm case-to-terminals at 100 V, written into its BOM line, part TBD), NTC with an isolated lug or on a 0.1 mm polyimide pad, splice SPL-HCUT in adhesive-lined heat-shrink and lifted off the spreader on a polyimide pad, film tails and leads sleeved (silicone or FEP) and held off the spreader edge by polyimide tape (>= 1 mm gap to any metal edge). A live heater-domain part touching the spreader would put up to 1.5 A through R2801 and the board ground plane. ASSEMBLED-HEAD CHECK (test label W-103.HTR-ISO): heater assembly fitted, spreader bolted to the board, BOARD DISCONNECTED (J2601 unplugged, so the leads are free): J2601 plug pins 1, 2 and 3 (and the NTC pair 4/5) each to FRAME (spreader) >= 10 MOhm at 100 V DC; repeat each to board GND with the board in place. (3) Heater film, cut-out and NTC parts are not in the sources (TBD). CCR-HE-02 (connector height) open. (4) PROTECTION GAP (see cables.md section 6): the AWG 20 wire is fine (5 A table value) but the 43030-0007 terminal is rated about 3.13 A continuous (UNVERIFIED) against heater draw up to 3.04 A; the head firmware cuts the heater at 3.2 A sustained for 300 ms; the chassis HEAD_HTR branch only trips at 3.56-4.35 A.
 
 | Wire | From (conn.pin) | To (conn.pin) | Net (from -> to) | AWG | Colour | Insulation | Pair | Length |
 |---|---|---|---|---|---|---|---|---|
-| W-103.1 | HEAD.J2601.1 | HEAD-HEATER.1 | HTR_SW | 18 | OG | SI | - | 110 |
+| W-103.1 | HEAD.J2601.1 | HEAD-HEATER.1 | HTR_SW | 20 | OG | SI | - | 110 |
 | W-103.2 | HEAD.J2601.3 | SPL-HCUT.1 | HTR_CUT | 24 | VT | SI | - | 110 |
-| W-103.3 | HEAD-HEATER.2 | SPL-HCUT.2 | HTR_CUT | 18 | BN | SI | - | 110 |
-| W-103.4 | SPL-HCUT.3 | HEAD-CUTOUT.1 | HTR_CUT | 18 | BN | SI | - | 110 |
-| W-103.5 | HEAD-CUTOUT.2 | HEAD.J2601.2 | HEAD_HTR_N | 18 | BN | SI | - | 110 |
+| W-103.3 | HEAD-HEATER.2 | SPL-HCUT.2 | HTR_CUT | 20 | BN | SI | - | 110 |
+| W-103.4 | SPL-HCUT.3 | HEAD-CUTOUT.1 | HTR_CUT | 20 | BN | SI | - | 110 |
+| W-103.5 | HEAD-CUTOUT.2 | HEAD.J2601.2 | HEAD_HTR_N | 20 | BN | SI | - | 110 |
 | W-103.6 | NTC-SPR.a | HEAD.J2601.4 | NTC_HTR | 24 | WH | FEP | P1 | 110 |
 | W-103.7 | NTC-SPR.b | HEAD.J2601.5 | GND | 24 | BK | FEP | P1 | 110 |
 
@@ -1194,6 +1196,47 @@ Open length items: (a) **IB-34 mapping (lead decision, OD-1 closed)**: J_TOF4 = 
 
 The 1.00 kohm resistor is on the head board at the FAR end of the switch string (chassis_safety_chain.md fault #24): do not move it into the harness.
 
+## 6. Head heater pair: AWG 20 at the head end (stage 3, H-03 / IB-61)
+
+Gauge change: the contract J1 table keeps AWG 18 on pins 3/4 at the M16 plug; each heater pole is AWG 18 from the M16 plug to a sealed crimp splice (SPL-JH3 / SPL-JH4) 30 mm outside the head gland, and AWG 20 from there through the gland to the Micro-Fit 43030-0007 terminal of J2001 (130 mm) and on through W-103 (110 mm) to the heater film and cut-out. One conductor cannot change gauge, so the splice is a wire-to-wire crimp splice (part TBD); it cannot sit inside the head (9 mm between plug backs and wall).  The chassis lead W-008 (160 mm) stays AWG 18 in the Mini-Fit Jr terminal.
+
+Loop resistance at 20 C: wires from the table below, 4 mated contact pairs per pole at 5 mohm each [A, power_budget.md], splices 1 mohm each [ASSUMPTION], board part 36 mohm (INA3221 shunt 5, eFuse FET 28, copper 3; power_budget.md). Heater 4.8 ohm (head circuit.py: 3.04 A at 14.6 V). Calculated, not measured.
+
+| Case | Supply at the chassis branch (V) | Wire loop (mohm) | Series total (mohm) | Heater current (A) | Voltage at the heater (V) | Power delivered (W) | Ideal, no series R (W) |
+|---|---|---|---|---|---|---|---|
+| head end AWG 20 (stage 3) | 10.0 | 30 | 108 | 2.04 | 9.78 | 19.93 | 20.83 |
+| head end AWG 20 (stage 3) | 12.0 | 30 | 108 | 2.45 | 11.74 | 28.70 | 30.00 |
+| head end AWG 20 (stage 3) | 14.6 | 30 | 108 | 2.97 | 14.28 | 42.48 | 44.41 |
+| all AWG 18 (stage 2, reference) | 10.0 | 24 | 100 | 2.04 | 9.80 | 19.99 | 20.83 |
+| all AWG 18 (stage 2, reference) | 12.0 | 24 | 100 | 2.45 | 11.76 | 28.79 | 30.00 |
+| all AWG 18 (stage 2, reference) | 14.6 | 24 | 100 | 2.98 | 14.30 | 42.62 | 44.41 |
+
+AWG 20 against AWG 18 at the head end costs 8 mohm of loop resistance (0.09 W at 12 V). The stage-3 head file quotes about 7 mohm for 2 x 0.29 m; the figure here follows the real lengths of this generator.
+
+**Protection gap (stated honestly).** Heater draw is up to 3.04 A at 14.6 V; the 43030-0007 terminal is rated about 3.13 A continuous [UNVERIFIED, recalled; the Molex fetch failed], i.e. 3 % margin at 14.6 V and 1.6x only against the AWG 20 wire (5 A table value). Protection layers: (1) head firmware cuts the heater at 3.2 A sustained for 300 ms (software, head MCU); (2) the independent bimetal cut-out in series acts on TEMPERATURE, not current; (3) the chassis HEAD_HTR eFuse trips only at 3.56-4.35 A (R46 845 ohm, 3.96 A nominal), i.e. 14-39 % above the terminal rating. Between 3.13 A and 3.56 A no hardware current protection acts at all; between 3.2 A and 3.56 A only the head firmware does, and a fault that also disables the head MCU (or a stuck heater FET with a hung MCU) leaves the terminal at up to 4.35 A until the eFuse trips (eFuse reaction time not in the sources). A rise of the terminal temperature is not covered by any figure in the sources. Mitigations not taken here (they need the lead): lower the chassis limit (R46 value, IB-28) to about 3.3 A nominal, or split each heater pole over two contacts (head L-02 / J1 contract revision).
+
+## 7. Motor-terminal suppression (review M4, head S3-H H-01): assembly item of W-006 / W-007
+
+Brush arcs (about 5 ns edges) and PWM edges put 1-100 MHz noise on the motor leads; the BLM31 bead + 1 nF at the chassis connector only acts above about 50 MHz and only at the board end. Fit at EACH motor, soldered AT the motor terminals:
+
+| Item | Value / type | Notes |
+|---|---|---|
+| C_X, across the two motor terminals | 47-100 nF, X7R >= 50 V in 1206 (or a film capacitor) | motor bus is limited to 16.6 V (OV cut-off) and clamped near 15.6 V: 50 V is a 3x margin; part TBD, no source names one |
+| C_Y1, C_Y2, one from EACH terminal to the motor can | 4.7-10 nF, X7R >= 100 V | the can is the shield return; part TBD |
+| Lead length of all three capacitors | <= 5 mm | short leads or the capacitor soldered directly across the tabs |
+| Temperature | X7R is -55..+125 C by EIA code: covers the -25 C objective; capacitance change within +-15 % over that range plus the DC-bias loss at 12 V: verify on the chosen part (a class value, no datasheet fetched) | film capacitors: check the -25 C rating of the part |
+| Can strap to the chassis plate | braid or tab, <= 30 mm, >= 2.5 mm wide, to the chassis plate | HOW on the Pololu 37D-class gearmotor: the motor can is the cylindrical shell behind the gearbox; the strap needs a bonded point on it: either a ring terminal clamped under the gearmotor bracket screw if the bracket touches the can, or a solder tab on the can (tin-plated steel can: heat-sink the can, short iron time so the brushes and magnets are not heated). UNVERIFIED mechanical detail: no Pololu drawing in the sources of how the can is finished or whether the mounting bracket makes metal contact with it; confirm on the first motor |
+| Test label | W-006.SUP / W-007.SUP | after fitting: can to chassis plate < 0.1 ohm (4-wire); capacitance of C_X and each C_Y (LCR meter, 1 kHz) within -20..+20 % of the nominal; motor terminals to can still insulated (no short from a terminal to the can: > 10 Mohm at 50 V with C_Y fitted is dominated by the capacitors: check with the capacitors DISCONNECTED during assembly); bench B11: motors on a DC supply at 100 % duty, back-driven with the bridges asleep, and through brake-relay transitions while counting head events |
+
+Routing: twist the motor pair (W-006.1/.2, W-007.1/.2) from the motor to the board connector (they are specified as pair M); route the encoder pairs away from the head side. Calculated clearance between the motor cable path and the head pigtail path in this generator: LEFT 55 mm, RIGHT 54 mm (centre-line distance, model accuracy +-20 mm); require >= 50 mm in the build and keep the motor leads on the OUTBOARD side of the chassis gutters, the head pigtails inboard.
+
+## 8. Test notes (harness)
+
+* **Head isolation test E7 (>= 10 Mohm, frame to receiver)**: run with J1 and J2 UNMATED (plugs removed, head on the receiver or on the bench with the receiver metal contacted): with J1/J2 mated a DC path exists by design: frame - F2801 (0.5 A fuse, stage 3) - R2801 (0 ohm) - head GND - J1 pin 2 (W-101.2, W-008.2) - chassis board GND, and the drain network (1 Mohm || 10 nF to FRAME). Test voltage 100 V DC, unmated only. **Mated check** (separate step, label E7M): measure the expected BOND resistance frame to chassis GND at the J1 receptacle shell with a four-wire meter at <= 100 mA (below the 0.5 A fuse rating): expected = F2801 + R2801 + about 0.44 m of AWG 20/18 conductor + contact pairs, dominated by the fuse; the fuse DC resistance is not in any source (record the real value, expect well under 2 ohm, UNVERIFIED) and it holds only if the chassis board GND is bonded to the chassis metal (not stated in the sources: if it is not, the mated reading is >= 1 Mohm through the drain network). Never run the 100 V insulation tester mated.
+* **Heater circuit insulation (review M5)**: assembled head, spreader bolted to the board, board disconnected: heater circuit (J2601 plug pins 1, 2, 3, NTC 4/5) to FRAME >= 10 Mohm at 100 V; label W-103.HTR-ISO. Isolated-case cut-out (>= 100 Mohm at 100 V) and isolated NTC lug or polyimide pad are BOM requirements (parts TBD).
+* **W-018 after routing**: continuity pin to pin, insulation between all six conductors (label W-018.ISO), no supply conductor between the two contact pairs.
+* **Motor suppression**: see section 7 (labels W-006.SUP, W-007.SUP).
+
 ## 5. Unconnected connector pins
 
 (The complete list with reasons is also in `connectors.yaml: unconnected_pins`.)
@@ -1270,6 +1313,12 @@ The 1.00 kohm resistor is on the head board at the FAR end of the switch string 
 | CHGPLUG | 3 | GND | supply-side plug: belongs to the external 24 V supply, not to the robot harness |
 | CHGPLUG | 4 | GND | supply-side plug: belongs to the external 24 V supply, not to the robot harness |
 | CHGPLUG | FE | CHASSIS | supply-side plug: belongs to the external 24 V supply, not to the robot harness |
+| MOTSUP-L | A | MOTC_L_A | assembly item soldered at the motor terminals (cables.md section 7): not a wire |
+| MOTSUP-L | B | MOTC_L_B | assembly item soldered at the motor terminals (cables.md section 7): not a wire |
+| MOTSUP-L | CAN | MOTOR_CAN_L | assembly item soldered at the motor terminals (cables.md section 7): not a wire |
+| MOTSUP-R | A | MOTC_R_A | as MOTSUP-L |
+| MOTSUP-R | B | MOTC_R_B | as MOTSUP-L |
+| MOTSUP-R | CAN | MOTOR_CAN_R | as MOTSUP-L |
 | CM5-USB1 | 1 | NC | NC by design (net NC) |
 | BUMP-L-DEV | NO | UNUSED | NC by design (net UNUSED) |
 | BUMP-R-DEV | NO | UNUSED | NC by design (net UNUSED) |

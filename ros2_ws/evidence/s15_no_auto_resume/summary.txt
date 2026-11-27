@@ -1,0 +1,28 @@
+RAD ROOMBA FLOOR SURVEY SUMMARY
+SYNTHETIC CALIBRATION/PROFILE - field_use_approved: false - NOT FOR SURVEY OR RELEASE DECISIONS
+run 00000000-0000-4000-8000-002900000001  trailer SIM-SECTION-3.0x1.0  floor 3 x 1 m (floor only)
+method CONTINUOUS_SCAN  profile ore-floor-demo-synthetic rev 1  calibration DEMO-CAL-SYNTH-0001
+unit Bq/cm2  investigation level 0.3  detection goal < 0.2
+review queue policy ALARM_ONLY
+alpha_scan 0.05  alpha_recount 0.000171  beta 0.05  decision cells 300
+
+WHERE THE ROBOT MEASURED
+  valid exposure on 7.2 % of the target floor (3.000 m2)
+  UNVISITED                    2.7844 m2
+  ACCEPTABLE                   0.0000 m2
+  INSUFFICIENT_SENSITIVITY     0.2156 m2
+  INVALID_DATA                 0.0000 m2
+  BLOCKED                      0.0000 m2
+  EXCLUDED                     0.0000 m2
+
+HOW SENSITIVE IT WAS
+  decision cells with data 44; sensitivity sufficient (D# < goal, envelope ok) 0
+  D# median 0.943  best 0.907  worst 0.979 Bq/cm2 (beta_window)
+  time sync: max gate bound 838.0520796923137 us (limit 10000)
+
+WHAT STILL NEEDS ATTENTION
+  scan-stage detections below the investigation level awaiting a recount under the two-stage rule: 0
+  unresolved floor INSUFFICIENT_SENSITIVITY: 0.2156 m2 (rectangles in residuals.json)
+  unresolved floor UNVISITED: 2.7844 m2 (rectangles in residuals.json)
+
+A release-status entry is a radiation-protection decision under the site procedure; this report is not one.

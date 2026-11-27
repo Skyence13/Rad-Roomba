@@ -68,6 +68,8 @@ class HeadLinkConfig:
         self.block_retry_us = 5_000_000
         self.diag_period_us = 1_000_000
         self.diag_enabled = True
+        self.setup = None                      # ENG_SETUP_SET members written before the first ARM (firmware 0.5.2: device,
+                                               # thresholds / thresholds_confirmed); None = leave the head's setup alone
         self.max_status_faults = 5
         self.tid_stride = 4096                 # id jump across a session transition
         for key, value in kw.items():
@@ -497,6 +499,7 @@ class HeadLinkMaster:
                 continue
             try:
                 yield from self._quiet()
+                yield from self._setup_step()
                 yield from self._handshake()
                 yield from self._sync_and_arm()
                 yield from self._run()
@@ -542,6 +545,42 @@ class HeadLinkMaster:
             yield
         self._decoder.reset()
         self._note(note="QUIET_INTERVAL_OK", quiet_us=self.cfg.quiet_us)
+
+    @staticmethod
+    def _setup_diff(want, have):
+        """Members of `want` (nested) that differ from the head's reported setup."""
+        out = {}
+        for k, v in want.items():
+            if isinstance(v, dict) and isinstance(have, dict) and isinstance(have.get(k), dict):
+                d = HeadLinkMaster._setup_diff(v, have[k])
+                if d:
+                    out[k] = d
+            elif not isinstance(have, dict) or have.get(k) != v:
+                out[k] = v
+        return out
+
+    def _setup_step(self):
+        """Head ICD addendum 0.5.2: before the first ARM the setup member `device` must be a real type and the
+        thresholds written or confirmed.  ENG_SETUP_GET, then ENG_SETUP_SET of what differs from the mission
+        configuration (head_setup); the change invalidates the binding, which the handshake that follows renews.
+        Every request and reply is archived like any other transaction.  UNSUPPORTED (fixed descriptor) is skipped."""
+        want = self.cfg.setup
+        if not want:
+            return
+        self.state = "SETUP"
+        rsp = yield from self._transact("ENG_SETUP_GET", {}, self.cfg.handshake_timeout_us)
+        if rsp["status"] == "UNSUPPORTED":
+            self._note(note="SETUP_UNSUPPORTED")
+            return
+        if rsp["status"] != "OK":
+            self._block("SETUP_GET_" + rsp["status"], "head refused ENG_SETUP_GET")
+        diff = self._setup_diff(want, rsp["body"].get("setup") or {})
+        if not diff:
+            return
+        rsp = yield from self._transact("ENG_SETUP_SET", dict(diff), self.cfg.handshake_timeout_us)
+        if rsp["status"] != "OK":
+            self._block("SETUP_SET_" + rsp["status"], f"head refused ENG_SETUP_SET {sorted(diff)}: {rsp['body']}")
+        self._note(note="SETUP_WRITTEN", members=sorted(diff))
 
     def _handshake(self):
         self.state = "HANDSHAKE"
@@ -643,7 +682,12 @@ class HeadLinkMaster:
         if rsp["status"] == "UNBOUND":
             raise _LinkLost("UNBOUND")
         if rsp["status"] != "OK":
-            self._block("ARM_" + rsp["status"], "head refused ARM")
+            # 0.5.2: FAULT with a reason (device_type_unset / placeholder_thresholds) is shown to the operator as such
+            why = (rsp.get("body") or {}).get("reason") or (rsp.get("body") or {}).get("detail")
+            self._block("ARM_" + rsp["status"] + (f":{why}" if why else ""),
+                        f"head refused ARM{(': ' + str(why)) if why else ''}"
+                        + (" - set head_setup.device and write or confirm the thresholds (thresholds_confirmed) in the mission configuration"
+                           if why in ("device_type_unset", "placeholder_thresholds") else ""))
         self.state = "ARMED"
 
     def _run(self):

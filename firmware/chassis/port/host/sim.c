@@ -32,12 +32,14 @@ static uint64_t h_now(void *ctx)
 #define TAP_OHM 156e3
 static bool tapped(int k)
 {
-    return k != SIM_N6 && k != SIM_N7; /* CH_N6/CH_N7 have test points only */
+    return k != SIM_N6A && k != SIM_N6 && k != SIM_N7; /* CH_N6A/CH_N6/CH_N7 have test points only */
 }
 
 static void chain_nodes(sim_t *s)
 {
-    bool loop_ok = (s->loop_ohm >= 590.0 && s->loop_ohm <= 1550.0) || s->loop_cmp_stuck || s->iox_drive_loop;
+    double lo = (s->rail_weld || s->loop_sns_leak) ? 1000.0 : s->loop_ohm; /* section 6.1 residual faults: the loop reads healthy */
+    bool loop_ok = (lo >= 590.0 && lo <= 1550.0) || s->loop_cmp_stuck || s->iox_drive_loop;
+    bool loop_b = (lo < 2700.0 || s->loop_b_stuck_ok) && !s->loop_b_stuck_open; /* stage 3 channel B (U46): open / high resistance only */
     bool lab_n = s->pres_ohm >= 3920.0 && s->pres_ohm <= 5640.0;
     bool e[SIM_NODES] = {false};
     e[SIM_N1] = s->mode_run;
@@ -46,21 +48,22 @@ static void chain_nodes(sim_t *s)
     e[SIM_N4A] = !s->chg_cover_open;
     e[SIM_N4] = !s->chg_plug;
     e[SIM_N5] = s->head_docked;
-    e[SIM_N6] = loop_ok;
+    e[SIM_N6A] = loop_ok; /* U21, channel A */
+    e[SIM_N6] = loop_b;   /* U21B, channel B */
     e[SIM_N7] = lab_n;
-    e[SIM_N8A] = !s->bumper_l;
+    e[SIM_N8A] = !s->bumper_l || s->bumper_l_weld;
     e[SIM_N8] = !s->bumper_r;
     e[SIM_N9] = s->wdg_ok;
     e[SIM_NEND] = ((s->core.out.arm_permit && !s->mcu_in_reset) || s->permit_short) && !s->permit_open;
     bool up = true; /* CH_N0: VBAT_SW through the chain PTC */
     for (int k = SIM_N1; k < SIM_NODES; k++) {
-        up = (up && e[k]) || s->chain_short == k;
+        up = (up && e[k]) || s->chain_short == k || (k == SIM_NEND && s->chain_end_short);
         s->node[k] = up;
         s->held[k] = false;
     }
     s->pole_b = !s->estop;
     s->v_held = 0.0;
-    if (!s->node[SIM_NEND] && !s->latch && !s->cset_diode && s->vc > 0.5) {
+    if (!s->node[SIM_NEND] && !s->k1 && !s->cset_diode && s->vc > 0.5) {
         int k = SIM_NEND, n = 0;
         s->held[k] = true;
         while (k > SIM_N1 && e[k] && !s->node[k - 1]) {
@@ -90,7 +93,8 @@ static void h_read(void *ctx, rrch_in_t *in)
     sim_t *s = ctx;
     uint32_t di = 0;
     chain_nodes(s);
-    bool loop_ok = (s->loop_ohm >= 590.0 && s->loop_ohm <= 1550.0) || s->loop_cmp_stuck || s->iox_drive_loop;
+    double lo = (s->rail_weld || s->loop_sns_leak) ? 1000.0 : s->loop_ohm;
+    bool loop_ok = (lo >= 590.0 && lo <= 1550.0) || s->loop_cmp_stuck || s->iox_drive_loop;
     /* BRAKE_x_RB: OR over both poles, valid only with the bridges asleep; during PWM / braking the
      * bridge outputs toggle and the comparators read garbage (CCR-E03 e) */
     bool asleep = !(s->core.out.bridge_awake && s->run12);
@@ -103,7 +107,7 @@ static void h_read(void *ctx, rrch_in_t *in)
     SET(CHG_PLUG_LINK, tap_high(s, SIM_N4, 7.35))
     SET(HEAD_DOCK, tap_high(s, SIM_N5, 7.35))
     SET(HEAD_LOOP_OK, loop_ok)
-    SET(HEAD_LOOP_SHORT, s->loop_ohm < 590.0 && !s->loop_cmp_stuck && !s->iox_drive_loop)
+    SET(HEAD_LOOP_SHORT, lo < 590.0 && !s->loop_cmp_stuck && !s->iox_drive_loop)
     SET(LAB_KEY_N, s->pres_ohm >= 3920.0 && s->pres_ohm <= 5640.0)
     SET(BODY_BUMPER_L, tap_high(s, SIM_N8A, 7.35))
     SET(BODY_BUMPER_R, tap_high(s, SIM_N8, 7.35))
@@ -112,7 +116,7 @@ static void h_read(void *ctx, rrch_in_t *in)
     SET(BRAKE_R, asleep ? s->rstate[1] == 1 : rnd(s) > 0.0)
     SET(HW_LATCH, s->run12) /* the tap on RUN_12V, not the K1 armature (review M5) */
     SET(J2_PRES, s->j2)
-    SET(BTN_REARM, s->rearm_ms > 0)
+    SET(BTN_REARM, s->rearm_ms > 0 || s->rearm_aux_short) /* aux contact */
     SET(BTN_PAUSE, s->pause_ms > 0)
 #undef SET
     memset(in, 0, sizeof *in);
@@ -121,7 +125,7 @@ static void h_read(void *ctx, rrch_in_t *in)
     in->io_cfg_ok = !s->io_cfg_fault && !s->iox_drive_loop;
     in->adc_ok = true;
     in->pres_ohm = s->pres_ohm > 999999.0 ? 1000000u : (uint32_t)(s->pres_ohm + 2.0 * rnd(s));
-    in->loop_ohm = s->loop_ohm > 999999.0 ? 1000000u : (uint32_t)(s->loop_ohm + 2.0 * rnd(s));
+    in->loop_ohm = lo > 999999.0 ? 1000000u : (uint32_t)(lo + 2.0 * rnd(s));
     in->vmot_v = (float)(s->vmot + 0.02 * rnd(s));
     in->vbat_v = (float)(s->vbat + 0.02 * rnd(s));
     in->v5_v = (float)(5.10 + 0.01 * rnd(s));
@@ -323,6 +327,7 @@ void sim_init(sim_t *s, uint64_t seed)
     sim_params_nominal(&s->p);
     s->vmot_tau_s = 0.81;
     s->cset_diode = true; /* current netlist: stage 3 D_RSET (F12); false = stage-2 board with C_SET back-feed */
+    s->cset_energy = true; /* REARM sets K1 only from a charged C_SET (chain closed ~2 s first) */
     s->mode_run = true;
     s->head_docked = true;
     s->j2 = true;
@@ -357,19 +362,28 @@ static void plant_ms(sim_t *s)
      * asleep 1 ms after K1 (RUN_12V). Pick-up: K1 10 ms of REARM, relays 8 ms. */
     chain_nodes(s);
 
-    /* C_SET: charged from CHAIN_END through R_SET (tau 2.2 s), dumped into the K1 coil by REARM (tau 103 ms),
-     * otherwise discharged through R_SET into the held taps (review M1) */
-    if (s->rearm_ms > 0) {
+    /* C_SET (stage 3): charged from CHAIN_END through D_RSET + R_SET (tau 2.2 s), dumped into the K1 coil while
+     * U_SET conducts (tau 103 ms), emptied by Q_SDIS (tau 0.1 s) whenever CHAIN_END is dead. Without D_RSET
+     * (cset_diode false, stage-2 option) it back-feeds the held nodes through R_SET instead (review M1). */
+    if (s->u_set) {
         s->vc -= s->vc * (1.0 - exp(-1e-3 / 0.1028));
     } else if (s->node[SIM_NEND]) {
         s->vc += (s->vbat - 0.4 - s->vc) * (1.0 - exp(-1e-3 / 2.2));
     } else if (s->cset_diode) {
-        s->vc -= s->vc * (1.0 - exp(-1e-3 / 0.1)); /* stage 3 Q_SDIS: C_SET emptied within ~0.3 s while CHAIN_END is dead */
+        s->vc -= s->vc * (1.0 - exp(-1e-3 / 0.1));
     } else if (s->v_held > 0.0) {
-        double i = s->v_held > 0.0 ? (s->vc - s->v_held) / 22e3 : 0.0; /* current into the held nodes */
-        s->vc -= i * 1e-3 / 100e-6;
+        s->vc -= (s->vc - s->v_held) / 22e3 * 1e-3 / 100e-6;
     }
-    s->k1_pulse_s = s->rearm_ms > 0 ? s->k1_pulse_s + 1e-3 : 0.0;
+    /* set stage: closing edge of the set contact (J_BTN 1-2, 1 uF coupling: ~110 ms gate pulse) AND level of the
+     * aux contact (J_BTN 3-4) -> U_SET (C_SET into the K1 coil) and Q_HSET (U_HOLD LED) */
+    bool set_contact = s->rearm_ms > 0 || s->rearm_set_short;
+    bool aux_contact = s->rearm_ms > 0 || s->rearm_aux_short;
+    if (set_contact && !s->set_prev) {
+        s->set_pulse_s = 0.110;
+    }
+    s->set_prev = set_contact;
+    s->u_set = s->set_pulse_s > 0.0 && aux_contact;
+    s->set_pulse_s = s->set_pulse_s > 1e-3 ? s->set_pulse_s - 1e-3 : 0.0;
     if (s->rearm_ms > 0) {
         s->rearm_ms--;
     }
@@ -383,34 +397,40 @@ static void plant_ms(sim_t *s)
     double grav = -p->mass * 9.81 * sin(s->tilt_deg * 0.017453292519943295) * p->r / 2.0;
     double v0 = s->v;
     for (int n = 0; n < SUBSTEPS; n++) {
-        /* K1 at 0.1 ms resolution. Coil energised by the seal-in (K1 closed, CHAIN_END live), by the REARM set
-         * pulse from C_SET (about 245 ms above must-release, needs only E-stop pole B), or by a fault model.
-         * Pick-up after 10 ms energised, release 4 ms after de-energising [U]. */
-        bool set_pulse = s->rearm_ms > 0 && s->k1_pulse_s < 0.245 && (!s->cset_energy || s->vc > 9.0 || s->k1_on_s > 0.0);
-        bool k1_coil = s->pole_b && ((s->latch && s->node[SIM_NEND]) || set_pulse || (s->k1_fault == 1 && s->node[SIM_NEND]) || s->k1_fault == 2);
+        /* K1 at 0.1 ms resolution. Coil energised by the seal-in (K1 closed or pole A welded, CHAIN_END live)
+         * or by C_SET through U_SET (K1 must-operate assumed 7.5 V [A]: with the 2.2 s charge from a 12.6 V
+         * chain this gives the "chain closed about 2 s before REARM" of section 2.1). Pick-up 10 ms, release 4 ms [U]. */
+        bool set_energy = s->u_set && (s->vc > 7.5 || s->k1_on_s > 0.0 || !s->cset_energy);
+        bool k1_coil = s->pole_b && (((s->k1 || s->k1_fault == 1) && s->node[SIM_NEND]) || set_energy);
         if (k1_coil) {
             s->k1_off_s = 0;
-            if (!s->latch) {
+            if (!s->k1) {
                 s->k1_on_s += DT;
                 if (s->k1_on_s >= 10.0e-3 - 1e-9) {
-                    s->latch = true;
+                    s->k1 = true;
                 }
             }
         } else {
             s->k1_on_s = 0;
-            if (s->latch) {
+            if (s->k1) {
                 s->k1_off_s += DT;
                 if (s->k1_off_s >= 4.0e-3 - 1e-9) {
-                    s->latch = false;
+                    s->k1 = false;
                 }
             }
         }
         if (s->latch_weld) {
-            s->latch = true; /* both K1 poles welded: the armature never releases */
+            s->k1 = true; /* both K1 poles welded: the armature never releases */
         }
         chain_nodes(s);
-        s->run12 = (s->latch && s->node[SIM_NEND]) || s->run12_short; /* HW_LATCH_RB, U8 EN, U9.B, K2/K3 coils */
-        bool coil = s->run12 && s->pole_b; /* K2/K3 coil return through E-stop pole B */
+        s->k1_run = (s->k1 && s->node[SIM_NEND]) || s->k1_run_short;
+        /* U_HOLD: LED from RUN_HD (self-holding) or from Q_HSET during the set pulse */
+        bool hold_led = s->u_set || (s->u_hold && s->run_hd);
+        s->run_hd = (s->k1_run && (s->u_hold || hold_led || s->uhold_short)) || s->run_hd_short;
+        s->u_hold = hold_led || (s->u_hold && s->run_hd);
+        s->run12 = s->run_hd || s->run12_short;           /* D_RUN: nothing on RUN_12V can feed RUN_HD */
+        s->latch = s->run_hd;                              /* "latched" = traction supply RUN_HD present */
+        bool coil = s->run12 && s->run_hd && s->pole_b;   /* K2/K3 return through U_LS (LED from RUN_HD) and pole B */
         for (int k = 0; k < 2; k++) {
             if (coil) {
                 if (s->rstate[k] != 1) {
@@ -424,10 +444,10 @@ static void plant_ms(sim_t *s)
                 }
             } else if (s->rstate[k] != 0) {
                 s->relay_t_s[k] += DT;
-                if (s->relay_t_s[k] >= 10.5e-3 - 1e-9) {
+                if (s->relay_t_s[k] >= 10.8e-3 - 1e-9) { /* stage 3: 20 V clamp, T2 10.8 ms */
                     s->rstate[k] = 0;
                     s->relay_t_s[k] = 0;
-                } else if (s->relay_t_s[k] >= 7.5e-3 - 1e-9) {
+                } else if (s->relay_t_s[k] >= 7.8e-3 - 1e-9) {
                     s->rstate[k] = 2;
                 }
             } else {
@@ -436,8 +456,8 @@ static void plant_ms(sim_t *s)
             s->relay[k] = s->rstate[k] == 1;
         }
         /* VMOT: eFuse on with RUN_12V (soft start ~5 ms); off: 1 kOhm bleed on 810 uF (tau 0.81 s) */
-        s->vmot += (s->run12 ? (s->vbat - s->vmot) / 0.005 : -s->vmot / s->vmot_tau_s) * DT;
-        bool awake = s->run12 && o->bridge_awake && !s->mcu_in_reset; /* U9: nSLEEP = DRV_NSLEEP AND RUN_12V */
+        s->vmot += (s->run_hd ? (s->vbat - s->vmot) / 0.005 : -s->vmot / s->vmot_tau_s) * DT; /* U8 EN from RUN_HD */
+        bool awake = s->run_hd && o->bridge_awake && !s->mcu_in_reset; /* U9: nSLEEP = DRV_NSLEEP AND HW_LATCH_G (RUN_HD) */
         double tau[2];
         for (int k = 0; k < 2; k++) {
             double di;
@@ -523,6 +543,17 @@ void sim_step_ms(sim_t *s)
     }
     if (s->plant_only) {
         return;
+    }
+    if (ms % 10u == 5u) { /* IOX_D (U47) input port: P0 LATCH_NC_RB, P1 LATCH_RUN_RB, P2 HEAD_LOOP2_OK_RB, P3 REARM_SET_RB, P4..7 = 1,0,0,0 */
+        chain_nodes(s);
+        double lo = (s->rail_weld || s->loop_sns_leak) ? 1000.0 : s->loop_ohm;
+        uint8_t v = 0x10u;
+        v |= (!s->k1 && s->k1_fault != 1) ? 1u : 0u; /* pole A NC closed (a welded NO keeps it open) */
+        v |= s->k1_run ? 2u : 0u;
+        v |= ((lo < 2700.0 || s->loop_b_stuck_ok) && !s->loop_b_stuck_open) ? 4u : 0u;
+        v = s->iox_d_bad_pattern ? (uint8_t)(v ^ 0x30u) : v;
+        v |= (s->rearm_ms > 0 || s->rearm_set_short) ? 8u : 0u;
+        rrch_iox_d_update(&s->core, !s->iox_d_fail, v, s->t_us - s->boot_us);
     }
     if (ms % 10u == 0u) { /* IOX_B input P17 = CHAIN_END_RB, read over I2C by the background loop */
         chain_nodes(s);
@@ -661,19 +692,22 @@ bool sim_env_apply(sim_t *s, const char *json, size_t len)
     B("usb_stall", usb_stall) B("usb_down", usb_down) B("imu_off", imu_off) B("iox_fail", iox_fail) B("latch_weld", latch_weld)
     B("estop_a_stuck", estop_a_stuck) B("freeze_control", freeze_control) B("freeze_supervisor", freeze_supervisor)
     B("freeze_background", freeze_background) B("nv_fail", nv_fail) B("iox_b_fail", iox_b_fail) B("permit_short", permit_short) B("permit_open", permit_open) B("run12_short", run12_short) B("loop_cmp_stuck", loop_cmp_stuck)
-    B("iox_drive_loop", iox_drive_loop) B("io_cfg_fault", io_cfg_fault) B("cset_diode", cset_diode) B("cset_energy", cset_energy) B("jp1_open", jp1_open) B("pmon_fail", pmon_fail) B("branch_fail", branch_fail) B("charger_fail", charger_fail)
+    B("iox_drive_loop", iox_drive_loop) B("io_cfg_fault", io_cfg_fault) B("cset_diode", cset_diode) B("cset_energy", cset_energy) B("jp1_open", jp1_open)
+    B("rail_weld", rail_weld) B("loop_sns_leak", loop_sns_leak) B("bumper_l_weld", bumper_l_weld) B("run_hd_short", run_hd_short)
+    B("k1_run_short", k1_run_short) B("chain_end_short", chain_end_short) B("uhold_short", uhold_short) B("loop_b_stuck_ok", loop_b_stuck_ok)
+    B("iox_d_fail", iox_d_fail) B("iox_d_bad_pattern", iox_d_bad_pattern) B("loop_b_stuck_open", loop_b_stuck_open) B("rearm_aux_short", rearm_aux_short) B("rearm_set_short", rearm_set_short) B("pmon_fail", pmon_fail) B("branch_fail", branch_fail) B("charger_fail", charger_fail)
     N("pres_ohm", pres_ohm) N("loop_ohm", loop_ohm) N("vbat", vbat) N("soc", soc) N("temp_bay", temp[0]) N("temp_pack", temp[1])
     N("temp_board", temp[2]) N("tilt_deg", tilt_deg) N("vmot_tau_s", vmot_tau_s)
 #undef B
 #undef N
     if ((t = rrc_json_get(&d, 0, "k1_fault")) >= 0) { /* "NONE", "SEAL_WELD", "SET_SHORT" */
-        s->k1_fault = rrc_json_str_eq(&d, t, "SEAL_WELD") ? 1 : (rrc_json_str_eq(&d, t, "SET_SHORT") ? 2 : 0);
+        s->k1_fault = rrc_json_str_eq(&d, t, "SEAL_WELD") ? 1 : 0; /* stage 3: the coil node no longer leaves the board */
     }
     if ((t = rrc_json_get(&d, 0, "wdi_edge")) >= 0) { /* "FALLING", "RISING", "BOTH" */
         s->wdi_mode = rrc_json_str_eq(&d, t, "RISING") ? 1u : (rrc_json_str_eq(&d, t, "BOTH") ? 2u : 0u);
     }
     if ((t = rrc_json_get(&d, 0, "chain_short")) >= 0) { /* "CH_N1".."CH_N9", "CH_N4A", "CH_N8A", "CHAIN_END", "NONE" */
-        static const char *const nn[SIM_NODES] = {"NONE", "CH_N1", "CH_N2", "CH_N3", "CH_N4A", "CH_N4", "CH_N5", "CH_N6", "CH_N7", "CH_N8A", "CH_N8", "CH_N9", "CHAIN_END"};
+        static const char *const nn[SIM_NODES] = {"NONE", "CH_N1", "CH_N2", "CH_N3", "CH_N4A", "CH_N4", "CH_N5", "CH_N6A", "CH_N6", "CH_N7", "CH_N8A", "CH_N8", "CH_N9", "CHAIN_END"};
         s->chain_short = 0;
         for (int k = 1; k < SIM_NODES; k++) {
             if (rrc_json_str_eq(&d, t, nn[k])) {
@@ -784,6 +818,8 @@ size_t sim_truth_json(const sim_t *s, char *buf, size_t cap)
     rrc_jw_kfixed(&w, "vmot", (int64_t)llround(s->vmot * 1e2), 2, true);
     rrc_jw_kbool(&w, "latch", s->latch);
     rrc_jw_kbool(&w, "run12", s->run12);
+    rrc_jw_kbool(&w, "k1", s->k1);
+    rrc_jw_kbool(&w, "k1_run", s->k1_run);
     rrc_jw_kfixed(&w, "c_set_v", (int64_t)llround(s->vc * 1e2), 2, true);
     rrc_jw_kbool(&w, "arm_permit", s->core.out.arm_permit);
     rrc_jw_kbool(&w, "wdg_ok", s->wdg_ok);

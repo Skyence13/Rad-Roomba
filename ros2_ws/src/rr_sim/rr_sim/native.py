@@ -203,8 +203,11 @@ class NativeSystem:
         assert app.command("preflight")["accepted"]
         assert self.run(until=lambda: app.mission.preflight_done
                         and app.chassis.drive.get("mode") == "STANDBY", timeout=10), (app.chassis.drive.get("mode"), app.chassis.state.get("brake_test"))
-        self.chassis.press("REARM")
-        self.run(1.5)
+        for _ in range(4):                      # the emulator needs the button press after the 2.2 s brake test to be seen: repeat if not
+            self.chassis.press("REARM")
+            self.run(1.5)
+            if app.chassis.drive.get("mode") == "ARMED_IDLE":
+                break
         out = app.command("arm")
         assert out["accepted"], out
         return out

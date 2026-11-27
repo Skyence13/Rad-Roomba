@@ -1,6 +1,6 @@
 # Rad Roomba static frames for the robot software (base_link -> sensors, head, controls, connectors).
 generated_by: mechanical/common/gen_interfaces.py from params.py -- do not edit by hand
-contract_version: 0.4.0-draft8
+contract_version: 0.4.0-draft9
 parent: base_link
 units:
   xyz: m
@@ -367,15 +367,15 @@ head:
     fully_stroked: 0.1952
   mass_cg:
     prototype:
-      mass_kg: 1.8624
+      mass_kg: 1.8642
       cg_xz_m:
       - 0.1184
       - 0.0345
     production:
-      mass_kg: 2.0817
+      mass_kg: 2.0832
       cg_xz_m:
       - 0.12
-      - 0.0329
+      - 0.033
   source: mechanical/head/out/head_report.md (calculated by the head engineer)
 kinematics:
   track_m: 0.27

@@ -537,14 +537,13 @@ static void test_protective_reasons(void)
         CHECK(th_req(t, "DIAG", "{}") && th_is(t, "brake_test.state", "PASSED") && th_true(t, "brake_test.passed_since_boot"));
         CHECK(!th_req(t, "BRAKE_TEST", "{}") && th_status(t, "REJECTED")); /* needs ARMED_IDLE */
 
-        /* review C1: K1 welded. HW_LATCH_RB is the tap on RUN_12V, which comes from CHAIN_END, so the test's
-         * ARM_PERMIT drop removes it whether K1 is welded or not: the test cannot see the weld. It shows when
-         * ARM_PERMIT returns after the test: the latch reads set again with no REARM -> LATCH_NO_REARM. */
+        /* stage 3: K1 welded (both poles). U_HOLD keeps RUN_HD off, and the brake test now sees the weld directly:
+         * K1 pole A does not read released (LATCH_NC_RB) and K1_RUN rises when ARM_PERMIT returns (LATCH_RUN_RB) */
         t = armed(271);
         th_env(t, "{\"latch_weld\":true}");
-        CHECK(th_req(t, "BRAKE_TEST", "{}") && th_true(t, "passed"));
+        CHECK(th_req(t, "BRAKE_TEST", "{}") && !th_true(t, "passed") && (th_has(t, "fail", "K1_WELDED") || th_has(t, "fail", "K1_NOT_RELEASED")));
         th_run(t, 300);
-        CHECK(th_mode(t, "FAULT") && th_has(t, "faults", "LATCH_NO_REARM"));
+        CHECK(th_mode(t, "FAULT") && th_has(t, "faults", "K1_WELD"));
         CHECK(!t->sim.core.out.arm_permit && !t->sim.core.out.bridge_awake && !t->sim.run12);
 
         t = th_new(272); /* no motion before a passed test */
@@ -935,7 +934,7 @@ static void test_reset_and_aux(void)
     /* absolute worst case: every reason and flag set at once (forced directly; not reachable in practice) */
     t->sim.core.sw_latched = t->sim.core.sw_acked = (1u << RRCH_SW_N) - 1u;
     t->sim.core.chain.hw_latched = (1u << RRCH_HW_N) - 1u;
-    t->sim.core.faults |= ((1u << RRCH_FLT_N) - 1u) & ~RRCH_FLT_FATAL_MASK;
+    t->sim.core.faults |= ((1ull << RRCH_FLT_N) - 1ull) & ~RRCH_FLT_FATAL_MASK;
     t->sim.core.hold = 3u;
     t->max_reply_len = 0;
     CHECK(th_req(t, "STATE", "{}") && th_true(t, "truncated") && th_len(t, "protective_stop_reasons") == 12 && th_len(t, "hw_inhibit_reasons") == RRCH_HW_N);

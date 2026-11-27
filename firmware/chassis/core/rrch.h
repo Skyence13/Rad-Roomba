@@ -37,8 +37,8 @@
 #define RRCH_PRES_LIST(X) X(ABSENT) X(HEAD_DIRECT) X(HEAD_VIA_LAB_EXTENSION) X(LAB_EXTENSION_ONLY) X(FAULT)
 #define RRCH_FLT_LIST(X) /* first group enters FAULT mode */ \
     X(ESTOP_DISCREPANCY) X(LATCH_STUCK) X(IOX_A) X(ADC) X(TIMING) X(PERMIT_STUCK_ON) X(CHAIN_IMPLAUSIBLE) \
-    X(LATCH_NO_REARM) X(LATCH_NO_DROP) X(LOOP_FAIL) X(PIN_CONFIG) \
-    X(PERMIT_STUCK_OFF) X(IOX_B) X(REARM_HELD) X(CONFIG_DEFAULTED) X(LOOP_DISCREPANCY) X(J1_PRES_FAULT) X(CHARGER_COMM) X(PMON_COMM) X(TOF_BUS) X(HEATER_SENSOR) \
+    X(LATCH_NO_REARM) X(LATCH_NO_DROP) X(LOOP_FAIL) X(PIN_CONFIG) X(K1_WELD) X(RUN_SHORT) \
+    X(PERMIT_STUCK_OFF) X(IOX_B) X(IOX_D) X(REARM_HELD) X(REARM_DISCREPANCY) X(CONFIG_DEFAULTED) X(LOOP_DISCREPANCY) X(J1_PRES_FAULT) X(CHARGER_COMM) X(PMON_COMM) X(TOF_BUS) X(HEATER_SENSOR) \
     X(EFUSE_HEAD_PWR) X(EFUSE_HEAD_HTR) X(EFUSE_CHS_HTR) X(EFUSE_LIDAR) X(EFUSE_V5) X(BRIDGE_L) X(BRIDGE_R) X(BUS_CLAMP) \
     X(EVENT_OVERFLOW) X(BATTERY_WARN)
 /* IB-34 (lead decision, corrected mapping): two forward-looking (grip cheeks, over the head) and two rearward-looking
@@ -69,9 +69,10 @@ typedef enum { RRCH_TOF_LIST(X) RRCH_TOF_COUNT } rrch_tof_id_t;
 #undef X
 #define RRCH_HW(n) (1u << RRCH_HWI_##n)
 #define RRCH_SW(n) (1u << RRCH_SWI_##n)
-#define RRCH_FLT(n) (1u << RRCH_FLTI_##n)
+#define RRCH_FLT(n) (1ull << RRCH_FLTI_##n) /* 64-bit flag word (stage 3 filled the 32-bit one) */
 #define RRCH_FLT_FATAL_MASK (RRCH_FLT(ESTOP_DISCREPANCY) | RRCH_FLT(LATCH_STUCK) | RRCH_FLT(IOX_A) | RRCH_FLT(ADC) | RRCH_FLT(TIMING) | RRCH_FLT(PERMIT_STUCK_ON) | \
-                             RRCH_FLT(CHAIN_IMPLAUSIBLE) | RRCH_FLT(LATCH_NO_REARM) | RRCH_FLT(LATCH_NO_DROP) | RRCH_FLT(LOOP_FAIL) | RRCH_FLT(PIN_CONFIG))
+                             RRCH_FLT(CHAIN_IMPLAUSIBLE) | RRCH_FLT(LATCH_NO_REARM) | RRCH_FLT(LATCH_NO_DROP) | RRCH_FLT(LOOP_FAIL) | RRCH_FLT(PIN_CONFIG) | \
+                             RRCH_FLT(K1_WELD) | RRCH_FLT(RUN_SHORT))
 /* fatal flags after which the supervisor stops the watchdog strobe (the chain is then opened at WDG_OK, upstream of a
  * suspect ARM_PERMIT element): electronics/analysis/chassis_safety_chain.md section 6, row 38 */
 #define RRCH_FLT_NO_STROBE_MASK (RRCH_FLT(TIMING) | RRCH_FLT(PERMIT_STUCK_ON) | RRCH_FLT(LATCH_STUCK) | RRCH_FLT(LATCH_NO_REARM) | RRCH_FLT(LATCH_NO_DROP))
@@ -173,6 +174,8 @@ typedef struct {            /* IOX_B input P17 = CHAIN_END_RB (CCR-E02), pushed 
     uint32_t fail_n;        /* consecutive failed reads */
 } rrch_iox_b_t;
 
+typedef struct { bool ok; uint8_t val; uint64_t t_us, seen_us; uint32_t fail_n; } rrch_iox_d_t; /* stage 3 IOX_D */
+
 typedef struct {
     void *ctx;
     uint64_t (*now_us)(void *ctx);
@@ -265,6 +268,8 @@ typedef struct {
     X(HTR_MAX_DUTY, "heater.max_duty_pct", 100, 0, 100, "%") \
     X(HTR_MAX_C, "heater.max_c", 35, 10, 50, "C") \
     X(HTR_DISAGREE_C, "heater.disagree_c", 15, 2, 40, "C") \
+    X(HTR_MIN_DISCHARGE_C, "heater.min_discharge_c", -10, -20, 10, "C") /* contract thermal_policy.bay_min_discharge_c */ \
+    X(HTR_PRECHARGE_C, "heater.precharge_c", 5, 0, 15, "C")             /* contract thermal_policy.bay_precharge_c */ \
     X(CHAIN_CLOSE_DEBOUNCE_MS, "chain.close_debounce_ms", 50, 5, 500, "ms") \
     X(CHAIN_PRES_SETTLE_MS, "chain.pres_settle_ms", 20, 5, 500, "ms") \
     /* review M1: without the stage-3 diode D_RSET, C_SET back-feeds CHAIN_END through R_SET and readbacks behind an \
@@ -353,6 +358,15 @@ typedef struct {
     uint8_t ana3;               /* analog loop: 0 OK, 1 OPEN, 2 SHORT, 3 marginal (between the bands) */
     uint64_t ce_live_us;        /* last time CHAIN_END was really live (permit high, CH_N9 live): C_SET charged */
     bool backfeed;              /* readbacks behind an open element may be held up by C_SET */
+    /* stage 3: IOX_D readbacks */
+    rrch_iox_d_t iox_d;
+    bool iox_d_known, k1_nc, k1_run, loop_b, rearm_set, rearm_set_prev;
+    uint64_t rearm_set_edge_us;
+    uint16_t t_k1_weld_nc, t_k1_weld_run, t_run_short, t_rearm_disc, t_loopab, hw_latch_raw_low_ms;
+    uint32_t rearm_set_held_ms;
+    bool raw_latch_prev;
+    uint64_t raw_latch_since_us;
+    uint8_t n_weld, n_run_short;
     uint32_t permit_hist, n9_hist; /* bit k: ARM_PERMIT output / raw CH_N9 readback k ms ago */
     uint8_t n_stuck_on, n_stuck_off, n_end_impl;
     bool chain_end_known, chain_end;
@@ -435,6 +449,8 @@ typedef enum { RRCH_BT_NONE = 0, RRCH_BT_RUNNING, RRCH_BT_PASSED, RRCH_BT_FAILED
 #define RRCH_BTF_BRIDGE_CURRENT_L 0x040u
 #define RRCH_BTF_BRIDGE_CURRENT_R 0x080u
 #define RRCH_BTF_WHEEL_MOVED 0x100u
+#define RRCH_BTF_K1_NOT_RELEASED 0x200u /* stage 3: LATCH_NC_RB low with the latch down */
+#define RRCH_BTF_K1_WELDED 0x400u       /* stage 3: ARM_PERMIT raised without REARM: LATCH_RUN_RB or HW_LATCH_RB rose */
 typedef struct {
     rrch_bt_state_t state;
     uint8_t step;
@@ -482,7 +498,7 @@ typedef struct rrch {
     rrch_mode_t mode;
     rrch_opmode_t op_mode;
     bool boot_done;
-    uint32_t faults;             /* RRCH_FLT bits */
+    uint64_t faults;             /* RRCH_FLT bits */
     uint32_t sw_latched, sw_active, sw_acked;
     uint32_t hold;
     uint32_t rearm_nonce;
@@ -507,6 +523,7 @@ typedef struct rrch {
     bool head_pwr, head_htr;
     bool htr_enabled;
     float htr_setpoint_c;
+    float htr_active_sp;        /* effective set-point (thermal policy floor or host) */
     float htr_duty;
     bool htr_sensor_ok;
     uint32_t t_htr_disagree_s;
@@ -535,6 +552,9 @@ void rrch_background(rrch_t *c);       /* main loop: protocol server */
 void rrch_tof_update(rrch_t *c, int idx, int32_t range_mm, rrch_tof_status_t st, uint64_t t_us);
 void rrch_power_update(rrch_t *c, const rrch_power_t *p);
 void rrch_iox_b_update(rrch_t *c, bool ok, bool chain_end, uint64_t t_us); /* background context, ~100 Hz */
+/* stage 3 F1: IOX_D (U47, TCA9534 0x22) input port, read >= 100 Hz; P0 LATCH_NC_RB, P1 LATCH_RUN_RB, P2 HEAD_LOOP2_OK_RB,
+ * P3 REARM_SET_RB, P4..P7 fixed pattern 1,0,0,0 */
+void rrch_iox_d_update(rrch_t *c, bool ok, uint8_t in, uint64_t t_us);
 
 /* ---- internal, shared between core files (also used by unit tests) ---- */
 rrch_pres_t rrch_pres_classify(uint32_t ohm);
@@ -548,7 +568,7 @@ void rrch_drive_stop(rrch_t *c, float decel, bool brake_now);
 uint8_t rrch_drive_dir(float v, float w);
 void rrch_caps(const rrch_t *c, float *vf, float *vr, float *w);
 rrch_event_t *rrch_event(rrch_t *c, rrch_ev_kind_t kind, int32_t a, int32_t b, int32_t d);
-void rrch_fault_set(rrch_t *c, uint32_t flt_bit, bool on);
+void rrch_fault_set(rrch_t *c, uint64_t flt_bit, bool on);
 void rrch_pstop(rrch_t *c, uint32_t sw_bits);
 void rrch_hold(rrch_t *c, uint32_t why);
 /* by_local: REARM button. Returns the reasons cleared; *blocked = causes still present (nothing cleared then). */

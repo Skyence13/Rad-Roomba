@@ -37,9 +37,21 @@ The cross-check loads the chassis, head and panel `circuit.py`, `electronics/cha
 | Rear-right cluster | J_PAUSE, J_TOF3, J_TOF10, J_BUMP_R, J_TOF6 positions from pinmap.json: W-019 290 -> 170, W-022 430 -> 310, W-033 400 -> 290, W-040 400 -> 290 mm | STAGE2 IB-12/33 |
 | Look sensors (IB-34, lead) | J_TOF4 = LOOK_FL, J_TOF5 = LOOK_RL, J_TOF6 = LOOK_RR, J_TOF7 = LOOK_FR (old names retired); W-034 150, W-035 270, W-036 290, W-037 150 mm | lead; frames.yaml |
 | Panel | J1/J2 on the top side, cable leaves over the v = 24 edge (which end faces +y unconfirmed) | panel P1 |
-| Head | J2001/J2601 side by side at the rear edge, J1 port y 76.2, J2004 at u 144.6, GH-6 and U.FL positions as built; coax 45-50 mm; shield drains 130/110 mm | head STAGE2 S2-L3..L6, CR-M03 |
+| Head | J2001/J2601 side by side at the rear edge, J1 port y 76.2, J2004 at u 144.6, GH-6 and U.FL positions as built; coax 45-50 mm; (stage 3) J2001/J2601 7 mm further forward, drains 70/50 mm, heater conductors AWG 20 at the head end | head STAGE2 S2-L3..L6, CR-M03 |
 | IB-37 | J_PAUX pins 3/4 stay unwired; offset accepted (about 3.4 K warm on discharge, about 0.7 K cold on charge) | chassis STAGE2 |
 | Bus clamp | W-044 and CLAMP-EXT removed: the board carries its own 2 x 9.1 ohm clamp resistors, no bolt-on part | lead decision, IB-26 |
+
+## Stage-3 changes (reviews: traction inhibit, head interference; IB-57, IB-61, IB-65, IB-66, IB-67)
+
+| Item | Harness now | Source |
+|---|---|---|
+| W-018 | J_BTN pin 1 = REARM_SET_SRC (V5_AUX via 1 kohm, <= 5 mA), pin 2 = REARM_SET_RAW; coil node stays on the board; three twisted pairs (set, aux, lamp). Shorts: set-line shorts (V12_AUX, LAMP_REARM_K, BTN_3V3, REARM_SET_SRC onto REARM_SET_RAW) and aux-contact bridging are harmless by the electronics' analysis (rows 42, 43); the residual is a crush putting a supply on REARM_SET_RAW and REARM_BTN_RAW together = one unintended arming (row 44, warning) | chassis STAGE2 S3-C1, chassis_safety_chain.md rows 42-46 |
+| Other chassis stage-3 nets | no other connector or pin moved; cross-check reads the S3 overrides (IOX_D U47 readbacks, D_RB hop, J_TOF names LOOK_FL/RL/RR/FR) | overrides.py |
+| W-019 | Pause/Stop at (-84, -122) read from frames.yaml: 170 -> 180 mm | IB-65 |
+| Head | W-101 / W-103 +7 mm (J2001/J2601 forward); heater conductors AWG 20 in the 43030-0007 terminals; splice AWG 18 -> 20 at 30 mm outside the gland (SPL-JH3/4); drains 70 / 50 mm | head S3-H H-03, CR-M06 |
+| Motor suppression | assembly item MOTSUP-L/R on W-006 / W-007 (cables.md section 7) | head S3-H H-01, review M4 |
+| Heater insulation, E7 and mated bond check | W-103 notes and cables.md section 8 | review M5, M3 |
+| Cross-check | no comparison with `reports/cable_lengths.json` any more (the chassis tool now reports this generator's own lengths: it would have compared the harness with itself) | IB-57 |
 
 ## IB-36 contradictions: what the harness assumes
 
@@ -89,9 +101,9 @@ Do not cut wire before the blocking open items (OI-01 .. OI-06 below) are closed
 |---|---|---|
 | OD-1 | **CLOSED (lead):** IB-34 mapping J_TOF4 = LOOK_FL, J_TOF5 = LOOK_RL, J_TOF6 = LOOK_RR, J_TOF7 = LOOK_FR (each pair split across the two I2C muxes). Lengths 150 / 270 / 290 / 150 mm. Firmware pinmap and contract still carry LOOK_LO/LI/RI/RO (warning until renamed). | closed |
 | OD-2 | SiPM coax pigtails W-112..W-119 are 45-50 mm (35 mm in board_envelopes.yaml) after the S2-L3 layout; carrier position assumed at the lane centre, drop 25 mm. | head electronics / mechanical |
-| OD-3 | Head J2001 pins 3/4 and J2601 pins 1/2 (AWG 18, up to 4.35 A) still rely on a recalled Micro-Fit '43030 18-24 AWG variant'; the head stage-2 file does not address it. Same remedy as chassis S2-02 (Mini-Fit Jr) or AWG 20 on the head side. | head electronics |
-| OD-4 | TP2004 / TP2501 (shield drain pads) are 60-100 mm from the J2001 / J2501 landings; drains are 130 / 110 mm separate wires. | head electronics |
-| OD-5 | Which end of RR-PANEL faces +y (cable exit edge); head CR-M01..M04 not yet adopted by head mechanical (IB-52); chassis cable_lengths.py takes path[0] as the board connector (wrong for W-001/003/004/005/006/007) - corrected here, tool is not mine. | mechanical |
+| OD-3 | **Heater-pair protection gap** (stage 3): AWG 20 into the 43030-0007 terminal (rating about 3.13 A continuous, UNVERIFIED) against heater draw up to 3.04 A; the head firmware cuts at 3.2 A / 300 ms, the bimetal cut-out acts on temperature, the chassis branch trips only at 3.56-4.35 A. No hardware current protection between 3.13 and 3.56 A. See `cables.md` section 6. Remedies for the lead: R46 for about 3.3 A, or two contacts per heater pole (head L-02). | lead, chassis + head electronics |
+| OD-4 | **Closed by head stage 3** (S3-H): drain pads TP2004 / TP2501 are now 9 mm from J2001 / next to the J2 port; drains W-101.S 70 mm and W-102.S 50 mm in this generator (it counts 2 x 15 mm of end allowance; the head file says about 45 / 25 mm). | closed |
+| OD-5 | Which end of RR-PANEL faces +y (cable exit edge); head CR-M01..M08 not yet adopted by head mechanical (IB-52, IB-61); Pololu 37D can-strap detail UNVERIFIED (cables.md section 7); fuse F2801 DC resistance and chassis-GND-to-chassis-metal bond not in any source (mated E7M reading). | mechanical, head electronics |
 | OD-6 | **CLOSED (lead):** the right rail switch is wired to J2003 and the left to J2004 (W-105 right, W-106 left), so the cables do not cross. Harness-side only; the idle BUMP_ZONE_L/R labels of J2003/J2004 are swapped against the physical rails (read-back not available in rev A). | closed |
 
 ## Open items carried over (blocking first, then the rest)

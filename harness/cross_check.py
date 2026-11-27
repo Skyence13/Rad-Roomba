@@ -361,6 +361,15 @@ for m in MATES:
                 edges[(m["b"], pin)].add((m["a"], pin))
 
 
+# a splice joins all its pins (SPL-JH3 / SPL-JH4 sit inside the J1 path since stage 3)
+for _c, _cc in HC.items():
+    if _cc.get("kind") == "splice" and _c.startswith("SPL-JH"):
+        for _a in _cc["pins"]:
+            for _b in _cc["pins"]:
+                if _a != _b:
+                    edges[(_c, _a)].add((_c, _b))
+
+
 def path(src_node, dst_node):
     seen, q = {src_node: None}, [src_node]
     while q:
@@ -487,12 +496,13 @@ for ex, ref in (("IOX_A", "U43"), ("IOX_B", "U44")):
         sig[d["signal"]] = (net, "%s %s pin %s" % (ex, ref, pn_))
         if net is None:
             err("H firmware pin map", "%s %s (%s) has no net in circuit.py" % (ex, pn_, d["signal"]))
-        elif not (d["signal"] in net or net in d["signal"]):
+        elif not (d["signal"] in net or net in d["signal"] or d["signal"].replace("_RB", "") == net.replace("_IO", "")):
             warn("H firmware names", "%s %s: firmware signal %s vs circuit net %s%s" % (ex, pn_, d["signal"], net, " (IB-01/CCR-E02: P17 is now CHAIN_END_RB in the circuit; firmware map still lists SPARE_OUT)" if net == "CHAIN_END_RB" else ""))
 # IOX_C
 for part in CHS.PARTS:
     if "TCA9534" in part["value"]:
-        refc = part["ref"]
+        if part["ref"] == "U45":      # IOX_C; stage 3 adds the second TCA9534 U47 = IOX_D (0x22)
+            refc = part["ref"]
 for pn_, d in fw["expanders"]["IOX_C"]["pins"].items():
     net = byname.get((refc, pn_))
     sig[d["signal"]] = (net, "IOX_C %s pin %s" % (refc, pn_))
@@ -506,6 +516,8 @@ LED_FETS = {"Q50", "Q51", "Q52", "Q53", "Q54", "Q55", "Q56", "Q58"}
 
 def hops_chs(ref, part):
     v = part["value"]
+    if ref == "D_RB":      # blocking Schottky of the REARM aux contact (S3-C1c): REARM_BTN_RAW (A) -> REARM_BTN_D (K)
+        return [("1", "2")]
     if "TPD4E05U06" in v:
         return [("1", "10"), ("2", "9"), ("4", "7"), ("5", "6")]
     if "USBLC6" in v:
@@ -619,6 +631,18 @@ for s, (net, where) in sig.items():
     if cons:
         warn("H firmware off-board", "chassis firmware %s (%s) is electrically connected to %s but is not in the expected-off-board table (check)" % (s, where, ", ".join("%s.%s" % c for c in sorted(cons))))
 
+# IOX_D (stage 3, F1): new TCA9534 U47, not yet in firmware/chassis/pinmap.yaml: check its readback nets and that REARM_SET_RB reaches J_BTN pin 2
+byn = {k[1]: v for k, v in byname.items() if k[0] == "U47"}
+okd = byn == {"P0": "LATCH_NC_RB", "P1": "LATCH_RUN_RB", "P2": "HEAD_LOOP2_OK_RB", "P3": "REARM_SET_RB"} or all(byn.get(k) == v for k, v in {"P0": "LATCH_NC_RB", "P1": "LATCH_RUN_RB", "P2": "HEAD_LOOP2_OK_RB", "P3": "REARM_SET_RB"}.items())
+consd = trace(CHS, PCHS, NCHS, "REARM_SET_RB", hops_chs)
+if not okd:
+    err("H IOX_D", "U47 (IOX_D) pins are not P0 LATCH_NC_RB, P1 LATCH_RUN_RB, P2 HEAD_LOOP2_OK_RB, P3 REARM_SET_RB: %s" % byn)
+if ("J_BTN", "2", "REARM_SET_RAW") not in consd and not any(c[0] == "J_BTN" and c[1] == "2" for c in consd):
+    err("H IOX_D", "REARM_SET_RB does not reach J_BTN pin 2 in the stage-3 netlist")
+elif ("J_BTN", "2") in {(a, b) for a, b, _ in consd} and ("CHS.J_BTN", "2") in use:
+    INFO.append(("H IOX_D", "REARM_SET_RB (IOX_D U47 P3, 0x22) reaches J_BTN pin 2 (REARM_SET_RAW) and has a harness wire (W-018.2); firmware/chassis/pinmap.yaml has no IOX_D entry yet (chassis firmware owner)"))
+count("H1b. stage-3 IOX_D (U47) readbacks LATCH_NC_RB, LATCH_RUN_RB, HEAD_LOOP2_OK_RB, REARM_SET_RB on P0..P3; REARM_SET_RB reaches J_BTN pin 2", int(okd), 1)
+
 # ToF channel mapping: firmware mux/channel vs the circuit's mux pins and the connector index
 tofch = fw["i2c"]["I2C_TOF"]["mux_channels"]
 SD = {0: "4", 1: "6", 2: "8", 3: "10", 4: "13", 5: "15", 6: "17", 7: "19"}
@@ -717,13 +741,8 @@ try:
             else:
                 n_ok += 1
     count("J2. robot cables inside the length assumed by the power budget (warning only)", n_ok, n_tot)
-    # the stage-2 board report's own estimate for comparison (electronics/chassis_main/reports/cable_lengths.json): information only
-    import json
-    cl = json.load(open(os.path.join(ROOT, "electronics/chassis_main/reports/cable_lengths.json")))
-    byc = {c["id"]: c["length_mm"] for c in hk.CABLES}
-    for r in cl:
-        if r["cable"] in byc and abs(byc[r["cable"]] - r["stage2_mm"]) >= 40:
-            INFO.append(("J length vs chassis tool", "%s: harness %d mm, electronics/chassis_main/tools/cable_lengths.py says %d mm (the tool takes the FIRST path point as the board connector, which is wrong for cables whose path starts at the device, and assumes the stage-1 look-sensor mapping: compare with OD-1 only after correcting both)" % (r["cable"], byc[r["cable"]], r["stage2_mm"])))
+    # NOTE (stage 3): the comparison with electronics/chassis_main/reports/cable_lengths.json was REMOVED. That tool now only reports THIS
+    # generator's lengths (IB-57), so comparing them would compare the harness with itself.
 except ImportError:
     pass
 
@@ -770,7 +789,7 @@ for j in ("J1001", "J1101", "J1201", "J1301"):
         err("K head stage 2", "%s is not the lane auxiliary GH-6" % j)
         ok4 = False
 count("K. head stage 2: J2601 and J2001 side by side at the rear edge, J2004 at u %.1f inside the harness reach u 140..149, four lane auxiliary GH-6" % c2004, int(ok4), 1)
-INFO.append(("K head stage 2", "TP2004 at u %.1f v %.1f and TP2501 at u %.1f v %.1f are 60-100 mm from the J2001 / J2501 landings: the shield drains W-101.S / W-102.S are separate wires of %s / %s mm inside the head" % (
+INFO.append(("K head stage 2", "TP2004 at u %.1f v %.1f and TP2501 at u %.1f v %.1f (stage 3: next to the J2001 / J2501 landings) the shield drains W-101.S / W-102.S are separate wires of %s / %s mm inside the head" % (
     *[x for t in ("TP2004", "TP2501") for x in hk.HEAD_UV[t]], W["W-101.S"]["length_mm"], W["W-102.S"]["length_mm"])))
 
 # ================================================================ report

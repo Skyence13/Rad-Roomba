@@ -28,7 +28,7 @@ Fixed in every option: the head interior (four 80 x 100 windows, 87.5 pitch, fil
 | Gap change at the leading-rail corner per mm single-wheel drop (mm) | 1.79 | 1.79 | 1.61 | 0.28; but 1.00 per mm under a roller |
 | Single feature that makes the 3 mm / 5 mm rail touch (mm) | 3.9 / 2.8 | 3.9 / 2.8 | 4.3 / 3.1 | rail concept changes (rollers are the first contact) |
 | Forward tip margin, 12 Ah pack, heaviest head, 0.4 m/s2 braking on 5 deg down-slope (mm) | +19.2 | +22.7 | +22.7 | +72 (head weight on its own rollers) |
-| same with the 9 Ah alternative pack (mm) | +9.8 | +13.5 | +13.5 | n/a |
+| same with the 9 Ah alternative pack (mm) | +9.8 | +13.4 | +13.4 | n/a |
 | Static caster load, same worst case, 12 Ah (N) | 12.2 | 13.6 | 13.6 | about 25 |
 | Heaviest operating mass, 12 Ah (kg) | 9.35 | 9.25 | 9.25 | about +0.25 (rollers, link, bearings) |
 | Outer head corner radius / swept radius incl. tail (mm) | 318 / 318 | 318 / 318 | 260 / 278 | as A or C, + roller width |
@@ -60,7 +60,7 @@ A floor-following head removes the cantilever from the balance (tip margin +72 m
 
 ## Recommendation: option C (implemented in `params.py`, layout and all calculations)
 
-- **Balance**: forward tip margin +19.2 mm (A) -> **+22.7 mm (C)** with the 12 Ah pack and the heaviest head, static caster load 12.2 -> 13.6 N; with the 9 Ah pack +9.8 -> +13.5 mm. No ballast in any configuration.
+- **Balance**: forward tip margin +19.2 mm (A) -> **+22.7 mm (C)** with the 12 Ah pack and the heaviest head, static caster load 12.2 -> 13.6 N; with the 9 Ah pack +9.8 -> +13.4 mm. No ballast in any configuration.
 - **Stiffness**: mount pitch 864 -> 4374 N m/rad and roll 5766 -> 45938 N m/rad (printed); 20 N at the front outer corner 0.74 -> **0.19 mm** printed, 0.14 -> 0.04 mm aluminium; first mode 45 -> 84 Hz printed.
 - **Gap**: pitch sensitivity at the row centre 1.00 -> **0.64 mm per mm** at the caster; worst rail corner per mm of single-wheel drop 1.79 -> 1.61; the 3 mm rail touches at 3.9 -> 4.3 mm features, the 5 mm rail at 2.8 -> 3.1 mm.
 - **Envelope**: overall length 537 -> 464 mm; outer head corner radius 318 -> 260 mm (the tail, 278 mm, now sets the swept circle); corner speed at the yaw limit 0.095 -> 0.078 m/s.

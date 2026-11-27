@@ -11,3 +11,5 @@ Stage-2 update done 2026-11-27 (IB-32..IB-37, IB-44). Last full run: `python3 ha
 | README.md | stage-2 changes, IB-36 table, open decisions OD-2..OD-5 (OD-1, OD-6 closed) |
 
 Re-run: `python3 harness/build.py && python3 harness/cross_check.py`. Edit the data in hdata_conn.py / hdata_cables.py / hdata_parts.py, never the generated outputs.
+
+Stage-3 update (2026-11-27): W-018 relabelled and shorts analysed, W-019 (Pause at y -122), W-101/W-103 +7 mm and AWG 20 heater conductors with splices SPL-JH3/4, motor suppression assembly items, heater-insulation and E7 test notes (cables.md sections 6-8), cross-check reads the stage-3 netlist (IOX_D checks, D_RB hop) and no longer reads cable_lengths.json. Open: OD-2, OD-3 (heater protection gap), OD-5.

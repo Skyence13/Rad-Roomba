@@ -60,7 +60,8 @@ static void debug_report(void)
     put_s(&p, " sw=");
     put_x(&p, g_core.sw_latched);
     put_s(&p, " flt=");
-    put_x(&p, g_core.faults);
+    put_x(&p, (uint32_t)(g_core.faults >> 32));
+    put_x(&p, (uint32_t)g_core.faults);
     put_s(&p, " di=");
     put_x(&p, g_core.chain.state);
     put_s(&p, " vbat_mV=");

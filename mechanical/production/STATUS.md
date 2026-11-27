@@ -1,6 +1,6 @@
 # RR-P production body -- status
 
-## State (2026-11-27): first complete build; see the result block at the end (written after the run)
+## State (2026-11-27): complete; `build.sh` exit 0, all checks pass (result block at the end)
 
 | Item | State |
 |---|---|
@@ -25,4 +25,17 @@
 
 ## Run time
 
-Cold BREP cache: about 20-30 min on the shared machine (skins); warm: see the result block.
+Cold BREP cache: about 45 min on the shared machine (the one-piece lid booleans); warm: about 15 min, of which about 10 min is the exact
+boolean of lower hull x lid (contact only, 0.0 mm3; RR_BOOL_TIMEOUT=1200 in build.sh, result cached in out/_interference).
+
+## Result of the last run (2026-11-27, tool-checked unless marked)
+
+- `build.sh` exit 0, 926 s warm. Interference 0 clashes in 371 pairs (20 declared through-wall envelope overlaps); containment, floor contact,
+  ToF / LiDAR rays, removal sweeps and glove zones, chin rule, receiver interface 41/41 (incl. the thermal break), width <= 295, corridors,
+  CCR-E08 keep-outs, slivers (< 100 mm3, same as the prototype), one valid solid per part, 45/45 process envelopes, one-piece skins: all PASS.
+  Grip proof: PASS (calculated).
+- Mass / CG (calculated): body 7.36 kg; with prototype head 9.23 kg, CG x -48.4, fwd tip margin 39.2 mm, hang -11.3 deg; with production head
+  9.44 kg, CG x -44.2, 35.1 mm, -8.7 deg (`mass_cg.md`).
+- 45 part STEP, 4 subassembly STEP (largest 44 MB), full assembly 60 MB in out/ (untracked), 9 DXF + hole tables, 50 drawing sheets.
+- Fixes made during this pass: one-piece hull trimmed at x 62 (nose lip and chin belong to the lid); the skin strip that closes the hump
+  opening starts at the hump rear face (the hatch frame owns the 3.3 mm gap behind it).

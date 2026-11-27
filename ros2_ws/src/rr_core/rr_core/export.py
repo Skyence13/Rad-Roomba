@@ -156,6 +156,10 @@ def _svg(proc, run, layer: str) -> str:
     return "\n".join(o) + "\n"
 
 
+def _f3(v):
+    return "n/a (no decision)" if v is None else (f"{v:.3f}" if math.isfinite(v) else "inf")
+
+
 def _diag_cols(d, lane):
     """alpha_short, alpha_idle_clears, imon_na of one lane from the gate's DIAG record ('' where no DIAG was read for the gate)."""
     if not d:
@@ -308,7 +312,8 @@ def export_survey(pipe, run: dict, out_dir, run_dir=None) -> dict:
     for obs in proc.observations.values():
         r = obs["result"]
         t.write(f"  scaler count {obs['id']} (flag {obs['flag']}, lane {obs['lane']}): {obs['outcome']}"
-                + (f" D={r['D']:.3f} +/- {r['u_total']:.3f}, D*={r['D_star']:.3f}, D#={r['D_hash']:.3f}, T={r['T_F']:.1f} s\n" if r else "\n"))
+                + (f" D={r['D']:.3f} +/- {r['u_total']:.3f}, D*={_f3(r['D_star'])}, D#={_f3(r['D_hash'])}, T={r['T_F']:.1f} s"
+                                                         + ("" if r.get("status", "OK") == "OK" else f" [{r['status']}]") + "\n" if r else "\n"))
     for reason, area in sorted(by_reason.items()):
         t.write(f"  unresolved floor {reason}: {area:.4f} m2 (rectangles in residuals.json)\n")
     for gap in proc.gaps:

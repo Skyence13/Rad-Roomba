@@ -97,6 +97,18 @@ static void kmask(rrc_jw_t *w, const char *key, uint32_t mask, const char *const
     rrc_jw_arr_end(w);
 }
 
+static void kmask64(rrc_jw_t *w, const char *key, uint64_t mask, const char *const *names, int n)
+{
+    rrc_jw_key(w, key);
+    rrc_jw_arr_begin(w);
+    for (int i = 0; i < n; i++) {
+        if (mask & (1ull << i)) {
+            rrc_jw_str(w, names[i]);
+        }
+    }
+    rrc_jw_arr_end(w);
+}
+
 /* like kmask but stops after max_names entries (STATE emergency compaction) */
 static void kmask_n(rrc_jw_t *w, const char *key, uint32_t mask, const char *const *names, int n, int max_names)
 {
@@ -121,7 +133,7 @@ static const char *const chg_names[8] = {"NONE", "PRECHARGE", "CC", "CV", "DONE"
 static const char *const rst_names[6] = {"POWER_ON", "BROWNOUT", "PIN", "WATCHDOG", "SOFTWARE", "UNKNOWN"};
 static const char *const loop_names[3] = {"OK", "OPEN", "SHORT"};
 static const char *const bt_names[4] = {"NONE", "RUNNING", "PASSED", "FAILED"};
-static const char *const btf_names[9] = {"PRECOND_VMOT", "PRECOND_RELAY", "LATCH_NOT_DROPPED", "RELAY_L", "RELAY_R", "VMOT_NOT_REMOVED", "BRIDGE_CURRENT_L", "BRIDGE_CURRENT_R", "WHEEL_MOVED"};
+static const char *const btf_names[11] = {"PRECOND_VMOT", "PRECOND_RELAY", "LATCH_NOT_DROPPED", "RELAY_L", "RELAY_R", "VMOT_NOT_REMOVED", "BRIDGE_CURRENT_L", "BRIDGE_CURRENT_R", "WHEEL_MOVED", "K1_NOT_RELEASED", "K1_WELDED"};
 static const char *const ev_names[RRCH_EV_KIND_N] = {"BOOT", "BROWNOUT", "CHAIN", "HW_LATCH", "PERMIT", "J1", "J2", "BUTTON", "MODE", "PSTOP", "PSTOP_CLEAR", "HOLD", "REARM_REJECT", "OP_MODE", "CONFIG", "HEAD_POWER", "FAULT", "BRAKE_TEST", "LINK", "TOF"};
 static const char *const permit_why[6] = {"NORMAL", "UNCOMMANDED_MOTION", "STOP_ESCALATION", "BRAKE_TEST", "MODE", "HEAD_LOOP"};
 static const char *const hp_why[5] = {"HOST", "PRESENCE", "CHARGE", "EFUSE", "BOOT"};
@@ -466,10 +478,11 @@ static void op_state(ctx_t *x, int level)
     kf(w, "chassis_duty_pct", c->htr_duty * 100.0f, 0);
     if (level < 2) {
         kf(w, "chassis_setpoint_c", c->htr_enabled ? c->htr_setpoint_c : NAN, 1);
+        kf(w, "active_setpoint_c", c->htr_active_sp, 1);
         rrc_jw_kbool(w, "sensor_ok", c->htr_sensor_ok);
     }
     rrc_jw_obj_end(w);
-    kmask(w, "faults", level < 1 ? c->faults : 0u, rrch_flt_names, RRCH_FLT_N);
+    kmask64(w, "faults", level < 1 ? c->faults : 0u, rrch_flt_names, RRCH_FLT_N);
     if (level > 0) {
         rrc_jw_kbool(w, "truncated", true);
     }
@@ -497,7 +510,7 @@ static void op_diag(ctx_t *x)
     kmask(w, "hw_active", ch->hw_live, rrch_hw_names, RRCH_HW_N);
     kmask(w, "protective_stop_reasons", c->sw_latched, rrch_sw_names, RRCH_SW_N);
     kmask(w, "sw_active", c->sw_active, rrch_sw_names, RRCH_SW_N);
-    kmask(w, "faults", c->faults, rrch_flt_names, RRCH_FLT_N);
+    kmask64(w, "faults", c->faults, rrch_flt_names, RRCH_FLT_N);
     rrc_jw_key(w, "estop");
     rrc_jw_obj_begin(w);
     rrc_jw_kbool(w, "a", (st & RRCH_DI(ESTOP_A)) != 0);
@@ -516,6 +529,14 @@ static void op_diag(ctx_t *x)
     for (int i = 0; i < RRCH_EL_N; i++) {
         rrc_jw_kstr(w, rrch_el_names[i], els_names[ch->el[i] % 3]);
     }
+    rrc_jw_obj_end(w);
+    rrc_jw_key(w, "iox_d"); /* (+) stage 3 readbacks; all false while not known */
+    rrc_jw_obj_begin(w);
+    rrc_jw_kbool(w, "known", ch->iox_d_known);
+    rrc_jw_kbool(w, "latch_nc", ch->k1_nc);
+    rrc_jw_kbool(w, "latch_run", ch->k1_run);
+    rrc_jw_kbool(w, "head_loop2_ok", ch->loop_b);
+    rrc_jw_kbool(w, "rearm_set", ch->rearm_set);
     rrc_jw_obj_end(w);
     if (ch->chain_end_known) {
         rrc_jw_kbool(w, "chain_end", ch->chain_end);
@@ -646,7 +667,7 @@ static void event_detail(rrch_t *c, rrc_jw_t *w, const rrch_event_t *e)
         break;
     case RRCH_EV_BRAKE_TEST:
         rrc_jw_kbool(w, "passed", e->a != 0);
-        kmask(w, "fail", (uint32_t)e->b, btf_names, 9);
+        kmask(w, "fail", (uint32_t)e->b, btf_names, 11);
         break;
     case RRCH_EV_LINK:
         rrc_jw_kbool(w, "up", e->a != 0);
@@ -869,8 +890,8 @@ static void op_heater(ctx_t *x)
     int t = rrc_json_get(x->doc, x->args, "chassis_setpoint_c");
     double sp = 0;
     bool off = rrc_json_is_null(x->doc, t);
-    if (!off && (!tok_num(x->doc, t, &sp) || sp < 0.0 || sp > 30.0)) {
-        simple(x, "BAD_ARG", "chassis_setpoint_c must be 0..30 or null");
+    if (!off && (!tok_num(x->doc, t, &sp) || sp < -10.0 || sp > 30.0)) {
+        simple(x, "BAD_ARG", "chassis_setpoint_c must be -10..30 or null");
         return;
     }
     if (!need_session(x)) {
@@ -880,6 +901,7 @@ static void op_heater(ctx_t *x)
     c->htr_setpoint_c = off ? NAN : (float)sp;
     begin(x, "OK");
     kf(&x->w, "chassis_setpoint_c", c->htr_setpoint_c, 1);
+    kf(&x->w, "active_setpoint_c", c->htr_active_sp, 1); /* (+) thermal-policy floor or host value */
     kf(&x->w, "duty_pct", c->htr_duty * 100.0f, 0);
     kf(&x->w, "bay_c", c->in.ntc_c[0], 1);
     rrc_jw_kbool(&x->w, "sensor_ok", c->htr_sensor_ok);
@@ -1018,7 +1040,7 @@ static void bt_body(ctx_t *x)
     rrc_jw_t *w = &x->w;
     begin(x, "OK");
     rrc_jw_kbool(w, "passed", b->state == RRCH_BT_PASSED);
-    kmask(w, "fail", b->fail, btf_names, 9);
+    kmask(w, "fail", b->fail, btf_names, 11);
     rrc_jw_ki64(w, "latch_drop_ms", b->latch_drop_ms);
     rrc_jw_ki64(w, "relay_ms", b->relay_ms);
     rrc_jw_ki64(w, "vmot_decay_ms", b->vmot_decay_ms);

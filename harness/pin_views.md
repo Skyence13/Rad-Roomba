@@ -1300,8 +1300,8 @@ Keying / coding: polarised housing (Micro-Fit 3.0 single row); right-angle heade
 |---|---|---|
 | 1 | HEAD_PWR_P | W-101.1 |
 | 2 | HEAD_PWR_N | W-101.2 |
-| 3 | HEAD_HTR_P | W-101.3 |
-| 4 | HEAD_HTR_N | W-101.4 |
+| 3 | HEAD_HTR_P | W-101.3H |
+| 4 | HEAD_HTR_N | W-101.4H |
 | 5 | HEAD_LOOP_OUT | W-101.5 |
 | 6 | HEAD_LOOP_RET | W-101.6 |
 | 7 | HEAD_PRES_ID | W-101.7 |
@@ -2366,6 +2366,30 @@ Device / module / pad: no standard pin geometry in the sources. Terminal table b
 | 5 | ENCC_R_A | W-007.5 |
 | 6 | ENCC_R_B | W-007.6 |
 
+## MOTSUP-L
+
+Left motor suppression network: C_X 47-100 nF across the motor terminals; C_Y1 and C_Y2 4.7-10 nF from each terminal to the motor can; can strapped to the chassis plate. Part: no part number in any source - to be selected (class: C_X X7R >= 50 V 1206 or film; C_Y X7R >= 100 V) [TBD]. Mating half: n/a (soldered) [TBD].
+
+Device / module / pad: no standard pin geometry in the sources. Terminal table below.
+
+| Pin | Net | Wire(s) |
+|---|---|---|
+| A | MOTC_L_A | - |
+| B | MOTC_L_B | - |
+| CAN | MOTOR_CAN_L | - |
+
+## MOTSUP-R
+
+Right motor suppression network: C_X 47-100 nF across the motor terminals; C_Y1 and C_Y2 4.7-10 nF from each terminal to the motor can; can strapped to the chassis plate. Part: no part number in any source - to be selected (class: C_X X7R >= 50 V 1206 or film; C_Y X7R >= 100 V) [TBD]. Mating half: n/a (soldered) [TBD].
+
+Device / module / pad: no standard pin geometry in the sources. Terminal table below.
+
+| Pin | Net | Wire(s) |
+|---|---|---|
+| A | MOTC_R_A | - |
+| B | MOTC_R_B | - |
+| CAN | MOTOR_CAN_R | - |
+
 ## LIDAR-PWR
 
 LiDAR supply input (Richbeam LakiBeam 1L, 9-36 V). Part: Richbeam LakiBeam 1L [verified (temp/mass VERIFIED in parts.yaml; connector_exit UNVERIFIED)]. Mating half: TBD - not in sources (LiDAR power connector/pigtail not in sources) [TBD].
@@ -2509,7 +2533,7 @@ Device / module / pad: no standard pin geometry in the sources. Terminal table b
 
 ## REARM-DEV
 
-REARM/Start guarded flush momentary, 2 NO (NO 1 = capacitor-coupled set path, NO 2 = REARM_BTN to the MCU), 12 V LED block. Part: Schneider Harmony XB5 guarded flush momentary 2 NO + 12 V LED block (reference TBD) [UNVERIFIED]. Mating half: n/a [TBD].
+REARM/Start guarded flush momentary, 2 NO (NO 1 = set contact into the on-board set stage, a 5 V signal since stage 3; NO 2 = REARM_BTN aux contact to the MCU and the set stage), 12 V LED block. Part: Schneider Harmony XB5 guarded flush momentary 2 NO + 12 V LED block (reference TBD) [UNVERIFIED]. Mating half: n/a [TBD].
 
 Device / module / pad: no standard pin geometry in the sources. Terminal table below.
 
@@ -2519,8 +2543,8 @@ Device / module / pad: no standard pin geometry in the sources. Terminal table b
 | AUX-b | REARM_BTN_RAW | W-018.4 |
 | LAMP+ | V12_AUX | W-018.5 |
 | LAMP- | LAMP_REARM_K | W-018.6 |
-| SET-a | SET_CAP | W-018.1 |
-| SET-b | K1_SET | W-018.2 |
+| SET-a | REARM_SET_SRC | W-018.1 |
+| SET-b | REARM_SET_RAW | W-018.2 |
 
 ## PAUSE-DEV
 
@@ -2648,6 +2672,28 @@ Device / module / pad: no standard pin geometry in the sources. Terminal table b
 |---|---|---|
 | 1 | CLAMP_F | - |
 | 2 | CLAMP_R | - |
+
+## SPL-JH3
+
+head pigtail heater pole + wire-to-wire splice AWG 18 (J1 plug side) to AWG 20 (J2001 side), 30 mm outside the head gland. Part: TBD - not in sources (sealed wire-to-wire splice) [TBD]. Mating half: n/a [TBD].
+
+Device / module / pad: no standard pin geometry in the sources. Terminal table below.
+
+| Pin | Net | Wire(s) |
+|---|---|---|
+| 1 | HEAD_HTR_P | W-101.3 |
+| 2 | HEAD_HTR_P | W-101.3H |
+
+## SPL-JH4
+
+head pigtail heater pole - wire-to-wire splice AWG 18 to AWG 20, 30 mm outside the head gland, staggered 15 mm from SPL-JH3. Part: TBD - not in sources (sealed wire-to-wire splice) [TBD]. Mating half: n/a [TBD].
+
+Device / module / pad: no standard pin geometry in the sources. Terminal table below.
+
+| Pin | Net | Wire(s) |
+|---|---|---|
+| 1 | HEAD_HTR_N | W-101.4 |
+| 2 | HEAD_HTR_N | W-101.4H |
 
 ## SPL-P
 

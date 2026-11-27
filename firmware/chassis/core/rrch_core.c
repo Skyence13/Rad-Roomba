@@ -52,7 +52,7 @@ rrch_event_t *rrch_event(rrch_t *c, rrch_ev_kind_t kind, int32_t a, int32_t b, i
     return e;
 }
 
-void rrch_fault_set(rrch_t *c, uint32_t bit, bool on)
+void rrch_fault_set(rrch_t *c, uint64_t bit, bool on)
 {
     bool was = (c->faults & bit) != 0;
     if (was == on || (!on && (bit & RRCH_FLT_FATAL_MASK))) {
@@ -60,7 +60,7 @@ void rrch_fault_set(rrch_t *c, uint32_t bit, bool on)
     }
     c->faults = on ? (c->faults | bit) : (c->faults & ~bit);
     for (int i = 0; i < RRCH_FLT_N; i++) {
-        if (bit == (1u << i)) {
+        if (bit == (1ull << i)) {
             rrch_event(c, RRCH_EV_FAULT, i, on, 0);
         }
     }
@@ -345,6 +345,18 @@ static bool bt_step(rrch_t *c)
             b->ms = 0;
         }
         return false;
+    case 3: /* stage 3 (F2, F3): ARM_PERMIT back high with every element closed and NO REARM: K1 must read
+             * released (LATCH_NC_RB high) and neither LATCH_RUN_RB nor HW_LATCH_RB may rise for 100 ms */
+        if (b->ms == 1u && !(c->chain.iox_d_known && c->chain.k1_nc)) {
+            b->fail |= RRCH_BTF_K1_NOT_RELEASED;
+        }
+        if (b->ms > 20u && (c->chain.k1_run || (c->in.di & RRCH_DI(HW_LATCH)))) {
+            b->fail |= RRCH_BTF_K1_WELDED;
+        }
+        if (b->ms >= 120u) {
+            bt_finish(c);
+        }
+        return true;
     default: /* probe: the bridges must be unable to move the motors */
         c->out.bridge_awake = true;
         c->out.duty[0] = c->out.duty[1] = CFG(c, BRK_PROBE_DUTY) * 0.01f;
@@ -362,7 +374,8 @@ static bool bt_step(rrch_t *c)
             if (b->probe_i[1] > CFG(c, BRK_PROBE_I_MAX)) {
                 b->fail |= RRCH_BTF_BRIDGE_CURRENT_R;
             }
-            bt_finish(c);
+            b->step = 3;
+            b->ms = 0;
             return true;
         }
         return false;
@@ -507,12 +520,20 @@ static void aux_step(rrch_t *c)
     }
     c->htr_sensor_ok = ok;
     rrch_fault_set(c, RRCH_FLT(HEATER_SENSOR), !ok);
-    bool charger = c->mode == RRCH_MODE_SERVICE_CHARGE;
-    bool allow = c->htr_enabled && ok && bay < CFG(c, HTR_MAX_C) && c->mode != RRCH_MODE_BOOT && c->mode != RRCH_MODE_FAULT &&
+    /* Thermal policy (contract power.thermal_policy, DEC-045): with no host set-point the bay heater holds the
+     * pack at or above heater.min_discharge_c (-10 C) on pack power, and at heater.precharge_c (+5 C) while an
+     * external supply is present (charging pre-heat). A host set-point (-10..30 C) can only raise that floor.
+     * Regulation input: the colder of the bay and pack NTCs. The hardware cold-charge inhibit is unchanged. */
+    bool charger = c->mode == RRCH_MODE_SERVICE_CHARGE || (c->pwr.charger_ok && c->pwr.chg_input);
+    float floor_c = charger ? CFG(c, HTR_PRECHARGE_C) : CFG(c, HTR_MIN_DISCHARGE_C);
+    float sp = c->htr_enabled ? fmaxf(c->htr_setpoint_c, floor_c) : floor_c;
+    float tctl = (pack == pack && pack < bay) ? pack : bay;
+    c->htr_active_sp = sp;
+    bool allow = ok && bay < CFG(c, HTR_MAX_C) && c->mode != RRCH_MODE_BOOT && c->mode != RRCH_MODE_FAULT &&
                  !(c->pwr.efuse_fault & 4u) && (charger || in->vbat_v >= CFG(c, BATT_WARN_V));
     float duty = 0.0f;
     if (allow) {
-        duty = (c->htr_setpoint_c - bay) / CFG(c, HTR_BAND_C);
+        duty = (sp - tctl) / CFG(c, HTR_BAND_C);
         duty = duty < 0.0f ? 0.0f : (duty > 1.0f ? 1.0f : duty);
         duty *= CFG(c, HTR_MAX_DUTY) * 0.01f;
     }

@@ -89,7 +89,7 @@ def board_head():
         elif "Micro-Fit" in p["package"]:
             kind, geom = "board_header", "single_ra"
             mating = "43645-%02d00 (circuit.py note; mating housing not in the chassis tables)" % n
-            contacts = "43030 'AWG 18-24 variant for the heater pair' (circuit.py note; suffix not in sources)"
+            contacts = "43030-0007 (AWG 20-24) (chassis table; stage 3 H-03 / IB-61: heater conductors AWG 20, rating about 3.13 A continuous UNVERIFIED)"
             seal, temp, tstat = "none stated (inside the head shell)", "-40 C family (CCR-E05); no figure in sources", "UNVERIFIED"
             keying = "polarised housing (Micro-Fit 3.0 single row); right-angle header"
         elif "TC2030" in p["package"]:
@@ -250,6 +250,15 @@ def others():
                              {"1": "MOTC_%s_A" % s, "2": "MOTC_%s_B" % s, "3": "ENC_%s_5V" % s, "4": "GND", "5": "ENCC_%s_A" % s, "6": "ENCC_%s_B" % s},
                              "Lead colours per Pololu product page [D, confirm on the part]: 1 red motor A, 2 black motor B, 3 blue encoder 5 V, 4 green encoder GND, 5 yellow encoder A, 6 white encoder B. Lead length and gauge not published (power_budget assumes AWG 22, 0.25 m): TBD.",
                              "electronics/modules/gearmotor_pololu_2828.md", "")
+    # --- motor-terminal suppression (review M4 / head S3-H H-01): an assembly item at each gearmotor, soldered AT the terminals
+    for s_, n_ in (("L", "Left"), ("R", "Right")):
+        o["MOTSUP-" + s_] = _c("MOTSUP-" + s_, "%s gearmotor terminals (soldered on the motor, leads <= 5 mm)" % n_,
+                               "%s motor suppression network: C_X 47-100 nF across the motor terminals; C_Y1 and C_Y2 4.7-10 nF from each terminal to the motor can; can strapped to the chassis plate" % n_,
+                               "assembly", "no part number in any source - to be selected (class: C_X X7R >= 50 V 1206 or film; C_Y X7R >= 100 V)", "TBD",
+                               "n/a (soldered)", "TBD", "solder at the motor terminals; can strap: braid or tab, <= 30 mm, >= 2.5 mm wide", "none", "X7R: -55..+125 C class value (EIA code), part TBD",
+                               "UNVERIFIED", "n/a", "list", {"A": "MOTC_%s_A" % s_, "B": "MOTC_%s_B" % s_, "CAN": "MOTOR_CAN_%s" % s_},
+                               "Chassis stage / head S3-H H-01 (review M4). Not a wire: no row in cables.csv. Brush arcs 1-100 MHz are not reduced by the BLM31 + 1 nF at the board connector.",
+                               "docs/reviews/REVIEW_head_interference.md M4; head_acq/STAGE2_CHANGE_REQUESTS.md S3-H H-01", "")
     # --- LiDAR, CM5
     o["LIDAR-PWR"] = _c("LIDAR-PWR", "LiDAR base on the battery hump, pad (-150, 0), z 150", "LiDAR supply input (Richbeam LakiBeam 1L, 9-36 V)", "module", "Richbeam LakiBeam 1L", "verified (temp/mass VERIFIED in parts.yaml; connector_exit UNVERIFIED)",
                         TBD + " (LiDAR power connector/pigtail not in sources)", "TBD", TBD, "IP65 (parts.yaml lidar.desc)", "-25..+60 C (parts.yaml, VERIFIED)", "verified", TBD, "list", {"1": "V12_LIDAR", "2": "GND"},
@@ -279,10 +288,10 @@ def others():
     o["HANDS-DEV"] = _c("HANDS-DEV", "Right deck (-172.0, -97.0, 125.2), axis (-0.190, -0.415, 0.890)", "HANDS-ON maintained illuminated pushbutton: 1 NC chain element + 12 V lamp from the real chain state", "device",
                         "Schneider Harmony XB5 illuminated push-push, 1 NC, 12 V LED block (exact reference TBD: ZB5AH... + ZBE-102 + light block)", "UNVERIFIED", "n/a", "TBD", xb, "IP rating not in sources", "-40..+70 C (UNVERIFIED)", "UNVERIFIED",
                         "22 mm panel", "list", {"NC-a": "CH_N2", "NC-b": "CH_N3", "LAMP+": "HANDS_LAMP_P", "LAMP-": "HANDS_LAMP_K"}, "Lamp <= 20 mA.", "estop_and_operator_switches.md", "")
-    o["REARM-DEV"] = _c("REARM-DEV", "Left deck (-172.0, 97.0, 125.2), axis (-0.190, 0.415, 0.890)", "REARM/Start guarded flush momentary, 2 NO (NO 1 = capacitor-coupled set path, NO 2 = REARM_BTN to the MCU), 12 V LED block", "device",
+    o["REARM-DEV"] = _c("REARM-DEV", "Left deck (-172.0, 97.0, 125.2), axis (-0.190, 0.415, 0.890)", "REARM/Start guarded flush momentary, 2 NO (NO 1 = set contact into the on-board set stage, a 5 V signal since stage 3; NO 2 = REARM_BTN aux contact to the MCU and the set stage), 12 V LED block", "device",
                          "Schneider Harmony XB5 guarded flush momentary 2 NO + 12 V LED block (reference TBD)", "UNVERIFIED", "n/a", "TBD", xb, "IP rating not in sources", "-40..+70 C (UNVERIFIED)", "UNVERIFIED",
-                         "22 mm panel", "list", {"SET-a": "SET_CAP", "SET-b": "K1_SET", "AUX-a": "BTN_3V3", "AUX-b": "REARM_BTN_RAW", "LAMP+": "V12_AUX", "LAMP-": "LAMP_REARM_K"},
-                         "NO 1 closes the latch set path. NO 2 is electrically independent.", "estop_and_operator_switches.md", "")
+                         "22 mm panel", "list", {"SET-a": "REARM_SET_SRC", "SET-b": "REARM_SET_RAW", "AUX-a": "BTN_3V3", "AUX-b": "REARM_BTN_RAW", "LAMP+": "V12_AUX", "LAMP-": "LAMP_REARM_K"},
+                         "NO 1 signals the set stage (<= 5 mA); NO 2 gives the aux level. Both are needed to set (stage 3).", "estop_and_operator_switches.md", "")
     o["PAUSE-DEV"] = _c("PAUSE-DEV", "Right deck (-84.0, -112.0, 122.0), axis (0.049, -0.521, 0.852)", "PAUSE/Stop projecting momentary, 1 NO, 12 V LED block", "device",
                         "Schneider Harmony XB5 projecting momentary 1 NO + 12 V LED block (reference TBD)", "UNVERIFIED", "n/a", "TBD", xb, "IP rating not in sources", "-40..+70 C (UNVERIFIED)", "UNVERIFIED",
                         "22 mm panel", "list", {"NO-a": "PAUSE_3V3", "NO-b": "PAUSE_BTN_RAW", "LAMP+": "V12_AUX", "LAMP-": "LAMP_PAUSE_K"}, "Contact supply is PAUSE_3V3 (1 kohm from 3V3 on the chassis board, S2-01f).", "estop_and_operator_switches.md; STAGE2_CHANGE_REQUESTS.md S2-01", "")
@@ -309,9 +318,11 @@ def others():
     o["CHS.W1"] = _c("CHS.W1", "RR-CHS-MAIN, near the clamp circuit (DNP)", "Two 2.5 mm DNP wire pads W1 (1 CLAMP_F, 2 CLAMP_R): NO cable, NO bolt-on resistor (the board carries its own 2 x 9.1 ohm clamp resistors, IB-26 / IB-36)", "board_pad", "2 x TestPoint_Pad_2.5x2.5mm (pcb feature, DNP)", "verified (not flagged)",
                      "none: not wired", "n/a", "-", "n/a", "n/a", "n/a", "n/a", "list", {"1": "CLAMP_F", "2": "CLAMP_R"}, "DNP in rev A; no harness wire (decision: no bolt-on clamp resistor; a 50 W part listed in parts.yaml is stale, IB-26).", "chassis circuit.py W1 and the on-board clamp R (9.1 ohm 2512 x 2)", "")
     # --- splices
-    for k, net1, nm in (("SPL-P", "VBAT_RAW", "pack positive 1-to-2 crimp splice (AWG 14 trunk to 2 x AWG 16)"), ("SPL-N", "GND", "pack negative 1-to-2 crimp splice (AWG 14 trunk to 2 x AWG 16)"),
+    for k, net1, nm in (("SPL-JH3", "HEAD_HTR_P", "head pigtail heater pole + wire-to-wire splice AWG 18 (J1 plug side) to AWG 20 (J2001 side), 30 mm outside the head gland"),
+                        ("SPL-JH4", "HEAD_HTR_N", "head pigtail heater pole - wire-to-wire splice AWG 18 to AWG 20, 30 mm outside the head gland, staggered 15 mm from SPL-JH3"),
+                        ("SPL-P", "VBAT_RAW", "pack positive 1-to-2 crimp splice (AWG 14 trunk to 2 x AWG 16)"), ("SPL-N", "GND", "pack negative 1-to-2 crimp splice (AWG 14 trunk to 2 x AWG 16)"),
                         ("SPL-HCUT", "HTR_CUT", "head heater: element end / cut-out / J2601 pin 3 sense junction")):
-        o[k] = _c(k, "In the loom", nm, "splice", TBD + " (sealed wire-to-wire splice)", "TBD", "n/a", "TBD", TBD, "TBD", TBD, "TBD", "n/a", "list", {"1": net1, "2": net1, "3": net1}, "Splice resistance not in power_budget.md: measure on the first harness.", "harness decision", "")
+        o[k] = _c(k, "In the loom", nm, "splice", TBD + " (sealed wire-to-wire splice)", "TBD", "n/a", "TBD", TBD, "TBD", TBD, "TBD", "n/a", "list", ({"1": net1, "2": net1} if k.startswith("SPL-JH") else {"1": net1, "2": net1, "3": net1}), "Splice resistance not in power_budget.md: measure on the first harness.", "harness decision", "")
     # --- head devices
     o["RAIL-F"] = _c("RAIL-F", "Head front bumper rail (184.2, 0.0, 21.0)", "Head rail switch, front zone, NC in the interlock loop", "device", "Omron D2HW-C201M", "verified (parts.yaml)", "n/a", "TBD", "lead wires: TBD", "IP67 (VERIFIED)", "-40..+85 C (VERIFIED)", "verified", "n/a", "list",
                      {"COM": "HEAD_LOOP_OUT", "NC": "LOOP_A", "NO": "UNUSED"}, "NO lead must stay unconnected (CCR-HE-04).", "head circuit.py J2002; CCR-HE-04", d2)

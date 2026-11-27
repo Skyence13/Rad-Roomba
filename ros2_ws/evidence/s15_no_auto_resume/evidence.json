@@ -1,0 +1,162 @@
+{
+ "scenario": "s15_no_auto_resume",
+ "evidence_class": "simulated",
+ "against": "Python protocol fakes (rr_core.fakes), virtual clock",
+ "seed": 29,
+ "sim_time_s": 46.5,
+ "checks": [
+  {
+   "check": "bumper: HOLD with a hardware inhibit",
+   "ok": true
+  },
+  {
+   "check": "bumper: chassis back in ARMED_IDLE, mission still in HOLD",
+   "ok": true
+  },
+  {
+   "check": "bumper: zero non-zero DRIVE for 5 s after the inhibit cleared and the latch was re-armed",
+   "ok": true,
+   "n": 0
+  },
+  {
+   "check": "bumper: explicit resume accepted",
+   "ok": true
+  },
+  {
+   "check": "bumper: motion resumes only after the command, on the same task",
+   "ok": true,
+   "task": "pair0:A+",
+   "n": 99
+  },
+  {
+   "check": "pause accepted",
+   "ok": true
+  },
+  {
+   "check": "pause + inhibit cleared + re-armed: zero non-zero DRIVE, still HOLD",
+   "ok": true,
+   "n": 0
+  },
+  {
+   "check": "explicit resume accepted after the pause",
+   "ok": true
+  },
+  {
+   "check": "resumes the paused task only",
+   "ok": true,
+   "task": "pair0:A+",
+   "paused": "pair0:A+"
+  },
+  {
+   "check": "link restored: mission in HOLD",
+   "ok": true,
+   "state": "HOLD",
+   "reason": "CHASSIS_LINK_DOWN"
+  },
+  {
+   "check": "link restored: zero non-zero DRIVE after the restore",
+   "ok": true,
+   "n": 0
+  },
+  {
+   "check": "software re-arm after the link loss still moves nothing",
+   "ok": true,
+   "n": 0
+  },
+  {
+   "check": "explicit resume accepted after the link loss",
+   "ok": true
+  },
+  {
+   "check": "resumes the interrupted task",
+   "ok": true,
+   "task": "pair0:A+",
+   "was": "pair0:A+"
+  },
+  {
+   "check": "fault flags, including a name this software does not know, are shown as reported",
+   "ok": true,
+   "shown": [
+    "PERMIT_STUCK_ON",
+    "CHAIN_IMPLAUSIBLE",
+    "SOME_FLAG_FROM_A_NEWER_FIRMWARE"
+   ]
+  },
+  {
+   "check": "DIAG reply with chain_state, chain_end and a 23-character readbacks string is received and archived",
+   "ok": true
+  }
+ ],
+ "passed": true,
+ "field_use_approved": false,
+ "coverage": {
+  "target_area_m2": 3.0,
+  "areas_m2": {
+   "UNVISITED": 2.7844,
+   "ACCEPTABLE": 0.0,
+   "INSUFFICIENT_SENSITIVITY": 0.2156,
+   "INVALID_DATA": 0.0,
+   "BLOCKED": 0.0,
+   "EXCLUDED": 0.0
+  },
+  "valid_exposure_fraction": 0.07186666666666668,
+  "acceptable_fraction": 0.0,
+  "sub_cell_m": 0.005,
+  "decision_cell_m": 0.1,
+  "position_allowance_m": 0.01
+ },
+ "time_sync": {
+  "limit_us": 10000.0,
+  "fits": 28,
+  "max_gate_bound_us": 838.0520796923137,
+  "median_gate_bound_us": 807.3400457141614
+ },
+ "link_stats": {
+  "tx": 2271,
+  "rx": 2267,
+  "bad_lines": 0,
+  "stale": 0,
+  "duplicates": 0,
+  "gates": 445,
+  "gaps": 0,
+  "retries": 2,
+  "unassigned_frames": 0,
+  "time_exchanges": 28,
+  "time_exchanges_rejected": 0
+ },
+ "localization_error_vs_truth_m": {
+  "max_x_m": 0.011206596867661789,
+  "max_y_m": 0.0001760445568492197
+ },
+ "plan": {
+  "n_pairs": 2,
+  "offset_m": 0.04375,
+  "pair_stride_m": 0.33625,
+  "seam_overlap_per_side_m": 0.01625,
+  "predicted_residual": {
+   "left_wall_strip_m": 0.1487,
+   "right_wall_strip_m": 0.1487,
+   "door_end_strip_m": 0.1413,
+   "front_end_strip_m": 0.0713,
+   "end_zone_single_heading_m": {
+    "door": 0.3399,
+    "front": 0.3399
+   },
+   "note": "wall strips are set by the in-place turn radius of the outline; see README coverage section"
+  },
+  "estimated_time_s": 244.2
+ },
+ "flags": [],
+ "scan_detections": 0,
+ "observations": [],
+ "decision_status": {
+  "cells_with_gates": 44,
+  "no_decision": 40,
+  "no_decision_text": [
+   "no decision \u2014 null reference unavailable"
+  ],
+  "no_decision_within_0.5m_of_an_end": 4,
+  "cells_within_0.5m_of_an_end": 4
+ },
+ "nonzero_drives_total": 914
+}

@@ -7,9 +7,9 @@ profile is present and unconfigured. Observed results are in the verification lo
 
 ## Update 2026-11-27 (contract draft7, MODEL.md rev 3, IB-46) - all `simulated` / `tool-checked` / `calculated`, nothing measured
 
-Observed in this update: `tools/test.sh unit` exit 0, **63 passed, 1 xfailed**; `tools/test.sh scenarios` exit 0, **16 passed**
-(Python fakes); `tools/test.sh native` exit 0, native_s01 and native_s02 PASS (rebuilt head and chassis emulators, host under load);
-`tools/test.sh plan` rewritten. `tools/test.sh ros` was NOT re-run.
+Observed in the follow-up of this update (revision 4, safety follow-up, head 0.5.2 set-up): `tools/test.sh unit` exit 0, **79 passed**;
+`tools/test.sh scenarios`: 16 + the new s15 = 17 tests, 15 passed in the full run and the two s11 tests (which failed on a None format in the
+summary writer, fixed) passed in the re-run (-k s11), no other failure; native: see item 8. `tools/test.sh ros` was NOT re-run.
 
 1. **Contract snapshot is generated** (`tools/snapshot_contract.py`, `tools/test.sh snapshot [--check]`); it now carries
    contract_version 0.4.0-draft7 and verbatim `frames.body_rev_e`, `motion`, `timing`, `survey_methods`. The old test compared only the station
@@ -25,16 +25,22 @@ Observed in this update: `tools/test.sh unit` exit 0, **63 passed, 1 xfailed**; 
    **55 mm left / 60 mm right** (was 55 / 55; predicted 48.8); the scenario tolerance was widened from +10 mm to +15 mm for that reason (a changed
    tolerance, stated here); rectangle-outline clearance inside the pivot band -28.9 mm (the earlier note said -41 mm at 0.278 m: the model difference
    is smaller, the rectangle model is still more conservative than 0.290 m).
-3. **MODEL.md rev 3 / IB-31 implemented** (`rr_core/estimator.py`, `processing.py`, `export.py`): see README, "Thin, stubbed or deviating". Effect on the
-   scenarios (simulated, synthetic calibration), compared with the numbers in the log below: s01 valid exposure 0.804 -> 0.796, **acceptable
-   0.630 -> 0.063, median D# 0.179 -> 0.304 Bq/cm2** (the per-lane limits at alpha/m are about 1.7 x the four-lane combined limit; the goal 0.20 is
-   no longer met by the median at 0.03 m/s), flags 3 -> 3, revisit error 1.7 / 2.0 mm, Expose 0.350 m; s10 median D# 0.247 -> 0.351 (scaler
-   stations, 3 s preset); s11 flags (queue, ALARM_ONLY) inline 12 -> 11, deferred 6 -> 7; the injected hotspot is still flagged and counted.
-   The 69 mm / <40 mm unit-test hot-spot localisation change: fewer edge cells flagged, so the flag centroid is taken over fewer cells.
-   Monte Carlo of the cell false-alarm rate (seed 20261127, 400 000 trials, tolerance 4 SE = 0.0014): achieved/nominal 0.26-0.39 for m = 2, 4,
-   normal and poisson-exact. **Not clean:** poisson-exact with weights 1 except one 0.1 gate per lane at low counts gives 1.16 (m = 2) and 1.24
-   (m = 4); normal at unit weights up to 1.035 (4 SE). The xfail test documents the 1.24 case; MODEL.md's open check is therefore answered with
-   "exceeds nominal in that corner", for the radiometry owner.
+3. **MODEL.md rev 4 / IB-31 implemented** (replaces the revision-3 rules I implemented earlier in the day; `rr_core/linstat.py`,
+   `estimator.py`, `processing.py`, `export.py`; README, "Thin, stubbed or deviating"). Observed on the scenarios (simulated, synthetic
+   calibration; before = the revision-2 numbers of the log below / revision 3 in brackets): s01 (0.03 m/s, 1100 s) acceptable fraction
+   0.630 (0.063) -> **0.690**, median D# 0.179 (0.304) -> **0.128 Bq/cm2**, flags 3 -> 2 (hotspot flagged, revisit 1.7 mm, Expose 0.350 m); s10 (step
+   and count, 3 s preset) median D# 0.247 (0.351) -> 0.184, acceptable 0.257; s14 acceptable 0.25; s11 flags inline 12 -> 11, deferred 6 -> 7; the injected
+   hotspot is still flagged and counted in s01, s11. The unit hot-spot localisation tolerance is 90 mm (was 40).
+   **The 200 T_F window leaves floor undecidable in short runs** (cells with data that end as `no decision - null reference unavailable`):
+   s01 0 of 284; s14 0 of 284 (long runs); the 230-460 s scenarios 27-33 of 231 (405) cells, about 12 %, of which only 7-13 lie within 0.5 m of a
+   trailer end (the rest are cells whose dwell T_F needs more reference than the run has before/after it); s10 15 of 119; s15 (46 s) 40 of 44;
+   s13 26 of 125. Per-cell cost (cold cache, 4 lanes: combined + 4 lane thresholds + D#): 36-39 ms on this loaded 4-core host
+   (`test_evaluation_cost_per_cell_is_reported`); D# is evaluated lazily and cached; not measured on a CM5. Full scenario run took 41 min on a
+   host at load ~7 (earlier runs of the same set 10-20 min at other loads): the cost split between load and the new evaluation was not
+   separated. Monte Carlo (seed 20261127, n = 400 000): clean-cell false alarm / alpha 0.79-0.91 (m = 1, 2, 4; 3 cases each); the former
+   xfail case now 0.86 (m = 2) and 0.90 (m = 4). Cross-check against `analysis/radiometry/rrrad` (thresholds and D# to 1e-6, observed ~1e-8)
+   in `test_cell_decision.py`. Scaler recounts need reference data outside the count: a recount without it reports estimate and outcome
+   INCONCLUSIVE/EXCEEDS (by D) but `no decision`. Not done: the open point of MODEL.md on the 200 T_F figure for recounts.
 4. **IB-46:** chassis link on its own thread for real-time hosts (`ChassisLink.start_thread`, config `chassis_thread`, on in `Runtime` and
    `NativeSystem`, off in the virtual-time harness; archive entries are handed to the app thread). Deterministic reproduction
    (`rr_bringup/test/test_chassis_thread.py`): injected 0.5 s head read stall -> max DRIVE gap **2504 ms** single loop (TTL 200 ms), **25 ms** with
@@ -44,7 +50,29 @@ Observed in this update: `tools/test.sh unit` exit 0, **63 passed, 1 xfailed**; 
    time vs 34.5 / 27.3 mm by arrival time, `emu_rebases` 0, `emu_lag_us` max 54 / 49 ms. So in these runs the cause is not the pacing reset; not
    investigated further. Chassis firmware requests (STATE.chain "open or unknown", ToF IDs, readbacks, look.* keys) touch nothing the host parses (the host
    treats `chain` false as not closed; the fake chassis returns no ToF list). Head additions (DIAG/STATUS members, setup members) are archived verbatim and the native head run passes.
-6. Not done: `tools/test.sh ros` and the stand-alone bridge/driver nodes not re-run; no fake updated for the new chassis DIAG fields.
+6b. **Safety follow-up (REVIEW_traction_inhibit "Not assessable"): the host does not resume DRIVE automatically.** From the code: the supervisor
+   leaves SCAN for HOLD on any chassis mode other than ARMED_IDLE/MOVING and on mover HELD (`supervisor.step`); `Mover._hold` clears the command and
+   the queue and the mover stays HELD (it never restarts itself); the link drops a rejected non-zero command; guidance aborts a held guided move
+   ("send a fresh command"); `resume` is accepted only from HOLD, is rejected (not queued) while prerequisites are missing and always restarts the
+   interrupted task through the RECOVER phase. Proven on the fakes by scenario **s15_no_auto_resume** (every non-zero DRIVE received by the
+   chassis fake is recorded): bumper inhibit cleared and locally re-armed -> 0 non-zero DRIVE for 5 s, motion only after `resume`, same task; remote
+   PAUSE with a hardware inhibit inside the pause -> 0 non-zero DRIVE, the resume restarts the paused task only; link outage with the chassis' HOST_LINK_LOST stop
+   -> HOLD, 0 non-zero DRIVE after the link and after the software re-arm, motion only after `resume`. No code fix was needed. Limit: a
+   `resume` after a hardware inhibit needs no further local action once the chassis reports ARMED_IDLE (the chassis' own latch is the local act).
+7. **Chassis firmware requests (CCR-CHS-10):** the Python fake chassis now has `DIAG` (`chain_state` CLOSED/OPEN/UNKNOWN, `chain_end`, 23-character
+   `readbacks`), injectable fault flags, a 2.2 s BRAKE_TEST (the host polls with a 3.5 s limit); `snapshot()["safety"]["faults"]` and the UI list the chassis fault flags
+   exactly as reported (unknown names such as K1_WELD, RUN_SHORT, REARM_DISCREPANCY pass through, HTML-escaped) next to "chain not closed (open or unknown)"; s15
+   checks an unknown flag name and a DIAG reply.
+8. **Head firmware 0.5.1/0.5.2:** the head link performs `ENG_SETUP_GET`/`ENG_SETUP_SET` from the mission configuration (`head_setup`, default `{"device": "J60035"}`;
+   add `"thresholds_confirmed": true` or `thresholds`) before the handshake and the first ARM, archived like any transaction; an ARM refusal is blocked as
+   `ARM_FAULT:device_type_unset` / `ARM_FAULT:placeholder_thresholds` with an instruction in `block_detail` (unit tests with a strict head fake). Heater transition is derived from consecutive
+   frames (`marks`: HEATER_TRANSITION, AFTER_GAP; first gate and gates after a gap), stored in `gates.csv` (`marks`, `heater`); DIAG members (`alpha_short`,
+   `alpha_idle_clears`, `imon_na`, `bias.dac_writes`, `bumper_zones` null) are kept per gate (`proc.diag`) and written to `gates.csv` where a DIAG was read for that gate (DIAG is polled about once per second,
+   not per gate: **`alpha_short` is therefore known for a fraction of the gates only**); the marks do not exclude any gate (no exclusion rule is defined). A gate with the global flag HEATER_FAULT
+   (set by FRAME_FAULT / HEATER_OVERCURRENT) is already excluded: every global flag becomes `HEAD_FLAG:<name>` and removes the gate. No workspace text states a head set-point, so the +5 C change needed no edit.
+   Contract snapshot regenerated for 0.4.0-draft9.
+9. Documentation: delta section 4 "100 mm stations" -> 80 mm (contract pitch); README 8.1 has the assumptions table of the mission-time figures.
+6. Native emulators (informational, rebuilt firmware, three runs): native_s01 PASS; **native_s02 FAILS in `bringup`** (three runs): after the brake test and a second REARM press the chassis stays in STANDBY (chain all closed, no reasons, `rearm_ready` false, fault CONFIG_DEFAULTED); repeating the press up to four times (added to `NativeSystem.bringup`) did not help. n01, with the same bring-up code, passes. Not diagnosed further (looks firmware-side: REARM handling after the 2.2 s brake test). Not done: `tools/test.sh ros`, IB-47 root cause.
 
 ## Verification log (close-out, 2026-11-26; filled in as runs complete)
 

@@ -42,7 +42,7 @@ python3 tests/test_integration.py build/rr_chassis_sim
 (cd port/stm32g474 && pio run -e rr_chs_main)        # 8 MHz crystal; -e rr_chs_main_24mhz for 24 MHz
 ```
 
-Results observed on 2026-11-27 after the traction-inhibit review fixes (`./check.sh`, exit 0): `test_chain` 325 checks, `test_state_machine` 1193, `test_review` 42 (review C1/C2/M1/M2/M6/m1/m3/m7 regressions), `test_drive` 2476, 9 Python integration tests, all passing. Target image: flash 85 392 bytes (text 84 884 + data 508) of 524 288, static RAM 23 612 bytes of 131 072 (hard-float, `-Os` PlatformIO default).
+Results observed on 2026-11-27 with the stage-3 board (`./check.sh`, exit 0): `test_chain` 329 checks, `test_state_machine` 1193, `test_review` 64 (review regressions, stage-3 checks, section-6.1 residual faults, thermal policy), `test_drive` 2476, 9 Python integration tests, all passing; netlist cross-check 110 items. Target image: flash 87 608 bytes (text 87 100 + data 508) of 524 288, static RAM 23 716 bytes of 131 072 (hard-float, `-Os` PlatformIO default).
 
 ### Simulated drive performance (plant model, not measurements)
 
@@ -108,7 +108,11 @@ Pose is of `base_link` in the simulator's world frame (starts at 0,0,0; `{"pose"
 | `usb_stall`, `usb_down` | bool | host bytes are held back (delivered late on release) / USB reports not configured |
 | `imu_off`, `iox_fail`, `latch_weld`, `estop_a_stuck`, `nv_fail`, `efuse_fault` (bit mask) | | sensor and hardware faults |
 | `iox_b_fail`, `permit_short`, `permit_open` | bool | IOX_B (CHAIN_END_RB) not answering; ARM_PERMIT photo-MOS U24 shorted / open |
-| `k1_fault` | `"SEAL_WELD"`, `"SET_SHORT"`, `"NONE"` | review C1: K1 seal-in contact welded (coil follows CHAIN_END) / K1_SET shorted to V12_AUX in W-018 (coil always energised); `latch_weld` = both K1 poles welded |
+| `k1_fault` | `"SEAL_WELD"`, `"NONE"` | K1 pole A NO welded (coil follows CHAIN_END, NC open); `latch_weld` = both K1 poles welded |
+| `rearm_aux_short`, `rearm_set_short` | bool | REARM aux / set contact line held closed (welded contact, W-018 short; both = §6.1 case 5) |
+| `rail_weld`, `loop_sns_leak`, `bumper_l_weld` | bool | §6.1 residual faults: loop reads healthy on every channel / left bumper cannot open |
+| `run_hd_short`, `k1_run_short`, `chain_end_short`, `uhold_short` | bool | board shorts to a supply (§6.1 case 4) / U_HOLD shorted |
+| `loop_b_stuck_ok`, `loop_b_stuck_open`, `iox_d_fail`, `iox_d_bad_pattern` | bool | channel B faults; IOX_D not answering / pattern wrong |
 | `run12_short`, `loop_cmp_stuck`, `iox_drive_loop`, `io_cfg_fault` | bool | review M6 RUN_12V fed from a supply; C2 U30A cannot pull HEAD_LOOP_OK_RB low; M2 IOX_A GPA5 driven as an output; M2/M3 pin configuration wrong |
 | `cset_diode`, `cset_energy` | bool | stage-3 D_RSET + Q_SDIS (default true = current netlist; false = stage-2 back-feed model); REARM needs C_SET above 9 V (off by default) |
 | `wdi_edge`, `jp1_open`, `vmot_tau_s` | `"FALLING"`/`"RISING"`/`"BOTH"`, bool, number | edges the TPS3430 model counts; JP1 open (WDO does not reset the MCU); VMOT bleed time constant |
@@ -117,7 +121,7 @@ Pose is of `base_link` in the simulator's world frame (starts at 0,0,0; `{"pose"
 | `freeze_control`, `freeze_supervisor`, `freeze_background` | bool | stop one firmware context (watchdog tests) |
 | `mcu_reset` | `"PIN"`, `"WATCHDOG"`, `"SOFTWARE"`, `"BROWNOUT"`, `"POWER_ON"` | reset the MCU now (plant keeps moving/braking) |
 
-The emulator contains the hardwired chain as node voltages, aligned with the netlist where the traction-inhibit review found differences (M5): `HW_LATCH_RB` is the tap on RUN_12V (= CHAIN_END through K1 pole B), not the K1 armature; C_SET charges from CHAIN_END (τ 2.2 s), is dumped by REARM (τ 103 ms) and back-feeds CHAIN_END and the nodes behind an opened element through R_SET (read high on MCP23S17 above 7.35 V, on STM32/TCA9535 above 6.43 V) unless `cset_diode`; K1 is energised by the seal-in, by the REARM set pulse (245 ms, independent of the chain) or by a fault model, picks up after 10 ms and releases 4 ms after de-energising; the comparator windows are the board's (loop 0.59–1.55 kΩ, LAB pass 3.92–5.64 kΩ); the watchdog is a TPS3430 model (counted WDI edges per `wdi_edge`, early < 2.2 ms or none for 23.4 ms → WDO for 200 ms, which with JP1 closed holds the MCU in reset). Brake relays are fed from RUN_12V and return through E-stop pole B (NO open 7.5 ms, NC closed 10.5 ms after the supply goes, 8 ms pick-up), `BRAKE_x_RB` reads garbage while the bridges are awake, `CHAIN_END_RB` is pushed every 10 ms as the IOX_B read would, VMOT decays with `vmot_tau_s` (0.81 s), the bridges chop at 2.68 A, INA228/INA3221 register images are decoded by the target code. Simplification: by default REARM sets K1 whatever the C_SET voltage (`cset_energy` models the ≈ 3 s recharge after power-up). TRUTH additionally carries `run12`, `c_set_v`, `emu_lag_us` and `emu_rebases` (IB-47).
+The emulator models the stage-3 chain (`electronics/analysis/chassis_safety_chain.md` §2.1, S3 overrides) as node voltages: series elements incl. the two head-loop channels (U21 → CH_N6A → U21B), K1 (seal-in, 10 ms pick-up, 4 ms release), the on-board set stage (closing edge of the set contact → 110 ms gate pulse, AND the level of the aux contact → U_SET dumps C_SET into the K1 coil and lights U_HOLD), C_SET charged only from CHAIN_END through D_RSET (τ 2.2 s) and emptied by Q_SDIS (τ 0.1 s) when CHAIN_END is dead, K1 must-operate 7.5 V [A] (so REARM works only after ≈ 2 s of closed chain), U_HOLD self-holding from RUN_HD, D_RUN, U_LS in the K2/K3 return, VMOT eFuse and U9 from RUN_HD, `HW_LATCH_RB` = RUN_12V tap, IOX_D (U47) readbacks with the fixed pattern, comparator windows as built (A 0.59–1.55 kΩ, B < 2.70 kΩ, LAB 3.92–5.64 kΩ), the TPS3430 (falling edges, 2.2–23.4 ms, WDO 200 ms holding NRST with JP1), K2/K3 NO open 7.8 ms / NC closed 10.8 ms, `BRAKE_x_RB` garbage while the bridges are awake, VMOT bleed `vmot_tau_s`, 2.68 A chop, INA228/INA3221 register images. `cset_diode:false` keeps the stage-2 C_SET back-feed model (only that part of stage 2). TRUTH carries `run12`, `k1`, `k1_run`, `c_set_v`, `emu_lag_us`, `emu_rebases`. The unit-test harness waits for C_SET before a REARM press when the chain is closed (an operator waits for the REARM lamp).
 
 ## Flash and debug (hardware)
 
@@ -245,6 +249,19 @@ Nothing here has been done on a board; these are the intended procedures.
 | P6 | `PMON_NALERT` | Pack monitor alert |
 | P7 | `V5_PGOOD` |  |
 
+**IOX_D** - TCA9534 (U47, TCA9534PWR) - stage 3 S3-F1 on I2C_SYS, address 0x22
+
+| Expander pin | Signal | Note |
+|---|---|---|
+| P0 | `LATCH_NC_RB` | Tap on K1 pole A NC (K1_SEAL_A biased from 3V3): HIGH = K1 pole A released, valid with the chain dead. LOW with HW_LATCH_RB low > 30 ms -> K1_WELD |
+| P1 | `LATCH_RUN_RB` | Tap on K1_RUN (K1 pole B output, before U_HOLD): HIGH = CHAIN_END live AND K1 pole B closed. HIGH with HW_LATCH_RB low -> K1_WELD; HW_LATCH_RB high with this low -> RUN_SHORT |
+| P2 | `HEAD_LOOP2_OK_RB` | Head-loop channel B (U46 TLV3201, drives U21B between CH_N6A and CH_N6): HIGH = loop closed (< 2.70 kOhm); detects open only |
+| P3 | `REARM_SET_RB` | REARM set contact (J_BTN 1-2, 5 V signal into the on-board edge-triggered set stage): HIGH = closed. Must agree with REARM_BTN (aux) within 200 ms |
+| P4 | `IOXD_P4` | tied to 3V3: reads 1 (pattern) |
+| P5 | `IOXD_P5` | tied to GND: reads 0 (pattern) |
+| P6 | `IOXD_P6` | tied to GND: reads 0 |
+| P7 | `IOXD_P7` | tied to GND: reads 0 |
+
 **ToF sensors** (I2C_TOF, two TCA9548A)
 
 | Index | Id | Mux | Channel | XSHUT group | Role |
@@ -289,7 +306,7 @@ Connect the debug UART before applying power. Expected on a first successful tes
 
 - No hardware test of anything. USB, ADC, timers, SPI/I²C device drivers, flash layout and the retained-RAM section are unproven; several register-level details are UNVERIFIED (listed in `bsp.c`, `pinmap.yaml`).
 - VL53L4ED driver is a stub (ST's ULD could not be obtained, IB-04): on hardware all ToF sensors are OFFLINE and the firmware refuses every motion direction. INA228 (pack current, bus voltage) and INA3221 (branch currents) drivers are written against the TI datasheets but never run. The LTC4162-F driver is disabled because its register map is UNVERIFIED (IB-06): `CHARGER_COMM` stays raised, SoC and charge state are null/UNKNOWN; charge inhibit is hardware. With the selector in SERVICE the cover/plug chain nodes are dead, so on hardware SERVICE_CHARGE is recognised only once a verified charger driver reports input power (until then the mode shows HW_INHIBIT/MODE_NOT_RUN while charging; head power is forced off in hardware anyway).
-- Traction-inhibit review (`docs/reviews/REVIEW_traction_inhibit.md`): C1, C2, M2 (firmware side), M3, m1, m2, m3, m4, m7 are addressed in firmware (ICD §4.6, `tests/test_review.c`). Not implemented: the boot watchdog (U23) self-test (needs a persistent test record and a guaranteed first WDI edge within 23 ms of reset — the port toggles WDI during init but the HSE start-up timeout and I²C probes are not covered, so keep JP1 open until measured and rely on the IWDG); the dynamic brake-deceleration check (row 46); supervision of IOX_B output writes (m8). The current netlist has the stage-3 R_SET diode (`chain.backfeed_ms` = 0, emulator default `cset_diode`); on a stage-2 board set 12 000 (the `PERMIT_STUCK_ON`/`CHAIN_IMPLAUSIBLE` checks then wait 12 s after the chain was last live, U24 is not verified at boot). Stage-3 IOX_D signals (LATCH_NC_RB, LATCH_RUN_RB, HEAD_LOOP2_OK_RB, REARM_SET_RB) are not read yet: the netlist export has not been regenerated with U47.
+- Traction-inhibit review (`docs/reviews/REVIEW_traction_inhibit.md`): C1, C2, M2 (firmware side), M3, m1, m2, m3, m4, m7 are addressed in firmware (ICD §4.6, `tests/test_review.c`). Not implemented: the boot watchdog (U23) self-test (needs a persistent test record and a guaranteed first WDI edge within 23 ms of reset — the port toggles WDI during init but the HSE start-up timeout and I²C probes are not covered, so keep JP1 open until measured and rely on the IWDG); the dynamic brake-deceleration check (row 46); supervision of IOX_B output writes (m8). The current netlist has the stage-3 R_SET diode (`chain.backfeed_ms` = 0, emulator default `cset_diode`); on a stage-2 board set 12 000 (the `PERMIT_STUCK_ON`/`CHAIN_IMPLAUSIBLE` checks then wait 12 s after the chain was last live, U24 is not verified at boot). Stage 3 (F1–F18) is implemented in firmware and emulator (ICD §4.6). Not implemented: the U23 boot watchdog test, the dynamic deceleration check, IOX_B output-write supervision; U_HOLD / U_LS / D_RUN shorts are latent (not observable).
 - The ARM_PERMIT/CHAIN_END check is implemented (IB-01).
 - Contract 0.4.0-draft7 enum additions `LATCH_UNEXPLAINED` / `STOP_ESCALATED` are not yet used.
 - Look-sensor geometry (`look.*`) comes from `mechanical/common/frames.yaml` (checked by `tools/look_geometry.py`); `cliff.*` and `rear.*` thresholds are still placeholders.

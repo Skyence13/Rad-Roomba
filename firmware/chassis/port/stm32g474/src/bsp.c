@@ -6,7 +6,7 @@
  *   - VL53L4ED ranging (stub, see tof_vl53l4ed.c)      -> all ToF OFFLINE, motion inhibited
  *   - charger (LTC4162-FAD): register map UNVERIFIED (IB-06), driver disabled -> CHARGER_COMM
  * Implemented, never run: INA228 pack monitor, INA3221 branch monitor (TI register maps checked against
- * the datasheets, core/rrch_pwrdev.c), IOX_B P17 = CHAIN_END_RB input (IB-01).
+ * the datasheets, core/rrch_pwrdev.c), IOX_B P17 = CHAIN_END_RB input (IB-01), IOX_D readbacks (stage 3).
  *   - PWM-synchronous current sampling (currents are sampled free-running and low-passed)
  */
 #include <math.h>
@@ -220,7 +220,8 @@ static void timers_init(void)
     (void)HAL_TIM_Encoder_Start(&htim_enc_r, TIM_CHANNEL_ALL);
     (void)HAL_TIM_Encoder_Start(&htim_enc_l, TIM_CHANNEL_ALL);
 
-    /* bridge PWM: centre aligned 20 kHz, four channels. TIM8 break on PD2 = HW_LATCH_RB (RUN_12V tap),
+    /* bridge PWM: centre aligned 20 kHz, four channels. TIM8 break on PD2 = HW_LATCH_RB (RUN_12V tap; stage 3:
+     * U9 has its own tap on RUN_HD, so this pin no longer affects the nSLEEP gate),
      * active low, automatic output re-enable: PWM is forced to its idle (low) state in hardware whenever
      * the latch readback is low - the fourth path of safety_chain.md 2.1 (review M4). UNVERIFIED on a board.
      * The brake-test probe then applies nothing, which is consistent: U9 holds the bridges asleep anyway. */
@@ -889,6 +890,14 @@ void bsp_background(rrch_t *core)
         static uint32_t n_fail;
         bool ok = i2c_rd_reg(&hi2c_sys, IOX_B_I2C_ADDR, 0x01, &hi, 1);
         n_fail = ok ? 0u : n_fail + 1u;
+        /* stage 3 F1: IOX_D (U47, TCA9534 0x22), input register 0x00 [U]; configuration register 0x03 must read
+         * 0xFF (all inputs) - it is never written. The core checks the fixed pattern on P4..P7. */
+        static uint32_t n_cfg_d;
+        uint8_t din = 0, dcfg = 0xFFu;
+        bool dok = i2c_rd_reg(&hi2c_sys, IOX_D_I2C_ADDR, 0x00, &din, 1);
+        if (dok && (n_cfg_d++ % 10u) == 0u) {
+            dok = i2c_rd_reg(&hi2c_sys, IOX_D_I2C_ADDR, 0x03, &dcfg, 1) && dcfg == 0xFFu;
+        }
         if (n_fail == 3u) { /* review m7: re-initialise the bus after three failed reads (no SCL toggling, UNVERIFIED) */
             (void)HAL_I2C_DeInit(&hi2c_sys);
             (void)HAL_I2C_Init(&hi2c_sys);
@@ -896,6 +905,7 @@ void bsp_background(rrch_t *core)
         uint64_t t = bsp_now_us();
         core->hal.irq_lock(NULL);
         rrch_iox_b_update(core, ok, ok && ((hi >> (IOX_B_BIT_CHAIN_END_RB - 8u)) & 1u) != 0u, t);
+        rrch_iox_d_update(core, dok, din, bsp_now_us());
         core->hal.irq_unlock(NULL);
     }
     /* 10 Hz: eFuse faults, bus health, INA228 pack and INA3221 branch telemetry. The charger driver is

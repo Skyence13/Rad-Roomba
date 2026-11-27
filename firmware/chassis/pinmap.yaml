@@ -180,6 +180,22 @@ expanders:
       P6: {signal: PMON_NALERT,     note: "Pack monitor alert"}
       P7: {signal: V5_PGOOD}
 
+  IOX_D:
+    part: "TCA9534 (U47, TCA9534PWR) - stage 3 S3-F1"
+    bus: I2C_SYS
+    address_7bit: 0x22
+    unverified: "Register map recalled (input 0x00, configuration 0x03, 1 = input; power-on all inputs). Address 0x22 from the netlist (A0 = GND, A1 = 3V3, A2 = GND)."
+    note: "All pins inputs; the configuration register is never written (only read back: must be 0xFF). Read at 100 Hz; every read checks the fixed pattern P4..P7 = 1,0,0,0 ((in & 0xF0) == 0x10). Unknown -> no arming; while latched a sample up to 50 ms old is used (m7 rule)."
+    pins:
+      P0: {signal: LATCH_NC_RB,      note: "Tap on K1 pole A NC (K1_SEAL_A biased from 3V3): HIGH = K1 pole A released, valid with the chain dead. LOW with HW_LATCH_RB low > 30 ms -> K1_WELD"}
+      P1: {signal: LATCH_RUN_RB,     note: "Tap on K1_RUN (K1 pole B output, before U_HOLD): HIGH = CHAIN_END live AND K1 pole B closed. HIGH with HW_LATCH_RB low -> K1_WELD; HW_LATCH_RB high with this low -> RUN_SHORT"}
+      P2: {signal: HEAD_LOOP2_OK_RB, note: "Head-loop channel B (U46 TLV3201, drives U21B between CH_N6A and CH_N6): HIGH = loop closed (< 2.70 kOhm); detects open only"}
+      P3: {signal: REARM_SET_RB,     note: "REARM set contact (J_BTN 1-2, 5 V signal into the on-board edge-triggered set stage): HIGH = closed. Must agree with REARM_BTN (aux) within 200 ms"}
+      P4: {signal: IOXD_P4,          note: "tied to 3V3: reads 1 (pattern)"}
+      P5: {signal: IOXD_P5,          note: "tied to GND: reads 0 (pattern)"}
+      P6: {signal: IOXD_P6,          note: "tied to GND: reads 0"}
+      P7: {signal: IOXD_P7,          note: "tied to GND: reads 0"}
+
 # ----------------------------------------------------------------------------- I2C device map
 i2c:
   I2C_SYS:
@@ -190,6 +206,7 @@ i2c:
       - {ref: BRANCH,   part: "INA3221 (U15, INA3221AIRGVR)", address_7bit: 0x41, verified: "TI SBOS576C Table 7-1 (A0 = VS -> 1000001b) and Table 8-1 register map, read 2026-11-27", note: "IN+ of all channels on VBAT_SW; ch1 HEAD_PWR R_SH2 20 mOhm, ch2 HEAD_HTR R_SH3 5 mOhm, ch3 CHS_HTR R_SH4 5 mOhm (STATE rails.i_head_a, i_head_htr_a, i_chs_htr_a). 40 uV shunt LSB -> 2 mA / 8 mA / 8 mA."}
       - {ref: IOX_B,    address_7bit: 0x20}
       - {ref: IOX_C,    address_7bit: 0x21}
+      - {ref: IOX_D,    address_7bit: 0x22}
   I2C_TOF:
     speed_hz: 400000
     devices:

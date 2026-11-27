@@ -332,18 +332,31 @@ cable("W-017", "HANDS-ON button and lamp to main board J_HANDS", "robot", [
     construction="4 x AWG 24; contact pair yellow (safety loom), lamp pair PK/BU in the same loom (lamp +12 V comes from the chain node: keep it in the safety loom). J_HANDS pin 5 not wired.", shield="none",
     protection=PRO["chain"], strain=STRAIN["clik"] + "; device end: " + STRAIN["device"], notes="Lamp 12 V, <= 20 mA. Exact XB5 reference TBD (UNVERIFIED).")
 pr = dev_rear((-172, 97, 125.2), (-0.1899, 0.415, 0.8898))
-pz = dev_rear((-84, -112, 122), (0.0491, -0.5205, 0.8524))
+def _panel(name, fallback):
+    """control position and normal from mechanical/common/frames.yaml panel_controls (re-read at every build), else the recorded values"""
+    try:
+        import yaml
+        with open(os.path.join(_repo_root(), "mechanical/common/frames.yaml")) as f:
+            c = yaml.safe_load(f)["panel_controls"][name]
+        return tuple(x * 1000.0 for x in c["xyz"]), tuple(c["normal"])
+    except Exception:
+        return fallback
+
+
+# Pause/Stop moved 10 mm outboard to (-84, -122) (IB-65, CR-08); stage 3 reads it from frames.yaml
+_pz_c, _pz_n = _panel("pause_stop", ((-84.0, -122.0, 114.02), (0.0622, -0.6579, 0.7506)))
+pz = dev_rear(_pz_c, _pz_n)
 cable("W-018", "REARM/Start button and lamp: main board J_BTN to the REARM button (left deck)", "robot", [
-    w("REARM-DEV", "SET-a", "CHS.J_BTN", "1", "SET_CAP", 24, "YE", pair="P1", note="NO 1: capacitor-coupled latch set path (SAFETY)"),
-    w("REARM-DEV", "SET-b", "CHS.J_BTN", "2", "K1_SET", 24, "YE", pair="P1"),
-    w("REARM-DEV", "AUX-a", "CHS.J_BTN", "3", "BTN_3V3", 24, "RD", note="NO 2 supply side (BTN_3V3 is now local to the REARM button: PAUSE has its own supply, R_PAUSE)"),
-    w("REARM-DEV", "AUX-b", "CHS.J_BTN", "4", "REARM_BTN_RAW", 24, "WH", note="NO 2: REARM_BTN to the MCU (isolated from the set path)"),
-    w("REARM-DEV", "LAMP+", "CHS.J_BTN", "6", "V12_AUX", 24, "PK", note="lamp supply; the PAUSE lamp has its own conductor on J_PAUSE pin 3"),
-    w("REARM-DEV", "LAMP-", "CHS.J_BTN", "7", "LAMP_REARM_K", 24, "BU"),
+    w("REARM-DEV", "SET-a", "CHS.J_BTN", "1", "REARM_SET_SRC", 24, "YE", pair="P1", note="set contact supply: V5_AUX through R_SSRC 1 kohm, <= 5 mA (stage 3 S3-C1a): a signal, no longer the K1 coil pulse"),
+    w("REARM-DEV", "SET-b", "CHS.J_BTN", "2", "REARM_SET_RAW", 24, "YE", pair="P1", note="set contact output to the on-board edge-triggered set stage (stage 3): the K1 coil node and C_SET stay on the board"),
+    w("REARM-DEV", "AUX-a", "CHS.J_BTN", "3", "BTN_3V3", 24, "RD", pair="P2", note="NO 2 supply side (BTN_3V3 is local to the REARM button: PAUSE has its own supply, R_PAUSE)"),
+    w("REARM-DEV", "AUX-b", "CHS.J_BTN", "4", "REARM_BTN_RAW", 24, "WH", pair="P2", note="NO 2: REARM_BTN to the MCU through the blocking diode D_RB; the set stage needs this LEVEL together with the set-contact EDGE"),
+    w("REARM-DEV", "LAMP+", "CHS.J_BTN", "6", "V12_AUX", 24, "PK", pair="P3", note="lamp supply; the PAUSE lamp has its own conductor on J_PAUSE pin 3"),
+    w("REARM-DEV", "LAMP-", "CHS.J_BTN", "7", "LAMP_REARM_K", 24, "BU", pair="P3"),
 ], path=[CHS_POS["J_BTN"], (-67, 76, 90), pr],
-    construction="6 x AWG 24, direct to the REARM button, no splices (stage 2, S2-01: the Y-loom with SPL-BTN3 / SPL-BTN6 is gone). Yellow safety loom for pins 1-2. J_BTN pins 5 and 8 are not connected on the board any more (the PAUSE signals moved to J_PAUSE): leave those housing cavities empty.",
-    shield="none", protection=PRO["chain"] + "; lamps: " + PRO["aux12"], strain=STRAIN["clik"] + "; device end: " + STRAIN["device"],
-    notes="A short between J_BTN 1-2 permanently sets the set path: the latch must still not set after an element cycles (chassis_safety_chain.md procedure 7). J_BTN stays an 8-way CLIK-Mate so that its circuit count stays unique among the safety headers (S2-01a/b).")
+    construction="6 x AWG 24, direct to the REARM button, no splices. Three twisted pairs: P1 set contact (pins 1-2, signal 5 V / <= 5 mA), P2 aux contact (3-4), P3 lamp (6-7). Lay the pairs in the order P1, P2, P3 in the bundle and keep the lamp pair (V12_AUX) on the OUTSIDE next to nothing but P3's own return: do not put a supply conductor between the two contact pairs. Yellow safety loom. J_BTN pins 5 and 8 are NC (PAUSE moved to J_PAUSE): leave those cavities empty.",
+    shield="none", protection=PRO["chain"] + "; lamps: " + PRO["aux12"] + "; set contact line limited to 5 mA by R_SSRC 1 kohm", strain=STRAIN["clik"] + "; device end: " + STRAIN["device"],
+    notes="STAGE 3 (S3-C1, review C1): the relay coil node no longer leaves the board. CONDUCTOR-TO-CONDUCTOR SHORTS in W-018 by the electronics' analysis (chassis_safety_chain.md section 5 rows 42-46): HARMLESS BY DESIGN: (a) V12_AUX, LAMP_REARM_K, BTN_3V3 or REARM_SET_SRC onto REARM_SET_RAW (row 42): one edge on the set line without the aux level: the set stage needs both, so NO SET; REARM_SET_RB vs REARM_BTN disagreement is detected (firmware F5), further presses give no edge until repaired; (b) the aux contact bridged (pins 3-4, or V12_AUX / BTN_3V3 onto REARM_BTN_RAW) (row 43): aux level always true, set still needs an edge; REARM_HELD after 2 s blocks ARM_PERMIT: cannot arm; bench step 7 (V12_AUX on J_BTN pin 2) is harmless. NOT HARMLESS (residual, row 44, marked as a warning by the electronics): a multi-conductor CRUSH that puts a supply on REARM_SET_RAW (pin 2) and REARM_BTN_RAW (pin 4) AT THE SAME TIME looks exactly like a REARM press and can arm the robot ONCE (chain closed, C_SET charged); every safety element still drops it; it is indistinguishable from a press. Latent two-fault cases (rows 45, 46: Q_SETA / Q_SETB shorted on the board plus a W-018 short) also reduce to one unintended set. Harness consequence: nothing in the cable can remove the crush case; keep the loom clamped clear of edges, with no supply conductor between the contact pairs, and treat W-018 as a safety-loom cable (continuity and insulation check after routing, test label W-018.ISO).")
 cable("W-019", "PAUSE/Stop button and lamp: main board J_PAUSE (JST GH 5-way) to the PAUSE button (right deck)", "robot", [
     w("PAUSE-DEV", "NO-a", "CHS.J_PAUSE", "1", "PAUSE_3V3", 26, "RD", ins=FEP, note="contact supply through R_PAUSE 1 kohm on the board (S2-01f): a short cannot load 3V3"),
     w("PAUSE-DEV", "NO-b", "CHS.J_PAUSE", "2", "PAUSE_BTN_RAW", 26, "WH", ins=FEP, note="PAUSE contact to the MCU input; ESD at D_PAUSE next to the connector"),
@@ -484,22 +497,28 @@ hp2 = (71.7, -87.5, 39.0)
 # the shield drain goes from the port to the SHLD pad (TP2004 / TP2501), which stage 2 placed far from the landings: separate wire inside the head
 _dr1 = int(math.ceil((plen([(80.0, hp[1], 39.0), hdb(*HEAD_UV["TP2004"])]) + 30.0) / 10.0) * 10)
 _dr2 = int(math.ceil((plen([(80.0, hp2[1], 39.0), hdb(*HEAD_UV["TP2501"])]) + 30.0) / 10.0) * 10)
+_p101 = [hpos("J2001", dv=-4.6), hp]
+_in101 = int(math.ceil((plen(_p101) + 2 * 25.0 + 20.0) / 10.0) * 10)      # conductor run inside the head
+_SPL_OUT = 30    # mm outside the gland: the AWG 18 -> AWG 20 splice
 cable("W-101", "Head J1 captive pigtail: head board J2001 to the J1 plug", "head", [
-    w("HEAD.J2001", p, "J1P", p, n, a, c, pair=pr, note=("terminal: Micro-Fit 43030 'AWG 18-24 variant' (head circuit.py note, recalled, UNVERIFIED): the same open question that chassis stage 2 closed at J_HEAD1 by moving to Mini-Fit Jr (IB-32); open for the head board (OD-3)" if a == 18 else "")) for p, n, a, c, pr in J1COL] +
-    [w("HEAD.TP2004", "1", "J1P", "SH", "SHLD_J1", 24, "bare", kind="shield", idx="S", len_mm=_dr1, note="shield drain to the board pad TP2004 (SHLD_J1: 1 Mohm || 10 nF to FRAME); braid also 360 degrees in the plug backshell. TP2004 is at u 23.5, v 70.5 (stage 2), far from J2001 (u 86.8, v 10.6): the drain is a separate wire of %d mm inside the head (about 100 mm of path), not the cable length" % _dr1)],
-    path=[hpos("J2001", dv=-4.6), hp], end=25, loop=20, extra=200.0,
+    w("HEAD.J2001", p, "J1P", p, n, a, c, pair=pr, idx=p) for p, n, a, c, pr in J1COL if p not in "34"] +
+    [x for p, n, a, c, pr in J1COL if p in "34" for x in (
+        w("SPL-JH" + p, "1", "J1P", p, n, 18, c, pair=pr, idx=p, len_mm=200 - _SPL_OUT, note="AWG 18 (contract J1 table, M16 plug contact) from the J1 plug to the splice SPL-JH%s, %d mm outside the head gland" % (p, _SPL_OUT)),
+        w("HEAD.J2001", p, "SPL-JH" + p, "2", n, 20, c, pair=pr, idx=p + "H", len_mm=_SPL_OUT + _in101, note="AWG 20 from the splice through the gland to the J2001 Micro-Fit terminal 43030-0007 (20-24 AWG, UNVERIFIED rating 3.13 A, stage 3 H-03 / IB-61)"))] +
+    [w("HEAD.TP2004", "1", "J1P", "SH", "SHLD_J1", 24, "bare", kind="shield", idx="S", len_mm=_dr1, note="shield drain to the board pad TP2004 (SHLD_J1: 1 Mohm || 10 nF to FRAME); braid also 360 degrees in the plug backshell. Stage 3 (S3-H / CR-H11): TP2004 is now 9 mm in front of J2001, so the drain is a short separate wire of %d mm inside the head" % _dr1)],
+    path=_p101, end=25, loop=20, extra=200.0,
     basis="inside the head: board J2001 (u 86.8, v 10.6, mating face rearward, stage 2) to the rear-wall port = 17.6 mm path + 2 x 25 mm + 20 mm; outside: 200 mm free length (mechanical_interfaces.md allows 150..200; straight-line port to plug rear is 142 mm, plus bends at 40 mm radius, so 150 mm is too short)", budget=350,
-    construction="Same construction as W-008 (shielded multicore, twisted pairs P1 power, P2 heater, P3 loop), captive: sealed strain relief in the head rear wall at (71.7, 76.2, 39) (CR-M03, moved from y 87.5), cable leaves toward -x/+z, clipped to the shoe root. OD <= 7.5 mm.",
+    construction="Same construction as W-008 (shielded multicore, twisted pairs P1 power, P2 heater, P3 loop), captive. WHERE THE HEATER GAUGE CHANGES (stage 3): pins 3/4 are AWG 18 from the M16 plug (contract) to a sealed crimp splice (SPL-JH3 / SPL-JH4: wire-to-wire, 18 -> 20 AWG, adhesive-lined heat-shrink, staggered 15 mm so the two splices do not stack) placed 30 mm OUTSIDE the head gland inside the cable overmould/boot, because there is no room for a splice inside the head (9 mm between the plug backs and the wall, CR-M06); from the splice the conductors are AWG 20 through the gland into the 43030-0007 terminals of J2001. Splice part TBD (none in any source). Sealed strain relief in the head rear wall at (71.7, 76.2, 39) (CR-M03, moved from y 87.5), cable leaves toward -x/+z, clipped to the shoe root. OD <= 7.5 mm.",
     shield="Braid: 360 degrees to the J1 plug backshell (-> chassis through the mated shell) AND drain wire to the head board pad TP2004. This is the contract: hard bond at the chassis, 1 Mohm || 10 nF at the head.",
     protection=PRO["head_pwr"] + " (pins 1-2); " + PRO["head_htr"] + " (pins 3-4); " + PRO["head_sig"], strain="Sealed strain-relief gland in the rear wall (inside the head wall); plug backshell clamp; clip to the shoe root; head cover 0.9 mm clearance must not trap the cable",
-    notes="IB-36 (head pigtail length): the harness specifies 200 mm free length outside the head plus about 90 mm inside = 290 mm, against the 2 x 0.35 m of the head power_budget.md (head side calculation); the geometry-based 200 mm follows mechanical_interfaces.md (150..200 mm) and the 142 mm straight-line check: the shorter pigtail lowers the resistance (conservative for the budget). The loop is potential-free: no conductor of pins 5-6 may touch the shield or any other pin. J2001 and J2601 sit side by side at the rear edge (stage 2, S2-L5: J2601 u 50.2..72.0, J2001 u 73.0..100.7) with the mating faces rearward; this needs CR-M02/CR-M03 (not yet accepted by head mechanical, IB-52). CCR-HE-02: J2001 header height 8 mm zone open.")
+    notes="IB-36 (head pigtail length): the harness specifies 200 mm free length outside the head plus about 90 mm inside = 290 mm, against the 2 x 0.35 m of the head power_budget.md (head side calculation); the geometry-based 200 mm follows mechanical_interfaces.md (150..200 mm) and the 142 mm straight-line check: the shorter pigtail lowers the resistance (conservative for the budget). The loop is potential-free: no conductor of pins 5-6 may touch the shield or any other pin. J2001 and J2601 sit side by side at the rear edge (stage 2, S2-L5: J2601 u 50.2..72.0, J2001 u 73.0..100.7) with the mating faces rearward; STAGE 3 (IB-61, CR-M06): both headers moved 7 mm forward (pin rows at v 17.57, mated plugs v -1.4..8.5, plug backs 9.0 mm from the rear-wall inner face), so the conductor run inside the head is 7 mm longer; this needs CR-M02/CR-M03/CR-M06 (not yet accepted by head mechanical, IB-52/IB-61). CCR-HE-02: J2001 header height 8 mm zone open.")
 cable("W-102", "Head J2 captive pigtail: head board J2501 to the J2 plug (plug link pin 7 to pin 4)", "head", [
     w("HEAD.J2501", "1", "J2P", "1", "RS485_DP", 26, "WH", ins=FEP, pair="P1"), w("HEAD.J2501", "2", "J2P", "2", "RS485_DN", 26, "BU", ins=FEP, pair="P1"),
     w("HEAD.J2501", "3", "J2P", "3", "BUS_5V", 26, "RD", ins=FEP, pair="P2"), w("HEAD.J2501", "4", "J2P", "4", "BUS_GND", 26, "BK", ins=FEP, pair="P2"),
     w("HEAD.J2501", "5", "J2P", "5", "SYNC_P", 26, "GN", ins=FEP, pair="P3"), w("HEAD.J2501", "6", "J2P", "6", "SYNC_N", 26, "GY", ins=FEP, pair="P3"),
     w("HEAD.J2501", "7", "J2P", "7", "J2_PRES", 26, "VT", ins=FEP, pair="P4"),
     w("J2P", "7", "J2P", "4", "J2_PRES", 26, "VT", ins=FEP, to_net="BUS_GND", kind="link", idx="L", len_mm=20, note="J2_PRES plug link inside the plug (contract); keep R2502 DNP"),
-    w("HEAD.TP2501", "1", "J2P", "SH", "SHLD_J2", 26, "bare", ins=FEP, kind="shield", idx="S", len_mm=_dr2, note="shield drain to pad TP2501 (SHLD_J2); braid 360 degrees in the plug backshell. TP2501 is at u 252.7, v 69.8 (stage 2), 60 mm from the J2501 landing: separate drain wire of %d mm inside the head" % _dr2)],
+    w("HEAD.TP2501", "1", "J2P", "SH", "SHLD_J2", 26, "bare", ins=FEP, kind="shield", idx="S", len_mm=_dr2, note="shield drain to pad TP2501 (SHLD_J2); braid 360 degrees in the plug backshell. Stage 3: TP2501 is now next to H3 and the J2 port: separate drain wire of %d mm inside the head" % _dr2)],
     path=[hpos("J2501", dv=0.8), hp2], end=25, loop=20, extra=200.0,
     basis="inside the head: board J2501 (u 262.3, v 5.2) to the rear-wall port (u 250.5) = about 21 mm + 2 x 25 mm + 20 mm; outside: 200 mm free length (150..200 allowed; port to plug rear 142 mm straight)",
     construction="Same as W-009: shielded 4-pair, 7 conductors + link. Captive, sealed strain relief at (71.7, -87.5, 39).", shield="As W-101 with TP2501 / J2P backshell.", protection=PRO["bus5"] + "; " + PRO["head_sig"],
@@ -507,16 +526,16 @@ cable("W-102", "Head J2 captive pigtail: head board J2501 to the J2 plug (plug l
 
 # ================================================================ HEAD: internal
 cable("W-103", "Head heater film, bimetal cut-out and spreader NTC: head board J2601 to the heater assembly", "head", [
-    w("HEAD.J2601", "1", "HEAD-HEATER", "1", "HTR_SW", 18, "OG", note="43030 'AWG 18-24 variant' crimp (head circuit.py note, recalled, UNVERIFIED: OD-3); up to 4.35 A trip, element draw <= 3.04 A"),
+    w("HEAD.J2601", "1", "HEAD-HEATER", "1", "HTR_SW", 20, "OG", note="AWG 20 in the Micro-Fit 43030-0007 terminal (20-24 AWG) at the head end (stage 3, H-03 / IB-61); element draw <= 3.04 A at 14.6 V, terminal rating 3.13 A continuous UNVERIFIED"),
     w("HEAD.J2601", "3", "SPL-HCUT", "1", "HTR_CUT", 24, "VT", note="cut-out sense (CUTOUT_SENSE node between element and cut-out)"),
-    w("HEAD-HEATER", "2", "SPL-HCUT", "2", "HTR_CUT", 18, "BN", note="element end to the junction"),
-    w("SPL-HCUT", "3", "HEAD-CUTOUT", "1", "HTR_CUT", 18, "BN"),
-    w("HEAD-CUTOUT", "2", "HEAD.J2601", "2", "HEAD_HTR_N", 18, "BN", note="heater return through the low-side cut-out; HEAD_HTR_N never touches ground on the board"),
+    w("HEAD-HEATER", "2", "SPL-HCUT", "2", "HTR_CUT", 20, "BN", note="element end to the junction"),
+    w("SPL-HCUT", "3", "HEAD-CUTOUT", "1", "HTR_CUT", 20, "BN"),
+    w("HEAD-CUTOUT", "2", "HEAD.J2601", "2", "HEAD_HTR_N", 20, "BN", note="heater return through the low-side cut-out; HEAD_HTR_N never touches ground on the board; AWG 20 in 43030-0007 (stage 3, H-03)"),
     w("NTC-SPR", "a", "HEAD.J2601", "4", "NTC_HTR", 24, "WH", ins=FEP, pair="P1"), w("NTC-SPR", "b", "HEAD.J2601", "5", "GND", 24, "BK", ins=FEP, pair="P1")],
     path=[hpos("J2601", dv=-2.6), (76, 87.5, 30), (74, 87.5, 24)], end=20, loop=30, budget=350,
-    construction="Heater circuit AWG 18 pair (supply and return twisted) plus AWG 24 sense and an AWG 26 NTC pair. Assembly (per J2601): HTR_SW -> 4.8 ohm element -> CUTOUT_SENSE -> bimetal cut-out (low side) -> HEAD_HTR_N. Tail comes up the rear chimney at y = +87.5. J2601 pin 6 not wired.",
+    construction="Heater circuit AWG 20 pair (supply and return twisted; stage 3 H-03, was AWG 18) plus AWG 24 sense and an AWG 26 NTC pair. Assembly (per J2601): HTR_SW -> 4.8 ohm element -> CUTOUT_SENSE -> bimetal cut-out (low side) -> HEAD_HTR_N. Tail comes up the rear chimney at y = +87.5. J2601 pin 6 not wired.",
     shield="none inside the shielded head", protection=PRO["head_htr"] + "; cut-out status reads 'tripped' when the feed is off (by design)", strain="Leads clipped to the spreader with Kapton/high-temperature tape within 20 mm of the film tail",
-    notes="Heater film, cut-out and NTC parts are not in the sources (TBD). CCR-HE-02 (connector height) open.")
+    notes="STAGE 3. (1) J2601 moved 7 mm forward (CR-M06): +7 mm in the length. (2) HEATER INSULATION (review M5, L-05): the heater harness inside the head (film leads, thermal cut-out, NTC lug, splice SPL-HCUT) must be INSULATED from the spreader / frame: cut-out with an electrically isolated case (>= 100 MOhm case-to-terminals at 100 V, written into its BOM line, part TBD), NTC with an isolated lug or on a 0.1 mm polyimide pad, splice SPL-HCUT in adhesive-lined heat-shrink and lifted off the spreader on a polyimide pad, film tails and leads sleeved (silicone or FEP) and held off the spreader edge by polyimide tape (>= 1 mm gap to any metal edge). A live heater-domain part touching the spreader would put up to 1.5 A through R2801 and the board ground plane. ASSEMBLED-HEAD CHECK (test label W-103.HTR-ISO): heater assembly fitted, spreader bolted to the board, BOARD DISCONNECTED (J2601 unplugged, so the leads are free): J2601 plug pins 1, 2 and 3 (and the NTC pair 4/5) each to FRAME (spreader) >= 10 MOhm at 100 V DC; repeat each to board GND with the board in place. (3) Heater film, cut-out and NTC parts are not in the sources (TBD). CCR-HE-02 (connector height) open. (4) PROTECTION GAP (see cables.md section 6): the AWG 20 wire is fine (5 A table value) but the 43030-0007 terminal is rated about 3.13 A continuous (UNVERIFIED) against heater draw up to 3.04 A; the head firmware cuts the heater at 3.2 A sustained for 300 ms; the chassis HEAD_HTR branch only trips at 3.56-4.35 A.")
 for cid, nm, jref, dev, sw in (("W-104", "front", "J2002", "RAIL-F", (184.2, 0.0, 21.0)), ("W-105", "right", "J2003", "RAIL-R", (131.2, -168.5, 21.0)), ("W-106", "left", "J2004", "RAIL-L", (131.2, 168.5, 21.0))):
     # OD-6 (lead): the RIGHT rail switch is on J2003 (y -8.5) and the LEFT rail switch on J2004 (y +18.4) so the cables do not cross.
     # Series loop, so the order is electrically free; the BUMP_ZONE_L/R labels of J2003/J2004 are swapped (read-back not available in rev A).

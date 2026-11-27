@@ -309,7 +309,7 @@ int main(void)
         th_t *t = th_new(40);
         th_run_silent(t, 300);
         CHECK(th_req(t, "HELLO", "{}"));
-        t->sim.rearm_ms = 200;
+        th_env(t, "{\"press\":\"REARM\"}"); /* waits for C_SET, then presses */
         bool woke_early = false;
         for (int ms = 0; ms < 80; ms++) {
             th_run_silent(t, 1);

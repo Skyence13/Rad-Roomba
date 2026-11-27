@@ -219,3 +219,56 @@ def test_heater_transition_is_derived_from_consecutive_frames_and_after_gaps(exa
     assert g2["marks"] == ["AFTER_GAP"]
     diags = rig.ev("diag")
     assert diags and all(len(d["body"]["lanes"]) == 4 and "alpha_short" in d["body"]["lanes"][0] and d["body"]["bumper_zones"] is None for d in diags)
+
+
+class StrictHead(FakeHead):
+    """Head firmware 0.5.2 behaviour: ARM is refused (FAULT + reason) until `device` is set and the thresholds are confirmed."""
+
+    def __init__(self, *a, **k):
+        super().__init__(*a, **k)
+        self.setup = {"device": None, "thresholds_confirmed": False}
+        self.setup_sets = []
+
+    def _op_ENG_SETUP_GET(self, tid, args, rx_us):
+        self._reply(tid, "OK", {"setup": dict(self.setup)})
+
+    def _op_ENG_SETUP_SET(self, tid, args, rx_us):
+        if self.armed:
+            return self._reply(tid, "BUSY")
+        self.setup_sets.append(dict(args))
+        self.setup.update(args)
+        self.bound = False                       # a setup change invalidates the binding
+        self._reply(tid, "OK", {"changed": True, "bound": False, "persisted": False})
+
+    def _op_ARM(self, tid, args, rx_us):
+        if self.bound and not self.setup["device"]:
+            return self._reply(tid, "FAULT", {"reason": "device_type_unset"})
+        if self.bound and not self.setup["thresholds_confirmed"]:
+            return self._reply(tid, "FAULT", {"reason": "placeholder_thresholds"})
+        super()._op_ARM(tid, args, rx_us)
+
+
+def _strict_rig(examples, demo_registry, **cfg):
+    rig = Rig(examples, demo_registry, **cfg)
+    rig.head = StrictHead(rig.clock, rig.link.ends[1], (examples / "head_descriptor.json").read_bytes(), seed=1)
+    rig.head.set_rates({n: {"alpha": 0.5, "beta": 5.0, "ref": 4.0} for n in range(4)})
+    return rig
+
+
+def test_head_setup_is_written_before_arm_and_archived(examples, demo_registry):
+    rig = _strict_rig(examples, demo_registry, setup={"device": "J60035", "thresholds_confirmed": True})
+    rig.run(8.0)
+    assert rig.head.setup_sets == [{"device": "J60035", "thresholds_confirmed": True}]
+    assert rig.master.state == "ARMED" and rig.ev("gate")
+    sent = [p for _, k, p in rig.entries if k == "T" and (b'"ENG_SETUP_SET"' in p or b'"ENG_SETUP_GET"' in p)]
+    assert any(b"ENG_SETUP_SET" in p for p in sent) and any(b"ENG_SETUP_GET" in p for p in sent)       # archived raw
+
+
+def test_arm_refusal_reason_is_surfaced_to_the_operator(examples, demo_registry):
+    rig = _strict_rig(examples, demo_registry, setup={"device": "J60035"})             # thresholds not confirmed
+    rig.run(8.0)
+    assert rig.master.state == "BLOCKED" and rig.master.block_reason == "ARM_FAULT:placeholder_thresholds"
+    assert "thresholds_confirmed" in rig.master.block_detail
+    rig2 = _strict_rig(examples, demo_registry)                                          # no setup step configured at all
+    rig2.run(8.0)
+    assert rig2.master.block_reason == "ARM_FAULT:device_type_unset"

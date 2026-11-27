@@ -157,11 +157,12 @@ static void odometry(double v, double w, int ms, double slip_l, const char *labe
 /* IB-03: latch drop (E-stop) on the plant alone, firmware not stepped, bridges driving the steady-state duty
  * until K1 releases. Two parameter sets from electronics/analysis/chassis_braking.py. Distance from the moment
  * the chain opens to rest. Reference: the same script's brake() + 10.5 ms dead time (chassis_braking_tables.md T3;
- * the 0.30 m/s value is computed with brake() because T3 stops at 0.20 m/s). */
+ * the 0.30 m/s value is computed with brake() because T3 stops at 0.20 m/s). Stage 3: 10.8 ms dead time; RUN_HD (VMOT,
+ * nSLEEP) collapses with CHAIN_END at once, so the bridges stop driving within about 1 ms instead of waiting for K1. */
 static void latch_drop_study(void)
 {
     static const double v0s[3] = {0.10, 0.20, 0.30};
-    static const double ref[2][3] = {{3.76, 8.71, 13.91}, {14.25, 28.50, 42.75}};
+    static const double ref[2][3] = {{3.79, 8.77, 14.00}, {14.28, 28.56, 42.84}}; /* chassis_braking.py, stage 3 (10.8 ms dead time) */
     static const char *const nm[2] = {"nominal", "conservative"};
     rep("latch drop (E-stop) on the plant, distance from chain opening to rest [SIMULATED] vs electronics chassis_braking.py [calculated]:\n");
     for (int c = 0; c < 2; c++) {
@@ -177,7 +178,7 @@ static void latch_drop_study(void)
             }
             const sim_params_t *p = &s->p;
             double w = v0s[k] / p->r, i_ss = p->tau_c / p->Kt;
-            s->latch = true;
+            s->latch = s->k1 = s->u_hold = s->run_hd = s->k1_run = s->run12 = true;
             s->vmot = s->vbat;
             for (int j = 0; j < 2; j++) {
                 s->rstate[j] = 1;

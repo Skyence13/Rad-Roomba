@@ -13,7 +13,7 @@ RR-HD-S-131,"insulating jacket cap 3 mm closed-cell foam, wipeable skin, PSA on 
 RR-HD-S-132,"insulating jacket front band 3 mm, PSA on the frame front face above the bail blocks",1,pcs,EPDM-FOAM,machined / sheet,"3 mm closed-cell foam strip 12.7 x 340 with skin, PSA",UNVERIFIED,standard cold configuration
 PUR-GSK-LID,"lid perimeter gasket, closed-cell silicone 1.2 mm (0.8 installed)",1,pcs,SIL-FOAM,purchased,"lid gasket die-cut, closed-cell silicone 1.2 mm (prototype black; production conductive Ni/graphite silicone)",UNVERIFIED,
 PUR-SO-M3x10.5,"9 x M3 x 10.5 round female spacer on the fence feet (lid hard seat, lid-spreader tie, fence bond)",9,pcs,AL6061,purchased,"round female spacer M3 x 10.5, OD 4.5, aluminium (cut from M3 x 11 or special)",UNVERIFIED,non-standard length; alternative M3 x 10 + 0.5 shim
-PUR-SO-M3x11,7 x M3 x 11 round female spacer in the chimney zones (no fence foot),7,pcs,AL6061,purchased,"round female spacer M3 x 11, OD 4.5, aluminium (Wurth 9701xx / Ettinger class)",UNVERIFIED,
+PUR-SO-M3x11,8 x M3 x 11 round female spacer in the chimney zones (no fence foot),8,pcs,AL6061,purchased,"round female spacer M3 x 11, OD 4.5, aluminium (Wurth 9701xx / Ettinger class)",UNVERIFIED,
 PUR-SO-M2.5x2.5,8 x M2.5 x 2.5 clinch standoff (FRAME net),8,pcs,BRASS,purchased,"PEM SO-M2.5-2.5 class clinch standoff, thru-thread, steel/zinc or aluminium",UNVERIFIED,mounting hole 4.2 assumed
 PUR-GSK-RIB,rib-top light gasket strips 5.4 x 1.0 (0.6 installed),13,pcs,SIL-FOAM,purchased,"rib light-seal strip 5.4 x 1.0, black closed-cell silicone, PSA",UNVERIFIED,
 PUR-FOAM-LINER,0.5 mm closed-cell insulation liner under the lid,1,pcs,EPDM-FOAM,purchased,"closed-cell EPDM / silicone foam liner 0.5 mm, PSA",UNVERIFIED,
@@ -30,7 +30,7 @@ RR-HD-X-301,lane spacer ring 1.75 mm (floor guide to barrier),4,pcs,PA-CF,printe
 RR-HD-X-302,opaque barrier plate 2 mm with foam edge,4,pcs,PA-CF,printed (X1C),,-,
 RR-HD-X-303,lane spacer ring 3 mm (barrier to reference tile),4,pcs,PA-CF,printed (X1C),,-,
 PUR-PAD,"retention / thermal pad 1.5 mm free, 1.2 mm installed",4,pcs,SIL-FOAM,purchased,"lane retention pad, silicone foam 1.5 mm (1.2 installed) 80 x 100",UNVERIFIED,
-PUR-HEATER,"polyimide heater zone 7.5 W, bonded under the spreader",4,pcs,PI,purchased,"polyimide heater zone 76 x 96, 7.5 W at 12 V, PSA backed (Minco / Holroyd class)",UNVERIFIED,zone size from the model; 4 zones may be one film
+PUR-HEATER,"polyimide heater zone 7.5 W, bonded under the spreader",4,pcs,PI,purchased,"polyimide heater zone 76 x 96, 7.5 W at 12 V, element fully encapsulated between two polyimide layers (>= 25 um each), PSA backed (Minco / Holroyd class)",UNVERIFIED,M5 insulation: the polyimide cover layer is the dielectric to the spreader; specify >= 100 MOhm at 100 V element-to-surface and no exposed tab metal on the spreader side
 OEM-CARRIER,SiPM carrier envelope (OEM),8,pcs,FR4,OEM optics (RFQ),,-,
 OEM-SIPM,SiPM envelope (OEM),8,pcs,FR4,OEM optics (RFQ),,-,
 RR-HD-X-304,"chimney insert: carrier retention fingers, floor/reference light shelf, coax channel",4,pcs,PA-CF,printed (X1C),,-,
@@ -50,11 +50,11 @@ PUR-M3x16-SHCS,3 x M3 guide pins for the 45 deg slots,6,pcs,SS304,purchased,"ISO
 RR-HD-S-432,"side contact rail + wing-tip return + guide tabs (0.8 mm 301 half hard, laser cut, 4 bends), 3 mm projection",1,pcs,SS301,machined / sheet,,-,DXF in prototype/dxf
 EL-RR-HEAD-ACQ,RR-HEAD-ACQ populated (envelope),1,pcs,FR4,other work package,"RR-HEAD-ACQ rev A (electronics/head_acq), as built: H1 at (75.5, 30.0), cans v 8.25..40.25, J2001/J2601 at the rear edge",-,fit tool-checked against the board file (head_report.md section 12)
 RR-HEAD-SHLD-A,"lane shield can 36 x 32 x 5, 0.2 mm tin-plated steel",4,pcs,STEEL,machined / sheet,,-,DXF in prototype/dxf
-PUR-TCO,"bimetal thermal cut-out in series with the heater, on the spreader tab",1,pcs,MIXED,purchased,"bimetal thermal cut-out, normally closed, opens 45 C (KSD-01F / Airpax 67F class)",UNVERIFIED,in series with HEAD_HTR
+PUR-TCO,"bimetal thermal cut-out in series with the heater, on the spreader tab",1,pcs,MIXED,purchased,"bimetal thermal cut-out, normally closed, opens 45 C, ISOLATED CASE variant (plastic / insulated cap; >= 100 MOhm case-to-terminals at 100 V) (KSD-01F / Airpax 67F class)",UNVERIFIED,"in series with the heater element (low side); M5: bonded on a 0.1 mm polyimide pad PUR-PI-PAD, never screwed metal-to-spreader"
 PUR-DES-1G,"4 desiccant pouches (about 0.5 g each) + indicator card, front strip between the lid bosses",4,pcs,MIXED,purchased,"silica gel pouch about 0.5 g, 4 off, + humidity indicator card",UNVERIFIED,3.0 cm3 space in the front strip
-PUR-NTC-10K,"10 k NTC ring-lug sensor on the spreader (heater regulation, board J-heater connector)",1,pcs,MIXED,purchased,10 k NTC ring-lug sensor M3 (Vishay / TDK class),UNVERIFIED,regulation input of the board heater controller
+PUR-NTC-10K,"10 k NTC ring-lug sensor on the spreader (heater regulation, board J-heater connector)",1,pcs,MIXED,purchased,"10 k NTC ring-lug sensor M3, ISOLATED LUG (bead potted, >= 100 MOhm leads-to-lug at 100 V) (Vishay / TDK class)",UNVERIFIED,regulation input of the board heater controller; M5: lug on a 0.1 mm polyimide pad + nylon M3 screw/washer as second barrier
 RR-HD-X-511,split strain-relief grommet (compressed by the lid),1,pcs,TPU,printed (X1C),,-,
-PUR-CABLE-J1,"J1 pigtail cable, 150 mm free length",1,pcs,MIXED,purchased,"shielded PUR cable 2 x 18 AWG + 2 x 20 AWG + 4 x 24 AWG, OD 7.5, -40 C flex, 150 mm free length",UNVERIFIED,OD drives the grommet bore
+PUR-CABLE-J1,"J1 pigtail cable, 150 mm free length",1,pcs,MIXED,purchased,"shielded PUR cable 4 x 20 AWG + 3 x 24 AWG (heater pair AWG 20, stage-3 H-03), OD 7.5, -40 C flex, 150 mm free length; conductors inside the head thin-wall ETFE / XL-PE, AWG 20 OD <= 1.6 mm (fan-in to J2001 in 9 mm, head_report.md); Micro-Fit 43030-0007 terminals",UNVERIFIED,OD drives the grommet bore
 PUR-M16-8,J1 cable plug envelope,1,pcs,MIXED,purchased,"binder M16 IP67 8-pole male cable connector, shieldable (series 423 / 723 family)",PARTIAL,envelope from mechanical/common/purchased/parts.yaml j1_receptacle
 RR-HD-X-512,split strain-relief grommet (compressed by the lid),1,pcs,TPU,printed (X1C),,-,
 PUR-CABLE-J2,"J2 pigtail cable, 150 mm free length",1,pcs,MIXED,purchased,"shielded PUR cable 4 x 2 x 24 AWG twisted pairs, OD 6.5, -40 C flex, 150 mm free length",UNVERIFIED,OD drives the grommet bore
@@ -63,21 +63,23 @@ PUR-VENT-M6,ePTFE breather vent M6 with internal light baffle,1,pcs,MIXED,purcha
 PUR-M2.5x8-PAN,"ISO 7045 M2.5 x 8 A2, spreader to rear-zone insert",6,pcs,SS304,purchased,,UNVERIFIED,
 PUR-M3x8-LOW,DIN 7984 M3 x 8 A2 + insulating shoulder washer (prototype) / plain washer,8,pcs,SS304,purchased,,UNVERIFIED,
 PUR-M2.5x5-PAN,"ISO 7045 M2.5 x 5, front fence foot into tapped spreader",12,pcs,SS304,purchased,,UNVERIFIED,
-PUR-M2.5x3-PAN,"ISO 7045 M2.5 x 3 A2, rear-comb foot tab into the tapped spreader (bond point under the J1 plugs)",2,pcs,SS304,purchased,ISO 7045 M2.5 x 3 A2 pan head,UNVERIFIED,rear-comb bond screw under the J1 plugs (CR-M03); tip 0.5 below the spreader into a frame relief
+PUR-M2.5x3-PAN,"ISO 7045 M2.5 x 3 A2, rear-comb foot tab into the tapped spreader (bond point under the J1 plugs)",3,pcs,SS304,purchased,ISO 7045 M2.5 x 3 A2 pan head,UNVERIFIED,rear-comb bond screw under the J1 plugs (CR-M03); tip 0.5 below the spreader into a frame relief
 PUR-M2.5x5-PAN-SW,"ISO 7045 M2.5 x 5 + serrated washer, board to standoff (FRAME bond)",8,pcs,SS304,purchased,,UNVERIFIED,
-PUR-M3x8-BUT,"ISO 7380 M3 button head + bonded sealing washer, lid",34,pcs,SS304,purchased,,UNVERIFIED,
+PUR-M3x8-BUT,"ISO 7380 M3 button head + bonded sealing washer, lid",35,pcs,SS304,purchased,,UNVERIFIED,
 RR-HD-S-433,"VARIANT: side contact rail LH for the 5 mm projection (strip 15 mm tall, same holes); replaces RR-HD-S-431",0,pcs (variant),SS301,machined / sheet,,-,STEP via assembly.build(projection=5); DXF in prototype/dxf
 RR-HD-S-434,"VARIANT: side contact rail RH for the 5 mm projection (strip 15 mm tall, same holes); replaces RR-HD-S-432",0,pcs (variant),SS301,machined / sheet,,-,STEP via assembly.build(projection=5); DXF in prototype/dxf
 PUR-M2.5x8-CSK,"ISO 10642 M2.5 x 8 A2: spreader to rib inserts / tapped ribs (flush, under the board)",10,pcs,-,purchased,,UNVERIFIED,
-PUR-M3x6-CSK,ISO 10642 M3 x 6 A2: lid standoffs from below the spreader,16,pcs,-,purchased,,UNVERIFIED,
+PUR-M3x6-CSK,ISO 10642 M3 x 6 A2: lid standoffs from below the spreader,17,pcs,-,purchased,,UNVERIFIED,
 PUR-M2.5x8-CSK-C,ISO 10642 M2.5 x 8 A2: window cassettes (4 each),16,pcs,-,purchased,,UNVERIFIED,
 PUR-M2.5x10-PAN,ISO 7045 M2.5 x 10 A2: bail blocks to the frame front face,6,pcs,-,purchased,,UNVERIFIED,
 PUR-M2.5x12-PAN,ISO 7045 M2.5 x 12 A2: switch saddles to the spreader,4,pcs,-,purchased,,UNVERIFIED,
 PUR-M3x8-SHCS,ISO 4762 M3 x 8 A2: rail inserts (2 each) and rods to the bar,10,pcs,-,purchased,,UNVERIFIED,
 PUR-M4x10-SHCS,ISO 4762 M4 x 10 A2: rear bridge to the T-head ears,4,pcs,-,purchased,,UNVERIFIED,
-PUR-M3-BONDSEAL,"bonded sealing washer M3 (steel + NBR/silicone, -40 C), under every lid screw",34,pcs,-,purchased,,UNVERIFIED,
+PUR-M3-BONDSEAL,"bonded sealing washer M3 (steel + NBR/silicone, -40 C), under every lid screw",35,pcs,-,purchased,,UNVERIFIED,
 PUR-M3-ISOWASH,"insulating shoulder washer M3 (PA66 / G10): T-head screws (FRAME isolated from the shoes, both builds)",8,pcs,-,purchased,,UNVERIFIED,
 PUR-PI-TAPE,"polyimide tape 0.1 mm, 30 x 45 mm, on the lid under the keeper (isolation)",1,pcs,-,purchased,,UNVERIFIED,
+PUR-PI-PAD,polyimide insulating pads 0.1 mm under the thermal cut-out and the NTC lug (review M5),2,pcs,-,purchased,"polyimide film 0.1 mm with PSA, die-cut pads 8 x 10 (cut-out) and dia 8 (NTC lug)",UNVERIFIED,M5 second insulation barrier on the spreader
+PUR-M3-NYLON,M3 x 6 polyamide screw + polyamide washer for the NTC lug (review M5),1,pcs,-,purchased,,UNVERIFIED,
 PUR-INS-M2.5,"heat-set insert M2.5 in the printed frame (ribs 10, rear zone 6, cassettes 16, bail blocks 6)",38,pcs,-,purchased,brass heat-set insert M2.5 x 4 (Ruthex / CNC Kitchen class),PARTIAL,hole dia 3.7 per distributor data (Albany County Fasteners spec sheet); maker's own figure not opened
 PUR-INS-M3,heat-set insert M3 in the printed lid bosses,18,pcs,-,purchased,brass heat-set insert M3 x 5.7 (Ruthex RX-M3x5.7 class),PARTIAL,"hole dia 4.0, min boss dia 6.5 per McMaster 94459A / distributor data; boss modelled 6.6"
 PUR-DOWEL-3x6,"dowel pin 3 x 6 h8, split-joint location",2,pcs,-,purchased,,UNVERIFIED,

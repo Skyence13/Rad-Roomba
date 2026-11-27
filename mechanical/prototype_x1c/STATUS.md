@@ -36,6 +36,9 @@ channel (target 0.10), datum-C stack +-0.057 -> +-0.093 worst case, 20 N corner 
 (aluminium head), first mode -1 % / -4 %, preload loss 6 % with the spring washer (57 % without), engagement 7.1 mm = 1.8 d.
 Joint section J17 added; stage 1 work instructions, hardware and tolerance table updated. The same parametric code now has a
 build switch (`RR_BUILD=production`, `rrx/production.py`) used by `mechanical/production`; the default build is unchanged.
+`mechanical/common` thermal: bay rows follow the draft8 policy (-10 C hold on pack power, +5 C pre-heat); the head set-point is read from the
+contract (draft9: +5 C) and the head rows are read from `mechanical/head/out/thermal_summary.json` at build time (0.07 W/K-per-shoe rows,
+stated as depending on the break). The CCR-E08 keep-out check reads the common layout boxes, not `pinmap.json` (re-run, all free).
 
 ## Run times (shared 4-core machine)
 

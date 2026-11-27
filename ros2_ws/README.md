@@ -298,19 +298,19 @@ Carried from `STATUS.md` (read that file for the current, complete list):
   (as-built tail incl. rear bumper 0.2892 m, tool-checked on nominal CAD, rounded up; contract draft7); the rectangle
   outline used for route holds and the wall-track checks reaches 0.309 m. Not measured on a built robot.
 - Continuous scan at 0.10 m/s does not meet the 0.20 Bq/cm² goal with the demo calibration.
-- Cell statistics (CR-08/CR-09, IB-31 **closed by MODEL.md revision 3**, implemented): footprint-weighted sums keep
-  the Poisson form (conservative; manifest `assumptions.weighted_sum_variance: poisson_form_conservative`). A cell is
-  flagged when ANY contributing lane exceeds its own threshold at alpha/m (m = lanes with a gate of weight >= 0.10 in
-  the cell; per-lane method normal / poisson-exact from MODEL.md §3); the quoted D* and D# are the minima over the
-  lanes of the per-lane values solved at (alpha/m, beta); D and its uncertainties stay the inverse-variance
-  combination. Stored per cell in `cells.csv` (`*.decision_rule` = `per-lane-exact/any-lane/alpha-over-m`,
-  `*.m_lanes`, `*.alpha_lane`, `*.lane_thresholds`, `*.flagged_lanes`), on flags and in scaler observations
-  (m = 1). **Monte Carlo (simulated, `rr_core/test/test_cell_decision.py`, seed 20261127, 400 000 trials, tolerance
-  4 binomial SE = 0.0014 at alpha 0.05): clean-cell false-alarm / alpha = 0.26-0.39 for m = 2 and 4, normal and
-  poisson-exact, weights uniform in 0.1-1. The check MODEL.md leaves open for poisson-exact with weighted sums is
-  NOT clean: with weights 1 except one 0.1 gate per lane and low counts (U = 3 /s) the ratio reached 1.16 (m = 2) and
-  1.24 (m = 4); the normal method at unit weights gave up to 1.035 (finite-count skew, not a weight effect). This is
-  an `xfail` test, reported to the radiometry owner.**
+- Cell statistics (**MODEL.md revision 4**, IB-31; revision 3 withdrawn): every decision statistic is S = sum a_j N_j + Z with the
+  footprint weights (rounded to a 0.05 lattice) as exact coefficients; threshold from the exact distribution (Gil-Pelaez,
+  lattice when Z = 0; `rr_core/linstat.py`, self-contained; the reference `analysis/radiometry/rrrad` is used by a test only);
+  D# = the D with P(S > t* | D) = 1 - beta (lazy, cached). Cell rule `linear-exact/combined+per-lane/0.8-0.2`: combined statistic at
+  0.8 alpha or any contributing lane (m = lanes with a U_null) at 0.2 alpha / m; stored per cell: m, c_i, alpha split, U_null window
+  per lane, lane thresholds, which test flagged, evaluator check (`cells.csv` `*.decision_rule`, `*.decision_status`, `*.m_lanes`,
+  `*.c_weights`, `*.alpha_combined`, `*.alpha_lane`, `*.u0_windows`, `*.lane_thresholds`, `*.flagged_by`, `*.evaluator_check`).
+  U_null: window >= 200 T_F excluding the gates under test (lane window, else four-lane pooled window), never a same-gate pool;
+  otherwise `no decision - null reference unavailable` (estimate D still reported; no flag, no D#). A failed half-step quadrature check gives
+  `no decision - evaluator check failed`. A stationary recount is the same rule with m = 1 (its alpha is then effectively 0.8 alpha_recount)
+  and needs reference data outside the count. Cache keys quantise U_null (0.25 % log grid) and live time (1 ms) so results do not depend on
+  evaluation order. Manifest `weighted_sum_variance: exact_coefficients`. Monte Carlo (seed 20261127, 400 000 trials): clean-cell false
+  alarm / alpha 0.79-0.91 for m = 1, 2, 4, including the former revision-3 failure case (now 0.86 / 0.90 for m = 2 / 4).
 - TF: the robot node publishes `map → base_link` only, no separate continuous `odom` frame (CR-11, logged by
   the lead for a later decision).
 - LiDAR: no de-skew; 12 m range and noise are assumptions. Along-trailer (x) position comes only from an end

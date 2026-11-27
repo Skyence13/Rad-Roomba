@@ -84,24 +84,29 @@ class Base(unittest.TestCase):
             time.sleep(0.01)
 
     def wait_rearm_ready(self, timeout=4.0):
+        """Stage 3: REARM sets K1 only from a charged C_SET (chain closed about 2 s); an operator waits for the
+        REARM lamp (rearm_ready). Returns False (no failure) if it does not come, so refusal tests still press."""
         end = time.monotonic() + timeout / self.speed + 1.0
         while time.monotonic() < end:
             if self.ok("STATE").get("rearm_ready"):
-                return
+                return True
             time.sleep(0.02)
-        self.fail("rearm_ready not reached")
+        return False
+
+    def press_rearm(self):
+        self.wait_rearm_ready()
+        self.env.set(press="REARM")
 
     def arm(self, op_mode=OPM):
         self.idle(0.4)
         hello = self.ok("HELLO")
         self.ok("SET_OP_MODE", {"op_mode": op_mode})
-        self.env.set(press="REARM")
+        self.press_rearm()
         self.wait_mode("ARMED_IDLE")
         bt = self.ok("BRAKE_TEST", timeout=5.0)
         self.assertTrue(bt["passed"], bt)
         self.wait_mode("STANDBY")
-        self.wait_rearm_ready()  # a REARM pressed before the chain reads closed is refused (review m3)
-        self.env.set(press="REARM")
+        self.press_rearm()
         self.wait_mode("ARMED_IDLE")
         # geometry comes from the chassis, never from literals in the host
         self.track = hello["caps"]["track_nom_m"]
@@ -280,7 +285,7 @@ class TestMotion(Base):
         status, b = self.link.rearm_sw()
         self.assertEqual((status, b["hw_latch"]), ("OK", False))
         self.assertEqual(self.ok("STATE")["mode"], "HW_INHIBIT")
-        self.env.set(press="REARM")
+        self.press_rearm()
         self.wait_mode("ARMED_IDLE")
         x1 = self.env.latest()["x"]
         self.idle(0.8)
@@ -298,7 +303,7 @@ class TestMotion(Base):
         self.assertLess(abs(self.env.latest()["v"]), 1e-3)
         self.env.set(estop=False)
         self.idle(0.3)  # a REARM pressed before the chain reads closed is refused (review m3)
-        self.env.set(press="REARM")
+        self.press_rearm()
         self.wait_mode("ARMED_IDLE")
         # charger cover opened while armed: SERVICE_CHARGE, latch gone, head power forced off, no motion
         self.env.set(chg_cover_open=True)
@@ -310,7 +315,7 @@ class TestMotion(Base):
         self.assertFalse(self.env.latest()["head_pwr"])
         self.assertEqual(self.req("HEAD_POWER", {"electronics": True, "heater_enable": False})[0], "REJECTED")
         self.assertEqual(self.link.drive(0.05, 0, OPM)["reject_reason"], "SERVICE_CHARGE")
-        self.env.set(press="REARM")
+        self.press_rearm()
         self.idle(0.4)
         self.assertEqual(self.ok("STATE")["mode"], "SERVICE_CHARGE")
         self.env.set(chg_cover_open=False)
@@ -352,7 +357,7 @@ class TestMotion(Base):
         st = self.ok("STATE")
         self.assertIn("PERMIT_STUCK_OFF", st["faults"])
         self.assertEqual((st["chain"]["ARM_PERMIT"], st["rearm_ready"]), (False, False))
-        self.env.set(press="REARM")
+        self.press_rearm()
         self.idle(0.3)
         self.assertFalse(self.env.latest()["latch"])
         self.env.set(permit_open=False)

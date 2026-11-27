@@ -34,7 +34,7 @@ NET_PAIRS = [
     dict(a="CH_N7", b="CH_N8A", via="BUMP-L-DEV NC", why="chain element BODY_BUMPER (left)"),
     dict(a="CH_N8A", b="CH_N8", via="BUMP-R-DEV NC", why="chain element BODY_BUMPER (right)"),
     dict(a="EN_SRC", b="EN_SYS", via="MODE-DEV EN contact", why="master enable contact"),
-    dict(a="SET_CAP", b="K1_SET", via="REARM-DEV NO 1", why="latch set contact (momentary)"),
+    dict(a="REARM_SET_SRC", b="REARM_SET_RAW", via="REARM-DEV NO 1", why="REARM set contact (momentary): a 5 V signal into the on-board set stage (stage 3), no longer the K1 coil pulse"),
     dict(a="BTN_3V3", b="REARM_BTN_RAW", via="REARM-DEV NO 2", why="REARM_BTN contact"),
     dict(a="PAUSE_3V3", b="PAUSE_BTN_RAW", via="PAUSE-DEV NO", why="PAUSE contact (own supply through R_PAUSE 1 kohm, stage 2 S2-01f)"),
     dict(a="HEAD_LOOP_OUT", b="LOOP_A", via="RAIL-F NC", why="head rail switch front"),
@@ -53,7 +53,7 @@ MATES = [
     dict(a="J1X-P", b="J1R", config="LAB"), dict(a="J1X-S", b="J1P", config="LAB"), dict(a="J2X-P", b="J2R", config="LAB"), dict(a="J2X-S", b="J2P", config="LAB"),
 ]
 SERVICE = {"CHS.J_AUX": "spare fan/spare connector: no cable in rev A", "CHS.J_DBG": "debug UART service port: plug a lead when needed", "CHS.J_SWD": "SWD service port: ribbon only when programming",
-           "CHS.W1": "DNP wire pads of the on-board clamp circuit: NO cable by decision (the board carries its own 2 x 9.1 ohm clamp resistors; no bolt-on 50 W part, IB-26 / IB-36)", "HEAD.J2401": "SWD pads (no component fitted): Tag-Connect cable only when programming", "HEAD.J2402": "debug UART service port", "HEAD.J2701": "monitor output test port: coax only on the bench",
+           "MOTSUP-L": "assembly item soldered at the motor terminals (cables.md section 7): not a wire", "MOTSUP-R": "as MOTSUP-L", "CHS.W1": "DNP wire pads of the on-board clamp circuit: NO cable by decision (the board carries its own 2 x 9.1 ohm clamp resistors; no bolt-on 50 W part, IB-26 / IB-36)", "HEAD.J2401": "SWD pads (no component fitted): Tag-Connect cable only when programming", "HEAD.J2402": "debug UART service port", "HEAD.J2701": "monitor output test port: coax only on the bench",
            "HEAD.JP2201": "solder jumper (lid bypass): bench only", "CHGPLUG": "supply-side plug: belongs to the external 24 V supply, not to the robot harness"}
 UNWIRED = {("CHS.J_PAUX", "3"): "no wire by decision (IB-37, chassis stage 2): NTC and presence return to pack negative inside the cassette (W-002/W-003); the accepted offset is about 0.1 V at full load (NTC about 3.4 K warm on discharge, about 0.7 K cold on charge, safe side). Wire pins 3/4 only if the cassette gets an isolated sense return", ("CHS.J_PAUX", "4"): "no wire by decision (IB-37, as pin 3)",
            ("HEAD.J2002", "3"): "no wire by decision: CCR-HE-04 (single-pole switch, NO throw not potential-free)", ("HEAD.J2002", "4"): "as pin 3",
@@ -285,6 +285,78 @@ def resist_awg(a):
     return {12: 5.21, 14: 8.29, 16: 13.2, 18: 20.9, 20: 33.3, 22: 53.0, 24: 84.2}.get(a)
 
 
+
+def _poly_dist(a, b, step=2.0):
+    """minimum distance (mm) between two polylines, sampled every `step` mm"""
+    def pts(p):
+        out = []
+        for i in range(len(p) - 1):
+            n = max(1, int(hk.dist(p[i], p[i + 1]) / step))
+            out += [tuple(p[i][k] + (p[i + 1][k] - p[i][k]) * j / n for k in range(3)) for j in range(n)]
+        return out + [p[-1]]
+    A, B = pts(a), pts(b)
+    return min(hk.dist(x, y) for x in A for y in B)
+
+
+def heater_section():
+    """sections 6-8 of cables.md: heater-pair drop with AWG 20 at the head end, motor suppression, test notes"""
+    R = {18: 20.9, 20: 33.3}
+    byid = {c["id"]: c for c in CABLES}
+    w8 = byid["W-008"]["length_mm"] / 1000.0
+    wx = {x["wid"]: x for x in byid["W-101"]["wires"]}
+    l18 = wx["W-101.3"]["len_mm"] / 1000.0
+    l20 = wx["W-101.3H"]["len_mm"] / 1000.0
+    l103 = byid["W-103"]["length_mm"] / 1000.0
+    def loop(head_awg):
+        wires = 2 * (w8 * R[18] + l18 * R[18] + (l20 * R[head_awg] if head_awg == 20 else (0)) + l103 * R[head_awg])
+        if head_awg == 18:      # all-AWG 18 reference: the 30 mm + inside run in AWG 18, no splice
+            wires = 2 * (w8 * R[18] + (l18 + l20) * R[18] + l103 * R[18])
+        return wires
+    contacts = 4 * 5.0 * 2       # 4 mated contact pairs per pole x 5 mohm [A, power_budget.md] x 2 poles
+    splices = 2 * 1.0            # 1 mohm per splice: ASSUMPTION (not in any source)
+    board = 5.0 + 28.0 + 3.0     # INA3221 shunt + eFuse FET + board copper (power_budget.md section 6)
+    rows = []
+    for tag, awg in (("head end AWG 20 (stage 3)", 20), ("all AWG 18 (stage 2, reference)", 18)):
+        rw = loop(awg)
+        rt = (rw + contacts + (splices if awg == 20 else 0.0) + board) / 1000.0
+        for vs in (10.0, 12.0, 14.6):
+            i = vs / (4.8 + rt)
+            p = i * i * 4.8
+            rows.append((tag, vs, rw, rt * 1000.0, i, i * 4.8, p, vs * vs / 4.8))
+    L = ["## 6. Head heater pair: AWG 20 at the head end (stage 3, H-03 / IB-61)", "",
+         "Gauge change: the contract J1 table keeps AWG 18 on pins 3/4 at the M16 plug; each heater pole is AWG 18 from the M16 plug to a sealed crimp splice (SPL-JH3 / SPL-JH4) %.0f mm outside the head gland, and AWG 20 from there through the gland to the Micro-Fit 43030-0007 terminal of J2001 (%.0f mm) and on through W-103 (%.0f mm) to the heater film and cut-out. One conductor cannot change gauge, so the splice is a wire-to-wire crimp splice (part TBD); it cannot sit inside the head (9 mm between plug backs and wall).  The chassis lead W-008 (%.0f mm) stays AWG 18 in the Mini-Fit Jr terminal." % (hk._SPL_OUT, l20 * 1000, l103 * 1000, w8 * 1000), "",
+         "Loop resistance at 20 C: wires from the table below, 4 mated contact pairs per pole at 5 mohm each [A, power_budget.md], splices 1 mohm each [ASSUMPTION], board part 36 mohm (INA3221 shunt 5, eFuse FET 28, copper 3; power_budget.md). Heater 4.8 ohm (head circuit.py: 3.04 A at 14.6 V). Calculated, not measured.", "",
+         "| Case | Supply at the chassis branch (V) | Wire loop (mohm) | Series total (mohm) | Heater current (A) | Voltage at the heater (V) | Power delivered (W) | Ideal, no series R (W) |", "|---|---|---|---|---|---|---|---|"]
+    for r in rows:
+        L.append("| %s | %.1f | %.0f | %.0f | %.2f | %.2f | %.2f | %.2f |" % r)
+    r20 = [r for r in rows if r[0].startswith("head end") and r[1] == 12.0][0]
+    r18 = [r for r in rows if r[0].startswith("all") and r[1] == 12.0][0]
+    L += ["", "AWG 20 against AWG 18 at the head end costs %.0f mohm of loop resistance (%.2f W at 12 V). The stage-3 head file quotes about 7 mohm for 2 x 0.29 m; the figure here follows the real lengths of this generator." % (r20[3] - r18[3], r18[6] - r20[6]), "",
+         "**Protection gap (stated honestly).** Heater draw is up to 3.04 A at 14.6 V; the 43030-0007 terminal is rated about 3.13 A continuous [UNVERIFIED, recalled; the Molex fetch failed], i.e. 3 %% margin at 14.6 V and 1.6x only against the AWG 20 wire (5 A table value). Protection layers: (1) head firmware cuts the heater at 3.2 A sustained for 300 ms (software, head MCU); (2) the independent bimetal cut-out in series acts on TEMPERATURE, not current; (3) the chassis HEAD_HTR eFuse trips only at 3.56-4.35 A (R46 845 ohm, 3.96 A nominal), i.e. 14-39 %% above the terminal rating. Between 3.13 A and 3.56 A no hardware current protection acts at all; between 3.2 A and 3.56 A only the head firmware does, and a fault that also disables the head MCU (or a stuck heater FET with a hung MCU) leaves the terminal at up to 4.35 A until the eFuse trips (eFuse reaction time not in the sources). A rise of the terminal temperature is not covered by any figure in the sources. Mitigations not taken here (they need the lead): lower the chassis limit (R46 value, IB-28) to about 3.3 A nominal, or split each heater pole over two contacts (head L-02 / J1 contract revision).", ""]
+    # motor routing distance to the head pigtails
+    hpg = {}
+    for sd, tag in (("L", "W-006"), ("R", "W-007")):
+        mp = byid[tag]["path"]
+        pig = [hk.hp, hk.rcpt1] if sd == "L" else [hk.hp2, hk.rcpt2]
+        hpg[sd] = _poly_dist(mp, pig)
+    L += ["## 7. Motor-terminal suppression (review M4, head S3-H H-01): assembly item of W-006 / W-007", "",
+          "Brush arcs (about 5 ns edges) and PWM edges put 1-100 MHz noise on the motor leads; the BLM31 bead + 1 nF at the chassis connector only acts above about 50 MHz and only at the board end. Fit at EACH motor, soldered AT the motor terminals:", "",
+          "| Item | Value / type | Notes |", "|---|---|---|",
+          "| C_X, across the two motor terminals | 47-100 nF, X7R >= 50 V in 1206 (or a film capacitor) | motor bus is limited to 16.6 V (OV cut-off) and clamped near 15.6 V: 50 V is a 3x margin; part TBD, no source names one |",
+          "| C_Y1, C_Y2, one from EACH terminal to the motor can | 4.7-10 nF, X7R >= 100 V | the can is the shield return; part TBD |",
+          "| Lead length of all three capacitors | <= 5 mm | short leads or the capacitor soldered directly across the tabs |",
+          "| Temperature | X7R is -55..+125 C by EIA code: covers the -25 C objective; capacitance change within +-15 %% over that range plus the DC-bias loss at 12 V: verify on the chosen part (a class value, no datasheet fetched) | film capacitors: check the -25 C rating of the part |",
+          "| Can strap to the chassis plate | braid or tab, <= 30 mm, >= 2.5 mm wide, to the chassis plate | HOW on the Pololu 37D-class gearmotor: the motor can is the cylindrical shell behind the gearbox; the strap needs a bonded point on it: either a ring terminal clamped under the gearmotor bracket screw if the bracket touches the can, or a solder tab on the can (tin-plated steel can: heat-sink the can, short iron time so the brushes and magnets are not heated). UNVERIFIED mechanical detail: no Pololu drawing in the sources of how the can is finished or whether the mounting bracket makes metal contact with it; confirm on the first motor |",
+          "| Test label | W-006.SUP / W-007.SUP | after fitting: can to chassis plate < 0.1 ohm (4-wire); capacitance of C_X and each C_Y (LCR meter, 1 kHz) within -20..+20 %% of the nominal; motor terminals to can still insulated (no short from a terminal to the can: > 10 Mohm at 50 V with C_Y fitted is dominated by the capacitors: check with the capacitors DISCONNECTED during assembly); bench B11: motors on a DC supply at 100 %% duty, back-driven with the bridges asleep, and through brake-relay transitions while counting head events |", "",
+          "Routing: twist the motor pair (W-006.1/.2, W-007.1/.2) from the motor to the board connector (they are specified as pair M); route the encoder pairs away from the head side. Calculated clearance between the motor cable path and the head pigtail path in this generator: LEFT %.0f mm, RIGHT %.0f mm (centre-line distance, model accuracy +-20 mm); require >= 50 mm in the build and keep the motor leads on the OUTBOARD side of the chassis gutters, the head pigtails inboard." % (hpg["L"], hpg["R"]), ""]
+    L += ["## 8. Test notes (harness)", "",
+          "* **Head isolation test E7 (>= 10 Mohm, frame to receiver)**: run with J1 and J2 UNMATED (plugs removed, head on the receiver or on the bench with the receiver metal contacted): with J1/J2 mated a DC path exists by design: frame - F2801 (0.5 A fuse, stage 3) - R2801 (0 ohm) - head GND - J1 pin 2 (W-101.2, W-008.2) - chassis board GND, and the drain network (1 Mohm || 10 nF to FRAME). Test voltage 100 V DC, unmated only. **Mated check** (separate step, label E7M): measure the expected BOND resistance frame to chassis GND at the J1 receptacle shell with a four-wire meter at <= 100 mA (below the 0.5 A fuse rating): expected = F2801 + R2801 + about 0.44 m of AWG 20/18 conductor + contact pairs, dominated by the fuse; the fuse DC resistance is not in any source (record the real value, expect well under 2 ohm, UNVERIFIED) and it holds only if the chassis board GND is bonded to the chassis metal (not stated in the sources: if it is not, the mated reading is >= 1 Mohm through the drain network). Never run the 100 V insulation tester mated.",
+          "* **Heater circuit insulation (review M5)**: assembled head, spreader bolted to the board, board disconnected: heater circuit (J2601 plug pins 1, 2, 3, NTC 4/5) to FRAME >= 10 Mohm at 100 V; label W-103.HTR-ISO. Isolated-case cut-out (>= 100 Mohm at 100 V) and isolated NTC lug or polyimide pad are BOM requirements (parts TBD).",
+          "* **W-018 after routing**: continuity pin to pin, insulation between all six conductors (label W-018.ISO), no supply conductor between the two contact pairs.",
+          "* **Motor suppression**: see section 7 (labels W-006.SUP, W-007.SUP).", ""]
+    return [x.replace("%%", "%") for x in L]
+
+
 def write_cables_md(un):
     L = ["# Cable assemblies", "",
          "GENERATED tables (by `harness/build.py` from `hdata_cables.py`) plus fixed text. One numbered item per assembly (W-xxx); each wire is W-xxx.n. Machine-readable form: `cables.csv`.", "",
@@ -368,6 +440,7 @@ def write_cables_md(un):
           "  The J2002/3/4 pins 3 and 4 (zone read-back) are NOT wired, and the D2HW NO lead stays cut back: using the NO throw would tie the loop to head logic (CCR-HE-04).",
           "```", "",
           "The 1.00 kohm resistor is on the head board at the FAR end of the switch string (chassis_safety_chain.md fault #24): do not move it into the harness.", ""]
+    L += heater_section()
     L += ["## 5. Unconnected connector pins", "", "(The complete list with reasons is also in `connectors.yaml: unconnected_pins`.)", "", "| Connector | Pin | Net | Reason |", "|---|---|---|---|"]
     for cid, p, net, why in un:
         L.append("| %s | %s | %s | %s |" % (cid, p, net, why))
