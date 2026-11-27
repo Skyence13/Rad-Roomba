@@ -294,8 +294,10 @@ void rrh_evtcap_service(rrh_evtcap_t *e, uint64_t now, const rrh_evt_in_t *in)
         uint32_t wbin;
         if (in_hold) {
             /* class and width were decided when the event first became ready */
+            /* The hold itself is never "too long" (it is bounded by RRH_ALPHA_HOLD_MAX_US); the
+             * over-long case is a comparator that is still high when the hold has run out. */
             ready = (now >= e->hold_until[ch]) && ((in->lld_low & bit) != 0u);
-            forced = !ready && (age >= (e->cfg.max_hold_ticks + e->alpha_hold_ticks));
+            forced = !ready && (now >= e->hold_until[ch]) && (age >= e->cfg.max_hold_ticks);
             cls = e->held_cls[ch];
             wbin = e->held_wbin[ch];
         } else {

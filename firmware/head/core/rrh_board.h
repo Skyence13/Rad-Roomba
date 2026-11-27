@@ -72,7 +72,7 @@ extern "C" {
 /* HV_SET DAC code <-> bias voltage at HV_BUS. 25 x 2.5 V = 62.5 V full scale (code 4096). */
 #define RRH_HV_GAIN_NUM (RRH_R2213_OHM + RRH_R2214_OHM + RRH_R2215_OHM)
 #define RRH_HV_GAIN_DEN RRH_R2215_OHM
-#define RRH_HV_FS_MV ((RRH_DAC_VREF_MV * RRH_HV_GAIN_NUM) / RRH_HV_GAIN_DEN) /* 62500 */
+#define RRH_HV_FS_MV ((uint32_t)(((uint64_t)RRH_DAC_VREF_MV * RRH_HV_GAIN_NUM) / RRH_HV_GAIN_DEN)) /* 62500 */
 uint16_t rrh_board_hv_code(uint32_t bias_mv);      /* clamps to 0..4095 */
 uint32_t rrh_board_hv_mv(uint16_t code);           /* what the code commands (nominal) */
 /* ADC pin voltage (mV) -> quantity at the source. */

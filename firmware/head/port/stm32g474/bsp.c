@@ -80,11 +80,12 @@ static void clock_init(void)
     RCC->CFGR &= ~RCC_CFGR_HPRE;
     SystemCoreClock = BSP_SYSCLK_HZ;
 
-    RCC->CCIPR = (RCC->CCIPR & ~(RCC_CCIPR_CLK48SEL | RCC_CCIPR_ADC12SEL)) | RCC_CCIPR_CLK48SEL_1 | RCC_CCIPR_ADC12SEL_1;
+    RCC->CCIPR = (RCC->CCIPR & ~(RCC_CCIPR_CLK48SEL | RCC_CCIPR_ADC12SEL | RCC_CCIPR_ADC345SEL)) | RCC_CCIPR_CLK48SEL_1 |
+                 RCC_CCIPR_ADC12SEL_1 | RCC_CCIPR_ADC345SEL_1; /* ADC kernel clocks = SYSCLK */
     RCC->CSR |= RCC_CSR_LSION; /* IWDG clock */
 
     RCC->AHB2ENR |= RCC_AHB2ENR_GPIOAEN | RCC_AHB2ENR_GPIOBEN | RCC_AHB2ENR_GPIOCEN | RCC_AHB2ENR_GPIODEN |
-                    RCC_AHB2ENR_GPIOEEN | RCC_AHB2ENR_GPIOFEN | RCC_AHB2ENR_ADC12EN | RCC_AHB2ENR_RNGEN;
+                    RCC_AHB2ENR_GPIOEEN | RCC_AHB2ENR_GPIOFEN | RCC_AHB2ENR_ADC12EN | RCC_AHB2ENR_ADC345EN | RCC_AHB2ENR_RNGEN;
     RCC->APB1ENR1 |= RCC_APB1ENR1_TIM2EN | RCC_APB1ENR1_TIM3EN | RCC_APB1ENR1_TIM4EN | RCC_APB1ENR1_TIM5EN | RCC_APB1ENR1_TIM6EN |
                      RCC_APB1ENR1_UART4EN | RCC_APB1ENR1_I2C3EN | RCC_APB1ENR1_PWREN;
     RCC->APB2ENR |= RCC_APB2ENR_USART1EN | RCC_APB2ENR_SPI1EN | RCC_APB2ENR_SYSCFGEN | RCC_APB2ENR_TIM8EN;
@@ -277,23 +278,37 @@ static uint8_t spi_xfer(SPI_TypeDef *spi, uint8_t b)
 
 uint8_t bsp_spi_dac_xfer(uint8_t b) { return spi_xfer(SPI1, b); }
 
-/* Test pulser strobe: TIM8_CH1, 1 kHz, 2 us wide, PWM mode 1. Amplitude comes from a DAC output. */
-void bsp_pulser(bool enable)
+/* Test pulser strobe (TIM8_CH1 = PC6) and LED pulser strobe (TIM8_CH3N = PC12): both at 1 kHz from
+ * TIM8 running at 48 MHz (PSC 2, 20.8 ns resolution), PWM mode 1. The charge pulser stays high for
+ * width_us (1 ... 100 us; alpha-scale tests need >= 20 us, budget 7). The LED strobe is a fixed
+ * ~208 ns pulse: with the FET on, R1018 (10 k) keeps feeding the LED, so the pulse must be short
+ * (UNVERIFIED: LED and optical coupling are not chosen). OC3N follows OC3REF because CC3E = 0 and
+ * CC3NE = 1 (RM0440 complementary output rule, UNVERIFIED on hardware). Amplitudes come from DAC outputs. */
+void bsp_pulser_config(bool pulser_enable, uint8_t width_us, bool led_enable)
 {
     TIM8->CR1 = 0u;
-    if (!enable) {
-        TIM8->CCER = 0u;
-        TIM8->BDTR = 0u;
+    TIM8->CCER = 0u;
+    TIM8->BDTR = 0u;
+    if (!pulser_enable && !led_enable) {
         return;
     }
-    TIM8->PSC = BSP_TICKS_PER_US - 1u; /* 1 MHz */
-    TIM8->ARR = 999u;
-    TIM8->CCR1 = 2u;
+    TIM8->PSC = 2u; /* 144 MHz / 3 = 48 MHz */
+    TIM8->ARR = 47999u; /* 1 kHz */
+    TIM8->CCR1 = (uint32_t)width_us * 48u;
+    TIM8->CCR3 = 10u;
     TIM8->CCMR1 = (6uL << TIM_CCMR1_OC1M_Pos) | TIM_CCMR1_OC1PE;
-    TIM8->CCER = TIM_CCER_CC1E;
+    TIM8->CCMR2 = (6uL << TIM_CCMR2_OC3M_Pos) | TIM_CCMR2_OC3PE;
+    TIM8->CCER = (pulser_enable ? TIM_CCER_CC1E : 0u) | (led_enable ? TIM_CCER_CC3NE : 0u);
     TIM8->BDTR = TIM_BDTR_MOE; /* advanced timer: main output enable */
     TIM8->EGR = TIM_EGR_UG;
     TIM8->CR1 = TIM_CR1_CEN;
+}
+
+void bsp_pulser_select(uint8_t chain)
+{
+    bsp_gpio_write(PIN_PULSER_A0_PORT, PIN_PULSER_A0_PIN, (chain & 1u) != 0u);
+    bsp_gpio_write(PIN_PULSER_A1_PORT, PIN_PULSER_A1_PIN, (chain & 2u) != 0u);
+    bsp_gpio_write(PIN_PULSER_A2_PORT, PIN_PULSER_A2_PIN, (chain & 4u) != 0u);
 }
 
 /* ---- DAC60508 (register map recalled from the TI datasheet: UNVERIFIED) ----------------------------- */
@@ -404,6 +419,29 @@ int32_t bsp_tmp117_mc(uint8_t index)
     return ((int32_t)code * 125) / 16;
 }
 
+/* ---- TCA9534 at 0x20 (optional; register map recalled from the data sheet: UNVERIFIED) ------------
+ * 0x00 input port, 0x01 output port, 0x02 polarity inversion, 0x03 configuration (1 = input).
+ * P0 = MON_EXT is an output held low (lane monitor page 0); everything else is read. */
+static bool g_exp_configured;
+
+bool bsp_expander_read(uint8_t *inputs)
+{
+    const uint8_t reg_in = 0x00u;
+    if (!g_exp_configured) {
+        const uint8_t out[2] = {0x01u, 0x00u};
+        const uint8_t cfg[2] = {0x03u, 0xFEu};
+        if (!bsp_i2c_xfer(0x20u, out, 2u, NULL, 0u) || !bsp_i2c_xfer(0x20u, cfg, 2u, NULL, 0u)) {
+            return false;
+        }
+        g_exp_configured = true;
+    }
+    if (!bsp_i2c_xfer(0x20u, &reg_in, 1u, inputs, 1u)) {
+        g_exp_configured = false; /* re-configure when it answers again */
+        return false;
+    }
+    return true;
+}
+
 /* ---- ADC1 housekeeping ------------------------------------------------------------------------------- */
 static const uint8_t k_adc_channel[BSP_ADC_COUNT] = {
     PIN_BIAS_VMON_ADC_CH, PIN_BIAS_IMON_ADC_CH, PIN_NTC_SIPM0_ADC_CH, PIN_NTC_SIPM1_ADC_CH, PIN_NTC_SIPM2_ADC_CH,
@@ -431,6 +469,7 @@ static void adc_init(void)
 
 void bsp_adc_step(void)
 {
+    bsp_imon_step();
     if (g_adc_busy) {
         if ((ADC1->ISR & ADC_ISR_EOC) == 0u) {
             return;
@@ -454,22 +493,86 @@ uint16_t bsp_adc_code(bsp_adc_ch_t ch) { return g_adc_code[ch]; }
 uint32_t bsp_adc_mv(bsp_adc_ch_t ch) { return ((uint32_t)g_adc_code[ch] * BSP_VREF_MV) / 4095u; }
 bool bsp_adc_valid(void) { return g_adc_rounds > 0u; }
 
-/* 10 k B3435 NTC to ground with 10.0 k to VREF: ADC code at -40, -30, ... +120 degC (calculated). */
-int32_t bsp_ntc_mc(uint16_t code)
+/* ---- IMON_CH: per-chain anode current monitor on ADC4 -------------------------------------------------
+ * PE15 = ADC4_IN2 reads V(TRIMDRV) of the chain addressed by MON_MUX_A[2:0] (TMUX1108 U2703). The
+ * mux output filter is R108 x C2704 = 1 ms, so each step waits RRH_IMON_SETTLE_US (10 time
+ * constants) before the conversion: a full scan of eight chains takes 80 ms plus conversions. The
+ * same address lines select the lane monitor decoder; see README (open electronics questions). */
+static uint32_t g_imon_uv[RRH_CHAINS];
+static uint64_t g_imon_at_us[RRH_CHAINS];
+static uint8_t g_imon_chain;
+static uint8_t g_imon_state; /* 0: select, 1: settling, 2: converting */
+static uint64_t g_imon_t0_us;
+static bool g_adc4_ready;
+
+static void adc4_init(void)
 {
-    static const uint16_t tab[17] = {3936u, 3813u, 3627u, 3368u, 3037u, 2654u, 2248u, 1854u, 1496u,
-                                     1191u, 940u,  740u,  584u,  462u,  368u,  295u,  238u};
-    if ((code > 4000u) || (code < 150u)) {
-        return RRH_TEMP_INVALID; /* open or shorted sensor, or outside -40..+120 degC */
+    ADC345_COMMON->CCR = (6uL << ADC_CCR_PRESC_Pos); /* 144 MHz / 12 = 12 MHz (as ADC1, UNVERIFIED) */
+    ADC4->CR &= ~ADC_CR_DEEPPWD;
+    ADC4->CR |= ADC_CR_ADVREGEN;
+    bsp_delay_us(50u);
+    ADC4->CR |= ADC_CR_ADCAL;
+    for (uint32_t i = 0u; (i < 400000u) && ((ADC4->CR & ADC_CR_ADCAL) != 0u); i++) {
     }
-    for (uint32_t i = 0u; i < 16u; i++) {
-        if (code >= tab[i + 1u]) {
-            const int32_t span = (int32_t)tab[i] - (int32_t)tab[i + 1u];
-            const int32_t into = (int32_t)tab[i] - (int32_t)code;
-            return (-40000 + ((int32_t)i * 10000)) + ((into * 10000) / span);
+    ADC4->ISR = ADC_ISR_ADRDY;
+    ADC4->CR |= ADC_CR_ADEN;
+    g_adc4_ready = wait_set(&ADC4->ISR, ADC_ISR_ADRDY, 400000u);
+    ADC4->SMPR1 = (6uL << ADC_SMPR1_SMP2_Pos); /* 247.5 cycles on channel 2 (20 us at 12 MHz, source 1 k) */
+}
+
+static void imon_select(uint8_t chain)
+{
+    bsp_gpio_write(PIN_MON_MUX_A0_PORT, PIN_MON_MUX_A0_PIN, (chain & 1u) != 0u);
+    bsp_gpio_write(PIN_MON_MUX_A1_PORT, PIN_MON_MUX_A1_PIN, (chain & 2u) != 0u);
+    bsp_gpio_write(PIN_MON_MUX_A2_PORT, PIN_MON_MUX_A2_PIN, (chain & 4u) != 0u);
+}
+
+void bsp_imon_step(void)
+{
+    if (!g_adc4_ready) {
+        return;
+    }
+#if !RRH_IMON_SCAN_WHILE_ARMED
+    if (evt_port_running()) {
+        return; /* the address lines stay where they are while counting; readings age out */
+    }
+#endif
+    const uint64_t now = bsp_now_us();
+    switch (g_imon_state) {
+    case 0u:
+        imon_select(g_imon_chain);
+        g_imon_t0_us = now;
+        g_imon_state = 1u;
+        break;
+    case 1u:
+        if ((now - g_imon_t0_us) >= RRH_IMON_SETTLE_US) {
+            ADC4->SQR1 = (uint32_t)PIN_IMON_CH_ADC_CH << ADC_SQR1_SQ1_Pos; /* one conversion */
+            ADC4->CR |= ADC_CR_ADSTART;
+            g_imon_state = 2u;
+        }
+        break;
+    default:
+        if ((ADC4->ISR & ADC_ISR_EOC) != 0u) {
+            const uint16_t code = (uint16_t)ADC4->DR;
+            g_imon_uv[g_imon_chain] = rrh_board_adc_uv(code);
+            g_imon_at_us[g_imon_chain] = now;
+            g_imon_chain = (uint8_t)((g_imon_chain + 1u) & 7u);
+            g_imon_state = 0u;
+        }
+        break;
+    }
+}
+
+void bsp_imon_get(rrh_imon_t *out)
+{
+    const uint64_t now = bsp_now_us();
+    memset(out, 0, sizeof *out);
+    for (uint32_t ch = 0u; ch < RRH_CHAINS; ch++) {
+        out->uv[ch] = g_imon_uv[ch];
+        if ((g_imon_at_us[ch] != 0u) && ((now - g_imon_at_us[ch]) < RRH_IMON_MAX_AGE_US)) {
+            out->valid |= (uint8_t)(1u << ch);
         }
     }
-    return RRH_TEMP_INVALID;
 }
 
 /* ---- flash: one page for the setup image ------------------------------------------------------------- */
@@ -645,13 +748,14 @@ void bsp_init(void)
     CFG_AF(LLD_R1, PULL_DOWN);
     CFG_AF(LLD_R2, PULL_DOWN);
     CFG_AF(LLD_R3, PULL_DOWN);
-    CFG_IN(SPARE_PE15, PULL_DOWN);
-    CFG_IN(SPARE_PC12, PULL_DOWN);
-    CFG_IN(SPARE_PF2, PULL_DOWN);
-    CFG_IN(SPARE_PF9, PULL_DOWN);
-    CFG_IN(SPARE_PF10, PULL_DOWN);
+    /* the six former spare pins (IB-17): anode current monitor, LED strobe, pulse channel select, reserved sync input */
+    CFG_ANALOG(IMON_CH);
+    CFG_AF(LED_STROBE, PULL_DOWN);
+    CFG_OUT(PULSER_A0, false); /* default channel F0 */
+    CFG_OUT(PULSER_A1, false);
+    CFG_OUT(PULSER_A2, false);
 #ifndef RRH_BOARD_NUCLEO
-    CFG_IN(SPARE_PF1, PULL_DOWN);
+    CFG_IN(SYNC_IN, PULL_DOWN); /* reserved: hardware time pulse, not used by this firmware */
 #endif
     CFG_IN(HTR_CUTOUT_OK, PULL_DOWN);
     CFG_IN(BUMP_ZONE_F_N, PULL_UP);
@@ -699,5 +803,6 @@ void bsp_init(void)
     I2C3->TIMINGR = 0x80423F4Fu;
     I2C3->CR1 = I2C_CR1_PE;
     adc_init();
+    adc4_init();
     rs485_init();
 }

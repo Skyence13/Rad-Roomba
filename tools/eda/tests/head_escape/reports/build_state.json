@@ -242,7 +242,843 @@
     },
     "vias": 87
   },
-  "finisher": null,
+  "finisher": {
+    "failed": [
+      {
+        "ends": [
+          "Pad 1 [HEAD_HTR_P] of R2610 on F.Cu",
+          "Pad 1 [HEAD_HTR_P] of R2607 on F.Cu"
+        ],
+        "net": "HEAD_HTR_P",
+        "why": "exact re-check failed: pad of HTR_CX; rip-up: exact re-check failed: pad of HTR_CX"
+      },
+      {
+        "net": "HEAD_HTR_P",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "HEAD_HTR_P",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "HEAD_HTR_P",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "HEAD_HTR_P",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "HEAD_HTR_N",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "HEAD_HTR_N",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "HEAD_HTR_N",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "HEAD_LOOP_OUT",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "HEAD_LOOP_RET",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "HEAD_PRES_ID",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "VIN_CM",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "VIN_CM",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "VIN_CM",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "VIN_CM",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "GND",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "GND",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "GND",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "GND",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "GND",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "GND",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "GND",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "GND",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "GND",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "GND",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "GND",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "GND",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "GND",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "GND",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "GND",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "GND",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "GND",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "GND",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "GND",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "EF_UVLO",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "EF_UVLO",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "EF_OVP",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "EF_OVP",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "EF_MODE",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "EF_MODE",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "EF_SHDN",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "EF_RTN",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "EF_RTN",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "EF_RTN",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "EF_RTN",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "EF_RTN",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "EF_RTN",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "VIN_EF",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "VIN_EF",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "VIN_EF",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "EF_IMON",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "EF_IMON",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "EF_ILIM",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "EF_DVDT",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "VIN_F",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "VIN_F",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "VIN_F",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "VIN_F",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "VIN_F",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "VIN_F",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "VIN_F",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "VIN_F",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "VIN_DMP",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "VIN_MON",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "SHLD_J1",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "SHLD_J1",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "FRAME",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "FRAME",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "FRAME",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "FRAME",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "FRAME",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "FRAME",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "FRAME",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "FRAME",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "FRAME",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "FRAME",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "FRAME",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "FRAME",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "FRAME",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "FRAME",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "FRAME",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "FRAME",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "FRAME",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "LOOP_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "BZ_F_IN",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "BZ_F_IN",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "LOOP_B",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "BZ_L_IN",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "BZ_L_IN",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "BUMP_ZONE_L_N",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "LOOP_C",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "BZ_R_IN",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "BZ_R_IN",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "BK_EN",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "BK_FB",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "BK_FB",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "BK_FB",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "BK_CB",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "BK_SW",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "BK_SW",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V6_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V6_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V6_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V_A",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V6_E",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V6_E",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+5V6_E",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3_EVT",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3_EVT",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3_EVT",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3_EVT",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3_EVT",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3_EVT",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3_EVT",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3_EVT",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3_EVT",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3_EVT",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3_EVT",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3_EVT",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3_EVT",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3_EVT",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3_EVT",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3_EVT",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3_EVT",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3_EVT",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3_EVT",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3_EVT",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3_EVT",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3_EVT",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3_EVT",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3_EVT",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3_EVT",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3_EVT",
+        "why": "finisher time budget (900 s) used up"
+      },
+      {
+        "net": "+3V3_EVT",
+        "why": "finisher time budget (900 s) used up"
+      }
+    ],
+    "items": 18,
+    "removed": 0,
+    "routed": [
+      {
+        "net": "HEAD_PWR_P",
+        "rerouted_nets": [],
+        "ripped_up_items": 0,
+        "segments": 4,
+        "vias": 0,
+        "width": 0.4
+      },
+      {
+        "net": "HEAD_PWR_P",
+        "rerouted_nets": [],
+        "ripped_up_items": 0,
+        "segments": 1,
+        "vias": 0,
+        "width": 0.4
+      },
+      {
+        "net": "HEAD_PWR_N",
+        "rerouted_nets": [],
+        "ripped_up_items": 0,
+        "segments": 2,
+        "vias": 1,
+        "width": 0.4
+      },
+      {
+        "net": "HEAD_PWR_N",
+        "rerouted_nets": [],
+        "ripped_up_items": 0,
+        "segments": 2,
+        "vias": 0,
+        "width": 0.4
+      },
+      {
+        "net": "HEAD_PWR_N",
+        "rerouted_nets": [],
+        "ripped_up_items": 0,
+        "segments": 1,
+        "vias": 0,
+        "width": 0.4
+      },
+      {
+        "net": "HEAD_HTR_P",
+        "rerouted_nets": [],
+        "ripped_up_items": 0,
+        "segments": 5,
+        "vias": 2,
+        "width": 1.0
+      }
+    ],
+    "seconds": 953.6
+  },
   "gen_warnings": [
     "U2001: 3D envelope uses the default height 1.0 mm (give height=)",
     "TP2001: 3D envelope uses the default height 1.0 mm (give height=)",
@@ -7404,18 +8240,18 @@
     "timed_out": false
   },
   "route_stats": {
-    "dangling_tracks_removed": 8,
-    "finisher_items": null,
+    "dangling_tracks_removed": 9,
+    "finisher_items": 18,
     "finisher_removed": 0,
     "necked_tracks_widened": 0,
     "preroutes": 4644,
     "preroutes_missing_after_import": 0,
-    "track_length_mm": 14102.17,
-    "tracks": 5092,
-    "unconnected_after_fill": 712,
-    "unconnected_before_cleanup": 712,
+    "track_length_mm": 14132.35,
+    "tracks": 5106,
+    "unconnected_after_fill": 707,
+    "unconnected_before_cleanup": 707,
     "unused_escapes_removed": 0,
-    "vias": 1744
+    "vias": 1747
   },
   "routed": true,
   "routing": {

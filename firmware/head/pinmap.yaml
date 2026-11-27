@@ -27,13 +27,14 @@ peripherals:
   TIM6:    "100 kHz event-capture service interrupt (classify, read clear time, pulse CLR, gate boundaries, heater switching, scheduled reply start)"
   TIM4:    "16-bit, 144 MHz, free running. CH1..CH4 input capture (falling edge) of the RAW BETA_LLD comparator outputs F0..F3: pulse width (time over threshold) = falling capture - BUSY start. Offset to TIM2 measured once."
   TIM3:    "16-bit, 144 MHz, free running. CH1..CH4 input capture of the RAW REF_LLD comparator outputs R0..R3 (as TIM4)."
-  TIM8:    "CH1 = test-pulser strobe (periodic; pseudo-random by reloading the period)"
+  TIM8:    "48 MHz (SYSCLK / 3), 1 kHz period. CH1 (PC6) = charge-injection test-pulser strobe, width 1..100 us; CH3N (PC12) = LED-pulser strobe LED_STROBE, ~200 ns (UNVERIFIED: the LED and its optical coupling are not chosen). Which chain is pulsed: PULSER_A[2:0] on PF2/PF9/PF10 (GPIO). (Pseudo-random strobing by reloading the period is not implemented.)"
   USART1:  "RS-485 host link, 1 Mbaud 8N1, hardware driver-enable (DEM) on USART1_DE"
   UART4:   "debug console 115200 8N1"
   SPI1:    "threshold/trim DACs, 4 x DAC60508, mode 1, 4.5 MHz, one GPIO chip-select each"
-  I2C3:    "TMP117 x2 (0x48, 0x49) and 24AA025E64 EUI EEPROM (0x50), 100 kHz"
+  I2C3:    "TMP117 x2 (0x48, 0x49), 24AA025E64 EUI EEPROM (0x50) and the OPTIONAL TCA9534 expander (0x20: MON_EXT out, HV_PERMIT / HV_INH_N / LID_G / EF_FLT_N / HWREV in), 100 kHz"
   ADC1:    "housekeeping scan: bias V/I, 4 SiPM NTC, heater NTC, board NTC, supply, heater sense"
-  ADC2:    "monitor waveform capture (engineering), stopped after the selected chain's BUSY capture"
+  ADC2:    "monitor waveform capture (engineering), stopped after the selected chain's BUSY capture (not implemented in the target port)"
+  ADC4:    "IMON_CH: per-chain anode current monitor on PE15 = ADC4_IN2, background scan of the eight chains through the TMUX1108 U2703 addressed by MON_MUX_A[2:0] (settle 10 ms per step)"
   IWDG:    "independent watchdog (LSI), ~1 s"
   RNG:     "TRNG for the boot UUID (48 MHz from PLLQ)"
 pins:
@@ -98,8 +99,8 @@ pins:
   - {pin: PC5,   lqfp100: 31, signal: "DAC_CS1_N",     peripheral: GPIO,   af: "-",dir: out,    note: "U_DAC1 /CS. 10 k ext PU."}
   - {pin: PB2,   lqfp100: 34, signal: "DAC_CS2_N",     peripheral: GPIO,   af: "-",dir: out,    note: "U_DAC2 /CS. 10 k ext PU."}
   - {pin: PC7,   lqfp100: 66, signal: "DAC_CS3_N",     peripheral: GPIO,   af: "-",dir: out,    note: "U_DAC3 /CS. 10 k ext PU."}
-  - {pin: PA2,   lqfp100: 22, signal: "BIAS_VMON",     peripheral: ADC1,   af: "-",dir: analog, note: "SiPM bias voltage after the output filter, divider 1:25 (60 V -> 2.4 V), 10 nF at the pin, source < 10 k.", channel: 3}
-  - {pin: PA3,   lqfp100: 25, signal: "BIAS_IMON",     peripheral: ADC1,   af: "-",dir: analog, note: "Bias current monitor, 0-2.5 V = 0-250 uA total (scale to be fixed by head electronics).", channel: 4}
+  - {pin: PA2,   lqfp100: 22, signal: "BIAS_VMON",     peripheral: ADC1,   af: "-",dir: analog, note: "SiPM bias voltage BIAS_VMON (circuit: R2217 + R2218 = 2 x 4.99 M, R2219 = 412 k, 1:25.2233 = 2.478 V at 62.5 V), 1 k series R2220, 10 nF at the pin, source < 10 k. The divider top resistors are 1 % parts.", channel: 3}
+  - {pin: PA3,   lqfp100: 25, signal: "BIAS_IMON",     peripheral: ADC1,   af: "-",dir: analog, note: "Total bias current BIAS_IMON = 0.8 x I x R2206 (10 k) = 8.0 mV per uA, 250 uA at 2.0 V (budget 5.1); includes the two bias dividers (about 30 uA at 60 V). 1 k series R2207.", channel: 4}
   - {pin: PC0,   lqfp100: 15, signal: "NTC_SIPM0",     peripheral: ADC1,   af: "-",dir: analog, note: "10 k B3435-class NTC at lane 0 SiPMs to AGND, 10.0 k 0.1 % to VREF_ADC, 100 nF.", channel: 6}
   - {pin: PC1,   lqfp100: 16, signal: "NTC_SIPM1",     peripheral: ADC1,   af: "-",dir: analog, note: "10 k B3435-class NTC at lane 1 SiPMs to AGND, 10.0 k 0.1 % to VREF_ADC, 100 nF.", channel: 7}
   - {pin: PC2,   lqfp100: 17, signal: "NTC_SIPM2",     peripheral: ADC1,   af: "-",dir: analog, note: "10 k B3435-class NTC at lane 2 SiPMs to AGND, 10.0 k 0.1 % to VREF_ADC, 100 nF.", channel: 8}
@@ -109,9 +110,9 @@ pins:
   - {pin: PB1,   lqfp100: 33, signal: "VIN_MON",       peripheral: ADC1,   af: "-",dir: analog, note: "HEAD_PWR after input protection, divider 1:6.6 (19.8 V full scale at 3.0 V reference), 100 nF.", channel: 12}
   - {pin: PB12,  lqfp100: 51, signal: "HTR_SENSE",     peripheral: ADC1,   af: "-",dir: analog, note: "Current-sense output of the heater high-side switch (scale by electronics).", channel: 11}
   - {pin: PC4,   lqfp100: 30, signal: "MON_ADC",       peripheral: ADC2,   af: "-",dir: analog, note: "Buffered monitor mux output, 0-3 V, anti-alias RC ~ 1 MHz.", channel: 5}
-  - {pin: PB5,   lqfp100: 92, signal: "MON_MUX_A0",    peripheral: GPIO,   af: "-",dir: out,    note: "Monitor mux select bit 0 (channel 0-7 = F0-F3, R0-R3)."}
-  - {pin: PB7,   lqfp100: 94, signal: "MON_MUX_A1",    peripheral: GPIO,   af: "-",dir: out,    note: "Monitor mux select bit 1."}
-  - {pin: PB9,   lqfp100: 96, signal: "MON_MUX_A2",    peripheral: GPIO,   af: "-",dir: out,    note: "Monitor mux select bit 2."}
+  - {pin: PB5,   lqfp100: 92, signal: "MON_MUX_A0",    peripheral: GPIO,   af: "-",dir: out,    note: "Mux select bit 0. Shared: (a) per-chain anode current mux U2703, channel = MON_MUX_A[2:0] (0-3 = F0-F3, 4-7 = R0-R3); (b) lane monitor decoder U2701 A0 (enables lane A[1:0])."}
+  - {pin: PB7,   lqfp100: 94, signal: "MON_MUX_A1",    peripheral: GPIO,   af: "-",dir: out,    note: "Mux select bit 1 (same shared use as bit 0)."}
+  - {pin: PB9,   lqfp100: 96, signal: "MON_MUX_A2",    peripheral: GPIO,   af: "-",dir: out,    note: "Mux select bit 2: U2703 A2 and the lane mux address A0 of the waveform monitor (shared)."}
   - {pin: PC8,   lqfp100: 67, signal: "MON_MUX_A3",    peripheral: GPIO,   af: "-",dir: out,    note: "Monitor mux select bit 3 (0 = fast path, 1 = slow path)."}
   - {pin: PB13,  lqfp100: 52, signal: "HV_EN",         peripheral: GPIO,   af: "-",dir: out,    note: "SiPM bias converter enable, active high, 10 k ext PD (bias off in reset)."}
   - {pin: PB15,  lqfp100: 54, signal: "HTR_EN",        peripheral: GPIO,   af: "-",dir: out,    note: "Heater high-side switch input, active high, 10 k ext PD (heater off in reset). Changed by firmware only in the service interrupt that follows a gate boundary (<= 10 us after it); the switch itself is slew-limited. The hardware thermal cut-out is in series and cannot be overridden."}
@@ -123,19 +124,26 @@ pins:
   - {pin: PC15,  lqfp100: 9,  signal: "BUMP_ZONE_R_N", peripheral: GPIO,   af: "-",dir: in,     note: "Right zone, as front. Backup-domain pin: input only."}
   - {pin: PB4,   lqfp100: 91, signal: "LED_STATUS_N",  peripheral: GPIO,   af: "-",dir: out,    note: "Green, active low to +3V3 through 1 k. PB4 is JTRST at reset and UCPD1_CC2 (dead-battery pull-down behaviour UNVERIFIED): LED only."}
   - {pin: PB6,   lqfp100: 93, signal: "LED_FAULT_N",   peripheral: GPIO,   af: "-",dir: out,    note: "Red, active low to +3V3 through 1 k. PB6 is UCPD1_CC1 (dead-battery pull-down behaviour UNVERIFIED): LED only."}
-  - {pin: PE15,  lqfp100: 46, signal: "SPARE_PE15",    peripheral: GPIO,   af: "-",dir: bidir,  note: "Spare, to a test pad; firmware configures it as input with pull-down."}
-  - {pin: PC12,  lqfp100: 81, signal: "SPARE_PC12",    peripheral: GPIO,   af: "-",dir: bidir,  note: "Spare, to a test pad; firmware configures it as input with pull-down."}
-  - {pin: PF1,   lqfp100: 13, signal: "SPARE_PF1",     peripheral: GPIO,   af: "-",dir: bidir,  note: "Spare, to a test pad; firmware configures it as input with pull-down. Usable as GPIO only because HSE runs in bypass mode."}
-  - {pin: PF2,   lqfp100: 19, signal: "SPARE_PF2",     peripheral: GPIO,   af: "-",dir: bidir,  note: "Spare, to a test pad; firmware configures it as input with pull-down."}
-  - {pin: PF9,   lqfp100: 10, signal: "SPARE_PF9",     peripheral: GPIO,   af: "-",dir: bidir,  note: "Spare, to a test pad; firmware configures it as input with pull-down."}
-  - {pin: PF10,  lqfp100: 11, signal: "SPARE_PF10",    peripheral: GPIO,   af: "-",dir: bidir,  note: "Spare, to a test pad; firmware configures it as input with pull-down."}
+  # The six former spare pins (IB-17, CCR-HE-01). Signal names are the net names of electronics/head_acq/design/circuit.py
+  # (MCU_PINMAP); tools/check_circuit.py compares them on every check.
+  - {pin: PE15,  lqfp100: 46, signal: "IMON_CH",       peripheral: ADC4,   af: "-",dir: analog, note: "Per-chain anode current monitor: V(TRIMDRV) of the chain selected by MON_MUX_A[2:0] through U2703 (TMUX1108), 10 k R108 + 100 nF C2704 (1 ms), unity buffer U2306B, 1 k R2701 + 10 nF C2705. I = (V_trim - V) / 4.99 k (R105). 147 nA per LSB at 3.0 V.", channel: 2}
+  - {pin: PC12,  lqfp100: 81, signal: "LED_STROBE",    peripheral: TIM8,   af: 4,  dir: out,    note: "TIM8_CH3N: strobe of the LED pulser (BSS138 Q1001/1101/1201/1301 via 100 R each), all four lanes together; amplitude V_LED = 2 x U_DAC0 output 7. Idle low, 100 k ext PD (R2413). Pulse ~200 ns: held high it feeds the LED through R1018 (10 k) continuously."}
+  - {pin: PF1,   lqfp100: 13, signal: "SYNC_IN",       peripheral: GPIO,   af: "-",dir: in,     note: "RESERVED hardware time-pulse input (J2 pins 5/6 via the DNP ISO7710 U2503). Not used by firmware 0.5; configured as an input with the board's 100 k pull-down (R2414). Usable as GPIO only because HSE runs in bypass mode."}
+  - {pin: PF2,   lqfp100: 19, signal: "PULSER_A0",     peripheral: GPIO,   af: "-",dir: out,    note: "Test-pulse channel select bit 0 (74LVC138 U2702 A0): pulsed chain = PULSER_A[2:0], 0-3 = F0-F3, 4-7 = R0-R3. 100 k ext PD (default F0)."}
+  - {pin: PF9,   lqfp100: 10, signal: "PULSER_A1",     peripheral: GPIO,   af: "-",dir: out,    note: "Test-pulse channel select bit 1. 100 k ext PD."}
+  - {pin: PF10,  lqfp100: 11, signal: "PULSER_A2",     peripheral: GPIO,   af: "-",dir: out,    note: "Test-pulse channel select bit 2. 100 k ext PD."}
 
-# DAC output allocation (firmware/head/hal/rrh_hal.h uses the same order). DAC60508: 12-bit, 8 outputs.
+# DAC output allocation. The `outputs` lists are compared with electronics/head_acq/design/circuit.py DAC_MAP by
+# its self-check, which spells the two former spare outputs "SPARE": do not rename them here. Their board functions are
+# in `board_functions` below (circuit.py: U_DAC0 OUT7 = LED_AMPL, U_DAC1 OUT7 = DAC1_SPARE test pad). (firmware/head/hal/rrh_hal.h uses the same order). DAC60508: 12-bit, 8 outputs.
 dac_map:
   U_DAC0: {cs: DAC_CS0_N, outputs: [BETA_LLD_0, BETA_ULD_0, ALPHA_0, BETA_LLD_1, BETA_ULD_1, ALPHA_1, HV_SET, SPARE]}
   U_DAC1: {cs: DAC_CS1_N, outputs: [BETA_LLD_2, BETA_ULD_2, ALPHA_2, BETA_LLD_3, BETA_ULD_3, ALPHA_3, PULSER_AMPL, SPARE]}
   U_DAC2: {cs: DAC_CS2_N, outputs: [REF_LLD_0, REF_ULD_0, REF_LLD_1, REF_ULD_1, REF_LLD_2, REF_ULD_2, REF_LLD_3, REF_ULD_3]}
   U_DAC3: {cs: DAC_CS3_N, outputs: [TRIM_FLOOR_0, TRIM_FLOOR_1, TRIM_FLOOR_2, TRIM_FLOOR_3, TRIM_REF_0, TRIM_REF_1, TRIM_REF_2, TRIM_REF_3]}
+board_functions:
+  U_DAC0: {7: "LED_AMPL (V_LED = 2 x V(LED_AMPL) through U2306A, R2313/R2314; 0 ... 5.0 V)"}
+  U_DAC1: {7: "DAC1_SPARE (test pad TP only; not driven by firmware)"}
 unused_pins: []
 event_capture_notes:
   - "BUSY must be the latch output itself (not a gated copy): its rising edge is the hardware-captured event start; it falls only when the MCU pulses CLR."

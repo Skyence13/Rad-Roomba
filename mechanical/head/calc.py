@@ -296,50 +296,170 @@ def tolerance_stack():
     return out
 
 
-# ------------------------------------------------------------------------------------------------ thermal (lumped)
-K_FOAM, K_PRINT, K_AL = 0.035, 0.30, 160.0     # W/m K: closed-cell foam, printed PA-CF, 6061 (handbook)
-P_ELEC = 5.0                                  # W dissipated by the electronics (contract electronics_target), counted as heating
+# ------------------------------------------------------------------------------------------------ thermal (lumped, IB-39 assumption set)
+K_FOAM, K_PRINT, K_AL, K_AIR = 0.035, 0.30, 160.0, 0.024   # W/m K: closed-cell foam, printed PA-CF, 6061, air (handbook)
+K_G10, K_PA66, K_GUIDE, K_CU = 0.29, 0.25, 0.19, 390.0     # W/m K: G10 through-thickness, PA66 washer, PVT/PMMA guide, copper (handbook)
+SIGMA, EMISSIVITY = 5.67e-8, 0.9                           # frame underside / film and floor both taken as 0.9 (conservative for the loss)
+# IB-39 assumption set (one set for the project; mechanical/common/calc/thermal.py uses the same):
+T_AMBIENT_C = (-20.0, -25.0)          # RQ-029 operating / qualification ambient
+T_SET_C = 10.0                        # regulated set-point at the SiPM carrier (baseline)
+T_SET_OPTION_C = 5.0                  # labelled option, reason in thermal()["_option"]
+H_EXT = {"still air": 12.0, "moving / draught": 25.0}      # W/m2 K incl. radiation; 25 = sensitivity
+H_IN = 6.0                            # W/m2 K inside the closed head (natural convection)
+FLOOR_GAP = 0.010                     # m: film plane z 10 above the floor (near-floor air layer, stable: hot above cold -> conduction only)
+P_ELEC_TYP, P_ELEC_MAX = 1.20, 2.10   # W: electronics/analysis/head_afe_budget.md section 8 "Total at J1 pins 1/2: 1.20 W typical, 2.10 W maximum";
+                                      # only the typical value is credited as heating (power_budget.md still carries the 5 W contract target: no
+                                      # typical head figure there)
+HEATER_FILMS_W = 4 * 7.5              # BOM PUR-HEATER: four 7.5 W polyimide zones at 12 V = 30 W (= 4.8 ohm element of head_afe_budget.md section 9)
+HEATER_AT_10V_W = 20.8                # head_afe_budget.md section 9: 4.8 ohm at 10.0 V (end of discharge)
+CUTOUT_OPEN_C = 45.0                  # BOM PUR-TCO bimetal, opens 45 C (UNVERIFIED part data)
+# Receiver boundary: the T-heads are isolated from the heated spreader by the 0.5 mm G10 (IB-38), but the shoes sit in the body channels.
+# Body side (prototype body RR-X: PAHT-CF channels with steel dowel-pin lands on the aluminium chassis plate, mechanical/prototype_x1c) per shoe:
+# x-stop pads 560 mm2 through 6 mm PAHT-CF (0.028 W/K) + two dowel-pin line contacts (0.01 W/K each) + printed side / roof pads (0.02 W/K)
+# -> 0.07 W/K, with the chassis plate at ambient. STATED ASSUMPTION (order of magnitude); the bound "receiver metal at ambient" is shown too.
+G_BODY_PER_SHOE = 0.07
+C_P = {"PA-CF": 1300, "PETG-CF": 1200, "ASA": 1300, "PA12-MJF": 1600, "POM": 1450, "TPU": 1500, "AL6061": 896, "AL5052": 900, "SS304": 500, "SS301": 500,
+       "STEEL": 470, "BRASS": 380, "COPPER": 385, "FR4": 1100, "PMMA": 1450, "PVT": 1400, "SIL-FOAM": 1100, "EPDM-FOAM": 1500, "PI": 1100, "PET": 1200, "MIXED": 900}
 
 
 def jacket_coverage():
-    """Projected areas (m2) actually covered by the jacket, from the solids: cap (minus screw holes and the keeper / latch cut-out)
-    and front band."""
+    """Projected areas (m2) actually covered by the jacket and the liner, from the solids."""
     from . import parts as T
     from .geom import box, volume
     cap = T.jacket_top()
     z = H.Z_LID1 + H.JACKET_T
     a_cap = volume(cap.intersect(box(0, 300, -200, 200, z - 0.1, z))) / 0.1 / 1e6
-    fb = T.jacket_front()
-    a_front = volume(fb) / H.JACKET_T / 1e6
-    return a_cap, a_front
+    a_front = volume(T.jacket_front()) / H.JACKET_T / 1e6
+    a_liner = volume(T.lid_liner()) / T.LINER_T / 1e6
+    return a_cap, a_front, a_liner
 
 
-def thermal():
-    """Steady-state lumped UA of the head and the heater power to hold the set-point (calculated). Same film coefficients as
-    mechanical/common/calc/thermal.py (still air 12, draught 3 m/s 25 W/m2K outside, 6 inside, 8 on the floor-facing side).
-    Configurations: 'liner only' = 2 mm Al lid + 0.5 mm closed-cell liner; 'standard cold' = liner + the 3 mm jacket
-    RR-HD-S-131/132 (k 0.035) over the covered areas computed from the solids. Side, rear and bottom faces unchanged (no room
-    inside the y +-175 envelope beside the side rails, ports and receiver at the rear). Heater power = UA x (set-point - ambient) - P_ELEC."""
-    out = {}
+def receiver_conductance(build):
+    """Head (FRAME / interior) -> receiver metal (shoes, T-heads, bridge, keeper), W/K, from the model geometry (calculated)."""
+    xe = H.XR - H.THEAD_POCKET_CLR
+    h_t = (H.Z_SPR0 - 0.5) - H.SHOE_Z0                               # T-head height in the pocket
+    a_g10 = (H.THEAD_X1 - H.XR) * 2 * H.THEAD_HY / 1e6                # isolator area under the spreader, one shoe
+    a_gap = (2 * H.THEAD_HY * h_t + 2 * (H.THEAD_X1 - xe) * h_t + (H.THEAD_X1 - xe) * 2 * H.THEAD_HY) / 1e6   # front, ends, bottom faces in the 0.3 air gap
+    g10 = K_G10 * a_g10 / 0.0005
+    r_gap = H.THEAD_POCKET_CLR / 1000 / K_AIR + (0.002 / K_PRINT if build == "prototype" else 0.0)   # + 2 mm printed web behind the gap (prototype)
+    gap = a_gap / r_gap
+    washer = K_PA66 * (math.pi * (3.0 ** 2 - 1.6 ** 2) / 1e6) / 0.0008 + K_PA66 * (math.pi * 4.6 * 2.0 / 1e6) / 0.0007   # under the head + shoulder sleeve
+    screws = len(H.THEAD_SCREW_DY) * washer
+    per_shoe = g10 + gap + screws
+    keeper = K_AIR * (40.8 * 30.0 / 1e6) / 0.0007                     # keeper plate 0.6 mm air + 0.1 mm tape above the lid
+    a_br = (2 * (H.BRIDGE_HY - 0.2) * 13.0 + 40.0 * 14.6) / 1e6
+    bridge = a_br / (0.0003 / K_AIR + (0.0026 / K_PRINT if build == "prototype" else 0.0))     # bridge 0.3 mm behind the rear wall
+    return {"G10 isolators (2)": 2 * g10, "air gaps round the T-heads (2)": 2 * gap, "T-head screws through insulating washers (8)": 2 * screws,
+            "keeper over the lid": keeper, "bridge behind the rear wall": bridge, "total": 2 * per_shoe + keeper + bridge}
+
+
+def cable_conductance(h):
+    """J1 / J2 pigtails as infinite copper fins (conservative: tanh -> 1), conductors per contract J1/J2 pin tables + an assumed 1.0 mm2 braid."""
+    awg = {18: 0.823, 20: 0.519, 24: 0.205}
+    cables = {"J1": (2 * awg[20] + 2 * awg[18] + 3 * awg[24] + 1.0, H.CABLE_D["J1"]), "J2": (8 * awg[24] + 1.0, H.CABLE_D["J2"])}
+    return {k: math.sqrt(h * math.pi * d / 1000 * K_CU * a / 1e6) for k, (a, d) in cables.items()}
+
+
+def h_floor(t_amb, t_set, h_ext):
+    """Floor-facing side: 10 mm near-floor air layer (conduction; stable stratification) + radiation to the floor at ambient. In the moving-air
+    sensitivity the floor side gets the external coefficient (bound)."""
+    tm = (t_amb + t_set) / 2 + 273.15
+    e = 1 / (2 / EMISSIVITY - 1)
+    still = K_AIR / FLOOR_GAP + 4 * SIGMA * e * tm ** 3
+    return still if h_ext <= 12.0 else max(h_ext, still)
+
+
+def ua_case(build, h_ext, jacket, t_amb, t_set, receiver="body"):
+    a_cap, a_front, a_liner = _COV()
+    wall_k = K_PRINT if build == "prototype" else K_AL
     a_top = (H.XF - H.XR) * 2 * H.YW / 1e6
     a_side = 2 * ((H.XF - H.XR) + 2 * H.YW) * (H.Z_LID1 - H.Z_FB) / 1e6
     a_win = 4 * H.ACT_X * H.ACT_Y / 1e6
     a_bot = a_top - a_win
-    a_cap, a_front = jacket_coverage()
-    out["_jacket_coverage"] = {"top_area_m2": a_top, "cap_covered_m2": a_cap, "cap_fraction": a_cap / a_top, "front_band_m2": a_front, "side_area_m2": a_side}
-    for label, hext, wall_k in (("prototype, still air", 12.0, K_PRINT), ("prototype, draught 3 m/s", 25.0, K_PRINT),
-                                ("production, still air", 12.0, K_AL), ("production, draught 3 m/s", 25.0, K_AL)):
-        r_in, liner, r_j = 1 / 6.0, 0.0005 / K_FOAM, H.JACKET_T / 1000 / K_FOAM
-        for cfg, jac in (("liner only", False), ("standard cold (liner + 3 mm jacket)", True)):
-            r_top = 1 / hext + liner + r_in
-            r_side = 1 / hext + 0.0026 / wall_k + r_in
-            ua_top = a_top / r_top if not jac else (a_top - a_cap) / r_top + a_cap / (r_top + r_j)
-            ua_side = a_side / r_side if not jac else (a_side - a_front) / r_side + a_front / (r_side + r_j)
-            ua_win = a_win / (1 / 8.0 + 0.001 / 0.024 + 0.0055 / 0.19 + 1 / 8.0)        # floor-facing: low coefficient, air gap, guide
-            ua_bot = a_bot / (1 / 8.0 + 0.004 / wall_k + r_in)
-            ua = ua_top + ua_side + ua_win + ua_bot + 0.06
-            out[f"{label}, {cfg}"] = {"UA_W_per_K": ua, "heater_W_at_-20C_setpoint_+5C": max(ua * 25 - P_ELEC, 0), "heater_W_at_-25C_setpoint_+10C": max(ua * 35 - P_ELEC, 0),
-                                      "split": {"top": ua_top, "sides": ua_side, "windows": ua_win, "underside": ua_bot, "mount+cables": 0.06}}
+    r_liner, r_j = 0.0005 / K_FOAM, H.JACKET_T / 1000 / K_FOAM
+    r_top = 1 / h_ext + 1 / H_IN
+    ua_top = (a_top - a_liner) / r_top + a_liner / (r_top + r_liner)
+    if jacket:      # the cap covers the liner area and the rest (holes / keeper / latch cut-outs uncovered): split proportionally
+        f = a_cap / a_top
+        ua_top = (1 - f) * ua_top + f * ((a_top - a_liner) / (r_top + r_j) + a_liner / (r_top + r_liner + r_j))
+    r_side = 1 / h_ext + 0.0026 / wall_k + 1 / H_IN
+    ua_side = a_side / r_side if not jacket else (a_side - a_front) / r_side + a_front / (r_side + r_j)
+    hf = h_floor(t_amb, t_set, h_ext)
+    ua_win = a_win / (0.00525 / 2 / K_GUIDE + 0.00025 / K_GUIDE + 0.001 / K_AIR + 1 / hf)   # floor SiPM carrier at set-point -> floor guide mid-plane
+    ua_bot = a_bot / (1 / H_IN + 0.004 / wall_k + 1 / hf)
+    rc = receiver_conductance(build)
+    g_ra = 2 * G_BODY_PER_SHOE + h_ext * 0.0036 if receiver == "body" else 1e9      # + exposed bridge / keeper faces (0.0036 m2)
+    ua_rec = 1 / (1 / rc["total"] + 1 / g_ra)
+    cab = sum(cable_conductance(h_ext).values())
+    ua = ua_top + ua_side + ua_win + ua_bot + ua_rec + cab
+    return ua, {"top": ua_top, "sides": ua_side, "windows (floor gap)": ua_win, "underside frame (floor gap)": ua_bot, "receiver shoes": ua_rec, "cables J1 + J2": cab}, hf
+
+
+_COV_CACHE = {}
+
+
+def _COV():
+    if "v" not in _COV_CACHE:
+        _COV_CACHE["v"] = jacket_coverage()
+    return _COV_CACHE["v"]
+
+
+def thermal_mass(parts):
+    """J/K from the model masses x handbook specific heat (calculated)."""
+    return sum(p.mass() / 1000.0 * C_P.get(p.material, 900) for p in parts)
+
+
+def warmup_min(c, ua, p, t_amb, t_set):
+    """Lumped first-order warm-up from a soak at t_amb to t_set with constant power p (minutes); None if never reached."""
+    t_inf = t_amb + p / ua
+    if t_inf <= t_set:
+        return None
+    return c / ua * math.log((t_inf - t_amb) / (t_inf - t_set)) / 60.0
+
+
+def thermal(builds=None):
+    """IB-39: heater power to hold the SiPM carrier at the set-point, one assumption set (calculated, lumped steady state)."""
+    out = {"_assumptions": {
+        "ambient_c": list(T_AMBIENT_C), "set_point_c": T_SET_C, "set_point_option_c": T_SET_OPTION_C, "h_ext_w_m2k": dict(H_EXT), "h_in_w_m2k": H_IN,
+        "electronics_credit_w": P_ELEC_TYP, "electronics_max_w_not_credited": P_ELEC_MAX, "floor_gap_mm": FLOOR_GAP * 1000, "emissivity": EMISSIVITY,
+        "receiver_body_side_w_per_k_per_shoe": G_BODY_PER_SHOE, "jacket": "RR-HD-S-131/132 fitted below 0 C (standard cold configuration); no-jacket shown"}}
+    a_cap, a_front, a_liner = _COV()
+    a_top = (H.XF - H.XR) * 2 * H.YW / 1e6
+    out["_jacket_coverage"] = {"top_area_m2": a_top, "cap_covered_m2": a_cap, "cap_fraction": a_cap / a_top, "front_band_m2": a_front, "liner_m2": a_liner,
+                               "side_area_m2": 2 * ((H.XF - H.XR) + 2 * H.YW) * (H.Z_LID1 - H.Z_FB) / 1e6}
+    out["_receiver"] = {b: receiver_conductance(b) for b in ("prototype", "production")}
+    out["_cables"] = {k: cable_conductance(v) for k, v in H_EXT.items()}
+    rows = []
+    for build in ("prototype", "production"):
+        for hname, h in H_EXT.items():
+            for jacket in (True, False):
+                for t_set in (T_SET_C, T_SET_OPTION_C):
+                    for t_amb in T_AMBIENT_C:
+                        for rec in (("body", "bound") if (t_set == T_SET_C and jacket) else ("body",)):
+                            ua, split, hf = ua_case(build, h, jacket, t_amb, t_set, rec)
+                            need = max(ua * (t_set - t_amb) - P_ELEC_TYP, 0.0)
+                            rows.append({"build": build, "ambient_c": t_amb, "set_point_c": t_set, "h_ext_w_m2k": h, "air": hname, "jacket": jacket,
+                                         "receiver_boundary": "body channels (0.07 W/K per shoe)" if rec == "body" else "BOUND: receiver metal at ambient",
+                                         "electronics_credit_w": P_ELEC_TYP, "ua_w_per_k": round(ua, 3), "heater_power_w": round(need, 1),
+                                         "within_30w_films": need <= HEATER_FILMS_W, "within_20w8_at_10v": need <= HEATER_AT_10V_W,
+                                         "split_w_per_k": {k: round(v, 3) for k, v in split.items()}, "h_floor_w_m2k": round(hf, 2)})
+    out["cases"] = rows
+    if builds:
+        out["thermal_mass_j_per_k"] = {b: round(thermal_mass(builds[b])) for b in ("prototype", "production")}
+        wu = {}
+        for b in ("prototype", "production"):
+            ua, _, _ = ua_case(b, H_EXT["still air"], True, -25.0, T_SET_C)
+            c = out["thermal_mass_j_per_k"][b]
+            wu[b] = {"ua_w_per_k": round(ua, 3), "tau_min": round(c / ua / 60, 0),
+                     "warmup_min_30w_12v": warmup_min(c, ua, HEATER_FILMS_W + P_ELEC_TYP, -25.0, T_SET_C),
+                     "warmup_min_20w8_10v": warmup_min(c, ua, HEATER_AT_10V_W + P_ELEC_TYP, -25.0, T_SET_C),
+                     "steady_c_heater_stuck_on_15v_at_+20c": round(20.0 + (46.9 + P_ELEC_MAX) / ua_case(b, 12.0, True, 20.0, 20.0)[0], 0),
+                     "steady_c_full_30w_at_-25c": round(-25.0 + (HEATER_FILMS_W + P_ELEC_TYP) / ua, 0)}
+        out["warmup_from_-25c_soak"] = wu
+    out["_option"] = (f"Option set-point +{T_SET_OPTION_C:g} C (labelled option, not the baseline): head_afe_budget.md section 3.2 shows the lowest usable BETA_LLD falling "
+                      "with temperature (8-9 p.e. at +10 C, 7-8 at -20 C) and crosstalk-limited below about 0 C, so +5 C costs no threshold against +10 C; "
+                      "+5 C is also inside the +5..+10 C bond-line range assumed for the OEM modules (head_report.md section 8). It is NOT chosen as the "
+                      "baseline because the OEM carrier / bond-line limits are unknown (no OEM drawing) and the project uses +10 C.")
     return out
 
 

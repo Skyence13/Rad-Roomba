@@ -68,7 +68,6 @@ caster,purchased,RRX-H41,caster,1,STEEL,TENTE Compacta 1430POI025P60-35x30,"VERI
 cassette,purchased,RRX-H42,battery_pack,1,PACK,Power-Sonic PSL-SC-12120,VERIFIED,,,
 cassette,purchased,RRX-H43,coupler_cassette,2,PA,Anderson SBS50 housing + 2 power + 2 aux contacts (cassette half),UNVERIFIED envelope,,,
 battery_bay,purchased,RRX-H44,chassis_heater_pad,1,PI,"Polyimide film heater 90 x 70 mm, 12 V, 20 W class with PSA (catalogue item TBD after thermal test)",design value,,,
-thermal,purchased,RRX-H45,bus_clamp_resistor,1,AL,Aluminium-housed wirewound 50 W (Arcol HS50 class),UNVERIFIED,,,
 chs_main,purchased,RRX-E01,RR-CHS-MAIN_pcb,1,FR4,RR-CHS-MAIN rev A (custom),contract outline,,,
 compute,purchased,RRX-H46,CM5_carrier_assembly,1,PCB,Raspberry Pi CM5104032 on Waveshare CM5-IO-BASE-A + heat sink,"outline VERIFIED, height/holes UNVERIFIED",,,
 lidar,purchased,RRX-H47,lidar,1,AL,Richbeam LakiBeam 1L,"footprint PARTIAL; scan plane, holes, connector UNVERIFIED",,,
@@ -120,7 +119,6 @@ E bridge,hardware,,pan head screw + nyloc nut,6,,M3 x 10 ISO 7045 A2 + M3 ISO 10
 E bridge,hardware,,thermal gap pad,1,,"60 x 40 x 2 mm, >= 3 W/mK",UNVERIFIED,,,"board underside zone u 50..110, v 30..70 -> tray"
 E bridge,hardware,,countersunk screw,4,,M3 x 8 ISO 10642 A2,STD,,0.6,plate -> CM5 tray inserts
 E bridge,hardware,,pan head screw,4,,M2.5 x 6 ISO 7045 A2,UNVERIFIED,,0.3,CM5 carrier -> tray inserts; carrier hole pattern UNVERIFIED
-E bridge,hardware,,pan head screw,2,,M3 x 8 ISO 7045 A2,UNVERIFIED,,0.6,bus clamp resistor -> tapped plate
 F grip,hardware,,countersunk screw + nyloc nut + washer,4,,M5 x 16 ISO 10642 A2-70,STD,,4.0,"plate (from below) -> angle feet; proof-load path, through-bolted"
 F grip,hardware,,socket cap screw + nyloc nut + 2 washers,4,,M5 x 16 ISO 4762 A2-70,STD,,4.0,side plates -> angle feet; proof-load path
 F grip,hardware,,socket cap screw + washer,2,,M6 x 16 ISO 4762 A2-70 + ISO 7089,STD,,6.0,side plates -> tapped ends of the 14 mm bar (in the fairing pockets); medium thread-lock; proof-load path
@@ -128,7 +126,7 @@ F grip,hardware,,pan head screw + nyloc nut,4,,M3 x 20 ISO 7045 A2,STD,,0.5,chee
 F grip,hardware,,end cap,2,,"push-in cap 11 mm, PE",UNVERIFIED,,,screw-head pockets of the fairings
 G lid,hardware,,button head screw + bonded sealing washer,14,,M3 x 10 ISO 7380 A2 + M3 EPDM bonded washer,STD,,0.5,lid/nose skirt -> tongue inserts (radial)
 G lid,hardware,,pan head screw,10,,M3 x 12 ISO 7045 A2,STD,,0.6,nose/shoulder (2 per side) and shoulder/deck (3 per side) flanges
-G lid,hardware,,dowel pin,6,,3 m6 x 8 ISO 2338,STD,,,"lid joint alignment; 1 per side at x = 47, 2 per side at x = -36"
+G lid,hardware,,dowel pin,6,,3 m6 x 8 ISO 2338,STD,,,"lid joint alignment; 1 per side at x = 47, 2 per side at x = -38"
 G lid,hardware,,countersunk screw,8,,M3 x 8 ISO 10642 A2,STD,,0.5,hump walls (from inside) -> deck curb inserts
 G lid,hardware,,captive panel screw,6,,M3 x 10 reduced-shank captive screw + retaining washer,UNVERIFIED,,0.5,saddle service cover
 G lid,hardware,,light pipe,5,,"3 mm rigid press-fit light pipe, 20 mm",UNVERIFIED,,,left deck over RR-PANEL

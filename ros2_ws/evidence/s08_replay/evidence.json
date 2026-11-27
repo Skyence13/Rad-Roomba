@@ -3,7 +3,7 @@
  "evidence_class": "simulated",
  "against": "Python protocol fakes (rr_core.fakes), virtual clock",
  "seed": 18,
- "sim_time_s": 215.72,
+ "sim_time_s": 212.68,
  "checks": [
   {
    "check": "replay of the raw archive reproduces every product bit-for-bit",
@@ -15,6 +15,18 @@
    "ok": true
   },
   {
+   "check": "manifest records weighted_sum_variance and the cell decision rule (MODEL.md rev 3, IB-31)",
+   "ok": true,
+   "assumptions": {
+    "cov_FU": 0.0,
+    "spatial_response": "uniform top-hat (MODEL.md 5)",
+    "weighted_sum_variance": "poisson_form_conservative",
+    "cell_variance": "MODEL.md rev 3 section 6: Poisson form evaluated with the footprint-weighted sums (variance taken as the weighted count; over-states the variance of a weighted sum, so thresholds and D# are conservative)",
+    "cell_decision": "per-lane-exact/any-lane/alpha-over-m (MODEL.md rev 3 section 6): flagged when any contributing lane exceeds its own threshold at alpha/m; quoted D* and D# are the minima over the lanes at (alpha/m, beta); the cell value and uncertainties are the inverse-variance combination; single-lane scaler recounts have m = 1",
+    "u0": "MODEL.md 3 R1: lane window excluding gates under test; fallback four-lane pooled"
+   }
+  },
+  {
    "check": "products compared",
    "ok": true,
    "n": 18
@@ -22,7 +34,7 @@
   {
    "check": "raw segments sealed with digests",
    "ok": true,
-   "entries": 33600
+   "entries": 33121
   }
  ],
  "passed": true,
@@ -30,14 +42,14 @@
  "coverage": {
   "target_area_m2": 3.0,
   "areas_m2": {
-   "UNVISITED": 1.0634000000000001,
+   "UNVISITED": 1.1397000000000002,
    "ACCEPTABLE": 0.0,
-   "INSUFFICIENT_SENSITIVITY": 1.9366,
+   "INSUFFICIENT_SENSITIVITY": 1.8603,
    "INVALID_DATA": 0.0,
    "BLOCKED": 0.0,
    "EXCLUDED": 0.0
   },
-  "valid_exposure_fraction": 0.6455333333333334,
+  "valid_exposure_fraction": 0.6201,
   "acceptable_fraction": 0.0,
   "sub_cell_m": 0.005,
   "decision_cell_m": 0.1,
@@ -45,203 +57,135 @@
  },
  "time_sync": {
   "limit_us": 10000.0,
-  "fits": 118,
+  "fits": 116,
   "max_gate_bound_us": 838.0520796923137,
-  "median_gate_bound_us": 800.7564848703003
+  "median_gate_bound_us": 800.7588848223019
  },
  "link_stats": {
-  "tx": 10775,
-  "rx": 10772,
+  "tx": 10620,
+  "rx": 10617,
   "bad_lines": 2,
   "stale": 0,
   "duplicates": 0,
-  "gates": 2126,
+  "gates": 2095,
   "gaps": 0,
   "retries": 4,
   "unassigned_frames": 0,
-  "time_exchanges": 118,
+  "time_exchanges": 116,
   "time_exchanges_rejected": 0
  },
  "localization_error_vs_truth_m": {
-  "max_x_m": 0.0018029933853801472,
-  "max_y_m": 0.0012002308700667652
+  "max_x_m": 0.0016682294482897042,
+  "max_y_m": 0.0011778412132127103
  },
  "plan": {
   "n_pairs": 2,
   "offset_m": 0.04375,
-  "pair_stride_m": 0.36025,
+  "pair_stride_m": 0.33625,
   "seam_overlap_per_side_m": 0.01625,
   "predicted_residual": {
-   "left_wall_strip_m": 0.1368,
-   "right_wall_strip_m": 0.1368,
-   "door_end_strip_m": 0.121,
-   "front_end_strip_m": 0.051,
+   "left_wall_strip_m": 0.1487,
+   "right_wall_strip_m": 0.1487,
+   "door_end_strip_m": 0.1413,
+   "front_end_strip_m": 0.0713,
    "end_zone_single_heading_m": {
-    "door": 0.3482,
-    "front": 0.3482
+    "door": 0.3399,
+    "front": 0.3399
    },
    "note": "wall strips are set by the in-place turn radius of the outline; see README coverage section"
   },
-  "estimated_time_s": 247.6
+  "estimated_time_s": 244.2
  },
  "flags": [
   {
    "id": "HS-0001",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 1,
-   "x_m": 1.7404889415575922,
-   "y_m": -0.1772734428996671,
-   "D": 0.22799688711344165,
-   "u_total": 0.13489791929456701,
-   "D_star": 0.18739841101315804,
-   "D_hash": 0.5111966110499294,
+   "source_lane": 2,
+   "x_m": 1.6443799128716834,
+   "y_m": -0.2337943659217134,
+   "D": 0.24795461808291372,
+   "u_total": 0.13135998673723132,
+   "D_star": 0.1813186274366344,
+   "D_hash": 0.4972595345596802,
    "location": {
-    "distance_from_door_m": 1.74,
+    "distance_from_door_m": 1.644,
     "wall": "right wall",
-    "distance_from_wall_m": 0.323,
-    "text": "1.74 m from the door threshold, 0.32 m from the right wall"
+    "distance_from_wall_m": 0.266,
+    "text": "1.64 m from the door threshold, 0.27 m from the right wall"
    }
   },
   {
    "id": "HS-0002",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 2,
-   "x_m": 2.245984488729438,
-   "y_m": -0.24574661046113663,
-   "D": 0.28696182892864297,
-   "u_total": 0.1598695161653501,
-   "D_star": 0.19559639972711096,
-   "D_hash": 0.5375029361458272,
+   "x_m": 2.444653761592044,
+   "y_m": -0.23378953320867324,
+   "D": 0.21018328516210918,
+   "u_total": 0.1431406143223104,
+   "D_star": 0.1979690063165339,
+   "D_hash": 0.5500451010997658,
    "location": {
-    "distance_from_door_m": 2.246,
+    "distance_from_door_m": 2.445,
     "wall": "right wall",
-    "distance_from_wall_m": 0.254,
-    "text": "2.25 m from the door threshold, 0.25 m from the right wall"
+    "distance_from_wall_m": 0.266,
+    "text": "2.44 m from the door threshold, 0.27 m from the right wall"
    }
   },
   {
    "id": "HS-0004",
-   "kind": "UNRESOLVED_EXCEEDANCE",
+   "kind": "INVESTIGATION_LEVEL",
    "source_lane": 1,
-   "x_m": 0.23308908676626547,
-   "y_m": -0.21992028215638648,
-   "D": 0.16152586249787768,
-   "u_total": 0.09319548117015013,
-   "D_star": 0.1365439662904185,
-   "D_hash": 0.35099935110419395,
+   "x_m": 1.5390394042253268,
+   "y_m": 0.16281743405647356,
+   "D": 1.3882087636077183,
+   "u_total": 0.2752493225822728,
+   "D_star": 0.20070186294705783,
+   "D_hash": 0.46252181584296026,
    "location": {
-    "distance_from_door_m": 0.233,
-    "wall": "right wall",
-    "distance_from_wall_m": 0.28,
-    "text": "0.23 m from the door threshold, 0.28 m from the right wall"
+    "distance_from_door_m": 1.539,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.337,
+    "text": "1.54 m from the door threshold, 0.34 m from the left wall"
    }
   },
   {
    "id": "HS-0005",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 3,
-   "x_m": 1.0418171141838481,
-   "y_m": 0.026749031246614895,
-   "D": 0.19492397969829534,
-   "u_total": 0.14158903684891305,
-   "D_star": 0.18587946915000764,
-   "D_hash": 0.4979400798929596,
+   "x_m": 2.4441570528414864,
+   "y_m": 0.32131744032909765,
+   "D": 0.23964756587579092,
+   "u_total": 0.1608590036671097,
+   "D_star": 0.2213915233448995,
+   "D_hash": 0.5955393584897749,
    "location": {
-    "distance_from_door_m": 1.042,
+    "distance_from_door_m": 2.444,
     "wall": "left wall",
-    "distance_from_wall_m": 0.473,
-    "text": "1.04 m from the door threshold, 0.47 m from the left wall"
+    "distance_from_wall_m": 0.179,
+    "text": "2.44 m from the door threshold, 0.18 m from the left wall"
    }
   },
   {
    "id": "HS-0006",
-   "kind": "INVESTIGATION_LEVEL",
-   "source_lane": 1,
-   "x_m": 1.5523366438116437,
-   "y_m": 0.17938226712474686,
-   "D": 1.158042000241497,
-   "u_total": 0.24619592589133105,
-   "D_star": 0.1599256987672802,
-   "D_hash": 0.39622804323620775,
-   "location": {
-    "distance_from_door_m": 1.552,
-    "wall": "left wall",
-    "distance_from_wall_m": 0.321,
-    "text": "1.55 m from the door threshold, 0.32 m from the left wall"
-   }
-  },
-  {
-   "id": "HS-0007",
-   "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 3,
-   "x_m": 2.4628886310763027,
-   "y_m": 0.026982333060893843,
-   "D": 0.21075927751600934,
-   "u_total": 0.13327185491042362,
-   "D_star": 0.18910597109231272,
-   "D_hash": 0.503997932671665,
-   "location": {
-    "distance_from_door_m": 2.463,
-    "wall": "left wall",
-    "distance_from_wall_m": 0.473,
-    "text": "2.46 m from the door threshold, 0.47 m from the left wall"
-   }
-  },
-  {
-   "id": "HS-0008",
-   "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 0,
-   "x_m": 2.3337029549130084,
-   "y_m": 0.28944254377181944,
-   "D": 0.1505594738317814,
-   "u_total": 0.08734811922888475,
-   "D_star": 0.13858923929268002,
-   "D_hash": 0.35159305698602805,
-   "location": {
-    "distance_from_door_m": 2.334,
-    "wall": "left wall",
-    "distance_from_wall_m": 0.211,
-    "text": "2.33 m from the door threshold, 0.21 m from the left wall"
-   }
-  },
-  {
-   "id": "HS-0009",
-   "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 0,
-   "x_m": 2.8547400984023965,
-   "y_m": 0.32468393140607593,
-   "D": 0.2299654685917378,
-   "u_total": 0.1392309796169563,
-   "D_star": 0.22640338660497206,
-   "D_hash": 0.583667656356164,
-   "location": {
-    "distance_from_door_m": 2.855,
-    "wall": "left wall",
-    "distance_from_wall_m": 0.175,
-    "text": "2.85 m from the door threshold, 0.18 m from the left wall"
-   }
-  },
-  {
-   "id": "HS-0010",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 2,
-   "x_m": 0.5616374472238541,
-   "y_m": 0.2457566983965103,
-   "D": 0.15796070739052165,
-   "u_total": 0.0928778099700271,
-   "D_star": 0.13274851447952765,
-   "D_hash": 0.3410187406928891,
+   "x_m": 0.25389326435159804,
+   "y_m": 0.23373724277414423,
+   "D": 0.21232688598813798,
+   "u_total": 0.1416213767358573,
+   "D_star": 0.14529072289402756,
+   "D_hash": 0.42909750396664137,
    "location": {
-    "distance_from_door_m": 0.562,
+    "distance_from_door_m": 0.254,
     "wall": "left wall",
-    "distance_from_wall_m": 0.254,
-    "text": "0.56 m from the door threshold, 0.25 m from the left wall"
+    "distance_from_wall_m": 0.266,
+    "text": "0.25 m from the door threshold, 0.27 m from the left wall"
    }
   }
  ],
  "scan_detections": 1,
  "observations": [],
- "journal_entries": 33600,
+ "journal_entries": 33121,
  "segments": 2,
  "products": [
   "calibration.json",
@@ -265,22 +209,22 @@
  ],
  "product_sha256": {
   "calibration.json": "3c246b889453729593dad6ceea9c0c6a15ad5d36ce7387fa6324263386786960",
-  "cells.csv": "126c66d428e52507a0321b84037b2ff4beaaff3d5e826a7573e2d9058a3fd343",
-  "cells.geojson": "c4c9a571604537fe1768c5d8d93a253d57fc152325a32946760d72ea583cd0de",
-  "clock_fits.ndjson": "fb2978e40ddca1bdebecf80f258ff913f9f2c625301a51960ba93d43a9d0c0db",
-  "coverage.png": "3fb03ae7e8a4eddcf4a55066aa0df6918b162da1caababd65dead73c2e93cb38",
-  "flags.json": "749a7dbd9d45352e42c9db35651ccf6e9de32c26cb00f36c82d5d07f1e49a9b5",
-  "gaps.json": "231b54735d1da8c7a6a85ac8703b7f951673ed73c54145f351a96a7af2cc49b3",
-  "gates.csv": "21e9379b8fe6cf8420ff49ae57eec3279e14f531d4ddf004d51f9c0cbd5827ac",
+  "cells.csv": "a4aae9e434a3fd958bb9950356117baa0b058f4afcfd50c2d0de750d1e33ba80",
+  "cells.geojson": "ddc0adf77a3655064944cb317166cb66a0e3301562a4e495b377822d615d013f",
+  "clock_fits.ndjson": "ea1f467e8399facf34af04f3278bff7187af0dcee51cbe4ce996793032964ce4",
+  "coverage.png": "dd6c9916ab9d569167dc0d5f0841882fa07ff26f9ed181c27c76d33bcedbcc41",
+  "flags.json": "1a0e50aa9b07d49a6dd17ac8a0fe4d5a94d475dcbb94c9860d580c31855bcb14",
+  "gaps.json": "a1789a08ae35d1796c5fe95b9515070a8d27f775abc07fe0b170224111fff8b4",
+  "gates.csv": "5eef599b129cceb09140f96a291a31356f163808ff67476e9edcb559ece9892f",
   "grid.json": "b1193a616edcd1b6884ec2fb1d48e0c0ec57f7cfd14e0a2b7fb32429b3345a4e",
-  "map_activity.svg": "a379d3104d41bf9430c1801891abaa6728966fa4bfaa70a3eb8b74583438e96b",
-  "map_coverage.svg": "26f3a2371328a0ad3e2f3dcb60c221641bd8aa02e4edd03a802ef032cdc7a294",
+  "map_activity.svg": "084d99aa78a8b54f42bc1f678b9973dfac9e9aaa93fb65700d41d35bf0e3e4d8",
+  "map_coverage.svg": "6f6b952cd1aff7a766ea79b684b017dc63afd7a7e16e64e1cb1cf46cb199355f",
   "observations.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
-  "poses.csv": "4e5078146405db5d61daed407a4dbe6937aa1e25f1de648be8392097c6f201e5",
+  "poses.csv": "8da3780b453c7b70910fff42f8fdfeca2ea80b218777fe6369c684890103fe9f",
   "profile.json": "1b14d43984b66d1981b0876c4d8e2b8ca1b69373e06f51caa4de4515f85d5375",
-  "residuals.json": "82bcf5ba672bbf15ea8321f479cbf2fd0e87fa59aa9141e3688d963f6e548b10",
-  "summary.txt": "eeef4daf4c155c921aa08566d8bee050a453ef523d1bae9560e77a9f3e377ba6",
-  "survey_manifest.json": "8f8c99f2e96ff7fe3b2eef0afdcf5b2a1bce17c48b7867d7239e38cc9cbc397e",
-  "transforms.json": "d8322cbbf4565c29f298af4ec34d630e66a4271224172dad91ddf2a2c73c5bf1"
+  "residuals.json": "0aa2b6cd1cc758ddafee9cc56d1df99da605b8ebd675e60a5a9de2ad0cdbaa25",
+  "summary.txt": "6b7ce1f8f0faba54a31067819474355230e804e5747bc8a1cf0d4b8afff8ee6c",
+  "survey_manifest.json": "c405b9363bb952cc67417093e9d861dacf2b35dfd82407a6d1697fac7244853b",
+  "transforms.json": "cb6d35c5659f8c4e205cdd682132ff6f01e9c5e1a149b1b90505ccf3c9d76c3e"
  }
 }

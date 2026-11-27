@@ -85,7 +85,10 @@ def _frame(kind):
         cuts.append(box(H.XR - 1, H.XR + H.SW["h"] + 0.2, s * (H.SW_SIDE["y"] - H.SW["l"] / 2 - 0.1), s * (H.SW_SIDE["y"] + H.SW["l"] / 2 + 0.1),
                         H.SW_SIDE["z"] - H.SW["t"] / 2 - 0.1, H.SW_SIDE["z"] + H.SW["t"] / 2 + 0.1))
         cuts.append(box(74.6, H.XR + H.SW["h"] + 0.2, s * 148.3, s * 150.2, H.SW_SIDE["z"] - 2.0, H.Z_SPR0 + 0.02))
-        cuts.append(box(H.XR - 1, H.BAY_X0 + 1, ys - H.PORT_SLOT_HY, ys + H.PORT_SLOT_HY, H.PORT_SLOT_Z0, 60))                             # cable port U-slot
+        yp = H.PORT_Y["J1" if s > 0 else "J2"]
+        cuts.append(box(H.XR - 1, H.BAY_X0 + 1, yp - H.PORT_SLOT_HY, yp + H.PORT_SLOT_HY, H.PORT_SLOT_Z0, 60))                             # cable port U-slot (J1 y 76.2, CR-M03)
+        if s > 0 and kind != "P":                                                                                                         # relief under the rear-comb bond-screw tips
+            cuts += [cyl(1.5, 0.8, (x, y, H.Z_SPR0 - 0.8)) for x, y in H.REAR_BOND]
         for dy in (-6.0, 6.0):                                                                                                            # bail block inserts (outer blocks)
             cuts.append(cyl(INS_R[kind == 'P'], 5.2, (H.XF + 0.02, s * 130.0 + dy, 25.7), (-1, 0, 0)))
         cuts.append(box(H.BAY_X1 - 0.02, H.BAY_X1 + 0.6, ys - 8.0, ys + 8.0, H.Z_SPR1 + 0.2, H.Z_WALL_TOP + 1))                            # switch relief (front rail switch left, lid switch right)
@@ -206,11 +209,12 @@ def spreader_holes():
     for s in (1, -1):
         h += [(x, s * H.SHOE_Y, 2.8, "M2.5 into rib insert, countersunk 90 deg x dia 5.2 on top (ISO 10642 head flush: under the board)") for x in H.ROD_PAD_X]
         h += [(H.REAR_SCREW_X, s * y, 2.8, "M2.5 into rear-zone insert (also rear comb foot)") for y in H.REAR_SCREW_Y]
-        h += [(H.THEAD_SCREW_X, s * H.SHOE_Y + dy, 4.6, "M3 into T-head, insulating shoulder washer (prototype) / plain washer (production)") for dy in H.THEAD_SCREW_DY]
+        h += [(H.THEAD_SCREW_X, s * H.SHOE_Y + dy, 4.6, "M3 into T-head, insulating shoulder washer (both builds)") for dy in H.THEAD_SCREW_DY]
         h += [(183.0, s * y, 2.05, "tap M2.5: front fence foot") for y in FENCE_FRONT_Y]
         h += [(x, s * 166.9, 2.05, "tap M2.5: side fence foot") for x in FENCE_SIDE_X]
         h += [(H.PIN_X, s * H.SHOE_Y, 3.2, "rail stop/switch pin clearance"), (183.1, s * H.SHOE_Y + 10.5, 2.05, "tap M2.5: switch saddle"),
               (183.1, s * H.SHOE_Y - 10.5, 2.05, "tap M2.5: switch saddle")]
+    h += [(x, y, 2.05, "tap M2.5: rear-comb bond screw (prototype; CR-M03 replacement bond points)") for x, y in H.REAR_BOND]
     return h
 
 
@@ -232,7 +236,7 @@ def j1_zone():
 
 def lid_holes():
     """Lid standoff positions (on the spreader)."""
-    return [(x, s * y) for x, y in H.LID_STANDOFFS for s in ((1, -1) if y else (1,))]
+    return [(x, s * y) for x, y in H.LID_STANDOFFS for s in ((1, -1) if y else (1,))] + list(H.LID_STANDOFFS_ONE_SIDE)
 
 
 def lid_boss_xy():
@@ -246,7 +250,8 @@ def lid_all_holes():
     return lid_holes() + lid_boss_xy()
 
 
-BLISTER = (74.5, None, 53.0, None)      # J1 blister rear / left edges extended so three rear-line lid screws pass through it (clamp + bond)
+BLISTER = (71.0, 5.5, 53.0, 122.0)      # J1 blister: rear edge over the lid rear strip (bond overlap 3.5 mm behind the opening), front edge 5.5 beyond the
+                                         # opening (rivets), y 53..122 so the rear-line lid screws at y 57.0 / 117.5 seat fully on it (clamp + bond)
 
 
 def lid_loop():
@@ -261,15 +266,14 @@ def lid():
     def build():
         i = H.LID_INSET
         pl = round_z(box(H.XR + i, H.XF - i, -H.YW + i, H.YW - i, H.Z_LID0, H.Z_LID1), 3.0)
-        x0, x1, y0, y1 = j1_zone()
-        cuts = [cyl(1.7, 4, (x, y, H.Z_LID0 - 1)) for x, y in lid_all_holes()] + [box(x0 - 0.5, x1 + 0.5, y0 - 0.5, y1 + 0.5, 40, 50)]
+        x0, x1, y0, y1 = H.LID_OPENING
+        cuts = [cyl(1.7, 4, (x, y, H.Z_LID0 - 1)) for x, y in lid_all_holes()] + [box(x0, x1, y0, y1, 40, 50)]
         return cut_all(pl, cuts)
     return cached("lid", build)
 
 
 def blister_rect():
-    x0, x1, y0, y1 = j1_zone()
-    return (BLISTER[0], x1 + 5.5, BLISTER[2], y1 + 5.5)
+    return (BLISTER[0], H.LID_OPENING[1] + BLISTER[1], BLISTER[2], BLISTER[3])
 
 
 def j1_blister():
@@ -281,8 +285,8 @@ def j1_blister():
 def lid_gasket():
     g = box(H.XR + 0.5, H.XF - 0.5, -H.YW + 0.5, H.YW - 0.5, H.Z_WALL_TOP, H.Z_LID0).cut(
         box(H.BAY_X0 - 0.3, H.BAY_X1 + 0.3, -H.BAY_HY - 0.3, H.BAY_HY + 0.3, 40, 50))
-    for s in (1, -1):          # the grommets close the two port slots
-        g = g.cut(box(H.XR - 1, H.BAY_X0 + 1, s * H.SHOE_Y - H.PORT_SLOT_HY, s * H.SHOE_Y + H.PORT_SLOT_HY, 40, 50))
+    for n in ("J1", "J2"):     # the grommets close the two port slots
+        g = g.cut(box(H.XR - 1, H.BAY_X0 + 1, H.PORT_Y[n] - H.PORT_SLOT_HY, H.PORT_Y[n] + H.PORT_SLOT_HY, 40, 50))
     return g
 
 
@@ -316,17 +320,20 @@ def fence_rear():
     """Rear comb: bay rear wall + feet on the spreader tabs + U-shaped liners hanging into the four chimneys."""
     t, x = H.FENCE_T, FENCE_REAR_X
     hy = FENCE_SIDE_Y + t
-    parts = [box(x, x + t, -hy, hy, H.Z_SPR1, FENCE_TOP), box(x, x + 2.0, -hy, hy, FENCE_TOP - t, FENCE_TOP)]
+    parts = [box(x, x + t, -hy, hy, H.Z_SPR1, FENCE_TOP), box(x, x + H.FENCE_REAR_FLANGE, -hy, hy, FENCE_TOP - t, FENCE_TOP)]
     edges = [-hy] + [v for yc in sorted(H.SEG_Y) for v in (yc - H.CHIM_HY - COMB_CHIM_MARGIN, yc + H.CHIM_HY + COMB_CHIM_MARGIN)] + [hy]
     for ya, yb in zip(edges[0::2], edges[1::2]):                              # feet between the chimneys
         parts.append(box(x, COMB_FOOT_X1, ya, yb, H.Z_SPR1, H.Z_SPR1 + t))
+    for bx, by in H.REAR_BOND:                                                # foot tabs under the CR-M03 bond screws (prototype)
+        parts.append(box(x, bx + 2.3, by - 2.6, by + 2.6, H.Z_SPR1, H.Z_SPR1 + t))
     for yc in H.SEG_Y:                                                        # chimney liners (rear + two sides)
         parts.append(box(x, x + t, yc - H.CHIM_HY + 0.2, yc + H.CHIM_HY - 0.2, H.CHIM_FLOOR_REAR + 0.5, H.Z_SPR1 + 0.01))
         for s in (1, -1):
             ya = yc + s * (H.CHIM_HY - 0.2)
             parts.append(box(x, H.CAV_X0 - 0.5, ya - s * t, ya, H.CHIM_FLOOR_REAR + 0.5, H.Z_SPR0 - 0.3))
     s = fuse_all(parts)
-    cuts = [box(x - 1, x + 3, sg * H.SHOE_Y - H.PORT_SLOT_HY, sg * H.SHOE_Y + H.PORT_SLOT_HY, H.PORT_SLOT_Z0, 50) for sg in (1, -1)]
+    cuts = [box(x - 1, x + 3, H.PORT_Y[n] - H.PORT_SLOT_HY, H.PORT_Y[n] + H.PORT_SLOT_HY, H.PORT_SLOT_Z0, 50) for n in ("J1", "J2")]
+    cuts += [cyl(1.45, 3, (bx, by, H.Z_SPR1 - 1)) for bx, by in H.REAR_BOND]                                     # bond screws clamp the tabs
     cuts += [cyl(2.5, 4, (x - 1, H.VENT[1], H.VENT[2]), (1, 0, 0))]
     cuts += [cyl(1.7, 3, (xx, yy, H.Z_SPR1 - 1)) for xx, yy in lid_holes() if xx < 90]                     # standoffs clamp the feet (where there is one)
     cuts += [cyl(1.45, 3, (H.REAR_SCREW_X, sg * yy, H.Z_SPR1 - 1)) for sg in (1, -1) for yy in H.REAR_SCREW_Y]  # rear spreader screws clamp the feet
@@ -340,9 +347,9 @@ def fence_gaskets():
     """Conductive fabric-over-foam strips on the fence top flanges (compressed 1.0 -> 0.7)."""
     t = H.FENCE_T
     hy = FENCE_SIDE_Y + t
-    rear = box(FENCE_REAR_X, FENCE_REAR_X + 2.0, -hy, hy, FENCE_TOP, H.Z_LID0)
-    for s in (1, -1):
-        rear = rear.cut(box(70, 80, s * H.SHOE_Y - H.PORT_SLOT_HY, s * H.SHOE_Y + H.PORT_SLOT_HY, 40, 50))
+    rear = box(FENCE_REAR_X, FENCE_REAR_X + H.FENCE_REAR_FLANGE, -hy, hy, FENCE_TOP, H.Z_LID0)
+    for n in ("J1", "J2"):
+        rear = rear.cut(box(70, 80, H.PORT_Y[n] - H.PORT_SLOT_HY, H.PORT_Y[n] + H.PORT_SLOT_HY, 40, 50))
     out = [box(FENCE_FRONT_X - 2.3, FENCE_FRONT_X + t, -hy, hy, FENCE_TOP, H.Z_LID0), rear]
     for s in (1, -1):
         ya, yb = sorted((s * (FENCE_SIDE_Y - 2.3), s * (FENCE_SIDE_Y + t)))
@@ -623,20 +630,33 @@ def pcb_keepouts():
     return top, bot, j1
 
 
+def microfit_plugs(height=None):
+    """Keep-out solids of the two MATED Micro-Fit plugs (J2001 J1 pigtail, J2601 heater / NTC) over the rear strip: u = header body (as built,
+    hp.py), v -8.4..1.5 (CR-M03), z from the PCB top up to MICROFIT_H_ALLOW (IB-19). Plug geometry itself is UNVERIFIED (CR-M05)."""
+    h = height or H.MICROFIT_H_ALLOW
+    oz = H.ACQ["origin"][2] + H.ACQ["thickness"]
+    out = []
+    for name, (u0, u1) in H.MICROFIT_BODY_U.items():
+        x0, y1 = P_board(u0, H.PLUG_V[0])[:2]
+        x1, y0 = P_board(u1, H.PLUG_V[1])[:2]
+        out.append((name, box(x0, x1, y0, y1, oz, oz + h)))
+    return out
+
+
 def shield_can(i=None):
-    """RR-HEAD-SHLD-A lane shield can 36.0 x 32.0 x 5.0, 0.2 mm wall (drawing owed to head electronics)."""
+    """RR-HEAD-SHLD-A lane shield can 36.0 x 32.0 x 5.0, 0.2 mm wall. Local frame: x = v from the rear wall, y = -du. Mouse holes 2.0 x 1.2 at
+    du -10.38 / +11.87 (CR-M04: anode U.FL centre pads of the translated channel layout, S2-L3); position on the board v 8.25..40.25 (CR-M01)."""
     w = 0.2
     can = box(0, 32.0, -18.0, 18.0, 0, 5.0).cut(box(w, 32.0 - w, -18.0 + w, 18.0 - w, -1, 5.0 - w))
-    can = can.cut(compound([box(-1, 1, s * 6.0 - 1.0, s * 6.0 + 1.0, -1, 1.2) for s in (1, -1)]))      # two 2 mm mouse holes, rear wall
+    can = can.cut(compound([box(-1, 1, -du - H.MOUSE_W / 2, -du + H.MOUSE_W / 2, -1, H.MOUSE_H) for du in H.CAN_MOUSE_DU]))      # mouse holes, rear wall
     if i is None:
         return can
     oz = H.ACQ["origin"][2] + H.ACQ["thickness"]
-    return can.translate(V(H.ACQ["origin"][0] + 5.5, H.SEG_Y[i], oz))
+    return can.translate(V(H.ACQ["origin"][0] + H.CAN_V0, H.SEG_Y[i], oz))
 
 
 def grommet(name):
-    s = 1 if name == "J1" else -1
-    y = s * H.SHOE_Y
+    y = H.PORT_Y[name]
     g = fuse_all([box(H.XR + 0.05, H.BAY_X0 - 0.05, y - H.PORT_SLOT_HY + 0.05, y + H.PORT_SLOT_HY - 0.05, H.PORT_SLOT_Z0, H.Z_LID0),
                   box(H.XR - 1.5, H.XR + 0.051, y - 7.5, y + 7.5, H.PORT_SLOT_Z0 - 2, H.Z_LID0)])
     g = g.cut(box(H.XR, H.XR + 0.06, y - 8, y + 8, 30, H.PORT_SLOT_Z0)).cut(box(H.XR, H.XR + 0.06, y + H.PORT_SLOT_HY - 0.05, y + 8, 30, 50)).cut(box(H.XR, H.XR + 0.06, y - 8, y - H.PORT_SLOT_HY + 0.05, 30, 50))
@@ -647,11 +667,11 @@ def pigtail(name):
     """Cable from the internal clamp through the port, rearward and up 150 mm, with the plug envelope at the end."""
     from mechanical.common.purchased import library as L
     s = 1 if name == "J1" else -1
-    y = s * H.SHOE_Y
+    y = H.PORT_Y[name]
     z = H.PORT[name][2]
     r = H.CABLE_D[name] / 2
     e = L.env("j1_receptacle" if name == "J1" else "j2_receptacle")
-    p0, p1 = (76.0, y, z), (H.XR - 12.0, y, z)
+    p0, p1 = ((H.ACQ["origin"][0] + H.PLUG_V[0] - 0.2) if name == "J1" else 76.0, y, z), (H.XR - 12.0, y, z)   # J1 cable ends at the mated J2001 plug back
     d = V(-0.55, -0.25 * s, 0.80).normalized()
     p2 = (p1[0] + d.x * 120, p1[1] + d.y * 120, p1[2] + d.z * 120)
     cable = fuse_all([cyl2(r, p0, p1), cq.Solid.makeSphere(r, V(*p1)), cyl2(r, p1, p2)])
@@ -677,7 +697,9 @@ def ntc():
 
 
 def thermal_cutout():
-    return box(77.0, 81.6, H.SHOE_Y + 28.0, H.SHOE_Y + 34.5, H.Z_SPR1, H.Z_SPR1 + 3.4)      # on the spreader through a window in the comb foot
+    """On the spreader through a window in the comb foot. Moved from y 115.5..122.0 (now the CR-M03 lid standoff at y 117.5) to y 82.0..88.5, between
+    the T-head screws at y 77.5 / 97.5, under the mated J2001 plug (top z 35.4 vs plug bottom z 36.1: tool-checked against the plug keep-out)."""
+    return box(77.0, 81.6, H.SHOE_Y - 5.5, H.SHOE_Y + 1.0, H.Z_SPR1, H.Z_SPR1 + 3.4)
 
 
 LINER_T = 0.5
@@ -800,6 +822,10 @@ def fastener_heads(build):
                 out.append((f"hd_ffoot_{s * y:+.0f}", "PUR-M2.5x5-PAN", _head(183.0, s * y, H.Z_SPR1 + foot, "M2.5_pan"), "ISO 7045 M2.5 x 5, front fence foot into tapped spreader"))
             for x in FENCE_SIDE_X:
                 out.append((f"hd_sfoot_{x:.0f}_{s:+d}", "PUR-M2.5x5-PAN", _head(x, s * 166.9, H.Z_SPR1 + foot, "M2.5_pan"), "ISO 7045 M2.5 x 5, side fence foot"))
+    if proto:   # rear-comb bond screws (CR-M03): head + the 0.5 mm tip below the spreader (the tip matters for the FRAME-isolation check)
+        for x, y in H.REAR_BOND:
+            out.append((f"hd_rbond_{y:+.0f}", "PUR-M2.5x3-PAN", fuse_all([_head(x, y, H.Z_SPR1 + foot, "M2.5_pan"), cyl(1.25, 0.5, (x, y, H.Z_SPR0 - 0.5))]),
+                        "ISO 7045 M2.5 x 3 A2, rear-comb foot tab into the tapped spreader (bond point under the J1 plugs)"))
     pcb_top = H.ACQ["origin"][2] + (2.0 if build == "dummy" else H.ACQ["thickness"])
     for k, (x, y, _) in enumerate(board_holes()):
         out.append((f"hd_board_{k}", "PUR-M2.5x5-PAN-SW", _head(x, y, pcb_top, "M2.5_pan"), "ISO 7045 M2.5 x 5 + serrated washer, board to standoff (FRAME bond)"))

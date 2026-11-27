@@ -157,7 +157,8 @@ static void imon_evaluate(rrh_core_t *c, uint64_t now)
         const uint16_t trim = c->setup.fe.trim[ch];
         c->imon_na[ch] = rrh_board_imon_na(trim, c->imon.uv[ch]);
         const bool over = c->imon_na[ch] > RRH_IMON_MAX_NA;
-        const bool under = (RRH_IMON_MIN_NA > 0u) && (c->imon_na[ch] < RRH_IMON_MIN_NA);
+        const uint32_t min_na = RRH_IMON_MIN_NA; /* 0 = low side disabled */
+        const bool under = (min_na > 0u) && (c->imon_na[ch] < min_na);
         const bool railed = (rrh_board_trim_uv(trim) >= (2u * RRH_IMON_SAT_UV)) && (c->imon.uv[ch] < RRH_IMON_SAT_UV);
         if (judged && (over || under || railed)) {
             if ((c->imon_pending & bit) == 0u) {

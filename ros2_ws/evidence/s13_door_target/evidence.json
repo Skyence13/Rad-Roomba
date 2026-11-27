@@ -3,7 +3,7 @@
  "evidence_class": "simulated",
  "against": "Python protocol fakes (rr_core.fakes), virtual clock",
  "seed": 23,
- "sim_time_s": 91.56,
+ "sim_time_s": 90.4,
  "checks": [
   {
    "check": "doors open, no target, trailer longer than LiDAR range: arm refused with ALONG_TRACK_REFERENCE",
@@ -38,8 +38,8 @@
    "check": "plan keeps the door end clear of the target",
    "ok": true,
    "pivot_x": [
-    0.628,
-    2.692
+    0.64,
+    2.68
    ]
   },
   {
@@ -49,15 +49,15 @@
   {
    "check": "x updated from the door-end target while heading to the door (bulkhead out of the configured range)",
    "ok": true,
-   "n": 232,
-   "n_all": 777
+   "n": 226,
+   "n_all": 763
   },
   {
    "check": "localisation error vs truth stays within 10 mm in x",
    "ok": true,
    "err": {
-    "max_x_m": 0.001792576769410692,
-    "max_y_m": 0.00046943579835401206
+    "max_x_m": 0.0017083719741943781,
+    "max_y_m": 0.0005151085784672327
    }
   },
   {
@@ -72,14 +72,14 @@
  "coverage": {
   "target_area_m2": 3.0,
   "areas_m2": {
-   "UNVISITED": 2.1462,
+   "UNVISITED": 2.1481250000000003,
    "ACCEPTABLE": 0.0,
-   "INSUFFICIENT_SENSITIVITY": 0.8538,
+   "INSUFFICIENT_SENSITIVITY": 0.851875,
    "INVALID_DATA": 0.0,
    "BLOCKED": 0.0,
    "EXCLUDED": 0.0
   },
-  "valid_exposure_fraction": 0.2846,
+  "valid_exposure_fraction": 0.28395833333333337,
   "acceptable_fraction": 0.0,
   "sub_cell_m": 0.005,
   "decision_cell_m": 0.1,
@@ -92,12 +92,12 @@
   "median_gate_bound_us": 805.3429672765469
  },
  "link_stats": {
-  "tx": 4546,
-  "rx": 4542,
+  "tx": 4489,
+  "rx": 4485,
   "bad_lines": 0,
   "stale": 0,
   "duplicates": 0,
-  "gates": 896,
+  "gates": 885,
   "gaps": 0,
   "retries": 2,
   "unassigned_frames": 0,
@@ -105,77 +105,77 @@
   "time_exchanges_rejected": 0
  },
  "localization_error_vs_truth_m": {
-  "max_x_m": 0.001792576769410692,
-  "max_y_m": 0.00046943579835401206
+  "max_x_m": 0.0017083719741943781,
+  "max_y_m": 0.0005151085784672327
  },
  "plan": {
   "n_pairs": 2,
   "offset_m": 0.04375,
-  "pair_stride_m": 0.36025,
+  "pair_stride_m": 0.33625,
   "seam_overlap_per_side_m": 0.01625,
   "predicted_residual": {
-   "left_wall_strip_m": 0.1368,
-   "right_wall_strip_m": 0.1368,
-   "door_end_strip_m": 0.371,
-   "front_end_strip_m": 0.051,
+   "left_wall_strip_m": 0.1487,
+   "right_wall_strip_m": 0.1487,
+   "door_end_strip_m": 0.3913,
+   "front_end_strip_m": 0.0713,
    "end_zone_single_heading_m": {
-    "door": 0.3482,
-    "front": 0.3482
+    "door": 0.3399,
+    "front": 0.3399
    },
    "note": "wall strips are set by the in-place turn radius of the outline; see README coverage section"
   },
-  "estimated_time_s": 237.6
+  "estimated_time_s": 234.2
  },
  "flags": [
   {
    "id": "HS-0001",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 3,
-   "x_m": 1.0390816765743933,
-   "y_m": -0.3334463004941685,
-   "D": 0.24806801555236235,
-   "u_total": 0.139527093422007,
-   "D_star": 0.1710858719902895,
-   "D_hash": 0.5021516797406324,
+   "x_m": 1.0513061093704597,
+   "y_m": -0.3214261841137984,
+   "D": 0.23085030272566587,
+   "u_total": 0.13928891837021848,
+   "D_star": 0.18395337444651064,
+   "D_hash": 0.550837996779058,
    "location": {
-    "distance_from_door_m": 1.039,
+    "distance_from_door_m": 1.051,
     "wall": "right wall",
-    "distance_from_wall_m": 0.167,
-    "text": "1.04 m from the door threshold, 0.17 m from the right wall"
+    "distance_from_wall_m": 0.179,
+    "text": "1.05 m from the door threshold, 0.18 m from the right wall"
    }
   },
   {
    "id": "HS-0002",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 3,
-   "x_m": 2.5731630485651986,
-   "y_m": -0.33327793238767306,
-   "D": 0.22164380935507835,
-   "u_total": 0.14563390095412584,
-   "D_star": 0.21819496760038454,
-   "D_hash": 0.5719814847396597,
+   "source_lane": 1,
+   "x_m": 1.9330288483576354,
+   "y_m": -0.1463188758531001,
+   "D": 0.22751990771039013,
+   "u_total": 0.1405384592123207,
+   "D_star": 0.2264209811441295,
+   "D_hash": 0.6047321276247295,
    "location": {
-    "distance_from_door_m": 2.573,
+    "distance_from_door_m": 1.933,
     "wall": "right wall",
-    "distance_from_wall_m": 0.167,
-    "text": "2.57 m from the door threshold, 0.17 m from the right wall"
+    "distance_from_wall_m": 0.354,
+    "text": "1.93 m from the door threshold, 0.35 m from the right wall"
    }
   },
   {
    "id": "HS-0003",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 1,
-   "x_m": 2.8186289567690763,
-   "y_m": -0.14419474336401938,
-   "D": 0.17120869681597597,
-   "u_total": 0.1519093669108822,
-   "D_star": 0.204770314221906,
-   "D_hash": 0.542136272000366,
+   "x_m": 2.8459297656657387,
+   "y_m": -0.131991919134655,
+   "D": 0.07985035415718972,
+   "u_total": 0.10056841935799396,
+   "D_star": 0.2361814044459173,
+   "D_hash": 0.5526632342128303,
    "location": {
-    "distance_from_door_m": 2.819,
+    "distance_from_door_m": 2.846,
     "wall": "right wall",
-    "distance_from_wall_m": 0.356,
-    "text": "2.82 m from the door threshold, 0.36 m from the right wall"
+    "distance_from_wall_m": 0.368,
+    "text": "2.85 m from the door threshold, 0.37 m from the right wall"
    }
   }
  ],

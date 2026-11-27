@@ -292,13 +292,13 @@ static void test_protective_reasons(void)
         CHECK(th_true(t, "allow.fwd") && th_drive(t, 0.1, 0, 200, OPM));
     }
     SECTION("LOOKAHEAD_L / LOOKAHEAD_R: speed is reduced, then the stop is latched before the edge");
-    static const char *const look[2][2] = {{"LOOK_LO", "LOOKAHEAD_L"}, {"LOOK_RO", "LOOKAHEAD_R"}};
+    static const char *const look[2][2] = {{"LOOK_FL", "LOOKAHEAD_L"}, {"LOOK_FR", "LOOKAHEAD_R"}};
     for (int i = 0; i < 2; i++) {
         th_t *t = armed(230 + i);
         moving(t, 0.20, 0.0);
         char e1[64], e2[64];
-        snprintf(e1, sizeof e1, "{\"tof\":{\"%s\":420}}", look[i][0]);
-        snprintf(e2, sizeof e2, "{\"tof\":{\"%s\":150}}", look[i][0]);
+        snprintf(e1, sizeof e1, "{\"tof\":{\"%s\":800}}", look[i][0]); /* floor beyond an edge: longer than 524 + 60 mm */
+        snprintf(e2, sizeof e2, "{\"tof\":{\"%s\":524}}", look[i][0]);
         double x0 = t->sim.x, vmin_seen = 1.0;
         th_env(t, e1);
         bool reduced = false;
@@ -312,23 +312,66 @@ static void test_protective_reasons(void)
         }
         CHECK(reduced);
         expect_pstop(t, look[i][1]);
-        printf("  SIMULATED: floor lost on %s at 0.20 m/s -> stopped after %.1f mm (edge assumed %.0f mm ahead)\n", look[i][0], (t->sim.x - x0) * 1000.0, 120.0);
-        CHECK(t->sim.x - x0 < 0.120);
+        printf("  SIMULATED: floor lost on %s at 0.20 m/s -> stopped after %.1f mm (edge assumed %.0f mm ahead)\n", look[i][0], (t->sim.x - x0) * 1000.0, 285.0);
+        CHECK(t->sim.x - x0 < 0.285); /* look.fwd_ahead_m: floor intersection beyond the leading rail */
         clear_pstop(t, look[i][1], e2, true);
+    }
+    SECTION("IB-34: the tail pair guards reverse (LOOKAHEAD_L/R = left/right sensor of the pair in the direction of travel)");
+    static const char *const rlook[2][2] = {{"LOOK_RL", "LOOKAHEAD_L"}, {"LOOK_RR", "LOOKAHEAD_R"}};
+    for (int i = 0; i < 2; i++) {
+        th_t *t = armed(235 + i);
+        moving(t, -0.05, 0.0);
+        char e1[64], e2[64];
+        snprintf(e1, sizeof e1, "{\"tof\":{\"%s\":null}}", rlook[i][0]); /* nothing behind the tail edge */
+        snprintf(e2, sizeof e2, "{\"tof\":{\"%s\":267}}", rlook[i][0]);
+        double x0 = t->sim.x;
+        th_env(t, e1);
+        for (int k = 0; k < 400 && !t->sim.core.sw_latched; k++) {
+            (void)th_drive(t, -0.05, 0, 200, OPM);
+            th_run_silent(t, 19);
+        }
+        expect_pstop(t, rlook[i][1]);
+        printf("  SIMULATED: floor lost behind the tail on %s at -0.05 m/s -> stopped after %.1f mm (edge 201 mm behind the 0.290 m radius)\n", rlook[i][0], (x0 - t->sim.x) * 1000.0);
+        CHECK(x0 - t->sim.x < 0.201);
+        clear_pstop(t, rlook[i][1], e2, true);
+    }
+    SECTION("IB-34: a look pair not in the direction of travel does not stop the robot but is supervised and inhibits its own direction");
+    {
+        th_t *t = armed(237);
+        moving(t, 0.10, 0.0);
+        th_env(t, "{\"tof_stale\":[\"LOOK_RR\"],\"tof\":{\"LOOK_RL\":null}}");
+        th_drive_for(t, 0.10, 0, 600, OPM);
+        CHECK(th_mode(t, "MOVING") && !t->sim.core.sw_latched);
+        CHECK(diag_has(t, "sw_active", "TOF_STALE") && diag_has(t, "sw_active", "LOOKAHEAD_L"));
+        CHECK(th_req(t, "STATE", "{}") && th_is(t, "tof.7.id", "LOOK_FR") && th_is(t, "tof.6.id", "LOOK_RR") && th_is(t, "tof.6.status", "STALE"));
+        CHECK(th_drive(t, 0.10, 0, 200, OPM) && !th_true(t, "allow.rev") && th_true(t, "allow.fwd"));
+        th_drive_for(t, 0, 0, 1500, OPM);
+        CHECK(th_mode(t, "ARMED_IDLE"));
+        CHECK(!th_drive(t, -0.05, 0, 200, OPM) && th_is(t, "reject_reason", "DIR_INHIBITED"));
+        th_env(t, "{\"tof_stale\":[],\"tof\":{\"LOOK_RL\":267}}");
+        th_run(t, 300);
+        CHECK(th_drive(t, -0.05, 0, 200, OPM));
+
+        t = armed(238); /* and the other way round: reversing with the forward pair blind */
+        moving(t, -0.05, 0.0);
+        th_env(t, "{\"tof\":{\"LOOK_FL\":\"INVALID\",\"LOOK_FR\":900}}");
+        th_drive_for(t, -0.05, 0, 600, OPM);
+        CHECK(th_mode(t, "MOVING") && !t->sim.core.sw_latched);
+        CHECK(diag_has(t, "sw_active", "LOOKAHEAD_L") && diag_has(t, "sw_active", "LOOKAHEAD_R")); /* supervised; caps forward when it is used */
     }
     SECTION("look-ahead: obstacle (short reading) reduces speed without a stop when it disappears");
     {
         th_t *t = armed(232);
         moving(t, 0.20, 0.0);
-        th_env(t, "{\"tof\":{\"LOOK_LI\":100,\"LOOK_LO\":105}}");
+        th_env(t, "{\"tof\":{\"LOOK_FR\":290,\"LOOK_FL\":295}}"); /* something 64 mm beyond the rail */
         th_drive_for(t, 0.20, 0, 400, OPM);
         CHECK(th_drive(t, 0.20, 0, 200, OPM) && th_num(t, "v_cap_mps") < 0.19 && th_num(t, "v_cap_mps") > 0.0);
         CHECK(t->sim.v < 0.19);
-        th_env(t, "{\"tof\":{\"LOOK_LI\":150,\"LOOK_LO\":150}}");
+        th_env(t, "{\"tof\":{\"LOOK_FR\":524,\"LOOK_FL\":524}}");
         th_drive_for(t, 0.20, 0, 1500, OPM);
         CHECK(th_mode(t, "MOVING") && fabs(t->sim.v - 0.20) < 0.01);
     }
-    SECTION("FIELD_REAR while reversing; TOF_STALE and TOF_DISAGREE while driving forward");
+    SECTION("FIELD_REAR while reversing; TOF_STALE and TOF_DISAGREE (blocked cliff window) while driving forward");
     {
         th_t *t = armed(240);
         moving(t, -0.05, 0.0);
@@ -340,7 +383,7 @@ static void test_protective_reasons(void)
         t = armed(241);
         moving(t, 0.10, 0.0);
         uint64_t t0 = t->sim.t_us;
-        th_env(t, "{\"tof_stale\":[\"LOOK_RI\"]}");
+        th_env(t, "{\"tof_stale\":[\"LOOK_FR\"]}");
         int ms = 0;
         for (; ms < 400 && !t->sim.core.sw_latched; ms += 20) {
             (void)th_drive(t, 0.10, 0, 200, OPM);
@@ -350,12 +393,13 @@ static void test_protective_reasons(void)
         expect_pstop(t, "TOF_STALE");
         clear_pstop(t, "TOF_STALE", "{\"tof_stale\":[]}", true);
 
+        /* IB-34: the partners of a look pair watch floor spots that do not overlap (frames.yaml: 0.29 m apart
+         * against ~0.17 m spots), so two different but individually nominal readings are not a disagreement */
         t = armed(242);
         moving(t, 0.10, 0.0);
-        th_env(t, "{\"tof\":{\"LOOK_LO\":186,\"LOOK_LI\":114}}");
-        th_drive_for(t, 0.10, 0, 500, OPM);
-        expect_pstop(t, "TOF_DISAGREE");
-        clear_pstop(t, "TOF_DISAGREE", "{\"tof\":{\"LOOK_LO\":150,\"LOOK_LI\":150}}", true);
+        th_env(t, "{\"tof\":{\"LOOK_FL\":475,\"LOOK_FR\":575}}");
+        th_drive_for(t, 0.10, 0, 600, OPM);
+        CHECK(th_mode(t, "MOVING") && !t->sim.core.sw_latched && !diag_has(t, "sw_active", "TOF_DISAGREE"));
 
         t = armed(243); /* blocked cliff window (reads ~0 mm) */
         moving(t, 0.10, 0.0);
@@ -503,7 +547,7 @@ static void test_protective_reasons(void)
         sim_host_write(&t->sim, (const uint8_t *)fr, fl);
         th_run_silent(t, 30);
         CHECK(!th_req(t, "STATE", "{}") && th_status(t, "BUSY"));
-        th_run_silent(t, 1500);
+        th_run_silent(t, 2600); /* VMOT bleed tau 0.8 s: the test needs about 2.1 s */
         uint8_t sink[4096];
         while (sim_host_read(&t->sim, sink, sizeof sink) > 0) {
         }
@@ -867,7 +911,9 @@ static void test_reset_and_aux(void)
     th_run(t, 400);
     t->max_reply_len = 0;
     CHECK(th_req(t, "STATE", "{}"));
-    CHECK(th_is(t, "mode", "HW_INHIBIT") && th_len(t, "hw_inhibit_reasons") >= 7);
+    /* node semantics: everything behind the open selector is UNKNOWN, not a reason; MODE_NOT_RUN, ESTOP (pole B),
+     * HEAD_LOOP_OPEN (comparator) and MCU_NOT_READY (presence FAULT) remain */
+    CHECK(th_is(t, "mode", "HW_INHIBIT") && th_len(t, "hw_inhibit_reasons") >= 4);
     printf("  worst-case STATE record observed: %zu bytes (limit %u)\n", t->max_reply_len, RRCH_RECORD_MAX);
     CHECK(t->max_reply_len <= RRCH_RECORD_MAX);
     /* absolute worst case: every reason and flag set at once (forced directly; not reachable in practice) */

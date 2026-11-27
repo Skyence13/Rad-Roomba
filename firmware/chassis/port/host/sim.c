@@ -23,35 +23,58 @@ static uint64_t h_now(void *ctx)
     return ((sim_t *)ctx)->t_us - ((sim_t *)ctx)->boot_us;
 }
 
-static bool chain_inputs_ok(const sim_t *s)
+/* Chain node voltages (live/dead) from the element states. A node shorted to a live conductor
+ * (fault injection) is live whatever its upstream. */
+static void chain_nodes(sim_t *s)
 {
     bool loop_ok = s->loop_ohm >= 600.0 && s->loop_ohm <= 1600.0;
     bool lab_n = !(s->pres_ohm >= 900.0 && s->pres_ohm <= 2500.0);
-    return s->mode_run && !s->estop && !s->hands_on && !s->chg_cover_open && !s->chg_plug && s->head_docked && loop_ok && lab_n && !s->bumper_l &&
-           !s->bumper_r && s->wdg_ok && s->core.out.arm_permit;
+    bool e[SIM_NODES] = {false};
+    e[SIM_N1] = s->mode_run;
+    e[SIM_N2] = !s->estop || s->estop_a_stuck;
+    e[SIM_N3] = !s->hands_on;
+    e[SIM_N4A] = !s->chg_cover_open;
+    e[SIM_N4] = !s->chg_plug;
+    e[SIM_N5] = s->head_docked;
+    e[SIM_N6] = loop_ok;
+    e[SIM_N7] = lab_n;
+    e[SIM_N8A] = !s->bumper_l;
+    e[SIM_N8] = !s->bumper_r;
+    e[SIM_N9] = s->wdg_ok;
+    e[SIM_NEND] = (s->core.out.arm_permit || s->permit_short) && !s->permit_open;
+    bool up = true; /* CH_N0: VBAT_SW through the chain PTC */
+    for (int k = SIM_N1; k < SIM_NODES; k++) {
+        up = (up && e[k]) || s->chain_short == k;
+        s->node[k] = up;
+    }
+    s->pole_b = !s->estop;
 }
 
 static void h_read(void *ctx, rrch_in_t *in)
 {
     sim_t *s = ctx;
     uint32_t di = 0;
+    chain_nodes(s);
     bool loop_ok = s->loop_ohm >= 600.0 && s->loop_ohm <= 1600.0;
+    /* BRAKE_x_RB: OR over both poles, valid only with the bridges asleep; during PWM / braking the
+     * bridge outputs toggle and the comparators read garbage (CCR-E03 e) */
+    bool asleep = !(s->core.out.bridge_awake && s->latch);
 #define SET(n, v) if (v) { di |= RRCH_DI(n); }
-    SET(MODE_RUN, s->mode_run)
-    SET(ESTOP_A, !s->estop || s->estop_a_stuck)
-    SET(ESTOP_B, !s->estop)
-    SET(HANDS_ON, !s->hands_on)
-    SET(CHG_COVER, !s->chg_cover_open)
-    SET(CHG_PLUG_LINK, !s->chg_plug)
-    SET(HEAD_DOCK, s->head_docked)
+    SET(MODE_RUN, s->node[SIM_N1])
+    SET(ESTOP_A, s->node[SIM_N2])
+    SET(ESTOP_B, s->pole_b)
+    SET(HANDS_ON, s->node[SIM_N3])
+    SET(CHG_COVER, s->node[SIM_N4A])
+    SET(CHG_PLUG_LINK, s->node[SIM_N4])
+    SET(HEAD_DOCK, s->node[SIM_N5])
     SET(HEAD_LOOP_OK, loop_ok)
     SET(HEAD_LOOP_SHORT, s->loop_ohm < 600.0)
     SET(LAB_KEY_N, !(s->pres_ohm >= 900.0 && s->pres_ohm <= 2500.0))
-    SET(BODY_BUMPER_L, !s->bumper_l)
-    SET(BODY_BUMPER_R, !s->bumper_r)
-    SET(WDG_OK, s->wdg_ok)
-    SET(BRAKE_L, s->relay[0])
-    SET(BRAKE_R, s->relay[1])
+    SET(BODY_BUMPER_L, s->node[SIM_N8A])
+    SET(BODY_BUMPER_R, s->node[SIM_N8])
+    SET(WDG_OK, s->node[SIM_N9])
+    SET(BRAKE_L, asleep ? s->rstate[0] == 1 : rnd(s) > 0.0)
+    SET(BRAKE_R, asleep ? s->rstate[1] == 1 : rnd(s) > 0.0)
     SET(HW_LATCH, s->latch)
     SET(J2_PRES, s->j2)
     SET(BTN_REARM, s->rearm_ms > 0)
@@ -68,7 +91,8 @@ static void h_read(void *ctx, rrch_in_t *in)
     in->v5_v = (float)(5.10 + 0.01 * rnd(s));
     for (int k = 0; k < 2; k++) {
         bool connected = s->latch && s->relay[k] && s->core.out.bridge_awake;
-        in->i_mot_a[k] = (float)(connected ? fabs(s->i[k]) + 0.01 * fabs(rnd(s)) : 0.005 * fabs(rnd(s)));
+        double ia = connected ? fabs(s->i[k]) + 0.01 * fabs(rnd(s)) : 0.005 * fabs(rnd(s));
+        in->i_mot_a[k] = (float)(ia > s->p.ipropi_fs_a ? s->p.ipropi_fs_a : ia); /* IPROPI saturates at VREF+ */
         in->enc[k] = s->enc_raw[k];
         in->ntc_c[k] = (float)s->temp[k];
     }
@@ -191,11 +215,54 @@ void sim_mcu_reset(sim_t *s, rrch_reset_cause_t cause)
     core_boot(s);
 }
 
+/* IB-03 / IB-24: plant constants from electronics/analysis/chassis_braking.py (Pololu #2828 37D 150:1,
+ * 104 mm wheel, 12 kg). Ground-referred values there are converted to the wheel shaft with r = 0.052 m:
+ *   R      = 12 V / 5.5 A = 2.18 ohm                         R_M
+ *   Ke     = 31.7 V per m/s x r = 1.648 V s/rad              KE
+ *   Kt     nominal = power-balance constant = Ke             KF_IDEAL (31.7 N/A)
+ *          conservative = catalogue stall constant 17.4 N/A  KF_DRIVE
+ *   J      rotor 1e-6 (nominal) / 2e-6 (conservative) kg m2 x 150^2 = 8.3 / 16.6 kg reflected per motor
+ *   friction 3.5 N rolling + 2 x 0.2 A x 31.7 = 16.2 N total (nominal); none (conservative)
+ *   brake loop R + 1.0 ohm resistor + 0.04 ohm contacts/leads = 3.22 ohm
+ * Inductance 2.3 mH is an assumption of this emulator (circuit_description.md assumes 2.5 mH). */
+static void params_common(sim_params_t *p)
+{
+    const double r = 0.052, v_nl = 67.0 / 60.0 * 2.0 * 3.141592653589793 * r;
+    p->r = r;
+    p->R = 12.0 / 5.5;
+    p->Ke = (12.0 - 0.2 * p->R) / v_nl * r;
+    p->L = 2.3e-3;
+    p->mass = 12.0;
+    p->Iz = 0.30;
+    p->track = 0.270; /* Rev E body (contract frames.wheel) */
+    p->R_brake = 1.0;
+    p->R_path = 0.04;
+    p->b_visc = 0.0;
+    p->i_trip = 2.68;
+    p->ipropi_fs_a = 3.000 / 1.1205;
+}
+
+void sim_params_nominal(sim_params_t *p)
+{
+    params_common(p);
+    p->Kt = p->Ke;
+    p->J = 1.0e-6 * 150.0 * 150.0;
+    p->tau_c = (3.5 + 2.0 * 0.2 * p->Ke / p->r) * 0.5 * p->r;
+}
+
+void sim_params_conservative(sim_params_t *p)
+{
+    params_common(p);
+    p->Kt = 49.0 * 9.80665 / 100.0 / (5.5 - 0.2);
+    p->J = 2.0e-6 * 150.0 * 150.0;
+    p->tau_c = 0.0;
+}
+
 void sim_init(sim_t *s, uint64_t seed)
 {
     memset(s, 0, sizeof *s);
     s->rng = seed * 2654435761u + 0x9E3779B97F4A7C15ull;
-    s->p = (sim_params_t){.R = 2.2, .L = 2.3e-3, .Ke = 1.65, .Kt = 1.0, .J = 0.012, .mass = 12.0, .Iz = 0.30, .r = 0.052, .track = 0.270, /* Rev E body: track 270 mm (contract frames.wheel) */ .tau_c = 0.25, .b_visc = 0.02, .R_brake = 4.7};
+    sim_params_nominal(&s->p);
     s->mode_run = true;
     s->head_docked = true;
     s->j2 = true;
@@ -205,10 +272,12 @@ void sim_init(sim_t *s, uint64_t seed)
     s->soc = 80.0;
     s->temp[0] = s->temp[1] = 20.0;
     s->temp[2] = 25.0;
-    for (int k = 0; k < RRCH_TOF_N; k++) {
+    for (int k = 0; k < RRCH_TOF_N; k++) { /* nominal floor ranges (defaults of look.* / cliff from frames.yaml) */
         s->tof_mm[k] = k < 4 ? 30 : 150;
         s->tof_st[k] = k < 8 ? RRCH_TOF_ST_OK : RRCH_TOF_ST_NO_TARGET;
     }
+    s->tof_mm[RRCH_TOF_LOOK_FL] = s->tof_mm[RRCH_TOF_LOOK_FR] = 524;
+    s->tof_mm[RRCH_TOF_LOOK_RL] = s->tof_mm[RRCH_TOF_LOOK_RR] = 267;
     s->wdg_ok = true;
     s->wdg_arm_us = 300000u;
     s->reset_cause = RRCH_RST_POWER_ON;
@@ -221,35 +290,24 @@ static void plant_ms(sim_t *s)
     const sim_params_t *p = &s->p;
     const rrch_out_t *o = &s->core.out;
 
-    /* hardwired chain, latch relay, brake relays (work without the firmware) */
-    bool ok = chain_inputs_ok(s);
-    if (s->latch) {
-        if (!ok && !s->latch_weld) {
-            if (++s->latch_drop_ms >= 5) {
-                s->latch = false;
-            }
-        } else {
-            s->latch_drop_ms = 0;
-        }
-        s->latch_set_ms = 0;
-    } else {
+    /* hardwired chain, latch relay, brake relays (work without the firmware). Timing from
+     * chassis_braking_tables.md T2: K1 releases 4 ms after its coil supply goes [U]; the brake relay
+     * coils are fed from CHAIN_END through K1 pole B and lose supply at once; their NO contacts open
+     * at 7.5 ms and the NC contacts close on the brake resistor at 10.5 ms; VMOT eFuse off and bridges
+     * asleep 1 ms after K1 (RUN_12V). Pick-up: K1 10 ms of REARM, relays 8 ms. */
+    chain_nodes(s);
+    bool ok = s->node[SIM_NEND] && s->pole_b;
+    if (!s->latch) {
         if (ok && s->rearm_ms > 0) {
             if (++s->latch_set_ms >= 10) {
                 s->latch = true;
-                s->latch_drop_ms = 0;
+                s->k1_off_s = 0;
             }
         } else {
             s->latch_set_ms = 0;
         }
-    }
-    for (int k = 0; k < 2; k++) {
-        if (s->relay[k] != s->latch) {
-            if (++s->relay_ms[k] >= 8) {
-                s->relay[k] = s->latch;
-            }
-        } else {
-            s->relay_ms[k] = 0;
-        }
+    } else {
+        s->latch_set_ms = 0;
     }
     if (s->rearm_ms > 0) {
         s->rearm_ms--;
@@ -264,23 +322,67 @@ static void plant_ms(sim_t *s)
     double grav = -p->mass * 9.81 * sin(s->tilt_deg * 0.017453292519943295) * p->r / 2.0;
     double v0 = s->v;
     for (int n = 0; n < SUBSTEPS; n++) {
-        s->vmot += (s->latch ? (s->vbat - s->vmot) / 0.005 : -s->vmot / 0.040) * DT;
+        /* K1 and brake relays at 0.1 ms resolution */
+        bool coil = ok && s->latch; /* K2/K3 coils: CHAIN_END -> K1 pole B -> RUN_12V, return through E-stop pole B */
+        if (s->latch && !ok && !s->latch_weld) {
+            s->k1_off_s += DT;
+            if (s->k1_off_s >= 4.0e-3 - 1e-9) {
+                s->latch = false;
+            }
+        } else {
+            s->k1_off_s = 0;
+        }
+        for (int k = 0; k < 2; k++) {
+            if (coil) {
+                if (s->rstate[k] != 1) {
+                    s->relay_t_s[k] += DT;
+                    if (s->relay_t_s[k] >= 8.0e-3 - 1e-9) {
+                        s->rstate[k] = 1;
+                        s->relay_t_s[k] = 0;
+                    }
+                } else {
+                    s->relay_t_s[k] = 0;
+                }
+            } else if (s->rstate[k] != 0) {
+                s->relay_t_s[k] += DT;
+                if (s->relay_t_s[k] >= 10.5e-3 - 1e-9) {
+                    s->rstate[k] = 0;
+                    s->relay_t_s[k] = 0;
+                } else if (s->relay_t_s[k] >= 7.5e-3 - 1e-9) {
+                    s->rstate[k] = 2;
+                }
+            } else {
+                s->relay_t_s[k] = 0;
+            }
+            s->relay[k] = s->rstate[k] == 1;
+        }
+        /* VMOT: eFuse on with RUN_12V (soft start ~5 ms); off: 1 kOhm bleed on 810 uF (tau 0.81 s) */
+        s->vmot += (s->latch ? (s->vbat - s->vmot) / 0.005 : -s->vmot / 0.81) * DT;
+        bool awake = s->latch && o->bridge_awake; /* U9: nSLEEP = DRV_NSLEEP AND RUN_12V */
         double tau[2];
         for (int k = 0; k < 2; k++) {
             double di;
-            if (s->latch && s->relay[k]) {
-                if (o->bridge_awake) {
+            if (s->rstate[k] == 1) {
+                if (awake) {
                     double d = o->duty[k] > 1.0f ? 1.0 : (o->duty[k] < -1.0f ? -1.0 : (double)o->duty[k]);
+                    /* hardware current chop (DRV8874 ITRIP from VREF+ and RIPROPI, 2.68 A): slow decay
+                     * while the current is at the trip level and the drive would raise it */
+                    if (fabs(s->i[k]) >= p->i_trip && d * s->vmot * s->i[k] > 0.0) {
+                        d = 0.0;
+                    }
                     di = (d * s->vmot - p->R * s->i[k] - p->Ke * s->w[k]) / p->L;
                 } else {
-                    di = -s->i[k] / 2e-4; /* bridge asleep: outputs high-Z, current dies */
+                    di = -s->i[k] / 2e-4; /* bridge asleep: outputs high-Z, back-EMF below VMOT, current dies */
                 }
-            } else if (!s->relay[k]) {
-                di = (-(p->R + p->R_brake) * s->i[k] - p->Ke * s->w[k]) / p->L; /* across the brake resistor */
+            } else if (s->rstate[k] == 0) {
+                di = (-(p->R + p->R_brake + p->R_path) * s->i[k] - p->Ke * s->w[k]) / p->L; /* across the brake resistor */
             } else {
-                di = -s->i[k] / 2e-4;
+                di = -s->i[k] / 2e-4; /* both contacts open */
             }
             s->i[k] += di * DT;
+            if (s->rstate[k] == 1 && awake && fabs(s->i[k]) > p->i_trip) {
+                s->i[k] = s->i[k] > 0.0 ? p->i_trip : -p->i_trip; /* chop: the trip level is not exceeded */
+            }
             double sat = s->w[k] / 0.02;
             sat = sat > 1.0 ? 1.0 : (sat < -1.0 ? -1.0 : sat);
             tau[k] = p->Kt * s->i[k] - p->tau_c * sat - p->b_visc * s->w[k] + grav;
@@ -310,6 +412,9 @@ static void plant_ms(sim_t *s)
     }
 
     /* external window watchdog */
+    if (s->plant_only) {
+        return;
+    }
     if (s->wdg_ok && s->t_us > s->wdg_arm_us && s->t_us - s->last_strobe_us > 35000u) {
         s->wdg_ok = false;
     }
@@ -330,6 +435,13 @@ void sim_step_ms(sim_t *s)
             rrch_tof_update(&s->core, k, r, s->tof_st[k], s->t_us - s->boot_us);
         }
     }
+    if (s->plant_only) {
+        return;
+    }
+    if (ms % 10u == 0u) { /* IOX_B input P17 = CHAIN_END_RB, read over I2C by the background loop */
+        chain_nodes(s);
+        rrch_iox_b_update(&s->core, !s->iox_b_fail, s->node[SIM_NEND], s->t_us - s->boot_us);
+    }
     if (ms % 100u == 0u) {
         rrch_power_t pw = {0};
         pw.pmon_ok = pw.charger_ok = pw.tof_bus_ok = true;
@@ -341,6 +453,8 @@ void sim_step_ms(sim_t *s)
         pw.i_head_htr_a = s->core.out.head_htr_en ? 1.2f : 0.0f;
         pw.i_chs_htr_a = s->core.out.chs_htr_on ? 2.0f : 0.0f;
         pw.efuse_fault = s->efuse_fault;
+        pw.chg_input = s->chg_plug; /* a fitted plug carries the 24 V inlet in this model */
+        pw.vbat_pmon_v = (float)s->vbat;
         rrch_power_update(&s->core, &pw);
     }
     if (!s->freeze_control) {
@@ -443,11 +557,20 @@ bool sim_env_apply(sim_t *s, const char *json, size_t len)
     B("head_docked", head_docked) B("bumper_l", bumper_l) B("bumper_r", bumper_r) B("j2", j2)
     B("usb_stall", usb_stall) B("usb_down", usb_down) B("imu_off", imu_off) B("iox_fail", iox_fail) B("latch_weld", latch_weld)
     B("estop_a_stuck", estop_a_stuck) B("freeze_control", freeze_control) B("freeze_supervisor", freeze_supervisor)
-    B("freeze_background", freeze_background) B("nv_fail", nv_fail)
+    B("freeze_background", freeze_background) B("nv_fail", nv_fail) B("iox_b_fail", iox_b_fail) B("permit_short", permit_short) B("permit_open", permit_open)
     N("pres_ohm", pres_ohm) N("loop_ohm", loop_ohm) N("vbat", vbat) N("soc", soc) N("temp_bay", temp[0]) N("temp_pack", temp[1])
     N("temp_board", temp[2]) N("tilt_deg", tilt_deg)
 #undef B
 #undef N
+    if ((t = rrc_json_get(&d, 0, "chain_short")) >= 0) { /* "CH_N1".."CH_N9", "CH_N4A", "CH_N8A", "CHAIN_END", "NONE" */
+        static const char *const nn[SIM_NODES] = {"NONE", "CH_N1", "CH_N2", "CH_N3", "CH_N4A", "CH_N4", "CH_N5", "CH_N6", "CH_N7", "CH_N8A", "CH_N8", "CH_N9", "CHAIN_END"};
+        s->chain_short = 0;
+        for (int k = 1; k < SIM_NODES; k++) {
+            if (rrc_json_str_eq(&d, t, nn[k])) {
+                s->chain_short = k;
+            }
+        }
+    }
     if ((t = rrc_json_get(&d, 0, "efuse_fault")) >= 0 && num(&d, t, &v)) {
         s->efuse_fault = (uint8_t)v;
     }

@@ -126,7 +126,8 @@ class Handshake(SimCase):
         for lane, y_mm in zip(desc["segments"], opt["segment_center_y_mm"]):
             cx = (opt["row_center_x_mm"] - mount[0]) / 1000
             cz = (opt["entrance_film_z_mm"] - mount[2]) / 1000
-            self.assertEqual(lane["center_m"], [cx, y_mm / 1000, cz])
+            for got, want in zip(lane["center_m"], [cx, y_mm / 1000, cz]):
+                self.assertAlmostEqual(got, want, places=9)   # (131.2 - 65.7) / 1000 is not exact in binary floating point
             xs = sorted({p[0] for p in lane["sensitive_polygon_m"]})
             ys = sorted({p[1] for p in lane["sensitive_polygon_m"]})
             self.assertAlmostEqual(xs[1] - xs[0], opt["active_x_mm"] / 1000, places=9)
@@ -266,8 +267,9 @@ class Acquisition(SimCase):
                 for ch in READOUTS:
                     self.assertTrue(1 <= seg[ch]["live_us"] <= f["span_us"])
                 # non-paralyzable model: live = span - tau * recorded events (10 us per event on both chains)
+                # and, on the floor chain, the 150 us afterglow hold (setup default) after every alpha event
                 floor_events = tl["alpha"] + tl["beta"] + tl["floor_reject"]
-                self.assertEqual(tl["floor_live_ticks"], 14400000 - floor_events * 1440)
+                self.assertEqual(tl["floor_live_ticks"], 14400000 - floor_events * 1440 - tl["alpha"] * 150 * 144)
                 self.assertEqual(tl["ref_live_ticks"], 14400000 - (tl["ref"] + tl["ref_reject"]) * 1440)
                 sums["alpha"][seg["id"]] += seg["alpha"]["counts"]
                 sums["beta"][seg["id"]] += seg["beta_window"]["counts"]

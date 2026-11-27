@@ -154,6 +154,57 @@ static void odometry(double v, double w, int ms, double slip_l, const char *labe
     }
 }
 
+/* IB-03: latch drop (E-stop) on the plant alone, firmware not stepped, bridges driving the steady-state duty
+ * until K1 releases. Two parameter sets from electronics/analysis/chassis_braking.py. Distance from the moment
+ * the chain opens to rest. Reference: the same script's brake() + 10.5 ms dead time (chassis_braking_tables.md T3;
+ * the 0.30 m/s value is computed with brake() because T3 stops at 0.20 m/s). */
+static void latch_drop_study(void)
+{
+    static const double v0s[3] = {0.10, 0.20, 0.30};
+    static const double ref[2][3] = {{3.76, 8.71, 13.91}, {14.25, 28.50, 42.75}};
+    static const char *const nm[2] = {"nominal", "conservative"};
+    rep("latch drop (E-stop) on the plant, distance from chain opening to rest [SIMULATED] vs electronics chassis_braking.py [calculated]:\n");
+    for (int c = 0; c < 2; c++) {
+        for (int k = 0; k < 3; k++) {
+            th_t *t = th_new(51);
+            sim_t *s = &t->sim;
+            th_run_silent(t, 50);
+            s->plant_only = true;
+            if (c == 0) {
+                sim_params_nominal(&s->p);
+            } else {
+                sim_params_conservative(&s->p);
+            }
+            const sim_params_t *p = &s->p;
+            double w = v0s[k] / p->r, i_ss = p->tau_c / p->Kt;
+            s->latch = true;
+            s->vmot = s->vbat;
+            for (int j = 0; j < 2; j++) {
+                s->rstate[j] = 1;
+                s->relay[j] = true;
+                s->w[j] = w;
+                s->i[j] = i_ss;
+                s->core.out.duty[j] = (float)((p->Ke * w + p->R * i_ss) / s->vmot);
+            }
+            s->core.out.arm_permit = true;
+            s->core.out.bridge_awake = true;
+            th_run_silent(t, 30);
+            double v_start = s->v, x0 = s->x;
+            uint64_t t0 = s->t_us;
+            s->estop = true;
+            int ms = 0;
+            for (; ms < 4000 && s->v > 1e-5; ms++) {
+                th_run_silent(t, 1);
+            }
+            double d = (s->x - x0) * 1000.0, dev = (d - ref[c][k]) / ref[c][k] * 100.0;
+            rep("  %-12s v0 %.2f m/s (plant %.3f): %5.1f mm in %4.0f ms; electronics %5.1f mm; difference %+5.1f %%\n", nm[c], v0s[k], v_start, d,
+                (double)(s->t_us - t0) * 1e-3, ref[c][k], dev);
+            CHECK(fabs(v_start - v0s[k]) < 0.003);
+            CHECK(fabs(dev) < 10.0);
+        }
+    }
+}
+
 int main(int argc, char **argv)
 {
     if (argc > 1) {
@@ -182,6 +233,9 @@ int main(int argc, char **argv)
     (void)d_zero;
     (void)d_to;
     (void)d_bu;
+
+    SECTION("latch-drop stop distances, nominal and conservative electronics brake model (IB-03)");
+    latch_drop_study();
 
     SECTION("odometry consistency");
     odometry(0.20, 0.0, 5000, 0.0, "straight 0.20 m/s");

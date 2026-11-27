@@ -166,6 +166,159 @@ int main(void)
         }
     }
 
+    SECTION("IB-02 node semantics: elements behind an open one are UNKNOWN, not open; no false discrepancy");
+    {
+        th_t *t = th_new(20);
+        th_run_silent(t, 400);
+        uint32_t s0 = t->sim.core.ev_newest;
+        t->sim.mode_run = false; /* selector in SERVICE: CH_N1..CHAIN_END all dead */
+        th_run_silent(t, 400);
+        const rrch_chain_t *ch = &t->sim.core.chain;
+        CHECK(ch->hw_live == RRCH_HW(MODE_NOT_RUN) || ch->hw_live == (RRCH_HW(MODE_NOT_RUN) | RRCH_HW(MCU_NOT_READY)));
+        CHECK(ch->el[RRCH_EL_MODE_RUN] == RRCH_ELS_OPEN && ch->el[RRCH_EL_ESTOP] == RRCH_ELS_UNKNOWN && ch->el[RRCH_EL_HANDS_ON] == RRCH_ELS_UNKNOWN);
+        CHECK(ch->el[RRCH_EL_CHG_COVER] == RRCH_ELS_UNKNOWN && ch->el[RRCH_EL_BODY_BUMPER] == RRCH_ELS_UNKNOWN && ch->el[RRCH_EL_WDG_OK] == RRCH_ELS_UNKNOWN);
+        CHECK(ch->el[RRCH_EL_ARM_PERMIT] == RRCH_ELS_UNKNOWN && ch->el[RRCH_EL_HEAD_LOOP] == RRCH_ELS_CLOSED);
+        CHECK(!(t->sim.core.faults & RRCH_FLT(ESTOP_DISCREPANCY)) && t->sim.core.mode == RRCH_MODE_HW_INHIBIT);
+        CHECK(count_ev(t, s0, RRCH_EV_CHAIN, RRCH_DII_MODE_RUN, 0) == 1 && count_ev(t, s0, RRCH_EV_CHAIN, -1, -1) == 1); /* only the selector */
+        CHECK(th_req(t, "DIAG", "{}") && th_is(t, "chain_state.MODE_RUN", "OPEN") && th_is(t, "chain_state.HANDS_ON", "UNKNOWN") && th_is(t, "chain_state.HEAD_LOOP", "CLOSED"));
+        CHECK(th_req(t, "STATE", "{}") && !th_true(t, "chain.HANDS_ON") && th_true(t, "chain.HEAD_LOOP") && !th_true(t, "rearm_ready"));
+        /* E-stop pressed while in SERVICE: pole B is read independently, so ESTOP is known open */
+        t->sim.estop = true;
+        th_run_silent(t, 300);
+        CHECK(ch->el[RRCH_EL_ESTOP] == RRCH_ELS_OPEN && (ch->hw_live & RRCH_HW(ESTOP)) && !(t->sim.core.faults & RRCH_FLT(ESTOP_DISCREPANCY)));
+        /* hands-on pressed behind the E-stop: unknown, and becomes a known cause (with its event) once the E-stop is released */
+        t->sim.mode_run = true;
+        t->sim.hands_on = true;
+        th_run_silent(t, 300);
+        CHECK(ch->el[RRCH_EL_HANDS_ON] == RRCH_ELS_UNKNOWN && !(ch->hw_live & RRCH_HW(HANDS_ON)));
+        s0 = t->sim.core.ev_newest;
+        t->sim.estop = false;
+        th_run_silent(t, 300);
+        CHECK(ch->el[RRCH_EL_HANDS_ON] == RRCH_ELS_OPEN && (ch->hw_live & RRCH_HW(HANDS_ON)) && count_ev(t, s0, RRCH_EV_CHAIN, RRCH_DII_HANDS_ON, 0) == 1);
+        CHECK(count_ev(t, s0, RRCH_EV_CHAIN, RRCH_DII_CHG_COVER, -1) == 0 && count_ev(t, s0, RRCH_EV_CHAIN, RRCH_DII_WDG_OK, -1) == 0);
+        /* body bumper behind an open head loop: unknown (CH_N6/N7 have no readback, inferred from the comparators) */
+        t->sim.hands_on = false;
+        t->sim.loop_ohm = 1e9;
+        t->sim.bumper_r = true;
+        th_run_silent(t, 300);
+        CHECK(ch->el[RRCH_EL_BODY_BUMPER] == RRCH_ELS_UNKNOWN && !(ch->hw_live & RRCH_HW(BODY_BUMPER)) && (ch->hw_live & RRCH_HW(HEAD_LOOP_OPEN)));
+        t->sim.loop_ohm = 1000.0;
+        th_run_silent(t, 300);
+        CHECK(ch->el[RRCH_EL_BODY_BUMPER] == RRCH_ELS_OPEN && (ch->hw_live & RRCH_HW(BODY_BUMPER)));
+        CHECK(!(t->sim.core.faults & RRCH_FLT_FATAL_MASK));
+    }
+
+    SECTION("IB-02: charger seen through its own telemetry while the cover/plug nodes are dead (selector in SERVICE)");
+    {
+        th_t *t = th_new(21);
+        th_run_silent(t, 400);
+        th_env(t, "{\"mode_run\":false,\"chg_plug\":true}");
+        th_run_silent(t, 400);
+        CHECK(t->sim.core.chain.el[RRCH_EL_CHG_COVER] == RRCH_ELS_UNKNOWN && t->sim.core.mode == RRCH_MODE_SERVICE_CHARGE);
+    }
+
+    SECTION("IB-02: a node live behind a dead node (harness short, shorted photo-MOS) is a FAULT");
+    {
+        static const char *const env[3] = {"{\"hands_on\":true,\"chain_short\":\"CH_N4A\"}", "{\"loop_ohm\":1e9,\"chain_short\":\"CH_N6\"}", "{\"bumper_l\":true,\"chain_short\":\"CH_N8\"}"};
+        for (int k = 0; k < 3; k++) {
+            th_t *t = th_new(22 + (uint64_t)k);
+            th_run_silent(t, 400);
+            th_env(t, env[k]);
+            th_run_silent(t, 15);
+            CHECK(!(t->sim.core.faults & RRCH_FLT(CHAIN_IMPLAUSIBLE))); /* 20 ms filter for the tap RC and photo-MOS delays */
+            th_run_silent(t, 30);
+            CHECK((t->sim.core.faults & RRCH_FLT(CHAIN_IMPLAUSIBLE)) && t->sim.core.mode == RRCH_MODE_FAULT && !t->sim.core.out.arm_permit);
+        }
+        /* opening and closing elements in normal use never trips it */
+        th_t *t = th_new(25);
+        th_run_silent(t, 400);
+        const char *seq[6] = {"{\"estop\":true}", "{\"estop\":false}", "{\"bumper_l\":true}", "{\"bumper_l\":false}", "{\"mode_run\":false}", "{\"mode_run\":true}"};
+        for (int k = 0; k < 6; k++) {
+            th_env(t, seq[k]);
+            th_run_silent(t, k % 2 ? 7 : 120);
+        }
+        th_run_silent(t, 300);
+        CHECK(!(t->sim.core.faults & RRCH_FLT_FATAL_MASK) && t->sim.core.mode == RRCH_MODE_HW_INHIBIT);
+    }
+
+    SECTION("IB-01: CHAIN_END_RB (IOX_B P17) is the readback of ARM_PERMIT");
+    {
+        th_t *t = th_new(30);
+        th_run_silent(t, 400);
+        CHECK(t->sim.core.out.arm_permit && t->sim.core.chain.chain_end && t->sim.core.chain.el[RRCH_EL_ARM_PERMIT] == RRCH_ELS_CLOSED);
+        CHECK(th_req(t, "DIAG", "{}") && th_true(t, "chain_end") && th_is(t, "chain_state.ARM_PERMIT", "CLOSED"));
+        /* stuck high (U24 shorted / PB10 stuck): seen at boot while ARM_PERMIT is low -> FAULT, strobe withheld,
+         * the watchdog opens the chain at WDG_OK and resets the MCU (JP1) */
+        t = th_new(31);
+        t->sim.permit_short = true;
+        th_run_silent(t, 150);
+        CHECK((t->sim.core.faults & RRCH_FLT(PERMIT_STUCK_ON)) && t->sim.core.mode == RRCH_MODE_FAULT);
+        uint32_t n0 = t->sim.n_strobes;
+        th_run_silent(t, 20);
+        CHECK(t->sim.n_strobes == n0);
+        th_run_silent(t, 500);
+        CHECK(t->sim.n_resets >= 1u);
+        t->sim.rearm_ms = 200; /* the latch cannot be set */
+        th_run_silent(t, 30);
+        CHECK(!t->sim.latch);
+        /* the same fault appearing later is caught at the next ARM_PERMIT low (here a brake test) */
+        t = th_new(32);
+        CHECK(th_arm(t, "COMMISSIONING"));
+        t->sim.permit_short = true;
+        th_run(t, 200);
+        CHECK(!(t->sim.core.faults & RRCH_FLT(PERMIT_STUCK_ON)));
+        (void)th_req(t, "BRAKE_TEST", "{}"); /* the latch cannot drop through ARM_PERMIT: the watchdog drops it */
+        CHECK(!t->sim.latch && (t->sim.n_resets >= 1u || (t->sim.core.faults & RRCH_FLT(PERMIT_STUCK_ON))));
+        th_run_silent(t, 100);
+        CHECK(t->sim.core.faults & RRCH_FLT(PERMIT_STUCK_ON)); /* again at the next boot */
+        /* stuck open (fails safe): permit commanded, CH_N9 live, CHAIN_END dead -> warning, MCU_NOT_READY, no re-arm */
+        t = th_new(33);
+        th_run_silent(t, 400);
+        t->sim.permit_open = true;
+        th_run_silent(t, 100);
+        CHECK((t->sim.core.faults & RRCH_FLT(PERMIT_STUCK_OFF)) && (t->sim.core.chain.hw_live & RRCH_HW(MCU_NOT_READY)));
+        CHECK(t->sim.core.chain.el[RRCH_EL_ARM_PERMIT] == RRCH_ELS_OPEN && !(t->sim.core.faults & RRCH_FLT_FATAL_MASK));
+        CHECK(th_req(t, "STATE", "{}") && !th_true(t, "rearm_ready") && !th_true(t, "chain.ARM_PERMIT"));
+        t->sim.permit_open = false;
+        th_run_silent(t, 100);
+        CHECK(!(t->sim.core.faults & RRCH_FLT(PERMIT_STUCK_OFF)));
+        /* a dead CH_N9 (watchdog) explains a dead CHAIN_END: no warning */
+        th_run_silent(t, 100);
+        /* IOX_B not readable: the permit is withheld (never closed unsupervised) */
+        t = th_new(34);
+        th_run_silent(t, 400);
+        t->sim.iox_b_fail = true;
+        th_run_silent(t, 150);
+        CHECK((t->sim.core.faults & RRCH_FLT(IOX_B)) && !t->sim.core.out.arm_permit && (t->sim.core.chain.hw_live & RRCH_HW(MCU_NOT_READY)));
+        t->sim.iox_b_fail = false;
+        th_run_silent(t, 50);
+        CHECK(!(t->sim.core.faults & RRCH_FLT(IOX_B)) && t->sim.core.out.arm_permit);
+    }
+
+    SECTION("IB-02: BRAKE_x_RB judged only with the bridges asleep; bridges wake only after both relays read back");
+    {
+        th_t *t = th_new(40);
+        th_run_silent(t, 300);
+        CHECK(th_req(t, "HELLO", "{}"));
+        t->sim.rearm_ms = 200;
+        bool woke_early = false;
+        for (int ms = 0; ms < 80; ms++) {
+            th_run_silent(t, 1);
+            if (t->sim.core.out.bridge_awake && !(t->sim.core.chain.state & RRCH_DI(BRAKE_L))) {
+                woke_early = true;
+            }
+        }
+        CHECK(t->sim.latch && !woke_early && t->sim.core.chain.relays_ok);
+        uint32_t s0 = t->sim.core.ev_newest;
+        th_run(t, 1000); /* armed, bridges awake (braking): the comparators read garbage */
+        CHECK(t->sim.core.out.bridge_awake && count_ev(t, s0, RRCH_EV_CHAIN, RRCH_DII_BRAKE_L, -1) == 0 && count_ev(t, s0, RRCH_EV_CHAIN, RRCH_DII_BRAKE_R, -1) == 0);
+        CHECK(!(t->sim.core.chain.hw_live & RRCH_HW(VMOT_FAULT)));
+        /* the latch drops: hardware sleeps the bridges, the readback becomes valid and must show "braked" */
+        t->sim.bumper_r = true;
+        th_run_silent(t, 30);
+        CHECK(!(t->sim.core.chain.state & (RRCH_DI(BRAKE_L) | RRCH_DI(BRAKE_R))) && count_ev(t, s0, RRCH_EV_CHAIN, RRCH_DII_BRAKE_L, 0) == 1);
+    }
+
     SECTION("stop model: v_cap is the inverse of the stopping distance");
     {
         rrch_cfg_t cfg;

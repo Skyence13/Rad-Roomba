@@ -209,6 +209,9 @@ bool th_arm(th_t *t, const char *op_mode)
         printf("  harness: brake test did not pass\n");
         return false;
     }
+    /* the test runs about 2.1 s (VMOT bleed tau 0.8 s, safety_chain.md 7.4): a host keeps polling
+     * meanwhile; one TIME keeps the link supervision alive here */
+    (void)th_req(t, "TIME", "{}");
     th_run(t, 100);
     th_env(t, "{\"press\":\"REARM\"}");
     th_run(t, 300);

@@ -142,6 +142,6 @@ uint32_t rrh_board_bias_limit_mv(void)
 
 /* Compile-time consistency of the derived constants. */
 _Static_assert(RRH_HV_FS_MV == 62500u, "bias full scale is 25 x 2.5 V");
-_Static_assert(RRH_BIAS_RAMP_STEP_MV == ((5000u * RRH_HV_GAIN_NUM / RRH_HV_GAIN_DEN) * RRH_CONTROL_PERIOD_US / 1000000u),
+_Static_assert(RRH_BIAS_RAMP_STEP_MV == ((5000uLL * RRH_HV_GAIN_NUM / RRH_HV_GAIN_DEN) * RRH_CONTROL_PERIOD_US / 1000000u),
                "bias ramp step = 5 V/s at HV_SET x 25 per control period");
 _Static_assert(RRH_IMON_SETTLE_US == (10u * RRH_R108_OHM * RRH_C2704_NF / 1000u), "10 time constants of R108 x C2704");

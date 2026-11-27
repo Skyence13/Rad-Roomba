@@ -79,15 +79,15 @@ Parts added (5): battery_tunnel, floor_plug, hatch_frame, coupler_fixed, chassis
 
 **Check before the next stage:** An empty cassette slides in and out with no binding; key rib reversed = blocked at the gate; coupler halves mate by hand.
 
-## Stage 5: grip feet and side plates, bridge posts, tray, RR-CHS-MAIN, CM5 tray, clamp resistor
+## Stage 5: grip feet and side plates, bridge posts, tray, RR-CHS-MAIN, CM5 tray
 
 ![05_bridge_grip](img/step_05_bridge_grip.png)
 
-Parts added (19): grip_side_plate_L, grip_foot_L, grip_side_plate_R, grip_foot_R, bridge_tray, bridge_post_0, bridge_post_1, bridge_post_2, bridge_post_3, board_standoff_0, board_standoff_1, board_standoff_2, board_standoff_3, board_standoff_4, board_standoff_5, cm5_tray, bus_clamp_resistor, RR-CHS-MAIN_pcb, CM5_carrier_assembly.
+Parts added (18): grip_side_plate_L, grip_foot_L, grip_side_plate_R, grip_foot_R, bridge_tray, bridge_post_0, bridge_post_1, bridge_post_2, bridge_post_3, board_standoff_0, board_standoff_1, board_standoff_2, board_standoff_3, board_standoff_4, board_standoff_5, cm5_tray, RR-CHS-MAIN_pcb, CM5_carrier_assembly.
 
 1. Grip feet (angle) on the plate: 2 x M5 x 16 countersunk from below + nyloc above each; side plates to the feet (2 x M5 x 16 cap + nyloc).
 2. Four bridge posts (M4 from below), bridge tray on top (M4 x 8), gap pad on the tray under the bridge zone, RR-CHS-MAIN on 3 mm spacers (6 x M3 + nyloc under the tray; H1 and H3 bond to chassis).
-3. CM5 tray (4 x M3 from below), CM5 carrier (4 x M2.5), clamp resistor (2 x M3 into the tapped plate, thermal paste).
+3. CM5 tray (4 x M3 from below), CM5 carrier (4 x M2.5). No bolt-on clamp resistor (RR-CHS-MAIN carries its own, IB-26).
 
 **Inserts / torques:** Torques: M5 grip 4.0 N m (proof-load path: no thread-lock substitutes for the nyloc), M4 1.5 N m, M3 0.5-0.6 N m.
 
@@ -115,7 +115,7 @@ Parts added (5): latch_arm, nose_cowl, J1_receptacle, J2_receptacle, head_latch.
 
 ![07_lid](img/step_07_lid.png)
 
-Parts added (40): door_peg_L, door_peg_R, shoulder_L, rear_deck_L, shoulder_R, rear_deck_R, battery_hump, panel_tray, inlet_cover, tof_clip_look_rl, tof_window_look_rl, tof_clip_look_rr, tof_window_look_rr, tof_clip_prox_rc, tof_window_prox_rc, tof_clip_prox_rl, tof_window_prox_rl, tof_clip_prox_rr, tof_window_prox_rr, lidar, RR-PANEL, estop_operator, estop_body, hands_on_operator, hands_on_body, mode_selector_operator, mode_selector_body, rearm_start_operator, rearm_start_body, pause_stop_operator, pause_stop_body, charge_inlet, tof_look_rl, tof_look_rr, tof_prox_rc, tof_prox_rl, tof_prox_rr, bumper_sw_l, bumper_sw_r, hatch_latch.
+Parts added (40): door_peg_L, door_peg_R, shoulder_L, rear_deck_L, shoulder_R, rear_deck_R, battery_hump, panel_tray, inlet_cover, tof_clip_look_rev_left, tof_window_look_rev_left, tof_clip_look_rev_right, tof_window_look_rev_right, tof_clip_prox_rc, tof_window_prox_rc, tof_clip_prox_rl, tof_window_prox_rl, tof_clip_prox_rr, tof_window_prox_rr, lidar, RR-PANEL, estop_operator, estop_body, hands_on_operator, hands_on_body, mode_selector_operator, mode_selector_body, rearm_start_operator, rearm_start_body, pause_stop_operator, pause_stop_body, charge_inlet, tof_look_rev_left, tof_look_rev_right, tof_prox_rc, tof_prox_rl, tof_prox_rr, bumper_sw_l, bumper_sw_r, hatch_latch.
 
 1. Pre-assemble the lid pieces off the robot: panel devices into the decks (anti-rotation notch), RR-PANEL on its tray with the light pipes, rear ToF boards and clips, charge inlet + cover + cover switch, bumper switches, door pegs, LiDAR on the hump (gasket, cable gland).
 2. Perimeter gasket on the lower land; lower the shoulders over the grip side plates (slots), then the rear decks; dowels at x = -45 and x = 47; flange screws.
@@ -131,10 +131,10 @@ Parts added (40): door_peg_L, door_peg_R, shoulder_L, rear_deck_L, shoulder_R, r
 
 ![08_grip_cover](img/step_08_grip_cover.png)
 
-Parts added (13): cheek_fairing_L, cheek_fairing_R, grip_bar, grip_screw_L, grip_screw_R, grip_sleeve, saddle_cover, tof_clip_look_fl, tof_window_look_fl, tof_clip_look_fr, tof_window_look_fr, tof_look_fl, tof_look_fr.
+Parts added (13): cheek_fairing_L, cheek_fairing_R, grip_bar, grip_screw_L, grip_screw_R, grip_sleeve, saddle_cover, tof_clip_look_fwd_left, tof_window_look_fwd_left, tof_clip_look_fwd_right, tof_window_look_fwd_right, tof_look_fwd_left, tof_look_fwd_right.
 
 1. On the bench: look-ahead ToF board, foam blocker and window into each fairing nose, shallow clip from behind (2 x M2). Then the fairings over the side plates (2 x M3 x 20 through each).
-2. Printed sleeve onto the 14 mm bar, bar between the side plates, one M6 x 16 cap screw + washer through each plate and fairing pocket into the tapped bar ends (thread-lock); push-in caps.
+2. Printed sleeve onto the 14 mm bar (bar centre x -25, sleeve centre x -30 after CR-04), bar between the side plates, one M6 x 16 cap screw + washer through each plate and fairing pocket into the tapped bar ends (thread-lock); push-in caps.
 3. Saddle cover on its gasket ledge, 9 captive M3 screws.
 
 **Inserts / torques:** Torque M6 into the 6061 bar 6.0 N m (medium thread-lock); captive cover screws 0.5 N m.
@@ -176,7 +176,7 @@ Parts added (11): tray_chock_L, tray_head_guard_L, tray_chock_R, tray_head_guard
 
 ## Harness routing order (summary)
 
-Corridors are the reserved boxes of `mechanical/common/layout.py` (checked free in `out/prototype_report.md`): front_bay (J1/J2, front cliff, dock switch, clamp resistor), left/right gutter (motors, look-ahead ToF, CM5 power; pack and charge feed on the right), under_bridge_right (pack feed between the motor ends), left_bay_over_cm5 (CM5 USB/Ethernet), hump_side_left (LiDAR, RR-PANEL, rear ToF, deck controls), right_bay (charge inlet, HANDS-ON/Pause, right rear ToF, bumper). Order: plate-level leads (stage 1-4) -> board connectors in the stage 5 order -> nose (stage 6) -> lid (stage 7) -> grip ToF (stage 8). Strain relief: P-clip or tie-wrap within 40 mm of every board header, grommet at every plate pass-through, sealed glands at the LiDAR and at the J receptacles (connector seals), service loops where a lid piece must lift.
+Corridors are the reserved boxes of `mechanical/common/layout.py` (checked free in `out/prototype_report.md`): front_bay (J1/J2, front cliff, dock switch), left/right gutter (motors, look-ahead ToF, CM5 power; pack and charge feed on the right), under_bridge_right (pack feed between the motor ends), left_bay_over_cm5 (CM5 USB/Ethernet), hump_side_left (LiDAR, RR-PANEL, rear ToF, deck controls), right_bay (charge inlet, HANDS-ON/Pause, right rear ToF, bumper). Order: plate-level leads (stage 1-4) -> board connectors in the stage 5 order -> nose (stage 6) -> lid (stage 7) -> grip ToF (stage 8). Strain relief: P-clip or tie-wrap within 40 mm of every board header, grommet at every plate pass-through, sealed glands at the LiDAR and at the J receptacles (connector seals), service loops where a lid piece must lift.
 
 ## Removal procedures (checked as sweeps in the report)
 

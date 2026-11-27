@@ -823,6 +823,7 @@
     },
     "chain": {
      "type": "object",
+     "description": "true = element known closed; false = open or UNKNOWN (behind an open element, IB-02); DIAG.chain_state distinguishes the two",
      "properties": {
       "MODE_RUN": {
        "type": "boolean"
@@ -1073,10 +1074,10 @@
          "CLIFF_FR",
          "CLIFF_RL",
          "CLIFF_RR",
-         "LOOK_LO",
-         "LOOK_LI",
-         "LOOK_RI",
-         "LOOK_RO",
+         "LOOK_FL",
+         "LOOK_RL",
+         "LOOK_RR",
+         "LOOK_FR",
          "REAR_L",
          "REAR_C",
          "REAR_R"
@@ -1463,7 +1464,92 @@
     },
     "readbacks": {
      "type": "string",
-     "pattern": "^[01]{22}$"
+     "pattern": "^[01]{23}$",
+     "description": "22 debounced readbacks in the order of ICD 3.14, then CHAIN_END (IOX_B P17). Chain readbacks are node voltages (IB-02)."
+    },
+    "chain_state": {
+     "type": "object",
+     "description": "Decoded state of every safety_chain element (IB-02): UNKNOWN = behind an open element",
+     "properties": {
+      "MODE_RUN": {
+       "enum": [
+        "CLOSED",
+        "OPEN",
+        "UNKNOWN"
+       ]
+      },
+      "ESTOP": {
+       "enum": [
+        "CLOSED",
+        "OPEN",
+        "UNKNOWN"
+       ]
+      },
+      "HANDS_ON": {
+       "enum": [
+        "CLOSED",
+        "OPEN",
+        "UNKNOWN"
+       ]
+      },
+      "CHG_COVER": {
+       "enum": [
+        "CLOSED",
+        "OPEN",
+        "UNKNOWN"
+       ]
+      },
+      "HEAD_DOCK": {
+       "enum": [
+        "CLOSED",
+        "OPEN",
+        "UNKNOWN"
+       ]
+      },
+      "HEAD_LOOP": {
+       "enum": [
+        "CLOSED",
+        "OPEN",
+        "UNKNOWN"
+       ]
+      },
+      "LAB_KEY_N": {
+       "enum": [
+        "CLOSED",
+        "OPEN",
+        "UNKNOWN"
+       ]
+      },
+      "BODY_BUMPER": {
+       "enum": [
+        "CLOSED",
+        "OPEN",
+        "UNKNOWN"
+       ]
+      },
+      "WDG_OK": {
+       "enum": [
+        "CLOSED",
+        "OPEN",
+        "UNKNOWN"
+       ]
+      },
+      "ARM_PERMIT": {
+       "enum": [
+        "CLOSED",
+        "OPEN",
+        "UNKNOWN"
+       ]
+      }
+     },
+     "additionalProperties": false
+    },
+    "chain_end": {
+     "type": [
+      "boolean",
+      "null"
+     ],
+     "description": "CHAIN_END_RB, node after the ARM_PERMIT element; null while IOX_B is not readable"
     },
     "pres_ohm": {
      "type": "integer",

@@ -199,7 +199,7 @@ static void op_status(rrh_core_t *c, const rrc_json_t *d, const rrc_req_t *req, 
     rrc_jw_arr_begin(w);
     static const char *const chain_names[RRH_CHAINS] = {"F0", "F1", "F2", "F3", "R0", "R1", "R2", "R3"};
     for (uint32_t ch = 0u; ch < RRH_CHAINS; ch++) {
-        if (((c->imon_fault >> ch) & 1u) != 0u) {
+        if ((((uint32_t)c->imon_fault >> ch) & 1u) != 0u) {
             rrc_jw_str(w, chain_names[ch]);
         }
     }

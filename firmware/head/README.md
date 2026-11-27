@@ -176,22 +176,22 @@ table and `port/stm32g474/rrh_pins.h`.
 | 7 | PC13 | `BUMP_ZONE_F_N` | GPIO | - | in | Front zone auxiliary contact to GND, active low, 10 k ext PU + 1 k series + 100 nF + TVS. Backup-domain pin: input only. |
 | 8 | PC14 | `BUMP_ZONE_L_N` | GPIO | - | in | Left zone, as front. Backup-domain pin: input only. |
 | 9 | PC15 | `BUMP_ZONE_R_N` | GPIO | - | in | Right zone, as front. Backup-domain pin: input only. |
-| 10 | PF9 | `SPARE_PF9` | GPIO | - | bidir | Spare, to a test pad; firmware configures it as input with pull-down. |
-| 11 | PF10 | `SPARE_PF10` | GPIO | - | bidir | Spare, to a test pad; firmware configures it as input with pull-down. |
+| 10 | PF9 | `PULSER_A1` | GPIO | - | out | Test-pulse channel select bit 1. 100 k ext PD. |
+| 11 | PF10 | `PULSER_A2` | GPIO | - | out | Test-pulse channel select bit 2. 100 k ext PD. |
 | 12 | PF0 | `HSE_IN_24M` | RCC | - | in | RCC_OSC_IN, HSE bypass, from the 24 MHz TCXO. |
-| 13 | PF1 | `SPARE_PF1` | GPIO | - | bidir | Spare, to a test pad; firmware configures it as input with pull-down. Usable as GPIO only because HSE runs in bypass mode. |
+| 13 | PF1 | `SYNC_IN` | GPIO | - | in | RESERVED hardware time-pulse input (J2 pins 5/6 via the DNP ISO7710 U2503). Not used by firmware 0.5; configured as an input with the board's 100 k pull-down (R2414). Usable as GPIO only because HSE runs in bypass mode. |
 | 14 | PG10 | `NRST` | SYS | - | bidir | 100 nF to GND, to SWD header pin 10. No other driver. |
 | 15 | PC0 | `NTC_SIPM0` | ADC1 IN6 | - | analog | 10 k B3435-class NTC at lane 0 SiPMs to AGND, 10.0 k 0.1 % to VREF_ADC, 100 nF. |
 | 16 | PC1 | `NTC_SIPM1` | ADC1 IN7 | - | analog | 10 k B3435-class NTC at lane 1 SiPMs to AGND, 10.0 k 0.1 % to VREF_ADC, 100 nF. |
 | 17 | PC2 | `NTC_SIPM2` | ADC1 IN8 | - | analog | 10 k B3435-class NTC at lane 2 SiPMs to AGND, 10.0 k 0.1 % to VREF_ADC, 100 nF. |
 | 18 | PC3 | `NTC_SIPM3` | ADC1 IN9 | - | analog | 10 k B3435-class NTC at lane 3 SiPMs to AGND, 10.0 k 0.1 % to VREF_ADC, 100 nF. |
-| 19 | PF2 | `SPARE_PF2` | GPIO | - | bidir | Spare, to a test pad; firmware configures it as input with pull-down. |
+| 19 | PF2 | `PULSER_A0` | GPIO | - | out | Test-pulse channel select bit 0 (74LVC138 U2702 A0): pulsed chain = PULSER_A[2:0], 0-3 = F0-F3, 4-7 = R0-R3. 100 k ext PD (default F0). |
 | 20 | PA0 | `BUSY_R0` | TIM5 | 2 | in | TIM5_CH1 input capture, rising edge. Q of the REF_LLD (BUSY) latch of reference lane 0. 100 k ext PD. |
 | 21 | PA1 | `BUSY_R1` | TIM5 | 2 | in | TIM5_CH2 input capture, rising edge. Q of the REF_LLD (BUSY) latch of reference lane 1. 100 k ext PD. |
-| 22 | PA2 | `BIAS_VMON` | ADC1 IN3 | - | analog | SiPM bias voltage after the output filter, divider 1:25 (60 V -> 2.4 V), 10 nF at the pin, source < 10 k. |
+| 22 | PA2 | `BIAS_VMON` | ADC1 IN3 | - | analog | SiPM bias voltage BIAS_VMON (circuit: R2217 + R2218 = 2 x 4.99 M, R2219 = 412 k, 1:25.2233 = 2.478 V at 62.5 V), 1 k series R2220, 10 nF at the pin, source < 10 k. The divider top resistors are 1 % parts. |
 | 23 | VSS | `GND` | power | - | power | Also pins 48, 63, 74, 99. |
 | 24 | VDD | `+3V3` | power | - | power | Also pins 49, 64, 75, 100. 100 nF each + 4.7 uF bulk. |
-| 25 | PA3 | `BIAS_IMON` | ADC1 IN4 | - | analog | Bias current monitor, 0-2.5 V = 0-250 uA total (scale to be fixed by head electronics). |
+| 25 | PA3 | `BIAS_IMON` | ADC1 IN4 | - | analog | Total bias current BIAS_IMON = 0.8 x I x R2206 (10 k) = 8.0 mV per uA, 250 uA at 2.0 V (budget 5.1); includes the two bias dividers (about 30 uA at 60 V). 1 k series R2207. |
 | 26 | PA4 | `DAC_CS0_N` | GPIO | - | out | U_DAC0 /CS. 10 k ext PU. |
 | 27 | PA5 | `DAC_SCK` | SPI1 | 5 | out | SPI1_SCK. DACs are written only while disarmed (and HV set-point between gates). |
 | 28 | PA6 | `DAC_MISO` | SPI1 | 5 | in | SPI1_MISO, DAC SDO wired-OR (SDO high-Z when /CS is high; DAC60508 behaviour UNVERIFIED), 100 k ext PU. |
@@ -212,7 +212,7 @@ table and `port/stm32g474/rrh_pins.h`.
 | 43 | PE12 | `CLR_R2_N` | GPIO | - | out | Clear of both latches of reference lane 2, active low pulse. 10 k ext PD. All eight CLR lines are on GPIOE so one BSRR write can clear several chains. |
 | 44 | PE13 | `CLR_R3_N` | GPIO | - | out | Clear of both latches of reference lane 3, active low pulse. 10 k ext PD. All eight CLR lines are on GPIOE so one BSRR write can clear several chains. |
 | 45 | PE14 | `LATCH_TEST` | GPIO | - | out | Latch self-test: a rising edge clocks every latch through an OR gate in each clock path (no analog signal involved). Idle low, 10 k ext PD. |
-| 46 | PE15 | `SPARE_PE15` | GPIO | - | bidir | Spare, to a test pad; firmware configures it as input with pull-down. |
+| 46 | PE15 | `IMON_CH` | ADC4 IN2 | - | analog | Per-chain anode current monitor: V(TRIMDRV) of the chain selected by MON_MUX_A[2:0] through U2703 (TMUX1108), 10 k R108 + 100 nF C2704 (1 ms), unity buffer U2306B, 1 k R2701 + 10 nF C2705. I = (V_trim - V) / 4.99 k (R105). 147 nA per LSB at 3.0 V. |
 | 47 | PB10 | `BUSY_F2` | TIM2 | 1 | in | TIM2_CH3 input capture, rising edge. Q of the BETA_LLD (BUSY) latch of floor lane 2. 100 k ext PD so a missing latch supply reads idle. |
 | 50 | PB11 | `BUSY_F3` | TIM2 | 1 | in | TIM2_CH4 input capture, rising edge. Q of the BETA_LLD (BUSY) latch of floor lane 3. 100 k ext PD so a missing latch supply reads idle. |
 | 51 | PB12 | `HTR_SENSE` | ADC1 IN11 | - | analog | Current-sense output of the heater high-side switch (scale by electronics). |
@@ -241,7 +241,7 @@ table and `port/stm32g474/rrh_pins.h`.
 | 78 | PA15 | `BUSY_F0` | TIM2 | 1 | in | TIM2_CH1 input capture, rising edge. Q of the BETA_LLD (BUSY) latch of floor lane 0. 100 k ext PD so a missing latch supply reads idle. PA15 is JTDI with a pull-up at reset: harmless for an input. |
 | 79 | PC10 | `DBG_TX` | UART4 | 5 | out | UART4_TX to a 3-pin debug header. |
 | 80 | PC11 | `DBG_RX` | UART4 | 5 | in | UART4_RX, 100 k ext PU. |
-| 81 | PC12 | `SPARE_PC12` | GPIO | - | bidir | Spare, to a test pad; firmware configures it as input with pull-down. |
+| 81 | PC12 | `LED_STROBE` | TIM8 | 4 | out | TIM8_CH3N: strobe of the LED pulser (BSS138 Q1001/1101/1201/1301 via 100 R each), all four lanes together; amplitude V_LED = 2 x U_DAC0 output 7. Idle low, 100 k ext PD (R2413). Pulse ~200 ns: held high it feeds the LED through R1018 (10 k) continuously. |
 | 82 | PD0 | `ULD_F0` | GPIO | - | in | BETA_ULD latch Q, floor lane 0. All 16 PD inputs are read with one GPIOD->IDR access in the service interrupt; 100 k ext PD each. |
 | 83 | PD1 | `ULD_F1` | GPIO | - | in | BETA_ULD latch Q, floor lane 1. All 16 PD inputs are read with one GPIOD->IDR access in the service interrupt; 100 k ext PD each. |
 | 84 | PD2 | `ULD_F2` | GPIO | - | in | BETA_ULD latch Q, floor lane 2. All 16 PD inputs are read with one GPIOD->IDR access in the service interrupt; 100 k ext PD each. |
@@ -252,11 +252,11 @@ table and `port/stm32g474/rrh_pins.h`.
 | 89 | PD7 | `ALPHA_F3` | GPIO | - | in | ALPHA (slow path) latch Q, floor lane 3. |
 | 90 | PB3 | `BUSY_F1` | TIM2 | 1 | in | TIM2_CH2 input capture, rising edge. Q of the BETA_LLD (BUSY) latch of floor lane 1. 100 k ext PD so a missing latch supply reads idle. PB3 is the only SWO pin: trace is given up. |
 | 91 | PB4 | `LED_STATUS_N` | GPIO | - | out | Green, active low to +3V3 through 1 k. PB4 is JTRST at reset and UCPD1_CC2 (dead-battery pull-down behaviour UNVERIFIED): LED only. |
-| 92 | PB5 | `MON_MUX_A0` | GPIO | - | out | Monitor mux select bit 0 (channel 0-7 = F0-F3, R0-R3). |
+| 92 | PB5 | `MON_MUX_A0` | GPIO | - | out | Mux select bit 0. Shared: (a) per-chain anode current mux U2703, channel = MON_MUX_A[2:0] (0-3 = F0-F3, 4-7 = R0-R3); (b) lane monitor decoder U2701 A0 (enables lane A[1:0]). |
 | 93 | PB6 | `LED_FAULT_N` | GPIO | - | out | Red, active low to +3V3 through 1 k. PB6 is UCPD1_CC1 (dead-battery pull-down behaviour UNVERIFIED): LED only. |
-| 94 | PB7 | `MON_MUX_A1` | GPIO | - | out | Monitor mux select bit 1. |
+| 94 | PB7 | `MON_MUX_A1` | GPIO | - | out | Mux select bit 1 (same shared use as bit 0). |
 | 95 | PB8 | `BOOT0` | SYS | - | in | 10 k ext PD + test point / jumper to +3V3 for the ROM bootloader. Not used as GPIO. |
-| 96 | PB9 | `MON_MUX_A2` | GPIO | - | out | Monitor mux select bit 2. |
+| 96 | PB9 | `MON_MUX_A2` | GPIO | - | out | Mux select bit 2: U2703 A2 and the lane mux address A0 of the waveform monitor (shared). |
 | 97 | PE0 | `CLR_F0_N` | GPIO | - | out | Clear of all three latches of floor lane 0, active low pulse (>= 20 ns, firmware gives ~100 ns). 10 k ext PD: latches are held cleared (chain idle, BUSY low) while the MCU is in reset. |
 | 98 | PE1 | `CLR_F1_N` | GPIO | - | out | Clear of all three latches of floor lane 1, active low pulse (>= 20 ns, firmware gives ~100 ns). 10 k ext PD: latches are held cleared (chain idle, BUSY low) while the MCU is in reset. |
 <!-- END PINMAP -->

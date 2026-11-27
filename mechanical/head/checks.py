@@ -117,7 +117,7 @@ def bond_pitch(parts):
         clamp[(x, y)] = on[0] if on else None
     fr = sorted([s_ * y for y in T.FENCE_FRONT_Y for s_ in (1, -1)] + [y for (x, y), f in clamp.items() if f == "fence_front"])
     sd = sorted(list(T.FENCE_SIDE_X) + [x for (x, y), f in clamp.items() if f == "fence_side_L"])
-    rr = sorted([s_ * y for y in H.REAR_SCREW_Y for s_ in (1, -1)] + [y for (x, y), f in clamp.items() if f == "fence_rear"])
+    rr = sorted([s_ * y for y in H.REAR_SCREW_Y for s_ in (1, -1)] + [y for x, y in H.REAR_BOND] + [y for (x, y), f in clamp.items() if f == "fence_rear"])
     gaps = lambda v, lo, hi: max(b - a for a, b in zip([lo] + v, v + [hi]))
     hy = T.FENCE_SIDE_Y + H.FENCE_T
     out = {"front": gaps(fr, -hy, hy), "side": gaps(sd, 79.2, T.FENCE_FRONT_X - 2.7), "rear": gaps(rr, -hy, hy)}
@@ -167,7 +167,7 @@ def overhangs(shape, orient, min_area=4.0):
     return sorted(out, key=lambda r: -r["area_mm2"])
 
 
-FRAME_NET = ("spreader", "lid", "j1_blister", "fence_", "lid_standoffs", "board_standoffs", "hd_board", "hd_lid", "hd_rear", "hd_ffoot", "hd_sfoot", "frame")
+FRAME_NET = ("spreader", "lid", "j1_blister", "fence_", "lid_standoffs", "board_standoffs", "hd_board", "hd_lid", "hd_rear", "hd_ffoot", "hd_sfoot", "hd_rbond", "frame")
 SHOE_NET = ("shoe_L", "shoe_R", "bridge", "keeper", "hd_thead")
 
 
@@ -182,6 +182,133 @@ def frame_isolation(parts):
     d.Perform()
     p1, p2 = d.PointOnShape1(1), d.PointOnShape2(1)
     return d.Value(), (round(p1.X(), 1), round(p1.Y(), 1), round(p1.Z(), 1))
+
+
+# ------------------------------------------------------------------------------------------------ RR-HEAD-ACQ as built vs the head (IB-52)
+BOARD_SKIP = ("H28", "SH1013", "SH1113", "SH1213", "SH1313")     # holes and cans are compared separately (cans enclose their parts by design)
+
+
+def board_asbuilt():
+    from . import asbuilt as AB
+    return AB.load()
+
+
+def board_fit(builds):
+    """Compare the board AS BUILT (electronics/head_acq/RR-HEAD-ACQ.kicad_pcb) with the head model. Returns (rows, data); each row is
+    (item, ok, detail). Everything is read from the board file; the model values come from hp.py / parts.py."""
+    from . import asbuilt as AB
+    fp, meta = board_asbuilt()
+    rows, data = [], {"source": meta}
+    tol = 0.01
+    # (a) mounting holes: board file vs model standoffs vs spreader holes
+    holes = sorted((round(AB.to_base(r["u"], r["v"])[0], 3), round(AB.to_base(r["u"], r["v"])[1], 3)) for k, r in fp.items() if k.startswith("H28"))
+    model = sorted((round(x, 3), round(y, 3)) for x, y, _ in T.board_holes())
+    spr = sorted((round(x, 3), round(y, 3)) for x, y, d, why in T.spreader_holes() if "board standoff" in why)
+    ok = len(holes) == 8 and all(math.dist(a, b) <= tol for a, b in zip(holes, model)) and model == spr
+    h1 = AB.to_base(fp["H2801"]["u"], fp["H2801"]["v"])
+    rows.append(("8 mounting holes (H2801..H2808) = model standoffs = spreader clinch holes", ok,
+                 f"board file {holes}; H1 (H2801) at u/v ({fp['H2801']['u']}, {fp['H2801']['v']}) = base ({h1[0]:.1f}, {h1[1]:.1f}) (CR-M02)"))
+    # (b) shield cans: outline, mouse holes, clips
+    oz = H.ACQ["origin"][2] + H.ACQ["thickness"]
+    can_rows = []
+    for k, lane in ((10, 0), (11, 1), (12, 2), (13, 3)):
+        c = fp[f"SH{k}13"]
+        u0, v0, u1, v1 = c["fab_uv"]
+        x0, x1, y0, y1 = AB.uv_box_to_base(c["fab_uv"])
+        b = bounds(T.shield_can(lane))
+        out_ok = all(abs(a - b_) <= tol for a, b_ in ((x0, b[0]), (x1, b[3]), (y0, b[1]), (y1, b[4]))) and abs(b[2] - oz) < 1e-6 and abs(b[5] - oz - c["height"]) < 1e-6
+        lc = (u0 + u1) / 2
+        mice = sorted(round((r[0] + r[2]) / 2 - lc, 3) for r in c["fab_rects_uv"] if abs((r[2] - r[0]) - H.MOUSE_W) < 0.01 and abs(r[1] - v0) < 0.01)
+        anodes = sorted(round(fp[f"J{100 * (lane + 1) + 1}"]["pads_uv"][0][1] - lc, 3), ) + [round(fp[f"J{100 * (lane + 5) + 1}"]["pads_uv"][0][1] - lc, 3)]
+        anodes = sorted(anodes)
+        can = T.shield_can(lane)
+        holes_open = all(volume(can.intersect(box(x0 - 0.5, x0 + 0.5, P.SEG_Y[lane] - du - 0.6, P.SEG_Y[lane] - du + 0.6, oz + 0.2, oz + 1.0))) < 1e-6 for du in H.CAN_MOUSE_DU)
+        mice_ok = mice == sorted(H.CAN_MOUSE_DU) and anodes == sorted(H.CAN_MOUSE_DU) and holes_open
+        clips = [fp[f"SH{k}{n:02d}"] for n in range(1, 13)]
+        walls = {"rear": v0 + 0.1, "front": v1 - 0.1, "left": u0 + 0.1, "right": u1 - 0.1}     # wall mid-planes (0.2 wall)
+        on_wall = []
+        for cl in clips:
+            d = min(abs(cl["v"] - walls["rear"]), abs(cl["v"] - walls["front"])) if cl["rot"] in (0.0, 180.0) else min(abs(cl["u"] - walls["left"]), abs(cl["u"] - walls["right"]))
+            on_wall.append(d <= 0.05)
+        clear_of_mice = all(min(abs(cl["u"] - lc - du) for du in H.CAN_MOUSE_DU) > 2.0 for cl in clips if abs(cl["v"] - walls["rear"]) < 0.1)
+        can_rows.append({"lane": lane, "outline_uv": c["fab_uv"], "model_bbox_x_y": [round(b[0], 2), round(b[3], 2), round(b[1], 2), round(b[4], 2)],
+                         "outline_ok": out_ok, "mouse_du_board": mice, "anode_pad_du": anodes, "mouse_holes_open_in_model": holes_open,
+                         "clips_on_wall": sum(on_wall), "clips_clear_of_mouse_holes": clear_of_mice})
+        ok_can = out_ok and mice_ok and all(on_wall) and clear_of_mice
+        if not ok_can:
+            rows.append((f"shield can lane {lane}", False, json.dumps(can_rows[-1])))
+    data["cans"] = can_rows
+    if all(r["outline_ok"] for r in can_rows):
+        r0 = can_rows[0]
+        rows.append(("4 shield cans: outline v 8.25..40.25 (CR-M01), 2 mouse holes at the anode U.FL pads (CR-M04), 12 clips on the wall line each", all(
+            r["outline_ok"] and r["clips_on_wall"] == 12 and r["clips_clear_of_mouse_holes"] and r["mouse_du_board"] == r["anode_pad_du"] for r in can_rows),
+            f"lane 0 outline u/v {r0['outline_uv']} = model x/y {r0['model_bbox_x_y']}; mouse holes du {r0['mouse_du_board']} (board) = anode pads {r0['anode_pad_du']} "
+            f"= model {sorted(H.CAN_MOUSE_DU)}, open in the can solid; clips on the wall mid-plane 12/12 per can"))
+    # (c) J1 port at the J2001 centre (CR-M03 a), Micro-Fit bodies as in hp.py
+    jb = fp["J2001"]["fab_uv"]
+    y_j = 163.0 - (jb[0] + jb[2]) / 2
+    ok = abs(H.PORT_Y["J1"] - y_j) <= 0.1 and all(abs(fp[r]["fab_uv"][0] - u0) < tol and abs(fp[r]["fab_uv"][2] - u1) < tol for r, (u0, u1) in H.MICROFIT_BODY_U.items())
+    rows.append(("J1 cable port at the J2001 centre (CR-M03 a); Micro-Fit bodies = hp.MICROFIT_BODY_U", ok,
+                 f"J2001 body u {jb[0]}..{jb[2]} -> centre y {y_j:.2f}; port y {H.PORT_Y['J1']:.2f} (P.HEAD_PIGTAIL_EXIT); J2601 body u {fp['J2601']['fab_uv'][0]}..{fp['J2601']['fab_uv'][2]}"))
+    # (d) every component body (courtyard, else fab outline, x the 3D envelope height; Micro-Fit at the IB-19 allowance) vs the head solids
+    heads = [p for p in builds["prototype"] + [q for q in builds["production"] if q.name == "frame"]
+             if p.group not in ("optic", "lane", "window", "rail") and not p.name.startswith(("pcb", "S0_shield", "S1_shield", "S2_shield", "S3_shield", "plug_ko", "pigtail", "plug_J", "fasteners_lumped"))]
+    hb = [(p, bounds(p.shape)) for p in heads]
+    hits, n, worst = [], 0, (99.0, "")
+    over = []
+    for ref, r in fp.items():
+        if ref.startswith(BOARD_SKIP) or r["height"] is None:
+            continue
+        bb = r["crtyd_uv"] or r["fab_uv"]
+        if bb is None:
+            continue
+        hgt = H.MICROFIT_H_ALLOW if ref in H.MICROFIT_BODY_U else r["height"]
+        inj1 = 50 <= r["u"] <= 100 and r["v"] <= 18
+        if r["height"] > (8.3 if inj1 else H.ACQ["max_top"]) or r["side"] != "F":
+            over.append((ref, r["height"], r["side"]))
+        x0, x1, y0, y1 = AB.uv_box_to_base(bb)
+        z1 = oz + hgt
+        fb = box(x0, x1, y0, y1, oz, z1)
+        for p, b in hb:
+            if b[3] < x0 or b[0] > x1 or b[4] < y0 or b[1] > y1 or b[5] < oz or b[2] > z1:
+                continue
+            n += 1
+            v = volume(fb.intersect(p.shape))
+            if v > TOL_VOL:
+                hits.append((ref, p.name, round(v, 2)))
+        # vertical clearance to the ceiling straight above (lid / liner / blister), for the report
+        cz = min((b[2] for p, b in hb if p.name in ("lid", "lid_liner", "j1_blister") and b[0] < x1 and b[3] > x0 and b[1] < y1 and b[4] > y0
+                  and volume(box(x0, x1, y0, y1, z1, 50).intersect(p.shape)) > 1e-6), default=None)
+        if cz is not None:
+            lo = min((bounds(box(x0, x1, y0, y1, z1, 50).intersect(p.shape))[2] for p, b in hb if p.name in ("lid", "lid_liner", "j1_blister")
+                      and volume(box(x0, x1, y0, y1, z1, 50).intersect(p.shape)) > 1e-6), default=99)
+            if lo - z1 < worst[0]:
+                worst = (lo - z1, ref)
+    data["component_pairs_tested"] = n
+    rows.append((f"{sum(1 for k in fp if not k.startswith(BOARD_SKIP))} component bodies (board-file courtyard x 3D envelope height; Micro-Fit at {H.MICROFIT_H_ALLOW:g} mm) vs every head part",
+                 not hits and not over, f"{n} candidate pairs intersected; overlaps: {hits or 'none'}; height-zone violations (6.0 top / 8.3 J1 landing / top side only): {over or 'none'}; "
+                 f"smallest clearance to the lid / liner / blister above a body: {worst[0]:.2f} mm ({worst[1]})"))
+    # (e) mated Micro-Fit plug keep-outs: their interference with the head is part of the assembly interference check; record the rear-strip numbers
+    plugs = {ref: bounds(ko) for ref, ko in T.microfit_plugs()}
+    data["plug_keepouts_xyz"] = plugs
+    back = min(b[0] for b in plugs.values())
+    rows.append(("mated Micro-Fit plug keep-outs (CR-M03: v -8.4..1.5, IB-19 height) clear of standoffs, fences, cut-out, NTC, bond screws, lid", True,
+                 f"keep-outs x {back:.1f}..{max(b[3] for b in plugs.values()):.1f}, y {min(b[1] for b in plugs.values()):.2f}..{max(b[4] for b in plugs.values()):.2f}, "
+                 f"z {oz:.1f}..{oz + H.MICROFIT_H_ALLOW:.1f}: in the prototype and production assemblies (interference checks above, parts plug_ko_J2001 / plug_ko_J2601)"))
+    return rows, data
+
+
+def spreader_hole_web(min_web=1.0):
+    """Every pair of spreader holes keeps >= min_web of material between their edges (CSK seats counted at the 5.2 head diameter)."""
+    hs = [(x, y, 5.2 if "countersunk" in why else d, why) for x, y, d, why in T.spreader_holes()]
+    worst = (99.0, None)
+    for i in range(len(hs)):
+        for j in range(i + 1, len(hs)):
+            a, b = hs[i], hs[j]
+            w = math.dist(a[:2], b[:2]) - (a[2] + b[2]) / 2
+            if w < worst[0]:
+                worst = (w, (a[:2], a[3][:30], b[:2], b[3][:30]))
+    return worst
 
 
 def run():

@@ -120,7 +120,7 @@ void evt_port_init(void)
 {
     /* width histogram bin edges 150 ns, 400 ns, 2 us (22, 58, 288 ticks of 6.94 ns) */
     const rrh_evt_cfg_t cfg = {BSP_TICK_HZ, EVT_WINDOW_US * BSP_TICKS_PER_US, EVT_MAX_HOLD_US * BSP_TICKS_PER_US,
-                               clear_cb, heater_cb, NULL, 0xFFu, {22u, 58u, 288u}, {150u, 400u, 2000u}};
+                               clear_cb, heater_cb, NULL, 0xFFu, {22u, 58u, 288u}, {150u, 400u, 2000u}, EVT_CLR_TICKS};
     rrh_evtcap_init(&g_evt, &cfg);
     /* Both timers count the same clock; their constant offset is measured once. The two reads are
      * a few CPU cycles apart, which is a fixed error of a few ticks (tens of ns) on where a
@@ -201,6 +201,13 @@ void evt_port_chain_enable(uint8_t mask)
 {
     service_irq(false);
     rrh_evtcap_set_chain_enable(&g_evt, mask);
+    service_irq(true);
+}
+
+void evt_port_set_alpha_hold_us(uint16_t us)
+{
+    service_irq(false);
+    rrh_evtcap_set_alpha_hold(&g_evt, (uint32_t)us * BSP_TICKS_PER_US);
     service_irq(true);
 }
 

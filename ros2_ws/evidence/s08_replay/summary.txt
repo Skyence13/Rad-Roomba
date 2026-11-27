@@ -7,31 +7,27 @@ review queue policy ALARM_ONLY
 alpha_scan 0.05  alpha_recount 0.000171  beta 0.05  decision cells 300
 
 WHERE THE ROBOT MEASURED
-  valid exposure on 64.6 % of the target floor (3.000 m2)
-  UNVISITED                    1.0634 m2
+  valid exposure on 62.0 % of the target floor (3.000 m2)
+  UNVISITED                    1.1397 m2
   ACCEPTABLE                   0.0000 m2
-  INSUFFICIENT_SENSITIVITY     1.9366 m2
+  INSUFFICIENT_SENSITIVITY     1.8603 m2
   INVALID_DATA                 0.0000 m2
   BLOCKED                      0.0000 m2
   EXCLUDED                     0.0000 m2
 
 HOW SENSITIVE IT WAS
-  decision cells with data 232; sensitivity sufficient (D# < goal, envelope ok) 0
-  D# median 0.401  best 0.296  worst 1.588 Bq/cm2 (beta_window)
+  decision cells with data 231; sensitivity sufficient (D# < goal, envelope ok) 0
+  D# median 0.637  best 0.343  worst 7.822 Bq/cm2 (beta_window)
   time sync: max gate bound 838.0520796923137 us (limit 10000)
 
 WHAT STILL NEEDS ATTENTION
-  HS-0001 UNRESOLVED_EXCEEDANCE lane 1 D=0.228 +/- 0.135 Bq/cm2 at 1.74 m from the door threshold, 0.32 m from the right wall status OPEN
-  HS-0002 UNRESOLVED_EXCEEDANCE lane 2 D=0.287 +/- 0.160 Bq/cm2 at 2.25 m from the door threshold, 0.25 m from the right wall status OPEN
-  HS-0004 UNRESOLVED_EXCEEDANCE lane 1 D=0.162 +/- 0.093 Bq/cm2 at 0.23 m from the door threshold, 0.28 m from the right wall status OPEN
-  HS-0005 UNRESOLVED_EXCEEDANCE lane 3 D=0.195 +/- 0.142 Bq/cm2 at 1.04 m from the door threshold, 0.47 m from the left wall status OPEN
-  HS-0006 INVESTIGATION_LEVEL lane 1 D=1.158 +/- 0.246 Bq/cm2 at 1.55 m from the door threshold, 0.32 m from the left wall status OPEN
-  HS-0007 UNRESOLVED_EXCEEDANCE lane 3 D=0.211 +/- 0.133 Bq/cm2 at 2.46 m from the door threshold, 0.47 m from the left wall status OPEN
-  HS-0008 UNRESOLVED_EXCEEDANCE lane 0 D=0.151 +/- 0.087 Bq/cm2 at 2.33 m from the door threshold, 0.21 m from the left wall status OPEN
-  HS-0009 UNRESOLVED_EXCEEDANCE lane 0 D=0.230 +/- 0.139 Bq/cm2 at 2.85 m from the door threshold, 0.18 m from the left wall status OPEN
-  HS-0010 UNRESOLVED_EXCEEDANCE lane 2 D=0.158 +/- 0.093 Bq/cm2 at 0.56 m from the door threshold, 0.25 m from the left wall status OPEN
+  HS-0001 UNRESOLVED_EXCEEDANCE lane 2 D=0.248 +/- 0.131 Bq/cm2 at 1.64 m from the door threshold, 0.27 m from the right wall status OPEN
+  HS-0002 UNRESOLVED_EXCEEDANCE lane 2 D=0.210 +/- 0.143 Bq/cm2 at 2.44 m from the door threshold, 0.27 m from the right wall status OPEN
+  HS-0004 INVESTIGATION_LEVEL lane 1 D=1.388 +/- 0.275 Bq/cm2 at 1.54 m from the door threshold, 0.34 m from the left wall status OPEN
+  HS-0005 UNRESOLVED_EXCEEDANCE lane 3 D=0.240 +/- 0.161 Bq/cm2 at 2.44 m from the door threshold, 0.18 m from the left wall status OPEN
+  HS-0006 UNRESOLVED_EXCEEDANCE lane 2 D=0.212 +/- 0.142 Bq/cm2 at 0.25 m from the door threshold, 0.27 m from the left wall status OPEN
   scan-stage detections below the investigation level awaiting a recount under the two-stage rule: 1
-  unresolved floor INSUFFICIENT_SENSITIVITY: 1.9366 m2 (rectangles in residuals.json)
-  unresolved floor UNVISITED: 1.0634 m2 (rectangles in residuals.json)
+  unresolved floor INSUFFICIENT_SENSITIVITY: 1.8603 m2 (rectangles in residuals.json)
+  unresolved floor UNVISITED: 1.1397 m2 (rectangles in residuals.json)
 
 A release-status entry is a radiation-protection decision under the site procedure; this report is not one.

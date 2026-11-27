@@ -13,11 +13,11 @@ Lid / lower hull perimeter lap joint at a screw station. Plane x = -122.0 mm, wi
 - radial M3 x 10 + bonded washer into the tongue insert
 - parts cut: lower_hull_RL, rear_deck_L
 
-## J02 lid flange x-36
+## J02 lid flange x-38
 
-Shoulder / rear deck bolted flange joint (x = -36). Plane z = 100.0 mm, window (-54, -18, 96, 130).
+Shoulder / rear deck bolted flange joint (x = -38). Plane z = 100.0 mm, window (-56, -20, 96, 130).
 
-![J02_lid_flange_x-36](J02_lid_flange_x-36.png)
+![J02_lid_flange_x-38](J02_lid_flange_x-38.png)
 
 - 4 mm flanges, 9 mm deep, faces set back 0.25 mm each for the 1 mm gasket
 - M3 x 12 into insert bosses at z 100 / 116 and on the roof; 3 mm dowels at z 108 and on the roof
@@ -46,7 +46,7 @@ Hump wall / rear deck coaming joint. Plane x = -124.0 mm, window (44, 80, 104, 1
 
 ## J05 saddle cover side
 
-Saddle well wall, cover ledge, grip side plate through the shoulder slot, cheek fairing on the roof, grip bar. Plane x = -11.0 mm, window (66, 106, 90, 180).
+Saddle well wall, cover ledge, grip side plate through the shoulder slot, cheek fairing on the roof, grip bar. Plane x = -25.0 mm, window (66, 106, 90, 180).
 
 ![J05_saddle_cover_side](J05_saddle_cover_side.png)
 
@@ -92,7 +92,7 @@ Door hook slot on the jamb peg, jamb / frame joint. Plane z = 100.0 mm, window (
 
 - door hangs on two M4 dog-point pegs (hook-and-swing)
 - skirt fits inside the jamb; frame ring is the gasket land
-- parts cut: battery_tunnel, battery_cassette, door_peg_L, rear_deck_L, battery_hump, hatch_frame, hatch_door, tof_clip_look_rl, tof_window_look_rl, battery_pack, tof_look_rl
+- parts cut: battery_tunnel, battery_cassette, door_peg_L, rear_deck_L, battery_hump, hatch_frame, hatch_door, tof_clip_look_rev_left, tof_window_look_rev_left, battery_pack, tof_look_rev_left
 
 ## J09 sole plate edge
 
@@ -122,7 +122,7 @@ Front bulkhead, chin floor of the nose cowl, latch arm and draw latch over the h
 
 - latch reaction: latch -> arm -> pedestals -> M5 -> plate -> channels
 - nothing but the latch below z = 50 ahead of x = 62
-- parts cut: chassis_plate, latch_arm, front_bulkhead, nose_cowl, bus_clamp_resistor, head_latch, head_envelope
+- parts cut: chassis_plate, latch_arm, front_bulkhead, nose_cowl, head_latch, head_envelope
 
 ## J12 receiver station
 

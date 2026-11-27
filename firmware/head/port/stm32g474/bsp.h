@@ -8,6 +8,7 @@
 
 #include "stm32g4xx.h"
 
+#include "rrh_board.h"
 #include "rrh_hal.h"
 #include "rrh_pins.h"
 
@@ -49,14 +50,18 @@ void bsp_rs485_tx_service(uint64_t now_ticks); /* from the service interrupt: st
 
 /* SPI1: DACs (mode 1) */
 uint8_t bsp_spi_dac_xfer(uint8_t b);
-void bsp_pulser(bool enable); /* 1 kHz test-pulser strobe on TIM3_CH1 */
+/* Test pulser (PC6 = TIM8_CH1, charge injection) and LED pulser (PC12 = TIM8_CH3N), both 1 kHz from TIM8 (48 MHz).
+ * Which chain is pulsed is selected with PULSER_A[2:0] (PF2, PF9, PF10, GPIO). */
+void bsp_pulser_config(bool pulser_enable, uint8_t width_us, bool led_enable);
+void bsp_pulser_select(uint8_t chain); /* 0..7 = F0..F3, R0..R3 */
 
 /* DAC60508 x4 */
 bool bsp_dac_init(void);
 void bsp_dac_write(uint8_t device, uint8_t channel, uint16_t code12);
 
-/* I2C3: TMP117 x2, EUI EEPROM */
+/* I2C3: TMP117 x2, EUI EEPROM, optional TCA9534 expander */
 bool bsp_i2c_xfer(uint8_t addr, const uint8_t *w, size_t wn, uint8_t *r, size_t rn);
+bool bsp_expander_read(uint8_t *inputs); /* false = no answer; configures the device on first contact */
 bool bsp_eui64(uint8_t out[8]);
 int32_t bsp_tmp117_mc(uint8_t index); /* RRH_TEMP_INVALID if absent */
 
@@ -69,7 +74,10 @@ void bsp_adc_step(void);
 uint32_t bsp_adc_mv(bsp_adc_ch_t ch);
 uint16_t bsp_adc_code(bsp_adc_ch_t ch);
 bool bsp_adc_valid(void); /* every channel converted at least once */
-int32_t bsp_ntc_mc(uint16_t code);
+/* Per-chain anode current monitor IMON_CH (PE15 = ADC4_IN2) behind the TMUX1108 addressed by MON_MUX_A[2:0].
+ * bsp_imon_step() is a non-blocking background scan (select, settle, convert), called from the main loop. */
+void bsp_imon_step(void);
+void bsp_imon_get(rrh_imon_t *out);
 
 /* Flash-backed non-volatile slot */
 bool bsp_nv_load(uint8_t *buf, size_t cap, size_t *len);
@@ -84,6 +92,7 @@ bool evt_port_running(void);
 bool evt_port_poll(rrh_gate_record_t *rec);
 void evt_port_chain_enable(uint8_t mask);
 void evt_port_heater_request(bool on);
+void evt_port_set_alpha_hold_us(uint16_t us);
 bool evt_port_selftest(void); /* LATCH_TEST line: every latch sets and clears */
 
 #endif

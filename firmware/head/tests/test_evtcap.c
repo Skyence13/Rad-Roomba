@@ -15,8 +15,11 @@
 #define SERVICE (10u * US)      /* 100 kHz */
 #define WINDOW (4u * US)
 #define MAX_HOLD (1000u * US)
-#define GATE (100000u * US)
+#define BLIND 30u               /* CLR low + latch recovery, booked for a clear that ends no event */
 #define MAX_GATES 700u
+static uint32_t g_gate = 100000u * US; /* gate length in ticks (100 ms; some tests use 1 ms) */
+#define GATE g_gate
+static uint32_t g_hold = 0u;           /* afterglow hold in ticks; 0 for the legacy tests */
 
 /* ---- hardware model ------------------------------------------------------------------------ */
 typedef struct {
@@ -34,6 +37,7 @@ static uint64_t g_now, g_first_gate;
 static uint32_t g_clear_latency = 40u; /* ticks from service entry to the first clear */
 static uint64_t truth_busy[MAX_GATES][RRH_EVT_CHAINS];
 static uint32_t truth_count[MAX_GATES][RRH_EVT_CHAINS][3];
+static uint32_t truth_idle[MAX_GATES][RRH_LANES];
 static uint8_t g_width_mask = 0xFFu;
 static uint32_t heater_calls;
 static bool heater_level;
@@ -50,13 +54,38 @@ static uint64_t clear_cb(void *ctx, uint8_t ch)
 {
     (void)ctx;
     const uint64_t t = g_now + g_clear_latency + (20u * ch);
+    if (!hw[ch].busy) {
+        /* idle clear (ALPHA latch set without BUSY): counted for DIAG in the gate that contains t,
+         * the blind interval [t - BLIND, t) is dead time, split at the gate boundaries */
+        if (t >= g_first_gate) {
+            const uint64_t gi = (t - g_first_gate) / GATE;
+            if ((gi < MAX_GATES) && (ch < RRH_LANES)) {
+                truth_idle[gi][ch]++;
+            }
+            uint64_t a = (t - BLIND > g_first_gate) ? (t - BLIND) : g_first_gate;
+            while (a < t) {
+                const uint64_t g = (a - g_first_gate) / GATE;
+                const uint64_t end = g_first_gate + ((g + 1u) * (uint64_t)GATE);
+                const uint64_t b = (t < end) ? t : end;
+                if (g < MAX_GATES) {
+                    truth_busy[g][ch] += b - a;
+                }
+                a = b;
+            }
+        }
+        hw[ch].alpha = false;
+        hw[ch].uld = false;
+        hw[ch].ready_at = t;
+        return t;
+    }
     /* independent bookkeeping: the event belongs to the gate that contains t; its busy
      * interval [start, t) is split at every gate boundary */
     if (t >= g_first_gate) {
         const uint64_t gi = (t - g_first_gate) / GATE;
         if (gi < MAX_GATES) {
-            const bool forced = (g_now - hw[ch].start >= MAX_HOLD) &&
-                                !((g_now - hw[ch].start >= WINDOW) && (g_now >= hw[ch].lld_high_until));
+            /* The firmware asks for a clear either because the comparator is low (ready) or, after the
+             * maximum hold, although it is still high (forced): the model needs only the comparator. */
+            const bool forced = g_now < hw[ch].lld_high_until;
             if (!forced) {
                 truth_count[gi][ch][class_of(ch)]++;
             }
@@ -64,7 +93,7 @@ static uint64_t clear_cb(void *ctx, uint8_t ch)
         uint64_t a = (hw[ch].start > g_first_gate) ? hw[ch].start : g_first_gate;
         while (a < t) {
             const uint64_t g = (a - g_first_gate) / GATE;
-            const uint64_t end = g_first_gate + ((g + 1u) * GATE);
+            const uint64_t end = g_first_gate + ((g + 1u) * (uint64_t)GATE);
             const uint64_t b = (t < end) ? t : end;
             if (g < MAX_GATES) {
                 truth_busy[g][ch] += b - a;
@@ -140,15 +169,17 @@ static void setup(uint64_t first_gate)
 {
     /* width histogram on all chains, bin edges 150 ns, 400 ns, 2 us */
     const rrh_evt_cfg_t cfg = {TICK_HZ, WINDOW, MAX_HOLD, clear_cb, heater_cb, NULL, g_width_mask,
-                               {(150u * US) / 1000u, (400u * US) / 1000u, 2u * US}, {150u, 400u, 2000u}};
+                               {(150u * US) / 1000u, (400u * US) / 1000u, 2u * US}, {150u, 400u, 2000u}, BLIND};
     memset(hw, 0, sizeof hw);
     memset(truth_busy, 0, sizeof truth_busy);
     memset(truth_count, 0, sizeof truth_count);
+    memset(truth_idle, 0, sizeof truth_idle);
     heater_calls = 0u;
     heater_level = false;
     g_clear_latency = 40u;
     g_first_gate = first_gate;
     rrh_evtcap_init(&ec, &cfg);
+    rrh_evtcap_set_alpha_hold(&ec, g_hold);
     CHECK(rrh_evtcap_start(&ec, first_gate, GATE));
 }
 
@@ -171,6 +202,7 @@ static void check_record(const rrh_gate_record_t *r, uint32_t gi)
         CHECK(g->floor_reject_counts == truth_count[gi][l][2]);
         CHECK(g->ref_counts == truth_count[gi][l + 4u][0]);
         CHECK(g->ref_reject_counts == truth_count[gi][l + 4u][1]);
+        CHECK(g->alpha_idle_clears == truth_idle[gi][l]);
         CHECK((uint64_t)g->floor_live_ticks + truth_busy[gi][l] == GATE);      /* live + busy = span, exactly */
         CHECK((uint64_t)g->ref_live_ticks + truth_busy[gi][l + 4u] == GATE);
     }

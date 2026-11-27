@@ -445,6 +445,16 @@ optimiser is multi-threaded) — which is why the SES is cached.
   1.0 mm otherwise with a note in the summary) and links it, so `out/<name>.step` shows
   board + component envelopes for fit checks. Envelopes are bounding boxes, not real
   shapes; give `model=` for a real STEP model or `Board(envelopes=False)` to disable.
+* Fine-pitch escape, plane fan-out, long fan-out and the finisher are Python geometry /
+  maze search inside the KiCad container: fine on 150-500-part boards, minutes to tens of
+  minutes on a 1000-part board (long fan-out capped by `long_fanout_seconds`, finisher by
+  `finisher_seconds`). The finisher's rip-up only touches autorouter copper of other
+  signal nets.
+* Replicated block copies are not checked against keep-outs or foreign copper at copy time
+  (DRC reports it). Footprint-level clearance overrides are not passed to Freerouting.
+* Freerouting is deterministic for a given DSN and seed; the continue runs / restarts use
+  other seeds. Each new DSN (any change of placement or pre-routes) starts routing from
+  scratch.
 * The dangling-stub clean-up after routing is single-pass and is skipped automatically
   if it would reduce connectivity (then `track_dangling` warnings remain and are counted).
 * Fabrication notes (finish ENIG, 1 oz outer copper, stack-up thicknesses) are generic
@@ -497,6 +507,41 @@ What a board author should do (in order of effect):
 5. Pre-route analogue / sensitive nets yourself; the router optimises connectivity only.
 6. Large boards: `build --budget SEC`, watch `route/progress.log`; see the real-board
    results below.
+
+### Real boards (measured on copies, 2026-11-27)
+`tests/head_escape/` = copy of RR-HEAD-ACQ (1085 parts, 326 x 96 mm, 6 layers, four replicated
+lanes with the lane-0 routes of the lead's earlier run replayed from `blocks.json`), escape on,
+zone nets not autorouted, `--budget 2400`, shared 4-core machine:
+
+| step | result |
+|---|---|
+| generation (incl. escape, plane / extended / long fan-out) | ~15 min; escape 87 vias + 20 direct pre-routes (LQFP-100, 4 WQFN-16 DACs; 60 pads without a legal spot); plane fan-out 783 vias, 32 long fan-outs in the 600 s cap, 171 plane pads left without a plane connection |
+| Freerouting, 2400 s budget | 1041 items at start; first run 930 s -> 795 open, continue 945 s -> 741, continue 378 s -> **712** |
+| finisher (900 s) | 6 routed, the rest ran out of time |
+| result | **FAIL: 707 open** (about half of them zone-net pads without a plane connection), DRC 2 errors (a replicated lane via in a lane-1 keep-out; a footprint-level 0.2 mm clearance on U2001 that the DSN does not carry), parity 0; 71 min in total |
+
+For comparison, the lead's run of the original definition (escape off, zone nets autorouted,
+no continue runs because they crashed): 1 h 45 min -> 340 open, 3 DRC errors.
+Throughput on this board is about 50 connections per 15-minute Freerouting run late in the
+job; the extended fan-out added afterwards gives 36 more plane pads their via (generation-
+only measurement: 819 fan-out vias, 12 long fan-outs, 155 pads left).
+
+What this means for the 600-1100-part boards: the flow handles them (no crashes, best state
+always on disk, progress log, connectivity counts beyond 499), but it does not route them to
+zero unattended in an hour. To get there the board author has to (in order of effect):
+1. make room for plane vias: every supply/GND pad needs a via spot within ~4 mm (extended
+   fan-out) - the 155-171 pads above are the list to work through (`summary.json` →
+   `routing.plane_fanout.failed`, with the reason); or pour the net on an outer layer there;
+2. keep 2+ mm around fine-pitch ICs free (escape ring) - 60 escape pads had no spot;
+3. route power / analogue / HV by hand or as pre-routes (`board.track`/`board.via`), and
+   freeze lane routes with `replicate()` once lane 0 is complete;
+4. then several budgeted runs (`--budget 3600` or more, an otherwise idle machine; the
+   result accumulates across builds only through `blocks.json`/pre-routes - a new DSN
+   starts Freerouting from scratch) and the finisher;
+5. finish the last tens of connections in KiCad by hand.
+`zone_nets="route"` gives the old behaviour (Freerouting routes zone nets as tracks), which
+may be the faster way to completion on a board whose planes are not yet reachable from
+every pad - at the price of power connections as thin routed tracks.
 
 Other generator tests: `tools/eda/tests/replicate/` (placement + route replication,
 `waive`, `severity`), `tools/eda/tests/import_chassis|import_panel|import_head_acq/`

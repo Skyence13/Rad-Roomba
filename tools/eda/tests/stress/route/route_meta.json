@@ -3,54 +3,19 @@
     {
       "kind": "first",
       "run": 1,
-      "seconds": 226.0,
+      "seconds": 273.7,
       "seed": 0,
-      "unconnected": 1
-    },
-    {
-      "kind": "continue",
-      "run": 2,
-      "seconds": 236.3,
-      "seed": 1,
-      "unconnected": 1
-    },
-    {
-      "kind": "continue",
-      "run": 3,
-      "seconds": 236.9,
-      "seed": 2,
-      "unconnected": null
-    },
-    {
-      "kind": "restart",
-      "run": 4,
-      "seconds": 291.5,
-      "seed": 1000,
-      "unconnected": 1
-    },
-    {
-      "kind": "continue",
-      "run": 5,
-      "seconds": 234.1,
-      "seed": 1001,
-      "unconnected": 1
-    },
-    {
-      "kind": "continue",
-      "run": 6,
-      "seconds": 234.2,
-      "seed": 1002,
-      "unconnected": 1
+      "unconnected": 0
     }
   ],
-  "dsn_sha256": "c4cb3e0005d61320e86c57e65e02916e270b0befe6c1066255bf0aa93bfd091c",
+  "dsn_sha256": "7fc92914c68ed632ab211cbf9c5f65e36b64beae434d50abf1faccde82258c34",
   "freerouting": "v2.6.0 (build-date: 2026-11-25)",
   "log_tail": [
-    "[C48888\\21C585] Auto-routing stage completed: started with 177 unrouted nets, completed in 219.71 seconds, final score: 996.72 (1 unrouted and 56 violations), using 203.35 total CPU seconds, 101.95 GB total allocated, and 572.4 MB peak heap usage.",
-    "[C48888\\21C585] Job 'C48888\\21C585' finished with state: COMPLETED (elapsed: 3 minutes 40.50 seconds, finished at UTC: 2026-11-27T06:02:36.033989424Z)."
+    "[33128D\\5EE886] Auto-routing stage completed: started with 176 unrouted nets, completed in 264.87 seconds, final score: 1000.00 (0 unrouted and 56 violations), using 194.43 total CPU seconds, 87.05 GB total allocated, and 538.3 MB peak heap usage.",
+    "[33128D\\5EE886] Job '33128D\\5EE886' finished with state: COMPLETED (elapsed: 4 minutes 26.08 seconds, finished at UTC: 2026-11-27T07:27:57.418704044Z)."
   ],
   "passes_limit": 30,
-  "seconds": 226.0,
+  "seconds": 273.7,
   "threads": 4,
   "timed_out": false
 }

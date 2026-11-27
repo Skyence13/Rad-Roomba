@@ -26,7 +26,7 @@ EXPECT = {
     "LLD_F0": "TIM4_CH1", "LLD_F1": "TIM4_CH2", "LLD_F2": "TIM4_CH3", "LLD_F3": "TIM4_CH4",
     "LLD_R0": "TIM3_CH1", "LLD_R1": "TIM3_CH2", "LLD_R2": "TIM3_CH3", "LLD_R3": "TIM3_CH4",
     "PULSER_STROBE": "TIM8_CH1", "I2C_SCL": "I2C3_SCL", "I2C_SDA": "I2C3_SDA",
-    "HSE_IN_24M": "RCC_OSC_IN",
+    "HSE_IN_24M": "RCC_OSC_IN", "LED_STROBE": "TIM8_CH3N",
 }
 
 
@@ -59,7 +59,7 @@ def main():
                 errors.append(f"{pin}: {want} is AF{db['signals'][want]}, pinmap says {e['af']}")
             elif db["signals"][want] is None and e["af"] != "-":
                 errors.append(f"{pin}: {want} has no AF number, pinmap says {e['af']}")
-        if e["peripheral"] in ("ADC1", "ADC2"):
+        if e["peripheral"] in ("ADC1", "ADC2", "ADC3", "ADC4", "ADC5"):
             name = f"{e['peripheral']}_IN{e['channel']}"
             if name not in db["signals"]:
                 errors.append(f"{pin}: {name} is not available on this pin")

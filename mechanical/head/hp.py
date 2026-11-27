@@ -45,7 +45,9 @@ JOINT_Y = 0.0          # prototype split plane (centre of the 7.5 mm S1|S2 seam 
 TONGUE_T, TONGUE_H = 1.2, 1.6     # tongue thickness (x or z) and projection across the joint (y)
 LAP_T, LAP_H = 1.0, 2.0            # ship-lap of the upper walls across the joint (outer 1.0 mm, 2.0 mm overlap)
 DOWEL_D = 4.0
-ROD_PAD_X = (96.0, 116.0, 136.0, 156.0, 176.0)   # spreader screw stations on the y = +-87.5 ribs (hard pads, M2.5 inserts)
+ROD_PAD_X = (96.0, 121.0, 138.0, 155.0, 168.0)   # spreader screw stations on the y = +-87.5 ribs (hard pads, M2.5 inserts).
+# Was (96, 116, 136, 156, 176): the 176 station's hole overlapped the H4 / H6 board-standoff holes at x 174.7 (centres 1.3 mm apart, found by the
+# new spreader hole-web check), and 116 overlaps the moved H1 at x 113.2 (CR-M02). Now >= 1.8 mm web to every board-standoff hole (tool-checked).
 REAR_SCREW_X = 76.8
 REAR_SCREW_Y = (8.0, 22.0, 153.0)                # spreader screws into the printed rear zone (each side), also comb-foot bond points
 THEAD_SCREW_DY = (-24.0, -10.0, 10.0, 24.0)       # M3 low-head through the spreader tab into the aluminium T-head (about y = +-87.5)
@@ -72,8 +74,17 @@ STANDOFF_BOARD_H = 2.5
 # Lid (cover) fastening: the cover is a shear panel screwed at <= 40 mm pitch round a closed loop (requirement). Rear line: M3 standoffs on the
 # spreader (the 2.6 mm rear wall cannot take an insert and the rear strip is full); front and side lines: hard bosses on the wall inner faces
 # (prototype: M3 heat-set inserts; production: tapped M3), inside the gasket loop, top = lid seat z 43.0.
-LID_STANDOFFS = [(183.0, 42.0), (183.0, 130.0), (77.5, 0.0), (77.5, 31.5), (77.5, 57.0), (77.5, 70.5), (77.5, 104.5), (77.5, 144.5), (ROW_X, 166.9)]
-LID_STANDOFF_D = 4.5   # +- y -> 17 off; prototype: M3 x 10.5 where it stands on (and clamps) a 0.5 mm EMI fence foot, M3 x 11 in the chimney zones; production M3 x 11
+LID_STANDOFFS = [(183.0, 42.0), (183.0, 130.0), (77.5, 0.0), (77.5, 31.5), (77.5, 57.0), (77.5, 144.5), (ROW_X, 166.9)]   # mirrored (+- y)
+# CR-M03 (b) (electronics/head_acq/STAGE2_CHANGE_REQUESTS.md section B, IB-52): the +y rear-strip standoffs at (77.5, +70.5) and (77.5, +104.5)
+# lay under the mated J2001 / J2601 plugs. (77.5, +70.5) is deleted (the CR's "y ~ +59" coincides with the existing (77.5, +57.0), which already
+# stands between the S1 chimney and the plugs); (77.5, +104.5) moves to (77.5, +117.5) (CR "y ~ +116": first position clear of the plugs AND of the
+# rear-comb foot end at y 114.75). The -y side (J2 landing, no Micro-Fit plugs) is unchanged.
+LID_STANDOFFS_ONE_SIDE = [(77.5, 117.5), (77.5, -70.5), (77.5, -104.5)]
+LID_STANDOFF_D = 4.5   # 16 off; prototype: M3 x 10.5 where it stands on (and clamps) a 0.5 mm EMI fence foot, M3 x 11 in the chimney zones; production M3 x 11
+# Prototype rear-comb bond screws that replace the two foot-clamping standoffs removed by CR-M03 on the +y middle foot (y 60.25..114.75, all under the
+# mated plugs): ISO 7045 M2.5 x 3 pan through a foot tab into the tapped spreader at x 80.3 (in front of the T-head pocket: tip 0.35 mm from the T-head
+# face, tool-checked by the FRAME-isolation check), head top z 34.15 below the plugs (z >= 36.1).
+REAR_BOND = [(80.3, 70.5), (80.3, 104.5)]
 LID_BOSS_FRONT_X = 184.2                         # front bosses (centre x), lid hole edge = gasket inner edge 185.9
 LID_BOSS_FRONT_Y = (6.0, 35.0, 70.5, 104.5, 137.0, 168.4)   # +- y (none on the y = 0 split); 168.4 = front corner boss
 LID_BOSS_SIDE_Y = 168.4                          # side bosses (centre |y|), lid hole edge 170.1 < gasket inner edge 170.2
@@ -136,8 +147,24 @@ SW_SIDE = {"x": XR, "y": 156.75, "z": 20.75}                  # side switch pock
 # switch (Omron D2HW-C201M, PARTIAL data: see purchased_and_fabricated.csv)
 SW = {"l": 13.3, "t": 5.3, "h": 7.0, "plunger": 1.5, "pt_max": 1.0, "ot_min": 1.1, "md": 0.25, "of_max_n": 0.75}
 
-# ports, vent
+# ports, vent. Port y is the interface value P.HEAD_PIGTAIL_EXIT: J1 y 76.2 (CR-M03 (a): J2001 centre u 86.8), J2 y -87.5.
+PORT_Y = {"J1": PORT["J1"][1], "J2": PORT["J2"][1]}
 PORT_SLOT_HY, PORT_SLOT_Z0 = 5.5, 33.5
+
+# ----------------------------------------------------------------------------- RR-HEAD-ACQ as built (IB-52; checks.py compares every value below
+# with electronics/head_acq/RR-HEAD-ACQ.kicad_pcb, so a board change shows up as a failed check, not as a silent misfit)
+CAN_V0 = 8.25                 # CR-M01: shield can rear outer face v 8.25 (libs.py CAN_V0; board footprint SH1013 F.Fab outline v 8.25..40.25)
+CAN_MOUSE_DU = (-10.38, 11.87)   # CR-M04: mouse-hole centres (du) in the rear wall = anode U.FL centre pads (libs.py MOUSE_DU, S2-L3)
+MOUSE_W, MOUSE_H = 2.0, 1.2
+# J1 landing as built (S2-L5): J2601 body u 50.255..71.905 and J2001 body u 73.015..100.665, v 1.65..11.55 (F.Fab), courtyards u 49.75..101.17,
+# v 1.15..12.06; mating faces rearward. Mated Micro-Fit plugs over the rear strip v -8.4..1.5 (CR-M03 text), width = header body (conservative).
+PLUG_V = (-8.4, 1.5)
+MICROFIT_BODY_U = {"J2001": (73.015, 100.665), "J2601": (50.255, 71.905)}   # F.Fab body extents in u (checked against the board file)
+MICROFIT_H_ALLOW = 8.3        # IB-19 / CR-M05: local height allowed for the Micro-Fit headers AND their mated plugs (board assumes 6.0, UNVERIFIED)
+LID_OPENING = (74.5, 101.7, 61.5, 113.5)   # x0, x1, y0, y1: lid opening under the J1 blister = as-built courtyards (u 49.75..101.17, +0.3) and the
+                                           # mated-plug zone (x from 74.8 - 0.3); rear edge 0.1 inboard of the narrowed rear fence flange (74.4)
+FENCE_REAR_FLANGE = 1.5       # rear comb top flange width (was 2.0): x 72.9..74.4 stays clear of the mated plugs (x >= 74.8)
+WIRE_EXIT_MIN = 8.0           # calculated minimum free length behind a Micro-Fit plug for the wire exit + one bend (stated assumption, see calc.harness)
 CABLE_D = {"J1": 7.5, "J2": 6.5}
 VENT = (XR, -65.0, 37.5)
 DRAIN = {"dy": 6.5, "x_in": 75.0, "x_out": 71.0, "d": 1.2, "z_ch": (11.5, 12.3)}   # light-trap drain per chimney: up-across-up, 3 turns

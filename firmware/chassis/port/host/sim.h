@@ -6,9 +6,15 @@
 #include "rrch.h"
 
 typedef struct {
-    /* motor + vehicle parameters */
-    double R, L, Ke, Kt, J, mass, Iz, r, track, tau_c, b_visc, R_brake;
+    /* motor + vehicle parameters, per wheel and referred to the wheel shaft (IB-03: source
+     * electronics/analysis/chassis_braking.py, see sim_params_nominal / sim_params_conservative) */
+    double R, L, Ke, Kt, J, mass, Iz, r, track, tau_c, b_visc, R_brake, R_path;
+    double i_trip;                  /* bridge hardware current chop, A (CCR-E03 b: 2.68 A) */
+    double ipropi_fs_a;             /* IPROPI ADC full scale, A (3.000 V / 1.1205 V/A) */
 } sim_params_t;
+
+/* chain nodes of the emulator (electronics/analysis/chassis_safety_chain.md 2.1) */
+enum { SIM_N1 = 1, SIM_N2, SIM_N3, SIM_N4A, SIM_N4, SIM_N5, SIM_N6, SIM_N7, SIM_N8A, SIM_N8, SIM_N9, SIM_NEND, SIM_NODES };
 
 typedef struct {
     sim_params_t p;
@@ -19,8 +25,12 @@ typedef struct {
     double w[2], th[2], i[2];       /* wheel speed rad/s, wheel angle rad, motor current A (left, right) */
     double x, y, yaw, v, wz, acc;   /* ground truth */
     double vmot;
-    bool latch, relay[2];
-    int latch_drop_ms, latch_set_ms, relay_ms[2];
+    bool latch, relay[2];           /* K1 contact (RUN_12V) / brake relay NO contacts closed (motor on the bridge) */
+    uint8_t rstate[2];              /* 0 braked (NC closed), 1 connected (NO closed), 2 in transfer (both open) */
+    int latch_set_ms;
+    double k1_off_s, relay_t_s[2];  /* time since the coil supply went away / came back */
+    bool node[SIM_NODES];           /* chain node live (index SIM_N1..SIM_NEND) */
+    bool pole_b;
     /* environment */
     bool mode_run, estop, hands_on, chg_cover_open, chg_plug, head_docked, bumper_l, bumper_r, j2;
     double pres_ohm, loop_ohm, vbat, soc, temp[3], tilt_deg;
@@ -30,6 +40,9 @@ typedef struct {
     int rearm_ms, pause_ms;
     /* fault injection */
     bool enc_dropout[2], block[2], usb_stall, usb_down, imu_off, iox_fail, latch_weld, estop_a_stuck;
+    bool iox_b_fail, permit_short, permit_open; /* IOX_B not answering; ARM_PERMIT photo-MOS U24 shorted / open */
+    int chain_short;                /* node shorted to a live conductor (SIM_N1..SIM_NEND), 0 = none */
+    bool plant_only;                /* firmware not stepped, watchdog model off (stop-distance studies) */
     bool freeze_control, freeze_supervisor, freeze_background;
     double slip[2];
     uint8_t efuse_fault;
@@ -55,6 +68,8 @@ typedef struct {
 } sim_t;
 
 void sim_init(sim_t *s, uint64_t seed);
+void sim_params_nominal(sim_params_t *p);       /* chassis_braking.py "nominal" case (default plant) */
+void sim_params_conservative(sim_params_t *p);  /* chassis_braking.py "conservative" case */
 void sim_step_ms(sim_t *s);                                /* advance 1 ms of simulated time */
 void sim_mcu_reset(sim_t *s, rrch_reset_cause_t cause);
 void sim_host_write(sim_t *s, const uint8_t *buf, size_t len); /* bytes from the host */

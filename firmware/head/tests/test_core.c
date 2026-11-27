@@ -616,7 +616,7 @@ static void test_setup_change_invalidates_binding(void)
     advance(150000u);
     CHECK(send("ENG_SETUP_SET", "{\"bias\":{\"ref_mv\":19000}}") && status_is("BAD_ARG"));
     CHECK(send("ENG_SETUP_SET", "{\"nonsense\":1}") && status_is("BAD_ARG"));
-    CHECK(send("ENG_SETUP_SET", "{\"thresholds\":{\"beta_lld\":[2000,200,200,200]}}") && status_is("BAD_ARG")); /* LLD >= ULD */
+    CHECK(send("ENG_SETUP_SET", "{\"thresholds\":{\"beta_lld\":[3000,200,200,200]}}") && status_is("BAD_ARG")); /* LLD >= ULD (default ULD 2679) */
     CHECK(core.link == RRH_LINK_BOUND);
     CHECK(send("ENG_SETUP_SET", "{\"bias\":{\"ref_mv\":30000}}") && status_is("OK") && has("\"changed\":false"));
     CHECK(core.link == RRH_LINK_BOUND); /* identical values: nothing happens */
@@ -841,11 +841,18 @@ static void test_misc_ops(void)
     boot();
     CHECK((core.health & RRH_H_ENTROPY) != 0u);
     handshake();
+    /* rev A: no rail-zone identification. Whatever the pins read, STATUS says "not available" -
+     * null, which is not the same as an empty list ("no zone actuated"). */
     m.analog.bumper_zones = 0x05u;
+    advance(100000u);
+    CHECK(send("STATUS", "{}") && has("\"bumper\":{\"available\":false,\"now\":null,\"latched\":null}"));
+    /* a board revision with auxiliary contacts: the port reports zones_available and the old behaviour applies */
+    m.analog.zones_available = true;
     advance(100000u);
     m.analog.bumper_zones = 0u;
     advance(100000u);
-    CHECK(send("STATUS", "{\"clear_bumper\":true}") && has("\"bumper\":{\"now\":[],\"latched\":[\"FRONT\",\"RIGHT\"]}"));
+    CHECK(send("STATUS", "{\"clear_bumper\":true}") &&
+          has("\"bumper\":{\"available\":true,\"now\":[],\"latched\":[\"FRONT\",\"RIGHT\"]}"));
     CHECK(send("STATUS", "{}") && has("\"latched\":[]"));
     CHECK(send("ENG_WAVE_ARM", "{\"channel\":3,\"samples\":64,\"pretrigger\":8}") && status_is("OK"));
     CHECK(send("ENG_WAVE_ARM", "{\"channel\":9,\"samples\":64,\"pretrigger\":8}") && status_is("BAD_ARG"));
