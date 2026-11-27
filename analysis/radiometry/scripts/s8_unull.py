@@ -58,7 +58,7 @@ for cname, case in CASES:
                 for n in GRID:                       # fill the rest monotonically for the table
                     tbl.setdefault(n, min(tbl.values()))
                 curves[(cname, H, a, rule)] = tbl
-                res[rule] = (N.min_n_ref(case, U, a, 1.10, rule, table=tbl)[0], N.min_n_ref(case, U, a, 1.05, rule, table=tbl)[0], tbl)
+                res[rule] = (N.min_n_ref(case, U, a, 1.10, rule, GRID, tbl)[0], N.min_n_ref(case, U, a, 1.05, rule, GRID, tbl)[0], tbl)
             f10, f05 = N.n_ref_formula(a, g, 1.10), N.n_ref_formula(a, g, 1.05)
             rows.append((cname, H, f"{U:.4g}", f"{a:.3g}", f"{g:.3f}", f"{(case.cal.k * U + case.cal.b) * case.lane.T:.4g}",
                          *[f"{res[r][i]:.4g}" for r in ("plugin", "predictive") for i in (0, 1)], f"{f10:.4g}", f"{f05:.4g}",
