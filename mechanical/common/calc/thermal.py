@@ -56,18 +56,19 @@ HEAD_REPORT = P.REPO / "mechanical" / "head" / "out" / "head_report.md"
 
 
 def head_reference():
-    """The head heater figure is owned by the head engineer (real head geometry): quote it, never recompute it here."""
+    """The head heater figure is owned by the head engineer (real head geometry, same assumption set): quote
+    mechanical/head/out/thermal_summary.json, never recompute it here."""
+    import json
+    f = P.REPO / "mechanical" / "head" / "out" / "thermal_summary.json"
     try:
-        txt = HEAD_REPORT.read_text(encoding="utf-8")
-    except OSError:
+        d = json.loads(f.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
         return None
-    i = txt.find("## 9. Thermal")
-    if i < 0:
-        return None
-    sec = txt[i:txt.find("\n## ", i + 5) if txt.find("\n## ", i + 5) > 0 else len(txt)]
-    if "1.2 W" not in sec:      # still on the old 5 W credit: not the reconciled assumption set
-        return None
-    return [ln for ln in sec.splitlines() if ln.startswith("|")]
+    rows = ["| Build | Ambient (C) | Air (W/m2K) | Jacket | Receiver boundary | Heater (W) |", "|---|---|---|---|---|---|"]
+    for c in d.get("cases", []):
+        if c.get("set_point_c") == T_SET_C and c.get("jacket"):
+            rows.append(f"| {c['build']} | {c['ambient_c']:.0f} | {c['h_ext_w_m2k']:.0f} | yes | {c['receiver_boundary']} | {c['heater_power_w']} |")
+    return rows if len(rows) > 2 else None
 
 
 def run():
@@ -112,9 +113,10 @@ def run():
     ref = head_reference()
     md.append("\n### Head (reference only)\n")
     if ref:
-        md.append("Head heater power from `mechanical/head/out/head_report.md` section 9 (head engineer, same assumption set):\n")
+        md.append("Head heater power from `mechanical/head/out/thermal_summary.json` (head engineer, real head geometry, same assumption set; "
+                  "the 'receiver metal at ambient' rows are the bound if the body channels conduct well -- see the prototype body report):\n")
         md += ref
-        key["head_htr"] = "see mechanical/head/out/head_report.md section 9"
+        key["head_htr"] = "see mechanical/head/out/thermal_summary.json"
     else:
         md.append("Head heater power: **pending head recalculation** (the head engineer recomputes it on the real head geometry with this assumption set; "
                   "the current `mechanical/head/out/head_report.md` still credits 5 W of electronics heat). This file carries no head figure of its own.")

@@ -49,6 +49,7 @@ def n01(tmp):
             c.add("Park accepted", app.command("park")["accepted"])
             sc._wait(sim, lambda: app.guidance.move is None, 240)
             c.add("parked", app.guidance.parked)
+        extra["localization_error_by_chassis_time_m"] = sim.loc_error_by_chassis_time()      # IB-47
         ev = sc._finish("native_s01_survey_revisit", sim, c, extra)
     finally:
         sim.close()
@@ -91,7 +92,7 @@ def n02(tmp):
         c.add("mission complete", app.mission.state == "REVIEW", state=app.mission.state, hold=app.mission.hold_reason)
         c.add("affected strip re-surveyed (bands complete)", min(sc._band_fraction(sim, p) for p in (0, 1)) == 1.0,
               bands=[sc._band_fraction(sim, p) for p in (0, 1)])
-        ev = sc._finish("native_s02_head_reset", sim, c, {})
+        ev = sc._finish("native_s02_head_reset", sim, c, {"localization_error_by_chassis_time_m": sim.loc_error_by_chassis_time()})
     finally:
         sim.close()
     return ev

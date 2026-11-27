@@ -34,6 +34,7 @@ Hand-written: this file, `production/README.md` (fabrication / test pack), `STAT
 | Path | Content |
 |---|---|
 | `hp.py` | head parameters; every shared datum is imported from `mechanical/common/params.py` (never retyped) |
+| `asbuilt.py` | reads the as-built RR-HEAD-ACQ placement from `electronics/head_acq/RR-HEAD-ACQ.kicad_pcb` (holes, can outlines, mouse holes, clips, courtyards, 3D heights) for the board-fit check |
 | `parts.py` | all part geometry (both builds, dummy, cradle, gauges), base_link coordinates, installed position |
 | `assembly.py` | part lists of the three builds with part numbers, materials, masses |
 | `calc.py` | closed-form calculations: deflection / modes, rails, light paths, tolerance stack, thermal, OEM-dependent list |
@@ -62,19 +63,30 @@ Hand-written: this file, `production/README.md` (fabrication / test pack), `STAT
   dummy; rail at rest and at full stroke with both inserts; side rails at their stop; 5 mm side strips; transport covers), windows and film plane vs the
   contract, rail heights, board standoffs vs `board_envelopes.yaml`, board height limits, envelope, shoes / keeper / ports vs `mechanical_interfaces.md`,
   bed fit and downward-facing faces of every printed part in print orientation, split joint vs windows, EMI bond pitch (clamping checked), lid fastener
-  pitch and hard seats, drain passage and line of sight, FRAME-to-receiver isolation gap.
+  pitch and hard seats, drain passage and line of sight, FRAME-to-receiver isolation gap, spreader hole webs.
+- **Tool-checked against the board file** (IB-52): the as-built RR-HEAD-ACQ (`electronics/head_acq/RR-HEAD-ACQ.kicad_pcb`, parsed by `asbuilt.py`):
+  8 holes vs standoffs and spreader holes, 4 can outlines / mouse holes / 48 clips vs the can model, J1 port vs the J2001 centre, all 1073 component bodies
+  (courtyard x 3D envelope height, Micro-Fit at 8.3 mm) intersected with every head part, mated Micro-Fit plug keep-outs (CR-M03 v -8.4..1.5) in the assemblies.
 - **Calculated** (closed form, stated assumptions in calc.py): masses / CG (model volumes x handbook densities, OEM modules assumed 50 + 52 g), corner
-  deflection and modes, rail kinematics and forces (switch data PARTIAL), tolerance stack, thermal UA, light-path table (geometry analysis, not a light test).
+  deflection and modes, rail kinematics and forces (switch data PARTIAL), tolerance stack, heater power on the IB-39 assumption set (`out/thermal_summary.json`),
+  warm-up, rail-switch lead lengths, light-path table (geometry analysis, not a light test).
 - **Not done**: slicing (owner slices from STEP), FEA, any physical test. Supplier data marked UNVERIFIED / PARTIAL in the BOM csv files.
 
 ## Open items (details: head_report.md section 2, STATUS.md)
 
-1. Closed: contract draft6 envelope x [66.0, 212.5] admits the sprung leading rail (front face x 212.2 unloaded, 195.2 stroked).
-2. `params.HEAD_RAIL_SWITCHES` placeholders vs the designed switch positions (frames.yaml update).
-3. Head mass 1.85 kg (prototype) / 2.06 kg (production) vs 1.67 / 2.10 kg in mech_calcs.md.
-4. Front-fence foot saddle windows 27 mm (> 20 mm slot rule, but closed by the spreader).
-5. Rib screws stay M2.5 into heat-set inserts (6.5 mm rib cannot hold an M3 insert next to the lane cavities) -- deviation from the "M3 minimum for
-   structure" rule in mechanical_interfaces.md section 8; all lid screws and the T-head screws are M3.
-6. Closed: grounding is the same in both builds -- FRAME isolated from the receiver shoes, R2801 fitted (production/README.md section 4).
-7. Closed: the external 3 mm jacket RR-HD-S-131/132 is standard for operation below 0 C (heater power with / without it: head_report.md section 9).
-8. Every OEM-dependent dimension (head_report.md section 8); switch data PARTIAL; most PUR items UNVERIFIED.
+1. **J1 landing harness (DEVIATION, IB-52 / CR-M03):** the mated J2001 / J2601 plugs end 2.0 mm (prototype comb: 1.4 mm) in front of the rear wall; about
+   8 mm is needed for the wire exit and bend, and the J2001 wires must fan in to the 7.5 mm cable at y 76.2. Needs a board-side decision (headers moved
+   >= 6 mm forward, or top-entry headers). The head fits the board as built (tool-checked); the harness cannot be made as laid out.
+2. **Lid fastener pitch (DEVIATION):** 60.5 mm on the rear line over the J1 bay (y 57.0..117.5): no standoff can stand under the mated plugs; bonded
+   blister doubles the lid there, calculated gasket-line sag 0.03 mm.
+3. **mechanical/common records (DEVIATION):** `params.HEAD_PIGTAIL_EXIT` still lists J1 at y 87.5 (head port is at 76.2, CR-M03).
+4. **Heater / receiver (IB-39, finding):** baseline 16.9-20.1 W fits the 30 W films; moving air at -25 C needs 30.2-30.7 W; with conductive body channels
+   (receiver metal at ambient) 43-66 W -- the G10 isolator (IB-38) is a weak thermal break. Body receiver material must stay insulating or the T-head gets a thermal break.
+5. `params.HEAD_RAIL_SWITCHES` placeholders vs the designed switch positions (frames.yaml update) -- unchanged.
+6. Head mass 1862 g (prototype) / 2082 g (production) vs 1.67 / 2.10 kg in mech_calcs.md.
+7. Front-fence foot saddle windows 27 mm (> 20 mm slot rule, closed by the spreader).
+8. Rib screws stay M2.5 into heat-set inserts (6.5 mm rib) -- deviation from the "M3 minimum" rule; lid and T-head screws M3.
+9. Closed: grounding (IB-38) identical in both builds, R2801 fitted (production/README.md section 4); jacket standard below 0 C; rail stroke after trip 15.6 mm
+   >= 15 mm in both builds (IB-11, calculated).
+10. Every OEM-dependent dimension (head_report.md section 8); switch data PARTIAL; most PUR items UNVERIFIED, including the Micro-Fit seated / mated
+    height (CR-M05, checked at 8.3 mm), the GH-8 (J2501) plug overhang, the D2HW lead length and the G10 / washer conductivities.

@@ -76,6 +76,9 @@ class NativeChassis:
     def __init__(self, port=5551):
         self.udp = _Udp(port)
         self._truth = {"x": 0.0, "y": 0.0, "yaw": 0.0, "v": 0.0, "w": 0.0}
+        self.history = []                 # (chassis_us, x, y, yaw) of every TRUTH datagram (IB-47: compare by chassis time)
+        self.emu_lag_max_us = 0
+        self.emu_rebases = 0
         self.udp.send({})         # any datagram subscribes the sender to TRUTH
 
     def env(self, name, value):
@@ -88,6 +91,11 @@ class NativeChassis:
         for msg in self.udp.drain():
             if msg.get("type") == "TRUTH":
                 self._truth = msg
+                if msg.get("chassis_us") is not None:
+                    self.history.append((msg["chassis_us"], msg["x"], msg["y"], msg["yaw"]))
+                    del self.history[:-20000]
+                self.emu_lag_max_us = max(self.emu_lag_max_us, msg.get("emu_lag_us") or 0)
+                self.emu_rebases = max(self.emu_rebases, msg.get("emu_rebases") or 0)
 
     def truth(self):
         self.poll()
@@ -165,7 +173,9 @@ class NativeSystem:
             angles, ranges = self.world.scan(pose)
             self.app.on_scan(self.clock.now_us(), angles, ranges)
             if self.app.loc.initialized:
-                self.trace.append((self.t, *pose, *[float(v) for v in self.app.loc.x]))
+                odom = (self.app.chassis.drive.get("odom") or {}).get("t_us")
+                self.trace.append((self.t, *pose, *[float(v) for v in self.app.loc.x], odom,
+                                   self.chassis._truth.get("emu_lag_us"), self.chassis._truth.get("emu_rebases")))
         time.sleep(0.0004)
 
     def run(self, seconds=None, until=None, timeout=600.0):
@@ -202,6 +212,31 @@ class NativeSystem:
     def loc_error(self):
         e = [abs(t[1] - t[4]) for t in self.trace[5:]], [abs(t[2] - t[5]) for t in self.trace[5:]]
         return {"max_x_m": max(e[0], default=0.0), "max_y_m": max(e[1], default=0.0)}
+
+    def truth_at_chassis_us(self, t_us):
+        """TRUTH pose interpolated at a chassis timestamp (None outside the recorded history)."""
+        import bisect
+        h = self.chassis.history
+        if not h or t_us is None or t_us < h[0][0] or t_us > h[-1][0]:
+            return None
+        i = bisect.bisect_left(h, (t_us,))
+        if i == 0 or h[i][0] == t_us:
+            return h[i][1:]
+        (t0, *a), (t1, *b) = h[i - 1], h[i]
+        f = (t_us - t0) / (t1 - t0)
+        return tuple(x + f * (y - x) for x, y in zip(a, b))
+
+    def loc_error_by_chassis_time(self):
+        """IB-47: estimate (state of the last odometry sample, chassis time) against TRUTH at that chassis time, instead of
+        against the newest datagram at host arrival time.  Returns the same keys as loc_error plus emulator pacing info."""
+        ex, ey = [], []
+        for row in self.trace[5:]:
+            tr = self.truth_at_chassis_us(row[7]) if len(row) > 7 else None
+            if tr is not None:
+                ex.append(abs(tr[0] - row[4]))
+                ey.append(abs(tr[1] - row[5]))
+        return {"max_x_m": max(ex, default=None), "max_y_m": max(ey, default=None), "samples": len(ex),
+                "emu_lag_max_us": self.chassis.emu_lag_max_us, "emu_rebases": self.chassis.emu_rebases}
 
     def close(self):
         try:

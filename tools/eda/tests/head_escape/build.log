@@ -1,3 +1,8 @@
 [rrkicad] definition: 1085 parts, 581 nets, 21 groups
 [rrkicad] schematic: 31 sheet(s): POWER_IN, POWER_REG, HEATER, BIAS, BIAS_2, DAC, MONITOR, MCU, COMM_ISOLATED, LANE0_FLOOR, LANE0_FLOOR_2, LANE0_REF, LANE0_LOGIC, LANE0_LOGIC_2, LANE1_FLOOR, LANE1_FLOOR_2, LANE1_REF, LANE1_LOGIC, LANE1_LOGIC_2, LANE2_FLOOR, LANE2_FLOOR_2, LANE2_REF, LANE2_LOGIC, LANE2_LOGIC_2, LANE3_FLOOR, LANE3_FLOOR_2, LANE3_REF, LANE3_LOGIC, LANE3_LOGIC_2, MECH
 [rrkicad] netlist cross-check OK (1085 components, 638 nets incl. unconnected)
+[rrkicad] plane fan-out: 815 via(s) on +3V3, +3V3_EVT, +5V6, +5V_A, BUS_GND, GND (32 with an extended stub), 8 long fan-out(s) (maze-routed to the plane), 163 pad(s) without
+[rrkicad] escape: 87 via(s), 20 direct pre-route(s) on U2201, U2301, U2302, U2303, U2304, U2401; 73 pad(s) skipped {"no legal escape position": 60, "no legal escape position inside its own plane polygon": 11, "not connected (single-pin net)": 2}
+[rrkicad] replicate: 2684 fixed track/via item(s) from route/blocks.json
+[rrkicad] DSN exported (changed)
+[rrkicad] routing: freerouting passes<=200 threads=4 timeout=900s

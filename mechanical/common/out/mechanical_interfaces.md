@@ -29,7 +29,7 @@ Both body builds must accept both head builds and both must pass `layout.py` wit
 | HEAD_DOCK switch | D2HW-C201M on the body at (-3.0, 87.5, 23.0) behind the left channel; the left shoe tip (x = 4.0) presses it in the last 1.5 mm of travel | body (switch), head (flat shoe tip) |
 | Nose over the head | lower hull removed for x > 62.0 below z = 50.0; nothing of the body below z = 50.0 ahead of x = 62.0 except the latch; head top is z = 45.0 | body |
 | Tyre to head | head rear-most parts (wing returns) at x = 68.8; tyre front at head height x = 51.5 -> 17 mm; the head carries a wipeable splash lip on the wing rear faces, the body a debris deflector ahead of each tyre | both |
-| Cable ports on the head | J1 at (71.7, 87.5, 39.0), J2 at (71.7, -87.5, 39.0) in the rear wall above the shoes; sealed strain relief inside the wall, cable leaves -x/+z; pigtail free length 150..200 mm, clipped to the shoe root | head |
+| Cable ports on the head | J1 at (71.7, 76.2, 39.0), J2 at (71.7, -87.5, 39.0) in the rear wall above the shoes; sealed strain relief inside the wall, cable leaves -x/+z; pigtail free length 150..200 mm, clipped to the shoe root | head |
 | J1 / J2 receptacles on the body | J1 at (72.0, 32.0, 116.9), axis (0.625, 0.290, 0.725); J2 at (72.0, -32.0, 116.9), axis (0.625, -0.290, 0.725); keep the 45 mm radial grasp zone round each coupling nut free | body |
 | Bench stand | the head stands on its two shoes and a front foot; the stand must not touch the films | head |
 

@@ -18,6 +18,7 @@ Downstream:  ``from mechanical.common import params as P``
 from __future__ import annotations
 
 import ast
+import json
 import math
 from pathlib import Path
 
@@ -245,14 +246,22 @@ HEAD_ENV_E = {"x": (round(HEAD_ENV_D["x"][0] + HEAD_DX, 3), float(HEAD_ENV_E_CEI
 HEAD_LEAD_RAIL = {"x": (HEAD_FRAME_FRONT_X, 212.2), "z": (FILM_Z - min(RAIL_PROJECTIONS), 22.0), "half_y": 175.0}
 # Head mass and CG incl. pigtails (calculated by the head engineer: mechanical/head/out/head_report.md section 3)
 HEAD_JACKET = {"top_z": 48.0, "front_x": 191.2}   # standard 3 mm insulating jacket below 0 C (cap top, front band face), head_report.md section 9
-HEAD_MASS = {"prototype": (1.864, 118.4, 34.5), "production": (2.083, 119.9, 32.9)}   # kg, x, z (base_link mm)
+HEAD_MASS = {"prototype": (1.862, 118.4, 34.5), "production": (2.082, 120.0, 32.9)}   # kg, x, z (base_link mm); refreshed below from the head build
+try:   # read the finished head's calculated mass/CG at build time (mechanical/head/out/checks.json data.mass_*)
+    _hc = json.loads((REPO / "mechanical" / "head" / "out" / "checks.json").read_text(encoding="utf-8"))["data"]
+    for _b in ("prototype", "production"):
+        _m = _hc.get(f"mass_{_b}")
+        if _m:
+            HEAD_MASS[_b] = (round(_m["mass_g"] / 1000.0, 4), round(_m["cg_mm"][0], 1), round(_m["cg_mm"][2], 1))
+except (OSError, KeyError, ValueError):
+    pass
 HEAD_FRAME_X = (round(143.0 + HEAD_DX, 3), round(261.0 + HEAD_DX, 3))  # Rev D frame extents, shifted
 HEAD_FRAME_HALF_Y = 172.5
 HEAD_COVER_X = (round(143.4 + HEAD_DX, 3), round(260.6 + HEAD_DX, 3))
 HEAD_COVER_HALF_Y = 172.1
 HEAD_SPREADER_X = (round(155.0 + HEAD_DX, 3), round(257.5 + HEAD_DX, 3))   # rear edge held back: SiPM pigtail chimney (9 mm deep) behind it
 HEAD_SPREADER_HALF_Y = 168.5
-HEAD_PIGTAIL_EXIT = {"J1": (round(144.5 + HEAD_DX, 3), SEG_PITCH, 39.0), "J2": (round(144.5 + HEAD_DX, 3), -SEG_PITCH, 39.0)}  # J1 move to y 76.2 requested by CR-M03 (IB-52): head mechanical owns the port  # strain-relief ports in the rear wall at the inactive seams, cables leave -x/+z
+HEAD_PIGTAIL_EXIT = {"J1": (round(144.5 + HEAD_DX, 3), 76.2, 39.0), "J2": (round(144.5 + HEAD_DX, 3), -SEG_PITCH, 39.0)}  # J1 at y 76.2: head-board CR-M03a accepted (IB-52), as in the head model  # strain-relief ports in the rear wall at the inactive seams, cables leave -x/+z
 
 # --------------------------------------------------------------------------- head / body receiver interface (option C)
 RECEIVER = {

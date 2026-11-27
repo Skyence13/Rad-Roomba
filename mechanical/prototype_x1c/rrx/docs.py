@@ -431,6 +431,13 @@ def write_report(R, table, parts, timing):
       "amplitude at the row; a printed PAHT-CF channel also halves its modulus when moist. (2) wear: aluminium shoes sliding on a printed slot with grit abrade the datum; a steel dowel is a line contact that does not "
       "pick up grit and is replaced by pressing it out. (3) creep: the latch preload sits on the x-stop pads permanently. (4) the part is a prismatic block: one slot milled from below, four reamed cross holes, "
       "five tapped/doweled holes. A printed copy of the same geometry (`out/step/receiver_channel_fitcheck_*.step`) is exported for a fit check before metal is cut; it is not the datum build.\n")
+    w("**Thermal path to the head (calculated estimate, IB-39 follow-up).** As designed, each receiver channel (RRX-F02L/R, machined 6061-T6) is bolted metal-to-metal under the 4 mm 6061 chassis plate "
+      "(3 x M4 + 2 x 4 mm steel dowels, ear contact about 640 mm2 per channel): its conductance to the plate is of the order of several W/K, so the channel runs at plate temperature and the head's "
+      "'receiver metal at ambient' bound (heater about 43-66 W, `mechanical/head/out/thermal_summary.json`) applies rather than its 0.07 W/K-per-shoe assumption. "
+      "Proposal, not built: a G10 shim under each channel's ears with the channel made shorter by the shim thickness (z datum C unchanged: the land pins stay at z 14 in the channel), "
+      "G10 shoulder bushings on the M4 screws and the locating dowels in G10 sleeves. Conductance estimate: 1.5 mm shim 0.3 W/m K x 640 mm2 / 1.5 mm = 0.13 W/K plus about 0.04 W/K through three A2 screws, "
+      "about 0.17 W/K per channel (0.11 W/K in series with the shoe's 0.3 W/K isolator); a 3 mm shim gives about 0.10 W/K per channel (0.07 W/K in series), matching the head assumption. "
+      "It changes the head datum stack by a compliant layer: re-check the land-height tolerance (+0.04/-0.02 mm) and the latch preload creep before adopting it.\n")
     w("## 6. Bed fit of every printed part in its print orientation (tool-checked bounding boxes)\n\n| Part | Bounding box (mm) | Verdict | Note | Mesh open edges |\n|---|---|---|---|---|")
     for r in R["bed_fit"]:
         w(f"| {r['part']} | {r['bbox_print']} | {r['verdict']} | {r['note']} | {r['open_edges']} |")

@@ -1,6 +1,6 @@
 {
   "autoplaced": [],
-  "block_copies": 2444,
+  "block_copies": 2684,
   "board_bbox": [
     0.0,
     0.0,
@@ -16,7 +16,7 @@
     "RR_ZONE_ISOLATED",
     "RR_ZONE_POWER"
   ],
-  "dsn_sha256": "9f298efb5c23d114ba60fa06eb8dc54725e0adaa6c100a4200ca6aa62eec8da7",
+  "dsn_sha256": "f3c24f74f1002773f06a914015089e3808946a4dd5ffd4642a0213f47e557193",
   "dsn_unchanged": false,
   "escape": {
     "direct": 20,
@@ -242,843 +242,7 @@
     },
     "vias": 87
   },
-  "finisher": {
-    "failed": [
-      {
-        "ends": [
-          "Pad 1 [HEAD_HTR_P] of R2610 on F.Cu",
-          "Pad 1 [HEAD_HTR_P] of R2607 on F.Cu"
-        ],
-        "net": "HEAD_HTR_P",
-        "why": "exact re-check failed: pad of HTR_CX; rip-up: exact re-check failed: pad of HTR_CX"
-      },
-      {
-        "net": "HEAD_HTR_P",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "HEAD_HTR_P",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "HEAD_HTR_P",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "HEAD_HTR_P",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "HEAD_HTR_N",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "HEAD_HTR_N",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "HEAD_HTR_N",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "HEAD_LOOP_OUT",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "HEAD_LOOP_RET",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "HEAD_PRES_ID",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "VIN_CM",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "VIN_CM",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "VIN_CM",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "VIN_CM",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "GND",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "GND",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "GND",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "GND",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "GND",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "GND",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "GND",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "GND",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "GND",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "GND",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "GND",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "GND",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "GND",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "GND",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "GND",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "GND",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "GND",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "GND",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "GND",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "EF_UVLO",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "EF_UVLO",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "EF_OVP",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "EF_OVP",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "EF_MODE",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "EF_MODE",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "EF_SHDN",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "EF_RTN",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "EF_RTN",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "EF_RTN",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "EF_RTN",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "EF_RTN",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "EF_RTN",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "VIN_EF",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "VIN_EF",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "VIN_EF",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "EF_IMON",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "EF_IMON",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "EF_ILIM",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "EF_DVDT",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "VIN_F",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "VIN_F",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "VIN_F",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "VIN_F",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "VIN_F",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "VIN_F",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "VIN_F",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "VIN_F",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "VIN_DMP",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "VIN_MON",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "SHLD_J1",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "SHLD_J1",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "FRAME",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "FRAME",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "FRAME",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "FRAME",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "FRAME",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "FRAME",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "FRAME",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "FRAME",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "FRAME",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "FRAME",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "FRAME",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "FRAME",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "FRAME",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "FRAME",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "FRAME",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "FRAME",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "FRAME",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "LOOP_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "BZ_F_IN",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "BZ_F_IN",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "LOOP_B",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "BZ_L_IN",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "BZ_L_IN",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "BUMP_ZONE_L_N",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "LOOP_C",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "BZ_R_IN",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "BZ_R_IN",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "BK_EN",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "BK_FB",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "BK_FB",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "BK_FB",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "BK_CB",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "BK_SW",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "BK_SW",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V6_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V6_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V6_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V_A",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V6_E",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V6_E",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+5V6_E",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3_EVT",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3_EVT",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3_EVT",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3_EVT",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3_EVT",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3_EVT",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3_EVT",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3_EVT",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3_EVT",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3_EVT",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3_EVT",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3_EVT",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3_EVT",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3_EVT",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3_EVT",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3_EVT",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3_EVT",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3_EVT",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3_EVT",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3_EVT",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3_EVT",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3_EVT",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3_EVT",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3_EVT",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3_EVT",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3_EVT",
-        "why": "finisher time budget (900 s) used up"
-      },
-      {
-        "net": "+3V3_EVT",
-        "why": "finisher time budget (900 s) used up"
-      }
-    ],
-    "items": 18,
-    "removed": 0,
-    "routed": [
-      {
-        "net": "HEAD_PWR_P",
-        "rerouted_nets": [],
-        "ripped_up_items": 0,
-        "segments": 4,
-        "vias": 0,
-        "width": 0.4
-      },
-      {
-        "net": "HEAD_PWR_P",
-        "rerouted_nets": [],
-        "ripped_up_items": 0,
-        "segments": 1,
-        "vias": 0,
-        "width": 0.4
-      },
-      {
-        "net": "HEAD_PWR_N",
-        "rerouted_nets": [],
-        "ripped_up_items": 0,
-        "segments": 2,
-        "vias": 1,
-        "width": 0.4
-      },
-      {
-        "net": "HEAD_PWR_N",
-        "rerouted_nets": [],
-        "ripped_up_items": 0,
-        "segments": 2,
-        "vias": 0,
-        "width": 0.4
-      },
-      {
-        "net": "HEAD_PWR_N",
-        "rerouted_nets": [],
-        "ripped_up_items": 0,
-        "segments": 1,
-        "vias": 0,
-        "width": 0.4
-      },
-      {
-        "net": "HEAD_HTR_P",
-        "rerouted_nets": [],
-        "ripped_up_items": 0,
-        "segments": 5,
-        "vias": 2,
-        "width": 1.0
-      }
-    ],
-    "seconds": 953.6
-  },
+  "finisher": null,
   "gen_warnings": [
     "U2001: 3D envelope uses the default height 1.0 mm (give height=)",
     "TP2001: 3D envelope uses the default height 1.0 mm (give height=)",
@@ -1240,28 +404,46 @@
     "escape: U2401.19 [PULSER_A0]: no legal escape position (left to the autorouter)",
     "escape: U2401.21 [BUSY_R1]: no legal escape position (left to the autorouter)",
     "escape: U2401.25 [BIAS_IMON]: no legal escape position (left to the autorouter)",
-    "plane fan-out: no legal via position for C1308 pad at (304.23, 23.00) [GND] - long fan-out: no free path to the plane within 30 mm (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for U1307 pad at (311.11, 61.32) [+5V_A] - long fan-out: exact re-check: seg: pad F3_MPRE U1307 (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for R1310 pad at (310.25, 55.26) [GND] - long fan-out: no free path to the plane within 30 mm (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for U804 pad at (308.24, 37.47) [+3V3_EVT] - long fan-out: no free path to the plane within 30 mm (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for C813 pad at (298.25, 22.23) [GND] - long fan-out: no free path to the plane within 30 mm (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for C812 pad at (300.00, 21.95) [GND] - long fan-out: no free path to the plane within 30 mm (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for C811 pad at (304.32, 26.70) [GND] - long fan-out: no free path to the plane within 30 mm (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for U801 pad at (310.20, 19.75) [+3V3_EVT] - long fan-out: exact re-check: seg: pad R3_TPG U801 (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for D403 pad at (290.21, 29.65) [+3V3_EVT] - long fan-out: exact re-check: seg: via F3_TL  (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for C413 pad at (302.23, 31.25) [GND] - long fan-out: no free path to the plane within 30 mm (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for FB401 pad at (289.49, 24.60) [+5V_A] - long fan-out: no free path to the plane within 30 mm (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for U401 pad at (287.95, 19.75) [+3V3_EVT] - long fan-out: exact re-check: seg: pad F3_TPG U401 (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for C1208 pad at (216.73, 23.00) [GND] - long fan-out: no free path to the plane within 30 mm (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for U1207 pad at (223.61, 61.32) [+5V_A] - long fan-out: exact re-check: seg: pad F2_MPRE U1207 (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for R1210 pad at (222.75, 55.26) [GND] - long fan-out: no free path to the plane within 30 mm (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for U704 pad at (220.74, 37.47) [+3V3_EVT] - long fan-out: no free path to the plane within 30 mm (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for C713 pad at (210.75, 22.23) [GND] - long fan-out: no free path to the plane within 30 mm (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for C712 pad at (212.50, 21.95) [GND] - long fan-out: no free path to the plane within 30 mm (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for C711 pad at (216.82, 26.70) [GND] - long fan-out: no free path to the plane within 30 mm (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C1308 pad at (304.23, 23.00) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C1307 pad at (310.52, 64.50) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U1307 pad at (311.11, 61.32) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C1301 pad at (298.72, 50.70) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U1301 pad at (296.73, 50.91) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C822 pad at (299.75, 38.52) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U804 pad at (308.24, 37.47) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for D802 pad at (300.96, 32.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C815 pad at (300.75, 29.98) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C813 pad at (298.25, 22.23) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C812 pad at (300.00, 21.95) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C811 pad at (304.32, 26.70) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C807 pad at (310.30, 22.72) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U801 pad at (310.20, 19.75) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C427 pad at (291.62, 20.30) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U406 pad at (295.39, 34.85) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for D403 pad at (290.21, 29.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C422 pad at (287.62, 38.20) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U404 pad at (285.99, 37.47) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for D402 pad at (278.71, 32.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C415 pad at (289.88, 23.10) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C413 pad at (302.23, 31.25) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for FB401 pad at (289.49, 24.60) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C407 pad at (289.52, 19.80) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U401 pad at (287.95, 19.75) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C1208 pad at (216.73, 23.00) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C1207 pad at (223.02, 64.50) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U1207 pad at (223.61, 61.32) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C1201 pad at (211.22, 50.70) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U1201 pad at (209.23, 50.91) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C722 pad at (212.25, 38.52) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U704 pad at (220.74, 37.47) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for D702 pad at (213.46, 32.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C715 pad at (213.25, 29.98) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C713 pad at (210.75, 22.23) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C712 pad at (212.50, 21.95) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C711 pad at (216.82, 26.70) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C707 pad at (222.80, 22.72) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U701 pad at (222.70, 19.75) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C327 pad at (204.12, 20.30) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for U306 pad at (205.61, 35.80) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U306 pad at (207.89, 34.85) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for D303 pad at (202.71, 29.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C322 pad at (200.12, 38.20) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
@@ -1272,20 +454,14 @@
     "plane fan-out: no legal via position for FB301 pad at (201.99, 24.60) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C307 pad at (202.02, 19.80) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U301 pad at (200.45, 19.75) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for R1117 pad at (117.74, 9.25) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C1108 pad at (129.23, 23.00) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C1107 pad at (135.52, 64.50) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U1107 pad at (136.11, 61.32) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for R1110 pad at (135.25, 55.26) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for U1104 pad at (109.11, 60.35) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C1101 pad at (123.72, 50.70) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U1101 pad at (121.72, 50.91) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C622 pad at (124.75, 38.52) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for C622 pad at (124.75, 39.48) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U604 pad at (133.24, 37.47) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for C620 pad at (135.88, 37.40) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for D602 pad at (125.96, 32.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for C616 pad at (124.50, 25.70) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C615 pad at (125.75, 29.98) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C613 pad at (123.25, 22.23) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C612 pad at (125.00, 21.95) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
@@ -1293,7 +469,6 @@
     "plane fan-out: no legal via position for C607 pad at (135.30, 22.72) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U601 pad at (135.20, 19.75) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C227 pad at (116.62, 20.30) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for U206 pad at (118.11, 35.80) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U206 pad at (120.39, 34.85) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for D203 pad at (115.21, 29.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C222 pad at (112.62, 38.20) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
@@ -1304,20 +479,14 @@
     "plane fan-out: no legal via position for FB201 pad at (114.49, 24.60) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C207 pad at (114.52, 19.80) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U201 pad at (112.95, 19.75) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for R1017 pad at (30.24, 9.25) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C1008 pad at (41.73, 23.00) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C1007 pad at (48.02, 64.50) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U1007 pad at (48.61, 61.32) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for R1010 pad at (47.75, 55.26) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for U1004 pad at (21.61, 60.35) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C1001 pad at (36.22, 50.70) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U1001 pad at (34.22, 50.91) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C522 pad at (37.25, 38.52) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for C522 pad at (37.25, 39.48) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U504 pad at (45.74, 37.47) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for C520 pad at (48.38, 37.40) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for D502 pad at (38.46, 32.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for C516 pad at (37.00, 25.70) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C515 pad at (38.25, 29.98) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C513 pad at (35.75, 22.23) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C512 pad at (37.50, 21.95) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
@@ -1325,7 +494,6 @@
     "plane fan-out: no legal via position for C507 pad at (47.80, 22.72) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U501 pad at (47.70, 19.75) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C127 pad at (29.12, 20.30) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for U106 pad at (30.61, 35.80) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U106 pad at (32.89, 34.85) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for D103 pad at (27.71, 29.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C122 pad at (25.12, 38.20) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
@@ -1338,11 +506,7 @@
     "plane fan-out: no legal via position for U101 pad at (25.45, 19.75) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U2503 pad at (234.10, 17.47) [BUS_GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U2503 pad at (234.10, 12.53) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for U2503 pad at (237.90, 12.53) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for R2503 pad at (243.20, 27.51) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for C2501 pad at (254.40, 21.62) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for U2501 pad at (254.44, 19.65) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for U2403 pad at (240.89, 33.35) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U2503 pad at (237.90, 12.53) [+3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U2403 pad at (240.89, 34.00) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U2402 pad at (53.89, 39.00) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C2404 pad at (167.90, 86.92) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
@@ -1361,29 +525,22 @@
     "plane fan-out: no legal via position for R2308 pad at (173.60, 53.09) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C2312 pad at (172.20, 52.82) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C2311 pad at (173.18, 46.90) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for U2304 pad at (172.75, 48.56) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U2304 pad at (173.25, 48.56) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C2308 pad at (164.27, 46.90) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for U2303 pad at (163.75, 48.56) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U2303 pad at (164.25, 48.56) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C2305 pad at (155.32, 46.90) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for U2302 pad at (154.75, 48.56) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U2302 pad at (155.25, 48.56) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C2302 pad at (145.98, 46.00) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U2301 pad at (146.25, 48.56) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for R2227 pad at (120.76, 88.00) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for R2224 pad at (136.69, 83.50) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for Q2204 pad at (117.06, 69.55) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for Q2203 pad at (117.06, 74.05) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for C2214 pad at (137.25, 70.52) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C2213 pad at (119.10, 86.07) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for D2203 pad at (125.06, 73.05) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C2209 pad at (134.38, 78.50) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U2202 pad at (134.47, 76.91) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C2208 pad at (120.75, 81.02) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for R2208 pad at (105.90, 74.29) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for C2206 pad at (104.22, 80.50) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for R2205 pad at (105.69, 81.90) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C2205 pad at (111.50, 78.23) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C2204 pad at (105.77, 71.00) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for R2203 pad at (111.25, 75.74) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
@@ -1409,8 +566,7 @@
     "plane fan-out: no legal via position for C2108 pad at (63.50, 56.23) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U2102 pad at (78.64, 51.95) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C2008 pad at (165.28, 68.00) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for R2008 pad at (100.00, 29.19) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for U2001 pad at (91.72, 27.22) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)"
+    "plane fan-out: no legal via position for R2008 pad at (100.00, 29.19) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)"
   ],
   "generated_files": [
     "BIAS.kicad_sch",
@@ -7964,29 +7120,81 @@
     ]
   },
   "plane_fanout": {
+    "extended": [
+      "R1310 [GND] 3.2 mm",
+      "U1304 [+3V3_EVT] 3.5 mm",
+      "C822 [GND] 1.5 mm",
+      "C820 [GND] 4.2 mm",
+      "C816 [GND] 1.3 mm",
+      "U406 [GND] 1.3 mm",
+      "R1210 [GND] 3.2 mm",
+      "U1204 [+3V3_EVT] 3.5 mm",
+      "C722 [GND] 1.5 mm",
+      "C720 [GND] 4.2 mm",
+      "C716 [GND] 1.3 mm",
+      "U306 [GND] 1.3 mm",
+      "R1110 [GND] 3.2 mm",
+      "U1104 [+3V3_EVT] 3.5 mm",
+      "C622 [GND] 1.5 mm",
+      "C620 [GND] 4.2 mm",
+      "C616 [GND] 1.3 mm",
+      "U206 [GND] 1.3 mm",
+      "R1010 [GND] 3.2 mm",
+      "U1004 [+3V3_EVT] 3.5 mm",
+      "C522 [GND] 1.5 mm",
+      "C520 [GND] 4.2 mm",
+      "C516 [GND] 1.3 mm",
+      "U106 [GND] 1.3 mm",
+      "U2304 [GND] 1.8 mm",
+      "U2303 [GND] 1.8 mm",
+      "U2302 [GND] 2.2 mm",
+      "R2227 [+3V3] 3.0 mm",
+      "C2214 [GND] 0.8 mm",
+      "C2206 [GND] 1.5 mm",
+      "R2205 [GND] 4.0 mm",
+      "U2001 [GND] 1.0 mm"
+    ],
     "failed": [
-      "C1308 pad at (304.23, 23.00) [GND] - long fan-out: no free path to the plane within 30 mm",
-      "U1307 pad at (311.11, 61.32) [+5V_A] - long fan-out: exact re-check: seg: pad F3_MPRE U1307",
-      "R1310 pad at (310.25, 55.26) [GND] - long fan-out: no free path to the plane within 30 mm",
-      "U804 pad at (308.24, 37.47) [+3V3_EVT] - long fan-out: no free path to the plane within 30 mm",
-      "C813 pad at (298.25, 22.23) [GND] - long fan-out: no free path to the plane within 30 mm",
-      "C812 pad at (300.00, 21.95) [GND] - long fan-out: no free path to the plane within 30 mm",
-      "C811 pad at (304.32, 26.70) [GND] - long fan-out: no free path to the plane within 30 mm",
-      "U801 pad at (310.20, 19.75) [+3V3_EVT] - long fan-out: exact re-check: seg: pad R3_TPG U801",
-      "D403 pad at (290.21, 29.65) [+3V3_EVT] - long fan-out: exact re-check: seg: via F3_TL ",
-      "C413 pad at (302.23, 31.25) [GND] - long fan-out: no free path to the plane within 30 mm",
-      "FB401 pad at (289.49, 24.60) [+5V_A] - long fan-out: no free path to the plane within 30 mm",
-      "U401 pad at (287.95, 19.75) [+3V3_EVT] - long fan-out: exact re-check: seg: pad F3_TPG U401",
-      "C1208 pad at (216.73, 23.00) [GND] - long fan-out: no free path to the plane within 30 mm",
-      "U1207 pad at (223.61, 61.32) [+5V_A] - long fan-out: exact re-check: seg: pad F2_MPRE U1207",
-      "R1210 pad at (222.75, 55.26) [GND] - long fan-out: no free path to the plane within 30 mm",
-      "U704 pad at (220.74, 37.47) [+3V3_EVT] - long fan-out: no free path to the plane within 30 mm",
-      "C713 pad at (210.75, 22.23) [GND] - long fan-out: no free path to the plane within 30 mm",
-      "C712 pad at (212.50, 21.95) [GND] - long fan-out: no free path to the plane within 30 mm",
-      "C711 pad at (216.82, 26.70) [GND] - long fan-out: no free path to the plane within 30 mm",
+      "C1308 pad at (304.23, 23.00) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "C1307 pad at (310.52, 64.50) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "U1307 pad at (311.11, 61.32) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "C1301 pad at (298.72, 50.70) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "U1301 pad at (296.73, 50.91) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "C822 pad at (299.75, 38.52) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "U804 pad at (308.24, 37.47) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "D802 pad at (300.96, 32.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "C815 pad at (300.75, 29.98) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "C813 pad at (298.25, 22.23) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "C812 pad at (300.00, 21.95) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "C811 pad at (304.32, 26.70) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "C807 pad at (310.30, 22.72) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "U801 pad at (310.20, 19.75) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "C427 pad at (291.62, 20.30) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "U406 pad at (295.39, 34.85) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "D403 pad at (290.21, 29.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "C422 pad at (287.62, 38.20) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "U404 pad at (285.99, 37.47) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "D402 pad at (278.71, 32.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "C415 pad at (289.88, 23.10) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "C413 pad at (302.23, 31.25) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "FB401 pad at (289.49, 24.60) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "C407 pad at (289.52, 19.80) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "U401 pad at (287.95, 19.75) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "C1208 pad at (216.73, 23.00) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "C1207 pad at (223.02, 64.50) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "U1207 pad at (223.61, 61.32) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "C1201 pad at (211.22, 50.70) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "U1201 pad at (209.23, 50.91) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
+      "C722 pad at (212.25, 38.52) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "U704 pad at (220.74, 37.47) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "D702 pad at (213.46, 32.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
+      "C715 pad at (213.25, 29.98) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "C713 pad at (210.75, 22.23) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "C712 pad at (212.50, 21.95) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "C711 pad at (216.82, 26.70) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+      "C707 pad at (222.80, 22.72) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
       "U701 pad at (222.70, 19.75) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
       "C327 pad at (204.12, 20.30) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
-      "U306 pad at (205.61, 35.80) [GND] - long fan-out: long fan-out time cap (600 s) used up",
       "U306 pad at (207.89, 34.85) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
       "D303 pad at (202.71, 29.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
       "C322 pad at (200.12, 38.20) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
@@ -7997,20 +7205,14 @@
       "FB301 pad at (201.99, 24.60) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
       "C307 pad at (202.02, 19.80) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
       "U301 pad at (200.45, 19.75) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
-      "R1117 pad at (117.74, 9.25) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
       "C1108 pad at (129.23, 23.00) [GND] - long fan-out: long fan-out time cap (600 s) used up",
       "C1107 pad at (135.52, 64.50) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
       "U1107 pad at (136.11, 61.32) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
-      "R1110 pad at (135.25, 55.26) [GND] - long fan-out: long fan-out time cap (600 s) used up",
-      "U1104 pad at (109.11, 60.35) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
       "C1101 pad at (123.72, 50.70) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
       "U1101 pad at (121.72, 50.91) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
       "C622 pad at (124.75, 38.52) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
-      "C622 pad at (124.75, 39.48) [GND] - long fan-out: long fan-out time cap (600 s) used up",
       "U604 pad at (133.24, 37.47) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
-      "C620 pad at (135.88, 37.40) [GND] - long fan-out: long fan-out time cap (600 s) used up",
       "D602 pad at (125.96, 32.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
-      "C616 pad at (124.50, 25.70) [GND] - long fan-out: long fan-out time cap (600 s) used up",
       "C615 pad at (125.75, 29.98) [GND] - long fan-out: long fan-out time cap (600 s) used up",
       "C613 pad at (123.25, 22.23) [GND] - long fan-out: long fan-out time cap (600 s) used up",
       "C612 pad at (125.00, 21.95) [GND] - long fan-out: long fan-out time cap (600 s) used up",
@@ -8018,7 +7220,6 @@
       "C607 pad at (135.30, 22.72) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
       "U601 pad at (135.20, 19.75) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
       "C227 pad at (116.62, 20.30) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
-      "U206 pad at (118.11, 35.80) [GND] - long fan-out: long fan-out time cap (600 s) used up",
       "U206 pad at (120.39, 34.85) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
       "D203 pad at (115.21, 29.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
       "C222 pad at (112.62, 38.20) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
@@ -8029,20 +7230,14 @@
       "FB201 pad at (114.49, 24.60) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
       "C207 pad at (114.52, 19.80) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
       "U201 pad at (112.95, 19.75) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
-      "R1017 pad at (30.24, 9.25) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
       "C1008 pad at (41.73, 23.00) [GND] - long fan-out: long fan-out time cap (600 s) used up",
       "C1007 pad at (48.02, 64.50) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
       "U1007 pad at (48.61, 61.32) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
-      "R1010 pad at (47.75, 55.26) [GND] - long fan-out: long fan-out time cap (600 s) used up",
-      "U1004 pad at (21.61, 60.35) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
       "C1001 pad at (36.22, 50.70) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
       "U1001 pad at (34.22, 50.91) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
       "C522 pad at (37.25, 38.52) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
-      "C522 pad at (37.25, 39.48) [GND] - long fan-out: long fan-out time cap (600 s) used up",
       "U504 pad at (45.74, 37.47) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
-      "C520 pad at (48.38, 37.40) [GND] - long fan-out: long fan-out time cap (600 s) used up",
       "D502 pad at (38.46, 32.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
-      "C516 pad at (37.00, 25.70) [GND] - long fan-out: long fan-out time cap (600 s) used up",
       "C515 pad at (38.25, 29.98) [GND] - long fan-out: long fan-out time cap (600 s) used up",
       "C513 pad at (35.75, 22.23) [GND] - long fan-out: long fan-out time cap (600 s) used up",
       "C512 pad at (37.50, 21.95) [GND] - long fan-out: long fan-out time cap (600 s) used up",
@@ -8050,7 +7245,6 @@
       "C507 pad at (47.80, 22.72) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
       "U501 pad at (47.70, 19.75) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
       "C127 pad at (29.12, 20.30) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
-      "U106 pad at (30.61, 35.80) [GND] - long fan-out: long fan-out time cap (600 s) used up",
       "U106 pad at (32.89, 34.85) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
       "D103 pad at (27.71, 29.65) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
       "C122 pad at (25.12, 38.20) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
@@ -8063,11 +7257,7 @@
       "U101 pad at (25.45, 19.75) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
       "U2503 pad at (234.10, 17.47) [BUS_GND] - long fan-out: long fan-out time cap (600 s) used up",
       "U2503 pad at (234.10, 12.53) [GND] - long fan-out: long fan-out time cap (600 s) used up",
-      "U2503 pad at (237.90, 12.53) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
-      "R2503 pad at (243.20, 27.51) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
-      "C2501 pad at (254.40, 21.62) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
-      "U2501 pad at (254.44, 19.65) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
-      "U2403 pad at (240.89, 33.35) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
+      "U2503 pad at (237.90, 12.53) [+3V3] - long fan-out: no free path to the plane within the board",
       "U2403 pad at (240.89, 34.00) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
       "U2402 pad at (53.89, 39.00) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
       "C2404 pad at (167.90, 86.92) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
@@ -8086,29 +7276,22 @@
       "R2308 pad at (173.60, 53.09) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
       "C2312 pad at (172.20, 52.82) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
       "C2311 pad at (173.18, 46.90) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
-      "U2304 pad at (172.75, 48.56) [GND] - long fan-out: long fan-out time cap (600 s) used up",
       "U2304 pad at (173.25, 48.56) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
       "C2308 pad at (164.27, 46.90) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
-      "U2303 pad at (163.75, 48.56) [GND] - long fan-out: long fan-out time cap (600 s) used up",
       "U2303 pad at (164.25, 48.56) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
       "C2305 pad at (155.32, 46.90) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
-      "U2302 pad at (154.75, 48.56) [GND] - long fan-out: long fan-out time cap (600 s) used up",
       "U2302 pad at (155.25, 48.56) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
       "C2302 pad at (145.98, 46.00) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
       "U2301 pad at (146.25, 48.56) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
-      "R2227 pad at (120.76, 88.00) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
       "R2224 pad at (136.69, 83.50) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
       "Q2204 pad at (117.06, 69.55) [GND] - long fan-out: long fan-out time cap (600 s) used up",
       "Q2203 pad at (117.06, 74.05) [GND] - long fan-out: long fan-out time cap (600 s) used up",
-      "C2214 pad at (137.25, 70.52) [GND] - long fan-out: long fan-out time cap (600 s) used up",
       "C2213 pad at (119.10, 86.07) [GND] - long fan-out: long fan-out time cap (600 s) used up",
       "D2203 pad at (125.06, 73.05) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
       "C2209 pad at (134.38, 78.50) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
       "U2202 pad at (134.47, 76.91) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
       "C2208 pad at (120.75, 81.02) [GND] - long fan-out: long fan-out time cap (600 s) used up",
       "R2208 pad at (105.90, 74.29) [GND] - long fan-out: long fan-out time cap (600 s) used up",
-      "C2206 pad at (104.22, 80.50) [GND] - long fan-out: long fan-out time cap (600 s) used up",
-      "R2205 pad at (105.69, 81.90) [GND] - long fan-out: long fan-out time cap (600 s) used up",
       "C2205 pad at (111.50, 78.23) [GND] - long fan-out: long fan-out time cap (600 s) used up",
       "C2204 pad at (105.77, 71.00) [GND] - long fan-out: long fan-out time cap (600 s) used up",
       "R2203 pad at (111.25, 75.74) [GND] - long fan-out: long fan-out time cap (600 s) used up",
@@ -8134,42 +7317,17 @@
       "C2108 pad at (63.50, 56.23) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
       "U2102 pad at (78.64, 51.95) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
       "C2008 pad at (165.28, 68.00) [GND] - long fan-out: long fan-out time cap (600 s) used up",
-      "R2008 pad at (100.00, 29.19) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
-      "U2001 pad at (91.72, 27.22) [GND] - long fan-out: long fan-out time cap (600 s) used up"
+      "R2008 pad at (100.00, 29.19) [+3V3] - long fan-out: long fan-out time cap (600 s) used up"
     ],
     "long_fanout": [
-      "R1317 [+3V3] 41.4 mm",
-      "C1307 [+5V_A] 24.5 mm",
-      "U1304 [+3V3_EVT] 1.1 mm",
-      "C1301 [+5V_A] 9.8 mm",
-      "U1301 [+5V_A] 10.8 mm",
-      "C822 [+3V3_EVT] 8.5 mm",
-      "C822 [GND] 8.0 mm",
-      "C820 [GND] 4.3 mm",
-      "D802 [+3V3_EVT] 12.8 mm",
-      "C816 [GND] 1.2 mm",
-      "C815 [GND] 0.8 mm",
-      "C807 [+3V3_EVT] 24.4 mm",
-      "C427 [+3V3_EVT] 25.2 mm",
-      "U406 [GND] 1.0 mm",
-      "U406 [+3V3_EVT] 12.5 mm",
-      "C422 [+3V3_EVT] 6.9 mm",
-      "U404 [+3V3_EVT] 7.9 mm",
-      "D402 [+3V3_EVT] 12.9 mm",
-      "C415 [GND] 1.7 mm",
-      "C407 [+3V3_EVT] 35.5 mm",
-      "R1217 [+3V3] 41.4 mm",
-      "C1207 [+5V_A] 24.5 mm",
-      "U1204 [+3V3_EVT] 1.1 mm",
-      "C1201 [+5V_A] 9.8 mm",
-      "U1201 [+5V_A] 10.8 mm",
-      "C722 [+3V3_EVT] 8.5 mm",
-      "C722 [GND] 8.0 mm",
-      "C720 [GND] 4.3 mm",
-      "D702 [+3V3_EVT] 12.8 mm",
-      "C716 [GND] 1.2 mm",
-      "C715 [GND] 0.8 mm",
-      "C707 [+3V3_EVT] 24.4 mm"
+      "R1317 [+3V3] 40.9 mm",
+      "R1217 [+3V3] 40.9 mm",
+      "R1117 [+3V3] 47.5 mm",
+      "R1017 [+3V3] 37.8 mm",
+      "R2503 [+3V3] 17.7 mm",
+      "C2501 [+3V3] 23.8 mm",
+      "U2501 [+3V3] 25.4 mm",
+      "U2403 [+3V3] 11.7 mm"
     ],
     "plane_nets": [
       "+3V3",
@@ -8179,7 +7337,7 @@
       "BUS_GND",
       "GND"
     ],
-    "vias": 783
+    "vias": 815
   },
   "pwr_flags": [
     "VIN_CM",
@@ -8253,9 +7411,9 @@
     "unused_escapes_removed": 0,
     "vias": 1747
   },
-  "routed": true,
+  "routed": false,
   "routing": {
-    "budget": null,
+    "budget": 3000,
     "chunk": 900,
     "enabled": true,
     "escape": true,

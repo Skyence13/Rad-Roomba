@@ -20,7 +20,7 @@ Shoulder / rear deck bolted flange joint (x = -38). Plane z = 100.0 mm, window (
 ![J02_lid_flange_x-38](J02_lid_flange_x-38.png)
 
 - 4 mm flanges, 9 mm deep, faces set back 0.25 mm each for the 1 mm gasket
-- M3 x 12 into insert bosses at z 100 / 116 and on the roof; 3 mm dowels at z 108 and on the roof
+- M3 x 12 into insert bosses at z 100 and on the roof; 3 mm dowels at z 108 and on the roof
 - flanges start above the hull tongue and stop at the wheel arch
 - parts cut: shoulder_L, rear_deck_L, tyre_L, panel_tray, RR-PANEL
 

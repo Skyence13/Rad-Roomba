@@ -1,20 +1,7 @@
 {
  "interference": {
   "pairs_evaluated": 394,
-  "clashes": [
-   [
-    "grip_side_plate_L",
-    "shoulder_L",
-    30.2,
-    "boolean"
-   ],
-   [
-    "grip_side_plate_R",
-    "shoulder_R",
-    30.2,
-    "boolean"
-   ]
-  ],
+  "clashes": [],
   "declared_overlaps": [
    [
     "rear_deck_L",
@@ -176,38 +163,38 @@
    ]
   ],
   "methods": {
-   "mesh screen": 364,
    "boolean: contact film 0.000 mm thick": 6,
+   "mesh screen": 366,
    "boolean: contact film 0.030 mm thick": 1,
-   "boolean": 23
+   "boolean": 21
   },
   "slowest_pairs_s": [
    [
-    39.7,
+    58.8,
     "lower_hull_RR",
     "rear_deck_R",
     "boolean: contact film 0.000 mm thick"
    ],
    [
-    33.1,
+    48.2,
     "lower_hull_RL",
     "rear_deck_L",
     "boolean: contact film 0.000 mm thick"
    ],
    [
-    15.4,
+    25.3,
     "rear_deck_L",
     "hatch_door",
     "boolean"
    ],
    [
-    5.7,
+    9.9,
     "cheek_fairing_L",
     "shoulder_L",
     "boolean: contact film 0.000 mm thick"
    ],
    [
-    5.3,
+    9.6,
     "cheek_fairing_R",
     "shoulder_R",
     "boolean: contact film 0.000 mm thick"
@@ -2441,8 +2428,8 @@
  },
  "summary": {
   "no interference among real parts and purchased envelopes": [
-   false,
-   "2 clash(es) in 394 pairs; 19 declared through-wall envelope overlaps"
+   true,
+   "0 clash(es) in 394 pairs; 19 declared through-wall envelope overlaps"
   ],
   "internals inside the shell cavity": [
    true,
