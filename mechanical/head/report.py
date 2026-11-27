@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from . import hp as H
+from . import parts as T
 from .geom import OUT
 
 
@@ -30,7 +31,7 @@ def write(res):
            "Largest items, prototype (g): " + ", ".join(f"{k} {v}" for k, v in d["mass_prototype"]["largest_items_g"].items()), ""]
     md += ["## 4. Deflection under 20 N at the front outer window corner and first modes (calculated)", "",
            "Model: rigid-body pitch on the four receiver lands (lead's mount model C, same contact stiffness assumption), roll through a two-halves model (each half on its own shoe, "
-           "joined at y = 0 by the listed bridging members), wing bending and wing twist of the 47.75 mm overhang beyond the T-head. The lid is a shear panel: 35 M3 screws round a closed loop at <= 40 mm pitch, 17 into M3 standoffs on the spreader (bending stiffness 20 % of fixed-fixed, "
+           "joined at y = 0 by the listed bridging members), wing bending and wing twist of the 47.75 mm overhang beyond the T-head. " f"The lid is a shear panel: {T.lid_count()} M3 screws round a closed loop (<= 40 mm pitch except the J1 bay, section 1), {len(T.lid_holes())} into M3 standoffs on the spreader (bending stiffness 20 % of fixed-fixed, "
            "STATED ASSUMPTION) and 18 into hard bosses on the frame walls (1500 N/mm per printed-insert joint, 8000 N/mm tapped aluminium, STATED ASSUMPTION); the weaker fastener row is the shear web of the closed cell. Lid-off values show what the cover contributes.", ""]
     rows = []
     for k, v in d["structure"].items():
@@ -64,6 +65,11 @@ def write(res):
            (lambda q: f"**Leading rail front face (tool-checked):** unloaded x {q['unloaded_x']:.1f}, fully stroked (bar on the frame face) x {q['full_stroke_x']:.1f}; "
                       f"end-wall residual strip from the window front edge (x {q['window_front_edge_x']:.1f}) to the rail face {q['residual_strip_unloaded_mm']:.1f} mm unloaded, "
                       f"{q['residual_strip_full_stroke_mm']:.1f} mm stroked. Contract draft6 envelope x [66.0, 212.5].")(d["rail_front_face"]), ""]
+    md += [f"**Designed stroke after switch actuation (IB-11, requirement >= 15 mm):** {f['post_trip_stroke_mm']:.1f} mm in BOTH builds (calculated: {f['stroke_to_stop_mm']:.1f} mm "
+           f"bar-to-frame gap minus the trip travel at the switch's maximum pre-travel, {f['trip_travel_mm']['max (unshimmed, PT max)']:.2f} mm). The rail bar, rods, springs, pin "
+           "and switch are shared parts (RR-HD-S-401..404, PUR-D2HW) and the gap is set by the frame front face x 188.2 in both frames, so the value is the same; margin "
+           f"{f['post_trip_stroke_mm'] - 15:.1f} mm, which a printed-frame front-face error or a late switch eats first (end-of-assembly check 1 measures it). A larger stroke would "
+           "need RAIL_GAP > 17.0 and the bar beyond the x 212.5 envelope (front face at 212.2 now): not available without a contract change.", ""]
     md += ["## 6. Light-path analysis of every joint (analysis of the model geometry, not a light test)", "",
            _t(["Id", "Joint", "From", "To", "Path", "Length (mm)", "Turns", "Barriers", "Builds"],
               [(x["id"], x["joint"], x["from"], x["to"], x["path"], f"{x['length_mm']:.1f}", x["turns"], x["barriers"], x["builds"]) for x in d["light_paths"]]), "",
@@ -75,19 +81,58 @@ def write(res):
            f"Film plane nominal z = {t['nominal_film_z']:.2f}. Prototype: +-{t['prototype']['worst_case_pm_mm']:.2f} mm worst case, +-{t['prototype']['rss_pm_mm']:.2f} mm RSS. "
            f"Production: +-{t['production']['worst_case_pm_mm']:.2f} / +-{t['production']['rss_pm_mm']:.2f} mm. Budget line in mech_calcs.md section 6: +-{t['budget_line_in_mech_calcs_pm_mm']:.2f} mm.", ""]
     md += ["## 8. Dimensions that depend on the missing OEM drawing", "", _t(["OEM quantity (assumption)", "Head dimension it drives", "How the housing absorbs a different value"], [(x["oem_quantity"], x["head_dimension"], x["adjustment"]) for x in d["oem_dependent"]]), ""]
-    th = {k: v for k, v in d["thermal"].items() if not k.startswith("_")}
-    cov = d["thermal"]["_jacket_coverage"]
-    md += ["## 9. Thermal: heater power with and without the standard insulating jacket (calculated, lumped; same coefficients as mech_calcs.md section 7)", "",
-           f"Assumptions: steady state; outside film 12 W/m2K (still air) / 25 W/m2K (3 m/s draught), inside 6, floor-facing side 8 W/m2K; foam k 0.035, printed PA-CF k 0.30, "
-           f"6061 k 160 W/m K; 0.5 mm liner under the lid in both configurations; jacket RR-HD-S-131 (cap) covers {cov['cap_covered_m2']:.4f} of {cov['top_area_m2']:.4f} m2 of the top "
-           f"({100 * cov['cap_fraction']:.0f} %: screw holes, keeper / latch cut-out uncovered) and RR-HD-S-132 covers {cov['front_band_m2']:.4f} of {cov['side_area_m2']:.4f} m2 of the "
-           "side faces (front band; sides beside the side rails, rear face and underside are not insulated); 5 W electronics dissipation counted as heating; "
-           "mount and cables 0.06 W/K. Heater = UA x (set-point - ambient) - 5 W.", "",
-           _t(["Case", "UA (W/K)", "Heater at -20 C, set-point +5 C (W)", "Heater at -25 C, set-point +10 C (W)"],
-              [(k, f"{v['UA_W_per_K']:.2f}", f"{v['heater_W_at_-20C_setpoint_+5C']:.1f}", f"{v['heater_W_at_-25C_setpoint_+10C']:.1f}") for k, v in th.items()]), "",
-           "The jacket is part of the standard cold configuration (lead decision): required for operation below 0 C. Only a 0.5 mm liner fits inside the cover "
-           "(0.9 mm cover clearance, 6.3 mm board height), so the jacket is external: cap top z 48.0 (ceiling 50), front band x 188.2..191.2 (envelope 212.5). "
-           "The 30 W heater allocation (contract heater_peak_at_12v) is compared with the draught cases.", ""]
+    th = d["thermal"]
+    A_ = th["_assumptions"]
+    cov = th["_jacket_coverage"]
+    rec = th["_receiver"]
+    cases = th["cases"]
+    def pick(b, h, jac, ts, ta, rb="body"):
+        return next(c for c in cases if c["build"] == b and c["h_ext_w_m2k"] == h and c["jacket"] == jac and c["set_point_c"] == ts and c["ambient_c"] == ta and c["receiver_boundary"].startswith(rb))
+    rows = []
+    for b in ("prototype", "production"):
+        for h in (12.0, 25.0):
+            for jac in (True, False):
+                c20, c25 = pick(b, h, jac, 10.0, -20.0), pick(b, h, jac, 10.0, -25.0)
+                o20, o25 = pick(b, h, jac, 5.0, -20.0), pick(b, h, jac, 5.0, -25.0)
+                rows.append((b, f"{h:g}", "yes" if jac else "no", f"{c20['ua_w_per_k']:.2f}", f"**{c20['heater_power_w']:.1f}**", f"**{c25['heater_power_w']:.1f}**",
+                             f"{o20['heater_power_w']:.1f} / {o25['heater_power_w']:.1f}"))
+    bound = [pick(b, h, True, 10.0, ta, "BOUND") for b in ("prototype", "production") for h in (12.0, 25.0) for ta in (-20.0, -25.0)]
+    sp = pick("prototype", 12.0, True, 10.0, -25.0)["split_w_per_k"]
+    wu = th.get("warmup_from_-25c_soak", {})
+    md += ["## 9. Thermal: heater power, one assumption set (IB-39; calculated, lumped steady state -- nothing measured)", "",
+           f"**Assumption set** (same as `mechanical/common/calc/thermal.py`): ambient -20 C and -25 C; regulated set-point **+{A_['set_point_c']:g} C at the SiPM carrier** "
+           f"(the floor carrier sits on the floor guide, so the window path is taken from the floor-guide mid-plane at the set-point; the rest of the interior is lumped at "
+           f"the set-point); electronics self-heat credited at the **typical {A_['electronics_credit_w']:g} W** only (`electronics/analysis/head_afe_budget.md` section 8: "
+           f"1.20 W typical, 2.10 W maximum at J1; `electronics/analysis/power_budget.md` carries only the 5 W contract target for the head, no typical value); "
+           "external film coefficient 12 W/m2K (still air, incl. radiation) with the sensitivity at 25 W/m2K (robot moving / draught); inside 6 W/m2K; jacket "
+           f"RR-HD-S-131 / -132 fitted below 0 C (cap covers {cov['cap_covered_m2']:.4f} of {cov['top_area_m2']:.4f} m2, front band {cov['front_band_m2']:.4f} m2; "
+           "both ambients are below 0 C, so the jacket is the baseline and the no-jacket case is shown); 0.5 mm liner under the lid.", "",
+           "**Conduction paths included:** (1) floor side: windows and frame underside across the 10 mm near-floor air layer (conduction k 0.024 / 10 mm, stable "
+           f"stratification) + radiation to the floor (emissivity 0.9 / 0.9) = {pick('prototype', 12.0, True, 10.0, -25.0)['h_floor_w_m2k']:.1f} W/m2K at -25 C; in the "
+           "25 W/m2K sensitivity the floor side gets 25 W/m2K too (bound); (2) receiver shoes: spreader -> 0.5 mm G10 isolators (k 0.29) + 0.3 mm air round the "
+           "T-heads + the 8 T-head screws through insulating washers + keeper and bridge air gaps = "
+           f"{rec['prototype']['total']:.2f} W/K (prototype) / {rec['production']['total']:.2f} W/K (production) from the model geometry, in series with the body side "
+           f"{A_['receiver_body_side_w_per_k_per_shoe']:g} W/K per shoe (RR-X PAHT-CF channels with steel dowel lands on the chassis plate at ambient, STATED ASSUMPTION) "
+           "+ exposed bridge / keeper faces; (3) J1 / J2 pigtails as infinite copper fins (contract conductor gauges + 1 mm2 braid, UNVERIFIED). "
+           "Heater = UA x (set-point - ambient) - 1.2 W.", "",
+           _t(["Build", "h ext (W/m2K)", "Jacket", "UA at -20 C (W/K)", "Heater at -20 C, +10 C (W)", "Heater at -25 C, +10 C (W)", "Option +5 C: -20 / -25 C (W)"], rows), "",
+           "UA split, prototype, still air, jacket, -25 C (W/K): " + ", ".join(f"{k} {v:.3f}" for k, v in sp.items()) + ".", "",
+           "**Bound -- receiver metal at ambient** (e.g. an aluminium body channel bolted to a cold chassis): "
+           + "; ".join(f"{c['build']} {c['h_ext_w_m2k']:g} W/m2K {c['ambient_c']:g} C: {c['heater_power_w']:.1f} W" for c in bound)
+           + ". The 0.5 mm G10 isolator under each T-head (IB-38) is a good electrical barrier but a poor thermal one (0.30 W/K per shoe, clamped to the heated "
+           "spreader): the heater fits only because the RR-X body channels are printed. Any body with conductive channels needs a thermal break in the receiver "
+           "(thicker / smaller-area isolator or a PEEK / G10 T-head cap) -- flagged for the lead.", "",
+           f"**Option +{A_['set_point_option_c']:g} C (not the baseline):** {th['_option']}", "",
+           f"**Against the installed heater:** four 7.5 W polyimide films = 30 W at 12 V (BOM PUR-HEATER; = 4.8 ohm element, head_afe_budget.md section 9; contract "
+           "heater_peak_at_12v 30 W); the HEAD_HTR branch limit 4.0 A x 12 V = 48 W is not the limit. At 10 V (end of discharge) the films give 20.8 W. "
+           "Baseline (still air, jacket): fits at 12 V in both builds at both ambients; at 10 V the -25 C case has under 1 W margin. Moving air at -25 C needs about "
+           "30-31 W: at or just over the films; with the jacket off, more. Thermal cut-out PUR-TCO opens at 45 C (UNVERIFIED part data): normal regulation never reaches it; "
+           + (f"a stuck-on heater at 15 V in +20 C would settle near {wu['prototype']['steady_c_heater_stuck_on_15v_at_+20c']:.0f} C, so the cut-out is the protection." if wu else ""), ""]
+    if wu:
+        md += [f"**Warm-up from a -25 C soak to +10 C** (lumped, thermal mass {th['thermal_mass_j_per_k']['prototype']} J/K prototype / {th['thermal_mass_j_per_k']['production']} J/K "
+               "production from the model masses x handbook c_p; still air, jacket; the optical stack lags the spreader): "
+               + "; ".join(f"{b}: {v['warmup_min_30w_12v']:.0f} min at 30 W (12 V), " + (f"{v['warmup_min_20w8_10v']:.0f} min at 20.8 W (10 V)" if v['warmup_min_20w8_10v'] else "10 V never reaches it")
+                           + f", time constant {v['tau_min']:.0f} min" for b, v in wu.items()) + ". Machine-readable summary: `out/thermal_summary.json`.", ""]
     md += ["## 10. Printed parts in print orientation (tool-checked: bounding box and downward-facing faces of the oriented solid)", "",
            "Downward faces = faces above the bed whose normal points more than 45 deg downward: each needs a bridge or support. Where the slicer "
            "will put supports and why they do not touch a critical surface is stated per part in `prototype/print_schedule.md`.", "",
@@ -96,4 +141,21 @@ def write(res):
                 "; ".join(f"{o['z']}/{o['span_mm']}/{o['length_mm']}" for o in x.get("largest_downward_faces", [])[:3])) for x in d["printed_parts"]]), ""]
     md += ["## 11. EMI bond points of the prototype fences (tool-checked clamping)", "",
            "; ".join(f"{k}: " + ", ".join(f"{v:+.1f}" for v in vals) for k, vals in d.get("bond_points", {}).items()), ""]
+    bf = d.get("board_fit", {})
+    md += ["## 12. RR-HEAD-ACQ as built vs the head (IB-52 change requests; tool-checked against the board file)", "",
+           f"Source: `{bf.get('source', {}).get('file')}` ({bf.get('source', {}).get('footprints')} footprints, file time {bf.get('source', {}).get('mtime_utc')} UTC); frame mapping "
+           "of electronics/head_acq/README.md section 2. Results are the 'RR-HEAD-ACQ as built vs head' rows of section 1.", "",
+           _t(["CR", "Request (electronics/head_acq/STAGE2_CHANGE_REQUESTS.md section B)", "Head change (both builds unless stated)"], [
+               ("CR-M01", "can outline v 8.25..40.25, 12 clips", "shield_can() at v 8.25 (x 91.45..123.45); clips checked on the wall mid-plane from the board file; drawing / DXF notes updated"),
+               ("CR-M04", "mouse holes du -10.38 / +11.87", "can rear wall holes at the anode U.FL centre pads; drawing / DXF updated"),
+               ("CR-M02", "H1 to (75.5, 30.0)", "standoff and spreader clinch hole at base (113.2, 87.5) (params.HEAD_ACQ); rib screw stations moved to x 96/121/138/155/168 "
+                "(116 clashed with H1, and the old 176 station overlapped the H4 / H6 standoff holes -- an existing defect found by the new hole-web check); dummy plate follows"),
+               ("CR-M03 a", "J1 port to y 76.2", "port U-slot, grommet, lid gasket, rear-comb and gasket cut-outs, pigtail at y 76.2; params.HEAD_PIGTAIL_EXIT still 87.5 (common)"),
+               ("CR-M03 b", "rear-strip standoffs clear of the mated plugs; P-clip follows", "(77.5, +70.5) deleted, (77.5, +104.5) -> (77.5, +117.5); two M2.5 x 3 rear-comb bond screws at "
+                "(80.3, 70.5 / 104.5) keep the prototype rear bond pitch; thermal cut-out moved to y 82..88.5; lid opening + blister extended over the plug zone, rear flange 1.5 mm; "
+                "the internal P-clip has nothing to hold (no jacket inside: see the harness deviation)"),
+               ("CR-M05", "blister 8.9 mm kept, header height UNVERIFIED", "kept; headers AND mated plugs checked at 8.3 mm (IB-19 allowance) -- all clear"),
+               ("S2-L6", "J2004 at u 144.6", "no part change; harness length below"),
+           ]), "", "Rail-switch lead lengths (calculated, S2-L6): " + "; ".join(f"{k}: {v['route_mm']:.0f} mm" for k, v in d.get("harness_routes", {}).items())
+           + ". D2HW-C201M lead length UNVERIFIED: splice to the GH-4 harness where shorter.", ""]
     (OUT / "head_report.md").write_text("\n".join(md))

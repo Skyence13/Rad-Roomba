@@ -106,9 +106,9 @@
   },
   {
    "check": "RR-HEAD-ACQ as built vs head: 1073 component bodies (board-file courtyard x 3D envelope height; Micro-Fit at 8.3 mm) vs every head part",
-   "status": "fail",
+   "status": "pass",
    "evidence": "tool-checked against electronics/head_acq/RR-HEAD-ACQ.kicad_pcb",
-   "detail": "3104 candidate pairs intersected; overlaps: [('J2001', 'lid_liner', 0.93)]; height-zone violations (6.0 top / 8.3 J1 landing / top side only): none; smallest clearance to the lid / liner / blister above a body: 0.60 mm (J2001)"
+   "detail": "3104 candidate pairs intersected; overlaps: none; height-zone violations (6.0 top / 8.3 J1 landing / top side only): none; smallest clearance to the lid / liner / blister above a body: 0.60 mm (J2001)"
   },
   {
    "check": "RR-HEAD-ACQ as built vs head: mated Micro-Fit plug keep-outs (CR-M03: v -8.4..1.5, IB-19 height) clear of standoffs, fences, cut-out, NTC, bond screws, lid",
@@ -214,9 +214,9 @@
   },
   {
    "check": "cover = shear panel: lid fasteners round a closed loop at <= 40 mm pitch, all on hard seats at the lid underside",
-   "status": "fail",
+   "status": "deviation",
    "evidence": "tool-checked",
-   "detail": "34 M3 screws (16 into standoffs on the spreader, 18 into frame bosses); largest neighbour distance 60.5 mm between (77.5, +117.5) and (77.5, +57.0); standoff tops z 43.00 / 43.00, boss tops z 43.00"
+   "detail": "34 M3 screws (16 into standoffs on the spreader, 18 into frame bosses); largest neighbour distance 60.5 mm between (77.5, +117.5) and (77.5, +57.0); standoff tops z 43.00 / 43.00, boss tops z 43.00. Only span over 40 mm: the J1 bay on the rear line, forced by CR-M03 (no standoff can stand under the mated plugs, y 62.3..112.7); the lid there is doubled by the bonded 1 mm blister; calculated gasket-line sag over the bay 0.011 mm against 0.4 mm gasket compression"
   },
   {
    "check": "insulating jacket (RR-HD-S-131/132, standard cold configuration) inside z <= 50, clear of the latch box, rails and receiver",
@@ -923,19 +923,19 @@
     },
     "roll_if_joint_rigid": 0.01611120290691253,
     "modes_hz": {
-     "pitch on the mount": 79.22684647460153,
-     "roll on the mount": 247.3958420915622,
-     "halves rocking about the y = 0 joint": 173.48705046041715,
-     "wing bending": 3378.773886669274
+     "pitch on the mount": 79.22687550862888,
+     "roll on the mount": 247.39593275398232,
+     "halves rocking about the y = 0 joint": 173.48711403770176,
+     "wing bending": 3378.775124878515
     },
-    "f1_hz": 79.22684647460153,
+    "f1_hz": 79.22687550862888,
     "joint_terms_Nm_per_rad": {
      "spreader alone (2 mm)": 38.413876543209874,
      "lid alone (2 mm)": 39.94498765432098,
      "spreader + lid as a couple through the lid fasteners near the joint (slip model)": 993.100362343998,
      "rear bridge plate (3 x 13 on edge, T-head to T-head)": 280.3209259259259
     },
-    "mass_kg": 1.862378650637058
+    "mass_kg": 1.8623772856370526
    },
    "prototype, split PA-CF (conditioned, E x 0.5)": {
     "lid fitted (all screws)": {
@@ -960,19 +960,19 @@
     },
     "roll_if_joint_rigid": 0.01611120290691253,
     "modes_hz": {
-     "pitch on the mount": 79.22684647460153,
-     "roll on the mount": 247.3958420915622,
-     "halves rocking about the y = 0 joint": 173.48705046041715,
-     "wing bending": 3108.451703977741
+     "pitch on the mount": 79.22687550862888,
+     "roll on the mount": 247.39593275398232,
+     "halves rocking about the y = 0 joint": 173.48711403770176,
+     "wing bending": 3108.4528431228136
     },
-    "f1_hz": 79.22684647460153,
+    "f1_hz": 79.22687550862888,
     "joint_terms_Nm_per_rad": {
      "spreader alone (2 mm)": 38.413876543209874,
      "lid alone (2 mm)": 39.94498765432098,
      "spreader + lid as a couple through the lid fasteners near the joint (slip model)": 993.100362343998,
      "rear bridge plate (3 x 13 on edge, T-head to T-head)": 280.3209259259259
     },
-    "mass_kg": 1.862378650637058
+    "mass_kg": 1.8623772856370526
    },
    "prototype, split PETG-CF frame": {
     "lid fitted (all screws)": {
@@ -997,19 +997,19 @@
     },
     "roll_if_joint_rigid": 0.01611120290691253,
     "modes_hz": {
-     "pitch on the mount": 79.22684647460153,
-     "roll on the mount": 247.3958420915622,
-     "halves rocking about the y = 0 joint": 173.48705046041715,
-     "wing bending": 3216.0228489445212
+     "pitch on the mount": 79.22687550862888,
+     "roll on the mount": 247.39593275398232,
+     "halves rocking about the y = 0 joint": 173.48711403770176,
+     "wing bending": 3216.024027510872
     },
-    "f1_hz": 79.22684647460153,
+    "f1_hz": 79.22687550862888,
     "joint_terms_Nm_per_rad": {
      "spreader alone (2 mm)": 38.413876543209874,
      "lid alone (2 mm)": 39.94498765432098,
      "spreader + lid as a couple through the lid fasteners near the joint (slip model)": 993.100362343998,
      "rear bridge plate (3 x 13 on edge, T-head to T-head)": 280.3209259259259
     },
-    "mass_kg": 1.862378650637058
+    "mass_kg": 1.8623772856370526
    },
    "production, one-piece 6061 frame": {
     "lid fitted (all screws)": {
@@ -1034,12 +1034,12 @@
     },
     "roll_if_joint_rigid": 0.004061785266769044,
     "modes_hz": {
-     "pitch on the mount": 149.87478418222813,
-     "roll on the mount": 468.0029572165292,
-     "halves rocking about the y = 0 joint": 543.2887657133216,
-     "wing bending": 5816.957330608984
+     "pitch on the mount": 149.87483332004615,
+     "roll on the mount": 468.0031106555768,
+     "halves rocking about the y = 0 joint": 543.2889438355098,
+     "wing bending": 5816.95923775162
     },
-    "f1_hz": 149.87478418222813,
+    "f1_hz": 149.87483332004615,
     "joint_terms_Nm_per_rad": {
      "spreader alone (2 mm)": 38.413876543209874,
      "lid alone (2 mm)": 39.94498765432098,
@@ -1047,7 +1047,7 @@
      "rear bridge plate (3 x 13 on edge, T-head to T-head)": 280.3209259259259,
      "one-piece aluminium frame walls": 12590.197952071221
     },
-    "mass_kg": 2.0816876888156224
+    "mass_kg": 2.081686323815618
    }
   },
   "rails": {
@@ -1175,6 +1175,39 @@
     }
    ],
    "budget_line_in_mech_calcs_pm_mm": 0.3
+  },
+  "harness_routes": {
+   "front (J2002)": {
+    "connector_base_xy": [
+     175.2,
+     8.5
+    ],
+    "route_mm": 92.0
+   },
+   "left (J2003)": {
+    "connector_base_xy": [
+     175.2,
+     -8.5
+    ],
+    "route_mm": 292.0
+   },
+   "right (J2004, S2-L6 u 144.6)": {
+    "connector_base_xy": [
+     175.2,
+     18.4
+    ],
+    "route_mm": 302.0
+   },
+   "lid (J2201)": {
+    "connector_base_xy": [
+     175.2,
+     41.0
+    ],
+    "route_mm": 142.0
+   },
+   "right switch to the stage-1 landing edge (u 150)": {
+    "route_mm": 297.0
+   }
   },
   "light_paths": [
    {
@@ -1445,7 +1478,7 @@
     "cap_covered_m2": 0.037203927164555665,
     "cap_fraction": 0.9099206878605833,
     "front_band_m2": 0.004318000000000001,
-    "liner_m2": 0.028962400000000003,
+    "liner_m2": 0.0289442,
     "side_area_m2": 0.0320505
    },
    "_receiver": {
@@ -2406,16 +2439,16 @@
     "prototype": {
      "ua_w_per_k": 0.601,
      "tau_min": 57.0,
-     "warmup_min_30w_12v": 63.54198412197117,
-     "warmup_min_20w8_10v": 177.76452160171897,
+     "warmup_min_30w_12v": 63.54219596191413,
+     "warmup_min_20w8_10v": 177.76875343508138,
      "steady_c_heater_stuck_on_15v_at_+20c": 99.0,
      "steady_c_full_30w_at_-25c": 27.0
     },
     "production": {
      "ua_w_per_k": 0.61,
      "tau_min": 60.0,
-     "warmup_min_30w_12v": 68.64051206433783,
-     "warmup_min_20w8_10v": 208.84525144785394,
+     "warmup_min_30w_12v": 68.64074631684831,
+     "warmup_min_20w8_10v": 208.85190821113517,
      "steady_c_heater_stuck_on_15v_at_+20c": 97.0,
      "steady_c_full_30w_at_-25c": 26.0
     }
@@ -2486,9 +2519,9 @@
   }
  },
  "summary": {
-  "pass": 41,
-  "fail": 2,
-  "deviation": 5
+  "pass": 42,
+  "fail": 0,
+  "deviation": 6
  },
- "runtime_s": 257.0
+ "runtime_s": 275.8
 }

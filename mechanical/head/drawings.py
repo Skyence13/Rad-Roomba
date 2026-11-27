@@ -92,9 +92,9 @@ def joints():
               notes=[((150, 14), "return spring in the blind bore", (140, 8)), ((175, 14), "guide rod 4 h6", (165, 8)), ((182.6, 22), "stop / switch pin 2.5", (160, 24)),
                      ((183.2, 37), "D2HW-C201M in the bay", (150, 40)), ((184.2, 15.2), "cam notch 1.3 deep, ramp 1.6", (194, 9)), ((206.7, 20), "bar 14 x 3", (196, 30)), ((210.2, 22), "insert (3 mm position)", (200, 36))],
               dims=[((188.2, 6.3), (205.2, 6.3), -0.6, True)], scale=3.0)
-    joint_fig("J5_shoe_T_head_and_cable_port", "Receiver shoe T-head, isolator, spreader tab and cable port (y = 87.0)", "y", H.SHOE_Y - 0.5, ((60, 100), (8, 48)), P_,
+    joint_fig("J5_shoe_T_head_and_cable_port", "Receiver shoe T-head, isolator, spreader tab (y = 87.0; the J1 port is at y 76.2 since CR-M03, see the frame sheet)", "y", H.SHOE_Y - 0.5, ((60, 100), (8, 48)), P_,
               notes=[((66, 23), "x-stop shoulder x 65.7 (datum A)", (61, 12)), ((74.5, 23), "T-head 6061", (78, 12)), ((76, 29.75), "isolator 0.5 G10 (prototype)", (84, 26.5)), ((79, 31), "spreader tab, 4 x M3", (86, 34)),
-                     ((71.5, 39), "split grommet + cable", (84, 44)), ((90, 35.3), "RR-HEAD-ACQ", (90, 38.5))], scale=4.0)
+                     ((71.5, 39), "rear wall (J1 port at y 76.2)", (84, 44)), ((90, 35.3), "RR-HEAD-ACQ", (90, 38.5))], scale=4.0)
     joint_fig("J6a_side_zone_tab_level", "Side zone, rear outer corner at the guide-tab level (z = 25.4): tabs in the slits, guide pins", "z", H.SLIT_Z[0] + 0.7, ((62, 84), (136, 178)), P_,
               notes=[((75.0, 168.5), "guide pin M3 in a 45 deg slot", (79, 176)), ((75.0, 145.7), "guide pin", (80, 150)), ((68.2, 160), "wing-tip return", (63, 156))], scale=5.0)
     joint_fig("J6b_side_zone_switch_level", "Side zone, rear outer corner at the switch level (z = 20.75): switch pocket, return plate, side strip", "z", H.SW_SIDE["z"], ((62, 84), (136, 178)), P_,
@@ -183,7 +183,7 @@ def fab():
     for s in (1, -1):
         D.dim(ax, rv((0, s * (H.SHOE_Y - H.THEAD_HY - 0.15), 16)), rv((0, s * (H.SHOE_Y + H.THEAD_HY + 0.15), 16)), off=-4, horizontal=True, fmt="{:.2f}", tol=" +0.1/0")
         D.note(ax, rv((0, s * H.SHOE_Y, 23)), "T-HEAD POCKET\n8.65 deep, z 15.9..30.0", fs=4.8, ha="center")
-        D.note(ax, rv((0, s * H.SHOE_Y, 38)), "PORT SLOT 11.0 wide\nfloor z 33.5", fs=4.8, ha="center")
+        D.note(ax, rv((0, H.PORT_Y["J1" if s > 0 else "J2"], 38)), f"PORT SLOT 11.0 wide at y {H.PORT_Y['J1' if s > 0 else 'J2']:+.1f}\nfloor z 33.5", fs=4.8, ha="center")
     D.dim(ax, rv((0, H.SHOE_Y, 9)), rv((0, -H.SHOE_Y, 9)), off=-5, horizontal=True, text="175.00", tol=" +-0.05")
     D.note(ax, rv((0, H.VENT[1], H.VENT[2])), "M6 x 0.75 vent", rv((0, H.VENT[1] + 14, H.VENT[2] + 7)), fs=5)
     D.datum(ax, rv((0, 150, H.Z_SPR0)), "A", rv((0, 150, 49)))
@@ -278,10 +278,10 @@ def fab():
     figs.append(("RR-HD-S-121_spreader", fig))
     # ---------------- sheet 5: lid, blister, shield can
     fig = D.sheet("LID, J1 BLISTER AND LANE SHIELD CAN", "RR-HD-S-122 / RR-HD-S-123 / RR-HEAD-SHLD-A", notes=[
-        "LID: 5052-H32 2.00, chromate conversion inside (conductive), black anodise or powder coat outside. Flatness 0.2. 35 x dia 3.4 for M3 button head + bonded sealing washer: 17 standoffs (labelled) + 18 frame bosses (front x 184.2, sides y +-168.4).",
-        "BLISTER: 1.0 aluminium, bonded with conductive epoxy bead + 2 x dia 2.4 blind rivets (front) and clamped by three lid screws (rear) over the 51 x 19 opening (J1 landing connector clearance 8.9 mm above the PCB top, CCR-HE-02).",
+        f"LID: 5052-H32 2.00, chromate conversion inside (conductive), black anodise or powder coat outside. Flatness 0.2. {T.lid_count()} x dia 3.4 for M3 button head + bonded sealing washer: {len(T.lid_holes())} standoffs (labelled) + 18 frame bosses (front x 184.2, sides y +-168.4).",
+        f"BLISTER: 1.0 aluminium, bonded with conductive epoxy bead + 2 x dia 2.4 blind rivets (front) and clamped by two lid screws (rear, y 57.0 / 117.5) over the {H.LID_OPENING[1] - H.LID_OPENING[0]:.1f} x {H.LID_OPENING[3] - H.LID_OPENING[2]:.1f} opening (J2001 / J2601 headers and mated plugs, 8.9 mm above the PCB top; IB-19, IB-52).",
         "SHIELD CAN RR-HEAD-SHLD-A: 0.20 tin-plated steel (or C770 nickel silver), folded 5-sided can 36.0 x 32.0 x 5.0 outside (+0/-0.1), corners open <= 0.3; two mouse holes 2.0 x 1.2 in the rear wall for the anode traces;",
-        "held by 12 SMT clips (3 per side) on board GND -- not connected to the lid. Flat pattern: RR-HEAD-SHLD-A_lane_shield_can.dxf. Positions on the board: du -18..+18, v 5.5..37.5 about each lane centre."])
+        "mouse holes at du -10.38 / +11.87 (CR-M04, anode U.FL pads); held by 12 SMT clips on board GND -- not connected to the lid. Flat pattern: RR-HEAD-SHLD-A_lane_shield_can.dxf. Positions on the board: du -18..+18, v 8.25..40.25 about each lane centre (CR-M01)."])
     ld = T.lid().fuse(T.j1_blister())
     ax = _hlr_ax(fig, (14, 150, 392, 130), ld, "top", "LID WITH BLISTER, TOP VIEW", margin=16)
     i = H.LID_INSET
@@ -289,9 +289,9 @@ def fab():
     D.dim(ax, tv((H.XR + i, -H.YW + i, 0)), tv((H.XF - i, -H.YW + i, 0)), off=9, horizontal=False, fmt="{:.2f}", tol=" +-0.1")
     for x, y in T.lid_holes():
         D.note(ax, tv((x, y, 0)), f"({x:.1f}, {y:+.1f})", tv((x - 6 if x > 100 else x + 6, y, 0)), fs=4.5)
-    a, b, c, e = T.j1_zone()
-    D.dim(ax, tv((a - 0.5, e + 0.5, 0)), tv((a - 0.5, c - 0.5, 0)), off=-4, horizontal=True, fmt="{:.1f}")
-    D.dim(ax, tv((a - 0.5, c - 0.5, 0)), tv((b + 0.5, c - 0.5, 0)), off=4, horizontal=False, fmt="{:.1f}")
+    a, b, c, e = H.LID_OPENING
+    D.dim(ax, tv((a, e, 0)), tv((a, c, 0)), off=-4, horizontal=True, fmt="{:.1f}")
+    D.dim(ax, tv((a, c, 0)), tv((b, c, 0)), off=4, horizontal=False, fmt="{:.1f}")
     can = T.shield_can()
     ax = _hlr_ax(fig, (14, 62, 120, 75), can, "top", "SHIELD CAN, TOP", margin=8)
     D.dim(ax, tv((0, 18, 0)), tv((0, -18, 0)), off=-4, horizontal=True, fmt="{:.2f}", tol=" 0/-0.1")
@@ -302,7 +302,7 @@ def fab():
     # ---------------- sheet 6: assembly with balloons and BOM
     Pp = A.build("production")
     fig = D.sheet("HEAD ASSEMBLY, PRODUCTION", "RR-HD-P-000", notes=[
-        "Torques: M2.5 into aluminium 0.45 N m, M3 0.9 N m, M4 (bridge ears) 2.0 N m (A2-70, medium thread-lock on every screw that is not a service screw). Lid: 35 x M3 button + bonded washer, 0.6 N m, centre outward.",
+        "Torques: M2.5 into aluminium 0.45 N m, M3 0.9 N m, M4 (bridge ears) 2.0 N m (A2-70, medium thread-lock on every screw that is not a service screw). Lid: 34 x M3 button + bonded washer, 0.6 N m, centre outward.",
         "Sealing: lid gasket = conductive silicone elastomer (Ni/graphite) in the wall-top land; cassette gaskets and rib strips = black closed-cell silicone; ports = moulded split grommets; vent = ePTFE M6.",
         "End-of-line tests and service access: production/README.md. Datums A, B, C on the shoes (RR-HD-S-111); film plane and standoff GD&T on sheet RR-HD-P-000-ICD."])
     main = [p for p in Pp if p.group in ("frame", "receiver", "deck", "rail", "window") and p.kind != "purchased" or p.name in ("lid_standoffs",)]
@@ -310,8 +310,8 @@ def fab():
     items = [("frame", "RR-HD-P-101", "Frame, CNC 6061", 1, (150, -120)), ("shoe_L", "RR-HD-S-111", "Receiver shoe with T-head", 2, (30, 87.5)), ("bridge", "RR-HD-S-114", "Rear bridge / keeper hinge", 1, (68, 30)),
              ("spreader", "RR-HD-S-121", "Spreader plate 2 mm", 1, (100, -150)), ("pcb", "EL-RR-HEAD-ACQ", "Head acquisition board", 1, (140, 60)), ("rail_bar", "RR-HD-S-401", "Leading rail bar", 1, (206.5, -60)),
              ("rail_insert_0", "RR-HD-P-411", "Wear insert, reversible 3 / 5 mm", 4, (210.5, -130)), ("guide_rod_L", "RR-HD-S-402", "Guide rod 4 h6", 2, (196, 87.5)), ("bail", "RR-HD-S-403", "Anti-racking bail", 1, (189.7, 60)),
-             ("side_rail_L", "RR-HD-S-431/432", "Side rail LH / RH", 2, (130, 174.6)), ("lid_standoffs", "PUR-SO-M3x11", "Lid standoff M3 x 11", 17, (183, 130)), ("sw_front", "PUR-D2HW", "D2HW-C201M (front, 2 side, lid)", 4, (183, 87.5)),
-             ("S1_shield_can", "RR-HEAD-SHLD-A", "Lane shield can", 4, (104, 43.75)), ("grommet_J1", "RR-HD-P-511/512", "Port grommet J1 / J2", 2, (71.5, 87.5))]
+             ("side_rail_L", "RR-HD-S-431/432", "Side rail LH / RH", 2, (130, 174.6)), ("lid_standoffs", "PUR-SO-M3x11", "Lid standoff M3 x 11", len(T.lid_holes()), (183, 130)), ("sw_front", "PUR-D2HW", "D2HW-C201M (front, 2 side, lid)", 4, (183, 87.5)),
+             ("S1_shield_can", "RR-HEAD-SHLD-A", "Lane shield can", 4, (104, 43.75)), ("grommet_J1", "RR-HD-P-511/512", "Port grommet J1 / J2", 2, (71.5, 76.2))]
     offs = [(-20, -18), (-10, 16), (-14, -14), (-22, 12), (0, 22), (16, -8), (18, 10), (16, 14), (18, 22), (-6, 12), (12, 20), (22, 4), (-10, 20), (-14, 22)]
     for k, ((nm, pn, desc, qty, xy), o) in enumerate(zip(items, offs), start=1):
         p2 = tv((xy[0], xy[1], 0))
@@ -419,7 +419,7 @@ def steps():
     img(5, "EMI fences, board, shield cans, switches, pigtails and grommets", s5, s1 + s2 + s3 + s4, explode=(0, 0, 40), per={"fence_rear": (-20, 0, 55), "pcb": (0, 0, 70), **{f"S{i}_shield_can": (0, 0, 95) for i in range(4)},
         "pigtail_J1": (-30, 0, 20), "pigtail_J2": (-30, 0, 20), "plug_J1": (-30, 0, 20), "plug_J2": (-30, 0, 20)}, labels=["8 x M2.5 x 5 board screws 0.35 N m; coax pigtails up through the spreader notches (R >= 6 mm)"])
     s6 = ["lid", "lid_gasket", "lid_liner", "j1_blister", "keeper", "keeper_pin"]
-    img(6, "lid with gasket (35 M3 + bonded washers), keeper plate swings down over it", s6, s1 + s2 + s3 + s4 + s5, explode=(0, 0, 40), per={"keeper": (-10, 0, 75), "keeper_pin": (-10, 40, 75)}, labels=["lid screws 0.6 N m, cross pattern from the centre"])
+    img(6, "lid with gasket (34 M3 + bonded washers), keeper plate swings down over it", s6, s1 + s2 + s3 + s4 + s5, explode=(0, 0, 40), per={"keeper": (-10, 0, 75), "keeper_pin": (-10, 40, 75)}, labels=["lid screws 0.6 N m, cross pattern from the centre"])
     allabove = s1 + s2 + s3 + s4 + s5 + s6
     s7 = lanes("cassette", "film", "cassette_gasket")
     img(7, "underside: window cassettes with film and gasket (4 x M2.5 countersunk each)", s7, [k for k in allabove if not k.startswith(("pigtail", "plug"))], explode=(0, 0, -45), azim=-58, elev=-32,
@@ -458,7 +458,7 @@ def steps_production():
         ("spreader with heater, pads, rib gaskets; standoffs; board, cans, switches, cables", ["spreader", "rib_gaskets", "board_standoffs", "lid_standoffs", "pcb", "sw_front", "sw_front_saddle", "sw_lid", "sw_lid_saddle",
                                                                                             "grommet_J1", "grommet_J2", "thermal_cutout", "ntc", "desiccant", "vent"] + [f"S{i}_{k}" for i in range(4) for k in ("pad", "heater", "shield_can")]
          + [h for h in heads if not h.startswith("hd_lid")], {"pcb": (0, 0, 50), **{f"S{i}_shield_can": (0, 0, 70) for i in range(4)}}),
-        ("lid (35 x M3 + bonded washers), blister, keeper, insulating jacket", ["lid", "lid_gasket", "lid_liner", "j1_blister", "keeper", "keeper_pin", "jacket_top", "jacket_front"] + [h for h in heads if h.startswith("hd_lid")], {"keeper": (-10, 0, 60), "keeper_pin": (-10, 0, 60)}),
+        ("lid (34 x M3 + bonded washers), blister, keeper, insulating jacket", ["lid", "lid_gasket", "lid_liner", "j1_blister", "keeper", "keeper_pin", "jacket_top", "jacket_front"] + [h for h in heads if h.startswith("hd_lid")], {"keeper": (-10, 0, 60), "keeper_pin": (-10, 0, 60)}),
         ("cassettes and leading rail", [f"S{i}_{k}" for i in range(4) for k in ("cassette", "film", "cassette_gasket")] + ["bail", "bail_block_C", "bail_block_L", "bail_block_R", "rail_bar", "bail_clip_L", "bail_clip_R"]
          + [f"rail_insert_{k}" for k in range(4)], {**{f"S{i}_{k}": (0, 0, -40) for i in range(4) for k in ("cassette", "film", "cassette_gasket")}, "rail_bar": (40, 0, 0), **{f"rail_insert_{k}": (60, 0, 0) for k in range(4)}}),
     ]

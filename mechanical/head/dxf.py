@@ -59,9 +59,9 @@ def lid(path):
                      format="xyb", close=True, dxfattribs={"layer": "CUT"})
     for x, y in T.lid_all_holes():
         m.add_circle((x, y), 1.7, dxfattribs={"layer": "CUT"})
-    a, b, c, e = T.j1_zone()
-    _rect(m, a - 0.5, b + 0.5, c - 0.5, e + 0.5)
-    _txt(m, "RR-HD-S-122 LID 2.0 AL 5052-H32; 35 x dia 3.4 for M3 + bonded sealing washer; J1 opening covered by RR-HD-S-123", (90, 20), 3)
+    a, b, c, e = H.LID_OPENING
+    _rect(m, a, b, c, e)
+    _txt(m, f"RR-HD-S-122 LID 2.0 AL 5052-H32; {T.lid_count()} x dia 3.4 for M3 + bonded sealing washer; J1 opening (connectors + mated plugs, IB-52) covered by RR-HD-S-123", (90, 20), 3)
     d.saveas(path)
     d, m = _doc()
     ba, bb, bc, bd = T.blister_rect()
@@ -71,7 +71,7 @@ def lid(path):
     for xx, yy in T.lid_all_holes():
         if ba < xx < bb and bc < yy < bd:
             m.add_circle((xx, yy), 1.7, dxfattribs={"layer": "CUT"})
-    _txt(m, "RR-HD-S-123 J1 BLISTER 1.0 AL; 2 x dia 2.5 rivet (front), 3 x dia 3.4 lid screws (rear)", (ba, bc - 12), 2.5)
+    _txt(m, "RR-HD-S-123 J1 BLISTER 1.0 AL; 2 x dia 2.5 rivet (front), 2 x dia 3.4 lid screws (rear, y 57.0 / 117.5); conductive epoxy bead round the opening", (ba, bc - 12), 2.5)
     d.saveas(path.with_name("RR-HD-S-123_j1_blister.dxf"))
 
 
@@ -141,10 +141,10 @@ def fences(folder):
     _poly(m, prof)
     m.add_line((-hy, y_wall1 + ba / 2), (hy, y_wall1 + ba / 2), dxfattribs={"layer": "BEND"})
     zdev = lambda z: z - H.Z_SPR1 - t                    # height on the wall above the foot bend
-    for s in (1, -1):
-        _rect(m, s * H.SHOE_Y - H.PORT_SLOT_HY, s * H.SHOE_Y + H.PORT_SLOT_HY, zdev(H.PORT_SLOT_Z0), y_wall1 + ba + top + 0.01)
+    for n in ("J1", "J2"):
+        _rect(m, H.PORT_Y[n] - H.PORT_SLOT_HY, H.PORT_Y[n] + H.PORT_SLOT_HY, zdev(H.PORT_SLOT_Z0), y_wall1 + ba + top + 0.01)
     m.add_circle((H.VENT[1], zdev(H.VENT[2])), 2.5, dxfattribs={"layer": "CUT"})
-    _txt(m, "RR-HD-X-126 EMI REAR COMB 0.5 AL 5052-H32; feet UP 90, top flange UP 90, chimney liner side flanges UP 90 (toward the lanes); foot holes: match-drill from RR-HD-S-121",
+    _txt(m, "RR-HD-X-126 EMI REAR COMB 0.5 AL 5052-H32; feet UP 90, top flange UP 90, chimney liner side flanges UP 90 (toward the lanes); foot holes: match-drill from RR-HD-S-121; top flange 1.5 wide; +y middle foot: two 5.2 x 7.4 tabs at y 70.5 / 104.5 for the M2.5 bond screws (STEP is master)",
          (-160, y_wall1 + 8), 2.2)
     d.saveas(folder / "RR-HD-X-126_fence_rear_comb.dxf")
 
@@ -182,9 +182,9 @@ def shield_can(path):
     _poly(m, prof)
     for a, b in (((0, 0), (L, 0)), ((L, 0), (L, W)), ((L, W), (0, W)), ((0, W), (0, 0))):
         m.add_line(a, b, dxfattribs={"layer": "BEND"})
-    for s in (1, -1):
-        _rect(m, -Hc - 0.01, -Hc + 1.2, W / 2 + s * 6.0 - 1.0, W / 2 + s * 6.0 + 1.0)
-    _txt(m, "RR-HEAD-SHLD-A LANE SHIELD CAN 0.2 tin-plated steel (or nickel silver C770); fold 4 walls DOWN 90; 36.0 x 32.0 x 5.0 outside; two 2 x 1.2 mouse holes on the rear wall (v = 5.5 side)",
+    for du in H.CAN_MOUSE_DU:
+        _rect(m, -Hc - 0.01, -Hc + H.MOUSE_H, W / 2 + du - H.MOUSE_W / 2, W / 2 + du + H.MOUSE_W / 2)
+    _txt(m, "RR-HEAD-SHLD-A LANE SHIELD CAN 0.2 tin-plated steel (or nickel silver C770); fold 4 walls DOWN 90; 36.0 x 32.0 x 5.0 outside; two 2 x 1.2 mouse holes on the rear wall at du -10.38 / +11.87 (CR-M04; DXF y = 18 + du); fitted at v 8.25..40.25 (CR-M01)",
          (-5, -12), 1.6)
     d.saveas(path)
 

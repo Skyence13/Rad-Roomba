@@ -248,7 +248,7 @@ def board_fit(builds):
     y_j = 163.0 - (jb[0] + jb[2]) / 2
     ok = abs(H.PORT_Y["J1"] - y_j) <= 0.1 and all(abs(fp[r]["fab_uv"][0] - u0) < tol and abs(fp[r]["fab_uv"][2] - u1) < tol for r, (u0, u1) in H.MICROFIT_BODY_U.items())
     rows.append(("J1 cable port at the J2001 centre (CR-M03 a); Micro-Fit bodies = hp.MICROFIT_BODY_U", ok,
-                 f"J2001 body u {jb[0]}..{jb[2]} -> centre y {y_j:.2f}; port y {H.PORT_Y['J1']:.2f} (P.HEAD_PIGTAIL_EXIT); J2601 body u {fp['J2601']['fab_uv'][0]}..{fp['J2601']['fab_uv'][2]}"))
+                 f"J2001 body u {jb[0]}..{jb[2]} -> centre y {y_j:.2f}; port y {H.PORT_Y['J1']:.2f} (hp.PORT_Y); J2601 body u {fp['J2601']['fab_uv'][0]}..{fp['J2601']['fab_uv'][2]}"))
     # (d) every component body (courtyard, else fab outline, x the 3D envelope height; Micro-Fit at the IB-19 allowance) vs the head solids
     heads = [p for p in builds["prototype"] + [q for q in builds["production"] if q.name == "frame"]
              if p.group not in ("optic", "lane", "window", "rail") and not p.name.startswith(("pcb", "S0_shield", "S1_shield", "S2_shield", "S3_shield", "plug_ko", "pigtail", "plug_J", "fasteners_lumped"))]
@@ -551,6 +551,7 @@ def run():
     add("head contribution to the film-to-floor gap (datum C to film plane)", "pass" if abs(tol["nominal_film_z"] - P.FILM_Z) < 1e-9 and tol["production"]["worst_case_pm_mm"] <= 0.30 else "fail",
         f"nominal film z {tol['nominal_film_z']:.2f}; prototype +-{tol['prototype']['worst_case_pm_mm']:.2f} worst / +-{tol['prototype']['rss_pm_mm']:.2f} RSS; production +-{tol['production']['worst_case_pm_mm']:.2f} / "
         f"+-{tol['production']['rss_pm_mm']:.2f} (budget line +-0.30: prototype meets it by RSS only -> trim with the isolator shim at the standoff-height check)", "calculated")
+    res["data"]["harness_routes"] = C.harness_routes(board_asbuilt()[0])
     res["data"]["light_paths"] = C.light_paths()
     no_los = all(r["turns"] > 0 or "gasket" in r["barriers"] or "solid" in r["barriers"] or "film" in r["barriers"] or "elastomer" in r["barriers"] for r in res["data"]["light_paths"])
     add("light-path analysis: every joint has a labyrinth turn or an opaque compressed barrier (no open line of sight)", "pass" if no_los else "fail",

@@ -51,22 +51,25 @@ SUPPLIER = {
     "PUR-DP2.5": ("dowel pin 2.5 m6 x 17 / x 14, stainless", "UNVERIFIED", ""),
     "PUR-DP3x40": ("dowel / hinge pin 3 x 40 with two circlips", "UNVERIFIED", ""),
     "PUR-M3x16-SHCS": ("ISO 4762 M3 x 16 A2 (guide pin, shank as pin)", "UNVERIFIED", ""),
+    "PUR-M2.5x3-PAN": ("ISO 7045 M2.5 x 3 A2 pan head", "UNVERIFIED", "rear-comb bond screw under the J1 plugs (CR-M03); tip 0.5 below the spreader into a frame relief"),
+    "EL-RR-HEAD-ACQ": ("RR-HEAD-ACQ rev A (electronics/head_acq), as built: H1 at (75.5, 30.0), cans v 8.25..40.25, J2001/J2601 at the rear edge", "-", "fit tool-checked against the board file (head_report.md section 12)"),
 }
 SCREWS_NOT_MODELLED = [  # (pn, description, qty prototype, qty production)
     ("PUR-M2.5x8-CSK", "ISO 10642 M2.5 x 8 A2: spreader to rib inserts / tapped ribs (flush, under the board)", 10, 10),
-    ("PUR-M3x6-CSK", "ISO 10642 M3 x 6 A2: lid standoffs from below the spreader", 17, 17),
+    ("PUR-M3x6-CSK", "ISO 10642 M3 x 6 A2: lid standoffs from below the spreader", len(T.lid_holes()), len(T.lid_holes())),
     ("PUR-M2.5x8-CSK-C", "ISO 10642 M2.5 x 8 A2: window cassettes (4 each)", 16, 16),
     ("PUR-M2.5x10-PAN", "ISO 7045 M2.5 x 10 A2: bail blocks to the frame front face", 6, 6),
     ("PUR-M2.5x12-PAN", "ISO 7045 M2.5 x 12 A2: switch saddles to the spreader", 4, 4),
     ("PUR-M3x8-SHCS", "ISO 4762 M3 x 8 A2: rail inserts (2 each) and rods to the bar", 10, 10),
     ("PUR-M4x10-SHCS", "ISO 4762 M4 x 10 A2: rear bridge to the T-head ears", 4, 4),
-    ("PUR-M3-BONDSEAL", "bonded sealing washer M3 (steel + NBR/silicone, -40 C), under every lid screw", 35, 35),
+    ("PUR-M3-BONDSEAL", "bonded sealing washer M3 (steel + NBR/silicone, -40 C), under every lid screw", T.lid_count(), T.lid_count()),
     ("PUR-M3-ISOWASH", "insulating shoulder washer M3 (PA66 / G10): T-head screws (FRAME isolated from the shoes, both builds)", 8, 8),
     ("PUR-PI-TAPE", "polyimide tape 0.1 mm, 30 x 45 mm, on the lid under the keeper (isolation)", 1, 1),
     ("PUR-INS-M2.5", "heat-set insert M2.5 in the printed frame (ribs 10, rear zone 6, cassettes 16, bail blocks 6)", 38, 0),
     ("PUR-INS-M3", "heat-set insert M3 in the printed lid bosses", 18, 0),
     ("PUR-DOWEL-3x6", "dowel pin 3 x 6 h8, split-joint location", 2, 0),
     ("PUR-RIVET-2.4", "blind rivet 2.4 Al, J1 blister front edge", 2, 2),
+    ("PUR-PCLIP-J1", "internal cable P-clip: NOT fitted in rev A (CR-M03 leaves no cable jacket inside the head; see head_report.md 'J1 landing harness')", 0, 0),
     ("PUR-COAX", "SiPM micro-coax pigtail U.FL class, about 60 mm, through the chimney (harness; length per OEM carrier)", 16, 16),
     ("PUR-RTV-BLACK", "black RTV, side-switch lead channel potting (2 x 0.1 ml)", 1, 1),
     ("PUR-EPOXY-COND", "conductive epoxy, J1 blister bead", 1, 1),
@@ -213,17 +216,19 @@ chimney, chimney insert (fingers onto the carriers), coax up through the insert 
 Heater zones, pads and rib gasket strips are bonded to the spreader underside beforehand; thermal cut-out and NTC on the top. Tilt the spreader in with its front
 edge under the frame lip, lower it, then: 10 x M2.5 CSK into the rib inserts, 6 x M2.5 pan into the rear-zone inserts (they also clamp the EMI comb foot -- fit
 the comb first in step 5 order if preferred), 8 x M3 low-head with insulating shoulder washers into the T-heads. Lid standoffs from below with M3 x 6 CSK
-(11 x 10.5 mm on fence feet, 6 x 11 mm in the chimney zones). Board standoffs are clinched in the spreader.
+({sum(1 for x, y in T.lid_holes() if T.standoff_on_foot(x, y))} x 10.5 mm on fence feet, {sum(1 for x, y in T.lid_holes() if not T.standoff_on_foot(x, y))} x 11 mm in the chimney zones; none in the J1 plug zone
+y 62..113, CR-M03). Board standoffs are clinched in the spreader (H1 at (113.2, 87.5), CR-M02). Thermal cut-out on the spreader at (77..81.6, 82..88.5), under the J2001 plug.
 
 **5. EMI fences, board, shield cans, switches, cables** -- ![step 5](assembly/step_05.png)
 Rear comb (liners into the chimneys around the coax), side and front fences; their feet are clamped by the standoffs and screws (bond points <= 50 mm,
-tool-checked). Front-switch saddle (shim the trip point: see section "Checks"), lid-switch saddle. Board on the eight standoffs (8 x M2.5 with serrated
+tool-checked); on the +y middle foot (under the J1 plugs) 2 x M2.5 x 3 pan at (80.3, 70.5) / (80.3, 104.5) into the tapped spreader -- fit them BEFORE the board. Front-switch saddle (shim the trip point: see section "Checks"), lid-switch saddle. Board on the eight standoffs (8 x M2.5 with serrated
 washers = FRAME bond), lane shield cans clipped on, coax to the board rear edge (bend radius >= 6 mm). J1 / J2 pigtails through the split grommets into
-the U-slots, internal cable clamp, landing on the board. Desiccant pouches into the front strip, indicator card visible.
+the U-slots (J1 at y 76.2, CR-M03), plugs onto J2001 / J2601 / J2501 (J1 harness: open item, head_report.md 'J1 landing harness').
+Rail-switch leads to J2002 (front), J2003 (left), J2004 (right, u 144.6 = y +18.4, S2-L6), J2201 (lid): cut lengths in head_report.md section 12. Desiccant pouches into the front strip, indicator card visible.
 
 **6. Lid** -- ![step 6](assembly/step_06.png)
-Lid gasket on the wall top land, liner under the lid. 35 x M3 button head + bonded washer: 17 into the standoffs, 18 into the wall bosses; tighten from the
-centre outward. Blister (J1 landing clearance) is clamped by three of the rear screws and riveted at the front. Keeper plate swings down over the lid (its
+Lid gasket on the wall top land, liner under the lid. {T.lid_count()} x M3 button head + bonded washer: {len(T.lid_holes())} into the standoffs, 18 into the wall bosses; tighten from the
+centre outward. Blister (J1 landing and mated-plug clearance, 8.9 mm) is bonded over the lid opening, clamped by the two rear screws at y 57.0 / 117.5 and riveted at the front. Keeper plate swings down over the lid (its
 hole clears the screw at (77.5, 0); 0.1 mm polyimide tape on the lid under it), hinge pin with circlips. **Insulating jacket (standard cold configuration,
 required below 0 C):** degrease the lid and the frame front face, press the cap RR-HD-S-131 onto the lid (PSA; its 9 mm holes line up with the 35 lid screws, so
 the lid is later removed with the cap on it; cut-out round the keeper and the latch box) and the front band RR-HD-S-132 onto the front face above the bail blocks.
@@ -271,7 +276,7 @@ inserts; the shoes are isolated from the frame exactly as in the prototype (G10 
 2. ![step 2](assembly/step_02.png) Side rails, guide pins, side switches (preset 0.40 mm), rods, springs, stop pins.
 3. ![step 3](assembly/step_03.png) Lane kits from above; stack-height check.
 4. ![step 4](assembly/step_04.png) Spreader (heater, pads, rib gaskets bonded), standoffs (11 mm), board, cans, switches, grommets, desiccant, cut-out, NTC.
-5. ![step 5](assembly/step_05.png) Lid with conductive gasket, 35 x M3 + bonded washers (18 into tapped frame bosses), blister, polyimide tape, keeper; insulating jacket cap RR-HD-S-131 (PSA on the lid, screws reachable through its holes) and front band RR-HD-S-132 (standard cold configuration).
+5. ![step 5](assembly/step_05.png) Lid with conductive gasket, {T.lid_count()} x M3 + bonded washers (18 into tapped frame bosses), blister, polyimide tape, keeper; insulating jacket cap RR-HD-S-131 (PSA on the lid, screws reachable through its holes) and front band RR-HD-S-132 (standard cold configuration).
 6. ![step 6](assembly/step_06.png) Cassettes (CNC 6061, black anodise) and leading rail.
 
 Overview: ![production](assembly/overview.png)

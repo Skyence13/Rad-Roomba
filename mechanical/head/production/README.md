@@ -52,6 +52,7 @@ and cassette before the first production order.
 
 The contract makes the J1 electronics return (pin 2) the only DC ground path between head and robot, and EMI results must transfer between the builds,
 so the head frame is **isolated from the chassis at the receiver shoes in both builds** and the board's single FRAME-to-ground bond R2801 is **fitted in both**.
+(Lead decision IB-38; this section was already in that form, the bonded-shoe text is gone. Thermal consequence of the G10 isolator: head_report.md section 9.)
 
 | | Prototype RR-HD-X-000 | Production RR-HD-P-000 |
 |---|---|---|
@@ -73,7 +74,7 @@ the lead's acceptance.
 
 | Joint | Seal | Fastening |
 |---|---|---|
-| Lid to frame | lid gasket on the wall-top land, closed-cell silicone 1.2 -> 0.8 (conductive Ni/graphite silicone in production) | 35 x M3 button + bonded sealing washer at <= 40 mm pitch round a closed loop (shear panel; tool-checked 40.0 mm largest): 17 into standoffs on the spreader, 18 into wall bosses (hard seats z 43.0 inside the gasket loop) |
+| Lid to frame | lid gasket on the wall-top land, closed-cell silicone 1.2 -> 0.8 (conductive Ni/graphite silicone in production) | 34 x M3 button + bonded sealing washer at <= 40 mm pitch round a closed loop except the 60.5 mm J1 bay forced by CR-M03 (shear panel; tool-checked, DEVIATION for the lead): 16 into standoffs on the spreader, 18 into wall bosses (hard seats z 43.0 inside the gasket loop) |
 | Window cassettes | cassette gasket 0.8 -> 0.45, lip in groove, film bonded | 4 x M2.5 CSK each; hard seat bosses |
 | Lanes to each other | rib gasket strips under the spreader, 1.0 -> 0.6 | spreader: 10 x M2.5 CSK on the ribs, 6 x M2.5 rear zone, 8 x M3 into the T-heads |
 | Cable entries J1 / J2 | split grommet (moulded silicone; TPU in the prototype) with three internal ribs, compressed by the lid | lid |
@@ -84,15 +85,21 @@ the lead's acceptance.
 
 ## 6. Harness routing inside the head
 
-- **J1 pigtail** (power, heater pair, loop, PRES_ID): grommet in the rear wall at (71.7, +87.5, 39.0) -> internal P-clip on the rear-strip standoff
-  (77.5, 70.5) -> board J1_LANDING (u 50..100, v 0..18 = x 83..101, y 63..113). Heater film tails come up through the S0 chimney notch beside the coax and
-  land in J1_LANDING; the thermal cut-out (77..82, 115..122) is in series in the HEAD_HTR+ lead; the spreader NTC (81, 109) lands there too.
-- **J2 pigtail** (RS-485, BUS_5V, sync, J2_PRES): grommet at (71.7, -87.5, 39.0) -> J2_LANDING (u 226..276, y -63..-113).
+- **J1 pigtail** (power, heater pair, loop, PRES_ID): grommet in the rear wall at (71.7, +76.2, 39.0) (CR-M03, IB-52: centred on J2001) -> mated
+  J2001 plug at the board rear edge (Micro-Fit, mating face rearward, plug over the rear strip x 74.8..84.7, y 62.3..90.0). **Open item (head_report.md
+  check "J1 landing harness", DEVIATION):** only 2.0 mm (1.4 mm to the prototype comb) remain between the plug backs and the rear wall, so there is no
+  room for the wire exit, the bend and the fan-in to the 7.5 mm cable; the internal P-clip of the old layout has nothing to hold and is not fitted. Needs a
+  board-side decision (headers >= 6 mm forward of the rear edge or top-entry headers) before the J1 harness can be made.
+- **Heater / NTC / cut-out** (J2601, 6-way Micro-Fit beside J2001, plug over x 74.8..84.7, y 91.1..112.7): heater film tails up through the S0 chimney
+  notch; thermal cut-out on the spreader at (77..81.6, 82..88.5), in series in the heater element loop (low side, head_afe_budget.md section 9); spreader
+  NTC at (81, 109). Both sit under the mated plugs (tops z 35.4 / 33.6 against the plug keep-out from z 36.1, tool-checked). Same wire-exit open item as J1.
+- **J2 pigtail** (RS-485, BUS_5V, sync, J2_PRES): grommet at (71.7, -87.5, 39.0) -> J2501 GH-8 at u 262.3 (y -99.3). The GH-8 plug overhang behind the
+  board edge is not given in the electronics files: the lid standoff at (77.5, -104.5) leaves 3.4 mm behind the board edge in that y range (UNVERIFIED fit).
 - **SiPM coax** (16 x U.FL class): from each carrier up through the chimney insert channel, R >= 6 mm bend, to the AFE_STRIP rear-edge connector pair at
   the lane centre (u +-13).
 - **Rail switches** (NC loop): front switch at (183, +87.5) and lid interlock at (183, -87.5) in the front strip; side switches at (73.8, +-156.75) with
-  leads up the potted channel into the rear corners, along the side strips, along the front strip, into RAIL_SWITCH_LANDING (u 150..176, v 84..96, front
-  edge centre). In the prototype the loop leads enter the fence enclosure through a 3 mm notch in the front-fence wall at y +-14 (**not modelled**: open item
+  leads up the potted channel into the rear corners, along the side strips, along the front strip, into the front-edge connectors J2002 (front, u 154.5), J2003 (left,
+  u 171.5), J2004 (right, u 144.6 = y +18.4, S2-L6) and J2201 (lid, u 122.0); lead lengths in head_report.md section 12. In the prototype the loop leads enter the fence enclosure through a 3 mm notch in the front-fence wall at y +-14 (**not modelled**: open item
   for the fence DXF). Loop wires are potential-free and stay away from the AFE strip.
 
 ## 7. Variant BOM
@@ -125,7 +132,7 @@ requalification by E1 + E4; a change to the receiver (shoe, bridge, keeper) requ
 |---|---|---|
 | Change an entrance film / window | from below, head on the bench cradle or transport cover: 4 x M2.5 CSK per cassette; lid stays closed, light seal unaffected | 1.5 hex, torque driver |
 | Flip / change rail inserts (3 <-> 5 mm), side strips | from the front / sides, 2 x M3 per insert | 2.5 hex |
-| Board, shield cans, desiccant, switches | lid off (35 x M3 through the jacket holes), keeper swung back first; the jacket cap stays on the lid | 2.0 hex |
+| Board, shield cans, desiccant, switches | lid off (34 x M3 through the jacket holes), keeper swung back first; the jacket cap stays on the lid | 2.0 hex |
 | Lane optics | lid, board (8 screws, unplug coax), spreader (24 screws) off, then from above | as above |
 | Vent | from outside | 8 mm spanner |
 | Shoes / bridge / keeper | rear, without opening the head | 2.5 / 3 hex |

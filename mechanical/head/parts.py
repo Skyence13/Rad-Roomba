@@ -254,6 +254,10 @@ BLISTER = (71.0, 5.5, 53.0, 122.0)      # J1 blister: rear edge over the lid rea
                                          # opening (rivets), y 53..122 so the rear-line lid screws at y 57.0 / 117.5 seat fully on it (clamp + bond)
 
 
+def lid_count():
+    return len(lid_all_holes())
+
+
 def lid_loop():
     """All lid fasteners ordered round the closed loop (for the pitch check)."""
     import math as _m
