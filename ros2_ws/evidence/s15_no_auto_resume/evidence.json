@@ -3,11 +3,16 @@
  "evidence_class": "simulated",
  "against": "Python protocol fakes (rr_core.fakes), virtual clock",
  "seed": 29,
- "sim_time_s": 46.5,
+ "sim_time_s": 48.68,
  "checks": [
   {
    "check": "bumper: HOLD with a hardware inhibit",
    "ok": true
+  },
+  {
+   "check": "REARM pressed too early (element just closed, discharge time not over) is refused and reported",
+   "ok": true,
+   "refusal": "DISCHARGE_TIME"
   },
   {
    "check": "bumper: chassis back in ARMED_IDLE, mission still in HOLD",
@@ -107,26 +112,26 @@
  },
  "time_sync": {
   "limit_us": 10000.0,
-  "fits": 28,
+  "fits": 29,
   "max_gate_bound_us": 838.0520796923137,
-  "median_gate_bound_us": 807.3400455949545
+  "median_gate_bound_us": 806.8252877139806
  },
  "link_stats": {
-  "tx": 2272,
-  "rx": 2268,
+  "tx": 2382,
+  "rx": 2379,
   "bad_lines": 0,
   "stale": 0,
   "duplicates": 0,
-  "gates": 445,
+  "gates": 467,
   "gaps": 0,
   "retries": 2,
   "unassigned_frames": 0,
-  "time_exchanges": 28,
+  "time_exchanges": 29,
   "time_exchanges_rejected": 0
  },
  "localization_error_vs_truth_m": {
-  "max_x_m": 0.011206596867661789,
-  "max_y_m": 0.0001760445568492197
+  "max_x_m": 0.011187801464528357,
+  "max_y_m": 0.0001760445565910651
  },
  "plan": {
   "n_pairs": 2,
@@ -136,15 +141,15 @@
   "predicted_residual": {
    "left_wall_strip_m": 0.1487,
    "right_wall_strip_m": 0.1487,
-   "door_end_strip_m": 0.1413,
-   "front_end_strip_m": 0.0713,
+   "door_end_strip_m": 0.121,
+   "front_end_strip_m": 0.051,
    "end_zone_single_heading_m": {
-    "door": 0.3399,
-    "front": 0.3399
+    "door": 0.3602,
+    "front": 0.3602
    },
    "note": "wall strips are set by the in-place turn radius of the outline; see README coverage section"
   },
-  "estimated_time_s": 244.2
+  "estimated_time_s": 249.1
  },
  "flags": [],
  "scan_detections": 0,
@@ -158,5 +163,5 @@
   "no_decision_within_0.5m_of_an_end": 4,
   "cells_within_0.5m_of_an_end": 4
  },
- "nonzero_drives_total": 914
+ "nonzero_drives_total": 913
 }
