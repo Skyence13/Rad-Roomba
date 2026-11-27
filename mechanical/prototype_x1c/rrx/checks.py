@@ -369,7 +369,7 @@ def grip_proof(M=None):
 def swept_radius(parts):
     """IB-48: largest plan radius of the body from the axle centre (base_link origin), tail side and head side (tessellated)."""
     import numpy as np
-    best = {"tail": (0.0, ""), "front_body": (0.0, "")}
+    best = {"tail": (0.0, ""), "front_body": (0.0, ""), "tail_shell": (0.0, "")}
     for p in parts:
         if p.group in ROBOT_EXCLUDE or p.group == "tray":
             continue
@@ -378,12 +378,13 @@ def swept_radius(parts):
         if not len(a):
             continue
         r = np.hypot(a[:, 0], a[:, 1])
-        for key, m in (("tail", a[:, 0] < 0), ("front_body", a[:, 0] >= 0)):
+        keys = (("tail", a[:, 0] < 0), ("front_body", a[:, 0] >= 0)) + ((("tail_shell", a[:, 0] < 0),) if p.group != "bumper" else ())
+        for key, m in keys:
             if m.any() and r[m].max() > best[key][0]:
                 best[key] = (float(r[m].max()), p.name)
     he = P.HEAD_ENV_E
     head_r = math.hypot(D.HEAD_X1, he["y"][1])
-    return {"tail_max_radius_mm": round(best["tail"][0], 1), "tail_part": best["tail"][1], "front_body_max_radius_mm": round(best["front_body"][0], 1),
+    return {"tail_max_radius_mm": round(best["tail"][0], 1), "tail_part": best["tail"][1], "tail_without_bumper_mm": round(best["tail_shell"][0], 1), "tail_without_bumper_part": best["tail_shell"][1], "front_body_max_radius_mm": round(best["front_body"][0], 1),
             "front_body_part": best["front_body"][1], "head_envelope_corner_radius_mm": round(head_r, 1),
             "note": "tool-checked on tessellated solids (0.1 mm chord); robot software assumes 278 mm for the tail (IB-48)"}
 
@@ -414,7 +415,7 @@ def ccr_e08(parts):
              "rear-right corner u 112-160, v 0-22, 12 mm above the PCB": uv_box(112, 160, 0, 22, top + 0.05, top + 12.0),
              "front-centre strip u 40-120, v 80-100, 12 mm above the PCB (strip extent ASSUMED)": uv_box(40, 120, 80, 100, top + 0.05, top + 12.0),
              "J_PWR mated plug + loom: u 160..183 (23 mm beyond the right edge), v 13..35 (header v 14.5..33.6), PCB top .. +14 mm": uv_box(160, 183, 13, 35, top - 1.5, top + 14.0),
-             "J_HEAD1 (Mini-Fit 2x5, 12.8 mm, front edge u 14.5..37.8): mated plug + loom room v 100..120, PCB top .. +14 mm": uv_box(14.5, 37.8, 100, 120, top - 1.5, top + 14.0),
+             "J_HEAD1 (Mini-Fit 2x5, 12.8 mm, front edge u 14.5..37.8): mated plug + loom room v 100..115, PCB top .. +13 mm": uv_box(14.5, 37.8, 100, 115, top - 1.5, top + 13.0),
              "rear-edge connector space u 0..18 and 142..160 behind the board (x -79..-67), z PCB .. +12 mm (IB-12)": None}
     robot = [p for p in parts if p.group not in ROBOT_EXCLUDE and p.group != "tray" and not p.name.startswith("RR-CHS-MAIN")]
     out = {}

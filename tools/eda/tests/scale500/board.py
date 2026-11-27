@@ -27,8 +27,7 @@ board.zone("GND", ["In1.Cu"], connect="solid")
 board.zone("+3V3", ["In4.Cu"], polygon=[(40.5, 0), (160, 0), (160, 100), (0, 100), (0, 30.5), (40.5, 30.5)], connect="solid")
 board.zone("+5V", ["In4.Cu"], polygon=[(0, 0), (40, 0), (40, 30), (0, 30)], connect="solid")
 board.text("{name} rev {rev} {date}", 80, 2.0, size=1.2)
-board.route(passes=30, timeout=840, optimizer=False, retries=2,
-            extra_args=["--router.autorouter.fallback_strategies=continue"])
+board.route(passes=30, timeout=840, optimizer=False, retries=2)
 
 C0402 = dict(mfr="Murata", mpn="GRM155R71C104KA88D")
 R0402 = dict(mfr="Yageo", mpn="RC0402FR-0710KL")

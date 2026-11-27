@@ -166,6 +166,8 @@ def overlaps(parts, folder, workers=3, timeout=150.0, screen_tol=2.0, log=print)
     if flagged:
         res = _exact(flagged, folder, max(1, min(workers, (os.cpu_count() or 2) - 1)), timeout, log)
         exact = {ab: r for ab, r in res.items() if r[1].startswith("boolean")}
+    for f in folder.glob("*.brep"):                     # exact results are cached in exact_cache.json; the BREPs are scratch
+        f.unlink()
     rows = []
     for a, b, v in screened:
         if (a, b) in exact:

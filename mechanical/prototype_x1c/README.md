@@ -36,10 +36,12 @@ helper that reads `plates.yaml`).
 | `out/fabricated/step/`, `out/dxf/` | fabricated parts; DXF profiles of the flat ones; `out/dxf/chassis_plate_holes.csv` hole table |
 | `out/RRX_assembly.step` | full robot assembly (sub-assemblies as in the BOM) |
 | `out/checks.json`, `out/prototype_report.md` | check results and report |
+| `out/_interference/exact_cache.json` | cached exact boolean results of the interference check (keyed on the BREP digests of each pair) |
+| `out/cache/` | BREP cache of the shell pieces (warm build about 5 min; cold about 25-30 min on the shared machine) |
 | `plates.yaml`, `print_schedule.md` | plates, orientation, material, supports, bed fit |
 | `purchased_and_fabricated.csv`, `hardware_by_subassembly.md` | bill of parts and of hardware by sub-assembly |
 | `assembly.md`, `img/` | illustrated assembly sequence |
-| `joints/` | true-size joint sections (PNG + PDF) |
+| `joints/` | 16 true-size joint sections (PNG + PDF), index in `joints/README.md` |
 | `CHANGE_REQUESTS.md` | deviations from `mechanical/common` and requests to the lead |
 | `STATUS.md` | work-package status |
 

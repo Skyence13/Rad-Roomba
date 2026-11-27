@@ -190,8 +190,7 @@ def apply(board, parts):
             json.dump({"notes": notes, "hv_vias": vias}, f, indent=1)
     # tools/eda/tests/head_escape: copy of electronics/head_acq for the EDA work package - escape on
     # (LQFP-100 + WQFN-16 DACs), continue runs within a budget (CLI --budget), finisher on
-    board.route(escape=True, finisher=True, plane_fanout=True, retries=2, timeout=900, passes=200,
-                extra_args=["--router.autorouter.fallback_strategies=continue"])
+    board.route(escape=True, finisher=True, plane_fanout=True, retries=2, timeout=900, passes=200, optimizer=False)
     board.autoplace_options(clearance=0.12, ic_halo=0.5, edge_margin=0.6, spread=0.0, grid=0.1)
 
 

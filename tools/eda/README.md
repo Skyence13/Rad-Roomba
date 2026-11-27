@@ -13,7 +13,8 @@ python3 tools/eda/rrkicad.py sch   .../board.py                   # schematic + 
 python3 tools/eda/rrkicad.py check .../board.py                   # re-run ERC/DRC on the existing files
 ```
 Options for `build`: `--passes N --threads N --timeout SEC` (override the definition's
-autorouter settings). Exit code 0 = pass, 1 = checks failed, 2 = definition error.
+autorouter settings), `--budget SEC` (wall-clock budget for all autorouter runs, see
+"Long routing jobs"). Exit code 0 = pass, 1 = checks failed, 2 = definition error.
 
 Requirements on the host: `python3`, `docker`, images `kicad/kicad:9.0` and
 `ghcr.io/freerouting/freerouting:latest` (tested: KiCad 9.0.9, Freerouting 2.6.0).
@@ -35,7 +36,9 @@ Files per board directory:
 ```
 board.py                       the definition (edit this, nothing else)
 <name>.kicad_pro/.kicad_sch/.kicad_pcb, <group>.kicad_sch, rr_local.*, *-lib-table, 3d/   generated KiCad project
-route/      <name>.dsn, <name>.ses (routing result = cache key + source of the tracks), freerouting.log
+route/      <name>.dsn, <name>.ses (routing result = cache key + source of the tracks), freerouting.log,
+            route_meta.json, progress.log (one JSON line per autorouter run), finish.json (finisher
+            result), blocks.json (replicate), escape_vias.json (intermediate)
 reports/    erc.json/.rpt, drc.json/.rpt, summary.json, placement.txt, build_state.json
 out/        <name>-schematic.pdf, gerber/ (Gerbers, Excellon PTH/NPTH, drill maps, .gbrjob),
             <name>-pos.csv, <name>-bom.csv, <name>-fab.pdf, <name>-assembly-top/bottom.pdf,
@@ -164,7 +167,12 @@ board.route(passes=100, threads=None, timeout=None, optimizer=True, enabled=True
             escape_direct=True,    #   short direct pre-route to a nearby two-pad passive instead of a via
             finisher=True,         # built-in maze router for the last open connections (see Routing notes)
             finisher_ripup=True,   #   ... allowed to rip up and reroute autorouter copper of other signal nets
-            finisher_seconds=900)  #   ... time budget
+            finisher_seconds=900,  #   ... time budget
+            budget=None,           # wall-clock budget (s) for all autorouter runs (also: build --budget SEC)
+            chunk=900,             #   with a budget: cap per Freerouting run (each run leaves an SES on disk)
+            stall=2,               #   with a budget: stop after this many continue runs without improvement
+            zone_nets="auto",      # "auto" = "exclude" on 4/6 layers: nets with a copper zone are never autorouted
+            fr_fallback="none")    # Freerouting's own fallback strategies after stagnation (see Routing notes)
 # per part: g.part(..., escape=None | True | False)   None = decided by pad pitch, True = force, False = never
 board.autoplace_options(clearance=0.3, ic_halo=2.0, edge_margin=0.5, grid=0.25, spread=0.35, rotations=(0, 90, 180, 270),
                         escape_keepaway=2.0)   # free band (mm) around the courtyard of escaped ICs (auto-arranged neighbours)
@@ -198,7 +206,8 @@ Derived symbols (`extends`) are flattened like KiCad does.
   — coordinates in the **footprint editor frame (x right, y DOWN, top view)**; `shape`
   rect/roundrect/circle/oval; `kind` smd/thru/npth. `board.footprint(..., body=(w, h),
   courtyard=(w, h), pin1=True, model="${KIPRJMOD}/3d/x.step")`. Fab outline, courtyard,
-  silk lines clear of pads and a pin-1 dot are generated.
+  silk lines clear of pads and a pin-1 dot are generated. A footprint without pads (e.g. a
+  shield-can outline) is allowed when it has `body=` or `courtyard=`.
 * Mounting holes from `board.hole()` are generated footprints in `rr_local.pretty`
   (board-only, no courtyard; the keep-out rule area protects them).
 * Generated rail symbols (rails with no stock `power:` symbol) also live in `rr_local.kicad_sym`.
@@ -216,10 +225,21 @@ classes on top (first matching pattern wins).
   and a via beside each SMD pad of that net (through-hole pads connect to the plane
   directly). The via respects copper clearance, hole-to-hole, edge clearance, cut-outs,
   via keep-outs and other parts' courtyards where possible, and must land inside its
-  own net's plane polygon (split planes). The autorouter then sees those nets as done
-  and only routes signals. Pads with no legal via position are listed in the summary
-  notes and left to the autorouter. After zone fill, KiCad's DRC connectivity check is
-  what confirms every plane connection (`unconnected` must be 0).
+  own net's plane polygon (split planes). Clearances are pairwise (the larger of both net
+  classes, like KiCad's DRC); footprint-internal rule areas and copper drawn inside
+  footprints (net ties) are obstacles. Exposed/thermal pads get their via in the pad centre.
+  **Long fan-out:** a pad with no legal via position beside it is connected by the maze
+  router (see Finisher) to the nearest legal via position inside its own plane polygon
+  (windows 5 / 12 / 30 mm), as locked pre-route; `summary.json` → `routing.plane_fanout`
+  lists them (`long_fanout`) and the pads still without a connection (`failed`, with the
+  reason). After zone fill, KiCad's DRC connectivity check is what confirms every plane
+  connection (`unconnected` must be 0).
+* **Zone nets are not autorouted (4/6 layers, `zone_nets="auto"`).** Every net that has a
+  copper zone is moved into a DSN net class `RR_ZONE_<class>` that Freerouting is told to
+  ignore (`--router.autorouter.ignore_net_classes`); its pads connect through the plane
+  fan-out / long fan-out and the zone fill only. Whatever stays open is left to the finisher
+  and reported. On 2-layer boards (`"auto"` = `"route"`) zone nets are routed as tracks and
+  the pour is added afterwards (RR-TOF-A, RR-PANEL).
   Split planes must be **non-overlapping polygons** (Freerouting rejects overlapping
   plane areas; do not rely on zone priority for splits).
   If you also pour a plane net on the outer layers, use `connect="solid"` for that pour
@@ -279,14 +299,17 @@ classes on top (first matching pattern wins).
 * Freerouting reports "N pin-to-pin clearance violations" in `route/freerouting.log` for
   QFN exposed pads vs. their perimeter pads: that is the footprint's own pad spacing under
   the 25 um DSN margin, fixed items it cannot change; KiCad DRC is the reference.
-* Freerouting's default fallback chain ends in `continue-auto-neck`, a from-scratch re-route
-  after stagnation that can eat the whole timeout; the stress/scale tests pass
-  `extra_args=["--router.autorouter.fallback_strategies=continue"]`.
-* Zones on signal layers are *not* given to the autorouter: those nets are routed with
-  real tracks and the pour is added afterwards (2-layer boards: see RR-TOF-A, with GND
-  stitching vias from `board.via`).
+* Freerouting's fallback strategies after stagnation (default chain ending in
+  `continue-auto-neck`; even `continue` re-routes from the initial board) can eat the whole
+  timeout: rrkicad passes `--router.autorouter.fallback_strategies=none` unless
+  `route(fr_fallback=...)` or `extra_args` say otherwise - its own continue runs and restarts
+  do that job and keep the best result.
 * The autorouter gets keep-out bands along the outline and around cut-outs so routed
-  copper keeps the board-edge clearance.
+  copper keeps the board-edge clearance, and via keep-outs (plus track keep-outs on their
+  layer, minus the tie's pads) over copper drawn inside footprints (net ties) - Freerouting
+  does not see that copper. Rule areas that ban neither tracks nor vias (e.g. a "no
+  footprints" area) are not exported to the router (KiCad would export them as full
+  routing keep-outs).
 * Pre-routes (`board.track`, `board.via`) and the plane fan-out are locked, exported as
   fixed, and verified after the SES import; the build fails if the router changed them.
 * **Completion strategy.** If connections are still open after the first run, the build
@@ -311,6 +334,23 @@ classes on top (first matching pattern wins).
   re-uses them and reproduces the same PCB. `route/<name>.unrouted.kicad_pcb` is an
   intermediate file and need not be kept.
 
+## Long routing jobs (large boards)
+`python3 tools/eda/rrkicad.py build board.py --budget 2400` (or `route(budget=2400)`):
+* every Freerouting run is capped at `chunk` seconds (default 900) and writes a scratch SES;
+  it is imported with a quick import (connectivity count only, no ERC/DRC/outputs) and
+  replaces `route/<name>.ses` only if it leaves fewer connections open. So
+  `route/<name>.ses` always holds the best state so far - an interrupted job loses at most
+  the run in progress; a later plain `build` re-uses it (DSN unchanged);
+* after the first run, continue runs resume from the best routed board (new DSN exported
+  from it), each with another item-order seed, until the budget is used up (less than
+  3 min left) or `stall` runs in a row did not improve; then `restarts` fresh runs if time
+  is left; then the finisher (its own `finisher_seconds`); then one full check;
+* `route/progress.log`: one JSON line per run (kind, seed, seconds, open count, kept, best,
+  elapsed) - `tail -f` it to watch an unattended job;
+* the count used everywhere is KiCad's connectivity count after zone fill (`summary.json` →
+  `drc.unconnected`; `drc.unconnected_listed` is how many KiCad's DRC report lists, it stops
+  at 499).
+
 ## Replicating blocks (identical lanes/channels)
 `board.replicate(pairs, dx, dy, routes=True)` — `pairs` is `{source_ref: destination_ref}`
 or a `(source_group, destination_group)` tuple (same parts in the same order).
@@ -325,9 +365,16 @@ or a `(source_group, destination_group)` tuple (same parts in the same order).
   identical; the autorouter only has plane leftovers and inter-block nets). If the
   source placement changes, the stored routes are ignored with a note and refreshed by
   the next build. Keep `route/blocks.json` under version control.
-* Plane fan-out is generated per pad for the copies as usual; overlaps of a copy with
-  foreign parts or tracks show up in DRC, they are not checked at copy time.
-Tested on `tools/eda/tests/replicate/` (2 lanes, 2 layers); not yet on a large board.
+* Plane fan-out / escape are generated per pad for the copies as usual and are *not* stored in
+  `blocks.json` (only router copper and the definition's own pre-routes are); a stored item
+  identical to copper already on the board (e.g. a pre-route the definition draws for every
+  lane itself) is not replayed again. (Before 2026-11-27 both happened and gave co-located
+  vias; such an old `blocks.json` heals on the next routed build.) Overlaps of a copy with
+  foreign parts, tracks or keep-outs show up in DRC, they are not checked at copy time.
+* Auto-arrange: when a source part is auto-arranged, the spots of all its copies must be
+  free as well and are reserved, so no other part lands where a copy will go.
+Tested on `tools/eda/tests/replicate/` (2 lanes, 2 layers) and on a copy of RR-HEAD-ACQ
+(`tools/eda/tests/head_escape/`, 4 lanes).
 
 ## Importing a stage-1 circuit definition
 `rrkicad.importer.from_circuit(board, "design/circuit.py", ...)` converts a tool-neutral
@@ -347,7 +394,9 @@ report = from_circuit(board, os.path.join(os.path.dirname(__file__), "design/cir
 board.rail("GND", "+3V3", ...); board.netclass(...); board.outline_rect(...); ...
 ```
 Symbol per part: `symbols[ref]`, else `symbol_hint` if that stock symbol exists, has all
-pin numbers used and no conflicting stacked pins, else a generated local box symbol (all
+pin numbers used and no conflicting stacked pins (a hint `rr_local:NAME` is accepted when
+`board.symbol("NAME", ...)` was defined before the import and has all pin numbers), else a
+generated local box symbol (all
 pins `passive`, named from the MPN). Pins with `None` become no-connects. `report` lists
 `hint_rejected` (with the reason), `local_symbols`, `missing_footprints`. Parts can be
 tuned afterwards: `board.part("U1").at = ...` is not supported - pass `place=`; other
@@ -407,64 +456,47 @@ optimiser is multi-threaded) — which is why the SES is cached.
 `tools/eda/tests/stress/board.py`: synthetic 4-layer 100 x 80 mm board, 150 parts
 (LQFP-64, QFN-48 0.5 mm, 20 SOT-23-5, SOIC-8 multi-unit, SOT-223, 119 passives, 2x10
 headers, JST GH, screw terminal, local symbol + footprint, DNP, cut-out, keep-out,
-pre-route, GND plane + split power plane), 146 parts auto-arranged, 377 connections of
-which 184 are plane connections made by the plane fan-out. `tools/eda/tests/stress6/` is
-the same circuit on 6 layers with the MCU decoupling on the bottom side.
-Measured on a shared 4-core / 16 GB machine (KiCad 9.0.9, Freerouting 2.6.0; other jobs
-were running, so times are upper bounds):
+pre-route, GND plane + split power plane), 146 parts auto-arranged, 377 connections.
+`tools/eda/tests/stress6/` is the same circuit on 6 layers with the MCU decoupling on the
+bottom side. Shared 4-core machine, KiCad 9.0.9, Freerouting 2.6.0; all results tool-checked
+(KiCad ERC/DRC with schematic parity):
 
-| step | RR-TOF-A (10 parts, 2 layers) | STRESS-150 (150 parts, 4 layers) | STRESS-150-6L (6 layers) |
+| board / flow | Freerouting runs (s -> open) | total | result |
 |---|---|---|---|
-| schematic + netlist check + PCB + auto-arrange + fan-out + DSN | ~5 s | ~25 s | ~25 s |
-| Freerouting, first run | 7-33 s, complete | 607 s (stopped by the 600 s limit after 20 passes), 7 open | 607 s (600 s limit, 19 passes), 8 open |
-| automatic continue runs | not needed | 2 runs, 494 s + 227 s, 7 -> 6 open | 2 runs, 289 s + 227 s, 8 -> 4 open |
-| SES import, fill, ERC, DRC, all outputs | ~8 s | ~30 s | ~30 s |
-| result | **PASS**: ERC 0, DRC 0, unconnected 0, parity 0 | **FAIL**: ERC 0, DRC 0 errors / 0 warnings, parity 0, **6 of 377 connections open** (25 min total) | **FAIL**: ERC 0, DRC 0 errors / 0 warnings, parity 0, **4 of 377 connections open** (22 min total) |
+| STRESS-150 before escape (previous engineer) | 607 -> 7, 494 -> 6, 227 -> 6 | 25 min | FAIL, 6 open |
+| STRESS-150-6L before escape | 607 -> 8, 289 -> 4, 227 -> 4 | 22 min | FAIL, 4 open |
+| STRESS-150 escape, run A / B (same DSN) | 462 -> 1, 56 -> 1, 47 -> 1, restart 305 -> **0** (B: 426, 54, 39, restart 314 -> 0) | 18 min each | **PASS** x2, DRC 0 errors, parity 0 |
+| STRESS-150-6L escape, run A / B | 62 -> **0** (B: 63 -> 0) | 90 s each | **PASS** x2, DRC 0 errors, parity 0 |
+| STRESS-150 escape + zone nets not autorouted + finisher (current flow) | 226 -> 1, continues / restart -> 1; finisher routed the last one (+5V through-hole pin outside its plane) | 11 min | **PASS**, DRC 0 errors, parity 0 |
 
-**STRESS-150 does not reach zero unconnected with fully automatic placement + routing**,
-on 4 or on 6 layers. What works and what does not:
-* Schematic: 7 A3 sheets, no label/field collisions, ERC 0 errors / 0 warnings; multi-unit
-  and local symbols work. Parity 0. Generation time is negligible.
-* Auto-arrange: 0 courtyard overlaps, 0 DRC errors before routing (group regions,
-  spreading, IC halo/keep-away, decoupling assigned to supply pins, bottom side works).
-* Plane fan-out: 183-187 of 200 plane pads get their via automatically; the rest (pads
-  whose own plane polygon is far away in the split-plane corner, and QFN pads boxed in by
-  the exposed pad) are left to the autorouter. Freerouting then starts with ~193 open
-  connections instead of 377.
-* Autorouter: reaches 371-374 of 377 connections; the same 3-6 connections stay open in
-  every run (7 runs, 25-40 passes, with and without Freerouting's own fan-out, wider
-  spacing, continue runs, 6 layers). They are always signal pins of the two 0.5 mm-pitch
-  ICs (LQFP-64 U1 <-> QFN-48 U2, a 16-net bus with arbitrary pin order) plus occasionally
-  one QFN supply pad without a fan-out via. The area is not congested (see the copper
-  PDF): the router boxes a pad in with its neighbours' escape vias and cannot recover.
-  Two extra signal layers do not change this, so it is an escape-routing limitation, not
-  a capacity limit.
-* Reported, not hidden: `summary.json` → `drc.unrouted` / the `OPEN` lines name each
-  net with both pads and their coordinates.
+(Since then that through-hole pin is handled by the long fan-out at generation time.)
+Notes: a fresh Freerouting run is deterministic for a given DSN and seed (the two runs of each
+board reproduce each other); what changes the outcome is the DSN or the seed - hence
+`restarts`. Earlier 4-layer variants of the escape code passed directly in 243-549 s
+(2 of 3), one left IO46 open in every run until the restart with another seed.
+What made the difference: the escape (every fine-pitch pad has its via before routing; the
+boxed-in pads were the whole failure before), via in the QFN exposed pad, seeded continue
+runs + restart, and the finisher for the last one. Tried and rejected: MCU decoupling on the
+bottom side of the 4-layer board (5 open: B.Cu is half of the routing capacity there).
 
-What a board author must do to get to zero (in order of effect):
-1. Fine-pitch ICs (<= 0.5 mm): pre-route the escape of the pins named in the `OPEN`
-   lines - a 1-2 mm `board.track(...)` stub away from the pad plus a `board.via(...)`, or
-   the whole short net - then rebuild; expect 3-6 such nets per pair of fine-pitch ICs
-   that share a bus. Choose pin assignments so buses do not cross (MCU pin swap).
-2. Place ICs, connectors and anything with a bus explicitly (`at=`), facing each other;
-   put decoupling on the bottom side under the IC (`side="B"`, `near="U1.16"`).
-3. Keep plane splits simple and non-overlapping; make sure every supply pad lies over
-   its own plane polygon (otherwise it is a routed power track).
-4. Sensitive analogue nets: always pre-route; the autorouter optimises nothing but
-   connectivity.
-Sizes: boards like RR-TOF-A (tens of parts, 0.8 mm pitch and up) route to completion
-automatically in seconds. 150 parts with SOT-23/SOIC/0402 only would be expected to
-complete (all failures here are at the two 0.5 mm-pitch ICs) but that was not measured
-separately. For the 600-1000-part boards (326 x 96 mm head board, 160 x 100 mm chassis
-board at 63 % fill, both with fine-pitch ICs) plan for: explicit placement of every
-IC/connector, `board.replicate()` for the identical lanes, pre-routed fine-pitch
-escapes and analogue nets, 6 layers, and several routing iterations of tens of minutes
-each (Freerouting's routing pass is single-threaded; 150 parts = 20-60 s per pass, so
-1000 parts will be several minutes per pass - not measured). Raise the Java heap with
-`RR_FREEROUTING_JAVA_OPTS=-Xmx8g`. High-current nets: use zones/polygons
-(`board.zone(net, layers, polygon)`) or pre-routes; wide net-class tracks into small pads
-are not something the autorouter handles well (not tested beyond 0.4 mm).
+Finisher test (copy of a routed STRESS-150-6L with the copper of 7 nets deleted, 8 open):
+8 of 8 routed in 36 s without rip-up, PASS. Rip-up test (4-layer board, 4 open): 2 of 4
+routed with rip-up (7 and 13 nets rerouted), DRC 0 errors, 2 stayed open.
+
+What a board author should do (in order of effect):
+1. 6 layers for anything with 0.5 mm-pitch ICs and buses; on 4 layers expect the last
+   connection or two to need the restart / finisher.
+2. Place ICs and connectors explicitly, buses facing each other; keep 2 mm (more for
+   0.6 mm vias and long QFP sides) around fine-pitch ICs free of other parts - the escape
+   ring needs it (`escape_keepaway`); pads whose via would land in a neighbour's
+   courtyard are skipped and listed.
+3. Escape vias: the fab-minimum via (default). 0.45/0.2 mm vias (if the fab allows) fit
+   two staggered rows at 0.5 mm pitch without fanning.
+4. Planes: every supply pad should lie over its own plane polygon (else a long fan-out
+   track is generated); split planes as non-overlapping polygons.
+5. Pre-route analogue / sensitive nets yourself; the router optimises connectivity only.
+6. Large boards: `build --budget SEC`, watch `route/progress.log`; see the real-board
+   results below.
 
 Other generator tests: `tools/eda/tests/replicate/` (placement + route replication,
 `waive`, `severity`), `tools/eda/tests/import_chassis|import_panel|import_head_acq/`

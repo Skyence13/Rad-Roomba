@@ -1,4 +1,48 @@
 subassembly,category,part_number,item,qty,material,supplier_pn_or_spec,status,drawing,torque_Nm,note
+drive,printed,RRX-P01L,motor_pod_L,1,PAHT-CF,,"DESIGN (print to out/step, see print_schedule.md)",out/step/motor_pod_L.step,,
+grip,printed,RRX-P03L,cheek_fairing_L,1,ASA,,"DESIGN (print to out/step, see print_schedule.md)",out/step/cheek_fairing_L.step,,
+drive,printed,RRX-P01R,motor_pod_R,1,PAHT-CF,,"DESIGN (print to out/step, see print_schedule.md)",out/step/motor_pod_R.step,,
+grip,printed,RRX-P03R,cheek_fairing_R,1,ASA,,"DESIGN (print to out/step, see print_schedule.md)",out/step/cheek_fairing_R.step,,
+receiver,printed,RRX-P04,dock_switch_bracket,1,PAHT-CF,,"DESIGN (print to out/step, see print_schedule.md)",out/step/dock_switch_bracket.step,,
+grip,printed,RRX-P05,grip_sleeve,1,ASA,,"DESIGN (print to out/step, see print_schedule.md)",out/step/grip_sleeve.step,,
+chassis,printed,RRX-P06,front_bulkhead,1,PAHT-CF,,"DESIGN (print to out/step, see print_schedule.md)",out/step/front_bulkhead.step,,
+battery_bay,printed,RRX-P10,battery_tunnel,1,ASA,,"DESIGN (print to out/step, see print_schedule.md)",out/step/battery_tunnel.step,,
+battery_bay,printed,RRX-P11,floor_plug,1,ASA,,"DESIGN (print to out/step, see print_schedule.md)",out/step/floor_plug.step,,
+cassette,printed,RRX-P12,battery_cassette,1,ASA,,"DESIGN (print to out/step, see print_schedule.md)",out/step/battery_cassette.step,,
+cassette,printed,RRX-P13,cassette_lid,1,ASA,,"DESIGN (print to out/step, see print_schedule.md)",out/step/cassette_lid.step,,
+cassette,printed,RRX-P14,coupler_carrier,1,PAHT-CF,,"DESIGN (print to out/step, see print_schedule.md)",out/step/coupler_carrier.step,,
+cassette,printed,RRX-P15,cassette_handle,1,PAHT-CF,,"DESIGN (print to out/step, see print_schedule.md)",out/step/cassette_handle.step,,
+cassette_option,printed,RRX-P16,spacer_9ah,1,ASA,"only with the 9 Ah PSL-SC-1290 pack; shown for reference, not in the interference set","DESIGN (print to out/step, see print_schedule.md)",out/step/spacer_9ah.step,,"only with the 9 Ah PSL-SC-1290 pack; shown for reference, not in the interference set"
+lower_hull,printed,RRX-P20L,lower_hull_FL,1,ASA,,"DESIGN (print to out/step, see print_schedule.md)",out/step/lower_hull_FL.step,,
+lower_hull,printed,RRX-P20R,lower_hull_FR,1,ASA,,"DESIGN (print to out/step, see print_schedule.md)",out/step/lower_hull_FR.step,,
+lower_hull,printed,RRX-P21L,lower_hull_RL,1,ASA,,"DESIGN (print to out/step, see print_schedule.md)",out/step/lower_hull_RL.step,,
+lower_hull,printed,RRX-P21R,lower_hull_RR,1,ASA,,"DESIGN (print to out/step, see print_schedule.md)",out/step/lower_hull_RR.step,,
+lid,printed,RRX-P22,nose_cowl,1,ASA,,"DESIGN (print to out/step, see print_schedule.md)",out/step/nose_cowl.step,,
+lid,printed,RRX-P23L,shoulder_L,1,ASA,,"DESIGN (print to out/step, see print_schedule.md)",out/step/shoulder_L.step,,
+lid,printed,RRX-P24L,rear_deck_L,1,ASA,,"DESIGN (print to out/step, see print_schedule.md)",out/step/rear_deck_L.step,,
+lid,printed,RRX-P23R,shoulder_R,1,ASA,,"DESIGN (print to out/step, see print_schedule.md)",out/step/shoulder_R.step,,
+lid,printed,RRX-P24R,rear_deck_R,1,ASA,,"DESIGN (print to out/step, see print_schedule.md)",out/step/rear_deck_R.step,,
+lid,printed,RRX-P25,battery_hump,1,ASA,,"DESIGN (print to out/step, see print_schedule.md)",out/step/battery_hump.step,,
+service_cover,printed,RRX-P26,saddle_cover,1,PAHT-CF,,"DESIGN (print to out/step, see print_schedule.md)",out/step/saddle_cover.step,,
+battery_bay,printed,RRX-P27,hatch_frame,1,PAHT-CF,,"DESIGN (print to out/step, see print_schedule.md)",out/step/hatch_frame.step,,
+hatch,printed,RRX-P28,hatch_door,1,ASA,,"DESIGN (print to out/step, see print_schedule.md)",out/step/hatch_door.step,,
+wheel,printed,RRX-P30,wheel_rim,2,PAHT-CF,,"DESIGN (print to out/step, see print_schedule.md)",out/step/wheel_rim.step,,
+wheel,printed,RRX-P31,tyre,2,TPU95A,,"DESIGN (print to out/step, see print_schedule.md)",out/step/tyre.step,,
+front_sensors,printed,RRX-P32L,cliff_pod_L,1,PAHT-CF,,"DESIGN (print to out/step, see print_schedule.md)",out/step/cliff_pod_L.step,,
+bumper,printed,RRX-P33L,bumper_side_L,1,ASA,,"DESIGN (print to out/step, see print_schedule.md)",out/step/bumper_side_L.step,,
+tray,printed,RRX-P40L,tray_chock_L,1,ASA,,"DESIGN (print to out/step, see print_schedule.md)",out/step/tray_chock_L.step,,
+tray,printed,RRX-P41L,tray_head_guard_L,1,ASA,,"DESIGN (print to out/step, see print_schedule.md)",out/step/tray_head_guard_L.step,,
+front_sensors,printed,RRX-P32R,cliff_pod_R,1,PAHT-CF,,"DESIGN (print to out/step, see print_schedule.md)",out/step/cliff_pod_R.step,,
+bumper,printed,RRX-P33R,bumper_side_R,1,ASA,,"DESIGN (print to out/step, see print_schedule.md)",out/step/bumper_side_R.step,,
+tray,printed,RRX-P40R,tray_chock_R,1,ASA,,"DESIGN (print to out/step, see print_schedule.md)",out/step/tray_chock_R.step,,
+tray,printed,RRX-P41R,tray_head_guard_R,1,ASA,,"DESIGN (print to out/step, see print_schedule.md)",out/step/tray_head_guard_R.step,,
+bumper,printed,RRX-P34,bumper_centre,1,ASA,,"DESIGN (print to out/step, see print_schedule.md)",out/step/bumper_centre.step,,
+tray,printed,RRX-P42,tray_caster_cup,1,ASA,,"DESIGN (print to out/step, see print_schedule.md)",out/step/tray_caster_cup.step,,
+controls,printed,RRX-P50,panel_tray,1,ASA,,"DESIGN (print to out/step, see print_schedule.md)",out/step/panel_tray.step,,
+compute,printed,RRX-P51,cm5_tray,1,ASA,,"DESIGN (print to out/step, see print_schedule.md)",out/step/cm5_tray.step,,
+charge,printed,RRX-P52,inlet_cover,1,ASA,,"DESIGN (print to out/step, see print_schedule.md)",out/step/inlet_cover.step,,
+tof,printed,RRX-P53,tof_clip_std,5,ASA,,"DESIGN (print to out/step, see print_schedule.md)",out/step/tof_clip_std.step,,
+tof,printed,RRX-P54,tof_clip_shallow,4,ASA,,"DESIGN (print to out/step, see print_schedule.md)",out/step/tof_clip_shallow.step,,
 chassis,fabricated,RRX-F01,chassis_plate,1,AL6061,"4 mm 6061-T6 laser/waterjet blank, countersunk and tapped per holes table; DXF in out/dxf",DESIGN (fabricate to the STEP/DXF),out/dxf/chassis_plate.dxf,,"4 mm 6061-T6 laser/waterjet blank, countersunk and tapped per holes table; DXF in out/dxf"
 receiver,fabricated,RRX-F02L,receiver_channel_L,1,AL6061,machined 6061 (printed PAHT-CF copy RRX-P02x for fit check only),DESIGN (fabricate to the STEP/DXF),out/fabricated/step/receiver_channel_L.step,,machined 6061 (printed PAHT-CF copy RRX-P02x for fit check only)
 drive,fabricated,RRX-F03,screw_ring,2,SS304,1 mm 304 laser-cut ring,DESIGN (fabricate to the STEP/DXF),out/dxf/screw_ring.dxf,,1 mm 304 laser-cut ring
@@ -33,7 +77,8 @@ controls,purchased,RRX-H50,estop_body,1,PA,Schneider Electric Harmony XB5AS8444,
 controls,purchased,RRX-H56,hands_on_body,3,PA,"Harmony XB5 family: illuminated latching (HANDS-ON), guarded flush momentary (REARM/Start), projecting momentary (Pause/Stop) - exact references TBD by chassis electronics",{'all': 'UNVERIFIED'},,,
 controls,purchased,RRX-H55,mode_selector_body,1,PA,Schneider Electric Harmony XB5AD33 (candidate),{'all': 'UNVERIFIED'},,,
 charge,purchased,RRX-H51,charge_inlet,1,BRASS,M12 L-coded 4+FE male panel receptacle (candidate) under a printed hinged cover,UNVERIFIED,,,
-connectors,purchased,RRX-H52,J1_receptacle,2,BRASS,"binder M16 IP67 8-pole female panel receptacle, shieldable (series 423/723, 09 0174 xx 08 family)",UNVERIFIED cut-out,,,
+connectors,purchased,RRX-H52,J1_receptacle,1,BRASS,"binder M16 IP67 8-pole female panel receptacle, shieldable (series 423/723, 09 0174 xx 08 family)",UNVERIFIED cut-out,,,
+connectors,purchased,RRX-H57,J2_receptacle,1,BRASS,"binder M12-A 8-pole female panel receptacle, shieldable (series 763 family)",UNVERIFIED cut-out,,,
 tof,purchased,RRX-E03,tof_cliff_fl,11,FR4,"RR-TOF (custom, VL53L4ED)",contract outline,,,
 bumper,purchased,RRX-H53,bumper_sw_l,3,PBT,Omron D2HW-C201M,UNVERIFIED: dimensions PARTIAL,,,
 receiver,purchased,RRX-H54,head_latch,2,SS304,"over-centre draw latch, stainless, 25 mm glove loop (Southco C7 / Protex class)",UNVERIFIED selection; envelope from interfaces,,,
@@ -46,11 +91,10 @@ A chassis,hardware,,countersunk screw,4,,M3 x 6 ISO 10642 A2,STD,,0.8,caster dis
 A chassis,hardware,,pan head screw,4,,M4 x 6 ISO 7045 A2,STD,,1.5,caster top plate -> tapped caster disc (through the shim); thread-lock; must not stand above the disc
 A chassis,hardware,,countersunk screw,4,,M5 x 25 ISO 10642 A2-70,STD,,3.0,plate (from below) -> bulkhead pedestals -> tapped latch arm; latch reaction path
 A chassis,hardware,,socket cap screw,4,,M4 x 10 ISO 4762 A2,UNVERIFIED,,2.0,draw latch -> chin floor -> tapped latch arm; latch hole pattern depends on the selected latch
-A chassis,hardware,,snap-action switch,4,,Omron D2HW-C201M,UNVERIFIED,,,"HEAD_DOCK, CHG_COVER, 2 x BODY_BUMPER; dimensions PARTIAL in parts.yaml; mounting holes 2.35 mm assumed"
+A chassis,hardware,,snap-action switch,1,,Omron D2HW-C201M,UNVERIFIED,,,CHG_COVER (HEAD_DOCK and the 2 BODY_BUMPER switches are RRX-H53 in the parts list); dimensions PARTIAL in parts.yaml
 A chassis,hardware,,pan head screw + insert,8,,M2 x 10 ISO 7045 A2 + M2 heat-set insert,UNVERIFIED,,0.15,D2HW retention in the four printed pockets
 A chassis,hardware,,cable grommet,2,,"8 mm hole, 5 mm bore, silicone",UNVERIFIED,,,plate grommet holes (dock switch / cliff leads)
 B lower hull,hardware,,countersunk screw,10,,M3 x 8 ISO 10642 A2,STD,,0.6,plate (from below) -> sole-ring inserts
-B lower hull,hardware,,pan head screw,2,,M3 x 10 ISO 7045 A2,STD,,0.6,front/rear hull splice flanges (x = -71)
 B lower hull,hardware,,membrane vent,1,,"M12 x 1.5 ePTFE protective vent + nut, IP67",UNVERIFIED,,,right rear quarter (12.2 mm hole)
 B lower hull,hardware,,duck-bill drain valve,2,,"3 mm stem, silicone",UNVERIFIED,,,plate drain holes beside the caster
 B lower hull,hardware,,sealant bead,1,,"neutral-cure RTV silicone, -50 C",STD,,,"plate edge / hull wrap, floor plug, pod notches, cheek slots; one 80 ml tube"
@@ -82,7 +126,7 @@ F grip,hardware,,socket cap screw + nyloc nut + 2 washers,4,,M5 x 16 ISO 4762 A2
 F grip,hardware,,socket cap screw + washer,2,,M6 x 16 ISO 4762 A2-70 + ISO 7089,STD,,6.0,side plates -> tapped ends of the 14 mm bar (in the fairing pockets); medium thread-lock; proof-load path
 F grip,hardware,,pan head screw + nyloc nut,4,,M3 x 20 ISO 7045 A2,STD,,0.5,cheek fairings through the side plates
 F grip,hardware,,end cap,2,,"push-in cap 11 mm, PE",UNVERIFIED,,,screw-head pockets of the fairings
-G lid,hardware,,button head screw + bonded sealing washer,16,,M3 x 10 ISO 7380 A2 + M3 EPDM bonded washer,STD,,0.5,lid/nose skirt -> tongue inserts (radial)
+G lid,hardware,,button head screw + bonded sealing washer,14,,M3 x 10 ISO 7380 A2 + M3 EPDM bonded washer,STD,,0.5,lid/nose skirt -> tongue inserts (radial)
 G lid,hardware,,pan head screw,10,,M3 x 12 ISO 7045 A2,STD,,0.6,nose/shoulder (2 per side) and shoulder/deck (3 per side) flanges
 G lid,hardware,,dowel pin,6,,3 m6 x 8 ISO 2338,STD,,,"lid joint alignment; 1 per side at x = 47, 2 per side at x = -36"
 G lid,hardware,,countersunk screw,8,,M3 x 8 ISO 10642 A2,STD,,0.5,hump walls (from inside) -> deck curb inserts
@@ -101,7 +145,7 @@ G bumper,hardware,,guide screw + sleeve + spring,6,,"M3 x 25 ISO 4762 + 5 x 0.75
 G bumper,hardware,,push pin + spring,2,,3 mm pin x 10 + spring 4 OD x 8,DESIGN,,,side segments -> D2HW plungers
 H inserts,hardware,,heat-set insert,26,,"M2 brass, knurled, for 3.2 mm hole x 4.0 deep",UNVERIFIED,,,all printed parts; brand to choose; hole sizes in dims.INSERT
 H inserts,hardware,,heat-set insert,4,,"M2.5 brass, knurled, for 3.8 mm hole x 5.0 deep",UNVERIFIED,,,all printed parts; brand to choose; hole sizes in dims.INSERT
-H inserts,hardware,,heat-set insert,96,,"M3 brass, knurled, for 4.0 mm hole x 5.7 deep",UNVERIFIED,,,all printed parts; brand to choose; hole sizes in dims.INSERT
+H inserts,hardware,,heat-set insert,94,,"M3 brass, knurled, for 4.0 mm hole x 5.7 deep",UNVERIFIED,,,all printed parts; brand to choose; hole sizes in dims.INSERT
 H inserts,hardware,,heat-set insert,10,,"M4 brass, knurled, for 5.6 mm hole x 8.1 deep",UNVERIFIED,,,all printed parts; brand to choose; hole sizes in dims.INSERT
 J seals,hardware,,perimeter gasket,1.16,,"closed-cell silicone foam strip 4 x 2.5 mm, -40 C",UNVERIFIED,,,lid / lower hull land (m)
 J seals,hardware,,flat gasket sheet,1,,"closed-cell silicone 1.0 mm, 300 x 300",UNVERIFIED,,,"lid flange joints, hump curb, hull splice, bulkhead/nose"

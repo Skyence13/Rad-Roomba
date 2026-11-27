@@ -72,7 +72,7 @@ Hatch frame, door end-plate ring, hump end and draw latch (top of the hatch). Pl
 
 - door end-plate ring seals on the frame face through a 3 x 2 gasket
 - latch on the hump roof pulls the catch on the door +x
-- parts cut: battery_cassette, cassette_lid, battery_hump, hatch_door, battery_pack, hatch_latch
+- parts cut: battery_cassette, cassette_lid, battery_hump, hatch_frame, hatch_door, battery_pack, hatch_latch
 
 ## J16 cassette latch
 
@@ -82,7 +82,7 @@ Cassette latch: index plunger through the hump roof into the lid, folded handle,
 
 - plunger pin drops 2.4 mm into the lid hole when the cassette is home (coupler mated)
 - door finger stops 0.5 mm behind the home position: the door closes only on a latched cassette
-- parts cut: chassis_plate, caster_disc, caster_shim, battery_tunnel, battery_cassette, cassette_lid, cassette_handle, cassette_plunger, battery_hump, hatch_frame, hatch_door, tof_clip_prox_rc, tof_window_prox_rc, battery_pack, tof_prox_rc
+- parts cut: chassis_plate, caster_disc, caster_shim, battery_cassette, cassette_lid, cassette_handle, cassette_plunger, battery_hump, hatch_frame, hatch_door, tof_clip_prox_rc, tof_window_prox_rc, battery_pack, tof_prox_rc
 
 ## J08 door peg
 
@@ -106,12 +106,13 @@ Lower hull sole ring on the chassis plate edge. Plane x = -162.5 mm, window (74.
 
 ## J10 hull splice
 
-Lower hull front / rear splice (x = -71). Plane z = 52.0 mm, window (-88, -54, 116, 148).
+Lower hull front / rear butt joint (x = -71) beside the CM5 bay. Plane z = 52.0 mm, window (-88, -54, 90, 148).
 
 ![J10_hull_splice](J10_hull_splice.png)
 
-- flange + M3 + insert, 1 mm gasket
-- parts cut: lower_hull_FL, lower_hull_RL
+- no splice screw (CM5 bay): both pieces screwed to the plate and held by the lid tongue
+- butt joint sealed with RTV, 1 mm gasket where the flange exists
+- parts cut: grip_side_plate_L, lower_hull_FL, lower_hull_RL, cm5_tray, CM5_carrier_assembly
 
 ## J11 nose bulkhead latch
 

@@ -19,7 +19,7 @@ from mechanical.common.purchased import library as L
 from . import dims as D
 from . import sensors as S
 from .structure import LATCH_ARM_X1, LATCH_ARM_Z, LATCH_SCREW_X, plate_blank, plate_outline, sole_screw_xy
-from .util import Part, V, box, cached, cut, cyl, fuse, inset_rows, loft, mirror_y, place, prism
+from .util import Part, V, biggest, box, cached, cut, cyl, fuse, inset_rows, loft, mirror_y, place, prism
 
 R = P.BODY_ROWS
 B = P.BATTERY_BAY
@@ -31,6 +31,7 @@ LEDGE_Z = (102.6, SAD["floor_z"][0])
 HUMP_X = (B["hatch_x"][1], B["hump_x"][1])          # hump shortened to the hatch frame plane (deviation D-03)
 FRAME_X = (B["hump_x"][0], B["hatch_x"][1])         # hatch frame ring -233..-230
 FRAME_OPEN_HY = 55.2                                # clear opening of the frame (cassette |y| <= 54.5)
+FRAME_SCREW_Y = 57.8                                # frame -> tunnel end-boss screws (inside the 60.4 frame edge)
 PERIM_DEG = {"nose": (20.0, 40.0), "shoulder": (50.0,), "deck": (85.0, 100.0, 120.0, 140.0)}   # shoulder station clear of the motor pod (x +-26)
 
 
@@ -215,7 +216,8 @@ def flange(plane, pos, side, region):
     a, b_ = (pos + GAP, pos + GAP + D.FLANGE_T) if side > 0 else (pos - GAP - D.FLANGE_T, pos - GAP)
     slab = box(a, b_, -200, 200, 0, 220) if plane == "x" else box(-400, 200, a, b_, 0, 220)
     f = slab.intersect(region).intersect(box(-400, 200, -200, 200, ZL + D.TONGUE[2] + 0.5, 300)).intersect(UI()).cut(UINS())   # above the hull tongue
-    return cut(f, *arch_cut(), *pod_cut(), box(SAD["x"][0], SAD["x"][1], -SAD["half_y"], SAD["half_y"], LEDGE_Z[0], 300))
+    return cut(f, *arch_cut(), *pod_cut(), box(SAD["x"][0], SAD["x"][1], -SAD["half_y"], SAD["half_y"], LEDGE_Z[0], 300),
+               box(SAD["x"][0], SAD["x"][1] + D.WELL_WALL + 1.0, -70.0, 70.0, 0, LEDGE_Z[0]))     # nothing over the board's front connectors (u 10..150) below the ledge
 
 
 def insert_boss_x(x_face, y, z, side, m="M3"):
@@ -297,7 +299,7 @@ def nose_cowl():
         n = perim_screws(n, "nose").cut(tongue_keepout())
         n = n.cut(cyl(4.0, 12, (58.0, 0.0, LEDGE_Z[0] + 8.0), (1, 0, 0)))                                   # J1/J2 lead pass to the board front edge
         return n
-    return cached(["nose_cowl", 13, DOWELS, R, D.X_NOSE, P.J_RECEPTACLES, LATCH_ARM_Z, PERIM_DEG, LATCH_ARM_X1, LATCH_SCREW_X], b)
+    return cached(["nose_cowl", 15, DOWELS, R, D.X_NOSE, P.J_RECEPTACLES, LATCH_ARM_Z, PERIM_DEG, LATCH_ARM_X1, LATCH_SCREW_X], b)
 
 
 def shoulder(s):
@@ -316,7 +318,7 @@ def shoulder(s):
         p = p.cut(box(-21.0, -2.0, D.GRIP_PLATE_Y[0] - 3.4, D.GRIP_PLATE_Y[0] - 0.3, 90, 220))     # look-ahead ToF lead slot beside the side plate (under the fairing)
         p = p.cut(tongue_keepout())
         return perim_screws(p, "shoulder", (1,))
-    p = cached(["shoulder", 13, DECK_JOINT, DOWELS, R, D.X_NOSE, D.X_DECK, PERIM_DEG, COVER_SCREWS], b)
+    p = cached(["shoulder", 15, DECK_JOINT, DOWELS, R, D.X_NOSE, D.X_DECK, PERIM_DEG, COVER_SCREWS], b)
     return p if s > 0 else mirror_y(p)
 
 
@@ -343,7 +345,7 @@ def rear_deck(s):
         return perim_screws(p, "deck", (1,))
 
     def b():
-        p = cached(["rear_deck_base", 13, DECK_JOINT, DOWELS, R, D.X_DECK, HUMP_X, PERIM_DEG, COVER_SCREWS], base)
+        p = cached(["rear_deck_base", 14, DECK_JOINT, DOWELS, R, D.X_DECK, HUMP_X, PERIM_DEG, COVER_SCREWS], base)
         p = p if s > 0 else mirror_y(p)
         feats = []
         for name in ("tof_look_r" + tag, "tof_prox_r" + tag):
@@ -375,7 +377,7 @@ def rear_deck(s):
         feats.append((box(DOOR_PEG[0] - 5, DOOR_PEG[0] + 3.5, s * D.HATCH_JAMB[0], s * (D.HATCH_JAMB[1] + 6.5), DOOR_PEG[1] - 5.5, DOOR_PEG[1] + 5.5),
                       cyl(D.INSERT["M4"][0] / 2, D.INSERT["M4"][1] + 1.0, (DOOR_PEG[0], s * D.HATCH_JAMB[0], DOOR_PEG[1]), (0, s, 0))))
         return _features(p, feats).cut(tongue_keepout())                 # features (ToF seats) must clear the hull tongue too
-    key = ["rear_deck", tag, 17, COVER_SCREWS, S.SEAT, R, D.X_DECK, HUMP_X, PERIM_DEG, P.TOF_SENSORS, P.PANEL_CONTROLS, P.CHARGE_INLET, D.BUMPER_DIR]
+    key = ["rear_deck", tag, 18, COVER_SCREWS, S.SEAT, R, D.X_DECK, HUMP_X, PERIM_DEG, P.TOF_SENSORS, P.PANEL_CONTROLS, P.CHARGE_INLET, D.BUMPER_DIR]
     if tag == "r":
         key.append(("inlet_seat", S.INLET_COVER_T, 2))
     return cached(key, b)
@@ -450,12 +452,8 @@ def lower_piece(front, s):
         slab = box(D.X_LOWER + GAP, D.X_LOWER + GAP + D.FLANGE_T, 0, 200, Z1 + 4.0, ZL) if front else box(D.X_LOWER - GAP - D.FLANGE_T, D.X_LOWER - GAP, 0, 200, Z1 + 4.0, ZL)
         fl = cut(slab.intersect(LI()).cut(loft(inset_rows(R["lower_inner"], D.FLANGE_DEPTH, 0.0))), *internal_clearance())
         p = p.fuse(fl).clean()
-        y = P.half_breadth(D.X_LOWER, SPLICE_Z, "inner") - 4.6
-        if front:
-            p = p.cut(cyl(D.CLEAR["M3"] / 2, 12, (D.X_LOWER - 1, y, SPLICE_Z), (1, 0, 0)))
-        else:
-            bo, br = insert_boss_x(D.X_LOWER, y, SPLICE_Z, -1)
-            p = p.fuse(bo.intersect(LI())).cut(br)
+        # no splice screw: the x = -71 station lies in the CM5 bay (its clearance removes the flange there); the four lower
+        # pieces are held by the plate sole screws and the lid tongue, the butt joint is sealed with RTV
         for x, yy in sole_screw_xy():                                    # M3 inserts in the sole ring (screws from below)
             if yy > 0 and ((x > D.X_LOWER) == front):
                 p = p.cut(cyl(D.INSERT["M3"][0] / 2, 4.0, (x, yy, Z1 - 0.01)))
@@ -466,7 +464,7 @@ def lower_piece(front, s):
         return p.clean()
 
     def b():
-        p = cached(["lower_base", front, 15, SPLICE_Z, R, D.X_LOWER, PERIM_DEG, D.TONGUE, D.POSTS, P.CM5_POSE], base)
+        p = cached(["lower_base", front, 16, SPLICE_Z, R, D.X_LOWER, PERIM_DEG, D.TONGUE, D.POSTS, P.CM5_POSE], base)
         p = p if s > 0 else mirror_y(p)
         if not front:
             blk, hole = bumper_switch_seat(s)
@@ -478,20 +476,22 @@ def lower_piece(front, s):
                 a, c, _ = S.device_seat(pt, n, hole_d=12.2, face_d=20.0, boss_d=24.0, notch=False, panel_t=4.0)
                 p = p.fuse(a.intersect(LO())).cut(c)
         return p
-    return cached(["lower_piece", tag, 16, S.SEAT, R, D.X_LOWER, PERIM_DEG, P.TOF_SENSORS, D.HATCH_JAMB], b)
+    return cached(["lower_piece", tag, 17, S.SEAT, R, D.X_LOWER, PERIM_DEG, P.TOF_SENSORS, D.HATCH_JAMB], b)
 
 
 # ----------------------------------------------------------------------------------------------- hatch frame and door
 def hatch_frame():
-    """Flat ring that is the gasket land of the door and ties tunnel, hump and jambs together."""
+    """Flat ring that is the gasket land of the door and ties tunnel, hump and jambs together.  Below the hump top it stays
+    inside the jamb inner faces (|y| <= 60.4); its top bar is the rear end of the hump growth."""
     hy, hz = B["hump_half_y"], B["hump_z"]
     x0, x1 = FRAME_X
     f = box(x0, x1, -hy - 2.0, hy + 2.0, Z1 + 1.2, hz[1]).cut(box(x0 - 1, x1 + 1, -FRAME_OPEN_HY, FRAME_OPEN_HY, B["cassette_z"][0] - 0.1, 146.5))
+    f = f.intersect(fuse(box(x0 - 1, x1 + 1, -60.4, 60.4, 0, 300), box(x0 - 1, x1 + 1, -100, 100, 146.0, 300)))
     for s in (1, -1):
         f = f.cut(cyl(D.CLEAR["M3"] / 2, 6, (x0 - 1, s * (hy - 1.5), 138.0), (1, 0, 0)))          # to the hump end
         for z in (48.0, 92.0):
-            f = f.cut(cyl(D.CLEAR["M3"] / 2, 6, (x0 - 1, s * 59.5, z), (1, 0, 0)))               # to the tunnel wall end bosses
-    return f.cut(skin_upper()).cut(skin_lower()).clean()
+            f = f.cut(cyl(D.CLEAR["M3"] / 2, 6, (x0 - 1, s * FRAME_SCREW_Y, z), (1, 0, 0)))      # to the tunnel wall end bosses
+    return biggest(f.cut(skin_lower()))
 
 
 def door():

@@ -71,5 +71,35 @@ Feedback from RR-CHS-MAIN (its engineer's `--no-route` build, read-only look): e
 and many small 10-pad 0.5 mm parts (USON-10 ESD arrays). Since then `escape_min_pads=16` (default)
 leaves small packages to the autorouter.
 
+## Defects reported by the board engineers (IB-45, IB-54) - 2026-11-27
+| # | defect | cause | fix | verified |
+|---|---|---|---|---|
+| 1 | continue run crashes in `_edge_guard` ('SwigPyObject' has no 'NewOutline') | pcbnew: objects created after `BOARD.Remove()` in the same process get broken SWIG proxies (boards with outer-layer pours remove zones before the edge guard) | export_dsn adds all rule areas first, removes last | pending (head copy) |
+| 2 | post-stage crash in the unused-escape clean-up; host then ran the finisher on an un-imported board | same SWIG cause (clean-up ran after `_remove_dangling` had removed items) | all victims collected first, removed in one step at the end; finisher replay moved into the import subprocess; `_post` records the SHA of the SES it imported and the host starts the finisher only if it matches | pending |
+| 3 | fan-out vias checked only with their own net-class clearance | fanout.py used the via net's class | pairwise clearance (larger of both classes) for vias and stubs | generation runs: STRESS-150 / head copy DRC 0 clearance errors from fan-out |
+| 4 | fan-out ignores footprint-internal rule areas and net-tie copper | not loaded | both loaded as obstacles (fan-out, escape, finisher); DSN gets via keep-outs (+ same-layer track keep-outs minus the tie's pads) over net-tie copper | code only (no net tie in the test boards) |
+| 5 | footprint-only rule area exported as a full B.Cu routing keep-out | KiCad DSN export | rule areas banning neither tracks nor vias are not exported | code only |
+| 6 | `summary.json` unconnected capped at 499 | KiCad DRC list limit | count from the board's connectivity; `unconnected_listed` kept | head copy: 958 reported (499 listed) |
+| 7 | replicated block vias co-located with fan-out vias | definition pre-routes every lane AND blocks.json replays them; duplicates inside blocks.json; generator copper stored | replay skips items identical to existing copper; save de-duplicates and stores only router copper + definition pre-routes | pending |
+| 8 | local footprints need >= 1 pad | explicit error | pad-less allowed with body=/courtyard= | code only |
+| 9 | importer ignores local symbol hints | only stock libs checked | `rr_local:NAME` hints accepted when defined on the board | code only |
+| 10 | auto-arranger ignores replicate destinations | not modelled | copies' spots must be free and are reserved | code only |
+| - | BOM-excluded footprints need `bom=False` for parity | KiCad parity semantics | not changed (documented behaviour) | - |
+
+Also new: zone nets excluded from autorouting on 4/6 layers (ignored DSN classes; verified: Freerouting log "200 ignored" pins on STRESS-150),
+long fan-out (maze-routed pad -> via in own plane; STRESS-150: 6 of 6 pads that had no fan-out via),
+`--budget` / `route(budget, chunk, stall)` with best-SES-always-on-disk and `route/progress.log`, Freerouting fallback `none` by default.
+
+## Real boards (copies under tests/, originals untouched)
+RR-HEAD-ACQ copy `tests/head_escape/` (1085 parts, 6 layers, 4 replicated lanes, lane routes from the
+lead's run replayed from blocks.json; escape on; zone nets excluded; `--budget 2400`):
+generation: escape 87 vias + 20 direct pre-routes on the LQFP-100 and the WQFN-16 DACs (60 pads without a legal
+spot - dense neighbours), plane fan-out 783 vias + 32 long fan-outs within the 600 s cap, 171 plane pads without
+a plane connection (these cannot be autorouted any more, by design). Routing: start 1041 items (Freerouting count);
+first run 930 s -> 795 open (KiCad count), continue 945 s -> 741 ... (running).
+Long fan-out speed on this board: ~20-50 s per pad (Python maze search on a shared CPU) - too slow for 150+ pads;
+the cheap extended fan-out (via spots up to 4 mm, straight/L stub) added since gives 36 more pads their via in
+seconds (measured on a generation-only copy: 819 fan-out vias, 12 long fan-outs, 155 pads left).
+
 ## Next
 1. Finish the repeatability series. 2. Route the scale test. 3. README results section.

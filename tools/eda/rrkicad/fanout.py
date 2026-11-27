@@ -15,6 +15,7 @@ MM = pcbnew.FromMM
 CELL = 2.0
 DIRS = [(1, 0), (-1, 0), (0, 1), (0, -1), (0.7071, 0.7071), (-0.7071, 0.7071), (0.7071, -0.7071), (-0.7071, -0.7071)]
 GAPS = (0.15, 0.3, 0.5, 0.8, 1.2, 1.7, 2.3)
+EXT = 4.0          # extended fan-out search radius (mm)
 
 
 def _pip(x, y, poly):
@@ -135,6 +136,7 @@ def plane_fanout(bld, skip=None):
     vias = Grid()       # dict(x, y, r, drill, net)
     segs = Grid()       # dict(a, b, w, layer, net)
     todo = []
+    failed, failed_items = [], []
     for fp in pcb.GetFootprints():
         ref = fp.GetReference()
         fp.BuildCourtyardCaches()
@@ -159,6 +161,13 @@ def plane_fanout(bld, skip=None):
             lay = "*" if tht else ("B.Cu" if pad.IsOnLayer(pcbnew.B_Cu) else "F.Cu")
             item = {"rect": rect, "net": pad.GetNetname(), "layer": lay, "ref": ref, "tht": tht}
             pads.add(rect, item)
+            if tht and item["net"] in plane_nets and not (part is not None and part.zone_connect == "none"):
+                pp = pad.GetPosition()
+                if not in_plane(item["net"], pcbnew.ToMM(pp.x), pcbnew.ToMM(pp.y)):
+                    # a through-hole pin outside its own plane polygon: no plane connection -> long fan-out
+                    failed.append("%s THT pad at (%.2f, %.2f) [%s] outside its plane" % (
+                        ref, pcbnew.ToMM(pp.x) - fr.ox, fr.oy - pcbnew.ToMM(pp.y), item["net"]))
+                    failed_items.append(item)
             if not tht and item["net"] in plane_nets and not (part is not None and part.zone_connect == "none"):
                 p = pad.GetPosition()
                 if skip and (ref, pad.GetNumber(), round(pcbnew.ToMM(p.x), 3), round(pcbnew.ToMM(p.y), 3)) in skip:
@@ -233,7 +242,8 @@ def plane_fanout(bld, skip=None):
                         _seg_dist(x, y, s["a"][0], s["a"][1], s["b"][0], s["b"][1]) < s["w"] / 2.0 + w / 2.0 + pclr(net, s["net"]) + 0.01:
                     return False
         return True
-    made, failed, failed_items = 0, [], []
+    made = 0
+    extended = []
     centre = {}      # ref -> pad-bbox centre and pad count, to fan big ICs out towards their inside
     for me in todo:
         pass
@@ -270,21 +280,54 @@ def plane_fanout(bld, skip=None):
                     break
             if hit:
                 break
+        path = [(px, py), hit] if hit else None
         if not hit:
+            # extended fan-out: via spots on a grid up to EXT mm around the pad, nearest first,
+            # reached by a straight stub or one 90-degree corner (exact checks as above)
+            ext = []
+            st = 0.25
+            nmax = int(EXT / st)
+            for i in range(-nmax, nmax + 1):
+                for j in range(-nmax, nmax + 1):
+                    vx, vy = px + i * st, py + j * st
+                    d = math.hypot(vx - px, vy - py)
+                    if d <= EXT and _rect_dist(vx, vy, me["rect"]) >= vr + 0.1:
+                        ext.append((d, vx, vy))
+            ext.sort()
+            for allow in (False, True):
+                for d, vx, vy in ext:
+                    if not via_ok(vx, vy, net, me, allow):
+                        continue
+                    for mid in (None, (vx, py), (px, vy)):
+                        pts = [(px, py), (vx, vy)] if mid is None else [(px, py), mid, (vx, vy)]
+                        if all(track_ok(a[0], a[1], c[0], c[1], tw, me["layer"], net, me) for a, c in zip(pts[:-1], pts[1:])):
+                            path = pts
+                            break
+                    if path:
+                        break
+                if path:
+                    break
+            if path:
+                extended.append("%s [%s] %.1f mm" % (me["ref"], net, sum(math.hypot(c[0] - a[0], c[1] - a[1]) for a, c in zip(path[:-1], path[1:]))))
+        if not path:
             failed.append("%s pad at (%.2f, %.2f) [%s]" % (me["ref"], px - fr.ox, fr.oy - py, net))
             failed_items.append(me)
             continue
-        vx, vy = hit
+        vx, vy = path[-1]
         ni = bld.net(net)
-        if math.hypot(vx - px, vy - py) > 1e-4:      # (no track for a via in the pad itself)
+        for a, c in zip(path[:-1], path[1:]):
+            if math.hypot(c[0] - a[0], c[1] - a[1]) <= 1e-4:      # (no track for a via in the pad itself)
+                continue
             tr = pcbnew.PCB_TRACK(pcb)
-            tr.SetStart(pcbnew.VECTOR2I(MM(px), MM(py)))
-            tr.SetEnd(pcbnew.VECTOR2I(MM(vx), MM(vy)))
+            tr.SetStart(pcbnew.VECTOR2I(MM(a[0]), MM(a[1])))
+            tr.SetEnd(pcbnew.VECTOR2I(MM(c[0]), MM(c[1])))
             tr.SetLayer(pcbnew.F_Cu if me["layer"] == "F.Cu" else pcbnew.B_Cu)
             tr.SetWidth(MM(tw))
             tr.SetNet(ni)
             tr.SetLocked(True)
             pcb.Add(tr)
+            sg = {"a": a, "b": c, "w": tw, "layer": me["layer"], "net": net}
+            segs.add((min(a[0], c[0]), min(a[1], c[1]), max(a[0], c[0]), max(a[1], c[1])), sg)
         via = pcbnew.PCB_VIA(pcb)
         via.SetPosition(pcbnew.VECTOR2I(MM(vx), MM(vy)))
         via.SetViaType(pcbnew.VIATYPE_THROUGH)
@@ -296,7 +339,5 @@ def plane_fanout(bld, skip=None):
         pcb.Add(via)
         v = {"x": vx, "y": vy, "r": vr, "drill": vdr, "net": net}
         vias.add((vx - vr, vy - vr, vx + vr, vy + vr), v)
-        s = {"a": (px, py), "b": (vx, vy), "w": tw, "layer": me["layer"], "net": net}
-        segs.add((min(px, vx), min(py, vy), max(px, vx), max(py, vy)), s)
         made += 1
-    return {"plane_nets": plane_nets, "vias": made, "failed": failed, "_failed_items": failed_items}
+    return {"plane_nets": plane_nets, "vias": made, "extended": extended, "failed": failed, "_failed_items": failed_items}

@@ -196,7 +196,8 @@ class Board:
         self.replicas = []
         self.routing = {"passes": 100, "threads": None, "timeout": None, "enabled": True, "extra_args": [],
                         "optimizer": True, "fanout": False, "plane_fanout": True, "retries": 2, "restarts": 1,
-                        "budget": None, "chunk": 900, "stall": 2, "zone_nets": "auto",
+                        "budget": None, "chunk": 900, "stall": 2, "zone_nets": "auto", "fr_fallback": "none",
+                        "long_fanout_seconds": 600,
                         "escape": "auto", "escape_pitch": 0.65, "escape_min_pads": 16, "escape_layers": None, "escape_via": None,
                         "escape_track": None, "escape_direct": True, "finisher": True,
                         "finisher_ripup": True, "finisher_seconds": 900}
@@ -380,6 +381,8 @@ class Board:
         (default 2) consecutive runs did not improve.
         zone_nets: "auto" (= "exclude" on 4/6 layers, "route" on 2 layers) - nets with a copper zone
         are not given to the autorouter as ordinary routes when excluded.
+        fr_fallback: Freerouting's fallback strategies after stagnation (default "none": its
+        fallbacks re-route from scratch; rrkicad's own continue runs / restarts do that job).
         finisher: built-in maze router for connections the autorouter leaves open (default True);
         finisher_ripup (default True), finisher_seconds (time budget, default 900)."""
         for k in kw:

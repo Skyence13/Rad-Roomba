@@ -167,8 +167,9 @@ def stage_gen(board_py, route=True, sch_only=False):
     # the project file is re-written last: pcbnew must not have the final say
     project.write_project(paths.pro, pro)
     if info["fanout"]["plane_nets"]:
-        log("plane fan-out: %d via(s) on %s, %d long fan-out(s) (maze-routed to the plane), %d pad(s) without" % (
-            info["fanout"]["vias"], ", ".join(info["fanout"]["plane_nets"]), len(info["fanout"].get("long_fanout", [])),
+        log("plane fan-out: %d via(s) on %s (%d with an extended stub), %d long fan-out(s) (maze-routed to the plane), %d pad(s) without" % (
+            info["fanout"]["vias"], ", ".join(info["fanout"]["plane_nets"]), len(info["fanout"].get("extended", [])),
+            len(info["fanout"].get("long_fanout", [])),
             len(info["fanout"]["failed"])))
     esc = info.get("escape") or {}
     if esc.get("enabled"):
@@ -438,31 +439,34 @@ class _Router:
         rc = _container(args)
         st = json.load(open(self.state_p))
         ok = st.get("imported_ses_sha256") == sha256(self.ses)
+        if not ok:
+            log("routing: imported SES %s != %s (rc %s)" % (str(st.get("imported_ses_sha256"))[:12], sha256(self.ses)[:12], rc))
         return rc, (st.get("route_stats") or {}).get("unconnected_after_fill") if ok else None
 
     def fr(self, dsn, seed):
         more = ["--router.autorouter.item_order_seed=%d" % seed] if seed else []
         return run_freerouting(self.board_py, dsn, self.rses, self.a, more, timeout=self.run_timeout())
 
-    def adopt(self, info, kind, seed, best_open, best_info):
-        """Scratch SES -> candidate; keep it if better.  Returns (open, info, kept)."""
-        if os.path.exists(self.ses):
-            shutil.copyfile(self.ses, self.ses + ".prev")
+    def adopt(self, info, kind, seed, best_open, best_info, run_seconds=None):
+        """Scratch SES -> candidate; keep it if better.  Returns (open, info, kept).
+        route/<name>.ses.best always holds the best SES so far; on a discard (or a failed import)
+        it is copied back and re-imported, so the board and route/<name>.ses are the best state."""
+        best = self.ses + ".best"
         shutil.copyfile(self.rses, self.ses)
         rc, o = self.post(info, quick=True)
-        self.attempts.append({"run": len(self.attempts) + 1, "kind": kind, "seed": seed,
-                              "seconds": info["seconds"], "unconnected": o})
+        if o is None:
+            log("routing: import of the %s run did not complete - result ignored" % kind)
+        secs = info["seconds"] if run_seconds is None else run_seconds
+        self.attempts.append({"run": len(self.attempts) + 1, "kind": kind, "seed": seed, "seconds": secs, "unconnected": o})
         kept = o is not None and (best_open is None or o < best_open)
-        self.note(event="run", kind=kind, seed=seed, seconds=info["seconds"], unconnected=o, kept=kept,
+        self.note(event="run", kind=kind, seed=seed, seconds=secs, unconnected=o, kept=kept,
                   best=o if kept else best_open)
         if kept:
-            if os.path.exists(self.ses + ".prev"):
-                os.remove(self.ses + ".prev")
+            shutil.copyfile(self.ses, best)
             log("routing: %s run -> %s open (kept)" % (kind, o))
             return o, info, True
-        if os.path.exists(self.ses + ".prev"):
-            shutil.copyfile(self.ses + ".prev", self.ses)
-            os.remove(self.ses + ".prev")
+        if os.path.exists(best):
+            shutil.copyfile(best, self.ses)
             self.post(best_info, quick=True)          # board back to the best result
         log("routing: %s run -> %s open (not better, discarded)" % (kind, o))
         return best_open, best_info, False
@@ -509,9 +513,10 @@ class _Router:
                     break
                 merged = dict(best_info, seconds=round(best_info.get("seconds", 0) + info["seconds"], 1),
                               log_tail=info.get("log_tail"))
-                best_open, best_info, kept = self.adopt(merged, "continue", 1000 * r + n, best_open, best_info)
+                best_open, best_info, kept = self.adopt(merged, "continue", 1000 * r + n, best_open, best_info,
+                                                        run_seconds=info["seconds"])
                 stall = 0 if kept else stall + 1
-        for f in (self.rdsn, self.rses):
+        for f in (self.rdsn, self.rses, self.ses + ".best"):
             if os.path.exists(f):
                 os.remove(f)
         best_info = dict(best_info, attempts=self.attempts)
@@ -591,6 +596,8 @@ def run_freerouting(board_py, dsn, ses, a, more_args=(), timeout=None):
     passes = a.passes or opts["passes"]
     threads = a.threads or opts["threads"] or (os.cpu_count() or 2)
     extra = list(opts.get("extra_args") or []) + list(more_args)
+    if not any("fallback_strategies" in x for x in extra) and opts.get("fr_fallback", "none"):
+        extra.append("--router.autorouter.fallback_strategies=%s" % opts.get("fr_fallback", "none"))
     if st.get("dsn_ignore_classes"):
         # nets with copper zones: connected by zone fill + plane fan-out, never routed as tracks
         extra.append("--router.autorouter.ignore_net_classes=%s" % ",".join(st["dsn_ignore_classes"]))

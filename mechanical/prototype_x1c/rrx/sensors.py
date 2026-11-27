@@ -100,9 +100,9 @@ def panel_tray():
     t = t.cut(box(pc[0] - e["l"] / 2 - 0.3, pc[0] + e["l"] / 2 + 0.3, pc[1] - e["w"] / 2 - 0.3, pc[1] + e["w"] / 2 + 0.3, zb, zb + 10))
     t = t.cut(box(pc[0] - e["l"] / 2 + 4, pc[0] + e["l"] / 2 - 4, pc[1] - e["w"] / 2 + 3, pc[1] + e["w"] / 2 - 3, zb - 3, zb + 1))
     for sy in (-1, 1):
-        ear = box(pc[0] - 6.0, pc[0] + 6.0, pc[1] + sy * (e["w"] / 2 + 2.5), pc[1] + sy * (e["w"] / 2 + 11.0), zb + 3.0, zb + 6.0)
+        ear = box(pc[0] - 6.0, pc[0] + 6.0, pc[1] + sy * (e["w"] / 2 + 2.5), pc[1] + sy * (PANEL_BOSS_DY + 3.5), zb + 3.0, zb + 6.0)   # ear stays out of the hump_side_left corridor
         t = t.fuse(ear).cut(cyl(D.CLEAR["M3"] / 2, 10, (pc[0], pc[1] + sy * PANEL_BOSS_DY, zb)))
-    t = t.cut(box(pc[0] - 8.0, pc[0] + 8.0, pc[1] - e["w"] / 2 - 4.0, pc[1] + e["w"] / 2 + 4.0, zb + 0.5, zb + 7.0))   # cable notches in both long walls (J1/J2 on top, cable over a long edge)
+    t = t.cut(box(pc[0] - 28.0, pc[0] - 16.0, pc[1] - e["w"] / 2 - 4.0, pc[1] + e["w"] / 2 + 4.0, zb + 0.5, zb + 7.0))   # cable notches in both long walls (J1/J2 on top, cable over a long edge)
     sw = D.WELL_WALL
     t = t.cut(box(P.SADDLE["x"][0] - sw - 0.5, 0.0, P.SADDLE["half_y"] - 0.5, P.SADDLE["half_y"] + sw + 0.4, 102.3, 120.0))   # under the saddle-well wall
     return t.clean(), zb + 6.0

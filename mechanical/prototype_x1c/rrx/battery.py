@@ -43,6 +43,8 @@ def _cavity():
     R = P.BODY_ROWS
     li = cached(["LI", R["lower_inner"]], lambda: loft(R["lower_inner"]))
     ui = cached(["UI", R["upper_inner"]], lambda: loft(R["upper_inner"]))
+    from .shells import scaled_xy
+    li = scaled_xy(li, 0.99)                                                      # >= ~1.2 mm inside the skin at the tail (containment margin 1 mm)
     return li.fuse(ui).fuse(box(-400, 200, -200, 200, D.PLATE_Z[0], D.PLATE_Z[1] + 0.5).intersect(li))
 
 
@@ -70,7 +72,7 @@ def tunnel():
         for x in FEET_X:
             t = t.cut(cyl(D.INSERT["M3"][0] / 2, D.INSERT["M3"][1], (x, s * 64.0, Z1)))
         for z in (48.0, 92.0):
-            t = t.cut(cyl(D.INSERT["M3"][0] / 2, D.INSERT["M3"][1], (x0, s * 59.5, z), (1, 0, 0)))
+            t = t.cut(cyl(D.INSERT["M3"][0] / 2, D.INSERT["M3"][1], (x0, s * 57.8, z), (1, 0, 0)))
         t = t.cut(box(x1 - 14.0, x1 - 2.0, s * wy0 - 1, s * wy1 + 1 if s > 0 else s * wy1 - 1, 70.0, 82.0))  # pack-lead / NTC slot
         t = t.cut(cyl(1.5, 4, (-215.0, s * 30.0, Z1 - 1)))                                                   # drains
     for x in (-60.0, -20.0):

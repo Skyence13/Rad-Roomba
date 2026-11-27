@@ -78,7 +78,7 @@ def purchased(add):
     for jn, key in (("J1", "j1_receptacle"), ("J2", "j2_receptacle")):
         j = P.J_RECEPTACLES[jn]
         rec, plug, nut = L.receptacle(key)
-        add(Part("RRX-H52", f"{jn}_receptacle", place(rec, j["xyz"], j["normal"]), "purchased", "BRASS", "connectors", color=C["conn"], internal=False, mass=L.mass(key),
+        add(Part("RRX-H52" if jn == "J1" else "RRX-H57", f"{jn}_receptacle", place(rec, j["xyz"], j["normal"]), "purchased", "BRASS", "connectors", color=C["conn"], internal=False, mass=L.mass(key),
                  mpn=L.PARTS[key]["mpn"], verified="UNVERIFIED cut-out", mates={"nose_cowl", f"{jn}_mated_plug"}))
         add(Part("RRX-H52", f"{jn}_mated_plug", place(plug, j["xyz"], j["normal"]), "purchased", "BRASS", "head_placeholder", color=C["conn"], internal=False, mass=0.0, hard=True,
                  mates={f"{jn}_receptacle", "nose_cowl"}))

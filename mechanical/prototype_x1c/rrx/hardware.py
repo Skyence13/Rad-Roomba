@@ -41,12 +41,11 @@ def rows():
     add("A chassis", "pan head screw", "M4 x 6 ISO 7045 A2", 4, "caster top plate -> tapped caster disc (through the shim)", torque="1.5", note="thread-lock; must not stand above the disc")
     add("A chassis", "countersunk screw", "M5 x 25 ISO 10642 A2-70", 4, "plate (from below) -> bulkhead pedestals -> tapped latch arm", torque="3.0", note="latch reaction path")
     add("A chassis", "socket cap screw", "M4 x 10 ISO 4762 A2", 4, "draw latch -> chin floor -> tapped latch arm", torque="2.0", status="UNVERIFIED", note="latch hole pattern depends on the selected latch")
-    add("A chassis", "snap-action switch", "Omron D2HW-C201M", 4, "HEAD_DOCK, CHG_COVER, 2 x BODY_BUMPER", "UNVERIFIED", note="dimensions PARTIAL in parts.yaml; mounting holes 2.35 mm assumed")
+    add("A chassis", "snap-action switch", "Omron D2HW-C201M", 1, "CHG_COVER (HEAD_DOCK and the 2 BODY_BUMPER switches are RRX-H53 in the parts list)", "UNVERIFIED", note="dimensions PARTIAL in parts.yaml")
     add("A chassis", "pan head screw + insert", "M2 x 10 ISO 7045 A2 + M2 heat-set insert", 8, "D2HW retention in the four printed pockets", "UNVERIFIED", "0.15")
     add("A chassis", "cable grommet", "8 mm hole, 5 mm bore, silicone", 2, "plate grommet holes (dock switch / cliff leads)", "UNVERIFIED")
     # B  lower hull
     add("B lower hull", "countersunk screw", "M3 x 8 ISO 10642 A2", N_SOLE, "plate (from below) -> sole-ring inserts", torque="0.6")
-    add("B lower hull", "pan head screw", "M3 x 10 ISO 7045 A2", 2, "front/rear hull splice flanges (x = %.0f)" % D.X_LOWER, torque="0.6")
     add("B lower hull", "membrane vent", "M12 x 1.5 ePTFE protective vent + nut, IP67", 1, "right rear quarter (12.2 mm hole)", "UNVERIFIED")
     add("B lower hull", "duck-bill drain valve", "3 mm stem, silicone", 2, "plate drain holes beside the caster", "UNVERIFIED")
     add("B lower hull", "sealant bead", "neutral-cure RTV silicone, -50 C", 1, "plate edge / hull wrap, floor plug, pod notches, cheek slots", note="one 80 ml tube")

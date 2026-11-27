@@ -135,16 +135,16 @@ def write_plates(table):
 # ----------------------------------------------------------------------------------------------- BOM
 def write_bom(parts, table):
     rows = []
-    for kind in ("fabricated", "purchased"):
+    for kind in ("printed", "fabricated", "purchased"):
         bom_parts = [q for q in parts if not (q.material == "KEEPOUT" or q.group == "head_placeholder" or q.name.endswith("_operator"))]
         for rec in unique_parts(bom_parts, kind):
             p = rec["part"]
             t = next((r for r in table if r["pn"] == p.pn), {})
-            status = "DESIGN (fabricate to the STEP/DXF)" if kind == "fabricated" else (p.verified or "see parts.yaml")
+            status = {"fabricated": "DESIGN (fabricate to the STEP/DXF)", "printed": "DESIGN (print to out/step, see print_schedule.md)"}.get(kind) or (p.verified or "see parts.yaml")
             if kind == "purchased" and "UNVERIFIED" not in status.upper() and "VERIFIED" not in status.upper() and "standard" not in status.lower() and "contract" not in status.lower() and "design" not in status.lower():
                 status = "UNVERIFIED: " + status
             rows.append({"subassembly": p.subasm, "category": kind, "part_number": p.pn, "item": rec.get("file", p.name), "qty": rec["qty"], "material": p.material,
-                         "supplier_pn_or_spec": p.mpn or p.note, "status": status, "drawing": t.get("dxf") or (f"out/fabricated/step/{t.get('name')}.step" if kind == "fabricated" else ""), "torque_Nm": "", "note": p.note})
+                         "supplier_pn_or_spec": p.mpn or p.note, "status": status, "drawing": t.get("dxf") or (f"out/fabricated/step/{t.get('name')}.step" if kind == "fabricated" else (f"out/step/{t.get('name')}.step" if kind == "printed" else "")), "torque_Nm": "", "note": p.note})
     for h in hardware.rows():
         rows.append({"subassembly": h["subassembly"], "category": "hardware", "part_number": "", "item": h["item"], "qty": h["qty"], "material": "", "supplier_pn_or_spec": h["spec"],
                      "status": h["status"], "drawing": "", "torque_Nm": h["torque_Nm"], "note": (h["where"] + ("; " + h["note"] if h["note"] else ""))})
@@ -185,19 +185,19 @@ STEPS = [
 
 STAGE_TEXT = {   # hand-written work instructions per stage: (do, inserts / torque notes, harness, check after the stage)
     "01_chassis": (
-        ["Deburr the plate; countersink from BELOW and tap per `out/dxf/chassis_plate_holes.csv` (78 holes). Ream the four 4 H7 dowel holes of the receiver in one set-up with the hole pattern.",
+        ["Deburr the plate; countersink from BELOW and tap per `out/dxf/chassis_plate_holes.csv` (hole table). Ream the four 4 H7 dowel holes of the receiver in one set-up with the hole pattern.",
          "Press the two 4 m6 x 10 locating dowels into each channel ear; press the two hardened 4 m6 x 24 land pins through each channel (they are the z datum C: flush both sides, no burr on the top line).",
          "Fit each channel to the plate underside on its dowels; 3 x M4 x 10 cap screws from above, medium thread-lock.",
          "Dock switch: D2HW-C201M into the bracket pocket (2 x M2 into inserts), 3 mm push pin into the left channel end wall, bracket to the plate (2 x M3 from above).",
          "Cliff pods: RR-TOF boards with light-blocker foam into the pods, IR window bonded in its recess (clear silicone, no squeeze-out over the aperture); pods to the plate (3 x M3 each).",
-         "Caster: shim and 2.5 mm disc on the plate underside (4 x M3 countersunk), caster to the tapped disc (4 x M4 pan head, thread-lock)."],
+         "Caster: 2.5 mm stainless disc on the plate TOP over the 48 mm hole (4 x M3 countersunk into the tapped plate); 1 mm shim and caster from below through the hole, 4 x M4 pan head into the tapped disc (thread-lock)."],
         "Inserts: dock switch bracket 2 x M3, cliff pods 3 x M3 each (set at 230-245 C tip for PAHT-CF, flush +-0.1). Torques: M4 receiver 2.2 N m, M3 0.6 N m, M4 caster 1.5 N m.",
         "Cliff ToF and dock switch leads up through the two 8 mm grommets at x = -2, y = +-80. Leave 150 mm coiled on top of the plate.",
         "Slide a 16.00 x 14.00 x 70 mm gauge bar (the head-shoe gauge) the full length of each channel: left channel no perceptible y shake, right channel 0.6 mm total y float; 0.06 mm feeler fits under the roof pad, 0.12 mm does not. "
         "X-stop faces coplanar within 0.05 mm (straight edge + feelers). Dock switch clicks in the last 1.5 mm of gauge travel (continuity meter)."),
     "02_lower_hull": (
-        ["Set all inserts in the four hull pieces first (sole ring, splice flange, tongue).",
-         "Bond the 1 mm gasket on the front splice flanges; join FL+RL and FR+RR with 1 x M3 x 10 each.",
+        ["Set all inserts in the four hull pieces first (sole ring, tongue, bumper-switch seats).",
+         "Butter the x = -71 butt faces with RTV (no splice screw: the joint lies in the CM5 bay).",
          "Run a bead of neutral-cure RTV round the plate edge, lower each hull half onto the plate (the sole ring wraps the plate edge) and screw from below (M3 x 8 countersunk into the sole inserts). Close the y = 0 butt seams on the floor with RTV.",
          "Front bulkhead on the plate at the chin cut (its pedestals take the latch-arm bolts in stage 6).",
          "Rear cliff ToF boards into the hull bosses with their clips (2 x M2 each)."],
@@ -341,7 +341,7 @@ JOINTS = [
      ["plunger pin drops 2.4 mm into the lid hole when the cassette is home (coupler mated)", "door finger stops 0.5 mm behind the home position: the door closes only on a latched cassette"]),
     ("J08_door_peg", "z", 100.0, (-254, -224, 42, 72), "Door hook slot on the jamb peg, jamb / frame joint", ["door hangs on two M4 dog-point pegs (hook-and-swing)", "skirt fits inside the jamb; frame ring is the gasket land"]),
     ("J09_sole_plate_edge", "x", None, None, "Lower hull sole ring on the chassis plate edge", ["hull wraps the plate edge; M3 countersunk from below into the sole insert", "RTV bead in the corner; plate underside flush with the hull"]),
-    ("J10_hull_splice", "z", 52.0, (-88, -54, 116, 148), "Lower hull front / rear splice (x = -71)", ["flange + M3 + insert, 1 mm gasket"]),
+    ("J10_hull_splice", "z", 52.0, (-88, -54, 90, 148), "Lower hull front / rear butt joint (x = -71) beside the CM5 bay", ["no splice screw (CM5 bay): both pieces screwed to the plate and held by the lid tongue", "butt joint sealed with RTV, 1 mm gasket where the flange exists"]),
     ("J11_nose_bulkhead_latch", "y", 0.0, (26, 112, 28, 72), "Front bulkhead, chin floor of the nose cowl, latch arm and draw latch over the head", ["latch reaction: latch -> arm -> pedestals -> M5 -> plate -> channels", "nothing but the latch below z = 50 ahead of x = 62"]),
     ("J12_receiver_station", "x", 8.0, (58, 118, 8, 40), "Receiver channel at the rear land station (x = 8) with the head shoe", ["dowel-pin land top = datum C (z 16.0)", "roof pad 14.06 above the land; side pads fit the left shoe, float the right"]),
     ("J13_receiver_long", "y", 87.5, (-16, 74, 8, 40), "Left receiver channel, longitudinal section: lands, x-stop flange, dock switch and push pin", ["x-stop face x = 65.7 (datum A)", "push pin 3 x 6 pressed by the shoe tip in the last 1.5 mm"]),
@@ -467,7 +467,7 @@ def write_report(R, table, parts, timing):
     for k, v in R["corridors"].items():
         w(f"- corridor **{k}** {v['box']} ({v['use']}): {'free' if not v['blocked_by'] else 'BLOCKED by ' + str(v['blocked_by'])}")
     sr = R["swept_radius"]
-    w(f"\n**Swept radius (IB-48):** tail {sr['tail_max_radius_mm']} mm from the axle centre ({sr['tail_part']}); body ahead of the axle {sr['front_body_max_radius_mm']} mm ({sr['front_body_part']}); head envelope corner {sr['head_envelope_corner_radius_mm']} mm. {sr['note']}.\n")
+    w(f"\n**Swept radius (IB-48):** tail {sr['tail_max_radius_mm']} mm from the axle centre ({sr['tail_part']}; without the bumper {sr['tail_without_bumper_mm']} mm, {sr['tail_without_bumper_part']}); body ahead of the axle {sr['front_body_max_radius_mm']} mm ({sr['front_body_part']}); head envelope corner {sr['head_envelope_corner_radius_mm']} mm. {sr['note']}.\n")
     w("\nCCR-E08 (chassis electronics) answers, checked as keep-out boxes against every body part:\n")
     for k, v in R["ccr_e08"].items():
         w(f"- {k}: {'free' if not v['blocked_by'] else 'BLOCKED by ' + str(v['blocked_by'])}")

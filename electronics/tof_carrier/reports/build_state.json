@@ -101,6 +101,7 @@
   },
   "plane_fanout": {
     "failed": [],
+    "long_fanout": [],
     "plane_nets": [],
     "vias": 0
   },
@@ -161,7 +162,9 @@
     "finisher": true,
     "finisher_ripup": true,
     "finisher_seconds": 900,
+    "fr_fallback": "none",
     "layers": 2,
+    "long_fanout_seconds": 600,
     "optimizer": true,
     "passes": 100,
     "plane_fanout": true,

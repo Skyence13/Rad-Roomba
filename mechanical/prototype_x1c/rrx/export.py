@@ -35,7 +35,7 @@ def unique_parts(parts, kind):
             if base.endswith(suf) and not p.pn.endswith(suf[1]):
                 base = base[:-2]
         if kind == "printed" and base.startswith("tof_clip"):
-            base = "tof_clip"
+            base = "tof_clip_std" if p.pn == "RRX-P53" else "tof_clip_shallow"
         rec["file"] = base.rstrip("0123456789").rstrip("_") if base[-1].isdigit() and not p.pn[-1].isdigit() is False and kind != "printed" else base
         seen[p.pn] = rec
         out.append(rec)

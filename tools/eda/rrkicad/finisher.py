@@ -763,7 +763,67 @@ def plane_connect(bld, failed):
     vdia, vdr = r.via_dia, r.via_drill
     vr = vdia / 2.0
     done, left = [], []
+    failed = sorted(failed, key=lambda m: m["net"])   # one net at a time: its board-wide raster stays valid
+    t_start = time.time()
+    bxx = [fr.kmm(*p) for p in b.outline["pts"]]
+    G0 = (min(p[0] for p in bxx) - 1, min(p[1] for p in bxx) - 1, max(p[0] for p in bxx) + 1, max(p[1] for p in bxx) + 1)
+    cache = {}
+
+    def inplane_mask(net, PX, PY):
+        inplane = np.zeros(PX.shape, dtype=bool)
+        for ln in sorted({z[0] for z in zones}):
+            best_p = np.full(PX.shape, -1)
+            best_own = np.zeros(PX.shape, dtype=bool)
+            for (l, prio, n, poly) in zones:
+                if l != ln:
+                    continue
+                m = _pip_grid(PX, PY, poly) & (prio > best_p)
+                best_p = np.where(m, prio, best_p)
+                best_own = np.where(m, n == net, best_own)
+            inplane |= best_own
+        return inplane
+
+    def court_count(win, vr_):
+        cc = np.zeros((win.ny, win.nx), dtype=np.int16)
+        for rect, ref in obs.court:
+            s_ = win.sub(rect, vr_)
+            if s_ is not None:
+                sj, si, QX, QY = s_
+                dx = np.maximum(np.maximum(rect[0] - QX, 0.0), QX - rect[2])
+                dy = np.maximum(np.maximum(rect[1] - QY, 0.0), QY - rect[3])
+                cc[sj, si] += (np.hypot(dx, dy) < vr_).astype(np.int16)
+        return cc
+
+    def global_raster(net, w):
+        """Board-wide rasters for *net* at 0.1 mm, computed once per net and track width."""
+        key = (net, round(w, 4))
+        if key not in cache:
+            win = Window(G0[0], G0[1], G0[2], G0[3], 0.1)
+            trk, via = _rasterize(obs, win, net, w, vr, vdr, sig)
+            PX, PY = np.meshgrid(win.X, win.Y)
+            cache[key] = {"win": win, "trk": trk, "via": via, "court": court_count(win, vr),
+                          "inplane": inplane_mask(net, PX, PY)}
+        return cache[key]
+
+    def sub_window(gr, px, py, grow):
+        """A Window + array views on a part of the global raster (grow None = all of it)."""
+        W = gr["win"]
+        if grow is None:
+            i0, i1, j0, j1 = 0, W.nx, 0, W.ny
+        else:
+            i0 = max(0, int((px - grow - W.x0) / W.g)); i1 = min(W.nx, int((px + grow - W.x0) / W.g) + 1)
+            j0 = max(0, int((py - grow - W.y0) / W.g)); j1 = min(W.ny, int((py + grow - W.y0) / W.g) + 1)
+        sw = Window(W.x0 + i0 * W.g, W.y0 + j0 * W.g, W.x0 + i1 * W.g, W.y0 + j1 * W.g, W.g)
+        sw.nx, sw.ny = i1 - i0, j1 - j0
+        sw.X, sw.Y = W.X[i0:i1], W.Y[j0:j1]
+        sl = (slice(j0, j1), slice(i0, i1))
+        return sw, {l: gr["trk"][l][sl] for l in sig}, gr["via"][sl], gr["court"][sl], gr["inplane"][sl]
+    cap = float(b.routing.get("long_fanout_seconds", 600))
     for me in failed:
+        if time.time() - t_start > cap:
+            me["_why"] = "long fan-out time cap (%g s) used up" % cap
+            left.append(me)
+            continue
         net = me["net"]
         x0, y0, x1, y1 = me["rect"]
         px, py = (x0 + x1) / 2.0, (y0 + y1) / 2.0
@@ -777,45 +837,47 @@ def plane_connect(bld, failed):
             continue
         ok = False
         why = "no path"
-        for grow, g in ((5.0, GRID), (12.0, 0.1), (30.0, 0.2)):
-            win = Window(px - grow, py - grow, px + grow, py + grow, g)
-            trk, via = _rasterize(obs, win, net, w, vr, vdr, sig)
-            PX, PY = np.meshgrid(win.X, win.Y)
-            inplane = np.zeros(PX.shape, dtype=bool)
-            for ln in sorted({z[0] for z in zones}):
-                best_p = np.full(PX.shape, -1)
-                best_own = np.zeros(PX.shape, dtype=bool)
-                for (l, prio, n, poly) in zones:
-                    if l != ln:
-                        continue
-                    m = _pip_grid(PX, PY, poly) & (prio > best_p)
-                    best_p = np.where(m, prio, best_p)
-                    best_own = np.where(m, n == net, best_own)
-                inplane |= best_own
-            for rect, ref in obs.court:               # no long fan-out via inside another part's courtyard
+        goal_seen = False
+        for grow, g in ((5.0, GRID), (12.0, 0.1), (30.0, 0.2), (None, 0.1)):
+            if grow is None and goal_seen:
+                break            # whole board only when no plane-via spot exists within 30 mm at all
+            if grow is not None:  # local window, rasterized for this pad
+                win = Window(px - grow, py - grow, px + grow, py + grow, g)
+                trk, via = _rasterize(obs, win, net, w, vr, vdr, sig)
+                PX, PY = np.meshgrid(win.X, win.Y)
+                inplane = inplane_mask(net, PX, PY)
+                cc = court_count(win, vr)
+            else:                # the board-wide raster of this net (built once per net)
+                gr = global_raster(net, w)
+                win, trk, via, cc, inplane = sub_window(gr, px, py, None)
+                via = via.copy()
+            # vias may not sit in another part's courtyard (their own part's is fine)
+            own_c = np.zeros(cc.shape, dtype=np.int16)
+            for rect, ref in obs.court:
                 if ref == me["ref"]:
-                    continue
-                s_ = win.sub(rect, vr)
-                if s_ is not None:
-                    sj, si, QX, QY = s_
-                    dx = np.maximum(np.maximum(rect[0] - QX, 0.0), QX - rect[2])
-                    dy = np.maximum(np.maximum(rect[1] - QY, 0.0), QY - rect[3])
-                    via[sj, si] |= np.hypot(dx, dy) < vr
+                    s_ = win.sub(rect, vr)
+                    if s_ is not None:
+                        sj, si, QX, QY = s_
+                        dx = np.maximum(np.maximum(rect[0] - QX, 0.0), QX - rect[2])
+                        dy = np.maximum(np.maximum(rect[1] - QY, 0.0), QY - rect[3])
+                        own_c[sj, si] += (np.hypot(dx, dy) < vr).astype(np.int16)
+            via |= (cc - own_c) > 0
             goal = (~via) & inplane
             starts = {c for c in _cells(win, [own], sig)}
             if not starts:
                 why = "pad not on a signal layer"
                 break
+            goal_seen = goal_seen or bool(goal.any())
             if not goal.any():
-                why = "no legal via position inside the own plane polygon within %g mm" % grow
+                why = "no legal via position inside the own plane polygon within %s" % ("the board" if grow is None else "%g mm" % grow)
                 continue
             try:
-                path = _astar(win, trk, via, sig, sorted(starts), [], budget=400_000, goal_mask=goal.reshape(-1))
+                path = _astar(win, trk, via, sig, sorted(starts), [], budget=1_500_000, goal_mask=goal.reshape(-1))
             except Budget:
                 path = None
                 why = "search budget"
             if path is None:
-                why = "no free path to the plane within %g mm" % grow
+                why = "no free path to the plane within %s" % ("the board" if grow is None else "%g mm" % grow)
                 continue
             route = _smooth(win, trk, _simplify(win, sig, path))
             l_end, rem = divmod(path[-1], win.ny * win.nx)
@@ -860,6 +922,12 @@ def plane_connect(bld, failed):
                     v.SetLocked(True)
                     pcb.Add(v)
                     obs.add_via(q[1][0], q[1][1], vr, vdr, net)
+                    for gr in cache.values():          # hole-to-hole around the new via
+                        W = gr["win"]
+                        s_ = W.sub((q[1][0], q[1][1], q[1][0], q[1][1]), vdr + r.min_hole_to_hole + 0.1)
+                        if s_ is not None:
+                            sj, si, QX, QY = s_
+                            gr["via"][sj, si] |= np.hypot(QX - q[1][0], QY - q[1][1]) < vdr + r.min_hole_to_hole + 0.05
             done.append("%s [%s] %.1f mm" % (me["ref"], net, sum(math.hypot(q[3][0] - q[2][0], q[3][1] - q[2][1]) for q in route if q[0] == "seg")))
             ok = True
             break
