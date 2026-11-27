@@ -1,35 +1,35 @@
 
 
-2026-11-27 10:51:42.692 INFO   Freerouting v2.6.0 (build-date: 2026-11-25)
-2026-11-27 10:51:43.233 INFO   Hardware: 4 CPU cores, 203 CPU score, 3072 MB RAM
-2026-11-27 10:51:43.346 WARN   GUI is disabled and you don't have a console available, so the only feedback from Freerouting is in the log.
-2026-11-27 10:51:45.191 WARN   The '-mp' command-line flag is deprecated and will be removed in a future release; use '--router.autorouter.max_passes' instead.
-2026-11-27 10:51:45.192 WARN   The '-mt' command-line flag is deprecated and will be removed in a future release; use '--router.max_threads=<n>' instead.
-2026-11-27 10:51:46.159 INFO   [5405D0\9F1B21] Loading board file 'RR-HEAD-ACQ.dsn'...
-2026-11-27 10:52:06.475 WARN   DSN file 'RR-HEAD-ACQ.dsn' was loaded with 29 warning(s).
-2026-11-27 10:52:06.687 INFO   The board's own vias decide: router.autorouter.via_in_pad = true.
-2026-11-27 10:52:06.783 INFO   8 multi-pin net-tie cluster(s) identified and indexed.
-2026-11-27 10:52:06.829 INFO   Auto-detected differential pair: HEAD_PWR (HEAD_PWR_P, HEAD_PWR_N)
-2026-11-27 10:52:06.829 INFO   Auto-detected differential pair: HEAD_HTR (HEAD_HTR_P, HEAD_HTR_N)
-2026-11-27 10:52:06.829 INFO   Auto-detected differential pair: SYNC (SYNC_P, SYNC_N)
-2026-11-27 10:52:06.852 INFO   [5405D0\9F1B21] Job '5405D0\9F1B21' started at 2026-11-27T10:52:06.851951929Z.
-2026-11-27 10:52:09.955 WARN   Design Warning: Board has 660 pre-existing clearance violation(s) in the loaded design (before routing):
-  - 660 unfixable violation(s) (cannot be resolved by Freerouting):
+2026-11-27 11:07:34.938 INFO   Freerouting v2.6.0 (build-date: 2026-11-25)
+2026-11-27 11:07:35.308 INFO   Hardware: 4 CPU cores, 446 CPU score, 3072 MB RAM
+2026-11-27 11:07:35.313 WARN   GUI is disabled and you don't have a console available, so the only feedback from Freerouting is in the log.
+2026-11-27 11:07:36.506 WARN   The '-mp' command-line flag is deprecated and will be removed in a future release; use '--router.autorouter.max_passes' instead.
+2026-11-27 11:07:36.508 WARN   The '-mt' command-line flag is deprecated and will be removed in a future release; use '--router.max_threads=<n>' instead.
+2026-11-27 11:07:37.250 INFO   [2D0AF7\1CD521] Loading board file 'RR-HEAD-ACQ.retry.dsn'...
+2026-11-27 11:07:57.079 WARN   DSN file 'RR-HEAD-ACQ.retry.dsn' was loaded with 77 warning(s).
+2026-11-27 11:07:57.241 INFO   The board's own vias decide: router.autorouter.via_in_pad = true.
+2026-11-27 11:07:57.305 INFO   8 multi-pin net-tie cluster(s) identified and indexed.
+2026-11-27 11:07:57.360 INFO   Auto-detected differential pair: HEAD_PWR (HEAD_PWR_P, HEAD_PWR_N)
+2026-11-27 11:07:57.360 INFO   Auto-detected differential pair: HEAD_HTR (HEAD_HTR_P, HEAD_HTR_N)
+2026-11-27 11:07:57.360 INFO   Auto-detected differential pair: SYNC (SYNC_P, SYNC_N)
+2026-11-27 11:07:57.376 INFO   [2D0AF7\1CD521] Job '2D0AF7\1CD521' started at 2026-11-27T11:07:57.376075629Z.
+2026-11-27 11:08:01.011 WARN   Design Warning: Board has 663 pre-existing clearance violation(s) in the loaded design (before routing):
+  - 663 unfixable violation(s) (cannot be resolved by Freerouting):
       * 86 pin-to-pin clearance violations (first 5 shown):
           - U804.8 [net +3V3_EVT] <-> U804.7 [net R3_CLLD]
           - U804.6 [net R3_CULD] <-> U804.5 [net GND]
           - U801.8 [net +3V3_EVT] <-> U801.7 [net R3_TPG]
           - U801.3 [net GND] <-> U801.2 [net TP_INH_R3_N]
           - U704.8 [net +3V3_EVT] <-> U704.7 [net R2_CLLD]
-      * 574 fixed trace/via clearance violations (first 5 shown):
-          - FixedVia#15832 [net L1_QALPHA_F] <-> ObstacleArea#430
-          - FixedVia#15832 [net L1_QALPHA_F] <-> ObstacleArea#432
-          - FixedVia#15832 [net L1_QALPHA_F] <-> ObstacleArea#433
-          - FixedVia#15832 [net L1_QALPHA_F] <-> ObstacleArea#434
-          - FixedVia#15832 [net L1_QALPHA_F] <-> ObstacleArea#435
+      * 577 fixed trace/via clearance violations (first 5 shown):
+          - FixedVia#16831 [net L1_QALPHA_F] <-> ObstacleArea#430
+          - FixedVia#16831 [net L1_QALPHA_F] <-> ObstacleArea#432
+          - FixedVia#16831 [net L1_QALPHA_F] <-> ObstacleArea#433
+          - FixedVia#16831 [net L1_QALPHA_F] <-> ObstacleArea#434
+          - FixedVia#16831 [net L1_QALPHA_F] <-> ObstacleArea#435
   - 0 potentially fixable violations
 Notice: Freerouting does not modify component placement, board outlines, or fixed items.
-Resolving these 660 unfixable violation(s) is the responsibility of the board author in their EDA tool (e.g. KiCad).
-2026-11-27 10:52:10.507 INFO   [5405D0\9F1B21] Exit stubs: 4 fine-pitch pins whose way out meets the clearances exactly get 4 stubs (0 inward to a pad of their net, 2 bent in a fan; U2201 2, U2503 2), router.autorouter.exit_stubs=true.
-2026-11-27 10:52:10.714 INFO   [5405D0\9F1B21] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=4.
-2026-11-27 10:52:13.253 INFO   [5405D0\9F1B21] Auto-routing stage started on board '36937a16fed4208af257e36918219b9e' with baseline score 457.41 for 997 unrouted items.
+Resolving these 663 unfixable violation(s) is the responsibility of the board author in their EDA tool (e.g. KiCad).
+2026-11-27 11:08:01.500 INFO   [2D0AF7\1CD521] Exit stubs: 4 fine-pitch pins whose way out meets the clearances exactly get 4 stubs (0 inward to a pad of their net, 2 bent in a fan; U2201 2, U2503 2), router.autorouter.exit_stubs=true.
+2026-11-27 11:08:01.630 INFO   [2D0AF7\1CD521] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=4.
+2026-11-27 11:08:04.809 INFO   [2D0AF7\1CD521] Auto-routing stage started on board '9b4437335a8d53622845b806ee32c4cd' with baseline score 513.47 for 894 unrouted items.

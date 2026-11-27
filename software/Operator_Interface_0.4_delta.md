@@ -38,16 +38,17 @@ inhibited is rejected with the reason and is not kept.
 
 The method is fixed for a mission and shown with every result.
 
-- **Continuous scan** — constant speed. With the demonstration calibration the 0.20 Bq/cm² detection goal is not met at 0.10 m/s (simulated D# ≈ 0.35 per 10 cm cell); about 0.03 m/s is needed. Cells that miss the goal are drawn as *insufficient sensitivity*, never as clean.
+- **Continuous scan** — constant speed. With the demonstration calibration the 0.20 Bq/cm² detection goal is not met at 0.10 m/s (simulated D# ≈ 0.35 per 10 cm cell); about 0.03 m/s was needed with the earlier combined statistic, and with the per-lane rule of MODEL.md rev 3 the simulated median D# at 0.03 m/s is 0.30 Bq/cm² (goal not met). Cells that miss the goal are drawn as *insufficient sensitivity*, never as clean.
 - **Search then count** — ratemeter view per lane with the alarm set-point. On an alarm the robot follows the rate for up to 0.15 m to find the peak, then either stops, reverses to centre the alarming lane and counts (*inline*), or queues the spot and counts after the passes (*deferred*). Floor seen only by the search is reported at the search-stage limit.
-- **Step and count** — 100 mm stations, settle, static count. Only static counts earn coverage; a count is discarded and repeated if the chassis did not report "stationary" for the whole count or any stop/inhibit event fell inside it. One full pre-motion alert at the start of a series and a chirp per hop (the supervisor raises `alert.rest_ms` with a logged setting change and restores it).
+- **Step and count** — 80 mm stations (contract default), settle, static count. Only static counts earn coverage; a count is discarded and repeated if the chassis did not report "stationary" for the whole count or any stop/inhibit event fell inside it. One full pre-motion alert at the start of a series and a chirp per hop (the supervisor raises `alert.rest_ms` with a logged setting change and restores it).
+- A cell is flagged when any contributing lane exceeds its own threshold at alpha/m (m = lanes in the cell); the quoted D* and D# are the smallest per-lane values; `cells.csv` stores the rule `per-lane-exact/any-lane/alpha-over-m`, m, per-lane thresholds and flagging lanes.
 - Scaler results list outcome, D ± u, D*, D#, live time and the threshold method. An outcome is *not detected* only when D# is below the goal; a marginal value is *inconclusive*.
 
 ## 5. Scan view
 
 - Three separate layers: **coverage quality** (patterns: diagonal = unvisited, crosses = invalid data, dots = insufficient sensitivity, bars = blocked, solid = acceptable), **activity** (signed Bq/cm² per decision cell; the colour clips, the data do not), **detection limit**.
 - Cells are 10 cm decision cells; nothing is interpolated between them. Coverage is accounted on 5 mm sub-cells with the footprint shrunk by the 10 mm position allowance; turns earn no coverage.
-- Wall strips (~0.14 m in a 2.5 m trailer), the door-threshold strip and the bulkhead strip are planned residuals and are listed with position and area.
+- Wall strips (~0.05 m per wall with the default reverse-entry wall tracks, ~0.15 m with `in_place`, in a 2.5 m trailer; calculated), the door-threshold strip and the bulkhead strip are planned residuals and are listed with position and area.
 - **Blocked strip**: an object seen within 0.8 m in the swept path makes the robot wait without a latch; after the patience time the strip is deferred, marked *blocked*, and retried once after the other passes. A person stepping inside the protective zone (0.25 m look-ahead plus margin) latches a protective stop instead.
 - A red banner marks synthetic calibration/profile data on the page and on every exported map and summary.
 
