@@ -207,7 +207,7 @@ U34,1,LM4040-2.5,Package_TO_SOT_SMD:SOT-23,Texas Instruments,LM4040C25IDBZR,,pin
 U37 U38,2,74LVC2G17,Package_TO_SOT_SMD:SOT-23-6,Texas Instruments,SN74LVC2G17DBVR,,[D sn74lvc2g17.pdf not re-read; standard pinout]
 U40,1,TPS3430,Package_SON:VSON-10-1EP_3x3mm_P0.5mm_EP1.65x2.4mm,Texas Instruments,TPS3430WDRCR,,Pin table and timing [D tps3430.pdf]. CWD (2) and CRST (4) open = factory presets. Firmware strobes every 10 ms.
 U41 U60,2,USBLC6-2SC6,Package_TO_SOT_SMD:SOT-23-6,STMicroelectronics,USBLC6-2SC6,,
-U42,1,BMI088,Package_LGA:Bosch_LGA-16_4.5x3mm_P0.5mm_LayoutBorder7x1y_ClockwisePinNumbering,Bosch Sensortec,BMI088,,Pin numbers recalled from the Bosch datasheet [U]. Interrupt pins unused (polled at 1 kHz per pin map). | stage 2: Stock Bosch LGA-16 pattern (clockwise numbering); stage-1 pin numbers recalled; verify: true
+U42,1,BMI088,rr_local:Bosch_LGA-16_4.5x3mm_P0.5mm_ClockwisePinNumbering,Bosch Sensortec,BMI088,,Pin numbers recalled from the Bosch datasheet [U]. Interrupt pins unused (polled at 1 kHz per pin map). | stage 2: Pads of the stock Bosch_LGA-16_4.5x3mm_P0.5mm_LayoutBorder7x1y_ClockwisePinNumbering without its internal rule area (board-level via keep-out instead); stage-1 pin numbers recalled; verify: true
 U43,1,MCP23S17,Package_SO:SSOP-28_5.3x10.2mm_P0.65mm,Microchip,MCP23S17-E/SS,,Pin numbers recalled (same as MCP23017 with SPI pins) [U]. INTA/INTB unused.; verify: true
 U44,1,TCA9535,Package_SO:TSSOP-24_4.4x7.8mm_P0.65mm,Texas Instruments,TCA9535PWR,,Pin numbers recalled [U]. P17 (SPARE_OUT in the pin map) carries CHAIN_END_RB as an INPUT: see CCR-E02.; verify: true
 U45,1,TCA9534,Package_SO:TSSOP-16_4.4x5mm_P0.65mm,Texas Instruments,TCA9534PWR,,Pin numbers recalled [U].; verify: true

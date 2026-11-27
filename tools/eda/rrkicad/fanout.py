@@ -222,6 +222,10 @@ def plane_fanout(bld, skip=None):
                 cands.append((inward, d, px + ux * d, py + uy * d))
         cands.sort()
         cands = [c[1:] for c in cands]
+        # exposed / thermal pads (large pads): via in the pad centre first - the usual thermal via,
+        # and often the only place left once the perimeter pads are escaped
+        if min(w, h) >= 2.0 * vr + 2 * 0.3:
+            cands.insert(0, (0.0, px, py))
         hit = None
         for allow in (False, True):
             for d, vx, vy in cands:
@@ -235,14 +239,15 @@ def plane_fanout(bld, skip=None):
             continue
         vx, vy = hit
         ni = bld.net(net)
-        tr = pcbnew.PCB_TRACK(pcb)
-        tr.SetStart(pcbnew.VECTOR2I(MM(px), MM(py)))
-        tr.SetEnd(pcbnew.VECTOR2I(MM(vx), MM(vy)))
-        tr.SetLayer(pcbnew.F_Cu if me["layer"] == "F.Cu" else pcbnew.B_Cu)
-        tr.SetWidth(MM(tw))
-        tr.SetNet(ni)
-        tr.SetLocked(True)
-        pcb.Add(tr)
+        if math.hypot(vx - px, vy - py) > 1e-4:      # (no track for a via in the pad itself)
+            tr = pcbnew.PCB_TRACK(pcb)
+            tr.SetStart(pcbnew.VECTOR2I(MM(px), MM(py)))
+            tr.SetEnd(pcbnew.VECTOR2I(MM(vx), MM(vy)))
+            tr.SetLayer(pcbnew.F_Cu if me["layer"] == "F.Cu" else pcbnew.B_Cu)
+            tr.SetWidth(MM(tw))
+            tr.SetNet(ni)
+            tr.SetLocked(True)
+            pcb.Add(tr)
         via = pcbnew.PCB_VIA(pcb)
         via.SetPosition(pcbnew.VECTOR2I(MM(vx), MM(vy)))
         via.SetViaType(pcbnew.VIATYPE_THROUGH)

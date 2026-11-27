@@ -651,7 +651,6 @@
   },
   "escape": {
     "debug": [
-      "U2.5 planned: courtyard of C4 path=[(168.8, 148.4), (167.805, 148.4), (167.65, 148.53), (167.55, 148.53)] r0=0.525 dr=0.580 e1=0.270; last: courtyard of R10",
       "U2.7 planned: courtyard of C9 path=[(173.2, 147.9), (174.195, 147.9), (175.01, 147.9)] r0=0.505 dr=0.580 e1=0.270; last: via: pad GND U2",
       "U2.6 planned: outside own plane path=[(173.2, 148.4), (174.195, 148.4), (174.272, 148.465), (174.43, 148.465)] r0=0.505 dr=0.580 e1=0.270; last: outside own plane",
       "U3.1 planned: courtyard of C17 path=[(176.05, 136.25), (175.355, 136.25), (175.084, 136.023), (174.884, 136.023)] r0=0.741 dr=0.580 e1=0.270; last: courtyard of C17",
@@ -675,6 +674,8 @@
       "U3.12 planned: courtyard of C21 path=[(178.25, 140.45), (178.25, 141.145), (178.282, 141.184), (178.282, 142.12)] r0=0.665 dr=0.580 e1=0.270; last: courtyard of C21",
       "U3.13 planned: courtyard of C21 path=[(178.75, 140.45), (178.75, 141.145), (178.847, 141.261), (178.847, 141.54)] r0=0.665 dr=0.580 e1=0.270; last: courtyard of C21",
       "U3.14 planned: courtyard of C21 path=[(179.25, 140.45), (179.25, 141.145), (179.412, 141.339), (179.412, 142.12)] r0=0.665 dr=0.580 e1=0.270; last: courtyard of C21",
+      "U10.3 planned: via: seg U10_VCC  path=[(101.95, 153.25), (101.38, 153.25), (101.315, 153.196), (101.145, 153.196)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of C31",
+      "U10.5 planned: via: seg U10_RT  path=[(101.95, 154.25), (101.38, 154.25), (101.29, 154.326), (101.145, 154.326)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of C31",
       "U13.2 planned: courtyard of SW2 path=[(100.15, 158.75), (99.63, 158.75), (99.611, 158.766), (98.815, 158.766)] r0=0.505 dr=0.580 e1=0.270; last: via: via U13_ILM ",
       "U16.4 planned: courtyard of C55 path=[(99.15, 110.75), (98.63, 110.75), (98.611, 110.766), (97.815, 110.766)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of L5",
       "U16.10 planned: courtyard of R44 path=[(100.85, 109.25), (101.37, 109.25), (101.486, 109.153), (101.685, 109.153)] r0=0.585 dr=0.580 e1=0.270; last: seg: seg HEAD_PWR_E ",
@@ -704,12 +705,12 @@
       "U40.7 planned: courtyard of U23 path=[(142.475, 164.5), (143.17, 164.5), (143.185, 164.513), (143.985, 164.513)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of U23",
       "U40.10 planned: outside own plane path=[(142.475, 166.0), (143.17, 166.0), (143.185, 166.013), (143.405, 166.013)] r0=0.505 dr=0.580 e1=0.270; last: outside own plane",
       "D29.8 planned: courtyard of J_BTN path=[(89.365, 183.25), (88.82, 183.25), (88.585, 183.25)] r0=0.505 dr=0.635 e1=0.270; last: courtyard of R128",
-      "D29.1 planned: courtyard of J_BTN path=[(90.135, 182.25), (90.68, 182.25), (90.915, 182.25)] r0=0.505 dr=0.635 e1=0.270; last: courtyard of J_BTN",
-      "D29.3 planned: courtyard of J_BTN path=[(90.135, 183.25), (90.68, 183.25), (90.915, 183.25)] r0=0.505 dr=0.635 e1=0.270; last: courtyard of LED1",
-      "D_PAUSE.1 planned: courtyard of J_PAUSE path=[(152.0, 173.115), (152.0, 172.57), (151.883, 172.431), (151.883, 172.285)] r0=0.555 dr=0.580 e1=0.270; last: courtyard of TP21",
-      "D_PAUSE.2 planned: courtyard of J_PAUSE path=[(152.5, 173.115), (152.5, 172.57), (152.448, 172.508), (152.448, 171.705)] r0=0.555 dr=0.580 e1=0.270; last: courtyard of TP21",
-      "D_PAUSE.3 planned: courtyard of J_PAUSE path=[(153.0, 173.115), (153.0, 172.57), (153.013, 172.555), (153.013, 172.285)] r0=0.555 dr=0.580 e1=0.270; last: courtyard of TP21",
-      "D_PAUSE.4 planned: courtyard of J_PAUSE path=[(153.5, 173.115), (153.5, 172.57), (153.578, 172.477), (153.578, 171.705)] r0=0.555 dr=0.580 e1=0.270; last: courtyard of TP21",
+      "D29.1 planned: courtyard of J_BTN path=[(90.135, 182.25), (90.68, 182.25), (90.915, 182.25)] r0=0.505 dr=0.635 e1=0.270; last: courtyard of LED1",
+      "D29.3 planned: courtyard of J_BTN path=[(90.135, 183.25), (90.68, 183.25), (90.915, 183.25)] r0=0.505 dr=0.635 e1=0.270; last: courtyard of FB7",
+      "D_PAUSE.1 planned: courtyard of J_PAUSE path=[(152.0, 173.115), (152.0, 172.57), (151.883, 172.431), (151.883, 172.285)] r0=0.555 dr=0.580 e1=0.270; last: courtyard of Q57",
+      "D_PAUSE.2 planned: courtyard of J_PAUSE path=[(152.5, 173.115), (152.5, 172.57), (152.448, 172.508), (152.448, 171.705)] r0=0.555 dr=0.580 e1=0.270; last: courtyard of Q57",
+      "D_PAUSE.3 planned: courtyard of J_PAUSE path=[(153.0, 173.115), (153.0, 172.57), (153.013, 172.555), (153.013, 172.285)] r0=0.555 dr=0.580 e1=0.270; last: courtyard of Q57",
+      "D_PAUSE.4 planned: courtyard of J_PAUSE path=[(153.5, 173.115), (153.5, 172.57), (153.578, 172.477), (153.578, 171.705)] r0=0.555 dr=0.580 e1=0.270; last: courtyard of Q57",
       "D_PAUSE.8 planned: courtyard of J_PAUSE path=[(153.0, 173.885), (153.0, 174.43), (153.0, 174.665)] r0=0.505 dr=0.635 e1=0.270; last: courtyard of J_PAUSE",
       "U8.1 planned: courtyard of L4 path=[(127.55, 152.25), (126.88, 152.25), (126.686, 152.088), (126.485, 152.088)] r0=0.665 dr=0.580 e1=0.270; last: courtyard of L4",
       "U8.2 planned: courtyard of L4 path=[(127.55, 152.75), (126.88, 152.75), (126.764, 152.653), (125.905, 152.653)] r0=0.665 dr=0.580 e1=0.270; last: courtyard of L4",
@@ -720,10 +721,8 @@
       "U8.15 planned: courtyard of K1 path=[(131.45, 153.75), (132.12, 153.75), (132.159, 153.782), (133.095, 153.782)] r0=0.665 dr=0.580 e1=0.270; last: courtyard of K1",
       "U8.14 planned: courtyard of K1 path=[(131.45, 154.25), (132.12, 154.25), (132.236, 154.347), (132.515, 154.347)] r0=0.665 dr=0.580 e1=0.270; last: courtyard of K1",
       "U8.13 planned: courtyard of K1 path=[(131.45, 154.75), (132.12, 154.75), (132.314, 154.912), (133.095, 154.912)] r0=0.665 dr=0.580 e1=0.270; last: courtyard of K1",
-      "D37.1 planned: courtyard of J_TOF0 path=[(110.0, 95.615), (110.0, 95.07), (109.935, 94.993), (109.935, 94.835)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of R164",
-      "D37.2 planned: courtyard of J_TOF0 path=[(110.5, 95.615), (110.5, 95.07), (110.5, 94.255)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of R164",
-      "D37.4 planned: courtyard of J_TOF0 path=[(111.5, 95.615), (111.5, 95.07), (111.5, 94.255)] r0=0.505 dr=0.580 e1=0.270; last: seg: pad unconnected-(D37-NC-Pad7) D37",
-      "D37.5 planned: courtyard of J_TOF0 path=[(112.0, 95.615), (112.0, 95.07), (112.065, 94.993), (112.065, 94.835)] r0=0.505 dr=0.580 e1=0.270; last: seg: pad unconnected-(D37-NC-Pad6) D37",
+      "D37.2 planned: seg: via GND  path=[(110.5, 99.115), (110.5, 98.57), (110.5, 97.755)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of R159",
+      "D37.4 planned: seg: via GND  path=[(111.5, 99.115), (111.5, 98.57), (111.5, 97.755)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of R164",
       "U20M.6 planned: courtyard of Y1 path=[(76.325, 139.75), (75.28, 139.75), (75.096, 139.596), (74.006, 139.596)] r0=0.964 dr=0.580 e1=0.270; last: courtyard of C78",
       "U20M.7 planned: courtyard of R70 path=[(76.325, 140.25), (75.28, 140.25), (75.173, 140.161), (74.586, 140.161)] r0=0.964 dr=0.580 e1=0.270; last: seg: seg BRAKE_R_RB ",
       "U20M.9 planned: courtyard of R70 path=[(76.325, 141.25), (75.28, 141.25), (75.232, 141.291), (74.586, 141.291)] r0=0.964 dr=0.580 e1=0.270; last: courtyard of C79",
@@ -738,63 +737,67 @@
       "U20M.19 planned: courtyard of C10 path=[(79.25, 146.675), (79.25, 147.72), (78.949, 148.078), (78.949, 148.363)] r0=0.913 dr=0.580 e1=0.270; last: seg: seg 3V3 ",
       "U20M.20 planned: courtyard of SW1 path=[(79.75, 146.675), (79.75, 147.72), (79.514, 148.001), (79.514, 148.943)] r0=0.913 dr=0.580 e1=0.270; last: seg: via 3V3 ",
       "U20M.26 planned: courtyard of SW1 path=[(82.75, 146.675), (82.75, 147.72), (82.904, 147.904), (82.904, 148.943)] r0=0.913 dr=0.580 e1=0.270; last: via: via V5_SENSE ",
-      "U42.3 planned: outside own plane path=[(129.5, 119.737), (129.5, 119.13), (129.5, 118.895)] r0=0.505 dr=0.635 e1=0.270; last: outside own plane",
-      "U42.11 planned: outside own plane path=[(130.5, 122.263), (130.5, 122.87), (130.481, 122.892), (130.481, 123.105)] r0=0.505 dr=0.580 e1=0.270; last: outside own plane",
-      "D38.5 planned: courtyard of J_BUMP_L path=[(117.365, 176.75), (116.82, 176.75), (116.743, 176.685), (116.585, 176.685)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of J_TOF9",
-      "D38.4 planned: courtyard of C153 path=[(117.365, 177.25), (116.82, 177.25), (116.005, 177.25)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of R97",
-      "D38.2 planned: courtyard of J_BUMP_L path=[(117.365, 178.25), (116.82, 178.25), (116.005, 178.25)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of R97",
-      "D38.1 planned: courtyard of J_BUMP_L path=[(117.365, 178.75), (116.82, 178.75), (116.743, 178.815), (116.585, 178.815)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of R97",
-      "D39.2 planned: edge path=[(115.25, 89.365), (115.25, 88.82), (115.172, 88.727), (115.172, 87.955)] r0=0.555 dr=0.580 e1=0.270; last: courtyard of R222",
-      "D39.3 planned: edge path=[(115.75, 89.365), (115.75, 88.82), (115.737, 88.805), (115.737, 88.535)] r0=0.555 dr=0.580 e1=0.270; last: courtyard of R222",
-      "D39.4 planned: edge path=[(116.25, 89.365), (116.25, 88.82), (116.302, 88.758), (116.302, 87.955)] r0=0.555 dr=0.580 e1=0.270; last: courtyard of R222",
-      "D39.5 planned: edge path=[(116.75, 89.365), (116.75, 88.82), (116.867, 88.681), (116.867, 88.535)] r0=0.555 dr=0.580 e1=0.270; last: courtyard of R222",
+      "U20M.32 planned: courtyard of SW1 path=[(85.75, 146.675), (85.75, 147.72), (86.034, 148.059), (86.034, 148.943)] r0=0.913 dr=0.580 e1=0.270; last: via: seg ARM_PERMIT ",
+      "U42.3 planned: outside own plane path=[(129.5, 119.74), (129.5, 119.13), (129.426, 119.041), (129.426, 118.765)] r0=0.635 dr=0.580 e1=0.270; last: outside own plane",
+      "U42.6 planned: courtyard of D8 path=[(131.0, 119.74), (131.0, 119.13), (131.121, 118.986), (131.121, 118.185)] r0=0.635 dr=0.580 e1=0.270; last: keepout",
+      "U42.11 planned: outside own plane path=[(130.5, 122.26), (130.5, 122.87), (130.481, 122.892), (130.481, 123.105)] r0=0.505 dr=0.580 e1=0.270; last: outside own plane",
+      "D38.8 planned: courtyard of J_AUX path=[(115.5, 168.615), (115.5, 168.07), (115.5, 167.835)] r0=0.505 dr=0.635 e1=0.270; last: courtyard of J_TOF9",
+      "D38.4 planned: courtyard of J_TOF9 path=[(115.0, 169.385), (115.0, 169.93), (114.922, 170.023), (114.922, 170.795)] r0=0.555 dr=0.580 e1=0.270; last: courtyard of J_AUX",
+      "D38.3 planned: courtyard of J_TOF9 path=[(115.5, 169.385), (115.5, 169.93), (115.487, 169.945), (115.487, 170.215)] r0=0.555 dr=0.580 e1=0.270; last: courtyard of J_AUX",
+      "D38.2 planned: courtyard of J_TOF9 path=[(116.0, 169.385), (116.0, 169.93), (116.052, 169.992), (116.052, 170.795)] r0=0.555 dr=0.580 e1=0.270; last: courtyard of J_AUX",
+      "D38.1 planned: courtyard of J_TOF9 path=[(116.5, 169.385), (116.5, 169.93), (116.617, 170.069), (116.617, 170.215)] r0=0.555 dr=0.580 e1=0.270; last: courtyard of J_AUX",
+      "D39.4 planned: courtyard of J_TOF0 path=[(113.365, 92.0), (112.82, 92.0), (112.789, 91.974), (112.005, 91.974)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of J_DOCK",
+      "D39.3 planned: courtyard of J_TOF0 path=[(113.365, 92.5), (112.82, 92.5), (112.774, 92.539), (112.585, 92.539)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of R242",
+      "D39.1 planned: courtyard of J_TOF0 path=[(113.365, 93.5), (112.82, 93.5), (112.774, 93.539), (112.585, 93.539)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of R242",
+      "D39.8 planned: courtyard of J_DOCK path=[(114.135, 92.5), (114.68, 92.5), (114.915, 92.5)] r0=0.505 dr=0.635 e1=0.270; last: courtyard of TP12",
       "D40.1 planned: courtyard of J_TOF1 path=[(146.75, 94.115), (146.75, 93.57), (146.711, 93.524), (146.711, 93.335)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of R226",
       "D40.3 planned: courtyard of J_TOF1 path=[(147.75, 94.115), (147.75, 93.57), (147.711, 93.524), (147.711, 93.335)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of R226",
       "D40.4 planned: courtyard of J_TOF1 path=[(148.25, 94.115), (148.25, 93.57), (148.276, 93.539), (148.276, 92.755)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of R226",
       "D40.5 planned: courtyard of J_TOF1 path=[(148.75, 94.115), (148.75, 93.57), (148.841, 93.462), (148.841, 93.335)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of R226",
-      "D40.8 planned: courtyard of J_TOF1 path=[(147.75, 94.885), (147.75, 95.43), (147.75, 95.665)] r0=0.505 dr=0.635 e1=0.270; last: courtyard of TP32",
-      "D41.2 planned: courtyard of R231 path=[(100.0, 185.615), (100.0, 185.07), (100.0, 184.2)] r0=0.505 dr=0.635 e1=0.270; last: edge",
-      "D41.5 planned: courtyard of J_BTN path=[(101.5, 185.615), (101.5, 185.07), (101.5, 184.835)] r0=0.505 dr=0.635 e1=0.270; last: edge",
-      "D41.8 planned: via: via GND  path=[(100.5, 186.385), (100.5, 186.93), (100.5, 187.165)] r0=0.505 dr=0.635 e1=0.270; last: courtyard of R231",
-      "D42.5 planned: courtyard of J_TOF3 path=[(165.115, 171.25), (164.57, 171.25), (164.415, 171.12), (164.315, 171.12)] r0=0.525 dr=0.580 e1=0.270; last: courtyard of R275",
-      "D42.4 planned: courtyard of C162 path=[(165.115, 171.75), (164.57, 171.75), (164.493, 171.685), (163.735, 171.685)] r0=0.525 dr=0.580 e1=0.270; last: courtyard of R275",
-      "D42.3 planned: courtyard of C162 path=[(165.115, 172.25), (164.57, 172.25), (164.315, 172.25)] r0=0.525 dr=0.580 e1=0.270; last: courtyard of TP15",
-      "D42.2 planned: courtyard of C162 path=[(165.115, 172.75), (164.57, 172.75), (164.493, 172.815), (163.735, 172.815)] r0=0.525 dr=0.580 e1=0.270; last: courtyard of TP15",
-      "D42.1 planned: courtyard of C162 path=[(165.115, 173.25), (164.57, 173.25), (164.415, 173.38), (164.315, 173.38)] r0=0.525 dr=0.580 e1=0.270; last: courtyard of TP15",
-      "D42.8 planned: courtyard of J_TOF3 path=[(165.885, 172.25), (166.43, 172.25), (166.665, 172.25)] r0=0.505 dr=0.635 e1=0.270; last: courtyard of J_TOF3",
-      "D43.2 planned: seg: via GND  path=[(62.5, 183.865), (62.5, 183.32), (62.5, 182.505)] r0=0.505 dr=0.580 e1=0.270; last: seg: pad unconnected-(D43-NC-Pad9) D43",
-      "D43.4 planned: courtyard of C152 path=[(63.5, 183.865), (63.5, 183.32), (63.5, 182.505)] r0=0.505 dr=0.580 e1=0.270; last: seg: pad unconnected-(D43-NC-Pad7) D43",
-      "D44.2 planned: courtyard of R250 path=[(119.75, 184.365), (119.75, 183.82), (119.737, 183.805), (119.737, 183.005)] r0=0.505 dr=0.580 e1=0.270; last: edge",
-      "D44.4 planned: courtyard of R250 path=[(120.75, 184.365), (120.75, 183.82), (120.737, 183.805), (120.737, 183.005)] r0=0.505 dr=0.580 e1=0.270; last: edge",
-      "D45.5 planned: courtyard of J_TOF6 path=[(169.115, 164.5), (168.57, 164.5), (168.415, 164.37), (168.315, 164.37)] r0=0.525 dr=0.580 e1=0.270; last: courtyard of J_TOF6",
-      "D45.4 planned: courtyard of C165 path=[(169.115, 165.0), (168.57, 165.0), (168.493, 164.935), (167.735, 164.935)] r0=0.525 dr=0.580 e1=0.270; last: courtyard of J_TOF6",
-      "D45.3 planned: courtyard of C165 path=[(169.115, 165.5), (168.57, 165.5), (168.315, 165.5)] r0=0.525 dr=0.580 e1=0.270; last: courtyard of TP18",
-      "D45.2 planned: courtyard of C165 path=[(169.115, 166.0), (168.57, 166.0), (168.493, 166.065), (167.735, 166.065)] r0=0.525 dr=0.580 e1=0.270; last: courtyard of TP18",
-      "D45.1 planned: courtyard of C165 path=[(169.115, 166.5), (168.57, 166.5), (168.415, 166.63), (168.315, 166.63)] r0=0.525 dr=0.580 e1=0.270; last: courtyard of TP18",
-      "D45.8 planned: courtyard of J_TOF6 path=[(169.885, 165.5), (170.43, 165.5), (170.665, 165.5)] r0=0.505 dr=0.635 e1=0.270; last: courtyard of C165",
-      "D46.1 planned: courtyard of J_TOF7 path=[(201.0, 122.865), (201.0, 122.32), (200.935, 122.243), (200.935, 122.085)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of C20",
-      "D46.2 planned: courtyard of C166 path=[(201.5, 122.865), (201.5, 122.32), (201.5, 121.505)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of C20",
-      "D46.4 planned: courtyard of C166 path=[(202.5, 122.865), (202.5, 122.32), (202.5, 121.505)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of C20",
-      "D46.5 planned: courtyard of J_TOF7 path=[(203.0, 122.865), (203.0, 122.32), (203.065, 122.243), (203.065, 122.085)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of C20",
-      "D46.8 planned: via: via GND  path=[(202.0, 123.635), (202.0, 124.18), (202.0, 124.415)] r0=0.505 dr=0.635 e1=0.270; last: courtyard of C166",
-      "D47.5 planned: courtyard of J_ESTOP path=[(138.115, 180.0), (137.57, 180.0), (137.415, 179.87), (137.315, 179.87)] r0=0.525 dr=0.580 e1=0.270; last: courtyard of J_ESTOP",
-      "D47.4 planned: courtyard of TP17 path=[(138.115, 180.5), (137.57, 180.5), (137.493, 180.435), (136.735, 180.435)] r0=0.525 dr=0.580 e1=0.270; last: courtyard of J_ESTOP",
-      "D47.3 planned: courtyard of J_ESTOP path=[(138.115, 181.0), (137.57, 181.0), (137.315, 181.0)] r0=0.525 dr=0.580 e1=0.270; last: courtyard of J_ESTOP",
-      "D47.2 planned: courtyard of TP17 path=[(138.115, 181.5), (137.57, 181.5), (137.493, 181.565), (136.735, 181.565)] r0=0.525 dr=0.580 e1=0.270; last: courtyard of J_ESTOP",
-      "D47.1 planned: courtyard of J_ESTOP path=[(138.115, 182.0), (137.57, 182.0), (137.415, 182.13), (137.315, 182.13)] r0=0.525 dr=0.580 e1=0.270; last: courtyard of J_ESTOP",
-      "D47.8 planned: courtyard of J_ESTOP path=[(138.885, 181.0), (139.43, 181.0), (139.665, 181.0)] r0=0.505 dr=0.635 e1=0.270; last: courtyard of TP17",
-      "D48.1 planned: courtyard of J_ESTOP path=[(146.0, 185.365), (146.0, 184.82), (145.948, 184.758), (145.948, 184.585)] r0=0.505 dr=0.580 e1=0.270; last: edge",
-      "D48.2 planned: courtyard of J_ESTOP path=[(146.5, 185.365), (146.5, 184.82), (146.513, 184.805), (146.513, 184.005)] r0=0.505 dr=0.580 e1=0.270; last: edge",
-      "D49.2 planned: courtyard of J_PAUX path=[(177.25, 170.115), (177.25, 169.57), (177.185, 169.493), (177.185, 168.735)] r0=0.525 dr=0.580 e1=0.270; last: courtyard of C169",
-      "D49.3 planned: courtyard of J_TOF10 path=[(177.75, 170.115), (177.75, 169.57), (177.75, 169.315)] r0=0.525 dr=0.580 e1=0.270; last: courtyard of C169",
-      "D49.4 planned: courtyard of J_PAUX path=[(178.25, 170.115), (178.25, 169.57), (178.315, 169.493), (178.315, 168.735)] r0=0.525 dr=0.580 e1=0.270; last: courtyard of C169",
-      "D49.5 planned: courtyard of J_TOF10 path=[(178.75, 170.115), (178.75, 169.57), (178.88, 169.415), (178.88, 169.315)] r0=0.525 dr=0.580 e1=0.270; last: courtyard of J_TOF10",
-      "D49.8 planned: courtyard of J_TOF10 path=[(177.75, 170.885), (177.75, 171.43), (177.75, 171.665)] r0=0.505 dr=0.635 e1=0.270; last: courtyard of J_PAUX",
+      "D40.8 planned: courtyard of J_TOF1 path=[(147.75, 94.885), (147.75, 95.43), (147.75, 95.665)] r0=0.505 dr=0.635 e1=0.270; last: courtyard of TP52",
+      "D41.1 planned: courtyard of J_BTN path=[(97.75, 181.865), (97.75, 181.32), (97.711, 181.274), (97.711, 181.085)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of FB_U",
+      "D41.3 planned: courtyard of J_BTN path=[(98.75, 181.865), (98.75, 181.32), (98.711, 181.274), (98.711, 181.085)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of FB_U",
+      "D41.4 planned: courtyard of R96 path=[(99.25, 181.865), (99.25, 181.32), (99.276, 181.289), (99.276, 180.505)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of FB_U",
+      "D41.5 planned: courtyard of J_BTN path=[(99.75, 181.865), (99.75, 181.32), (99.841, 181.212), (99.841, 181.085)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of FB_U",
+      "D41.8 planned: courtyard of J_BTN path=[(98.75, 182.635), (98.75, 183.18), (98.75, 183.415)] r0=0.505 dr=0.635 e1=0.270; last: courtyard of R96",
+      "D42.5 planned: courtyard of J_TOF3 path=[(165.115, 171.0), (164.57, 171.0), (164.415, 170.87), (164.315, 170.87)] r0=0.525 dr=0.580 e1=0.270; last: courtyard of J_TOF3",
+      "D42.4 planned: courtyard of J_TOF3 path=[(165.115, 171.5), (164.57, 171.5), (164.493, 171.435), (163.735, 171.435)] r0=0.525 dr=0.580 e1=0.270; last: courtyard of J_TOF3",
+      "D42.3 planned: courtyard of C162 path=[(165.115, 172.0), (164.57, 172.0), (164.315, 172.0)] r0=0.525 dr=0.580 e1=0.270; last: courtyard of J_TOF3",
+      "D42.2 planned: courtyard of C162 path=[(165.115, 172.5), (164.57, 172.5), (164.493, 172.565), (163.735, 172.565)] r0=0.525 dr=0.580 e1=0.270; last: courtyard of TP15",
+      "D42.1 planned: courtyard of C162 path=[(165.115, 173.0), (164.57, 173.0), (164.415, 173.13), (164.315, 173.13)] r0=0.525 dr=0.580 e1=0.270; last: courtyard of TP15",
+      "D42.8 planned: courtyard of J_TOF3 path=[(165.885, 172.0), (166.43, 172.0), (166.665, 172.0)] r0=0.505 dr=0.635 e1=0.270; last: courtyard of J_TOF3",
+      "D43.2 planned: courtyard of J_CM5 path=[(62.0, 180.115), (62.0, 179.57), (62.0, 178.755)] r0=0.505 dr=0.580 e1=0.270; last: seg: pad unconnected-(D43-NC-Pad9) D43",
+      "D43.4 planned: courtyard of J_CM5 path=[(63.0, 180.115), (63.0, 179.57), (63.0, 178.755)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of TP17",
+      "D44.1 planned: courtyard of J_MODE path=[(72.0, 185.865), (72.0, 185.32), (71.948, 185.258), (71.948, 185.085)] r0=0.505 dr=0.580 e1=0.270; last: edge",
+      "D44.2 planned: courtyard of J_MODE path=[(72.5, 185.865), (72.5, 185.32), (72.513, 185.305), (72.513, 184.505)] r0=0.505 dr=0.580 e1=0.270; last: edge",
+      "D44.5 planned: courtyard of J_MODE path=[(74.0, 185.865), (74.0, 185.32), (74.013, 185.305), (74.013, 185.085)] r0=0.505 dr=0.580 e1=0.270; last: edge",
+      "D44.8 planned: edge path=[(73.0, 186.635), (73.0, 187.18), (73.0, 187.415)] r0=0.505 dr=0.635 e1=0.270; last: courtyard of J_MODE",
+      "D45.5 planned: courtyard of J_TOF6 path=[(165.0, 163.635), (165.0, 164.18), (164.935, 164.257), (164.935, 164.415)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of C7",
+      "D45.4 planned: courtyard of FB11 path=[(165.5, 163.635), (165.5, 164.18), (165.5, 164.995)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of C7",
+      "D45.2 planned: courtyard of C165 path=[(166.5, 163.635), (166.5, 164.18), (166.5, 164.995)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of C7",
+      "D45.1 planned: courtyard of J_TOF6 path=[(167.0, 163.635), (167.0, 164.18), (167.065, 164.257), (167.065, 164.415)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of C7",
+      "D46.1 planned: courtyard of J_TOF7 path=[(200.75, 122.865), (200.75, 122.32), (200.685, 122.243), (200.685, 122.085)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of C20",
+      "D46.2 planned: courtyard of C166 path=[(201.25, 122.865), (201.25, 122.32), (201.25, 121.505)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of C20",
+      "D46.4 planned: courtyard of C166 path=[(202.25, 122.865), (202.25, 122.32), (202.25, 121.505)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of C20",
+      "D46.5 planned: courtyard of J_TOF7 path=[(202.75, 122.865), (202.75, 122.32), (202.815, 122.243), (202.815, 122.085)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of C20",
+      "D46.8 planned: via: via GND  path=[(201.75, 123.635), (201.75, 124.18), (201.75, 124.415)] r0=0.505 dr=0.635 e1=0.270; last: courtyard of C166",
+      "D47.1 planned: courtyard of J_BUMP_L path=[(110.5, 179.865), (110.5, 179.32), (110.409, 179.212), (110.409, 179.085)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of TP20",
+      "D47.2 planned: courtyard of R109 path=[(111.0, 179.865), (111.0, 179.32), (110.974, 179.289), (110.974, 178.505)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of TP20",
+      "D47.3 planned: courtyard of J_BUMP_L path=[(111.5, 179.865), (111.5, 179.32), (111.539, 179.274), (111.539, 179.085)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of TP20",
+      "D47.5 planned: courtyard of J_BUMP_L path=[(112.5, 179.865), (112.5, 179.32), (112.539, 179.274), (112.539, 179.085)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of R277",
+      "D47.8 planned: courtyard of J_BUMP_L path=[(111.5, 180.635), (111.5, 181.18), (111.5, 181.415)] r0=0.505 dr=0.635 e1=0.270; last: courtyard of R109",
+      "D48.5 planned: courtyard of J_TOF9 path=[(122.115, 172.25), (121.57, 172.25), (121.555, 172.237), (121.335, 172.237)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of C170",
+      "D48.2 planned: courtyard of C168 path=[(122.115, 173.75), (121.57, 173.75), (121.555, 173.737), (120.755, 173.737)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of TP10",
+      "D48.1 planned: courtyard of J_TOF9 path=[(122.115, 174.25), (121.57, 174.25), (121.508, 174.302), (121.335, 174.302)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of C171",
+      "D49.5 planned: courtyard of J_TOF10 path=[(174.5, 170.885), (174.5, 171.43), (174.435, 171.507), (174.435, 171.665)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of J_TOF6",
+      "D49.4 planned: courtyard of FB15 path=[(175.0, 170.885), (175.0, 171.43), (175.0, 172.245)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of J_TOF6",
+      "D49.2 planned: courtyard of C169 path=[(176.0, 170.885), (176.0, 171.43), (176.0, 172.245)] r0=0.505 dr=0.580 e1=0.270; last: seg: pad unconnected-(D49-NC-Pad9) D49",
+      "D49.1 planned: courtyard of J_TOF10 path=[(176.5, 170.885), (176.5, 171.43), (176.565, 171.507), (176.565, 171.665)] r0=0.505 dr=0.580 e1=0.270; last: seg: pad unconnected-(D49-NC-Pad10) D49",
       "U61.1 planned: courtyard of J_DBG path=[(105.4, 163.222), (104.53, 163.222), (103.715, 163.223)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of J_DBG"
     ],
-    "direct": 13,
+    "direct": 16,
     "enabled": true,
-    "inward": 49,
+    "inward": 45,
     "layers": [
       "In2.Cu",
       "In3.Cu",
@@ -810,26 +813,25 @@
       },
       "D37": {
         "exposed_pad": false,
-        "inward": 1,
+        "inward": 2,
         "pads": 10,
         "pitch": 0.5,
-        "ring": 1,
-        "skipped": 8
+        "ring": 2,
+        "skipped": 6
       },
       "D38": {
+        "direct": 1,
         "exposed_pad": false,
-        "inward": 1,
         "pads": 10,
         "pitch": 0.5,
-        "ring": 1,
-        "skipped": 8
+        "skipped": 9
       },
       "D39": {
         "direct": 1,
         "exposed_pad": false,
-        "inward": 1,
         "pads": 10,
         "pitch": 0.5,
+        "ring": 1,
         "skipped": 8
       },
       "D40": {
@@ -840,12 +842,11 @@
         "skipped": 9
       },
       "D41": {
-        "direct": 2,
+        "direct": 1,
         "exposed_pad": false,
-        "inward": 1,
         "pads": 10,
         "pitch": 0.5,
-        "skipped": 7
+        "skipped": 9
       },
       "D42": {
         "exposed_pad": false,
@@ -864,17 +865,18 @@
       "D44": {
         "direct": 1,
         "exposed_pad": false,
-        "inward": 2,
+        "inward": 1,
         "pads": 10,
         "pitch": 0.5,
-        "ring": 1,
-        "skipped": 6
+        "skipped": 8
       },
       "D45": {
         "exposed_pad": false,
+        "inward": 1,
         "pads": 10,
         "pitch": 0.5,
-        "skipped": 10
+        "ring": 1,
+        "skipped": 8
       },
       "D46": {
         "exposed_pad": false,
@@ -884,10 +886,11 @@
         "skipped": 9
       },
       "D47": {
+        "direct": 1,
         "exposed_pad": false,
         "pads": 10,
         "pitch": 0.5,
-        "skipped": 10
+        "skipped": 9
       },
       "D48": {
         "direct": 1,
@@ -895,15 +898,16 @@
         "inward": 1,
         "pads": 10,
         "pitch": 0.5,
-        "ring": 2,
-        "skipped": 6
+        "ring": 1,
+        "skipped": 7
       },
       "D49": {
         "exposed_pad": false,
+        "inward": 1,
         "pads": 10,
         "pitch": 0.5,
         "ring": 1,
-        "skipped": 9
+        "skipped": 8
       },
       "D_PAUSE": {
         "exposed_pad": false,
@@ -912,11 +916,12 @@
         "skipped": 10
       },
       "U10": {
+        "direct": 2,
         "exposed_pad": true,
         "pads": 14,
         "pitch": 0.6,
-        "ring": 11,
-        "skipped": 2
+        "ring": 7,
+        "skipped": 4
       },
       "U13": {
         "exposed_pad": false,
@@ -959,19 +964,19 @@
       },
       "U2": {
         "exposed_pad": false,
-        "inward": 2,
+        "inward": 1,
         "pads": 10,
         "pitch": 0.5,
-        "ring": 5,
-        "skipped": 3
+        "ring": 7,
+        "skipped": 2
       },
       "U20M": {
         "exposed_pad": false,
         "inward": 26,
         "pads": 64,
         "pitch": 0.5,
-        "ring": 24,
-        "skipped": 14
+        "ring": 23,
+        "skipped": 15
       },
       "U3": {
         "exposed_pad": true,
@@ -990,18 +995,17 @@
       },
       "U42": {
         "exposed_pad": false,
-        "inward": 3,
         "pads": 16,
         "pitch": 0.5,
-        "ring": 7,
-        "skipped": 6
+        "ring": 9,
+        "skipped": 7
       },
       "U61": {
         "exposed_pad": false,
-        "inward": 4,
+        "inward": 5,
         "pads": 16,
         "pitch": 0.635,
-        "ring": 8,
+        "ring": 7,
         "skipped": 4
       },
       "U8": {
@@ -1014,7 +1018,6 @@
     },
     "pitch_limit": 0.65,
     "skipped": [
-      "U2.5 [I2C_SYS_SCL]: no legal escape position",
       "U2.7 [GND]: no legal escape position inside its own plane polygon",
       "U2.6 [3V3]: no legal escape position inside its own plane polygon",
       "U3.1 [CHG_VIN]: no legal escape position",
@@ -1040,6 +1043,8 @@
       "U3.14 [U3_BOOST]: no legal escape position",
       "U10.8 [VSYS]: no escape direction (square/round pad)",
       "U10.12 [VSYS]: no escape direction (square/round pad)",
+      "U10.3 [GND]: no legal escape position inside its own plane polygon",
+      "U10.5 [V5_PGOOD]: no legal escape position",
       "U13.3 [unconnected-(U13-Pad3)]: not connected (single-pin net)",
       "U13.2 [GND]: no legal escape position inside its own plane polygon",
       "U16.3 [unconnected-(U16-Pad3)]: not connected (single-pin net)",
@@ -1108,10 +1113,8 @@
       "D37.9 [unconnected-(D37-NC-Pad9)]: not connected (single-pin net)",
       "D37.7 [unconnected-(D37-NC-Pad7)]: not connected (single-pin net)",
       "D37.6 [unconnected-(D37-NC-Pad6)]: not connected (single-pin net)",
-      "D37.1 [ENCC_L_A]: no legal escape position",
       "D37.2 [ENCC_L_B]: no legal escape position",
       "D37.4 [ENCC_R_A]: no legal escape position",
-      "D37.5 [ENCC_R_B]: no legal escape position",
       "U20M.6 [OSC_OUT]: no legal escape position",
       "U20M.7 [NRST]: no legal escape position",
       "U20M.9 [HEAD_LOOP_SENSE]: no legal escape position",
@@ -1126,28 +1129,31 @@
       "U20M.19 [SPI1_SCK]: no legal escape position",
       "U20M.20 [SPI1_MISO]: no legal escape position",
       "U20M.26 [BUZZER]: no legal escape position",
+      "U20M.32 [3V3]: no legal escape position inside its own plane polygon",
       "U42.16 [unconnected-(U42-Pad16)]: not connected (single-pin net)",
       "U42.1 [unconnected-(U42-Pad1)]: not connected (single-pin net)",
       "U42.13 [unconnected-(U42-Pad13)]: not connected (single-pin net)",
       "U42.12 [unconnected-(U42-Pad12)]: not connected (single-pin net)",
       "U42.3 [3V3]: no legal escape position inside its own plane polygon",
+      "U42.6 [GND]: no legal escape position inside its own plane polygon",
       "U42.11 [3V3]: no legal escape position inside its own plane polygon",
       "D38.6 [unconnected-(D38-NC-Pad6)]: not connected (single-pin net)",
       "D38.7 [unconnected-(D38-NC-Pad7)]: not connected (single-pin net)",
       "D38.9 [unconnected-(D38-NC-Pad9)]: not connected (single-pin net)",
       "D38.10 [unconnected-(D38-NC-Pad10)]: not connected (single-pin net)",
-      "D38.5 [DBG_RX_C]: no legal escape position",
+      "D38.8 [GND]: no legal escape position inside its own plane polygon",
       "D38.4 [DBG_TX_C]: no legal escape position",
+      "D38.3 [GND]: no legal escape position inside its own plane polygon",
       "D38.2 [NTC_PACK]: no legal escape position",
       "D38.1 [NTC_BAY]: no legal escape position",
-      "D39.10 [unconnected-(D39-NC-Pad10)]: not connected (single-pin net)",
-      "D39.9 [unconnected-(D39-NC-Pad9)]: not connected (single-pin net)",
-      "D39.7 [unconnected-(D39-NC-Pad7)]: not connected (single-pin net)",
       "D39.6 [unconnected-(D39-NC-Pad6)]: not connected (single-pin net)",
-      "D39.2 [TOF0_SCL_C]: no legal escape position",
-      "D39.3 [GND]: no legal escape position inside its own plane polygon",
+      "D39.7 [unconnected-(D39-NC-Pad7)]: not connected (single-pin net)",
+      "D39.9 [unconnected-(D39-NC-Pad9)]: not connected (single-pin net)",
+      "D39.10 [unconnected-(D39-NC-Pad10)]: not connected (single-pin net)",
       "D39.4 [TOF0_XSHUT_C]: no legal escape position",
-      "D39.5 [TOF0_GPIO1]: no legal escape position",
+      "D39.3 [GND]: no legal escape position inside its own plane polygon",
+      "D39.1 [TOF0_SDA_C]: no legal escape position",
+      "D39.8 [GND]: no legal escape position inside its own plane polygon",
       "D40.10 [unconnected-(D40-NC-Pad10)]: not connected (single-pin net)",
       "D40.9 [unconnected-(D40-NC-Pad9)]: not connected (single-pin net)",
       "D40.7 [unconnected-(D40-NC-Pad7)]: not connected (single-pin net)",
@@ -1161,7 +1167,9 @@
       "D41.9 [unconnected-(D41-NC-Pad9)]: not connected (single-pin net)",
       "D41.7 [unconnected-(D41-NC-Pad7)]: not connected (single-pin net)",
       "D41.6 [unconnected-(D41-NC-Pad6)]: not connected (single-pin net)",
-      "D41.2 [TOF2_SCL_C]: no legal escape position",
+      "D41.1 [TOF2_SDA_C]: no legal escape position",
+      "D41.3 [GND]: no legal escape position inside its own plane polygon",
+      "D41.4 [TOF2_XSHUT_C]: no legal escape position",
       "D41.5 [TOF2_GPIO1]: no legal escape position",
       "D41.8 [GND]: no legal escape position inside its own plane polygon",
       "D42.6 [unconnected-(D42-NC-Pad6)]: not connected (single-pin net)",
@@ -1184,18 +1192,18 @@
       "D44.9 [unconnected-(D44-NC-Pad9)]: not connected (single-pin net)",
       "D44.7 [unconnected-(D44-NC-Pad7)]: not connected (single-pin net)",
       "D44.6 [unconnected-(D44-NC-Pad6)]: not connected (single-pin net)",
+      "D44.1 [TOF5_SDA_C]: no legal escape position",
       "D44.2 [TOF5_SCL_C]: no legal escape position",
-      "D44.4 [TOF5_XSHUT_C]: no legal escape position",
+      "D44.5 [TOF5_GPIO1]: no legal escape position",
+      "D44.8 [GND]: no legal escape position inside its own plane polygon",
       "D45.6 [unconnected-(D45-NC-Pad6)]: not connected (single-pin net)",
       "D45.7 [unconnected-(D45-NC-Pad7)]: not connected (single-pin net)",
       "D45.9 [unconnected-(D45-NC-Pad9)]: not connected (single-pin net)",
       "D45.10 [unconnected-(D45-NC-Pad10)]: not connected (single-pin net)",
       "D45.5 [TOF6_GPIO1]: no legal escape position",
       "D45.4 [TOF6_XSHUT_C]: no legal escape position",
-      "D45.3 [GND]: no legal escape position inside its own plane polygon",
       "D45.2 [TOF6_SCL_C]: no legal escape position",
       "D45.1 [TOF6_SDA_C]: no legal escape position",
-      "D45.8 [GND]: no legal escape position inside its own plane polygon",
       "D46.10 [unconnected-(D46-NC-Pad10)]: not connected (single-pin net)",
       "D46.9 [unconnected-(D46-NC-Pad9)]: not connected (single-pin net)",
       "D46.7 [unconnected-(D46-NC-Pad7)]: not connected (single-pin net)",
@@ -1205,31 +1213,30 @@
       "D46.4 [TOF7_XSHUT_C]: no legal escape position",
       "D46.5 [TOF7_GPIO1]: no legal escape position",
       "D46.8 [GND]: no legal escape position inside its own plane polygon",
-      "D47.6 [unconnected-(D47-NC-Pad6)]: not connected (single-pin net)",
-      "D47.7 [unconnected-(D47-NC-Pad7)]: not connected (single-pin net)",
-      "D47.9 [unconnected-(D47-NC-Pad9)]: not connected (single-pin net)",
       "D47.10 [unconnected-(D47-NC-Pad10)]: not connected (single-pin net)",
-      "D47.5 [TOF8_GPIO1]: no legal escape position",
-      "D47.4 [TOF8_XSHUT_C]: no legal escape position",
-      "D47.3 [GND]: no legal escape position inside its own plane polygon",
-      "D47.2 [TOF8_SCL_C]: no legal escape position",
+      "D47.9 [unconnected-(D47-NC-Pad9)]: not connected (single-pin net)",
+      "D47.7 [unconnected-(D47-NC-Pad7)]: not connected (single-pin net)",
+      "D47.6 [unconnected-(D47-NC-Pad6)]: not connected (single-pin net)",
       "D47.1 [TOF8_SDA_C]: no legal escape position",
+      "D47.2 [TOF8_SCL_C]: no legal escape position",
+      "D47.3 [GND]: no legal escape position inside its own plane polygon",
+      "D47.5 [TOF8_GPIO1]: no legal escape position",
       "D47.8 [GND]: no legal escape position inside its own plane polygon",
-      "D48.10 [unconnected-(D48-NC-Pad10)]: not connected (single-pin net)",
-      "D48.9 [unconnected-(D48-NC-Pad9)]: not connected (single-pin net)",
-      "D48.7 [unconnected-(D48-NC-Pad7)]: not connected (single-pin net)",
       "D48.6 [unconnected-(D48-NC-Pad6)]: not connected (single-pin net)",
-      "D48.1 [TOF9_SDA_C]: no legal escape position",
+      "D48.7 [unconnected-(D48-NC-Pad7)]: not connected (single-pin net)",
+      "D48.9 [unconnected-(D48-NC-Pad9)]: not connected (single-pin net)",
+      "D48.10 [unconnected-(D48-NC-Pad10)]: not connected (single-pin net)",
+      "D48.5 [TOF9_GPIO1]: no legal escape position",
       "D48.2 [TOF9_SCL_C]: no legal escape position",
-      "D49.10 [unconnected-(D49-NC-Pad10)]: not connected (single-pin net)",
-      "D49.9 [unconnected-(D49-NC-Pad9)]: not connected (single-pin net)",
-      "D49.7 [unconnected-(D49-NC-Pad7)]: not connected (single-pin net)",
+      "D48.1 [TOF9_SDA_C]: no legal escape position",
       "D49.6 [unconnected-(D49-NC-Pad6)]: not connected (single-pin net)",
-      "D49.2 [TOF10_SCL_C]: no legal escape position",
-      "D49.3 [GND]: no legal escape position inside its own plane polygon",
-      "D49.4 [TOF10_XSHUT_C]: no legal escape position",
+      "D49.7 [unconnected-(D49-NC-Pad7)]: not connected (single-pin net)",
+      "D49.9 [unconnected-(D49-NC-Pad9)]: not connected (single-pin net)",
+      "D49.10 [unconnected-(D49-NC-Pad10)]: not connected (single-pin net)",
       "D49.5 [TOF10_GPIO1]: no legal escape position",
-      "D49.8 [GND]: no legal escape position inside its own plane polygon",
+      "D49.4 [TOF10_XSHUT_C]: no legal escape position",
+      "D49.2 [TOF10_SCL_C]: no legal escape position",
+      "D49.1 [TOF10_SDA_C]: no legal escape position",
       "U61.2 [unconnected-(U61-~{RTS}-Pad2)]: not connected (single-pin net)",
       "U61.14 [unconnected-(U61-CBUS1-Pad14)]: not connected (single-pin net)",
       "U61.16 [unconnected-(U61-CBUS3-Pad16)]: not connected (single-pin net)",
@@ -1237,8 +1244,8 @@
     ],
     "skipped_by_reason": {
       "no escape direction (square/round pad)": 2,
-      "no legal escape position": 92,
-      "no legal escape position inside its own plane polygon": 48,
+      "no legal escape position": 91,
+      "no legal escape position inside its own plane polygon": 52,
       "not connected (single-pin net)": 78
     },
     "track": 0.15,
@@ -1247,11 +1254,11 @@
       0.3
     ],
     "via_target_layers": {
-      "B.Cu": 50,
-      "In2.Cu": 51,
-      "In3.Cu": 51
+      "B.Cu": 48,
+      "In2.Cu": 49,
+      "In3.Cu": 49
     },
-    "vias": 152
+    "vias": 146
   },
   "finisher": null,
   "gen_warnings": [
@@ -1275,16 +1282,6 @@
     "W1: 3D envelope uses the default height 1.0 mm (give height=)",
     "JP2: 3D envelope uses the default height 1.0 mm (give height=)",
     "NT1: 3D envelope uses the default height 1.0 mm (give height=)",
-    "H1: 3D envelope uses the default height 1.0 mm (give height=)",
-    "H2: 3D envelope uses the default height 1.0 mm (give height=)",
-    "H3: 3D envelope uses the default height 1.0 mm (give height=)",
-    "H4: 3D envelope uses the default height 1.0 mm (give height=)",
-    "H5: 3D envelope uses the default height 1.0 mm (give height=)",
-    "H6: 3D envelope uses the default height 1.0 mm (give height=)",
-    "FID1: 3D envelope uses the default height 1.0 mm (give height=)",
-    "FID2: 3D envelope uses the default height 1.0 mm (give height=)",
-    "FID3: 3D envelope uses the default height 1.0 mm (give height=)",
-    "escape: U2.5 [I2C_SYS_SCL]: no legal escape position (left to the autorouter)",
     "escape: U2.7 [GND]: no legal escape position inside its own plane polygon (left to the autorouter)",
     "escape: U2.6 [3V3]: no legal escape position inside its own plane polygon (left to the autorouter)",
     "escape: U3.1 [CHG_VIN]: no legal escape position (left to the autorouter)",
@@ -1308,6 +1305,8 @@
     "escape: U3.12 [GND]: no legal escape position inside its own plane polygon (left to the autorouter)",
     "escape: U3.13 [GND]: no legal escape position inside its own plane polygon (left to the autorouter)",
     "escape: U3.14 [U3_BOOST]: no legal escape position (left to the autorouter)",
+    "escape: U10.3 [GND]: no legal escape position inside its own plane polygon (left to the autorouter)",
+    "escape: U10.5 [V5_PGOOD]: no legal escape position (left to the autorouter)",
     "escape: U13.2 [GND]: no legal escape position inside its own plane polygon (left to the autorouter)",
     "escape: U16.4 [HEAD_PWR_NFLT]: no legal escape position (left to the autorouter)",
     "escape: U16.10 [U16_ITMR]: no legal escape position (left to the autorouter)",
@@ -1353,10 +1352,8 @@
     "escape: U8.15 [U8_DVDT]: no legal escape position (left to the autorouter)",
     "escape: U8.14 [GND]: no legal escape position inside its own plane polygon (left to the autorouter)",
     "escape: U8.13 [VMOT_PG]: no legal escape position (left to the autorouter)",
-    "escape: D37.1 [ENCC_L_A]: no legal escape position (left to the autorouter)",
     "escape: D37.2 [ENCC_L_B]: no legal escape position (left to the autorouter)",
     "escape: D37.4 [ENCC_R_A]: no legal escape position (left to the autorouter)",
-    "escape: D37.5 [ENCC_R_B]: no legal escape position (left to the autorouter)",
     "escape: U20M.6 [OSC_OUT]: no legal escape position (left to the autorouter)",
     "escape: U20M.7 [NRST]: no legal escape position (left to the autorouter)",
     "escape: U20M.9 [HEAD_LOOP_SENSE]: no legal escape position (left to the autorouter)",
@@ -1371,22 +1368,27 @@
     "escape: U20M.19 [SPI1_SCK]: no legal escape position (left to the autorouter)",
     "escape: U20M.20 [SPI1_MISO]: no legal escape position (left to the autorouter)",
     "escape: U20M.26 [BUZZER]: no legal escape position (left to the autorouter)",
+    "escape: U20M.32 [3V3]: no legal escape position inside its own plane polygon (left to the autorouter)",
     "escape: U42.3 [3V3]: no legal escape position inside its own plane polygon (left to the autorouter)",
+    "escape: U42.6 [GND]: no legal escape position inside its own plane polygon (left to the autorouter)",
     "escape: U42.11 [3V3]: no legal escape position inside its own plane polygon (left to the autorouter)",
-    "escape: D38.5 [DBG_RX_C]: no legal escape position (left to the autorouter)",
+    "escape: D38.8 [GND]: no legal escape position inside its own plane polygon (left to the autorouter)",
     "escape: D38.4 [DBG_TX_C]: no legal escape position (left to the autorouter)",
+    "escape: D38.3 [GND]: no legal escape position inside its own plane polygon (left to the autorouter)",
     "escape: D38.2 [NTC_PACK]: no legal escape position (left to the autorouter)",
     "escape: D38.1 [NTC_BAY]: no legal escape position (left to the autorouter)",
-    "escape: D39.2 [TOF0_SCL_C]: no legal escape position (left to the autorouter)",
-    "escape: D39.3 [GND]: no legal escape position inside its own plane polygon (left to the autorouter)",
     "escape: D39.4 [TOF0_XSHUT_C]: no legal escape position (left to the autorouter)",
-    "escape: D39.5 [TOF0_GPIO1]: no legal escape position (left to the autorouter)",
+    "escape: D39.3 [GND]: no legal escape position inside its own plane polygon (left to the autorouter)",
+    "escape: D39.1 [TOF0_SDA_C]: no legal escape position (left to the autorouter)",
+    "escape: D39.8 [GND]: no legal escape position inside its own plane polygon (left to the autorouter)",
     "escape: D40.1 [TOF1_SDA_C]: no legal escape position (left to the autorouter)",
     "escape: D40.3 [GND]: no legal escape position inside its own plane polygon (left to the autorouter)",
     "escape: D40.4 [TOF1_XSHUT_C]: no legal escape position (left to the autorouter)",
     "escape: D40.5 [TOF1_GPIO1]: no legal escape position (left to the autorouter)",
     "escape: D40.8 [GND]: no legal escape position inside its own plane polygon (left to the autorouter)",
-    "escape: D41.2 [TOF2_SCL_C]: no legal escape position (left to the autorouter)",
+    "escape: D41.1 [TOF2_SDA_C]: no legal escape position (left to the autorouter)",
+    "escape: D41.3 [GND]: no legal escape position inside its own plane polygon (left to the autorouter)",
+    "escape: D41.4 [TOF2_XSHUT_C]: no legal escape position (left to the autorouter)",
     "escape: D41.5 [TOF2_GPIO1]: no legal escape position (left to the autorouter)",
     "escape: D41.8 [GND]: no legal escape position inside its own plane polygon (left to the autorouter)",
     "escape: D42.5 [TOF3_GPIO1]: no legal escape position (left to the autorouter)",
@@ -1397,131 +1399,136 @@
     "escape: D42.8 [GND]: no legal escape position inside its own plane polygon (left to the autorouter)",
     "escape: D43.2 [TOF4_SCL_C]: no legal escape position (left to the autorouter)",
     "escape: D43.4 [TOF4_XSHUT_C]: no legal escape position (left to the autorouter)",
+    "escape: D44.1 [TOF5_SDA_C]: no legal escape position (left to the autorouter)",
     "escape: D44.2 [TOF5_SCL_C]: no legal escape position (left to the autorouter)",
-    "escape: D44.4 [TOF5_XSHUT_C]: no legal escape position (left to the autorouter)",
+    "escape: D44.5 [TOF5_GPIO1]: no legal escape position (left to the autorouter)",
+    "escape: D44.8 [GND]: no legal escape position inside its own plane polygon (left to the autorouter)",
     "escape: D45.5 [TOF6_GPIO1]: no legal escape position (left to the autorouter)",
     "escape: D45.4 [TOF6_XSHUT_C]: no legal escape position (left to the autorouter)",
-    "escape: D45.3 [GND]: no legal escape position inside its own plane polygon (left to the autorouter)",
     "escape: D45.2 [TOF6_SCL_C]: no legal escape position (left to the autorouter)",
     "escape: D45.1 [TOF6_SDA_C]: no legal escape position (left to the autorouter)",
-    "escape: D45.8 [GND]: no legal escape position inside its own plane polygon (left to the autorouter)",
     "escape: D46.1 [TOF7_SDA_C]: no legal escape position (left to the autorouter)",
     "escape: D46.2 [TOF7_SCL_C]: no legal escape position (left to the autorouter)",
     "escape: D46.4 [TOF7_XSHUT_C]: no legal escape position (left to the autorouter)",
     "escape: D46.5 [TOF7_GPIO1]: no legal escape position (left to the autorouter)",
     "escape: D46.8 [GND]: no legal escape position inside its own plane polygon (left to the autorouter)",
-    "escape: D47.5 [TOF8_GPIO1]: no legal escape position (left to the autorouter)",
-    "escape: D47.4 [TOF8_XSHUT_C]: no legal escape position (left to the autorouter)",
-    "escape: D47.3 [GND]: no legal escape position inside its own plane polygon (left to the autorouter)",
-    "escape: D47.2 [TOF8_SCL_C]: no legal escape position (left to the autorouter)",
     "escape: D47.1 [TOF8_SDA_C]: no legal escape position (left to the autorouter)",
+    "escape: D47.2 [TOF8_SCL_C]: no legal escape position (left to the autorouter)",
+    "escape: D47.3 [GND]: no legal escape position inside its own plane polygon (left to the autorouter)",
+    "escape: D47.5 [TOF8_GPIO1]: no legal escape position (left to the autorouter)",
     "escape: D47.8 [GND]: no legal escape position inside its own plane polygon (left to the autorouter)",
-    "escape: D48.1 [TOF9_SDA_C]: no legal escape position (left to the autorouter)",
+    "escape: D48.5 [TOF9_GPIO1]: no legal escape position (left to the autorouter)",
     "escape: D48.2 [TOF9_SCL_C]: no legal escape position (left to the autorouter)",
-    "escape: D49.2 [TOF10_SCL_C]: no legal escape position (left to the autorouter)",
-    "escape: D49.3 [GND]: no legal escape position inside its own plane polygon (left to the autorouter)",
-    "escape: D49.4 [TOF10_XSHUT_C]: no legal escape position (left to the autorouter)",
+    "escape: D48.1 [TOF9_SDA_C]: no legal escape position (left to the autorouter)",
     "escape: D49.5 [TOF10_GPIO1]: no legal escape position (left to the autorouter)",
-    "escape: D49.8 [GND]: no legal escape position inside its own plane polygon (left to the autorouter)",
+    "escape: D49.4 [TOF10_XSHUT_C]: no legal escape position (left to the autorouter)",
+    "escape: D49.2 [TOF10_SCL_C]: no legal escape position (left to the autorouter)",
+    "escape: D49.1 [TOF10_SDA_C]: no legal escape position (left to the autorouter)",
     "escape: U61.1 [FT_TXD]: no legal escape position (left to the autorouter)",
-    "plane fan-out: no legal via position for TP47 pad at (136.75, 43.75) [VMOT] (left to the autorouter)",
-    "plane fan-out: no legal via position for TP44 pad at (138.50, 6.75) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for TP47 pad at (122.75, 30.50) [VMOT] (left to the autorouter)",
+    "plane fan-out: no legal via position for TP44 pad at (130.00, 9.75) [3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for TP42 pad at (140.75, 37.75) [VSYS] (left to the autorouter)",
-    "plane fan-out: no legal via position for R299 pad at (125.07, 91.00) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R274 pad at (84.32, 86.00) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R273 pad at (84.82, 83.50) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for R299 pad at (106.07, 98.50) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for J_PANEL pad at (20.42, 13.25) [GND] (left to the autorouter)",
+    "plane fan-out: no legal via position for R274 pad at (81.82, 82.25) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for R273 pad at (81.82, 80.00) [3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for FB15 pad at (124.50, 15.29) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R269 pad at (106.07, 78.25) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R268 pad at (101.57, 74.00) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for FB14 pad at (90.29, 2.25) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R264 pad at (84.82, 81.25) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R263 pad at (84.75, 79.07) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for FB13 pad at (73.29, 8.50) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for R269 pad at (94.68, 74.00) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for R268 pad at (100.07, 74.00) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for FB14 pad at (67.79, 11.25) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for R264 pad at (81.82, 77.75) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for R263 pad at (78.07, 82.25) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for FB13 pad at (58.54, 6.75) [3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for R259 pad at (102.32, 78.50) [3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for R258 pad at (101.82, 80.75) [3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for FB12 pad at (148.21, 67.00) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R254 pad at (81.07, 83.75) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R253 pad at (81.07, 81.50) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for R254 pad at (78.07, 80.00) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for R253 pad at (78.07, 77.75) [3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for FB11 pad at (115.00, 22.54) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R249 pad at (91.25, 81.07) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R248 pad at (93.50, 78.57) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for FB10 pad at (63.54, 5.50) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R244 pad at (80.57, 86.00) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R243 pad at (77.57, 90.50) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for FB9 pad at (10.75, 5.96) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for D44 pad at (23.00, 1.37) [GND] (left to the autorouter)",
+    "plane fan-out: no legal via position for R249 pad at (91.25, 71.18) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for R248 pad at (90.82, 75.00) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for FB10 pad at (17.75, 3.21) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for R244 pad at (73.32, 89.75) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for R243 pad at (74.82, 86.00) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for FB9 pad at (51.29, 97.25) [3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for R239 pad at (98.82, 76.25) [3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for R238 pad at (98.57, 78.50) [3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for FB8 pad at (111.00, 15.29) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for D41 pad at (50.50, 1.62) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for R234 pad at (76.82, 86.00) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R233 pad at (77.32, 83.75) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for FB7 pad at (48.04, 5.50) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for D41 pad at (48.75, 6.13) [GND] (left to the autorouter)",
+    "plane fan-out: no legal via position for D41 pad at (48.75, 5.37) [GND] (left to the autorouter)",
+    "plane fan-out: no legal via position for R234 pad at (74.32, 83.75) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for R233 pad at (74.32, 81.50) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for FB7 pad at (35.75, 3.21) [3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for D40 pad at (97.75, 93.88) [GND] (left to the autorouter)",
     "plane fan-out: no legal via position for D40 pad at (97.75, 93.12) [GND] (left to the autorouter)",
     "plane fan-out: no legal via position for R229 pad at (95.75, 81.43) [3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for R228 pad at (97.32, 85.25) [3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for FB6 pad at (94.79, 92.00) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for D39 pad at (65.75, 98.63) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for R224 pad at (70.32, 94.00) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R223 pad at (69.57, 91.75) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for FB5 pad at (59.04, 97.25) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for D39 pad at (63.37, 95.50) [GND] (left to the autorouter)",
+    "plane fan-out: no legal via position for D39 pad at (64.13, 95.50) [GND] (left to the autorouter)",
+    "plane fan-out: no legal via position for R224 pad at (70.57, 85.25) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for R223 pad at (67.32, 90.00) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for FB5 pad at (57.04, 95.25) [3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for C158 pad at (95.48, 87.50) [3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for U51 pad at (95.14, 87.58) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for U51 pad at (100.86, 85.62) [GND] (left to the autorouter)",
     "plane fan-out: no legal via position for U51 pad at (100.86, 87.58) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for C157 pad at (72.22, 89.00) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for C157 pad at (69.47, 87.50) [3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for U50 pad at (68.86, 87.58) [3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for F_AUX pad at (106.10, 73.50) [VBAT_SW] (left to the autorouter)",
-    "plane fan-out: no legal via position for R214 pad at (65.75, 93.32) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R213 pad at (51.32, 97.25) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R212 pad at (56.25, 6.43) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R211 pad at (54.00, 6.43) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R210 pad at (63.25, 8.18) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for C153 pad at (65.50, 12.52) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for C152 pad at (13.75, 7.52) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for C151 pad at (82.50, 77.47) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R204 pad at (16.00, 6.93) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R203 pad at (51.75, 6.43) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R202 pad at (31.50, 5.43) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for C150 pad at (80.25, 77.47) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for C149 pad at (18.25, 8.52) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for R214 pad at (65.75, 87.82) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for R213 pad at (70.57, 82.50) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for R212 pad at (60.25, 15.68) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for R211 pad at (56.50, 14.93) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for R210 pad at (68.50, 19.93) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for C153 pad at (64.72, 21.25) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for C152 pad at (15.50, 8.52) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for C151 pad at (84.98, 75.00) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for R204 pad at (29.00, 9.18) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for R203 pad at (54.25, 14.18) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for R202 pad at (31.25, 9.18) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for C150 pad at (81.23, 73.75) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for C149 pad at (17.25, 12.27) [3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for U42 pad at (79.50, 68.26) [3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for U42 pad at (80.50, 65.74) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R199 pad at (51.25, 10.43) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R196 pad at (60.50, 14.18) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R192 pad at (20.50, 6.93) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for C142 pad at (28.00, 12.70) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for C141 pad at (49.00, 13.77) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for C140 pad at (33.75, 13.02) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for C139 pad at (22.25, 14.27) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for C138 pad at (16.25, 16.02) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for C134 pad at (76.47, 79.25) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for J_USB_MCU pad at (35.15, 20.65) [GND] (left to the autorouter)",
+    "plane fan-out: no legal via position for R199 pad at (52.00, 14.18) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for R196 pad at (58.07, 18.75) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for R192 pad at (24.50, 10.18) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for C142 pad at (19.75, 16.20) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for C141 pad at (56.47, 21.00) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for C140 pad at (39.97, 15.75) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for C139 pad at (26.25, 15.52) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for C138 pad at (22.25, 18.02) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for C134 pad at (77.47, 75.50) [3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for U38 pad at (143.14, 81.00) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R184 pad at (18.50, 14.43) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R183 pad at (103.75, 74.82) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for D36 pad at (125.50, 84.90) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for C129 pad at (69.25, 16.23) [VMOT] (left to the autorouter)",
-    "plane fan-out: no legal via position for C128 pad at (96.25, 21.02) [VMOT] (left to the autorouter)",
-    "plane fan-out: no legal via position for C126 pad at (111.00, 63.28) [VMOT] (left to the autorouter)",
-    "plane fan-out: no legal via position for R174 pad at (97.50, 72.57) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for R184 pad at (28.50, 15.18) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for R183 pad at (104.00, 72.57) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for D36 pad at (110.60, 78.50) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for C129 pad at (77.25, 23.73) [VMOT] (left to the autorouter)",
+    "plane fan-out: no legal via position for C128 pad at (74.75, 25.27) [VMOT] (left to the autorouter)",
+    "plane fan-out: no legal via position for C126 pad at (96.48, 71.00) [VMOT] (left to the autorouter)",
+    "plane fan-out: no legal via position for R174 pad at (86.50, 72.57) [3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for U6 pad at (95.73, 56.86) [3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for C122 pad at (95.27, 71.00) [3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for U37 pad at (13.14, 70.00) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R166 pad at (30.50, 12.93) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R165 pad at (63.25, 89.32) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for D33 pad at (125.90, 93.50) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for C117 pad at (93.75, 17.73) [VMOT] (left to the autorouter)",
-    "plane fan-out: no legal via position for C116 pad at (82.00, 15.52) [VMOT] (left to the autorouter)",
-    "plane fan-out: no legal via position for C114 pad at (71.25, 83.03) [VMOT] (left to the autorouter)",
-    "plane fan-out: no legal via position for R156 pad at (58.25, 15.93) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for R166 pad at (3.17, 72.00) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for R165 pad at (49.00, 71.32) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for D33 pad at (107.65, 96.00) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for C117 pad at (72.25, 28.98) [VMOT] (left to the autorouter)",
+    "plane fan-out: no legal via position for C116 pad at (79.75, 26.02) [VMOT] (left to the autorouter)",
+    "plane fan-out: no legal via position for C114 pad at (62.25, 72.53) [VMOT] (left to the autorouter)",
     "plane fan-out: no legal via position for U5 pad at (59.72, 56.86) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R148 pad at (111.00, 59.57) [VBAT_SW] (left to the autorouter)",
-    "plane fan-out: no legal via position for R144 pad at (112.57, 44.50) [VMOT] (left to the autorouter)",
+    "plane fan-out: no legal via position for R148 pad at (111.43, 57.00) [VBAT_SW] (left to the autorouter)",
+    "plane fan-out: no legal via position for R144 pad at (115.57, 47.25) [VMOT] (left to the autorouter)",
+    "plane fan-out: no legal via position for R143 pad at (111.25, 50.82) [VBAT_SW] (left to the autorouter)",
     "plane fan-out: no legal via position for U33 pad at (108.47, 43.41) [VBAT_SW] (left to the autorouter)",
     "plane fan-out: no legal via position for C109 pad at (71.25, 77.72) [3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for U9 pad at (81.14, 56.95) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R139 pad at (2.17, 57.75) [VMOT] (left to the autorouter)",
-    "plane fan-out: no legal via position for R138 pad at (72.00, 16.96) [VMOT] (left to the autorouter)",
-    "plane fan-out: no legal via position for R137 pad at (74.50, 15.43) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for R139 pad at (3.92, 56.00) [VMOT] (left to the autorouter)",
+    "plane fan-out: no legal via position for R138 pad at (77.25, 28.96) [VMOT] (left to the autorouter)",
+    "plane fan-out: no legal via position for R137 pad at (78.00, 8.93) [3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for U8 pad at (77.55, 34.75) [VBAT_SW] (left to the autorouter)",
     "plane fan-out: no legal via position for U8 pad at (77.55, 34.25) [GND] (left to the autorouter)",
     "plane fan-out: no legal via position for U8 pad at (77.55, 33.75) [GND] (left to the autorouter)",
@@ -1532,18 +1539,18 @@
     "plane fan-out: no legal via position for D29 pad at (39.37, 4.75) [GND] (left to the autorouter)",
     "plane fan-out: no legal via position for R128 pad at (42.00, 5.57) [3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for Q_J2PRE pad at (68.69, 76.05) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for D28 pad at (123.65, 96.75) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R123 pad at (122.82, 84.00) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for Q_ESTOP pad at (44.80, 14.06) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for D27 pad at (128.65, 27.00) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R120 pad at (125.25, 1.68) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for D26 pad at (40.25, 13.85) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for D25 pad at (51.75, 14.10) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for D23 pad at (24.75, 16.10) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for D22 pad at (27.75, 18.35) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for D17 pad at (28.00, 23.60) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for D28 pad at (109.65, 83.75) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for R123 pad at (99.07, 71.75) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for Q_ESTOP pad at (43.80, 18.56) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for D27 pad at (115.90, 3.50) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for R120 pad at (97.32, 17.25) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for D26 pad at (40.00, 17.85) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for D25 pad at (54.00, 17.85) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for D24 pad at (30.50, 18.85) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for D22 pad at (27.75, 18.85) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for D17 pad at (41.25, 23.10) [3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for R93 pad at (98.43, 24.00) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R92 pad at (122.32, 35.50) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for R92 pad at (108.00, 25.18) [3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for R91 pad at (81.93, 24.00) [3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for R90 pad at (96.25, 24.82) [3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for C86 pad at (85.75, 22.23) [3V3] (left to the autorouter)",
@@ -1566,18 +1573,18 @@
     "plane fan-out: no legal via position for U15 pad at (46.03, 81.14) [3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for U15 pad at (46.03, 84.86) [3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for U15 pad at (47.00, 83.00) [GND] (left to the autorouter)",
-    "plane fan-out: no legal via position for C46 pad at (38.25, 29.73) [VSYS] (left to the autorouter)",
+    "plane fan-out: no legal via position for C46 pad at (64.53, 26.00) [VSYS] (left to the autorouter)",
+    "plane fan-out: no legal via position for U12 pad at (71.36, 29.50) [GND] (left to the autorouter)",
     "plane fan-out: no legal via position for U12 pad at (73.64, 29.50) [VSYS] (left to the autorouter)",
-    "plane fan-out: no legal via position for C42 pad at (61.50, 20.98) [VSYS] (left to the autorouter)",
-    "plane fan-out: no legal via position for R40 pad at (65.00, 23.68) [3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for C42 pad at (64.53, 28.75) [VSYS] (left to the autorouter)",
+    "plane fan-out: no legal via position for R40 pad at (75.32, 22.50) [3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for L3 pad at (69.30, 35.00) [3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for U11 pad at (67.64, 29.50) [VSYS] (left to the autorouter)",
-    "plane fan-out: no legal via position for R36 pad at (40.68, 25.25) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for U13 pad at (50.15, 29.25) [GND] (left to the autorouter)",
+    "plane fan-out: no legal via position for R32 pad at (60.82, 29.00) [3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for C35 pad at (49.03, 45.25) [VSYS] (left to the autorouter)",
-    "plane fan-out: no legal via position for C34 pad at (51.50, 21.52) [VSYS] (left to the autorouter)",
-    "plane fan-out: no legal via position for C33 pad at (41.47, 32.75) [VSYS] (left to the autorouter)",
-    "plane fan-out: no legal via position for C32 pad at (64.53, 28.25) [VSYS] (left to the autorouter)",
+    "plane fan-out: no legal via position for C34 pad at (48.03, 30.75) [VSYS] (left to the autorouter)",
+    "plane fan-out: no legal via position for C33 pad at (43.72, 36.00) [VSYS] (left to the autorouter)",
+    "plane fan-out: no legal via position for C32 pad at (50.75, 23.73) [VSYS] (left to the autorouter)",
     "plane fan-out: no legal via position for U10 pad at (54.85, 33.30) [VSYS] (left to the autorouter)",
     "plane fan-out: no legal via position for U10 pad at (54.85, 35.70) [VSYS] (left to the autorouter)",
     "plane fan-out: no legal via position for R25 pad at (117.68, 50.75) [3V3] (left to the autorouter)",
@@ -1600,7 +1607,6 @@
     "plane fan-out: no legal via position for R11 pad at (28.25, 43.32) [VBAT_SW] (left to the autorouter)",
     "plane fan-out: no legal via position for C8 pad at (122.48, 43.75) [VBAT_SW] (left to the autorouter)",
     "plane fan-out: no legal via position for C6 pad at (122.27, 39.00) [3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for R10 pad at (120.93, 41.25) [VBAT_SW] (left to the autorouter)",
     "plane fan-out: no legal via position for U2 pad at (123.20, 39.60) [3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for U2 pad at (123.20, 40.10) [GND] (left to the autorouter)",
     "plane fan-out: no legal via position for U1 pad at (127.36, 40.82) [GND] (left to the autorouter)"
@@ -1644,34 +1650,34 @@
       "B"
     ],
     "C100": [
-      2.0,
-      48.75,
+      4.5,
+      53.0,
       90.0,
       "B"
     ],
     "C101": [
-      20.75,
-      17.25,
+      15.75,
+      19.0,
       270.0,
       "B"
     ],
     "C102": [
-      74.5,
-      20.0,
-      270.0,
-      "B"
-    ],
-    "C103": [
-      70.0,
-      20.0,
-      270.0,
-      "B"
-    ],
-    "C104": [
-      88.25,
+      78.0,
       17.0,
       270.0,
-      "B"
+      "F"
+    ],
+    "C103": [
+      80.25,
+      11.75,
+      270.0,
+      "F"
+    ],
+    "C104": [
+      82.5,
+      11.75,
+      270.0,
+      "F"
     ],
     "C105": [
       80.0,
@@ -1692,8 +1698,8 @@
       "F"
     ],
     "C108": [
-      4.0,
-      66.5,
+      3.0,
+      58.25,
       180.0,
       "B"
     ],
@@ -1710,57 +1716,57 @@
       "B"
     ],
     "C110": [
-      64.25,
-      20.25,
+      74.75,
+      28.25,
       270.0,
       "B"
     ],
     "C111": [
-      111.0,
-      39.25,
-      270.0,
-      "B"
+      114.0,
+      44.25,
+      90.0,
+      "F"
     ],
     "C112": [
-      113.25,
-      35.75,
-      270.0,
-      "B"
+      116.5,
+      49.5,
+      0.0,
+      "F"
     ],
     "C113": [
-      32.75,
-      16.0,
+      33.0,
+      17.5,
       270.0,
       "B"
     ],
     "C114": [
-      71.25,
-      82.25,
+      62.25,
+      71.75,
       90.0,
-      "B"
+      "F"
     ],
     "C115": [
-      62.75,
-      83.25,
-      0.0,
-      "B"
+      48.75,
+      63.0,
+      90.0,
+      "F"
     ],
     "C116": [
-      82.0,
-      14.75,
+      79.75,
+      25.25,
       270.0,
       "B"
     ],
     "C117": [
-      93.75,
-      16.25,
+      72.25,
+      27.5,
       270.0,
       "B"
     ],
     "C118": [
-      67.0,
-      84.75,
-      90.0,
+      67.5,
+      80.25,
+      0.0,
       "B"
     ],
     "C119": [
@@ -1806,32 +1812,32 @@
       "B"
     ],
     "C125": [
-      25.0,
-      13.25,
+      30.75,
+      16.0,
       270.0,
       "B"
     ],
     "C126": [
-      111.0,
-      62.5,
-      90.0,
-      "B"
+      97.25,
+      71.0,
+      180.0,
+      "F"
     ],
     "C127": [
-      100.5,
+      101.0,
       71.0,
       0.0,
-      "B"
+      "F"
     ],
     "C128": [
-      96.25,
-      20.25,
+      74.75,
+      24.5,
       270.0,
       "B"
     ],
     "C129": [
-      69.25,
-      14.75,
+      77.25,
+      22.25,
       270.0,
       "B"
     ],
@@ -1842,9 +1848,9 @@
       "B"
     ],
     "C130": [
-      104.25,
-      71.0,
-      180.0,
+      111.0,
+      59.25,
+      270.0,
       "B"
     ],
     "C131": [
@@ -1866,8 +1872,8 @@
       "B"
     ],
     "C134": [
-      77.25,
-      79.25,
+      78.25,
+      75.5,
       0.0,
       "B"
     ],
@@ -1884,20 +1890,20 @@
       "B"
     ],
     "C137": [
-      76.5,
-      81.5,
-      0.0,
-      "B"
+      51.25,
+      71.75,
+      90.0,
+      "F"
     ],
     "C138": [
-      16.25,
-      15.25,
+      22.25,
+      17.25,
       270.0,
       "B"
     ],
     "C139": [
-      22.25,
-      13.5,
+      26.25,
+      14.75,
       270.0,
       "B"
     ],
@@ -1908,62 +1914,62 @@
       "B"
     ],
     "C140": [
-      33.75,
-      12.25,
-      270.0,
+      40.75,
+      15.75,
+      0.0,
       "B"
     ],
     "C141": [
-      49.0,
-      13.0,
-      270.0,
+      57.25,
+      21.0,
+      0.0,
       "B"
     ],
     "C142": [
-      28.0,
-      11.75,
+      19.75,
+      15.25,
       270.0,
       "B"
     ],
     "C143": [
-      42.5,
-      11.0,
+      33.5,
+      13.75,
       270.0,
       "B"
     ],
     "C144": [
-      31.5,
-      10.0,
-      270.0,
+      44.5,
+      16.0,
+      0.0,
       "B"
     ],
     "C145": [
-      20.0,
-      11.5,
+      17.25,
+      15.25,
       270.0,
       "B"
     ],
     "C146": [
-      17.75,
-      11.5,
+      22.25,
+      13.5,
       270.0,
       "B"
     ],
     "C147": [
-      23.75,
-      10.25,
-      0.0,
+      20.0,
+      11.25,
+      270.0,
       "B"
     ],
     "C148": [
-      29.25,
-      7.75,
+      33.5,
+      10.0,
       270.0,
       "B"
     ],
     "C149": [
-      18.25,
-      7.75,
+      17.25,
+      11.5,
       270.0,
       "B"
     ],
@@ -1974,50 +1980,50 @@
       "B"
     ],
     "C150": [
-      80.25,
-      78.25,
-      90.0,
+      82.0,
+      73.75,
+      0.0,
       "B"
     ],
     "C151": [
-      82.5,
-      78.25,
-      90.0,
+      85.75,
+      75.0,
+      0.0,
       "B"
     ],
     "C152": [
-      13.75,
-      6.75,
+      15.5,
+      7.75,
       270.0,
       "B"
     ],
     "C153": [
       65.5,
-      11.75,
-      270.0,
+      21.25,
+      0.0,
       "B"
     ],
     "C154": [
-      44.25,
-      4.75,
-      270.0,
+      48.0,
+      11.5,
+      0.0,
       "B"
     ],
     "C155": [
-      20.5,
-      4.0,
+      45.0,
+      9.25,
       270.0,
       "B"
     ],
     "C156": [
       33.5,
-      2.5,
+      6.25,
       270.0,
       "B"
     ],
     "C157": [
-      73.0,
-      89.0,
+      70.25,
+      87.5,
       0.0,
       "B"
     ],
@@ -2028,8 +2034,8 @@
       "B"
     ],
     "C159": [
-      62.0,
-      96.0,
+      60.75,
+      92.5,
       0.0,
       "B"
     ],
@@ -2046,8 +2052,8 @@
       "B"
     ],
     "C161": [
-      44.5,
-      1.75,
+      45.0,
+      6.25,
       0.0,
       "B"
     ],
@@ -2058,15 +2064,15 @@
       "B"
     ],
     "C163": [
-      16.0,
-      4.0,
+      17.75,
+      7.75,
       270.0,
       "B"
     ],
     "C164": [
-      62.75,
-      3.25,
-      0.0,
+      20.0,
+      3.75,
+      270.0,
       "B"
     ],
     "C165": [
@@ -2082,14 +2088,14 @@
       "B"
     ],
     "C167": [
-      75.5,
-      10.5,
-      270.0,
+      61.0,
+      12.75,
+      0.0,
       "B"
     ],
     "C168": [
-      93.25,
-      2.25,
+      69.25,
+      13.5,
       0.0,
       "B"
     ],
@@ -2106,33 +2112,33 @@
       "B"
     ],
     "C170": [
-      107.75,
-      16.5,
-      270.0,
+      77.25,
+      16.25,
+      0.0,
       "B"
     ],
     "C171": [
-      105.5,
-      6.75,
+      77.25,
+      14.0,
       0.0,
       "B"
     ],
     "C172": [
-      104.75,
-      4.25,
+      77.25,
+      11.5,
       0.0,
       "B"
     ],
     "C173": [
-      107.75,
-      12.75,
-      270.0,
+      81.0,
+      17.25,
+      0.0,
       "B"
     ],
     "C174": [
-      107.75,
-      9.75,
-      0.0,
+      66.25,
+      4.5,
+      270.0,
       "B"
     ],
     "C175": [
@@ -2142,21 +2148,21 @@
       "B"
     ],
     "C176": [
-      118.0,
-      2.25,
+      92.75,
+      17.5,
       0.0,
       "B"
     ],
     "C177": [
-      113.75,
-      98.25,
+      72.25,
+      97.75,
       0.0,
       "B"
     ],
     "C178": [
-      117.5,
-      97.75,
-      0.0,
+      93.25,
+      83.25,
+      270.0,
       "B"
     ],
     "C179": [
@@ -2220,27 +2226,27 @@
       "B"
     ],
     "C26": [
-      48.25,
+      47.5,
       35.75,
       180.0,
-      "B"
+      "F"
     ],
     "C27": [
       48.25,
-      31.25,
+      42.75,
       0.0,
-      "B"
+      "F"
     ],
     "C28": [
-      44.5,
-      36.75,
-      0.0,
-      "B"
+      42.5,
+      39.75,
+      270.0,
+      "F"
     ],
     "C29": [
-      51.25,
-      25.25,
-      270.0,
+      47.5,
+      36.0,
+      180.0,
       "B"
     ],
     "C3": [
@@ -2250,33 +2256,33 @@
       "B"
     ],
     "C30": [
-      48.5,
-      22.75,
+      50.5,
+      27.5,
       270.0,
       "B"
     ],
     "C31": [
-      40.0,
-      36.0,
+      47.5,
+      33.25,
       180.0,
       "B"
     ],
     "C32": [
-      66.0,
-      28.25,
-      0.0,
+      50.75,
+      22.25,
+      270.0,
       "B"
     ],
     "C33": [
-      40.0,
-      32.75,
+      42.25,
+      36.0,
       180.0,
       "B"
     ],
     "C34": [
-      51.5,
-      20.75,
-      270.0,
+      47.25,
+      30.75,
+      180.0,
       "B"
     ],
     "C35": [
@@ -2292,20 +2298,20 @@
       "B"
     ],
     "C37": [
-      53.75,
-      20.25,
-      270.0,
-      "B"
+      40.0,
+      33.5,
+      180.0,
+      "F"
     ],
     "C38": [
-      41.75,
-      27.5,
+      37.0,
+      30.0,
       180.0,
-      "B"
+      "F"
     ],
     "C39": [
-      45.25,
-      22.0,
+      47.0,
+      24.25,
       180.0,
       "B"
     ],
@@ -2316,21 +2322,21 @@
       "B"
     ],
     "C40": [
-      49.0,
-      17.5,
-      270.0,
+      42.25,
+      31.0,
+      180.0,
       "B"
     ],
     "C41": [
-      70.5,
-      29.0,
-      0.0,
-      "B"
+      73.75,
+      25.5,
+      270.0,
+      "F"
     ],
     "C42": [
-      61.5,
-      19.5,
-      270.0,
+      66.0,
+      28.75,
+      0.0,
       "B"
     ],
     "C43": [
@@ -2346,15 +2352,15 @@
       "B"
     ],
     "C45": [
-      74.25,
-      29.0,
+      76.75,
+      26.0,
       0.0,
-      "B"
+      "F"
     ],
     "C46": [
-      38.25,
-      28.25,
-      270.0,
+      66.0,
+      26.0,
+      0.0,
       "B"
     ],
     "C47": [
@@ -2592,9 +2598,9 @@
       "B"
     ],
     "C82": [
-      38.0,
-      43.0,
-      180.0,
+      38.75,
+      42.25,
+      270.0,
       "B"
     ],
     "C83": [
@@ -2604,14 +2610,14 @@
       "B"
     ],
     "C84": [
-      19.0,
-      37.25,
-      180.0,
+      31.0,
+      35.5,
+      0.0,
       "B"
     ],
     "C85": [
-      32.25,
-      32.5,
+      34.0,
+      33.75,
       270.0,
       "B"
     ],
@@ -2622,21 +2628,21 @@
       "B"
     ],
     "C87": [
-      11.75,
-      42.0,
-      90.0,
+      27.0,
+      32.75,
+      0.0,
       "B"
     ],
     "C88": [
-      30.5,
-      25.0,
+      38.75,
+      27.75,
       270.0,
       "B"
     ],
     "C89": [
-      11.0,
-      39.0,
-      180.0,
+      27.0,
+      26.0,
+      270.0,
       "B"
     ],
     "C9": [
@@ -2647,20 +2653,20 @@
     ],
     "C90": [
       7.25,
-      39.5,
+      45.0,
       180.0,
       "B"
     ],
     "C91": [
-      3.5,
-      43.5,
+      5.75,
+      40.0,
       180.0,
       "B"
     ],
     "C92": [
-      4.25,
-      48.75,
-      90.0,
+      3.5,
+      45.0,
+      180.0,
       "B"
     ],
     "C93": [
@@ -2671,38 +2677,38 @@
     ],
     "C94": [
       1.75,
-      38.25,
+      39.0,
       90.0,
       "B"
     ],
     "C95": [
-      32.75,
-      19.75,
+      35.25,
+      23.5,
       270.0,
       "B"
     ],
     "C96": [
-      40.0,
-      20.0,
+      47.75,
+      21.25,
       270.0,
       "B"
     ],
     "C97": [
-      35.5,
-      17.5,
+      37.5,
+      20.25,
       270.0,
       "B"
     ],
     "C98": [
-      135.0,
-      33.0,
-      0.0,
+      96.25,
+      20.25,
+      90.0,
       "B"
     ],
     "C99": [
-      121.25,
-      87.0,
-      90.0,
+      101.5,
+      97.5,
+      0.0,
       "B"
     ],
     "C_SET": [
@@ -2748,32 +2754,32 @@
       "B"
     ],
     "D15": [
-      79.5,
-      24.0,
+      80.5,
+      20.0,
       90.0,
-      "B"
+      "F"
     ],
     "D16": [
-      8.0,
-      42.0,
+      10.25,
+      41.75,
       0.0,
       "B"
     ],
     "D17": [
-      28.0,
-      25.25,
+      41.25,
+      24.75,
       90.0,
       "B"
     ],
     "D18": [
-      8.0,
-      47.5,
+      10.25,
+      39.0,
       0.0,
       "B"
     ],
     "D19": [
-      5.5,
-      37.0,
+      5.0,
+      42.5,
       0.0,
       "B"
     ],
@@ -2785,55 +2791,55 @@
     ],
     "D20": [
       5.5,
-      34.25,
+      36.25,
       0.0,
       "B"
     ],
     "D21": [
-      3.0,
-      52.0,
+      5.5,
+      33.5,
       0.0,
       "B"
     ],
     "D22": [
       27.75,
-      20.0,
+      20.5,
       90.0,
       "B"
     ],
     "D23": [
-      24.75,
-      17.75,
-      90.0,
-      "B"
-    ],
-    "D24": [
-      4.0,
-      55.25,
+      3.0,
+      49.75,
       0.0,
       "B"
     ],
+    "D24": [
+      30.5,
+      20.5,
+      90.0,
+      "B"
+    ],
     "D25": [
-      51.75,
-      15.75,
+      54.0,
+      19.5,
       90.0,
       "B"
     ],
     "D26": [
-      40.25,
-      15.5,
+      40.0,
+      19.5,
       90.0,
       "B"
     ],
     "D27": [
-      127.0,
-      27.0,
+      114.25,
+      3.5,
       180.0,
       "B"
     ],
     "D28": [
-      122.0,
-      96.75,
+      108.0,
+      83.75,
       180.0,
       "B"
     ],
@@ -2850,63 +2856,63 @@
       "B"
     ],
     "D30": [
-      114.75,
-      55.75,
-      0.0,
-      "B"
+      115.5,
+      58.75,
+      90.0,
+      "F"
     ],
     "D31": [
       3.25,
-      69.0,
+      66.75,
       0.0,
       "B"
     ],
     "D32": [
       3.25,
-      71.75,
+      69.5,
       0.0,
       "B"
     ],
     "D33": [
-      124.25,
-      93.5,
+      106.0,
+      96.0,
       0.0,
       "B"
     ],
     "D34": [
-      55.0,
-      95.25,
-      270.0,
+      56.5,
+      90.0,
+      180.0,
       "B"
     ],
     "D35": [
-      57.75,
-      93.5,
-      270.0,
+      56.25,
+      92.75,
+      180.0,
       "B"
     ],
     "D36": [
-      125.5,
-      83.25,
-      90.0,
+      112.25,
+      78.5,
+      180.0,
       "B"
     ],
     "D37": [
       61.0,
-      92.0,
+      88.5,
       270.0,
       "B"
     ],
     "D38": [
-      67.75,
-      10.25,
-      0.0,
+      65.5,
+      19.0,
+      90.0,
       "B"
     ],
     "D39": [
-      65.75,
-      98.25,
-      270.0,
+      63.75,
+      95.5,
+      0.0,
       "B"
     ],
     "D4": [
@@ -2922,57 +2928,57 @@
       "B"
     ],
     "D41": [
-      50.5,
-      2.0,
+      48.75,
+      5.75,
       270.0,
       "B"
     ],
     "D42": [
       115.5,
-      15.75,
+      16.0,
       0.0,
       "B"
     ],
     "D43": [
-      13.0,
-      3.75,
+      12.5,
+      7.5,
       270.0,
       "B"
     ],
     "D44": [
-      70.25,
-      3.25,
+      23.0,
+      1.75,
       270.0,
       "B"
     ],
     "D45": [
-      119.5,
-      22.5,
-      0.0,
+      116.0,
+      24.75,
+      90.0,
       "B"
     ],
     "D46": [
-      152.0,
+      151.75,
       64.75,
       270.0,
       "B"
     ],
     "D47": [
-      88.5,
-      7.0,
-      0.0,
+      61.5,
+      7.75,
+      270.0,
       "B"
     ],
     "D48": [
-      97.0,
-      2.25,
-      270.0,
+      72.5,
+      14.75,
+      0.0,
       "B"
     ],
     "D49": [
-      127.75,
+      125.5,
       17.5,
-      270.0,
+      90.0,
       "B"
     ],
     "D5": [
@@ -2982,9 +2988,9 @@
       "F"
     ],
     "D50": [
-      87.25,
-      81.0,
-      270.0,
+      86.5,
+      7.5,
+      180.0,
       "B"
     ],
     "D6": [
@@ -3024,10 +3030,10 @@
       "B"
     ],
     "D_SEAL": [
-      103.75,
-      24.75,
-      0.0,
-      "B"
+      83.25,
+      20.0,
+      270.0,
+      "F"
     ],
     "F1": [
       10.0,
@@ -3048,9 +3054,9 @@
       "F"
     ],
     "FB10": [
-      62.75,
-      5.5,
-      180.0,
+      17.75,
+      4.0,
+      90.0,
       "B"
     ],
     "FB11": [
@@ -3066,14 +3072,14 @@
       "B"
     ],
     "FB13": [
-      72.5,
-      8.5,
+      57.75,
+      6.75,
       180.0,
       "B"
     ],
     "FB14": [
-      89.5,
-      2.25,
+      67.0,
+      11.25,
       180.0,
       "B"
     ],
@@ -3102,8 +3108,8 @@
       "F"
     ],
     "FB5": [
-      58.25,
-      97.25,
+      56.25,
+      95.25,
       180.0,
       "B"
     ],
@@ -3114,9 +3120,9 @@
       "B"
     ],
     "FB7": [
-      47.25,
-      5.5,
-      180.0,
+      35.75,
+      4.0,
+      90.0,
       "B"
     ],
     "FB8": [
@@ -3126,9 +3132,9 @@
       "B"
     ],
     "FB9": [
-      10.75,
-      6.75,
-      90.0,
+      50.5,
+      97.25,
+      180.0,
       "B"
     ],
     "FB_A": [
@@ -3138,9 +3144,9 @@
       "B"
     ],
     "FB_U": [
-      101.75,
-      4.5,
-      270.0,
+      47.5,
+      1.75,
+      0.0,
       "B"
     ],
     "FID1": [
@@ -3222,7 +3228,7 @@
       "F"
     ],
     "JP1": [
-      81.5,
+      82.0,
       24.25,
       0.0,
       "F"
@@ -3504,27 +3510,27 @@
       "F"
     ],
     "LED1": [
-      35.0,
-      5.5,
-      180.0,
+      35.75,
+      7.75,
+      90.0,
       "B"
     ],
     "LED2": [
-      111.5,
-      22.75,
+      69.25,
+      5.0,
       0.0,
       "B"
     ],
     "LED3": [
-      88.75,
-      91.5,
+      72.5,
+      92.0,
       0.0,
       "B"
     ],
     "NT1": [
       113.0,
       39.0,
-      0.0,
+      90.0,
       "F"
     ],
     "Q1": [
@@ -3534,10 +3540,10 @@
       "F"
     ],
     "Q10": [
-      38.0,
-      39.5,
+      48.25,
+      46.0,
       270.0,
-      "B"
+      "F"
     ],
     "Q2": [
       133.5,
@@ -3576,14 +3582,14 @@
       "B"
     ],
     "Q25": [
-      37.0,
-      13.5,
+      36.75,
+      15.75,
       270.0,
       "B"
     ],
     "Q26": [
-      55.0,
-      16.25,
+      48.75,
+      17.25,
       270.0,
       "B"
     ],
@@ -3595,7 +3601,7 @@
     ],
     "Q28": [
       35.5,
-      34.25,
+      38.0,
       90.0,
       "B"
     ],
@@ -3648,16 +3654,16 @@
       "F"
     ],
     "Q41": [
-      66.5,
-      88.5,
-      0.0,
-      "B"
+      35.75,
+      59.0,
+      270.0,
+      "F"
     ],
     "Q42": [
-      88.25,
-      76.0,
-      90.0,
-      "B"
+      93.5,
+      74.0,
+      180.0,
+      "F"
     ],
     "Q5": [
       118.0,
@@ -3666,56 +3672,56 @@
       "F"
     ],
     "Q50": [
-      114.0,
-      10.25,
+      73.25,
+      4.0,
       180.0,
       "B"
     ],
     "Q51": [
-      113.75,
-      6.25,
+      86.0,
+      4.25,
       180.0,
       "B"
     ],
     "Q52": [
-      113.75,
-      2.25,
+      90.5,
+      4.25,
       180.0,
       "B"
     ],
     "Q53": [
-      116.5,
-      32.0,
+      96.25,
+      10.5,
       180.0,
       "B"
     ],
     "Q54": [
-      118.5,
-      9.5,
+      98.5,
+      6.5,
       180.0,
       "B"
     ],
     "Q55": [
-      118.25,
-      5.5,
+      98.5,
+      2.5,
       180.0,
       "B"
     ],
     "Q56": [
-      120.75,
-      32.0,
+      104.75,
+      25.75,
       270.0,
       "B"
     ],
     "Q57": [
-      115.75,
-      43.75,
+      103.0,
+      9.75,
       180.0,
       "B"
     ],
     "Q58": [
-      123.0,
-      9.5,
+      103.0,
+      5.75,
       180.0,
       "B"
     ],
@@ -3726,8 +3732,8 @@
       "B"
     ],
     "Q_ESTOP": [
-      45.75,
-      15.0,
+      44.75,
+      19.5,
       90.0,
       "B"
     ],
@@ -3750,8 +3756,8 @@
       "B"
     ],
     "R100": [
-      34.75,
-      23.5,
+      36.25,
+      31.5,
       270.0,
       "B"
     ],
@@ -3762,8 +3768,8 @@
       "B"
     ],
     "R102": [
-      25.5,
-      26.0,
+      30.5,
+      28.75,
       270.0,
       "B"
     ],
@@ -3774,8 +3780,8 @@
       "B"
     ],
     "R104": [
-      7.25,
-      45.0,
+      8.75,
+      47.25,
       180.0,
       "B"
     ],
@@ -3786,9 +3792,9 @@
       "B"
     ],
     "R106": [
-      3.5,
-      45.75,
-      180.0,
+      29.25,
+      25.0,
+      270.0,
       "B"
     ],
     "R107": [
@@ -3798,8 +3804,8 @@
       "B"
     ],
     "R108": [
-      3.5,
-      41.25,
+      5.0,
+      47.25,
       180.0,
       "B"
     ],
@@ -3823,14 +3829,14 @@
     ],
     "R111": [
       81.0,
-      20.25,
+      21.75,
       180.0,
       "B"
     ],
     "R112": [
-      30.5,
-      21.25,
-      270.0,
+      32.25,
+      24.25,
+      0.0,
       "B"
     ],
     "R113": [
@@ -3840,32 +3846,32 @@
       "B"
     ],
     "R114": [
-      37.0,
-      21.25,
+      37.5,
+      24.0,
       270.0,
       "B"
     ],
     "R115": [
-      77.0,
-      26.0,
+      78.0,
+      20.75,
       270.0,
-      "B"
+      "F"
     ],
     "R116": [
-      42.25,
-      20.0,
+      44.0,
+      23.5,
       270.0,
       "B"
     ],
     "R117": [
-      76.25,
-      23.0,
+      75.0,
+      20.25,
       180.0,
-      "B"
+      "F"
     ],
     "R118": [
-      37.75,
-      17.5,
+      33.0,
+      21.25,
       270.0,
       "B"
     ],
@@ -3882,14 +3888,14 @@
       "B"
     ],
     "R120": [
-      125.25,
-      2.5,
-      90.0,
+      96.5,
+      17.25,
+      180.0,
       "B"
     ],
     "R121": [
-      30.5,
-      17.5,
+      35.25,
+      19.75,
       270.0,
       "B"
     ],
@@ -3900,8 +3906,8 @@
       "B"
     ],
     "R123": [
-      122.0,
-      84.0,
+      98.25,
+      71.75,
       180.0,
       "B"
     ],
@@ -3924,8 +3930,8 @@
       "B"
     ],
     "R127": [
-      136.0,
-      29.5,
+      103.0,
+      19.25,
       90.0,
       "B"
     ],
@@ -3936,7 +3942,7 @@
       "B"
     ],
     "R129": [
-      40.25,
+      39.0,
       10.75,
       90.0,
       "B"
@@ -3949,7 +3955,7 @@
     ],
     "R130": [
       1.75,
-      34.5,
+      35.25,
       270.0,
       "B"
     ],
@@ -3960,50 +3966,50 @@
       "B"
     ],
     "R132": [
-      15.75,
-      19.0,
+      24.5,
+      18.5,
       270.0,
       "B"
     ],
     "R133": [
-      40.0,
-      87.5,
-      0.0,
-      "B"
-    ],
-    "R134": [
-      71.25,
-      23.75,
-      270.0,
-      "B"
-    ],
-    "R135": [
-      77.0,
-      20.0,
-      270.0,
-      "B"
-    ],
-    "R136": [
-      72.25,
-      20.0,
-      270.0,
-      "B"
-    ],
-    "R137": [
-      74.5,
-      16.25,
+      61.75,
+      74.0,
       90.0,
       "B"
     ],
-    "R138": [
-      72.0,
+    "R134": [
+      75.75,
+      17.25,
+      270.0,
+      "F"
+    ],
+    "R135": [
+      80.25,
       15.5,
+      270.0,
+      "F"
+    ],
+    "R136": [
+      82.5,
+      15.5,
+      270.0,
+      "F"
+    ],
+    "R137": [
+      78.0,
+      9.75,
+      90.0,
+      "F"
+    ],
+    "R138": [
+      77.25,
+      27.5,
       270.0,
       "B"
     ],
     "R139": [
-      3.0,
-      57.75,
+      4.75,
+      56.0,
       0.0,
       "B"
     ],
@@ -4014,58 +4020,58 @@
       "B"
     ],
     "R140": [
-      3.0,
-      60.0,
-      180.0,
+      2.25,
+      53.0,
+      90.0,
       "B"
     ],
     "R141": [
-      81.25,
-      74.5,
+      74.25,
+      71.75,
       90.0,
-      "B"
+      "F"
     ],
     "R142": [
-      77.5,
-      76.25,
-      90.0,
-      "B"
+      48.25,
+      51.25,
+      180.0,
+      "F"
     ],
     "R143": [
-      111.75,
-      42.25,
-      180.0,
-      "B"
+      111.25,
+      50.0,
+      270.0,
+      "F"
     ],
     "R144": [
-      111.75,
-      44.5,
+      114.75,
+      47.25,
       180.0,
-      "B"
+      "F"
     ],
     "R145": [
-      111.0,
-      35.5,
-      270.0,
-      "B"
+      113.5,
+      50.25,
+      90.0,
+      "F"
     ],
     "R146": [
-      111.75,
-      52.0,
-      0.0,
-      "B"
+      111.25,
+      53.75,
+      90.0,
+      "F"
     ],
     "R147": [
-      111.0,
-      55.0,
+      113.5,
+      54.0,
       270.0,
-      "B"
+      "F"
     ],
     "R148": [
-      111.0,
-      58.75,
-      270.0,
-      "B"
+      112.25,
+      57.0,
+      0.0,
+      "F"
     ],
     "R149": [
       106.0,
@@ -4086,56 +4092,56 @@
       "F"
     ],
     "R151": [
-      104.75,
-      29.0,
+      89.5,
+      71.0,
+      180.0,
+      "F"
+    ],
+    "R152": [
+      3.0,
+      60.5,
       180.0,
       "B"
     ],
-    "R152": [
-      27.25,
-      15.5,
-      270.0,
-      "B"
-    ],
     "R153": [
-      66.75,
-      81.0,
-      90.0,
-      "B"
+      48.25,
+      53.5,
+      180.0,
+      "F"
     ],
     "R154": [
-      69.0,
-      81.0,
-      90.0,
-      "B"
+      44.5,
+      50.25,
+      180.0,
+      "F"
     ],
     "R155": [
-      83.5,
-      74.5,
-      90.0,
-      "B"
+      44.5,
+      52.5,
+      180.0,
+      "F"
     ],
     "R156": [
-      58.25,
-      16.75,
-      90.0,
-      "B"
+      44.25,
+      48.0,
+      0.0,
+      "F"
     ],
     "R157": [
-      64.0,
-      16.5,
-      270.0,
-      "B"
+      49.0,
+      66.75,
+      90.0,
+      "F"
     ],
     "R158": [
-      58.5,
-      85.25,
+      58.0,
+      71.75,
       90.0,
-      "B"
+      "F"
     ],
     "R159": [
-      60.75,
-      86.25,
+      58.5,
+      85.25,
       90.0,
       "B"
     ],
@@ -4146,9 +4152,9 @@
       "B"
     ],
     "R160": [
-      55.0,
-      90.5,
-      90.0,
+      40.0,
+      87.5,
+      180.0,
       "B"
     ],
     "R161": [
@@ -4164,27 +4170,27 @@
       "B"
     ],
     "R163": [
-      64.0,
-      85.5,
+      62.75,
+      83.25,
       0.0,
       "B"
     ],
     "R164": [
-      58.25,
-      89.75,
+      61.75,
+      85.5,
       0.0,
       "B"
     ],
     "R165": [
-      63.25,
-      88.5,
+      49.0,
+      70.5,
       270.0,
-      "B"
+      "F"
     ],
     "R166": [
-      30.5,
-      13.75,
-      90.0,
+      4.0,
+      72.0,
+      0.0,
       "B"
     ],
     "R167": [
@@ -4218,40 +4224,40 @@
       "B"
     ],
     "R171": [
-      115.5,
-      53.0,
+      112.0,
+      59.25,
       0.0,
-      "B"
+      "F"
     ],
     "R172": [
-      91.25,
-      71.75,
-      90.0,
-      "B"
+      93.25,
+      71.0,
+      180.0,
+      "F"
     ],
     "R173": [
-      114.0,
-      58.25,
-      0.0,
-      "B"
+      111.25,
+      62.25,
+      90.0,
+      "F"
     ],
     "R174": [
-      97.5,
+      86.5,
       71.75,
       270.0,
-      "B"
+      "F"
     ],
     "R175": [
-      93.5,
-      74.0,
+      84.25,
+      72.75,
       90.0,
-      "B"
+      "F"
     ],
     "R176": [
-      91.25,
-      75.5,
+      90.25,
+      74.0,
       90.0,
-      "B"
+      "F"
     ],
     "R177": [
       111.25,
@@ -4260,9 +4266,9 @@
       "B"
     ],
     "R178": [
-      114.0,
-      61.0,
-      0.0,
+      111.25,
+      63.25,
+      270.0,
       "B"
     ],
     "R179": [
@@ -4290,20 +4296,20 @@
       "B"
     ],
     "R182": [
-      117.25,
+      113.75,
       60.25,
       270.0,
       "B"
     ],
     "R183": [
-      103.75,
-      74.0,
+      104.0,
+      71.75,
       270.0,
-      "B"
+      "F"
     ],
     "R184": [
-      18.5,
-      15.25,
+      28.5,
+      16.0,
       90.0,
       "B"
     ],
@@ -4332,10 +4338,10 @@
       "B"
     ],
     "R189": [
-      73.5,
-      82.0,
+      55.75,
+      71.75,
       270.0,
-      "B"
+      "F"
     ],
     "R19": [
       133.0,
@@ -4344,62 +4350,62 @@
       "B"
     ],
     "R190": [
-      70.0,
-      85.25,
+      53.5,
+      71.75,
+      90.0,
+      "F"
+    ],
+    "R191": [
+      29.25,
+      13.0,
       0.0,
       "B"
     ],
-    "R191": [
-      15.5,
-      11.5,
-      270.0,
-      "B"
-    ],
     "R192": [
-      20.5,
-      7.75,
+      24.5,
+      11.0,
       90.0,
       "B"
     ],
     "R193": [
-      36.75,
-      10.0,
+      42.0,
+      13.5,
       180.0,
       "B"
     ],
     "R194": [
-      33.75,
-      8.5,
+      35.75,
+      11.5,
       270.0,
       "B"
     ],
     "R195": [
-      44.75,
-      10.75,
+      45.0,
+      13.0,
       270.0,
       "B"
     ],
     "R196": [
-      60.5,
-      15.0,
-      90.0,
+      57.25,
+      18.75,
+      180.0,
       "B"
     ],
     "R197": [
-      55.0,
-      12.75,
-      0.0,
+      60.25,
+      20.25,
+      270.0,
       "B"
     ],
     "R198": [
-      58.25,
-      13.0,
+      62.5,
+      20.25,
       90.0,
       "B"
     ],
     "R199": [
-      51.25,
-      11.25,
+      52.0,
+      15.0,
       90.0,
       "B"
     ],
@@ -4416,62 +4422,62 @@
       "B"
     ],
     "R200": [
-      44.5,
-      7.75,
+      42.0,
+      11.25,
       0.0,
       "B"
     ],
     "R201": [
-      27.0,
-      7.75,
-      90.0,
+      48.0,
+      13.75,
+      180.0,
       "B"
     ],
     "R202": [
-      31.5,
-      6.25,
+      31.25,
+      10.0,
       90.0,
       "B"
     ],
     "R203": [
-      51.75,
-      7.25,
+      54.25,
+      15.0,
       90.0,
       "B"
     ],
     "R204": [
-      16.0,
-      7.75,
+      29.0,
+      10.0,
       90.0,
       "B"
     ],
     "R205": [
       26.75,
-      4.75,
-      0.0,
+      10.0,
+      90.0,
       "B"
     ],
     "R206": [
-      66.25,
-      15.5,
+      69.75,
+      28.25,
       270.0,
       "B"
     ],
     "R207": [
-      63.25,
-      12.75,
-      270.0,
+      65.25,
+      23.5,
+      0.0,
       "B"
     ],
     "R208": [
-      73.0,
-      86.0,
-      90.0,
+      69.75,
+      24.5,
+      270.0,
       "B"
     ],
     "R209": [
-      70.0,
-      88.25,
+      66.75,
+      83.25,
       90.0,
       "B"
     ],
@@ -4482,62 +4488,62 @@
       "B"
     ],
     "R210": [
-      63.25,
-      9.0,
+      68.5,
+      20.75,
       90.0,
       "B"
     ],
     "R211": [
-      54.0,
-      7.25,
+      56.5,
+      15.75,
       90.0,
       "B"
     ],
     "R212": [
-      56.25,
-      7.25,
+      60.25,
+      16.5,
       90.0,
       "B"
     ],
     "R213": [
-      50.5,
-      97.25,
+      69.75,
+      82.5,
       180.0,
       "B"
     ],
     "R214": [
       65.75,
-      92.5,
+      87.0,
       270.0,
       "B"
     ],
     "R215": [
-      87.25,
-      13.25,
-      0.0,
+      88.25,
+      14.5,
+      270.0,
       "B"
     ],
     "R216": [
-      77.5,
-      13.5,
+      77.25,
+      18.5,
       180.0,
       "B"
     ],
     "R217": [
-      94.25,
-      12.5,
-      180.0,
+      93.5,
+      14.5,
+      270.0,
       "B"
     ],
     "R218": [
-      78.75,
-      11.25,
+      81.0,
+      19.5,
       180.0,
       "B"
     ],
     "R219": [
       31.25,
-      2.5,
+      6.25,
       90.0,
       "B"
     ],
@@ -4548,39 +4554,39 @@
       "B"
     ],
     "R220": [
-      60.25,
-      7.75,
+      63.25,
+      15.0,
       0.0,
       "B"
     ],
     "R221": [
-      62.0,
-      98.25,
+      60.75,
+      94.75,
       180.0,
       "B"
     ],
     "R222": [
-      65.75,
-      96.0,
+      64.5,
+      92.5,
       180.0,
       "B"
     ],
     "R223": [
-      68.75,
-      91.75,
+      66.5,
+      90.0,
       180.0,
       "B"
     ],
     "R224": [
-      69.5,
-      94.0,
+      69.75,
+      85.25,
       180.0,
       "B"
     ],
     "R225": [
-      72.5,
-      91.25,
-      180.0,
+      69.5,
+      90.5,
+      90.0,
       "B"
     ],
     "R226": [
@@ -4614,39 +4620,39 @@
       "B"
     ],
     "R230": [
-      92.25,
-      85.0,
-      90.0,
+      91.5,
+      86.25,
+      0.0,
       "B"
     ],
     "R231": [
-      51.0,
-      4.25,
+      57.25,
+      12.75,
       180.0,
       "B"
     ],
     "R232": [
-      47.5,
-      2.5,
-      270.0,
+      52.5,
+      7.75,
+      180.0,
       "B"
     ],
     "R233": [
-      76.5,
-      83.75,
+      73.5,
+      81.5,
       180.0,
       "B"
     ],
     "R234": [
-      76.0,
-      86.0,
+      73.5,
+      83.75,
       180.0,
       "B"
     ],
     "R235": [
-      54.75,
-      4.25,
-      180.0,
+      56.25,
+      9.75,
+      270.0,
       "B"
     ],
     "R236": [
@@ -4681,62 +4687,62 @@
     ],
     "R240": [
       107.25,
-      19.5,
+      20.25,
       0.0,
       "B"
     ],
     "R241": [
-      73.25,
+      68.5,
       93.5,
       180.0,
       "B"
     ],
     "R242": [
-      76.75,
-      88.25,
+      68.5,
+      95.75,
       180.0,
       "B"
     ],
     "R243": [
-      76.75,
-      90.5,
-      180.0,
-      "B"
-    ],
-    "R244": [
-      79.75,
+      74.0,
       86.0,
       180.0,
       "B"
     ],
+    "R244": [
+      72.5,
+      89.75,
+      180.0,
+      "B"
+    ],
     "R245": [
-      18.25,
-      4.0,
+      20.0,
+      7.5,
       90.0,
       "B"
     ],
     "R246": [
-      66.5,
-      5.5,
-      180.0,
-      "B"
-    ],
-    "R247": [
-      66.5,
+      32.75,
       3.25,
       180.0,
       "B"
     ],
+    "R247": [
+      29.75,
+      2.5,
+      90.0,
+      "B"
+    ],
     "R248": [
-      93.5,
-      77.75,
-      270.0,
+      90.0,
+      75.0,
+      180.0,
       "B"
     ],
     "R249": [
       91.25,
-      80.25,
-      270.0,
+      72.0,
+      90.0,
       "B"
     ],
     "R25": [
@@ -4746,8 +4752,8 @@
       "B"
     ],
     "R250": [
-      70.25,
-      5.5,
+      26.75,
+      1.75,
       180.0,
       "B"
     ],
@@ -4758,26 +4764,26 @@
       "B"
     ],
     "R252": [
-      108.25,
-      28.25,
-      270.0,
+      108.0,
+      29.0,
+      0.0,
       "B"
     ],
     "R253": [
-      80.25,
-      81.5,
+      77.25,
+      77.75,
       180.0,
       "B"
     ],
     "R254": [
-      80.25,
-      83.75,
+      77.25,
+      80.0,
       180.0,
       "B"
     ],
     "R255": [
-      107.75,
-      21.75,
+      106.25,
+      22.5,
       0.0,
       "B"
     ],
@@ -4812,63 +4818,63 @@
       "B"
     ],
     "R260": [
-      138.75,
-      59.25,
+      137.25,
+      59.5,
       0.0,
       "B"
     ],
     "R261": [
-      75.0,
-      5.5,
+      66.25,
+      14.25,
       270.0,
       "B"
     ],
     "R262": [
-      78.5,
-      9.0,
-      180.0,
-      "B"
-    ],
-    "R263": [
-      84.75,
-      78.25,
+      70.75,
+      20.75,
       270.0,
       "B"
     ],
+    "R263": [
+      77.25,
+      82.25,
+      180.0,
+      "B"
+    ],
     "R264": [
-      84.0,
-      81.25,
+      81.0,
+      77.75,
       180.0,
       "B"
     ],
     "R265": [
-      85.75,
-      2.5,
-      180.0,
+      64.0,
+      12.0,
+      270.0,
       "B"
     ],
     "R266": [
-      96.25,
-      16.5,
+      73.0,
+      20.75,
       270.0,
       "B"
     ],
     "R267": [
-      103.0,
-      21.5,
-      270.0,
+      73.5,
+      17.75,
+      180.0,
       "B"
     ],
     "R268": [
-      100.75,
+      99.25,
       74.0,
       180.0,
       "B"
     ],
     "R269": [
-      105.25,
-      78.25,
-      180.0,
+      95.5,
+      74.0,
+      0.0,
       "B"
     ],
     "R27": [
@@ -4878,93 +4884,93 @@
       "B"
     ],
     "R270": [
-      98.25,
-      6.75,
-      180.0,
+      70.25,
+      16.75,
+      270.0,
       "B"
     ],
     "R271": [
-      115.5,
-      25.5,
+      117.25,
+      29.5,
       270.0,
       "B"
     ],
     "R272": [
-      118.5,
-      28.0,
+      119.5,
+      29.5,
       270.0,
       "B"
     ],
     "R273": [
-      84.0,
-      83.5,
+      81.0,
+      80.0,
       180.0,
       "B"
     ],
     "R274": [
-      83.5,
-      86.0,
+      81.0,
+      82.25,
       180.0,
       "B"
     ],
     "R275": [
-      120.25,
-      17.75,
+      116.25,
+      11.25,
       0.0,
       "B"
     ],
     "R276": [
-      104.75,
-      9.75,
+      66.25,
+      8.25,
       270.0,
       "B"
     ],
     "R277": [
-      102.5,
-      1.5,
+      63.0,
+      3.75,
       0.0,
       "B"
     ],
     "R278": [
-      110.25,
-      18.75,
+      74.0,
+      7.75,
       270.0,
       "B"
     ],
     "R279": [
-      113.25,
-      32.0,
-      90.0,
+      81.0,
+      15.0,
+      0.0,
       "B"
     ],
     "R28": [
-      48.25,
+      47.5,
       33.5,
       180.0,
-      "B"
+      "F"
     ],
     "R280": [
-      114.0,
-      29.0,
+      89.0,
+      17.75,
       0.0,
       "B"
     ],
     "R281": [
-      128.5,
-      82.5,
+      126.75,
+      81.75,
       270.0,
       "B"
     ],
     "R282": [
-      127.75,
-      78.75,
-      90.0,
+      123.75,
+      77.75,
+      0.0,
       "B"
     ],
     "R283": [
-      110.75,
-      10.75,
-      270.0,
+      77.0,
+      9.0,
+      0.0,
       "B"
     ],
     "R284": [
@@ -5004,10 +5010,10 @@
       "B"
     ],
     "R29": [
-      50.75,
+      56.25,
       29.0,
-      0.0,
-      "B"
+      180.0,
+      "F"
     ],
     "R290": [
       119.5,
@@ -5016,56 +5022,56 @@
       "B"
     ],
     "R291": [
-      79.75,
-      89.0,
-      90.0,
+      63.0,
+      1.5,
+      0.0,
       "B"
     ],
     "R292": [
-      82.0,
-      89.0,
-      90.0,
+      66.75,
+      1.5,
+      0.0,
       "B"
     ],
     "R293": [
-      87.75,
       84.75,
+      77.25,
       0.0,
       "B"
     ],
     "R294": [
-      85.0,
-      88.25,
-      0.0,
+      77.0,
+      85.25,
+      90.0,
       "B"
     ],
     "R295": [
-      88.75,
-      87.0,
+      84.75,
+      79.5,
       0.0,
       "B"
     ],
     "R296": [
-      85.0,
-      90.5,
+      80.0,
+      84.5,
       0.0,
       "B"
     ],
     "R297": [
-      88.75,
-      89.25,
-      0.0,
-      "B"
-    ],
-    "R298": [
-      85.0,
-      93.5,
+      75.5,
+      89.0,
       90.0,
       "B"
     ],
+    "R298": [
+      10.25,
+      2.75,
+      270.0,
+      "B"
+    ],
     "R299": [
-      124.25,
-      91.0,
+      105.25,
+      98.5,
       180.0,
       "B"
     ],
@@ -5076,26 +5082,26 @@
       "B"
     ],
     "R30": [
-      44.5,
+      43.75,
       34.5,
       0.0,
-      "B"
+      "F"
     ],
     "R300": [
-      106.25,
-      1.5,
-      0.0,
+      85.5,
+      10.75,
+      90.0,
       "B"
     ],
     "R301": [
-      111.75,
-      85.75,
-      270.0,
+      68.5,
+      98.0,
+      0.0,
       "B"
     ],
     "R302": [
-      116.5,
-      94.75,
+      91.0,
+      83.25,
       270.0,
       "B"
     ],
@@ -5106,16 +5112,16 @@
       "B"
     ],
     "R31": [
-      44.5,
-      32.25,
+      41.75,
+      36.75,
       180.0,
-      "B"
+      "F"
     ],
     "R32": [
-      41.75,
-      29.75,
-      0.0,
-      "B"
+      60.0,
+      29.0,
+      180.0,
+      "F"
     ],
     "R33": [
       32.25,
@@ -5130,28 +5136,28 @@
       "B"
     ],
     "R35": [
-      45.25,
-      24.25,
-      180.0,
-      "B"
+      63.0,
+      28.25,
+      270.0,
+      "F"
     ],
     "R36": [
-      41.5,
-      25.25,
+      37.0,
+      27.75,
       0.0,
-      "B"
+      "F"
     ],
     "R37": [
-      41.5,
-      23.0,
-      0.0,
-      "B"
+      38.75,
+      36.5,
+      270.0,
+      "F"
     ],
     "R38": [
-      46.0,
-      19.0,
-      270.0,
-      "B"
+      36.25,
+      32.25,
+      180.0,
+      "F"
     ],
     "R39": [
       44.5,
@@ -5166,28 +5172,28 @@
       "B"
     ],
     "R40": [
-      65.0,
-      24.5,
-      90.0,
-      "B"
+      74.5,
+      22.5,
+      180.0,
+      "F"
     ],
     "R41": [
-      67.25,
-      24.5,
-      270.0,
-      "B"
+      76.75,
+      28.25,
+      0.0,
+      "F"
     ],
     "R42": [
-      70.5,
-      26.75,
-      0.0,
-      "B"
+      78.25,
+      23.75,
+      180.0,
+      "F"
     ],
     "R43": [
-      73.5,
-      26.0,
-      270.0,
-      "B"
+      80.5,
+      28.25,
+      0.0,
+      "F"
     ],
     "R44": [
       50.75,
@@ -5328,9 +5334,9 @@
       "B"
     ],
     "R65": [
-      120.5,
-      90.25,
-      180.0,
+      94.75,
+      78.5,
+      90.0,
       "B"
     ],
     "R66": [
@@ -5442,8 +5448,8 @@
       "B"
     ],
     "R82": [
-      34.75,
-      38.25,
+      38.5,
+      38.5,
       90.0,
       "B"
     ],
@@ -5454,8 +5460,8 @@
       "B"
     ],
     "R84": [
-      31.5,
-      35.5,
+      37.75,
+      34.5,
       180.0,
       "B"
     ],
@@ -5484,9 +5490,9 @@
       "B"
     ],
     "R89": [
-      61.75,
-      74.0,
-      270.0,
+      38.5,
+      31.5,
+      90.0,
       "B"
     ],
     "R9": [
@@ -5508,9 +5514,9 @@
       "B"
     ],
     "R92": [
-      121.5,
-      35.5,
-      180.0,
+      108.0,
+      26.0,
+      90.0,
       "B"
     ],
     "R93": [
@@ -5520,14 +5526,14 @@
       "B"
     ],
     "R94": [
-      29.25,
-      32.75,
-      180.0,
+      31.75,
+      32.5,
+      270.0,
       "B"
     ],
     "R95": [
-      37.75,
-      24.25,
+      41.75,
+      28.5,
       0.0,
       "B"
     ],
@@ -5544,9 +5550,9 @@
       "B"
     ],
     "R98": [
-      30.5,
-      28.75,
-      270.0,
+      19.0,
+      37.25,
+      180.0,
       "B"
     ],
     "R99": [
@@ -5556,8 +5562,8 @@
       "B"
     ],
     "RT1": [
-      35.75,
-      2.5,
+      29.0,
+      6.25,
       270.0,
       "B"
     ],
@@ -5568,8 +5574,8 @@
       "B"
     ],
     "R_SET": [
-      54.5,
-      10.25,
+      53.25,
+      10.0,
       180.0,
       "B"
     ],
@@ -5628,20 +5634,20 @@
       "B"
     ],
     "TP10": [
-      78.25,
-      16.5,
+      76.5,
+      13.5,
       0.0,
-      "B"
+      "F"
     ],
     "TP11": [
-      67.25,
-      20.0,
-      90.0,
-      "B"
+      74.25,
+      10.0,
+      0.0,
+      "F"
     ],
     "TP12": [
-      72.0,
-      96.75,
+      58.25,
+      98.0,
       0.0,
       "B"
     ],
@@ -5652,7 +5658,7 @@
       "B"
     ],
     "TP14": [
-      59.0,
+      54.0,
       4.0,
       90.0,
       "B"
@@ -5664,50 +5670,50 @@
       "B"
     ],
     "TP16": [
-      27.0,
-      2.0,
-      0.0,
-      "B"
-    ],
-    "TP17": [
-      85.5,
-      6.25,
+      26.0,
+      5.5,
       90.0,
       "B"
     ],
+    "TP17": [
+      14.0,
+      3.0,
+      0.0,
+      "B"
+    ],
     "TP18": [
-      124.0,
-      20.75,
+      121.25,
+      21.25,
       90.0,
       "B"
     ],
     "TP19": [
-      157.25,
+      157.0,
       67.0,
       90.0,
       "B"
     ],
     "TP2": [
-      57.5,
-      20.5,
+      43.75,
+      43.25,
       0.0,
-      "B"
+      "F"
     ],
     "TP20": [
-      96.75,
-      9.75,
+      58.5,
+      3.25,
       0.0,
       "B"
     ],
     "TP21": [
-      101.75,
-      9.0,
-      90.0,
+      70.25,
+      8.0,
+      0.0,
       "B"
     ],
     "TP22": [
-      130.5,
-      12.0,
+      130.75,
+      14.0,
       90.0,
       "B"
     ],
@@ -5718,38 +5724,38 @@
       "B"
     ],
     "TP24": [
-      88.75,
-      94.25,
-      0.0,
-      "B"
-    ],
-    "TP25": [
-      117.0,
-      36.0,
-      0.0,
-      "B"
-    ],
-    "TP26": [
-      86.5,
-      97.75,
-      0.0,
-      "B"
-    ],
-    "TP27": [
-      100.0,
-      84.5,
+      88.25,
+      78.75,
       90.0,
       "B"
     ],
+    "TP25": [
+      108.25,
+      16.5,
+      90.0,
+      "B"
+    ],
+    "TP26": [
+      84.5,
+      83.25,
+      90.0,
+      "B"
+    ],
+    "TP27": [
+      79.25,
+      88.75,
+      0.0,
+      "B"
+    ],
     "TP28": [
-      91.75,
-      98.0,
+      73.0,
+      94.75,
       0.0,
       "B"
     ],
     "TP29": [
-      104.5,
-      82.25,
+      83.5,
+      88.5,
       90.0,
       "B"
     ],
@@ -5760,64 +5766,64 @@
       "B"
     ],
     "TP30": [
-      104.5,
-      86.5,
-      0.0,
+      88.0,
+      84.0,
+      90.0,
       "B"
     ],
     "TP31": [
-      108.75,
-      79.75,
+      91.75,
+      78.75,
       90.0,
       "B"
     ],
     "TP32": [
-      97.0,
-      98.0,
-      0.0,
+      87.0,
+      89.25,
+      90.0,
       "B"
     ],
     "TP33": [
-      108.75,
-      85.0,
+      85.5,
+      94.5,
       90.0,
       "B"
     ],
     "TP34": [
-      102.25,
-      98.0,
-      0.0,
+      90.5,
+      90.0,
+      90.0,
       "B"
     ],
     "TP35": [
-      106.5,
-      91.0,
+      89.0,
+      95.25,
       90.0,
       "B"
     ],
     "TP36": [
-      112.25,
-      79.75,
+      92.5,
+      95.75,
       90.0,
       "B"
     ],
     "TP37": [
-      106.5,
-      96.25,
+      100.0,
+      84.5,
       90.0,
       "B"
     ],
     "TP38": [
-      124.5,
-      31.25,
-      90.0,
-      "B"
+      73.5,
+      6.5,
+      0.0,
+      "F"
     ],
     "TP39": [
-      120.0,
-      59.5,
-      90.0,
-      "B"
+      119.25,
+      46.0,
+      0.0,
+      "F"
     ],
     "TP4": [
       55.5,
@@ -5826,15 +5832,15 @@
       "B"
     ],
     "TP40": [
-      122.25,
-      4.75,
-      90.0,
+      103.5,
+      2.0,
+      0.0,
       "B"
     ],
     "TP41": [
-      134.5,
-      16.25,
-      0.0,
+      127.75,
+      28.25,
+      90.0,
       "B"
     ],
     "TP42": [
@@ -5850,14 +5856,14 @@
       "B"
     ],
     "TP44": [
-      138.5,
-      6.75,
+      130.0,
+      9.75,
       0.0,
       "B"
     ],
     "TP45": [
-      130.0,
-      7.75,
+      138.5,
+      6.75,
       0.0,
       "B"
     ],
@@ -5868,21 +5874,21 @@
       "B"
     ],
     "TP47": [
-      136.75,
-      43.75,
+      122.75,
+      30.5,
       90.0,
       "B"
     ],
     "TP48": [
       131.75,
-      2.75,
+      4.75,
       0.0,
       "B"
     ],
     "TP49": [
-      154.25,
-      40.75,
-      0.0,
+      124.25,
+      10.0,
+      90.0,
       "B"
     ],
     "TP5": [
@@ -5892,63 +5898,63 @@
       "B"
     ],
     "TP50": [
-      124.5,
-      59.25,
+      108.0,
+      9.0,
       0.0,
       "B"
     ],
     "TP51": [
-      110.0,
-      90.25,
+      113.25,
+      7.5,
       90.0,
       "B"
     ],
     "TP52": [
-      110.0,
-      95.5,
-      90.0,
+      97.0,
+      98.0,
+      0.0,
       "B"
     ],
     "TP53": [
-      113.5,
-      94.5,
+      105.0,
+      79.75,
       90.0,
       "B"
     ],
     "TP54": [
-      122.25,
-      78.5,
+      103.5,
+      85.0,
       90.0,
       "B"
     ],
     "TP55": [
+      118.5,
+      58.75,
+      90.0,
+      "F"
+    ],
+    "TP56": [
+      112.5,
+      35.0,
+      0.0,
+      "B"
+    ],
+    "TP57": [
+      124.0,
+      81.5,
+      90.0,
+      "B"
+    ],
+    "TP58": [
       136.5,
       54.25,
       90.0,
       "B"
     ],
-    "TP56": [
-      140.0,
-      52.0,
-      90.0,
-      "B"
-    ],
-    "TP57": [
-      125.5,
-      88.0,
-      0.0,
-      "B"
-    ],
-    "TP58": [
-      141.0,
-      56.25,
-      0.0,
-      "B"
-    ],
     "TP59": [
-      150.75,
-      45.75,
-      0.0,
+      136.75,
+      43.75,
+      90.0,
       "B"
     ],
     "TP6": [
@@ -6260,104 +6266,110 @@
   },
   "plane_fanout": {
     "failed": [
-      "TP47 pad at (136.75, 43.75) [VMOT]",
-      "TP44 pad at (138.50, 6.75) [3V3]",
+      "TP47 pad at (122.75, 30.50) [VMOT]",
+      "TP44 pad at (130.00, 9.75) [3V3]",
       "TP42 pad at (140.75, 37.75) [VSYS]",
-      "R299 pad at (125.07, 91.00) [3V3]",
-      "R274 pad at (84.32, 86.00) [3V3]",
-      "R273 pad at (84.82, 83.50) [3V3]",
+      "R299 pad at (106.07, 98.50) [3V3]",
+      "J_PANEL pad at (20.42, 13.25) [GND]",
+      "R274 pad at (81.82, 82.25) [3V3]",
+      "R273 pad at (81.82, 80.00) [3V3]",
       "FB15 pad at (124.50, 15.29) [3V3]",
-      "R269 pad at (106.07, 78.25) [3V3]",
-      "R268 pad at (101.57, 74.00) [3V3]",
-      "FB14 pad at (90.29, 2.25) [3V3]",
-      "R264 pad at (84.82, 81.25) [3V3]",
-      "R263 pad at (84.75, 79.07) [3V3]",
-      "FB13 pad at (73.29, 8.50) [3V3]",
+      "R269 pad at (94.68, 74.00) [3V3]",
+      "R268 pad at (100.07, 74.00) [3V3]",
+      "FB14 pad at (67.79, 11.25) [3V3]",
+      "R264 pad at (81.82, 77.75) [3V3]",
+      "R263 pad at (78.07, 82.25) [3V3]",
+      "FB13 pad at (58.54, 6.75) [3V3]",
       "R259 pad at (102.32, 78.50) [3V3]",
       "R258 pad at (101.82, 80.75) [3V3]",
       "FB12 pad at (148.21, 67.00) [3V3]",
-      "R254 pad at (81.07, 83.75) [3V3]",
-      "R253 pad at (81.07, 81.50) [3V3]",
+      "R254 pad at (78.07, 80.00) [3V3]",
+      "R253 pad at (78.07, 77.75) [3V3]",
       "FB11 pad at (115.00, 22.54) [3V3]",
-      "R249 pad at (91.25, 81.07) [3V3]",
-      "R248 pad at (93.50, 78.57) [3V3]",
-      "FB10 pad at (63.54, 5.50) [3V3]",
-      "R244 pad at (80.57, 86.00) [3V3]",
-      "R243 pad at (77.57, 90.50) [3V3]",
-      "FB9 pad at (10.75, 5.96) [3V3]",
+      "D44 pad at (23.00, 1.37) [GND]",
+      "R249 pad at (91.25, 71.18) [3V3]",
+      "R248 pad at (90.82, 75.00) [3V3]",
+      "FB10 pad at (17.75, 3.21) [3V3]",
+      "R244 pad at (73.32, 89.75) [3V3]",
+      "R243 pad at (74.82, 86.00) [3V3]",
+      "FB9 pad at (51.29, 97.25) [3V3]",
       "R239 pad at (98.82, 76.25) [3V3]",
       "R238 pad at (98.57, 78.50) [3V3]",
       "FB8 pad at (111.00, 15.29) [3V3]",
-      "D41 pad at (50.50, 1.62) [GND]",
-      "R234 pad at (76.82, 86.00) [3V3]",
-      "R233 pad at (77.32, 83.75) [3V3]",
-      "FB7 pad at (48.04, 5.50) [3V3]",
+      "D41 pad at (48.75, 6.13) [GND]",
+      "D41 pad at (48.75, 5.37) [GND]",
+      "R234 pad at (74.32, 83.75) [3V3]",
+      "R233 pad at (74.32, 81.50) [3V3]",
+      "FB7 pad at (35.75, 3.21) [3V3]",
       "D40 pad at (97.75, 93.88) [GND]",
       "D40 pad at (97.75, 93.12) [GND]",
       "R229 pad at (95.75, 81.43) [3V3]",
       "R228 pad at (97.32, 85.25) [3V3]",
       "FB6 pad at (94.79, 92.00) [3V3]",
-      "D39 pad at (65.75, 98.63) [GND]",
-      "R224 pad at (70.32, 94.00) [3V3]",
-      "R223 pad at (69.57, 91.75) [3V3]",
-      "FB5 pad at (59.04, 97.25) [3V3]",
+      "D39 pad at (63.37, 95.50) [GND]",
+      "D39 pad at (64.13, 95.50) [GND]",
+      "R224 pad at (70.57, 85.25) [3V3]",
+      "R223 pad at (67.32, 90.00) [3V3]",
+      "FB5 pad at (57.04, 95.25) [3V3]",
       "C158 pad at (95.48, 87.50) [3V3]",
       "U51 pad at (95.14, 87.58) [3V3]",
+      "U51 pad at (100.86, 85.62) [GND]",
       "U51 pad at (100.86, 87.58) [3V3]",
-      "C157 pad at (72.22, 89.00) [3V3]",
+      "C157 pad at (69.47, 87.50) [3V3]",
       "U50 pad at (68.86, 87.58) [3V3]",
       "F_AUX pad at (106.10, 73.50) [VBAT_SW]",
-      "R214 pad at (65.75, 93.32) [3V3]",
-      "R213 pad at (51.32, 97.25) [3V3]",
-      "R212 pad at (56.25, 6.43) [3V3]",
-      "R211 pad at (54.00, 6.43) [3V3]",
-      "R210 pad at (63.25, 8.18) [3V3]",
-      "C153 pad at (65.50, 12.52) [3V3]",
-      "C152 pad at (13.75, 7.52) [3V3]",
-      "C151 pad at (82.50, 77.47) [3V3]",
-      "R204 pad at (16.00, 6.93) [3V3]",
-      "R203 pad at (51.75, 6.43) [3V3]",
-      "R202 pad at (31.50, 5.43) [3V3]",
-      "C150 pad at (80.25, 77.47) [3V3]",
-      "C149 pad at (18.25, 8.52) [3V3]",
+      "R214 pad at (65.75, 87.82) [3V3]",
+      "R213 pad at (70.57, 82.50) [3V3]",
+      "R212 pad at (60.25, 15.68) [3V3]",
+      "R211 pad at (56.50, 14.93) [3V3]",
+      "R210 pad at (68.50, 19.93) [3V3]",
+      "C153 pad at (64.72, 21.25) [3V3]",
+      "C152 pad at (15.50, 8.52) [3V3]",
+      "C151 pad at (84.98, 75.00) [3V3]",
+      "R204 pad at (29.00, 9.18) [3V3]",
+      "R203 pad at (54.25, 14.18) [3V3]",
+      "R202 pad at (31.25, 9.18) [3V3]",
+      "C150 pad at (81.23, 73.75) [3V3]",
+      "C149 pad at (17.25, 12.27) [3V3]",
       "U42 pad at (79.50, 68.26) [3V3]",
       "U42 pad at (80.50, 65.74) [3V3]",
-      "R199 pad at (51.25, 10.43) [3V3]",
-      "R196 pad at (60.50, 14.18) [3V3]",
-      "R192 pad at (20.50, 6.93) [3V3]",
-      "C142 pad at (28.00, 12.70) [3V3]",
-      "C141 pad at (49.00, 13.77) [3V3]",
-      "C140 pad at (33.75, 13.02) [3V3]",
-      "C139 pad at (22.25, 14.27) [3V3]",
-      "C138 pad at (16.25, 16.02) [3V3]",
-      "C134 pad at (76.47, 79.25) [3V3]",
+      "J_USB_MCU pad at (35.15, 20.65) [GND]",
+      "R199 pad at (52.00, 14.18) [3V3]",
+      "R196 pad at (58.07, 18.75) [3V3]",
+      "R192 pad at (24.50, 10.18) [3V3]",
+      "C142 pad at (19.75, 16.20) [3V3]",
+      "C141 pad at (56.47, 21.00) [3V3]",
+      "C140 pad at (39.97, 15.75) [3V3]",
+      "C139 pad at (26.25, 15.52) [3V3]",
+      "C138 pad at (22.25, 18.02) [3V3]",
+      "C134 pad at (77.47, 75.50) [3V3]",
       "U38 pad at (143.14, 81.00) [3V3]",
-      "R184 pad at (18.50, 14.43) [3V3]",
-      "R183 pad at (103.75, 74.82) [3V3]",
-      "D36 pad at (125.50, 84.90) [3V3]",
-      "C129 pad at (69.25, 16.23) [VMOT]",
-      "C128 pad at (96.25, 21.02) [VMOT]",
-      "C126 pad at (111.00, 63.28) [VMOT]",
-      "R174 pad at (97.50, 72.57) [3V3]",
+      "R184 pad at (28.50, 15.18) [3V3]",
+      "R183 pad at (104.00, 72.57) [3V3]",
+      "D36 pad at (110.60, 78.50) [3V3]",
+      "C129 pad at (77.25, 23.73) [VMOT]",
+      "C128 pad at (74.75, 25.27) [VMOT]",
+      "C126 pad at (96.48, 71.00) [VMOT]",
+      "R174 pad at (86.50, 72.57) [3V3]",
       "U6 pad at (95.73, 56.86) [3V3]",
       "C122 pad at (95.27, 71.00) [3V3]",
       "U37 pad at (13.14, 70.00) [3V3]",
-      "R166 pad at (30.50, 12.93) [3V3]",
-      "R165 pad at (63.25, 89.32) [3V3]",
-      "D33 pad at (125.90, 93.50) [3V3]",
-      "C117 pad at (93.75, 17.73) [VMOT]",
-      "C116 pad at (82.00, 15.52) [VMOT]",
-      "C114 pad at (71.25, 83.03) [VMOT]",
-      "R156 pad at (58.25, 15.93) [3V3]",
+      "R166 pad at (3.17, 72.00) [3V3]",
+      "R165 pad at (49.00, 71.32) [3V3]",
+      "D33 pad at (107.65, 96.00) [3V3]",
+      "C117 pad at (72.25, 28.98) [VMOT]",
+      "C116 pad at (79.75, 26.02) [VMOT]",
+      "C114 pad at (62.25, 72.53) [VMOT]",
       "U5 pad at (59.72, 56.86) [3V3]",
-      "R148 pad at (111.00, 59.57) [VBAT_SW]",
-      "R144 pad at (112.57, 44.50) [VMOT]",
+      "R148 pad at (111.43, 57.00) [VBAT_SW]",
+      "R144 pad at (115.57, 47.25) [VMOT]",
+      "R143 pad at (111.25, 50.82) [VBAT_SW]",
       "U33 pad at (108.47, 43.41) [VBAT_SW]",
       "C109 pad at (71.25, 77.72) [3V3]",
       "U9 pad at (81.14, 56.95) [3V3]",
-      "R139 pad at (2.17, 57.75) [VMOT]",
-      "R138 pad at (72.00, 16.96) [VMOT]",
-      "R137 pad at (74.50, 15.43) [3V3]",
+      "R139 pad at (3.92, 56.00) [VMOT]",
+      "R138 pad at (77.25, 28.96) [VMOT]",
+      "R137 pad at (78.00, 8.93) [3V3]",
       "U8 pad at (77.55, 34.75) [VBAT_SW]",
       "U8 pad at (77.55, 34.25) [GND]",
       "U8 pad at (77.55, 33.75) [GND]",
@@ -6368,18 +6380,18 @@
       "D29 pad at (39.37, 4.75) [GND]",
       "R128 pad at (42.00, 5.57) [3V3]",
       "Q_J2PRE pad at (68.69, 76.05) [3V3]",
-      "D28 pad at (123.65, 96.75) [3V3]",
-      "R123 pad at (122.82, 84.00) [3V3]",
-      "Q_ESTOP pad at (44.80, 14.06) [3V3]",
-      "D27 pad at (128.65, 27.00) [3V3]",
-      "R120 pad at (125.25, 1.68) [3V3]",
-      "D26 pad at (40.25, 13.85) [3V3]",
-      "D25 pad at (51.75, 14.10) [3V3]",
-      "D23 pad at (24.75, 16.10) [3V3]",
-      "D22 pad at (27.75, 18.35) [3V3]",
-      "D17 pad at (28.00, 23.60) [3V3]",
+      "D28 pad at (109.65, 83.75) [3V3]",
+      "R123 pad at (99.07, 71.75) [3V3]",
+      "Q_ESTOP pad at (43.80, 18.56) [3V3]",
+      "D27 pad at (115.90, 3.50) [3V3]",
+      "R120 pad at (97.32, 17.25) [3V3]",
+      "D26 pad at (40.00, 17.85) [3V3]",
+      "D25 pad at (54.00, 17.85) [3V3]",
+      "D24 pad at (30.50, 18.85) [3V3]",
+      "D22 pad at (27.75, 18.85) [3V3]",
+      "D17 pad at (41.25, 23.10) [3V3]",
       "R93 pad at (98.43, 24.00) [3V3]",
-      "R92 pad at (122.32, 35.50) [3V3]",
+      "R92 pad at (108.00, 25.18) [3V3]",
       "R91 pad at (81.93, 24.00) [3V3]",
       "R90 pad at (96.25, 24.82) [3V3]",
       "C86 pad at (85.75, 22.23) [3V3]",
@@ -6402,18 +6414,18 @@
       "U15 pad at (46.03, 81.14) [3V3]",
       "U15 pad at (46.03, 84.86) [3V3]",
       "U15 pad at (47.00, 83.00) [GND]",
-      "C46 pad at (38.25, 29.73) [VSYS]",
+      "C46 pad at (64.53, 26.00) [VSYS]",
+      "U12 pad at (71.36, 29.50) [GND]",
       "U12 pad at (73.64, 29.50) [VSYS]",
-      "C42 pad at (61.50, 20.98) [VSYS]",
-      "R40 pad at (65.00, 23.68) [3V3]",
+      "C42 pad at (64.53, 28.75) [VSYS]",
+      "R40 pad at (75.32, 22.50) [3V3]",
       "L3 pad at (69.30, 35.00) [3V3]",
       "U11 pad at (67.64, 29.50) [VSYS]",
-      "R36 pad at (40.68, 25.25) [3V3]",
-      "U13 pad at (50.15, 29.25) [GND]",
+      "R32 pad at (60.82, 29.00) [3V3]",
       "C35 pad at (49.03, 45.25) [VSYS]",
-      "C34 pad at (51.50, 21.52) [VSYS]",
-      "C33 pad at (41.47, 32.75) [VSYS]",
-      "C32 pad at (64.53, 28.25) [VSYS]",
+      "C34 pad at (48.03, 30.75) [VSYS]",
+      "C33 pad at (43.72, 36.00) [VSYS]",
+      "C32 pad at (50.75, 23.73) [VSYS]",
       "U10 pad at (54.85, 33.30) [VSYS]",
       "U10 pad at (54.85, 35.70) [VSYS]",
       "R25 pad at (117.68, 50.75) [3V3]",
@@ -6436,7 +6448,6 @@
       "R11 pad at (28.25, 43.32) [VBAT_SW]",
       "C8 pad at (122.48, 43.75) [VBAT_SW]",
       "C6 pad at (122.27, 39.00) [3V3]",
-      "R10 pad at (120.93, 41.25) [VBAT_SW]",
       "U2 pad at (123.20, 39.60) [3V3]",
       "U2 pad at (123.20, 40.10) [GND]",
       "U1 pad at (127.36, 40.82) [GND]"
@@ -6448,7 +6459,7 @@
       "VMOT",
       "VSYS"
     ],
-    "vias": 481
+    "vias": 479
   },
   "pwr_flags": [
     "GND",
@@ -6465,10 +6476,10 @@
   ],
   "route_info": null,
   "route_stats": {
-    "track_length_mm": 901.4,
-    "tracks": 923,
-    "unconnected_after_fill": 1178,
-    "vias": 633
+    "track_length_mm": 874.09,
+    "tracks": 899,
+    "unconnected_after_fill": 1182,
+    "vias": 625
   },
   "routed": false,
   "routing": {

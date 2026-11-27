@@ -146,6 +146,7 @@ for p in board.parts:
         p.bom = False
     if p.ref.startswith(("H", "FID")) and p.mpn in ("MOUNTING-HOLE-M3", "FIDUCIAL"):
         p.silk_ref = False
+        p.height = 0.1
     # reference designators on silk only for connectors, ICs, relays, inductors, fuses, switches, jumpers
     # (the 600 passives are identified on the assembly drawings / Fab layer)
     if not p.ref.startswith(("J", "U", "K", "L", "F_", "SW", "JP", "Q", "H")) or p.ref.startswith("LED"):

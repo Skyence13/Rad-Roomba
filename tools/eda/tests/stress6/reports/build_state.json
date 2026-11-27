@@ -169,7 +169,7 @@
           "Pad 6 [IO37] of U2 on F.Cu"
         ],
         "net": "IO37",
-        "why": "exact re-check failed: via: pad IO36 U1"
+        "why": "no path"
       },
       {
         "ends": [
@@ -177,7 +177,7 @@
           "Pad 2 [IO38] of U2 on F.Cu"
         ],
         "net": "IO38",
-        "why": "exact re-check failed: via: seg IO09 "
+        "why": "no path"
       },
       {
         "ends": [
@@ -185,7 +185,7 @@
           "Pad 41 [IO46] of U2 on F.Cu"
         ],
         "net": "IO46",
-        "why": "exact re-check failed: via: pad +3V3 U1"
+        "why": "no path"
       },
       {
         "ends": [
@@ -193,12 +193,12 @@
           "PTH pad 1 [AUX00] of J4"
         ],
         "net": "AUX00",
-        "why": "exact re-check failed: via: pad GND U2"
+        "why": "no path"
       }
     ],
     "items": 0,
     "routed": [],
-    "seconds": 371.2
+    "seconds": 341.8
   },
   "gen_warnings": [
     "U50: 3D envelope uses the default height 1.0 mm (give height=)",

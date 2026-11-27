@@ -88,7 +88,7 @@ PLACE = {
     "C_SET": (105.5, 32.5, 0, "F"),     # set-pulse capacitor next to K1
     # ---- power entry (pack current enters and leaves within 40 mm of J_PWR)
     "Q1": (133.5, 30.0, 90, "F"), "Q2": (133.5, 38.0, 90, "F"), "R_SH1": (127.7, 34.0, 90, "F"),
-    "D1": (156.5, 38.0, 90, "F"), "U1": (128.5, 40.5, 0, "F"), "U2": (121.0, 40.6, 0, "F"), "NT1": (113.0, 39.0, 0, "F"),
+    "D1": (156.5, 38.0, 90, "F"), "U1": (128.5, 40.5, 0, "F"), "U2": (121.0, 40.6, 0, "F"), "NT1": (113.0, 39.0, 90, "F"),
     # ---- charger (straddles the pad's right edge)
     "F_CHG": (150.0, 36.5, 0, "F"), "D2": (150.0, 41.0, 0, "F"), "Q3": (150.0, 48.0, 0, "F"),
     "Q4": (137.0, 47.0, 0, "F"), "R_SNSI": (141.0, 47.0, 90, "F"), "U3": (128.0, 50.0, 0, "F"), "L1": (128.0, 57.5, 0, "F"),
@@ -179,7 +179,17 @@ def auto_near(board):
             p.near = NEAR[p.ref]
         elif p.ref in anchor:
             p.near = anchor[p.ref]
-        if SMALL_BOTTOM_OK.match(_fpname(p)):
+        a = (NEAR.get(p.ref) or anchor.get(p.ref) or "").split(".")[0]
+        # follow the anchor chain to an explicitly placed part
+        seen = set()
+        while a and a not in PLACE and a not in seen:
+            seen.add(a)
+            a = (NEAR.get(a) or anchor.get(a) or "").split(".")[0]
+        in_pad = False
+        if a in PLACE:
+            ax, ay = PLACE[a][0], PLACE[a][1]
+            in_pad = THERMAL[0] - 2.0 <= ax <= THERMAL[2] + 2.0 and THERMAL[1] - 2.0 <= ay <= THERMAL[3] + 2.0
+        if SMALL_BOTTOM_OK.match(_fpname(p)) and not in_pad:
             p.side = "B"
     return anchor
 

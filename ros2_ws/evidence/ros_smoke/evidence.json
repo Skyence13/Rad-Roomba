@@ -38,7 +38,7 @@
    "ok": true,
    "holds": [
     {
-     "t_wall": 41.91,
+     "t_wall": 42.28,
      "reason": "OPERATOR_PAUSE",
      "task": "pair0:A+",
      "phase": "PASS"
@@ -55,7 +55,7 @@
   {
    "check": "credited coverage grows",
    "ok": true,
-   "fraction": 0.03636110946536064
+   "fraction": 0.0360555537045002
   },
   {
    "check": "eligible lane-gates received",
@@ -74,19 +74,19 @@
    "hold": null,
    "loc": {
     "pose": [
-     1.232301276599396,
-     -0.30188271858729515,
-     -1.3099090831591466e-05
+     1.22945554439909,
+     -0.3022427019163675,
+     0.00016970540482487393
     ],
     "frame": "map (trailer): origin door-threshold centre, +x to bulkhead, +y left",
-    "uncertainty_2s_m": 0.0009906229363782746,
+    "uncertainty_2s_m": 0.0009789802858553027,
     "credit": true,
     "slip": false,
     "hold_request": false,
     "sigma": [
-     0.0004461452289210964,
-     0.00018854465671821002,
-     0.0003238380317940831
+     0.0004405123140284389,
+     0.00018838169362783204,
+     0.0003134647408176262
     ]
    },
    "events": [
@@ -127,10 +127,10 @@
     "state": "ARMED",
     "block_reason": null,
     "block_detail": null,
-    "attachment": "aa62337a-d199-46b5-9e69-bfab7bedd9bc",
+    "attachment": "e13b474d-0410-409f-80a8-fb91bbd4036e",
     "head_id": "HEAD-DEMO-001",
-    "last_seq": 362,
-    "bound_us": 517.815734783783
+    "last_seq": 361,
+    "bound_us": 507.0018334036255
    },
    "chassis": {
     "link": "UP",
@@ -141,7 +141,7 @@
     "reject_reason": null,
     "applied": {
      "v_mps": 0.1,
-     "w_radps": 0.0
+     "w_radps": -0.0002
     },
     "stationary": {
      "is_stationary": false,
@@ -156,7 +156,7 @@
      "charge_state": "NONE"
     },
     "head_presence": "HEAD_DIRECT",
-    "time_bound_us": 594.6966227801513
+    "time_bound_us": 765.125307890625
    }
   },
   {
@@ -166,7 +166,7 @@
  ],
  "holds": [
   {
-   "t_wall": 41.91,
+   "t_wall": 42.28,
    "reason": "OPERATOR_PAUSE",
    "task": "pair0:A+",
    "phase": "PASS"
