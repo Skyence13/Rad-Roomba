@@ -185,7 +185,7 @@
       "unconnected_items | Missing connection between items | Pad 2 [+3V3] of U2103 on F.Cu | Pad 1 [+3V3] of U2103 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 2 [+3V3] of U2103 on F.Cu | Pad 5 [+3V3] of U2601 on F.Cu",
       "unconnected_items | Missing connection between items | Track [+3V3] on F.Cu, length 2.6187 mm | Pad 1 [+3V3] of FB2101 on F.Cu",
-      "unconnected_items | Missing connection between items | Track [+3V3] on F.Cu, length 0.3551 mm | Pad 8 [+3V3] of U2503 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [+3V3] of R1217 on F.Cu | Pad 8 [+3V3] of U2503 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 8 [+3V3] of U2503 on F.Cu | Pad 1 [+3V3] of R2503 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 5 [+3V3] of U2403 on F.Cu | Pad 4 [+3V3] of U2403 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [+3V3] of R2503 on F.Cu | Pad 4 [+3V3] of U2403 on F.Cu",
@@ -233,7 +233,7 @@
       "unconnected_items | Missing connection between items | Pad 1 [+5V6_A] of C2107 on F.Cu | Pad 2 [+5V6_A] of L2102 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [+5V6_A] of U2102 on F.Cu | Pad 1 [+5V6_A] of C2107 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 3 [+5V6_A] of U2102 on F.Cu | Pad 1 [+5V6_A] of U2102 on F.Cu",
-      "unconnected_items | Missing connection between items | Track [+5V_A] on F.Cu, length 0.9250 mm | Pad 1 [+5V_A] of C1001 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of FB501 on F.Cu | Pad 1 [+5V_A] of C1001 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 8 [+5V_A] of U1001 on F.Cu | Pad 1 [+5V_A] of C1001 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C1001 on F.Cu | Pad 13 [+5V_A] of U1007 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C1007 on F.Cu | Pad 13 [+5V_A] of U1007 on F.Cu",
@@ -270,7 +270,7 @@
       "unconnected_items | Missing connection between items | Pad 8 [+5V_A] of U1201 on F.Cu | Pad 1 [+5V_A] of C1201 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C1207 on F.Cu | Pad 13 [+5V_A] of U1207 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 13 [+5V_A] of U1207 on F.Cu | Pad 1 [+5V_A] of C1201 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of FB801 on F.Cu | Pad 1 [+5V_A] of C1301 on F.Cu",
+      "unconnected_items | Missing connection between items | Track [+5V_A] on F.Cu, length 0.9250 mm | Pad 1 [+5V_A] of C1301 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C1301 on F.Cu | Pad 8 [+5V_A] of U1301 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 13 [+5V_A] of U1307 on F.Cu | Pad 1 [+5V_A] of C1307 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 13 [+5V_A] of U1307 on F.Cu | Pad 1 [+5V_A] of C1301 on F.Cu",
@@ -1399,7 +1399,7 @@
       {
         "ends": [
           {
-            "item": "Track [+3V3] on F.Cu, length 0.3551 mm",
+            "item": "Pad 1 [+3V3] of R1217 on F.Cu",
             "xy_mm": [
               205.24,
               9.25
@@ -2311,7 +2311,7 @@
       {
         "ends": [
           {
-            "item": "Track [+5V_A] on F.Cu, length 0.9250 mm",
+            "item": "Pad 1 [+5V_A] of FB501 on F.Cu",
             "xy_mm": [
               34.0,
               31.037
@@ -3014,7 +3014,7 @@
       {
         "ends": [
           {
-            "item": "Pad 1 [+5V_A] of FB801 on F.Cu",
+            "item": "Track [+5V_A] on F.Cu, length 0.9250 mm",
             "xy_mm": [
               296.5,
               31.037
@@ -4507,7 +4507,7 @@
     "plane fan-out: no legal via position for U101 pad at (25.45, 19.75) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U2503 pad at (234.10, 17.47) [BUS_GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U2503 pad at (234.10, 12.53) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for U2503 pad at (237.90, 12.53) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U2503 pad at (237.90, 12.53) [+3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for R2503 pad at (243.20, 27.51) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C2501 pad at (254.40, 21.62) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U2501 pad at (254.44, 19.65) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
@@ -4787,7 +4787,7 @@
         "U101 pad at (25.45, 19.75) [+3V3_EVT] - long fan-out: long fan-out time cap (600 s) used up",
         "U2503 pad at (234.10, 17.47) [BUS_GND] - long fan-out: long fan-out time cap (600 s) used up",
         "U2503 pad at (234.10, 12.53) [GND] - long fan-out: long fan-out time cap (600 s) used up",
-        "U2503 pad at (237.90, 12.53) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "U2503 pad at (237.90, 12.53) [+3V3] - long fan-out: no free path to the plane within the board",
         "R2503 pad at (243.20, 27.51) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
         "C2501 pad at (254.40, 21.62) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
         "U2501 pad at (254.44, 19.65) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",

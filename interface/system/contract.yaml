@@ -3,7 +3,8 @@
 # DEC-xxx entry in planning/decisions.csv and a line in docs/architecture/CHANGELOG.md.
 # Human-readable rationale: docs/architecture/SYSTEM_ARCHITECTURE.md
 # Units: SI (m, s, rad, V, A, W, kg) unless a key name carries another unit suffix (_mm, _us, _ms, _c).
-contract_version: "0.4.0-draft8"   # draft8: thermal_policy added (bay not held at +10 C on pack power; receiver thermal break required)
+contract_version: "0.4.0-draft9"   # draft9: head set-point +5 C (owner decision 2026-11-27); head loop evaluated by two channels in series; latch set stage kept on the board (chassis board stage 3)
+# previous:   # draft8: thermal_policy added (bay not held at +10 C on pack power; receiver thermal break required)
 # previous:   # draft7: tail swept radius 0.290 m (rear bumper included, prototype body CR-09); grip bar moved aft to x = -30 (CR-04); look-ahead ToF set = 2 forward + 2 rearward (IB-34); branch limits reconciled with the stage-2 board (IB-28)
 # previous:   # draft6: head envelope extended forward for the sprung leading rail (15.6 mm stroke); head grounding and insulation decisions
 # previous:   # draft5: head mount option C adopted (DEC-041 closed): mount datum and optics row moved 72.8 mm aft; 12 Ah layout
@@ -119,7 +120,7 @@ power:
     bay_discharge: "No regulation to +10 C while running from the pack: heating the pack from its own energy costs more than the capacity it recovers (22 W for about 2 h = 44 Wh against roughly 15 Wh gained on a 154 Wh pack, estimate). The bay heater holds the pack skin at or above bay_min_discharge_c only; typical chassis self-heat (12.6 W) keeps the bay about 11 K above ambient by calculation."
     bay_min_discharge_c: -10.0    # margin to the pack's low-temperature discharge limit (-20 C, recalled from the Power-Sonic PSL-SC data sheet, UNVERIFIED)
     bay_precharge_c: 5.0          # on external power before and during charging (charger gate cold_charge_inhibit_below_c)
-    head_setpoint_c: 10.0         # baseline; +5 C is a documented option (head report section 9) pending the optics supplier's temperature limits - owner decision open (IB-62)
+    head_setpoint_c: 5.0          # owner decision 2026-11-27 (Morgan): +5 C at the SiPM carrier (was +10 C). Calculated demand, still air, jacket fitted: about 13.8-14.0 W at -20 C and 16.8-17.0 W at -25 C (head report section 9). The optics supplier's temperature limits are still unknown (RFQ).
     head_receiver_thermal_break: "Required: the head heater figures assume about 0.07 W/K per receiver shoe to the body. Metal receiver channels bolted to the chassis plate without a break raise the head demand to 43-66 W (calculated), above the 30 W fitted."
   charger: {topology: "On-board buck charger with power path (LTC4162-F class), external 24 V DC supply", charge_current_a: 3.0, cold_charge_inhibit_below_c: 5.0, note: "The +5 C gate is the on-board charger's thermistor qualification. The baseline pack's own BMS gate is lower (datasheet charge range 0 to +45 C), so it is a backstop, not a second +5 C channel."}
 
@@ -132,7 +133,7 @@ safety_chain:
     - {id: HANDS_ON,      desc: "Maintained local HANDS-ON INHIBIT pushbutton, NC, illuminated from the actual chain state"}
     - {id: CHG_COVER,     desc: "Charge inlet cover switch closed (cover shut) AND charge plug link absent"}
     - {id: HEAD_DOCK,     desc: "Body-side dock switch: head (or dummy head) mechanically seated and latched"}
-    - {id: HEAD_LOOP,     desc: "J1 pins 5/6 loop through three head rail switches + 1.00 kOhm; window comparator 0.6-1.6 kOhm = healthy; open = contact or unplugged; short = wiring fault"}
+    - {id: HEAD_LOOP,     desc: "J1 pins 5/6 loop through three head rail switches + 1.00 kOhm; two independent window-comparator channels in series in the chain (stage 3, after the traction-inhibit review), 0.6-1.6 kOhm = healthy; open = contact or unplugged; short = wiring fault. Both channels share the loop sense node: a 1-3 kOhm leak from that node to a supply defeats both (stated limit)."}
     - {id: LAB_KEY_N,     desc: "J1 pin 7 PRES_ID shows a head without the LAB extension resistor"}
     - {id: BODY_BUMPER,   desc: "Rear/quarter body bumper NC switches"}
     - {id: WDG_OK,        desc: "External window watchdog serviced by the motion MCU"}
