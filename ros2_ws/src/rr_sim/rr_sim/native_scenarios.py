@@ -98,6 +98,59 @@ def n02(tmp):
     return ev
 
 
+def n15(tmp):
+    """No automatic resume against the native chassis emulator (hardware inhibit by bumper, local re-arm with the emulator's
+    realistic timing, remote PAUSE) - the native counterpart of s15 for what the emulator can stimulate.  The link
+    outage case has no emulator stimulus and stays a gap.  Non-zero set-points are counted in ChassisLink.stats."""
+    sim = NativeSystem(Path(tmp) / "n15", sc._cfg(), seed=35)
+    c = sc.Checks()
+    try:
+        sim.bringup()
+        app = sim.app
+        st = app.chassis.stats
+        app.command("start")
+        sc._wait(sim, lambda: app.mission.task is not None and app.mission.task["name"] == "pair0:A+" and app.mission.phase == "PASS"
+                 and sim.truth()[0] > 1.3, 300)
+        name0 = app.mission.task["name"]
+        sim.chassis.env("bumper_l", True)
+        sim.run(0.4)
+        sim.chassis.env("bumper_l", False)
+        sc._wait(sim, lambda: app.mission.state == "HOLD", 5)
+        t_hold = sim.clock.now_us()
+        n_hold = st["drive_nonzero"]
+        c.add("bumper: HOLD with a hardware inhibit", app.mission.state == "HOLD" and "BODY_BUMPER" in app.chassis.drive["stops"]["hw"],
+              stops=app.chassis.drive["stops"])
+        c.add("REARM pressed too early is not accepted (latch stays open)", (sim.chassis.press("REARM") or True) and sim.run(0.5) is not None
+              and app.chassis.drive["mode"] == "HW_INHIBIT", mode=app.chassis.drive["mode"], ready=app.chassis.state.get("rearm_ready"))
+        sim.press_rearm()
+        sim.run(5.0)
+        c.add("bumper: ARMED_IDLE again, mission still HOLD", app.chassis.drive["mode"] == "ARMED_IDLE" and app.mission.state == "HOLD")
+        c.add("bumper: zero non-zero DRIVE after the inhibit (and the early press) until resume", st["drive_nonzero"] == n_hold,
+              sent=st["drive_nonzero"] - n_hold)
+        c.add("explicit resume accepted", app.command("resume")["accepted"])
+        sim.run(3.0)
+        c.add("motion only after the command, same task", st["drive_nonzero"] > n_hold and app.mission.task["name"] == name0)
+        sc._wait(sim, lambda: app.mission.phase == "PASS" and sim.truth()[0] > 0.9, 120)
+        name1 = app.mission.task["name"]
+        c.add("pause accepted", app.command("pause", actor="op1")["accepted"])
+        sim.run(1.0)
+        n_p = st["drive_nonzero"]
+        sim.chassis.env("bumper_r", True)
+        sim.run(0.4)
+        sim.chassis.env("bumper_r", False)
+        sim.run(1.0)
+        sim.press_rearm()
+        sim.run(4.0)
+        c.add("pause + inhibit + local re-arm: zero non-zero DRIVE, still HOLD", st["drive_nonzero"] == n_p and app.mission.state == "HOLD")
+        c.add("resume accepted, paused task only", app.command("resume", actor="op1")["accepted"])
+        sim.run(3.0)
+        c.add("moves again on the paused task", st["drive_nonzero"] > n_p and app.mission.task["name"] == name1)
+        ev = sc._finish("native_s15_no_auto_resume", sim, c, {"gap": "link outage case: no emulator stimulus"})
+    finally:
+        sim.close()
+    return ev
+
+
 def n03(tmp, preset_s=3.0):
     """Step-and-count on the native emulators (opt-in: `tools/test.sh native n03`): only static
     scaler gates earn credit; the hot spot is flagged from static counts."""

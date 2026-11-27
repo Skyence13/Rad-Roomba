@@ -40,7 +40,7 @@
     X(LATCH_NO_REARM) X(LATCH_NO_DROP) X(LOOP_FAIL) X(PIN_CONFIG) X(K1_WELD) X(RUN_SHORT) \
     X(PERMIT_STUCK_OFF) X(IOX_B) X(IOX_D) X(REARM_HELD) X(REARM_DISCREPANCY) X(CONFIG_DEFAULTED) X(LOOP_DISCREPANCY) X(J1_PRES_FAULT) X(CHARGER_COMM) X(PMON_COMM) X(TOF_BUS) X(HEATER_SENSOR) \
     X(EFUSE_HEAD_PWR) X(EFUSE_HEAD_HTR) X(EFUSE_CHS_HTR) X(EFUSE_LIDAR) X(EFUSE_V5) X(BRIDGE_L) X(BRIDGE_R) X(BUS_CLAMP) \
-    X(EVENT_OVERFLOW) X(BATTERY_WARN)
+    X(EVENT_OVERFLOW) X(BATTERY_WARN) X(LOOP_HIGH_R)
 /* IB-34 (lead decision, corrected mapping): two forward-looking (grip cheeks, over the head) and two rearward-looking
  * (tail) oblique sensors. Index 4 LOOK_FL (J_TOF4, mux 0 ch 2), 5 LOOK_RL (J_TOF5, mux 1 ch 2), 6 LOOK_RR (J_TOF6,
  * mux 0 ch 3), 7 LOOK_FR (J_TOF7, mux 1 ch 3): each pair is split across the two muxes. */
@@ -84,6 +84,13 @@ extern const char *const rrch_sw_names[RRCH_SW_N];
 extern const char *const rrch_opmode_names[RRCH_OP_N];
 extern const char *const rrch_pres_names[RRCH_PRES_N];
 extern const char *const rrch_flt_names[RRCH_FLT_N];
+/* round 4 (N1): why a REARM press would not, or did not, set the hardware latch. NONE = a press will set it. */
+#define RRCH_RREF_LIST(X) X(NONE) X(FAULT_OR_MODE) X(CHAIN_OPEN) X(REARM_HELD) X(PERMIT_WITHHELD) X(SUPPLY_LOW) X(RESERVOIR_LOW) \
+    X(SET_INCOMPLETE) X(SET_FAILED)
+#define X(n) RRCH_RREF_##n,
+typedef enum { RRCH_RREF_LIST(X) RRCH_RREF_N } rrch_rref_t;
+#undef X
+extern const char *const rrch_rref_names[RRCH_RREF_N];
 extern const char *const rrch_tof_names[RRCH_TOF_COUNT];
 
 /* ---- digital inputs: one bit each, logical level 1 = closed / healthy / present / pressed ---- */
@@ -311,7 +318,7 @@ bool rrch_cfg_save(rrch_cfg_t *c, const rrch_hal_t *hal);   /* bumps gen, altern
 typedef enum {
     RRCH_EV_BOOT = 0, RRCH_EV_BROWNOUT, RRCH_EV_CHAIN, RRCH_EV_HW_LATCH, RRCH_EV_PERMIT, RRCH_EV_J1, RRCH_EV_J2, RRCH_EV_BUTTON,
     RRCH_EV_MODE, RRCH_EV_PSTOP, RRCH_EV_PSTOP_CLEAR, RRCH_EV_HOLD, RRCH_EV_REARM_REJECT, RRCH_EV_OP_MODE, RRCH_EV_CONFIG,
-    RRCH_EV_HEAD_POWER, RRCH_EV_FAULT, RRCH_EV_BRAKE_TEST, RRCH_EV_LINK, RRCH_EV_TOF, RRCH_EV_KIND_N
+    RRCH_EV_HEAD_POWER, RRCH_EV_FAULT, RRCH_EV_BRAKE_TEST, RRCH_EV_LINK, RRCH_EV_TOF, RRCH_EV_REARM_REFUSED, RRCH_EV_KIND_N
 } rrch_ev_kind_t;
 typedef struct {
     uint32_t seq;
@@ -370,6 +377,21 @@ typedef struct {
     uint32_t permit_hist, n9_hist; /* bit k: ARM_PERMIT output / raw CH_N9 readback k ms ago */
     uint8_t n_stuck_on, n_stuck_off, n_end_impl;
     bool chain_end_known, chain_end;
+    /* round 4 N1: conservative timed model of the C_SET charge (no readback on the board) and refusal reporting */
+    float cset_model_v, cset_need_v, cset_target_v;
+    uint8_t rearm_why;          /* rrch_rref_t: what a press would meet now (NONE = it will set the latch) */
+    uint8_t rearm_refusal;      /* rrch_rref_t: last press that did not set (cleared when the latch is set) */
+    uint8_t press_why;          /* rearm_why at the moment of the pending press */
+    bool press_pending;         /* REARM aux edge with the latch down, outcome not yet reported */
+    uint64_t press_us, press_end_us; /* aux edge and release of the latest press */
+    /* N2: REARM legitimacy judged on the first IOX_D sample taken after the latch rose */
+    bool judge_pending, judge_timing_ok;
+    uint64_t judge_rise_us;
+    /* N2: K1 sealed in without U_HOLD (set pulse shorter than the operate time): released, not a weld */
+    uint8_t n_unheld;
+    uint64_t unheld_until_us;
+    uint32_t latched_held_ms;   /* W-018: a REARM contact closed while latched */
+    uint16_t t_loop_high;
 } rrch_chain_t;
 
 typedef struct {
@@ -555,6 +577,9 @@ void rrch_iox_b_update(rrch_t *c, bool ok, bool chain_end, uint64_t t_us); /* ba
 /* stage 3 F1: IOX_D (U47, TCA9534 0x22) input port, read >= 100 Hz; P0 LATCH_NC_RB, P1 LATCH_RUN_RB, P2 HEAD_LOOP2_OK_RB,
  * P3 REARM_SET_RB, P4..P7 fixed pattern 1,0,0,0 */
 void rrch_iox_d_update(rrch_t *c, bool ok, uint8_t in, uint64_t t_us);
+/* round 4 N2: true while the port should read IOX_D every 1 ms instead of every 10 ms (latch down and a REARM press
+ * possible or in progress, and the 300 ms after a latch rise), so that a 4 ms REARM tap is seen on REARM_SET_RB */
+bool rrch_iox_d_fast(const rrch_t *c);
 
 /* ---- internal, shared between core files (also used by unit tests) ---- */
 rrch_pres_t rrch_pres_classify(uint32_t ohm);

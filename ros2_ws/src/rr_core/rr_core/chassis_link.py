@@ -65,7 +65,8 @@ class ChassisLink:
         self.out_events = deque()
         self.chassis_events = []               # all chassis events (dicts with host time added)
         self._event_seq_read = 0
-        self.stats = {"drive": 0, "rejected": 0, "timeouts": 0, "boots": 0, "event_gaps": 0, "drive_gap_max_us": 0}
+        self.stats = {"drive": 0, "rejected": 0, "timeouts": 0, "boots": 0, "event_gaps": 0, "drive_gap_max_us": 0,
+                      "drive_nonzero": 0, "last_nonzero_us": None}
         self._last_drive_tx_us = None
         self._thread = None
         self._stop_evt = threading.Event()
@@ -350,6 +351,9 @@ class ChassisLink:
         if self._last_drive_tx_us is not None:
             self.stats["drive_gap_max_us"] = max(self.stats["drive_gap_max_us"], now - self._last_drive_tx_us)
         self._last_drive_tx_us = now
+        if v or w:                              # every non-zero set-point put on the wire (no-auto-resume checks)
+            self.stats["drive_nonzero"] += 1
+            self.stats["last_nonzero_us"] = now
         rsp = yield from self._transact("DRIVE", {"seq": self._seq, "v_mps": round(v, 4), "w_radps": round(w, 4),
                                                   "ttl_ms": self.ttl_ms, "op_mode": self.op_mode}, retries=0)
         if rsp is None:

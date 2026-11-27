@@ -7,25 +7,24 @@ review queue policy ALARM_ONLY
 alpha_scan 0.05  alpha_recount 0.000171  beta 0.05  decision cells 300
 
 WHERE THE ROBOT MEASURED
-  valid exposure on 80.8 % of the target floor (3.000 m2)
-  UNVISITED                    0.5766 m2
-  ACCEPTABLE                   2.1292 m2
-  INSUFFICIENT_SENSITIVITY     0.2941 m2
+  valid exposure on 79.6 % of the target floor (3.000 m2)
+  UNVISITED                    0.6120 m2
+  ACCEPTABLE                   2.0714 m2
+  INSUFFICIENT_SENSITIVITY     0.3166 m2
   INVALID_DATA                 0.0000 m2
   BLOCKED                      0.0000 m2
   EXCLUDED                     0.0000 m2
 
 HOW SENSITIVE IT WAS
-  decision cells with data 284; sensitivity sufficient (D# < goal, envelope ok) 220
-  D# median 0.128  best 0.103  worst 1.823 Bq/cm2 (beta_window)
+  decision cells with data 284; sensitivity sufficient (D# < goal, envelope ok) 212
+  D# median 0.128  best 0.104  worst 1.837 Bq/cm2 (beta_window)
   time sync: max gate bound 838.0520796923137 us (limit 10000)
 
 WHAT STILL NEEDS ATTENTION
-  HS-0003 UNRESOLVED_EXCEEDANCE lane 3 D=0.186 +/- 0.081 Bq/cm2 at 0.28 m from the door threshold, 0.49 m from the right wall status OK
-  HS-0005 INVESTIGATION_LEVEL lane 1 D=0.835 +/- 0.135 Bq/cm2 at 1.54 m from the door threshold, 0.33 m from the left wall status OK
-  HS-0010 UNRESOLVED_EXCEEDANCE lane 1 D=0.202 +/- 0.078 Bq/cm2 at 2.66 m from the door threshold, 0.17 m from the left wall status OK
-  scan-stage detections below the investigation level awaiting a recount under the two-stage rule: 10
-  unresolved floor INSUFFICIENT_SENSITIVITY: 0.2941 m2 (rectangles in residuals.json)
-  unresolved floor UNVISITED: 0.5766 m2 (rectangles in residuals.json)
+  HS-0009 INVESTIGATION_LEVEL lane 1 D=0.773 +/- 0.125 Bq/cm2 at 1.56 m from the door threshold, 0.32 m from the left wall status OK
+  HS-0010 UNRESOLVED_EXCEEDANCE lane 1 D=0.115 +/- 0.077 Bq/cm2 at 2.63 m from the door threshold, 0.17 m from the left wall status OK
+  scan-stage detections below the investigation level awaiting a recount under the two-stage rule: 11
+  unresolved floor INSUFFICIENT_SENSITIVITY: 0.3166 m2 (rectangles in residuals.json)
+  unresolved floor UNVISITED: 0.6120 m2 (rectangles in residuals.json)
 
 A release-status entry is a radiation-protection decision under the site procedure; this report is not one.
