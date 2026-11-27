@@ -1,6 +1,6 @@
 {
   "autoplaced": [],
-  "block_copies": 0,
+  "block_copies": 444,
   "board_bbox": [
     0.0,
     0.0,
@@ -12,7 +12,7 @@
     "parts": 1085,
     "sheets": 31
   },
-  "dsn_sha256": "75082d31d36a10dd7fbc6f79c1ca74f3c518890c26613e6faffe97a0397c59d2",
+  "dsn_sha256": "0600ab197f5acaf760b059e70c4bdbeabc6a7b08e1d87ea80861fed929e5ff99",
   "dsn_unchanged": false,
   "escape": {
     "direct": 0,
@@ -7030,14 +7030,33 @@
     "F3_V5",
     "R3_V5"
   ],
-  "route_info": null,
-  "route_stats": {
-    "track_length_mm": 1342.62,
-    "tracks": 854,
-    "unconnected_after_fill": 1484,
-    "vias": 869
+  "route_info": {
+    "dsn_sha256": "0600ab197f5acaf760b059e70c4bdbeabc6a7b08e1d87ea80861fed929e5ff99",
+    "freerouting": "v2.6.0 (build-date: 2026-11-25)",
+    "log_tail": [
+      "[8C7AF9\\8FE9CB] Auto-routing stage completed with timeout: started with 1475 unrouted nets, completed in 545.81 seconds, final score: 401.90 (1099 unrouted and 552 violations), using 513.84 total CPU seconds, 158.33 GB total allocated, and 1357.8 MB peak heap usage.",
+      "[8C7AF9\\8FE9CB] Job '8C7AF9\\8FE9CB' finished with state: TIMED_OUT (elapsed: 9 minutes 10.12 seconds, finished at UTC: 2026-11-27T01:53:35.352742145Z)."
+    ],
+    "passes_limit": 40,
+    "reused": false,
+    "seconds": 571.7,
+    "threads": 4,
+    "timed_out": false
   },
-  "routed": false,
+  "route_stats": {
+    "dangling_tracks_removed": 1,
+    "finisher_items": null,
+    "necked_tracks_widened": 0,
+    "preroutes": 1947,
+    "preroutes_missing_after_import": 0,
+    "track_length_mm": 8426.84,
+    "tracks": 3014,
+    "unconnected_after_fill": 1090,
+    "unconnected_before_cleanup": 1090,
+    "unused_escapes_removed": 0,
+    "vias": 1400
+  },
+  "routed": true,
   "routing": {
     "enabled": true,
     "escape": false,
@@ -7050,13 +7069,14 @@
     "extra_args": [],
     "fanout": false,
     "finisher": false,
+    "finisher_ripup": true,
     "layers": 6,
     "optimizer": true,
     "passes": 40,
     "plane_fanout": true,
-    "retries": 0,
+    "retries": 1,
     "threads": null,
-    "timeout": 1080
+    "timeout": 540
   },
   "single_pin_nets": []
 }

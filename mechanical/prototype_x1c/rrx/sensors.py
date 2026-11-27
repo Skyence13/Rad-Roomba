@@ -164,15 +164,14 @@ def inlet_seat():
     e = L.env("charge_inlet")
     cw, ch, _ = e["cover"]
     ct = INLET_COVER_T
-    spot = box(-cw / 2 - 1.5, cw / 2 + 1.5, -ch / 2 - 10.5, ch / 2 + 5.5, 0.5, 40.0)
-    add = fuse(box(-cw / 2 - 1.5, cw / 2 + 1.5, -ch / 2 - 10.5, ch / 2 + 5.5, -6.0, 0.5),                            # flat plinth (spot face)
+    spot = box(-cw / 2 - 4.5, cw / 2 + 4.5, -ch / 2 - 10.5, ch / 2 + 5.5, 0.5, 40.0)
+    add = fuse(box(-cw / 2 - 4.5, cw / 2 + 4.5, -ch / 2 - 10.5, ch / 2 + 5.5, -6.0, 0.5),                            # flat plinth (spot face)
                cyl(e["body_d"] / 2 + 6.0, 6.0, (0, 0, -5.5)),
-               box(-cw / 2, cw / 2, 8.0, ch / 2 + 4.0, -5.5, 0.5),                                                 # hinge pad joining the lugs to the boss
-               box(-cw / 2, -cw / 2 + 3.6, ch / 2 - 2.0, ch / 2 + 4.0, -3.0, e["front_projection"] + ct),      # hinge lugs
-               box(cw / 2 - 3.6, cw / 2, ch / 2 - 2.0, ch / 2 + 4.0, -3.0, e["front_projection"] + ct),
+               box(-cw / 2 - 4.0, -cw / 2 - 0.4, ch / 2 - 2.0, ch / 2 + 4.0, -3.0, e["front_projection"] + ct),     # hinge lugs outside the cover
+               box(cw / 2 + 0.4, cw / 2 + 4.0, ch / 2 - 2.0, ch / 2 + 4.0, -3.0, e["front_projection"] + ct),
                box(-8.0, 8.0, -ch / 2 - 1.0, -ch / 2 + 9.0, -14.0, -2.0))                                         # cover-switch pocket block
     c = fuse(cyl(e["body_d"] / 2 - 2 + 0.15, 40, (0, 0, -30)), cyl(e["body_d"] / 2 + 3.0, 12.0, (0, 0, -0.5)),
-             cyl(1.1, cw + 2, (-cw / 2 - 1, ch / 2 + 1.0, e["front_projection"] + ct - 3.0), (1, 0, 0)),
+             cyl(1.1, cw + 10, (-cw / 2 - 5, ch / 2 + 1.0, e["front_projection"] + ct - 3.0), (1, 0, 0)),
              box(-6.8, 6.8, -ch / 2 + 1.2, -ch / 2 + 6.6, -15.0, -5.0),                                           # D2HW pocket (plunger +z)
              cyl(1.6, 8.0, (0, -ch / 2 + 3.9, -6.0)))                                                              # push-pin bore
     return add, c, spot

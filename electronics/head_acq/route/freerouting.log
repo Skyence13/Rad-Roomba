@@ -1,18 +1,63 @@
 
 
-2026-11-27 01:22:33.081 INFO   Freerouting v2.6.0 (build-date: 2026-11-25)
-2026-11-27 01:22:33.516 INFO   Hardware: 4 CPU cores, 372 CPU score, 6144 MB RAM
-2026-11-27 01:22:33.521 WARN   GUI is disabled and you don't have a console available, so the only feedback from Freerouting is in the log.
-2026-11-27 01:22:34.832 WARN   The '-mp' command-line flag is deprecated and will be removed in a future release; use '--router.autorouter.max_passes' instead.
-2026-11-27 01:22:34.833 WARN   The '-mt' command-line flag is deprecated and will be removed in a future release; use '--router.max_threads=<n>' instead.
-2026-11-27 01:22:35.817 INFO   [09043C\D964AA] Loading board file 'RR-HEAD-ACQ.dsn'...
-2026-11-27 01:22:56.277 INFO   The board's own vias decide: router.autorouter.via_in_pad = true.
-2026-11-27 01:22:56.340 INFO   8 multi-pin net-tie cluster(s) identified and indexed.
-2026-11-27 01:22:56.361 INFO   Auto-detected differential pair: HEAD_PWR (HEAD_PWR_P, HEAD_PWR_N)
-2026-11-27 01:22:56.362 INFO   Auto-detected differential pair: HEAD_HTR (HEAD_HTR_P, HEAD_HTR_N)
-2026-11-27 01:22:56.362 INFO   Auto-detected differential pair: SYNC (SYNC_P, SYNC_N)
-2026-11-27 01:22:56.371 INFO   [09043C\D964AA] Job '09043C\D964AA' started at 2026-11-27T01:22:56.371173164Z.
-2026-11-27 01:22:58.513 WARN   Design Warning: Board has 552 pre-existing clearance violation(s) in the loaded design (before routing):
+2026-11-27 01:44:07.444 INFO   Freerouting v2.6.0 (build-date: 2026-11-25)
+2026-11-27 01:44:07.794 INFO   Hardware: 4 CPU cores, 354 CPU score, 6144 MB RAM
+2026-11-27 01:44:07.798 WARN   GUI is disabled and you don't have a console available, so the only feedback from Freerouting is in the log.
+2026-11-27 01:44:08.956 WARN   The '-mp' command-line flag is deprecated and will be removed in a future release; use '--router.autorouter.max_passes' instead.
+2026-11-27 01:44:08.956 WARN   The '-mt' command-line flag is deprecated and will be removed in a future release; use '--router.max_threads=<n>' instead.
+2026-11-27 01:44:09.623 INFO   [8C7AF9\8FE9CB] Loading board file 'RR-HEAD-ACQ.dsn'...
+2026-11-27 01:44:11.156 WARN   Wiring: duplicate via skipped at (662800, -2411000)
+2026-11-27 01:44:11.158 WARN   Wiring: duplicate via skipped at (662000, -2384000)
+2026-11-27 01:44:11.158 WARN   Wiring: duplicate via skipped at (662000, -2384000)
+2026-11-27 01:44:11.159 WARN   Wiring: duplicate via skipped at (662800, -2411000)
+2026-11-27 01:44:11.159 WARN   Wiring: duplicate via skipped at (662800, -2411000)
+2026-11-27 01:44:11.159 WARN   Wiring: duplicate via skipped at (662000, -2384000)
+2026-11-27 01:44:11.160 WARN   Wiring: duplicate via skipped at (884500, -2384000)
+2026-11-27 01:44:11.163 WARN   Wiring: duplicate via skipped at (884500, -2384000)
+2026-11-27 01:44:11.164 WARN   Wiring: duplicate via skipped at (885300, -2411000)
+2026-11-27 01:44:11.164 WARN   Wiring: duplicate via skipped at (885300, -2411000)
+2026-11-27 01:44:11.164 WARN   Wiring: duplicate via skipped at (885300, -2411000)
+2026-11-27 01:44:11.164 WARN   Wiring: duplicate via skipped at (884500, -2384000)
+2026-11-27 01:44:11.165 WARN   Wiring: duplicate via skipped at (957375, -2249500)
+2026-11-27 01:44:11.165 WARN   Wiring: duplicate via skipped at (957375, -2249500)
+2026-11-27 01:44:11.166 WARN   Wiring: duplicate via skipped at (889065, -2232960)
+2026-11-27 01:44:11.166 WARN   Wiring: duplicate via skipped at (889065, -2232960)
+2026-11-27 01:44:11.167 WARN   Wiring: duplicate via skipped at (965100, -2148000)
+2026-11-27 01:44:11.167 WARN   Wiring: duplicate via skipped at (965100, -2148000)
+2026-11-27 01:44:11.168 WARN   Wiring: duplicate via skipped at (957375, -2183500)
+2026-11-27 01:44:11.169 WARN   Wiring: duplicate via skipped at (957375, -2183500)
+2026-11-27 01:44:11.170 WARN   Wiring: duplicate via skipped at (934625, -2164500)
+2026-11-27 01:44:11.171 WARN   Wiring: duplicate via skipped at (954900, -2148000)
+2026-11-27 01:44:11.171 WARN   Wiring: duplicate via skipped at (934625, -2164500)
+2026-11-27 01:44:11.171 WARN   Wiring: duplicate via skipped at (954900, -2148000)
+2026-11-27 01:44:11.174 WARN   Wiring: duplicate via skipped at (939354, -2096420)
+2026-11-27 01:44:11.174 WARN   Wiring: duplicate via skipped at (967352, -2088880)
+2026-11-27 01:44:11.175 WARN   Wiring: duplicate via skipped at (939354, -2096420)
+2026-11-27 01:44:11.175 WARN   Wiring: duplicate via skipped at (967352, -2088880)
+2026-11-27 01:44:11.176 WARN   Wiring: duplicate via skipped at (855000, -2152600)
+2026-11-27 01:44:11.176 WARN   Wiring: duplicate via skipped at (855000, -2152600)
+2026-11-27 01:44:11.177 WARN   Wiring: duplicate via skipped at (879972, -2165120)
+2026-11-27 01:44:11.178 WARN   Wiring: duplicate via skipped at (879972, -2165120)
+2026-11-27 01:44:11.178 WARN   Wiring: duplicate via skipped at (1537000, -2384000)
+2026-11-27 01:44:11.179 WARN   Wiring: duplicate via skipped at (1537800, -2411000)
+2026-11-27 01:44:11.180 WARN   Wiring: duplicate via skipped at (1759500, -2384000)
+2026-11-27 01:44:11.180 WARN   Wiring: duplicate via skipped at (1760300, -2411000)
+2026-11-27 01:44:11.182 WARN   Wiring: duplicate via skipped at (2412800, -2411000)
+2026-11-27 01:44:11.183 WARN   Wiring: duplicate via skipped at (2412000, -2384000)
+2026-11-27 01:44:11.184 WARN   Wiring: duplicate via skipped at (2634500, -2384000)
+2026-11-27 01:44:11.184 WARN   Wiring: duplicate via skipped at (2635300, -2411000)
+2026-11-27 01:44:11.187 WARN   Wiring: duplicate via skipped at (3287000, -2384000)
+2026-11-27 01:44:11.187 WARN   Wiring: duplicate via skipped at (3287800, -2411000)
+2026-11-27 01:44:11.188 WARN   Wiring: duplicate via skipped at (3509500, -2384000)
+2026-11-27 01:44:11.188 WARN   Wiring: duplicate via skipped at (3510300, -2411000)
+2026-11-27 01:44:24.971 WARN   DSN file 'RR-HEAD-ACQ.dsn' was loaded with 48 warning(s).
+2026-11-27 01:44:25.139 INFO   The board's own vias decide: router.autorouter.via_in_pad = true.
+2026-11-27 01:44:25.196 INFO   8 multi-pin net-tie cluster(s) identified and indexed.
+2026-11-27 01:44:25.214 INFO   Auto-detected differential pair: HEAD_PWR (HEAD_PWR_P, HEAD_PWR_N)
+2026-11-27 01:44:25.214 INFO   Auto-detected differential pair: HEAD_HTR (HEAD_HTR_P, HEAD_HTR_N)
+2026-11-27 01:44:25.214 INFO   Auto-detected differential pair: SYNC (SYNC_P, SYNC_N)
+2026-11-27 01:44:25.228 INFO   [8C7AF9\8FE9CB] Job '8C7AF9\8FE9CB' started at 2026-11-27T01:44:25.227916308Z.
+2026-11-27 01:44:27.061 WARN   Design Warning: Board has 552 pre-existing clearance violation(s) in the loaded design (before routing):
   - 552 unfixable violation(s) (cannot be resolved by Freerouting):
       * 86 pin-to-pin clearance violations (first 5 shown):
           - U804.8 [net +3V3_EVT] <-> U804.7 [net R3_CLLD]
@@ -21,14 +66,21 @@
           - U801.3 [net GND] <-> U801.2 [net TP_INH_R3_N]
           - U704.8 [net +3V3_EVT] <-> U704.7 [net R2_CLLD]
       * 466 fixed trace/via clearance violations (first 5 shown):
-          - FixedVia#13304 [net HV_BUS] <-> ObstacleArea#545
-          - FixedVia#13304 [net HV_BUS] <-> ObstacleArea#547
-          - FixedVia#13304 [net HV_BUS] <-> ObstacleArea#548
-          - FixedVia#13304 [net HV_BUS] <-> ObstacleArea#549
-          - FixedVia#13304 [net HV_BUS] <-> ObstacleArea#550
+          - FixedVia#13614 [net HV_BUS] <-> ObstacleArea#545
+          - FixedVia#13614 [net HV_BUS] <-> ObstacleArea#547
+          - FixedVia#13614 [net HV_BUS] <-> ObstacleArea#548
+          - FixedVia#13614 [net HV_BUS] <-> ObstacleArea#549
+          - FixedVia#13614 [net HV_BUS] <-> ObstacleArea#550
   - 0 potentially fixable violations
 Notice: Freerouting does not modify component placement, board outlines, or fixed items.
 Resolving these 552 unfixable violation(s) is the responsibility of the board author in their EDA tool (e.g. KiCad).
-2026-11-27 01:22:59.247 INFO   [09043C\D964AA] Exit stubs: 12 fine-pitch pins whose way out meets the clearances exactly get 16 stubs (4 inward to a pad of their net, 4 bent in a fan; U2201 2, U2301 2, U2302 3, U2303 3, U2304 3, U2503 3; 1 left out, their ends out of the router's reach), router.autorouter.exit_stubs=true.
-2026-11-27 01:22:59.507 INFO   [09043C\D964AA] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=4.
-2026-11-27 01:23:01.598 INFO   [09043C\D964AA] Auto-routing stage started on board '607f3e93ff20bb8271f22482107a3c3a' with baseline score 250.34 for 1530 unrouted items.
+2026-11-27 01:44:27.509 INFO   [8C7AF9\8FE9CB] Exit stubs: 12 fine-pitch pins whose way out meets the clearances exactly get 16 stubs (4 inward to a pad of their net, 4 bent in a fan; U2201 2, U2301 2, U2302 3, U2303 3, U2304 3, U2503 3; 1 left out, their ends out of the router's reach), router.autorouter.exit_stubs=true.
+2026-11-27 01:44:27.718 INFO   [8C7AF9\8FE9CB] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=4.
+2026-11-27 01:44:29.629 INFO   [8C7AF9\8FE9CB] Auto-routing stage started on board 'adb262035934fd9adad214dd94153155' with baseline score 265.31 for 1475 unrouted items.
+2026-11-27 01:53:27.817 INFO   [8C7AF9\8FE9CB] Auto-routing pass #1 on board 'adb262035934fd9adad214dd94153155' was completed in 537.33 seconds with score 401.90 (1099 unrouted and 552 violations), using 513.84 CPU seconds and the job allocated 158.33 GB of memory so far.
+2026-11-27 01:53:33.528 INFO   [8C7AF9\8FE9CB] Routing fallback skipped: the pass loop stopped at its cancelled with 1099 unrouted, 0 new violations (552 total), score 401.90.
+2026-11-27 01:53:34.709 INFO   [8C7AF9\8FE9CB] Auto-routing stage completed with timeout: started with 1475 unrouted nets, completed in 545.81 seconds, final score: 401.90 (1099 unrouted and 552 violations), using 513.84 total CPU seconds, 158.33 GB total allocated, and 1357.8 MB peak heap usage.
+2026-11-27 01:53:35.255 INFO   [8C7AF9\8FE9CB] Exit stubs: 16 released as ordinary copper, 4 split where routes join them, 11 unused pieces removed; 30 connection(s) of their nets open.
+2026-11-27 01:53:35.354 INFO   [8C7AF9\8FE9CB] Job '8C7AF9\8FE9CB' finished with state: TIMED_OUT (elapsed: 9 minutes 10.12 seconds, finished at UTC: 2026-11-27T01:53:35.352742145Z).
+2026-11-27 01:53:35.372 INFO   Saving output file '/home/user/Rad-Roomba/electronics/head_acq/route/RR-HEAD-ACQ.ses' (SES)...
+2026-11-27 01:53:35.375 INFO   Successfully saved output file '/home/user/Rad-Roomba/electronics/head_acq/route/RR-HEAD-ACQ.ses' (205472 bytes).

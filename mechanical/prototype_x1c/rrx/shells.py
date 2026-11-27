@@ -101,6 +101,30 @@ def perim_stations():
     return out
 
 
+SPLICE_Z = 44.0                 # lower-hull splice screw height: below the CM5 deck (z 49.5)
+
+
+def bumper_switch_seat(s):
+    """D2HW seat at the body bumper switch: (block, holes) in base_link; s = +1 left, -1 right."""
+    sw = P.BODY_BUMPER_SWITCHES["bumper_sw_" + ("l" if s > 0 else "r")]
+    d = D.BUMPER_DIR["L" if s > 0 else "R"]
+    n = (-d[0], -d[1], 0.0)
+    blk = place(box(-10, 10, -9, 9, -12.0, -1.0), sw, n)
+    hole = place(fuse(box(-6.9, 6.9, -2.9, 2.9, -11.0, -3.6), cyl(1.7, 12, (0, 0, -4.0)), cyl(2.6, 20, (-14.0, 0, -8.0)), cyl(2.6, 20, (14.0, 0, -8.0))), sw, n)
+    return blk, hole
+
+
+def tongue_keepout():
+    """Hull tongue + its insert bosses (+0.3): the lid pieces are cut by it so they only touch the hull at the land."""
+    def b():
+        k = tongue_ring()
+        for g, sgn, pt, n in perim_stations():
+            q = tuple(pt[i] - n[i] * D.TONGUE[0] for i in range(3))
+            k = k.fuse(place(cyl(4.7, 8.1, (0, 0, -7.8)), q, n))
+        return k
+    return cached(["TONGUE_KEEP", 1, R["upper_inner"], D.TONGUE, ZL, PERIM_DEG], b)
+
+
 def arch_cut():
     return [cyl(P.WHEEL_ARCH_R, 60, (0, s * P.WHEEL_ARCH_INNER_Y, P.AXLE_Z), (0, s, 0)) for s in (1, -1)]
 
@@ -158,7 +182,7 @@ def lower_master():
                      box(D.FOOT_X[0] - 1, D.FOOT_X[1] + 1, s * 60.0, s * (D.GRIP_PLATE_Y[1] + 0.6), Z1 - 0.1, Z1 + 26.5))
         sh = cut(sh, *internal_clearance())
         return sh.clean()
-    return cached(["lower_master", 10, R, D.PLATE_INSET, D.BEAM_X, D.BEAM_HALF_Y, B, D.TONGUE, D.HATCH_JAMB, D.POD_Y0, D.FOOT_X, D.GRIP_PLATE_Y, P.RECEIVER["chin_cut"]], b)
+    return cached(["lower_master", 11, R, D.PLATE_INSET, D.BEAM_X, D.BEAM_HALF_Y, B, D.TONGUE, D.HATCH_JAMB, D.POD_Y0, D.FOOT_X, D.GRIP_PLATE_Y, P.RECEIVER["chin_cut"]], b)
 
 
 def internal_clearance():
@@ -261,10 +285,10 @@ def nose_cowl():
             for (y, z) in x_joint_points(D.X_NOSE, zs_side=(74.0, 88.0), sgn=sgn):
                 n = n.cut(cyl(D.CLEAR["M3"] / 2, 12, (D.X_NOSE - 1, y, z), (1, 0, 0)))
         n = n.cut(dowel_bores(D.X_NOSE, "nose", 1)).cut(dowel_bores(D.X_NOSE, "nose", -1))
-        n = perim_screws(n, "nose")
+        n = perim_screws(n, "nose").cut(tongue_keepout())
         n = n.cut(cyl(4.0, 12, (58.0, 0.0, LEDGE_Z[0] + 8.0), (1, 0, 0)))                                   # J1/J2 lead pass to the board front edge
         return n
-    return cached(["nose_cowl", 10, DOWELS, R, D.X_NOSE, P.J_RECEPTACLES, LATCH_ARM_Z, PERIM_DEG, LATCH_ARM_X1, LATCH_SCREW_X], b)
+    return cached(["nose_cowl", 11, DOWELS, R, D.X_NOSE, P.J_RECEPTACLES, LATCH_ARM_Z, PERIM_DEG, LATCH_ARM_X1, LATCH_SCREW_X], b)
 
 
 def shoulder(s):
@@ -281,8 +305,9 @@ def shoulder(s):
         a, c = cover_bosses(reg)
         p = p.fuse(a).cut(c).cut(dowel_bores(D.X_NOSE, "nose")).cut(dowel_bores(D.X_DECK, "deck"))
         p = p.cut(box(-21.0, -2.0, D.GRIP_PLATE_Y[0] - 3.4, D.GRIP_PLATE_Y[0] - 0.3, 90, 220))     # look-ahead ToF lead slot beside the side plate (under the fairing)
+        p = p.cut(tongue_keepout())
         return perim_screws(p, "shoulder", (1,))
-    p = cached(["shoulder", 10, DECK_JOINT, DOWELS, R, D.X_NOSE, D.X_DECK, PERIM_DEG, COVER_SCREWS], b)
+    p = cached(["shoulder", 11, DECK_JOINT, DOWELS, R, D.X_NOSE, D.X_DECK, PERIM_DEG, COVER_SCREWS], b)
     return p if s > 0 else mirror_y(p)
 
 
@@ -302,14 +327,14 @@ def rear_deck(s):
         for x in HUMP_SCREW_X:
             z = P.roof_z(x, B["hump_half_y"] + 3.0, "inner") - 4.6
             p = p.cut(cyl(D.INSERT["M3"][0] / 2, D.INSERT["M3"][1], (x, B["hump_half_y"] + 0.3, z), (0, 1, 0)))
-        p = p.cut(dowel_bores(D.X_DECK, "deck"))
+        p = p.cut(dowel_bores(D.X_DECK, "deck")).cut(tongue_keepout())
         a, c = cover_bosses(reg)
         if a is not None:
             p = p.fuse(a).cut(c)
         return perim_screws(p, "deck", (1,))
 
     def b():
-        p = cached(["rear_deck_base", 10, DECK_JOINT, DOWELS, R, D.X_DECK, HUMP_X, PERIM_DEG, COVER_SCREWS], base)
+        p = cached(["rear_deck_base", 11, DECK_JOINT, DOWELS, R, D.X_DECK, HUMP_X, PERIM_DEG, COVER_SCREWS], base)
         p = p if s > 0 else mirror_y(p)
         feats = []
         for name in ("tof_look_r" + tag, "tof_prox_r" + tag):
@@ -335,16 +360,13 @@ def rear_deck(s):
             a, cu, spot = S.inlet_seat()
             xd = S.inlet_xdir()
             p = p.cut(place(spot, ci["xyz"], ci["normal"], xd))                 # flat spot face: nothing of the skin above the seat plane
-            feats.append((place(a, ci["xyz"], ci["normal"], xd).intersect(box(-400, 0, -200, 0, ZU, 300)), place(cu, ci["xyz"], ci["normal"], xd), False))
-        sw = P.BODY_BUMPER_SWITCHES["bumper_sw_" + tag]
-        d = D.BUMPER_DIR["L" if s > 0 else "R"]
-        out_n = (-d[0], -d[1], 0.0)
-        feats.append((place(box(-10, 10, -9, 9, -12.0, -1.0), sw, out_n), place(fuse(box(-6.9, 6.9, -2.9, 2.9, -11.0, -3.6), cyl(1.7, 12, (0, 0, -4.0)), cyl(2.6, 20, (-14.0, 0, -8.0)), cyl(2.6, 20, (14.0, 0, -8.0))), sw, out_n)))
+            feats.append((place(a, ci["xyz"], ci["normal"], xd).intersect(box(-400, 0, -200, 0, ZL + D.TONGUE[2] + 0.5, 300)), place(cu, ci["xyz"], ci["normal"], xd), False))
+        feats.append((None, bumper_switch_seat(s)[1]))                          # switch block is on the lower hull; the lid skirt only gets the holes
         from .battery import DOOR_PEG
         feats.append((box(DOOR_PEG[0] - 5, DOOR_PEG[0] + 3.5, s * D.HATCH_JAMB[0], s * (D.HATCH_JAMB[1] + 6.5), DOOR_PEG[1] - 5.5, DOOR_PEG[1] + 5.5),
                       cyl(D.INSERT["M4"][0] / 2, D.INSERT["M4"][1] + 1.0, (DOOR_PEG[0], s * D.HATCH_JAMB[0], DOOR_PEG[1]), (0, s, 0))))
         return _features(p, feats)
-    key = ["rear_deck", tag, 14, COVER_SCREWS, S.SEAT, R, D.X_DECK, HUMP_X, PERIM_DEG, P.TOF_SENSORS, P.PANEL_CONTROLS, P.CHARGE_INLET, D.BUMPER_DIR]
+    key = ["rear_deck", tag, 15, COVER_SCREWS, S.SEAT, R, D.X_DECK, HUMP_X, PERIM_DEG, P.TOF_SENSORS, P.PANEL_CONTROLS, P.CHARGE_INLET, D.BUMPER_DIR]
     if tag == "r":
         key.append(("inlet_seat", S.INLET_COVER_T, 2))
     return cached(key, b)
@@ -419,11 +441,11 @@ def lower_piece(front, s):
         slab = box(D.X_LOWER + GAP, D.X_LOWER + GAP + D.FLANGE_T, 0, 200, Z1 + 4.0, ZL) if front else box(D.X_LOWER - GAP - D.FLANGE_T, D.X_LOWER - GAP, 0, 200, Z1 + 4.0, ZL)
         fl = cut(slab.intersect(LI()).cut(loft(inset_rows(R["lower_inner"], D.FLANGE_DEPTH, 0.0))), *internal_clearance())
         p = p.fuse(fl).clean()
-        y = P.half_breadth(D.X_LOWER, 52.0, "inner") - 4.6
+        y = P.half_breadth(D.X_LOWER, SPLICE_Z, "inner") - 4.6
         if front:
-            p = p.cut(cyl(D.CLEAR["M3"] / 2, 12, (D.X_LOWER - 1, y, 52.0), (1, 0, 0)))
+            p = p.cut(cyl(D.CLEAR["M3"] / 2, 12, (D.X_LOWER - 1, y, SPLICE_Z), (1, 0, 0)))
         else:
-            bo, br = insert_boss_x(D.X_LOWER, y, 52.0, -1)
+            bo, br = insert_boss_x(D.X_LOWER, y, SPLICE_Z, -1)
             p = p.fuse(bo.intersect(LI())).cut(br)
         for x, yy in sole_screw_xy():                                    # M3 inserts in the sole ring (screws from below)
             if yy > 0 and ((x > D.X_LOWER) == front):
@@ -435,9 +457,11 @@ def lower_piece(front, s):
         return p.clean()
 
     def b():
-        p = cached(["lower_base", front, 12, R, D.X_LOWER, PERIM_DEG, D.TONGUE, D.POSTS, P.CM5_POSE], base)
+        p = cached(["lower_base", front, 13, SPLICE_Z, R, D.X_LOWER, PERIM_DEG, D.TONGUE, D.POSTS, P.CM5_POSE], base)
         p = p if s > 0 else mirror_y(p)
         if not front:
+            blk, hole = bumper_switch_seat(s)
+            p = p.fuse(blk.intersect(LO()).intersect(box(-400, 200, -200, 200, 0, ZL + D.TONGUE[2]))).cut(hole)
             t = P.TOF_SENSORS["tof_cliff_r" + tag[1].lower()]
             p = p.fuse(S.tof_boss(t["xyz"], t["dir"]).intersect(LO())).cut(S.tof_pocket(t["xyz"], t["dir"]))
             if s < 0:                                                    # membrane breather (M12 x 1.5 ePTFE vent) in the right rear quarter
@@ -445,7 +469,7 @@ def lower_piece(front, s):
                 a, c, _ = S.device_seat(pt, n, hole_d=12.2, face_d=20.0, boss_d=24.0, notch=False, panel_t=4.0)
                 p = p.fuse(a.intersect(LO())).cut(c)
         return p
-    return cached(["lower_piece", tag, 13, S.SEAT, R, D.X_LOWER, PERIM_DEG, P.TOF_SENSORS, D.HATCH_JAMB], b)
+    return cached(["lower_piece", tag, 14, S.SEAT, R, D.X_LOWER, PERIM_DEG, P.TOF_SENSORS, D.HATCH_JAMB], b)
 
 
 # ----------------------------------------------------------------------------------------------- hatch frame and door
@@ -479,12 +503,15 @@ def door():
         for s in (1, -1):                                                # hook-and-swing: the door is lowered onto the jamb pegs tilted back, then swung shut
             slot = box(DOOR_PEG[0] - 2.3, DOOR_PEG[0] + 2.3, s * 54.0, s * 58.5, 80.0, DOOR_PEG[1] + 2.3)   # hook slots, open downward
             d = d.cut(slot)
+        for name in ("tof_look_rl", "tof_look_rr"):                       # relief round the look-behind seats of the decks
+            t = P.TOF_SENSORS[name]
+            d = d.cut(S.tof_boss(t["xyz"], t["dir"], "look_r", grow=0.4, back=4.0))
         for y in (-30.0, 30.0):                                           # bushings for the centre bumper guide pins
             d = d.cut(cyl(2.6, 30, (P.BODY_TAIL_X - 3.0, y, 66.0), (1, 0, 0)))
         d = d.cut(cyl(D.CLEAR["M4"] / 2, 8, (FRAME_X[0] - 4.3, 35.0, 141.0), (1, 0, 0)))            # latch catch plate screws
         d = d.cut(cyl(D.CLEAR["M4"] / 2, 8, (FRAME_X[0] - 4.3, 35.0, 131.0), (1, 0, 0)))
         return d
-    return cached(["door", 12, R, B, FRAME_X], b)
+    return cached(["door", 13, S.SEAT, R, B, FRAME_X], b)
 
 
 def build(add):

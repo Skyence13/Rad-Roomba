@@ -71,7 +71,7 @@ the pick-and-place file, `out/pinmap.json` and the STEP model (`out/RR-HEAD-ACQ.
 | Netlist KiCad vs design/circuit.py (independent) | IDENTICAL, 2987 pins on 581 nets, values/MPN/manufacturer/DNP | `reports/netlist_vs_circuit.json` |
 | `build --no-route`: courtyard overlaps / DRC errors / schematic parity | 0 / 0 (waivers listed in summary.json) / 0 | `reports/summary.json` |
 | Height limits (envelope heights the build attaches) | max 6.0 mm (Micro-Fit, UNVERIFIED value), nothing on the bottom | `reports/fit_check.json` |
-| Routing | see STATUS.md (not complete) | `reports/summary.json` -> `drc.unrouted` |
+| Routing | **incomplete**: 1090 open connections on 212 nets, DRC 0 errors, parity 0 | `reports/open_connections.md`, `reports/summary.json` |
 
 Not checked: signal integrity, HV creepage under coating, thermal; the generated 3D models are bounding boxes.
 
@@ -98,4 +98,19 @@ No unconnected item is waived.
 * UNVERIFIED stage-1 pin-outs carried over (verify flags in the BOM): TLV7021, TPS7A2050 DBV, REF3030, INA180, TMP117,
   TCA9534, 24AA025E64, ISO7710, THVD1420, BZX84/BAV199/BAT54S/BAV99 order, ACM4520 pairing, TCXO pads, OPA836, MPN suffixes.
 * Bias block HV parts are spaced for 1.0 mm (S2-L1), not 1.5 mm.
-* Routing: see STATUS.md.
+* Routing: 1090 connections open (STATUS.md, reports/open_connections.md).
+
+## 8. Tool defects met (worked around in this directory; tools/eda not edited)
+
+1. Local footprints need >= 1 pad: the pad-less shield-can footprint is swapped in by a hook on `locallib.make_footprint` (libs.py).
+2. The importer only resolves STOCK symbol hints; rr_local symbols are passed per reference (`symbols=`).
+3. Plane fan-out checks only its own net-class clearance (GND stubs/vias inside the 1.0 mm HV / heater clearance) and
+   ignores footprint-internal rule areas (U.FL): via keep-outs in layout.py.
+4. Auto-arranger: unaware of `replicate()` destinations; group-region slicing scatters board-level passives -> pass-1
+   keep-outs + `near=` hints + scripts/legalize.py.
+5. Parts whose footprint is excluded from the BOM (test pads, holes, fiducials, TC2030, solder jumper) give schematic-
+   parity errors unless `bom=False`.
+6. Automatic continue run crashes: `pcb._edge_guard` -> AttributeError 'SwigPyObject' object has no attribute
+   'NewOutline' (stage_retrydsn) -> `retries=0`.
+7. Replicated block vias coincide with fan-out vias of the copies (66 `holes_co_located` warnings).
+8. `route(escape=..., finisher=...)` exist in model.py but are not documented in the README -> not used (escape=False).

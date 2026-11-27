@@ -30,7 +30,7 @@ FEET_X = (-222.0, -190.0, -150.0, -110.0, -76.0)
 PLUG = (-164.6, -74.0, 42.0)         # flange of the floor plug on the plate top (starts clear of the caster disc, x -165.0)
 HANDLE_Y = (32.3, 36.3)               # handle arm |y| (outboard of the hinge lugs)
 LUG_Y = (27.8, 32.0)                  # hinge lugs on the cassette rear face
-HINGE_Z = 128.0                       # handle hinge axis (along y) on the cassette rear face
+HINGE_Z = 105.0                       # handle hinge axis (along y) on the cassette rear face (the tail cap is only ~4 mm deep at z 112..122)
 HANDLE_X = (CX0 - 4.0, CX0 - 0.5)     # folded handle lies flat 0.5..4.0 mm behind the cassette rear face
 HANDLE_L = 52.0                       # hinge to bar centre: 49 mm clear finger gap when pulled out (>= 45 gloved)
 PLUNGER_X = -215.0                    # index plunger axis (x, y = 0), through the hump roof into the cassette lid
@@ -138,8 +138,9 @@ def handle():
 def plunger():
     """Purchased spring index plunger envelope: M10 body through the hump roof, pull knob above, 5 mm pin into the lid."""
     top = B["hump_z"][1]
-    return fuse(cyl(2.5, top - B["hump_wall"] - (CZ1 - 2.4) + 0.1, (PLUNGER_X, 0, CZ1 - 2.4)),
-                cyl(5.0, 18.0, (PLUNGER_X, 0, top - 12.0)), cyl(9.0, 12.0, (PLUNGER_X, 0, top + 6.0)))
+    return fuse(cyl(2.5, 3.1, (PLUNGER_X, 0, CZ1 - 2.4)),                     # pin, latched: 2.4 mm into the lid
+                cyl(5.0, top + 6.0 - (CZ1 + 0.6), (PLUNGER_X, 0, CZ1 + 0.6)),         # M10 body + inner nut, 0.6 above the lid
+                cyl(9.0, 12.0, (PLUNGER_X, 0, top + 6.0)))                           # pull knob
 
 
 def spacer_9ah():

@@ -1,128 +1,69 @@
-"""Pairwise interference of the RR-X parts (tool-checked, OCC boolean common), run in worker processes with a per-pair
-time limit.  A pair whose boolean does not finish in time is re-evaluated by point sampling (1 mm grid in the overlap
-of the two bounding boxes, solid classifier) and reported with method 'sampled'.  Results are identical in meaning:
-overlap volume in mm3."""
+"""Pairwise interference of the RR-X parts (tool-checked).  Stage 1 screens every bounding-box-overlapping pair with
+z-ray intervals of the tessellated solids on a 0.5 mm grid (seconds for all pairs).  Stage 2 re-evaluates every flagged
+pair exactly with an OCC boolean common, one process per pair with a time limit (a pair that does not finish keeps its
+screening volume, method 'mesh'); exact results are cached on the BREP digests so unchanged pairs cost nothing."""
 from __future__ import annotations
 
 import itertools
-import multiprocessing as mp
 import os
-import queue
 import time
 from pathlib import Path
 
 
-def _volume_common(a, b):
-    from OCP.BRepAlgoAPI import BRepAlgoAPI_Common
-    import cadquery as cq
-    op = BRepAlgoAPI_Common(a.wrapped, b.wrapped)
-    if not op.IsDone():
-        raise RuntimeError("boolean failed")
-    return sum(s.Volume() for s in cq.Shape.cast(op.Shape()).Solids())
+PAIR_SCRIPT = r"""
+import json, sys
+import cadquery as cq
+from OCP.BRepAlgoAPI import BRepAlgoAPI_Common
+a = cq.Shape.importBrep(sys.argv[1]); b = cq.Shape.importBrep(sys.argv[2])
+op = BRepAlgoAPI_Common(a.wrapped, b.wrapped)
+v = sum(s.Volume() for s in cq.Shape.cast(op.Shape()).Solids()) if op.IsDone() else float("nan")
+print(json.dumps({"v": v}))
+"""
 
 
-def _volume_sampled(a, b, step=1.0, cap=400000):
-    """Overlap volume by classifying grid points (inside both) in the common bounding box."""
-    import numpy as np
-    from OCP.BRepClass3d import BRepClass3d_SolidClassifier
-    from OCP.gp import gp_Pnt
-    from OCP.TopAbs import TopAbs_IN
-    ba, bb = a.BoundingBox(), b.BoundingBox()
-    lo = [max(ba.xmin, bb.xmin), max(ba.ymin, bb.ymin), max(ba.zmin, bb.zmin)]
-    hi = [min(ba.xmax, bb.xmax), min(ba.ymax, bb.ymax), min(ba.zmax, bb.zmax)]
-    if any(h <= l for l, h in zip(lo, hi)):
-        return 0.0
-    n = [max(1, int((h - l) / step)) for l, h in zip(lo, hi)]
-    while n[0] * n[1] * n[2] > cap:
-        step *= 1.25
-        n = [max(1, int((h - l) / step)) for l, h in zip(lo, hi)]
-    d = [(h - l) / k for l, h, k in zip(lo, hi, n)]
-    ca, cb = BRepClass3d_SolidClassifier(a.wrapped), BRepClass3d_SolidClassifier(b.wrapped)
-    hits = 0
-    for i, j, k in itertools.product(*(np.arange(k) + 0.5 for k in n)):
-        p = gp_Pnt(lo[0] + i * d[0], lo[1] + j * d[1], lo[2] + k * d[2])
-        cb.Perform(p, 1e-6)
-        if cb.State() != TopAbs_IN:
-            continue
-        ca.Perform(p, 1e-6)
-        if ca.State() == TopAbs_IN:
-            hits += 1
-    return hits * d[0] * d[1] * d[2]
+def _exact(pairs, folder, workers, timeout, log):
+    """OCC boolean common of each pair in its own process (clean kill on timeout). Results cached on the BREP digests."""
+    import hashlib
+    import json
+    import subprocess
+    import sys
+    from concurrent.futures import ThreadPoolExecutor
+    folder = Path(folder)
+    cache_f = folder / "exact_cache.json"
+    try:
+        cache = json.loads(cache_f.read_text())
+    except Exception:  # noqa: BLE001
+        cache = {}
+    dig = {}
 
+    def digest(n):
+        if n not in dig:
+            dig[n] = hashlib.sha1((folder / f"{n}.brep").read_bytes()).hexdigest()[:16]
+        return dig[n]
 
-def _worker(wid, folder, tasks, results, sampled):
-    import cadquery as cq
-    shapes = {}
-
-    def get(name):
-        if name not in shapes:
-            shapes[name] = cq.Shape.importBrep(str(Path(folder) / f"{name}.brep"))
-        return shapes[name]
-    while True:
-        try:
-            item = tasks.get(timeout=1.0)
-        except queue.Empty:
-            continue
-        if item is None:
-            return
-        k, na, nb = item
-        results.put(("start", wid, k, time.time()))
+    def one(ab):
+        a, b = ab
+        key = digest(a) + digest(b)
+        if key in cache:
+            return ab, tuple(cache[key]) + (0.0,)
         t = time.time()
         try:
-            v = _volume_sampled(get(na), get(nb)) if sampled else _volume_common(get(na), get(nb))
-            method = "sampled" if sampled else "boolean"
+            r = subprocess.run([sys.executable, "-c", PAIR_SCRIPT, str(folder / f"{a}.brep"), str(folder / f"{b}.brep")],
+                               capture_output=True, text=True, timeout=timeout)
+            v = json.loads(r.stdout.strip().splitlines()[-1])["v"]
+            res = (v, "boolean")
+        except subprocess.TimeoutExpired:
+            log(f"    pair {a} x {b}: boolean > {timeout:.0f} s, screening volume kept")
+            res = (None, "timeout")
         except Exception as e:  # noqa: BLE001
-            v, method = float("nan"), f"error: {e}"
-        results.put(("done", wid, k, (v, method, round(time.time() - t, 2))))
-
-
-def _run(pairs, folder, workers, timeout, sampled, log):
-    ctx = mp.get_context("spawn")          # not fork: OCC thread pools in the parent deadlock forked children
-    tasks, results = ctx.Queue(), ctx.Queue()
-    for k, (a, b) in enumerate(pairs):
-        tasks.put((k, a, b))
-    procs, running, out, timed_out = {}, {}, {}, []
-
-    def spawn(w):
-        p = ctx.Process(target=_worker, args=(w, folder, tasks, results, sampled), daemon=True)
-        p.start()
-        procs[w] = p
-    for w in range(workers):
-        spawn(w)
-    next_w = workers
-    while len(out) + len(timed_out) < len(pairs):
-        try:
-            msg = results.get(timeout=1.0)
-            if msg[0] == "start":
-                running[msg[1]] = (msg[2], msg[3])
-            else:
-                out[msg[2]] = msg[3]
-                running.pop(msg[1], None)
-        except queue.Empty:
-            pass
-        now = time.time()
-        for w, (k, t0) in list(running.items()):
-            if now - t0 > timeout:
-                procs[w].kill()
-                procs[w].join()
-                running.pop(w)
-                timed_out.append(k)
-                log(f"    pair {pairs[k][0]} x {pairs[k][1]}: boolean > {timeout:.0f} s, re-checked by sampling")
-                spawn(next_w)
-                next_w += 1
-        for w, p in list(procs.items()):
-            if not p.is_alive() and w in running:
-                k, _ = running.pop(w)
-                timed_out.append(k)
-                spawn(next_w)
-                next_w += 1
-    for _ in procs:
-        tasks.put(None)
-    for p in procs.values():
-        p.join(timeout=5)
-        if p.is_alive():
-            p.kill()
-    return out, timed_out
+            res = (None, f"error: {str(e)[:60]}")
+        if res[1] == "boolean":
+            cache[key] = list(res)
+        return ab, res + (round(time.time() - t, 1),)
+    with ThreadPoolExecutor(max_workers=workers) as ex:
+        out = dict(ex.map(one, pairs))
+    cache_f.write_text(json.dumps(cache))
+    return out
 
 
 # ----------------------------------------------------------------------------------------------- mesh screening
@@ -198,7 +139,7 @@ def interval_overlap(ia, ib):
     return float(np.clip(ov, 0, None).sum() * H * H)
 
 
-def overlaps(parts, folder, workers=3, timeout=60.0, screen_tol=2.0, log=print):
+def overlaps(parts, folder, workers=3, timeout=150.0, screen_tol=2.0, log=print):
     """Two stages.  (1) mesh screening of every bounding-box-overlapping pair: z-ray intervals on a 0.5 mm grid
     (touching faces give zero, curved fits give at most a few mm3 of chord error).  (2) every pair the screening
     flags above `screen_tol` mm3 is re-evaluated exactly with an OCC boolean in a worker process (per-pair time limit;
@@ -219,10 +160,8 @@ def overlaps(parts, folder, workers=3, timeout=60.0, screen_tol=2.0, log=print):
         byn[n].shape.exportBrep(str(folder / f"{n}.brep"))
     exact = {}
     if flagged:
-        out, slow = _run(flagged, folder, max(1, min(workers, (os.cpu_count() or 2) - 1)), timeout, False, log)
-        for k, (a, b) in enumerate(flagged):
-            if k in out and out[k][1] == "boolean":
-                exact[(a, b)] = out[k]
+        res = _exact(flagged, folder, max(1, min(workers, (os.cpu_count() or 2) - 1)), timeout, log)
+        exact = {ab: r for ab, r in res.items() if r[1] == "boolean"}
     rows = []
     for a, b, v in screened:
         if (a, b) in exact:

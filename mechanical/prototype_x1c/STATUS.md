@@ -12,7 +12,15 @@ Handover 2 (second engineer): the inherited code was complete in modules but nev
 - wheel hub = Pololu #1999 verified dimensions; head data from the head engineer (1.864 / 2.083 kg, envelope to x 212.5);
 - interference engine `rrx/interference.py`: bbox prefilter, spawn workers, 60 s per-pair limit with point-sampling fallback;
 - new checks: tyre-width rule, cable corridors, CCR-E08 keep-outs over RR-CHS-MAIN, sliver audit, plate bending in the grip proof;
-- `assembly.md` generator (docs.write_assembly), `CHANGE_REQUESTS.md` (draft).
+- `assembly.md` generator (docs.write_assembly), `CHANGE_REQUESTS.md`, `README.md`.
+- second clash round (real-vs-real overlaps no longer hidden): cassette cam bail replaced by fold-flat handle + spring index
+  plunger + door interlock finger (bail could not stand inside the tail cap); bulkhead inside the hull; latch arm pocketed
+  in the nose; shell flanges above the hull tongue and clipped by arches/saddle; lid pieces cut by the tongue keep-out;
+  shoulder/deck split moved to x -36 (RR-PANEL tray); saddle-cover screws 4 front + 2 rear corners (board 18 mm envelope);
+  bumper-switch seat moved to the lower hull; inlet cover seated on a spot-face plinth with the hinge lugs outside it;
+  look-behind ToF seats with the board long axis vertical; hull clearance cuts for internals (tunnel, CM5, motors, posts, bulkhead).
+- interference engine reworked: mesh z-ray screening of all pairs (~10 s) + exact OCC boolean per flagged pair in its own
+  process with a 150 s limit, results cached on BREP digests (worker pool / fork approach deadlocked; abandoned).
 
 | Item | State |
 |---|---|

@@ -56,7 +56,9 @@ for k, name in enumerate(io):
     pins[name] = io_net[name]
 mcu.part("U1", "MCU_ST_STM32G4:STM32G474RETx", "STM32G474RET6", mfr="STMicroelectronics", mpn="STM32G474RET6", pins=pins)
 for k in range(8):
-    mcu.C("C%d" % (10 + k), "100n", "+3V3", "GND", mfr="Murata", mpn="GRM155R71C104KA88D")
+    # bottom side, under the MCU: keeps the band outside the escape ring free for routing
+    # (with top-side decoupling the 4-layer variant deterministically left IO46 walled in)
+    mcu.C("C%d" % (10 + k), "100n", "+3V3", "GND", side="B", mfr="Murata", mpn="GRM155R71C104KA88D")
 mcu.C("C18", "4u7", "+3V3", "GND", pkg="0603", mfr="Murata", mpn="GRM188R61A475KE15D")
 mcu.C("C19", "1u", "+3V3", "GND", mfr="Murata", mpn="GRM155R61A105KE15D")
 

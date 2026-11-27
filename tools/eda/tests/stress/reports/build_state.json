@@ -159,22 +159,22 @@
     "parts": 150,
     "sheets": 7
   },
-  "dsn_sha256": "89cc898861dcb7390ed5a9490d36fba2c94ae69ae7608153ac90aaff45cd92a1",
-  "dsn_unchanged": true,
+  "dsn_sha256": "b104536bc2a55afcf7b5ffc702d12318b562e61e1bf2fa538205df1f4daa2e36",
+  "dsn_unchanged": false,
   "escape": {
     "direct": 0,
     "enabled": true,
-    "inward": 10,
+    "inward": 9,
     "layers": [
       "B.Cu"
     ],
     "parts": {
       "U1": {
         "exposed_pad": false,
-        "inward": 10,
+        "inward": 9,
         "pads": 64,
         "pitch": 0.5,
-        "ring": 54
+        "ring": 55
       },
       "U2": {
         "exposed_pad": true,
@@ -221,9 +221,11 @@
     "J6: 3D envelope uses the default height 1.0 mm (give height=)",
     "plane fan-out: no legal via position for C40 pad at (57.77, 26.75) [+5V] (left to the autorouter)",
     "plane fan-out: no legal via position for U4 pad at (54.66, 26.78) [+5V] (left to the autorouter)",
-    "plane fan-out: no legal via position for U104 pad at (27.39, 23.20) [+3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for C102 pad at (19.25, 19.48) [+3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for U102 pad at (19.11, 22.55) [+3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for C104 pad at (19.25, 19.48) [+3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for U104 pad at (19.11, 22.55) [+3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for C101 pad at (27.75, 26.23) [+3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for C14 pad at (27.98, 38.25) [+3V3] (left to the autorouter)",
+    "plane fan-out: no legal via position for C11 pad at (29.52, 38.25) [GND] (left to the autorouter)",
     "plane fan-out: no legal via position for U3 pad at (24.85, 12.00) [+3V3] (left to the autorouter)"
   ],
   "generated_files": [
@@ -248,10 +250,10 @@
       "F"
     ],
     "C10": [
-      17.0,
-      40.0,
-      180.0,
-      "F"
+      21.0,
+      40.5,
+      90.0,
+      "B"
     ],
     "C100": [
       23.0,
@@ -261,13 +263,13 @@
     ],
     "C101": [
       27.75,
-      25.5,
+      25.75,
       270.0,
       "F"
     ],
     "C102": [
-      19.25,
-      19.0,
+      33.0,
+      21.75,
       270.0,
       "F"
     ],
@@ -278,15 +280,15 @@
       "F"
     ],
     "C104": [
-      31.0,
-      23.25,
-      0.0,
+      19.25,
+      19.0,
+      270.0,
       "F"
     ],
     "C105": [
-      35.25,
-      20.5,
-      270.0,
+      31.0,
+      22.0,
+      0.0,
       "F"
     ],
     "C106": [
@@ -296,28 +298,28 @@
       "F"
     ],
     "C107": [
+      38.0,
+      16.75,
+      270.0,
+      "F"
+    ],
+    "C108": [
+      44.75,
+      20.75,
+      270.0,
+      "F"
+    ],
+    "C109": [
       48.5,
       32.25,
       270.0,
       "F"
     ],
-    "C108": [
-      40.5,
-      17.5,
-      270.0,
-      "F"
-    ],
-    "C109": [
-      39.25,
-      15.25,
-      0.0,
-      "F"
-    ],
     "C11": [
-      30.25,
-      34.0,
-      270.0,
-      "F"
+      30.0,
+      38.25,
+      180.0,
+      "B"
     ],
     "C110": [
       59.0,
@@ -380,50 +382,50 @@
       "F"
     ],
     "C12": [
-      36.5,
+      31.75,
       47.5,
-      0.0,
-      "F"
+      180.0,
+      "B"
     ],
     "C13": [
-      21.25,
-      53.5,
-      90.0,
-      "F"
+      22.5,
+      49.5,
+      180.0,
+      "B"
     ],
     "C14": [
-      28.5,
-      34.0,
-      270.0,
-      "F"
+      27.5,
+      38.25,
+      180.0,
+      "B"
     ],
     "C15": [
-      26.75,
-      34.0,
-      270.0,
-      "F"
+      28.5,
+      40.25,
+      90.0,
+      "B"
     ],
     "C16": [
-      17.0,
+      20.5,
       47.5,
       180.0,
-      "F"
+      "B"
     ],
     "C17": [
-      17.0,
-      41.75,
-      180.0,
-      "F"
+      23.0,
+      40.0,
+      0.0,
+      "B"
     ],
     "C18": [
-      32.25,
-      33.25,
-      270.0,
+      29.5,
+      34.0,
+      180.0,
       "F"
     ],
     "C19": [
       36.5,
-      49.25,
+      47.5,
       0.0,
       "F"
     ],
@@ -494,7 +496,7 @@
       "F"
     ],
     "C53": [
-      60.25,
+      60.5,
       28.75,
       270.0,
       "F"
@@ -549,7 +551,7 @@
     ],
     "R100": [
       17.25,
-      38.0,
+      38.75,
       270.0,
       "F"
     ],
@@ -560,8 +562,8 @@
       "F"
     ],
     "R102": [
-      21.25,
-      28.0,
+      31.0,
+      31.5,
       270.0,
       "F"
     ],
@@ -572,14 +574,14 @@
       "F"
     ],
     "R104": [
-      16.5,
+      21.25,
       28.0,
       270.0,
       "F"
     ],
     "R105": [
-      32.75,
-      30.25,
+      16.5,
+      28.0,
       270.0,
       "F"
     ],
@@ -590,21 +592,21 @@
       "F"
     ],
     "R107": [
-      43.25,
-      38.75,
-      0.0,
+      36.25,
+      26.5,
+      270.0,
       "F"
     ],
     "R108": [
-      38.75,
+      39.5,
       26.75,
       0.0,
       "F"
     ],
     "R109": [
-      30.75,
-      20.5,
-      270.0,
+      43.25,
+      38.75,
+      0.0,
       "F"
     ],
     "R110": [
@@ -675,19 +677,19 @@
     ],
     "R200": [
       17.25,
-      43.75,
+      42.5,
       90.0,
       "F"
     ],
     "R201": [
-      34.25,
+      32.25,
       34.0,
       90.0,
       "F"
     ],
     "R202": [
-      18.25,
-      28.0,
+      34.0,
+      34.0,
       90.0,
       "F"
     ],
@@ -698,13 +700,13 @@
       "F"
     ],
     "R204": [
-      31.0,
-      30.25,
+      18.25,
+      28.0,
       90.0,
       "F"
     ],
     "R205": [
-      39.75,
+      36.25,
       29.0,
       90.0,
       "F"
@@ -716,21 +718,21 @@
       "F"
     ],
     "R207": [
-      44.25,
-      41.75,
-      180.0,
+      39.75,
+      29.0,
+      90.0,
       "F"
     ],
     "R208": [
-      42.25,
-      27.0,
+      46.75,
+      31.75,
       90.0,
       "F"
     ],
     "R209": [
-      44.0,
-      23.75,
-      90.0,
+      44.25,
+      41.75,
+      180.0,
       "F"
     ],
     "R210": [
@@ -800,14 +802,14 @@
       "F"
     ],
     "R301": [
-      21.75,
-      19.0,
+      30.75,
+      20.0,
       270.0,
       "F"
     ],
     "R302": [
-      17.5,
-      19.0,
+      32.5,
+      19.25,
       270.0,
       "F"
     ],
@@ -818,39 +820,39 @@
       "F"
     ],
     "R304": [
+      21.75,
+      19.0,
+      270.0,
+      "F"
+    ],
+    "R305": [
       22.5,
       16.5,
       270.0,
       "F"
     ],
-    "R305": [
-      44.25,
-      26.75,
-      0.0,
-      "F"
-    ],
     "R306": [
-      46.75,
-      32.25,
-      270.0,
-      "F"
-    ],
-    "R307": [
-      46.75,
-      41.75,
+      42.0,
+      42.0,
       90.0,
       "F"
     ],
-    "R308": [
-      44.25,
-      21.5,
+    "R307": [
+      41.75,
+      21.0,
       0.0,
       "F"
     ],
+    "R308": [
+      46.5,
+      20.75,
+      270.0,
+      "F"
+    ],
     "R309": [
-      39.25,
-      13.5,
-      0.0,
+      46.75,
+      41.75,
+      90.0,
       "F"
     ],
     "R310": [
@@ -914,9 +916,9 @@
       "F"
     ],
     "R50": [
-      47.25,
-      24.75,
-      0.0,
+      48.75,
+      22.75,
+      90.0,
       "F"
     ],
     "R51": [
@@ -926,15 +928,15 @@
       "F"
     ],
     "R52": [
-      48.5,
-      23.0,
-      0.0,
+      58.25,
+      28.5,
+      180.0,
       "F"
     ],
     "R53": [
-      58.0,
-      28.75,
-      90.0,
+      62.5,
+      29.0,
+      180.0,
       "F"
     ],
     "R60": [
@@ -987,14 +989,14 @@
     ],
     "U101": [
       26.75,
-      30.25,
+      30.5,
       270.0,
       "F"
     ],
     "U102": [
-      20.25,
-      23.5,
-      180.0,
+      32.0,
+      26.5,
+      270.0,
       "F"
     ],
     "U103": [
@@ -1004,15 +1006,15 @@
       "F"
     ],
     "U104": [
-      26.25,
-      22.25,
-      0.0,
+      20.25,
+      23.5,
+      180.0,
       "F"
     ],
     "U105": [
-      34.25,
-      25.25,
-      270.0,
+      26.25,
+      22.5,
+      0.0,
       "F"
     ],
     "U106": [
@@ -1022,20 +1024,20 @@
       "F"
     ],
     "U107": [
-      47.75,
-      37.0,
+      37.25,
+      21.5,
       270.0,
       "F"
     ],
     "U108": [
-      39.75,
-      22.25,
+      44.0,
+      25.5,
       270.0,
       "F"
     ],
     "U109": [
-      34.75,
-      16.25,
+      47.75,
+      37.0,
       270.0,
       "F"
     ],
@@ -1146,9 +1148,11 @@
     "failed": [
       "C40 pad at (57.77, 26.75) [+5V]",
       "U4 pad at (54.66, 26.78) [+5V]",
-      "U104 pad at (27.39, 23.20) [+3V3]",
-      "C102 pad at (19.25, 19.48) [+3V3]",
-      "U102 pad at (19.11, 22.55) [+3V3]",
+      "C104 pad at (19.25, 19.48) [+3V3]",
+      "U104 pad at (19.11, 22.55) [+3V3]",
+      "C101 pad at (27.75, 26.23) [+3V3]",
+      "C14 pad at (27.98, 38.25) [+3V3]",
+      "C11 pad at (29.52, 38.25) [GND]",
       "U3 pad at (24.85, 12.00) [+3V3]"
     ],
     "plane_nets": [
@@ -1156,7 +1160,7 @@
       "+5V",
       "GND"
     ],
-    "vias": 173
+    "vias": 171
   },
   "pwr_flags": [
     "+5V",
@@ -1166,24 +1170,29 @@
     "attempts": [
       {
         "run": 1,
-        "seconds": 549.0,
+        "seconds": 511.9,
         "unconnected": 1
       },
       {
         "run": 2,
-        "seconds": 47.4,
+        "seconds": 35.4,
+        "unconnected": 1
+      },
+      {
+        "run": 3,
+        "seconds": 33.5,
         "unconnected": 1
       }
     ],
     "dsn_sha256": "89cc898861dcb7390ed5a9490d36fba2c94ae69ae7608153ac90aaff45cd92a1",
     "freerouting": "v2.6.0 (build-date: 2026-11-25)",
     "log_tail": [
-      "[8A1DF8\\D15B72] Auto-routing stage completed: started with 183 unrouted nets, completed in 539.62 seconds, final score: 996.72 (1 unrouted and 56 violations), using 364.92 total CPU seconds, 183.07 GB total allocated, and 684.1 MB peak heap usage.",
-      "[8A1DF8\\D15B72] Job '8A1DF8\\D15B72' finished with state: COMPLETED (elapsed: 9 minutes 1.77 seconds, finished at UTC: 2026-11-27T01:04:56.680822313Z)."
+      "[6F6B36\\820661] Auto-routing stage completed: started with 183 unrouted nets, completed in 503.89 seconds, final score: 996.72 (1 unrouted and 56 violations), using 360.85 total CPU seconds, 182.93 GB total allocated, and 678.8 MB peak heap usage.",
+      "[6F6B36\\820661] Job '6F6B36\\820661' finished with state: COMPLETED (elapsed: 8 minutes 25.10 seconds, finished at UTC: 2026-11-27T01:40:36.128481666Z)."
     ],
     "passes_limit": 30,
-    "reused": true,
-    "seconds": 549.0,
+    "reused": false,
+    "seconds": 511.9,
     "threads": 4,
     "timed_out": false
   },
