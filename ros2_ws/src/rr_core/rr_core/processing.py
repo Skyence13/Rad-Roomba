@@ -34,6 +34,24 @@ FLAG_RANK = {"SCAN_DETECTION": 1, "UNRESOLVED_EXCEEDANCE": 2, "INVESTIGATION_LEV
 CHANNELS = ("beta", "alpha")
 
 
+def classify_cell(d, level, policy="ALARM_ONLY"):
+    """Flag kind of one decision cell, or None (review_queue_policy, contract survey_methods).
+    ALARM_ONLY: a flag needs the scan-stage alarm (statistic above the decision threshold at alpha_scan,
+    `d.detected`); a non-alarming cell is never flagged, whatever its D#.  ALL_UNRESOLVED: also every
+    cell that cannot be cleared at the investigation level (D + kappa_beta * u >= level)."""
+    if d is None or d.D is None:
+        return None
+    if policy == "ALARM_ONLY" and not d.detected:
+        return None
+    if d.D >= level:
+        return "INVESTIGATION_LEVEL"
+    if d.D + est.kappa(d.beta) * d.u_total >= level:
+        return "UNRESOLVED_EXCEEDANCE"
+    if d.detected:
+        return "SCAN_DETECTION"
+    return None
+
+
 class SurveyConfig:
     def __init__(self, length_m, width_m, keepouts=(), sub_res=0.005, cell_m=0.10,
                  position_allowance_m=0.010, min_cell_coverage=0.5, speed_ref_mps=0.10,
@@ -442,16 +460,7 @@ class SurveyProcessor:
 
     # ------------------------------------------------------------------ flags
     def _classify(self, d):
-        if d.D is None:
-            return None
-        level = self.profile["investigation_level_Bq_cm2"]
-        if d.D >= level:
-            return "INVESTIGATION_LEVEL"
-        if d.D + est.kappa(d.beta) * d.u_total >= level:
-            return "UNRESOLVED_EXCEEDANCE"
-        if d.detected:
-            return "SCAN_DETECTION"
-        return None
+        return classify_cell(d, self.profile["investigation_level_Bq_cm2"], self.params["review_queue_policy"])
 
     def _update_flag(self, cy, cx, channel, d):
         if self.cell_coverage(cy, cx) < self.cfg.min_cell_coverage:
@@ -689,7 +698,8 @@ class SurveyProcessor:
                 row = {"ix": cx, "iy": cy, "x_m": round(x, 4), "y_m": round(y, 4),
                        "coverage_fraction": round(self.cell_coverage(cy, cx), 4),
                        "stage": "+".join(sorted(self.cell_stage.get((cy, cx), []))),
-                       "method": self.method["name"], "n_lane_gates": len(self.members.get((cy, cx), []))}
+                       "method": self.method["name"], "n_lane_gates": len(self.members.get((cy, cx), [])),
+                       "review_queue_policy": self.params["review_queue_policy"], "alpha_decision": self.params["alpha_scan"]}
                 for ch in channels:
                     d = self.decisions[ch].get((cy, cx))
                     p = CLASS_OF_CHANNEL[ch]

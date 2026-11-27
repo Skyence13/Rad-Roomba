@@ -78,9 +78,11 @@ function render() {
     const w = Math.min(200, r.rate * 6), a = Math.min(200, (r.alarm_level || 0) * 6);
     return `<div>lane ${k}: <span class="bar ${r.alarm ? "alarm" : ""}" style="width:${w}px"></span><span style="margin-left:${Math.max(0, a - w)}px">▲</span> ${r.rate.toFixed(1)} (set-point ${fmt(r.alarm_level, 1)})</div>`; }).join("");
   $("scaler").innerHTML = (s.observations || []).slice(-6).map((o) => `${o.id} lane ${o.lane}: ${o.outcome}` + (o.result ? ` D=${o.result.D.toFixed(3)}±${o.result.u_total.toFixed(3)} D*=${o.result.D_star.toFixed(3)} D#=${fmt(o.result.D_hash, 3)} T=${o.result.T_F.toFixed(1)} s (${o.result.method})` : "")).join("<br>") || "none";
+  $("qpolicy").textContent = s.review.policy === "ALL_UNRESOLVED" ? "— policy ALL_UNRESOLVED: every cell not cleared at the investigation level"
+    : `— policy ALARM_ONLY: scan alarms at α = ${s.review.alpha_queue} only (insufficient-sensitivity floor is on the map, not here)`;
   $("queue").innerHTML = (s.review.items || []).map((i) => `<div class="item ${s.review.current === i.id ? "cur" : ""}"><b>${i.id}</b> ${i.kind} — <b>${i.status}</b><br>` +
     `${i.location.text}; lane ${i.source_lane}; D=${i.D.toFixed(3)} ± ${i.u_total.toFixed(3)} Bq/cm² (D* ${i.D_star.toFixed(3)}, D# ${fmt(i.D_hash, 3)}); position ±${(i.position_uncertainty_m * 1000).toFixed(0)} mm<br>` +
-    `<span class="small">${(i.notes || []).join(" · ")}</span></div>`).join("") || "<i>no flagged areas (queue shows investigation-level and unresolved items)</i>";
+    `<span class="small">${(i.notes || []).join(" · ")}</span></div>`).join("") || "<i>no flagged areas</i>";
   $("svcnote").textContent = sf.charge_service ? "CHARGE/SERVICE: charger connected — settings and data access available, all drive requests refused." : "Settings and data access. Profile edits need the RP role and are refused while a mission uses a snapshot.";
   $("events").textContent = (s.events || []).slice(-12).map((e) => `${e.ev} ${e.reason || e.name || e.note || e.task || ""} ${e.accepted === false ? "REJECTED" : ""}`).join("\n");
   const can = mine && $("conn").textContent === "live";

@@ -233,7 +233,7 @@ def plane_fanout(bld, skip=None):
                         _seg_dist(x, y, s["a"][0], s["a"][1], s["b"][0], s["b"][1]) < s["w"] / 2.0 + w / 2.0 + pclr(net, s["net"]) + 0.01:
                     return False
         return True
-    made, failed = 0, []
+    made, failed, failed_items = 0, [], []
     centre = {}      # ref -> pad-bbox centre and pad count, to fan big ICs out towards their inside
     for me in todo:
         pass
@@ -272,6 +272,7 @@ def plane_fanout(bld, skip=None):
                 break
         if not hit:
             failed.append("%s pad at (%.2f, %.2f) [%s]" % (me["ref"], px - fr.ox, fr.oy - py, net))
+            failed_items.append(me)
             continue
         vx, vy = hit
         ni = bld.net(net)
@@ -298,4 +299,4 @@ def plane_fanout(bld, skip=None):
         s = {"a": (px, py), "b": (vx, vy), "w": tw, "layer": me["layer"], "net": net}
         segs.add((min(px, vx), min(py, vy), max(px, vx), max(py, vy)), s)
         made += 1
-    return {"plane_nets": plane_nets, "vias": made, "failed": failed}
+    return {"plane_nets": plane_nets, "vias": made, "failed": failed, "_failed_items": failed_items}

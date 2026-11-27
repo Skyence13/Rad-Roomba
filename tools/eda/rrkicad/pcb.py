@@ -345,8 +345,19 @@ class Builder:
             from .fanout import plane_fanout
             self.via_keepouts = [[self.fr.kmm(*p) for p in ko["_pts"]] for ko in self._all_keepouts if ko["vias"]]
             fan = plane_fanout(self, skip=handled)
+            items = fan.pop("_failed_items", [])
+            fan["long_fanout"] = []
+            if items and zone_nets(b):
+                # nets with a plane are not autorouted: maze-route the remaining pads to a via in their plane
+                from .finisher import plane_connect
+                done, left = plane_connect(self, items)
+                fan["long_fanout"] = done
+                keep = {id(m): m.get("_why", "") for m in left}
+                fan["failed"] = [f + " - long fan-out: " + keep[id(m)] for f, m in zip(fan["failed"], items) if id(m) in keep]
+            excl = bool(zone_nets(b))
             for f in fan["failed"]:
-                self.warnings.append("plane fan-out: no legal via position for " + f + " (left to the autorouter)")
+                self.warnings.append("plane fan-out: no legal via position for " + f + (
+                    " (zone net, not autorouted: left to the finisher, else open)" if excl else " (left to the autorouter)"))
         self.fanout = fan
         pcb.BuildConnectivity()
         pcbnew.SaveBoard(paths.pcb, pcb, True)

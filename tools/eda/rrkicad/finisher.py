@@ -209,7 +209,7 @@ class Budget(Exception):
 SOFT_COST = 30.0         # extra cost per grid step through rip-up candidate copper
 
 
-def _astar(win, trk, via, layers, starts, goals, budget=1_500_000, trk_soft=None, via_soft=None):
+def _astar(win, trk, via, layers, starts, goals, budget=1_500_000, trk_soft=None, via_soft=None, goal_mask=None):
     L, ny, nx = len(layers), win.ny, win.nx
     N = L * ny * nx
     blocked = np.stack([trk[l] for l in layers]).reshape(-1)
@@ -221,13 +221,14 @@ def _astar(win, trk, via, layers, starts, goals, budget=1_500_000, trk_soft=None
     goal = set()
     for (l, i, j) in goals:
         goal.add(l * ny * nx + j * nx + i)
-    gx = sum(g[1] for g in goals) / float(len(goals))
-    gy = sum(g[2] for g in goals) / float(len(goals))
+    hw = 0.0 if goal_mask is not None else 1.0       # goal mask (any cell where it is True): Dijkstra
+    gx = sum(g[1] for g in goals) / float(len(goals)) if goals else 0.0
+    gy = sum(g[2] for g in goals) / float(len(goals)) if goals else 0.0
     heap = []
     for (l, i, j) in starts:
         s = l * ny * nx + j * nx + i
         gcost[s] = 0.0
-        heapq.heappush(heap, (math.hypot(i - gx, j - gy), 0.0, s))
+        heapq.heappush(heap, (hw * math.hypot(i - gx, j - gy), 0.0, s))
     moves = [(1, 0, 1.0), (-1, 0, 1.0), (0, 1, 1.0), (0, -1, 1.0),
              (1, 1, 1.41421356), (1, -1, 1.41421356), (-1, 1, 1.41421356), (-1, -1, 1.41421356)]
     pops = 0
@@ -235,7 +236,7 @@ def _astar(win, trk, via, layers, starts, goals, budget=1_500_000, trk_soft=None
         f, gc, s = heapq.heappop(heap)
         if gc > gcost[s]:
             continue
-        if s in goal:
+        if s in goal or (goal_mask is not None and gc > 0 and goal_mask[s % (ny * nx)]):
             path = []
             while s != -1:
                 path.append(s)
@@ -260,7 +261,7 @@ def _astar(win, trk, via, layers, starts, goals, budget=1_500_000, trk_soft=None
             if ng < gcost[t]:
                 gcost[t] = ng
                 parent[t] = s
-                heapq.heappush(heap, (ng + math.hypot(ii - gx, jj - gy), ng, t))
+                heapq.heappush(heap, (ng + hw * math.hypot(ii - gx, jj - gy), ng, t))
         if L > 1 and not vflat[j * nx + i]:
             for l2 in range(L):
                 if l2 == l:
@@ -273,7 +274,7 @@ def _astar(win, trk, via, layers, starts, goals, budget=1_500_000, trk_soft=None
                 if ng < gcost[t]:
                     gcost[t] = ng
                     parent[t] = s
-                    heapq.heappush(heap, (ng + math.hypot(i - gx, j - gy), ng, t))
+                    heapq.heappush(heap, (ng + hw * math.hypot(i - gx, j - gy), ng, t))
     return None
 
 
@@ -412,8 +413,12 @@ def _cells(win, items, sig):
         if s is None:
             continue
         sj, si, PX, PY = s
-        m = _surface_dist(it, PX, PY) <= -win.g * 0.25 if it["kind"] != "seg" else \
-            _segdist_grid(PX, PY, it["a"][0], it["a"][1], it["b"][0], it["b"][1]) <= win.g * 0.5
+        if it["kind"] == "seg":
+            m = _segdist_grid(PX, PY, it["a"][0], it["a"][1], it["b"][0], it["b"][1]) <= win.g * 0.5
+        elif it["kind"] == "via":
+            m = _surface_dist(it, PX, PY) <= -win.g * 0.25
+        else:                       # pads: the distance is 0 inside the pad
+            m = _surface_dist(it, PX, PY) <= 0.0
         jj, ii = np.nonzero(m)
         for l in it["layers"]:
             if l in sig:
@@ -738,3 +743,127 @@ def apply(pcb, fr, route_dir, ses_path):
             pcb.Add(t)
         n += 1
     return n, victims
+
+
+def plane_connect(bld, failed):
+    """Generation time: pads of plane nets that the plane fan-out could not give a via beside the
+    pad get a maze-routed connection from the pad to the nearest legal via position inside their
+    own plane polygon (a "long fan-out"), as locked pre-routes - so nets with a plane never reach
+    the autorouter.  *failed*: fan-out items (rect, net, layer, ref).  Returns (routed, still failed)."""
+    from .geom import pip, pad_dist
+    b, pcb, fr = bld.b, bld.pcb, bld.fr
+    obs = Obstacles(bld, margin=0.03)                 # with the DSN's 25 um margin
+    sig = [l for l in b.copper_layers if l not in b.plane_layers]
+    zones = []
+    for zd in b.zones:
+        for ln in zd["layers"]:
+            if ln in b.plane_layers:
+                zones.append((ln, zd["priority"], zd["net"], [fr.kmm(*p) for p in (zd["polygon"] or b.outline["pts"])]))
+    r = b.rules
+    vdia, vdr = r.via_dia, r.via_drill
+    vr = vdia / 2.0
+    done, left = [], []
+    for me in failed:
+        net = me["net"]
+        x0, y0, x1, y1 = me["rect"]
+        px, py = (x0 + x1) / 2.0, (y0 + y1) / 2.0
+        w = max(r.min_track, min(b.class_of(net)["track"], min(x1 - x0, y1 - y0) - 0.05))
+        own = None
+        for it in obs.pads_by_ref.get(me["ref"], []):
+            if abs(it["cx"] - px) < 1e-3 and abs(it["cy"] - py) < 1e-3:
+                own = it
+        if own is None:
+            left.append(me)
+            continue
+        ok = False
+        why = "no path"
+        for grow, g in ((5.0, GRID), (12.0, 0.1), (30.0, 0.2)):
+            win = Window(px - grow, py - grow, px + grow, py + grow, g)
+            trk, via = _rasterize(obs, win, net, w, vr, vdr, sig)
+            PX, PY = np.meshgrid(win.X, win.Y)
+            inplane = np.zeros(PX.shape, dtype=bool)
+            for ln in sorted({z[0] for z in zones}):
+                best_p = np.full(PX.shape, -1)
+                best_own = np.zeros(PX.shape, dtype=bool)
+                for (l, prio, n, poly) in zones:
+                    if l != ln:
+                        continue
+                    m = _pip_grid(PX, PY, poly) & (prio > best_p)
+                    best_p = np.where(m, prio, best_p)
+                    best_own = np.where(m, n == net, best_own)
+                inplane |= best_own
+            for rect, ref in obs.court:               # no long fan-out via inside another part's courtyard
+                if ref == me["ref"]:
+                    continue
+                s_ = win.sub(rect, vr)
+                if s_ is not None:
+                    sj, si, QX, QY = s_
+                    dx = np.maximum(np.maximum(rect[0] - QX, 0.0), QX - rect[2])
+                    dy = np.maximum(np.maximum(rect[1] - QY, 0.0), QY - rect[3])
+                    via[sj, si] |= np.hypot(dx, dy) < vr
+            goal = (~via) & inplane
+            starts = {c for c in _cells(win, [own], sig)}
+            if not starts:
+                why = "pad not on a signal layer"
+                break
+            if not goal.any():
+                why = "no legal via position inside the own plane polygon within %g mm" % grow
+                continue
+            try:
+                path = _astar(win, trk, via, sig, sorted(starts), [], budget=400_000, goal_mask=goal.reshape(-1))
+            except Budget:
+                path = None
+                why = "search budget"
+            if path is None:
+                why = "no free path to the plane within %g mm" % grow
+                continue
+            route = _smooth(win, trk, _simplify(win, sig, path))
+            l_end, rem = divmod(path[-1], win.ny * win.nx)
+            je, ie = divmod(rem, win.nx)
+            vxy = win.xy(ie, je)
+            l0, rem0 = divmod(path[0], win.ny * win.nx)
+            j0, i0 = divmod(rem0, win.nx)
+            route.insert(0, ("seg", sig[l0], (px, py), win.xy(i0, j0)))
+            route.append(("via", vxy))
+            route = [q for q in route if q[0] != "seg" or math.hypot(q[3][0] - q[2][0], q[3][1] - q[2][1]) >= 1e-6]
+            bad = False
+            for q in route:
+                if q[0] == "seg":
+                    bad = not obs.seg_ok(q[2], q[3], w, q[1], net, own={id(own)})
+                else:
+                    bad = not obs.via_ok(q[1][0], q[1][1], vr, vdr, net, courtyard_ignore=(me["ref"],))
+                if bad:
+                    why = "exact re-check: " + obs.why
+                    break
+            if bad:
+                continue
+            ni = bld.net(net)
+            for q in route:
+                if q[0] == "seg":
+                    t = pcbnew.PCB_TRACK(pcb)
+                    t.SetStart(pcbnew.VECTOR2I(MM(q[2][0]), MM(q[2][1])))
+                    t.SetEnd(pcbnew.VECTOR2I(MM(q[3][0]), MM(q[3][1])))
+                    t.SetLayer(pcb.GetLayerID(q[1]))
+                    t.SetWidth(MM(w))
+                    t.SetNet(ni)
+                    t.SetLocked(True)
+                    pcb.Add(t)
+                    obs.add_seg(q[2], q[3], w, q[1], net)
+                else:
+                    v = pcbnew.PCB_VIA(pcb)
+                    v.SetPosition(pcbnew.VECTOR2I(MM(q[1][0]), MM(q[1][1])))
+                    v.SetViaType(pcbnew.VIATYPE_THROUGH)
+                    v.SetLayerPair(pcbnew.F_Cu, pcbnew.B_Cu)
+                    v.SetWidth(pcbnew.F_Cu, MM(vdia))
+                    v.SetDrill(MM(vdr))
+                    v.SetNet(ni)
+                    v.SetLocked(True)
+                    pcb.Add(v)
+                    obs.add_via(q[1][0], q[1][1], vr, vdr, net)
+            done.append("%s [%s] %.1f mm" % (me["ref"], net, sum(math.hypot(q[3][0] - q[2][0], q[3][1] - q[2][1]) for q in route if q[0] == "seg")))
+            ok = True
+            break
+        if not ok:
+            me["_why"] = why
+            left.append(me)
+    return done, left

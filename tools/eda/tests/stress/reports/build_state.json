@@ -162,7 +162,7 @@
   "dsn_ignore_classes": [
     "RR_ZONE_PWR"
   ],
-  "dsn_sha256": "36b78637f52b1e0bfe0503b55f32d690ab6a1f223b748c8faf3e8ce0b2862acb",
+  "dsn_sha256": "c4cb3e0005d61320e86c57e65e02916e270b0befe6c1066255bf0aa93bfd091c",
   "dsn_unchanged": false,
   "escape": {
     "direct": 0,
@@ -221,13 +221,7 @@
     "U52: 3D envelope uses the default height 1.0 mm (give height=)",
     "U53: 3D envelope uses the default height 1.0 mm (give height=)",
     "J5: 3D envelope uses the default height 1.0 mm (give height=)",
-    "J6: 3D envelope uses the default height 1.0 mm (give height=)",
-    "plane fan-out: no legal via position for C40 pad at (57.77, 26.75) [+5V] (left to the autorouter)",
-    "plane fan-out: no legal via position for U4 pad at (54.66, 26.78) [+5V] (left to the autorouter)",
-    "plane fan-out: no legal via position for U104 pad at (27.39, 23.20) [+3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for C102 pad at (19.25, 19.48) [+3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for U102 pad at (19.11, 22.55) [+3V3] (left to the autorouter)",
-    "plane fan-out: no legal via position for U3 pad at (24.85, 12.00) [+3V3] (left to the autorouter)"
+    "J6: 3D envelope uses the default height 1.0 mm (give height=)"
   ],
   "generated_files": [
     "STRESS-150.kicad_sch",
@@ -1147,13 +1141,14 @@
     ]
   },
   "plane_fanout": {
-    "failed": [
-      "C40 pad at (57.77, 26.75) [+5V]",
-      "U4 pad at (54.66, 26.78) [+5V]",
-      "U104 pad at (27.39, 23.20) [+3V3]",
-      "C102 pad at (19.25, 19.48) [+3V3]",
-      "U102 pad at (19.11, 22.55) [+3V3]",
-      "U3 pad at (24.85, 12.00) [+3V3]"
+    "failed": [],
+    "long_fanout": [
+      "C40 [+5V] 28.5 mm",
+      "U4 [+5V] 26.1 mm",
+      "U104 [+3V3] 3.2 mm",
+      "C102 [+3V3] 11.9 mm",
+      "U102 [+3V3] 9.1 mm",
+      "U3 [+3V3] 6.2 mm"
     ],
     "plane_nets": [
       "+3V3",

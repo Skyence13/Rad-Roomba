@@ -167,8 +167,9 @@ def stage_gen(board_py, route=True, sch_only=False):
     # the project file is re-written last: pcbnew must not have the final say
     project.write_project(paths.pro, pro)
     if info["fanout"]["plane_nets"]:
-        log("plane fan-out: %d via(s) on %s, %d pad(s) left to the autorouter" % (
-            info["fanout"]["vias"], ", ".join(info["fanout"]["plane_nets"]), len(info["fanout"]["failed"])))
+        log("plane fan-out: %d via(s) on %s, %d long fan-out(s) (maze-routed to the plane), %d pad(s) without" % (
+            info["fanout"]["vias"], ", ".join(info["fanout"]["plane_nets"]), len(info["fanout"].get("long_fanout", [])),
+            len(info["fanout"]["failed"])))
     esc = info.get("escape") or {}
     if esc.get("enabled"):
         log("escape: %d via(s), %d direct pre-route(s) on %s; %d pad(s) skipped %s" % (

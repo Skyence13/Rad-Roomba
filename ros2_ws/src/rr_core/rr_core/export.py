@@ -175,6 +175,8 @@ def export_survey(pipe, run: dict, out_dir, run_dir=None) -> dict:
         "profile": {"id": proc.profile["id"], "revision": proc.profile.get("revision"), "sha256": proc.profile.get("sha256"),
                     "unit": "Bq/cm2", "decision_class": proc.profile["decision_class"]},
         "calibration": proc.cal.summary(), "decision_parameters": _clean(proc.params),
+        "review_queue": {"policy": proc.params["review_queue_policy"], "alpha_scan": proc.params["alpha_scan"],
+                         "rule": "contract survey_methods.review_queue_policy; per cell also in cells.csv"},
         "assumptions": {"cov_FU": proc.cal.cov_FU_assumed, "spatial_response": "uniform top-hat (MODEL.md 5)",
                         "cell_variance": "MODEL.md 3 Poisson form with footprint-fraction weights (conservative for fractional weights)",
                         "u0": "MODEL.md 3 R1: lane window excluding gates under test; fallback four-lane pooled"},
@@ -265,6 +267,7 @@ def export_survey(pipe, run: dict, out_dir, run_dir=None) -> dict:
     t.write(f"run {run.get('run_id')}  trailer {run.get('trailer_id')}  floor {proc.cfg.length_m:g} x {proc.cfg.width_m:g} m (floor only)\n")
     t.write(f"method {proc.method['name']}  profile {proc.profile['id']} rev {proc.profile.get('revision')}  calibration {proc.cal.calibration_id}\n")
     t.write(f"unit Bq/cm2  investigation level {proc.profile['investigation_level_Bq_cm2']}  detection goal < {proc.profile['detection_goal_Bq_cm2']}\n")
+    t.write(f"review queue policy {proc.params['review_queue_policy']}\n")
     t.write(f"alpha_scan {proc.params['alpha_scan']:.3g}  alpha_recount {proc.params['alpha_recount']:.3g}  beta {proc.params['beta']:.3g}  decision cells {proc.params['n_decision_cells']}\n\n")
     t.write("WHERE THE ROBOT MEASURED\n")
     t.write(f"  valid exposure on {100 * summary['valid_exposure_fraction']:.1f} % of the target floor ({summary['target_area_m2']:.3f} m2)\n")

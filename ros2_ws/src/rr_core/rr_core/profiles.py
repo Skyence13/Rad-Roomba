@@ -126,6 +126,21 @@ class CalibrationStore:
 
 
 # -------------------------------------------------------------------- profiles
+REVIEW_QUEUE_POLICIES = ("ALARM_ONLY", "ALL_UNRESOLVED")     # contract survey_methods.review_queue_policy
+
+
+def review_queue_policy(profile: dict) -> str:
+    """Site-profile setting (owner decision 2026-11-27).  Absent -> ALARM_ONLY (contract default).
+      ALARM_ONLY      only cells whose statistic exceeds the decision threshold at alpha_scan are flagged
+                      and queued; non-alarming cells with D# above the goal are 'insufficient sensitivity'
+                      on the map / in the report, not queued.
+      ALL_UNRESOLVED  every cell that cannot be cleared at the investigation level is queued (pre-2026-11-27)."""
+    v = profile.get("review_queue_policy") or "ALARM_ONLY"
+    if v not in REVIEW_QUEUE_POLICIES:
+        raise ProfileError(f"review_queue_policy must be one of {REVIEW_QUEUE_POLICIES}, not {v!r}")
+    return v
+
+
 REQUIRED_FOR_DECISION = ("decision_class", "investigation_level_Bq_cm2", "detection_goal_Bq_cm2",
                          "alpha_per_decision", "beta_per_decision", "head_calibration_id")
 ACTIVITY_FIELDS = ("investigation_level_Bq_cm2", "site_reported_comparison_Bq_cm2", "detection_goal_Bq_cm2")
@@ -138,6 +153,8 @@ class ProfileStore:
         if document.get("surface_activity_unit") != "Bq/cm2":
             raise ProfileError("profile document must state surface_activity_unit Bq/cm2")
         self.document = copy.deepcopy(document)
+        for prof in self.document.get("profiles", []):          # contract default when the field is absent
+            prof["review_queue_policy"] = review_queue_policy(prof)
         self.history = []          # every superseded revision is retained
         self.audit = []
 
@@ -173,6 +190,7 @@ class ProfileStore:
         if calibration is None or calibration.calibration_id != p["head_calibration_id"]:
             raise ProfileError("profile calibration reference does not match the bound head calibration")
         p["unit"] = "Bq/cm2"
+        p["review_queue_policy"] = review_queue_policy(p)          # explicit in the mission snapshot
         p["field_use_approved"] = approved and calibration.field_use_approved
         p["sha256"] = canonical_sha256(p)
         return p
@@ -228,5 +246,6 @@ def decision_parameters(profile: dict, n_decision_cells: int) -> dict:
     a_rec = sidak_alpha(p_m, max(1, n_decision_cells)) if p_m else a_scan
     rec = profile.get("stationary_recount_s") or {}
     return {"alpha_scan": a_scan, "alpha_recount": a_rec, "beta": beta, "kappa_scan": kappa(a_scan),
+            "review_queue_policy": review_queue_policy(profile), "alpha_queue": a_scan,
             "n_decision_cells": n_decision_cells, "mission_allowance": p_m,
             "recount_default_s": rec.get("default", 30.0), "recount_max_s": rec.get("maximum", 100.0)}

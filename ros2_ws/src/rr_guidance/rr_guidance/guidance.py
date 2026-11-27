@@ -22,7 +22,8 @@ import numpy as np
 from rr_core.geometry import rot, transform
 from rr_coverage.planner import approach, transit
 
-QUEUE_KINDS = ("INVESTIGATION_LEVEL", "UNRESOLVED_EXCEEDANCE")
+QUEUE_KINDS = ("INVESTIGATION_LEVEL", "UNRESOLVED_EXCEEDANCE")            # ALL_UNRESOLVED policy
+FLAG_KINDS = ("INVESTIGATION_LEVEL", "UNRESOLVED_EXCEEDANCE", "SCAN_DETECTION")
 
 
 class GuidedReview:
@@ -43,8 +44,11 @@ class GuidedReview:
     # ------------------------------------------------------------------ queue
     def items(self):
         out = []
-        for f in self.app.pipeline.proc.flags:
-            if f["kind"] not in self.kinds or f.get("x_m") is None:
+        proc = self.app.pipeline.proc
+        # ALARM_ONLY: every flag is an alarm at alpha_scan, so every flag is queued (incl. SCAN_DETECTION)
+        kinds = tuple(FLAG_KINDS) if proc.params.get("review_queue_policy", "ALARM_ONLY") == "ALARM_ONLY" else self.kinds
+        for f in proc.flags:
+            if f["kind"] not in kinds or f.get("x_m") is None:
                 continue
             st = self.status.setdefault(f["id"], {"status": "OPEN", "notes": [], "visits": []})
             out.append({"id": f["id"], "kind": f["kind"], "class": f["class"], "status": st["status"],

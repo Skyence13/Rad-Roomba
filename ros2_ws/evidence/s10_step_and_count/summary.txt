@@ -3,6 +3,7 @@ SYNTHETIC CALIBRATION/PROFILE - field_use_approved: false - NOT FOR SURVEY OR RE
 run 00000000-0000-4000-8000-002000000001  trailer SIM-SECTION-1.8x1.0  floor 1.8 x 1 m (floor only)
 method STEP_AND_COUNT  profile ore-floor-demo-synthetic rev 1  calibration DEMO-CAL-SYNTH-0001
 unit Bq/cm2  investigation level 0.3  detection goal < 0.2
+review queue policy ALARM_ONLY
 alpha_scan 0.05  alpha_recount 0.000285  beta 0.05  decision cells 180
 
 WHERE THE ROBOT MEASURED

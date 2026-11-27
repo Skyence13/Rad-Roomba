@@ -165,6 +165,11 @@ Fixed per mission; stored with every result (`survey_methods` in `interface/syst
 | *(all methods)* | wall tracks along the side walls (§8.1) | `plan: {wall_track_entry: reverse_entry}` (default) or `in_place` |
 | `STEP_AND_COUNT` | move one station, settle, verified-stationary scaler count, repeat; moving counts archived but uncredited. Station pitch default **0.080 m** from contract `survey_methods.STEP_AND_COUNT.station_pitch_m` (CR-05 accepted: aperture length 0.10 m − 2 × 10 mm erosion, so credited footprints abut) | `mission: {method: STEP_AND_COUNT, station_preset_s: 10}` (override `station_pitch_m` only deliberately) |
 
+**Review queue** (site-profile field `review_queue_policy`): `ALARM_ONLY` (default) queues only
+scan alarms at the profile's `alpha_scan`; non-alarming cells with D# above the goal are shown as
+*insufficient sensitivity* and reported, not queued. `ALL_UNRESOLVED` queues every cell not cleared at
+the investigation level (previous behaviour). Stored per cell in `cells.csv` and in the manifest.
+
 Set it in the config YAML (`config:=` launch argument) or, for the stand-alone simulator,
 `tools/run_sim.sh --method SEARCH_THEN_COUNT`.
 
@@ -245,7 +250,7 @@ verification item, which need the hardware and procedures listed in `verificatio
 | RQ-014 / VT-008 | Seam, perimeter and wall strips | s01 / native_s01 (seam hotspot, interior bands fully covered), **s14_wall_tracks** (achieved wall strip, outline clearance, rear-field stop), `evidence/plan_2.5x16.json`, `test_processing.py` |
 | RQ-021 / VT-020 | Map in Bq/cm² | `test_estimator.py` (incl. cross-test vs `analysis/radiometry/rrrad`), s01 exports |
 | RQ-022 | Moving sensitivity | s01 (0.03 m/s, median D#), `test_estimator.py`; goal not met at 0.10 m/s (STATUS) |
-| RQ-023 / VT-022 | Hotspot and uncertainty decisions | s01, s10, s11 INLINE/DEFERRED (scaler counts), `test_estimator.py` |
+| RQ-023 / VT-022 | Hotspot and uncertainty decisions | s01, s10, s11 INLINE/DEFERRED (scaler counts), `test_estimator.py`, `test_review_queue.py` (queue policy) |
 | RQ-024 / VT-019, VT-033 | Host/time contract, handshake, identity | `test_head_link.py`, `test_wire_descriptor.py`, s02, native_s02, s09 |
 | RQ-025 / VT-019 | Acquisition loss and overload | `test_head_link.py` (CRC, duplicate, gap, reset), s02 / native_s02 |
 | RQ-026 / VT-020 | Replay and raw records | s08_replay, s12 |
