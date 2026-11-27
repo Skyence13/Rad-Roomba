@@ -42,7 +42,7 @@ python3 tests/test_integration.py build/rr_chassis_sim
 (cd port/stm32g474 && pio run -e rr_chs_main)        # 8 MHz crystal; -e rr_chs_main_24mhz for 24 MHz
 ```
 
-Results observed on 2026-11-27 with the stage-3 board (`./check.sh`, exit 0): `test_chain` 329 checks, `test_state_machine` 1193, `test_review` 64 (review regressions, stage-3 checks, section-6.1 residual faults, thermal policy), `test_drive` 2476, 9 Python integration tests, all passing; netlist cross-check 110 items. Target image: flash 87 608 bytes (text 87 100 + data 508) of 524 288, static RAM 23 716 bytes of 131 072 (hard-float, `-Os` PlatformIO default).
+Results observed on 2026-11-27 with the stage-3 board after the round-4 follow-up fixes (`./check.sh`, exit 0): `test_chain` 331 checks, `test_state_machine` 1195, `test_review` 65 (review regressions, stage-3 checks, section-6.1 residual faults, thermal policy), `test_rearm` 35 (round 4: C_SET model, refusals, tap phase sweep, partial set, loop band, held REARM), `test_drive` 2476, 10 Python integration tests, all passing; netlist cross-check 110 items. Target image: flash 90 096 bytes (text 89 588 + data 508) of 524 288, static RAM 23 812 bytes of 131 072 (hard-float, `-Os` PlatformIO default).
 
 ### Simulated drive performance (plant model, not measurements)
 
@@ -105,23 +105,44 @@ Pose is of `base_link` in the simulator's world frame (starts at 0,0,0; `{"pose"
 | `vbat`, `soc`, `temp_bay`, `temp_pack`, `temp_board`, `tilt_deg` | number | battery, temperatures, floor pitch |
 | `enc_dropout`, `block` | `"L"`, `"R"`, `"BOTH"`, `"NONE"` | encoder stops counting / wheel mechanically blocked |
 | `slip` | `[left, right]` 0…0.95 | wheel slip fraction |
-| `usb_stall`, `usb_down` | bool | host bytes are held back (delivered late on release) / USB reports not configured |
+| `usb_stall`, `usb_down` | bool | host bytes are held back (delivered late on release) / USB reports not configured (host bytes sent meanwhile are lost) |
+| `usb_down_ms` | ms | timed link outage: `usb_down` for that long, then restored (host scenario s15) |
 | `imu_off`, `iox_fail`, `latch_weld`, `estop_a_stuck`, `nv_fail`, `efuse_fault` (bit mask) | | sensor and hardware faults |
 | `iox_b_fail`, `permit_short`, `permit_open` | bool | IOX_B (CHAIN_END_RB) not answering; ARM_PERMIT photo-MOS U24 shorted / open |
 | `k1_fault` | `"SEAL_WELD"`, `"NONE"` | K1 pole A NO welded (coil follows CHAIN_END, NC open); `latch_weld` = both K1 poles welded |
 | `rearm_aux_short`, `rearm_set_short` | bool | REARM aux / set contact line held closed (welded contact, W-018 short; both = §6.1 case 5) |
 | `rail_weld`, `loop_sns_leak`, `bumper_l_weld` | bool | §6.1 residual faults: loop reads healthy on every channel / left bumper cannot open |
 | `run_hd_short`, `k1_run_short`, `chain_end_short`, `uhold_short` | bool | board shorts to a supply (§6.1 case 4) / U_HOLD shorted |
-| `loop_b_stuck_ok`, `loop_b_stuck_open`, `iox_d_fail`, `iox_d_bad_pattern` | bool | channel B faults; IOX_D not answering / pattern wrong |
+| `loop_b_stuck_ok`, `loop_b_stuck_open`, `iox_d_fail`, `iox_d_bad_pattern` | bool | channel B faults; IOX_D not answering / input bits 4 and 7 not following the test outputs |
+| `u21_short`, `u21b_short` | bool | stage 4 G5: loop photo-MOS U21 (channel A) / U21B (channel B) conducting whatever its channel says |
+| `set_ready_stuck` | bool | SET_READY comparator stuck high (SET_STAGE_FAULT) |
+| `rset_ohm`, `set_ready_v`, `set_qual_ms`, `loop_b_ohm` | number | R_SET (15 k), SET_READY rising threshold (10.8 V), set qualification (6 ms; 3.2–11.2 ms), channel B threshold (1890 Ω) |
 | `run12_short`, `loop_cmp_stuck`, `iox_drive_loop`, `io_cfg_fault` | bool | review M6 RUN_12V fed from a supply; C2 U30A cannot pull HEAD_LOOP_OK_RB low; M2 IOX_A GPA5 driven as an output; M2/M3 pin configuration wrong |
-| `cset_diode`, `cset_energy` | bool | stage-3 D_RSET + Q_SDIS (default true = current netlist; false = stage-2 back-feed model); REARM needs C_SET above 9 V (off by default) |
+| `cset_diode`, `cset_energy` | bool | stage-3 D_RSET + Q_SDIS (default true = current netlist; false = stage-2 back-feed model); REARM sets K1 only from a charged C_SET (T11 coil-current model, default true; false = any press sets) |
+| `cset_uf`, `k1_coil_c`, `k1_pickup_ms` | number | C_SET capacitance (default 100 µF, ±20 %), K1 coil temperature (default = `temp_board`), K1 operate time (default 3 ms, max 4 ms) |
+| `uhold_open` | bool | U_HOLD LED open: K1 closes on a set pulse but the hold path never comes (a PARTIAL set) |
+| `iox_d_period_ms` | ms | force the IOX_D read period (0 = follow the firmware: 1 ms during the loop self-test, else 10 ms) |
 | `wdi_edge`, `jp1_open`, `vmot_tau_s` | `"FALLING"`/`"RISING"`/`"BOTH"`, bool, number | edges the TPS3430 model counts; JP1 open (WDO does not reset the MCU); VMOT bleed time constant |
 | `chain_short` | `"CH_N1"`…`"CH_N9"`, `"CH_N4A"`, `"CH_N8A"`, `"CHAIN_END"`, `"NONE"` | chain node shorted to a live conductor (plausibility tests) |
 | `pmon_fail`, `branch_fail`, `charger_fail` | bool | INA228 / INA3221 / charger telemetry lost |
 | `freeze_control`, `freeze_supervisor`, `freeze_background` | bool | stop one firmware context (watchdog tests) |
 | `mcu_reset` | `"PIN"`, `"WATCHDOG"`, `"SOFTWARE"`, `"BROWNOUT"`, `"POWER_ON"` | reset the MCU now (plant keeps moving/braking) |
 
-The emulator models the stage-3 chain (`electronics/analysis/chassis_safety_chain.md` §2.1, S3 overrides) as node voltages: series elements incl. the two head-loop channels (U21 → CH_N6A → U21B), K1 (seal-in, 10 ms pick-up, 4 ms release), the on-board set stage (closing edge of the set contact → 110 ms gate pulse, AND the level of the aux contact → U_SET dumps C_SET into the K1 coil and lights U_HOLD), C_SET charged only from CHAIN_END through D_RSET (τ 2.2 s) and emptied by Q_SDIS (τ 0.1 s) when CHAIN_END is dead, K1 must-operate 7.5 V [A] (so REARM works only after ≈ 2 s of closed chain), U_HOLD self-holding from RUN_HD, D_RUN, U_LS in the K2/K3 return, VMOT eFuse and U9 from RUN_HD, `HW_LATCH_RB` = RUN_12V tap, IOX_D (U47) readbacks with the fixed pattern, comparator windows as built (A 0.59–1.55 kΩ, B < 2.70 kΩ, LAB 3.92–5.64 kΩ), the TPS3430 (falling edges, 2.2–23.4 ms, WDO 200 ms holding NRST with JP1), K2/K3 NO open 7.8 ms / NC closed 10.8 ms, `BRAKE_x_RB` garbage while the bridges are awake, VMOT bleed `vmot_tau_s`, 2.68 A chop, INA228/INA3221 register images. `cset_diode:false` keeps the stage-2 C_SET back-feed model (only that part of stage 2). TRUTH carries `run12`, `k1`, `k1_run`, `c_set_v`, `emu_lag_us`, `emu_rebases`. The unit-test harness waits for C_SET before a REARM press when the chain is closed (an operator waits for the REARM lamp).
+The emulator models the stage-4 chain (`electronics/analysis/chassis_safety_chain.md` §2.1, S3 + S4 overrides, `electronics/chassis_main/STAGE2_CHANGE_REQUESTS.md` §4.1 G12) as node voltages: series elements incl. the two head-loop channels (U21 → CH_N6A → U21B; channel B < 1.89 kΩ) with the test FETs (LOOP_TEST_A pulls LOOP_F: channel A and the analog copy read open; LOOP_TEST_B pulls LOOP_FB: channel B reads open), K1 (seal-in; operates only while the coil current from C_SET exceeds 8.75 mA = 9 V / 1028 Ω at 23 °C, coil +0.393 %/K, for `k1_pickup_ms`; an armature that had operate current for half that time completes its stroke [A], which gives PARTIAL sets; 4 ms release), the set stage (a pulse starts after `set_qual_ms` of set-contact closure and ends at its release or 110 ms after the closure; U_SET = pulse AND aux contact AND Q_SETC), C_SET (R_SET 15 k towards 0.989 (CHAIN_END − 0.4 V); dumped into the coil while U_SET conducts; Q_SDIS τ 0.1 s once CHAIN_END has been dead 50 ms), the SET_READY comparator (10.8 V rising / 9.3 V falling) and Q_SETC (on 20 ms after SET_READY rises, off 50 ms after it falls), U_HOLD self-holding from RUN_HD, D_RUN, U_LS in the K2/K3 return, VMOT eFuse and U9 from RUN_HD, `HW_LATCH_RB` = RUN_12V tap, IOX_D (U47) with the G6 map (output register written from `rrch_iox_d_out`), IOX_A GPB6 = set contact, comparator windows as built (A 0.59–1.55 kΩ, LAB 3.92–5.64 kΩ), the TPS3430 (falling edges, 2.2–23.4 ms, WDO 200 ms holding NRST with JP1), K2/K3 NO open 7.8 ms / NC closed 10.8 ms, `BRAKE_x_RB` garbage while the bridges are awake, VMOT bleed `vmot_tau_s`, 2.68 A chop, INA228/INA3221 register images. `cset_diode:false` keeps the stage-2 C_SET back-feed model. TRUTH carries `run12`, `k1`, `k1_run`, `c_set_v`, `emu_lag_us`, `emu_rebases`. The unit-test harness waits for `rearm_ready` before a REARM press while only the C_SET charge or the loop self-test is missing (an operator waits for the REARM lamp); add `"no_wait":true` to press at once.
+
+### Host scenario support (s15, no automatic resumption)
+
+What the host's `s15_no_auto_resume` needs from `rr_chassis_sim` (all on the UDP environment socket; exercised by `TestMotion.test_s15_stimuli_refused_rearm_and_link_outage`):
+
+| Step | Datagram | What the chassis does |
+|---|---|---|
+| Body-bumper inhibit / clear | `{"bumper_l":true}` … `{"bumper_l":false}` | latch drops, `HW_INHIBIT` / `BODY_BUMPER` stays latched after the clear; nothing moves by itself. An opening shorter than ≈ 0.1 s keeps most of the C_SET charge (stage 4 G8), so `rearm_ready` can return at once; hold ≥ 1 s for a full recharge wait |
+| Realistic local re-arm | wait for `STATE.rearm_ready`, then `{"press":"REARM","press_ms":250}` | latch set, `ARMED_IDLE`, no motion until a new `DRIVE`; `rearm_ready` comes ≈ 3 s after the chain closes at 12.6 V (SET_READY, loop self-test) |
+| Re-arm pressed too early | `{"press":"REARM","press_ms":250}` before `rearm_ready` | not set; event `REARM_REFUSED` `{"why":"NOT_READY"}` (or `CHAIN_OPEN`, `LOOP_TEST`, `REARM_HELD`, …) and `STATE.rearm_refusal`; C_SET is untouched (stage 4 Q_SETC), press again when ready |
+| Short tap | `{"press":"REARM","press_ms":4}` | `REARM_REFUSED` `TOO_SHORT` (below the set qualification) |
+| Link outage | `{"usb_down_ms":1500}` | bytes in both directions lost for 1.5 s: `CMD_TIMEOUT` / `HOST_LINK_LOST` protective stop; after the outage still stopped until `HELLO` + `REARM_SW` |
+
+The Python fake (`ros2_ws/src/rr_core/rr_core/fakes/chassis.py`) uses `rearm_refusal` / `REARM_REFUSED` with `DISCHARGE_TIME`; the firmware name for that case is `NOT_READY` (ICD §3.5, §4.6). That file is the host engineer's.
 
 ## Flash and debug (hardware)
 
@@ -212,7 +233,7 @@ Nothing here has been done on a board; these are the intended procedures.
 | GPB3 | `PAUSE_BTN` | Local PAUSE/Stop pressed = HIGH. Stage 2 (S2-01): button on its own connector J_PAUSE (JST GH 5-way, rear-right): pin 1 PAUSE_3V3 (own 1 kOhm supply R_PAUSE), pin 2 PAUSE_BTN_RAW -> R131 -> here, pin 3 V12_AUX lamp +, pin 4 LAMP_PAUSE_K (Q56 from IOX_B P06); ESD D_PAUSE. J_BTN pins 5/8 no longer used |
 | GPB4 | `DRV_L_NFAULT` | LOW = left bridge fault (open drain, 10k pull-up) |
 | GPB5 | `DRV_R_NFAULT` | LOW = right bridge fault |
-| GPB6 | `BUS_CLAMP_ACTIVE` | Brake chopper / bus clamp conducting = HIGH |
+| GPB6 | `REARM_SET_RB` | Stage 4 G4 (S4-N2a): REARM set contact (J_BTN 1-2) from REARM_SET_RAW through a 33 k / 47 k divider (2.7-2.9 V high; no internal pull-up): HIGH = closed. Read at 1 kHz without debounce for the edge capture; the set stage cannot start a pulse before 3.2 ms of closure (T13). Must agree with REARM_BTN within 200 ms. (BUS_CLAMP_ACTIVE moved to IOX_D P3.) |
 | GPB7 | `SENTINEL` | Wired to the WDG_STROBE net (PB11): firmware checks that this bit follows the strobe it generates, which proves the expander read path is live. |
 
 **IOX_B** - TCA9535 (U44, TCA9535PWR) on I2C_SYS, address 0x20
@@ -249,18 +270,18 @@ Nothing here has been done on a board; these are the intended procedures.
 | P6 | `PMON_NALERT` | Pack monitor alert |
 | P7 | `V5_PGOOD` |  |
 
-**IOX_D** - TCA9534 (U47, TCA9534PWR) - stage 3 S3-F1 on I2C_SYS, address 0x22
+**IOX_D** - TCA9534 (U47, TCA9534PWR) - stage 3 S3-F1, map of stage 4 G6 on I2C_SYS, address 0x22
 
 | Expander pin | Signal | Note |
 |---|---|---|
-| P0 | `LATCH_NC_RB` | Tap on K1 pole A NC (K1_SEAL_A biased from 3V3): HIGH = K1 pole A released, valid with the chain dead. LOW with HW_LATCH_RB low > 30 ms -> K1_WELD |
-| P1 | `LATCH_RUN_RB` | Tap on K1_RUN (K1 pole B output, before U_HOLD): HIGH = CHAIN_END live AND K1 pole B closed. HIGH with HW_LATCH_RB low -> K1_WELD; HW_LATCH_RB high with this low -> RUN_SHORT |
-| P2 | `HEAD_LOOP2_OK_RB` | Head-loop channel B (U46 TLV3201, drives U21B between CH_N6A and CH_N6): HIGH = loop closed (< 2.70 kOhm); detects open only |
-| P3 | `REARM_SET_RB` | REARM set contact (J_BTN 1-2, 5 V signal into the on-board edge-triggered set stage): HIGH = closed. Must agree with REARM_BTN (aux) within 200 ms |
-| P4 | `IOXD_P4` | tied to 3V3: reads 1 (pattern) |
-| P5 | `IOXD_P5` | tied to GND: reads 0 (pattern) |
-| P6 | `IOXD_P6` | tied to GND: reads 0 |
-| P7 | `IOXD_P7` | tied to GND: reads 0 |
+| P0 | `LATCH_NC_RB` | Tap on K1 pole A NC (K1_SEAL_A biased from 3V3): HIGH = K1 pole A released, valid with the chain dead. LOW with ARM_PERMIT low >= 30 ms and the latch down -> K1_WELD; with CHAIN_END possibly live -> PARTIAL set (ARM_PERMIT withdrawn 200 ms) |
+| P1 | `LATCH_RUN_RB` | Tap on K1_RUN (K1 pole B output, before U_HOLD): HIGH = CHAIN_END live AND K1 pole B closed. HW_LATCH_RB high with this low -> RUN_SHORT |
+| P2 | `HEAD_LOOP2_OK_RB` | Head-loop channel B (U46 TLV3201, drives U21B between CH_N6A and CH_N6): HIGH = loop closed (< 1.89 kOhm, stage 4 G7: R_LB2 30.9 k); detects open only |
+| P3 | `BUS_CLAMP_ACTIVE` | Stage 4 G4: brake chopper / bus clamp conducting = HIGH (diagnostic, 100 Hz; was IOX_A GPB6) |
+| P4 | `LOOP_TEST_A` | Stage 4 G5: HIGH pulls LOOP_F to ground through Q_LTA: channel A (GPA5) and the analog copy read open. Only during the arming self-test; never together with P7; never while latched |
+| P5 | `SET_READY_RB` | Stage 4 G1: U33B comparator: HIGH = C_SET >= 10.8 V rising (falls below ~9.3 V): a press will set (coil <= +45 C). High with CHAIN_END dead > 1 s -> SET_STAGE_FAULT |
+| P6 | `CHN6A_RB` | Stage 4 G5: tap on CH_N6A (between U21 and U21B, 100 k/56 k/22 nF/BAT54): HIGH with channel A open > 10 ms -> LOOP_SW_SHORT (U21/Q22 shorted) |
+| P7 | `LOOP_TEST_B` | Stage 4 G5: HIGH pulls LOOP_FB to ground through Q_LTB: channel B (P2) reads open, channel A stays closed. Only during the arming self-test |
 
 **ToF sensors** (I2C_TOF, two TCA9548A)
 
@@ -306,13 +327,15 @@ Connect the debug UART before applying power. Expected on a first successful tes
 
 - No hardware test of anything. USB, ADC, timers, SPI/I²C device drivers, flash layout and the retained-RAM section are unproven; several register-level details are UNVERIFIED (listed in `bsp.c`, `pinmap.yaml`).
 - VL53L4ED driver is a stub (ST's ULD could not be obtained, IB-04): on hardware all ToF sensors are OFFLINE and the firmware refuses every motion direction. INA228 (pack current, bus voltage) and INA3221 (branch currents) drivers are written against the TI datasheets but never run. The LTC4162-F driver is disabled because its register map is UNVERIFIED (IB-06): `CHARGER_COMM` stays raised, SoC and charge state are null/UNKNOWN; charge inhibit is hardware. With the selector in SERVICE the cover/plug chain nodes are dead, so on hardware SERVICE_CHARGE is recognised only once a verified charger driver reports input power (until then the mode shows HW_INHIBIT/MODE_NOT_RUN while charging; head power is forced off in hardware anyway).
-- Traction-inhibit review (`docs/reviews/REVIEW_traction_inhibit.md`): C1, C2, M2 (firmware side), M3, m1, m2, m3, m4, m7 are addressed in firmware (ICD §4.6, `tests/test_review.c`). Not implemented: the boot watchdog (U23) self-test (needs a persistent test record and a guaranteed first WDI edge within 23 ms of reset — the port toggles WDI during init but the HSE start-up timeout and I²C probes are not covered, so keep JP1 open until measured and rely on the IWDG); the dynamic brake-deceleration check (row 46); supervision of IOX_B output writes (m8). The current netlist has the stage-3 R_SET diode (`chain.backfeed_ms` = 0, emulator default `cset_diode`); on a stage-2 board set 12 000 (the `PERMIT_STUCK_ON`/`CHAIN_IMPLAUSIBLE` checks then wait 12 s after the chain was last live, U24 is not verified at boot). Stage 3 (F1–F18) is implemented in firmware and emulator (ICD §4.6). Not implemented: the U23 boot watchdog test, the dynamic deceleration check, IOX_B output-write supervision; U_HOLD / U_LS / D_RUN shorts are latent (not observable).
+- Traction-inhibit review (`docs/reviews/REVIEW_traction_inhibit.md`): C1, C2, M2 (firmware side), M3, m1, m2, m3, m4, m7 are addressed in firmware (ICD §4.6, `tests/test_review.c`). Not implemented: the boot watchdog (U23) self-test (needs a persistent test record and a guaranteed first WDI edge within 23 ms of reset — the port toggles WDI during init but the HSE start-up timeout and I²C probes are not covered, so keep JP1 open until measured and rely on the IWDG); the dynamic brake-deceleration check (row 46); supervision of IOX_B output writes (m8). The current netlist has the stage-3 R_SET diode (`chain.backfeed_ms` = 0, emulator default `cset_diode`); on a stage-2 board set 12 000 (the `PERMIT_STUCK_ON`/`CHAIN_IMPLAUSIBLE` checks then wait 12 s after the chain was last live, U24 is not verified at boot). Stage 3 (F1–F18) is implemented in firmware and emulator (ICD §4.6). Not implemented: the U23 boot watchdog test, the dynamic deceleration check; U_HOLD / U_LS / D_RUN shorts are latent (not observable). IOX_B output writes are now read back every 100 ms and rewritten on a mismatch (m8), and its configuration registers 0x06/0x07 are read back (P17 must be an input, else `PIN_CONFIG`; register addresses UNVERIFIED, TCA9535 class).
+- Boot path and JP1: the port toggles WDI during init, but the HSE start-up timeout and the I²C probes before the first control tick are **not** covered by a guaranteed WDI edge within the TPS3430 window: keep JP1 open (WDO does not reset the MCU; the IWDG still does) until the boot timing is measured.
+- Follow-up review (`docs/reviews/REVIEW_traction_inhibit_followup.md`, round 4, `tests/test_rearm.c`) and the stage-4 board (`electronics/chassis_main/STAGE2_CHANGE_REQUESTS.md` §4.1 G1–G12, in the netlist): N1/M5 (T11/G12 set stage in the emulator, `rearm_ready` from SET_READY_RB, `REARM_REFUSED` with a reason), N2 (set contact on IOX_A GPB6 at 1 kHz, PARTIAL set not a weld, TOO_SHORT; phase sweep), N3 (loop self-test before every arming, `LOOP_SW_SHORT`), N6 (`LOOP_HIGH_R`, `loop.b_stuck_ohm` 2050), W-018/G11 (held 2 s after the rise withdraws ARM_PERMIT), G6 IOX_D map and integrity, G8 IOX_B configuration read-back are implemented, simulated only. The IOX_D output/configuration register addresses (0x01, 0x03) are recalled (UNVERIFIED); the 1 kHz IOX_D reads during the 90 ms self-test assume the background loop comes round every 1 ms (UNVERIFIED). The +45 °C coil limit is applied to the board NTC (no coil sensor).
 - The ARM_PERMIT/CHAIN_END check is implemented (IB-01).
-- Contract 0.4.0-draft7 enum additions `LATCH_UNEXPLAINED` / `STOP_ESCALATED` are not yet used.
+- Contract 0.4.0-draft7 enum additions `LATCH_UNEXPLAINED` (a drop no readback explains) and `STOP_ESCALATED` (permit withdrawn by the stop escalation / head-loop rule) are used.
 - Look-sensor geometry (`look.*`) comes from `mechanical/common/frames.yaml` (checked by `tools/look_geometry.py`); `cliff.*` and `rear.*` thresholds are still placeholders.
 - Stop-escalation by ARM_PERMIT withdrawal is tested for uncommanded motion; the "ramp did not finish in time" path has no fault injection in the plant.
 - The brake test proves the switching elements, not braking torque.
-- Motor current is not sampled synchronously with the PWM; TIM8 break input is not used.
+- Motor current is not sampled synchronously with the PWM. The TIM8 break input (PD2, `HW_LATCH_RB`) is configured and enabled as an extra path that forces the PWM outputs off when RUN_12V falls; it is not the barrier (U9 / RUN_HD are) and is UNVERIFIED on hardware.
 - The boot counter erases one flash page per boot (10 k boots).
 - Reply-time and control-tick execution-time budgets are not measured.
 

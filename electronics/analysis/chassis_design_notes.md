@@ -127,3 +127,16 @@ Circuit and fault analysis are in `chassis_safety_chain.md` §2 and §6; the cha
 | Taps on PB12, PD2 | 22 kΩ / 15 kΩ | valid HIGH above 7.7 V even with the STM32 pull-down enabled (M3); clamp current into 3V3 ≤ 0.26 mA per tap at 14.6 V |
 
 K1 set margin over supply and temperature is table T11 of `chassis_braking_tables.md`; VMOT decay with capacitor tolerance T10.
+
+## 12. Stage 4 (follow-up review fixes): component choices
+
+| Part | Choice | Reason |
+|---|---|---|
+| U33B (SET_READY) | the unused half of the bus-clamp LM2903B, reference CLAMP_REF (LM4040C 2.5 V) | no new IC; supplied from VBAT_SW like the reservoir; rising 10.8 V / falling 9.3 V with R_SD1 1 M, R_SD2 348 k, R_SDH 2.2 M (T11). A shared-IC failure costs availability (never/always ready), not a barrier |
+| Q_SETC + R_SCG/C_SCG | third FET in the set stack, 100 k / 470 nF gate | an early press cannot dump C_SET; the gate RC keeps the stack on 37-67 ms into the dump although SET_READY falls |
+| R_SET | 15 k (was 22 k) | charge tau 1.5 s; a stuck-on stack still gives ≤ 0.94 V on the coil (< 1.2 V must-release) |
+| C_SF | 2.2 µF X7R 16 V 0603 | qualification: the set pulse cannot start earlier than 3.2 ms after the set contact closes (T13), so the 1 kHz firmware sampling sees every press that can set |
+| D_RUN | S1G-13-F silicon (was B160 Schottky) + R_RHD 10 k | hot Schottky leakage (mA) could hold U_LS/U_HOLD after a drop with RUN_12V held up (review N5); silicon leaks µA, bled below the LED forward voltage (T14). Costs about 0.4 V on the K2/K3 coils |
+| D_AUX | PESD15VL2BT on the aux pair (D29 removed) | 15 V stand-off as D_SET; the 5.5 V TPD4E05U06 would conduct from a V12_AUX short (review m-C) |
+| Q_LTA / Q_LTB | BSS138 on LOOP_F / LOOP_FB, gates on IOX_D outputs with 100 k pull-downs | self-test that can only force a channel open; off at power-up; drain leakage pulls the filter node towards "open" (≤ 50 mV hot) |
+| Channel B threshold | R_LB2 30.9 k: 1.89 kΩ (was 2.70 kΩ) | narrows the marginal band between the channels to 1.55-1.93 kΩ (review N6) |

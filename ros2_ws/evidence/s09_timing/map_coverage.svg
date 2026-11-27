@@ -2,7 +2,7 @@
 <defs><pattern id="p-UNVISITED" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#fff"/><path d="M0 8L8 0" stroke="#888" stroke-width="1"/></pattern><pattern id="p-INVALID_DATA" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#f6d5d5"/><path d="M0 0L8 8M0 8L8 0" stroke="#c83c3c" stroke-width="1"/></pattern><pattern id="p-INSUFFICIENT_SENSITIVITY" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="#fdebc8"/><circle cx="3" cy="3" r="1.2" fill="#b9770e"/></pattern><pattern id="p-BLOCKED" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#e4dcf0"/><path d="M0 4H8" stroke="#785aa0" stroke-width="2"/></pattern><pattern id="p-EXCLUDED" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#5a5a5a"/></pattern><pattern id="p-ACCEPTABLE" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#2e8b57"/></pattern></defs>
 <rect width="1240" height="510" fill="#fff"/>
 <text x="20" y="16" font-size="13" font-weight="bold">Coverage quality (patterns: unvisited / invalid / insufficient sensitivity / blocked / acceptable)</text>
-<text x="20" y="32">run 00000000-0000-4000-8000-001900000001 | profile ore-floor-demo-synthetic rev 1 | calibration DEMO-CAL-SYNTH-0001 | method CONTINUOUS_SCAN | map frame: origin door-threshold centre, +x to bulkhead, +y left</text>
+<text x="20" y="32">run 00000000-0000-4000-8000-002000000001 | profile ore-floor-demo-synthetic rev 1 | calibration DEMO-CAL-SYNTH-0001 | method CONTINUOUS_SCAN | map frame: origin door-threshold centre, +x to bulkhead, +y left</text>
 <text x="20" y="48" fill="#b00020" font-weight="bold">SYNTHETIC CALIBRATION/PROFILE - field_use_approved: false - NOT FOR SURVEY OR RELEASE DECISIONS</text>
 <rect x="20.0" y="452.0" width="1200.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="20.0" y="444.0" width="1200.0" height="8.0" fill="url(#p-UNVISITED)"/>
@@ -27,14 +27,13 @@
 <rect x="20.0" y="348.0" width="200.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="1188.0" y="348.0" width="32.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="20.0" y="340.0" width="64.0" height="8.0" fill="url(#p-UNVISITED)"/>
-<rect x="124.0" y="340.0" width="16.0" height="8.0" fill="url(#p-UNVISITED)"/>
-<rect x="196.0" y="340.0" width="8.0" height="8.0" fill="url(#p-UNVISITED)"/>
+<rect x="116.0" y="340.0" width="24.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="1052.0" y="340.0" width="72.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="1188.0" y="340.0" width="32.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="20.0" y="332.0" width="64.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="1052.0" y="332.0" width="72.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="1188.0" y="332.0" width="32.0" height="8.0" fill="url(#p-UNVISITED)"/>
-<rect x="20.0" y="324.0" width="80.0" height="8.0" fill="url(#p-UNVISITED)"/>
+<rect x="20.0" y="324.0" width="72.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="1052.0" y="324.0" width="72.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="1188.0" y="324.0" width="32.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="20.0" y="316.0" width="200.0" height="8.0" fill="url(#p-UNVISITED)"/>
@@ -90,13 +89,12 @@
 <rect x="1124.0" y="364.0" width="64.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="220.0" y="356.0" width="968.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="220.0" y="348.0" width="968.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="84.0" y="340.0" width="40.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="140.0" y="340.0" width="56.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="204.0" y="340.0" width="848.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="84.0" y="340.0" width="32.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="140.0" y="340.0" width="912.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="1124.0" y="340.0" width="64.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="84.0" y="332.0" width="968.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="1124.0" y="332.0" width="64.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="100.0" y="324.0" width="952.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="92.0" y="324.0" width="960.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="1124.0" y="324.0" width="64.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="220.0" y="316.0" width="968.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="220.0" y="308.0" width="968.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
@@ -114,6 +112,8 @@
 <text x="20.0" y="474.0">DOOR (x = 0)</text>
 <text x="1130.0" y="474.0">BULKHEAD (x = 3 m)</text>
 <line x1="60.0" y1="486.0" x2="260.0" y2="486.0" stroke="#000" stroke-width="2"/><text x="60.0" y="500.0">0.5 m | +y = left wall (top)</text>
-<polygon points="652.3,320.0 612.3,320.0 612.3,352.0 652.3,352.0" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
-<text x="638.3" y="330.0" font-weight="bold">HS-0001</text>
+<polygon points="654.1,318.4 614.1,318.4 614.1,350.4 654.1,350.4" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
+<text x="640.1" y="328.4" font-weight="bold">HS-0002</text>
+<polygon points="383.0,299.5 423.0,299.5 423.0,267.5 383.0,267.5" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
+<text x="409.0" y="277.5" font-weight="bold">HS-0004</text>
 </svg>

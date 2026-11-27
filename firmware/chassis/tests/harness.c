@@ -160,9 +160,9 @@ void th_env(th_t *t, const char *json)
 {
     /* stage 3 / round 4 N1: REARM sets K1 only from a charged C_SET. An operator waits for the REARM lamp
      * (rearm_ready); the harness does the same while the only thing missing is the C_SET charge
-     * (RESERVOIR_LOW). Any other refusal reason is pressed into at once, so refusal tests stay meaningful. */
+     * (NOT_READY). Any other refusal reason is pressed into at once, so refusal tests stay meaningful. */
     if (strstr(json, "\"press\":\"REARM\"") && t->sim.cset_energy && !t->sim.latch && !strstr(json, "\"no_wait\"")) {
-        for (int ms = 0; ms < 10000 && t->sim.core.chain.rearm_why == RRCH_RREF_RESERVOIR_LOW; ms += 50) {
+        for (int ms = 0; ms < 10000 && (t->sim.core.chain.rearm_why == RRCH_RREF_NOT_READY || t->sim.core.chain.rearm_why == RRCH_RREF_LOOP_TEST); ms += 50) {
             th_run_silent(t, 49);
             if (t->keepalive) {
                 (void)th_req(t, "TIME", "{}");

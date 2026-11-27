@@ -3,7 +3,7 @@
  "evidence_class": "simulated",
  "against": "Python protocol fakes (rr_core.fakes), virtual clock",
  "seed": 21,
- "sim_time_s": 252.26,
+ "sim_time_s": 251.72,
  "checks": [
   {
    "check": "mission complete",
@@ -17,10 +17,10 @@
   },
   {
    "check": "alarming lane parked over the spot for the count (within 30 mm of the patch centre along track)",
-   "ok": true,
+   "ok": false,
    "achieved": [
-    1.5253272945201308,
-    -0.14612161375182628
+    1.5852979251790107,
+    -0.14619763349250584
    ]
   },
   {
@@ -28,9 +28,9 @@
    "ok": true,
    "outcome": "EXCEEDS_INVESTIGATION_LEVEL",
    "result": {
-    "D": 1.6947983870292591,
-    "u_stat": 0.09360820637945254,
-    "u_total": 0.27098024697070994,
+    "D": 1.199086342732146,
+    "u_stat": 0.08216341428251957,
+    "u_total": 0.19784628609303406,
     "D_star": null,
     "D_hash": null,
     "T_F": 9.891090000000004,
@@ -43,8 +43,8 @@
   },
   {
    "check": "scaler result consistent with the injected patch (lane-average 2.0 Bq/cm2 +/- 30 %)",
-   "ok": true,
-   "D": 1.6947983870292591
+   "ok": false,
+   "D": 1.199086342732146
   },
   {
    "check": "floor that only saw the search stage is reported with stage SEARCH",
@@ -59,19 +59,19 @@
    "ok": true
   }
  ],
- "passed": true,
+ "passed": false,
  "field_use_approved": false,
  "coverage": {
   "target_area_m2": 3.0,
   "areas_m2": {
-   "UNVISITED": 1.1397000000000002,
+   "UNVISITED": 1.1402,
    "ACCEPTABLE": 0.0,
-   "INSUFFICIENT_SENSITIVITY": 1.8603,
+   "INSUFFICIENT_SENSITIVITY": 1.8598000000000001,
    "INVALID_DATA": 0.0,
    "BLOCKED": 0.0,
    "EXCLUDED": 0.0
   },
-  "valid_exposure_fraction": 0.6201,
+  "valid_exposure_fraction": 0.6199333333333333,
   "acceptable_fraction": 0.0,
   "sub_cell_m": 0.005,
   "decision_cell_m": 0.1,
@@ -79,26 +79,26 @@
  },
  "time_sync": {
   "limit_us": 10000.0,
-  "fits": 131,
+  "fits": 130,
   "max_gate_bound_us": 838.0520796923137,
-  "median_gate_bound_us": 798.7147259438991
+  "median_gate_bound_us": 798.7155256894874
  },
  "link_stats": {
-  "tx": 12663,
-  "rx": 12660,
+  "tx": 12634,
+  "rx": 12631,
   "bad_lines": 0,
   "stale": 0,
   "duplicates": 0,
-  "gates": 2503,
+  "gates": 2498,
   "gaps": 0,
   "retries": 2,
   "unassigned_frames": 0,
-  "time_exchanges": 131,
+  "time_exchanges": 130,
   "time_exchanges_rejected": 0
  },
  "localization_error_vs_truth_m": {
-  "max_x_m": 0.001663398868968713,
-  "max_y_m": 0.0012041304036698453
+  "max_x_m": 0.0015226481306058193,
+  "max_y_m": 0.0012285983759716956
  },
  "plan": {
   "n_pairs": 2,
@@ -120,88 +120,71 @@
  },
  "flags": [
   {
-   "id": "HS-0001",
-   "kind": "UNRESOLVED_EXCEEDANCE",
+   "id": "HS-0004",
+   "kind": "INVESTIGATION_LEVEL",
    "source_lane": 2,
-   "x_m": 2.057216187618612,
-   "y_m": -0.14703356112099647,
-   "D": 0.11806982112236651,
-   "u_total": 0.07545983342547988,
-   "D_star": 0.11111097089631235,
-   "D_hash": 0.25610429683135083,
+   "x_m": 1.5261781077114778,
+   "y_m": -0.12112346850636813,
+   "D": 0.8793528589245364,
+   "u_total": 0.18437865942878645,
+   "D_star": 0.21133252209159345,
+   "D_hash": 0.5291423197004829,
    "location": {
-    "distance_from_door_m": 2.057,
+    "distance_from_door_m": 1.526,
     "wall": "right wall",
-    "distance_from_wall_m": 0.353,
-    "text": "2.06 m from the door threshold, 0.35 m from the right wall"
+    "distance_from_wall_m": 0.379,
+    "text": "1.53 m from the door threshold, 0.38 m from the right wall"
    }
   },
   {
-   "id": "HS-0003",
-   "kind": "INVESTIGATION_LEVEL",
-   "source_lane": 2,
-   "x_m": 1.5511866952951543,
-   "y_m": -0.10243472103818207,
-   "D": 0.8481859621034114,
-   "u_total": 0.1840914743170412,
-   "D_star": 0.210838379139684,
-   "D_hash": 0.5281043149821859,
+   "id": "HS-0005",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 1,
+   "x_m": 0.9274719750382732,
+   "y_m": 0.1805808887091889,
+   "D": 0.13525799625444263,
+   "u_total": 0.08301146888927248,
+   "D_star": 0.12970335728587318,
+   "D_hash": 0.304021999712619,
    "location": {
-    "distance_from_door_m": 1.551,
-    "wall": "right wall",
-    "distance_from_wall_m": 0.398,
-    "text": "1.55 m from the door threshold, 0.40 m from the right wall"
+    "distance_from_door_m": 0.927,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.319,
+    "text": "0.93 m from the door threshold, 0.32 m from the left wall"
    }
   },
   {
    "id": "HS-0006",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 0,
-   "x_m": 0.939691155735384,
-   "y_m": 0.27738200241596833,
-   "D": 0.16849251571751694,
-   "u_total": 0.09509624671329896,
-   "D_star": 0.14872008278842874,
-   "D_hash": 0.3558594291142647,
+   "source_lane": 3,
+   "x_m": 1.344786560596998,
+   "y_m": 0.3213060030383093,
+   "D": 0.24333338871977556,
+   "u_total": 0.14607757429556326,
+   "D_star": 0.21483563181722948,
+   "D_hash": 0.5353251763610218,
    "location": {
-    "distance_from_door_m": 0.94,
+    "distance_from_door_m": 1.345,
     "wall": "left wall",
-    "distance_from_wall_m": 0.223,
-    "text": "0.94 m from the door threshold, 0.22 m from the left wall"
+    "distance_from_wall_m": 0.179,
+    "text": "1.34 m from the door threshold, 0.18 m from the left wall"
    }
   },
   {
    "id": "HS-0007",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 3,
-   "x_m": 1.8607288613174886,
-   "y_m": 0.3213613337872446,
-   "D": 0.22618615814807685,
-   "u_total": 0.14605336851543996,
-   "D_star": 0.21432738229946852,
-   "D_hash": 0.5342581080936923,
+   "source_lane": 1,
+   "x_m": 0.22300797747635043,
+   "y_m": 0.13580431778130553,
+   "D": 0.15323099018396275,
+   "u_total": 0.11991887644961804,
+   "D_star": 0.17857568940001725,
+   "D_hash": 0.4363290465420421,
    "location": {
-    "distance_from_door_m": 1.861,
+    "distance_from_door_m": 0.223,
     "wall": "left wall",
-    "distance_from_wall_m": 0.179,
-    "text": "1.86 m from the door threshold, 0.18 m from the left wall"
-   }
-  },
-  {
-   "id": "HS-0008",
-   "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 0,
-   "x_m": 0.25072443834340236,
-   "y_m": 0.03259925918874014,
-   "D": 0.16101715664093758,
-   "u_total": 0.07179266774466628,
-   "D_star": 0.11055572606121152,
-   "D_hash": 0.2545863312338033,
-   "location": {
-    "distance_from_door_m": 0.251,
-    "wall": "left wall",
-    "distance_from_wall_m": 0.467,
-    "text": "0.25 m from the door threshold, 0.47 m from the left wall"
+    "distance_from_wall_m": 0.364,
+    "text": "0.22 m from the door threshold, 0.36 m from the left wall"
    }
   }
  ],
@@ -220,25 +203,25 @@
    "beta": 0.05,
    "n_gates": 99,
    "pose": [
-    1.3941288020854905,
-    -0.1898761344654349,
-    3.4456856563651764e-05
+    1.4540792801637674,
+    -0.1898916800018823,
+    -0.0004264444683213689
    ],
    "target_xy": [
-    1.5271474511716416,
-    -0.14627221950928132
+    1.5870755857817125,
+    -0.1462227836059252
    ],
    "achieved_xy": [
-    1.5253272945201308,
-    -0.14612161375182628
+    1.5852979251790107,
+    -0.14619763349250584
    ],
-   "t_end_us": 1252201000,
+   "t_end_us": 1251661000,
    "lanes": [
     {
      "lane": 0,
-     "D": -0.001843704557339084,
-     "u_stat": 0.03842946043777761,
-     "u_total": 0.038794060459610584,
+     "D": -0.015085706660998982,
+     "u_stat": 0.04329833030464983,
+     "u_total": 0.04387991342529187,
      "D_star": null,
      "D_hash": null,
      "T_F": 9.891090000000004,
@@ -247,17 +230,17 @@
      "m": 0,
      "alpha_lane": 0.0,
      "status": "NO_DECISION_REF",
-     "N_F": 41.0,
-     "N_U": 37.0,
+     "N_F": 50.0,
+     "N_U": 49.0,
      "U0": null,
      "u0_method": "unavailable",
      "envelope_ok": true
     },
     {
      "lane": 1,
-     "D": 1.6947983870292591,
-     "u_stat": 0.09360820637945254,
-     "u_total": 0.27098024697070994,
+     "D": 1.199086342732146,
+     "u_stat": 0.08216341428251957,
+     "u_total": 0.19784628609303406,
      "D_star": null,
      "D_hash": null,
      "T_F": 9.891090000000004,
@@ -266,17 +249,17 @@
      "m": 0,
      "alpha_lane": 0.0,
      "status": "NO_DECISION_REF",
-     "N_F": 464.0,
-     "N_U": 47.0,
+     "N_F": 345.0,
+     "N_U": 48.0,
      "U0": null,
      "u0_method": "unavailable",
      "envelope_ok": true
     },
     {
      "lane": 2,
-     "D": 0.01052509882104139,
-     "u_stat": 0.039768410827727564,
-     "u_total": 0.040189337054481244,
+     "D": -0.05592330052586122,
+     "u_stat": 0.04055337095202928,
+     "u_total": 0.04195637001791167,
      "D_star": null,
      "D_hash": null,
      "T_F": 9.891090000000004,
@@ -285,17 +268,17 @@
      "m": 0,
      "alpha_lane": 0.0,
      "status": "NO_DECISION_REF",
-     "N_F": 49.0,
-     "N_U": 42.0,
+     "N_F": 43.0,
+     "N_U": 52.0,
      "U0": null,
      "u0_method": "unavailable",
      "envelope_ok": true
     },
     {
      "lane": 3,
-     "D": -0.0838815086802136,
-     "u_stat": 0.04357118288970901,
-     "u_total": 0.045995841063925264,
+     "D": -0.06162159421603543,
+     "u_stat": 0.04287974023715222,
+     "u_total": 0.044445831496967736,
      "D_star": null,
      "D_hash": null,
      "T_F": 9.891090000000004,
@@ -304,17 +287,17 @@
      "m": 0,
      "alpha_lane": 0.0,
      "status": "NO_DECISION_REF",
-     "N_F": 41.0,
-     "N_U": 55.0,
+     "N_F": 42.0,
+     "N_U": 51.0,
      "U0": null,
      "u0_method": "unavailable",
      "envelope_ok": true
     }
    ],
    "result": {
-    "D": 1.6947983870292591,
-    "u_stat": 0.09360820637945254,
-    "u_total": 0.27098024697070994,
+    "D": 1.199086342732146,
+    "u_stat": 0.08216341428251957,
+    "u_total": 0.19784628609303406,
     "D_star": null,
     "D_hash": null,
     "T_F": 9.891090000000004,
@@ -328,11 +311,11 @@
  ],
  "decision_status": {
   "cells_with_gates": 231,
-  "no_decision": 27,
+  "no_decision": 28,
   "no_decision_text": [
    "no decision \u2014 null reference unavailable"
   ],
-  "no_decision_within_0.5m_of_an_end": 7,
+  "no_decision_within_0.5m_of_an_end": 8,
   "cells_within_0.5m_of_an_end": 71
  },
  "policy": "DEFERRED",
@@ -340,17 +323,17 @@
   {
    "lane": 1,
    "xy": [
-    1.5271474511716416,
-    -0.14627221950928132
+    1.5870755857817125,
+    -0.1462227836059252
    ],
    "pose": [
-    1.3959357464821096,
-    -0.18998710315852643,
-    -0.00026764317229542275
+    1.4558837006784213,
+    -0.18999711150533297,
+    0.0001854317966310957
    ],
-   "D_search": 1.483941240416113,
+   "D_search": 1.6474871245222658,
    "task": "T000",
-   "t_us": 1019002000,
+   "t_us": 1018011000,
    "ev": "search_alarm",
    "state": "SCAN"
   }
@@ -358,35 +341,35 @@
  "ratemeter": {
   "0": {
    "rate": 4.003603242918627,
-   "net": -1.4534042593320486,
-   "alarm_level": 19.017376554250877,
+   "net": -3.463407260232319,
+   "alarm_level": 19.909538472678978,
    "alarm": false,
-   "D": -0.06243145443866188,
-   "t_us": 1252176309.3201134
+   "D": -0.14877178952887968,
+   "t_us": 1251676319.3199136
   },
   "1": {
-   "rate": 45.040536482834554,
-   "net": 38.32868318684576,
-   "alarm_level": 19.338050471940754,
+   "rate": 31.02792513261936,
+   "net": 25.345680719295363,
+   "alarm_level": 19.765290913517845,
    "alarm": true,
-   "D": 1.5657141824691894,
-   "t_us": 1252176309.3201134
+   "D": 1.0353627744810197,
+   "t_us": 1251676319.3199136
   },
   "2": {
-   "rate": 7.006305675107597,
-   "net": 2.542111746929143,
-   "alarm_level": 18.631826717593913,
+   "rate": 3.00270243218897,
+   "net": -1.4614914959894834,
+   "alarm_level": 18.681994588467994,
    "alarm": false,
-   "D": 0.1059213227887143,
-   "t_us": 1252176309.3201134
+   "D": -0.060895478999561804,
+   "t_us": 1251676319.3199136
   },
   "3": {
-   "rate": 6.00540486437794,
-   "net": -1.505207529340176,
-   "alarm_level": 20.28139158300105,
+   "rate": 4.003603242918627,
+   "net": -0.48930383920601134,
+   "alarm_level": 19.647392925177627,
    "alarm": false,
-   "D": -0.06601787409386738,
-   "t_us": 1252176309.3201134
+   "D": -0.02146069470201804,
+   "t_us": 1251676319.3199136
   }
  },
  "false_alarm_counts": 0

@@ -644,6 +644,9 @@ static void panel_step(rrch_t *c)
     bool ready = !c->chain.latch && c->chain.rearm_why == RRCH_RREF_NONE; /* round 4 N1: a press will set the latch */
     bool clearable = (c->sw_latched || c->hold) && !(c->sw_active & c->sw_latched);
     c->out.lamp_rearm = (ready || clearable) && (c->ms % 500u) < 250u;
+    if (!c->chain.latch && c->chain.refused_us != 0u && c->now_us - c->chain.refused_us < 2000000u) {
+        c->out.lamp_rearm = (c->ms % 250u) < 125u; /* refused press: fast blink for 2 s (stage 4 G3) */
+    }
     c->out.lamp_pause = c->mode == RRCH_MODE_MOVING;
 }
 

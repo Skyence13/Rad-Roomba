@@ -35,11 +35,22 @@ static bool tapped(int k)
     return k != SIM_N6A && k != SIM_N6 && k != SIM_N7; /* CH_N6A/CH_N6/CH_N7 have test points only */
 }
 
-static void chain_nodes(sim_t *s)
+/* head-loop channels (stage 4): the analog copy and channel A see LOOP_F, pulled to ground by Q_LTA (LOOP_TEST_A);
+ * channel B sees LOOP_FB, pulled to ground by Q_LTB (LOOP_TEST_B); B passes < 1.89 kOhm (G7) */
+static void loop_channels(const sim_t *s, double *lo_ana, bool *a_ok, bool *b_ok)
 {
     double lo = (s->rail_weld || s->loop_sns_leak) ? 1000.0 : s->loop_ohm; /* section 6.1 residual faults: the loop reads healthy */
-    bool loop_ok = (lo >= 590.0 && lo <= 1550.0) || s->loop_cmp_stuck || s->iox_drive_loop;
-    bool loop_b = (lo < 2700.0 || s->loop_b_stuck_ok) && !s->loop_b_stuck_open; /* stage 3 channel B (U46): open / high resistance only */
+    bool ta = (s->iox_d_out & 0x10u) != 0, tb = (s->iox_d_out & 0x80u) != 0;
+    *lo_ana = ta ? 1e9 : lo;
+    *a_ok = ((lo >= 590.0 && lo <= 1550.0) && !ta) || s->loop_cmp_stuck || s->iox_drive_loop;
+    *b_ok = ((lo < s->loop_b_ohm && !tb) || s->loop_b_stuck_ok) && !s->loop_b_stuck_open;
+}
+
+static void chain_nodes(sim_t *s)
+{
+    double lo;
+    bool loop_ok, loop_b;
+    loop_channels(s, &lo, &loop_ok, &loop_b);
     bool lab_n = s->pres_ohm >= 3920.0 && s->pres_ohm <= 5640.0;
     bool e[SIM_NODES] = {false};
     e[SIM_N1] = s->mode_run;
@@ -48,8 +59,8 @@ static void chain_nodes(sim_t *s)
     e[SIM_N4A] = !s->chg_cover_open;
     e[SIM_N4] = !s->chg_plug;
     e[SIM_N5] = s->head_docked;
-    e[SIM_N6A] = loop_ok; /* U21, channel A */
-    e[SIM_N6] = loop_b;   /* U21B, channel B */
+    e[SIM_N6A] = loop_ok || s->u21_short; /* U21, channel A */
+    e[SIM_N6] = loop_b || s->u21b_short;  /* U21B, channel B */
     e[SIM_N7] = lab_n;
     e[SIM_N8A] = !s->bumper_l || s->bumper_l_weld;
     e[SIM_N8] = !s->bumper_r;
@@ -93,8 +104,9 @@ static void h_read(void *ctx, rrch_in_t *in)
     sim_t *s = ctx;
     uint32_t di = 0;
     chain_nodes(s);
-    double lo = (s->rail_weld || s->loop_sns_leak) ? 1000.0 : s->loop_ohm;
-    bool loop_ok = (lo >= 590.0 && lo <= 1550.0) || s->loop_cmp_stuck || s->iox_drive_loop;
+    double lo;
+    bool loop_ok, loop_b_unused;
+    loop_channels(s, &lo, &loop_ok, &loop_b_unused);
     /* BRAKE_x_RB: OR over both poles, valid only with the bridges asleep; during PWM / braking the
      * bridge outputs toggle and the comparators read garbage (CCR-E03 e) */
     bool asleep = !(s->core.out.bridge_awake && s->run12);
@@ -117,6 +129,7 @@ static void h_read(void *ctx, rrch_in_t *in)
     SET(HW_LATCH, s->run12) /* the tap on RUN_12V, not the K1 armature (review M5) */
     SET(J2_PRES, s->j2)
     SET(BTN_REARM, s->rearm_ms > 0 || s->rearm_aux_short) /* aux contact */
+    SET(REARM_SET, s->rearm_ms > 0 || s->rearm_set_short) /* set contact, IOX_A GPB6 (stage 4 G4) */
     SET(BTN_PAUSE, s->pause_ms > 0)
 #undef SET
     memset(in, 0, sizeof *in);
@@ -331,6 +344,10 @@ void sim_init(sim_t *s, uint64_t seed)
     s->cset_uf = 100.0;
     s->k1_coil_c = NAN;
     s->k1_pickup_ms = 3.0;
+    s->rset_ohm = 15e3;
+    s->set_ready_v = 10.8;
+    s->set_qual_ms = 6.0;
+    s->loop_b_ohm = 1890.0;
     s->mode_run = true;
     s->head_docked = true;
     s->j2 = true;
@@ -371,33 +388,57 @@ static void plant_ms(sim_t *s)
     double cset_f = (s->cset_uf > 1.0 ? s->cset_uf : 100.0) * 1e-6;
     double t_coil = isfinite(s->k1_coil_c) ? s->k1_coil_c : s->temp[2];
     double r_coil = 1028.0 * (1.0 + 0.00393 * (t_coil - 23.0));
+    /* stage 4 (G2, G8, T12): C_SET charged from CHAIN_END through D_RSET and R_SET 15 k to Vmax = 0.989 (CHAIN_END - 0.4 V);
+     * discharged by Q_SDIS (tau 0.1 s) only once CHAIN_END has been dead for 50 ms (own gate RC, 41-64 ms) */
+    s->ce_dead_ms = s->node[SIM_NEND] ? 0 : (s->ce_dead_ms < 1000000 ? s->ce_dead_ms + 1 : s->ce_dead_ms);
     if (s->u_set) {
         s->vc -= s->vc * (1.0 - exp(-1e-3 / ((r_coil + 0.15) * cset_f)));
     } else if (s->node[SIM_NEND]) {
-        s->vc += (s->vbat - 0.4 - s->vc) * (1.0 - exp(-1e-3 / (22e3 * cset_f)));
+        s->vc += (0.989 * (s->vbat - 0.4) - s->vc) * (1.0 - exp(-1e-3 / (s->rset_ohm * cset_f)));
     } else if (s->cset_diode) {
-        s->vc -= s->vc * (1.0 - exp(-1e-3 / 0.1));
+        if (s->ce_dead_ms > 50) {
+            s->vc -= s->vc * (1.0 - exp(-1e-3 / 0.1));
+        }
     } else if (s->v_held > 0.0) {
-        s->vc -= (s->vc - s->v_held) / 22e3 * 1e-3 / 100e-6;
+        s->vc -= (s->vc - s->v_held) / s->rset_ohm * 1e-3 / cset_f;
     }
-    /* set stage: closing edge of the set contact (J_BTN 1-2, 1 uF coupling: ~110 ms gate pulse) AND level of the
-     * aux contact (J_BTN 3-4) -> U_SET (C_SET into the K1 coil) and Q_HSET (U_HOLD LED) */
+    /* G1: SET_READY comparator (10.8 V rising, 9.3 V falling) and the third stack FET Q_SETC (on 20 ms after SET_READY
+     * rises, off 50 ms after it falls: T13 13-28 / 37-67 ms) - a press while SET_READY is low does not touch C_SET */
+    if (!s->set_ready && s->vc >= s->set_ready_v) {
+        s->set_ready = true;
+    } else if (s->set_ready && s->vc < 9.3) {
+        s->set_ready = false;
+    }
+    bool sr = s->set_ready || s->set_ready_stuck;
+    s->qsetc_on_ms = sr ? s->qsetc_on_ms + 1 : 0;
+    s->qsetc_off_ms = sr ? 0 : s->qsetc_off_ms + 1;
+    if (s->qsetc_on_ms >= 20) {
+        s->q_setc = true;
+    } else if (s->qsetc_off_ms >= 50) {
+        s->q_setc = false;
+    }
+    /* set stage (G4, T13): a set pulse starts only after the set contact (J_BTN 1-2) has been closed for set_qual_ms
+     * and ends when it opens or 110 ms after the closure; U_SET = pulse AND aux contact (J_BTN 3-4) AND Q_SETC */
     bool set_contact = s->rearm_ms > 0 || s->rearm_set_short;
     bool aux_contact = s->rearm_ms > 0 || s->rearm_aux_short;
-    if (set_contact && !s->set_prev) {
-        s->set_pulse_s = 0.110;
+    s->set_closed_ms = set_contact ? s->set_closed_ms + 1 : 0;
+    if (set_contact && s->set_closed_ms == (int)lround(s->set_qual_ms)) {
+        s->set_pulse_s = 0.110 - s->set_qual_ms * 1e-3;
     }
     if (!set_contact) {
-        s->set_pulse_s = 0.0; /* the gate is cut short when the set contact opens (D_SGN) */
+        s->set_pulse_s = 0.0; /* the gate is cut short when the set contact opens */
     }
     s->set_prev = set_contact;
-    s->u_set = s->set_pulse_s > 0.0 && aux_contact;
+    s->u_set = s->set_pulse_s > 0.0 && aux_contact && (s->q_setc || !s->cset_energy);
     s->set_pulse_s = s->set_pulse_s > 1e-3 ? s->set_pulse_s - 1e-3 : 0.0;
     if (s->rearm_ms > 0) {
         s->rearm_ms--;
     }
     if (s->pause_ms > 0) {
         s->pause_ms--;
+    }
+    if (s->usb_down_ms > 0 && --s->usb_down_ms == 0) {
+        s->usb_down = false;
     }
 
     double A = p->J + p->r * p->r * (p->mass / 4.0 + p->Iz / (p->track * p->track));
@@ -412,7 +453,10 @@ static void plant_ms(sim_t *s)
          * must-operate for the whole operate time. Release 4 ms [U]. */
         bool set_energy = s->u_set && (s->vc / (r_coil + 0.15) > 8.75e-3 || !s->cset_energy);
         bool k1_coil = s->pole_b && (((s->k1 || s->k1_fault == 1) && s->node[SIM_NEND]) || set_energy);
-        if (k1_coil) {
+        /* an armature that has had operate current for half the operate time completes its stroke [A]; with the
+         * set pulse already over, K1 then seals in without U_HOLD (a PARTIAL set, G12) */
+        bool committed = !s->k1 && s->k1_on_s >= 0.5 * s->k1_pickup_ms * 1e-3;
+        if (k1_coil || committed) {
             s->k1_off_s = 0;
             if (!s->k1) {
                 s->k1_on_s += DT;
@@ -542,6 +586,9 @@ static void plant_ms(sim_t *s)
 void sim_step_ms(sim_t *s)
 {
     s->t_us += 1000u;
+    if (!s->mcu_in_reset && !s->plant_only) {
+        s->iox_d_out = rrch_iox_d_out(&s->core); /* the port writes the IOX_D output register (test FETs) */
+    }
     plant_ms(s);
     uint32_t ms = (uint32_t)(s->t_us / 1000u);
     /* background sensor drivers: each ToF delivers a sample every 20 ms, staggered */
@@ -555,16 +602,21 @@ void sim_step_ms(sim_t *s)
         return;
     }
     int xd_per = s->iox_d_period_ms > 0 ? s->iox_d_period_ms : (rrch_iox_d_fast(&s->core) ? 1 : 10);
-    if (xd_per == 1 || ms % (uint32_t)xd_per == 5u % (uint32_t)xd_per) { /* IOX_D (U47) input port: P0 LATCH_NC_RB, P1 LATCH_RUN_RB, P2 HEAD_LOOP2_OK_RB, P3 REARM_SET_RB, P4..7 = 1,0,0,0 */
+    if (xd_per == 1 || ms % (uint32_t)xd_per == 5u % (uint32_t)xd_per) { /* IOX_D (U47), stage 4 G6 map */
         chain_nodes(s);
-        double lo = (s->rail_weld || s->loop_sns_leak) ? 1000.0 : s->loop_ohm;
-        uint8_t v = 0x10u;
-        v |= (!s->k1 && s->k1_fault != 1) ? 1u : 0u; /* pole A NC closed (a welded NO keeps it open) */
-        v |= s->k1_run ? 2u : 0u;
-        v |= ((lo < 2700.0 || s->loop_b_stuck_ok) && !s->loop_b_stuck_open) ? 4u : 0u;
-        v = s->iox_d_bad_pattern ? (uint8_t)(v ^ 0x30u) : v;
-        v |= (s->rearm_ms > 0 || s->rearm_set_short) ? 8u : 0u;
-        rrch_iox_d_update(&s->core, !s->iox_d_fail, v, s->t_us - s->boot_us);
+        double lo;
+        bool lo_a_ok;
+        uint8_t v = 0;
+        bool b_ok;
+        loop_channels(s, &lo, &lo_a_ok, &b_ok);
+        v |= (!s->k1 && s->k1_fault != 1) ? 0x01u : 0u; /* P0 pole A NC closed (a welded NO keeps it open) */
+        v |= s->k1_run ? 0x02u : 0u;                    /* P1 */
+        v |= b_ok ? 0x04u : 0u;                         /* P2 channel B */
+        v |= (s->iox_d_out & 0x90u);                    /* P4/P7 outputs read back */
+        v |= (s->set_ready || s->set_ready_stuck) ? 0x20u : 0u; /* P5 SET_READY_RB */
+        v |= s->node[SIM_N6A] ? 0x40u : 0u;             /* P6 CH_N6A_RB */
+        v = s->iox_d_bad_pattern ? (uint8_t)(v ^ 0x90u) : v;
+        rrch_iox_d_update(&s->core, !s->iox_d_fail, v, s->iox_d_out, s->t_us - s->boot_us);
     }
     if (ms % 10u == 0u) { /* IOX_B input P17 = CHAIN_END_RB, read over I2C by the background loop */
         chain_nodes(s);
@@ -615,6 +667,9 @@ void sim_step_ms(sim_t *s)
 
 void sim_host_write(sim_t *s, const uint8_t *buf, size_t len)
 {
+    if (s->usb_down) {
+        return; /* link outage: what the host sends meanwhile is lost, as on a pulled cable */
+    }
     if (s->rx_len + len <= sizeof s->rx) {
         memcpy(s->rx + s->rx_len, buf, len);
         s->rx_len += len;
@@ -703,12 +758,12 @@ bool sim_env_apply(sim_t *s, const char *json, size_t len)
     B("usb_stall", usb_stall) B("usb_down", usb_down) B("imu_off", imu_off) B("iox_fail", iox_fail) B("latch_weld", latch_weld)
     B("estop_a_stuck", estop_a_stuck) B("freeze_control", freeze_control) B("freeze_supervisor", freeze_supervisor)
     B("freeze_background", freeze_background) B("nv_fail", nv_fail) B("iox_b_fail", iox_b_fail) B("permit_short", permit_short) B("permit_open", permit_open) B("run12_short", run12_short) B("loop_cmp_stuck", loop_cmp_stuck)
-    B("iox_drive_loop", iox_drive_loop) B("io_cfg_fault", io_cfg_fault) B("cset_diode", cset_diode) B("cset_energy", cset_energy) B("uhold_open", uhold_open) B("jp1_open", jp1_open)
+    B("iox_drive_loop", iox_drive_loop) B("io_cfg_fault", io_cfg_fault) B("cset_diode", cset_diode) B("cset_energy", cset_energy) B("uhold_open", uhold_open) B("set_ready_stuck", set_ready_stuck) B("u21_short", u21_short) B("u21b_short", u21b_short) B("jp1_open", jp1_open)
     B("rail_weld", rail_weld) B("loop_sns_leak", loop_sns_leak) B("bumper_l_weld", bumper_l_weld) B("run_hd_short", run_hd_short)
     B("k1_run_short", k1_run_short) B("chain_end_short", chain_end_short) B("uhold_short", uhold_short) B("loop_b_stuck_ok", loop_b_stuck_ok)
     B("iox_d_fail", iox_d_fail) B("iox_d_bad_pattern", iox_d_bad_pattern) B("loop_b_stuck_open", loop_b_stuck_open) B("rearm_aux_short", rearm_aux_short) B("rearm_set_short", rearm_set_short) B("pmon_fail", pmon_fail) B("branch_fail", branch_fail) B("charger_fail", charger_fail)
     N("pres_ohm", pres_ohm) N("loop_ohm", loop_ohm) N("vbat", vbat) N("soc", soc) N("temp_bay", temp[0]) N("temp_pack", temp[1])
-    N("temp_board", temp[2]) N("tilt_deg", tilt_deg) N("vmot_tau_s", vmot_tau_s) N("cset_uf", cset_uf) N("k1_coil_c", k1_coil_c) N("k1_pickup_ms", k1_pickup_ms)
+    N("temp_board", temp[2]) N("tilt_deg", tilt_deg) N("vmot_tau_s", vmot_tau_s) N("cset_uf", cset_uf) N("k1_coil_c", k1_coil_c) N("k1_pickup_ms", k1_pickup_ms) N("rset_ohm", rset_ohm) N("set_ready_v", set_ready_v) N("set_qual_ms", set_qual_ms) N("loop_b_ohm", loop_b_ohm)
 #undef B
 #undef N
     if ((t = rrc_json_get(&d, 0, "k1_fault")) >= 0) { /* "NONE", "SEAL_WELD", "SET_SHORT" */
@@ -780,6 +835,10 @@ bool sim_env_apply(sim_t *s, const char *json, size_t len)
             s->y = q[1];
             s->yaw = q[2];
         }
+    }
+    if ((t = rrc_json_get(&d, 0, "usb_down_ms")) >= 0 && num(&d, t, &v) && v >= 1.0 && v <= 600000.0) {
+        s->usb_down_ms = (int)v;
+        s->usb_down = true;
     }
     if ((t = rrc_json_get(&d, 0, "iox_d_period_ms")) >= 0 && num(&d, t, &v)) {
         s->iox_d_period_ms = v >= 0.0 && v <= 100.0 ? (int)v : 0;

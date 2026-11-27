@@ -302,7 +302,7 @@ _TCA_D = dict(ref="U47", value="TCA9534", mpn="TCA9534PWR", manufacturer="Texas 
               package="TSSOP-16", symbol_hint="Interface_Expansion:TCA9534", footprint_hint="Package_SO:TSSOP-16_4.4x5mm_P0.65mm",
               pins={"1": ("A0", "GND"), "2": ("A1", "3V3"), "3": ("A2", "GND"), "4": ("P0", "LATCH_NC_RB"), "5": ("P1", "LATCH_RUN_RB"),
                     "6": ("P2", "HEAD_LOOP2_OK_RB"), "7": ("P3", "BUS_CLAMP_ACTIVE"), "8": ("GND", "GND"), "9": ("P4", "LOOP_TEST_A"),
-                    "10": ("P5", "SET_READY_RB"), "11": ("P6", "CH_N6A_RB"), "12": ("P7", "LOOP_TEST_B"), "13": None, "14": ("SCL", "I2C_SYS_SCL"),
+                    "10": ("P5", "SET_READY_RB"), "11": ("P6", "CHN6A_RB"), "12": ("P7", "LOOP_TEST_B"), "13": None, "14": ("SCL", "I2C_SYS_SCL"),
                     "15": ("SDA", "I2C_SYS_SDA"), "16": ("VCC", "3V3")},
               block="mcu", dnp=False, rating=None, tolerance=None, verify=True, height_mm=1.2, area_mm2=34,
               notes="Same part and pin table as U45 (IOX_C, pin numbers recalled [U]). Address 0x22 (A1 high). Stage 4: P4/P7 are the loop "
@@ -385,7 +385,7 @@ S3_ADD = [
     ("S3-M6g", [_tp("TP60", "CH_N6A"), _tp("TP61", "K1_RUN"), _tp("TP62", "RELAY_RTN")], "test points for the new chain nodes"),
 ]
 S4_ADD = [
-    ("S4-N3", _tap("N6A", "CH_N6A", "CH_N6A_RB", "N3: CH_N6A readback (IOX_D P6)")
+    ("S4-N3", _tap("N6A", "CH_N6A", "CHN6A_RB", "N3: CH_N6A readback (IOX_D P6)")
      + [_nfet("Q_LTA", "LOOP_F", "LOOP_TEST_A", "GND", "N3 self-test: forces loop channel A to 'open' (can only open)"),
         _r("R_LTA", "100k", "LOOP_TEST_A", "GND", "off at power-up (IOX_D pins are inputs)"),
         _nfet("Q_LTB", "LOOP_FB", "LOOP_TEST_B", "GND", "N3 self-test: forces loop channel B to 'open' (can only open)"),

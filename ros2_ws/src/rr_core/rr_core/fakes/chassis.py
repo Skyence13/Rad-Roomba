@@ -464,7 +464,8 @@ class FakeChassis:
                       "panel": {"buttons": {"rearm": False, "pause": False}, "pattern": self.panel},
                       "heater": {"chassis_duty_pct": 0}, "faults": list(self.inputs["faults"]), "sw_active": self._sw_active(),
                       "hw_active": self._hw_active(), "stationary": t["stationary"],
-                      "rearm_ready": (not self.hw_latch) and self.rearm_refusal() is None,
+                      "rearm_ready": ((not self.hw_latch) and self.rearm_refusal() is None)
+                                    or (self.hw_latch and bool(self.sw_reasons or self.hold) and not self._sw_active()),   # ICD 4.6: also a clearable software latch / hold
                       "rearm_refusal": self.last_rearm_refusal if not self.hw_latch else None,
                       "rearm_nonce": self.nonce, "hold": list(self.hold), "head_power": dict(self.head_power),
                       "brake_test": {"state": "PASSED" if self.brake_passed else "NONE"},

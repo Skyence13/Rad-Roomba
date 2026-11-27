@@ -37,10 +37,10 @@
 #define RRCH_PRES_LIST(X) X(ABSENT) X(HEAD_DIRECT) X(HEAD_VIA_LAB_EXTENSION) X(LAB_EXTENSION_ONLY) X(FAULT)
 #define RRCH_FLT_LIST(X) /* first group enters FAULT mode */ \
     X(ESTOP_DISCREPANCY) X(LATCH_STUCK) X(IOX_A) X(ADC) X(TIMING) X(PERMIT_STUCK_ON) X(CHAIN_IMPLAUSIBLE) \
-    X(LATCH_NO_REARM) X(LATCH_NO_DROP) X(LOOP_FAIL) X(PIN_CONFIG) X(K1_WELD) X(RUN_SHORT) \
+    X(LATCH_NO_REARM) X(LATCH_NO_DROP) X(LOOP_FAIL) X(PIN_CONFIG) X(K1_WELD) X(RUN_SHORT) X(LOOP_SW_SHORT) \
     X(PERMIT_STUCK_OFF) X(IOX_B) X(IOX_D) X(REARM_HELD) X(REARM_DISCREPANCY) X(CONFIG_DEFAULTED) X(LOOP_DISCREPANCY) X(J1_PRES_FAULT) X(CHARGER_COMM) X(PMON_COMM) X(TOF_BUS) X(HEATER_SENSOR) \
     X(EFUSE_HEAD_PWR) X(EFUSE_HEAD_HTR) X(EFUSE_CHS_HTR) X(EFUSE_LIDAR) X(EFUSE_V5) X(BRIDGE_L) X(BRIDGE_R) X(BUS_CLAMP) \
-    X(EVENT_OVERFLOW) X(BATTERY_WARN) X(LOOP_HIGH_R)
+    X(EVENT_OVERFLOW) X(BATTERY_WARN) X(LOOP_HIGH_R) X(SET_STAGE_FAULT)
 /* IB-34 (lead decision, corrected mapping): two forward-looking (grip cheeks, over the head) and two rearward-looking
  * (tail) oblique sensors. Index 4 LOOK_FL (J_TOF4, mux 0 ch 2), 5 LOOK_RL (J_TOF5, mux 1 ch 2), 6 LOOK_RR (J_TOF6,
  * mux 0 ch 3), 7 LOOK_FR (J_TOF7, mux 1 ch 3): each pair is split across the two muxes. */
@@ -72,7 +72,7 @@ typedef enum { RRCH_TOF_LIST(X) RRCH_TOF_COUNT } rrch_tof_id_t;
 #define RRCH_FLT(n) (1ull << RRCH_FLTI_##n) /* 64-bit flag word (stage 3 filled the 32-bit one) */
 #define RRCH_FLT_FATAL_MASK (RRCH_FLT(ESTOP_DISCREPANCY) | RRCH_FLT(LATCH_STUCK) | RRCH_FLT(IOX_A) | RRCH_FLT(ADC) | RRCH_FLT(TIMING) | RRCH_FLT(PERMIT_STUCK_ON) | \
                              RRCH_FLT(CHAIN_IMPLAUSIBLE) | RRCH_FLT(LATCH_NO_REARM) | RRCH_FLT(LATCH_NO_DROP) | RRCH_FLT(LOOP_FAIL) | RRCH_FLT(PIN_CONFIG) | \
-                             RRCH_FLT(K1_WELD) | RRCH_FLT(RUN_SHORT))
+                             RRCH_FLT(K1_WELD) | RRCH_FLT(RUN_SHORT) | RRCH_FLT(LOOP_SW_SHORT))
 /* fatal flags after which the supervisor stops the watchdog strobe (the chain is then opened at WDG_OK, upstream of a
  * suspect ARM_PERMIT element): electronics/analysis/chassis_safety_chain.md section 6, row 38 */
 #define RRCH_FLT_NO_STROBE_MASK (RRCH_FLT(TIMING) | RRCH_FLT(PERMIT_STUCK_ON) | RRCH_FLT(LATCH_STUCK) | RRCH_FLT(LATCH_NO_REARM) | RRCH_FLT(LATCH_NO_DROP))
@@ -85,8 +85,8 @@ extern const char *const rrch_opmode_names[RRCH_OP_N];
 extern const char *const rrch_pres_names[RRCH_PRES_N];
 extern const char *const rrch_flt_names[RRCH_FLT_N];
 /* round 4 (N1): why a REARM press would not, or did not, set the hardware latch. NONE = a press will set it. */
-#define RRCH_RREF_LIST(X) X(NONE) X(FAULT_OR_MODE) X(CHAIN_OPEN) X(REARM_HELD) X(PERMIT_WITHHELD) X(SUPPLY_LOW) X(RESERVOIR_LOW) \
-    X(SET_INCOMPLETE) X(SET_FAILED)
+#define RRCH_RREF_LIST(X) X(NONE) X(FAULT_OR_MODE) X(CHAIN_OPEN) X(REARM_HELD) X(PERMIT_WITHHELD) X(LOOP_TEST) X(SUPPLY_LOW) X(COIL_HOT) \
+    X(NOT_READY) X(TOO_SHORT) X(PARTIAL) X(SET_FAILED)
 #define X(n) RRCH_RREF_##n,
 typedef enum { RRCH_RREF_LIST(X) RRCH_RREF_N } rrch_rref_t;
 #undef X
@@ -97,7 +97,7 @@ extern const char *const rrch_tof_names[RRCH_TOF_COUNT];
 #define RRCH_DI_LIST(X) \
     X(MODE_RUN) X(ESTOP_A) X(ESTOP_B) X(HANDS_ON) X(CHG_COVER) X(CHG_PLUG_LINK) X(HEAD_DOCK) X(HEAD_LOOP_OK) \
     X(HEAD_LOOP_SHORT) X(LAB_KEY_N) X(BODY_BUMPER_L) X(BODY_BUMPER_R) X(WDG_OK) X(BRAKE_L) X(BRAKE_R) /* chain events up to here */ \
-    X(HW_LATCH) X(J2_PRES) X(BTN_REARM) X(BTN_PAUSE) X(DRV_FAULT_L) X(DRV_FAULT_R) X(BUS_CLAMP)
+    X(HW_LATCH) X(J2_PRES) X(BTN_REARM) X(BTN_PAUSE) X(DRV_FAULT_L) X(DRV_FAULT_R) X(REARM_SET) /* stage 4 G4: IOX_A GPB6 */
 #define X(n) RRCH_DII_##n,
 typedef enum { RRCH_DI_LIST(X) RRCH_DI_N } rrch_di_idx_t;
 #undef X
@@ -181,7 +181,7 @@ typedef struct {            /* IOX_B input P17 = CHAIN_END_RB (CCR-E02), pushed 
     uint32_t fail_n;        /* consecutive failed reads */
 } rrch_iox_b_t;
 
-typedef struct { bool ok; uint8_t val; uint64_t t_us, seen_us; uint32_t fail_n; } rrch_iox_d_t; /* stage 3 IOX_D */
+typedef struct { bool ok; uint8_t val, out; uint64_t t_us, seen_us; uint32_t fail_n; } rrch_iox_d_t; /* IOX_D: input, output register written */
 
 typedef struct {
     void *ctx;
@@ -282,6 +282,7 @@ typedef struct {
     /* review M1: without the stage-3 diode D_RSET, C_SET back-feeds CHAIN_END through R_SET and readbacks behind an \
      * open element can read live for ~10 s. The current netlist (S3, F12) has D_RSET: 0. 12000 for a stage-2 board. */ \
     X(CHAIN_BACKFEED_MS, "chain.backfeed_ms", 0, 0, 20000, "ms") \
+    X(LOOP_B_STUCK_OHM, "loop.b_stuck_ohm", 2050, 1900, 3500, "ohm") \
     X(BRK_LATCH_DROP_MAX_MS, "brake.latch_drop_max_ms", 50, 5, 500, "ms") \
     X(BRK_VMOT_MIN_V, "brake.vmot_min_v", 9.0, 5, 12, "V") \
     X(BRK_VMOT_OFF_V, "brake.vmot_off_v", 1.0, 0.2, 5, "V") \
@@ -377,22 +378,31 @@ typedef struct {
     uint32_t permit_hist, n9_hist; /* bit k: ARM_PERMIT output / raw CH_N9 readback k ms ago */
     uint8_t n_stuck_on, n_stuck_off, n_end_impl;
     bool chain_end_known, chain_end;
-    /* round 4 N1: conservative timed model of the C_SET charge (no readback on the board) and refusal reporting */
-    float cset_model_v, cset_need_v, cset_target_v;
+    /* round 4 / stage 4: SET_READY (G1), CH_N6A tap and loop self-test (G5), refusal reporting (G3) */
+    bool set_ready, chn6a, bus_clamp, rearm_set_raw_prev;
+    uint32_t ce_dead_ms;        /* CHAIN_END_RB known dead for this long (SET_STAGE_FAULT) */
+    uint64_t set_ready_since_us; /* SET_READY_RB first seen high */
+    uint64_t set_close_us, set_open_us; /* REARM set contact (IOX_A GPB6, raw 1 kHz) closing / opening */
+    uint64_t a_open_since_us, b_low_since_us; /* channel A (GPA5 raw) open / channel B (IOX_D) low since */
+    uint8_t n_u21s, n_u21bs;
+    uint8_t lt_phase;           /* 0 idle, 1 TEST_A, 2 gap, 3 TEST_B, 4 settle */
+    uint16_t lt_ms, closed_ms;
+    bool lt_passed, lt_a_ok, lt_b_ok;
+    uint8_t lt_out;             /* requested IOX_D output register (P4 LOOP_TEST_A, P7 LOOP_TEST_B) */
+    uint32_t lt_snap_st, lt_snap_ohm;
+    bool lt_snap_b;
+    uint32_t lt_n;              /* self-tests passed since boot */
     uint8_t rearm_why;          /* rrch_rref_t: what a press would meet now (NONE = it will set the latch) */
     uint8_t rearm_refusal;      /* rrch_rref_t: last press that did not set (cleared when the latch is set) */
     uint8_t press_why;          /* rearm_why at the moment of the pending press */
     bool press_pending;         /* REARM aux edge with the latch down, outcome not yet reported */
     uint64_t press_us, press_end_us; /* aux edge and release of the latest press */
-    /* N2: REARM legitimacy judged on the first IOX_D sample taken after the latch rose */
-    bool judge_pending, judge_timing_ok;
-    uint64_t judge_rise_us;
+    uint64_t refused_us;        /* last REARM_REFUSED (lamp: fast blink for 2 s, stage 4 G3) */
     /* N2: K1 sealed in without U_HOLD (set pulse shorter than the operate time): released, not a weld */
     uint8_t n_unheld;
     uint64_t unheld_until_us;
     uint32_t latched_held_ms;   /* W-018: a REARM contact closed while latched */
-    bool held_drop, aux_raw_prev;
-    uint8_t n_xd_in_press;      /* IOX_D samples taken while the aux contact of the latest press was closed */
+    bool held_drop;
     uint16_t t_loop_high;
 } rrch_chain_t;
 
@@ -576,12 +586,12 @@ void rrch_background(rrch_t *c);       /* main loop: protocol server */
 void rrch_tof_update(rrch_t *c, int idx, int32_t range_mm, rrch_tof_status_t st, uint64_t t_us);
 void rrch_power_update(rrch_t *c, const rrch_power_t *p);
 void rrch_iox_b_update(rrch_t *c, bool ok, bool chain_end, uint64_t t_us); /* background context, ~100 Hz */
-/* stage 3 F1: IOX_D (U47, TCA9534 0x22) input port, read >= 100 Hz; P0 LATCH_NC_RB, P1 LATCH_RUN_RB, P2 HEAD_LOOP2_OK_RB,
- * P3 REARM_SET_RB, P4..P7 fixed pattern 1,0,0,0 */
-void rrch_iox_d_update(rrch_t *c, bool ok, uint8_t in, uint64_t t_us);
-/* round 4 N2: true while the port should read IOX_D every 1 ms instead of every 10 ms (latch down and a REARM press
- * possible or in progress, and the 300 ms after a latch rise), so that a 4 ms REARM tap is seen on REARM_SET_RB */
-bool rrch_iox_d_fast(const rrch_t *c);
+/* IOX_D (U47, TCA9534 0x22), stage 4 G6 map: P0 LATCH_NC_RB, P1 LATCH_RUN_RB, P2 HEAD_LOOP2_OK_RB, P3 BUS_CLAMP_ACTIVE,
+ * P4 LOOP_TEST_A (out), P5 SET_READY_RB, P6 CH_N6A_RB, P7 LOOP_TEST_B (out). `in` = input register, `out` = the output
+ * register value the port has written (and read back); read >= 100 Hz */
+void rrch_iox_d_update(rrch_t *c, bool ok, uint8_t in, uint8_t out, uint64_t t_us);
+uint8_t rrch_iox_d_out(const rrch_t *c);  /* output register the port must write (0 except during the loop self-test) */
+bool rrch_iox_d_fast(const rrch_t *c);    /* read IOX_D every 1 ms (loop self-test in progress), else every 10 ms */
 
 /* ---- internal, shared between core files (also used by unit tests) ---- */
 rrch_pres_t rrch_pres_classify(uint32_t ohm);

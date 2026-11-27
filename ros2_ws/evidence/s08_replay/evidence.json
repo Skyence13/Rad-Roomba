@@ -3,7 +3,7 @@
  "evidence_class": "simulated",
  "against": "Python protocol fakes (rr_core.fakes), virtual clock",
  "seed": 18,
- "sim_time_s": 214.14,
+ "sim_time_s": 213.0,
  "checks": [
   {
    "check": "replay of the raw archive reproduces every product bit-for-bit",
@@ -45,7 +45,7 @@
   {
    "check": "raw segments sealed with digests",
    "ok": true,
-   "entries": 33279
+   "entries": 33082
   }
  ],
  "passed": true,
@@ -53,14 +53,14 @@
  "coverage": {
   "target_area_m2": 3.0,
   "areas_m2": {
-   "UNVISITED": 1.13955,
+   "UNVISITED": 1.14135,
    "ACCEPTABLE": 0.0,
-   "INSUFFICIENT_SENSITIVITY": 1.8604500000000002,
+   "INSUFFICIENT_SENSITIVITY": 1.8586500000000001,
    "INVALID_DATA": 0.0,
    "BLOCKED": 0.0,
    "EXCLUDED": 0.0
   },
-  "valid_exposure_fraction": 0.6201500000000001,
+  "valid_exposure_fraction": 0.61955,
   "acceptable_fraction": 0.0,
   "sub_cell_m": 0.005,
   "decision_cell_m": 0.1,
@@ -70,15 +70,15 @@
   "limit_us": 10000.0,
   "fits": 116,
   "max_gate_bound_us": 838.0520796923137,
-  "median_gate_bound_us": 801.1042456595993
+  "median_gate_bound_us": 800.7584648307038
  },
  "link_stats": {
-  "tx": 10694,
-  "rx": 10691,
+  "tx": 10637,
+  "rx": 10634,
   "bad_lines": 2,
   "stale": 0,
   "duplicates": 0,
-  "gates": 2110,
+  "gates": 2098,
   "gaps": 0,
   "retries": 4,
   "unassigned_frames": 0,
@@ -86,8 +86,8 @@
   "time_exchanges_rejected": 0
  },
  "localization_error_vs_truth_m": {
-  "max_x_m": 0.0017189998910366877,
-  "max_y_m": 0.0012226357904597251
+  "max_x_m": 0.0016729180740808758,
+  "max_y_m": 0.001160071364630505
  },
  "plan": {
   "n_pairs": 2,
@@ -109,75 +109,109 @@
  },
  "flags": [
   {
-   "id": "HS-0001",
-   "kind": "INVESTIGATION_LEVEL",
-   "source_lane": 1,
-   "x_m": 0.2905788820817226,
-   "y_m": -0.20391911140577218,
-   "D": 0.15250193555045644,
-   "u_total": 0.08994784773517733,
-   "D_star": 0.14520992639713384,
-   "D_hash": 0.34376469574731594,
-   "location": {
-    "distance_from_door_m": 0.291,
-    "wall": "right wall",
-    "distance_from_wall_m": 0.296,
-    "text": "0.29 m from the door threshold, 0.30 m from the right wall"
-   }
-  },
-  {
    "id": "HS-0002",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 2,
-   "x_m": 1.0381327211526232,
-   "y_m": 0.1022685558437175,
-   "D": 0.1747885662719123,
-   "u_total": 0.1087146323391551,
-   "D_star": 0.13924766401815175,
-   "D_hash": 0.333176097071206,
+   "source_lane": 1,
+   "x_m": 2.513650064245248,
+   "y_m": -0.18994439390786966,
+   "D": 0.15194775082987508,
+   "u_total": 0.09550161311733042,
+   "D_star": 0.20882230408239777,
+   "D_hash": 0.514711539365596,
    "location": {
-    "distance_from_door_m": 1.038,
-    "wall": "left wall",
-    "distance_from_wall_m": 0.398,
-    "text": "1.04 m from the door threshold, 0.40 m from the left wall"
+    "distance_from_door_m": 2.514,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.31,
+    "text": "2.51 m from the door threshold, 0.31 m from the right wall"
    }
   },
   {
-   "id": "HS-0003",
+   "id": "HS-0006",
    "kind": "INVESTIGATION_LEVEL",
    "source_lane": 1,
-   "x_m": 1.5450550929296811,
-   "y_m": 0.16516776557211266,
-   "D": 1.312756268445479,
-   "u_total": 0.2418879693593977,
-   "D_star": 0.11876862758398131,
-   "D_hash": 0.2761875963931179,
+   "x_m": 1.5442953573821019,
+   "y_m": 0.16159301065481657,
+   "D": 1.0350657220630604,
+   "u_total": 0.2041473066102463,
+   "D_star": 0.11810021696048734,
+   "D_hash": 0.27490860580943105,
    "location": {
-    "distance_from_door_m": 1.545,
+    "distance_from_door_m": 1.544,
     "wall": "left wall",
-    "distance_from_wall_m": 0.335,
-    "text": "1.55 m from the door threshold, 0.33 m from the left wall"
+    "distance_from_wall_m": 0.338,
+    "text": "1.54 m from the door threshold, 0.34 m from the left wall"
    }
   },
   {
-   "id": "HS-0004",
+   "id": "HS-0007",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 0,
-   "x_m": 2.350746934366044,
-   "y_m": 0.27742756117959316,
-   "D": 0.11903771068430816,
-   "u_total": 0.07968321065218462,
-   "D_star": 0.12071376433281436,
-   "D_hash": 0.28111506648552886,
+   "x_m": 2.2110298614985977,
+   "y_m": 0.27744875030214455,
+   "D": 0.22973931879279036,
+   "u_total": 0.1346316618275426,
+   "D_star": 0.20980743652786352,
+   "D_hash": 0.5288454880396651,
    "location": {
-    "distance_from_door_m": 2.351,
+    "distance_from_door_m": 2.211,
     "wall": "left wall",
     "distance_from_wall_m": 0.223,
-    "text": "2.35 m from the door threshold, 0.22 m from the left wall"
+    "text": "2.21 m from the door threshold, 0.22 m from the left wall"
+   }
+  },
+  {
+   "id": "HS-0008",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 2,
+   "x_m": 2.516514491605323,
+   "y_m": 0.1024499396721505,
+   "D": 0.19251170647626414,
+   "u_total": 0.08245936493172094,
+   "D_star": 0.1285381206969965,
+   "D_hash": 0.3014122885225903,
+   "location": {
+    "distance_from_door_m": 2.517,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.398,
+    "text": "2.52 m from the door threshold, 0.40 m from the left wall"
+   }
+  },
+  {
+   "id": "HS-0009",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 3,
+   "x_m": 2.44437150958325,
+   "y_m": 0.32131057571294985,
+   "D": 0.25189677878323313,
+   "u_total": 0.15344713835729018,
+   "D_star": 0.21168330226837387,
+   "D_hash": 0.5293858462958685,
+   "location": {
+    "distance_from_door_m": 2.444,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.179,
+    "text": "2.44 m from the door threshold, 0.18 m from the left wall"
+   }
+  },
+  {
+   "id": "HS-0010",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 2,
+   "x_m": 0.27775293854402006,
+   "y_m": 0.22632257954015603,
+   "D": 0.18762754411252103,
+   "u_total": 0.11562525804838263,
+   "D_star": 0.18119853444354747,
+   "D_hash": 0.44734415173298864,
+   "location": {
+    "distance_from_door_m": 0.278,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.274,
+    "text": "0.28 m from the door threshold, 0.27 m from the left wall"
    }
   }
  ],
- "scan_detections": 0,
+ "scan_detections": 4,
  "observations": [],
  "decision_status": {
   "cells_with_gates": 231,
@@ -188,7 +222,7 @@
   "no_decision_within_0.5m_of_an_end": 9,
   "cells_within_0.5m_of_an_end": 71
  },
- "journal_entries": 33279,
+ "journal_entries": 33082,
  "segments": 2,
  "products": [
   "calibration.json",
@@ -212,22 +246,22 @@
  ],
  "product_sha256": {
   "calibration.json": "3c246b889453729593dad6ceea9c0c6a15ad5d36ce7387fa6324263386786960",
-  "cells.csv": "ed2cd816731d0f5228e25c7d162f196af1d006716c706371fab48476e51496d7",
-  "cells.geojson": "e257a1c5d3ab24891be38246b0b3b330ddc8acdb5f83116015567554fcb7819f",
-  "clock_fits.ndjson": "3e0c6d586c1ebdd3d5d10dbdc2623f0edb62fb201704ccdc72a9fda9ca21558f",
-  "coverage.png": "4e833f9d13f3874448bb81d6d5058c0d02f035a8ca274270280551c3e7ee250b",
-  "flags.json": "d2a46dd76238f4879993bb42bcf62c17b5cb41aa4282877409334b26d17985c1",
-  "gaps.json": "88d1a8cf9b64c064dd911cf58e39687966dbdb69f61b336d65ccaa39dbb63ad0",
-  "gates.csv": "58e122a0a2ff38cc43afca9cb2205612da60ef9c03d4e4d70c5a3292e0794be4",
+  "cells.csv": "10c7ac9bcfd6431f6da462d2a87bfb684846f2f7b1e11da5e34c11fd4beca8d1",
+  "cells.geojson": "17c55dba28226a2133eb6ffc6197d3cd95f07e3366c169f597f84442926fd936",
+  "clock_fits.ndjson": "e55cb5559475d46e4c4d319724b4fe4cc259f47e1340f78df324f33f089e347a",
+  "coverage.png": "0c06f33e67cdf3cc4ec69363b4093f456f81c92cc56303944b7a04c0ba6c63ea",
+  "flags.json": "3f47d502b64723b56caf9c844312343e1c6a17a150e9b00b63a07f741b8fb2a9",
+  "gaps.json": "872c9a194648146e5c56402ee8dc5d779505aa8cf1d4516e062601e4fc8ff196",
+  "gates.csv": "2d8bcaed919e89e0984b5ba1d6225790dabf121adef4839187f0e3f21c0066c4",
   "grid.json": "b1193a616edcd1b6884ec2fb1d48e0c0ec57f7cfd14e0a2b7fb32429b3345a4e",
-  "map_activity.svg": "67a0f7cb18679bb8840bfe31171f74acceec33808a70a03be12d5b67639bfb92",
-  "map_coverage.svg": "e4a0385d9644b0eb4393aa8fe3a7f989ca5fc37b74fefb51e90cd422d4d57b82",
+  "map_activity.svg": "735e9d768bd3b69ce807dc96564b71e7096b85b88eb7db33b868d7a3ab4314e8",
+  "map_coverage.svg": "3080a2ac134d02e3ea56725815fc3c78931867ccabff60a2b0e6620442c9eda5",
   "observations.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
-  "poses.csv": "386ed36ecf97366241a9c19d97a1a5963c14c2e385a2e3bfc2b085086596cf9a",
+  "poses.csv": "fe6117dfe29da2b67ae19a07cba0c25c71e4ebe06fd96dc5ed2784774bb018fa",
   "profile.json": "1b14d43984b66d1981b0876c4d8e2b8ca1b69373e06f51caa4de4515f85d5375",
-  "residuals.json": "2f219ebef1e012d927bc53883ac3de9d275935bc9d0e3b5a7730947c2e986cbf",
-  "summary.txt": "98568115118ccb35092e4294ce134527df7ac5929c06b2a3ae85b9e25e5671d8",
-  "survey_manifest.json": "34d43bc99fa60f4a92d72afa71986be6ce9ca16508d9037fbdd1b320e3afef48",
-  "transforms.json": "b4308b5fef46e0825b417bf5082123b8df143af932aa7549b6883ede001f76ee"
+  "residuals.json": "4623fd3d77f191e01ae3e94881de5f07b2a38b9558242b7a24584a69f8963b33",
+  "summary.txt": "725c4120a7203b1d15b43da8ca25457e141e80644bff51a3f5cbaea0018cf74f",
+  "survey_manifest.json": "43d9a9a038f711145ea757852f08fd9523213c02ad8f8308a9262ece032bcdec",
+  "transforms.json": "432a2c97d8e4f56686c7cfffba1c58dc18fe4e6693f1185675619fcd8d5fdda6"
  }
 }

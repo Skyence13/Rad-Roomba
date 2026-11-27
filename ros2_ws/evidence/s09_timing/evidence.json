@@ -2,8 +2,8 @@
  "scenario": "s09_timing",
  "evidence_class": "simulated",
  "against": "Python protocol fakes (rr_core.fakes), virtual clock",
- "seed": 19,
- "sim_time_s": 84.28,
+ "seed": 20,
+ "sim_time_s": 83.18,
  "checks": [
   {
    "check": "nominal 0.2 ms: true time error never exceeds the reported bound",
@@ -98,7 +98,7 @@
   {
    "check": "moving survey with injected offset/latency: hotspot mapped within 20 mm along track",
    "ok": true,
-   "err": 0.014303102459442885
+   "err": 0.009738447081801604
   }
  ],
  "passed": true,
@@ -106,14 +106,14 @@
  "coverage": {
   "target_area_m2": 3.0,
   "areas_m2": {
-   "UNVISITED": 2.06575,
+   "UNVISITED": 2.058825,
    "ACCEPTABLE": 0.0,
-   "INSUFFICIENT_SENSITIVITY": 0.93425,
+   "INSUFFICIENT_SENSITIVITY": 0.9411750000000001,
    "INVALID_DATA": 0.0,
    "BLOCKED": 0.0,
    "EXCLUDED": 0.0
   },
-  "valid_exposure_fraction": 0.3114166666666667,
+  "valid_exposure_fraction": 0.31372500000000003,
   "acceptable_fraction": 0.0,
   "sub_cell_m": 0.005,
   "decision_cell_m": 0.1,
@@ -121,26 +121,26 @@
  },
  "time_sync": {
   "limit_us": 10000.0,
-  "fits": 47,
+  "fits": 46,
   "max_gate_bound_us": 4095.9505726605175,
-  "median_gate_bound_us": 3806.4134669226455
+  "median_gate_bound_us": 3806.29548638404
  },
  "link_stats": {
-  "tx": 3474,
-  "rx": 3470,
+  "tx": 3427,
+  "rx": 3423,
   "bad_lines": 0,
   "stale": 0,
   "duplicates": 0,
-  "gates": 823,
+  "gates": 812,
   "gaps": 0,
   "retries": 2,
   "unassigned_frames": 0,
-  "time_exchanges": 47,
+  "time_exchanges": 46,
   "time_exchanges_rejected": 0
  },
  "localization_error_vs_truth_m": {
-  "max_x_m": 0.002643268818538491,
-  "max_y_m": 0.0009572423734877933
+  "max_x_m": 0.002705020649269141,
+  "max_y_m": 0.0009697828978510736
  },
  "plan": {
   "n_pairs": 2,
@@ -162,20 +162,37 @@
  },
  "flags": [
   {
-   "id": "HS-0001",
+   "id": "HS-0002",
    "kind": "INVESTIGATION_LEVEL",
    "source_lane": 1,
-   "x_m": 1.530696897540557,
-   "y_m": -0.19006002874048072,
-   "D": 1.4720127331850692,
-   "u_total": 0.2692150390750232,
-   "D_star": 0.12112085049517135,
-   "D_hash": 0.2810713382572024,
+   "x_m": 1.5352615529181983,
+   "y_m": -0.185936302366569,
+   "D": 1.39790801433013,
+   "u_total": 0.2531022470770881,
+   "D_star": 0.12222160961663756,
+   "D_hash": 0.2827270600533849,
    "location": {
-    "distance_from_door_m": 1.531,
+    "distance_from_door_m": 1.535,
     "wall": "right wall",
-    "distance_from_wall_m": 0.31,
-    "text": "1.53 m from the door threshold, 0.31 m from the right wall"
+    "distance_from_wall_m": 0.314,
+    "text": "1.54 m from the door threshold, 0.31 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0004",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 0,
+   "x_m": 0.9574741516386788,
+   "y_m": -0.058759989689668855,
+   "D": 0.22408466363340654,
+   "u_total": 0.12378822931657539,
+   "D_star": 0.19631654825652017,
+   "D_hash": 0.4800446070916948,
+   "location": {
+    "distance_from_door_m": 0.957,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.441,
+    "text": "0.96 m from the door threshold, 0.44 m from the right wall"
    }
   }
  ],
@@ -183,11 +200,11 @@
  "observations": [],
  "decision_status": {
   "cells_with_gates": 140,
-  "no_decision": 28,
+  "no_decision": 29,
   "no_decision_text": [
    "no decision \u2014 null reference unavailable"
   ],
-  "no_decision_within_0.5m_of_an_end": 8,
+  "no_decision_within_0.5m_of_an_end": 9,
   "cells_within_0.5m_of_an_end": 40
  },
  "cases": [
@@ -248,6 +265,6 @@
    "position_error_at_0.10_mps_mm": 0.03156134068965912
   }
  ],
- "moving_hotspot_along_track_error_m": 0.014303102459442885,
- "chassis_time_bound_us": 2155.100400238419
+ "moving_hotspot_along_track_error_m": 0.009738447081801604,
+ "chassis_time_bound_us": 2137.100400238419
 }

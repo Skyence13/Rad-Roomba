@@ -130,8 +130,8 @@
   "time_exchanges_rejected": 0
  },
  "localization_error_vs_truth_m": {
-  "max_x_m": 0.011187801464528357,
-  "max_y_m": 0.0001760445565910651
+  "max_x_m": 0.011187801502836159,
+  "max_y_m": 0.00017604455659103735
  },
  "plan": {
   "n_pairs": 2,
@@ -141,15 +141,15 @@
   "predicted_residual": {
    "left_wall_strip_m": 0.1487,
    "right_wall_strip_m": 0.1487,
-   "door_end_strip_m": 0.121,
-   "front_end_strip_m": 0.051,
+   "door_end_strip_m": 0.1413,
+   "front_end_strip_m": 0.0713,
    "end_zone_single_heading_m": {
-    "door": 0.3602,
-    "front": 0.3602
+    "door": 0.3399,
+    "front": 0.3399
    },
    "note": "wall strips are set by the in-place turn radius of the outline; see README coverage section"
   },
-  "estimated_time_s": 249.1
+  "estimated_time_s": 244.2
  },
  "flags": [],
  "scan_detections": 0,

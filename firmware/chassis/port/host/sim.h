@@ -57,6 +57,15 @@ typedef struct {
     double k1_pickup_ms;            /* K1 operate time, default 3 ms (T11: 4 ms max) */
     bool uhold_open;                /* U_HOLD LED open: K1 can close on a set pulse but RUN_HD never comes */
     int iox_d_period_ms;            /* 0: IOX_D read every 1 ms when rrch_iox_d_fast() asks, else 10 ms; >0 forced period */
+    /* stage 4 (G1, G2, G4, G5, G8, G12) */
+    double rset_ohm;                /* R_SET, default 15 k (G2) */
+    double set_ready_v;             /* SET_READY rising threshold, default 10.8 V (falls at 9.3 V) */
+    double set_qual_ms;             /* set-contact closure before a set pulse can start, default 6 ms (3.2-11.2 ms, T13) */
+    bool set_ready, q_setc, set_ready_stuck; /* comparator output, third stack FET, comparator stuck high (fault) */
+    int qsetc_on_ms, qsetc_off_ms, ce_dead_ms, set_closed_ms;
+    bool u21_short, u21b_short;     /* loop photo-MOS U21 (channel A) / U21B (channel B) conducting whatever the channel says */
+    double loop_b_ohm;              /* channel B threshold, default 1890 ohm (G7) */
+    uint8_t iox_d_out;              /* IOX_D output register as written by the port (P4 LOOP_TEST_A, P7 LOOP_TEST_B) */
     /* TPS3430 window watchdog: WDI edges counted per wdi_mode (0 falling, 1 rising, 2 both); a counted edge
      * closer than 2.2 ms to the previous one or none for 23.4 ms (tWDU min) asserts WDO for 200 ms; with
      * JP1 closed WDO also holds NRST, so the MCU sits in reset for those 200 ms */
@@ -72,6 +81,7 @@ typedef struct {
     rrch_tof_status_t tof_st[RRCH_TOF_N];
     bool tof_stale[RRCH_TOF_N];
     int rearm_ms, pause_ms;
+    int usb_down_ms;                /* timed link outage (host scenario s15): usb_down for this long, then restored */
     /* fault injection */
     bool enc_dropout[2], block[2], usb_stall, usb_down, imu_off, iox_fail, latch_weld, estop_a_stuck;
     bool iox_b_fail, permit_short, permit_open; /* IOX_B not answering; ARM_PERMIT photo-MOS U24 shorted / open */

@@ -30,6 +30,7 @@ static rrc_wrap32_t us_wrap;
 static bool iox_a_ok, imu_ok, iox_b_ok, tof_ok;
 static volatile uint16_t iox_b_want;
 static uint16_t iox_b_cur = 0xFFFFu;
+static volatile bool iox_b_cfg_bad; /* IOX_B configuration registers read back wrong (round 4) */
 static int lock_depth;
 static rrch_reset_cause_t reset_cause = RRCH_RST_UNKNOWN;
 static rrch_retained_t retained __attribute__((section(".noinit"))); /* UNVERIFIED: must not be zeroed by the startup code */
@@ -507,6 +508,9 @@ static void i2c_init(void)
     /* every pin an output except IOX_B_INPUT_MASK (P17 = CHAIN_END_RB, CCR-E02: never driven) */
     uint8_t cfg[3] = {0x06, (uint8_t)IOX_B_INPUT_MASK, (uint8_t)(IOX_B_INPUT_MASK >> 8)};
     iox_b_ok = i2c_wr(&hi2c_sys, IOX_B_I2C_ADDR, out, 3) && i2c_wr(&hi2c_sys, IOX_B_I2C_ADDR, cfg, 3);
+    /* IOX_D (stage 4 G6, UNVERIFIED registers): output register 0 first (test FETs off), then P4/P7 outputs */
+    uint8_t d_out[2] = {0x01, 0x00}, d_cfg[2] = {0x03, 0x6F};
+    (void)(i2c_wr(&hi2c_sys, IOX_D_I2C_ADDR, d_out, 2) && i2c_wr(&hi2c_sys, IOX_D_I2C_ADDR, d_cfg, 2));
     iox_b_cur = iox_b_ok ? iox_b_want : 0xFFFFu;
     tof_ok = tof_init(&hi2c_tof);
     pmon_init();
@@ -597,7 +601,7 @@ static void h_read(void *ctx, rrch_in_t *in)
         SET(BTN_PAUSE, XB(IOX_A_BIT_PAUSE_BTN))
         SET(DRV_FAULT_L, !XB(IOX_A_BIT_DRV_L_NFAULT))
         SET(DRV_FAULT_R, !XB(IOX_A_BIT_DRV_R_NFAULT))
-        SET(BUS_CLAMP, XB(IOX_A_BIT_BUS_CLAMP_ACTIVE))
+        SET(REARM_SET, XB(IOX_A_BIT_REARM_SET_RB)) /* stage 4 G4: set contact, 1 kHz, no debounce for the edges */
     } /* else: every expander readback reads "open / unhealthy" and iox_ok is false */
     SET(ESTOP_A, RD(ESTOP_A_RB))
     SET(ESTOP_B, RD(ESTOP_B_RB))
@@ -743,7 +747,7 @@ static bool io_cfg_check(void)
     /* stage 3 F7/F8/F11: GPPUA/GPPUB (0x0C/0x0D, UNVERIFIED) must stay 0x00 behind the 47 k series resistors */
     uint8_t tp[4] = {0x41, 0x0C, 0, 0}, rp[4] = {0xFF, 0xFF, 0xFF, 0xFF};
     ok = ok && spi_xfer(P(IOX_A_CS_N), tp, rp, 4) && rp[2] == 0x00u && rp[3] == 0x00u;
-    return ok;
+    return ok && !iox_b_cfg_bad; /* IOX_B configuration read back by the background loop (P17 an input) */
 }
 
 static size_t h_link_read(void *ctx, uint8_t *buf, size_t cap)
@@ -883,20 +887,26 @@ void bsp_background(rrch_t *core)
         tof_idx = (tof_idx + 1) % RRCH_TOF_N;
     }
     /* 100 Hz: IOX_B input port 1 for P17 = CHAIN_END_RB (UNVERIFIED register 0x01, TCA9535 class) */
-    static uint32_t t_iox_b;
+    static uint32_t t_iox_b, t_iox_d, n_fail;
     if (now - t_iox_b >= 10u) {
         t_iox_b = now;
         uint8_t hi = 0;
-        static uint32_t n_fail;
         bool ok = i2c_rd_reg(&hi2c_sys, IOX_B_I2C_ADDR, 0x01, &hi, 1);
         n_fail = ok ? 0u : n_fail + 1u;
-        /* stage 3 F1: IOX_D (U47, TCA9534 0x22), input register 0x00 [U]; configuration register 0x03 must read
-         * 0xFF (all inputs) - it is never written. The core checks the fixed pattern on P4..P7. */
-        static uint32_t n_cfg_d;
-        uint8_t din = 0, dcfg = 0xFFu;
-        bool dok = i2c_rd_reg(&hi2c_sys, IOX_D_I2C_ADDR, 0x00, &din, 1);
-        if (dok && (n_cfg_d++ % 10u) == 0u) {
-            dok = i2c_rd_reg(&hi2c_sys, IOX_D_I2C_ADDR, 0x03, &dcfg, 1) && dcfg == 0xFFu;
+        /* round 4 (follow-up review m-B, stage 4 G8): every 10th read also reads back the configuration registers
+         * 0x06/0x07 (UNVERIFIED, TCA9535 class): P17 (bit 7 of 0x07) must stay an input, or the ARM_PERMIT readback is
+         * no longer what it seems (since G8 it no longer gates the C_SET discharge): PIN_CONFIG (fatal). The output
+         * registers 0x02/0x03 are read back too (m8): a mismatch with what was written forces a rewrite. */
+        static uint32_t n_cfg_b;
+        if (ok && (n_cfg_b++ % 10u) == 0u) {
+            uint8_t cfgb[2] = {0, 0}, outb[2] = {0, 0};
+            if (i2c_rd_reg(&hi2c_sys, IOX_B_I2C_ADDR, 0x06, cfgb, 2)) {
+                iox_b_cfg_bad = cfgb[0] != (uint8_t)IOX_B_INPUT_MASK || cfgb[1] != (uint8_t)(IOX_B_INPUT_MASK >> 8);
+            }
+            if (i2c_rd_reg(&hi2c_sys, IOX_B_I2C_ADDR, 0x02, outb, 2) && iox_b_cur != 0xFFFFu &&
+                (((uint16_t)outb[0] | (uint16_t)(outb[1] << 8)) & (uint16_t)~IOX_B_INPUT_MASK) != (iox_b_cur & (uint16_t)~IOX_B_INPUT_MASK)) {
+                iox_b_cur = 0xFFFFu; /* rewritten on the next pass */
+            }
         }
         if (n_fail == 3u) { /* review m7: re-initialise the bus after three failed reads (no SCL toggling, UNVERIFIED) */
             (void)HAL_I2C_DeInit(&hi2c_sys);
@@ -905,7 +915,41 @@ void bsp_background(rrch_t *core)
         uint64_t t = bsp_now_us();
         core->hal.irq_lock(NULL);
         rrch_iox_b_update(core, ok, ok && ((hi >> (IOX_B_BIT_CHAIN_END_RB - 8u)) & 1u) != 0u, t);
-        rrch_iox_d_update(core, dok, din, bsp_now_us());
+        core->hal.irq_unlock(NULL);
+    }
+    /* IOX_D (U47, TCA9534 0x22), stage 4 G6 map [U: register map recalled]: input 0x00, output 0x01, configuration 0x03
+     * = 0x6F (P4 LOOP_TEST_A and P7 LOOP_TEST_B outputs). The core asks for the test outputs (rrch_iox_d_out, 0 except
+     * during the loop self-test) and checks that input bits 4/7 read what was written; every 10th read the port also
+     * checks 0x03 == 0x6F and 0x01 == the written value (a mismatch counts as a failed read and forces a rewrite).
+     * Every 1 ms during the self-test (rrch_iox_d_fast), else every 10 ms. */
+    static uint8_t xd_out_cur = 0xFFu;
+    uint8_t xd_want;
+    bool fast;
+    core->hal.irq_lock(NULL);
+    fast = rrch_iox_d_fast(core);
+    xd_want = rrch_iox_d_out(core);
+    core->hal.irq_unlock(NULL);
+    if (xd_want != xd_out_cur) {
+        uint8_t w1[2] = {0x01, xd_want};
+        xd_out_cur = i2c_wr(&hi2c_sys, IOX_D_I2C_ADDR, w1, 2) ? xd_want : 0xFFu;
+    }
+    if (now - t_iox_d >= (fast ? 1u : 10u)) {
+        t_iox_d = now;
+        static uint32_t n_cfg_d;
+        uint8_t din = 0, dcfg = 0, dout = 0;
+        bool dok = xd_out_cur != 0xFFu && i2c_rd_reg(&hi2c_sys, IOX_D_I2C_ADDR, 0x00, &din, 1);
+        if (dok && (n_cfg_d++ % 10u) == 0u) {
+            dok = i2c_rd_reg(&hi2c_sys, IOX_D_I2C_ADDR, 0x03, &dcfg, 1) && dcfg == 0x6Fu && i2c_rd_reg(&hi2c_sys, IOX_D_I2C_ADDR, 0x01, &dout, 1) &&
+                  dout == xd_out_cur;
+            if (!dok) {
+                uint8_t c3[2] = {0x03, 0x6F};
+                (void)i2c_wr(&hi2c_sys, IOX_D_I2C_ADDR, c3, 2);
+                xd_out_cur = 0xFFu; /* rewrite the output register on the next pass */
+            }
+        }
+        uint64_t t = bsp_now_us();
+        core->hal.irq_lock(NULL);
+        rrch_iox_d_update(core, dok, din, xd_out_cur, t);
         core->hal.irq_unlock(NULL);
     }
     /* 10 Hz: eFuse faults, bus health, INA228 pack and INA3221 branch telemetry. The charger driver is

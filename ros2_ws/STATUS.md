@@ -74,6 +74,16 @@ summary writer, fixed) passed in the re-run (-k s11), no other failure; native: 
 9. Documentation: delta section 4 "100 mm stations" -> 80 mm (contract pitch); README 8.1 has the assumptions table of the mission-time figures.
 6. Native emulators (informational, rebuilt firmware, three runs): native_s01 PASS; **native_s02 FAILS in `bringup`** (three runs): after the brake test and a second REARM press the chassis stays in STANDBY (chain all closed, no reasons, `rearm_ready` false, fault CONFIG_DEFAULTED); repeating the press up to four times (added to `NativeSystem.bringup`) did not help. n01, with the same bring-up code, passes. Not diagnosed further (looks firmware-side: REARM handling after the 2.2 s brake test). Not done: `tools/test.sh ros`, IB-47 root cause.
 
+### Bring-up follows the chassis ICD 4.6 / 6.6 / 6.8 (2026-11-27, after the stage-3 chassis firmware)
+
+Cause of the native bring-up failure (confirmed): the harness pressed REARM on fixed delays, but the firmware accepts REARM only when `rearm_ready`
+is true (about 2 s of closed chain, not early, not while held) and the brake test is longer; the press after the brake test was ignored and the chassis stayed in
+STANDBY. Changes: `SimSystem.press_rearm` / `NativeSystem.press_rearm` wait for `STATE.rearm_ready`, press ONCE and fail with the chassis' reasons; bring-up and the scenarios use them;
+the host reply limit of BRAKE_TEST is 4.5 s (ICD: at most 3.7 s); the operator snapshot has `safety.rearm_prompt` (press REARM only when `rearm_ready`; otherwise the reason: chain element open/unknown,
+fault flags, last refusal, discharge time) and the UI shows it; the Python fake chassis implements the 2 s discharge rule, refuses an early press (`REARM_REFUSED` event, `STATE.rearm_refusal`),
+`rearm_ready` also for a clearable software latch, brake test 2.6 s. s15 checks the early-press refusal. `ChassisLink.stats` counts non-zero set-points (`drive_nonzero`); opt-in native variant
+`tools/test.sh native n15` (bumper inhibit, early REARM, PAUSE) against `rr_chassis_sim`; the link-outage case has no emulator stimulus: gap.
+
 ## Verification log (close-out, 2026-11-26; filled in as runs complete)
 
 Observed by the close-out engineer, not copied from earlier notes. "simulated" = deterministic

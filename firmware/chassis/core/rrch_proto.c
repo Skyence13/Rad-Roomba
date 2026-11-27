@@ -534,21 +534,24 @@ static void op_diag(ctx_t *x)
         rrc_jw_kstr(w, rrch_el_names[i], els_names[ch->el[i] % 3]);
     }
     rrc_jw_obj_end(w);
-    rrc_jw_key(w, "iox_d"); /* (+) stage 3 readbacks; all false while not known */
+    rrc_jw_key(w, "iox_d"); /* (+) stage 3/4 readbacks (stage 4 G6 map); all false while not known */
     rrc_jw_obj_begin(w);
     rrc_jw_kbool(w, "known", ch->iox_d_known);
     rrc_jw_kbool(w, "latch_nc", ch->k1_nc);
     rrc_jw_kbool(w, "latch_run", ch->k1_run);
     rrc_jw_kbool(w, "head_loop2_ok", ch->loop_b);
-    rrc_jw_kbool(w, "rearm_set", ch->rearm_set);
+    rrc_jw_kbool(w, "bus_clamp", ch->bus_clamp);
+    rrc_jw_kbool(w, "set_ready", ch->set_ready);
+    rrc_jw_kbool(w, "ch_n6a", ch->chn6a);
+    rrc_jw_ku64(w, "test_out", ch->lt_out);
     rrc_jw_obj_end(w);
-    rrc_jw_key(w, "rearm"); /* (+) round 4 N1: what a REARM press meets now, from the conservative C_SET model */
+    rrc_jw_key(w, "rearm"); /* (+) round 4 / stage 4: what a REARM press meets now, set-contact line, loop self-test */
     rrc_jw_obj_begin(w);
     rrc_jw_kstr(w, "why", ch->latch ? "LATCHED" : rrch_rref_names[ch->rearm_why]);
-    kf(w, "cset_model_v", ch->cset_model_v, 2);
-    kf(w, "cset_need_v", ch->cset_need_v, 2);
-    kf(w, "cset_target_v", ch->cset_target_v, 2);
-    rrc_jw_kbool(w, "iox_d_fast", rrch_iox_d_fast(c));
+    rrc_jw_kbool(w, "set_ready", ch->iox_d_known && ch->set_ready);
+    rrc_jw_kbool(w, "set_contact", ch->rearm_set);
+    rrc_jw_kstr(w, "loop_test", ch->lt_phase != 0u ? "RUNNING" : (ch->lt_passed ? "PASSED" : "PENDING"));
+    rrc_jw_ku64(w, "loop_tests_passed", ch->lt_n);
     rrc_jw_obj_end(w);
     if (ch->chain_end_known) {
         rrc_jw_kbool(w, "chain_end", ch->chain_end);

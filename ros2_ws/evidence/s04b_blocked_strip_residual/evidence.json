@@ -3,7 +3,7 @@
  "evidence_class": "simulated",
  "against": "Python protocol fakes (rr_core.fakes), virtual clock",
  "seed": 14,
- "sim_time_s": 402.1,
+ "sim_time_s": 400.9,
  "checks": [
   {
    "check": "mission complete without a collision",
@@ -36,14 +36,14 @@
  "coverage": {
   "target_area_m2": 4.8,
   "areas_m2": {
-   "UNVISITED": 1.2824,
+   "UNVISITED": 1.28255,
    "ACCEPTABLE": 0.0,
-   "INSUFFICIENT_SENSITIVITY": 2.68065,
+   "INSUFFICIENT_SENSITIVITY": 2.680475,
    "INVALID_DATA": 0.0,
-   "BLOCKED": 0.8369500000000001,
+   "BLOCKED": 0.836975,
    "EXCLUDED": 0.0
   },
-  "valid_exposure_fraction": 0.5584687500000001,
+  "valid_exposure_fraction": 0.5584322916666666,
   "acceptable_fraction": 0.0,
   "sub_cell_m": 0.005,
   "decision_cell_m": 0.1,
@@ -51,26 +51,26 @@
  },
  "time_sync": {
   "limit_us": 10000.0,
-  "fits": 206,
+  "fits": 205,
   "max_gate_bound_us": 838.0520796923137,
-  "median_gate_bound_us": 796.7171658950996
+  "median_gate_bound_us": 796.7147659430981
  },
  "link_stats": {
-  "tx": 20235,
-  "rx": 20231,
+  "tx": 20172,
+  "rx": 20168,
   "bad_lines": 0,
   "stale": 0,
   "duplicates": 0,
-  "gates": 4002,
+  "gates": 3989,
   "gaps": 0,
   "retries": 2,
   "unassigned_frames": 0,
-  "time_exchanges": 206,
+  "time_exchanges": 205,
   "time_exchanges_rejected": 0
  },
  "localization_error_vs_truth_m": {
-  "max_x_m": 0.0016177136595931785,
-  "max_y_m": 0.0012333670957105913
+  "max_x_m": 0.0016145158250964187,
+  "max_y_m": 0.0012113956667002546
  },
  "plan": {
   "n_pairs": 4,
@@ -94,149 +94,64 @@
   {
    "id": "HS-0002",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 0,
-   "x_m": 2.1500370571734475,
-   "y_m": -0.35873502199647306,
-   "D": 0.09529083577321362,
-   "u_total": 0.06933903136675561,
-   "D_star": 0.10771621641350308,
-   "D_hash": 0.24653287705861426,
-   "location": {
-    "distance_from_door_m": 2.15,
-    "wall": "right wall",
-    "distance_from_wall_m": 0.441,
-    "text": "2.15 m from the door threshold, 0.44 m from the right wall"
-   }
-  },
-  {
-   "id": "HS-0004",
-   "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 3,
-   "x_m": 1.6198532157278178,
-   "y_m": -0.3116190426539101,
-   "D": 0.13997728506371443,
-   "u_total": 0.07243260681056059,
-   "D_star": 0.10758702236068983,
-   "D_hash": 0.2462640438429981,
-   "location": {
-    "distance_from_door_m": 1.62,
-    "wall": "right wall",
-    "distance_from_wall_m": 0.488,
-    "text": "1.62 m from the door threshold, 0.49 m from the right wall"
-   }
-  },
-  {
-   "id": "HS-0005",
-   "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 2,
-   "x_m": 2.3796907242348433,
-   "y_m": -0.09025362041230639,
-   "D": 0.1241659709158818,
-   "u_total": 0.0700187347535677,
-   "D_star": 0.10624730550215647,
-   "D_hash": 0.24364657219180422,
+   "x_m": 2.5180558414223193,
+   "y_m": -0.4023394937150704,
+   "D": 0.10454983767015368,
+   "u_total": 0.12112041888116161,
+   "D_star": 0.1899564330028772,
+   "D_hash": 0.4628003432550845,
    "location": {
-    "distance_from_door_m": 2.38,
+    "distance_from_door_m": 2.518,
     "wall": "right wall",
-    "distance_from_wall_m": 0.71,
-    "text": "2.38 m from the door threshold, 0.71 m from the right wall"
+    "distance_from_wall_m": 0.398,
+    "text": "2.52 m from the door threshold, 0.40 m from the right wall"
    }
   },
   {
    "id": "HS-0006",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 3,
-   "x_m": 2.818804320637346,
-   "y_m": 0.0223279975079717,
-   "D": 0.13801323386881492,
-   "u_total": 0.07348710061961916,
-   "D_star": 0.11376904286793546,
-   "D_hash": 0.26204017241932775,
-   "location": {
-    "distance_from_door_m": 2.819,
-    "wall": "left wall",
-    "distance_from_wall_m": 0.778,
-    "text": "2.82 m from the door threshold, 0.78 m from the left wall"
-   }
-  },
-  {
-   "id": "HS-0008",
-   "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 2,
-   "x_m": 0.21429564439677454,
-   "y_m": -0.11005249202927511,
-   "D": 0.2443353933178359,
-   "u_total": 0.13617260744792692,
-   "D_star": 0.19180933853705703,
-   "D_hash": 0.4742533926413704,
-   "location": {
-    "distance_from_door_m": 0.214,
-    "wall": "right wall",
-    "distance_from_wall_m": 0.69,
-    "text": "0.21 m from the door threshold, 0.69 m from the right wall"
-   }
-  },
-  {
-   "id": "HS-0009",
-   "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 0,
-   "x_m": 1.253974667532704,
-   "y_m": 0.26526960749907835,
-   "D": 0.14511964266179841,
-   "u_total": 0.07887837419201289,
-   "D_star": 0.12285521116742104,
-   "D_hash": 0.2852368225730756,
-   "location": {
-    "distance_from_door_m": 1.254,
-    "wall": "left wall",
-    "distance_from_wall_m": 0.535,
-    "text": "1.25 m from the door threshold, 0.53 m from the left wall"
-   }
-  },
-  {
-   "id": "HS-0010",
-   "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 1,
-   "x_m": 1.881754157264095,
-   "y_m": 0.15786256538668642,
-   "D": 0.17105160679793,
-   "u_total": 0.08131042051891378,
-   "D_star": 0.1289703394124808,
-   "D_hash": 0.30181363219173857,
+   "x_m": 1.6469388311192854,
+   "y_m": -0.14498616109333415,
+   "D": 0.2406870494032962,
+   "u_total": 0.13898728502331478,
+   "D_star": 0.20582550230891897,
+   "D_hash": 0.5112106289683357,
    "location": {
-    "distance_from_door_m": 1.882,
-    "wall": "left wall",
-    "distance_from_wall_m": 0.642,
-    "text": "1.88 m from the door threshold, 0.64 m from the left wall"
+    "distance_from_door_m": 1.647,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.655,
+    "text": "1.65 m from the door threshold, 0.66 m from the right wall"
    }
   },
   {
-   "id": "HS-0011",
+   "id": "HS-0007",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 3,
-   "x_m": 2.055407914832827,
-   "y_m": 0.00042106008820391727,
-   "D": 0.16223358289066975,
-   "u_total": 0.08693166963538723,
-   "D_star": 0.12266720231809701,
-   "D_hash": 0.2859262009339285,
+   "x_m": 2.0380052274054106,
+   "y_m": 0.00046385773292960804,
+   "D": 0.23371767674563226,
+   "u_total": 0.14415126914724863,
+   "D_star": 0.20751178720100738,
+   "D_hash": 0.5185173706804647,
    "location": {
-    "distance_from_door_m": 2.055,
+    "distance_from_door_m": 2.038,
     "wall": "left wall",
     "distance_from_wall_m": 0.8,
-    "text": "2.06 m from the door threshold, 0.80 m from the left wall"
+    "text": "2.04 m from the door threshold, 0.80 m from the left wall"
    }
   }
  ],
- "scan_detections": 4,
+ "scan_detections": 6,
  "observations": [],
  "decision_status": {
   "cells_with_gates": 330,
-  "no_decision": 27,
+  "no_decision": 28,
   "no_decision_text": [
    "no decision \u2014 null reference unavailable"
   ],
-  "no_decision_within_0.5m_of_an_end": 7,
+  "no_decision_within_0.5m_of_an_end": 8,
   "cells_within_0.5m_of_an_end": 106
  },
  "deferred_tasks": [
@@ -244,7 +159,7 @@
   "pair3:B+cap",
   "pair3:B-"
  ],
- "blocked_area_m2": 0.8369500000000001,
+ "blocked_area_m2": 0.836975,
  "box": [
   1.5,
   1.65,
@@ -288,18 +203,18 @@
   {
    "reason": "BLOCKED",
    "x0": 0.14,
-   "x1": 0.485,
+   "x1": 0.145,
    "y0": 0.46,
-   "y1": 0.465,
-   "area_m2": 0.001725
+   "y1": 0.52,
+   "area_m2": 0.0003
   },
   {
    "reason": "BLOCKED",
    "x0": 0.14,
-   "x1": 0.145,
-   "y0": 0.465,
-   "y1": 0.52,
-   "area_m2": 0.000275
+   "x1": 2.93,
+   "y0": 0.52,
+   "y1": 0.55,
+   "area_m2": 0.0837
   }
  ]
 }

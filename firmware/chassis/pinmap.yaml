@@ -140,7 +140,7 @@ expanders:
       GPB3: {signal: PAUSE_BTN,         note: "Local PAUSE/Stop pressed = HIGH. Stage 2 (S2-01): button on its own connector J_PAUSE (JST GH 5-way, rear-right): pin 1 PAUSE_3V3 (own 1 kOhm supply R_PAUSE), pin 2 PAUSE_BTN_RAW -> R131 -> here, pin 3 V12_AUX lamp +, pin 4 LAMP_PAUSE_K (Q56 from IOX_B P06); ESD D_PAUSE. J_BTN pins 5/8 no longer used"}
       GPB4: {signal: DRV_L_NFAULT,      note: "LOW = left bridge fault (open drain, 10k pull-up)"}
       GPB5: {signal: DRV_R_NFAULT,      note: "LOW = right bridge fault"}
-      GPB6: {signal: BUS_CLAMP_ACTIVE,  note: "Brake chopper / bus clamp conducting = HIGH"}
+      GPB6: {signal: REARM_SET_RB,      note: "Stage 4 G4 (S4-N2a): REARM set contact (J_BTN 1-2) from REARM_SET_RAW through a 33 k / 47 k divider (2.7-2.9 V high; no internal pull-up): HIGH = closed. Read at 1 kHz without debounce for the edge capture; the set stage cannot start a pulse before 3.2 ms of closure (T13). Must agree with REARM_BTN within 200 ms. (BUS_CLAMP_ACTIVE moved to IOX_D P3.)"}
       GPB7: {signal: SENTINEL,          note: "Wired to the WDG_STROBE net (PB11): firmware checks that this bit follows the strobe it generates, which proves the expander read path is live."}
   IOX_B:
     part: "TCA9535 (U44, TCA9535PWR)"
@@ -181,20 +181,20 @@ expanders:
       P7: {signal: V5_PGOOD}
 
   IOX_D:
-    part: "TCA9534 (U47, TCA9534PWR) - stage 3 S3-F1"
+    part: "TCA9534 (U47, TCA9534PWR) - stage 3 S3-F1, map of stage 4 G6"
     bus: I2C_SYS
     address_7bit: 0x22
-    unverified: "Register map recalled (input 0x00, configuration 0x03, 1 = input; power-on all inputs). Address 0x22 from the netlist (A0 = GND, A1 = 3V3, A2 = GND)."
-    note: "All pins inputs; the configuration register is never written (only read back: must be 0xFF). Read at 100 Hz; every read checks the fixed pattern P4..P7 = 1,0,0,0 ((in & 0xF0) == 0x10). Unknown -> no arming; while latched a sample up to 50 ms old is used (m7 rule)."
+    unverified: "Register map recalled (input 0x00, output 0x01, configuration 0x03, 1 = input; power-on all inputs, output register 0xFF). Address 0x22 from the netlist (A0 = GND, A1 = 3V3, A2 = GND)."
+    note: "Stage 4 G6: P4 and P7 are outputs (loop self-test FETs, 100 k gate pull-downs: off while the pins are inputs at power-up). Init: output register 0x01 = 0x00 first, then configuration 0x03 = 0x6F. Read at 100 Hz (1 kHz during the loop self-test); every 10th read checks 0x03 == 0x6F and 0x01; every read checks that input bits 4 and 7 equal the written test outputs (replaces the stage-3 fixed pattern). Unknown -> no arming; while latched a sample up to 50 ms old is used (m7 rule)."
     pins:
-      P0: {signal: LATCH_NC_RB,      note: "Tap on K1 pole A NC (K1_SEAL_A biased from 3V3): HIGH = K1 pole A released, valid with the chain dead. LOW with HW_LATCH_RB low > 30 ms -> K1_WELD"}
-      P1: {signal: LATCH_RUN_RB,     note: "Tap on K1_RUN (K1 pole B output, before U_HOLD): HIGH = CHAIN_END live AND K1 pole B closed. HIGH with HW_LATCH_RB low -> K1_WELD; HW_LATCH_RB high with this low -> RUN_SHORT"}
-      P2: {signal: HEAD_LOOP2_OK_RB, note: "Head-loop channel B (U46 TLV3201, drives U21B between CH_N6A and CH_N6): HIGH = loop closed (< 2.70 kOhm); detects open only"}
-      P3: {signal: REARM_SET_RB,     note: "REARM set contact (J_BTN 1-2, 5 V signal into the on-board edge-triggered set stage): HIGH = closed. Must agree with REARM_BTN (aux) within 200 ms"}
-      P4: {signal: IOXD_P4,          note: "tied to 3V3: reads 1 (pattern)"}
-      P5: {signal: IOXD_P5,          note: "tied to GND: reads 0 (pattern)"}
-      P6: {signal: IOXD_P6,          note: "tied to GND: reads 0"}
-      P7: {signal: IOXD_P7,          note: "tied to GND: reads 0"}
+      P0: {signal: LATCH_NC_RB,       dir: in,  note: "Tap on K1 pole A NC (K1_SEAL_A biased from 3V3): HIGH = K1 pole A released, valid with the chain dead. LOW with ARM_PERMIT low >= 30 ms and the latch down -> K1_WELD; with CHAIN_END possibly live -> PARTIAL set (ARM_PERMIT withdrawn 200 ms)"}
+      P1: {signal: LATCH_RUN_RB,      dir: in,  note: "Tap on K1_RUN (K1 pole B output, before U_HOLD): HIGH = CHAIN_END live AND K1 pole B closed. HW_LATCH_RB high with this low -> RUN_SHORT"}
+      P2: {signal: HEAD_LOOP2_OK_RB,  dir: in,  note: "Head-loop channel B (U46 TLV3201, drives U21B between CH_N6A and CH_N6): HIGH = loop closed (< 1.89 kOhm, stage 4 G7: R_LB2 30.9 k); detects open only"}
+      P3: {signal: BUS_CLAMP_ACTIVE,  dir: in,  note: "Stage 4 G4: brake chopper / bus clamp conducting = HIGH (diagnostic, 100 Hz; was IOX_A GPB6)"}
+      P4: {signal: LOOP_TEST_A,       dir: out, note: "Stage 4 G5: HIGH pulls LOOP_F to ground through Q_LTA: channel A (GPA5) and the analog copy read open. Only during the arming self-test; never together with P7; never while latched"}
+      P5: {signal: SET_READY_RB,      dir: in,  note: "Stage 4 G1: U33B comparator: HIGH = C_SET >= 10.8 V rising (falls below ~9.3 V): a press will set (coil <= +45 C). High with CHAIN_END dead > 1 s -> SET_STAGE_FAULT"}
+      P6: {signal: CHN6A_RB,          dir: in,  note: "Stage 4 G5: tap on CH_N6A (between U21 and U21B, 100 k/56 k/22 nF/BAT54): HIGH with channel A open > 10 ms -> LOOP_SW_SHORT (U21/Q22 shorted)"}
+      P7: {signal: LOOP_TEST_B,       dir: out, note: "Stage 4 G5: HIGH pulls LOOP_FB to ground through Q_LTB: channel B (P2) reads open, channel A stays closed. Only during the arming self-test"}
 
 # ----------------------------------------------------------------------------- I2C device map
 i2c:

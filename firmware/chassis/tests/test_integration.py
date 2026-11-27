@@ -83,8 +83,9 @@ class Base(unittest.TestCase):
                 self.fail("mode %s not reached, still %s (hw %s sw %s)" % (mode, st["mode"], st["hw_inhibit_reasons"], st["protective_stop_reasons"]))
             time.sleep(0.01)
 
-    def wait_rearm_ready(self, timeout=4.0):
-        """Stage 3: REARM sets K1 only from a charged C_SET (chain closed about 2 s); an operator waits for the
+    def wait_rearm_ready(self, timeout=9.0):
+        """Stage 3 / round 4 N1: REARM sets K1 only from a charged C_SET (conservative model: about 4-6 s of closed
+        chain at 25 C); an operator waits for the
         REARM lamp (rearm_ready). Returns False (no failure) if it does not come, so refusal tests still press."""
         end = time.monotonic() + timeout / self.speed + 1.0
         while time.monotonic() < end:
@@ -279,7 +280,10 @@ class TestMotion(Base):
         self.assertTrue(any(e["kind"] == "HW_LATCH" and e["detail"]["set"] is False and "BODY_BUMPER" in e["detail"]["reasons"] for e in ev))
         # released: stays inhibited; software re-arm cannot set the latch; the local button can
         self.env.set(bumper_l=False)
-        self.idle(2.3)  # rearm_ready after 2 s of CHAIN_END live (C_SET recharge, stage 3 F12)
+        self.idle(2.3)  # 2 s of CHAIN_END live is no longer enough (round 4 N1: T11 C_SET model)
+        st = self.ok("STATE")
+        self.assertEqual((st["mode"], st["rearm_ready"]), ("HW_INHIBIT", False))
+        self.assertTrue(self.wait_rearm_ready())
         st = self.ok("STATE")
         self.assertEqual((st["mode"], st["hw_inhibit_reasons"], st["rearm_ready"]), ("HW_INHIBIT", ["BODY_BUMPER"], True))
         status, b = self.link.rearm_sw()
@@ -290,6 +294,49 @@ class TestMotion(Base):
         x1 = self.env.latest()["x"]
         self.idle(0.8)
         self.assertAlmostEqual(self.env.latest()["x"], x1, delta=1e-4)  # nothing was queued
+
+    def test_s15_stimuli_refused_rearm_and_link_outage(self):
+        """What the host scenario s15 (no automatic resumption) drives on rr_chassis_sim: a body-bumper inhibit and
+        clear, a local REARM pressed too early (refused and reported, never silent), the realistic re-arm (wait for
+        rearm_ready, 250 ms press), and a timed link outage (usb_down_ms: bytes in both directions lost)."""
+        self.arm()
+        self.start_moving(0.10)
+        self.env.set(bumper_l=True)
+        self.wait_mode("HW_INHIBIT", 1.0)
+        self.idle(1.0)  # chain open 1 s: C_SET discharged (a short opening keeps the charge, stage 4 G8)
+        self.env.set(bumper_l=False)
+        self.idle(0.5)
+        seq0 = self.ok("STATE")["event_seq"]
+        self.env.set(press="REARM", press_ms=250)  # too early: SET_READY low, C_SET untouched
+        self.idle(0.6)
+        st = self.ok("STATE")
+        self.assertEqual((st["mode"], st["hw_latch"], st["rearm_ready"], st["rearm_refusal"]), ("HW_INHIBIT", False, False, "NOT_READY"))
+        ev = [e for e in self.events(seq0) if e["kind"] == "REARM_REFUSED"]
+        self.assertEqual([e["detail"] for e in ev], [{"why": "NOT_READY"}])
+        self.assertEqual(self.ok("DIAG")["rearm"]["why"], "NOT_READY")
+        self.assertTrue(self.wait_rearm_ready())
+        self.env.set(press="REARM", press_ms=250)
+        st = self.wait_mode("ARMED_IDLE")
+        self.assertIsNone(st["rearm_refusal"])
+        x1 = self.env.latest()["x"]
+        self.idle(0.5)
+        self.assertAlmostEqual(self.env.latest()["x"], x1, delta=1e-4)  # re-armed, but nothing moves without a new DRIVE
+        # link outage while moving: HOST_LINK_LOST / CMD_TIMEOUT stop; link back: still stopped until REARM_SW
+        self.start_moving(0.10)
+        self.env.set(usb_down_ms=1500)
+        time.sleep(1.8 / self.speed)
+        self.assertLess(abs(self.env.latest()["v"]), 1e-3)
+        self.idle(0.3)
+        st = self.ok("STATE")
+        self.assertEqual(st["mode"], "PROTECTIVE_STOP")
+        self.assertTrue({"HOST_LINK_LOST", "CMD_TIMEOUT"} & set(st["protective_stop_reasons"]), st["protective_stop_reasons"])
+        x2 = self.env.latest()["x"]
+        self.idle(0.5)
+        self.assertAlmostEqual(self.env.latest()["x"], x2, delta=1e-4)
+        self.ok("HELLO")
+        status, b = self.link.rearm_sw()
+        self.assertEqual(status, "OK", b)
+        self.wait_mode("ARMED_IDLE")
 
     def test_estop_and_charger_cover(self):
         self.arm()

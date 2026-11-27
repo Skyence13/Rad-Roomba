@@ -3,7 +3,7 @@
  "evidence_class": "simulated",
  "against": "Python protocol fakes (rr_core.fakes), virtual clock",
  "seed": 20,
- "sim_time_s": 432.36,
+ "sim_time_s": 403.02,
  "checks": [
   {
    "check": "local Pause cleared remotely by the controlling operator, resume accepted",
@@ -37,9 +37,9 @@
    "ok": true,
    "flags": [
     [
-     "HS-0002",
-     1.0010541829048492,
-     -0.1024131691708505
+     "HS-0001",
+     1.0004902127017907,
+     -0.10244759817320997
     ]
    ]
   },
@@ -60,7 +60,7 @@
      "value": 2000.0,
      "why": "restore after STEP_AND_COUNT",
      "ev": "config_set",
-     "t_us": 1432341000,
+     "t_us": 1403001000,
      "state": "SCAN"
     }
    ]
@@ -71,41 +71,41 @@
  "coverage": {
   "target_area_m2": 1.8,
   "areas_m2": {
-   "UNVISITED": 0.969025,
-   "ACCEPTABLE": 0.49365000000000003,
-   "INSUFFICIENT_SENSITIVITY": 0.33065,
-   "INVALID_DATA": 0.006675,
+   "UNVISITED": 1.032675,
+   "ACCEPTABLE": 0.46092500000000003,
+   "INSUFFICIENT_SENSITIVITY": 0.299775,
+   "INVALID_DATA": 0.006625000000000001,
    "BLOCKED": 0.0,
    "EXCLUDED": 0.0
   },
-  "valid_exposure_fraction": 0.45794444444444443,
-  "acceptable_fraction": 0.27425,
+  "valid_exposure_fraction": 0.4226111111111111,
+  "acceptable_fraction": 0.25606944444444446,
   "sub_cell_m": 0.005,
   "decision_cell_m": 0.1,
   "position_allowance_m": 0.01
  },
  "time_sync": {
   "limit_us": 10000.0,
-  "fits": 221,
+  "fits": 206,
   "max_gate_bound_us": 838.0520796923137,
-  "median_gate_bound_us": 796.7039660398889
+  "median_gate_bound_us": 796.7135658478928
  },
  "link_stats": {
-  "tx": 21762,
-  "rx": 21759,
+  "tx": 20280,
+  "rx": 20277,
   "bad_lines": 0,
   "stale": 0,
   "duplicates": 0,
-  "gates": 4304,
+  "gates": 4011,
   "gaps": 0,
   "retries": 2,
   "unassigned_frames": 0,
-  "time_exchanges": 221,
+  "time_exchanges": 206,
   "time_exchanges_rejected": 0
  },
  "localization_error_vs_truth_m": {
   "max_x_m": 0.0012887065303567868,
-  "max_y_m": 0.0011811601014893036
+  "max_y_m": 0.0011875595506071202
  },
  "plan": {
   "n_pairs": 2,
@@ -115,50 +115,50 @@
   "predicted_residual": {
    "left_wall_strip_m": 0.1487,
    "right_wall_strip_m": 0.1487,
-   "door_end_strip_m": 0.121,
-   "front_end_strip_m": 0.051,
+   "door_end_strip_m": 0.1413,
+   "front_end_strip_m": 0.0713,
    "end_zone_single_heading_m": {
-    "door": 0.3602,
-    "front": 0.3602
+    "door": 0.3399,
+    "front": 0.3399
    },
    "note": "wall strips are set by the in-place turn radius of the outline; see README coverage section"
   },
-  "estimated_time_s": 456.9
+  "estimated_time_s": 431.6
  },
  "flags": [
   {
-   "id": "HS-0002",
+   "id": "HS-0001",
    "kind": "INVESTIGATION_LEVEL",
    "source_lane": 2,
-   "x_m": 1.0010541829048492,
-   "y_m": -0.1024131691708505,
-   "D": 0.6515010689085905,
-   "u_total": 0.11844507973883102,
-   "D_star": 0.13842804297034061,
-   "D_hash": 0.32656853023437965,
+   "x_m": 1.0004902127017907,
+   "y_m": -0.10244759817320997,
+   "D": 0.756910181559797,
+   "u_total": 0.13335655068785326,
+   "D_star": 0.13763564767867315,
+   "D_hash": 0.3248972518300512,
    "location": {
-    "distance_from_door_m": 1.001,
+    "distance_from_door_m": 1.0,
     "wall": "right wall",
     "distance_from_wall_m": 0.398,
     "text": "1.00 m from the door threshold, 0.40 m from the right wall"
    }
   }
  ],
- "scan_detections": 3,
+ "scan_detections": 1,
  "observations": [],
  "decision_status": {
-  "cells_with_gates": 133,
-  "no_decision": 17,
+  "cells_with_gates": 119,
+  "no_decision": 15,
   "no_decision_text": [
    "no decision \u2014 null reference unavailable"
   ],
-  "no_decision_within_0.5m_of_an_end": 9,
-  "cells_within_0.5m_of_an_end": 69
+  "no_decision_within_0.5m_of_an_end": 7,
+  "cells_within_0.5m_of_an_end": 55
  },
- "stations": 57,
+ "stations": 53,
  "stations_invalid": 1,
  "station_preset_s": 3.0,
- "D_hash_median": 0.1889906934473713,
+ "D_hash_median": 0.18178565794457985,
  "note": "station pitch 0.10 m with a 100 mm aperture eroded by 10 mm per side leaves 20 mm uncredited stripes between stations; pitch <= L - 2e = 0.08 m closes them (CONTRACT_CHANGE_REQUESTS CR-05)",
- "unvisited_m2": 0.969025
+ "unvisited_m2": 1.032675
 }

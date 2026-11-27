@@ -29,6 +29,7 @@ Status of every line at the end of stage 1: **open** unless marked. "Evidence" n
 - [ ] REARM cannot set, hold or re-set the latch through any single W-018 short or a held/welded contact (§8 step 7 a-f); set margin at 10 V / 12 V pack and hot coil (T11).
 - [ ] K1 weld simulation on both poles (§8 step 9) and RUN_12V-to-supply simulation (§8 step 10).
 - [ ] Head loop: each channel alone opens the chain (§8 step 3); U30 pins 1/7/8, U46 pins, R74 and the loop resistors on the AOI / inspection list.
+- [ ] Stage 4: SET_READY threshold and T12 timing measured on the bench (§8 step 7); loop self-test outputs and the CH_N6A tap exercised (§8 step 3); D_RUN/R_RHD leakage check hot (§8 step 10 at +60 °C board); periodic service test S3-S8 and pre-use check P1 written into the operator/service procedures.
 - [ ] Firmware has the stage-3 readbacks (IOX_D: LATCH_NC_RB, LATCH_RUN_RB, HEAD_LOOP2_OK_RB, REARM_SET_RB) and the rules F1-F15 of `STAGE2_CHANGE_REQUESTS.md`.
 - [ ] No tap, lamp or test point bridges any chain element (review the routed board, not only the netlist).
 - [ ] Chain-to-supply clearances of `layout_guidance.md` §5: enforced by DRC since stage 3 (`RR-CHS-MAIN.kicad_dru` from `placement.chain_rules()`: 1.0 mm high-side chain to supply, 0.5 mm class, 2.0 mm loop to heater, 10 mm chain test-point spacing); re-run DRC on the routed board with zones filled.

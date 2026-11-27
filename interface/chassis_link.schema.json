@@ -1288,6 +1288,23 @@
     "rearm_ready": {
      "type": "boolean"
     },
+    "rearm_refusal": {
+     "description": "(+) round 4 / stage 4 G3: why the last REARM press made with the latch down did not set it (REARM_REFUSED event); null while latched or after a successful set",
+     "enum": [
+      "FAULT_OR_MODE",
+      "CHAIN_OPEN",
+      "REARM_HELD",
+      "PERMIT_WITHHELD",
+      "LOOP_TEST",
+      "SUPPLY_LOW",
+      "COIL_HOT",
+      "NOT_READY",
+      "TOO_SHORT",
+      "PARTIAL",
+      "SET_FAILED",
+      null
+     ]
+    },
     "hold": {
      "type": "array",
      "items": {
@@ -1648,6 +1665,53 @@
        "STOP_ESCALATED"
       ]
      }
+    },
+    "rearm": {
+     "type": "object",
+     "description": "(+) round 4 / stage 4: what a REARM press meets now, SET_READY_RB, the set-contact line, the loop self-test (G5)",
+     "properties": {
+      "why": {
+       "enum": [
+        "NONE",
+        "LATCHED",
+        "FAULT_OR_MODE",
+        "CHAIN_OPEN",
+        "REARM_HELD",
+        "PERMIT_WITHHELD",
+        "LOOP_TEST",
+        "SUPPLY_LOW",
+        "COIL_HOT",
+        "NOT_READY",
+        "TOO_SHORT",
+        "PARTIAL",
+        "SET_FAILED"
+       ]
+      },
+      "set_ready": {
+       "type": "boolean"
+      },
+      "set_contact": {
+       "type": "boolean"
+      },
+      "loop_test": {
+       "enum": [
+        "PENDING",
+        "RUNNING",
+        "PASSED"
+       ]
+      },
+      "loop_tests_passed": {
+       "type": "integer",
+       "minimum": 0
+      }
+     },
+     "required": [
+      "why",
+      "set_ready",
+      "set_contact",
+      "loop_test",
+      "loop_tests_passed"
+     ]
     }
    },
    "required": [
@@ -1701,7 +1765,8 @@
          "FAULT",
          "BRAKE_TEST",
          "LINK",
-         "TOF"
+         "TOF",
+         "REARM_REFUSED"
         ]
        },
        "detail": {

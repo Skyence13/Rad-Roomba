@@ -40,9 +40,9 @@ static void test_boot_and_hello(void)
     CHECK(!th_req(t, "SET_OP_MODE", "{\"op_mode\":\"GUIDED\"}") && th_status(t, "REJECTED") && th_is(t, "reason", "NO_SESSION"));
     th_run_silent(t, 300);
     CHECK(th_mode(t, "STANDBY") && !th_true(t, "rearm_ready") && th_true(t, "chain.ARM_PERMIT") && !th_true(t, "hw_latch"));
-    /* "ready" only once the conservative C_SET model says a press will set K1 (round 4 N1; T11): about 5 s of
-     * CHAIN_END live at 12.6 V and 25 C, never before 3 s */
-    th_run_silent(t, 3000);
+    /* "ready" only once the set stage's own comparator says C_SET >= 10.8 V (stage 4 G1, SET_READY_RB), after the loop
+     * self-test (G5): about 3 s of CHAIN_END live at 12.6 V */
+    th_run_silent(t, 1500);
     CHECK(th_mode(t, "STANDBY") && !th_true(t, "rearm_ready") && rrc_json_type(&t->doc, th_get(t, "rearm_refusal")) == RRC_JT_NULL);
     for (int k = 0; k < 80 && !t->sim.core.out.lamp_rearm && t->sim.core.chain.rearm_why != RRCH_RREF_NONE; k++) {
         th_run_silent(t, 100);
