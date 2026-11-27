@@ -29,8 +29,8 @@ net_pairs:
   - {a: BTN_3V3, b: REARM_BTN_RAW, via: REARM-DEV NO 2, why: "REARM_BTN contact"}
   - {a: PAUSE_3V3, b: PAUSE_BTN_RAW, via: PAUSE-DEV NO, why: "PAUSE contact (own supply through R_PAUSE 1 kohm, stage 2 S2-01f)"}
   - {a: HEAD_LOOP_OUT, b: LOOP_A, via: RAIL-F NC, why: "head rail switch front"}
-  - {a: LOOP_A, b: LOOP_B, via: RAIL-L NC, why: "head rail switch left"}
-  - {a: LOOP_B, b: LOOP_C, via: RAIL-R NC, why: "head rail switch right"}
+  - {a: LOOP_A, b: LOOP_B, via: RAIL-R NC, why: "head rail switch right (on J2003, OD-6)"}
+  - {a: LOOP_B, b: LOOP_C, via: RAIL-L NC, why: "head rail switch left (on J2004, OD-6)"}
   - {a: LOOP_C, b: HEAD_LOOP_RET, via: R2019 1.00 kohm on the head board, why: "loop resistor (on the board, not in the harness)"}
   - {a: CHASSIS, b: SHLD_J1, via: mated J1 shells / LAB braid, why: "shield: chassis bond at the receptacle, RC bond at the head"}
   - {a: CHASSIS, b: SHLD_J2, via: mated J2 shells / LAB braid, why: "shield: chassis bond at the receptacle, RC bond at the head"}
@@ -1837,8 +1837,8 @@ connectors:
       "5": {net: XSHUT, wires: [W-034.5]}
       "6": {net: GPIO1, wires: [W-034.6]}
   - id: TOF5.J1
-    location: 'RR-TOF carrier #5 (LOOK_FR), 18 x 14 mm, behind a 1 mm window'
-    function: ToF carrier LOOK_FR harness connector
+    location: 'RR-TOF carrier #5 (LOOK_RL), 18 x 14 mm, behind a 1 mm window'
+    function: ToF carrier LOOK_RL harness connector
     kind: board_header
     family: JST GH side entry (bottom side of the carrier)
     mpn: JST SM06B-GHS-TB(LF)(SN)
@@ -1862,8 +1862,8 @@ connectors:
       "5": {net: XSHUT, wires: [W-035.5]}
       "6": {net: GPIO1, wires: [W-035.6]}
   - id: TOF6.J1
-    location: 'RR-TOF carrier #6 (LOOK_RL), 18 x 14 mm, behind a 1 mm window'
-    function: ToF carrier LOOK_RL harness connector
+    location: 'RR-TOF carrier #6 (LOOK_RR), 18 x 14 mm, behind a 1 mm window'
+    function: ToF carrier LOOK_RR harness connector
     kind: board_header
     family: JST GH side entry (bottom side of the carrier)
     mpn: JST SM06B-GHS-TB(LF)(SN)
@@ -1887,8 +1887,8 @@ connectors:
       "5": {net: XSHUT, wires: [W-036.5]}
       "6": {net: GPIO1, wires: [W-036.6]}
   - id: TOF7.J1
-    location: 'RR-TOF carrier #7 (LOOK_RR), 18 x 14 mm, behind a 1 mm window'
-    function: ToF carrier LOOK_RR harness connector
+    location: 'RR-TOF carrier #7 (LOOK_FR), 18 x 14 mm, behind a 1 mm window'
+    function: ToF carrier LOOK_FR harness connector
     kind: board_header
     family: JST GH side entry (bottom side of the carrier)
     mpn: JST SM06B-GHS-TB(LF)(SN)
@@ -2949,11 +2949,12 @@ connectors:
     temp: -40..+85 C (VERIFIED)
     temp_status: verified
     keying: n/a
-    source: head circuit.py J2003
+    source: head circuit.py J2004; OD-6
+    notes: 'Wired to J2004 (OD-6: cables do not cross).'
     pin_geometry_status: UNVERIFIED (no manufacturer drawing in the sources; see pin_views.md, geometry family 'list')
     pins:
-      "COM": {net: LOOP_A, wires: [W-105.1]}
-      "NC": {net: LOOP_B, wires: [W-105.2]}
+      "COM": {net: LOOP_B, wires: [W-106.1]}
+      "NC": {net: LOOP_C, wires: [W-106.2]}
       "NO": {net: UNUSED, wires: []}
   - id: RAIL-R
     location: Head right rail (131.2, -168.5, 21.0)
@@ -2969,11 +2970,12 @@ connectors:
     temp: -40..+85 C (VERIFIED)
     temp_status: verified
     keying: n/a
-    source: head circuit.py J2004
+    source: head circuit.py J2003; OD-6
+    notes: 'Wired to J2003 (OD-6: cables do not cross).'
     pin_geometry_status: UNVERIFIED (no manufacturer drawing in the sources; see pin_views.md, geometry family 'list')
     pins:
-      "COM": {net: LOOP_B, wires: [W-106.1]}
-      "NC": {net: LOOP_C, wires: [W-106.2]}
+      "COM": {net: LOOP_A, wires: [W-105.1]}
+      "NC": {net: LOOP_B, wires: [W-105.2]}
       "NO": {net: UNUSED, wires: []}
   - id: LID-SW
     location: Head housing/lid (position not in sources)

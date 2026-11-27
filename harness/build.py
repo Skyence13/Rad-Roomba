@@ -38,8 +38,8 @@ NET_PAIRS = [
     dict(a="BTN_3V3", b="REARM_BTN_RAW", via="REARM-DEV NO 2", why="REARM_BTN contact"),
     dict(a="PAUSE_3V3", b="PAUSE_BTN_RAW", via="PAUSE-DEV NO", why="PAUSE contact (own supply through R_PAUSE 1 kohm, stage 2 S2-01f)"),
     dict(a="HEAD_LOOP_OUT", b="LOOP_A", via="RAIL-F NC", why="head rail switch front"),
-    dict(a="LOOP_A", b="LOOP_B", via="RAIL-L NC", why="head rail switch left"),
-    dict(a="LOOP_B", b="LOOP_C", via="RAIL-R NC", why="head rail switch right"),
+    dict(a="LOOP_A", b="LOOP_B", via="RAIL-R NC", why="head rail switch right (on J2003, OD-6)"),
+    dict(a="LOOP_B", b="LOOP_C", via="RAIL-L NC", why="head rail switch left (on J2004, OD-6)"),
     dict(a="LOOP_C", b="HEAD_LOOP_RET", via="R2019 1.00 kohm on the head board", why="loop resistor (on the board, not in the harness)"),
     dict(a="CHASSIS", b="SHLD_J1", via="mated J1 shells / LAB braid", why="shield: chassis bond at the receptacle, RC bond at the head"),
     dict(a="CHASSIS", b="SHLD_J2", via="mated J2 shells / LAB braid", why="shield: chassis bond at the receptacle, RC bond at the head"),
@@ -323,7 +323,7 @@ def write_cables_md(un):
     for f in flags:
         L.append("| %s | %d | %s |" % f)
     L += ["", "Where lengths come from (stage 2): the board connector positions are the PLACED positions in `electronics/chassis_main/out/pinmap.json` (rear-right cluster J_PAUSE, J_TOF3, J_TOF10, J_BUMP_R, J_TOF6; J_PWR at u 142.5, v 24.1; J_HEAD1 Mini-Fit Jr at u 26.1, v 82.5), the head connector positions are those of `electronics/head_acq/out/pinmap.json`, the sensor positions are those of `mechanical/common/frames.yaml` read at the time of the build. The stage-1 rear-left allocation of the right-hand cables (W-022 430 mm, W-033 400 mm, W-040 400 mm, W-019 290 mm) is gone.", "",
-          "Open length items: (a) **IB-34 mapping**: with J_TOF4 = LOOK_FL, J_TOF5 = LOOK_FR, J_TOF6 = LOOK_RL, J_TOF7 = LOOK_RR (lead decision) the connectors J_TOF6 (rear-right) and J_TOF7 (front-right edge) are on the wrong side for their tail sensors, so W-036 and W-037 exceed 300 mm. The mapping J_TOF5 = LOOK_RL, J_TOF6 = LOOK_RR, J_TOF7 = LOOK_FR (same four connectors, different names) would give W-035 270, W-036 290, W-037 150 mm: see README open decision OD-1. (b) W-004 is 30 mm over the 250 mm of the power budget (about 1 mohm: no consequence). (c) The eight SiPM coax pairs (W-112..W-119) are 45-50 mm against the 35 mm of `board_envelopes.yaml` because the stage-2 translated channel layout (S2-L3) moved the U.FL jacks (bias at du -15.47 / +6.78, anode at -10.38 / +11.87).", ""]
+          "Open length items: (a) **IB-34 mapping (lead decision, OD-1 closed)**: J_TOF4 = LOOK_FL, J_TOF5 = LOOK_RL, J_TOF6 = LOOK_RR, J_TOF7 = LOOK_FR: W-034 150, W-035 270, W-036 290, W-037 150 mm. (b) W-004 is 30 mm over the 250 mm of the power budget (about 1 mohm: no consequence). (c) The eight SiPM coax pairs (W-112..W-119) are 45-50 mm against the 35 mm of `board_envelopes.yaml` because the stage-2 translated channel layout (S2-L3) moved the U.FL jacks (bias at du -15.47 / +6.78, anode at -10.38 / +11.87).", ""]
     L += ["## 3. Per-assembly detail", ""]
     for c in CABLES:
         L.append("### %s  %s" % (c["id"], c["title"]))
@@ -354,10 +354,10 @@ def write_cables_md(un):
           "                                                                                +--> J2002.1 --[ RAIL-F  COM-NC ]--> J2002.2 = LOOP_A",
           "                                                                                                                         |",
           "                                                                                +--> J2003.1 <-----------------------LOOP_A",
-          "                                                                                     J2003.1 --[ RAIL-L  COM-NC ]--> J2003.2 = LOOP_B",
+          "                                                                                     J2003.1 --[ RAIL-R  COM-NC ]--> J2003.2 = LOOP_B",
           "                                                                                                                         |",
           "                                                                                     J2004.1 <-----------------------LOOP_B",
-          "                                                                                     J2004.1 --[ RAIL-R  COM-NC ]--> J2004.2 = LOOP_C",
+          "                                                                                     J2004.1 --[ RAIL-L  COM-NC ]--> J2004.2 = LOOP_C",
           "                                                                                                                         |",
           "                                                                                                               R2019 1.00 kohm 0.1 %",
           "                                                                                                                         |",

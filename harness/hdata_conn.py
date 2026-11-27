@@ -316,9 +316,9 @@ def others():
     o["RAIL-F"] = _c("RAIL-F", "Head front bumper rail (184.2, 0.0, 21.0)", "Head rail switch, front zone, NC in the interlock loop", "device", "Omron D2HW-C201M", "verified (parts.yaml)", "n/a", "TBD", "lead wires: TBD", "IP67 (VERIFIED)", "-40..+85 C (VERIFIED)", "verified", "n/a", "list",
                      {"COM": "HEAD_LOOP_OUT", "NC": "LOOP_A", "NO": "UNUSED"}, "NO lead must stay unconnected (CCR-HE-04).", "head circuit.py J2002; CCR-HE-04", d2)
     o["RAIL-L"] = _c("RAIL-L", "Head left rail (131.2, 168.5, 21.0)", "Head rail switch, left zone", "device", "Omron D2HW-C201M", "verified (parts.yaml)", "n/a", "TBD", "lead wires: TBD", "IP67 (VERIFIED)", "-40..+85 C (VERIFIED)", "verified", "n/a", "list",
-                     {"COM": "LOOP_A", "NC": "LOOP_B", "NO": "UNUSED"}, "", "head circuit.py J2003", d2)
+                     {"COM": "LOOP_B", "NC": "LOOP_C", "NO": "UNUSED"}, "Wired to J2004 (OD-6: cables do not cross).", "head circuit.py J2004; OD-6", d2)
     o["RAIL-R"] = _c("RAIL-R", "Head right rail (131.2, -168.5, 21.0)", "Head rail switch, right zone", "device", "Omron D2HW-C201M", "verified (parts.yaml)", "n/a", "TBD", "lead wires: TBD", "IP67 (VERIFIED)", "-40..+85 C (VERIFIED)", "verified", "n/a", "list",
-                     {"COM": "LOOP_B", "NC": "LOOP_C", "NO": "UNUSED"}, "", "head circuit.py J2004", d2)
+                     {"COM": "LOOP_A", "NC": "LOOP_B", "NO": "UNUSED"}, "Wired to J2003 (OD-6: cables do not cross).", "head circuit.py J2003; OD-6", d2)
     o["LID-SW"] = _c("LID-SW", "Head housing/lid (position not in sources)", "Light-leak lid interlock switch, closed = light-tight", "device", TBD, "TBD", "n/a", "TBD", TBD, TBD, TBD, "TBD", "n/a", "list", {"a": "LID_IN", "b": "GND"},
                      "Switch type and location are not in the sources. Bench bypass is the solder jumper JP2201 (close deliberately, record in the build sheet).", "head circuit.py J2201", "")
     o["HEAD-HEATER"] = _c("HEAD-HEATER", "Under the spreader plate (z 28.5..30.0), tail up the chimney at y = +87.5", "Head heater film 4.8 ohm element (12 V, 30 W peak), polyimide 0.3 mm, zoned per lane", "device", TBD + " (polyimide heater film, 4.8 ohm)", "TBD", "n/a", "TBD", TBD, TBD, TBD, "TBD", "n/a", "list",

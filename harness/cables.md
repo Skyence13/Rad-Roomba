@@ -77,9 +77,9 @@ At **both ends** of every cable, within 30 mm of the connector: a sleeve with `W
 | W-032 | ToF carrier CLIFF_RL (RR-TOF #2): main board J_TOF2 to the carrier J1 | 6 | 290 | 300 |  |
 | W-033 | ToF carrier CLIFF_RR (RR-TOF #3): main board J_TOF3 to the carrier J1 | 6 | 290 | 300 |  |
 | W-034 | ToF carrier LOOK_FL (RR-TOF #4): main board J_TOF4 to the carrier J1 | 6 | 150 | 300 |  |
-| W-035 | ToF carrier LOOK_FR (RR-TOF #5): main board J_TOF5 to the carrier J1 | 6 | 280 | 300 |  |
-| W-036 | ToF carrier LOOK_RL (RR-TOF #6): main board J_TOF6 to the carrier J1 | 6 | 360 | 300 | ToF cable exceeds 300 mm |
-| W-037 | ToF carrier LOOK_RR (RR-TOF #7): main board J_TOF7 to the carrier J1 | 6 | 350 | 300 | ToF cable exceeds 300 mm |
+| W-035 | ToF carrier LOOK_RL (RR-TOF #5): main board J_TOF5 to the carrier J1 | 6 | 270 | 300 |  |
+| W-036 | ToF carrier LOOK_RR (RR-TOF #6): main board J_TOF6 to the carrier J1 | 6 | 290 | 300 |  |
+| W-037 | ToF carrier LOOK_FR (RR-TOF #7): main board J_TOF7 to the carrier J1 | 6 | 150 | 300 |  |
 | W-038 | ToF carrier REAR_L (RR-TOF #8): main board J_TOF8 to the carrier J1 | 6 | 270 | 300 |  |
 | W-039 | ToF carrier REAR_C (RR-TOF #9): main board J_TOF9 to the carrier J1 | 6 | 290 | 300 |  |
 | W-040 | ToF carrier REAR_R (RR-TOF #10): main board J_TOF10 to the carrier J1 | 6 | 290 | 300 |  |
@@ -89,8 +89,8 @@ At **both ends** of every cable, within 30 mm of the connector: a sleeve with `W
 | W-102 | Head J2 captive pigtail: head board J2501 to the J2 plug (plug link pin 7 to pin 4) | 9 | 300 | - |  |
 | W-103 | Head heater film, bimetal cut-out and spreader NTC: head board J2601 to the heater assembly | 7 | 100 | 350 |  |
 | W-104 | Head rail switch front (series element of the interlock loop): head board J2002 to the switch | 2 | 90 | - |  |
-| W-105 | Head rail switch left (series element of the interlock loop): head board J2003 to the switch | 2 | 290 | - |  |
-| W-106 | Head rail switch right (series element of the interlock loop): head board J2004 to the switch | 2 | 290 | - |  |
+| W-105 | Head rail switch right (series element of the interlock loop): head board J2003 to the switch | 2 | 270 | - |  |
+| W-106 | Head rail switch left (series element of the interlock loop): head board J2004 to the switch | 2 | 280 | - |  |
 | W-107 | Head lid (light-leak) interlock switch: head board J2201 to the lid switch | 2 | 200 | - |  |
 | W-108 | Head lane 0 auxiliary pigtail: head board J1001 to the SiPM carrier aux | 6 | 35 | - |  |
 | W-109 | Head lane 1 auxiliary pigtail: head board J1101 to the SiPM carrier aux | 6 | 35 | - |  |
@@ -114,8 +114,6 @@ Totals: **58 cable assemblies, 284 wires** (179 robot, 88 head, 17 LAB extension
 | Cable | Length (mm) | Why flagged |
 |---|---|---|
 | W-004 | 280 | exceeds the length assumed in power_budget.md / mechanical (250 mm) |
-| W-036 | 360 | ToF cable exceeds the 300 mm I2C design limit (modules/tof_vl53l4ed.md) |
-| W-037 | 350 | ToF cable exceeds the 300 mm I2C design limit (modules/tof_vl53l4ed.md) |
 | W-112 | 50 | exceeds the length assumed in power_budget.md / mechanical (35 mm) |
 | W-113 | 50 | exceeds the length assumed in power_budget.md / mechanical (35 mm) |
 | W-114 | 50 | exceeds the length assumed in power_budget.md / mechanical (35 mm) |
@@ -127,7 +125,7 @@ Totals: **58 cable assemblies, 284 wires** (179 robot, 88 head, 17 LAB extension
 
 Where lengths come from (stage 2): the board connector positions are the PLACED positions in `electronics/chassis_main/out/pinmap.json` (rear-right cluster J_PAUSE, J_TOF3, J_TOF10, J_BUMP_R, J_TOF6; J_PWR at u 142.5, v 24.1; J_HEAD1 Mini-Fit Jr at u 26.1, v 82.5), the head connector positions are those of `electronics/head_acq/out/pinmap.json`, the sensor positions are those of `mechanical/common/frames.yaml` read at the time of the build. The stage-1 rear-left allocation of the right-hand cables (W-022 430 mm, W-033 400 mm, W-040 400 mm, W-019 290 mm) is gone.
 
-Open length items: (a) **IB-34 mapping**: with J_TOF4 = LOOK_FL, J_TOF5 = LOOK_FR, J_TOF6 = LOOK_RL, J_TOF7 = LOOK_RR (lead decision) the connectors J_TOF6 (rear-right) and J_TOF7 (front-right edge) are on the wrong side for their tail sensors, so W-036 and W-037 exceed 300 mm. The mapping J_TOF5 = LOOK_RL, J_TOF6 = LOOK_RR, J_TOF7 = LOOK_FR (same four connectors, different names) would give W-035 270, W-036 290, W-037 150 mm: see README open decision OD-1. (b) W-004 is 30 mm over the 250 mm of the power budget (about 1 mohm: no consequence). (c) The eight SiPM coax pairs (W-112..W-119) are 45-50 mm against the 35 mm of `board_envelopes.yaml` because the stage-2 translated channel layout (S2-L3) moved the U.FL jacks (bias at du -15.47 / +6.78, anode at -10.38 / +11.87).
+Open length items: (a) **IB-34 mapping (lead decision, OD-1 closed)**: J_TOF4 = LOOK_FL, J_TOF5 = LOOK_RL, J_TOF6 = LOOK_RR, J_TOF7 = LOOK_FR: W-034 150, W-035 270, W-036 290, W-037 150 mm. (b) W-004 is 30 mm over the 250 mm of the power budget (about 1 mohm: no consequence). (c) The eight SiPM coax pairs (W-112..W-119) are 45-50 mm against the 35 mm of `board_envelopes.yaml` because the stage-2 translated channel layout (S2-L3) moved the U.FL jacks (bias at du -15.47 / +6.78, anode at -10.38 / +11.87).
 
 ## 3. Per-assembly detail
 
@@ -644,62 +642,62 @@ Open length items: (a) **IB-34 mapping**: with J_TOF4 = LOOK_FL, J_TOF5 = LOOK_F
 | W-034.5 | CHS.J_TOF4.5 | TOF4.J1.5 | TOF4_XSHUT_C -> XSHUT | 28 | VT | FEP | P3 | 150 |
 | W-034.6 | CHS.J_TOF4.6 | TOF4.J1.6 | TOF4_GPIO1 -> GPIO1 | 28 | GY | FEP | P3 | 150 |
 
-### W-035  ToF carrier LOOK_FR (RR-TOF #5): main board J_TOF5 to the carrier J1
+### W-035  ToF carrier LOOK_RL (RR-TOF #5): main board J_TOF5 to the carrier J1
 
-* **Length:** 280 mm (routed path 210 mm + 2 x 15 mm termination/strain relief + 30 mm service loop = 270 mm, rounded up to 280 mm). *Estimated from layout, confirm on first build.*
+* **Length:** 270 mm (routed path 208 mm + 2 x 15 mm termination/strain relief + 30 mm service loop = 268 mm, rounded up to 270 mm). *Estimated from layout, confirm on first build.*
 * **Construction:** 6 x AWG 28 in 3 twisted pairs (3V3/GND, SDA/SCL, XSHUT/GPIO1), overall foil shield with drain, thin silicone/PUR jacket (type TBD). The I2C bus is specified for <= 300 mm of cable (about 30 pF, modules sheet).
 * **Shield / bonding:** Foil + drain: drain crimped in J_TOF5 pin 2 (GND) at the board end ONLY; carrier end open (cut back, insulated). Two wires in one 26-30 AWG crimp: allowed only if the contact datasheet permits (TBD).
 * **Protection upstream:** V3V3_CHS / V5_AUX bucks (LMR51610, 1 A device, peak limit ~1.4 A [U]); no per-branch fuse
 * **Strain relief:** Adhesive-lined heat-shrink boot over the housing and the first 15 mm of jacket; P-clip or saddle tie within 60 mm; no tension on crimps; cable leaves sideways below 12 mm on the board; carrier end: cable clamp to the window bracket within 30 mm
 * **Labels:** both ends, `W-035` + connector ID + pin-1 mark; per-conductor `W-xxx.n` (see `cables.csv`).
-* **Notes:** ToF LOOK_FR (firmware id 5). IB-34 (lead decision): the four oblique look-ahead sensors are two forward-looking (grip cheeks: tof_look_fl, tof_look_fr) and two rearward-looking (tail: tof_look_rl, tof_look_rr) as placed in frames.yaml; same connectors J_TOF4..J_TOF7, names LOOK_FL / LOOK_FR / LOOK_RL / LOOK_RR (the old names LOOK_LO / LI / RI / RO are retired). The contract and firmware pinmap still carry the old names until the firmware owner renames them. Sensor position from frames.yaml tof_look_fwd_right. CONTRADICTION: layout_guidance.md calls these '300 mm unshielded sensor cables' while the harness specification here calls for shields; with a single drain at the board end the shield costs nothing electrically.
+* **Notes:** ToF LOOK_RL (firmware id 5). IB-34 (lead decision): the four oblique look-ahead sensors are two forward-looking (grip cheeks: tof_look_fl, tof_look_fr) and two rearward-looking (tail: tof_look_rl, tof_look_rr) as placed in frames.yaml; same connectors J_TOF4..J_TOF7, names LOOK_FL / LOOK_FR / LOOK_RL / LOOK_RR (the old names LOOK_LO / LI / RI / RO are retired). The contract and firmware pinmap still carry the old names until the firmware owner renames them. Sensor position from frames.yaml tof_look_rev_left. CONTRADICTION: layout_guidance.md calls these '300 mm unshielded sensor cables' while the harness specification here calls for shields; with a single drain at the board end the shield costs nothing electrically.
 
 | Wire | From (conn.pin) | To (conn.pin) | Net (from -> to) | AWG | Colour | Insulation | Pair | Length |
 |---|---|---|---|---|---|---|---|---|
-| W-035.1 | CHS.J_TOF5.1 | TOF5.J1.1 | TOF5_3V3 -> +3V3 | 28 | RD | FEP | P1 | 280 |
-| W-035.2 | CHS.J_TOF5.2 | TOF5.J1.2 | GND | 28 | BK | FEP | P1 | 280 |
-| W-035.3 | CHS.J_TOF5.3 | TOF5.J1.3 | TOF5_SDA_C -> SDA | 28 | GN | FEP | P2 | 280 |
-| W-035.4 | CHS.J_TOF5.4 | TOF5.J1.4 | TOF5_SCL_C -> SCL | 28 | WH | FEP | P2 | 280 |
-| W-035.5 | CHS.J_TOF5.5 | TOF5.J1.5 | TOF5_XSHUT_C -> XSHUT | 28 | VT | FEP | P3 | 280 |
-| W-035.6 | CHS.J_TOF5.6 | TOF5.J1.6 | TOF5_GPIO1 -> GPIO1 | 28 | GY | FEP | P3 | 280 |
+| W-035.1 | CHS.J_TOF5.1 | TOF5.J1.1 | TOF5_3V3 -> +3V3 | 28 | RD | FEP | P1 | 270 |
+| W-035.2 | CHS.J_TOF5.2 | TOF5.J1.2 | GND | 28 | BK | FEP | P1 | 270 |
+| W-035.3 | CHS.J_TOF5.3 | TOF5.J1.3 | TOF5_SDA_C -> SDA | 28 | GN | FEP | P2 | 270 |
+| W-035.4 | CHS.J_TOF5.4 | TOF5.J1.4 | TOF5_SCL_C -> SCL | 28 | WH | FEP | P2 | 270 |
+| W-035.5 | CHS.J_TOF5.5 | TOF5.J1.5 | TOF5_XSHUT_C -> XSHUT | 28 | VT | FEP | P3 | 270 |
+| W-035.6 | CHS.J_TOF5.6 | TOF5.J1.6 | TOF5_GPIO1 -> GPIO1 | 28 | GY | FEP | P3 | 270 |
 
-### W-036  ToF carrier LOOK_RL (RR-TOF #6): main board J_TOF6 to the carrier J1
+### W-036  ToF carrier LOOK_RR (RR-TOF #6): main board J_TOF6 to the carrier J1
 
-* **Length:** 360 mm (routed path 296 mm + 2 x 15 mm termination/strain relief + 30 mm service loop = 356 mm, rounded up to 360 mm). *Estimated from layout, confirm on first build.*
+* **Length:** 290 mm (routed path 227 mm + 2 x 15 mm termination/strain relief + 30 mm service loop = 287 mm, rounded up to 290 mm). *Estimated from layout, confirm on first build.*
 * **Construction:** 6 x AWG 28 in 3 twisted pairs (3V3/GND, SDA/SCL, XSHUT/GPIO1), overall foil shield with drain, thin silicone/PUR jacket (type TBD). The I2C bus is specified for <= 300 mm of cable (about 30 pF, modules sheet).
 * **Shield / bonding:** Foil + drain: drain crimped in J_TOF6 pin 2 (GND) at the board end ONLY; carrier end open (cut back, insulated). Two wires in one 26-30 AWG crimp: allowed only if the contact datasheet permits (TBD).
 * **Protection upstream:** V3V3_CHS / V5_AUX bucks (LMR51610, 1 A device, peak limit ~1.4 A [U]); no per-branch fuse
 * **Strain relief:** Adhesive-lined heat-shrink boot over the housing and the first 15 mm of jacket; P-clip or saddle tie within 60 mm; no tension on crimps; cable leaves sideways below 12 mm on the board; carrier end: cable clamp to the window bracket within 30 mm
 * **Labels:** both ends, `W-036` + connector ID + pin-1 mark; per-conductor `W-xxx.n` (see `cables.csv`).
-* **Notes:** ToF LOOK_RL (firmware id 6). IB-34 (lead decision): the four oblique look-ahead sensors are two forward-looking (grip cheeks: tof_look_fl, tof_look_fr) and two rearward-looking (tail: tof_look_rl, tof_look_rr) as placed in frames.yaml; same connectors J_TOF4..J_TOF7, names LOOK_FL / LOOK_FR / LOOK_RL / LOOK_RR (the old names LOOK_LO / LI / RI / RO are retired). The contract and firmware pinmap still carry the old names until the firmware owner renames them. Sensor position from frames.yaml tof_look_rev_left. CONTRADICTION: layout_guidance.md calls these '300 mm unshielded sensor cables' while the harness specification here calls for shields; with a single drain at the board end the shield costs nothing electrically.
+* **Notes:** ToF LOOK_RR (firmware id 6). IB-34 (lead decision): the four oblique look-ahead sensors are two forward-looking (grip cheeks: tof_look_fl, tof_look_fr) and two rearward-looking (tail: tof_look_rl, tof_look_rr) as placed in frames.yaml; same connectors J_TOF4..J_TOF7, names LOOK_FL / LOOK_FR / LOOK_RL / LOOK_RR (the old names LOOK_LO / LI / RI / RO are retired). The contract and firmware pinmap still carry the old names until the firmware owner renames them. Sensor position from frames.yaml tof_look_rev_right. CONTRADICTION: layout_guidance.md calls these '300 mm unshielded sensor cables' while the harness specification here calls for shields; with a single drain at the board end the shield costs nothing electrically.
 
 | Wire | From (conn.pin) | To (conn.pin) | Net (from -> to) | AWG | Colour | Insulation | Pair | Length |
 |---|---|---|---|---|---|---|---|---|
-| W-036.1 | CHS.J_TOF6.1 | TOF6.J1.1 | TOF6_3V3 -> +3V3 | 28 | RD | FEP | P1 | 360 |
-| W-036.2 | CHS.J_TOF6.2 | TOF6.J1.2 | GND | 28 | BK | FEP | P1 | 360 |
-| W-036.3 | CHS.J_TOF6.3 | TOF6.J1.3 | TOF6_SDA_C -> SDA | 28 | GN | FEP | P2 | 360 |
-| W-036.4 | CHS.J_TOF6.4 | TOF6.J1.4 | TOF6_SCL_C -> SCL | 28 | WH | FEP | P2 | 360 |
-| W-036.5 | CHS.J_TOF6.5 | TOF6.J1.5 | TOF6_XSHUT_C -> XSHUT | 28 | VT | FEP | P3 | 360 |
-| W-036.6 | CHS.J_TOF6.6 | TOF6.J1.6 | TOF6_GPIO1 -> GPIO1 | 28 | GY | FEP | P3 | 360 |
+| W-036.1 | CHS.J_TOF6.1 | TOF6.J1.1 | TOF6_3V3 -> +3V3 | 28 | RD | FEP | P1 | 290 |
+| W-036.2 | CHS.J_TOF6.2 | TOF6.J1.2 | GND | 28 | BK | FEP | P1 | 290 |
+| W-036.3 | CHS.J_TOF6.3 | TOF6.J1.3 | TOF6_SDA_C -> SDA | 28 | GN | FEP | P2 | 290 |
+| W-036.4 | CHS.J_TOF6.4 | TOF6.J1.4 | TOF6_SCL_C -> SCL | 28 | WH | FEP | P2 | 290 |
+| W-036.5 | CHS.J_TOF6.5 | TOF6.J1.5 | TOF6_XSHUT_C -> XSHUT | 28 | VT | FEP | P3 | 290 |
+| W-036.6 | CHS.J_TOF6.6 | TOF6.J1.6 | TOF6_GPIO1 -> GPIO1 | 28 | GY | FEP | P3 | 290 |
 
-### W-037  ToF carrier LOOK_RR (RR-TOF #7): main board J_TOF7 to the carrier J1
+### W-037  ToF carrier LOOK_FR (RR-TOF #7): main board J_TOF7 to the carrier J1
 
-* **Length:** 350 mm (routed path 284 mm + 2 x 15 mm termination/strain relief + 30 mm service loop = 344 mm, rounded up to 350 mm). *Estimated from layout, confirm on first build.*
+* **Length:** 150 mm (routed path 82 mm + 2 x 15 mm termination/strain relief + 30 mm service loop = 142 mm, rounded up to 150 mm). *Estimated from layout, confirm on first build.*
 * **Construction:** 6 x AWG 28 in 3 twisted pairs (3V3/GND, SDA/SCL, XSHUT/GPIO1), overall foil shield with drain, thin silicone/PUR jacket (type TBD). The I2C bus is specified for <= 300 mm of cable (about 30 pF, modules sheet).
 * **Shield / bonding:** Foil + drain: drain crimped in J_TOF7 pin 2 (GND) at the board end ONLY; carrier end open (cut back, insulated). Two wires in one 26-30 AWG crimp: allowed only if the contact datasheet permits (TBD).
 * **Protection upstream:** V3V3_CHS / V5_AUX bucks (LMR51610, 1 A device, peak limit ~1.4 A [U]); no per-branch fuse
 * **Strain relief:** Adhesive-lined heat-shrink boot over the housing and the first 15 mm of jacket; P-clip or saddle tie within 60 mm; no tension on crimps; cable leaves sideways below 12 mm on the board; carrier end: cable clamp to the window bracket within 30 mm
 * **Labels:** both ends, `W-037` + connector ID + pin-1 mark; per-conductor `W-xxx.n` (see `cables.csv`).
-* **Notes:** ToF LOOK_RR (firmware id 7). IB-34 (lead decision): the four oblique look-ahead sensors are two forward-looking (grip cheeks: tof_look_fl, tof_look_fr) and two rearward-looking (tail: tof_look_rl, tof_look_rr) as placed in frames.yaml; same connectors J_TOF4..J_TOF7, names LOOK_FL / LOOK_FR / LOOK_RL / LOOK_RR (the old names LOOK_LO / LI / RI / RO are retired). The contract and firmware pinmap still carry the old names until the firmware owner renames them. Sensor position from frames.yaml tof_look_rev_right. CONTRADICTION: layout_guidance.md calls these '300 mm unshielded sensor cables' while the harness specification here calls for shields; with a single drain at the board end the shield costs nothing electrically.
+* **Notes:** ToF LOOK_FR (firmware id 7). IB-34 (lead decision): the four oblique look-ahead sensors are two forward-looking (grip cheeks: tof_look_fl, tof_look_fr) and two rearward-looking (tail: tof_look_rl, tof_look_rr) as placed in frames.yaml; same connectors J_TOF4..J_TOF7, names LOOK_FL / LOOK_FR / LOOK_RL / LOOK_RR (the old names LOOK_LO / LI / RI / RO are retired). The contract and firmware pinmap still carry the old names until the firmware owner renames them. Sensor position from frames.yaml tof_look_fwd_right. CONTRADICTION: layout_guidance.md calls these '300 mm unshielded sensor cables' while the harness specification here calls for shields; with a single drain at the board end the shield costs nothing electrically.
 
 | Wire | From (conn.pin) | To (conn.pin) | Net (from -> to) | AWG | Colour | Insulation | Pair | Length |
 |---|---|---|---|---|---|---|---|---|
-| W-037.1 | CHS.J_TOF7.1 | TOF7.J1.1 | TOF7_3V3 -> +3V3 | 28 | RD | FEP | P1 | 350 |
-| W-037.2 | CHS.J_TOF7.2 | TOF7.J1.2 | GND | 28 | BK | FEP | P1 | 350 |
-| W-037.3 | CHS.J_TOF7.3 | TOF7.J1.3 | TOF7_SDA_C -> SDA | 28 | GN | FEP | P2 | 350 |
-| W-037.4 | CHS.J_TOF7.4 | TOF7.J1.4 | TOF7_SCL_C -> SCL | 28 | WH | FEP | P2 | 350 |
-| W-037.5 | CHS.J_TOF7.5 | TOF7.J1.5 | TOF7_XSHUT_C -> XSHUT | 28 | VT | FEP | P3 | 350 |
-| W-037.6 | CHS.J_TOF7.6 | TOF7.J1.6 | TOF7_GPIO1 -> GPIO1 | 28 | GY | FEP | P3 | 350 |
+| W-037.1 | CHS.J_TOF7.1 | TOF7.J1.1 | TOF7_3V3 -> +3V3 | 28 | RD | FEP | P1 | 150 |
+| W-037.2 | CHS.J_TOF7.2 | TOF7.J1.2 | GND | 28 | BK | FEP | P1 | 150 |
+| W-037.3 | CHS.J_TOF7.3 | TOF7.J1.3 | TOF7_SDA_C -> SDA | 28 | GN | FEP | P2 | 150 |
+| W-037.4 | CHS.J_TOF7.4 | TOF7.J1.4 | TOF7_SCL_C -> SCL | 28 | WH | FEP | P2 | 150 |
+| W-037.5 | CHS.J_TOF7.5 | TOF7.J1.5 | TOF7_XSHUT_C -> XSHUT | 28 | VT | FEP | P3 | 150 |
+| W-037.6 | CHS.J_TOF7.6 | TOF7.J1.6 | TOF7_GPIO1 -> GPIO1 | 28 | GY | FEP | P3 | 150 |
 
 ### W-038  ToF carrier REAR_L (RR-TOF #8): main board J_TOF8 to the carrier J1
 
@@ -862,42 +860,42 @@ Open length items: (a) **IB-34 mapping**: with J_TOF4 = LOOK_FL, J_TOF5 = LOOK_F
 * **Protection upstream:** No fuse: signal conductors, series-limited (loop through 1.00 kohm; PRES_ID through the 4.70 kohm pull-up) [circuit.py]
 * **Strain relief:** Clip in the front wall channel every 50 mm; switch end clipped within 20 mm
 * **Labels:** both ends, `W-104` + connector ID + pin-1 mark; per-conductor `W-xxx.n` (see `cables.csv`).
-* **Notes:** Loop is a potential-free series chain; see the loop diagram in cables.md. Stage 2: the connector order on the board (J2004 at u 144.6, J2002 at u 154.5, J2003 at u 171.5) puts the RIGHT-rail connector on the left of the centre line and the LEFT-rail connector on the right, so cables W-105 and W-106 cross once in the front channel (about 30 mm of extra length); the zone read-back is not available in rev A, so swapping the left and right switch cables between J2003 and J2004 would cost nothing functionally (it would only exchange the idle BUMP_ZONE_L/R labels) and avoids the crossing: decision for head electronics, not taken here.
+* **Notes:** Loop is a potential-free series chain; see the loop diagram in cables.md. OD-6 (lead): the RIGHT rail switch is wired to J2003 and the LEFT rail switch to J2004, so W-105 and W-106 do not cross in the front channel (J2004 is at u 144.6 = left of centre, J2003 at u 171.5 = right of centre). The loop order of the series chain is electrically free; the only consequence is that the idle BUMP_ZONE_L/R read-back labels of J2003/J2004 are swapped relative to the physical rails: if rev B enables the zone read-back, either swap the cables back or swap the firmware labels. No board change.
 
 | Wire | From (conn.pin) | To (conn.pin) | Net (from -> to) | AWG | Colour | Insulation | Pair | Length |
 |---|---|---|---|---|---|---|---|---|
 | W-104.1 | RAIL-F.COM | HEAD.J2002.1 | HEAD_LOOP_OUT | 26 | GN | FEP | P1 | 90 |
 | W-104.2 | RAIL-F.NC | HEAD.J2002.2 | LOOP_A | 26 | GY | FEP | P1 | 90 |
 
-### W-105  Head rail switch left (series element of the interlock loop): head board J2003 to the switch
+### W-105  Head rail switch right (series element of the interlock loop): head board J2003 to the switch
 
-* **Length:** 290 mm (routed path 221 mm + 2 x 15 mm termination/strain relief + 30 mm service loop = 281 mm, rounded up to 290 mm). *Estimated from layout, confirm on first build.*
+* **Length:** 270 mm (routed path 210 mm + 2 x 15 mm termination/strain relief + 30 mm service loop = 270 mm, rounded up to 270 mm). *Estimated from layout, confirm on first build.*
 * **Construction:** 2 x AWG 26 twisted pair in the front wall channel (JST GH contacts take AWG 26-30). Connector pins 3 and 4 (AUX_N/AUX_GND zone read-back) are NOT wired: the D2HW is single-pole and its NO throw is not potential-free from the loop (CCR-HE-04). The NO lead is cut back and insulated.
 * **Shield / bonding:** none (inside the shielded head)
 * **Protection upstream:** No fuse: signal conductors, series-limited (loop through 1.00 kohm; PRES_ID through the 4.70 kohm pull-up) [circuit.py]
 * **Strain relief:** Clip in the front wall channel every 50 mm; switch end clipped within 20 mm
 * **Labels:** both ends, `W-105` + connector ID + pin-1 mark; per-conductor `W-xxx.n` (see `cables.csv`).
-* **Notes:** Loop is a potential-free series chain; see the loop diagram in cables.md. Stage 2: the connector order on the board (J2004 at u 144.6, J2002 at u 154.5, J2003 at u 171.5) puts the RIGHT-rail connector on the left of the centre line and the LEFT-rail connector on the right, so cables W-105 and W-106 cross once in the front channel (about 30 mm of extra length); the zone read-back is not available in rev A, so swapping the left and right switch cables between J2003 and J2004 would cost nothing functionally (it would only exchange the idle BUMP_ZONE_L/R labels) and avoids the crossing: decision for head electronics, not taken here.
+* **Notes:** Loop is a potential-free series chain; see the loop diagram in cables.md. OD-6 (lead): the RIGHT rail switch is wired to J2003 and the LEFT rail switch to J2004, so W-105 and W-106 do not cross in the front channel (J2004 is at u 144.6 = left of centre, J2003 at u 171.5 = right of centre). The loop order of the series chain is electrically free; the only consequence is that the idle BUMP_ZONE_L/R read-back labels of J2003/J2004 are swapped relative to the physical rails: if rev B enables the zone read-back, either swap the cables back or swap the firmware labels. No board change.
 
 | Wire | From (conn.pin) | To (conn.pin) | Net (from -> to) | AWG | Colour | Insulation | Pair | Length |
 |---|---|---|---|---|---|---|---|---|
-| W-105.1 | RAIL-L.COM | HEAD.J2003.1 | LOOP_A | 26 | GN | FEP | P1 | 290 |
-| W-105.2 | RAIL-L.NC | HEAD.J2003.2 | LOOP_B | 26 | GY | FEP | P1 | 290 |
+| W-105.1 | RAIL-R.COM | HEAD.J2003.1 | LOOP_A | 26 | GN | FEP | P1 | 270 |
+| W-105.2 | RAIL-R.NC | HEAD.J2003.2 | LOOP_B | 26 | GY | FEP | P1 | 270 |
 
-### W-106  Head rail switch right (series element of the interlock loop): head board J2004 to the switch
+### W-106  Head rail switch left (series element of the interlock loop): head board J2004 to the switch
 
-* **Length:** 290 mm (routed path 230 mm + 2 x 15 mm termination/strain relief + 30 mm service loop = 290 mm, rounded up to 290 mm). *Estimated from layout, confirm on first build.*
+* **Length:** 280 mm (routed path 213 mm + 2 x 15 mm termination/strain relief + 30 mm service loop = 273 mm, rounded up to 280 mm). *Estimated from layout, confirm on first build.*
 * **Construction:** 2 x AWG 26 twisted pair in the front wall channel (JST GH contacts take AWG 26-30). Connector pins 3 and 4 (AUX_N/AUX_GND zone read-back) are NOT wired: the D2HW is single-pole and its NO throw is not potential-free from the loop (CCR-HE-04). The NO lead is cut back and insulated.
 * **Shield / bonding:** none (inside the shielded head)
 * **Protection upstream:** No fuse: signal conductors, series-limited (loop through 1.00 kohm; PRES_ID through the 4.70 kohm pull-up) [circuit.py]
 * **Strain relief:** Clip in the front wall channel every 50 mm; switch end clipped within 20 mm
 * **Labels:** both ends, `W-106` + connector ID + pin-1 mark; per-conductor `W-xxx.n` (see `cables.csv`).
-* **Notes:** Loop is a potential-free series chain; see the loop diagram in cables.md. Stage 2: the connector order on the board (J2004 at u 144.6, J2002 at u 154.5, J2003 at u 171.5) puts the RIGHT-rail connector on the left of the centre line and the LEFT-rail connector on the right, so cables W-105 and W-106 cross once in the front channel (about 30 mm of extra length); the zone read-back is not available in rev A, so swapping the left and right switch cables between J2003 and J2004 would cost nothing functionally (it would only exchange the idle BUMP_ZONE_L/R labels) and avoids the crossing: decision for head electronics, not taken here.
+* **Notes:** Loop is a potential-free series chain; see the loop diagram in cables.md. OD-6 (lead): the RIGHT rail switch is wired to J2003 and the LEFT rail switch to J2004, so W-105 and W-106 do not cross in the front channel (J2004 is at u 144.6 = left of centre, J2003 at u 171.5 = right of centre). The loop order of the series chain is electrically free; the only consequence is that the idle BUMP_ZONE_L/R read-back labels of J2003/J2004 are swapped relative to the physical rails: if rev B enables the zone read-back, either swap the cables back or swap the firmware labels. No board change.
 
 | Wire | From (conn.pin) | To (conn.pin) | Net (from -> to) | AWG | Colour | Insulation | Pair | Length |
 |---|---|---|---|---|---|---|---|---|
-| W-106.1 | RAIL-R.COM | HEAD.J2004.1 | LOOP_B | 26 | GN | FEP | P1 | 290 |
-| W-106.2 | RAIL-R.NC | HEAD.J2004.2 | LOOP_C | 26 | GY | FEP | P1 | 290 |
+| W-106.1 | RAIL-L.COM | HEAD.J2004.1 | LOOP_B | 26 | GN | FEP | P1 | 280 |
+| W-106.2 | RAIL-L.NC | HEAD.J2004.2 | LOOP_C | 26 | GY | FEP | P1 | 280 |
 
 ### W-107  Head lid (light-leak) interlock switch: head board J2201 to the lid switch
 
@@ -1180,10 +1178,10 @@ Open length items: (a) **IB-34 mapping**: with J_TOF4 = LOOK_FL, J_TOF5 = LOOK_F
                                                                                 +--> J2002.1 --[ RAIL-F  COM-NC ]--> J2002.2 = LOOP_A
                                                                                                                          |
                                                                                 +--> J2003.1 <-----------------------LOOP_A
-                                                                                     J2003.1 --[ RAIL-L  COM-NC ]--> J2003.2 = LOOP_B
+                                                                                     J2003.1 --[ RAIL-R  COM-NC ]--> J2003.2 = LOOP_B
                                                                                                                          |
                                                                                      J2004.1 <-----------------------LOOP_B
-                                                                                     J2004.1 --[ RAIL-R  COM-NC ]--> J2004.2 = LOOP_C
+                                                                                     J2004.1 --[ RAIL-L  COM-NC ]--> J2004.2 = LOOP_C
                                                                                                                          |
                                                                                                                R2019 1.00 kohm 0.1 %
                                                                                                                          |

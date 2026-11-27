@@ -701,7 +701,7 @@ for cid_, w in CAB.items():
     if 30 <= int(cid_[2:]) <= 40 and cid_.startswith("W-0"):
         n_tot += 1
         if L_ > 300:
-            err("J ToF cable length", "%s (ToF) is %d mm > 300 mm, the I2C design limit (modules/tof_vl53l4ed.md): %s" % (cid_, L_, "see open decision OD-1 (IB-34 look-sensor mapping against the connector positions)" if cid_ in ("W-035", "W-036", "W-037") else "check the routing"))
+            err("J ToF cable length", "%s (ToF) is %d mm > 300 mm, the I2C design limit (modules/tof_vl53l4ed.md): %s" % (cid_, L_, "check the IB-34 look-sensor mapping (LOOK_MAP) against the connector positions" if cid_ in ("W-035", "W-036", "W-037") else "check the routing"))
         else:
             n_ok += 1
 count("J1. every ToF cable is <= 300 mm (I2C design limit; stage-2 connector positions from pinmap.json, sensor positions from frames.yaml)", n_ok, n_tot)

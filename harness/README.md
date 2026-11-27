@@ -25,7 +25,7 @@ Needs Python 3 with PyYAML. Both scripts only read the other directories and onl
 
 The cross-check loads the chassis, head and panel `circuit.py`, `electronics/chassis_main/design/connectors.yaml`, `electronics/tof_carrier/out/pinmap.json`, `firmware/chassis/pinmap.yaml`, `firmware/head/pinmap.yaml`, `interface/system/contract.yaml`, `connectors.yaml` and `cables.csv`, and checks: board connector pin nets against the circuit definitions; both ends of every wire (same net, or a documented pair); J1/J2 against the contract at the chassis board, the receptacle, the plug and the head board with a continuous wire path; every firmware signal that leaves a board reaches the expected connector pin and a wire; wire gauge against the crimp range and the branch current; no pin used twice; unconnected pins and their reasons; the LAB extension. A deliberately wrong wire is caught (mutation-tested when written).
 
-**Latest result: see `cross_check_report.md` and `STATUS.md`.** Stage 2 (2026-11-27): the chassis circuit is read WITH `electronics/chassis_main/overrides.py` applied, connector positions come from the placed boards' `out/pinmap.json`, sensor positions from `mechanical/common/frames.yaml`. The six AWG 18 on Micro-Fit errors are closed by S2-02 (J_HEAD1 = Mini-Fit Jr 2x5) and S2-xx (W-010 AWG 20). The only remaining errors are the two ToF cables over 300 mm that follow from the IB-34 mapping (OD-1).
+**Latest result: see `cross_check_report.md` and `STATUS.md`.** Stage 2 (2026-11-27): the chassis circuit is read WITH `electronics/chassis_main/overrides.py` applied, connector positions come from the placed boards' `out/pinmap.json`, sensor positions from `mechanical/common/frames.yaml`. The six AWG 18 on Micro-Fit errors are closed by S2-02 (J_HEAD1 = Mini-Fit Jr 2x5) and S2-xx (W-010 AWG 20). The cross-check passes (0 errors); ToF cables over 300 mm remain an ERROR.
 
 ## Stage-2 changes in the harness (IB-32..IB-37, IB-44)
 
@@ -35,7 +35,7 @@ The cross-check loads the chassis, head and panel `circuit.py`, `electronics/cha
 | J_HEAD1 | Mini-Fit Jr 2x5 39-30-1100, pins 1-8 = J1 pins 1-8, 9/10 NC; W-008 terminals 39-00-0038 AWG 18-24 [UNVERIFIED] | S2-02 |
 | J_CM5 | stays Micro-Fit; W-010 AWG 18 -> AWG 20 | STAGE2 IB-32 |
 | Rear-right cluster | J_PAUSE, J_TOF3, J_TOF10, J_BUMP_R, J_TOF6 positions from pinmap.json: W-019 290 -> 170, W-022 430 -> 310, W-033 400 -> 290, W-040 400 -> 290 mm | STAGE2 IB-12/33 |
-| Look sensors (IB-34, lead) | J_TOF4 = LOOK_FL, J_TOF5 = LOOK_FR, J_TOF6 = LOOK_RL, J_TOF7 = LOOK_RR (old names retired); W-034 150, W-035 280, W-036 360, W-037 350 mm | lead; frames.yaml |
+| Look sensors (IB-34, lead) | J_TOF4 = LOOK_FL, J_TOF5 = LOOK_RL, J_TOF6 = LOOK_RR, J_TOF7 = LOOK_FR (old names retired); W-034 150, W-035 270, W-036 290, W-037 150 mm | lead; frames.yaml |
 | Panel | J1/J2 on the top side, cable leaves over the v = 24 edge (which end faces +y unconfirmed) | panel P1 |
 | Head | J2001/J2601 side by side at the rear edge, J1 port y 76.2, J2004 at u 144.6, GH-6 and U.FL positions as built; coax 45-50 mm; shield drains 130/110 mm | head STAGE2 S2-L3..L6, CR-M03 |
 | IB-37 | J_PAUX pins 3/4 stay unwired; offset accepted (about 3.4 K warm on discharge, about 0.7 K cold on charge) | chassis STAGE2 |
@@ -83,16 +83,16 @@ Do not cut wire before the blocking open items (OI-01 .. OI-06 below) are closed
 | Anderson SBS50 | contacts TBD - not in sources | TBD - not in sources | TBD - not in sources |
 | Faston 6.35 mm (cassette) | insulated fastons AWG 12 | TBD - not in sources | n/a |
 
-## Open decisions (these keep `cross_check.py` at exit status 1 or leave warnings)
+## Open decisions
 
 | ID | Decision | Detail |
 |---|---|---|
-| OD-1 | **IB-34 mapping vs connector positions.** With J_TOF5 = LOOK_FR, J_TOF6 = LOOK_RL, J_TOF7 = LOOK_RR the connectors J_TOF6 (rear-right) and J_TOF7 (front-right edge) are on the wrong side: W-036 360 mm and W-037 350 mm exceed the 300 mm I2C limit (cross-check ERROR). The stage-1 order (LO/LI/RI/RO = FL, RL, RR, FR, i.e. J_TOF5 = RL, J_TOF6 = RR, J_TOF7 = FR) gives 150 / 270 / 290 / 150 mm for J_TOF4..7 and passes. Change only `LOOK_MAP` in `hdata_cables.py` if the lead agrees. Firmware pinmap and contract still carry LOOK_LO/LI/RI/RO (cross-check warning). | lead |
+| OD-1 | **CLOSED (lead):** IB-34 mapping J_TOF4 = LOOK_FL, J_TOF5 = LOOK_RL, J_TOF6 = LOOK_RR, J_TOF7 = LOOK_FR (each pair split across the two I2C muxes). Lengths 150 / 270 / 290 / 150 mm. Firmware pinmap and contract still carry LOOK_LO/LI/RI/RO (warning until renamed). | closed |
 | OD-2 | SiPM coax pigtails W-112..W-119 are 45-50 mm (35 mm in board_envelopes.yaml) after the S2-L3 layout; carrier position assumed at the lane centre, drop 25 mm. | head electronics / mechanical |
 | OD-3 | Head J2001 pins 3/4 and J2601 pins 1/2 (AWG 18, up to 4.35 A) still rely on a recalled Micro-Fit '43030 18-24 AWG variant'; the head stage-2 file does not address it. Same remedy as chassis S2-02 (Mini-Fit Jr) or AWG 20 on the head side. | head electronics |
 | OD-4 | TP2004 / TP2501 (shield drain pads) are 60-100 mm from the J2001 / J2501 landings; drains are 130 / 110 mm separate wires. | head electronics |
 | OD-5 | Which end of RR-PANEL faces +y (cable exit edge); head CR-M01..M04 not yet adopted by head mechanical (IB-52); chassis cable_lengths.py takes path[0] as the board connector (wrong for W-001/003/004/005/006/007) - corrected here, tool is not mine. | mechanical |
-| OD-6 | Head rail switch connector order puts the right-rail connector left of centre: W-105/W-106 cross; swapping them is functionally free in rev A. | head electronics |
+| OD-6 | **CLOSED (lead):** the right rail switch is wired to J2003 and the left to J2004 (W-105 right, W-106 left), so the cables do not cross. Harness-side only; the idle BUMP_ZONE_L/R labels of J2003/J2004 are swapped against the physical rails (read-back not available in rev A). | closed |
 
 ## Open items carried over (blocking first, then the rest)
 

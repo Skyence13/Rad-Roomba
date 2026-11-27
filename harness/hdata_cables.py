@@ -391,8 +391,8 @@ cable("W-024", "OPTIONAL external 22 mm sounder: RR-PANEL J2 to the panel sounde
 # as placed in mechanical/common/frames.yaml (tof_look_fl, _fr, _rl, _rr).  Same connectors J_TOF4..J_TOF7, new names (old LOOK_LO/LI/RI/RO gone).
 # LOOK_MAP: firmware id -> frames.yaml sensor.  To change the mapping change ONLY this table.
 # (harness name, zone, frames.yaml keys: the mechanical engineer renamed tof_look_fl/fr/rl/rr to tof_look_fwd_left/... on 2026-11-27, both are accepted)
-LOOK_MAP = {4: ("LOOK_FL", "fl", ("tof_look_fwd_left", "tof_look_fl")), 5: ("LOOK_FR", "fr", ("tof_look_fwd_right", "tof_look_fr")),
-            6: ("LOOK_RL", "rl", ("tof_look_rev_left", "tof_look_rl")), 7: ("LOOK_RR", "rr", ("tof_look_rev_right", "tof_look_rr"))}
+LOOK_MAP = {4: ("LOOK_FL", "fl", ("tof_look_fwd_left", "tof_look_fl")), 5: ("LOOK_RL", "rl", ("tof_look_rev_left", "tof_look_rl")),
+            6: ("LOOK_RR", "rr", ("tof_look_rev_right", "tof_look_rr")), 7: ("LOOK_FR", "fr", ("tof_look_fwd_right", "tof_look_fr"))}
 _FALLBACK = {"tof_cliff_fl": (46.0, 109.5, 31.0), "tof_cliff_fr": (46.0, -109.5, 31.0), "tof_cliff_rl": (-241.7, 78.3, 41.0), "tof_cliff_rr": (-241.7, -78.3, 41.0),
              "tof_look_fl": (1.5, 91.0, 162.0), "tof_look_fr": (1.5, -91.0, 162.0), "tof_look_rl": (-247.6, 65.6, 100.0), "tof_look_rr": (-247.6, -65.6, 100.0),
              "tof_prox_rl": (-249.3, 82.0, 80.0), "tof_prox_rc": (-236.0, 0.0, 158.0), "tof_prox_rr": (-249.3, -82.0, 80.0)}
@@ -517,10 +517,12 @@ cable("W-103", "Head heater film, bimetal cut-out and spreader NTC: head board J
     construction="Heater circuit AWG 18 pair (supply and return twisted) plus AWG 24 sense and an AWG 26 NTC pair. Assembly (per J2601): HTR_SW -> 4.8 ohm element -> CUTOUT_SENSE -> bimetal cut-out (low side) -> HEAD_HTR_N. Tail comes up the rear chimney at y = +87.5. J2601 pin 6 not wired.",
     shield="none inside the shielded head", protection=PRO["head_htr"] + "; cut-out status reads 'tripped' when the feed is off (by design)", strain="Leads clipped to the spreader with Kapton/high-temperature tape within 20 mm of the film tail",
     notes="Heater film, cut-out and NTC parts are not in the sources (TBD). CCR-HE-02 (connector height) open.")
-for cid, nm, jref, dev, sw in (("W-104", "front", "J2002", "RAIL-F", (184.2, 0.0, 21.0)), ("W-105", "left", "J2003", "RAIL-L", (131.2, 168.5, 21.0)), ("W-106", "right", "J2004", "RAIL-R", (131.2, -168.5, 21.0))):
+for cid, nm, jref, dev, sw in (("W-104", "front", "J2002", "RAIL-F", (184.2, 0.0, 21.0)), ("W-105", "right", "J2003", "RAIL-R", (131.2, -168.5, 21.0)), ("W-106", "left", "J2004", "RAIL-L", (131.2, 168.5, 21.0))):
+    # OD-6 (lead): the RIGHT rail switch is on J2003 (y -8.5) and the LEFT rail switch on J2004 (y +18.4) so the cables do not cross.
+    # Series loop, so the order is electrically free; the BUMP_ZONE_L/R labels of J2003/J2004 are swapped (read-back not available in rev A).
     # stage-2 positions (head pinmap.json): J2002 u 154.5, J2003 u 171.5, J2004 u 144.6 (S2-L6: outside RAIL_SWITCH_LANDING, harness reach u 140..149),
     # all at v 91.2 on the front edge.  base y = 163 - u: J2004 (RIGHT rail) is LEFT of centre (y +18.4) and J2003 (LEFT rail) is RIGHT of centre (y -8.5):
-    # the two cables cross in the front wall channel.
+    # (the stage-1 switch order would make the two cables cross, so the switches are assigned crosswise, see OD-6).
     pos = hpos(jref, dv=-1.2)
     via = {"front": [], "left": [(180, 10, 30), (180, 160, 25)], "right": [(180, -10, 30), (180, -160, 25)]}[nm]
     nets = {"J2002": ("HEAD_LOOP_OUT", "LOOP_A"), "J2003": ("LOOP_A", "LOOP_B"), "J2004": ("LOOP_B", "LOOP_C")}[jref]
@@ -529,7 +531,7 @@ for cid, nm, jref, dev, sw in (("W-104", "front", "J2002", "RAIL-F", (184.2, 0.0
         path=[pos] + via + [sw], end=15, loop=30,
         construction="2 x AWG 26 twisted pair in the front wall channel (JST GH contacts take AWG 26-30). Connector pins 3 and 4 (AUX_N/AUX_GND zone read-back) are NOT wired: the D2HW is single-pole and its NO throw is not potential-free from the loop (CCR-HE-04). The NO lead is cut back and insulated.",
         shield="none (inside the shielded head)", protection=PRO["head_sig"], strain="Clip in the front wall channel every 50 mm; switch end clipped within 20 mm",
-        notes="Loop is a potential-free series chain; see the loop diagram in cables.md. Stage 2: the connector order on the board (J2004 at u 144.6, J2002 at u 154.5, J2003 at u 171.5) puts the RIGHT-rail connector on the left of the centre line and the LEFT-rail connector on the right, so cables W-105 and W-106 cross once in the front channel (about 30 mm of extra length); the zone read-back is not available in rev A, so swapping the left and right switch cables between J2003 and J2004 would cost nothing functionally (it would only exchange the idle BUMP_ZONE_L/R labels) and avoids the crossing: decision for head electronics, not taken here.")
+        notes="Loop is a potential-free series chain; see the loop diagram in cables.md. OD-6 (lead): the RIGHT rail switch is wired to J2003 and the LEFT rail switch to J2004, so W-105 and W-106 do not cross in the front channel (J2004 is at u 144.6 = left of centre, J2003 at u 171.5 = right of centre). The loop order of the series chain is electrically free; the only consequence is that the idle BUMP_ZONE_L/R read-back labels of J2003/J2004 are swapped relative to the physical rails: if rev B enables the zone read-back, either swap the cables back or swap the firmware labels. No board change.")
 cable("W-107", "Head lid (light-leak) interlock switch: head board J2201 to the lid switch", "head", [
     w("LID-SW", "a", "HEAD.J2201", "1", "LID_IN", 26, "WH", ins=FEP, pair="P1"), w("LID-SW", "b", "HEAD.J2201", "2", "GND", 26, "BK", ins=FEP, pair="P1")],
     length=200, basis="PLACEHOLDER: switch position and part are not in the sources; 200 mm assumed (J2201 is on the front edge, board_envelopes BIAS zone)",

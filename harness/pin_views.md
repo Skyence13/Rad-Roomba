@@ -1734,7 +1734,7 @@ Keying / coding: polarised housing (JST GH); 4/5/6-pin same-count housings can b
 
 ## TOF5.J1
 
-ToF carrier LOOK_FR harness connector. Part: JST SM06B-GHS-TB(LF)(SN) [verified (not flagged in source)]. Mating half: GHR-06V-S [verified (not flagged in source)].
+ToF carrier LOOK_RL harness connector. Part: JST SM06B-GHS-TB(LF)(SN) [verified (not flagged in source)]. Mating half: GHR-06V-S [verified (not flagged in source)].
 
 **MATING FACE view** (cable-side housing, looking at the face that meets the board header / receptacle)
 ```
@@ -1761,7 +1761,7 @@ Keying / coding: polarised housing (JST GH); 4/5/6-pin same-count housings can b
 
 ## TOF6.J1
 
-ToF carrier LOOK_RL harness connector. Part: JST SM06B-GHS-TB(LF)(SN) [verified (not flagged in source)]. Mating half: GHR-06V-S [verified (not flagged in source)].
+ToF carrier LOOK_RR harness connector. Part: JST SM06B-GHS-TB(LF)(SN) [verified (not flagged in source)]. Mating half: GHR-06V-S [verified (not flagged in source)].
 
 **MATING FACE view** (cable-side housing, looking at the face that meets the board header / receptacle)
 ```
@@ -1788,7 +1788,7 @@ Keying / coding: polarised housing (JST GH); 4/5/6-pin same-count housings can b
 
 ## TOF7.J1
 
-ToF carrier LOOK_RR harness connector. Part: JST SM06B-GHS-TB(LF)(SN) [verified (not flagged in source)]. Mating half: GHR-06V-S [verified (not flagged in source)].
+ToF carrier LOOK_FR harness connector. Part: JST SM06B-GHS-TB(LF)(SN) [verified (not flagged in source)]. Mating half: GHR-06V-S [verified (not flagged in source)].
 
 **MATING FACE view** (cable-side housing, looking at the face that meets the board header / receptacle)
 ```
@@ -2705,8 +2705,8 @@ Device / module / pad: no standard pin geometry in the sources. Terminal table b
 
 | Pin | Net | Wire(s) |
 |---|---|---|
-| COM | LOOP_A | W-105.1 |
-| NC | LOOP_B | W-105.2 |
+| COM | LOOP_B | W-106.1 |
+| NC | LOOP_C | W-106.2 |
 | NO | UNUSED | - |
 
 ## RAIL-R
@@ -2717,8 +2717,8 @@ Device / module / pad: no standard pin geometry in the sources. Terminal table b
 
 | Pin | Net | Wire(s) |
 |---|---|---|
-| COM | LOOP_B | W-106.1 |
-| NC | LOOP_C | W-106.2 |
+| COM | LOOP_A | W-105.1 |
+| NC | LOOP_B | W-105.2 |
 | NO | UNUSED | - |
 
 ## LID-SW
