@@ -136,7 +136,7 @@ class Mission:
         if c.drive.get("mode") == "ARMED_IDLE" and not self.preflight_done:
             c.request("BRAKE_TEST", {}, lambda r: setattr(self, "preflight_done", r["status"] == "OK" and r["body"].get("passed")))
         self.state = "READY"
-        return {"accepted": True, "note": "press the local REARM button before and after the brake test"}
+        return {"accepted": True, "note": "press the local REARM button only when safety.rearm_prompt says so (rearm_ready), once, before and after the brake test"}
 
     def _cmd_arm(self, args, actor):
         if self.state not in ("READY", "CONFIGURE"):

@@ -46,6 +46,8 @@ class FakeChassis:
         self._decoder = wire.StreamDecoder(MAX_RECORD)
         self._last_step = None
         self._boot_count = 0
+        self._closed_since = None
+        self.last_rearm_refusal = None
         self._boot("POWER_ON")
 
     # ------------------------------------------------------------------ boot
@@ -114,6 +116,24 @@ class FakeChassis:
                     self._event("J1", {"from": self._presence, "to": new, "ohm": value})
                     self._presence = new
 
+    REARM_DISCHARGE_US = 2_000_000       # ICD 4.6: REARM can set only after about 2 s of closed chain (C_SET discharge)
+
+    def _chain_closed(self):
+        c = self._chain()
+        return all(v for k, v in c.items() if k != "ARM_PERMIT")
+
+    def rearm_refusal(self):
+        """None when a REARM press would act now, else why not (ICD 4.6, rearm_ready)."""
+        if self.mode in ("BOOT", "FAULT", "LAB", "SERVICE_CHARGE") or self.inputs["faults"]:
+            return "FAULT_OR_MODE"
+        if self.inputs.get("rearm_held"):
+            return "REARM_HELD"
+        if not self._chain_closed():
+            return "CHAIN_OPEN"
+        if self._closed_since is None or self.clock.now_us() - self._closed_since < self.REARM_DISCHARGE_US:
+            return "DISCHARGE_TIME"
+        return None
+
     def press(self, name):
         self._event("BUTTON", {"name": name, "pressed": True})
         if name == "PAUSE":
@@ -123,6 +143,12 @@ class FakeChassis:
                 self.cmd = None
                 self._event("HOLD", {"on": True, "why": "LOCAL_PAUSE"})
         elif name == "REARM":
+            if not self.hw_latch:
+                why = self.rearm_refusal()
+                self.last_rearm_refusal = why
+                if why:
+                    self._event("REARM_REFUSED", {"why": why})
+                    return
             chain = self._chain()
             if not self.hw_latch and all(chain.values()) and self.mode not in ("BOOT", "FAULT"):
                 self.hw_latch = True
@@ -191,6 +217,11 @@ class FakeChassis:
             self._event("PSTOP", {"reason": reason, "v_mps": round(self.v, 4)})
 
     def _update_mode(self):
+        if self._chain_closed():
+            if self._closed_since is None:
+                self._closed_since = self.clock.now_us()
+        else:
+            self._closed_since = None
         old = self.mode
         i = self.inputs
         active = self._hw_active()
@@ -433,7 +464,8 @@ class FakeChassis:
                       "panel": {"buttons": {"rearm": False, "pause": False}, "pattern": self.panel},
                       "heater": {"chassis_duty_pct": 0}, "faults": list(self.inputs["faults"]), "sw_active": self._sw_active(),
                       "hw_active": self._hw_active(), "stationary": t["stationary"],
-                      "rearm_ready": (not self.hw_latch) and all(self._chain().values()),
+                      "rearm_ready": (not self.hw_latch) and self.rearm_refusal() is None,
+                      "rearm_refusal": self.last_rearm_refusal if not self.hw_latch else None,
                       "rearm_nonce": self.nonce, "hold": list(self.hold), "head_power": dict(self.head_power),
                       "brake_test": {"state": "PASSED" if self.brake_passed else "NONE"},
                       "event_seq": self.event_seq, "uptime_us": self.now_us()}
@@ -560,5 +592,5 @@ class FakeChassis:
     def _op_BRAKE_TEST(self, a, rx, tid, raw):
         if self.mode != "ARMED_IDLE":
             return "REJECTED", {"reason": "NOT_ARMED_IDLE", "mode": self.mode}
-        self._brake = (tid, raw, self.clock.now_us() + 2_200_000)      # chassis firmware: BRAKE_TEST takes about 2.2 s (CCR-CHS-10)
+        self._brake = (tid, raw, self.clock.now_us() + 2_600_000)      # firmware: ~2.2 s VMOT decay plus the K1 release / weld steps (ICD 3.13, 6.8)
         return None

@@ -4,8 +4,8 @@
 Run from anywhere:  python3 planning/bom_0.4/extract_board_boms.py
 
 Inputs  (imported, not edited; PARTS lists are plain module-level data):
-  electronics/chassis_main/design/circuit.py   -> RR-CHS-MAIN_bom.csv
-  electronics/head_acq/design/circuit.py       -> RR-HEAD-ACQ_bom.csv
+  electronics/chassis_main/design/circuit.py + overrides.py (stage 2 and 3)  -> RR-CHS-MAIN_bom.csv
+  electronics/head_acq/design/circuit.py + overrides.py (stage 2 and 3)      -> RR-HEAD-ACQ_bom.csv
   electronics/panel/design/circuit.py          -> RR-PANEL_bom.csv
 RR-TOF-A is not regenerated here: its fabrication BOM is electronics/tof_carrier/out/RR-TOF-A-bom.csv
 (copied verbatim as RR-TOF-A_bom.csv together with a count check).
@@ -86,6 +86,11 @@ def main():
     for board, path in BOARDS:
         mod = load(path, "circ_" + board.replace("-", "_"))
         parts = mod.PARTS
+        ovp = os.path.join(ROOT, os.path.dirname(os.path.dirname(path)), "overrides.py")
+        if os.path.exists(ovp):
+            # stage-2/3 overrides (S2-xx, S3-xx) are applied exactly as electronics/*/board.py applies them
+            ov = load(os.path.relpath(ovp, ROOT), "ovr_" + board.replace("-", "_"))
+            parts, _log = ov.apply(mod.PARTS)
         rows = collapse(parts)
         fn = os.path.join(OUT, board + "_bom.csv")
         with open(fn, "w", newline="", encoding="utf-8-sig") as f:
@@ -106,6 +111,11 @@ def main():
         tof = list(csv.DictReader(f))
     n_tof = sum(int(r["Qty"]) for r in tof)
     summary.append(("RR-TOF-A", n_tof, len(tof), sum(1 for r in tof if r.get("DNP")), sum(1 for r in tof if "verify" in r.get("Notes", "").lower()), 0))
+    for board, out in (("RR-CHS-MAIN", "chassis_main"), ("RR-HEAD-ACQ", "head_acq"), ("RR-PANEL", "panel")):
+        with open(os.path.join(ROOT, "electronics", out, "out", board + "-bom.csv"), newline="", encoding="utf-8-sig") as f:
+            gen = sum(int(r["Qty"]) for r in csv.DictReader(f))
+        mine = [x for x in summary if x[0] == board][0][1]
+        print("cross-check %-12s records here %d, generated fabrication BOM Qty sum %d (differences are PCB features / DNP handling: inspect if large)" % (board, mine, gen))
     print("%-12s %8s %8s %6s %7s %9s" % ("board", "records", "lines", "DNP", "verify", "non-buy"))
     for s in summary:
         print("%-12s %8d %8d %6d %7d %9d" % s)

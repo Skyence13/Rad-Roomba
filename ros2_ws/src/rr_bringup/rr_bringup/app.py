@@ -330,6 +330,27 @@ class RobotApp:
         return export_survey(self.pipeline, self.run, out_dir, run_dir=self.run_dir)
 
     # ----------------------------------------------------------------- status
+    @staticmethod
+    def _rearm_prompt(st, mode):
+        """Operator prompt for the local REARM button (ICD 4.6, 6.6): offered ONLY when the chassis reports rearm_ready;
+        otherwise the reason is shown (chain element open, discharge time about 2 s, REARM held, fault)."""
+        if mode in ("ARMED_IDLE", "MOVING", "HOLD") and st.get("hw_latch"):
+            return {"press_rearm": False, "text": "hardware latch set", "reasons": []}
+        if st.get("rearm_ready") is True:
+            return {"press_rearm": True, "text": "Press REARM once on the robot", "reasons": []}
+        reasons = []
+        open_ = [k for k, v in (st.get("chain") or {}).items() if not v and k != "ARM_PERMIT"]
+        if open_:
+            reasons.append("chain not closed (open or unknown): " + ", ".join(open_))
+        faults = [str(x) for x in (st.get("faults") or [])]
+        if faults:
+            reasons.append("fault flags: " + ", ".join(faults))
+        if st.get("rearm_refusal"):
+            reasons.append("last REARM press refused: " + str(st["rearm_refusal"]))
+        if not reasons:
+            reasons.append("waiting: REARM is accepted about 2 s after the chain closes, and not while the REARM line is held or pressed early")
+        return {"press_rearm": False, "text": "Do not press REARM yet", "reasons": reasons}
+
     def snapshot(self, with_map=False):
         d, st = self.chassis.drive, self.chassis.state
         mode = d.get("mode") or st.get("mode")
@@ -353,7 +374,7 @@ class RobotApp:
                         "time_bound_us": _fin(self.chassis.time_bound_us())},
             "safety": {"hw_latch": st.get("hw_latch"), "hw_inhibit_reasons": d.get("stops", {}).get("hw", []),
                        "protective_stop_reasons": d.get("stops", {}).get("sw", []), "hold": d.get("hold", []),
-                       "chain": st.get("chain"), "rearm_ready": st.get("rearm_ready"),
+                       "chain": st.get("chain"), "rearm_ready": st.get("rearm_ready"), "rearm_prompt": self._rearm_prompt(st, mode),
                        # chassis fault flags exactly as reported (unknown names included, never filtered); chain false = open OR unknown
                        "faults": [str(x) for x in (st.get("faults") or [])],
                        "chain_not_closed": [k for k, v in (st.get("chain") or {}).items() if not v],

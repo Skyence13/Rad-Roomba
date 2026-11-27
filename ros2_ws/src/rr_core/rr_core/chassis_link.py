@@ -294,7 +294,7 @@ class ChassisLink:
             if self._ops:
                 op, args, cb = self._ops.popleft()
                 if op == "BRAKE_TEST":
-                    rsp = yield from self._transact(op, args, timeout_us=3_500_000, retries=0, poll_same_id_us=150_000)
+                    rsp = yield from self._transact(op, args, timeout_us=4_500_000, retries=0, poll_same_id_us=150_000)
                 else:
                     rsp = yield from self._transact(op, args, timeout_us=150_000 if op == "CONFIG_SET" else None)
                 result = {"op": op, "args": args, "status": rsp["status"] if rsp else "TIMEOUT",

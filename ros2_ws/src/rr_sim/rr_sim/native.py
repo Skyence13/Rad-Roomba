@@ -197,20 +197,25 @@ class NativeSystem:
         self.run(0.3)
         assert app.command("register_datum", {"pose": list(start)})["accepted"]
         assert app.command("preflight")["accepted"]
-        self.run(0.8)
-        self.chassis.press("REARM")
-        self.run(1.0)
+        self.press_rearm()                                    # ICD 4.6: wait for rearm_ready, one press
         assert app.command("preflight")["accepted"]
         assert self.run(until=lambda: app.mission.preflight_done
-                        and app.chassis.drive.get("mode") == "STANDBY", timeout=10), (app.chassis.drive.get("mode"), app.chassis.state.get("brake_test"))
-        for _ in range(4):                      # the emulator needs the button press after the 2.2 s brake test to be seen: repeat if not
-            self.chassis.press("REARM")
-            self.run(1.5)
-            if app.chassis.drive.get("mode") == "ARMED_IDLE":
-                break
+                        and app.chassis.drive.get("mode") == "STANDBY", timeout=15), (app.chassis.drive.get("mode"), app.chassis.state.get("brake_test"))
+        self.press_rearm()
         out = app.command("arm")
         assert out["accepted"], out
         return out
+
+    def press_rearm(self, timeout=12.0):
+        """Wait for `rearm_ready` (about 2 s after the chain closes), press REARM once, expect the latch; the failure
+        message carries what the chassis reported (chain, faults, STATE reason fields)."""
+        app = self.app
+        assert self.run(until=lambda: app.chassis.state.get("rearm_ready") is True, timeout=timeout), \
+            ("rearm_ready never true", app.chassis.state.get("chain"), app.chassis.state.get("faults"), app.chassis.drive.get("mode"))
+        self.chassis.press("REARM")
+        assert self.run(until=lambda: app.chassis.state.get("hw_latch") is True or app.chassis.drive.get("mode") == "ARMED_IDLE", timeout=4.0), \
+            ("REARM pressed with rearm_ready true but refused", app.chassis.state.get("faults"), app.chassis.state.get("hw_inhibit_reasons"),
+             app.chassis.drive.get("mode"), app.chassis.state.get("rearm_ready"))
 
     def loc_error(self):
         e = [abs(t[1] - t[4]) for t in self.trace[5:]], [abs(t[2] - t[5]) for t in self.trace[5:]]

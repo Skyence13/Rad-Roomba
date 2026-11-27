@@ -103,17 +103,24 @@ class SimSystem:
         est = (start[0] + pose_error[0], start[1] + pose_error[1], start[2] + pose_error[2])
         assert app.command("register_datum", {"pose": est})["accepted"]
         assert app.command("preflight")["accepted"]
-        self.run(0.5)
-        self.chassis.press("REARM")
-        self.run(0.3)
+        self.press_rearm()                                    # ICD 4.6: only when rearm_ready, one press
         assert app.command("preflight")["accepted"]          # now ARMED_IDLE -> brake test (drops the latch)
         assert self.run(until=lambda: app.mission.preflight_done
-                        and app.chassis.drive.get("mode") == "STANDBY", timeout=6)
-        self.chassis.press("REARM")
-        self.run(1.0)
+                        and app.chassis.drive.get("mode") == "STANDBY", timeout=12), (app.chassis.drive.get("mode"), app.chassis.state.get("brake_test"))
+        self.press_rearm()
         out = app.command("arm")
         assert out["accepted"], out
         return out
+
+    def press_rearm(self, timeout=10.0):
+        """Operator action of the ICD: wait until the robot reports `rearm_ready`, press the local REARM button ONCE, and
+        check that the latch was set; raises with the refusal reason if not."""
+        app = self.app
+        assert self.run(until=lambda: app.chassis.state.get("rearm_ready") is True, timeout=timeout), \
+            ("rearm_ready never true", app.chassis.state.get("chain"), app.chassis.state.get("faults"), app.chassis.drive.get("mode"))
+        self.chassis.press("REARM")
+        assert self.run(until=lambda: app.chassis.drive.get("mode") == "ARMED_IDLE" or (app.chassis.state.get("hw_latch") is True), timeout=3.0), \
+            ("REARM refused", self.chassis.last_rearm_refusal, app.chassis.drive.get("mode"))
 
     def truth(self):
         return (self.chassis.x, self.chassis.y, self.chassis.yaw)

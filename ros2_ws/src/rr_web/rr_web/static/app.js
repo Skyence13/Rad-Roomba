@@ -70,6 +70,7 @@ function render() {
     row("Missing before motion", (m.prerequisites_missing || []).join(", ") || "nothing");
   $("safety").innerHTML = `<div>Traction: <b>${sf.traction_inhibited ? "INHIBITED ⛔" : "permitted ✔"}</b>${sf.charge_service ? " — CHARGE/SERVICE: drive locked out" : ""}</div>` +
     `<div>Hardware inhibit: ${(sf.hw_inhibit_reasons || []).join(", ") || "none"} · latch ${sf.hw_latch ? "set" : "open"}</div>` +
+    (sf.rearm_prompt ? `<div><b>${sf.rearm_prompt.press_rearm ? "▶ " : ""}${esc(sf.rearm_prompt.text)}</b>${(sf.rearm_prompt.reasons || []).length ? " — " + esc(sf.rearm_prompt.reasons.join("; ")) : ""}</div>` : "") +
     `<div>Chassis faults: ${esc((sf.faults || []).join(", ")) || "none"} · chain not closed (open or unknown): ${esc((sf.chain_not_closed || []).join(", ")) || "none"}</div>` +
     `<div>Protective stop: ${(sf.protective_stop_reasons || []).join(", ") || "none"} · hold: ${(sf.hold || []).join(", ") || "none"}</div>` +
     `<div class="small">Local only (cannot be cleared from this page): ${sf.local_only.join("; ")}.<br>Clearable by the controlling operator: ${sf.remote_clearable.join("; ")}.</div>`;
