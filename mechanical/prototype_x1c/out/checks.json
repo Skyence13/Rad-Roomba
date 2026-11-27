@@ -163,41 +163,41 @@
    ]
   ],
   "methods": {
-   "boolean: contact film 0.000 mm thick": 6,
-   "mesh screen": 366,
    "boolean: contact film 0.030 mm thick": 1,
-   "boolean": 21
+   "mesh screen": 366,
+   "boolean": 21,
+   "boolean: contact film 0.000 mm thick": 6
   },
   "slowest_pairs_s": [
    [
-    58.8,
-    "lower_hull_RR",
-    "rear_deck_R",
-    "boolean: contact film 0.000 mm thick"
+    0.0,
+    "wheel_rim_R",
+    "wheel_hub_R",
+    "mesh screen"
    ],
    [
-    48.2,
-    "lower_hull_RL",
-    "rear_deck_L",
-    "boolean: contact film 0.000 mm thick"
+    0.0,
+    "wheel_rim_R",
+    "tyre_R",
+    "mesh screen"
    ],
    [
-    25.3,
-    "rear_deck_L",
-    "hatch_door",
-    "boolean"
+    0.0,
+    "wheel_rim_R",
+    "motor_R",
+    "mesh screen"
    ],
    [
-    9.9,
-    "cheek_fairing_L",
-    "shoulder_L",
-    "boolean: contact film 0.000 mm thick"
+    0.0,
+    "wheel_rim_R",
+    "cliff_pod_R",
+    "mesh screen"
    ],
    [
-    9.6,
-    "cheek_fairing_R",
-    "shoulder_R",
-    "boolean: contact film 0.000 mm thick"
+    0.0,
+    "wheel_rim_L",
+    "wheel_hub_L",
+    "mesh screen"
    ]
   ]
  },
@@ -2267,7 +2267,7 @@
     "hang_angle_deg_old_bar_x-11": -44.8
    },
    {
-    "head": "prototype head RR-HD-X (1.864 kg)",
+    "head": "prototype head RR-HD-X (1.862 kg)",
     "mass_kg": 8.57,
     "cg_x": -46.5,
     "cg_z": 71.8,
@@ -2277,11 +2277,11 @@
     "tip_margin_forward_mm": 37.3,
     "tip_margin_rearward_mm": 149.0,
     "tip_margin_lateral_mm": 80.6,
-    "hang_angle_deg": -10.1,
+    "hang_angle_deg": -10.2,
     "hang_angle_deg_old_bar_x-11": -21.1
    },
    {
-    "head": "production head (2.083 kg)",
+    "head": "production head (2.082 kg)",
     "mass_kg": 8.79,
     "cg_x": -42.0,
     "cg_z": 70.5,
@@ -2414,7 +2414,7 @@
     "chassis plate bending at x = -15 (fore masses 3.09 kg x 3 g; net width 239 mm x 4 mm, shells and tunnel ignored)",
     13.3,
     "MPa",
-    "allow 240 (6061-T6) -> SF 18.0"
+    "allow 240 (6061-T6) -> SF 18.1"
    ],
    [
     "chassis plate bending at x = 30 (fore masses 2.20 kg x 3 g; net width 239 mm x 4 mm, shells and tunnel ignored)",

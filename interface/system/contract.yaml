@@ -3,7 +3,8 @@
 # DEC-xxx entry in planning/decisions.csv and a line in docs/architecture/CHANGELOG.md.
 # Human-readable rationale: docs/architecture/SYSTEM_ARCHITECTURE.md
 # Units: SI (m, s, rad, V, A, W, kg) unless a key name carries another unit suffix (_mm, _us, _ms, _c).
-contract_version: "0.4.0-draft7"   # draft7: tail swept radius 0.290 m (rear bumper included, prototype body CR-09); grip bar moved aft to x = -30 (CR-04); look-ahead ToF set = 2 forward + 2 rearward (IB-34); branch limits reconciled with the stage-2 board (IB-28)
+contract_version: "0.4.0-draft8"   # draft8: thermal_policy added (bay not held at +10 C on pack power; receiver thermal break required)
+# previous:   # draft7: tail swept radius 0.290 m (rear bumper included, prototype body CR-09); grip bar moved aft to x = -30 (CR-04); look-ahead ToF set = 2 forward + 2 rearward (IB-34); branch limits reconciled with the stage-2 board (IB-28)
 # previous:   # draft6: head envelope extended forward for the sprung leading rail (15.6 mm stroke); head grounding and insulation decisions
 # previous:   # draft5: head mount option C adopted (DEC-041 closed): mount datum and optics row moved 72.8 mm aft; 12 Ah layout
 # previous:   # draft4: Rev E body adopted (DEC-039), 12 Ah pack (DEC-040), head mount under trade study (DEC-041)
@@ -113,7 +114,13 @@ power:
     lidar: 6.0
     chassis_logic_sensors: 3.0
     head_electronics: 5.0
-    heaters_combined: 22.0        # was 15.0 in the 0.3 worksheet; mechanical lumped model and power_budget.md give about 21-22 W at -20 C (head 16 W + bay 6 W) and about 30 W at -25 C
+    heaters_combined: 22.0        # planning value only. Calculated on the common assumption set (IB-39, still air): head 16.9-17.2 W at -20 C and 19.8-20.1 W at -25 C for +10 C at the SiPM carrier (mechanical/head/out/thermal_summary.json); bay 22 W at -20 C and 27 W at -25 C IF the pack skin were held at +10 C (mechanical/common/out/mech_calcs.md section 7). The bay figure is avoided by thermal_policy below.
+  thermal_policy:                 # lead decision 2026-11-27 (DEC-045); calculated only, cold trial pending
+    bay_discharge: "No regulation to +10 C while running from the pack: heating the pack from its own energy costs more than the capacity it recovers (22 W for about 2 h = 44 Wh against roughly 15 Wh gained on a 154 Wh pack, estimate). The bay heater holds the pack skin at or above bay_min_discharge_c only; typical chassis self-heat (12.6 W) keeps the bay about 11 K above ambient by calculation."
+    bay_min_discharge_c: -10.0    # margin to the pack's low-temperature discharge limit (-20 C, recalled from the Power-Sonic PSL-SC data sheet, UNVERIFIED)
+    bay_precharge_c: 5.0          # on external power before and during charging (charger gate cold_charge_inhibit_below_c)
+    head_setpoint_c: 10.0         # baseline; +5 C is a documented option (head report section 9) pending the optics supplier's temperature limits - owner decision open (IB-62)
+    head_receiver_thermal_break: "Required: the head heater figures assume about 0.07 W/K per receiver shoe to the body. Metal receiver channels bolted to the chassis plate without a break raise the head demand to 43-66 W (calculated), above the 30 W fitted."
   charger: {topology: "On-board buck charger with power path (LTC4162-F class), external 24 V DC supply", charge_current_a: 3.0, cold_charge_inhibit_below_c: 5.0, note: "The +5 C gate is the on-board charger's thermistor qualification. The baseline pack's own BMS gate is lower (datasheet charge range 0 to +45 C), so it is a backstop, not a second +5 C channel."}
 
 # ---------------------------------------------------------------- hardwired traction chain

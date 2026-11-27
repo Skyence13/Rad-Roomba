@@ -82,9 +82,9 @@
   },
   {
    "check": "mechanical/common interface records follow the as-built board (IB-52: board_envelopes.yaml holes, HEAD_PIGTAIL_EXIT)",
-   "status": "deviation",
+   "status": "pass",
    "evidence": "design note",
-   "detail": "params.HEAD_PIGTAIL_EXIT J1 y 87.5 vs head port y 76.2 (CR-M03 a); owner mechanical/common (head model already follows the board file)"
+   "detail": "board_envelopes.yaml and params agree with the head"
   },
   {
    "check": "RR-HEAD-ACQ as built vs head: 8 mounting holes (H2801..H2808) = model standoffs = spreader clinch holes",
@@ -2519,9 +2519,9 @@
   }
  },
  "summary": {
-  "pass": 42,
+  "pass": 43,
   "fail": 0,
-  "deviation": 6
+  "deviation": 5
  },
- "runtime_s": 247.7
+ "runtime_s": 222.7
 }
