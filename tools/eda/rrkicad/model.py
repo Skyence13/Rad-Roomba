@@ -196,6 +196,7 @@ class Board:
         self.replicas = []
         self.routing = {"passes": 100, "threads": None, "timeout": None, "enabled": True, "extra_args": [],
                         "optimizer": True, "fanout": False, "plane_fanout": True, "retries": 2, "restarts": 1,
+                        "budget": None, "chunk": 900, "stall": 2, "zone_nets": "auto",
                         "escape": "auto", "escape_pitch": 0.65, "escape_min_pads": 16, "escape_layers": None, "escape_via": None,
                         "escape_track": None, "escape_direct": True, "finisher": True,
                         "finisher_ripup": True, "finisher_seconds": 900}
@@ -373,6 +374,12 @@ class Board:
         (short direct pre-route to a nearby two-pad passive instead of a via, default True).
         restarts: fresh autorouter runs with another item-order seed when connections are still
         open after the continue runs (default 1; the best result is kept).
+        budget: wall-clock seconds for all autorouter runs (None = no budget: first run + `retries`
+        continue runs + `restarts`).  With a budget every Freerouting run is capped at `chunk`
+        seconds (default 900) and continue runs repeat until the budget is used up or `stall`
+        (default 2) consecutive runs did not improve.
+        zone_nets: "auto" (= "exclude" on 4/6 layers, "route" on 2 layers) - nets with a copper zone
+        are not given to the autorouter as ordinary routes when excluded.
         finisher: built-in maze router for connections the autorouter leaves open (default True);
         finisher_ripup (default True), finisher_seconds (time budget, default 900)."""
         for k in kw:

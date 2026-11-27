@@ -539,6 +539,17 @@ class Builder:
         by_key = {(s["first"], s["dx"], s["dy"]): s for s in stored}
         n = 0
         done_src = set()
+        # copper already on the board (definition pre-routes) or already replayed is not added twice
+        # (a definition that pre-routes every lane itself gave co-located vias on the copies)
+        have = set()
+        for t in self.pcb.GetTracks():
+            if t.GetClass() == "PCB_VIA":
+                x_, y_ = self.fr.user(t.GetPosition())
+                have.add(("via", t.GetNetname(), round(x_, 3), round(y_, 3)))
+            else:
+                a_, b_ = self.fr.user(t.GetStart()), self.fr.user(t.GetEnd())
+                a_, b_ = (round(a_[0], 3), round(a_[1], 3)), (round(b_[0], 3), round(b_[1], 3))
+                have.add(("seg", t.GetNetname(), t.GetLayerName(), min(a_, b_), max(a_, b_)))
         for rep in reps:
             s = by_key.get((sorted(rep["pairs"])[0], rep["dx"], rep["dy"]))
             if s is None or s["sig"] != block_signature(b, rep["pairs"]):
@@ -552,6 +563,15 @@ class Builder:
                         if key in done_src:
                             continue
                         done_src.add(key)
+                    if it["k"] == "via":
+                        key = ("via", net, round(it["xy"][0] + dx, 3), round(it["xy"][1] + dy, 3))
+                    else:
+                        a_ = (round(it["a"][0] + dx, 3), round(it["a"][1] + dy, 3))
+                        b_ = (round(it["b"][0] + dx, 3), round(it["b"][1] + dy, 3))
+                        key = ("seg", net, it["layer"], min(a_, b_), max(a_, b_))
+                    if key in have:
+                        continue
+                    have.add(key)
                     if it["k"] == "via":
                         self._add_via({"net": net, "x": it["xy"][0] + dx, "y": it["xy"][1] + dy, "dia": it["dia"], "drill": it["drill"]})
                     else:
@@ -737,18 +757,89 @@ def _edge_guard(pcb, board):
             pcb.Add(z)
 
 
+def _net_tie_guard(pcb, board):
+    """Rule areas over the copper polygons of net-tie footprints (Freerouting does not see them):
+    no vias on any layer, no tracks on the polygon's layer.  The tie's own pads are cut out so the
+    router can still reach them."""
+    paper, pw, ph, ox, oy = page_and_origin(board)
+    n = 0
+    cu_all = pcbnew.LSET()
+    for l in board.copper_layers:
+        cu_all.AddLayer(pcb.GetLayerID(l))
+    for fp in pcb.GetFootprints():
+        shapes = [g for g in fp.GraphicalItems() if g.GetClass() == "PCB_SHAPE" and pcbnew.IsCopperLayer(g.GetLayer())]
+        if not shapes:
+            continue
+        for g in shapes:
+            poly = pcbnew.SHAPE_POLY_SET()
+            g.TransformShapeToPolygon(poly, g.GetLayer(), 0, pcbnew.FromMM(0.005), pcbnew.ERROR_INSIDE)
+            pads = pcbnew.SHAPE_POLY_SET()
+            for pad in fp.Pads():
+                if pad.IsOnLayer(g.GetLayer()):
+                    pad.TransformShapeToPolygon(pads, g.GetLayer(), pcbnew.FromMM(0.05), pcbnew.FromMM(0.005), pcbnew.ERROR_OUTSIDE)
+            poly.BooleanSubtract(pads)
+            for k in range(poly.OutlineCount()):
+                o = poly.Outline(k)
+                if o.PointCount() < 3:
+                    continue
+                for vias_only in (True, False):
+                    z = pcbnew.ZONE(pcb)
+                    ol = z.Outline()
+                    ol.NewOutline()
+                    for m in range(o.PointCount()):
+                        p = o.CPoint(m)
+                        ol.Append(p.x, p.y)
+                    if vias_only:
+                        z.SetLayerSet(cu_all)
+                    else:
+                        ls = pcbnew.LSET()
+                        ls.AddLayer(g.GetLayer())
+                        z.SetLayerSet(ls)
+                    z.SetIsRuleArea(True)
+                    z.SetDoNotAllowTracks(not vias_only)
+                    z.SetDoNotAllowVias(vias_only)
+                    z.SetDoNotAllowPads(False)
+                    z.SetDoNotAllowCopperPour(False)
+                    z.SetDoNotAllowFootprints(False)
+                    pcb.Add(z)
+                n += 1
+    return n
+
+
+def zone_nets(board):
+    """Nets the autorouter must not route as ordinary tracks (4/6 layers, route(zone_nets="exclude")):
+    every net that has a copper zone.  Their pads connect through the zone fill and the plane
+    fan-out; whatever stays open is left to the finisher and reported."""
+    mode = board.routing.get("zone_nets", "auto")
+    if mode == "route" or (mode == "auto" and board.layers < 4):
+        return set()
+    return {z["net"] for z in board.zones}
+
+
 def export_dsn(pcb_path, dsn_path, board=None):
-    """Export a Specctra DSN.  Zones on outer *signal* layers are left out so the
-    autorouter routes those nets with real tracks; inner plane zones are kept."""
+    """Export a Specctra DSN.  Zones on outer *signal* layers are left out (their nets are routed
+    with real tracks on 2-layer boards; on 4/6 layers zone nets are excluded from autorouting, see
+    zone_nets()); inner plane zones are kept.  Rule areas that ban neither tracks nor vias (e.g.
+    "no footprints here") are left out - KiCad would export them as full routing keep-outs.
+
+    pcbnew note: nothing may be created after BOARD.Remove() in the same process (the SWIG proxies
+    of new objects degrade, e.g. ZONE.Outline() comes back as a bare SwigPyObject), so all new
+    rule areas are added first and the removals come last."""
     pcb = pcbnew.LoadBoard(pcb_path)
+    drop = []
     for z in list(pcb.Zones()):
         if z.GetIsRuleArea():
+            if not (z.GetDoNotAllowTracks() or z.GetDoNotAllowVias()):
+                drop.append(z)
             continue
         lids = [l for l in z.GetLayerSet().CuStack()]
         if all(pcb.GetLayerType(l) == pcbnew.LT_SIGNAL for l in lids):
-            pcb.Remove(z)
+            drop.append(z)
     if board is not None:
+        _net_tie_guard(pcb, board)
         _edge_guard(pcb, board)
+    for z in drop:
+        pcb.Remove(z)
     pcb.BuildConnectivity()
     if os.path.exists(dsn_path):
         os.remove(dsn_path)
@@ -765,10 +856,66 @@ def export_dsn(pcb_path, dsn_path, board=None):
         v = float(m.group(1))
         return "(clearance %s" % (("%.1f" % (v + 25.0)).rstrip("0").rstrip(".") if v >= 100.0 else m.group(1))
     text2 = re.sub(r"\(clearance ([0-9.]+)", bump, text)
+    ignored = []
+    if board is not None:
+        text2, ignored = _split_classes(text2, zone_nets(board))
     if text2 != text:
         with open(dsn_path, "w") as f:
             f.write(text2)
-    return dsn_path
+    return ignored
+
+
+def _sexpr_end(text, i):
+    """Index after the parenthesised expression starting at text[i] == '('."""
+    depth, q = 0, False
+    while i < len(text):
+        c = text[i]
+        if q:
+            if c == '"':
+                q = False
+        elif c == '"':
+            q = True
+        elif c == "(":
+            depth += 1
+        elif c == ")":
+            depth -= 1
+            if depth == 0:
+                return i + 1
+        i += 1
+    raise ValueError("unbalanced DSN")
+
+
+def _split_classes(text, nets):
+    """Move *nets* out of their DSN net classes into classes named RR_ZONE_<class> (same rules);
+    returns (text, [new class names]) - the caller tells Freerouting to ignore those classes."""
+    import re
+    if not nets:
+        return text, []
+    out, pos, made = [], 0, []
+    for m in re.finditer(r"\(class ", text):
+        if m.start() < pos:
+            continue
+        end = _sexpr_end(text, m.start())
+        block = text[m.start():end]
+        k = block.index("(", 1)              # first sub-expression: (circuit ...) / (rule ...)
+        head, body = block[:k], block[k:]
+        toks = re.findall(r'"[^"]*"|[^\s()]+', head)[1:]   # drop "class"
+        name, members = toks[0], toks[1:]
+        bare = [t[1:-1] if t.startswith('"') else t for t in members]
+        keep = [t for t, b in zip(members, bare) if b not in nets]
+        move = [t for t, b in zip(members, bare) if b in nets]
+        out.append(text[pos:m.start()])
+        if not move:
+            out.append(block)
+        else:
+            cname = "RR_ZONE_" + re.sub(r"[^A-Za-z0-9_]", "_", name.strip('"'))
+            made.append(cname)
+            if keep:
+                out.append("(class %s %s\n      %s\n    " % (name, " ".join(keep), body))
+            out.append("(class %s %s\n      %s" % (cname, " ".join(move), body))
+        pos = end
+    out.append(text[pos:])
+    return "".join(out), made
 
 
 def block_netmap(board, pairs):
@@ -798,10 +945,41 @@ def save_block_routes(board, pcb, fr, paths):
             continue
         nm = block_netmap(board, rep["pairs"])
         items = []
+        # locked copper is the generator's (escape, plane fan-out, earlier block copies) unless it is a
+        # pre-route of the definition: only router copper and definition pre-routes are stored - the
+        # generator re-creates its own copper for every copy (storing it gave co-located vias)
+        user_vias = {(round(v["x"], 3), round(v["y"], 3), v["net"]) for v in board.vias}
+        user_segs = set()
+        # items replayed from the previous blocks.json are locked too: keep them
+        try:
+            with open(os.path.join(paths.route_dir, "blocks.json")) as f_:
+                for blk in json.load(f_):
+                    for it in blk.get("items", []):
+                        if it["k"] == "via":
+                            user_vias.add((round(it["xy"][0], 3), round(it["xy"][1], 3), it["src"]))
+                        else:
+                            a_, b_ = (round(it["a"][0], 3), round(it["a"][1], 3)), (round(it["b"][0], 3), round(it["b"][1], 3))
+                            user_segs.add((min(a_, b_), max(a_, b_), it["src"]))
+        except (OSError, ValueError, KeyError):
+            pass
+        for tdef in board.tracks:
+            for p_, q_ in zip(tdef["pts"][:-1], tdef["pts"][1:]):
+                a_, b_ = (round(p_[0], 3), round(p_[1], 3)), (round(q_[0], 3), round(q_[1], 3))
+                user_segs.add((min(a_, b_), max(a_, b_), tdef["net"]))
         for t in pcb.GetTracks():
             n = t.GetNetname()
             if n not in nm:
                 continue
+            if t.IsLocked():
+                if t.GetClass() == "PCB_VIA":
+                    x_, y_ = fr.user(t.GetPosition())
+                    if (round(x_, 3), round(y_, 3), n) not in user_vias:
+                        continue
+                else:
+                    a_, b_ = fr.user(t.GetStart()), fr.user(t.GetEnd())
+                    a_, b_ = (round(a_[0], 3), round(a_[1], 3)), (round(b_[0], 3), round(b_[1], 3))
+                    if (min(a_, b_), max(a_, b_), n) not in user_segs:
+                        continue
             if t.GetClass() == "PCB_VIA":
                 x, y = fr.user(t.GetPosition())
                 items.append({"k": "via", "src": n, "dst": nm[n], "xy": [x, y],
@@ -810,7 +988,7 @@ def save_block_routes(board, pcb, fr, paths):
                 a, e = fr.user(t.GetStart()), fr.user(t.GetEnd())
                 items.append({"k": "seg", "src": n, "dst": nm[n], "layer": t.GetLayerName(), "a": list(a), "b": list(e),
                               "w": round(pcbnew.ToMM(t.GetWidth()), 4)})
-        items.sort(key=lambda i: json.dumps(i, sort_keys=True))
+        items = sorted({json.dumps(i, sort_keys=True): i for i in items}.values(), key=lambda i: json.dumps(i, sort_keys=True))
         blocks.append({"sig": block_signature(board, rep["pairs"]), "first": sorted(rep["pairs"])[0],
                        "dx": rep["dx"], "dy": rep["dy"], "items": items})
     path = os.path.join(paths.route_dir, "blocks.json")
@@ -861,14 +1039,27 @@ def import_ses(name, pcb_path, ses, clean="1", min_track="0"):
             t.SetWidth(mt)
             widened += 1
     info["necked_tracks_widened"] = widened
+    # finisher items stored for this SES (route/finish.json): add now, removals at the end
+    from . import finisher
+    ax = pcb.GetDesignSettings().GetAuxOrigin()
+    n_fin, fin_gone = finisher.apply(pcb, Frame(pcbnew.ToMM(ax.x), pcbnew.ToMM(ax.y)), os.path.dirname(ses), ses)
+    info["finisher_items"] = n_fin
+    info["finisher_removed"] = len(fin_gone)
     pcbnew.ZONE_FILLER(pcb).Fill(pcb.Zones())
     pcb.BuildConnectivity()
     info["unconnected_before_cleanup"] = int(pcb.GetConnectivity().GetUnconnectedCount(True))
-    info["dangling_tracks_removed"] = _remove_dangling(pcb) if clean in ("1", "d") else 0
+    # collect everything first, remove last: after BOARD.Remove() the pcbnew SWIG proxies of this
+    # process are unreliable (that is what crashed the unused-escape clean-up on RR-CHS-MAIN)
+    dang = _dangling_victims(pcb) if clean in ("1", "d") else []
     # unused escape vias are only dropped on a completely connected board: while anything is open
     # they are the finisher's (and the engineer's) best starting points
-    info["unused_escapes_removed"] = _remove_unused_escapes(pcb, os.path.join(os.path.dirname(ses), "escape_vias.json")) \
-        if clean == "1" and info["unconnected_before_cleanup"] == 0 else 0
+    esc = _unused_escape_victims(pcb, os.path.join(os.path.dirname(ses), "escape_vias.json"), skip=dang) \
+        if clean == "1" and info["unconnected_before_cleanup"] == 0 else []
+    info["dangling_tracks_removed"] = len(dang)
+    info["unused_escapes_removed"] = sum(1 for it in esc if it.GetClass() == "PCB_VIA")
+    fin_keys = {_track_key(t) for t in fin_gone}
+    for it in fin_gone + [t for t in dang + esc if _track_key(t) not in fin_keys]:
+        pcb.Remove(it)
     pcbnew.SaveBoard(pcb_path, pcb, True)
     return info
 
@@ -921,13 +1112,6 @@ def finish_pcb(board, paths, ses=None):
             os.remove(unrouted)
     else:
         pcb, after = load_filled()
-    if ses:
-        from . import finisher
-        n_fin = finisher.apply(board, pcb, fr, paths, ses)
-        info["finisher_items"] = n_fin
-        if n_fin:
-            pcbnew.ZONE_FILLER(pcb).Fill(pcb.Zones())
-            pcb.BuildConnectivity()
     n_tr = n_via = 0
     length = 0.0
     drills = {}
@@ -956,19 +1140,20 @@ def finish_pcb(board, paths, ses=None):
     return info
 
 
-def _remove_unused_escapes(pcb, listing):
+def _unused_escape_victims(pcb, listing, skip=()):
     """Drop escape via + stub pairs the router never used (the via touches nothing but its own
     stub): they are dead-end antennas and give via_dangling warnings.  Only vias listed by the
     escape generator are considered; the caller re-checks connectivity and redoes the import
     without clean-up if anything got worse."""
     import json
     if not os.path.exists(listing):
-        return 0
+        return []
     with open(listing) as f:
         want = {(MM(x), MM(y), n) for x, y, n in json.load(f)}
     if not want:
-        return 0
-    tracks = [t for t in pcb.GetTracks() if t.GetClass() == "PCB_TRACK"]
+        return []
+    skip_keys = {_track_key(t) for t in skip}
+    tracks = [t for t in pcb.GetTracks() if t.GetClass() == "PCB_TRACK" and _track_key(t) not in skip_keys]
     ends = {}
     for t in tracks:
         for p in (t.GetStart(), t.GetEnd()):
@@ -999,23 +1184,17 @@ def _remove_unused_escapes(pcb, listing):
             node = nxt[0].GetStart() if nxt[0].GetEnd() == node else nxt[0].GetEnd()
         victims.append(v)
         victims += chain
-    n_via = sum(1 for it in victims if it.GetClass() == "PCB_VIA")
-    for it in victims:
-        pcb.Remove(it)
-    return n_via
+    return victims
 
 
-def _remove_dangling(pcb):
-    """Delete autorouter left-overs: unlocked track segments with a free end (unused
-    fan-out stubs).  Returns the number removed (the caller re-checks connectivity)."""
+def _dangling_victims(pcb):
+    """Autorouter left-overs: unlocked track segments with a free end (unused fan-out stubs).
+    Returned, not removed (the caller removes everything at the end and re-checks connectivity)."""
     conn = pcb.GetConnectivity()
     tracks = [t for t in pcb.GetTracks() if t.GetClass() != "PCB_VIA" and not t.IsLocked()]
     # single pass on purpose: the connectivity object cannot be refreshed reliably
     # from Python after removals, and a stale one reports false positives
-    victims = [t for t in tracks if conn.TestTrackEndpointDangling(t, True)]
-    for t in victims:
-        pcb.Remove(t)
-    return len(victims)
+    return [t for t in tracks if conn.TestTrackEndpointDangling(t, True)]
 
 
 def pad_positions(pcb_path, board):

@@ -52,7 +52,15 @@ routed 2 of the 4 (IO00 rerouting 7 nets, IO43 rerouting 13 nets; DRC 0 errors),
 
 Added: `restarts=1` (fresh Freerouting run with another item-order seed when connections stay open after
 the continue runs; best kept), `finisher_seconds=900`.
-Formal series (2x 4-layer, 2x 6-layer) with this code: running.
+Formal series with this code (fresh route each, tool-checked):
+| board | run | Freerouting attempts (s -> open) | total wall | result |
+|---|---|---|---|---|
+| STRESS-150 | 1 | 462 -> 1, continue 56 -> 1, continue 47 -> 1, restart (seed 1000) 305 -> 0 | 1089 s | PASS, DRC 0 err / 17 warn, parity 0 |
+| STRESS-150 | 2 | 426 -> 1, 54 -> 1, 39 -> 1, restart 314 -> 0 | 1039 s | PASS, DRC 0 err / 17 warn, parity 0 |
+| STRESS-150-6L | 1 | 62 -> 0 | 90 s | PASS, DRC 0 err / 3 warn, parity 0 |
+| STRESS-150-6L | 2 | 63 -> 0 | 90 s | PASS, DRC 0 err / 3 warn, parity 0 |
+The two runs of each board use the same DSN, so they reproduce (deterministic router); they show the
+result is stable, not that it is independent of luck. Finisher not needed in these runs.
 
 Scale test `tests/scale500/` (493 parts, 160 x 100 mm, 6 layers, LQFP-100 + LQFP-64 + 2 QFN + 2 TSSOP,
 40 SOT-23(-5), 13 connectors): generates; escape 199 vias + 4 direct on U1-U4, 1 pad without a legal

@@ -102,9 +102,34 @@ def plane_fanout(bld, skip=None):
                 return False
         for cx, cy in [(0, 0)] + ring:
             px, py = x + cx * vr, y + cy * vr
-            if any(_pip(px, py, k) for k in bld.via_keepouts):
+            if any(_pip(px, py, k) for k in via_kos):
                 return False
         return True
+    _pc = {}
+
+    def pclr(n1, n2):
+        """Clearance between two nets: the larger of both net classes (KiCad's rule)."""
+        k = (n1, n2)
+        if k not in _pc:
+            c = r.clearance
+            for n in (n1, n2):
+                if n:
+                    c = max(c, b.class_of(n)["clearance"])
+            _pc[k] = c
+        return _pc[k]
+    # footprint-internal rule areas (e.g. an LGA's keep-out) and their track bans per layer
+    fp_via_ko, fp_trk_ko = [], []
+    for fp in pcb.GetFootprints():
+        for z in fp.Zones():
+            if not z.GetIsRuleArea() or z.Outline().OutlineCount() < 1:
+                continue
+            o = z.Outline().Outline(0)
+            poly = [(pcbnew.ToMM(o.CPoint(i).x), pcbnew.ToMM(o.CPoint(i).y)) for i in range(o.PointCount())]
+            if z.GetDoNotAllowVias():
+                fp_via_ko.append(poly)
+            if z.GetDoNotAllowTracks():
+                fp_trk_ko.append((poly, {pcb.GetLayerName(l) for l in z.GetLayerSet().CuStack()}))
+    via_kos = list(bld.via_keepouts) + fp_via_ko
     pads = Grid()       # dict(rect, net, layers, ref)
     court = Grid()      # dict(rect, ref)
     vias = Grid()       # dict(x, y, r, drill, net)
@@ -119,6 +144,12 @@ def plane_fanout(bld, skip=None):
             rect = (pcbnew.ToMM(bb.GetLeft()), pcbnew.ToMM(bb.GetTop()), pcbnew.ToMM(bb.GetRight()), pcbnew.ToMM(bb.GetBottom()))
             court.add(rect, {"rect": rect, "ref": ref})
         part = b._refs.get(ref)
+        # copper drawn in the footprint (net ties): copper of no net, bounding box as the obstacle
+        for g in fp.GraphicalItems():
+            if g.GetClass() == "PCB_SHAPE" and pcbnew.IsCopperLayer(g.GetLayer()):
+                bb = g.GetBoundingBox()
+                rect = (pcbnew.ToMM(bb.GetLeft()), pcbnew.ToMM(bb.GetTop()), pcbnew.ToMM(bb.GetRight()), pcbnew.ToMM(bb.GetBottom()))
+                pads.add(rect, {"rect": rect, "net": "", "layer": g.GetLayerName(), "ref": ref, "tht": False})
         for pad in fp.Pads():
             if not pad.IsOnCopperLayer():
                 continue            # paste-only apertures (e.g. inside a QFN exposed pad)
@@ -147,7 +178,7 @@ def plane_fanout(bld, skip=None):
 
     def via_ok(x, y, net, me, allow_courtyard):
         clr = max(r.clearance, b.class_of(net)["clearance"]) + 0.03
-        m = vr + clr + 1.0
+        m = vr + clr + 1.5
         if not in_plane(net, x, y) or not edge_ok(x, y):
             return False
         for q in pads.near(x - m, y - m, x + m, y + m):
@@ -157,16 +188,16 @@ def plane_fanout(bld, skip=None):
             if q["net"] == net:
                 if d < vr + 0.1:
                     return False
-            elif d < vr + clr or d < vdr / 2.0 + r.min_hole_clearance + 0.03:
+            elif d < vr + pclr(net, q["net"]) + 0.03 or d < vdr / 2.0 + r.min_hole_clearance + 0.03:
                 return False
         for v in vias.near(x - m, y - m, x + m, y + m):
             d = math.hypot(x - v["x"], y - v["y"])
             if d < vdr / 2.0 + v["drill"] / 2.0 + r.min_hole_to_hole + 0.05:
                 return False
-            if d < vr + v["r"] + (clr if v["net"] != net else 0.05):
+            if d < vr + v["r"] + (pclr(net, v["net"]) + 0.03 if v["net"] != net else 0.05):
                 return False
         for s in segs.near(x - m, y - m, x + m, y + m):
-            if s["net"] != net and _seg_dist(x, y, s["a"][0], s["a"][1], s["b"][0], s["b"][1]) < vr + s["w"] / 2.0 + clr:
+            if s["net"] != net and _seg_dist(x, y, s["a"][0], s["a"][1], s["b"][0], s["b"][1]) < vr + s["w"] / 2.0 + pclr(net, s["net"]) + 0.03:
                 return False
         if not allow_courtyard:
             for c in court.near(x, y, x, y):
@@ -176,9 +207,12 @@ def plane_fanout(bld, skip=None):
 
     def track_ok(ax, ay, bx, by, w, layer, net, me):
         clr = max(r.clearance, b.class_of(net)["clearance"]) + 0.01
+        for poly, lays in fp_trk_ko:
+            if layer in lays and (_pip(ax, ay, poly) or _pip(bx, by, poly) or _pip((ax + bx) / 2, (ay + by) / 2, poly)):
+                return False
         n = max(1, int(math.hypot(bx - ax, by - ay) / 0.08))
         mr = me["rect"]
-        m = w / 2.0 + clr
+        m = w / 2.0 + clr + 1.5
         near_p = pads.near(min(ax, bx) - m, min(ay, by) - m, max(ax, bx) + m, max(ay, by) + m)
         near_v = vias.near(min(ax, bx) - m - 1, min(ay, by) - m - 1, max(ax, bx) + m + 1, max(ay, by) + m + 1)
         near_s = segs.near(min(ax, bx) - m - 1, min(ay, by) - m - 1, max(ax, bx) + m + 1, max(ay, by) + m + 1)
@@ -189,14 +223,14 @@ def plane_fanout(bld, skip=None):
             for q in near_p:
                 if q is me or q["net"] == net or q["layer"] not in ("*", layer):
                     continue
-                if _rect_dist(x, y, q["rect"]) < m:
+                if _rect_dist(x, y, q["rect"]) < w / 2.0 + pclr(net, q["net"]) + 0.01:
                     return False
             for v in near_v:
-                if v["net"] != net and math.hypot(x - v["x"], y - v["y"]) < v["r"] + m:
+                if v["net"] != net and math.hypot(x - v["x"], y - v["y"]) < v["r"] + w / 2.0 + pclr(net, v["net"]) + 0.01:
                     return False
             for s in near_s:
                 if s["net"] != net and s["layer"] == layer and \
-                        _seg_dist(x, y, s["a"][0], s["a"][1], s["b"][0], s["b"][1]) < s["w"] / 2.0 + m:
+                        _seg_dist(x, y, s["a"][0], s["a"][1], s["b"][0], s["b"][1]) < s["w"] / 2.0 + w / 2.0 + pclr(net, s["net"]) + 0.01:
                     return False
         return True
     made, failed = 0, []

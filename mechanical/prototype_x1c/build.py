@@ -29,7 +29,8 @@ def main(argv=None):
     print("[1/6] building parts", flush=True)
     parts = assembly.build()
     from .rrx import util
-    stale = [f for f in util.CACHE.glob("*.brep") if f.name not in util.USED]
+    used_prefix = {n.rsplit("_", 1)[0] for n in util.USED}
+    stale = [f for f in util.CACHE.glob("*.brep") if f.name not in util.USED and f.name.rsplit("_", 1)[0] in used_prefix]   # superseded versions only
     for f in stale:
         f.unlink()
     print(f"  BREP cache: {len(util.USED)} entries used, {len(stale)} stale removed", flush=True)

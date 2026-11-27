@@ -159,8 +159,11 @@
     "parts": 150,
     "sheets": 7
   },
-  "dsn_sha256": "89cc898861dcb7390ed5a9490d36fba2c94ae69ae7608153ac90aaff45cd92a1",
-  "dsn_unchanged": true,
+  "dsn_ignore_classes": [
+    "RR_ZONE_PWR"
+  ],
+  "dsn_sha256": "36b78637f52b1e0bfe0503b55f32d690ab6a1f223b748c8faf3e8ce0b2862acb",
+  "dsn_unchanged": false,
   "escape": {
     "direct": 0,
     "enabled": true,
@@ -235,6 +238,7 @@
     "misc.kicad_sch",
     "power.kicad_sch"
   ],
+  "imported_ses_sha256": null,
   "name": "STRESS-150",
   "pcb_page_origin": [
     50.0,
@@ -1201,20 +1205,15 @@
     "timed_out": false
   },
   "route_stats": {
-    "dangling_tracks_removed": 0,
-    "finisher_items": null,
-    "necked_tracks_widened": 0,
-    "preroutes": 743,
-    "preroutes_missing_after_import": 0,
-    "track_length_mm": 4799.27,
-    "tracks": 1860,
-    "unconnected_after_fill": 0,
-    "unconnected_before_cleanup": 0,
-    "unused_escapes_removed": 9,
-    "vias": 448
+    "track_length_mm": 347.35,
+    "tracks": 469,
+    "unconnected_after_fill": 183,
+    "vias": 274
   },
-  "routed": true,
+  "routed": false,
   "routing": {
+    "budget": null,
+    "chunk": 900,
     "enabled": true,
     "escape": "auto",
     "escape_direct": true,
@@ -1236,8 +1235,10 @@
     "plane_fanout": true,
     "restarts": 1,
     "retries": 2,
+    "stall": 2,
     "threads": null,
-    "timeout": 600
+    "timeout": 600,
+    "zone_nets": "auto"
   },
   "single_pin_nets": []
 }

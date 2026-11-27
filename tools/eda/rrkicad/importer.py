@@ -61,7 +61,15 @@ def from_circuit(board, module_or_path, footprints=None, symbols=None, place=Non
                 names[num] = v[0] or num
         sym = symbols.get(ref)
         hint = p.get("symbol_hint")
-        if sym is None and hint:
+        if sym is None and hint and str(hint).startswith("rr_local:") and str(hint)[9:] in board.local_symbols:
+            # a project-local symbol defined on the board before the import
+            lpins = board.local_symbols[str(hint)[9:]]["pins"]
+            have = {q.number for q in lpins}
+            if set(names) <= have:
+                sym = hint
+            else:
+                report["hint_rejected"].append("%s: %s lacks pin(s) %s" % (ref, hint, sorted(set(names) - have)))
+        if sym is None and hint and not str(hint).startswith("rr_local:"):
             try:
                 sd = libs.get(hint)
                 have = {q.number for q in sd.pins}

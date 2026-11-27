@@ -16,7 +16,7 @@ from mechanical.common import params as P
 from mechanical.common.purchased import library as L
 
 from . import dims as D
-from .util import Part, box, cyl, fuse, prism_xz
+from .util import Part, biggest, box, cyl, fuse, prism_xz
 
 B = P.BATTERY_BAY
 Z1 = D.PLATE_Z[1]
@@ -36,6 +36,14 @@ HANDLE_L = 52.0                       # hinge to bar centre: 49 mm clear finger 
 PLUNGER_X = -215.0                    # index plunger axis (x, y = 0), through the hump roof into the cassette lid
 DOOR_PEG = (-237.0, 100.0)            # fixed pegs in the upper jambs the door hangs on
 CARRIER_HY = 26.0                    # half width of the floating coupler carrier on the cassette nose
+
+
+def _cavity():
+    from .util import cached, loft
+    R = P.BODY_ROWS
+    li = cached(["LI", R["lower_inner"]], lambda: loft(R["lower_inner"]))
+    ui = cached(["UI", R["upper_inner"]], lambda: loft(R["upper_inner"]))
+    return li.fuse(ui).fuse(box(-400, 200, -200, 200, D.PLATE_Z[0], D.PLATE_Z[1] + 0.5).intersect(li))
 
 
 def tunnel():
@@ -67,6 +75,7 @@ def tunnel():
         t = t.cut(cyl(1.5, 4, (-215.0, s * 30.0, Z1 - 1)))                                                   # drains
     for x in (-60.0, -20.0):
         t = t.cut(cyl(D.INSERT["M3"][0] / 2, D.INSERT["M3"][1], (x, 0.0, Z1)))
+    t = biggest(t.intersect(_cavity()))                                           # guide walls / feet trimmed to the inner skin at the tail corners
     for x in (-52.0, -30.0):                                                                               # coupler cross-pin (M4) bores
         t = t.cut(cyl(D.CLEAR["M4"] / 2, 60, (x, -30.0, 53.0), (0, 1, 0)))
     return t
@@ -104,7 +113,7 @@ def cassette():
 def cassette_lid():
     px0, px1 = B["pack_x"]
     lid = box(CX0 + WALL + 0.3, CX1 - WALL - 0.3, -CHY + WALL + 0.3, CHY - WALL - 0.3, CZ1 - 2.5, CZ1)
-    lid = lid.fuse(box(CX0 + 21.0, CX1 - 21.0, -CHY + 0.4, -CHY + WALL + 1.5, CZ1 - 5.6, CZ1 - 2.6)).clean()
+    lid = lid.fuse(box(CX0 + 21.0, CX1 - 21.0, -CHY + 0.4, -CHY + WALL + 3.0, CZ1 - 5.6, CZ1 - 2.5)).clean()   # tongue under the -y wall lip, fused to the plate
     for x in (px0 + 12.0, px1 - 12.0):
         lid = lid.cut(cyl(D.CLEAR["M3"] / 2, 5, (x, CHY - WALL - 2.6, CZ1 - 3.5)))
     lid = lid.cut(cyl(2.8, 6, (PLUNGER_X, 0.0, CZ1 - 4)))                                         # latch hole for the 5 mm plunger pin

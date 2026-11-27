@@ -1,0 +1,2553 @@
+{
+ "interference": {
+  "pairs_evaluated": 408,
+  "clashes": [
+   [
+    "lower_hull_RR",
+    "rear_deck_R",
+    22.0,
+    "boolean"
+   ],
+   [
+    "lower_hull_RL",
+    "rear_deck_L",
+    20.0,
+    "boolean"
+   ]
+  ],
+  "declared_overlaps": [
+   [
+    "rear_deck_L",
+    "mode_selector_body",
+    2323.6,
+    "boolean"
+   ],
+   [
+    "rear_deck_L",
+    "rearm_start_body",
+    2252.4,
+    "boolean"
+   ],
+   [
+    "rear_deck_R",
+    "hands_on_body",
+    2252.4,
+    "boolean"
+   ],
+   [
+    "rear_deck_R",
+    "estop_body",
+    2210.7,
+    "boolean"
+   ],
+   [
+    "rear_deck_R",
+    "pause_stop_body",
+    2136.2,
+    "boolean"
+   ],
+   [
+    "J1_receptacle",
+    "J1_mated_plug",
+    1781.3,
+    "boolean"
+   ],
+   [
+    "nose_cowl",
+    "head_latch",
+    1587.5,
+    "boolean"
+   ],
+   [
+    "battery_cassette",
+    "battery_pack",
+    852.9,
+    "boolean"
+   ],
+   [
+    "J2_receptacle",
+    "J2_mated_plug",
+    796.4,
+    "boolean"
+   ],
+   [
+    "latch_arm",
+    "head_latch",
+    651.6,
+    "boolean"
+   ],
+   [
+    "board_standoff_0",
+    "RR-CHS-MAIN_bottom_parts",
+    71.3,
+    "boolean"
+   ],
+   [
+    "board_standoff_1",
+    "RR-CHS-MAIN_bottom_parts",
+    71.3,
+    "boolean"
+   ],
+   [
+    "board_standoff_2",
+    "RR-CHS-MAIN_bottom_parts",
+    71.3,
+    "boolean"
+   ],
+   [
+    "board_standoff_3",
+    "RR-CHS-MAIN_bottom_parts",
+    71.3,
+    "boolean"
+   ],
+   [
+    "board_standoff_4",
+    "RR-CHS-MAIN_bottom_parts",
+    71.3,
+    "boolean"
+   ],
+   [
+    "board_standoff_5",
+    "RR-CHS-MAIN_bottom_parts",
+    71.3,
+    "boolean"
+   ],
+   [
+    "grip_bar",
+    "grip_screw_L",
+    67.9,
+    "boolean"
+   ],
+   [
+    "grip_bar",
+    "grip_screw_R",
+    67.9,
+    "boolean"
+   ]
+  ],
+  "contact_films": [
+   [
+    "front_bulkhead",
+    "lower_hull_FL",
+    0,
+    "boolean: contact film 0.000 mm thick"
+   ],
+   [
+    "front_bulkhead",
+    "lower_hull_FR",
+    3.4,
+    "boolean: contact film 0.030 mm thick"
+   ],
+   [
+    "rear_deck_R",
+    "estop_operator",
+    0,
+    "boolean: contact film 0.000 mm thick"
+   ]
+  ],
+  "methods": {
+   "boolean": 21,
+   "boolean: contact film 0.000 mm thick": 2,
+   "boolean: contact film 0.030 mm thick": 1,
+   "mesh screen": 384
+  },
+  "slowest_pairs_s": [
+   [
+    51.6,
+    "front_bulkhead",
+    "lower_hull_FR",
+    "boolean: contact film 0.030 mm thick"
+   ],
+   [
+    47.4,
+    "front_bulkhead",
+    "lower_hull_FL",
+    "boolean: contact film 0.000 mm thick"
+   ],
+   [
+    36.0,
+    "lower_hull_RR",
+    "rear_deck_R",
+    "boolean"
+   ],
+   [
+    29.5,
+    "lower_hull_RL",
+    "rear_deck_L",
+    "boolean"
+   ],
+   [
+    16.2,
+    "rear_deck_L",
+    "hatch_door",
+    "boolean"
+   ]
+  ]
+ },
+ "containment": {
+  "checked": [
+   "grip_foot_L",
+   "grip_foot_R",
+   "bridge_tray",
+   "bridge_post_0",
+   "bridge_post_1",
+   "bridge_post_2",
+   "bridge_post_3",
+   "board_standoff_0",
+   "board_standoff_1",
+   "board_standoff_2",
+   "board_standoff_3",
+   "board_standoff_4",
+   "board_standoff_5",
+   "battery_tunnel",
+   "battery_cassette",
+   "cassette_lid",
+   "coupler_carrier",
+   "cassette_handle",
+   "panel_tray",
+   "cm5_tray",
+   "battery_pack",
+   "coupler_cassette",
+   "coupler_fixed",
+   "chassis_heater_pad",
+   "bus_clamp_resistor",
+   "RR-CHS-MAIN_pcb",
+   "RR-CHS-MAIN_top_parts",
+   "RR-CHS-MAIN_bottom_parts",
+   "CM5_carrier_assembly",
+   "RR-PANEL"
+  ],
+  "outside": [
+   [
+    "battery_tunnel",
+    [
+     -230.0,
+     58.0,
+     37.0,
+     -5.8
+    ]
+   ]
+  ]
+ },
+ "floor": {
+  "contact_z": {
+   "tyre_L": 0.0,
+   "tyre_R": 0.0,
+   "caster": 0.0
+  },
+  "ok": true,
+  "lowest_other_parts": [
+   [
+    7.5,
+    "wheel_rim_L"
+   ],
+   [
+    7.5,
+    "wheel_rim_R"
+   ],
+   [
+    8.0,
+    "cliff_pod_L"
+   ],
+   [
+    8.0,
+    "cliff_pod_R"
+   ],
+   [
+    12.0,
+    "land_pin_L0"
+   ]
+  ]
+ },
+ "rays": {
+  "self_test": "ray aimed at the head hits head_envelope",
+  "tof": [
+   {
+    "sensor": "tof_cliff_fl",
+    "centre_ray_hits": [],
+    "cone_edge_hits": {}
+   },
+   {
+    "sensor": "tof_cliff_fr",
+    "centre_ray_hits": [],
+    "cone_edge_hits": {}
+   },
+   {
+    "sensor": "tof_cliff_rl",
+    "centre_ray_hits": [],
+    "cone_edge_hits": {}
+   },
+   {
+    "sensor": "tof_cliff_rr",
+    "centre_ray_hits": [],
+    "cone_edge_hits": {}
+   },
+   {
+    "sensor": "tof_look_fl",
+    "centre_ray_hits": [],
+    "cone_edge_hits": {}
+   },
+   {
+    "sensor": "tof_look_fr",
+    "centre_ray_hits": [],
+    "cone_edge_hits": {}
+   },
+   {
+    "sensor": "tof_look_rl",
+    "centre_ray_hits": [],
+    "cone_edge_hits": {}
+   },
+   {
+    "sensor": "tof_look_rr",
+    "centre_ray_hits": [],
+    "cone_edge_hits": {}
+   },
+   {
+    "sensor": "tof_prox_rc",
+    "centre_ray_hits": [],
+    "cone_edge_hits": {}
+   },
+   {
+    "sensor": "tof_prox_rl",
+    "centre_ray_hits": [],
+    "cone_edge_hits": {}
+   },
+   {
+    "sensor": "tof_prox_rr",
+    "centre_ray_hits": [],
+    "cone_edge_hits": {}
+   }
+  ],
+  "tof_centre_blocked": [],
+  "lidar_scan_z": 210.0,
+  "lidar_blocked": [],
+  "ok": true
+ },
+ "service": {
+  "battery_removal_sweep": {
+   "what": "cassette envelope swept 165 mm along -x; door, centre bumper and coupler removed/unmated",
+   "blocked_by": [
+    [
+     "lower_hull_RL",
+     7.0
+    ],
+    [
+     "lower_hull_RR",
+     7.0
+    ]
+   ]
+  },
+  "wheel_L_axial_removal": {
+   "what": "104 mm disc swept 60 mm outboard",
+   "blocked_by": []
+  },
+  "wheel_R_axial_removal": {
+   "what": "104 mm disc swept 60 mm outboard",
+   "blocked_by": []
+  },
+  "head_removal_sweep_+x": {
+   "what": "head envelope swept 66 mm forward",
+   "blocked_by": []
+  },
+  "service_cover_lift": {
+   "what": "cover lifted straight up to the underside of the grip bar (45 mm), then slid forward over the nose",
+   "blocked_by": []
+  },
+  "grip_hand_zone": {
+   "what": "45 mm in front of, behind and below the bar, 130 mm wide (same boxes as layout.py)",
+   "blocked_by": []
+  },
+  "J1_glove_zone": {
+   "what": "annulus 45 mm round the coupling nut, all solids incl. the skin",
+   "blocked_by": []
+  },
+  "J2_glove_zone": {
+   "what": "annulus 45 mm round the coupling nut, all solids incl. the skin",
+   "blocked_by": []
+  },
+  "charge_inlet_glove_zone": {
+   "what": "45 mm sphere in front of the opened inlet (cover swung up)",
+   "blocked_by": []
+  },
+  "handle_glove_gap": {
+   "what": "finger gap between the pulled-out handle bar and the cassette rear face (calculated from the model dimensions)",
+   "value_mm": 47.5,
+   "required_mm": 45.0,
+   "ok": true
+  }
+ },
+ "chin_rule": {
+  "parts_in_the_zone": [
+   [
+    "receiver_channel_L",
+    2778,
+    65.7
+   ],
+   [
+    "land_pin_L1",
+    146,
+    64.0
+   ],
+   [
+    "receiver_channel_R",
+    2754,
+    65.7
+   ],
+   [
+    "land_pin_R1",
+    146,
+    64.0
+   ],
+   [
+    "head_latch",
+    1896,
+    108.0
+   ]
+  ],
+  "allowed": [
+   "head_latch",
+   "receiver_channel_*",
+   "land_pin_*",
+   "J?_mated_plug"
+  ],
+  "ok": true,
+  "note": "receiver flange = the x-stop pads of datum A (x 59.7..65.7); land pin at x = 62 +- 2"
+ },
+ "receiver": {
+  "rows": [
+   {
+    "item": "L datum A: channel front face x",
+    "required": 65.7,
+    "measured": 65.7,
+    "ok": true
+   },
+   {
+    "item": "L channel rear x",
+    "required": 2.0,
+    "measured": 2.0,
+    "ok": true
+   },
+   {
+    "item": "L channel z bottom",
+    "required": 12.0,
+    "measured": 12.0,
+    "ok": true
+   },
+   {
+    "item": "L channel z top (under the beam)",
+    "required": 33.0,
+    "measured": 33.0,
+    "ok": true
+   },
+   {
+    "item": "L datum C: land (dowel) top z",
+    "required": 16.0,
+    "measured": 16.0,
+    "ok": true
+   },
+   {
+    "item": "L land 0 centre x",
+    "required": 8.0,
+    "measured": 8.0,
+    "ok": true
+   },
+   {
+    "item": "L land 1 centre x",
+    "required": 62.0,
+    "measured": 62.0,
+    "ok": true
+   },
+   {
+    "item": "L land centre line y",
+    "required": 87.5,
+    "measured": 87.5,
+    "ok": true
+   },
+   {
+    "item": "L smallest shoe-to-channel gap (fit at the stations)",
+    "required": 0.05,
+    "measured": 0.0,
+    "ok": false
+   },
+   {
+    "item": "L shoe / channel interference volume (mm3)",
+    "required": 0.0,
+    "measured": 0.0,
+    "ok": true
+   },
+   {
+    "item": "L shoe rests on both lands (distance)",
+    "required": 0.0,
+    "measured": 0.0,
+    "ok": true
+   },
+   {
+    "item": "L running clearance each side away from the lands",
+    "required": 0.5,
+    "measured": 0.5,
+    "ok": true
+   },
+   {
+    "item": "R datum A: channel front face x",
+    "required": 65.7,
+    "measured": 65.7,
+    "ok": true
+   },
+   {
+    "item": "R channel rear x",
+    "required": 2.0,
+    "measured": 2.0,
+    "ok": true
+   },
+   {
+    "item": "R channel z bottom",
+    "required": 12.0,
+    "measured": 12.0,
+    "ok": true
+   },
+   {
+    "item": "R channel z top (under the beam)",
+    "required": 33.0,
+    "measured": 33.0,
+    "ok": true
+   },
+   {
+    "item": "R datum C: land (dowel) top z",
+    "required": 16.0,
+    "measured": 16.0,
+    "ok": true
+   },
+   {
+    "item": "R land 0 centre x",
+    "required": 8.0,
+    "measured": 8.0,
+    "ok": true
+   },
+   {
+    "item": "R land 1 centre x",
+    "required": 62.0,
+    "measured": 62.0,
+    "ok": true
+   },
+   {
+    "item": "R land centre line y",
+    "required": -87.5,
+    "measured": -87.5,
+    "ok": true
+   },
+   {
+    "item": "R smallest shoe-to-channel gap (fit at the stations)",
+    "required": 0.06,
+    "measured": 0.0,
+    "ok": false
+   },
+   {
+    "item": "R shoe / channel interference volume (mm3)",
+    "required": 0.0,
+    "measured": 0.0,
+    "ok": true
+   },
+   {
+    "item": "R shoe rests on both lands (distance)",
+    "required": 0.0,
+    "measured": 0.0,
+    "ok": true
+   },
+   {
+    "item": "R running clearance each side away from the lands",
+    "required": 0.5,
+    "measured": 0.5,
+    "ok": true
+   },
+   {
+    "item": "HEAD_DOCK switch body centre y",
+    "required": 87.5,
+    "measured": 87.5,
+    "ok": true
+   },
+   {
+    "item": "HEAD_DOCK switch body centre z",
+    "required": 23.0,
+    "measured": 23.0,
+    "ok": true
+   },
+   {
+    "item": "HEAD_DOCK switch body centre x (plunger +x, push pin through the channel end wall)",
+    "required": -3.0,
+    "measured": -3.25,
+    "ok": true
+   },
+   {
+    "item": "latch envelope x0",
+    "required": 88.0,
+    "measured": 88.0,
+    "ok": true
+   },
+   {
+    "item": "latch envelope z0",
+    "required": 46.0,
+    "measured": 46.0,
+    "ok": true
+   }
+  ],
+  "ok": false
+ },
+ "bed_fit": [
+  {
+   "part": "motor_pod_L",
+   "pn": "RRX-P01L",
+   "bbox_print": [
+    52.0,
+    45.5,
+    19.0
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "cheek_fairing_L",
+   "pn": "RRX-P03L",
+   "bbox_print": [
+    29.23,
+    29.05,
+    61.16
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "motor_pod_R",
+   "pn": "RRX-P01R",
+   "bbox_print": [
+    52.0,
+    45.5,
+    19.0
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "cheek_fairing_R",
+   "pn": "RRX-P03R",
+   "bbox_print": [
+    29.23,
+    29.05,
+    61.16
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "dock_switch_bracket",
+   "pn": "RRX-P04",
+   "bbox_print": [
+    14.8,
+    18.0,
+    17.0
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "grip_sleeve",
+   "pn": "RRX-P05",
+   "bbox_print": [
+    25.0,
+    22.0,
+    167.0
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "front_bulkhead",
+   "pn": "RRX-P06",
+   "bbox_print": [
+    28.7,
+    121.47,
+    15.0
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "battery_tunnel",
+   "pn": "RRX-P10",
+   "bbox_print": [
+    214.0,
+    138.0,
+    63.0
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "floor_plug",
+   "pn": "RRX-P11",
+   "bbox_print": [
+    91.7,
+    84.0,
+    5.0
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "battery_cassette",
+   "pn": "RRX-P12",
+   "bbox_print": [
+    161.0,
+    109.0,
+    105.3
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "cassette_lid",
+   "pn": "RRX-P13",
+   "bbox_print": [
+    150.9,
+    103.4,
+    2.5
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "coupler_carrier",
+   "pn": "RRX-P14",
+   "bbox_print": [
+    20.2,
+    52.0,
+    4.0
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "cassette_handle",
+   "pn": "RRX-P15",
+   "bbox_print": [
+    60.5,
+    72.6,
+    3.5
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "spacer_9ah",
+   "pn": "RRX-P16",
+   "bbox_print": [
+    149.0,
+    95.0,
+    33.5
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "lower_hull_FL",
+   "pn": "RRX-P20L",
+   "bbox_print": [
+    133.19,
+    140.51,
+    38.84
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 8
+  },
+  {
+   "part": "lower_hull_FR",
+   "pn": "RRX-P20R",
+   "bbox_print": [
+    133.19,
+    140.51,
+    38.84
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 8
+  },
+  {
+   "part": "lower_hull_RL",
+   "pn": "RRX-P21L",
+   "bbox_print": [
+    191.33,
+    145.2,
+    38.84
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 9
+  },
+  {
+   "part": "lower_hull_RR",
+   "pn": "RRX-P21R",
+   "bbox_print": [
+    191.33,
+    145.2,
+    38.84
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 9
+  },
+  {
+   "part": "nose_cowl",
+   "pn": "RRX-P22",
+   "bbox_print": [
+    83.12,
+    187.09,
+    55.1
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "shoulder_L",
+   "pn": "RRX-P23L",
+   "bbox_print": [
+    69.41,
+    127.11,
+    82.5
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "rear_deck_L",
+   "pn": "RRX-P24L",
+   "bbox_print": [
+    226.8,
+    146.39,
+    76.99
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "shoulder_R",
+   "pn": "RRX-P23R",
+   "bbox_print": [
+    69.41,
+    127.11,
+    82.5
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "rear_deck_R",
+   "pn": "RRX-P24R",
+   "bbox_print": [
+    226.8,
+    146.97,
+    76.99
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "battery_hump",
+   "pn": "RRX-P25",
+   "bbox_print": [
+    66.0,
+    121.0,
+    167.8
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "saddle_cover",
+   "pn": "RRX-P26",
+   "bbox_print": [
+    115.2,
+    163.2,
+    3.0
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "hatch_frame",
+   "pn": "RRX-P27",
+   "bbox_print": [
+    72.39,
+    125.0,
+    3.0
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "hatch_door",
+   "pn": "RRX-P28",
+   "bbox_print": [
+    110.7,
+    115.4,
+    41.35
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "wheel_rim",
+   "pn": "RRX-P30",
+   "bbox_print": [
+    89.0,
+    89.0,
+    25.0
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "tyre",
+   "pn": "RRX-P31",
+   "bbox_print": [
+    104.0,
+    104.0,
+    25.0
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "cliff_pod_L",
+   "pn": "RRX-P32L",
+   "bbox_print": [
+    33.2,
+    49.0,
+    30.5
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "bumper_side_L",
+   "pn": "RRX-P33L",
+   "bbox_print": [
+    50.08,
+    71.18,
+    20.0
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "tray_chock_L",
+   "pn": "RRX-P40L",
+   "bbox_print": [
+    92.0,
+    34.0,
+    30.0
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "tray_head_guard_L",
+   "pn": "RRX-P41L",
+   "bbox_print": [
+    141.0,
+    136.0,
+    55.0
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "cliff_pod_R",
+   "pn": "RRX-P32R",
+   "bbox_print": [
+    33.2,
+    49.0,
+    30.5
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "bumper_side_R",
+   "pn": "RRX-P33R",
+   "bbox_print": [
+    50.08,
+    71.18,
+    20.0
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "tray_chock_R",
+   "pn": "RRX-P40R",
+   "bbox_print": [
+    92.0,
+    34.0,
+    30.0
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "tray_head_guard_R",
+   "pn": "RRX-P41R",
+   "bbox_print": [
+    141.0,
+    136.0,
+    55.0
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "bumper_centre",
+   "pn": "RRX-P34",
+   "bbox_print": [
+    17.17,
+    168.0,
+    20.0
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "tray_caster_cup",
+   "pn": "RRX-P42",
+   "bbox_print": [
+    68.0,
+    68.0,
+    10.0
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "panel_tray",
+   "pn": "RRX-P50",
+   "bbox_print": [
+    74.0,
+    29.0,
+    8.0
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "cm5_tray",
+   "pn": "RRX-P51",
+   "bbox_print": [
+    87.0,
+    54.0,
+    15.0
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "inlet_cover",
+   "pn": "RRX-P52",
+   "bbox_print": [
+    36.0,
+    49.0,
+    14.0
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "tof_clip",
+   "pn": "RRX-P53",
+   "bbox_print": [
+    8.0,
+    28.0,
+    1.6
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "tof_clip",
+   "pn": "RRX-P54",
+   "bbox_print": [
+    27.0,
+    8.0,
+    1.6
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 0
+  },
+  {
+   "part": "receiver_channel_fitcheck_L",
+   "pn": "RRX-P02L",
+   "bbox_print": [
+    63.7,
+    51.0,
+    21.0
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 4
+  },
+  {
+   "part": "receiver_channel_fitcheck_R",
+   "pn": "RRX-P02R",
+   "bbox_print": [
+    63.7,
+    51.0,
+    21.0
+   ],
+   "verdict": "OK",
+   "note": "",
+   "open_edges": 4
+  }
+ ],
+ "width_rule": {
+  "limit_half_width_mm": 147.51,
+  "over": [
+   [
+    "cliff_pod_L",
+    149.0
+   ],
+   [
+    "cliff_pod_R",
+    149.0
+   ]
+  ],
+  "ok": false
+ },
+ "swept_radius": {
+  "tail_max_radius_mm": 289.2,
+  "tail_part": "bumper_centre",
+  "front_body_max_radius_mm": 160.3,
+  "front_body_part": "cliff_pod_L",
+  "head_envelope_corner_radius_mm": 275.3,
+  "note": "tool-checked on tessellated solids (0.1 mm chord); robot software assumes 278 mm for the tail (IB-48)"
+ },
+ "corridors": {
+  "hump_side_left": {
+   "box": [
+    -118,
+    -72,
+    62,
+    76,
+    100,
+    116
+   ],
+   "use": "LiDAR Ethernet/12 V, RR-PANEL, rear ToF and deck controls to the board rear corners",
+   "blocked_by": [
+    [
+     "rear_deck_L",
+     149.0
+    ]
+   ]
+  },
+  "left_gutter": {
+   "box": [
+    -69,
+    -5,
+    99,
+    105,
+    84,
+    92
+   ],
+   "use": "left motor/encoder, left look-ahead ToF, USB/5 V to CM5",
+   "blocked_by": []
+  },
+  "right_gutter": {
+   "box": [
+    -69,
+    -5,
+    -105,
+    -99,
+    84,
+    92
+   ],
+   "use": "pack feed from the coupler, charge feed, right motor/encoder, E-stop loop",
+   "blocked_by": []
+  },
+  "front_bay": {
+   "box": [
+    36,
+    62,
+    -30,
+    30,
+    56,
+    90
+   ],
+   "use": "J1/J2 feeds, front cliff ToF, dock switch, clamp resistor leads",
+   "blocked_by": []
+  },
+  "under_bridge_right": {
+   "box": [
+    -12,
+    20,
+    -41,
+    -20,
+    40,
+    76
+   ],
+   "use": "pack feed from the coupler between the motor ends to the right gutter",
+   "blocked_by": []
+  },
+  "left_bay_over_cm5": {
+   "box": [
+    -102,
+    -75,
+    59,
+    80,
+    78,
+    90
+   ],
+   "use": "CM5 USB/Ethernet/antenna pigtails, selector and REARM leads",
+   "blocked_by": []
+  },
+  "right_bay": {
+   "box": [
+    -155,
+    -100,
+    -90,
+    -60,
+    45,
+    76
+   ],
+   "use": "charge inlet feed, HANDS-ON/Pause leads, right rear ToF, bumper switch",
+   "blocked_by": []
+  }
+ },
+ "ccr_e08": {
+  "rear-left corner u 0-45, v 0-20, 12 mm above the PCB": {
+   "box": [
+    -67.0,
+    -47.0,
+    35.0,
+    80.0,
+    84.6,
+    96.6
+   ],
+   "blocked_by": []
+  },
+  "rear-right corner u 112-160, v 0-22, 12 mm above the PCB": {
+   "box": [
+    -67.0,
+    -45.0,
+    -80.0,
+    -32.0,
+    84.6,
+    96.6
+   ],
+   "blocked_by": []
+  },
+  "front-centre strip u 40-120, v 80-100, 12 mm above the PCB (strip extent ASSUMED)": {
+   "box": [
+    13.0,
+    33.0,
+    -40.0,
+    40.0,
+    84.6,
+    96.6
+   ],
+   "blocked_by": []
+  },
+  "J_PWR mated plug + loom: u 160..183 (23 mm beyond the right edge), v 13..35 (header v 14.5..33.6), PCB top .. +14 mm": {
+   "box": [
+    -54.0,
+    -32.0,
+    -103.0,
+    -80.0,
+    83.1,
+    98.6
+   ],
+   "blocked_by": []
+  },
+  "J_HEAD1 (Mini-Fit 2x5, 12.8 mm, front edge u 14.5..37.8): mated plug + loom room v 100..125, PCB top .. +16 mm": {
+   "box": [
+    33.0,
+    58.0,
+    42.2,
+    65.5,
+    83.1,
+    100.6
+   ],
+   "blocked_by": [
+    [
+     "nose_cowl",
+     2.0
+    ],
+    [
+     "shoulder_L",
+     169.0
+    ]
+   ]
+  },
+  "rear-edge connector space u 0..18 and 142..160 behind the board (x -79..-67), z PCB .. +12 mm (IB-12)": {
+   "blocked_by": [
+    [
+     "pause_stop_body",
+     72.0
+    ]
+   ]
+  }
+ },
+ "slivers": {
+  "dropped": [
+   [
+    "cassette_lid",
+    [
+     1236.6
+    ]
+   ],
+   [
+    "lower_hull_FL",
+    [
+     95.0,
+     0.2
+    ]
+   ],
+   [
+    "lower_hull_FR",
+    [
+     95.0,
+     0.2
+    ]
+   ],
+   [
+    "lower_hull_RL",
+    [
+     282.4,
+     19.6
+    ]
+   ],
+   [
+    "lower_hull_RR",
+    [
+     282.4,
+     19.6
+    ]
+   ],
+   [
+    "hatch_frame",
+    [
+     2513.4
+    ]
+   ],
+   [
+    "hatch_door",
+    [
+     7.0,
+     7.0
+    ]
+   ],
+   [
+    "panel_tray",
+    [
+     224.8,
+     224.8
+    ]
+   ]
+  ],
+  "ok": false
+ },
+ "mass_cg": {
+  "base_without_head": {
+   "mass": 6.76,
+   "x": -91.07,
+   "y": 1.19,
+   "z": 81.71
+  },
+  "groups": {
+   "battery_bay": {
+    "mass_kg": 0.183,
+    "x": -122.5,
+    "z": 70.0
+   },
+   "bridge": {
+    "mass_kg": 0.108,
+    "x": -16.5,
+    "z": 75.4
+   },
+   "bumper": {
+    "mass_kg": 0.037,
+    "x": -259.1,
+    "z": 66.0
+   },
+   "cassette": {
+    "mass_kg": 1.849,
+    "x": -150.6,
+    "z": 91.3
+   },
+   "caster": {
+    "mass_kg": 0.096,
+    "x": -196.3,
+    "z": 32.6
+   },
+   "charge": {
+    "mass_kg": 0.035,
+    "x": -199.8,
+    "z": 88.0
+   },
+   "chassis": {
+    "mass_kg": 0.547,
+    "x": -65.1,
+    "z": 35.2
+   },
+   "chs_main": {
+    "mass_kg": 0.22,
+    "x": -17.0,
+    "z": 83.8
+   },
+   "compute": {
+    "mass_kg": 0.161,
+    "x": -111.5,
+    "z": 62.7
+   },
+   "connectors": {
+    "mass_kg": 0.035,
+    "x": 69.3,
+    "z": 113.8
+   },
+   "controls": {
+    "mass_kg": 0.295,
+    "x": -130.6,
+    "z": 104.5
+   },
+   "drive": {
+    "mass_kg": 0.46,
+    "x": -0.0,
+    "z": 58.7
+   },
+   "front_sensors": {
+    "mass_kg": 0.011,
+    "x": 50.5,
+    "z": 25.8
+   },
+   "grip": {
+    "mass_kg": 0.253,
+    "x": -18.8,
+    "z": 128.9
+   },
+   "hatch": {
+    "mass_kg": 0.13,
+    "x": -239.7,
+    "z": 107.9
+   },
+   "lid": {
+    "mass_kg": 0.52,
+    "x": -87.7,
+    "z": 108.4
+   },
+   "lidar": {
+    "mass_kg": 0.16,
+    "x": -150.0,
+    "z": 190.0
+   },
+   "lower_hull": {
+    "mass_kg": 0.219,
+    "x": -118.3,
+    "z": 46.6
+   },
+   "lumped: RR-TOF harness ends, NTCs, cut-out, vent, light pipes": {
+    "mass_kg": 0.04,
+    "x": -120.0,
+    "z": 95.0
+   },
+   "lumped: fasteners, inserts, standoffs": {
+    "mass_kg": 0.25,
+    "x": -60.0,
+    "z": 70.0
+   },
+   "lumped: foam liner 5 mm + gaskets": {
+    "mass_kg": 0.15,
+    "x": -97.0,
+    "z": 80.0
+   },
+   "lumped: harness (power, sensor, Ethernet, USB)": {
+    "mass_kg": 0.45,
+    "x": -60.0,
+    "z": 85.0
+   },
+   "receiver": {
+    "mass_kg": 0.2,
+    "x": 53.4,
+    "z": 35.8
+   },
+   "service_cover": {
+    "mass_kg": 0.051,
+    "x": -11.1,
+    "z": 106.5
+   },
+   "thermal": {
+    "mass_kg": 0.05,
+    "x": 34.5,
+    "z": 44.5
+   },
+   "tof": {
+    "mass_kg": 0.027,
+    "x": -149.9,
+    "z": 92.8
+   },
+   "wheel": {
+    "mass_kg": 0.224,
+    "x": -0.0,
+    "z": 52.0
+   }
+  },
+  "items": [
+   [
+    "chassis_plate",
+    0.5378,
+    -67.1,
+    35.0
+   ],
+   [
+    "receiver_channel_L",
+    0.052,
+    37.2,
+    25.2
+   ],
+   [
+    "land_pin_L0",
+    0.0024,
+    8.0,
+    14.0
+   ],
+   [
+    "land_pin_L1",
+    0.0024,
+    62.0,
+    14.0
+   ],
+   [
+    "motor_pod_L",
+    0.0144,
+    -0.0,
+    56.0
+   ],
+   [
+    "screw_ring_L",
+    0.0053,
+    -0.0,
+    59.6
+   ],
+   [
+    "grip_side_plate_L",
+    0.0427,
+    -22.9,
+    96.3
+   ],
+   [
+    "grip_foot_L",
+    0.0122,
+    -39.0,
+    44.3
+   ],
+   [
+    "cheek_fairing_L",
+    0.0082,
+    -9.5,
+    151.3
+   ],
+   [
+    "receiver_channel_R",
+    0.0517,
+    37.2,
+    25.2
+   ],
+   [
+    "land_pin_R0",
+    0.0024,
+    8.0,
+    14.0
+   ],
+   [
+    "land_pin_R1",
+    0.0024,
+    62.0,
+    14.0
+   ],
+   [
+    "motor_pod_R",
+    0.0144,
+    -0.0,
+    56.0
+   ],
+   [
+    "screw_ring_R",
+    0.0053,
+    -0.0,
+    59.6
+   ],
+   [
+    "grip_side_plate_R",
+    0.0427,
+    -22.9,
+    96.3
+   ],
+   [
+    "grip_foot_R",
+    0.0122,
+    -39.0,
+    44.3
+   ],
+   [
+    "cheek_fairing_R",
+    0.0082,
+    -9.5,
+    151.3
+   ],
+   [
+    "dock_switch_bracket",
+    0.0033,
+    -5.7,
+    24.6
+   ],
+   [
+    "bridge_tray",
+    0.0888,
+    -16.3,
+    79.0
+   ],
+   [
+    "bridge_post_0",
+    0.0046,
+    -64.0,
+    57.5
+   ],
+   [
+    "bridge_post_1",
+    0.0046,
+    -64.0,
+    57.5
+   ],
+   [
+    "bridge_post_2",
+    0.0046,
+    30.0,
+    57.5
+   ],
+   [
+    "bridge_post_3",
+    0.0046,
+    30.0,
+    57.5
+   ],
+   [
+    "board_standoff_0",
+    0.0002,
+    -63.0,
+    81.5
+   ],
+   [
+    "board_standoff_1",
+    0.0002,
+    -63.0,
+    81.5
+   ],
+   [
+    "board_standoff_2",
+    0.0002,
+    -63.0,
+    81.5
+   ],
+   [
+    "board_standoff_3",
+    0.0002,
+    29.0,
+    81.5
+   ],
+   [
+    "board_standoff_4",
+    0.0002,
+    29.0,
+    81.5
+   ],
+   [
+    "board_standoff_5",
+    0.0002,
+    29.0,
+    81.5
+   ],
+   [
+    "grip_bar",
+    0.0719,
+    -15.5,
+    164.0
+   ],
+   [
+    "grip_screw_L",
+    0.007,
+    -15.5,
+    164.0
+   ],
+   [
+    "grip_screw_R",
+    0.007,
+    -15.5,
+    164.0
+   ],
+   [
+    "grip_sleeve",
+    0.0413,
+    -9.0,
+    164.0
+   ],
+   [
+    "caster_disc",
+    0.0544,
+    -195.0,
+    38.3
+   ],
+   [
+    "caster_shim",
+    0.0115,
+    -195.0,
+    36.5
+   ],
+   [
+    "latch_arm",
+    0.0293,
+    55.3,
+    54.0
+   ],
+   [
+    "front_bulkhead",
+    0.0094,
+    50.8,
+    45.1
+   ],
+   [
+    "battery_tunnel",
+    0.0839,
+    -119.4,
+    58.7
+   ],
+   [
+    "floor_plug",
+    0.0261,
+    -121.4,
+    35.6
+   ],
+   [
+    "battery_cassette",
+    0.1352,
+    -152.3,
+    80.5
+   ],
+   [
+    "cassette_lid",
+    0.03,
+    -151.6,
+    142.7
+   ],
+   [
+    "coupler_carrier",
+    0.0009,
+    -71.5,
+    56.3
+   ],
+   [
+    "cassette_handle",
+    0.003,
+    -232.2,
+    65.4
+   ],
+   [
+    "door_peg_L",
+    0.0002,
+    -237.0,
+    100.0
+   ],
+   [
+    "door_peg_R",
+    0.0002,
+    -237.0,
+    100.0
+   ],
+   [
+    "cassette_plunger",
+    0.03,
+    -215.0,
+    159.1
+   ],
+   [
+    "lower_hull_FL",
+    0.0342,
+    1.4,
+    46.2
+   ],
+   [
+    "lower_hull_FR",
+    0.0342,
+    1.4,
+    46.2
+   ],
+   [
+    "lower_hull_RL",
+    0.0758,
+    -173.1,
+    46.9
+   ],
+   [
+    "lower_hull_RR",
+    0.0746,
+    -172.4,
+    46.8
+   ],
+   [
+    "nose_cowl",
+    0.0901,
+    73.0,
+    89.5
+   ],
+   [
+    "shoulder_L",
+    0.0294,
+    4.1,
+    100.3
+   ],
+   [
+    "rear_deck_L",
+    0.1353,
+    -141.4,
+    106.1
+   ],
+   [
+    "shoulder_R",
+    0.0294,
+    4.1,
+    100.3
+   ],
+   [
+    "rear_deck_R",
+    0.134,
+    -144.2,
+    106.2
+   ],
+   [
+    "battery_hump",
+    0.1018,
+    -137.1,
+    135.7
+   ],
+   [
+    "saddle_cover",
+    0.0507,
+    -11.1,
+    106.5
+   ],
+   [
+    "hatch_frame",
+    0.003,
+    -231.5,
+    69.7
+   ],
+   [
+    "hatch_door",
+    0.0791,
+    -254.7,
+    77.6
+   ],
+   [
+    "wheel_rim_L",
+    0.0409,
+    -0.0,
+    52.0
+   ],
+   [
+    "tyre_L",
+    0.0644,
+    0.0,
+    52.0
+   ],
+   [
+    "wheel_hub_L",
+    0.0068,
+    -0.0,
+    52.0
+   ],
+   [
+    "cliff_pod_L",
+    0.0055,
+    50.5,
+    25.8
+   ],
+   [
+    "bumper_side_L",
+    0.0075,
+    -254.9,
+    66.0
+   ],
+   [
+    "wheel_rim_R",
+    0.0409,
+    -0.0,
+    52.0
+   ],
+   [
+    "tyre_R",
+    0.0644,
+    0.0,
+    52.0
+   ],
+   [
+    "wheel_hub_R",
+    0.0068,
+    -0.0,
+    52.0
+   ],
+   [
+    "cliff_pod_R",
+    0.0055,
+    50.5,
+    25.8
+   ],
+   [
+    "bumper_side_R",
+    0.0075,
+    -254.9,
+    66.0
+   ],
+   [
+    "bumper_centre",
+    0.0136,
+    -280.5,
+    66.0
+   ],
+   [
+    "panel_tray",
+    0.0031,
+    -78.2,
+    98.0
+   ],
+   [
+    "cm5_tray",
+    0.0113,
+    -111.8,
+    45.4
+   ],
+   [
+    "inlet_cover",
+    0.0051,
+    -205.0,
+    88.3
+   ],
+   [
+    "tof_window_cliff_fl",
+    0.0002,
+    46.0,
+    31.5
+   ],
+   [
+    "tof_window_cliff_fr",
+    0.0002,
+    46.0,
+    31.5
+   ],
+   [
+    "tof_clip_cliff_rl",
+    0.0003,
+    -241.7,
+    51.3
+   ],
+   [
+    "tof_window_cliff_rl",
+    0.0002,
+    -241.7,
+    41.5
+   ],
+   [
+    "tof_clip_cliff_rr",
+    0.0003,
+    -241.7,
+    51.3
+   ],
+   [
+    "tof_window_cliff_rr",
+    0.0002,
+    -241.7,
+    41.5
+   ],
+   [
+    "tof_clip_look_fl",
+    0.0003,
+    -5.2,
+    164.2
+   ],
+   [
+    "tof_window_look_fl",
+    0.0002,
+    1.0,
+    162.2
+   ],
+   [
+    "tof_clip_look_fr",
+    0.0003,
+    -5.2,
+    164.2
+   ],
+   [
+    "tof_window_look_fr",
+    0.0002,
+    1.0,
+    162.2
+   ],
+   [
+    "tof_clip_look_rl",
+    0.0003,
+    -241.1,
+    102.7
+   ],
+   [
+    "tof_window_look_rl",
+    0.0002,
+    -247.2,
+    100.2
+   ],
+   [
+    "tof_clip_look_rr",
+    0.0003,
+    -241.1,
+    102.7
+   ],
+   [
+    "tof_window_look_rr",
+    0.0002,
+    -247.2,
+    100.2
+   ],
+   [
+    "tof_clip_prox_rc",
+    0.0003,
+    -225.7,
+    158.0
+   ],
+   [
+    "tof_window_prox_rc",
+    0.0002,
+    -235.5,
+    158.0
+   ],
+   [
+    "tof_clip_prox_rl",
+    0.0003,
+    -240.9,
+    80.0
+   ],
+   [
+    "tof_window_prox_rl",
+    0.0002,
+    -248.9,
+    80.0
+   ],
+   [
+    "tof_clip_prox_rr",
+    0.0003,
+    -240.9,
+    80.0
+   ],
+   [
+    "tof_window_prox_rr",
+    0.0002,
+    -248.9,
+    80.0
+   ],
+   [
+    "motor_L",
+    0.21,
+    -0.0,
+    58.9
+   ],
+   [
+    "motor_R",
+    0.21,
+    -0.0,
+    58.9
+   ],
+   [
+    "caster",
+    0.03,
+    -199.0,
+    21.0
+   ],
+   [
+    "battery_pack",
+    1.65,
+    -152.0,
+    92.0
+   ],
+   [
+    "coupler_cassette",
+    0.03,
+    -58.8,
+    53.0
+   ],
+   [
+    "coupler_fixed",
+    0.03,
+    -30.0,
+    53.0
+   ],
+   [
+    "chassis_heater_pad",
+    0.01,
+    -119.0,
+    38.2
+   ],
+   [
+    "bus_clamp_resistor",
+    0.05,
+    34.5,
+    44.5
+   ],
+   [
+    "RR-CHS-MAIN_pcb",
+    0.22,
+    -17.0,
+    83.8
+   ],
+   [
+    "CM5_carrier_assembly",
+    0.15,
+    -111.5,
+    64.0
+   ],
+   [
+    "lidar",
+    0.16,
+    -150.0,
+    190.0
+   ],
+   [
+    "RR-PANEL",
+    0.012,
+    -80.0,
+    103.4
+   ],
+   [
+    "estop_body",
+    0.07,
+    -119.6,
+    107.4
+   ],
+   [
+    "hands_on_body",
+    0.05,
+    -167.3,
+    102.9
+   ],
+   [
+    "mode_selector_body",
+    0.06,
+    -133.0,
+    107.6
+   ],
+   [
+    "rearm_start_body",
+    0.05,
+    -167.3,
+    102.9
+   ],
+   [
+    "pause_stop_body",
+    0.05,
+    -85.2,
+    100.7
+   ],
+   [
+    "charge_inlet",
+    0.03,
+    -198.9,
+    88.0
+   ],
+   [
+    "J1_receptacle",
+    0.02,
+    68.9,
+    113.3
+   ],
+   [
+    "J2_receptacle",
+    0.015,
+    69.9,
+    114.4
+   ],
+   [
+    "tof_cliff_fl",
+    0.002,
+    46.0,
+    35.4
+   ],
+   [
+    "tof_cliff_fr",
+    0.002,
+    46.0,
+    35.4
+   ],
+   [
+    "tof_cliff_rl",
+    0.002,
+    -241.7,
+    45.4
+   ],
+   [
+    "tof_cliff_rr",
+    0.002,
+    -241.7,
+    45.4
+   ],
+   [
+    "tof_look_fl",
+    0.002,
+    -2.6,
+    163.3
+   ],
+   [
+    "tof_look_fr",
+    0.002,
+    -2.6,
+    163.3
+   ],
+   [
+    "tof_look_rl",
+    0.002,
+    -243.7,
+    101.6
+   ],
+   [
+    "tof_look_rr",
+    0.002,
+    -243.7,
+    101.6
+   ],
+   [
+    "tof_prox_rc",
+    0.002,
+    -231.6,
+    158.0
+   ],
+   [
+    "tof_prox_rl",
+    0.002,
+    -245.8,
+    80.0
+   ],
+   [
+    "tof_prox_rr",
+    0.002,
+    -245.8,
+    80.0
+   ],
+   [
+    "bumper_sw_l",
+    0.004,
+    -230.6,
+    66.0
+   ],
+   [
+    "bumper_sw_r",
+    0.004,
+    -230.6,
+    66.0
+   ],
+   [
+    "head_dock_switch",
+    0.004,
+    -3.2,
+    23.0
+   ],
+   [
+    "head_latch",
+    0.05,
+    98.0,
+    53.0
+   ],
+   [
+    "hatch_latch",
+    0.05,
+    -216.0,
+    156.0
+   ]
+  ],
+  "configurations": [
+   {
+    "head": "none (transport / LAB)",
+    "mass_kg": 6.76,
+    "cg_x": -91.1,
+    "cg_z": 81.7,
+    "caster_N": 29.6,
+    "each_wheel_N": 18.4,
+    "caster_fraction": 0.446,
+    "tip_margin_forward_mm": 80.6,
+    "tip_margin_rearward_mm": 103.3,
+    "tip_margin_lateral_mm": 55.2,
+    "hang_angle_deg": -44.2,
+    "hang_angle_deg_CR04_bar_x-30": -36.6
+   },
+   {
+    "head": "prototype head RR-HD-X (1.864 kg)",
+    "mass_kg": 8.62,
+    "cg_x": -45.8,
+    "cg_z": 71.5,
+    "caster_N": 19.0,
+    "each_wheel_N": 32.8,
+    "caster_fraction": 0.225,
+    "tip_margin_forward_mm": 36.6,
+    "tip_margin_rearward_mm": 149.8,
+    "tip_margin_lateral_mm": 81.0,
+    "hang_angle_deg": -20.6,
+    "hang_angle_deg_CR04_bar_x-30": -9.7
+   },
+   {
+    "head": "production head (2.083 kg)",
+    "mass_kg": 8.84,
+    "cg_x": -41.4,
+    "cg_z": 70.2,
+    "caster_N": 17.6,
+    "each_wheel_N": 34.6,
+    "caster_fraction": 0.203,
+    "tip_margin_forward_mm": 32.4,
+    "tip_margin_rearward_mm": 154.3,
+    "tip_margin_lateral_mm": 83.6,
+    "hang_angle_deg": -17.9,
+    "hang_angle_deg_CR04_bar_x-30": -6.9
+   },
+   {
+    "head": "production head + 15 % margin",
+    "mass_kg": 9.16,
+    "cg_x": -35.9,
+    "cg_z": 68.9,
+    "caster_N": 15.8,
+    "each_wheel_N": 37.0,
+    "caster_fraction": 0.176,
+    "tip_margin_forward_mm": 27.0,
+    "tip_margin_rearward_mm": 160.0,
+    "tip_margin_lateral_mm": 86.8,
+    "hang_angle_deg": -14.7,
+    "hang_angle_deg_CR04_bar_x-30": -3.5
+   }
+  ],
+  "mass_goal_kg": 12.0,
+  "assumptions": "printed parts: CAD volume x density x effective fill (dims.MAT); purchased: parts.yaml masses; lumped items from the common budget; evidence class: calculated"
+ },
+ "grip": {
+  "rows": [
+   [
+    "design load = 3 x 9 kg x g",
+    264.9,
+    "N",
+    ""
+   ],
+   [
+    "load per side plate",
+    132.4,
+    "N",
+    ""
+   ],
+   [
+    "bar 14 mm solid 6061-T6: bending stress (hand 100 mm, span 182 mm)",
+    32.4,
+    "MPa",
+    "allow 240 (0.2 % proof, T6) -> SF 7.4"
+   ],
+   [
+    "bar mid-span deflection",
+    0.19,
+    "mm",
+    ""
+   ],
+   [
+    "side plate leg 9 x 6 6061-T6: tension + bending from the 11.0 mm offset",
+    20.4,
+    "MPa",
+    "allow 240 -> SF 11.7"
+   ],
+   [
+    "side plate net section at the M6 bar-screw hole (cheek x -21..-9)",
+    3.8,
+    "MPa",
+    "SF 63"
+   ],
+   [
+    "M6 bar screw bearing on the 6 mm plate",
+    3.7,
+    "MPa",
+    "allow 300"
+   ],
+   [
+    "M6 bar screw shear (friction ignored)",
+    6.6,
+    "MPa",
+    "A2-70 shear ~ 270 -> SF 41"
+   ],
+   [
+    "M5 through-bolt tension at the foot (prying about the angle toe, 2 bolts)",
+    194.5,
+    "N",
+    "A2-70 proof 450 MPa x 14.2 mm2 = 6390 N -> SF 33"
+   ],
+   [
+    "angle foot 3 mm leg bending",
+    40.2,
+    "MPa",
+    "allow 150 (6060-T6) -> SF 3.7"
+   ],
+   [
+    "M5 countersunk head pull-through in the 4 mm plate",
+    8324.0,
+    "N capacity",
+    "SF 43"
+   ],
+   [
+    "inserts in the lifting path",
+    0,
+    "-",
+    "none: bar -> 2 x M6 into the tapped bar ends -> side plates -> angle feet -> M5 through-bolts with nyloc nuts -> chassis plate"
+   ],
+   [
+    "misuse case: whole 3 x weight hung on the lid (16 perimeter M3 inserts in shear/pull-out)",
+    16.6,
+    "N per insert",
+    "typ. pull-out 600 N (UNVERIFIED) -> SF 36"
+   ],
+   [
+    "chassis plate bending at x = -60 (aft masses 4.16 kg x 3 g; net width 199 mm x 4 mm, shells and tunnel ignored)",
+    18.6,
+    "MPa",
+    "allow 240 (6061-T6) -> SF 12.9"
+   ],
+   [
+    "chassis plate bending at x = -90 (aft masses 3.55 kg x 3 g; net width 132 mm x 4 mm, shells and tunnel ignored)",
+    18.6,
+    "MPa",
+    "allow 240 (6061-T6) -> SF 12.9"
+   ],
+   [
+    "chassis plate bending at x = -140 (aft masses 2.85 kg x 3 g; net width 133 mm x 4 mm, shells and tunnel ignored)",
+    5.1,
+    "MPa",
+    "allow 240 (6061-T6) -> SF 47.4"
+   ],
+   [
+    "chassis plate bending at x = -15 (fore masses 3.20 kg x 3 g; net width 239 mm x 4 mm, shells and tunnel ignored)",
+    13.4,
+    "MPa",
+    "allow 240 (6061-T6) -> SF 17.9"
+   ],
+   [
+    "chassis plate bending at x = 30 (fore masses 2.25 kg x 3 g; net width 239 mm x 4 mm, shells and tunnel ignored)",
+    8.1,
+    "MPa",
+    "allow 240 (6061-T6) -> SF 29.6"
+   ]
+  ],
+  "ok": true,
+  "cold_note": "6061/6060-T6 and A2 fasteners gain strength at -25 C and stay ductile; no polymer is in the lifting path. Proof test: 3 x weight for 60 s warm and at -20 C (VT-002)."
+ },
+ "summary": {
+  "no interference among real parts and purchased envelopes": [
+   false,
+   "2 clash(es) in 408 pairs; 18 declared through-wall envelope overlaps"
+  ],
+  "internals inside the shell cavity": [
+   false,
+   "30 parts checked, 1 outside"
+  ],
+  "wheels and caster on the floor": [
+   true,
+   "{'tyre_L': 0.0, 'tyre_R': 0.0, 'caster': 0.0}"
+  ],
+  "ToF centre rays and LiDAR plane clear": [
+   true,
+   "blocked ToF []; LiDAR bearings blocked 0"
+  ],
+  "removal sweeps and glove zones": [
+   false,
+   "{'battery_removal_sweep': [('lower_hull_RL', 7.0), ('lower_hull_RR', 7.0)]}"
+  ],
+  "nothing below z = 50 ahead of x = 62 except latch / datum A": [
+   true,
+   "[('receiver_channel_L', 2778, 65.7), ('land_pin_L1', 146, 64.0), ('receiver_channel_R', 2754, 65.7), ('land_pin_R1', 146, 64.0), ('head_latch', 1896, 108.0)]"
+  ],
+  "receiver interface matches mechanical_interfaces.md": [
+   false,
+   "27/29 items"
+  ],
+  "every printed part fits the X1C bed in its print orientation": [
+   true,
+   "46 parts; marginal: []; no-fit: []"
+  ],
+  "printed-part meshes watertight": [
+   false,
+   "open edges in ['lower_hull_FL', 'lower_hull_FR', 'lower_hull_RL', 'lower_hull_RR', 'receiver_channel_fitcheck_L', 'receiver_channel_fitcheck_R']"
+  ],
+  "grip proof-load calculation (3 x 9 kg)": [
+   true,
+   "calculated"
+  ],
+  "nothing wider than the tyres (295 mm)": [
+   false,
+   "[('cliff_pod_L', 149.0), ('cliff_pod_R', 149.0)]"
+  ],
+  "cable corridors of the master layout free": [
+   false,
+   "{'hump_side_left': [('rear_deck_L', 149.0)]}"
+  ],
+  "CCR-E08 keep-outs over RR-CHS-MAIN free": [
+   false,
+   "{'J_HEAD1 (Mini-Fit 2x5, 12.8 mm': [('nose_cowl', 2.0), ('shoulder_L', 169.0)], 'rear-edge connector space u 0.': [('pause_stop_body', 72.0)]}"
+  ],
+  "boolean slivers dropped from parts below 100 mm3": [
+   false,
+   "[('cassette_lid', [1236.6]), ('lower_hull_FL', [95.0, 0.2]), ('lower_hull_FR', [95.0, 0.2]), ('lower_hull_RL', [282.4, 19.6]), ('lower_hull_RR', [282.4, 19.6]), ('hatch_frame', [2513.4]), ('hatch_door', [7.0, 7.0]), ('panel_tray', [224.8, 224.8])]"
+  ],
+  "every printed/fabricated part is one valid solid": [
+   true,
+   "all single valid solids"
+  ]
+ },
+ "multi_body_or_invalid_parts": []
+}

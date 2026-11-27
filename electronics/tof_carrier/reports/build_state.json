@@ -12,6 +12,7 @@
     "parts": 10,
     "sheets": 3
   },
+  "dsn_ignore_classes": [],
   "dsn_sha256": "c246955d7bd9cfcabec93a677e0c3737c96c50d3e7bfce36d96f9e13a6377ecb",
   "dsn_unchanged": true,
   "escape": {
@@ -30,6 +31,7 @@
     "connector.kicad_sch",
     "sensor.kicad_sch"
   ],
+  "imported_ses_sha256": "8d49ffac461f4888838ae0e298a3a678d3a253ecfb58bcfaa8ab314bdad2dcea",
   "name": "RR-TOF-A",
   "pcb_page_origin": [
     59.0,
@@ -131,6 +133,7 @@
   "route_stats": {
     "dangling_tracks_removed": 0,
     "finisher_items": null,
+    "finisher_removed": 0,
     "necked_tracks_widened": 0,
     "preroutes": 9,
     "preroutes_missing_after_import": 0,
@@ -138,27 +141,36 @@
     "tracks": 125,
     "unconnected_after_fill": 0,
     "unconnected_before_cleanup": 0,
+    "unused_escapes_removed": 0,
     "vias": 18
   },
   "routed": true,
   "routing": {
+    "budget": null,
+    "chunk": 900,
     "enabled": true,
     "escape": "auto",
     "escape_direct": true,
     "escape_layers": null,
+    "escape_min_pads": 16,
     "escape_pitch": 0.65,
     "escape_track": null,
     "escape_via": null,
     "extra_args": [],
     "fanout": false,
     "finisher": true,
+    "finisher_ripup": true,
+    "finisher_seconds": 900,
     "layers": 2,
     "optimizer": true,
     "passes": 100,
     "plane_fanout": true,
+    "restarts": 1,
     "retries": 2,
+    "stall": 2,
     "threads": null,
-    "timeout": null
+    "timeout": null,
+    "zone_nets": "auto"
   },
   "single_pin_nets": []
 }

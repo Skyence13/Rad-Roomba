@@ -466,6 +466,8 @@ def write_report(R, table, parts, timing):
     w(f"- Width rule (nothing wider than the tyres, |y| <= {wr['limit_half_width_mm']}): {'PASS' if wr['ok'] else 'FAIL ' + str(wr['over'])}.")
     for k, v in R["corridors"].items():
         w(f"- corridor **{k}** {v['box']} ({v['use']}): {'free' if not v['blocked_by'] else 'BLOCKED by ' + str(v['blocked_by'])}")
+    sr = R["swept_radius"]
+    w(f"\n**Swept radius (IB-48):** tail {sr['tail_max_radius_mm']} mm from the axle centre ({sr['tail_part']}); body ahead of the axle {sr['front_body_max_radius_mm']} mm ({sr['front_body_part']}); head envelope corner {sr['head_envelope_corner_radius_mm']} mm. {sr['note']}.\n")
     w("\nCCR-E08 (chassis electronics) answers, checked as keep-out boxes against every body part:\n")
     for k, v in R["ccr_e08"].items():
         w(f"- {k}: {'free' if not v['blocked_by'] else 'BLOCKED by ' + str(v['blocked_by'])}")

@@ -82,6 +82,15 @@ def run_drc(board, paths, waivers=None, state=None):
     unconn = data.get("unconnected_items", [])
     parity = data.get("schematic_parity", [])
     res["unconnected"] = len(unconn)
+    # KiCad's DRC report lists at most 499 unconnected items: take the real count from the board
+    res["unconnected_listed"] = len(unconn)
+    try:
+        import pcbnew
+        b_ = pcbnew.LoadBoard(paths.pcb)
+        b_.BuildConnectivity()          # zones as saved (finish_pcb saves them filled)
+        res["unconnected"] = max(len(unconn), int(b_.GetConnectivity().GetUnconnectedCount(True)))
+    except Exception as e:              # never hide a count: keep the listed one and say why
+        res["unconnected_count_error"] = str(e)[:200]
     nets = set()
     for u in unconn:
         for it in u.get("items", []):
@@ -149,7 +158,9 @@ def run_checks(board, paths, state):
         if drc["errors"]:
             reasons.append("DRC: %d error(s)" % drc["errors"])
         if drc["unconnected"]:
-            reasons.append("DRC: %d unconnected item(s) on nets: %s" % (drc["unconnected"], ", ".join(drc["unrouted_nets"][:30])))
+            reasons.append("DRC: %d unconnected item(s)%s on nets: %s" % (
+                drc["unconnected"], (" (%d listed by KiCad)" % drc["unconnected_listed"]) if drc["unconnected_listed"] < drc["unconnected"] else "",
+                ", ".join(drc["unrouted_nets"][:30])))
         if drc["parity"]:
             reasons.append("schematic parity: %d issue(s)" % drc["parity"])
     bi = bom_issues(board)
@@ -168,7 +179,7 @@ def run_checks(board, paths, state):
         "notes": notes,
         "erc": {k: erc[k] for k in ("errors", "warnings", "waived", "excluded", "by_type", "error_items", "report")},
         "drc": None if drc is None else {k: drc[k] for k in (
-            "errors", "warnings", "unconnected", "parity", "waived", "excluded", "by_type", "error_items",
+            "errors", "warnings", "unconnected", "unconnected_listed", "parity", "waived", "excluded", "by_type", "error_items",
             "unrouted_nets", "unrouted", "unconnected_items", "parity_items", "report")},
         "waivers": [{"check": w["check"], "rule": w["rule"], "match": w["match"], "reason": w["reason"],
                      "matched": w["count"], "kind": "violation waiver (tool-level; the KiCad GUI still lists these)"}

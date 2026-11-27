@@ -209,6 +209,15 @@ class Placer:
     def run(self):
         b = self.b
         todo = [p for p in b.parts if not p.placed and not p.replica_of]
+        # offsets of the copies of every replicated source part (chains: offsets of copies of copies)
+        self.copies = {}
+        for part in b.parts:
+            if part.replica_of:
+                src, dx, dy = part.replica_of
+                while self.b.part(src).replica_of:
+                    s2, dx2, dy2 = self.b.part(src).replica_of
+                    src, dx, dy = s2, dx + dx2, dy + dy2
+                self.copies.setdefault(src, []).append((dx, dy))
         # fine-pitch ICs that get an escape ring keep a wider band free around them
         from . import escape as esc
         est = esc.settings(b)
@@ -281,6 +290,20 @@ class Placer:
                     for s in sides:
                         occ = self.occB[s] if big else self.occA[s]
                         ok &= self.free(self.sat(("B" if big else "A") + s, occ), rect, 0.0)
+                    # replicate(): the copies of this part land at fixed offsets - those spots must be free too
+                    for (cdx, cdy) in self.copies.get(part.ref, ()):
+                        si, sj = int(round(cdx / self.g)), int(round(-cdy / self.g))
+                        okc = ok & self.free(self.sat("out", self.outside), rect, self.edge)
+                        for s in sides:
+                            occ = self.occB[s] if big else self.occA[s]
+                            okc = okc & self.free(self.sat(("B" if big else "A") + s, occ), rect, 0.0)
+                        sh = np.zeros_like(ok)
+                        J, I = ok.shape
+                        j0, j1 = max(0, -sj), min(J, J - sj)
+                        i0, i1 = max(0, -si), min(I, I - si)
+                        if j1 > j0 and i1 > i0:
+                            sh[j0:j1, i0:i1] = okc[j0 + sj:j1 + sj, i0 + si:i1 + si]
+                        ok &= sh
                     if not ok.any():
                         continue
                     reg = regions.get(part.group.name)
@@ -355,6 +378,8 @@ class Placer:
                 if part.ref in self.esc_parts:
                     cl = ekeep
                 self.mark(part.ref, X, Y, rect, pads, tht, part.side, cl)
+                for (cdx, cdy) in self.copies.get(part.ref, ()):     # reserve the copies' spots
+                    self.mark(part.ref + "@copy", X + cdx, Y - cdy, rect, [], tht, part.side, cl)
                 placed.append(part.ref)
                 pending.remove(part)
                 progressed = True

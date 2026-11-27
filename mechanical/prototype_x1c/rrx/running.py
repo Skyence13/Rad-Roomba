@@ -69,8 +69,9 @@ def cliff_pod(s):
     xb = D.RX_FLANGE_X[0] - 0.5                                            # stops 0.5 mm short of the receiver x-stop flange
     bez = box(26.0, xb, 100.0, D.BEAM_HALF_Y, z, Z0)
     collar = box(x - 10.5, x + 10.5, y - 8.5, y + 8.5, Z0, Z1 + 1.5)
-    arm = box(53.0, 59.0, 104.0, 149.0, 25.0, Z0)
-    blade = prism([(55.0, 119.6), (59.0, 119.6), (57.0, 149.0), (53.0, 149.0)], 8.0, Z0)
+    ym = P.WHEEL_Y + P.TYRE_WIDTH / 2 - 0.5                               # deflector stays inside the 295 mm tyre width
+    arm = box(53.0, 59.0, 104.0, ym, 25.0, Z0)
+    blade = prism([(55.0, 119.6), (59.0, 119.6), (57.0, ym), (53.0, ym)], 8.0, Z0)
     lugs = fuse(*[box(cx - 4.0, min(cx + 4.0, xb), cy - 4.0, min(cy + 4.0, D.BEAM_HALF_Y), Z0 - 7.0, Z0) for cx, cy in CLIFF_SCREWS])
     p = fuse(bez, collar, arm, blade, lugs)
     p = p.cut(box(x - e["l"] / 2 - 0.25, x + e["l"] / 2 + 0.25, y - e["w"] / 2 - 0.25, y + e["w"] / 2 + 0.25, z + 2.6, Z1 + 3))    # board pocket (long axis x)

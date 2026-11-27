@@ -700,17 +700,22 @@ def run(board, paths, fr, ses_sha, drc_unrouted):
             "removed": len(removed)}
 
 
-def apply(board, pcb, fr, paths, ses_path):
-    """Add stored finisher items if they belong to this SES.  Returns the number added (or None)."""
-    fn = os.path.join(paths.route_dir, "finish.json")
+def apply(pcb, fr, route_dir, ses_path):
+    """Add the stored finisher items to *pcb* if they belong to this SES.  Returns
+    (number of items added, [board items to remove]) - the caller removes those LAST (after
+    BOARD.Remove() pcbnew's SWIG proxies in the same process are unreliable).  (None, []) when
+    there is nothing for this SES."""
+    from .geom import item_key
+    fn = os.path.join(route_dir, "finish.json")
     if not os.path.exists(fn) or not ses_path or not os.path.exists(ses_path):
-        return None
+        return None, []
     with open(fn) as f:
         data = json.load(f)
     h = hashlib.sha256(open(ses_path, "rb").read()).hexdigest()
     if data.get("ses_sha256") != h:
-        return None
-    from .geom import item_key
+        return None, []
+    gone = {json.dumps(k) for k in data.get("remove", [])}
+    victims = [t for t in pcb.GetTracks() if not t.IsLocked() and json.dumps(item_key(t)) in gone] if gone else []
     n = 0
     for it in data["items"]:
         ni = pcb.FindNet(it["net"])
@@ -732,10 +737,4 @@ def apply(board, pcb, fr, paths, ses_path):
             t.SetNet(ni)
             pcb.Add(t)
         n += 1
-    gone = {json.dumps(k) for k in data.get("remove", [])}
-    if gone:
-        for t in list(pcb.GetTracks()):
-            if not t.IsLocked() and json.dumps(item_key(t)) in gone:
-                pcb.Remove(t)
-                n += 1
-    return n
+    return n, victims

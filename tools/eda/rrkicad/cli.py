@@ -192,7 +192,8 @@ def stage_gen(board_py, route=True, sch_only=False):
     if route and board.routing["enabled"]:
         shutil.copyfile(paths.pcb, paths.unrouted)
         new_dsn = paths.dsn + ".new"
-        pcb.export_dsn(paths.pcb, new_dsn, board)
+        ignored = pcb.export_dsn(paths.pcb, new_dsn, board)
+        write_state(paths, dsn_ignore_classes=ignored)
         same = os.path.exists(paths.dsn) and sha256(paths.dsn) == sha256(new_dsn)
         os.replace(new_dsn, paths.dsn)
         write_state(paths, dsn_sha256=sha256(paths.dsn), dsn_unchanged=bool(same))
@@ -248,7 +249,7 @@ def _cleanup(paths):
                 os.remove(p)
 
 
-def stage_post(board_py, routed=True, outputs=True, route_info=None, ses=None):
+def stage_post(board_py, routed=True, outputs=True, route_info=None, ses=None, quick=False):
     """SES import, zone fill, fab notes, checks, outputs, summary."""
     from . import pcb, checks, outputs as outmod, project
     board = load_board(board_py)
@@ -261,12 +262,19 @@ def stage_post(board_py, routed=True, outputs=True, route_info=None, ses=None):
             pt.x, pt.y, pt.rot, pt.side = x, y, rot, side
     if routed and os.path.exists(paths.unrouted):
         shutil.copyfile(paths.unrouted, paths.pcb)     # always import into the pristine generated board
+    write_state(paths, imported_ses_sha256=None)
     info = pcb.finish_pcb(board, paths, ses=(ses or paths.ses) if routed else None)
+    if routed:
+        write_state(paths, imported_ses_sha256=sha256(ses or paths.ses))
     # keep the project file exactly as generated (pcbnew may have re-saved it)
     with open(paths.pro) as f:
         pro = json.load(f)
     project.write_project(paths.pro, pro)
     write_state(paths, routed=bool(routed), route_stats=info, route_info=route_info or st.get("route_info"))
+    if quick:          # intermediate import during routing: connectivity count only, no ERC/DRC/outputs
+        log("import: %s connection(s) open" % info.get("unconnected_after_fill"))
+        _cleanup(paths)
+        return 0
     rc = stage_check(board_py, board=board, do_outputs=outputs)
     _cleanup(paths)
     return rc
@@ -304,7 +312,8 @@ def stage_retrydsn(board_py):
     from . import pcb
     board = load_board(board_py)
     paths = Paths(board_py, board.name)
-    pcb.export_dsn(paths.pcb, paths.retry_dsn, board)
+    ignored = pcb.export_dsn(paths.pcb, paths.retry_dsn, board)
+    write_state(paths, dsn_ignore_classes=ignored)
     return 0
 
 
@@ -383,6 +392,132 @@ def host_build(a):
             os.remove(lock)
 
 
+class _Router:
+    """Host-side routing session: first run, continue runs, restarts, finisher - within an
+    optional wall-clock budget.  route/<name>.ses only ever holds the best result so far (every
+    Freerouting run writes a scratch SES that replaces it only when it leaves fewer connections
+    open), and every step is appended to route/progress.log, so an interrupted multi-hour job
+    still leaves its best state on disk."""
+
+    def __init__(self, a, board_py, st):
+        self.a, self.board_py = a, board_py
+        self.bdir = os.path.dirname(board_py)
+        self.state_p = os.path.join(self.bdir, "reports", "build_state.json")
+        name = st["name"]
+        rd = os.path.join(self.bdir, "route")
+        self.dsn = os.path.join(rd, name + ".dsn")
+        self.ses = os.path.join(rd, name + ".ses")
+        self.rdsn = os.path.join(rd, name + ".retry.dsn")
+        self.rses = os.path.join(rd, name + ".retry.ses")
+        self.progress = os.path.join(rd, "progress.log")
+        self.opts = st.get("routing", {})
+        self.t0 = time.time()
+        b = self.opts.get("budget")
+        self.deadline = (self.t0 + float(b)) if b else None
+        self.attempts = []
+
+    def remaining(self):
+        return None if self.deadline is None else self.deadline - time.time()
+
+    def note(self, **kw):
+        kw = dict(kw, t=time.strftime("%Y-%m-%d %H:%M:%S"), elapsed_s=round(time.time() - self.t0, 1))
+        with open(self.progress, "a") as f:
+            f.write(json.dumps(kw, sort_keys=True) + "\n")
+
+    def run_timeout(self):
+        """Job timeout for the next Freerouting run (None = the definition's / CLI timeout)."""
+        t = self.a.timeout or self.opts.get("timeout")
+        if self.deadline is not None:
+            chunk = float(self.opts.get("chunk") or 900)
+            t = min(float(t) if t else chunk, chunk, max(60.0, self.remaining() - 120.0))
+        return int(t) if t else None
+
+    def post(self, info, quick):
+        args = ["_post", self.board_py, "--route-info", json.dumps(info)] + (["--quick"] if quick else [])
+        rc = _container(args)
+        st = json.load(open(self.state_p))
+        ok = st.get("imported_ses_sha256") == sha256(self.ses)
+        return rc, (st.get("route_stats") or {}).get("unconnected_after_fill") if ok else None
+
+    def fr(self, dsn, seed):
+        more = ["--router.autorouter.item_order_seed=%d" % seed] if seed else []
+        return run_freerouting(self.board_py, dsn, self.rses, self.a, more, timeout=self.run_timeout())
+
+    def adopt(self, info, kind, seed, best_open, best_info):
+        """Scratch SES -> candidate; keep it if better.  Returns (open, info, kept)."""
+        if os.path.exists(self.ses):
+            shutil.copyfile(self.ses, self.ses + ".prev")
+        shutil.copyfile(self.rses, self.ses)
+        rc, o = self.post(info, quick=True)
+        self.attempts.append({"run": len(self.attempts) + 1, "kind": kind, "seed": seed,
+                              "seconds": info["seconds"], "unconnected": o})
+        kept = o is not None and (best_open is None or o < best_open)
+        self.note(event="run", kind=kind, seed=seed, seconds=info["seconds"], unconnected=o, kept=kept,
+                  best=o if kept else best_open)
+        if kept:
+            if os.path.exists(self.ses + ".prev"):
+                os.remove(self.ses + ".prev")
+            log("routing: %s run -> %s open (kept)" % (kind, o))
+            return o, info, True
+        if os.path.exists(self.ses + ".prev"):
+            shutil.copyfile(self.ses + ".prev", self.ses)
+            os.remove(self.ses + ".prev")
+            self.post(best_info, quick=True)          # board back to the best result
+        log("routing: %s run -> %s open (not better, discarded)" % (kind, o))
+        return best_open, best_info, False
+
+    def out_of_time(self):
+        r = self.remaining()
+        return r is not None and r < 180
+
+    def route(self, dsn_sha):
+        """Returns (route_info, open) of the best result; route/<name>.ses holds it."""
+        retries = int(self.opts.get("retries", 0))
+        restarts = int(self.opts.get("restarts", 1))
+        stall_max = int(self.opts.get("stall", 2))
+        self.note(event="start", budget_s=self.opts.get("budget"), retries=retries, restarts=restarts)
+        info = self.fr(self.dsn, 0)
+        if info is None:
+            return None, None
+        info["dsn_sha256"] = dsn_sha
+        best_open, best_info, _ = self.adopt(info, "first", 0, None, None)
+        for r in range(0, restarts + 1):
+            if r > 0:
+                if not best_open or self.out_of_time():
+                    break
+                log("routing: %d connection(s) open -> fresh restart %d with another item-order seed" % (best_open, r))
+                info = self.fr(self.dsn, 1000 * r)
+                if info is None:
+                    break
+                info["dsn_sha256"] = dsn_sha
+                info["restart"] = r
+                best_open, best_info, _ = self.adopt(info, "restart", 1000 * r, best_open, best_info)
+            # continue runs from the current best routed board (with a budget: until it stalls)
+            n, stall = 0, 0
+            while best_open and not self.out_of_time():
+                if self.deadline is None and n >= retries:
+                    break
+                if self.deadline is not None and stall >= stall_max:
+                    break
+                n += 1
+                log("routing: %d connection(s) open -> continue run %d" % (best_open, len(self.attempts) + 1))
+                if _container(["_retrydsn", self.board_py]) != 0:
+                    break
+                info = self.fr(self.rdsn, 1000 * r + n)
+                if info is None:
+                    break
+                merged = dict(best_info, seconds=round(best_info.get("seconds", 0) + info["seconds"], 1),
+                              log_tail=info.get("log_tail"))
+                best_open, best_info, kept = self.adopt(merged, "continue", 1000 * r + n, best_open, best_info)
+                stall = 0 if kept else stall + 1
+        for f in (self.rdsn, self.rses):
+            if os.path.exists(f):
+                os.remove(f)
+        best_info = dict(best_info, attempts=self.attempts)
+        self.note(event="autorouter done", unconnected=best_open)
+        return best_info, best_open
+
+
 def _host_build(a, board_py):
     t0 = time.time()
     rc = _container(["_gen", board_py] + (["--no-route"] if a.no_route else []))
@@ -390,14 +525,13 @@ def _host_build(a, board_py):
         return rc
     route_info = None
     routed = False
+    bdir = os.path.dirname(board_py)
+    state_p = os.path.join(bdir, "reports", "build_state.json")
     if not a.no_route:
-        # the container wrote build_state.json; read name + dsn status from it
-        bdir = os.path.dirname(board_py)
-        with open(os.path.join(bdir, "reports", "build_state.json")) as f:
+        with open(state_p) as f:
             st = json.load(f)
         name = st["name"]
         if "dsn_sha256" in st:
-            dsn = os.path.join(bdir, "route", name + ".dsn")
             ses = os.path.join(bdir, "route", name + ".ses")
             meta_p = os.path.join(bdir, "route", "route_meta.json")
             meta = {}
@@ -405,15 +539,20 @@ def _host_build(a, board_py):
                 with open(meta_p) as f:
                     meta = json.load(f)
             reuse = (not a.reroute and os.path.exists(ses) and meta.get("dsn_sha256") == st["dsn_sha256"]
-                     and not a.passes and not a.threads and not a.timeout)
+                     and not a.passes and not a.threads and not a.timeout and not a.budget)
+            if a.budget:
+                st["routing"]["budget"] = a.budget
+                with open(state_p, "w") as f:
+                    json.dump(st, f, indent=2, sort_keys=True)
+                    f.write("\n")
             if reuse:
                 log("routing: DSN unchanged -> re-using %s" % os.path.relpath(ses, REPO))
                 route_info = dict(meta, reused=True)
             else:
-                route_info = run_freerouting(board_py, dsn, ses, a)
+                router = _Router(a, board_py, st)
+                route_info, _ = router.route(st["dsn_sha256"])
                 if route_info is None:
                     return 3
-                route_info["dsn_sha256"] = st["dsn_sha256"]
                 with open(meta_p, "w") as f:
                     json.dump(route_info, f, indent=2, sort_keys=True)
                     f.write("\n")
@@ -425,70 +564,15 @@ def _host_build(a, board_py):
     if route_info:
         args += ["--route-info", json.dumps(route_info)]
     rc = _container(args)
-    # completion strategy: while connections are open, let the autorouter continue from
-    # the current result (fresh rip-up budget on the failed nets), keep the best result
-    if routed and route_info and not route_info.get("reused"):
-        bdir = os.path.dirname(board_py)
-        state_p = os.path.join(bdir, "reports", "build_state.json")
-        st = json.load(open(state_p))
-        retries = int(st.get("routing", {}).get("retries", 0))
-        open_now = (st.get("route_stats") or {}).get("unconnected_after_fill", 0)
-        attempts = [{"run": 1, "seconds": route_info.get("seconds"), "unconnected": open_now}]
-        name = st["name"]
-        ses = os.path.join(bdir, "route", name + ".ses")
-        rdsn = os.path.join(bdir, "route", name + ".retry.dsn")
-        rses = os.path.join(bdir, "route", name + ".retry.ses")
-        dsn = os.path.join(bdir, "route", name + ".dsn")
-        restarts = int(st.get("routing", {}).get("restarts", 1))
-        ctx = {"board_py": board_py, "a": a, "state_p": state_p, "ses": ses, "rdsn": rdsn, "rses": rses,
-               "attempts": attempts, "retries": retries}
-        open_now, route_info, rc_c = _continue_runs(ctx, route_info, open_now, 0)
-        rc = rc if rc_c is None else rc_c
-        r = 0
-        while open_now > 0 and r < restarts:
-            # Freerouting is deterministic for a given DSN and item order: start once more from
-            # scratch with another item-order seed, keep whichever result leaves fewer open
-            r += 1
-            log("routing: %d connection(s) open after the continue runs -> fresh restart %d (other seed)" % (open_now, r))
-            shutil.copyfile(ses, ses + ".best")
-            best = (open_now, route_info, rc)
-            info = run_freerouting(board_py, dsn, ses, a, ["--router.autorouter.item_order_seed=%d" % (1000 * r)])
-            if info is None:
-                shutil.copyfile(ses + ".best", ses)
-                os.remove(ses + ".best")
-                break
-            info["dsn_sha256"] = route_info.get("dsn_sha256")
-            info["restart"] = r
-            rc2 = _container(["_post", board_py, "--route-info", json.dumps(info)])
-            o2 = (json.load(open(state_p)).get("route_stats") or {}).get("unconnected_after_fill", 0)
-            attempts.append({"run": len(attempts) + 1, "restart": r, "seconds": info["seconds"], "unconnected": o2})
-            o2, info, rc3 = _continue_runs(ctx, info, o2, 1000 * r)
-            rc2 = rc2 if rc3 is None else rc3
-            if o2 < best[0]:
-                open_now, route_info, rc = o2, info, rc2
-                os.remove(ses + ".best")
-            else:
-                shutil.copyfile(ses + ".best", ses)
-                os.remove(ses + ".best")
-                open_now, route_info = best[0], best[1]
-                rc = _container(["_post", board_py, "--route-info", json.dumps(route_info)])
-        for f in (rdsn, rses):
-            if os.path.exists(f):
-                os.remove(f)
-        route_info["attempts"] = attempts
-        meta_p = os.path.join(bdir, "route", "route_meta.json")
-        with open(meta_p, "w") as f:
-            json.dump({k: v for k, v in route_info.items() if k != "reused"}, f, indent=2, sort_keys=True)
-            f.write("\n")
-        if len(attempts) > 1:
-            rc = _container(["_post", board_py, "--route-info", json.dumps(route_info)])
     # finisher: built-in maze router for what the autorouter left open (checked by DRC like the rest)
     if routed and route_info:
-        bdir = os.path.dirname(board_py)
-        state_p = os.path.join(bdir, "reports", "build_state.json")
         st = json.load(open(state_p))
         open_now = (st.get("route_stats") or {}).get("unconnected_after_fill", 0)
-        if open_now > 0 and st.get("routing", {}).get("finisher", True):
+        ses_p = os.path.join(bdir, "route", st["name"] + ".ses")
+        imported = os.path.exists(ses_p) and st.get("imported_ses_sha256") == sha256(ses_p)
+        if not imported:
+            log("routing: the SES import did not complete (see above) - finisher not started")
+        elif open_now > 0 and st.get("routing", {}).get("finisher", True):
             log("routing: %d connection(s) still open -> finisher" % open_now)
             if _container(["_finish", board_py]) == 0:
                 rc = _container(["_post", board_py, "--route-info", json.dumps(route_info)])
@@ -496,54 +580,24 @@ def _host_build(a, board_py):
     return rc
 
 
-
-def _continue_runs(ctx, route_info, open_now, seed_base):
-    """Up to `retries` Freerouting runs continuing from the current result (each with another
-    item-order seed); a run is kept only if it reduces the open count.  Returns
-    (open, route_info, rc of the last _post or None)."""
-    board_py, a, state_p, ses = ctx["board_py"], ctx["a"], ctx["state_p"], ctx["ses"]
-    rdsn, rses, attempts = ctx["rdsn"], ctx["rses"], ctx["attempts"]
-    rc = None
-    n = 0
-    while open_now > 0 and n < ctx["retries"]:
-        n += 1
-        log("routing: %d connection(s) still open -> continue run %d" % (open_now, len(attempts) + 1))
-        if _container(["_retrydsn", board_py]) != 0:
-            break
-        info = run_freerouting(board_py, rdsn, rses, a, ["--router.autorouter.item_order_seed=%d" % (seed_base + n)])
-        if info is None:
-            break
-        shutil.copyfile(ses, ses + ".prev")
-        shutil.copyfile(rses, ses)
-        merged = dict(route_info, seconds=round(route_info.get("seconds", 0) + info["seconds"], 1),
-                      log_tail=info.get("log_tail"))
-        rc2 = _container(["_post", board_py, "--route-info", json.dumps(merged)])
-        new_open = (json.load(open(state_p)).get("route_stats") or {}).get("unconnected_after_fill", 0)
-        attempts.append({"run": len(attempts) + 1, "seconds": info["seconds"], "unconnected": new_open, "continue": True})
-        if new_open < open_now:
-            open_now, rc, route_info = new_open, rc2, merged
-            os.remove(ses + ".prev")
-        else:   # not better: restore the previous result, try the next seed (if any retries are left)
-            shutil.copyfile(ses + ".prev", ses)
-            os.remove(ses + ".prev")
-            rc = _container(["_post", board_py, "--route-info", json.dumps(route_info)])
-    return open_now, route_info, rc
-
-
-def run_freerouting(board_py, dsn, ses, a, more_args=()):
+def run_freerouting(board_py, dsn, ses, a, more_args=(), timeout=None):
     """Run the autorouter container; returns stats dict or None on failure."""
     # routing options come from the board definition via reports/build_state.json
     # (the definition itself is only ever evaluated inside the KiCad container).
     with open(os.path.join(os.path.dirname(board_py), "reports", "build_state.json")) as f:
-        opts = json.load(f)["routing"]
+        st = json.load(f)
+    opts = st["routing"]
     passes = a.passes or opts["passes"]
     threads = a.threads or opts["threads"] or (os.cpu_count() or 2)
     extra = list(opts.get("extra_args") or []) + list(more_args)
+    if st.get("dsn_ignore_classes"):
+        # nets with copper zones: connected by zone fill + plane fan-out, never routed as tracks
+        extra.append("--router.autorouter.ignore_net_classes=%s" % ",".join(st["dsn_ignore_classes"]))
     if not opts.get("optimizer", True):
         extra.append("--router.optimizer.enabled=false")
     fanout = bool(opts.get("fanout"))
     extra.append("--router.fanout.enabled=%s" % ("true" if fanout else "false"))
-    timeout = a.timeout or opts["timeout"]
+    timeout = timeout or a.timeout or opts["timeout"]
     if timeout:
         # ask Freerouting to stop by itself (it then still writes the SES); hard kill 3 min later
         extra.append("--router.job_timeout=%02d:%02d:%02d" % (timeout // 3600, (timeout % 3600) // 60, timeout % 60))
@@ -609,6 +663,9 @@ def main(argv=None):
         sp.add_argument("--passes", type=int, help="override Freerouting max passes")
         sp.add_argument("--threads", type=int, help="override Freerouting thread count")
         sp.add_argument("--timeout", type=int, help="kill Freerouting after N seconds")
+        sp.add_argument("--budget", type=int, help="wall-clock budget (s) for all autorouter runs; "
+                        "continue runs repeat until it is used up or they stop improving")
+        sp.add_argument("--quick", action="store_true", help=argparse.SUPPRESS)
         sp.add_argument("--route-info", help=argparse.SUPPRESS)
     a = ap.parse_args(argv)
     from .model import DefinitionError
@@ -620,7 +677,7 @@ def main(argv=None):
                 return stage_gen(a.board, route=not a.no_route)
             if a.cmd == "_post":
                 return stage_post(a.board, routed=not a.no_route,
-                                  route_info=json.loads(a.route_info) if a.route_info else None)
+                                  route_info=json.loads(a.route_info) if a.route_info else None, quick=a.quick)
             if a.cmd == "_retrydsn":
                 return stage_retrydsn(a.board)
             if a.cmd == "_finish":

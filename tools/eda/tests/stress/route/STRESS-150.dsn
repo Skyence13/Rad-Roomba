@@ -2411,7 +2411,16 @@
         (clearance 175)
       )
     )
-    (class PWR +3V3 +5V GND VIN
+    (class PWR VIN
+      (circuit
+        (use_via "Via[0-3]_800:400_um")
+      )
+      (rule
+        (width 400)
+        (clearance 225)
+      )
+    )
+    (class RR_ZONE_PWR +3V3 +5V GND
       (circuit
         (use_via "Via[0-3]_800:400_um")
       )

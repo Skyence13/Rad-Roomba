@@ -148,6 +148,23 @@ class Obstacles:
     def _load(self, pcb):
         for fp in pcb.GetFootprints():
             ref = fp.GetReference()
+            # footprint-internal rule areas (keep-outs inside footprints)
+            for z in fp.Zones():
+                if not z.GetIsRuleArea() or z.Outline().OutlineCount() < 1:
+                    continue
+                o = z.Outline().Outline(0)
+                poly = [(T(o.CPoint(i).x), T(o.CPoint(i).y)) for i in range(o.PointCount())]
+                self.keepouts.append({"poly": poly, "bb": bbox_of(poly),
+                                      "layers": {pcb.GetLayerName(l) for l in z.GetLayerSet().CuStack()},
+                                      "tracks": bool(z.GetDoNotAllowTracks()), "vias": bool(z.GetDoNotAllowVias())})
+            # copper drawn in a footprint (net ties): copper of no net (bounding box)
+            for g in fp.GraphicalItems():
+                if g.GetClass() == "PCB_SHAPE" and pcbnew.IsCopperLayer(g.GetLayer()):
+                    bb = g.GetBoundingBox()
+                    rect = (T(bb.GetLeft()), T(bb.GetTop()), T(bb.GetRight()), T(bb.GetBottom()))
+                    self._add({"kind": "pad", "rect": rect, "net": "", "layers": {g.GetLayerName()}, "ref": ref,
+                               "num": "", "cx": (rect[0] + rect[2]) / 2, "cy": (rect[1] + rect[3]) / 2, "drill": 0.0,
+                               "bb": rect, "circle": None, "nettie": True})
             fp.BuildCourtyardCaches()
             cy = fp.GetCourtyard(pcbnew.B_CrtYd if fp.IsFlipped() else pcbnew.F_CrtYd)
             if cy.OutlineCount() > 0:

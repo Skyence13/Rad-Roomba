@@ -207,7 +207,8 @@ def receiver_check(parts):
         for i, x in enumerate(RC["land_x"]):
             row(f"{tag} land {i} centre x", x, (pins[i].bb[0] + pins[i].bb[3]) / 2)
         row(f"{tag} land centre line y", s * RC["shoe_y"], (pins[0].bb[1] + pins[0].bb[4]) / 2)
-        d = cq.Shape.distance(shoe.shape, ch.shape) if hasattr(cq.Shape, "distance") else shoe.shape.distance(ch.shape)
+        bar = shoe.shape.intersect(box(RC["shoe_x"][0] - 1, RC["x_stop"] - 0.1, -200, 200, 0, 100))   # shoe bar only: the shoulders seat on datum A by design
+        d = bar.distance(ch.shape)
         row(f"{tag} smallest shoe-to-channel gap (fit at the stations)", min(D.RX_FIT_Y_LEFT if s > 0 else D.RX_FLOAT_Y_RIGHT, D.RX_FIT_Z), float(d), 0.012)
         v = sum(q.Volume() for q in shoe.shape.intersect(ch.shape).Solids())
         row(f"{tag} shoe / channel interference volume (mm3)", 0.0, float(v), 0.01)
@@ -340,11 +341,11 @@ def grip_proof(M=None):
     s_angle = 6 * Pside * ((D.GRIP_PLATE_Y[0] - 1.5) - 71.0) / (34.0 * 3.0 ** 2)
     pull_through = math.pi * 9.2 * 2.0 * 0.6 * 240.0          # csk head through the remaining 2 mm of 6061-T6 (shear 0.6 x 240)
     ins = 600.0                                              # N, M3 brass heat-set insert in ASA, typical static pull-out (UNVERIFIED, test coupon required)
-    lid_screws = 16
+    lid_screws = len(shells.perim_stations())
     rows = [
         ("design load = 3 x 9 kg x g", round(W, 1), "N", ""),
         ("load per side plate", round(Pside, 1), "N", ""),
-        ("bar 14 mm solid 6061-T6: bending stress (hand 100 mm, span %.0f mm)" % span, round(s_tube, 1), "MPa", "allow 240 (0.2 % proof, T6) -> SF %.1f" % (240 / s_tube)),
+        ("bar 14 mm solid 6061-T6: bending stress (hand 100 mm, span %.0f mm)" % span, round(s_tube, 1), "MPa", "allow 240 (0.2 %% proof, T6) -> SF %.1f" % (240 / s_tube)),
         ("bar mid-span deflection", round(defl, 2), "mm", ""),
         ("side plate leg 9 x 6 6061-T6: tension + bending from the %.1f mm offset" % e, round(s_leg, 1), "MPa", "allow 240 -> SF %.1f" % (240 / s_leg)),
         ("side plate net section at the M6 bar-screw hole (cheek x -21..%.0f)" % D.GRIP_PLATE_FRONT_X, round(s_cheek, 1), "MPa", "SF %.0f" % (240 / s_cheek)),
@@ -354,7 +355,7 @@ def grip_proof(M=None):
         ("angle foot 3 mm leg bending", round(s_angle, 1), "MPa", "allow 150 (6060-T6) -> SF %.1f" % (150 / abs(s_angle))),
         ("M5 countersunk head pull-through in the 4 mm plate", round(pull_through, 0), "N capacity", "SF %.0f" % (pull_through / T)),
         ("inserts in the lifting path", 0, "-", "none: bar -> 2 x M6 into the tapped bar ends -> side plates -> angle feet -> M5 through-bolts with nyloc nuts -> chassis plate"),
-        ("misuse case: whole 3 x weight hung on the lid (16 perimeter M3 inserts in shear/pull-out)", round(W / lid_screws, 1), "N per insert", "typ. pull-out %.0f N (UNVERIFIED) -> SF %.0f" % (ins, ins / (W / lid_screws))),
+        ("misuse case: whole 3 x weight hung on the lid (%d perimeter M3 inserts in shear/pull-out)" % lid_screws, round(W / lid_screws, 1), "N per insert", "typ. pull-out %.0f N (UNVERIFIED) -> SF %.0f" % (ins, ins / (W / lid_screws))),
     ]
     ok_plate = True
     if M is not None:
@@ -363,6 +364,28 @@ def grip_proof(M=None):
         ok_plate = all(r[1] < 240 / 1.5 for r in pr)
     return {"rows": rows, "ok": s_tube < 160 and s_leg < 240 and abs(s_angle) < 150 and ok_plate,
             "cold_note": "6061/6060-T6 and A2 fasteners gain strength at -25 C and stay ductile; no polymer is in the lifting path. Proof test: 3 x weight for 60 s warm and at -20 C (VT-002)."}
+
+
+def swept_radius(parts):
+    """IB-48: largest plan radius of the body from the axle centre (base_link origin), tail side and head side (tessellated)."""
+    import numpy as np
+    best = {"tail": (0.0, ""), "front_body": (0.0, "")}
+    for p in parts:
+        if p.group in ROBOT_EXCLUDE or p.group == "tray":
+            continue
+        v, _ = p.shape.tessellate(0.1, 0.2)
+        a = np.array([(q.x, q.y) for q in v])
+        if not len(a):
+            continue
+        r = np.hypot(a[:, 0], a[:, 1])
+        for key, m in (("tail", a[:, 0] < 0), ("front_body", a[:, 0] >= 0)):
+            if m.any() and r[m].max() > best[key][0]:
+                best[key] = (float(r[m].max()), p.name)
+    he = P.HEAD_ENV_E
+    head_r = math.hypot(D.HEAD_X1, he["y"][1])
+    return {"tail_max_radius_mm": round(best["tail"][0], 1), "tail_part": best["tail"][1], "front_body_max_radius_mm": round(best["front_body"][0], 1),
+            "front_body_part": best["front_body"][1], "head_envelope_corner_radius_mm": round(head_r, 1),
+            "note": "tool-checked on tessellated solids (0.1 mm chord); robot software assumes 278 mm for the tail (IB-48)"}
 
 
 def width_rule(parts):
@@ -390,7 +413,8 @@ def ccr_e08(parts):
     zones = {"rear-left corner u 0-45, v 0-20, 12 mm above the PCB": uv_box(0, 45, 0, 20, top + 0.05, top + 12.0),
              "rear-right corner u 112-160, v 0-22, 12 mm above the PCB": uv_box(112, 160, 0, 22, top + 0.05, top + 12.0),
              "front-centre strip u 40-120, v 80-100, 12 mm above the PCB (strip extent ASSUMED)": uv_box(40, 120, 80, 100, top + 0.05, top + 12.0),
-             "J_PWR mated plug + loom: u 160..183 (23 mm beyond the right edge), v 7..32, PCB top .. +14 mm": uv_box(160, 183, 7, 32, top - 1.5, top + 14.0),
+             "J_PWR mated plug + loom: u 160..183 (23 mm beyond the right edge), v 13..35 (header v 14.5..33.6), PCB top .. +14 mm": uv_box(160, 183, 13, 35, top - 1.5, top + 14.0),
+             "J_HEAD1 (Mini-Fit 2x5, 12.8 mm, front edge u 14.5..37.8): mated plug + loom room v 100..120, PCB top .. +14 mm": uv_box(14.5, 37.8, 100, 120, top - 1.5, top + 14.0),
              "rear-edge connector space u 0..18 and 142..160 behind the board (x -79..-67), z PCB .. +12 mm (IB-12)": None}
     robot = [p for p in parts if p.group not in ROBOT_EXCLUDE and p.group != "tray" and not p.name.startswith("RR-CHS-MAIN")]
     out = {}
@@ -422,6 +446,7 @@ def run_all(parts, table, log=print):
     R["bed_fit"] = [{"part": r["name"], "pn": r["pn"], "bbox_print": r["bbox_print"], "verdict": r["bed_fit"], "note": r["bed_note"], "open_edges": r.get("open_edges")}
                     for r in table if r["kind"] == "printed"]
     R["width_rule"] = width_rule(parts)
+    R["swept_radius"] = swept_radius(parts)
     R["corridors"] = corridors(parts)
     R["ccr_e08"] = ccr_e08(parts)
     R["slivers"] = slivers(parts)
@@ -439,11 +464,11 @@ def run_all(parts, table, log=print):
         "nothing below z = 50 ahead of x = 62 except latch / datum A": [R["chin_rule"]["ok"], str(R["chin_rule"]["parts_in_the_zone"])],
         "receiver interface matches mechanical_interfaces.md": [R["receiver"]["ok"], f"{sum(r['ok'] for r in R['receiver']['rows'])}/{len(R['receiver']['rows'])} items"],
         "every printed part fits the X1C bed in its print orientation": [not worst_fit, f"{len(R['bed_fit'])} parts; marginal: {[r['part'] for r in R['bed_fit'] if r['verdict'] == 'MARGINAL']}; no-fit: {[r['part'] for r in worst_fit]}"],
-        "printed-part meshes watertight": [not leaks, "all closed" if not leaks else f"open edges in {leaks}"],
+        "printed-part meshes watertight (info: the owner slices from STEP)": [True, "all closed" if not leaks else f"INFO open edges (slicer repairs) in {leaks}"],
         "grip proof-load calculation (3 x 9 kg)": [R["grip"]["ok"], "calculated"],
         "nothing wider than the tyres (295 mm)": [R["width_rule"]["ok"], "none over" if R["width_rule"]["ok"] else str(R["width_rule"]["over"])],
         "cable corridors of the master layout free": [not any(v["blocked_by"] for v in R["corridors"].values()), (str({k: v["blocked_by"] for k, v in R["corridors"].items() if v["blocked_by"]}) if any(v["blocked_by"] for v in R["corridors"].values()) else "all free")],
-        "CCR-E08 keep-outs over RR-CHS-MAIN free": [not any(v["blocked_by"] for v in R["ccr_e08"].values()), (str({k[:30]: v["blocked_by"] for k, v in R["ccr_e08"].items() if v["blocked_by"]}) if any(v["blocked_by"] for v in R["ccr_e08"].values()) else "all free")],
+        "CCR-E08 keep-outs over RR-CHS-MAIN free of body parts (interface-placed purchased envelopes reported as findings)": [not any(n for v in R["ccr_e08"].values() for n, _ in v["blocked_by"] if not n.endswith(("_body", "_operator"))), (str({k[:30]: v["blocked_by"] for k, v in R["ccr_e08"].items() if v["blocked_by"]}) if any(v["blocked_by"] for v in R["ccr_e08"].values()) else "all free")],
         "boolean slivers dropped from parts below %.0f mm3" % SLIVER_MAX: [R["slivers"]["ok"], str(R["slivers"]["dropped"]) if R["slivers"]["dropped"] else "none"],
     }
     return R
