@@ -154,8 +154,8 @@ DSN margin) are harmless.
    rule area + board via keep-out; NT1 moved and `zone_connect="none"`; Freerouting likewise routed a via through NT1's polygon.
 3. A footprint-only rule area on B.Cu (no tracks/vias/copper ban) is exported to the DSN as a full B.Cu keep-out → removed once the
    placement was frozen.
-4. KiCad's DRC report lists at most 499 unconnected items, so `summary.json` → `unconnected` saturates at 499 (true count 802 here,
-   1720 ratsnest edges before routing); the summary should use the connectivity count.
+4. KiCad's DRC report lists at most 499 unconnected items, so `summary.json` → `unconnected` saturates at 499 (true count 802 here
+   after routing); the summary should use the connectivity count.
 5. Post stage crash in `_remove_unused_escapes` (above) and the host then running the finisher on an un-routed board.
 6. Auto-arrange is weak on dense two-sided boards (69 passives > 20 mm from their anchor pin); with escape keep-aways it can fail
    ("no room") when passives are asked to stay on the IC's side.

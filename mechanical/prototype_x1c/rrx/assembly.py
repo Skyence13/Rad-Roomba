@@ -13,6 +13,7 @@ from . import sensors as S
 from .util import Part, bounds, box, cyl, fuse, place
 
 Z1 = D.PLATE_Z[1]
+LOW_ZONES_UV = [(0, 14, 88, 100), (146, 160, 88, 100), (0, 45, 0, 20), (112, 160, 0, 22)]
 
 
 def purchased(add):
@@ -42,7 +43,12 @@ def purchased(add):
     ox, oy, oz = b["origin"]
     w_, h_ = b["outline"]
     add(Part("RRX-E01", "RR-CHS-MAIN_pcb", box(ox, ox + h_, oy - w_, oy, oz, oz + b["thickness"]), "purchased", "FR4", "chs_main", color=C["pcb"], mass=0.22, mpn="RR-CHS-MAIN rev A (custom)", verified="contract outline"))
-    add(Part("RRX-E01", "RR-CHS-MAIN_top_parts", box(ox, ox + h_, oy - w_, oy, oz + b["thickness"], oz + b["thickness"] + b["max_top"]), "purchased", "KEEPOUT", "chs_main", color=C["keep"], mass=0.0))
+    top = oz + b["thickness"]
+    keep = box(ox, ox + h_, oy - w_, oy, top, top + b["max_top"])
+    for (u0, u1, v0, v1) in LOW_ZONES_UV:                     # 12 mm zones: front corners (board_envelopes.yaml) and rear corners (CCR-E08)
+        keep = keep.cut(box(ox + v0, ox + v1, oy - u1, oy - u0, top + 12.0, top + b["max_top"] + 1))
+    add(Part("RRX-E01", "RR-CHS-MAIN_top_parts", keep, "purchased", "KEEPOUT", "chs_main", color=C["keep"], mass=0.0,
+             verified="18 mm top envelope; 12 mm in the front corners (board_envelopes.yaml) and rear corners (CCR-E08 request)"))
     add(Part("RRX-E01", "RR-CHS-MAIN_bottom_parts", box(ox, ox + h_, oy - w_, oy, oz - b["max_bottom"], oz), "purchased", "KEEPOUT", "chs_main", color=C["keep"], mass=0.0, mates={"*standoff*"}))
     c = P.CM5_POSE
     e = L.env("cm5_carrier")
@@ -76,7 +82,7 @@ def purchased(add):
         add(Part("RRX-H52", f"{jn}_mated_plug", place(plug, j["xyz"], j["normal"]), "purchased", "BRASS", "head_placeholder", color=C["conn"], internal=False, mass=0.0, hard=True,
                  mates={f"{jn}_receptacle", "nose_cowl"}))
     for name, t in P.TOF_SENSORS.items():
-        xdir = (1.0, 0.0, 0.0) if name.startswith("tof_cliff_f") else (S._look_xdir(t["dir"]) if name.startswith("tof_look_f") else None)
+        xdir = (1.0, 0.0, 0.0) if name.startswith("tof_cliff_f") else S.seat_xdir(t["dir"], S.seat_kind(name))
         brd = box(-9.0, 9.0, -7.0, 7.0, -6.0, -2.7)
         add(Part("RRX-E03", name, place(brd, t["xyz"], t["dir"], xdir), "purchased", "FR4", "tof", color=C["sens"], internal=False, mass=L.mass("tof_board"), mpn="RR-TOF (custom, VL53L4ED)", verified="contract outline",
                  mates={"*"}))

@@ -35,6 +35,8 @@ def main(argv=None):
     extra = [Part(f"RRX-P02{tag}", f"receiver_channel_fitcheck_{tag}", structure.receiver_channel(s), "printed", "PAHT-CF", "receiver_option", orient=(180, 0, 0), hard=False,
                   print_note="plate face on the bed (upside-down); no supports; FIT CHECK ONLY, the datum part is the machined RRX-F02", note="optional") for tag, s in (("L", 1), ("R", -1))]
     table = export.export_all(parts + extra, meshes=not args.no_mesh)
+    nb = export.export_base_link(parts)
+    print(f"  {nb} parts as STEP in base_link (out/parts_base_link)", flush=True)
     nh = export.export_plate_holes()
     print(f"  chassis plate hole table: {nh} holes", flush=True)
     if not args.no_assembly_step:

@@ -127,7 +127,7 @@ def _surface_dist(it, PX, PY):
 def _rasterize(obs, win, net, w, vr, vdrill, layers):
     """Blocked maps: track[layer] (ny, nx) and via (ny, nx)."""
     rr = obs.r
-    q = win.g * 0.5
+    q = 0.0       # no grid margin: optimistic raster, every path is re-checked exactly afterwards
     trk = {l: np.zeros((win.ny, win.nx), dtype=bool) for l in layers}
     via = np.zeros((win.ny, win.nx), dtype=bool)
     bb = (win.x0, win.y0, win.x0 + win.nx * win.g, win.y0 + win.ny * win.g)

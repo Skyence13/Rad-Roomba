@@ -109,10 +109,18 @@ def main():
     ISL = (230.2, 0.6, 271.8, 12.8)
     BAR = (226.0, 0.0, 276.0, 17.0)
 
+    # corridors kept free for the lane pre-routes (anode entry stub, HVF via pair) in both channel columns
+    CORR = []
+    for org in (layout.F_ORG, layout.R_ORG):
+        ux = lc0 + org
+        CORR += [(ux + 7.62 - 0.7, 8.0, ux + 7.62 + 0.7, 11.2), (ux + 2.45 - 1.0, 8.4, ux + 2.45 + 1.0, 10.4)]
+
     def region_ok(ref, R):
         k, pre, kk, ch = lane_info(ref)
         if ch is not None:
             if k != 0:
+                return False
+            if any(overl(R, C, 0.0) for C in CORR):
                 return False
             if ch in "FR":
                 return inside(R, LOGIC) if is_trim(pre, kk) else inside(R, CAN_IN)

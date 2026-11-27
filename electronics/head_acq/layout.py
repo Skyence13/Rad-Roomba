@@ -183,6 +183,11 @@ def apply(board, parts):
     _rules(board)
     _keepouts(board)
     _planes(board)
+    if not pass1:
+        notes, vias = preroutes(board)
+        _hv_via_bands(board, vias)
+        with open(os.path.join(HERE, "reports", "preroute_notes.json"), "w") as f:
+            json.dump({"notes": notes, "hv_vias": vias}, f, indent=1)
     board.route(escape=False, finisher=True, plane_fanout=True, retries=1, timeout=900, passes=60)
     board.autoplace_options(clearance=0.12, ic_halo=0.5, edge_margin=0.6, spread=0.0, grid=0.1)
 
@@ -200,6 +205,10 @@ def _rules(board):
     board.netclass("SENSITIVE", ["[FR]?_A", "[FR]?_PINA", "[FR]?_PIN", "[FR]?_PFB", "[FR]?_PG", "[FR]?_FS", "[FR]?_FFB",
                                  "[FR]?_TRIM", "[FR]?_TPI", "[FR]?_SI", "[FR]?_SS", "[FR]?_SFB"],
                    track=0.2, clearance=0.3, via_dia=0.6, via_drill=0.3)
+    board.waive("drc", "items_not_allowed",
+                "GND copper (plane fan-out stubs/vias of the clip pads and of parts next to the wall) under a shield-can "
+                "wall: the can is on GND, so GND copper under it is harmless; the wall keep-outs exist to keep every OTHER "
+                "net off F.Cu under the walls.", match=r"KO_WALL_[^|]*\| (Track|Via) \[GND\]")
     # waiver: pads of ONE component closer than its own net-class clearance (U.FL centre pin to shell 0.45 mm,
     # 0603/0805/1206 HV capacitor and resistor terminals): the spacing is the part's rated spacing, not a layout choice.
     board.waive("drc", "clearance",
@@ -209,6 +218,7 @@ def _rules(board):
 
 
 def _keepouts(board):
+    _wall_keepouts(board)
     # mounting holes: standoff + screw head 6.0 mm (envelope) + 0.5 mm, all copper layers, no tracks/vias/pour
     for ref, (x, y) in HOLES.items():
         board.keepout("KO_" + ref, circle=(x, y, 7.0), layers=("*.Cu",), tracks=True, vias=True, copper=True,
@@ -219,7 +229,7 @@ def _keepouts(board):
             for key in ("J1", "J2"):
                 x, v, _r = CH[key]
                 board.keepout("KO_UFL_%d_%s_%s" % (k, "F" if org == F_ORG else "R", key),
-                              circle=(LC[k] + org + x, v, 5.6), layers=("*.Cu",), tracks=False, vias=True, copper=False,
+                              circle=(LC[k] + org + x, v, 4.8), layers=("*.Cu",), tracks=False, vias=True, copper=False,
                               pads=False, footprints=False)
     board.keepout("KO_UFL_J2701", circle=(BOARD["J2701"][0], BOARD["J2701"][1], 5.6), layers=("*.Cu",), tracks=False,
                   vias=True, copper=False, pads=False, footprints=False)
@@ -346,6 +356,225 @@ def _hv_pad_circles():
             px, py = pad[1], -pad[2]
             a = math.radians(r)
             bx, by = px * math.cos(a) - py * math.sin(a), px * math.sin(a) + py * math.cos(a)
-            rad = 0.5 * math.hypot(pad[3], pad[4]) + (1.0 + 0.35 if hvpad else 2.0)
+            rad = 0.5 * math.hypot(pad[3], pad[4]) + (1.0 + 0.35 if hvpad else 3.6)
             out.append((round(x + bx, 3), round(y + by, 3), round(rad, 3)))
     return out
+
+
+# =============================================================================================== pre-routes
+def _geometry():
+    """Pad rectangles of every placed part, lanes 1..3 expanded: [(ref, num, net, (x0, y0, x1, y1), (cx, cy))]."""
+    import math
+    import re
+    import overrides
+    geo = json.load(open(os.path.join(HERE, "scripts", "fp_geometry.json")))
+    parts, _ = overrides.apply(overrides.load_circuit().PARTS)
+    pd = {p["ref"]: p for p in parts}
+    at = placement()
+    full = dict(at)
+    for ref in pd:
+        m = re.match(r"([A-Z]+)(\d+)$", ref)
+        n = int(m.group(2))
+        if 200 <= n < 500 or 600 <= n < 900 or 1100 <= n < 1400:
+            k = ((n // 100 - 1) % 4) if n < 900 else (n - 1000) // 100
+            base = n - 100 * k
+            src = "%s%d" % (m.group(1), base)
+            if src in at:
+                x, y, r, s = at[src]
+                full[ref] = (x + DU_LANE * k, y, r, s)
+    out = []
+    for ref, (x, y, r, _s) in full.items():
+        g = geo.get(pd[ref]["footprint_hint"])
+        if not g:
+            continue
+        a = math.radians(r)
+        for pad in g["pads"]:
+            num, px, py, pw, ph, prot = pad[:6]
+            if (prot + r) % 180:
+                pw, ph = ph, pw
+            bx, by = px * math.cos(a) + py * math.sin(a), px * math.sin(a) - py * math.cos(a)
+            cx, cy = x + bx, y + by
+            v = pd[ref]["pins"].get(num)
+            out.append((ref, num, v[1] if v else None, (cx - pw / 2, cy - ph / 2, cx + pw / 2, cy + ph / 2), (cx, cy)))
+    return out
+
+
+def _dist_pt_rect(px, py, R):
+    import math
+    dx = max(R[0] - px, 0, px - R[2])
+    dy = max(R[1] - py, 0, py - R[3])
+    return math.hypot(dx, dy)
+
+
+def _seg_rect(p, q, R, n=24):
+    return min(_dist_pt_rect(p[0] + (q[0] - p[0]) * i / n, p[1] + (q[1] - p[1]) * i / n, R) for i in range(n + 1))
+
+
+def _free_via(pads, net, cx, cy, clr, rmin=1.2, rmax=4.0, avoid=()):
+    """Nearest via position to (cx, cy) at >= clr from every pad of another net (and stub clear too)."""
+    import math
+    best = None
+    r = rmin
+    while r <= rmax and best is None:
+        for j in range(24):
+            a = 2 * math.pi * j / 24 + math.pi / 2
+            vx, vy = round(cx + r * math.cos(a), 3), round(cy + r * math.sin(a), 3)
+            if any(abs(vy - w) < 0.9 for w in avoid):
+                continue
+            ok = True
+            for (_ref, _n, pn, R, _c) in pads:
+                if pn == net or abs(R[0] - vx) > 6 or abs(R[1] - vy) > 6:
+                    continue
+                if _dist_pt_rect(vx, vy, R) < clr + 0.3 or _seg_rect((cx, cy), (vx, vy), R) < clr + 0.15:
+                    ok = False
+                    break
+            if ok:
+                best = (vx, vy)
+                break
+        r += 0.25
+    return best
+
+
+RISER = []
+
+
+def preroutes(board):
+    """HV_BUS trunk + per-channel drops, HVF connector links, anode entry stubs (all four lanes)."""
+    pads = _geometry()
+    bypad = {(r, n): (net, R, c) for (r, n, net, R, c) in pads}
+    notes = []
+    vias = []          # (x, y) of HV pre-route vias (gaps in the via keep-out bands)
+    drops = []
+    for k in range(4):
+        for ch, base in (("F", 100), ("R", 500)):
+            cb = base + 100 * k
+            r1 = "R%d" % (cb + 1)
+            net, R, (px, py) = bypad[(r1, "1")]
+            assert net == "HV_BUS"
+            v = _free_via(pads, "HV_BUS", px, py, 1.0, avoid=(libs.CAN_V0 + 0.1, libs.CAN_V1 - 0.1))
+            if v is None:
+                notes.append("no HV_BUS drop via position at %s" % r1)
+                continue
+            board.track("HV_BUS", [(px, py), v], layer="F.Cu", width=0.25)
+            board.via("HV_BUS", v[0], v[1])
+            board.track("HV_BUS", [v, (v[0], V_TRUNK)], layer="In2.Cu", width=0.25)
+            board.via("HV_BUS", v[0], V_TRUNK)
+            vias += [v, (v[0], V_TRUNK)]
+            drops.append(v[0])
+            # HVF: connector centre pad -> via in front of it -> In2 under the rear wall -> via -> C2 / R2
+            j2 = "J%d" % (cb + 2)
+            hvf = "%s%d_HVF" % (ch, k)
+            _n, _R, (jx, jy) = bypad[(j2, "1")]
+            c2 = bypad[("C%d" % (cb + 2), "1")][2]
+            r2 = bypad[("R%d" % (cb + 2), "2")][2]
+            vo = (round(jx, 3), round(jy + 1.95, 3))
+            vi = (round(jx - 0.08, 3), 9.6)
+            board.track(hvf, [(jx, jy), vo], layer="F.Cu", width=0.25)
+            board.via(hvf, *vo)
+            board.track(hvf, [vo, vi], layer="In2.Cu", width=0.25)
+            board.via(hvf, *vi)
+            board.track(hvf, [vi, c2], layer="F.Cu", width=0.25)
+            board.track(hvf, [vi, r2], layer="F.Cu", width=0.25)
+            # anode: U.FL centre pad -> straight through the mouse hole -> R_IN (R3) pad 1
+            j1 = "J%d" % (cb + 1)
+            an = "%s%d_A" % (ch, k)
+            _n, _R, (ax, ay) = bypad[(j1, "1")]
+            r3 = bypad[("R%d" % (cb + 3), "1")][2]
+            board.track(an, [(ax, ay), (ax, r3[1] - 0.95), (r3[0], r3[1] - 0.33), r3], layer="F.Cu", width=0.2)
+    # trunk: F.Cu along v = V_TRUNK over all drops, plus the riser to the bias block on In3
+    xs = sorted(drops)
+    xr = 138.6
+    board.track("HV_BUS", [(xs[0], V_TRUNK), (xs[-1], V_TRUNK)], layer="F.Cu", width=0.3)
+    board.via("HV_BUS", xr, V_TRUNK)
+    vias.append((xr, V_TRUNK))
+    tgt = bypad[("C2213", "1")]
+    circ = _hv_pad_circles()
+    vb = None
+    for rmin in (1.2, 1.8, 2.4, 3.0, 3.6):
+        vb = _free_via(pads, "HV_BUS", tgt[2][0], tgt[2][1], 1.0, rmin=rmin, rmax=rmin + 0.5)
+        if vb and not any(((vb[0] - cx) ** 2 + (vb[1] - cy) ** 2) ** 0.5 < cr + 0.35 for cx, cy, cr in circ):
+            break
+        vb = None
+    if vb:
+        board.track("HV_BUS", [tgt[2], vb], layer="F.Cu", width=0.25)
+        board.via("HV_BUS", *vb)
+        mid = (xr, vb[1] - (xr - vb[0]) if xr - vb[0] < vb[1] - V_TRUNK else V_TRUNK)
+        board.track("HV_BUS", [(xr, V_TRUNK), mid, vb], layer="In3.Cu", width=0.25)
+        RISER[:] = [((xr, V_TRUNK), mid), (mid, vb)]
+        vias.append(vb)
+    else:
+        notes.append("no via position next to C2213")
+    return notes, vias
+
+
+def _hv_via_bands(board, vias):
+    """Via keep-outs along the HV inner-layer tracks and the trunk (the plane fan-out and the autorouter must not put
+    a foreign via within the 1.0 mm HV clearance; the tool's fan-out only checks its own net class)."""
+    w = 1.0 + 0.3 + 0.125 + 0.15
+    i = 0
+    xs = sorted({round(x, 3) for (x, y) in vias if abs(y - V_TRUNK) < 0.01})
+    edges = [12.0] + [e for x in xs for e in (x - 0.9, x + 0.9)] + [314.0]
+    for a, b in zip(edges[0::2], edges[1::2]):
+        if b - a > 0.2:
+            board.keepout("KO_HVBAND_%d" % i, polygon=[(a, V_TRUNK - w), (b, V_TRUNK - w), (b, V_TRUNK + w), (a, V_TRUNK + w)],
+                          layers=("*.Cu",), tracks=False, vias=True, copper=False, pads=False, footprints=False)
+            i += 1
+    for seg in RISER:
+        (ax, ay), (bx, by) = seg
+        import math
+        L = math.hypot(bx - ax, by - ay)
+        ux, uy = (bx - ax) / L, (by - ay) / L
+        nx, ny = -uy * w, ux * w
+        a0 = (ax + ux * 0.9, ay + uy * 0.9)
+        b0 = (bx - ux * 0.9, by - uy * 0.9)
+        board.keepout("KO_HVBAND_%d" % i, polygon=[(a0[0] + nx, a0[1] + ny), (b0[0] + nx, b0[1] + ny), (b0[0] - nx, b0[1] - ny),
+                                                    (a0[0] - nx, a0[1] - ny)],
+                      layers=("*.Cu",), tracks=False, vias=True, copper=False, pads=False, footprints=False)
+        i += 1
+    for (x, y) in vias:
+        if abs(y - V_TRUNK) < 0.01 or y > V_TRUNK:
+            continue
+        y0, y1 = y + 0.9, V_TRUNK - w
+        if y1 - y0 > 0.3:
+            board.keepout("KO_HVBAND_%d" % i, polygon=[(x - w, y0), (x + w, y0), (x + w, y1), (x - w, y1)],
+                          layers=("*.Cu",), tracks=False, vias=True, copper=False, pads=False, footprints=False)
+            i += 1
+
+
+def _wall_keepouts(board):
+    """No F.Cu tracks or vias under the shield-can walls, except the anode mouse holes."""
+    hw = 0.35
+    for k, c in enumerate(LC):
+        x0, x1 = c - libs.CAN_W / 2, c + libs.CAN_W / 2
+        y0, y1 = libs.CAN_V0, libs.CAN_V1
+        segs = [("F", [(x0, y1 - 0.2 - hw), (x1, y1 - 0.2 - hw), (x1, y1 + hw), (x0, y1 + hw)]),
+                ("L", [(x0 - hw, y0), (x0 + 0.2 + hw, y0), (x0 + 0.2 + hw, y1), (x0 - hw, y1)]),
+                ("Rt", [(x1 - 0.2 - hw, y0), (x1 + hw, y0), (x1 + hw, y1), (x1 - 0.2 - hw, y1)])]
+        holes = sorted(c + d for d in libs.MOUSE_DU)
+        edges = [x0] + [e for h in holes for e in (h - libs.MOUSE_W / 2, h + libs.MOUSE_W / 2)] + [x1]
+        for j, (a, b) in enumerate(zip(edges[0::2], edges[1::2])):
+            segs.append(("B%d" % j, [(a, y0 - hw), (b, y0 - hw), (b, y0 + 0.2 + hw), (a, y0 + 0.2 + hw)]))
+        cut = []
+        for name, poly in segs:
+            xs_ = [p[0] for p in poly]
+            ys_ = [p[1] for p in poly]
+            bx0, bx1, by0, by1 = min(xs_), max(xs_), min(ys_), max(ys_)
+            horiz = (bx1 - bx0) > (by1 - by0)
+            gaps = sorted((c + du) if horiz else v for (du, v, rot) in libs.CLIPS
+                          if (rot == 0) == horiz and (by0 - 0.5 <= v <= by1 + 0.5 if horiz else bx0 - 0.5 <= c + du <= bx1 + 0.5))
+            lo, hi = (bx0, bx1) if horiz else (by0, by1)
+            pieces, cur = [], lo
+            for g in gaps:
+                if not (lo - 2.6 < g < hi + 2.6):
+                    continue
+                if g - 2.6 > cur:
+                    pieces.append((cur, min(hi, g - 2.6)))
+                cur = max(cur, g + 2.6)
+            if hi > cur:
+                pieces.append((cur, hi))
+            for j, (a, b) in enumerate(pieces):
+                cut.append(("%s_%d" % (name, j), [(a, by0), (b, by0), (b, by1), (a, by1)] if horiz else
+                            [(bx0, a), (bx1, a), (bx1, b), (bx0, b)]))
+        for name, poly in cut:
+            board.keepout("KO_WALL_%d_%s" % (k, name), polygon=poly, layers=("F.Cu",), tracks=True, vias=True,
+                          copper=False, pads=False, footprints=False)

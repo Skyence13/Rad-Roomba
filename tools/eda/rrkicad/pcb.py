@@ -831,6 +831,7 @@ def _track_key(t):
 
 def import_ses(name, pcb_path, ses, clean="1", min_track="0"):
     """Phase A (own process): import the SES, verify pre-routes, drop dangling stubs, save.
+    clean: "1" dangling stubs + unused escape vias (only if fully connected), "d" dangling only, "0" none.
 
     Runs in a separate interpreter because removing items leaves the pcbnew SWIG
     proxies of that process in an unreliable state."""
@@ -863,9 +864,11 @@ def import_ses(name, pcb_path, ses, clean="1", min_track="0"):
     pcbnew.ZONE_FILLER(pcb).Fill(pcb.Zones())
     pcb.BuildConnectivity()
     info["unconnected_before_cleanup"] = int(pcb.GetConnectivity().GetUnconnectedCount(True))
-    info["dangling_tracks_removed"] = _remove_dangling(pcb) if clean == "1" else 0
+    info["dangling_tracks_removed"] = _remove_dangling(pcb) if clean in ("1", "d") else 0
+    # unused escape vias are only dropped on a completely connected board: while anything is open
+    # they are the finisher's (and the engineer's) best starting points
     info["unused_escapes_removed"] = _remove_unused_escapes(pcb, os.path.join(os.path.dirname(ses), "escape_vias.json")) \
-        if clean == "1" else 0
+        if clean == "1" and info["unconnected_before_cleanup"] == 0 else 0
     pcbnew.SaveBoard(pcb_path, pcb, True)
     return info
 

@@ -60,10 +60,10 @@ POSTS = [(-64.0, 76.0), (-64.0, -76.0), (30.0, 45.0), (30.0, -45.0)]
 # ---- grip frame (fabricated): two 6 mm 6061 side plates, 14 mm solid 6061 bar with M6 tapped ends, 25 x 25 x 3 angle feet
 GRIP_PLATE_Y = (88.0, 94.0)                    # inside the cheek envelope 84..98
 GRIP_BAR_D = 14.0                              # solid round bar (was a 16 x 2 tube on an M8 rod: it collided with the look-ahead ToF seats)
-GRIP_BAR_X = -15.0                             # bar axis x: front of the bar x -8.0 stays behind the look-ahead ToF clips
+GRIP_BAR_X = -15.5                             # bar axis x: front of the bar x -8.0 stays behind the look-ahead ToF clips
 GRIP_BAR_Z = (P.GRIP["bar_bottom_z"] + P.GRIP["bar_top_z"]) / 2
 GRIP_BAR_SCREW = "M6"
-GRIP_PLATE_FRONT_X = -8.0                      # cheek front edge of the side plate (z >= 150)
+GRIP_PLATE_FRONT_X = -8.6                      # cheek front edge of the side plate (z >= 150)
 GRIP_DESIGN_MASS = 9.0                         # kg (task: 3 x the 9 kg robot)
 GRIP_FACTOR = 3.0
 FOOT_X = (-56.0, -22.0)
@@ -72,7 +72,7 @@ FOOT_X = (-56.0, -22.0)
 SPLIT_Z_LOWER_TOP = P.BODY_ROWS["lower_outer"][-1][0]    # 61.9: top land of the lower hull
 SPLIT_Z_UPPER_BOT = P.BODY_SPLIT_Z                        # 63.68: bottom land of the lid; 1.78 mm gasket between
 X_NOSE = P.SADDLE["x"][1]                      # 47: nose cowl / shoulder split
-X_DECK = -45.0                                 # shoulder / rear deck split (ahead of RR-PANEL and its light pipes, behind the grip slots)
+X_DECK = -36.0                                 # shoulder / rear deck split: behind the grip slots (x -21.5), ahead of the RR-PANEL tray (ends x -42.5)
 X_LOWER = -71.0                                # lower hull front / rear split
 WELL_WALL = 3.0
 FLANGE_T = 4.0                                 # joint flange thickness each side
@@ -85,7 +85,7 @@ B = P.BATTERY_BAY
 TUNNEL_WALL_Y = (55.5, 58.0)
 TUNNEL_X = (-230.0, B["cassette_x"][1])        # guide walls; front bulkhead ahead of the cassette
 FLOOR_RIB_Y = 42.0
-KEY_RIB_Y = 50.5                               # off-centre key (left side only): reversed cassette is blocked
+KEY_RIB_Y = (32.0, 36.0)                       # off-centre key rib under the cassette (left only, clear of the caster disc r 30): reversed cassette is blocked
 
 # ---- wheels: printed hub on a purchased 6 mm clamping hub + printed TPU tyre
 TYRE_T = 9.0

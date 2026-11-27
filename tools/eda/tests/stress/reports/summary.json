@@ -174,7 +174,7 @@
     "by_type": {
       "via_dangling": {
         "errors": 0,
-        "warnings": 15
+        "warnings": 29
       }
     },
     "error_items": [],
@@ -185,23 +185,23 @@
     "report": "reports/drc.json",
     "unconnected": 1,
     "unconnected_items": [
-      "unconnected_items | Missing connection between items | Pad 30 [IO46] of U1 on F.Cu | Pad 41 [IO46] of U2 on F.Cu"
+      "unconnected_items | Missing connection between items | Track [IO46] on F.Cu, length 0.5418 mm | Track [IO46] on F.Cu, length 1.0950 mm"
     ],
     "unrouted": [
       {
         "ends": [
           {
-            "item": "Pad 30 [IO46] of U1 on F.Cu",
+            "item": "Track [IO46] on F.Cu, length 0.5418 mm",
             "xy_mm": [
-              29.5,
-              38.075
+              48.213,
+              57.828
             ]
           },
           {
-            "item": "Pad 41 [IO46] of U2 on F.Cu",
+            "item": "Track [IO46] on F.Cu, length 1.0950 mm",
             "xy_mm": [
-              49.062,
-              57.75
+              29.5,
+              38.075
             ]
           }
         ],
@@ -212,7 +212,7 @@
       "IO46"
     ],
     "waived": 0,
-    "warnings": 15
+    "warnings": 29
   },
   "erc": {
     "by_type": {},
@@ -324,7 +324,7 @@
         "[8A1DF8\\D15B72] Job '8A1DF8\\D15B72' finished with state: COMPLETED (elapsed: 9 minutes 1.77 seconds, finished at UTC: 2026-11-27T01:04:56.680822313Z)."
       ],
       "passes_limit": 30,
-      "reused": false,
+      "reused": true,
       "seconds": 549.0,
       "threads": 4,
       "timed_out": false
@@ -383,8 +383,8 @@
       "failed": [
         {
           "ends": [
-            "Pad 30 [IO46] of U1 on F.Cu",
-            "Pad 41 [IO46] of U2 on F.Cu"
+            "Track [IO46] on F.Cu, length 0.5418 mm",
+            "Track [IO46] on F.Cu, length 1.0950 mm"
           ],
           "net": "IO46",
           "why": "no free path (window board mm, grid 0.10)"
@@ -392,7 +392,7 @@
       ],
       "items": 0,
       "routed": [],
-      "seconds": 11.8
+      "seconds": 12.5
     },
     "plane_fanout": {
       "failed": [
@@ -417,12 +417,12 @@
       "necked_tracks_widened": 0,
       "preroutes": 743,
       "preroutes_missing_after_import": 0,
-      "track_length_mm": 4705.66,
-      "tracks": 2019,
+      "track_length_mm": 4735.58,
+      "tracks": 2061,
       "unconnected_after_fill": 1,
       "unconnected_before_cleanup": 1,
-      "unused_escapes_removed": 14,
-      "vias": 472
+      "unused_escapes_removed": 0,
+      "vias": 486
     }
   },
   "single_pin_nets": [],

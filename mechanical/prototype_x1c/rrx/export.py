@@ -83,6 +83,19 @@ def export_all(parts, meshes=True, log=print):
     return table
 
 
+def export_base_link(parts):
+    """Every real part (printed, fabricated, purchased envelope) as STEP in its assembled position (base_link)."""
+    d = OUT / "parts_base_link"
+    d.mkdir(parents=True, exist_ok=True)
+    n = 0
+    for p in parts:
+        if p.kind == "placeholder":
+            continue
+        cq.exporters.export(cq.Workplane("XY").add(p.shape), str(d / f"{p.name}.step"))
+        n += 1
+    return n
+
+
 def export_plate_holes():
     from .structure import plate_holes, sole_screw_xy
     rows = plate_holes() + [(x, y, D.CLEAR["M3"], "csk_bottom", "lower-hull sole ring M3 (insert in the hull)") for x, y in sole_screw_xy()]

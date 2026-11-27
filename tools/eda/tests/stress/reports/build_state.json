@@ -211,21 +211,7 @@
     },
     "vias": 101
   },
-  "finisher": {
-    "failed": [
-      {
-        "ends": [
-          "Pad 30 [IO46] of U1 on F.Cu",
-          "Pad 41 [IO46] of U2 on F.Cu"
-        ],
-        "net": "IO46",
-        "why": "no free path (window board mm, grid 0.10)"
-      }
-    ],
-    "items": 0,
-    "routed": [],
-    "seconds": 11.8
-  },
+  "finisher": null,
   "gen_warnings": [
     "U50: 3D envelope uses the default height 1.0 mm (give height=)",
     "U51: 3D envelope uses the default height 1.0 mm (give height=)",
@@ -1196,7 +1182,7 @@
       "[8A1DF8\\D15B72] Job '8A1DF8\\D15B72' finished with state: COMPLETED (elapsed: 9 minutes 1.77 seconds, finished at UTC: 2026-11-27T01:04:56.680822313Z)."
     ],
     "passes_limit": 30,
-    "reused": false,
+    "reused": true,
     "seconds": 549.0,
     "threads": 4,
     "timed_out": false
@@ -1207,12 +1193,12 @@
     "necked_tracks_widened": 0,
     "preroutes": 743,
     "preroutes_missing_after_import": 0,
-    "track_length_mm": 4705.66,
-    "tracks": 2019,
+    "track_length_mm": 4735.58,
+    "tracks": 2061,
     "unconnected_after_fill": 1,
     "unconnected_before_cleanup": 1,
-    "unused_escapes_removed": 14,
-    "vias": 472
+    "unused_escapes_removed": 0,
+    "vias": 486
   },
   "routed": true,
   "routing": {

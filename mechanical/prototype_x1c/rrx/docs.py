@@ -434,14 +434,15 @@ def write_report(R, table, parts, timing):
         w(f"| {k} | {v['mass_kg']:.3f} | {v['x']} | {v['z']} |")
     b = M["base_without_head"]
     w(f"| **Base with the 12 Ah pack, no head** | **{b['mass']:.2f}** | {b['x']:.1f} | {b['z']:.1f} |")
-    w("\n| Head | Mass (kg) | Margin to 12 kg | CG x | CG z | Caster N (fraction) | Each wheel N | Tip margin forward (0.4 m/s2 braking, 5 deg) | rearward | lateral | Hang angle at the grip (deg, - = tail down) |\n|---|---|---|---|---|---|---|---|---|---|---|")
+    w("\n| Head | Mass (kg) | Margin to 12 kg | CG x | CG z | Caster N (fraction) | Each wheel N | Tip margin forward (0.4 m/s2 braking, 5 deg) | rearward | lateral | Hang angle at the grip x -11 (deg, - = tail down) | Hang angle with CR-04 bar x -30 |\n|---|---|---|---|---|---|---|---|---|---|---|---|")
     for c in M["configurations"]:
         w(f"| {c['head']} | {c['mass_kg']} | {M['mass_goal_kg'] - c['mass_kg']:.2f} | {c['cg_x']} | {c['cg_z']} | {c['caster_N']} ({c['caster_fraction']:.2f}) | {c['each_wheel_N']} | {c['tip_margin_forward_mm']} | "
-          f"{c['tip_margin_rearward_mm']} | {c['tip_margin_lateral_mm']} | {c['hang_angle_deg']} |")
+          f"{c['tip_margin_rearward_mm']} | {c['tip_margin_lateral_mm']} | {c['hang_angle_deg']} | {c['hang_angle_deg_CR04_bar_x-30']} |")
+    w("\nHead masses and CGs are the head engineer's calculated values (`mechanical/head/out/head_report.md` section 3, incl. pigtails). The 9 Ah pack variant is 0.65 kg lighter at x = -152 (spacer +0.05 kg).\n")
     w("\nLayout budget for comparison (`mech_calcs.md`, prototype, 12 Ah): 6.90 kg / CG x -86.3 / z 82.0 without head; 8.57 kg / -46.5 / 71.6 with the printed head (tip margin 37.3 mm, hang -19.6 deg).\n")
-    w("**IB-10 (carry attitude).** The bar cannot move aft inside the fixed interfaces: its 45 mm hand zone ends 0.7 mm ahead of the hump front wall (calculated: corner distance from the bar's lower rear edge to the hump "
-      "corner must stay >= 45 mm -> bar centre x >= -13). The grip frame, front beam and latch arm in aluminium move the base CG forward relative to the layout budget; the remaining tail-down angle is reported above. "
-      "Getting to <= 10 deg needs the bar about 19 mm further aft (hump front wall moved or the hand zone reduced to about 26 mm behind the bar) or a second carry point; see CHANGE_REQUESTS.md CR-04.\n")
+    w("**IB-10 (carry attitude).** Inside the fixed interfaces the bar cannot move aft: the 45 mm hand zone behind and below the bar ends at the hump front wall (bar centre x >= -13). "
+      "The last column shows the calculated hang angle if the bar centre moves to x = -30 with the hand zone behind the bar reduced to 25 mm below z 153 (fingertips; the palm is above the hump top z 150): "
+      "CHANGE_REQUESTS.md CR-04. Ballast is not a remedy (about 1.9 kg in the nose for 10 deg).\n")
     w("## 8. Carry-grip proof load (calculated)\n\n| Item | Value | Unit | Assessment |\n|---|---|---|---|")
     for item, val, unit, note in R["grip"]["rows"]:
         w(f"| {item} | {val} | {unit} | {note} |")
@@ -453,4 +454,16 @@ def write_report(R, table, parts, timing):
       "(3) Printed TPU has layer lines across the tread: tread wear and diameter must be re-measured after the first hours. (4) Alternative kept open: the same rim turned down to carry a purchased 86 x 9 polyurethane "
       "tyre/O-ring band (60..70A cold-grade) if the cold traction test fails. The shaft eccentricity (shaft 7 mm below the can axis, UNVERIFIED) is handled in the pod: can bore on z = 59, shaft boss hole on z = 52, "
       "and twelve M3 holes so the UNVERIFIED six-hole pattern fits in either clocking.\n")
+    w("## 10. Rules, corridors and the RR-CHS-MAIN keep-outs (tool-checked)\n")
+    wr = R["width_rule"]
+    w(f"- Width rule (nothing wider than the tyres, |y| <= {wr['limit_half_width_mm']}): {'PASS' if wr['ok'] else 'FAIL ' + str(wr['over'])}.")
+    for k, v in R["corridors"].items():
+        w(f"- corridor **{k}** {v['box']} ({v['use']}): {'free' if not v['blocked_by'] else 'BLOCKED by ' + str(v['blocked_by'])}")
+    w("\nCCR-E08 (chassis electronics) answers, checked as keep-out boxes against every body part:\n")
+    for k, v in R["ccr_e08"].items():
+        w(f"- {k}: {'free' if not v['blocked_by'] else 'BLOCKED by ' + str(v['blocked_by'])}")
+    w("\nThe two rear cover-screw bosses hang to z 97.6 (13.0 mm above the PCB) over the rear corners, i.e. above the 12 mm the request asks for. "
+      "The combined 8-way Mini-Fit at the right-rear edge (CCR-E08 a) has its mated plug and loom room beyond the board edge. Boolean slivers removed from parts: "
+      f"{R['slivers']['dropped'] or 'none'}.\n")
+    w("## 11. Deviations and change requests\n\nSee `CHANGE_REQUESTS.md` (deviations D-01..D-07 taken inside this package, requests CR-01..CR-06 to the lead).\n")
     (OUT / "prototype_report.md").write_text("\n".join(A) + "\n", encoding="utf-8")

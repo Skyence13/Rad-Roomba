@@ -10,7 +10,7 @@ from mechanical.common import params as P
 from mechanical.common.purchased import library as L
 
 from . import dims as D
-from .util import (Part, V, box, cut, cyl, fuse, loft, mirror_y, prism, prism_xz, ring_xy)
+from .util import (Part, V, box, cached, cut, cyl, fuse, loft, mirror_y, prism, prism_xz, ring_xy)
 
 Z0, Z1 = D.PLATE_Z
 RC = D.RC
@@ -70,7 +70,10 @@ def sole_screw_xy():
         cx = (row[1] + row[2]) / 2
         r = math.hypot(x - cx, y)
         f = (r - D.PLATE_INSET - 6.0) / r
-        pts.append((cx + (x - cx) * f, y * f))
+        px, py = cx + (x - cx) * f, y * f
+        if px < D.TUNNEL_X[1] + 4.0 and abs(py) < 70.0:      # the battery tunnel footprint owns the plate there (no hull sole ring)
+            continue
+        pts.append((px, py))
     return pts + [(x, -y) for x, y in pts]
 
 
@@ -240,7 +243,7 @@ def grip_side_plate(s):
     pl = pl.cut(cyl(D.CLEAR[D.GRIP_BAR_SCREW] / 2, 10, (D.GRIP_BAR_X, y0 - 1, D.GRIP_BAR_Z), (0, 1, 0)))
     for x in (-48.0, -30.0):
         pl = pl.cut(cyl(D.CLEAR["M5"] / 2, 10, (x, y0 - 1, Z1 + 16.0), (0, 1, 0)))
-    for z in (118.0, 140.0):
+    for z in FAIRING_SCREW_Z:
         pl = pl.cut(cyl(D.CLEAR["M3"] / 2, 10, (-11.0, y0 - 1, z), (0, 1, 0)))
     return pl if s > 0 else mirror_y(pl)
 
@@ -281,7 +284,7 @@ def grip_sleeve():
     from .sensors import tof_boss
     for name in ("tof_look_fl", "tof_look_fr"):
         t = P.TOF_SENSORS[name]
-        sl = sl.cut(tof_boss(t["xyz"], t["dir"], look=True, grow=0.4))
+        sl = sl.cut(tof_boss(t["xyz"], t["dir"], "look_f", grow=0.4, back=2.0))
     return sl
 
 
@@ -294,7 +297,7 @@ def cheek_fairing(s):
     f = cq.Workplane("XY").add(box(x0, x1, y0, y1, zb, G["bar_top_z"] + 2.0)).edges("|Z").fillet(3.0).val()
     t = P.TOF_SENSORS["tof_look_fl"]
     from .sensors import tof_boss, tof_pocket
-    f = f.fuse(tof_boss(t["xyz"], t["dir"], look=True)).clean()
+    f = f.fuse(tof_boss(t["xyz"], t["dir"], "look_f")).clean()
     gap = 0.3
     fx = D.GRIP_PLATE_FRONT_X
     f = f.cut(box(-21.0 - gap - 0.1, -1.0 + gap + 0.1, D.GRIP_PLATE_Y[0] - gap, D.GRIP_PLATE_Y[1] + gap, zb - 1, 150.5))     # slot for the plate cheek
@@ -302,18 +305,20 @@ def cheek_fairing(s):
     f = f.cut(cyl(D.GRIP_BAR_D / 2 + 0.3, 6, (D.GRIP_BAR_X, y0 - 1, D.GRIP_BAR_Z), (0, 1, 0)))       # bar enters the inner wall
     f = f.cut(cyl(5.6, 5, (D.GRIP_BAR_X, y1 - 4.5, D.GRIP_BAR_Z), (0, 1, 0)))                          # screw-head pocket (push-in cap)
     f = f.cut(cyl(D.CLEAR["M6"] / 2, 20, (D.GRIP_BAR_X, y0, D.GRIP_BAR_Z), (0, 1, 0)))
-    for z in (118.0, 140.0):
+    for z in FAIRING_SCREW_Z:
         f = f.cut(cyl(D.CLEAR["M3"] / 2, 20, (-11.0, y0 - 1, z), (0, 1, 0)))
         f = f.cut(cyl(3.2, 2.2, (-11.0, y1 - 2.0, z), (0, 1, 0)))
-    f = f.cut(tof_pocket(t["xyz"], t["dir"], look=True))
-    f = f.cut(box(-7.0, -2.0, y0 + 0.8, D.GRIP_PLATE_Y[0] - gap - 0.6, 112.0, 156.0))                 # ToF lead channel inboard of the plate
+    f = f.cut(tof_pocket(t["xyz"], t["dir"], kind="look_f"))
+    f = f.cut(box(-7.0, -2.0, y0 + 0.8, D.GRIP_PLATE_Y[0] - gap - 0.6, 100.0, 156.0))                 # ToF lead channel inboard of the plate
+    uo = cached(["UO", P.BODY_ROWS["upper_outer"]], lambda: loft(P.BODY_ROWS["upper_outer"]))
+    f = f.cut(uo)                                                                                      # sits on the shoulder roof, covers the plate slot
     return f if s > 0 else mirror_y(f)
 
 
 # ----------------------------------------------------------------------------------------------- caster, latch
 def caster_disc():
     cx, cy = P.CASTER_SWIVEL
-    d = cyl(30.5, 2.5, (cx, cy, Z1))
+    d = cyl(30.0, 2.5, (cx, cy, Z1))                     # r 30: clear of the floor-plug flange (x -164.6) and the cassette key rib (y 32)
     e = L.env("caster")
     for sx in (-1, 1):
         for sy in (-1, 1):
@@ -329,17 +334,20 @@ def caster_shim():
 
 
 LATCH_ARM_Z = (52.0, 56.0)
+FAIRING_SCREW_Z = (131.0, 146.0)   # cheek fairing -> side plate screws, above the shoulder roof (z 119..127 at the cheek)
+LATCH_ARM_X1 = 95.5                # front end stays 2.4 mm inside the nose outer skin at z 52..56 (outer skin x 97.9 at z 52)
+LATCH_SCREW_X = (85.0, 92.0)       # draw-latch base screws through the chin floor into the arm (latch hole pattern UNVERIFIED)
 
 
 def latch_arm():
     """4 mm 6061 T-plate: carries the draw latch under the nose tip back to the front beam (latch reaction path)."""
     lb = RC["latch_box"]
-    pts = [(33.0, -40.0), (51.0, -40.0), (60.0, -12.5), (lb[1] - 6.0, -12.5), (lb[1] - 6.0, 12.5), (60.0, 12.5), (51.0, 40.0), (33.0, 40.0)]
+    pts = [(33.0, -40.0), (51.0, -40.0), (60.0, -12.5), (LATCH_ARM_X1, -12.5), (LATCH_ARM_X1, 12.5), (60.0, 12.5), (51.0, 40.0), (33.0, 40.0)]
     a = prism(pts, *LATCH_ARM_Z)
     for x in (37.0, 47.0):
         for y in (-34.0, 34.0):
             a = a.cut(cyl(D.TAP["M5"] / 2, 6, (x, y, LATCH_ARM_Z[0] - 1)))
-    for x in (lb[0] + 3.0, lb[1] - 11.0):
+    for x in LATCH_SCREW_X:
         for y in (-7.0, 7.0):
             a = a.cut(cyl(D.TAP["M4"] / 2, 6, (x, y, LATCH_ARM_Z[0] - 1)))
     return a
@@ -348,8 +356,8 @@ def latch_arm():
 def front_bulkhead():
     """Printed wall closing the hull mouth at the chin cut, with the two pedestals that carry the latch arm."""
     xc = RC["chin_cut"][0]
-    lo = loft(P.BODY_ROWS["lower_outer"])
-    wall = box(xc - 4.0, xc, -120, 120, Z1, LATCH_ARM_Z[0]).intersect(lo)
+    li = cached(["LI", P.BODY_ROWS["lower_inner"]], lambda: loft(P.BODY_ROWS["lower_inner"]))
+    wall = box(xc - 4.0, xc - 0.3, -120, 120, Z1, LATCH_ARM_Z[0]).intersect(li)          # inside the hull skin
     out = wall
     for s in (1, -1):
         ped = box(33.0, 51.0, s * 28.0, s * 40.0, Z1, LATCH_ARM_Z[0])

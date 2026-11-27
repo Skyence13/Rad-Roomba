@@ -17,9 +17,9 @@ CHY = B["cassette_half_y"]
 CZ0, CZ1 = B["cassette_z"]
 WALL = 2.5
 RIB_Y = (44.0, 50.0)                 # floor ribs the cassette runs on (top z = cassette underside)
-KEY_Y = (18.0, 22.0)                 # off-centre key rib on the cassette floor (left of centre)
+KEY_Y = D.KEY_RIB_Y                  # off-centre key rib on the cassette floor (left of centre)
 FEET_X = (-222.0, -190.0, -150.0, -110.0, -76.0)
-PLUG = (-170.0, -74.0, 42.0)         # flange of the floor plug on the plate top
+PLUG = (-164.6, -74.0, 42.0)         # flange of the floor plug on the plate top (starts clear of the caster disc, x -165.0)
 EAR_Y = (44.0, 48.5)
 ARM_Y = (49.2, 53.8)
 PIVOT = (-236.0, 80.0)               # bail pivot on the cassette rear ears (x, z)
@@ -27,6 +27,7 @@ BAIL_PIN = (-239.0, 71.0)            # bail cam pin, latched position (9.5 mm fr
 DOOR_PEG = (-237.0, 100.0)           # fixed pegs in the upper jambs the door hangs on
 CAM_Y = (55.2, 57.5)                 # cam ears on the hatch frame, outside the cassette width
 BAIL_LEN = 46.0
+CARRIER_HY = 26.0                    # half width of the floating coupler carrier on the cassette nose
 
 
 def tunnel():
@@ -45,7 +46,7 @@ def tunnel():
     cradle = fuse(box(x1 + 3.0, B["coupler_x"][1], -24.0, 24.0, Z1, B["coupler_z"][0] - 0.3),
                   box(-60.0, -22.0, B["coupler_half_y"] + 0.4, 24.0, Z1, 56.0), box(-60.0, -22.0, -24.0, -B["coupler_half_y"] - 0.4, Z1, 56.0))
     t = fuse(t, gate, cradle)
-    t = t.cut(box(x1 - 1, x1 + 4, -B["coupler_half_y"] - 1.5, B["coupler_half_y"] + 1.5, B["coupler_z"][0] - 1.0, B["coupler_z"][1] + 1.5))
+    t = t.cut(box(x1 - 1, x1 + 4, -CARRIER_HY - 0.6, CARRIER_HY + 0.6, B["coupler_z"][0] - 0.6, B["coupler_z"][1] + 2.6))      # window: floating carrier enters it
     t = t.cut(box(PLUG[0] - 0.3, PLUG[1] + 0.3, -PLUG[2] - 0.3, PLUG[2] + 0.3, Z1 - 1, Z1 + 1.01))        # floor plug seat
     cx, cy = P.CASTER_SWIVEL
     t = t.cut(cyl(31.2, 3.0, (cx, cy, Z1 - 0.5)))                                                           # caster disc
@@ -96,7 +97,7 @@ def cassette():
 def cassette_lid():
     px0, px1 = B["pack_x"]
     lid = box(CX0 + WALL + 0.3, CX1 - WALL - 0.3, -CHY + WALL + 0.3, CHY - WALL - 0.3, CZ1 - 2.5, CZ1)
-    lid = lid.fuse(box(CX0 + 21.0, CX1 - 21.0, -CHY + 0.4, -CHY + WALL + 1.5, CZ1 - 5.6, CZ1 - 2.4)).clean()
+    lid = lid.fuse(box(CX0 + 21.0, CX1 - 21.0, -CHY + 0.4, -CHY + WALL + 1.5, CZ1 - 5.6, CZ1 - 2.6)).clean()
     for x in (px0 + 12.0, px1 - 12.0):
         lid = lid.cut(cyl(D.CLEAR["M3"] / 2, 5, (x, CHY - WALL - 2.6, CZ1 - 3.5)))
     return lid
@@ -105,7 +106,7 @@ def cassette_lid():
 def coupler_carrier():
     """Cassette-side coupler bracket: 2 shoulder screws in 2 mm oversize holes give the +-1 mm float."""
     cz0, cz1 = B["coupler_z"]
-    b = box(CX1, CX1 + 4.0, -26.0, 26.0, cz0 - 2.0, cz1 + 2.0).cut(box(CX1 - 1, CX1 + 5, -B["coupler_half_y"] - 0.4, B["coupler_half_y"] + 0.4, cz0 - 0.4, cz1 + 0.4))
+    b = box(CX1, CX1 + 4.0, -CARRIER_HY, CARRIER_HY, cz0 - 0.2, cz1 + 2.0).cut(box(CX1 - 1, CX1 + 5, -B["coupler_half_y"] - 0.4, B["coupler_half_y"] + 0.4, cz0 - 0.4, cz1 + 0.4))
     for s in (1, -1):
         for z in (48.0, 60.0):
             b = b.cut(cyl(2.7, 6, (CX1 - 1, s * 23.0, z), (1, 0, 0)))

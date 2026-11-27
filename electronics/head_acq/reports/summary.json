@@ -107,12 +107,8 @@
   "docnum": "RR-EL-0103",
   "drc": {
     "by_type": {
-      "clearance": {
-        "errors": 2,
-        "warnings": 0
-      },
       "items_not_allowed": {
-        "errors": 2,
+        "errors": 12,
         "warnings": 0
       },
       "silk_edge_clearance": {
@@ -126,15 +122,27 @@
       "silk_overlap": {
         "errors": 0,
         "warnings": 199
+      },
+      "via_dangling": {
+        "errors": 0,
+        "warnings": 1
       }
     },
     "error_items": [
-      "items_not_allowed | Items not allowed (keepout area 'KO_HVVIA_10') | Via [GND] on F.Cu - B.Cu",
-      "items_not_allowed | Items not allowed (keepout area 'KO_HVVIA_27') | Via [GND] on F.Cu - B.Cu",
-      "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.9000 mm) | Pad 1 [HV_CAP] of C2205 on F.Cu | Track [GND] on F.Cu, length 1.0864 mm",
-      "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.9000 mm) | Pad 1 [HV_G] of C2208 on F.Cu | Track [GND] on F.Cu, length 0.9000 mm"
+      "items_not_allowed | Items not allowed (keepout area 'KO_WALL_1_Rt_3') | Track [GND] on F.Cu, length 2.2800 mm",
+      "items_not_allowed | Items not allowed (keepout area 'KO_WALL_3_Rt_3') | Track [GND] on F.Cu, length 2.2800 mm",
+      "items_not_allowed | Items not allowed (keepout area 'KO_WALL_0_Rt_3') | Track [GND] on F.Cu, length 2.2800 mm",
+      "items_not_allowed | Items not allowed (keepout area 'KO_WALL_2_Rt_3') | Track [GND] on F.Cu, length 2.2800 mm",
+      "items_not_allowed | Items not allowed (keepout area 'KO_WALL_0_B0_0') | Track [F0_A] on F.Cu, length 5.6750 mm",
+      "items_not_allowed | Items not allowed (keepout area 'KO_WALL_0_B1_2') | Track [R0_A] on F.Cu, length 5.6750 mm",
+      "items_not_allowed | Items not allowed (keepout area 'KO_WALL_1_B0_0') | Track [F1_A] on F.Cu, length 5.6750 mm",
+      "items_not_allowed | Items not allowed (keepout area 'KO_WALL_1_B0_2') | Track [R1_A] on F.Cu, length 5.6750 mm",
+      "items_not_allowed | Items not allowed (keepout area 'KO_WALL_2_B0_0') | Track [F2_A] on F.Cu, length 5.6750 mm",
+      "items_not_allowed | Items not allowed (keepout area 'KO_WALL_2_B0_2') | Track [R2_A] on F.Cu, length 5.6750 mm",
+      "items_not_allowed | Items not allowed (keepout area 'KO_WALL_3_B0_0') | Track [F3_A] on F.Cu, length 5.6750 mm",
+      "items_not_allowed | Items not allowed (keepout area 'KO_WALL_3_B1_2') | Track [R3_A] on F.Cu, length 5.6750 mm"
     ],
-    "errors": 4,
+    "errors": 12,
     "excluded": 0,
     "parity": 0,
     "parity_items": [],
@@ -162,9 +170,9 @@
       "unconnected_items | Missing connection between items | Pad 1 [VIN_CM] of U2001 on F.Cu | Pad 2 [VIN_CM] of U2001 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [VIN_CM] of C2001 on F.Cu | Pad 1 [VIN_CM] of U2001 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [VIN_CM] of R2002 on F.Cu | Pad 1 [VIN_CM] of C2001 on F.Cu",
-      "unconnected_items | Missing connection between items | Zone 'GND_outer' [GND] on F.Cu and B.Cu, priority 0 | Pad 2 [GND] of U2601 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 2 [GND] of U2601 on F.Cu | Zone 'GND_outer' [GND] on F.Cu and B.Cu, priority 0",
       "unconnected_items | Missing connection between items | Zone 'GND_outer' [GND] on F.Cu and B.Cu, priority 0 | Zone 'GND_outer' [GND] on F.Cu and B.Cu, priority 0",
-      "unconnected_items | Missing connection between items | Zone 'GND_outer' [GND] on F.Cu and B.Cu, priority 0 | Pad 7 [GND] of U2201 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 7 [GND] of U2201 on F.Cu | Zone 'GND_outer' [GND] on F.Cu and B.Cu, priority 0",
       "unconnected_items | Missing connection between items | Zone 'GND_outer' [GND] on F.Cu and B.Cu, priority 0 | Pad 5 [GND] of U2503 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 3 [EF_UVLO] of U2001 on F.Cu | Pad 1 [EF_UVLO] of R2003 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 2 [EF_UVLO] of R2002 on F.Cu | Pad 3 [EF_UVLO] of U2001 on F.Cu",
@@ -188,7 +196,7 @@
       "unconnected_items | Missing connection between items | Pad 10 [EF_IMON] of U2001 on F.Cu | Pad 1 [EF_IMON] of R2006 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [EF_ILIM] of R2005 on F.Cu | Pad 11 [EF_ILIM] of U2001 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [EF_DVDT] of C2002 on F.Cu | Pad 12 [EF_DVDT] of U2001 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 1 [+3V3] of C2602 on F.Cu | Pad 1 [+3V3] of R1017 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [+3V3] of R1017 on F.Cu | Pad 1 [+3V3] of C2602 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 2 [+3V3] of D2603 on F.Cu | Pad 5 [+3V3] of U2402 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 2 [+3V3] of D2603 on F.Cu | Pad 1 [+3V3] of C2602 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [+3V3] of C2110 on F.Cu | Pad 5 [+3V3] of U2402 on F.Cu",
@@ -196,20 +204,21 @@
       "unconnected_items | Missing connection between items | Pad 1 [+3V3] of TP2104 on F.Cu | Pad 1 [+3V3] of U2103 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [+3V3] of U2103 on F.Cu | Pad 2 [+3V3] of U2103 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [+3V3] of FB2101 on F.Cu | Pad 1 [+3V3] of U2103 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 1 [+3V3] of FB2101 on F.Cu | Via [+3V3] on F.Cu - B.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [+3V3] of FB2101 on F.Cu | Track [+3V3] on F.Cu, length 2.6187 mm",
       "unconnected_items | Missing connection between items | Pad 1 [+3V3] of R2008 on F.Cu | Pad 5 [+3V3] of U2601 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [+3V3] of R2008 on F.Cu | Pad 2 [+3V3] of U2103 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 1 [+3V3] of R1117 on F.Cu | Pad 1 [+3V3] of R2008 on F.Cu",
-      "unconnected_items | Missing connection between items | Via [+3V3] on F.Cu - B.Cu | Pad 64 [+3V3] of U2401 on F.Cu",
-      "unconnected_items | Missing connection between items | Track [+3V3] on F.Cu, length 0.7600 mm | Pad 49 [+3V3] of U2401 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 1 [+3V3] of R1217 on F.Cu | Pad 8 [+3V3] of U2503 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 1 [+3V3] of R1217 on F.Cu | Via [+3V3] on F.Cu - B.Cu",
-      "unconnected_items | Missing connection between items | Pad 4 [+3V3] of U2403 on F.Cu | Pad 5 [+3V3] of U2403 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [+3V3] of R2008 on F.Cu | Pad 1 [+3V3] of R1117 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [+3V3] of R2227 on F.Cu | Via [+3V3] on F.Cu - B.Cu",
+      "unconnected_items | Missing connection between items | Pad 64 [+3V3] of U2401 on F.Cu | Via [+3V3] on F.Cu - B.Cu",
+      "unconnected_items | Missing connection between items | Pad 49 [+3V3] of U2401 on F.Cu | Track [+3V3] on F.Cu, length 0.7600 mm",
+      "unconnected_items | Missing connection between items | Via [+3V3] on F.Cu - B.Cu | Pad 1 [+3V3] of R1217 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 8 [+3V3] of U2503 on F.Cu | Pad 1 [+3V3] of R2503 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 8 [+3V3] of U2503 on F.Cu | Pad 1 [+3V3] of R1217 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 5 [+3V3] of U2403 on F.Cu | Pad 4 [+3V3] of U2403 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 4 [+3V3] of U2403 on F.Cu | Pad 1 [+3V3] of R2503 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 1 [+3V3] of R2503 on F.Cu | Pad 8 [+3V3] of U2503 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 1 [+3V3] of C2501 on F.Cu | Pad 1 [+3V3] of R2503 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 1 [+3V3] of U2501 on F.Cu | Pad 1 [+3V3] of C2501 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 1 [+3V3] of U2501 on F.Cu | Pad 1 [+3V3] of R1317 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [+3V3] of R2503 on F.Cu | Pad 1 [+3V3] of C2501 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [+3V3] of C2501 on F.Cu | Pad 1 [+3V3] of U2501 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [+3V3] of R1317 on F.Cu | Pad 1 [+3V3] of U2501 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [VIN_F] of R2101 on F.Cu | Pad 5 [VIN_F] of U2101 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [VIN_F] of TP2101 on F.Cu | Pad 1 [VIN_F] of C2102 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [VIN_F] of C2102 on F.Cu | Pad 1 [VIN_F] of C2101 on F.Cu",
@@ -271,48 +280,48 @@
       "unconnected_items | Missing connection between items | Pad 3 [+5V6_A] of U2102 on F.Cu | Pad 1 [+5V6_A] of U2102 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of FB101 on F.Cu | Via [+5V_A] on F.Cu - B.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C1001 on F.Cu | Pad 8 [+5V_A] of U1001 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C1001 on F.Cu | Pad 1 [+5V_A] of FB501 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 13 [+5V_A] of U1007 on F.Cu | Pad 1 [+5V_A] of C1007 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 13 [+5V_A] of U1007 on F.Cu | Pad 1 [+5V_A] of C1001 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C2108 on F.Cu | Pad 13 [+5V_A] of U1007 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C1001 on F.Cu | Pad 13 [+5V_A] of U1007 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C1001 on F.Cu | Track [+5V_A] on F.Cu, length 0.9250 mm",
+      "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C1007 on F.Cu | Pad 13 [+5V_A] of U1007 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 13 [+5V_A] of U1007 on F.Cu | Pad 1 [+5V_A] of C2108 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of TP2103 on F.Cu | Pad 1 [+5V_A] of C2108 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 5 [+5V_A] of U2102 on F.Cu | Pad 1 [+5V_A] of TP2103 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 5 [+5V_A] of U2102 on F.Cu | Pad 8 [+5V_A] of U1101 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of FB201 on F.Cu | Via [+5V_A] on F.Cu - B.Cu",
-      "unconnected_items | Missing connection between items | Pad 8 [+5V_A] of U1101 on F.Cu | Pad 1 [+5V_A] of C1101 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 8 [+5V_A] of U1101 on F.Cu | Pad 5 [+5V_A] of U2102 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C1101 on F.Cu | Pad 8 [+5V_A] of U1101 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C1101 on F.Cu | Pad 13 [+5V_A] of U1107 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 2 [+5V_A] of D2203 on F.Cu | Pad 8 [+5V_A] of U2202 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 8 [+5V_A] of U2202 on F.Cu | Pad 1 [+5V_A] of C2209 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 8 [+5V_A] of U2202 on F.Cu | Pad 2 [+5V_A] of D2203 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 8 [+5V_A] of U2202 on F.Cu | Pad 1 [+5V_A] of C1107 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 13 [+5V_A] of U1107 on F.Cu | Pad 1 [+5V_A] of C1107 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C1107 on F.Cu | Pad 13 [+5V_A] of U1107 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C1107 on F.Cu | Pad 8 [+5V_A] of U2202 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 13 [+5V_A] of U1107 on F.Cu | Pad 7 [+5V_A] of U2301 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 13 [+5V_A] of U1107 on F.Cu | Pad 1 [+5V_A] of C1101 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of R2224 on F.Cu | Pad 1 [+5V_A] of C2209 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C2302 on F.Cu | Pad 7 [+5V_A] of U2301 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C2302 on F.Cu | Via [+5V_A] on F.Cu - B.Cu",
+      "unconnected_items | Missing connection between items | Pad 7 [+5V_A] of U2301 on F.Cu | Pad 1 [+5V_A] of C2302 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 7 [+5V_A] of U2301 on F.Cu | Pad 7 [+5V_A] of U2302 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 8 [+5V_A] of U2305 on F.Cu | Pad 1 [+5V_A] of C2313 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 7 [+5V_A] of U2302 on F.Cu | Pad 8 [+5V_A] of U2305 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 8 [+5V_A] of U2305 on F.Cu | Pad 7 [+5V_A] of U2302 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C2313 on F.Cu | Pad 8 [+5V_A] of U2305 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C2305 on F.Cu | Pad 7 [+5V_A] of U2302 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C2305 on F.Cu | Pad 1 [+5V_A] of C2308 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 7 [+5V_A] of U2303 on F.Cu | Pad 1 [+5V_A] of C2308 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C2311 on F.Cu | Pad 1 [+5V_A] of C2308 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 7 [+5V_A] of U2304 on F.Cu | Pad 1 [+5V_A] of C2311 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 8 [+5V_A] of U2306 on F.Cu | Pad 1 [+5V_A] of C2315 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C2308 on F.Cu | Pad 7 [+5V_A] of U2303 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C2308 on F.Cu | Pad 1 [+5V_A] of C2311 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C2311 on F.Cu | Pad 7 [+5V_A] of U2304 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C2315 on F.Cu | Pad 8 [+5V_A] of U2306 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 13 [+5V_A] of U2703 on F.Cu | Pad 8 [+5V_A] of U2306 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 13 [+5V_A] of U2703 on F.Cu | Pad 7 [+5V_A] of U2304 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C2703 on F.Cu | Pad 1 [+5V_A] of C2706 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C2703 on F.Cu | Pad 13 [+5V_A] of U2703 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C2703 on F.Cu | Pad 8 [+5V_A] of U1201 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C2706 on F.Cu | Pad 1 [+5V_A] of C2703 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of FB301 on F.Cu | Via [+5V_A] on F.Cu - B.Cu",
-      "unconnected_items | Missing connection between items | Pad 6 [+5V_A] of U2704 on F.Cu | Pad 5 [+5V_A] of U2704 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 5 [+5V_A] of U2704 on F.Cu | Pad 6 [+5V_A] of U2704 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 5 [+5V_A] of U2704 on F.Cu | Pad 1 [+5V_A] of C1207 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 8 [+5V_A] of U1201 on F.Cu | Pad 1 [+5V_A] of C1201 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C1201 on F.Cu | Pad 13 [+5V_A] of U1207 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C1207 on F.Cu | Pad 13 [+5V_A] of U1207 on F.Cu",
-      "unconnected_items | Missing connection between items | Via [+5V_A] on F.Cu - B.Cu | Pad 1 [+5V_A] of FB401 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of FB401 on F.Cu | Track [+5V_A] on F.Cu, length 0.8743 mm",
       "unconnected_items | Missing connection between items | Pad 8 [+5V_A] of U1301 on F.Cu | Pad 1 [+5V_A] of C1301 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C1301 on F.Cu | Pad 13 [+5V_A] of U1307 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of FB801 on F.Cu | Pad 1 [+5V_A] of C1301 on F.Cu",
+      "unconnected_items | Missing connection between items | Track [+5V_A] on F.Cu, length 0.9250 mm | Pad 1 [+5V_A] of C1301 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 13 [+5V_A] of U1307 on F.Cu | Pad 1 [+5V_A] of C1307 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 2 [+5V6_E] of L2103 on F.Cu | Pad 1 [+5V6_E] of C2111 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [+5V6_E] of C2111 on F.Cu | Pad 4 [+5V6_E] of U2104 on F.Cu",
@@ -339,8 +348,7 @@
       "unconnected_items | Missing connection between items | Pad 8 [+3V3_EVT] of U204 on F.Cu | Pad 1 [+3V3_EVT] of C222 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [+3V3_EVT] of C207 on F.Cu | Pad 8 [+3V3_EVT] of U201 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [+3V3_EVT] of C207 on F.Cu | Pad 1 [+3V3_EVT] of C227 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 2 [+3V3_EVT] of D203 on F.Cu | Pad 1 [+3V3_EVT] of C227 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 4 [+3V3_EVT] of U206 on F.Cu | Pad 1 [+3V3_EVT] of C622 on F.Cu"
+      "unconnected_items | Missing connection between items | Pad 2 [+3V3_EVT] of D203 on F.Cu | Pad 1 [+3V3_EVT] of C227 on F.Cu"
     ],
     "unrouted": [
       {
@@ -745,30 +753,11 @@
       {
         "ends": [
           {
-            "item": "Zone 'GND_outer' [GND] on F.Cu and B.Cu, priority 0",
-            "xy_mm": [
-              0.0,
-              0.0
-            ]
-          },
-          {
             "item": "Pad 2 [GND] of U2601 on F.Cu",
             "xy_mm": [
               83.863,
               20.5
             ]
-          }
-        ],
-        "net": "GND"
-      },
-      {
-        "ends": [
-          {
-            "item": "Zone 'GND_outer' [GND] on F.Cu and B.Cu, priority 0",
-            "xy_mm": [
-              0.0,
-              0.0
-            ]
           },
           {
             "item": "Zone 'GND_outer' [GND] on F.Cu and B.Cu, priority 0",
@@ -789,11 +778,30 @@
               0.0
             ]
           },
+          {
+            "item": "Zone 'GND_outer' [GND] on F.Cu and B.Cu, priority 0",
+            "xy_mm": [
+              0.0,
+              0.0
+            ]
+          }
+        ],
+        "net": "GND"
+      },
+      {
+        "ends": [
           {
             "item": "Pad 7 [GND] of U2201 on F.Cu",
             "xy_mm": [
               108.25,
               77.562
+            ]
+          },
+          {
+            "item": "Zone 'GND_outer' [GND] on F.Cu and B.Cu, priority 0",
+            "xy_mm": [
+              0.0,
+              0.0
             ]
           }
         ],
@@ -1239,17 +1247,17 @@
       {
         "ends": [
           {
-            "item": "Pad 1 [+3V3] of C2602 on F.Cu",
-            "xy_mm": [
-              51.5,
-              12.77
-            ]
-          },
-          {
             "item": "Pad 1 [+3V3] of R1017 on F.Cu",
             "xy_mm": [
               30.24,
               9.25
+            ]
+          },
+          {
+            "item": "Pad 1 [+3V3] of C2602 on F.Cu",
+            "xy_mm": [
+              51.5,
+              12.77
             ]
           }
         ],
@@ -1398,10 +1406,10 @@
             ]
           },
           {
-            "item": "Via [+3V3] on F.Cu - B.Cu",
+            "item": "Track [+3V3] on F.Cu, length 2.6187 mm",
             "xy_mm": [
               104.0,
-              72.325
+              73.213
             ]
           }
         ],
@@ -1448,17 +1456,17 @@
       {
         "ends": [
           {
-            "item": "Pad 1 [+3V3] of R1117 on F.Cu",
-            "xy_mm": [
-              117.74,
-              9.25
-            ]
-          },
-          {
             "item": "Pad 1 [+3V3] of R2008 on F.Cu",
             "xy_mm": [
               100.0,
               29.19
+            ]
+          },
+          {
+            "item": "Pad 1 [+3V3] of R1117 on F.Cu",
+            "xy_mm": [
+              117.74,
+              9.25
             ]
           }
         ],
@@ -1467,55 +1475,55 @@
       {
         "ends": [
           {
-            "item": "Via [+3V3] on F.Cu - B.Cu",
+            "item": "Pad 1 [+3V3] of R2227 on F.Cu",
             "xy_mm": [
-              167.14,
-              86.92
+              120.76,
+              88.0
             ]
           },
+          {
+            "item": "Via [+3V3] on F.Cu - B.Cu",
+            "xy_mm": [
+              138.79,
+              84.27
+            ]
+          }
+        ],
+        "net": "+3V3"
+      },
+      {
+        "ends": [
           {
             "item": "Pad 64 [+3V3] of U2401 on F.Cu",
             "xy_mm": [
               167.5,
               85.175
             ]
+          },
+          {
+            "item": "Via [+3V3] on F.Cu - B.Cu",
+            "xy_mm": [
+              167.14,
+              86.92
+            ]
           }
         ],
         "net": "+3V3"
       },
       {
         "ends": [
-          {
-            "item": "Track [+3V3] on F.Cu, length 0.7600 mm",
-            "xy_mm": [
-              177.42,
-              83.2
-            ]
-          },
           {
             "item": "Pad 49 [+3V3] of U2401 on F.Cu",
             "xy_mm": [
               175.675,
               83.0
             ]
-          }
-        ],
-        "net": "+3V3"
-      },
-      {
-        "ends": [
-          {
-            "item": "Pad 1 [+3V3] of R1217 on F.Cu",
-            "xy_mm": [
-              205.24,
-              9.25
-            ]
           },
           {
-            "item": "Pad 8 [+3V3] of U2503 on F.Cu",
+            "item": "Track [+3V3] on F.Cu, length 0.7600 mm",
             "xy_mm": [
-              237.905,
-              12.525
+              177.42,
+              83.2
             ]
           }
         ],
@@ -1523,37 +1531,18 @@
       },
       {
         "ends": [
-          {
-            "item": "Pad 1 [+3V3] of R1217 on F.Cu",
-            "xy_mm": [
-              205.24,
-              9.25
-            ]
-          },
           {
             "item": "Via [+3V3] on F.Cu - B.Cu",
             "xy_mm": [
               180.325,
               52.625
             ]
-          }
-        ],
-        "net": "+3V3"
-      },
-      {
-        "ends": [
-          {
-            "item": "Pad 4 [+3V3] of U2403 on F.Cu",
-            "xy_mm": [
-              240.887,
-              33.35
-            ]
           },
           {
-            "item": "Pad 5 [+3V3] of U2403 on F.Cu",
+            "item": "Pad 1 [+3V3] of R1217 on F.Cu",
             "xy_mm": [
-              240.887,
-              34.0
+              205.24,
+              9.25
             ]
           }
         ],
@@ -1561,38 +1550,19 @@
       },
       {
         "ends": [
-          {
-            "item": "Pad 4 [+3V3] of U2403 on F.Cu",
-            "xy_mm": [
-              240.887,
-              33.35
-            ]
-          },
-          {
-            "item": "Pad 1 [+3V3] of R2503 on F.Cu",
-            "xy_mm": [
-              243.2,
-              27.51
-            ]
-          }
-        ],
-        "net": "+3V3"
-      },
-      {
-        "ends": [
-          {
-            "item": "Pad 1 [+3V3] of R2503 on F.Cu",
-            "xy_mm": [
-              243.2,
-              27.51
-            ]
-          },
           {
             "item": "Pad 8 [+3V3] of U2503 on F.Cu",
             "xy_mm": [
               237.905,
               12.525
             ]
+          },
+          {
+            "item": "Pad 1 [+3V3] of R2503 on F.Cu",
+            "xy_mm": [
+              243.2,
+              27.51
+            ]
           }
         ],
         "net": "+3V3"
@@ -1600,10 +1570,48 @@
       {
         "ends": [
           {
-            "item": "Pad 1 [+3V3] of C2501 on F.Cu",
+            "item": "Pad 8 [+3V3] of U2503 on F.Cu",
             "xy_mm": [
-              254.4,
-              21.62
+              237.905,
+              12.525
+            ]
+          },
+          {
+            "item": "Pad 1 [+3V3] of R1217 on F.Cu",
+            "xy_mm": [
+              205.24,
+              9.25
+            ]
+          }
+        ],
+        "net": "+3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 5 [+3V3] of U2403 on F.Cu",
+            "xy_mm": [
+              240.887,
+              34.0
+            ]
+          },
+          {
+            "item": "Pad 4 [+3V3] of U2403 on F.Cu",
+            "xy_mm": [
+              240.887,
+              33.35
+            ]
+          }
+        ],
+        "net": "+3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 4 [+3V3] of U2403 on F.Cu",
+            "xy_mm": [
+              240.887,
+              33.35
             ]
           },
           {
@@ -1619,10 +1627,10 @@
       {
         "ends": [
           {
-            "item": "Pad 1 [+3V3] of U2501 on F.Cu",
+            "item": "Pad 1 [+3V3] of R2503 on F.Cu",
             "xy_mm": [
-              254.445,
-              19.65
+              243.2,
+              27.51
             ]
           },
           {
@@ -1638,17 +1646,36 @@
       {
         "ends": [
           {
+            "item": "Pad 1 [+3V3] of C2501 on F.Cu",
+            "xy_mm": [
+              254.4,
+              21.62
+            ]
+          },
+          {
             "item": "Pad 1 [+3V3] of U2501 on F.Cu",
             "xy_mm": [
               254.445,
               19.65
             ]
-          },
+          }
+        ],
+        "net": "+3V3"
+      },
+      {
+        "ends": [
           {
             "item": "Pad 1 [+3V3] of R1317 on F.Cu",
             "xy_mm": [
               292.74,
               9.25
+            ]
+          },
+          {
+            "item": "Pad 1 [+3V3] of U2501 on F.Cu",
+            "xy_mm": [
+              254.445,
+              19.65
             ]
           }
         ],
@@ -2787,8 +2814,8 @@
           {
             "item": "Via [+5V_A] on F.Cu - B.Cu",
             "xy_mm": [
-              25.188,
-              13.0
+              24.569,
+              12.868
             ]
           }
         ],
@@ -2823,7 +2850,26 @@
             ]
           },
           {
-            "item": "Pad 1 [+5V_A] of FB501 on F.Cu",
+            "item": "Pad 13 [+5V_A] of U1007 on F.Cu",
+            "xy_mm": [
+              48.612,
+              61.325
+            ]
+          }
+        ],
+        "net": "+5V_A"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [+5V_A] of C1001 on F.Cu",
+            "xy_mm": [
+              36.22,
+              50.7
+            ]
+          },
+          {
+            "item": "Track [+5V_A] on F.Cu, length 0.9250 mm",
             "xy_mm": [
               47.7,
               29.588
@@ -2835,18 +2881,18 @@
       {
         "ends": [
           {
-            "item": "Pad 13 [+5V_A] of U1007 on F.Cu",
-            "xy_mm": [
-              48.612,
-              61.325
-            ]
-          },
-          {
             "item": "Pad 1 [+5V_A] of C1007 on F.Cu",
             "xy_mm": [
               48.02,
               64.5
             ]
+          },
+          {
+            "item": "Pad 13 [+5V_A] of U1007 on F.Cu",
+            "xy_mm": [
+              48.612,
+              61.325
+            ]
           }
         ],
         "net": "+5V_A"
@@ -2860,30 +2906,11 @@
               61.325
             ]
           },
-          {
-            "item": "Pad 1 [+5V_A] of C1001 on F.Cu",
-            "xy_mm": [
-              36.22,
-              50.7
-            ]
-          }
-        ],
-        "net": "+5V_A"
-      },
-      {
-        "ends": [
           {
             "item": "Pad 1 [+5V_A] of C2108 on F.Cu",
             "xy_mm": [
               63.5,
               56.225
-            ]
-          },
-          {
-            "item": "Pad 13 [+5V_A] of U1007 on F.Cu",
-            "xy_mm": [
-              48.612,
-              61.325
             ]
           }
         ],
@@ -2922,25 +2949,6 @@
             "xy_mm": [
               71.5,
               57.0
-            ]
-          }
-        ],
-        "net": "+5V_A"
-      },
-      {
-        "ends": [
-          {
-            "item": "Pad 5 [+5V_A] of U2102 on F.Cu",
-            "xy_mm": [
-              78.637,
-              51.95
-            ]
-          },
-          {
-            "item": "Pad 8 [+5V_A] of U1101 on F.Cu",
-            "xy_mm": [
-              121.725,
-              50.905
             ]
           }
         ],
@@ -2958,8 +2966,8 @@
           {
             "item": "Via [+5V_A] on F.Cu - B.Cu",
             "xy_mm": [
-              112.688,
-              13.0
+              112.069,
+              12.868
             ]
           }
         ],
@@ -2975,10 +2983,67 @@
             ]
           },
           {
+            "item": "Pad 5 [+5V_A] of U2102 on F.Cu",
+            "xy_mm": [
+              78.637,
+              51.95
+            ]
+          }
+        ],
+        "net": "+5V_A"
+      },
+      {
+        "ends": [
+          {
             "item": "Pad 1 [+5V_A] of C1101 on F.Cu",
             "xy_mm": [
               123.72,
               50.7
+            ]
+          },
+          {
+            "item": "Pad 8 [+5V_A] of U1101 on F.Cu",
+            "xy_mm": [
+              121.725,
+              50.905
+            ]
+          }
+        ],
+        "net": "+5V_A"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [+5V_A] of C1101 on F.Cu",
+            "xy_mm": [
+              123.72,
+              50.7
+            ]
+          },
+          {
+            "item": "Pad 13 [+5V_A] of U1107 on F.Cu",
+            "xy_mm": [
+              136.113,
+              61.325
+            ]
+          }
+        ],
+        "net": "+5V_A"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 2 [+5V_A] of D2203 on F.Cu",
+            "xy_mm": [
+              125.062,
+              73.05
+            ]
+          },
+          {
+            "item": "Pad 8 [+5V_A] of U2202 on F.Cu",
+            "xy_mm": [
+              134.475,
+              76.905
             ]
           }
         ],
@@ -3006,55 +3071,36 @@
       {
         "ends": [
           {
-            "item": "Pad 8 [+5V_A] of U2202 on F.Cu",
-            "xy_mm": [
-              134.475,
-              76.905
-            ]
-          },
-          {
-            "item": "Pad 2 [+5V_A] of D2203 on F.Cu",
-            "xy_mm": [
-              125.062,
-              73.05
-            ]
-          }
-        ],
-        "net": "+5V_A"
-      },
-      {
-        "ends": [
-          {
-            "item": "Pad 8 [+5V_A] of U2202 on F.Cu",
-            "xy_mm": [
-              134.475,
-              76.905
-            ]
-          },
-          {
             "item": "Pad 1 [+5V_A] of C1107 on F.Cu",
             "xy_mm": [
               135.52,
               64.5
             ]
-          }
-        ],
-        "net": "+5V_A"
-      },
-      {
-        "ends": [
+          },
           {
             "item": "Pad 13 [+5V_A] of U1107 on F.Cu",
             "xy_mm": [
               136.113,
               61.325
             ]
-          },
+          }
+        ],
+        "net": "+5V_A"
+      },
+      {
+        "ends": [
           {
             "item": "Pad 1 [+5V_A] of C1107 on F.Cu",
             "xy_mm": [
               135.52,
               64.5
+            ]
+          },
+          {
+            "item": "Pad 8 [+5V_A] of U2202 on F.Cu",
+            "xy_mm": [
+              134.475,
+              76.905
             ]
           }
         ],
@@ -3074,25 +3120,6 @@
             "xy_mm": [
               146.25,
               48.562
-            ]
-          }
-        ],
-        "net": "+5V_A"
-      },
-      {
-        "ends": [
-          {
-            "item": "Pad 13 [+5V_A] of U1107 on F.Cu",
-            "xy_mm": [
-              136.113,
-              61.325
-            ]
-          },
-          {
-            "item": "Pad 1 [+5V_A] of C1101 on F.Cu",
-            "xy_mm": [
-              123.72,
-              50.7
             ]
           }
         ],
@@ -3127,25 +3154,6 @@
             ]
           },
           {
-            "item": "Pad 7 [+5V_A] of U2301 on F.Cu",
-            "xy_mm": [
-              146.25,
-              48.562
-            ]
-          }
-        ],
-        "net": "+5V_A"
-      },
-      {
-        "ends": [
-          {
-            "item": "Pad 1 [+5V_A] of C2302 on F.Cu",
-            "xy_mm": [
-              145.975,
-              46.0
-            ]
-          },
-          {
             "item": "Via [+5V_A] on F.Cu - B.Cu",
             "xy_mm": [
               136.125,
@@ -3165,6 +3173,25 @@
             ]
           },
           {
+            "item": "Pad 1 [+5V_A] of C2302 on F.Cu",
+            "xy_mm": [
+              145.975,
+              46.0
+            ]
+          }
+        ],
+        "net": "+5V_A"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 7 [+5V_A] of U2301 on F.Cu",
+            "xy_mm": [
+              146.25,
+              48.562
+            ]
+          },
+          {
             "item": "Pad 7 [+5V_A] of U2302 on F.Cu",
             "xy_mm": [
               155.25,
@@ -3183,24 +3210,24 @@
               60.905
             ]
           },
+          {
+            "item": "Pad 7 [+5V_A] of U2302 on F.Cu",
+            "xy_mm": [
+              155.25,
+              48.562
+            ]
+          }
+        ],
+        "net": "+5V_A"
+      },
+      {
+        "ends": [
           {
             "item": "Pad 1 [+5V_A] of C2313 on F.Cu",
             "xy_mm": [
               152.6,
               62.42
             ]
-          }
-        ],
-        "net": "+5V_A"
-      },
-      {
-        "ends": [
-          {
-            "item": "Pad 7 [+5V_A] of U2302 on F.Cu",
-            "xy_mm": [
-              155.25,
-              48.562
-            ]
           },
           {
             "item": "Pad 8 [+5V_A] of U2305 on F.Cu",
@@ -3253,16 +3280,35 @@
       {
         "ends": [
           {
+            "item": "Pad 1 [+5V_A] of C2308 on F.Cu",
+            "xy_mm": [
+              164.275,
+              46.9
+            ]
+          },
+          {
             "item": "Pad 7 [+5V_A] of U2303 on F.Cu",
             "xy_mm": [
               164.25,
               48.562
             ]
-          },
+          }
+        ],
+        "net": "+5V_A"
+      },
+      {
+        "ends": [
           {
             "item": "Pad 1 [+5V_A] of C2308 on F.Cu",
             "xy_mm": [
               164.275,
+              46.9
+            ]
+          },
+          {
+            "item": "Pad 1 [+5V_A] of C2311 on F.Cu",
+            "xy_mm": [
+              173.175,
               46.9
             ]
           }
@@ -3278,50 +3324,31 @@
               46.9
             ]
           },
-          {
-            "item": "Pad 1 [+5V_A] of C2308 on F.Cu",
-            "xy_mm": [
-              164.275,
-              46.9
-            ]
-          }
-        ],
-        "net": "+5V_A"
-      },
-      {
-        "ends": [
           {
             "item": "Pad 7 [+5V_A] of U2304 on F.Cu",
             "xy_mm": [
               173.25,
               48.562
             ]
-          },
-          {
-            "item": "Pad 1 [+5V_A] of C2311 on F.Cu",
-            "xy_mm": [
-              173.175,
-              46.9
-            ]
           }
         ],
         "net": "+5V_A"
       },
       {
         "ends": [
-          {
-            "item": "Pad 8 [+5V_A] of U2306 on F.Cu",
-            "xy_mm": [
-              184.475,
-              60.905
-            ]
-          },
           {
             "item": "Pad 1 [+5V_A] of C2315 on F.Cu",
             "xy_mm": [
               184.3,
               62.42
             ]
+          },
+          {
+            "item": "Pad 8 [+5V_A] of U2306 on F.Cu",
+            "xy_mm": [
+              184.475,
+              60.905
+            ]
           }
         ],
         "net": "+5V_A"
@@ -3359,6 +3386,25 @@
             "xy_mm": [
               173.25,
               48.562
+            ]
+          }
+        ],
+        "net": "+5V_A"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [+5V_A] of C2703 on F.Cu",
+            "xy_mm": [
+              186.62,
+              51.5
+            ]
+          },
+          {
+            "item": "Pad 1 [+5V_A] of C2706 on F.Cu",
+            "xy_mm": [
+              186.62,
+              50.2
             ]
           }
         ],
@@ -3397,25 +3443,6 @@
             "xy_mm": [
               209.225,
               50.905
-            ]
-          }
-        ],
-        "net": "+5V_A"
-      },
-      {
-        "ends": [
-          {
-            "item": "Pad 1 [+5V_A] of C2706 on F.Cu",
-            "xy_mm": [
-              186.62,
-              50.2
-            ]
-          },
-          {
-            "item": "Pad 1 [+5V_A] of C2703 on F.Cu",
-            "xy_mm": [
-              186.62,
-              51.5
             ]
           }
         ],
@@ -3433,8 +3460,8 @@
           {
             "item": "Via [+5V_A] on F.Cu - B.Cu",
             "xy_mm": [
-              200.188,
-              13.0
+              199.569,
+              12.868
             ]
           }
         ],
@@ -3443,17 +3470,17 @@
       {
         "ends": [
           {
-            "item": "Pad 6 [+5V_A] of U2704 on F.Cu",
-            "xy_mm": [
-              209.137,
-              86.95
-            ]
-          },
-          {
             "item": "Pad 5 [+5V_A] of U2704 on F.Cu",
             "xy_mm": [
               209.137,
               86.0
+            ]
+          },
+          {
+            "item": "Pad 6 [+5V_A] of U2704 on F.Cu",
+            "xy_mm": [
+              209.137,
+              86.95
             ]
           }
         ],
@@ -3538,17 +3565,17 @@
       {
         "ends": [
           {
-            "item": "Via [+5V_A] on F.Cu - B.Cu",
-            "xy_mm": [
-              287.688,
-              13.0
-            ]
-          },
-          {
             "item": "Pad 1 [+5V_A] of FB401 on F.Cu",
             "xy_mm": [
               289.488,
               24.6
+            ]
+          },
+          {
+            "item": "Track [+5V_A] on F.Cu, length 0.8743 mm",
+            "xy_mm": [
+              287.688,
+              12.25
             ]
           }
         ],
@@ -3595,7 +3622,7 @@
       {
         "ends": [
           {
-            "item": "Pad 1 [+5V_A] of FB801 on F.Cu",
+            "item": "Track [+5V_A] on F.Cu, length 0.9250 mm",
             "xy_mm": [
               310.2,
               29.588
@@ -4123,25 +4150,6 @@
           }
         ],
         "net": "+3V3_EVT"
-      },
-      {
-        "ends": [
-          {
-            "item": "Pad 4 [+3V3_EVT] of U206 on F.Cu",
-            "xy_mm": [
-              120.387,
-              34.85
-            ]
-          },
-          {
-            "item": "Pad 1 [+3V3_EVT] of C622 on F.Cu",
-            "xy_mm": [
-              124.75,
-              38.52
-            ]
-          }
-        ],
-        "net": "+3V3_EVT"
       }
     ],
     "unrouted_nets": [
@@ -4250,10 +4258,15 @@
       "LOOP_A",
       "LOOP_B",
       "LOOP_C",
+      "MON_EN_0",
+      "MON_EN_1",
+      "MON_EN_2",
+      "MON_EN_3",
       "MON_MUX_A0",
       "MON_MUX_A1",
       "NTC_BOARD",
       "NTC_HTR",
+      "PULSER_A0",
       "PULSER_AMPL",
       "REF_BUF",
       "SHLD_J1",
@@ -4297,7 +4310,7 @@
       "V_LED"
     ],
     "waived": 54,
-    "warnings": 400
+    "warnings": 401
   },
   "erc": {
     "by_type": {
@@ -4314,7 +4327,7 @@
     "warnings": 8
   },
   "fail_reasons": [
-    "DRC: 4 error(s)",
+    "DRC: 12 error(s)",
     "DRC: 499 unconnected item(s) on nets: +3V3, +3V3A, +3V3_EVT, +3V3_HV, +5V6_A, +5V6_E, +5V_A, BIAS_IMON, BIAS_IMON_R, BIAS_VMON, BIAS_VMON_B, BK_CB, BK_EN, BK_FB, BK_SW, BUMP_ZONE_F_N, BUMP_ZONE_L_N, BUMP_ZONE_R_N, BZ_F_IN, BZ_L_IN, BZ_R_IN, DAC0_REF, DAC0_SDO, DAC1_REF, DAC1_SDO, DAC1_SPARE, DAC2_REF, DAC2_SDO, DAC3_REF, DAC3_SDO"
   ],
   "notes": [
@@ -4415,6 +4428,7 @@
     "plane fan-out: no legal via position for C1301 pad at (298.72, 50.70) [+5V_A] (left to the autorouter)",
     "plane fan-out: no legal via position for U1301 pad at (296.73, 50.91) [+5V_A] (left to the autorouter)",
     "plane fan-out: no legal via position for C822 pad at (299.75, 38.52) [+3V3_EVT] (left to the autorouter)",
+    "plane fan-out: no legal via position for C822 pad at (299.75, 39.48) [GND] (left to the autorouter)",
     "plane fan-out: no legal via position for U804 pad at (308.24, 37.47) [+3V3_EVT] (left to the autorouter)",
     "plane fan-out: no legal via position for D802 pad at (300.96, 32.65) [+3V3_EVT] (left to the autorouter)",
     "plane fan-out: no legal via position for C807 pad at (310.30, 22.72) [+3V3_EVT] (left to the autorouter)",
@@ -4425,6 +4439,7 @@
     "plane fan-out: no legal via position for C422 pad at (287.62, 38.20) [+3V3_EVT] (left to the autorouter)",
     "plane fan-out: no legal via position for U404 pad at (285.99, 37.47) [+3V3_EVT] (left to the autorouter)",
     "plane fan-out: no legal via position for D402 pad at (278.71, 32.65) [+3V3_EVT] (left to the autorouter)",
+    "plane fan-out: no legal via position for C413 pad at (302.23, 31.25) [GND] (left to the autorouter)",
     "plane fan-out: no legal via position for FB401 pad at (289.49, 24.60) [+5V_A] (left to the autorouter)",
     "plane fan-out: no legal via position for C407 pad at (289.52, 19.80) [+3V3_EVT] (left to the autorouter)",
     "plane fan-out: no legal via position for U401 pad at (287.95, 19.75) [+3V3_EVT] (left to the autorouter)",
@@ -4436,6 +4451,7 @@
     "plane fan-out: no legal via position for C1201 pad at (211.22, 50.70) [+5V_A] (left to the autorouter)",
     "plane fan-out: no legal via position for U1201 pad at (209.23, 50.91) [+5V_A] (left to the autorouter)",
     "plane fan-out: no legal via position for C722 pad at (212.25, 38.52) [+3V3_EVT] (left to the autorouter)",
+    "plane fan-out: no legal via position for C722 pad at (212.25, 39.48) [GND] (left to the autorouter)",
     "plane fan-out: no legal via position for U704 pad at (220.74, 37.47) [+3V3_EVT] (left to the autorouter)",
     "plane fan-out: no legal via position for D702 pad at (213.46, 32.65) [+3V3_EVT] (left to the autorouter)",
     "plane fan-out: no legal via position for C707 pad at (222.80, 22.72) [+3V3_EVT] (left to the autorouter)",
@@ -4446,6 +4462,7 @@
     "plane fan-out: no legal via position for C322 pad at (200.12, 38.20) [+3V3_EVT] (left to the autorouter)",
     "plane fan-out: no legal via position for U304 pad at (198.49, 37.47) [+3V3_EVT] (left to the autorouter)",
     "plane fan-out: no legal via position for D302 pad at (191.21, 32.65) [+3V3_EVT] (left to the autorouter)",
+    "plane fan-out: no legal via position for C313 pad at (214.73, 31.25) [GND] (left to the autorouter)",
     "plane fan-out: no legal via position for FB301 pad at (201.99, 24.60) [+5V_A] (left to the autorouter)",
     "plane fan-out: no legal via position for C307 pad at (202.02, 19.80) [+3V3_EVT] (left to the autorouter)",
     "plane fan-out: no legal via position for U301 pad at (200.45, 19.75) [+3V3_EVT] (left to the autorouter)",
@@ -4457,6 +4474,7 @@
     "plane fan-out: no legal via position for C1101 pad at (123.72, 50.70) [+5V_A] (left to the autorouter)",
     "plane fan-out: no legal via position for U1101 pad at (121.72, 50.91) [+5V_A] (left to the autorouter)",
     "plane fan-out: no legal via position for C622 pad at (124.75, 38.52) [+3V3_EVT] (left to the autorouter)",
+    "plane fan-out: no legal via position for C622 pad at (124.75, 39.48) [GND] (left to the autorouter)",
     "plane fan-out: no legal via position for U604 pad at (133.24, 37.47) [+3V3_EVT] (left to the autorouter)",
     "plane fan-out: no legal via position for D602 pad at (125.96, 32.65) [+3V3_EVT] (left to the autorouter)",
     "plane fan-out: no legal via position for C607 pad at (135.30, 22.72) [+3V3_EVT] (left to the autorouter)",
@@ -4467,6 +4485,7 @@
     "plane fan-out: no legal via position for C222 pad at (112.62, 38.20) [+3V3_EVT] (left to the autorouter)",
     "plane fan-out: no legal via position for U204 pad at (110.99, 37.47) [+3V3_EVT] (left to the autorouter)",
     "plane fan-out: no legal via position for D202 pad at (103.71, 32.65) [+3V3_EVT] (left to the autorouter)",
+    "plane fan-out: no legal via position for C213 pad at (127.23, 31.25) [GND] (left to the autorouter)",
     "plane fan-out: no legal via position for FB201 pad at (114.49, 24.60) [+5V_A] (left to the autorouter)",
     "plane fan-out: no legal via position for C207 pad at (114.52, 19.80) [+3V3_EVT] (left to the autorouter)",
     "plane fan-out: no legal via position for U201 pad at (112.95, 19.75) [+3V3_EVT] (left to the autorouter)",
@@ -4478,6 +4497,7 @@
     "plane fan-out: no legal via position for C1001 pad at (36.22, 50.70) [+5V_A] (left to the autorouter)",
     "plane fan-out: no legal via position for U1001 pad at (34.22, 50.91) [+5V_A] (left to the autorouter)",
     "plane fan-out: no legal via position for C522 pad at (37.25, 38.52) [+3V3_EVT] (left to the autorouter)",
+    "plane fan-out: no legal via position for C522 pad at (37.25, 39.48) [GND] (left to the autorouter)",
     "plane fan-out: no legal via position for U504 pad at (45.74, 37.47) [+3V3_EVT] (left to the autorouter)",
     "plane fan-out: no legal via position for D502 pad at (38.46, 32.65) [+3V3_EVT] (left to the autorouter)",
     "plane fan-out: no legal via position for C507 pad at (47.80, 22.72) [+3V3_EVT] (left to the autorouter)",
@@ -4488,6 +4508,7 @@
     "plane fan-out: no legal via position for C122 pad at (25.12, 38.20) [+3V3_EVT] (left to the autorouter)",
     "plane fan-out: no legal via position for U104 pad at (23.49, 37.47) [+3V3_EVT] (left to the autorouter)",
     "plane fan-out: no legal via position for D102 pad at (16.21, 32.65) [+3V3_EVT] (left to the autorouter)",
+    "plane fan-out: no legal via position for C113 pad at (39.73, 31.25) [GND] (left to the autorouter)",
     "plane fan-out: no legal via position for FB101 pad at (26.99, 24.60) [+5V_A] (left to the autorouter)",
     "plane fan-out: no legal via position for C107 pad at (27.02, 19.80) [+3V3_EVT] (left to the autorouter)",
     "plane fan-out: no legal via position for U101 pad at (25.45, 19.75) [+3V3_EVT] (left to the autorouter)",
@@ -4525,14 +4546,27 @@
     "plane fan-out: no legal via position for U2302 pad at (155.25, 48.56) [+5V_A] (left to the autorouter)",
     "plane fan-out: no legal via position for C2302 pad at (145.98, 46.00) [+5V_A] (left to the autorouter)",
     "plane fan-out: no legal via position for U2301 pad at (146.25, 48.56) [+5V_A] (left to the autorouter)",
+    "plane fan-out: no legal via position for R2227 pad at (120.76, 88.00) [+3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for R2224 pad at (136.69, 83.50) [+5V_A] (left to the autorouter)",
+    "plane fan-out: no legal via position for Q2204 pad at (117.06, 69.55) [GND] (left to the autorouter)",
+    "plane fan-out: no legal via position for Q2203 pad at (117.06, 74.05) [GND] (left to the autorouter)",
     "plane fan-out: no legal via position for C2214 pad at (137.25, 70.52) [GND] (left to the autorouter)",
+    "plane fan-out: no legal via position for C2213 pad at (119.10, 86.07) [GND] (left to the autorouter)",
     "plane fan-out: no legal via position for D2203 pad at (125.06, 73.05) [+5V_A] (left to the autorouter)",
     "plane fan-out: no legal via position for C2209 pad at (134.38, 78.50) [+5V_A] (left to the autorouter)",
     "plane fan-out: no legal via position for U2202 pad at (134.47, 76.91) [+5V_A] (left to the autorouter)",
+    "plane fan-out: no legal via position for C2208 pad at (120.75, 81.02) [GND] (left to the autorouter)",
+    "plane fan-out: no legal via position for R2208 pad at (105.90, 74.29) [GND] (left to the autorouter)",
+    "plane fan-out: no legal via position for C2206 pad at (104.22, 80.50) [GND] (left to the autorouter)",
+    "plane fan-out: no legal via position for R2205 pad at (105.69, 81.90) [GND] (left to the autorouter)",
+    "plane fan-out: no legal via position for C2205 pad at (111.50, 78.23) [GND] (left to the autorouter)",
+    "plane fan-out: no legal via position for C2204 pad at (105.77, 71.00) [GND] (left to the autorouter)",
     "plane fan-out: no legal via position for R2203 pad at (111.25, 75.74) [GND] (left to the autorouter)",
+    "plane fan-out: no legal via position for C2203 pad at (115.98, 86.75) [GND] (left to the autorouter)",
     "plane fan-out: no legal via position for U2201 pad at (108.25, 77.56) [GND] (left to the autorouter)",
+    "plane fan-out: no legal via position for U2201 pad at (107.25, 80.44) [GND] (left to the autorouter)",
     "plane fan-out: no legal via position for U2201 pad at (108.00, 79.00) [GND] (left to the autorouter)",
+    "plane fan-out: no legal via position for C2202 pad at (106.73, 83.25) [GND] (left to the autorouter)",
     "plane fan-out: no legal via position for D2603 pad at (56.06, 35.05) [+3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for C2602 pad at (51.50, 12.77) [+3V3] (left to the autorouter)",
     "plane fan-out: no legal via position for U2601 pad at (83.86, 20.50) [GND] (left to the autorouter)",
@@ -4655,6 +4689,7 @@
         "C1301 pad at (298.72, 50.70) [+5V_A]",
         "U1301 pad at (296.73, 50.91) [+5V_A]",
         "C822 pad at (299.75, 38.52) [+3V3_EVT]",
+        "C822 pad at (299.75, 39.48) [GND]",
         "U804 pad at (308.24, 37.47) [+3V3_EVT]",
         "D802 pad at (300.96, 32.65) [+3V3_EVT]",
         "C807 pad at (310.30, 22.72) [+3V3_EVT]",
@@ -4665,6 +4700,7 @@
         "C422 pad at (287.62, 38.20) [+3V3_EVT]",
         "U404 pad at (285.99, 37.47) [+3V3_EVT]",
         "D402 pad at (278.71, 32.65) [+3V3_EVT]",
+        "C413 pad at (302.23, 31.25) [GND]",
         "FB401 pad at (289.49, 24.60) [+5V_A]",
         "C407 pad at (289.52, 19.80) [+3V3_EVT]",
         "U401 pad at (287.95, 19.75) [+3V3_EVT]",
@@ -4676,6 +4712,7 @@
         "C1201 pad at (211.22, 50.70) [+5V_A]",
         "U1201 pad at (209.23, 50.91) [+5V_A]",
         "C722 pad at (212.25, 38.52) [+3V3_EVT]",
+        "C722 pad at (212.25, 39.48) [GND]",
         "U704 pad at (220.74, 37.47) [+3V3_EVT]",
         "D702 pad at (213.46, 32.65) [+3V3_EVT]",
         "C707 pad at (222.80, 22.72) [+3V3_EVT]",
@@ -4686,6 +4723,7 @@
         "C322 pad at (200.12, 38.20) [+3V3_EVT]",
         "U304 pad at (198.49, 37.47) [+3V3_EVT]",
         "D302 pad at (191.21, 32.65) [+3V3_EVT]",
+        "C313 pad at (214.73, 31.25) [GND]",
         "FB301 pad at (201.99, 24.60) [+5V_A]",
         "C307 pad at (202.02, 19.80) [+3V3_EVT]",
         "U301 pad at (200.45, 19.75) [+3V3_EVT]",
@@ -4697,6 +4735,7 @@
         "C1101 pad at (123.72, 50.70) [+5V_A]",
         "U1101 pad at (121.72, 50.91) [+5V_A]",
         "C622 pad at (124.75, 38.52) [+3V3_EVT]",
+        "C622 pad at (124.75, 39.48) [GND]",
         "U604 pad at (133.24, 37.47) [+3V3_EVT]",
         "D602 pad at (125.96, 32.65) [+3V3_EVT]",
         "C607 pad at (135.30, 22.72) [+3V3_EVT]",
@@ -4707,6 +4746,7 @@
         "C222 pad at (112.62, 38.20) [+3V3_EVT]",
         "U204 pad at (110.99, 37.47) [+3V3_EVT]",
         "D202 pad at (103.71, 32.65) [+3V3_EVT]",
+        "C213 pad at (127.23, 31.25) [GND]",
         "FB201 pad at (114.49, 24.60) [+5V_A]",
         "C207 pad at (114.52, 19.80) [+3V3_EVT]",
         "U201 pad at (112.95, 19.75) [+3V3_EVT]",
@@ -4718,6 +4758,7 @@
         "C1001 pad at (36.22, 50.70) [+5V_A]",
         "U1001 pad at (34.22, 50.91) [+5V_A]",
         "C522 pad at (37.25, 38.52) [+3V3_EVT]",
+        "C522 pad at (37.25, 39.48) [GND]",
         "U504 pad at (45.74, 37.47) [+3V3_EVT]",
         "D502 pad at (38.46, 32.65) [+3V3_EVT]",
         "C507 pad at (47.80, 22.72) [+3V3_EVT]",
@@ -4728,6 +4769,7 @@
         "C122 pad at (25.12, 38.20) [+3V3_EVT]",
         "U104 pad at (23.49, 37.47) [+3V3_EVT]",
         "D102 pad at (16.21, 32.65) [+3V3_EVT]",
+        "C113 pad at (39.73, 31.25) [GND]",
         "FB101 pad at (26.99, 24.60) [+5V_A]",
         "C107 pad at (27.02, 19.80) [+3V3_EVT]",
         "U101 pad at (25.45, 19.75) [+3V3_EVT]",
@@ -4765,14 +4807,27 @@
         "U2302 pad at (155.25, 48.56) [+5V_A]",
         "C2302 pad at (145.98, 46.00) [+5V_A]",
         "U2301 pad at (146.25, 48.56) [+5V_A]",
+        "R2227 pad at (120.76, 88.00) [+3V3]",
         "R2224 pad at (136.69, 83.50) [+5V_A]",
+        "Q2204 pad at (117.06, 69.55) [GND]",
+        "Q2203 pad at (117.06, 74.05) [GND]",
         "C2214 pad at (137.25, 70.52) [GND]",
+        "C2213 pad at (119.10, 86.07) [GND]",
         "D2203 pad at (125.06, 73.05) [+5V_A]",
         "C2209 pad at (134.38, 78.50) [+5V_A]",
         "U2202 pad at (134.47, 76.91) [+5V_A]",
+        "C2208 pad at (120.75, 81.02) [GND]",
+        "R2208 pad at (105.90, 74.29) [GND]",
+        "C2206 pad at (104.22, 80.50) [GND]",
+        "R2205 pad at (105.69, 81.90) [GND]",
+        "C2205 pad at (111.50, 78.23) [GND]",
+        "C2204 pad at (105.77, 71.00) [GND]",
         "R2203 pad at (111.25, 75.74) [GND]",
+        "C2203 pad at (115.98, 86.75) [GND]",
         "U2201 pad at (108.25, 77.56) [GND]",
+        "U2201 pad at (107.25, 80.44) [GND]",
         "U2201 pad at (108.00, 79.00) [GND]",
+        "C2202 pad at (106.73, 83.25) [GND]",
         "D2603 pad at (56.06, 35.05) [+3V3]",
         "C2602 pad at (51.50, 12.77) [+3V3]",
         "U2601 pad at (83.86, 20.50) [GND]",
@@ -4800,14 +4855,14 @@
         "BUS_GND",
         "GND"
       ],
-      "vias": 857
+      "vias": 836
     },
     "routed": false,
     "stats": {
-      "track_length_mm": 788.48,
-      "tracks": 802,
-      "unconnected_after_fill": 1514,
-      "vias": 857
+      "track_length_mm": 1342.62,
+      "tracks": 854,
+      "unconnected_after_fill": 1484,
+      "vias": 869
     }
   },
   "single_pin_nets": [],
@@ -4984,6 +5039,11 @@
     },
     {
       "severity": "error",
+      "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2500 mm) | Pad 5 [HV_MIR] of U2201 on F.Cu | Pad 6 [HV_RAWF] of U2201 on F.Cu",
+      "type": "clearance"
+    },
+    {
+      "severity": "error",
       "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.7500 mm) | Pad 5 [HV_MIR] of U2201 on F.Cu | Pad 7 [GND] of U2201 on F.Cu",
       "type": "clearance"
     },
@@ -4994,17 +5054,7 @@
     },
     {
       "severity": "error",
-      "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2500 mm) | Pad 5 [HV_MIR] of U2201 on F.Cu | Pad 6 [HV_RAWF] of U2201 on F.Cu",
-      "type": "clearance"
-    },
-    {
-      "severity": "error",
       "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2500 mm) | Pad 6 [HV_RAWF] of U2201 on F.Cu | Pad 7 [GND] of U2201 on F.Cu",
-      "type": "clearance"
-    },
-    {
-      "severity": "error",
-      "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2000 mm) | Pad 6 [HV_RAWF] of U2201 on F.Cu | Pad 17 [GND] of U2201 on F.Cu",
       "type": "clearance"
     },
     {
@@ -5014,12 +5064,17 @@
     },
     {
       "severity": "error",
-      "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.6656 mm) | Pad 7 [GND] of U2201 on F.Cu | Pad 9 [HV_CAP] of U2201 on F.Cu",
+      "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2000 mm) | Pad 6 [HV_RAWF] of U2201 on F.Cu | Pad 17 [GND] of U2201 on F.Cu",
       "type": "clearance"
     },
     {
       "severity": "error",
       "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2500 mm) | Pad 7 [GND] of U2201 on F.Cu | Pad 8 [HV_SW] of U2201 on F.Cu",
+      "type": "clearance"
+    },
+    {
+      "severity": "error",
+      "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.6656 mm) | Pad 7 [GND] of U2201 on F.Cu | Pad 9 [HV_CAP] of U2201 on F.Cu",
       "type": "clearance"
     },
     {
@@ -5044,12 +5099,12 @@
     },
     {
       "severity": "error",
-      "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.7500 mm) | Pad 9 [HV_CAP] of U2201 on F.Cu | Pad 11 [HV_ISHORT] of U2201 on F.Cu",
+      "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2000 mm) | Pad 9 [HV_CAP] of U2201 on F.Cu | Pad 17 [GND] of U2201 on F.Cu",
       "type": "clearance"
     },
     {
       "severity": "error",
-      "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2000 mm) | Pad 9 [HV_CAP] of U2201 on F.Cu | Pad 17 [GND] of U2201 on F.Cu",
+      "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.7500 mm) | Pad 9 [HV_CAP] of U2201 on F.Cu | Pad 11 [HV_ISHORT] of U2201 on F.Cu",
       "type": "clearance"
     },
     {
