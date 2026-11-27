@@ -76,6 +76,7 @@ bool rrh_hal_frontend_apply(const rrh_frontend_cfg_t *cfg)
     bsp_pulser_select(cfg->pulser_channel);
     bsp_pulser_config(cfg->pulser_enable, cfg->pulser_width_us, cfg->led_enable);
     evt_port_set_alpha_hold_us(cfg->alpha_hold_us);
+    evt_port_set_alpha_tot_min_ns(cfg->alpha_min_tot_ns);
     evt_port_chain_enable(cfg->chain_enable);
     return g_dac_ok;
 }

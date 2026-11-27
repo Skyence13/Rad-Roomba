@@ -19,6 +19,11 @@ void rrh_evtcap_set_alpha_hold(rrh_evtcap_t *e, uint32_t ticks)
     e->alpha_hold_ticks = ticks;
 }
 
+void rrh_evtcap_set_alpha_tot_min(rrh_evtcap_t *e, uint32_t ticks)
+{
+    e->alpha_tot_min_ticks = ticks;
+}
+
 static void clear_accumulators(rrh_evtcap_t *e)
 {
     memset(e->count, 0, sizeof e->count);
@@ -29,6 +34,8 @@ static void clear_accumulators(rrh_evtcap_t *e)
     memset(e->next_busy, 0, sizeof e->next_busy);
     memset(e->next_width_hist, 0, sizeof e->next_width_hist);
     e->next_saturated = 0u;
+    memset(e->short_alpha, 0, sizeof e->short_alpha);
+    memset(e->next_short_alpha, 0, sizeof e->next_short_alpha);
     memset(e->idle_clears, 0, sizeof e->idle_clears);
     memset(e->next_idle_clears, 0, sizeof e->next_idle_clears);
 }
@@ -135,6 +142,7 @@ static void close_gate(rrh_evtcap_t *e)
             l->ref_reject_counts = e->count[rc][1];
             l->ref_live_ticks = live_of(e, rc);
             l->alpha_idle_clears = e->idle_clears[lane];
+            l->alpha_short_counts = e->short_alpha[lane];
             if ((((uint32_t)e->saturated >> fc) & 1u) != 0u) {
                 l->flags |= RRH_GF_FLOOR_SATURATED;
             }
@@ -162,6 +170,8 @@ static void close_gate(rrh_evtcap_t *e)
     memset(e->next_width_hist, 0, sizeof e->next_width_hist);
     memcpy(e->count, e->next_count, sizeof e->count);
     memcpy(e->busy, e->next_busy, sizeof e->busy);
+    memcpy(e->short_alpha, e->next_short_alpha, sizeof e->short_alpha);
+    memset(e->next_short_alpha, 0, sizeof e->next_short_alpha);
     memcpy(e->idle_clears, e->next_idle_clears, sizeof e->idle_clears);
     memset(e->next_idle_clears, 0, sizeof e->next_idle_clears);
     e->saturated = e->next_saturated;
@@ -295,6 +305,7 @@ void rrh_evtcap_service(rrh_evtcap_t *e, uint64_t now, const rrh_evt_in_t *in)
         bool forced;
         uint32_t cls;
         uint32_t wbin;
+        bool is_short = false;
         if (in_hold) {
             /* class and width were decided when the event first became ready */
             /* The hold itself is never "too long" (it is bounded by RRH_ALPHA_HOLD_MAX_US); the
@@ -310,7 +321,22 @@ void rrh_evtcap_service(rrh_evtcap_t *e, uint64_t now, const rrh_evt_in_t *in)
                 continue;
             }
             if (ch < 4u) {
-                cls = ((in->alpha & bit) != 0u) ? 0u : (((in->uld & bit) != 0u) ? 2u : 1u);
+                if ((in->alpha & bit) != 0u) {
+                    /* The falling-edge flag is sampled before the comparator level: an event that ended in
+                     * between has LLD low but no width yet. Wait (at most 2 services) rather than call it short. */
+                    if ((e->alpha_tot_min_ticks != 0u) && ((in->width_valid & bit) == 0u) && ((e->cfg.width_mask & bit) != 0u) &&
+                        (e->width_wait[ch] < 2u) && ready) {
+                        e->width_wait[ch]++;
+                        continue;
+                    }
+                    const bool width_ok = (e->alpha_tot_min_ticks == 0u) ||
+                                          ((((uint32_t)e->cfg.width_mask & (uint32_t)in->width_valid & (uint32_t)bit) != 0u) &&
+                                           (in->width_ticks[ch] >= e->alpha_tot_min_ticks));
+                    is_short = !width_ok;
+                    cls = width_ok ? 0u : 2u; /* short ALPHA: a bright beta (or unmeasurable): reject, never alpha */
+                } else {
+                    cls = ((in->uld & bit) != 0u) ? 2u : 1u;
+                }
             } else {
                 cls = ((in->uld & bit) != 0u) ? 1u : 0u;
             }
@@ -336,6 +362,9 @@ void rrh_evtcap_service(rrh_evtcap_t *e, uint64_t now, const rrh_evt_in_t *in)
         }
         e->pending &= (uint8_t)~bit;
         e->holding &= (uint8_t)~bit;
+        if (ch < RRH_LANES) {
+            e->width_wait[ch] = 0u;
+        }
         e->last_clear[ch] = clear;
         if (!e->running || (clear < e->g0)) {
             continue; /* not recording (yet): the chain is kept clear, nothing is counted */
@@ -353,6 +382,13 @@ void rrh_evtcap_service(rrh_evtcap_t *e, uint64_t now, const rrh_evt_in_t *in)
                 e->next_saturated |= bit;
             }
         } else if (counted) {
+            if (is_short) {
+                if (clear < e->g1) {
+                    e->short_alpha[ch]++;
+                } else {
+                    e->next_short_alpha[ch]++;
+                }
+            }
             if (clear < e->g1) {
                 e->count[ch][cls]++;
                 if (wbin < RRH_WIDTH_BINS) {

@@ -114,6 +114,7 @@ typedef struct {
     uint8_t seg_flags;                  /* RRH_SF_* */
     uint8_t gate_flags;                 /* RRH_GF_* as delivered (DIAG), plus BIAS_OUT_OF_RANGE from the anode monitor */
     uint32_t alpha_idle_clears;         /* DIAG */
+    uint32_t alpha_short;               /* DIAG: ALPHA latch set, time over threshold short/unmeasured: counted as floor reject */
     uint32_t imon_na[2];                /* DIAG: anode current of the floor and reference chain, RRH_IMON_NA_INVALID = not measured */
 } rrh_frame_lane_t;
 #define RRH_IMON_NA_INVALID UINT32_MAX
@@ -144,6 +145,8 @@ typedef struct {
     uint32_t supply_mv;
     uint8_t bumper_zones; /* zones seen closed at any poll during the gate (meaningful only if zones_available) */
     bool zones_available; /* false on rev A: no rail-zone identification, DIAG reports null */
+    uint8_t bias_writes;  /* HV_SET writes during this gate (bias temperature tracking while armed), saturating */
+    bool imon_paused;     /* per-chain anode monitor not scanning during this gate (armed, RRH_IMON_SCAN_WHILE_ARMED 0) */
     uint8_t imon_fault;   /* chains whose anode current monitor was out of window in this gate (bit n = chain n) */
     uint8_t width_mask;   /* chains with a pulse-width histogram (0 = port does not measure widths) */
     uint16_t width_hist[2u * RRH_LANES][RRH_WIDTH_BINS]; /* saturating at 65535 */
@@ -217,6 +220,8 @@ typedef struct {
     uint32_t bias_out_mv;     /* what the port was told: ramps from 0 to bias_cmd_mv after bias-on */
     bool bias_on;
     uint32_t bias_settle;     /* control periods since the last set-point change */
+    uint32_t bias_writes_gate; /* HV_SET writes since the last frame */
+    bool imon_paused;          /* armed with the scan off: readings are held back (reported null), the verdict of the last scan stays */
     uint32_t bias_on_age;     /* control periods since HV_EN was raised */
     rrh_imon_t imon;          /* per-chain anode monitor, latest scan */
     rrh_expander_t exp;       /* TCA9534 read-back, latest */

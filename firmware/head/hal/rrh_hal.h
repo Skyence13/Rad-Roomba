@@ -53,6 +53,7 @@ typedef struct {
     uint32_t ref_counts;
     uint32_t ref_reject_counts;
     uint32_t ref_live_ticks;
+    uint32_t alpha_short_counts; /* ALPHA latch set but time over threshold below the limit (or unmeasured): counted as floor reject, not alpha (DIAG only) */
     uint32_t alpha_idle_clears; /* ALPHA latch found set on the idle floor chain and cleared (engineering, DIAG only) */
     uint8_t flags; /* RRH_GF_* */
 } rrh_gate_lane_t;
@@ -110,6 +111,7 @@ typedef struct {
     uint16_t led_code;                    /* 12-bit LED pulser amplitude (U_DAC0 output 7 = LED_AMPL, V_LED = 2 x) */
     bool led_enable;                      /* strobe LED_STROBE (PC12) with the pulser period */
     uint16_t alpha_hold_us;               /* afterglow hold after an alpha event, 0 = off (IB-18) */
+    uint16_t alpha_min_tot_ns;            /* alpha = ALPHA latch AND raw-LLD time over threshold >= this (C1); 0 = no width condition */
     uint8_t chain_enable; /* bit n: floor lane n; bit 4+n: reference lane n */
 } rrh_frontend_cfg_t;
 

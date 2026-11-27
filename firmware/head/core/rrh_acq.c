@@ -193,6 +193,7 @@ static void map_lane(rrh_frame_lane_t *o, const rrh_gate_lane_t *in, const rrh_g
     o->ref_live_ticks = in->ref_live_ticks;
     o->gate_flags = in->flags;
     o->alpha_idle_clears = in->alpha_idle_clears;
+    o->alpha_short = in->alpha_short_counts;
     o->imon_na[0] = RRH_IMON_NA_INVALID;
     o->imon_na[1] = RRH_IMON_NA_INVALID;
 
@@ -320,6 +321,9 @@ static void on_gate(rrh_core_t *c, const rrh_gate_record_t *rec)
         f->lane[lane].imon_na[1] = c->imon_na[lane + 4u];
     }
     f->imon_fault = c->imon_fault;
+    f->imon_paused = c->imon_paused;
+    f->bias_writes = (uint8_t)((c->bias_writes_gate > 255u) ? 255u : c->bias_writes_gate);
+    c->bias_writes_gate = 0u;
     f->health = c->health;
     f->acq_flags = rrh_control_acq_flags(c);
     f->head_mc = rrh_control_head_mc(c);
@@ -525,6 +529,7 @@ void rrh_acq_write_diag(const rrh_core_t *c, const rrh_frame_t *f, rrc_jw_t *w)
     rrc_jw_kfixed(w, "set_v", f->bias_set_mv, 3u, true);
     rrc_jw_kfixed(w, "v", f->bias_mv, 3u, true);
     rrc_jw_ku64(w, "ua", f->bias_ua);
+    rrc_jw_ku64(w, "dac_writes", f->bias_writes);
     rrc_jw_obj_end(w);
     rrc_jw_key(w, "temps");
     rrc_jw_obj_begin(w);
@@ -571,6 +576,7 @@ void rrh_acq_write_diag(const rrh_core_t *c, const rrh_frame_t *f, rrc_jw_t *w)
         rrc_jw_key(w, "flags");
         put_flag_names(w, l->gate_flags, k_gate_flags, 6u);
         rrc_jw_ku64(w, "alpha_idle_clears", l->alpha_idle_clears);
+        rrc_jw_ku64(w, "alpha_short", l->alpha_short);
         rrc_jw_key(w, "imon_na");
         rrc_jw_arr_begin(w);
         for (uint32_t g = 0u; g < 2u; g++) {

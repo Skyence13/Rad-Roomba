@@ -3,7 +3,7 @@
 #ifndef RRH_CONFIG_H
 #define RRH_CONFIG_H
 
-#define RRH_FW_VERSION "rr-head-0.5.0"
+#define RRH_FW_VERSION "rr-head-0.5.1"
 #define RRH_PROTO_VERSION "2.0"
 #define RRH_ACQ_FORMAT "2.0"
 #define RRH_HEAD_TYPE "FOUR_LANE_ZNS_PLASTIC_WITH_REFERENCE"
@@ -80,8 +80,10 @@
 #define RRH_IMON_HOLD_US 200000u   /* out-of-window condition must persist this long (two control periods) before a chain is flagged */
 #define RRH_IMON_MAX_AGE_US 1000000u /* a chain not converted within this long is reported as not measured */
 #ifndef RRH_IMON_SCAN_WHILE_ARMED
-#define RRH_IMON_SCAN_WHILE_ARMED 1 /* MON_MUX_A[2:0] also address the lane monitor decoder (U2701); see README "Open electronics questions" */
+#define RRH_IMON_SCAN_WHILE_ARMED 0 /* review M2: MON_MUX_A[2:0] also address the lane monitor decoder (U2701), which connects a FAST tap to FCMP through 1 k;
+                                     * scanning while counting is off until the circuit change (tap moved to the op-amp output / decoder disable) is verified */
 #endif
+#define RRH_IMON_PARK_CHAIN 7u      /* address left on the lines while armed: R3 (a reference tap loads one reference channel, not an alpha/beta chain) */
 
 /* Default thresholds above the 0.600 V baseline (rrh_setup_defaults): levels in p.e. of the FAST path
  * of a 6 mm onsemi J-series device (6.9 mV per p.e., budget 2.2) - ASSUMED, replace when the SiPM is chosen. */
@@ -92,8 +94,14 @@
                                       * also crosses it - the budget 2.3 ranges overlap (beta maximum 44 mV). ASSUMED */
 
 /* Afterglow hold after an alpha event (IB-18, budget 4): ZnS(Ag) afterglow / slow-baseline undershoot. */
-#define RRH_ALPHA_HOLD_DEFAULT_US 150u
+#define RRH_ALPHA_HOLD_DEFAULT_US 300u /* review m2: FAST is still ~3 p.e. low 150 us after a large alpha (PZ network passes DC), zero crossing ~314 us */
 #define RRH_ALPHA_HOLD_MAX_US 500u
+
+/* Alpha classification (review C1): the ALPHA latch alone is not enough, a bright beta (>= ~81 p.e.) crosses the slow
+ * threshold too (SLOW 0.369 mV/p.e. for plastic light against 0.218 for ZnS, head_afe_calc_out.md T2). Alpha needs
+ * a raw-LLD time over threshold >= this: bright beta 120 p.e. ~ 160 ns, ZnS alpha 150 p.e. >= 280 ns (calculated). */
+#define RRH_ALPHA_MIN_TOT_DEFAULT_NS 250u
+#define RRH_ALPHA_MIN_TOT_MAX_NS 5000u
 
 /* ALPHA latch set on a chain whose BUSY latch is not (slow light below BETA_LLD): cleared after
  * it has been seen on this many consecutive services (one service is not enough: the capture

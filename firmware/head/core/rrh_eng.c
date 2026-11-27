@@ -185,6 +185,7 @@ static void op_status(rrh_core_t *c, const rrc_json_t *d, const rrc_req_t *req, 
     /* Per-chain anode current (nA; null = not measured) and the chains out of window. */
     rrc_jw_key(w, "imon");
     rrc_jw_obj_begin(w);
+    rrc_jw_kstr(w, "scan", c->imon_paused ? "PAUSED_ARMED" : "RUNNING");
     rrc_jw_key(w, "na");
     rrc_jw_arr_begin(w);
     for (uint32_t ch = 0u; ch < RRH_CHAINS; ch++) {

@@ -93,6 +93,7 @@ bool evt_port_poll(rrh_gate_record_t *rec);
 void evt_port_chain_enable(uint8_t mask);
 void evt_port_heater_request(bool on);
 void evt_port_set_alpha_hold_us(uint16_t us);
+void evt_port_set_alpha_tot_min_ns(uint16_t ns);
 bool evt_port_selftest(void); /* LATCH_TEST line: every latch sets and clears */
 
 #endif

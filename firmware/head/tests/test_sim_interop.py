@@ -267,9 +267,9 @@ class Acquisition(SimCase):
                 for ch in READOUTS:
                     self.assertTrue(1 <= seg[ch]["live_us"] <= f["span_us"])
                 # non-paralyzable model: live = span - tau * recorded events (10 us per event on both chains)
-                # and, on the floor chain, the 150 us afterglow hold (setup default) after every alpha event
+                # and, on the floor chain, the 300 us afterglow hold (setup default) after every alpha event
                 floor_events = tl["alpha"] + tl["beta"] + tl["floor_reject"]
-                self.assertEqual(tl["floor_live_ticks"], 14400000 - floor_events * 1440 - tl["alpha"] * 150 * 144)
+                self.assertEqual(tl["floor_live_ticks"], 14400000 - floor_events * 1440 - tl["alpha"] * 300 * 144)
                 self.assertEqual(tl["ref_live_ticks"], 14400000 - (tl["ref"] + tl["ref_reject"]) * 1440)
                 sums["alpha"][seg["id"]] += seg["alpha"]["counts"]
                 sums["beta"][seg["id"]] += seg["beta_window"]["counts"]
@@ -556,10 +556,14 @@ class BoardFunctions(SimCase):
         return reader
 
     def test_per_lane_bias_out_of_range_reaches_the_host(self):
-        reader = self.arm()
-        self.sim.advance(300_000)
+        hello, reader = self.bound_reader()
+        self.sim.ctl(cmd="rates", alpha=0, beta=50, ref=50)
+        self.sim.advance(1_500_000)
         self.sim.ctl(cmd="analog", imon_ua=[1, 1, 1, 1, 1, 1, 400, 1])   # reference chain of lane 2 over 0.2 mA
-        self.sim.advance(800_000)
+        self.sim.advance(800_000)                                         # disarmed: the scan sees it
+        self.assertEqual(self.link.ok("STATUS", {})["imon"]["fault"], ["R2"])
+        self.link.ok("ARM", {"span_us": 100000})
+        self.sim.advance(1_000_000)
         frames, _ = read_all(self.link)
         last = frames[-1]
         ACQ.validate(last)
@@ -571,11 +575,12 @@ class BoardFunctions(SimCase):
         self.assertIn("BIAS_OUT_OF_RANGE", last["flags"])
         self.assertEqual(last["segments"][0]["flags"], [])
         diag = self.link.ok("DIAG", {"seq": last["sequence"]})
-        self.assertGreater(diag["lanes"][2]["imon_na"][1], 200000)
+        self.assertEqual(diag["lanes"][2]["imon_na"], [None, None])      # scan paused while armed (review M2)
         self.assertIn("BIAS_OUT_OF_RANGE", diag["lanes"][2]["flags"])
         self.assertEqual(diag["lanes"][2]["alpha_idle_clears"], 0)
         st = self.link.ok("STATUS", {})
         self.assertEqual(st["imon"]["fault"], ["R2"])
+        self.assertEqual(st["imon"]["scan"], "PAUSED_ARMED")
         self.assertEqual(st["bumper"], {"available": False, "now": None, "latched": None})   # rev A: not available
         self.assertIsNone(diag["bumper_zones"])
 
@@ -629,6 +634,60 @@ class BoardFunctions(SimCase):
         self.assertTrue(all(60 <= c <= 140 for c in counts), counts)
         self.assertTrue(all(f["segments"][0]["photon_ref"]["counts"] == 0 for f in frames))
 
+    def test_bright_beta_is_not_counted_as_alpha(self):
+        """Review C1: a 120 p.e. beta crosses the ALPHA threshold (44 mV slow against 30 mV) but its time over threshold
+        is ~160 ns against >= 277 ns for the weakest assumed ZnS alpha. Neither channel may gain the other's events."""
+        hello, reader = self.bound_reader()
+        self.sim.ctl(cmd="rates", alpha=[0, 20, 0, 0], beta=0, ref=0, floor_reject=0, ref_reject=0,
+                     bright_beta=[400, 0, 0, 0], alpha_pe=300, bright_pe=120)
+        self.sim.advance(300_000)
+        self.link.ok("ARM", {"span_us": 100000})
+        self.sim.advance(2_050_000)
+        frames, _ = read_all(self.link)
+        a0 = sum(f["segments"][0]["alpha"]["counts"] for f in frames)
+        b0 = sum(f["segments"][0]["beta_window"]["counts"] for f in frames)
+        a1 = sum(f["segments"][1]["alpha"]["counts"] for f in frames)
+        self.assertEqual((a0, b0), (0, 0))                 # bright betas reach neither alpha nor beta window
+        self.assertGreater(a1, 20)                         # real ZnS alphas (300 p.e., ~410 ns) still counted
+        diag = [self.link.ok("DIAG", {"seq": f["sequence"]}) for f in frames]
+        short = sum(d["lanes"][0]["alpha_short"] for d in diag)
+        rej = sum(d["lanes"][0]["floor_reject"] for d in diag)
+        drawn = self.sim.ctl(cmd="stats")["drawn"]["bright_beta"][0]
+        self.assertEqual(short, rej)
+        self.assertGreater(short, 0.8 * drawn)             # (the last gate is not read)
+        # the old classification (no width condition) counts them as alpha
+        self.link.ok("DISARM", {})
+        self.sim.advance(300_000)
+        hello, reader = self.bound_reader()
+        self.link.ok("ENG_SETUP_SET", {"afterglow": {"alpha_min_tot_ns": 0}})
+        hello, reader = self.bound_reader()
+        self.link.ok("ARM", {"span_us": 100000})
+        self.sim.advance(1_050_000)
+        frames, _ = read_all(self.link)
+        self.assertGreater(sum(f["segments"][0]["alpha"]["counts"] for f in frames), 100)
+
+    def test_heater_transition_marker_is_derivable_from_acq(self):
+        """Review m6: ACQ 2.0 cannot carry the marker; the per-gate heater state (thermal.heater, duty_pct 0/100) can: the gate
+        with a transition is exactly the first gate whose state differs from the previous one."""
+        hello, reader = self.bound_reader()
+        self.link.ok("ENG_SETUP_SET", {"heater": {"enable": True, "setpoint_mc": 5000, "max_duty_pct": 100}})
+        hello, reader = self.bound_reader()
+        self.sim.ctl(cmd="analog", heater_c=-10)
+        self.sim.ctl(cmd="rates", alpha=0, beta=10, ref=10)
+        self.link.ok("ARM", {"span_us": 100000})
+        self.sim.advance(2_000_000)
+        self.sim.ctl(cmd="analog", heater_c=40)
+        self.sim.advance(2_000_000)
+        frames, _ = read_all(self.link)
+        diag = [self.link.ok("DIAG", {"seq": f["sequence"]}) for f in frames]
+        states = [f["thermal"]["heater"] for f in frames]
+        self.assertIn("ON", states)
+        derived = [False] + [states[i] != states[i - 1] for i in range(1, len(states))]
+        marked = [d["heater"]["transition"] for d in diag]
+        self.assertEqual(derived, marked)
+        self.assertTrue(any(marked))
+        self.assertTrue(all(f["thermal"]["duty_pct"] in (0, 100) for f in frames))
+
     def test_afterglow_hold_is_dead_time(self):
         reader = self.arm(alpha=[2000, 0, 0, 0], beta=0, ref=0)
         self.sim.advance(1_050_000)
@@ -638,7 +697,7 @@ class BoardFunctions(SimCase):
         lane = diag["lanes"][0]
         dead = 14_400_000 - lane["floor_live_ticks"]
         # 10 us + 150 us hold per alpha event (emulator, simulated)
-        self.assertAlmostEqual(dead / max(lane["alpha_raw"], 1), (10 + 150) * 144, delta=1)
+        self.assertAlmostEqual(dead / max(lane["alpha_raw"], 1), (10 + 300) * 144, delta=1)
 
 
 class NoWidthHistogram(SimCase):

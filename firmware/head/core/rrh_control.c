@@ -118,6 +118,7 @@ static void bias_loop(rrh_core_t *c, int32_t head_mc)
     if (changed) {
         c->bias_settle = 0u;
         rrh_hal_bias_set(c->bias_out_mv, true);
+        c->bias_writes_gate++; /* review m7: HV_SET write; counted per gate (DIAG bias.dac_writes) */
     } else if (c->bias_settle < UINT32_MAX) {
         c->bias_settle++;
     } else {
@@ -145,6 +146,16 @@ void rrh_control_refresh_inputs(rrh_core_t *c)
  * bias is on and settled, and flagged only after RRH_IMON_HOLD_US of continuous violation. */
 static void imon_evaluate(rrh_core_t *c, uint64_t now)
 {
+    c->imon_paused = (c->armed || c->draining) && (RRH_IMON_SCAN_WHILE_ARMED == 0);
+    if (c->imon_paused) {
+        /* The port holds the scan while counting (review M2). Per-chain supervision is NOT running:
+         * nothing new is detected, nothing is cleared; the verdict of the last scan before ARM stays
+         * and keeps nulling its chains. Readings are reported as not measured. */
+        for (uint32_t ch = 0u; ch < RRH_CHAINS; ch++) {
+            c->imon_na[ch] = RRH_IMON_NA_INVALID;
+        }
+        return;
+    }
     const bool judged = c->bias_on && (c->bias_settle >= RRH_BIAS_SETTLE_PERIODS);
     for (uint32_t ch = 0u; ch < RRH_CHAINS; ch++) {
         const uint8_t bit = (uint8_t)(1u << ch);

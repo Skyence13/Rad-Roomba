@@ -9,7 +9,7 @@
 #include "rrh_core.h"
 
 #define SIM_TICK_HZ 144000000u /* same tick as the capture timers of the target port */
-#define SIM_CH 5u             /* alpha, beta, ref, floor_reject, ref_reject */
+#define SIM_CH 6u             /* alpha (ZnS), beta, ref, floor_reject, ref_reject, bright_beta */
 #define SIM_SCHED_MAX 2048u
 
 typedef struct {
@@ -32,6 +32,8 @@ typedef struct {
     sim_rate_change_t sched[SIM_SCHED_MAX];
     uint32_t n_sched;
     double tau_floor_us, tau_ref_us;
+    double alpha_pe;   /* photo-electrons of a ZnS alpha event (default 1500) */
+    double bright_pe;  /* photo-electrons of a bright beta event (default 120) */
     /* acquisition source */
     bool running;
     bool stopping;

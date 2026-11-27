@@ -533,9 +533,16 @@ void bsp_imon_step(void)
         return;
     }
 #if !RRH_IMON_SCAN_WHILE_ARMED
+    static bool parked;
     if (evt_port_running()) {
-        return; /* the address lines stay where they are while counting; readings age out */
+        if (!parked) { /* park the address on a reference tap once (review M2); readings age out */
+            imon_select(RRH_IMON_PARK_CHAIN);
+            g_imon_state = 0u;
+            parked = true;
+        }
+        return;
     }
+    parked = false;
 #endif
     const uint64_t now = bsp_now_us();
     switch (g_imon_state) {

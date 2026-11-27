@@ -20,6 +20,8 @@
 static uint32_t g_gate = 100000u * US; /* gate length in ticks (100 ms; some tests use 1 ms) */
 #define GATE g_gate
 static uint32_t g_hold = 0u;           /* afterglow hold in ticks; 0 for the legacy tests */
+static uint32_t g_tot_min = 0u;        /* alpha width condition in ticks; 0 for the legacy tests */
+static uint8_t g_width_delay[RRH_EVT_CHAINS]; /* services for which the falling-edge capture is not yet visible */
 
 /* ---- hardware model ------------------------------------------------------------------------ */
 typedef struct {
@@ -28,6 +30,7 @@ typedef struct {
     uint64_t ready_at;      /* latch can accept an edge again from this tick */
     uint64_t lld_high_until;
     bool uld, alpha;
+    uint64_t width;
     uint64_t accepted, lost;
 } chain_t;
 
@@ -38,6 +41,7 @@ static uint32_t g_clear_latency = 40u; /* ticks from service entry to the first 
 static uint64_t truth_busy[MAX_GATES][RRH_EVT_CHAINS];
 static uint32_t truth_count[MAX_GATES][RRH_EVT_CHAINS][3];
 static uint32_t truth_idle[MAX_GATES][RRH_LANES];
+static uint32_t truth_short[MAX_GATES][RRH_LANES];
 static uint8_t g_width_mask = 0xFFu;
 static uint32_t heater_calls;
 static bool heater_level;
@@ -45,7 +49,12 @@ static bool heater_level;
 static uint32_t class_of(uint32_t ch)
 {
     if (ch < 4u) {
-        return hw[ch].alpha ? 0u : (hw[ch].uld ? 2u : 1u);
+        if (hw[ch].alpha) {
+            /* alpha only with a measured width >= the limit; otherwise a reject (and counted as short) */
+            const bool measured = (g_width_mask & (1u << ch)) != 0u;
+            return (g_tot_min == 0u || (measured && (hw[ch].width >= g_tot_min))) ? 0u : 2u;
+        }
+        return hw[ch].uld ? 2u : 1u;
     }
     return hw[ch].uld ? 1u : 0u;
 }
@@ -87,7 +96,11 @@ static uint64_t clear_cb(void *ctx, uint8_t ch)
              * maximum hold, although it is still high (forced): the model needs only the comparator. */
             const bool forced = g_now < hw[ch].lld_high_until;
             if (!forced) {
-                truth_count[gi][ch][class_of(ch)]++;
+                const uint32_t k = class_of(ch);
+                truth_count[gi][ch][k]++;
+                if ((ch < 4u) && hw[ch].alpha && (k == 2u)) {
+                    truth_short[gi][ch]++;
+                }
             }
         }
         uint64_t a = (hw[ch].start > g_first_gate) ? hw[ch].start : g_first_gate;
@@ -127,6 +140,7 @@ static void pulse(uint32_t ch, uint64_t t, uint32_t cls, uint32_t width)
     c->busy = true;
     c->start = t;
     c->lld_high_until = t + width;
+    c->width = width;
     if (ch < 4u) {
         c->alpha = cls == 0u;
         c->uld = cls == 2u;
@@ -151,8 +165,12 @@ static void service_at(uint64_t t)
             in.lld_low |= bit;
             if (hw[ch].busy) {
                 /* the port's falling-edge capture: time over threshold of the triggering pulse */
-                in.width_valid |= bit;
-                in.width_ticks[ch] = (uint32_t)(hw[ch].lld_high_until - hw[ch].start);
+                if (g_width_delay[ch] == 0u) {
+                    in.width_valid |= bit;
+                    in.width_ticks[ch] = (uint32_t)(hw[ch].lld_high_until - hw[ch].start);
+                } else {
+                    g_width_delay[ch]--;
+                }
             }
         }
         if (hw[ch].uld) {
@@ -174,12 +192,15 @@ static void setup(uint64_t first_gate)
     memset(truth_busy, 0, sizeof truth_busy);
     memset(truth_count, 0, sizeof truth_count);
     memset(truth_idle, 0, sizeof truth_idle);
+    memset(truth_short, 0, sizeof truth_short);
+    memset(g_width_delay, 0, sizeof g_width_delay);
     heater_calls = 0u;
     heater_level = false;
     g_clear_latency = 40u;
     g_first_gate = first_gate;
     rrh_evtcap_init(&ec, &cfg);
     rrh_evtcap_set_alpha_hold(&ec, g_hold);
+    rrh_evtcap_set_alpha_tot_min(&ec, g_tot_min);
     CHECK(rrh_evtcap_start(&ec, first_gate, GATE));
 }
 
@@ -203,6 +224,7 @@ static void check_record(const rrh_gate_record_t *r, uint32_t gi)
         CHECK(g->ref_counts == truth_count[gi][l + 4u][0]);
         CHECK(g->ref_reject_counts == truth_count[gi][l + 4u][1]);
         CHECK(g->alpha_idle_clears == truth_idle[gi][l]);
+        CHECK(g->alpha_short_counts == truth_short[gi][l]);
         CHECK((uint64_t)g->floor_live_ticks + truth_busy[gi][l] == GATE);      /* live + busy = span, exactly */
         CHECK((uint64_t)g->ref_live_ticks + truth_busy[gi][l + 4u] == GATE);
     }
@@ -696,14 +718,14 @@ static void test_poisson_sweep_with_afterglow_hold(void)
 {
     static const double rates[] = {10.0, 100.0, 1000.0, 5000.0, 20000.0};
     static const double secs[] = {60.0, 20.0, 5.0, 2.0, 2.0};
-    g_hold = 150u * US;
+    g_hold = 300u * US;
     rng_state = 0x1234567887654321uLL;
     for (size_t i = 0; i < sizeof rates / sizeof rates[0]; i++) {
         double counted, corrected, dead;
         poisson_run(rates[i], secs[i], 0u, false, &counted, &corrected, &dead);
         const double n = rates[i] * secs[i] * 8.0;
         const double tol = (4.0 / sqrt(n)) + 0.002;    /* the same tolerance as the sweep without the hold */
-        printf("    hold 150 us: true %8.1f /s  counted %9.2f /s  corrected %9.2f /s  dead %6.3f %%\n", rates[i], counted,
+        printf("    hold 300 us: true %8.1f /s  counted %9.2f /s  corrected %9.2f /s  dead %6.3f %%\n", rates[i], counted,
                corrected, dead * 100.0);
         CHECK(fabs((corrected / rates[i]) - 1.0) < tol);
         /* 5 % alpha events on the floor chains pay the hold: mean dead time per event grows by about 0.05 x 150 us / 2 */
@@ -711,6 +733,55 @@ static void test_poisson_sweep_with_afterglow_hold(void)
         CHECK((per_event_us >= 4.0) && (per_event_us <= 4.0 + 10.0 + 2.5 + 6.0 + 5.0));
     }
     g_hold = 0u;
+}
+
+
+static void test_bright_beta_is_not_alpha(void)
+{
+    rrh_gate_record_t r;
+    g_tot_min = 36u;                                  /* 250 ns at 144 MHz */
+    setup(0u);
+    run_services(0u, 1000u * US);
+    const uint64_t t = 1000u * US + 9u;
+    pulse(0u, t, 0u, 6u * US);                        /* ZnS alpha: long pulse, ALPHA set -> alpha */
+    pulse(1u, t, 0u, 22u);                            /* bright beta: ALPHA set, 158 ns -> reject + alpha_short, NOT alpha */
+    pulse(2u, t, 1u, 22u);                            /* ordinary beta: ALPHA clear -> beta window */
+    run_services(1000u * US + SERVICE, 1000u * US + 300u * US);
+    pulse(3u, 1000u * US + 300u * US + 3u, 0u, 36u);  /* exactly at the limit: alpha */
+    run_services(1000u * US + 300u * US + SERVICE, 1000u * US + 700u * US);
+    pulse(3u, 1000u * US + 700u * US + 3u, 0u, 35u);  /* one tick short: reject */
+    run_services(1000u * US + 700u * US + SERVICE, GATE + SERVICE);
+    CHECK(rrh_evtcap_pop(&ec, &r));
+    check_record(&r, 0u);                             /* equals the independent model, exactly */
+    CHECK((r.lane[0].alpha_counts == 1u) && (r.lane[0].alpha_short_counts == 0u));
+    CHECK((r.lane[1].alpha_counts == 0u) && (r.lane[1].floor_reject_counts == 1u) && (r.lane[1].alpha_short_counts == 1u));
+    CHECK((r.lane[1].beta_counts == 0u));             /* neither channel gains it */
+    CHECK((r.lane[2].beta_counts == 1u) && (r.lane[2].alpha_counts == 0u) && (r.lane[2].alpha_short_counts == 0u));
+    CHECK((r.lane[3].alpha_counts == 1u) && (r.lane[3].alpha_short_counts == 1u) && (r.lane[3].floor_reject_counts == 1u));
+    /* the old rule (no width condition) calls the bright beta an alpha: this is what the test must fail on */
+    g_tot_min = 0u;
+    setup(0u);
+    run_services(0u, 1000u * US);
+    pulse(1u, 1000u * US + 9u, 0u, 22u);
+    run_services(1000u * US + SERVICE, GATE + SERVICE);
+    CHECK(rrh_evtcap_pop(&ec, &r) && (r.lane[1].alpha_counts == 1u));
+    /* a port that measures no widths: ALPHA events are never alpha (they are counted as short) */
+    g_tot_min = 36u;
+    g_width_mask = 0u;
+    setup(0u);
+    g_width_mask = 0xFFu;
+    run_services(0u, 1000u * US);
+    pulse(0u, 1000u * US + 9u, 0u, 6u * US);
+    run_services(1000u * US + SERVICE, GATE + SERVICE);
+    CHECK(rrh_evtcap_pop(&ec, &r) && (r.lane[0].alpha_counts == 0u) && (r.lane[0].alpha_short_counts == 1u));
+    /* the falling-edge capture can lag the comparator level by one service: wait, do not call the alpha short */
+    setup(0u);
+    run_services(0u, 1000u * US);
+    g_width_delay[0] = 1u;
+    pulse(0u, 1000u * US + 9u, 0u, 6u * US);
+    run_services(1000u * US + SERVICE, GATE + SERVICE);
+    CHECK(rrh_evtcap_pop(&ec, &r) && (r.lane[0].alpha_counts == 1u) && (r.lane[0].alpha_short_counts == 0u));
+    g_tot_min = 0u;
 }
 
 int main(void)
@@ -727,5 +798,6 @@ int main(void)
     RUN(test_service_late_by_more_than_one_period);
     RUN(test_chain_held_by_a_long_tail);
     RUN(test_poisson_sweep_with_afterglow_hold);
+    RUN(test_bright_beta_is_not_alpha);
     return TEST_SUMMARY();
 }

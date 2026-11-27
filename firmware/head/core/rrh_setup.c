@@ -52,6 +52,7 @@ void rrh_setup_defaults(rrh_setup_t *s)
     s->fe.led_code = 0u;
     s->fe.led_enable = false;
     s->fe.alpha_hold_us = RRH_ALPHA_HOLD_DEFAULT_US;
+    s->fe.alpha_min_tot_ns = RRH_ALPHA_MIN_TOT_DEFAULT_NS;
     s->fe.chain_enable = 0xFFu;
     /* Placeholders until the SiPM type is known: 30.0 V at 25 degC is below the fitted 31.5 V
      * over-voltage trip (rev A, onsemi J/C strap); 21.5 mV/degC is the onsemi J-series value. */
@@ -84,7 +85,8 @@ bool rrh_setup_valid(const rrh_setup_t *s)
         }
     }
     if ((s->fe.pulser_channel > 7u) || (s->fe.pulser_width_us < 1u) || (s->fe.pulser_width_us > 100u) ||
-        (s->fe.led_code > 4095u) || (s->fe.alpha_hold_us > RRH_ALPHA_HOLD_MAX_US)) {
+        (s->fe.led_code > 4095u) || (s->fe.alpha_hold_us > RRH_ALPHA_HOLD_MAX_US) ||
+        (s->fe.alpha_min_tot_ns > RRH_ALPHA_MIN_TOT_MAX_NS)) {
         return false;
     }
     return (s->fe.pulser_code <= 4095u) && (s->bias_ref_mv >= RRH_BIAS_MIN_MV) &&
@@ -95,8 +97,8 @@ bool rrh_setup_valid(const rrh_setup_t *s)
 }
 
 /* ---- canonical byte image (non-volatile storage and setup hash) ------------------------------ */
-#define SETUP_IMAGE_VERSION 2u
-#define SETUP_IMAGE_LEN (1u + (2u * RRH_N_THRESHOLDS) + (2u * RRH_N_TRIMS) + 2u + 1u + 1u + 4u + 4u + 4u + 1u + 4u + 1u + 1u + 1u + 1u + 2u + 2u)
+#define SETUP_IMAGE_VERSION 3u
+#define SETUP_IMAGE_LEN (1u + (2u * RRH_N_THRESHOLDS) + (2u * RRH_N_TRIMS) + 2u + 1u + 1u + 4u + 4u + 4u + 1u + 4u + 1u + 1u + 1u + 1u + 2u + 2u + 2u)
 
 static size_t put_be(uint8_t *buf, size_t pos, uint32_t v, size_t bytes)
 {
@@ -140,6 +142,7 @@ static size_t pack_image(const rrh_setup_t *s, uint8_t *buf)
     n = put_be(buf, n, s->fe.led_enable ? 1u : 0u, 1u);
     n = put_be(buf, n, s->fe.led_code, 2u);
     n = put_be(buf, n, s->fe.alpha_hold_us, 2u);
+    n = put_be(buf, n, s->fe.alpha_min_tot_ns, 2u);
     return n;
 }
 
@@ -185,6 +188,7 @@ bool rrh_setup_unpack(rrh_setup_t *s, const uint8_t *buf, size_t len)
     t.fe.led_enable = get_be(buf, &pos, 1u) != 0u;
     t.fe.led_code = (uint16_t)get_be(buf, &pos, 2u);
     t.fe.alpha_hold_us = (uint16_t)get_be(buf, &pos, 2u);
+    t.fe.alpha_min_tot_ns = (uint16_t)get_be(buf, &pos, 2u);
     if (!rrh_setup_valid(&t)) {
         return false;
     }
@@ -267,6 +271,7 @@ void rrh_setup_to_json(const rrh_setup_t *s, rrc_jw_t *w)
     rrc_jw_key(w, "afterglow");
     rrc_jw_obj_begin(w);
     rrc_jw_ku64(w, "alpha_hold_us", s->fe.alpha_hold_us);
+    rrc_jw_ku64(w, "alpha_min_tot_ns", s->fe.alpha_min_tot_ns);
     rrc_jw_obj_end(w);
     rrc_jw_key(w, "heater");
     rrc_jw_obj_begin(w);
@@ -426,10 +431,15 @@ bool rrh_setup_from_json(rrh_setup_t *s, const rrc_json_t *d, int obj)
     if (sub >= 0) {
         n = 0u;
         v = t.fe.alpha_hold_us;
-        if (!get_int(d, sub, "alpha_hold_us", 0, RRH_ALPHA_HOLD_MAX_US, &v, &n) || (n != rrc_json_size(d, sub))) {
+        if (!get_int(d, sub, "alpha_hold_us", 0, RRH_ALPHA_HOLD_MAX_US, &v, &n)) {
             return false;
         }
         t.fe.alpha_hold_us = (uint16_t)v;
+        v = t.fe.alpha_min_tot_ns;
+        if (!get_int(d, sub, "alpha_min_tot_ns", 0, RRH_ALPHA_MIN_TOT_MAX_NS, &v, &n) || (n != rrc_json_size(d, sub))) {
+            return false;
+        }
+        t.fe.alpha_min_tot_ns = (uint16_t)v;
     }
     if (!sub_object(d, obj, "heater", &sub, &top)) {
         return false;

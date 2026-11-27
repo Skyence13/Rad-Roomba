@@ -15,6 +15,11 @@
  * An event belongs to the gate that contains its clear time. Live time of a gate is
  * gate_ticks - busy; nothing is inferred from a nominal dead time or from the service rate.
  *
+ * Alpha class (review C1): floor event with the ALPHA latch set is alpha only if the port measured the
+ * time over threshold of the triggering pulse and it is >= alpha_tot_min. Otherwise it is a floor REJECT
+ * (never alpha, never beta window) and is counted in short_alpha -> DIAG alpha_short. An unmeasured
+ * width never defaults to alpha.
+ *
  * Afterglow hold (IB-18b): an event classified alpha is not cleared at once; the chain stays BUSY
  * for alpha_hold ticks counted from the service that found it ready (window elapsed, comparator
  * low), and is cleared by the first service after that at which the comparator is low again. The
@@ -92,11 +97,15 @@ typedef struct {
     /* afterglow hold (IB-18): after an alpha event has been classified the chain is kept BUSY
      * (not cleared) until hold_until, so the hold is part of the measured busy interval */
     uint32_t alpha_hold_ticks;
+    uint32_t alpha_tot_min_ticks;          /* alpha needs raw-LLD time over threshold >= this (0 = no condition) */
     uint8_t holding;                       /* chains in the hold state */
     uint64_t hold_until[RRH_EVT_CHAINS];
     uint8_t held_cls[RRH_EVT_CHAINS];
     uint8_t held_wbin[RRH_EVT_CHAINS];
+    uint8_t width_wait[RRH_LANES];          /* services an ALPHA event waited for its falling-edge capture */
     uint8_t idle_alpha_seen[RRH_LANES];    /* consecutive services with ALPHA set on an idle floor chain */
+    uint32_t short_alpha[RRH_LANES];       /* ALPHA latch set, width below the limit or unmeasured: floor reject, counted here */
+    uint32_t next_short_alpha[RRH_LANES];
     uint32_t idle_clears[RRH_LANES];       /* accumulators of the gate in progress */
     uint32_t next_idle_clears[RRH_LANES];
     /* accumulators of the gate in progress */
@@ -123,6 +132,8 @@ void rrh_evtcap_init(rrh_evtcap_t *e, const rrh_evt_cfg_t *cfg);
 void rrh_evtcap_set_chain_enable(rrh_evtcap_t *e, uint8_t mask);
 /* Afterglow hold after an alpha event in ticks (0 = off). Not while recording. */
 void rrh_evtcap_set_alpha_hold(rrh_evtcap_t *e, uint32_t ticks);
+/* Alpha classification limit on the time over threshold, ticks (0 = none). Not while recording. */
+void rrh_evtcap_set_alpha_tot_min(rrh_evtcap_t *e, uint32_t ticks);
 /* Start equal gates of gate_ticks; the first gate begins at first_gate_tick (>= now). */
 bool rrh_evtcap_start(rrh_evtcap_t *e, uint64_t first_gate_tick, uint32_t gate_ticks);
 /* Finish the gate in progress, then stop. Returns true if a gate is in progress at now_tick. */

@@ -211,6 +211,13 @@ void evt_port_set_alpha_hold_us(uint16_t us)
     service_irq(true);
 }
 
+void evt_port_set_alpha_tot_min_ns(uint16_t ns)
+{
+    service_irq(false);
+    rrh_evtcap_set_alpha_tot_min(&g_evt, ((uint32_t)ns * BSP_TICKS_PER_US + 999u) / 1000u);
+    service_irq(true);
+}
+
 void evt_port_heater_request(bool on)
 {
     service_irq(false);

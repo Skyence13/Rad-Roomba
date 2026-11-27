@@ -73,7 +73,7 @@ Tests (all on the host):
   Every gate record is compared exactly with an independent hardware model. Added for IB-18 and
   the review questions: afterglow hold, idle ALPHA latch (including the lagging-capture case),
   a latch clear whose blind interval crosses a gate boundary, services late by 37 us / 2.5 gates /
-  2.9 gates, chains held by 0.6 / 0.9 / 2.3 ms tails, and the rate sweep repeated with the 150 us hold.
+  2.9 gates, chains held by 0.6 / 0.9 / 2.3 ms tails, and the rate sweep repeated with the 300 us hold, the alpha width rule (bright beta, boundary tick, unmeasured width, lagging falling-edge capture).
 - `head_sim_interop` (`tests/test_sim_interop.py`): launches `rr_head_sim` and drives it with the
   unmodified `interface/wire_codec.py`, `head_discovery.py`, `check_frames.py`: byte-exact
   reproduction of the 0.3 example handshake, descriptor chunking + SHA-256, BIND, TIME/SYNC, ARM,
@@ -88,7 +88,7 @@ Tests (all on the host):
 |---|---|
 | MCU | STM32G474VET6, 512 kB flash, 128 kB RAM (SRAM1 + SRAM2 + CCM mapped contiguously at 0x2000 0000 by the ST linker script) |
 | Clock | 24 MHz TCXO → HSE bypass → PLL → 144 MHz SYSCLK (falls back to HSI16 and latches health `SOURCE` if the TCXO is absent) |
-| Size (`rr_head_acq`, `-Os`, GCC 12.3.1) | flash 39 816 bytes (7.6 %), static RAM 94 220 bytes (71.9 %) — tool-checked with `arm-none-eabi-size` (firmware 0.5.0) |
+| Size (`rr_head_acq`, `-Os`, GCC 12.3.1) | flash 40 540 bytes (7.7 %), static RAM 96 892 bytes (73.9 %) — tool-checked with `arm-none-eabi-size` (firmware 0.5.1) |
 
 Memory map (default ST script `STM32G474RETX_FLASH.ld`; the RE and VE parts share die and memory):
 
@@ -141,7 +141,7 @@ is counted in the gate that contains its clear time. A chain BUSY for more than 
 comparator high while the latch is clear, is flagged saturated (→ `SATURATED`, null counts).
 
 Afterglow hold and idle latches (IB-18, firmware 0.5): an event classified alpha is not cleared at
-once. The chain stays BUSY for `afterglow.alpha_hold_us` (default 150 us, setup member, 0 = off, at most
+once. The chain stays BUSY for `afterglow.alpha_hold_us` (default 300 us since 0.5.1, setup member, 0 = off, at most
 500) counted from the service that found it ready, and is cleared by the first service after that with the
 comparator low. Class and pulse width are fixed when the event first becomes ready; the hold is inside
 [captured start, clear) and therefore inside the measured busy time, so live time stays exact (rate
@@ -166,8 +166,8 @@ Measured on the host model (`head_evtcap_unit`, simulated, 8 chains):
 | 5000 | 4772.5 | 5006.4 | 4.67 % |
 | 20000 | 16738.6 | 19994.2 | 16.3 % |
 
-With the 150 us hold (default, 5 % alpha events on the floor chains in the model) the corrected rate stays
-within the same tolerance at every rate (10 ... 20000 s⁻¹: 10.01, 100.49, 999.90, 5003.2, 19977 s⁻¹; dead 21.0 % at 20000 s⁻¹ against
+With the 300 us hold (default, 5 % alpha events on the floor chains in the model) the corrected rate stays
+within the same tolerance at every rate (10 ... 20000 s⁻¹: 10.01, 100.48, 1000.12, 5005.7, 19979 s⁻¹; dead 24.8 % at 20000 s⁻¹ against
 16.3 % without the hold; simulated). i.e. about 9.7 µs of measured dead time per event without the hold. With ±6 µs service jitter and 0.1 % of the
 services 50 µs late the corrected rate stays unbiased (5003 s⁻¹ at 5000 s⁻¹); only the dead time
 grows. Deviation from the contract wording: the gate snapshot is taken by the service interrupt
@@ -368,7 +368,21 @@ on the shared MON_MUX lines would be needed): `ENG_WAVE_ARM` answers `FAULT` on 
 
 MON_MUX_A[2:0] drive both the IMON mux and the lane-monitor decoder U2701/lane muxes, so scanning IMON
 while counting repeatedly connects shaper taps (through 1 kohm) to MON_BUS; charge injection into the comparator
-inputs was not analysed. The scan runs while armed by default (`RRH_IMON_SCAN_WHILE_ARMED`); bench test B8-class needed.
+inputs was not analysed. Since 0.5.1 the scan does NOT run while armed (`RRH_IMON_SCAN_WHILE_ARMED` 0, review M2); see the 0.5.1 section.
+
+## Interference review follow-up (firmware 0.5.1, `docs/reviews/REVIEW_head_interference.md`)
+
+| Finding | Change |
+|---|---|
+| **C1** alpha decided by the ALPHA latch alone | Checked and confirmed: `head_afe_calc_out.md` T2 gives FAST/SLOW = 6.93/0.369 = 18.8 per p.e. for plastic light and 1.467/0.218 = 6.7 for ZnS, and budget 2.3 puts the beta maximum (120 p.e., SLOW 44 mV) above the alpha minimum (150 p.e., 33 mV); the 0.5.0 default ALPHA level (30 mV) is crossed by every beta above ~81 p.e. and `rrh_evtcap.c` tested ALPHA before ULD. New rule: alpha = ALPHA latch AND measured raw-LLD time over threshold >= `afterglow.alpha_min_tot_ns` (setup member, hashed, default 250 ns, 0 = old rule, max 5000). ALPHA with a shorter or unmeasured width is a floor **reject** (never alpha, never beta window) and is counted in DIAG `alpha_short`. A falling-edge capture that lags the comparator level by one service is waited for (max 2 services) instead of being called short. Emulator: new stimulus `bright_beta` (+ `bright_pe`, `alpha_pe`) with the T2 amplitudes and TOT shapes (plastic Gaussian FWHM 80 ns, ZnS 200 ns decay). Tests fail on the old rule (`test_bright_beta_is_not_alpha`, `test_bright_beta_is_not_counted_as_alpha`). |
+| **M2** IMON scan while armed | Default off. The scan runs only while disarmed (gates are contiguous, there is no gap between gates in which a scan step could run without touching live time). On ARM the address lines are parked on R3 (`RRH_IMON_PARK_CHAIN`). While armed: per-chain readings are reported null (STATUS `imon.scan` = `PAUSED_ARMED`), the verdict of the last scan before ARM stays and keeps nulling its chains, nothing new is detected and nothing is cleared. **Coverage lost while armed:** onset of a per-chain over-current or unheld anode during a run is not seen per chain; it is still seen by the total BIAS_IMON trip (200 uA), by saturation/live fraction, and at the next disarm. One reference tap (R3) stays connected to MON_BUS through 1 kohm (loading of that reference channel, review M2 numbers) until the circuit gives a way to disable the lane muxes. |
+| **m2** hold | Default 300 us. Circuit check: R_PZ 226 ohm / R_D 100 ohm give a DC transmission 100/326 = 0.307 (FAST sees 6.45 x PRE at low frequency), so the booked 150 us is indeed short of the input-coupling undershoot (C 100 nF with 1 kohm bias); I agree with the argument. I did not re-derive the -3.1 p.e. figure (no low-frequency model of the preamp in the repository); the zero crossing at 314 us is the reviewer's. Live-time sweep repeated: unbiased at every rate. Cost: 24.8 % dead at 20000 s⁻¹ against 21.0 % with 150 us (5 % alphas, simulated). |
+| **m6** heater marker | Where it travels: DIAG `heater.transition` per retained gate (addendum 3) and nowhere in ACQ 2.0. End to end on the head side: the same information is in every ACQ frame as `thermal.heater` (ON/OFF) with `duty_pct` 0 or 100 (the heater switches only on gate boundaries), and the transition gate is exactly the first gate whose state differs from the previous frame. Test `test_heater_transition_marker_is_derivable_from_acq` compares the derivation with the DIAG marker over a heater on and off cycle. A gap in sequence numbers hides the edge: the host should then treat the gate after the gap as marked. |
+| **m7** DAC writes while armed | Not deferred: deferring would freeze temperature tracking for hours of a survey (0.2 - 1.8 %/degC gain). Instead each write is counted per gate (DIAG `bias.dac_writes`, saturating at 255) so the host can exclude or study those gates; the writes are at most 20 mV per 100 ms control period and happen only while the target moves by more than 5 mV. The reviewer's numbers (about 3 nA at the anode, 0.007 p.e. DAC crosstalk on the shared package) are calculated, not measured; bench test B8 with tracking active decides. |
+| O2 | Cut-out actuation nulling the gate: not done; there is no ACQ lane flag whose meaning matches. `HEATER_FAULT` + `OVERTEMP` flag the frame (global) and the host should exclude flagged gates. |
+| O6 | Refusing ARM with placeholder thresholds: not done; the firmware has no device-type setting. Defaults stay flagged ASSUMED; STATUS does not yet say "placeholder". |
+
+**Time over threshold: what the capture clock resolves.** Tick 6.94 ns (144 MHz, TIM4/TIM3 16-bit for the falling edge, TIM2/TIM5 for the BUSY rising edge). Each edge is quantised to +-1 tick, so a width has +-2 ticks = +-14 ns; the two timers' offset is measured once with reads a few cycles apart (<= 3 ticks = 21 ns systematic, sign unknown); the comparator delay (4.5 ns) cancels between the edges, the 6 mV hysteresis widens the pulse slightly. Total about +-35 ns worst case. The calculated classes are bright beta 120 p.e. ~ 120 - 170 ns and ZnS alpha 150 p.e. ~ 277 ns (1500 p.e. ~ 737 ns): the 250 ns limit is 80 - 130 ns (12 - 19 ticks) above the beta side, which the clock resolves comfortably, but only 27 ns (4 ticks) below the weakest assumed alpha, which is **marginal**: alphas of 150 p.e. can fall on either side; alphas above ~300 p.e. (~416 ns) are robust. The larger uncertainty is the pulse shape itself (ZnS decay 200 ns is assumed; +-30 % moves the 150 p.e. alpha between 190 and 360 ns). The DIAG width histogram (edges 150/400/2000 ns) already shows both populations; set the limit from an Am-241 and Sr-90 measurement. Circuit change that would make it robust: bring the raw ALPHA (SLOW) comparator output of each floor chain to a capture channel and use its time over threshold (microseconds for ZnS, a fraction of that for plastic) or the delay between the LLD and ALPHA edges; no MCU pin is free (the reserved PF1 `SYNC_IN` could serve one chain only), so this needs the pin budget revisited (rev B).
 
 ## Review of the event-capture questions (item 5)
 

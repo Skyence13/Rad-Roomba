@@ -215,7 +215,8 @@ static bool j_chain_mask(uint8_t *mask)
 
 static const char *cmd_rates(void)
 {
-    static const char *const names[SIM_CH] = {"alpha", "beta", "ref", "floor_reject", "ref_reject"};
+    static const char *const names[SIM_CH] = {"alpha", "beta", "ref", "floor_reject", "ref_reject", "bright_beta"};
+    double pe = 0.0;
     sim_rate_change_t chg;
     uint64_t t = 0u;
     memset(&chg, 0, sizeof chg);
@@ -229,6 +230,12 @@ static const char *cmd_rates(void)
         chg.from_us = (t > g_sim.boot_mono_ns) ? ((t - g_sim.boot_mono_ns) / 1000u) : 0u;
     } else {
         /* immediately */
+    }
+    if (j_num(rrc_json_get(&g_doc, 0, "alpha_pe"), &pe) && (pe > 0.0)) {
+        g_sim.alpha_pe = pe;
+    }
+    if (j_num(rrc_json_get(&g_doc, 0, "bright_pe"), &pe) && (pe > 0.0)) {
+        g_sim.bright_pe = pe;
     }
     for (uint32_t ch = 0u; ch < SIM_CH; ch++) {
         const int a = rrc_json_get(&g_doc, 0, names[ch]);
@@ -453,7 +460,7 @@ static size_t control_handle(const char *msg, size_t len, char *out, size_t cap)
     rrc_jw_ku64(&w, "head_us", rrh_hal_now_us());
     rrc_jw_ku64(&w, "boot_count", g_sim.boot_count);
     if (strcmp(cmd, "stats") == 0) {
-        static const char *const names[SIM_CH] = {"alpha", "beta", "ref", "floor_reject", "ref_reject"};
+        static const char *const names[SIM_CH] = {"alpha", "beta", "ref", "floor_reject", "ref_reject", "bright_beta"};
         static const char *const links[3] = {"UNBOUND", "HANDSHAKE", "BOUND"};
         rrc_jw_kstr(&w, "serial", g_ident.serial);
         rrc_jw_kstr(&w, "boot_id", g_core.boot_id);
@@ -491,6 +498,7 @@ static size_t control_handle(const char *msg, size_t len, char *out, size_t cap)
         rrc_jw_ku64(&w, "v_led_mv", rrh_board_led_mv(g_sim.fe.led_code));
         rrc_jw_obj_end(&w);
         rrc_jw_ku64(&w, "alpha_hold_us", g_sim.fe.alpha_hold_us);
+        rrc_jw_ku64(&w, "alpha_min_tot_ns", g_sim.fe.alpha_min_tot_ns);
         rrc_jw_key(&w, "bias");
         rrc_jw_obj_begin(&w);
         rrc_jw_ku64(&w, "out_mv", g_sim.bias_set_mv);

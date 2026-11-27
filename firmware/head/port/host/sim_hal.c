@@ -106,6 +106,8 @@ void sim_init(sim_t *s, uint64_t seed, bool manual)
     s->tau_floor_us = 10.0;
     s->tau_ref_us = 10.0;
     s->arm_delay_us = 2000u;
+    s->alpha_pe = 1500.0;
+    s->bright_pe = 120.0;
     s->tick_offset = 987654321u;
     s->ambient_c = 20.0;
     s->width_hist = true;
@@ -290,6 +292,32 @@ static uint32_t live_ticks(uint32_t gate_ticks, uint64_t events, double tau_us, 
     return gate_ticks - (uint32_t)dead;
 }
 
+/* Pulse-shape model of the two classes that compete for the ALPHA latch (review C1). Amplitudes per
+ * photo-electron from head_afe_calc_out.md T2 (J60035 at 2.5 V): FAST 6.93 mV (plastic) / 1.467 mV (ZnS),
+ * SLOW 0.369 mV (plastic) / 0.218 mV (ZnS). Time over threshold of the raw LLD: plastic fast pulse
+ * Gaussian-like, FWHM 80 ns: w = 80 ns x sqrt(ln(A/T)/ln 2) (120 p.e. at an 8 p.e. threshold: 158 ns);
+ * ZnS: 200 ns exponential decay: w = 200 ns x ln(A/T) (150 p.e.: 277 ns, 1500 p.e.: 737 ns). SIMULATED. */
+typedef enum { OUT_NONE = 0, OUT_ALPHA, OUT_BETA, OUT_REJECT, OUT_SHORT } outcome_t;
+
+static outcome_t shape_outcome(const sim_t *s, bool zns, double pe, uint32_t lane)
+{
+    const double base = (double)rrh_board_baseline_uv();
+    const double lld = (double)rrh_board_trim_uv(s->fe.threshold[lane * 3u]) - base;
+    const double uld = (double)rrh_board_trim_uv(s->fe.threshold[(lane * 3u) + 1u]) - base;
+    const double alp = (double)rrh_board_trim_uv(s->fe.threshold[(lane * 3u) + 2u]) - base;
+    const double fast = pe * (zns ? 1467.0 : (double)RRH_FAST_UV_PER_PE);
+    const double slow = pe * (zns ? 218.0 : 369.0);
+    if ((lld <= 0.0) || (fast < lld)) {
+        return OUT_NONE;
+    }
+    const double tot_ns = zns ? (200.0 * log(fast / lld)) : (80.0 * sqrt(log(fast / lld) / log(2.0)));
+    if (slow >= alp) {
+        const bool long_enough = (s->fe.alpha_min_tot_ns == 0u) || (tot_ns >= (double)s->fe.alpha_min_tot_ns);
+        return long_enough ? OUT_ALPHA : OUT_SHORT;
+    }
+    return (fast >= uld) ? OUT_REJECT : OUT_BETA;
+}
+
 /* Test pulser model (charge injection through C109..C809 into the selected chain, 1 kHz strobe).
  * Amplitude: Q = 100 pF x V(PULSER_AMPL) -> photo-electrons at 0.465 pC each, FAST output 6.9 mV
  * per p.e. above the 0.600 V baseline, compared with the chain's threshold DAC levels. A pulse
@@ -361,18 +389,33 @@ bool rrh_hal_acq_poll(rrh_gate_record_t *rec)
             /* Non-paralyzable chain with dead time tau per accepted event: the accepted rate
              * is n / (1 + n * tau). The recorded counts are drawn with that mean, and the live
              * time is the gate minus tau per recorded event. */
-            const double floor_n = mean[l][0] + mean[l][1] + mean[l][3];
+            const outcome_t o_zns = shape_outcome(s, true, s->alpha_pe, l);
+            const outcome_t o_brt = shape_outcome(s, false, s->bright_pe, l);
+            const double floor_n = mean[l][0] + mean[l][1] + mean[l][3] + mean[l][5];
+            const double hold_n = ((o_zns == OUT_ALPHA) ? mean[l][0] : 0.0) + ((o_brt == OUT_ALPHA) ? mean[l][5] : 0.0);
             const double floor_true = floor_n / span_s;
             /* afterglow hold: each alpha event keeps the chain busy for alpha_hold_us more */
             const double hold_us = (double)s->fe.alpha_hold_us;
-            const double tau_eff = s->tau_floor_us + ((floor_n > 0.0) ? ((mean[l][0] / floor_n) * hold_us) : 0.0);
+            const double tau_eff = s->tau_floor_us + ((floor_n > 0.0) ? ((hold_n / floor_n) * hold_us) : 0.0);
             const double ff = 1.0 / (1.0 + (floor_true * tau_eff * 1e-6));
             const double ref_true = (mean[l][2] + mean[l][4]) / span_s;
             const double fr = 1.0 / (1.0 + (ref_true * s->tau_ref_us * 1e-6));
-            g->alpha_counts = rng_poisson(s->rng, mean[l][0] * ff);
-            g->beta_counts = rng_poisson(s->rng, mean[l][1] * ff);
+            const uint32_t n_zns = rng_poisson(s->rng, mean[l][0] * ff);
+            const uint32_t n_brt = rng_poisson(s->rng, mean[l][5] * ff);
+            const uint32_t n_cls[2] = {n_zns, n_brt};
+            const outcome_t o_cls[2] = {o_zns, o_brt};
+            for (uint32_t k = 0u; k < 2u; k++) {
+                switch (o_cls[k]) {
+                case OUT_ALPHA: g->alpha_counts += n_cls[k]; break;
+                case OUT_BETA: g->beta_counts += n_cls[k]; break;
+                case OUT_REJECT: g->floor_reject_counts += n_cls[k]; break;
+                case OUT_SHORT: g->floor_reject_counts += n_cls[k]; g->alpha_short_counts += n_cls[k]; break;
+                default: break; /* below LLD: not seen */
+                }
+            }
+            g->beta_counts += rng_poisson(s->rng, mean[l][1] * ff);
             g->ref_counts = rng_poisson(s->rng, mean[l][2] * fr);
-            g->floor_reject_counts = rng_poisson(s->rng, mean[l][3] * ff);
+            g->floor_reject_counts += rng_poisson(s->rng, mean[l][3] * ff);
             g->ref_reject_counts = rng_poisson(s->rng, mean[l][4] * fr);
             g->floor_live_ticks =
                 live_ticks(rec->gate_ticks, (uint64_t)g->alpha_counts + g->beta_counts + g->floor_reject_counts,
@@ -401,6 +444,7 @@ bool rrh_hal_acq_poll(rrh_gate_record_t *rec)
                 rec->width_hist[4u + l][2] = g->ref_reject_counts;
             }
             s->drawn[l][0] += g->alpha_counts;
+            s->drawn[l][5] += n_brt;
             s->drawn[l][1] += g->beta_counts;
             s->drawn[l][2] += g->ref_counts;
             s->drawn[l][3] += g->floor_reject_counts;

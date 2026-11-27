@@ -875,9 +875,9 @@ static void test_setup_members_and_defaults(void)
         CHECK(core.setup.fe.threshold[(l * 3u) + 2u] > base);
         CHECK(core.setup.fe.threshold[12u + (l * 2u)] > base);
     }
-    CHECK(core.setup.fe.alpha_hold_us == 150u);
+    CHECK(core.setup.fe.alpha_hold_us == 300u);
     handshake();
-    CHECK(send("ENG_SETUP_GET", "{}") && has("\"afterglow\":{\"alpha_hold_us\":150}") && has("\"channel\":0,\"width_us\":2"));
+    CHECK(send("ENG_SETUP_GET", "{}") && has("\"afterglow\":{\"alpha_hold_us\":300,\"alpha_min_tot_ns\":250}") && has("\"channel\":0,\"width_us\":2"));
     char old_id[100];
     strcpy(old_id, core.setup_id);
     CHECK(send("ENG_SETUP_SET", "{\"pulser\":{\"enable\":true,\"code\":500,\"channel\":6,\"width_us\":25,\"led_enable\":true,\"led_code\":900},"
@@ -981,11 +981,8 @@ static void test_per_lane_bias_out_of_range(void)
     mock_reset();
     boot();
     handshake();
-    advance(1000000u); /* bias ramped and settled */
-    arm(100000u);
-    advance(500000u);
-    CHECK(send("READ", "{\"after_seq\":-1}") && status_is("OK") && has("\"flags\":[]"));
-    CHECK(!has("FLOOR_FAULT") && !has("REFERENCE_FAULT") && (core.imon_fault == 0u));
+    advance(1000000u); /* bias ramped and settled; the scan runs while disarmed */
+    CHECK(core.imon_fault == 0u);
     CHECK(core.imon_na[0] > 900u && core.imon_na[0] < 1100u); /* 1 uA programmed in the mock */
     /* a short excursion (< RRH_IMON_HOLD_US) is not flagged */
     m.imon_ua[1] = 400.0;
@@ -998,6 +995,9 @@ static void test_per_lane_bias_out_of_range(void)
     m.imon_ua[6] = 5000.0;
     advance(600000u);
     CHECK(core.imon_fault == ((1u << 1) | (1u << 6)));
+    CHECK(send("STATUS", "{}") && has("\"scan\":\"RUNNING\"") && has("\"fault\":[\"F1\",\"R2\"]"));
+    arm(100000u);
+    advance(500000u);
     const int64_t last = (int64_t)core.next_seq - 1;
     CHECK(send("READ", "{\"after_seq\":%d}", (int)(last - 1)) && status_is("OK"));
     /* ACQ: only the faulted chain is nulled and flagged; global BIAS_OUT_OF_RANGE */
@@ -1007,15 +1007,24 @@ static void test_per_lane_bias_out_of_range(void)
     CHECK(!frame_flags_have(0u, "FAULT") && !frame_flags_have(3u, "FAULT"));
     CHECK(strstr(rsp, "{\"id\":1,\"alpha\":null,\"beta_window\":null,\"photon_ref\":{") != NULL); /* floor null, ref kept */
     CHECK(strstr(rsp, "{\"id\":2,\"alpha\":{") != NULL && strstr(rsp, "\"photon_ref\":null") != NULL);
-    /* DIAG: lane flag and the per-chain currents; raw counts still reported */
+    /* DIAG: lane flag; while armed the readings are not measured (null), the verdict of the last scan stays */
     CHECK(send("DIAG", "{\"seq\":%d}", (int)last) && status_is("OK"));
-    CHECK(has("\"imon_na\":[250100,"));
+    CHECK(has("\"imon_na\":[null,null]"));
     CHECK(has("\"flags\":[\"BIAS_OUT_OF_RANGE\"]"));
-    CHECK(send("STATUS", "{}") && has("\"fault\":[\"F1\",\"R2\"]"));
-    /* back in window: clears by itself (live condition, not latched) */
+    CHECK(send("STATUS", "{}") && has("\"scan\":\"PAUSED_ARMED\"") && has("\"fault\":[\"F1\",\"R2\"]"));
+    /* COVERAGE LOST WHILE ARMED: a chain that goes bad now is not seen, and one that recovers is not cleared */
+    m.imon_ua[0] = 900.0;
     m.imon_ua[1] = 1.0;
+    advance(600000u);
+    CHECK(core.imon_fault == ((1u << 1) | (1u << 6)));
+    /* disarmed: the scan resumes, the verdict follows the readings */
+    CHECK(send("DISARM", "{}") && status_is("OK"));
+    advance(500000u);
+    CHECK(core.imon_fault == ((1u << 0) | (1u << 6)));
+    CHECK(send("DIAG", "{\"seq\":%d}", (int)last) && has("\"imon_na\":[null,null]"));
+    m.imon_ua[0] = 1.0;
     m.imon_ua[6] = 1.0;
-    advance(400000u);
+    advance(500000u);
     CHECK(core.imon_fault == 0u);
     /* a chain the scan did not convert is "not measured": null, never a fault, never a zero */
     m.imon.valid = (uint8_t)~(1u << 3);
@@ -1023,7 +1032,6 @@ static void test_per_lane_bias_out_of_range(void)
     CHECK(core.imon_fault == 0u && (core.imon_na[3] == RRH_IMON_NA_INVALID));
     CHECK(send("STATUS", "{}") && has("\"na\":[1000,1000,1000,null,"));
     /* bias off: not judged */
-    CHECK(send("DISARM", "{}") && status_is("OK"));
     m.imon.valid = 0xFFu;
     m.imon_ua[0] = 900.0;
     core.health |= RRH_H_BIAS_PERMIT;
@@ -1043,6 +1051,41 @@ static void test_zones_not_available_and_lid(void)
     CHECK(send("DIAG", "{\"seq\":0}") && has("\"bumper_zones\":null"));
     CHECK(send("STATUS", "{\"clear_bumper\":true}") && has("\"bumper\":{\"available\":false,\"now\":null,\"latched\":null}"));
     CHECK(core.bumper_latched == 0u);
+}
+
+
+static void test_alpha_width_setup_and_dac_write_marker(void)
+{
+    mock_reset();
+    boot();
+    handshake();
+    CHECK(core.setup.fe.alpha_min_tot_ns == 250u);
+    char old_id[100];
+    strcpy(old_id, core.setup_id);
+    CHECK(send("ENG_SETUP_SET", "{\"afterglow\":{\"alpha_min_tot_ns\":400}}") && status_is("OK") && has("\"changed\":true"));
+    CHECK((m.fe.alpha_min_tot_ns == 400u) && (strcmp(old_id, core.setup_id) != 0)); /* enters setup_id */
+    handshake();
+    CHECK(send("ENG_SETUP_SET", "{\"afterglow\":{\"alpha_min_tot_ns\":5001}}") && status_is("BAD_ARG"));
+    CHECK(send("ENG_SETUP_SET", "{\"afterglow\":{\"alpha_min_tot_ns\":0,\"alpha_hold_us\":300}}") && status_is("OK"));
+    /* bias tracking while armed: every HV_SET write is counted in the gate (DIAG bias.dac_writes) */
+    handshake();
+    advance(1000000u);
+    arm(100000u);
+    advance(300000u);
+    for (uint32_t l = 0; l < RRH_LANES; l++) {
+        m.analog.sipm_mc[l] = 15000; /* 10 K colder: target moves by 215 mV, 20 mV per control period */
+    }
+    advance(1000000u);
+    uint32_t writes = 0u;
+    for (int i = 0; i < 12; i++) {
+        const int seq = (int)core.next_seq - 12 + i;
+        if (send("DIAG", "{\"seq\":%d}", seq) && status_is("OK")) {
+            int64_t v = -1;
+            (void)rrc_json_to_i64(&rdoc, rrc_json_get(&rdoc, rrc_json_get(&rdoc, body(), "bias"), "dac_writes"), &v);
+            writes += (uint32_t)((v < 0) ? 0 : v);
+        }
+    }
+    CHECK(writes >= 8u && writes <= 12u); /* one write per 100 ms gate while the target moves */
 }
 
 int main(void)
@@ -1065,5 +1108,6 @@ int main(void)
     RUN(test_bias_permit_trip_and_recovery);
     RUN(test_per_lane_bias_out_of_range);
     RUN(test_zones_not_available_and_lid);
+    RUN(test_alpha_width_setup_and_dac_write_marker);
     return TEST_SUMMARY();
 }
