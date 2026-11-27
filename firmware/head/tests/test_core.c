@@ -23,8 +23,13 @@ static struct {
     bool heater_req, heater_applied;
     uint32_t heater_requests;
     rrh_analog_t analog;
+    rrh_imon_t imon;
+    rrh_expander_t exp;
+    double imon_ua[RRH_CHAINS];
+    bool permit_ok;          /* mock of the permit latch: bias_mv reads 0 while false */
     uint32_t bias_mv;
     bool bias_on;
+    uint32_t bias_calls;
     uint8_t nv[128];
     size_t nv_len;
     uint32_t fe_applies, kicks;
@@ -109,12 +114,23 @@ bool rrh_hal_acq_poll(rrh_gate_record_t *rec)
     }
 }
 bool rrh_hal_frontend_apply(const rrh_frontend_cfg_t *cfg) { m.fe = *cfg; m.fe_applies++; return true; }
-void rrh_hal_bias_set(uint32_t mv, bool enable) { m.bias_mv = mv; m.bias_on = enable; }
+void rrh_hal_bias_set(uint32_t mv, bool enable) { m.bias_mv = mv; m.bias_on = enable; m.bias_calls++; }
 void rrh_hal_analog_read(rrh_analog_t *out)
 {
     *out = m.analog;
-    out->bias_mv = m.bias_on ? m.bias_mv : 0u;
+    out->bias_mv = (m.bias_on && m.permit_ok) ? m.bias_mv : 0u;
 }
+/* IMON_CH of chain ch = V(trim) - I x R105 (mock of the board, same formula as the sim) */
+void rrh_hal_imon_read(rrh_imon_t *out)
+{
+    memset(out, 0, sizeof *out);
+    out->valid = m.imon.valid;
+    for (uint32_t ch = 0; ch < RRH_CHAINS; ch++) {
+        double v = (double)rrh_board_trim_uv(m.fe.trim[ch]) - (m.bias_on ? m.imon_ua[ch] : 0.0) * (double)RRH_R105_OHM;
+        out->uv[ch] = (v < 2000.0) ? 2000u : (uint32_t)v;
+    }
+}
+void rrh_hal_expander_read(rrh_expander_t *out) { *out = m.exp; }
 void rrh_hal_heater_request(bool on)
 {
     m.heater_req = on;
@@ -188,6 +204,11 @@ static void mock_reset(void)
     m.analog.supply_valid = true;
     m.analog.supply_mv = 12000u;
     m.analog.heater_cutout_ok = true;
+    m.permit_ok = true;
+    m.imon.valid = 0xFFu;
+    for (uint32_t ch = 0; ch < RRH_CHAINS; ch++) {
+        m.imon_ua[ch] = 1.0;
+    }
 }
 
 static void boot(void)

@@ -128,27 +128,42 @@ void rrch_fields_step(rrch_t *c)
         }
     }
 
-    /* oblique look-ahead 4..7: left pair (4,5), right pair (6,7); guard forward */
-    float nominal = CFG(c, LOOK_NOMINAL_MM), tol = CFG(c, LOOK_TOL_MM), ahead = CFG(c, LOOK_AHEAD_M);
+    /* oblique look sensors (IB-34). The grip-cheek pair LOOK_FL/LOOK_FR guards forward travel, the tail pair
+     * LOOK_RL/LOOK_RR guards reverse travel. A pair caps and stops only motion in its own direction; the
+     * other pair is still checked every tick (stale / invalid / abnormal floor) and inhibits its own
+     * direction unlatched, so a reversal onto a bad sensor is refused. Reasons: LOOKAHEAD_L / LOOKAHEAD_R =
+     * robot-left (+y) / robot-right sensor of the pair in the direction of travel.
+     * No pair cross-comparison (TOF_DISAGREE): from mechanical/common/frames.yaml the floor spots of the
+     * partners are 0.286 m (forward) / 0.217 m (rear) apart laterally against spot diameters of about
+     * 0.17 m / 0.09 m (18 deg full field), so their fields do not overlap and a real edge seen by one
+     * only is legitimate. Each sensor is checked against its own expected floor range instead. */
+    static const struct { uint8_t idx; uint8_t rev; uint32_t side; } look[4] = {
+        {RRCH_TOF_LOOK_FL, 0, RRCH_SW(LOOKAHEAD_L)}, {RRCH_TOF_LOOK_FR, 0, RRCH_SW(LOOKAHEAD_R)},
+        {RRCH_TOF_LOOK_RL, 1, RRCH_SW(LOOKAHEAD_L)}, {RRCH_TOF_LOOK_RR, 1, RRCH_SW(LOOKAHEAD_R)}};
     for (int k = 0; k < 4; k++) {
-        rrch_tof_t *s = &c->tof[4 + k];
-        uint32_t side = (k < 2) ? RRCH_SW(LOOKAHEAD_L) : RRCH_SW(LOOKAHEAD_R);
+        rrch_tof_t *s = &c->tof[look[k].idx];
+        bool rev = look[k].rev != 0;
+        uint8_t dir = rev ? RRCH_DIR_REV : RRCH_DIR_FWD;
+        int di = rev ? 1 : 0;
+        float nominal = rev ? CFG(c, LOOK_REV_NOMINAL_MM) : CFG(c, LOOK_FWD_NOMINAL_MM);
+        float tol = rev ? CFG(c, LOOK_REV_TOL_MM) : CFG(c, LOOK_FWD_TOL_MM);
+        float ahead = rev ? CFG(c, LOOK_REV_AHEAD_M) : CFG(c, LOOK_FWD_AHEAD_M);
+        float cosf_ = rev ? CFG(c, LOOK_REV_COS) : CFG(c, LOOK_FWD_COS);
         if (s->eff == RRCH_TOF_ST_STALE || s->eff == RRCH_TOF_ST_OFFLINE) {
-            inhibit |= RRCH_DIR_FWD;
+            inhibit |= dir;
             cause |= RRCH_SW(TOF_STALE);
-            dc[0] |= RRCH_SW(TOF_STALE);
+            dc[di] |= RRCH_SW(TOF_STALE);
             f->look_active[k] = false;
             continue;
         }
         float r = (float)s->range_mm;
-        bool normal = s->valid && fabsf(r - nominal) <= tol;
-        if (normal) {
+        if (s->valid && fabsf(r - nominal) <= tol) {
             f->look_active[k] = false;
             continue;
         }
         float dist;
-        if (s->valid && r < nominal) { /* something stands on the floor ahead: measured each sample */
-            dist = ahead - (nominal - r) * 0.001f * CFG(c, LOOK_COS_FWD);
+        if (s->valid && r < nominal) { /* something stands on the floor in the field: measured each sample */
+            dist = ahead - (nominal - r) * 0.001f * cosf_;
             f->look_active[k] = false;
         } else { /* floor ends or cannot be seen: track the remaining distance by odometry */
             if (!f->look_active[k]) {
@@ -157,27 +172,21 @@ void rrch_fields_step(rrch_t *c)
                 f->look_s0[k] = c->drive.odometer_m;
             }
             float travelled = (float)(c->drive.odometer_m - f->look_s0[k]);
+            if (rev) {
+                travelled = -travelled;
+            }
             dist = f->look_dist0[k] - (travelled > 0.0f ? travelled : 0.0f);
         }
         float cap = rrch_stop_vcap(&c->cfg, dist);
-        if (cap < cap_f) {
-            cap_f = cap;
+        if (rev) {
+            cap_r = cap < cap_r ? cap : cap_r;
+        } else {
+            cap_f = cap < cap_f ? cap : cap_f;
         }
-        cause |= side;
+        cause |= look[k].side;
         if (cap <= 0.0f) {
-            inhibit |= RRCH_DIR_FWD;
-            dc[0] |= side;
-        }
-    }
-    for (int p = 0; p < 2; p++) {
-        rrch_tof_t *a = &c->tof[4 + 2 * p], *b = &c->tof[5 + 2 * p];
-        /* only while both read "nominal floor": an abnormal reading is already handled by the cap above */
-        bool an = a->valid && fabsf((float)a->range_mm - nominal) <= tol, bn = b->valid && fabsf((float)b->range_mm - nominal) <= tol;
-        bool dis = an && bn && fabsf((float)(a->range_mm - b->range_mm)) > CFG(c, LOOK_PAIR_TOL_MM);
-        if (timer_run(&f->t_disagree[p], dis, (uint16_t)CFG(c, TOF_DISAGREE_MS))) {
-            inhibit |= RRCH_DIR_FWD;
-            cause |= RRCH_SW(TOF_DISAGREE);
-            dc[0] |= RRCH_SW(TOF_DISAGREE);
+            inhibit |= dir;
+            dc[di] |= look[k].side;
         }
     }
 

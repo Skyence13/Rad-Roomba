@@ -120,6 +120,12 @@ void sim_init(sim_t *s, uint64_t seed, bool manual)
     s->analog.supply_mv = 12000u;
     s->analog.supply_valid = true;
     s->analog.heater_cutout_ok = true;
+    s->analog.zones_available = false; /* rev A: no rail-zone identification */
+    for (uint32_t ch = 0u; ch < RRH_CHAINS; ch++) {
+        s->imon_ua[ch] = 1.0;
+    }
+    s->imon_valid = 0xFFu;
+    s->exp_present = true;
     s->boot_mono_ns = sim_mono_ns();
 }
 
@@ -132,6 +138,8 @@ void sim_power_cycle(sim_t *s)
     s->heater_req = false;
     s->heater_applied = false;
     s->bias_enable = false;
+    s->bias_enable_prev = false;
+    s->permit = false;
     s->wave_state = RRH_WAVE_IDLE;
     s->model_us = 0u;
     s->boot_count++;
@@ -273,13 +281,44 @@ static void integrate_rates(sim_t *s, uint64_t start, uint64_t end, double mean[
     }
 }
 
-static uint32_t live_ticks(uint32_t gate_ticks, uint64_t events, double tau_us)
+static uint32_t live_ticks(uint32_t gate_ticks, uint64_t events, double tau_us, uint64_t held, double hold_us)
 {
-    const double dead = (double)events * tau_us * (double)(SIM_TICK_HZ / 1000000u);
+    const double dead = (((double)events * tau_us) + ((double)held * hold_us)) * (double)(SIM_TICK_HZ / 1000000u);
     if (dead >= ((double)gate_ticks - 1.0)) {
         return 1u;
     }
     return gate_ticks - (uint32_t)dead;
+}
+
+/* Test pulser model (charge injection through C109..C809 into the selected chain, 1 kHz strobe).
+ * Amplitude: Q = 100 pF x V(PULSER_AMPL) -> photo-electrons at 0.465 pC each, FAST output 6.9 mV
+ * per p.e. above the 0.600 V baseline, compared with the chain's threshold DAC levels. A pulse
+ * below LLD is not seen, above ULD it is a reject, otherwise a beta / reference count. The model
+ * never produces alpha-class events (no slow-path amplitude model). SIMULATED constants of a 6 mm
+ * J-series device (budget 2.2), not measurements. */
+static void pulser_add(sim_t *s, double mean[RRH_LANES][SIM_CH], double span_s)
+{
+    if (!s->fe.pulser_enable) {
+        return;
+    }
+    const uint32_t ch = s->fe.pulser_channel;
+    const uint32_t lane = ch & 3u;
+    const double pe = (double)rrh_board_pulser_fc(s->fe.pulser_code) / 465.0;
+    const double amp_uv = pe * (double)RRH_FAST_UV_PER_PE;
+    const uint16_t lld_code = (ch < 4u) ? s->fe.threshold[lane * 3u] : s->fe.threshold[12u + (lane * 2u)];
+    const uint16_t uld_code = (ch < 4u) ? s->fe.threshold[(lane * 3u) + 1u] : s->fe.threshold[12u + (lane * 2u) + 1u];
+    const double base = (double)rrh_board_baseline_uv();
+    const double lld = (double)rrh_board_trim_uv(lld_code) - base; /* same DAC scale as the trim codes */
+    const double uld = (double)rrh_board_trim_uv(uld_code) - base;
+    const double n = 1000.0 * span_s;
+    if (amp_uv < lld) {
+        return;
+    }
+    if (ch < 4u) {
+        mean[lane][(amp_uv >= uld) ? 3u : 1u] += n;
+    } else {
+        mean[lane][(amp_uv >= uld) ? 4u : 2u] += n;
+    }
 }
 
 bool rrh_hal_acq_poll(rrh_gate_record_t *rec)
@@ -303,6 +342,7 @@ bool rrh_hal_acq_poll(rrh_gate_record_t *rec)
         const double span_s = (double)s->span_us * 1e-6;
         double mean[RRH_LANES][SIM_CH];
         integrate_rates(s, start, end, mean);
+        pulser_add(s, mean, span_s);
         memset(rec, 0, sizeof *rec);
         rec->sequence = s->next_gate;
         rec->gate_start_tick = us_to_tick(start);
@@ -321,8 +361,12 @@ bool rrh_hal_acq_poll(rrh_gate_record_t *rec)
             /* Non-paralyzable chain with dead time tau per accepted event: the accepted rate
              * is n / (1 + n * tau). The recorded counts are drawn with that mean, and the live
              * time is the gate minus tau per recorded event. */
-            const double floor_true = (mean[l][0] + mean[l][1] + mean[l][3]) / span_s;
-            const double ff = 1.0 / (1.0 + (floor_true * s->tau_floor_us * 1e-6));
+            const double floor_n = mean[l][0] + mean[l][1] + mean[l][3];
+            const double floor_true = floor_n / span_s;
+            /* afterglow hold: each alpha event keeps the chain busy for alpha_hold_us more */
+            const double hold_us = (double)s->fe.alpha_hold_us;
+            const double tau_eff = s->tau_floor_us + ((floor_n > 0.0) ? ((mean[l][0] / floor_n) * hold_us) : 0.0);
+            const double ff = 1.0 / (1.0 + (floor_true * tau_eff * 1e-6));
             const double ref_true = (mean[l][2] + mean[l][4]) / span_s;
             const double fr = 1.0 / (1.0 + (ref_true * s->tau_ref_us * 1e-6));
             g->alpha_counts = rng_poisson(s->rng, mean[l][0] * ff);
@@ -330,10 +374,11 @@ bool rrh_hal_acq_poll(rrh_gate_record_t *rec)
             g->ref_counts = rng_poisson(s->rng, mean[l][2] * fr);
             g->floor_reject_counts = rng_poisson(s->rng, mean[l][3] * ff);
             g->ref_reject_counts = rng_poisson(s->rng, mean[l][4] * fr);
-            g->floor_live_ticks = live_ticks(
-                rec->gate_ticks, (uint64_t)g->alpha_counts + g->beta_counts + g->floor_reject_counts, s->tau_floor_us);
+            g->floor_live_ticks =
+                live_ticks(rec->gate_ticks, (uint64_t)g->alpha_counts + g->beta_counts + g->floor_reject_counts,
+                           s->tau_floor_us, g->alpha_counts, hold_us);
             g->ref_live_ticks =
-                live_ticks(rec->gate_ticks, (uint64_t)g->ref_counts + g->ref_reject_counts, s->tau_ref_us);
+                live_ticks(rec->gate_ticks, (uint64_t)g->ref_counts + g->ref_reject_counts, s->tau_ref_us, 0u, 0.0);
             if ((((uint32_t)s->saturate_mask >> l) & 1u) != 0u) {
                 g->flags |= RRH_GF_FLOOR_SATURATED;
             }
@@ -397,10 +442,60 @@ bool rrh_hal_frontend_apply(const rrh_frontend_cfg_t *cfg)
     return true;
 }
 
+/* Permit latch (U2205): set by a rising edge of HV_EN while no inhibit is active, cleared by any
+ * inhibit (over-voltage comparator, +5V_A supervisor: `inhibit`; lid switch open: `lid_open`). */
+static void permit_update(sim_t *s)
+{
+    if (s->inhibit || s->lid_open) {
+        s->permit = false;
+    }
+}
+
 void rrh_hal_bias_set(uint32_t millivolts, bool enable)
 {
-    g_sim.bias_set_mv = millivolts;
-    g_sim.bias_enable = enable;
+    sim_t *s = &g_sim;
+    permit_update(s);
+    if (enable && !s->bias_enable_prev && !s->inhibit && !s->lid_open) {
+        s->permit = true;
+    }
+    if (!enable) {
+        s->permit = false; /* HV_EN low: the latch D input stays high but the converter is off; re-arm needs a new edge */
+    }
+    s->bias_enable_prev = enable;
+    s->bias_set_mv = millivolts;
+    s->bias_enable = enable;
+}
+
+void rrh_hal_imon_read(rrh_imon_t *out)
+{
+    sim_t *s = &g_sim;
+    memset(out, 0, sizeof *out);
+    permit_update(s);
+    const bool biased = s->bias_enable && s->permit && (s->bias_set_mv > 0u);
+    for (uint32_t ch = 0u; ch < RRH_CHAINS; ch++) {
+        /* V(TRIMDRV) = V(trim) - I x R105; the buffer cannot go below its rail (2 mV) */
+        const double vt = (double)rrh_board_trim_uv(s->fe.trim[ch]);
+        double v = vt - ((biased ? s->imon_ua[ch] : 0.0) * (double)RRH_R105_OHM) + (double)s->imon_offset_uv;
+        if (v < 2000.0) {
+            v = 2000.0;
+        }
+        out->uv[ch] = (uint32_t)v;
+    }
+    out->valid = s->imon_valid;
+}
+
+void rrh_hal_expander_read(rrh_expander_t *out)
+{
+    sim_t *s = &g_sim;
+    permit_update(s);
+    out->present = s->exp_present;
+    out->inputs = 0u;
+    if (s->exp_present) {
+        out->inputs = (uint8_t)((s->permit ? RRH_EXP_HV_PERMIT : 0u) |
+                                ((s->inhibit || s->lid_open) ? 0u : RRH_EXP_HV_INH_N) | (s->lid_open ? RRH_EXP_LID_G : 0u) |
+                                (s->efuse_fault ? 0u : RRH_EXP_EF_FLT_N) | ((s->hw_rev & 1u) != 0u ? RRH_EXP_HWREV0 : 0u) |
+                                ((s->hw_rev & 2u) != 0u ? RRH_EXP_HWREV1 : 0u));
+    }
 }
 
 void rrh_hal_analog_read(rrh_analog_t *out)
@@ -427,7 +522,8 @@ void rrh_hal_analog_read(rrh_analog_t *out)
     } else {
         out->heater_plate_mc = s->analog.heater_plate_mc + (int32_t)(s->plate_heat_c * 1000.0);
     }
-    out->bias_mv = s->bias_enable ? s->bias_set_mv : 0u;
+    permit_update(s);
+    out->bias_mv = (s->bias_enable && s->permit) ? s->bias_set_mv : 0u; /* tripped permit: BIAS_VMON reads ~0 */
 }
 
 void rrh_hal_heater_request(bool on)

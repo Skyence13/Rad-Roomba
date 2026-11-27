@@ -375,16 +375,11 @@ static void op_state(ctx_t *x, int level)
     rrc_jw_kbool(w, "hw_latch", ch->latch);
     rrc_jw_key(w, "chain");
     rrc_jw_obj_begin(w);
-    rrc_jw_kbool(w, "MODE_RUN", (st & RRCH_DI(MODE_RUN)) != 0);
-    rrc_jw_kbool(w, "ESTOP", (st & RRCH_DI(ESTOP_A)) && (st & RRCH_DI(ESTOP_B)));
-    rrc_jw_kbool(w, "HANDS_ON", (st & RRCH_DI(HANDS_ON)) != 0);
-    rrc_jw_kbool(w, "CHG_COVER", (st & RRCH_DI(CHG_COVER)) && (st & RRCH_DI(CHG_PLUG_LINK)));
-    rrc_jw_kbool(w, "HEAD_DOCK", (st & RRCH_DI(HEAD_DOCK)) != 0);
-    rrc_jw_kbool(w, "HEAD_LOOP", ch->loop_state == 0u);
-    rrc_jw_kbool(w, "LAB_KEY_N", !(ch->hw_live & RRCH_HW(LAB_KEY)));
-    rrc_jw_kbool(w, "BODY_BUMPER", (st & RRCH_DI(BODY_BUMPER_L)) && (st & RRCH_DI(BODY_BUMPER_R)));
-    rrc_jw_kbool(w, "WDG_OK", (st & RRCH_DI(WDG_OK)) != 0);
-    rrc_jw_kbool(w, "ARM_PERMIT", c->out.arm_permit);
+    /* true = element known closed (IB-02: an element behind an open one is UNKNOWN and reported false here;
+     * DIAG.chain_state distinguishes OPEN from UNKNOWN) */
+    for (int i = 0; i < RRCH_EL_N; i++) {
+        rrc_jw_kbool(w, rrch_el_names[i], ch->el[i] == RRCH_ELS_CLOSED);
+    }
     rrc_jw_obj_end(w);
     kmask(w, "hw_inhibit_reasons", ch->hw_latched, rrch_hw_names, RRCH_HW_N);
     kmask_n(w, "protective_stop_reasons", c->sw_latched, rrch_sw_names, RRCH_SW_N, level < 2 ? RRCH_SW_N : 12);
@@ -508,12 +503,25 @@ static void op_diag(ctx_t *x)
     rrc_jw_kbool(w, "a", (st & RRCH_DI(ESTOP_A)) != 0);
     rrc_jw_kbool(w, "b", (st & RRCH_DI(ESTOP_B)) != 0);
     rrc_jw_obj_end(w);
-    char bits[RRCH_DI_N + 1]; /* debounced readbacks as a 0/1 string in the order of ICD section 3.14 */
+    char bits[RRCH_DI_N + 2]; /* debounced readbacks as a 0/1 string in the order of ICD section 3.14, + CHAIN_END */
     for (int i = 0; i < RRCH_DI_N; i++) {
         bits[i] = (st & (1u << i)) ? '1' : '0';
     }
-    bits[RRCH_DI_N] = 0;
+    bits[RRCH_DI_N] = ch->chain_end ? '1' : '0';
+    bits[RRCH_DI_N + 1] = 0;
     rrc_jw_kstr(w, "readbacks", bits);
+    static const char *const els_names[3] = {"UNKNOWN", "CLOSED", "OPEN"};
+    rrc_jw_key(w, "chain_state");
+    rrc_jw_obj_begin(w);
+    for (int i = 0; i < RRCH_EL_N; i++) {
+        rrc_jw_kstr(w, rrch_el_names[i], els_names[ch->el[i] % 3]);
+    }
+    rrc_jw_obj_end(w);
+    if (ch->chain_end_known) {
+        rrc_jw_kbool(w, "chain_end", ch->chain_end);
+    } else {
+        rrc_jw_knull(w, "chain_end");
+    }
     rrc_jw_ku64(w, "pres_ohm", ch->pres_ohm > 999999u ? 999999u : ch->pres_ohm);
     rrc_jw_key(w, "head_power");
     rrc_jw_obj_begin(w);

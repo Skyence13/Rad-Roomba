@@ -56,6 +56,17 @@ typedef struct {
     uint8_t saturate_mask;     /* bit n floor lane n, bit 4+n reference lane n */
     bool source_fail;          /* acquisition source refuses to start */
     bool width_hist;           /* fabricate the optional pulse-width histogram */
+    /* board functions of IB-17 (modelled, not measured): anode current monitor, expander, bias permit */
+    double imon_ua[RRH_CHAINS]; /* SiPM anode current per chain while the bias is on (default 1.0 uA, J60035 dark class) */
+    uint8_t imon_valid;         /* chains the monitor scan reports as converted */
+    int32_t imon_offset_uv;     /* offset error added to every IMON reading */
+    bool exp_present;           /* TCA9534 answers */
+    bool inhibit;               /* inhibit bus asserted by something other than the lid (OVP, +5V_A low) */
+    bool lid_open;
+    bool efuse_fault;
+    bool permit;                /* modelled permit latch: set by HV_EN rising edge with no inhibit, cleared by any inhibit */
+    bool bias_enable_prev;
+    uint8_t hw_rev;
     /* storage */
     uint8_t nv[256];
     size_t nv_len;

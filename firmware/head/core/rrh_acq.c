@@ -10,8 +10,11 @@
  *   live fraction < RRH_MIN_LIVE_PERCENT       -> SATURATED
  *   live_ticks == 0 or > gate_ticks            -> DEAD_TIME_UNKNOWN
  *   BASELINE_SHIFT (lane)                      -> DISCRIMINATOR_FAULT, all three channels
- *   BIAS_OUT_OF_RANGE (lane)                   -> FLOOR_FAULT + REFERENCE_FAULT, all three
+ *   BIAS_OUT_OF_RANGE (lane, from the source)  -> FLOOR_FAULT + REFERENCE_FAULT, all three
  *   chain invalid/disabled, front-end fault    -> FLOOR_FAULT or REFERENCE_FAULT for that chain
+ *   anode monitor out of window (chain, IMON)  -> FLOOR_FAULT (alpha, beta_window null) or
+ *                                                 REFERENCE_FAULT (photon_ref null) for that chain only;
+ *                                                 the lane DIAG flag BIAS_OUT_OF_RANGE is set as well
  * A measured zero stays {"counts":0,"live_us":n}.
  */
 #include <string.h>
@@ -178,7 +181,7 @@ static void sync_evaluate(rrh_core_t *c, rrh_frame_t *f, uint64_t start_us)
 
 /* ---- one gate record -> one frame ----------------------------------------------------------- */
 static void map_lane(rrh_frame_lane_t *o, const rrh_gate_lane_t *in, const rrh_gate_record_t *rec, uint8_t fe_fault,
-                     uint32_t lane, uint8_t chain_enable)
+                     uint32_t lane, uint8_t chain_enable, uint8_t imon_fault)
 {
     memset(o, 0, sizeof *o);
     o->alpha = in->alpha_counts;
@@ -189,6 +192,9 @@ static void map_lane(rrh_frame_lane_t *o, const rrh_gate_lane_t *in, const rrh_g
     o->floor_live_ticks = in->floor_live_ticks;
     o->ref_live_ticks = in->ref_live_ticks;
     o->gate_flags = in->flags;
+    o->alpha_idle_clears = in->alpha_idle_clears;
+    o->imon_na[0] = RRH_IMON_NA_INVALID;
+    o->imon_na[1] = RRH_IMON_NA_INVALID;
 
     const uint8_t floor = (uint8_t)(RRH_CH_ALPHA | RRH_CH_BETA);
     const bool floor_off = (((uint32_t)chain_enable >> lane) & 1u) == 0u;
@@ -240,6 +246,17 @@ static void map_lane(rrh_frame_lane_t *o, const rrh_gate_lane_t *in, const rrh_g
     if (((in->flags & RRH_GF_REF_INVALID) != 0u) || ref_off || ((((uint32_t)fe_fault >> (4u + lane)) & 1u) != 0u)) {
         o->null_mask |= RRH_CH_REF;
         o->seg_flags |= RRH_SF_REFERENCE_FAULT;
+    }
+    /* Anode current monitor: the SiPM of that chain is not held at its set overvoltage. */
+    if ((((uint32_t)imon_fault >> lane) & 1u) != 0u) {
+        o->null_mask |= floor;
+        o->seg_flags |= RRH_SF_FLOOR_FAULT;
+        o->gate_flags |= RRH_GF_BIAS_OUT_OF_RANGE;
+    }
+    if ((((uint32_t)imon_fault >> (4u + lane)) & 1u) != 0u) {
+        o->null_mask |= RRH_CH_REF;
+        o->seg_flags |= RRH_SF_REFERENCE_FAULT;
+        o->gate_flags |= RRH_GF_BIAS_OUT_OF_RANGE;
     }
 }
 
@@ -297,8 +314,12 @@ static void on_gate(rrh_core_t *c, const rrh_gate_record_t *rec)
     rrh_control_sample(c);
     rrh_control_on_gate(c, rec);
     for (uint32_t lane = 0u; lane < RRH_LANES; lane++) {
-        map_lane(&f->lane[lane], &rec->lane[lane], rec, c->analog.frontend_fault, lane, c->setup.fe.chain_enable);
+        map_lane(&f->lane[lane], &rec->lane[lane], rec, c->analog.frontend_fault, lane, c->setup.fe.chain_enable,
+                 c->imon_fault);
+        f->lane[lane].imon_na[0] = c->imon_na[lane];
+        f->lane[lane].imon_na[1] = c->imon_na[lane + 4u];
     }
+    f->imon_fault = c->imon_fault;
     f->health = c->health;
     f->acq_flags = rrh_control_acq_flags(c);
     f->head_mc = rrh_control_head_mc(c);
@@ -327,7 +348,8 @@ static void on_gate(rrh_core_t *c, const rrh_gate_record_t *rec)
     f->heater_plate_mc = c->analog.heater_plate_mc;
     f->board_mc = c->analog.board_mc;
     f->supply_mv = c->analog.supply_valid ? c->analog.supply_mv : 0u;
-    f->bumper_zones = (uint8_t)(c->bumper_gate | c->analog.bumper_zones);
+    f->zones_available = c->analog.zones_available;
+    f->bumper_zones = c->analog.zones_available ? (uint8_t)(c->bumper_gate | c->analog.bumper_zones) : 0u;
     c->bumper_gate = 0u;
     f->width_mask = rec->width_mask;
     if (rec->width_mask != 0u) {
@@ -388,14 +410,14 @@ static const char *const k_acq_flags[6] = {"ACQ_FAULT", "HEAD_TEMP_OUT_OF_RANGE"
                                            "HEATER_FAULT", "OVERTEMP"};
 static const char *const k_gate_flags[6] = {"FLOOR_SATURATED", "REF_SATURATED", "BIAS_OUT_OF_RANGE", "BASELINE_SHIFT",
                                             "FLOOR_INVALID", "REF_INVALID"};
-static const char *const k_health[13] = {"SOURCE", "GATE_TIMING", "RECORD_LOST", "GATE_TIMEOUT", "INJECTED",
-                                         "HEATER_SENSOR", "HEATER_CUTOUT", "HEATER_OVERTEMP", "HEATER_STUCK",
-                                         "BIAS_TRIP", "ENTROPY", "STORAGE", "WATCHDOG_RESET"};
+static const char *const k_health[RRH_H_COUNT] = {"SOURCE", "GATE_TIMING", "RECORD_LOST", "GATE_TIMEOUT", "INJECTED",
+                                                  "HEATER_SENSOR", "HEATER_CUTOUT", "HEATER_OVERTEMP", "HEATER_STUCK",
+                                                  "BIAS_TRIP", "ENTROPY", "STORAGE", "WATCHDOG_RESET", "BIAS_PERMIT"};
 static const char *const k_zones[3] = {"FRONT", "LEFT", "RIGHT"};
 
 void rrh_write_health_names(uint16_t health, rrc_jw_t *w)
 {
-    put_flag_names(w, health, k_health, 13u);
+    put_flag_names(w, health, k_health, RRH_H_COUNT);
 }
 
 void rrh_write_zone_names(uint8_t zones, rrc_jw_t *w)
@@ -517,7 +539,11 @@ void rrh_acq_write_diag(const rrh_core_t *c, const rrh_frame_t *f, rrc_jw_t *w)
     rrc_jw_obj_end(w);
     rrc_jw_kfixed(w, "supply_v", f->supply_mv, 3u, true);
     rrc_jw_key(w, "bumper_zones");
-    rrh_write_zone_names(f->bumper_zones, w);
+    if (f->zones_available) {
+        rrh_write_zone_names(f->bumper_zones, w);
+    } else {
+        rrc_jw_null(w); /* rev A: no zone identification (not "not actuated") */
+    }
     rrc_jw_key(w, "health");
     rrh_write_health_names(f->health, w);
     if (f->width_mask != 0u) {
@@ -544,6 +570,17 @@ void rrh_acq_write_diag(const rrh_core_t *c, const rrh_frame_t *f, rrc_jw_t *w)
         rrc_jw_ku64(w, "ref_live_ticks", l->ref_live_ticks);
         rrc_jw_key(w, "flags");
         put_flag_names(w, l->gate_flags, k_gate_flags, 6u);
+        rrc_jw_ku64(w, "alpha_idle_clears", l->alpha_idle_clears);
+        rrc_jw_key(w, "imon_na");
+        rrc_jw_arr_begin(w);
+        for (uint32_t g = 0u; g < 2u; g++) {
+            if (l->imon_na[g] == RRH_IMON_NA_INVALID) {
+                rrc_jw_null(w);
+            } else {
+                rrc_jw_u64(w, l->imon_na[g]);
+            }
+        }
+        rrc_jw_arr_end(w);
         put_width_hist(w, "floor_width_hist", f, lane);
         put_width_hist(w, "ref_width_hist", f, lane + RRH_LANES);
         rrc_jw_obj_end(w);

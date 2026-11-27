@@ -289,6 +289,31 @@ static const char *cmd_analog(void)
         g_sim.analog.bumper_zones = (uint8_t)((uint32_t)v & 7u);
     }
     g_sim.analog.heater_cutout_ok = j_flag("cutout_ok", g_sim.analog.heater_cutout_ok);
+    /* board functions of IB-17 */
+    t = rrc_json_get(&g_doc, 0, "imon_ua");
+    if (t >= 0) {
+        for (uint32_t ch = 0u; ch < RRH_CHAINS; ch++) {
+            const int e = (rrc_json_type(&g_doc, t) == RRC_JT_ARRAY) ? rrc_json_at(&g_doc, t, (uint16_t)ch) : t;
+            if (!j_num(e, &v) || (v < 0.0)) {
+                return "imon_ua";
+            }
+            g_sim.imon_ua[ch] = v;
+        }
+    }
+    if (j_num(rrc_json_get(&g_doc, 0, "imon_valid"), &v)) {
+        g_sim.imon_valid = (uint8_t)((uint32_t)v & 0xFFu);
+    }
+    if (j_num(rrc_json_get(&g_doc, 0, "imon_offset_uv"), &v)) {
+        g_sim.imon_offset_uv = (int32_t)v;
+    }
+    g_sim.exp_present = j_flag("expander", g_sim.exp_present);
+    g_sim.lid_open = j_flag("lid_open", g_sim.lid_open);
+    g_sim.inhibit = j_flag("inhibit", g_sim.inhibit);
+    g_sim.efuse_fault = j_flag("efuse_fault", g_sim.efuse_fault);
+    g_sim.analog.zones_available = j_flag("zones_available", g_sim.analog.zones_available);
+    if (j_num(rrc_json_get(&g_doc, 0, "hw_rev"), &v)) {
+        g_sim.hw_rev = (uint8_t)((uint32_t)v & 3u);
+    }
     return NULL;
 }
 
@@ -448,6 +473,31 @@ static size_t control_handle(const char *msg, size_t len, char *out, size_t cap)
             }
             rrc_jw_arr_end(&w);
         }
+        rrc_jw_obj_end(&w);
+        rrc_jw_key(&w, "board");
+        rrc_jw_obj_begin(&w);
+        rrc_jw_key(&w, "pulser");
+        rrc_jw_obj_begin(&w);
+        rrc_jw_kbool(&w, "enable", g_sim.fe.pulser_enable);
+        rrc_jw_ku64(&w, "channel", g_sim.fe.pulser_channel);
+        rrc_jw_ku64(&w, "code", g_sim.fe.pulser_code);
+        rrc_jw_ku64(&w, "width_us", g_sim.fe.pulser_width_us);
+        rrc_jw_ku64(&w, "charge_fc", rrh_board_pulser_fc(g_sim.fe.pulser_code));
+        rrc_jw_obj_end(&w);
+        rrc_jw_key(&w, "led");
+        rrc_jw_obj_begin(&w);
+        rrc_jw_kbool(&w, "enable", g_sim.fe.led_enable);
+        rrc_jw_ku64(&w, "code", g_sim.fe.led_code);
+        rrc_jw_ku64(&w, "v_led_mv", rrh_board_led_mv(g_sim.fe.led_code));
+        rrc_jw_obj_end(&w);
+        rrc_jw_ku64(&w, "alpha_hold_us", g_sim.fe.alpha_hold_us);
+        rrc_jw_key(&w, "bias");
+        rrc_jw_obj_begin(&w);
+        rrc_jw_ku64(&w, "out_mv", g_sim.bias_set_mv);
+        rrc_jw_kbool(&w, "hv_en", g_sim.bias_enable);
+        rrc_jw_kbool(&w, "permit", g_sim.permit);
+        rrc_jw_ku64(&w, "hv_set_code", rrh_board_hv_code(g_sim.bias_set_mv));
+        rrc_jw_obj_end(&w);
         rrc_jw_obj_end(&w);
         rrc_jw_ku64(&w, "rx_bytes", g_rx_bytes);
         rrc_jw_ku64(&w, "tx_bytes", g_tx_bytes);

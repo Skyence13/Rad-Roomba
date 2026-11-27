@@ -19,7 +19,7 @@ add_subdirectory(../common common)
 set(RRH_WARN -Wall -Wextra -Werror -Wconversion -Wshadow -Wstrict-prototypes -Wmissing-prototypes)
 
 add_library(rrh_core STATIC core/rrh_core.c core/rrh_acq.c core/rrh_setup.c core/rrh_control.c core/rrh_eng.c
-                            core/rrh_evtcap.c)
+                            core/rrh_evtcap.c core/rrh_board.c)
 target_include_directories(rrh_core PUBLIC core hal)
 target_link_libraries(rrh_core PUBLIC rr_common)
 target_compile_options(rrh_core PRIVATE ${RRH_WARN} -Wpedantic)
@@ -36,6 +36,13 @@ target_include_directories(test_core PRIVATE ../common/tests)
 target_compile_options(test_core PRIVATE ${RRH_WARN})
 set_target_properties(test_core PROPERTIES C_STANDARD 11 C_STANDARD_REQUIRED ON C_EXTENSIONS OFF)
 add_test(NAME head_core_unit COMMAND test_core)
+
+add_executable(test_board tests/test_board.c)
+target_link_libraries(test_board PRIVATE rrh_core m)
+target_include_directories(test_board PRIVATE ../common/tests)
+target_compile_options(test_board PRIVATE ${RRH_WARN})
+set_target_properties(test_board PROPERTIES C_STANDARD 11 C_STANDARD_REQUIRED ON C_EXTENSIONS OFF)
+add_test(NAME head_board_unit COMMAND test_board)
 
 add_executable(test_evtcap tests/test_evtcap.c)
 target_link_libraries(test_evtcap PRIVATE rrh_core m)

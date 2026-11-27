@@ -147,12 +147,63 @@ static void op_status(rrh_core_t *c, const rrc_json_t *d, const rrc_req_t *req, 
     } else {
         rrc_jw_knull(w, "supply_v");
     }
+    /* Rail zones: rev A has no zone identification (IB-21 closed for rev A). "available": false
+     * means NOT AVAILABLE, which is different from "no zone actuated" (empty arrays). */
     rrc_jw_key(w, "bumper");
     rrc_jw_obj_begin(w);
-    rrc_jw_key(w, "now");
-    rrh_write_zone_names(a->bumper_zones, w);
-    rrc_jw_key(w, "latched");
-    rrh_write_zone_names(c->bumper_latched, w);
+    rrc_jw_kbool(w, "available", a->zones_available);
+    if (a->zones_available) {
+        rrc_jw_key(w, "now");
+        rrh_write_zone_names(a->bumper_zones, w);
+        rrc_jw_key(w, "latched");
+        rrh_write_zone_names(c->bumper_latched, w);
+    } else {
+        rrc_jw_knull(w, "now");
+        rrc_jw_knull(w, "latched");
+    }
+    rrc_jw_obj_end(w);
+    /* Optional I2C expander (TCA9534 at 0x20): hardware permit, inhibit, lid and eFuse read-back.
+     * Without it every field but "present" is null ("unknown"). */
+    rrc_jw_key(w, "expander");
+    rrc_jw_obj_begin(w);
+    rrc_jw_kbool(w, "present", c->exp.present);
+    if (c->exp.present) {
+        rrc_jw_kbool(w, "hv_permit", (c->exp.inputs & RRH_EXP_HV_PERMIT) != 0u);
+        rrc_jw_kbool(w, "hv_inhibit", (c->exp.inputs & RRH_EXP_HV_INH_N) == 0u);
+        rrc_jw_kbool(w, "lid_open", (c->exp.inputs & RRH_EXP_LID_G) != 0u);
+        rrc_jw_kbool(w, "efuse_fault", (c->exp.inputs & RRH_EXP_EF_FLT_N) == 0u);
+        rrc_jw_ku64(w, "hw_rev", (uint64_t)(((c->exp.inputs & RRH_EXP_HWREV0) != 0u) ? 1u : 0u) |
+                                      (uint64_t)(((c->exp.inputs & RRH_EXP_HWREV1) != 0u) ? 2u : 0u));
+    } else {
+        rrc_jw_knull(w, "hv_permit");
+        rrc_jw_knull(w, "hv_inhibit");
+        rrc_jw_knull(w, "lid_open");
+        rrc_jw_knull(w, "efuse_fault");
+        rrc_jw_knull(w, "hw_rev");
+    }
+    rrc_jw_obj_end(w);
+    /* Per-chain anode current (nA; null = not measured) and the chains out of window. */
+    rrc_jw_key(w, "imon");
+    rrc_jw_obj_begin(w);
+    rrc_jw_key(w, "na");
+    rrc_jw_arr_begin(w);
+    for (uint32_t ch = 0u; ch < RRH_CHAINS; ch++) {
+        if (c->imon_na[ch] == RRH_IMON_NA_INVALID) {
+            rrc_jw_null(w);
+        } else {
+            rrc_jw_u64(w, c->imon_na[ch]);
+        }
+    }
+    rrc_jw_arr_end(w);
+    rrc_jw_key(w, "fault");
+    rrc_jw_arr_begin(w);
+    static const char *const chain_names[RRH_CHAINS] = {"F0", "F1", "F2", "F3", "R0", "R1", "R2", "R3"};
+    for (uint32_t ch = 0u; ch < RRH_CHAINS; ch++) {
+        if (((c->imon_fault >> ch) & 1u) != 0u) {
+            rrc_jw_str(w, chain_names[ch]);
+        }
+    }
+    rrc_jw_arr_end(w);
     rrc_jw_obj_end(w);
     rrc_jw_key(w, "link_stats");
     rrc_jw_obj_begin(w);
@@ -163,16 +214,16 @@ static void op_status(rrh_core_t *c, const rrc_json_t *d, const rrc_req_t *req, 
     rrc_jw_obj_end(w);
     rrc_rsp_end(w);
     if (clear_bumper) {
-        c->bumper_latched = a->bumper_zones;
+        c->bumper_latched = a->zones_available ? a->bumper_zones : 0u;
     }
 }
 
 static uint16_t health_bit_by_name(const rrc_json_t *d, int tok)
 {
-    static const char *const names[13] = {"SOURCE", "GATE_TIMING", "RECORD_LOST", "GATE_TIMEOUT", "INJECTED",
-                                          "HEATER_SENSOR", "HEATER_CUTOUT", "HEATER_OVERTEMP", "HEATER_STUCK",
-                                          "BIAS_TRIP", "ENTROPY", "STORAGE", "WATCHDOG_RESET"};
-    for (uint32_t i = 0u; i < 13u; i++) {
+    static const char *const names[RRH_H_COUNT] = {"SOURCE", "GATE_TIMING", "RECORD_LOST", "GATE_TIMEOUT", "INJECTED",
+                                                   "HEATER_SENSOR", "HEATER_CUTOUT", "HEATER_OVERTEMP", "HEATER_STUCK",
+                                                   "BIAS_TRIP", "ENTROPY", "STORAGE", "WATCHDOG_RESET", "BIAS_PERMIT"};
+    for (uint32_t i = 0u; i < RRH_H_COUNT; i++) {
         if (rrc_json_str_eq(d, tok, names[i])) {
             return (uint16_t)(1u << i);
         }
@@ -200,7 +251,7 @@ static void op_fault_clear(rrh_core_t *c, const rrc_json_t *d, const rrc_req_t *
         }
     }
     /* Refresh the inputs so "cause gone" is judged on current data, then clear only those. */
-    rrh_hal_analog_read(&c->analog);
+    rrh_control_refresh_inputs(c);
     const uint16_t cleared = (uint16_t)(c->health & want & rrh_control_clearable(c));
     c->health = (uint16_t)(c->health & (uint16_t)~cleared);
     rrc_rsp_begin(w, RRH_PROTO_VERSION, req->id, "OK");
