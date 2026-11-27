@@ -50,7 +50,13 @@ typedef struct {
     bool io_cfg_fault;              /* a tap pin / expander direction reads back wrong (M2/M3) */
     bool cset_diode;                /* stage-3 option: diode in series with R_SET, no back-feed */
     double vmot_tau_s;              /* VMOT bleed time constant (1 kOhm x bulk capacitance), default 0.81 s */
-    bool cset_energy;               /* REARM sets K1 only with C_SET above 9 V (off by default: tests arm right after boot) */
+    bool cset_energy;               /* REARM sets K1 only from a charged C_SET (T11 coil-current model); false = any press sets */
+    /* round 4 (N1/N2, T11): set stage parameters and fault models */
+    double cset_uf;                 /* C_SET capacitance, default 100 uF (T11: -20 % tolerance) */
+    double k1_coil_c;               /* K1 coil temperature; NAN = board temperature (temp_board) */
+    double k1_pickup_ms;            /* K1 operate time, default 3 ms (T11: 4 ms max) */
+    bool uhold_open;                /* U_HOLD LED open: K1 can close on a set pulse but RUN_HD never comes */
+    int iox_d_period_ms;            /* 0: IOX_D read every 1 ms when rrch_iox_d_fast() asks, else 10 ms; >0 forced period */
     /* TPS3430 window watchdog: WDI edges counted per wdi_mode (0 falling, 1 rising, 2 both); a counted edge
      * closer than 2.2 ms to the previous one or none for 23.4 ms (tWDU min) asserts WDO for 200 ms; with
      * JP1 closed WDO also holds NRST, so the MCU sits in reset for those 200 ms */

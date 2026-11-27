@@ -165,6 +165,7 @@ void rrch_init(rrch_t *c, const rrch_hal_t *hal)
 {
     memset(c, 0, sizeof *c);
     c->hal = *hal;
+    c->chain.rearm_why = RRCH_RREF_FAULT_OR_MODE; /* nothing evaluated yet: a press would not be offered */
     c->now_us = hal->now_us(hal->ctx);
     uint8_t seed[4] = {1, 2, 3, 4};
     if (hal->entropy) {
@@ -640,8 +641,7 @@ static void panel_step(rrch_t *c)
         bz = (c->ms % 250u) < 125u;
     }
     c->out.buzzer = bz;
-    bool ready = !c->chain.latch && c->boot_done && c->chain.hw_live == 0u && c->out.arm_permit && c->chain.el[RRCH_EL_ARM_PERMIT] == RRCH_ELS_CLOSED &&
-                 c->chain.el[RRCH_EL_ESTOP] == RRCH_ELS_CLOSED && c->chain.ce_high_ms >= 2000u /* C_SET recharged (stage 3 F12) */;
+    bool ready = !c->chain.latch && c->chain.rearm_why == RRCH_RREF_NONE; /* round 4 N1: a press will set the latch */
     bool clearable = (c->sw_latched || c->hold) && !(c->sw_active & c->sw_latched);
     c->out.lamp_rearm = (ready || clearable) && (c->ms % 500u) < 250u;
     c->out.lamp_pause = c->mode == RRCH_MODE_MOVING;

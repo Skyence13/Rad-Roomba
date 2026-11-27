@@ -30,14 +30,16 @@ def afmt(a):
 
 
 def scan_case():
-    return N.LaneCase(R.cell_lane_weights(0.0, v=V), R.BETA_CAL, 0.05)
+    """Scan cell, 1 s dwell, weights 1 (a centred realistic footprint gives the same achieved/nominal within
+    0.02, slightly lower; tests/test_unull.py)."""
+    return N.LaneCase(R.Lane(np.array([1.0]), np.array([1.0])), R.BETA_CAL, 1.0)
 
 
 def recount_case(T):
     return N.LaneCase(R.Lane(np.array([1.0]), np.array([float(T)])), R.BETA_CAL, 1.0)
 
 
-CASES = [("scan cell, lane centred, 0.1 m/s", scan_case())] + [(f"recount {T:g} s", recount_case(T)) for T in (10, 30, 60)]
+CASES = [("scan cell 1 s", scan_case())] + [(f"recount {T:g} s", recount_case(T)) for T in (10, 30, 60)]
 
 # ------------------------------------------------------------------ (1) minimum window count
 rows, tab = [], []
@@ -124,10 +126,15 @@ for cname, case in (CASES[0], CASES[2]):
             for n in (50, 100, 400):
                 tp = N.threshold_rule(case, n, n / U, a, "predictive")
                 line.append(N.rate_for_power(case, U, tp) / r_true)
+            tu = N.threshold_rule(case, 100, 100 / U, a, "upper")
+            line.append(N.rate_for_power(case, U, tu) / r_true)
             crow.append(line)
-write_csv("rev4_cost.csv", ["statistic", "dose_rate_uSv_h", "alpha", "D_hash_ratio_N50", "D_hash_ratio_N100", "D_hash_ratio_N400"],
+write_csv("rev4_cost.csv", ["statistic", "dose_rate_uSv_h", "alpha", "D_hash_ratio_N50", "D_hash_ratio_N100", "D_hash_ratio_N400",
+                            "D_hash_ratio_upper_bound_rule_N100"],
           [[f"{x:.5g}" if isinstance(x, float) else x for x in r] for r in crow])
-md_table("rev4_cost", ["Statistic", "µSv/h", "α", "D# predictive ÷ D# with U known, N_ref = 50", "N_ref = 100", "N_ref = 400"], crow)
+md_table("rev4_cost", ["Statistic", "µSv/h", "α", "D# predictive ÷ D# with U known, N_ref = 50", "N_ref = 100", "N_ref = 400",
+                       "Provable upper-bound rule, N_ref = 100"], crow)
+S["rev4_cost_upper_max"] = fmt(max(r[6] for r in crow))
 S["rev4_cost_100_max"] = fmt(max(r[4] for r in crow))
 S["rev4_cost_50_max"] = fmt(max(r[3] for r in crow))
 S["rev4_cost_400_max"] = fmt(max(r[5] for r in crow))
@@ -213,6 +220,25 @@ S["rev4_rec_own_min"] = fmt(min(r[6] for r in rrow))
 S["rev4_runtime"] = f"{time.time() - t0:.0f} s"
 S["rev4_alpha_recount"] = afmt(ALPHA_RECOUNT)
 update_summary(**S)
+
+# ------------------------------------------------------------------ probe of the ros2_ws processing (static input)
+import csv  # noqa: E402
+
+probe = ROOT / "results" / "rev4_window_probe.csv"
+if probe.exists():
+    with probe.open(encoding="utf-8") as fh:
+        pr = list(csv.DictReader(fh))
+    md_table("rev4_probe", ["Scenario", "Evaluation", "β cells", "Cells with a lane without window (rule rev 4)",
+                            "Failing lanes: window counts min / median", "Failing lanes within half a window of a series start/end",
+                            "Cells < 100 / < 200 counts, whole attachment, lane or pooled", "Cells < 100 / < 200 counts, lane only"],
+             [(r["scenario"], r["evaluation"], r["beta_cells"], r["cells_with_a_lane_without_window_rev4"],
+               f"{r['failing_lanes_window_counts_min']} / {r['failing_lanes_window_counts_median']}" if r["failing_lanes"] != "0" else "—",
+               f"{r['failing_lanes_within_half_window_of_series_start_or_end']} of {r['failing_lanes']}",
+               f"{r.get('cells_lt_100_counts_whole_attachment_lane_or_pooled', '')} / {r.get('cells_lt_200_counts_whole_attachment_lane_or_pooled', '')}",
+               f"{r.get('cells_lt_100_counts_whole_attachment_lane_only', '')} / {r.get('cells_lt_200_counts_whole_attachment_lane_only', '')}")
+              for r in pr])
+else:
+    (TABLES / "rev4_probe.md").write_text("(probe not run: scripts/probe_unull_windows.py)\n", encoding="utf-8")
 
 # ------------------------------------------------------------------ report fragment
 summary = json.loads((ROOT / "results" / "summary.json").read_text(encoding="utf-8"))

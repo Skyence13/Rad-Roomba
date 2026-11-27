@@ -336,10 +336,15 @@ int main(void)
             th_run_silent(t, 300);
             (void)th_req(t, "HELLO", "{}");
             (void)th_req(t, "SET_OP_MODE", "{\"op_mode\":\"" OPM "\"}");
-            th_run(t, 2800); /* C_SET charged */
+            th_run(t, 6500); /* C_SET charged */
             th_env(t, "{\"rearm_aux_short\":true,\"rearm_set_short\":true}");
             th_run(t, 400);
             bool armed_once = t->sim.latch;
+            /* round 4: a REARM contact still closed 2 s after the latch rose withdraws ARM_PERMIT (REARM_HELD) */
+            th_run(t, 1500);
+            bool still = t->sim.latch;
+            th_run(t, 300);
+            CHECK(armed_once && still && !t->sim.latch && fault(t, RRCH_FLT(REARM_HELD)) && th_req(t, "STATE", "{}") && th_has(t, "hw_inhibit_reasons", "MCU_NOT_READY"));
             th_env(t, "{\"bumper_r\":true}");
             th_run(t, 200);
             th_env(t, "{\"bumper_r\":false}");

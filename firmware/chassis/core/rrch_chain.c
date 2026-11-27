@@ -100,6 +100,79 @@ void rrch_iox_d_update(rrch_t *c, bool ok, uint8_t in, uint64_t t_us)
     }
 }
 
+bool rrch_iox_d_fast(const rrch_t *c)
+{
+    const rrch_chain_t *ch = &c->chain;
+    if (ch->latch) {
+        return ch->judge_pending || c->now_us - ch->raw_latch_since_us < 300000u;
+    }
+    return ch->chain_end || ch->press_pending || ch->judge_pending || (c->in.di & RRCH_DI(BTN_REARM)) != 0u;
+}
+
+/* --- round 4 N1: conservative timed model of the C_SET charge (the board has no C_SET readback) ---
+ * electronics/analysis/chassis_braking_tables.md T11: C_SET 100 uF charged from CHAIN_END through D_RSET (0.4 V) and
+ * R_SET 22 k, dumped into the K1 coil (1028 ohm at 23 C, +0.393 %/K) while U_SET conducts (set gate ~110 ms, cut short
+ * when the set contact opens), emptied by Q_SDIS within ~0.3 s whenever CHAIN_END is dead. K1 operates when the coil
+ * current exceeds 8.75 mA (9 V at 23 C) for the 4 ms operate time. Every constant below errs towards a LOWER modelled
+ * voltage / HIGHER needed voltage, so rearm_ready can be late but not early. */
+#define CSET_KC 3.7446e-4f      /* 1 - exp(-1 ms / 2.67 s): 22 k (1 %) x 120 uF (C_SET +20 % [A]; T11 states -20 %) */
+#define CSET_KD 0.98582f        /* exp(-1 ms / 70 ms): dump through the coil, 1028 ohm -15 % x 80 uF (fastest) [A] */
+#define CSET_DIODE_V 0.5f       /* D_RSET at the end of charge 0.4 V [A] + 0.1 V */
+#define CSET_SUPPLY_LOSS_V 0.3f /* VBAT reading to CHAIN_END: chain photo-MOS, fuses, ADC error [A] */
+#define K1_OPERATE_A 8.75e-3f   /* T11 must-operate current (ampere-turns: the same at any temperature) */
+#define K1_COIL_OHM_23 1028.0f
+#define K1_COIL_TC 0.00393f
+#define K1_COIL_RISE_K 10.0f    /* coil above the board NTC (warm from an earlier seal-in) [A] */
+#define K1_COIL_UNKNOWN_C 60.0f /* board NTC unreadable [A] */
+#define K1_OPERATE_MARGIN 1.07f /* current above must-operate for the whole 4 ms operate time: exp(4/70) + 1 % */
+#define SET_GATE_US 115000u     /* set gate 110 ms + 5 ms */
+static void cset_model_step(rrch_t *c, bool aux, bool set)
+{
+    rrch_chain_t *ch = &c->chain;
+    float tb = c->in.ntc_c[2];
+    float tcoil = isfinite(tb) ? tb + K1_COIL_RISE_K : K1_COIL_UNKNOWN_C;
+    float rc = K1_COIL_OHM_23 * (1.0f + K1_COIL_TC * (tcoil - 23.0f));
+    rc = rc < 700.0f ? 700.0f : rc;
+    ch->cset_need_v = K1_OPERATE_A * rc * K1_OPERATE_MARGIN;
+    float vb = c->in.vbat_v;
+    ch->cset_target_v = isfinite(vb) ? vb - CSET_SUPPLY_LOSS_V - CSET_DIODE_V : 0.0f;
+    uint64_t last = ch->rearm_edge_us > ch->rearm_set_edge_us ? ch->rearm_edge_us : ch->rearm_set_edge_us;
+    bool dumping = (aux || set) && last != 0u && c->now_us - last <= SET_GATE_US;
+    if (!(ch->chain_end_known && ch->chain_end)) {
+        ch->cset_model_v = 0.0f; /* Q_SDIS: assumed empty at once */
+    } else if (dumping) {
+        ch->cset_model_v *= CSET_KD;
+    } else if (ch->cset_target_v > ch->cset_model_v) {
+        ch->cset_model_v += (ch->cset_target_v - ch->cset_model_v) * CSET_KC;
+    }
+}
+
+/* what a REARM press would meet now (latch down) */
+static uint8_t rearm_why(const rrch_t *c, bool others_closed)
+{
+    const rrch_chain_t *ch = &c->chain;
+    if (!c->boot_done || c->mode == RRCH_MODE_FAULT || c->mode == RRCH_MODE_BOOT || c->mode == RRCH_MODE_LAB || c->mode == RRCH_MODE_SERVICE_CHARGE ||
+        (c->faults & RRCH_FLT_FATAL_MASK)) {
+        return RRCH_RREF_FAULT_OR_MODE;
+    }
+    if (ch->rearm_held_ms > 2000u || ch->rearm_set_held_ms > 2000u) {
+        return RRCH_RREF_REARM_HELD;
+    }
+    if (!others_closed || (ch->hw_live & ~RRCH_HW(MCU_NOT_READY)) != 0u) {
+        return RRCH_RREF_CHAIN_OPEN;
+    }
+    if (!c->out.arm_permit || ch->el[RRCH_EL_ARM_PERMIT] != RRCH_ELS_CLOSED) {
+        return RRCH_RREF_PERMIT_WITHHELD;
+    }
+    if (ch->cset_target_v < ch->cset_need_v + 0.1f) {
+        return RRCH_RREF_SUPPLY_LOW;
+    }
+    if (ch->cset_model_v < ch->cset_need_v) {
+        return RRCH_RREF_RESERVOIR_LOW;
+    }
+    return RRCH_RREF_NONE;
+}
+
 static rrch_el_state_t node_el(uint32_t st, uint32_t known, uint32_t bit)
 {
     if (!(known & bit)) {
@@ -282,6 +355,9 @@ void rrch_chain_step(rrch_t *c)
             ch->rearm_set_edge_us = xd->t_us;
         }
         ch->rearm_set_prev = ch->rearm_set;
+        if ((in->di & RRCH_DI(BTN_REARM)) && ch->n_xd_in_press < 255u) {
+            ch->n_xd_in_press++; /* N2: IOX_D samples taken while the aux contact was closed (raw line) */
+        }
     }
     /* raw HW_LATCH_RB (RUN_12V tap) level history for the weld / short rules */
     static const uint64_t settle_us = 10000u;
@@ -296,8 +372,23 @@ void rrch_chain_step(rrch_t *c)
         /* the set pulse (110 ms) may hold K1 for a moment without the hold path: not judged within 300 ms of a REARM edge */
         uint64_t last_edge = ch->rearm_edge_us > ch->rearm_set_edge_us ? ch->rearm_edge_us : ch->rearm_set_edge_us;
         bool in_pulse = last_edge != 0u && c->now_us - last_edge < 300000u;
-        bool weld = !raw_latch && (!ch->k1_nc || ch->k1_run) && !in_pulse;
+        /* round 4 N2: K1 closed with the latch down while CHAIN_END is (or may be) live is first a set that did not
+         * complete (a REARM tap shorter than K1's operate time: K1 sealed in by its own contact, U_HOLD never set),
+         * not proof of a weld: ARM_PERMIT is withdrawn for 200 ms (K1 releases in 4 ms) and the press is reported
+         * SET_INCOMPLETE. K1_WELD needs pole A still operated, or K1_RUN live, with CHAIN_END known dead (ARM_PERMIT low >= 30 ms). */
+        bool ce_dead = !c->out.arm_permit && hist_all(ch->permit_hist, 0u, 30u, false);
+        bool k1_closed = !ch->k1_nc || ch->k1_run;
+        bool unheld = !raw_latch && k1_closed && !ce_dead && c->boot_done;
+        bool weld = !raw_latch && k1_closed && ce_dead && !in_pulse; /* K1_RUN live without CHAIN_END: fed from elsewhere */
         bool run_short = raw_latch && !ch->k1_run;
+        ch->n_unheld = unheld ? (uint8_t)(ch->n_unheld + 1u) : 0u;
+        if (ch->n_unheld >= 2u) {
+            ch->unheld_until_us = c->now_us + 200000u;
+            if (ch->press_pending || (ch->press_us != 0u && c->now_us - ch->press_us < 1000000u)) {
+                ch->press_why = RRCH_RREF_SET_INCOMPLETE;
+                ch->press_pending = true;
+            }
+        }
         ch->n_weld = weld ? (uint8_t)(ch->n_weld + 1u) : 0u;
         ch->n_run_short = run_short ? (uint8_t)(ch->n_run_short + 1u) : 0u;
         if (ch->n_weld >= 2u && c->boot_done) {
@@ -341,13 +432,23 @@ void rrch_chain_step(rrch_t *c)
      * channel holds the chain open anyway). Without IOX_D the stage-2 rule (A vs analog) stays. */
     bool ab = ch->iox_d_known && cmp != 2u && ((cmp == 1u) != b_open);
     bool ab_t = timer_run(&ch->t_loopab, ab, 20);
-    if (ab_t && ana == 1u) {
+    /* round 4 N6: the channels have different thresholds (A opens above 1.55 kOhm, B only above 2.70 kOhm), so
+     * a loop between them (analog 1.65-2.9 kOhm, i.e. B's threshold plus tolerance) is "A open, B closed" by
+     * design: HEAD_LOOP_OPEN (arming withheld, A holds U21 open) plus the warning LOOP_HIGH_R, not a fault.
+     * LOOP_FAIL only when a channel is provably stuck healthy: A closed with the analog copy above 1.65 kOhm,
+     * or B closed with the analog copy above 2.9 kOhm. */
+    bool high_r = lo > 1650u && lo <= 2900u;
+    bool a_stuck = cmp == 0u && ana == 1u;
+    bool b_stuck = !b_open && lo > 2900u;
+    if (ab_t && (a_stuck || b_stuck)) {
         rrch_fault_set(c, RRCH_FLT(LOOP_FAIL), true);
     }
+    bool ab_disc = ab_t && !(high_r && cmp == 1u && !b_open);
+    rrch_fault_set(c, RRCH_FLT(LOOP_HIGH_R), timer_run(&ch->t_loop_high, high_r && cmp == 1u, 200));
     if (ch->iox_d_known) {
         /* analog alone disagreeing with two agreeing hardware channels is a diagnostic discrepancy only */
         disagree = false;
-        rrch_fault_set(c, RRCH_FLT(LOOP_DISCREPANCY), ab_t || timer_run(&ch->t_loop_disc, ana != 3u && ((cmp == 0u && !b_open) != (ana == 0u)), 200));
+        rrch_fault_set(c, RRCH_FLT(LOOP_DISCREPANCY), ab_disc || timer_run(&ch->t_loop_disc, ana != 3u && ((cmp == 0u && !b_open) != (ana == 0u)), 200));
     }
     if (!disagree) {
         ch->loop_disc_latched = false;
@@ -501,20 +602,34 @@ void rrch_chain_step(rrch_t *c)
      * is live AND K1 is closed. A rise is legitimate only within 250 ms after a REARM_BTN edge that the
      * firmware saw while every element read closed, ARM_PERMIT was high and the latch was down. */
     bool rb_now = (st & RRCH_DI(BTN_REARM)) != 0;
-    bool all_closed = true;
+    bool all_closed = true, others_closed = true;
     for (int e = 0; e < RRCH_EL_N; e++) {
         all_closed = all_closed && ch->el[e] == RRCH_ELS_CLOSED;
+        others_closed = others_closed && (e == RRCH_EL_ARM_PERMIT || ch->el[e] == RRCH_ELS_CLOSED);
     }
     if (rb_now && !ch->rearm_prev) {
         ch->rearm_edge_us = c->now_us;
         ch->rearm_edge_ok = all_closed && !latch && c->boot_done && c->out.arm_permit;
+        ch->n_xd_in_press = 0;
         if (!ch->rearm_edge_ok && !latch) {
             /* pressed before the chain closed: refuse it by holding ARM_PERMIT low for longer than the
              * C_SET set pulse can hold K1 (245 ms above must-release, review m3) */
             ch->rearm_block_until_us = c->now_us + 300000u;
         }
+        if (!latch) {
+            /* N1: every press with the latch down gets an outcome: the latch rises, or REARM_REFUSED with a reason */
+            ch->press_pending = true;
+            ch->press_us = c->now_us;
+            ch->press_why = ch->rearm_why;
+        }
     }
+    bool aux_raw = (in->di & RRCH_DI(BTN_REARM)) != 0u; /* undebounced: the release is debounced, the tap length is not */
+    if (!aux_raw && ch->aux_raw_prev) {
+        ch->press_end_us = c->now_us;
+    }
+    ch->aux_raw_prev = aux_raw;
     ch->rearm_prev = rb_now;
+    cset_model_step(c, rb_now, ch->rearm_set); /* after the edge bookkeeping: a press dumps C_SET from its first ms */
     ch->rearm_held_ms = rb_now ? (ch->rearm_held_ms < 0x7FFFFFFFu ? ch->rearm_held_ms + 1u : ch->rearm_held_ms) : 0u;
     rrch_fault_set(c, RRCH_FLT(REARM_HELD), ch->rearm_held_ms > 2000u || ch->rearm_set_held_ms > 2000u); /* held / welded REARM: permit withheld */
     /* F5: the two REARM contact lines must agree; F17: both closing edges within 100 ms (+ the 10 ms IOX_D
@@ -524,15 +639,55 @@ void rrch_chain_step(rrch_t *c)
     if (ch->rearm_set_held_ms > 2000u) {
         rrch_fault_set(c, RRCH_FLT(REARM_HELD), true);
     }
+    /* N2: legitimacy of a latch rise. The aux line (GPIO, 1 kHz) gives the timing; the set line is on IOX_D (1 kHz
+     * while a press is possible, rrch_iox_d_fast, else 100 Hz). If the set edge has not been seen yet the judgement
+     * waits for the first IOX_D sample taken after the rise (<= 50 ms). A tap so short that at most one IOX_D
+     * sample fell inside it (<= 20 ms) cannot be confirmed on the set line and is accepted on the aux timing alone
+     * (a set needs both contacts; neither line can be faked by a single stuck contact: a stuck set contact is
+     * REARM_HELD and gives no edge). Anything else is LATCH_NO_REARM (welded K1, K1_SET short, RUN_12V short). */
+    uint64_t a_e = ch->rearm_edge_us, b_e = ch->rearm_set_edge_us;
+    bool both = a_e != 0u && b_e != 0u && (a_e > b_e ? a_e - b_e : b_e - a_e) <= 110000u;
     if (latch && !ch->latch) {
-        uint64_t a = ch->rearm_edge_us, b = ch->rearm_set_edge_us, later = a > b ? a : b;
-        bool both = b != 0u && (a > b ? a - b : b - a) <= 110000u;
-        bool legit = ch->rearm_edge_ok && both && c->now_us - later <= 250000u + 1000u * (uint64_t)CFG(c, CHAIN_CLOSE_DEBOUNCE_MS);
+        uint64_t later = both && b_e > a_e ? b_e : a_e;
+        bool timing = ch->rearm_edge_ok && a_e != 0u && c->now_us - later <= 250000u + 1000u * (uint64_t)CFG(c, CHAIN_CLOSE_DEBOUNCE_MS);
         ch->rearm_edge_ok = false;
-        if (!legit) {
-            rrch_fault_set(c, RRCH_FLT(LATCH_NO_REARM), true); /* welded K1, K1_SET short, RUN_12V short */
+        ch->judge_pending = timing && !both;
+        ch->judge_rise_us = c->now_us;
+        ch->held_drop = false;
+        if (!timing) {
+            rrch_fault_set(c, RRCH_FLT(LATCH_NO_REARM), true);
         }
     }
+    if (ch->judge_pending) {
+        bool sampled = ch->iox_d_known && ch->iox_d.t_us >= ch->judge_rise_us;
+        bool short_tap = !aux_raw && ch->press_end_us >= a_e && ch->press_end_us - a_e <= 20000u && ch->n_xd_in_press <= 1u;
+        if (both) {
+            ch->judge_pending = false;
+        } else if (sampled || c->now_us - ch->judge_rise_us > 50000u) {
+            ch->judge_pending = false;
+            if (!(sampled && short_tap)) {
+                rrch_fault_set(c, RRCH_FLT(LATCH_NO_REARM), true);
+            }
+        }
+    }
+    /* N1: outcome of a press made with the latch down */
+    if (ch->press_pending) {
+        if (latch) {
+            ch->press_pending = false;
+            ch->rearm_refusal = RRCH_RREF_NONE;
+        } else if (c->now_us - ch->press_us >= 300000u) {
+            ch->press_pending = false;
+            ch->rearm_refusal = ch->press_why != RRCH_RREF_NONE ? ch->press_why : RRCH_RREF_SET_FAILED;
+            rrch_event(c, RRCH_EV_REARM_REFUSED, ch->rearm_refusal, 0, 0);
+        }
+    }
+    /* W-018: a REARM contact still closed 2 s after the latch rose (held, welded, or a body against the button) */
+    ch->latched_held_ms = (latch && (rb_now || ch->rearm_set)) ? (ch->latched_held_ms < 0x7FFFFFFFu ? ch->latched_held_ms + 1u : ch->latched_held_ms) : 0u;
+    if (ch->latched_held_ms > 2000u) {
+        rrch_fault_set(c, RRCH_FLT(REARM_HELD), true);
+        ch->held_drop = true;
+    }
+    ch->rearm_why = latch ? RRCH_RREF_NONE : rearm_why(c, others_closed);
     if (timer_run(&ch->t_latch_boot, latch && !c->boot_done, 40)) {
         rrch_fault_set(c, RRCH_FLT(LATCH_NO_REARM), true); /* latch readback high at boot (ARM_PERMIT is low) */
     }
@@ -559,6 +714,10 @@ void rrch_chain_step(rrch_t *c)
         ch->latch = latch;
         if (!latch) {
             ch->hw_latched = hw | prev_live; /* causes seen just before the drop count too */
+            if (ch->held_drop) {
+                ch->hw_latched |= RRCH_HW(MCU_NOT_READY); /* W-018: ARM_PERMIT withdrawn, REARM held */
+            }
+            ch->held_drop = false;
             if (ch->hw_latched == 0 && !bt_running) {
                 ch->hw_latched = RRCH_HW(LATCH_UNEXPLAINED); /* drop that no readback explains (contract draft7) */
             }
@@ -578,7 +737,10 @@ bool rrch_rearm_blocked(const rrch_t *c)
      * be read, or while K1 pole A does not read released (F1, F2, F5) */
     bool raw_latch = (c->in.di & RRCH_DI(HW_LATCH)) != 0;
     if (ch->latch || raw_latch) {
-        return false;
+        return ch->latched_held_ms > 2000u; /* W-018 */
+    }
+    if (c->now_us < ch->unheld_until_us) {
+        return true; /* N2: K1 sealed in without U_HOLD: release it */
     }
     /* K1 must read released before ARM_PERMIT is raised (F2): blocks raising only, never withdraws */
     bool k1_unproven = !c->out.arm_permit && !(ch->iox_d_known && ch->k1_nc);

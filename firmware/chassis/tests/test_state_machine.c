@@ -40,7 +40,13 @@ static void test_boot_and_hello(void)
     CHECK(!th_req(t, "SET_OP_MODE", "{\"op_mode\":\"GUIDED\"}") && th_status(t, "REJECTED") && th_is(t, "reason", "NO_SESSION"));
     th_run_silent(t, 300);
     CHECK(th_mode(t, "STANDBY") && !th_true(t, "rearm_ready") && th_true(t, "chain.ARM_PERMIT") && !th_true(t, "hw_latch"));
-    th_run_silent(t, 2000); /* "ready" only after 2 s of CHAIN_END live: C_SET recharged (stage 3 F12) */
+    /* "ready" only once the conservative C_SET model says a press will set K1 (round 4 N1; T11): about 5 s of
+     * CHAIN_END live at 12.6 V and 25 C, never before 3 s */
+    th_run_silent(t, 3000);
+    CHECK(th_mode(t, "STANDBY") && !th_true(t, "rearm_ready") && rrc_json_type(&t->doc, th_get(t, "rearm_refusal")) == RRC_JT_NULL);
+    for (int k = 0; k < 80 && !t->sim.core.out.lamp_rearm && t->sim.core.chain.rearm_why != RRCH_RREF_NONE; k++) {
+        th_run_silent(t, 100);
+    }
     CHECK(th_mode(t, "STANDBY") && th_true(t, "rearm_ready"));
     CHECK(th_is(t, "op_mode", "SERVICE"));
     CHECK(th_req(t, "HELLO", "{}"));
@@ -84,7 +90,7 @@ static void chain_case(const char *open_env, const char *close_env, const char *
     CHECK(fabs(t->sim.v) < 1e-3 && !t->sim.core.out.bridge_awake);
     /* cause removed: nothing clears by itself */
     th_env(t, close_env);
-    th_run(t, 2500);
+    th_run(t, 6500); /* C_SET model: a press will set only after ~5 s of closed chain (round 4 N1) */
     CHECK(th_req(t, "STATE", "{}") && th_is(t, "mode", "HW_INHIBIT") && th_has(t, "hw_inhibit_reasons", reason));
     CHECK(th_true(t, "rearm_ready") && !th_true(t, "hw_latch"));
     CHECK(!diag_has(t, "hw_active", reason));
@@ -192,7 +198,9 @@ static void test_chain_elements(void)
         th_run(t, 200);
         CHECK(th_mode(t, "HW_INHIBIT") && th_has(t, "hw_inhibit_reasons", "MCU_NOT_READY") && th_has(t, "protective_stop_reasons", "ENCODER_FAULT"));
         th_run(t, 3500);
-        CHECK(th_req(t, "STATE", "{}") && th_true(t, "chain.ARM_PERMIT") && th_true(t, "rearm_ready")); /* permit returns once at rest */
+        CHECK(th_req(t, "STATE", "{}") && th_true(t, "chain.ARM_PERMIT")); /* permit returns once at rest */
+        th_run(t, 6000);                                                     /* then C_SET recharges (round 4 N1) */
+        CHECK(th_req(t, "STATE", "{}") && th_true(t, "rearm_ready"));
         th_env(t, "{\"press\":\"REARM\"}");
         th_run(t, 400);
         CHECK(th_mode(t, "ARMED_IDLE"));

@@ -158,11 +158,11 @@ bool th_has(th_t *t, const char *path, const char *str)
 
 void th_env(th_t *t, const char *json)
 {
-    /* stage 3: REARM sets K1 only from a charged C_SET, i.e. after the chain has been closed for about 2 s.
-     * An operator waits for the REARM lamp; the harness does the same when the chain is live (a REARM pressed
-     * with the chain open is applied at once, so refusal tests stay meaningful). */
-    if (strstr(json, "\"press\":\"REARM\"") && t->sim.cset_energy && !t->sim.latch) {
-        for (int ms = 0; ms < 4000 && t->sim.node[SIM_NEND] && t->sim.vc < 7.7; ms += 50) {
+    /* stage 3 / round 4 N1: REARM sets K1 only from a charged C_SET. An operator waits for the REARM lamp
+     * (rearm_ready); the harness does the same while the only thing missing is the C_SET charge
+     * (RESERVOIR_LOW). Any other refusal reason is pressed into at once, so refusal tests stay meaningful. */
+    if (strstr(json, "\"press\":\"REARM\"") && t->sim.cset_energy && !t->sim.latch && !strstr(json, "\"no_wait\"")) {
+        for (int ms = 0; ms < 10000 && t->sim.core.chain.rearm_why == RRCH_RREF_RESERVOIR_LOW; ms += 50) {
             th_run_silent(t, 49);
             if (t->keepalive) {
                 (void)th_req(t, "TIME", "{}");

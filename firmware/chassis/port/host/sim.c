@@ -327,7 +327,10 @@ void sim_init(sim_t *s, uint64_t seed)
     sim_params_nominal(&s->p);
     s->vmot_tau_s = 0.81;
     s->cset_diode = true; /* current netlist: stage 3 D_RSET (F12); false = stage-2 board with C_SET back-feed */
-    s->cset_energy = true; /* REARM sets K1 only from a charged C_SET (chain closed ~2 s first) */
+    s->cset_energy = true; /* REARM sets K1 only from a charged C_SET (T11 coil-current model) */
+    s->cset_uf = 100.0;
+    s->k1_coil_c = NAN;
+    s->k1_pickup_ms = 3.0;
     s->mode_run = true;
     s->head_docked = true;
     s->j2 = true;
@@ -365,10 +368,13 @@ static void plant_ms(sim_t *s)
     /* C_SET (stage 3): charged from CHAIN_END through D_RSET + R_SET (tau 2.2 s), dumped into the K1 coil while
      * U_SET conducts (tau 103 ms), emptied by Q_SDIS (tau 0.1 s) whenever CHAIN_END is dead. Without D_RSET
      * (cset_diode false, stage-2 option) it back-feeds the held nodes through R_SET instead (review M1). */
+    double cset_f = (s->cset_uf > 1.0 ? s->cset_uf : 100.0) * 1e-6;
+    double t_coil = isfinite(s->k1_coil_c) ? s->k1_coil_c : s->temp[2];
+    double r_coil = 1028.0 * (1.0 + 0.00393 * (t_coil - 23.0));
     if (s->u_set) {
-        s->vc -= s->vc * (1.0 - exp(-1e-3 / 0.1028));
+        s->vc -= s->vc * (1.0 - exp(-1e-3 / ((r_coil + 0.15) * cset_f)));
     } else if (s->node[SIM_NEND]) {
-        s->vc += (s->vbat - 0.4 - s->vc) * (1.0 - exp(-1e-3 / 2.2));
+        s->vc += (s->vbat - 0.4 - s->vc) * (1.0 - exp(-1e-3 / (22e3 * cset_f)));
     } else if (s->cset_diode) {
         s->vc -= s->vc * (1.0 - exp(-1e-3 / 0.1));
     } else if (s->v_held > 0.0) {
@@ -380,6 +386,9 @@ static void plant_ms(sim_t *s)
     bool aux_contact = s->rearm_ms > 0 || s->rearm_aux_short;
     if (set_contact && !s->set_prev) {
         s->set_pulse_s = 0.110;
+    }
+    if (!set_contact) {
+        s->set_pulse_s = 0.0; /* the gate is cut short when the set contact opens (D_SGN) */
     }
     s->set_prev = set_contact;
     s->u_set = s->set_pulse_s > 0.0 && aux_contact;
@@ -398,15 +407,16 @@ static void plant_ms(sim_t *s)
     double v0 = s->v;
     for (int n = 0; n < SUBSTEPS; n++) {
         /* K1 at 0.1 ms resolution. Coil energised by the seal-in (K1 closed or pole A welded, CHAIN_END live)
-         * or by C_SET through U_SET (K1 must-operate assumed 7.5 V [A]: with the 2.2 s charge from a 12.6 V
-         * chain this gives the "chain closed about 2 s before REARM" of section 2.1). Pick-up 10 ms, release 4 ms [U]. */
-        bool set_energy = s->u_set && (s->vc > 7.5 || s->k1_on_s > 0.0 || !s->cset_energy);
+         * or by C_SET through U_SET. T11: K1 operates when the coil current exceeds 8.75 mA (9 V / 1028 ohm at
+         * 23 C, coil +0.393 %/K) for the operate time (default 3 ms, 4 ms max [U]); the current must stay above
+         * must-operate for the whole operate time. Release 4 ms [U]. */
+        bool set_energy = s->u_set && (s->vc / (r_coil + 0.15) > 8.75e-3 || !s->cset_energy);
         bool k1_coil = s->pole_b && (((s->k1 || s->k1_fault == 1) && s->node[SIM_NEND]) || set_energy);
         if (k1_coil) {
             s->k1_off_s = 0;
             if (!s->k1) {
                 s->k1_on_s += DT;
-                if (s->k1_on_s >= 10.0e-3 - 1e-9) {
+                if (s->k1_on_s >= s->k1_pickup_ms * 1e-3 - 1e-9) {
                     s->k1 = true;
                 }
             }
@@ -425,7 +435,7 @@ static void plant_ms(sim_t *s)
         chain_nodes(s);
         s->k1_run = (s->k1 && s->node[SIM_NEND]) || s->k1_run_short;
         /* U_HOLD: LED from RUN_HD (self-holding) or from Q_HSET during the set pulse */
-        bool hold_led = s->u_set || (s->u_hold && s->run_hd);
+        bool hold_led = !s->uhold_open && (s->u_set || (s->u_hold && s->run_hd));
         s->run_hd = (s->k1_run && (s->u_hold || hold_led || s->uhold_short)) || s->run_hd_short;
         s->u_hold = hold_led || (s->u_hold && s->run_hd);
         s->run12 = s->run_hd || s->run12_short;           /* D_RUN: nothing on RUN_12V can feed RUN_HD */
@@ -544,7 +554,8 @@ void sim_step_ms(sim_t *s)
     if (s->plant_only) {
         return;
     }
-    if (ms % 10u == 5u) { /* IOX_D (U47) input port: P0 LATCH_NC_RB, P1 LATCH_RUN_RB, P2 HEAD_LOOP2_OK_RB, P3 REARM_SET_RB, P4..7 = 1,0,0,0 */
+    int xd_per = s->iox_d_period_ms > 0 ? s->iox_d_period_ms : (rrch_iox_d_fast(&s->core) ? 1 : 10);
+    if (xd_per == 1 || ms % (uint32_t)xd_per == 5u % (uint32_t)xd_per) { /* IOX_D (U47) input port: P0 LATCH_NC_RB, P1 LATCH_RUN_RB, P2 HEAD_LOOP2_OK_RB, P3 REARM_SET_RB, P4..7 = 1,0,0,0 */
         chain_nodes(s);
         double lo = (s->rail_weld || s->loop_sns_leak) ? 1000.0 : s->loop_ohm;
         uint8_t v = 0x10u;
@@ -692,12 +703,12 @@ bool sim_env_apply(sim_t *s, const char *json, size_t len)
     B("usb_stall", usb_stall) B("usb_down", usb_down) B("imu_off", imu_off) B("iox_fail", iox_fail) B("latch_weld", latch_weld)
     B("estop_a_stuck", estop_a_stuck) B("freeze_control", freeze_control) B("freeze_supervisor", freeze_supervisor)
     B("freeze_background", freeze_background) B("nv_fail", nv_fail) B("iox_b_fail", iox_b_fail) B("permit_short", permit_short) B("permit_open", permit_open) B("run12_short", run12_short) B("loop_cmp_stuck", loop_cmp_stuck)
-    B("iox_drive_loop", iox_drive_loop) B("io_cfg_fault", io_cfg_fault) B("cset_diode", cset_diode) B("cset_energy", cset_energy) B("jp1_open", jp1_open)
+    B("iox_drive_loop", iox_drive_loop) B("io_cfg_fault", io_cfg_fault) B("cset_diode", cset_diode) B("cset_energy", cset_energy) B("uhold_open", uhold_open) B("jp1_open", jp1_open)
     B("rail_weld", rail_weld) B("loop_sns_leak", loop_sns_leak) B("bumper_l_weld", bumper_l_weld) B("run_hd_short", run_hd_short)
     B("k1_run_short", k1_run_short) B("chain_end_short", chain_end_short) B("uhold_short", uhold_short) B("loop_b_stuck_ok", loop_b_stuck_ok)
     B("iox_d_fail", iox_d_fail) B("iox_d_bad_pattern", iox_d_bad_pattern) B("loop_b_stuck_open", loop_b_stuck_open) B("rearm_aux_short", rearm_aux_short) B("rearm_set_short", rearm_set_short) B("pmon_fail", pmon_fail) B("branch_fail", branch_fail) B("charger_fail", charger_fail)
     N("pres_ohm", pres_ohm) N("loop_ohm", loop_ohm) N("vbat", vbat) N("soc", soc) N("temp_bay", temp[0]) N("temp_pack", temp[1])
-    N("temp_board", temp[2]) N("tilt_deg", tilt_deg) N("vmot_tau_s", vmot_tau_s)
+    N("temp_board", temp[2]) N("tilt_deg", tilt_deg) N("vmot_tau_s", vmot_tau_s) N("cset_uf", cset_uf) N("k1_coil_c", k1_coil_c) N("k1_pickup_ms", k1_pickup_ms)
 #undef B
 #undef N
     if ((t = rrc_json_get(&d, 0, "k1_fault")) >= 0) { /* "NONE", "SEAL_WELD", "SET_SHORT" */
@@ -769,6 +780,9 @@ bool sim_env_apply(sim_t *s, const char *json, size_t len)
             s->y = q[1];
             s->yaw = q[2];
         }
+    }
+    if ((t = rrc_json_get(&d, 0, "iox_d_period_ms")) >= 0 && num(&d, t, &v)) {
+        s->iox_d_period_ms = v >= 0.0 && v <= 100.0 ? (int)v : 0;
     }
     if ((t = rrc_json_get(&d, 0, "press")) >= 0) {
         double ms = 200;

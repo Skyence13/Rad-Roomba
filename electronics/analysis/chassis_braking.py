@@ -201,24 +201,105 @@ def build():
         tau = r_b * cap
         A("| %s | %.2f | %.2f | %.2f | %.2f |" % (lab.replace("%%", "%"), tau, tau * math.log(13.4), tau * math.log(14.6), tau * math.log(29.2)))
     A("\nFirmware limit `brake.vmot_decay_max_ms` must be >= 3.5 s (worst case 2.7 s); bench procedure step 10 uses 3 s, BRAKE_TEST step 4 uses the firmware threshold. [C]\n")
-    A("### T11. K1 set pulse over supply and temperature (stage 3 set stage, review M1)\n")
-    A("C_SET 100 uF (-20 %) charged from CHAIN_END through D_RSET (1N4148W, 0.4 V at the end of charge [A]) and R_SET 22 k (tau 2.2 s), dumped through U_SET (0.15 ohm) and R96 (0 ohm) "
-      "into the K1 coil (1028 ohm at 23 C, +0.393 %/K); the U_HOLD set current comes from V5_AUX through Q_HSET and does not load C_SET. Coil temperature = ambient (the coil is not energised before the set). K1 operates when the coil current exceeds the must-operate current 9 V / 1028 ohm = 8.75 mA "
-      "(75 % of rated at 23 C [D family, G6S]; ampere-turns, so the same current at any temperature [C]); operate time 4 ms max [U]. Full charge assumed (chain closed >= 10 s); after 2 s closed the charge is 60 %. [C]\n")
-    A("| Pack (V) | Coil temp | C_SET | Initial coil current (mA) | Time above must-operate (ms) | Sets? |\n|---:|---|---|---:|---:|---|")
-    for vb in (10.0, 12.0, 12.8, 14.6):
-        for tc in (-25.0, 23.0, 50.0, 85.0):
-            for cf in (1.0, 0.8):
-                rc = 1028.0 * (1 + 0.00393 * (tc - 23.0))
-                vc = vb - 0.4
-                v0 = vc
-                tau = 100e-6 * cf * rc
-                i0 = v0 / rc
-                t_on = tau * math.log(i0 / 8.75e-3) * 1000 if i0 > 8.75e-3 else 0.0
-                if cf == 0.8 or tc == 23.0:
-                    A("| %.1f | %+.0f C | %s | %.1f | %.1f | %s |" % (vb, tc, "100 uF" if cf == 1.0 else "80 uF", i0 * 1000, t_on, "yes" if t_on >= 6.0 else ("marginal" if t_on > 4.0 else "**no** (fail-safe: cannot arm)")))
-    A("\nWhere the table says no, the latch cannot be set: fail-safe (REARM is refused; the operator re-arms after the pack is charged or the coil has cooled). In normal operation (12.8-13.4 V, up to +50 C ambient) the margin is >= 3x the 4 ms operate time; at +85 C ambient and a 12 V pack it is marginal. "
-      "D_RSET is a silicon diode on purpose: a Schottky's leakage at temperature (up to about 0.1 mA) into the 156 k CHAIN_END tap could hold CHAIN_END above the discharge threshold (back-feed, M1). A held or welded REARM (or a shorted U_SET) passes CHAIN_END x 1028 / 23 028 <= 0.65 V to the coil, below the 1.2 V must-release, and never charges C_SET. [C]\n")
+    A("### T11. K1 set from the reservoir at the SET_READY threshold (stage 4, follow-up review N1)\n")
+    # SET_READY comparator: SET_CAP -> R1 -> SET_DIV -> R2 to GND, RH from SET_READY; CLAMP_REF 2.500 V (LM4040C 0.5 %)
+    R1, R2, RH, VREF = 1.0e6, 348e3, 2.2e6, 2.5
+    def thr(vout, r1=R1, r2=R2, vref=VREF):
+        g = 1 / r1 + 1 / r2 + 1 / RH
+        return r1 * (vref * g - vout / RH)
+    v_rise = thr(0.1)                                      # output low (open collector, about 0.1 V)
+    v_fall = thr(3.3)
+    v_rise_lo = thr(0.1, r1=R1 * 0.99, r2=R2 * 1.01, vref=VREF * 0.995)
+    v_rise_hi = thr(0.1, r1=R1 * 1.01, r2=R2 * 0.99, vref=VREF * 1.005)
+    A("SET_READY (U33B) rises at C_SET = %.2f V (%.2f-%.2f V with 1 %% resistors and the 0.5 %% LM4040C) and falls at %.2f V [C]. A press while SET_READY is low "
+      "does not reach U_SET (Q_SETC in the stack), so the reservoir is never dumped by an early press. At the moment SET_READY is first high C_SET holds at least "
+      "%.2f V; the table gives the time the K1 coil current stays above the must-operate current 8.75 mA (9 V / 1028 ohm, 75 %% of rated at 23 C [D family G6S, U]; "
+      "ampere-turns, so the same current at any coil temperature) with C_SET -20 %% / nominal, D_RSET not in the discharge path, U_SET 0.15 ohm. Guaranteed set = "
+      ">= 6 ms (1.5 x the 4 ms operate time [U]). The coil is at board temperature (it carries no current before the set). [C]\n" % (v_rise, v_rise_lo, v_rise_hi, v_fall, v_rise_lo))
+    A("| Coil (board) temperature | Coil R (ohm) | Must-operate voltage (V) | Time above must-operate, C_SET 80 uF (ms) | Same, 100 uF (ms) | Set at SET_READY? |\n|---|---:|---:|---:|---:|---|")
+    t_lim = None
+    for tc in (-25.0, 0.0, 23.0, 35.0, 45.0, 50.0, 60.0, 85.0):
+        rc = 1028.0 * (1 + 0.00393 * (tc - 23.0))
+        vop = 8.75e-3 * rc
+        res = []
+        for cf in (0.8, 1.0):
+            tau = 100e-6 * cf * rc
+            res.append(tau * math.log(v_rise_lo / vop) * 1000 if v_rise_lo > vop else 0.0)
+        ok = res[0] >= 6.0
+        A("| %+.0f C | %.0f | %.2f | %.1f | %.1f | %s |" % (tc, rc, vop, res[0], res[1], "yes" if ok else ("marginal" if res[0] > 0 else "**no**: REARM_REFUSED COIL_HOT")))
+    A("\nDesign limit: a set at the SET_READY threshold is guaranteed up to a **+45 C** board (coil) temperature; above it firmware reports COIL_HOT (a press may still set "
+      "when C_SET has charged above the threshold). The limit is an assumption on the trailer environment [A]; raising it needs a higher threshold and so a higher minimum supply.\n")
+    A("### T12. Time from chain closure to SET_READY, and the minimum supply to arm (stage 4, N1)\n")
+    r_set, c_set = 15e3, 100e-6
+    k_div = (R1 + R2) / (R1 + R2 + r_set)
+    A("C_SET charges from CHAIN_END through D_RSET (0.4 V [A]) and R_SET 15 k; the 1.357 M divider limits the final voltage to %.3f x (CHAIN_END - 0.4 V); tau %.2f s (C_SET +/-20 %%: %.2f-%.2f s). "
+      "CHAIN_END is the pack voltage less F_CHAIN and the photo-MOS drops (< 0.1 V before latching) [C].\n" % (k_div, r_set * c_set * k_div, 0.8 * r_set * c_set * k_div, 1.2 * r_set * c_set * k_div))
+    A("| Pack (V) | Final C_SET (V) | To SET_READY, nominal (s) | Worst (C +20 %, threshold high) (s) |\n|---:|---:|---:|---:|")
+    for vb in (11.0, 11.2, 11.4, 11.6, 12.0, 12.8, 13.3, 14.4):
+        vmax = k_div * (vb - 0.1 - 0.4)
+        tau = r_set * c_set * k_div
+        tn = tau * math.log(vmax / (vmax - v_rise)) if vmax > v_rise else float("inf")
+        tw = 1.2 * tau * math.log(vmax / (vmax - v_rise_hi)) if vmax > v_rise_hi else float("inf")
+        A("| %.1f | %.2f | %s | %s |" % (vb, vmax, "%.1f" % tn if tn != float("inf") else "never", "%.1f" % tw if tw != float("inf") else "never"))
+    v_min = v_rise_hi / k_div + 0.6
+    A("\n**Minimum supply at which the robot can be armed: %.1f V** (worst-case threshold; %.1f V nominal). Below it SET_READY never comes and the firmware reports "
+      "REARM_NOT_READY / SUPPLY_LOW; the firmware's own BATTERY_LOW stop is 11.2 V. A legitimate press with SET_READY high does not wait for anything else. "
+      "Every interruption of CHAIN_END longer than 41-64 ms empties C_SET again (Q_SDIS, tau 0.1 s), shorter dips do not (C_SDB on the discharge gate). [C]\n"
+      % (v_min, v_rise / k_div + 0.5))
+    A("### T13. REARM qualification and pulse timing (stage 4, N2)\n")
+    # numerical model of REARM_SET_RAW -> R_SSER -> REARM_SET (C_SF) -> C_SC -> SET_G (R_SG, D_SGN)
+    def pulse(c_sf, c_sc, vsrc, vth, hold_s=0.4, dt=2e-5):
+        vs, vg, vcsc, t = 0.0, 0.0, 0.0, 0.0
+        t_on = t_off = None
+        while t < hold_s:
+            # node REARM_SET: current in via 10 k, out to C_SF and through C_SC/R_SG
+            i_in = (vsrc - vs) / 10e3
+            i_g = vg / 100e3                       # current through R_SG = current through C_SC
+            dvs = (i_in - i_g) / c_sf * dt
+            dvcsc = i_g / c_sc * dt
+            vs += dvs
+            vcsc += dvcsc
+            vg = vs - vcsc
+            if vg < -0.3:
+                vg = -0.3
+            if t_on is None and vg > vth:
+                t_on = t
+            if t_on is not None and t_off is None and vg < vth:
+                t_off = t
+            t += dt
+        return t_on, t_off
+    A("Set contact closes at t = 0 and stays closed (REARM_SET_RAW = 4.65-4.9 V from V5_AUX via 1 k / 47 k). Q_SETA conducts while SET_G exceeds its threshold (BSS138 0.8-1.5 V [D]). "
+      "C_SF 2.2 uF and C_SC 1 uF X7R at +/-20 % (DC-bias derating at 5 V included in the -20 % corner [A]). Release of the set contact ends the pulse at once (D_SGN) [C, numerical].\n")
+    A("| Corner | Pulse can start after (ms) | Pulse length if held (ms) |\n|---|---:|---:|")
+    tmin = None
+    for lab, csf, csc, vsrc, vth in (("earliest (C -20 %, 4.9 V, Vth 0.8 V)", 2.2e-6 * 0.8, 1e-6 * 0.8, 4.9, 0.8),
+                                    ("nominal (Vth 1.1 V)", 2.2e-6, 1e-6, 4.8, 1.1),
+                                    ("latest (C +20 %, 4.65 V, Vth 1.5 V)", 2.2e-6 * 1.2, 1e-6 * 1.2, 4.65, 1.5),
+                                    ("shortest pulse (C -20 %, 4.65 V, Vth 1.5 V)", 2.2e-6 * 0.8, 1e-6 * 0.8, 4.65, 1.5)):
+        ton, toff = pulse(csf, csc, vsrc, vth)
+        A("| %s | %.1f | %.0f |" % (lab, ton * 1000, (toff - ton) * 1000 if toff else float("nan")))
+    A("\nFirmware guarantee: no set pulse can start before the set contact has been closed for the 'earliest' time above; both REARM contacts are sampled at 1 kHz on IOX_A "
+      "(GPB2, GPB6), so every press that can set the latch is seen in at least 3 samples. A press released after the start but before K1 (<= 4 ms [U]) and U_HOLD "
+      "(<= 3 ms [U]) have both closed can leave K1 sealed with RUN_HD dead: firmware treats it as REARM_REFUSED (PARTIAL), drops ARM_PERMIT 50 ms, non-fatal. "
+      "Q_SETC gate (100 k / 470 nF): on 13-28 ms after SET_READY rises, off 37-67 ms after it falls (the falling hysteresis adds about 15 ms of dump before that). "
+      "C_SET discharge gate (100 k || 56 k, 1 uF): discharge starts 41-64 ms after CHAIN_END dies, stops 6-13 ms after it returns. [C]\n")
+    A("### T14. Leakage into photo-MOS LEDs (stage 4, follow-up review N5)\n")
+    A("An element is held only if its LED gets a meaningful forward current. TLP241A: IFT (guaranteed on) <= 3 mA [U]; the current at which the output starts to "
+      "conduct is not specified: **0.1 mA is assumed as the lowest current that may hold an element partly on** [A]. Leakage values are recalled family values [U] at the "
+      "maximum reverse / off voltage; board temperature +60 C / +85 C. [C]\n")
+    A("| Element | Leakage path into the LED node | Leakage +60 C / +85 C | Shunt across the LED path | LED current (+85 C) | vs 0.1 mA |\n|---|---|---:|---|---:|---|")
+    rows = [
+        ("U_LS, U_HOLD (RUN_HD) - stage 3", "D_RUN B160 Schottky, RUN_12V held up, 14.6 V reverse", "1-3 mA / 3-10 mA", "LEDs 1.5 k each, dividers >= 122 k", "up to several mA", "**fails** (N5)"),
+        ("U_LS, U_HOLD (RUN_HD) - stage 4", "D_RUN S1G silicon, 14.6 V reverse", "2-5 uA / 5-20 uA", "R_RHD 10 k to GND: RUN_HD <= 0.2 V (< LED Vf)", "~0", "ok"),
+        ("U_LS, U_HOLD (RUN_HD)", "U_HOLD off-state, K1_RUN live (K1 welded)", "<= 1 uA / <= 10 uA [U]", "R_RHD 10 k", "~0", "ok"),
+        ("U_HOLD (HOLD_A)", "Q_HSET BSS84 off, 5 V across", "<= 1 uA / <= 10 uA [U]", "R_HA 1.5 k + R_RHD 10 k to GND (0.12 V)", "~0", "ok"),
+        ("U_SET", "4-FET stack off (BSS138), 3.7 V", "<= 0.5 uA / <= 5 uA [U]", "none needed (series)", "<= 5 uA", "ok"),
+        ("U21, U21B, U22, U23, U24, U20", "driver BSS138 off (Q22, Q_LB, Q28, Q23, Q24, Q20)", "<= 0.5 uA / <= 5 uA [U]", "series", "<= 5 uA", "ok"),
+        ("loop channels A/B inputs", "loop self-test FETs Q_LTA/Q_LTB off-state into LOOP_F / LOOP_FB", "<= 0.5 uA / <= 5 uA [U]", "R69 / R_LB1 10 k", "(not an LED) -50 mV on a 1.56 V signal, towards 'open'", "ok"),
+    ]
+    for r in rows:
+        A("| %s | %s | %s | %s | %s | %s |" % r)
+    A("\nThe K2/K3 coil-hold case of the review (G2RL must-release about 5 % of rated [U]) cannot arise in stage 4: U_LS cannot be held by leakage, so the coil return opens. [C]\n")
     return "\n".join(o) + "\n", out
 
 if __name__ == "__main__":

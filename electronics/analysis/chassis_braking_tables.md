@@ -125,32 +125,66 @@ Bleed 1.00 kohm 1 % (R on VMOT) in parallel with the 47 k + 10 k VMOT_SENSE divi
 
 Firmware limit `brake.vmot_decay_max_ms` must be >= 3.5 s (worst case 2.7 s); bench procedure step 10 uses 3 s, BRAKE_TEST step 4 uses the firmware threshold. [C]
 
-### T11. K1 set pulse over supply and temperature (stage 3 set stage, review M1)
+### T11. K1 set from the reservoir at the SET_READY threshold (stage 4, follow-up review N1)
 
-C_SET 100 uF (-20 %) charged from CHAIN_END through D_RSET (1N4148W, 0.4 V at the end of charge [A]) and R_SET 22 k (tau 2.2 s), dumped through U_SET (0.15 ohm) and R96 (0 ohm) into the K1 coil (1028 ohm at 23 C, +0.393 %/K); the U_HOLD set current comes from V5_AUX through Q_HSET and does not load C_SET. Coil temperature = ambient (the coil is not energised before the set). K1 operates when the coil current exceeds the must-operate current 9 V / 1028 ohm = 8.75 mA (75 % of rated at 23 C [D family, G6S]; ampere-turns, so the same current at any temperature [C]); operate time 4 ms max [U]. Full charge assumed (chain closed >= 10 s); after 2 s closed the charge is 60 %. [C]
+SET_READY (U33B) rises at C_SET = 10.77 V (10.57-10.99 V with 1 % resistors and the 0.5 % LM4040C) and falls at 9.32 V [C]. A press while SET_READY is low does not reach U_SET (Q_SETC in the stack), so the reservoir is never dumped by an early press. At the moment SET_READY is first high C_SET holds at least 10.57 V; the table gives the time the K1 coil current stays above the must-operate current 8.75 mA (9 V / 1028 ohm, 75 % of rated at 23 C [D family G6S, U]; ampere-turns, so the same current at any coil temperature) with C_SET -20 % / nominal, D_RSET not in the discharge path, U_SET 0.15 ohm. Guaranteed set = >= 6 ms (1.5 x the 4 ms operate time [U]). The coil is at board temperature (it carries no current before the set). [C]
 
-| Pack (V) | Coil temp | C_SET | Initial coil current (mA) | Time above must-operate (ms) | Sets? |
-|---:|---|---|---:|---:|---|
-| 10.0 | -25 C | 80 uF | 11.5 | 18.3 | yes |
-| 10.0 | +23 C | 100 uF | 9.3 | 6.7 | yes |
-| 10.0 | +23 C | 80 uF | 9.3 | 5.4 | marginal |
-| 10.0 | +50 C | 80 uF | 8.4 | 0.0 | **no** (fail-safe: cannot arm) |
-| 10.0 | +85 C | 80 uF | 7.5 | 0.0 | **no** (fail-safe: cannot arm) |
-| 12.0 | -25 C | 80 uF | 13.9 | 30.9 | yes |
-| 12.0 | +23 C | 100 uF | 11.3 | 26.1 | yes |
-| 12.0 | +23 C | 80 uF | 11.3 | 20.9 | yes |
-| 12.0 | +50 C | 80 uF | 10.2 | 14.0 | yes |
-| 12.0 | +85 C | 80 uF | 9.1 | 3.7 | **no** (fail-safe: cannot arm) |
-| 12.8 | -25 C | 80 uF | 14.9 | 35.4 | yes |
-| 12.8 | +23 C | 100 uF | 12.1 | 33.0 | yes |
-| 12.8 | +23 C | 80 uF | 12.1 | 26.4 | yes |
-| 12.8 | +50 C | 80 uF | 10.9 | 20.0 | yes |
-| 12.8 | +85 C | 80 uF | 9.7 | 10.5 | yes |
-| 14.6 | -25 C | 80 uF | 17.0 | 44.4 | yes |
-| 14.6 | +23 C | 100 uF | 13.8 | 46.9 | yes |
-| 14.6 | +23 C | 80 uF | 13.8 | 37.5 | yes |
-| 14.6 | +50 C | 80 uF | 12.5 | 32.4 | yes |
-| 14.6 | +85 C | 80 uF | 11.1 | 24.4 | yes |
+| Coil (board) temperature | Coil R (ohm) | Must-operate voltage (V) | Time above must-operate, C_SET 80 uF (ms) | Same, 100 uF (ms) | Set at SET_READY? |
+|---|---:|---:|---:|---:|---|
+| -25 C | 834 | 7.30 | 24.7 | 30.9 | yes |
+| +0 C | 935 | 8.18 | 19.1 | 23.9 | yes |
+| +23 C | 1028 | 9.00 | 13.3 | 16.6 | yes |
+| +35 C | 1076 | 9.42 | 9.9 | 12.4 | yes |
+| +45 C | 1117 | 9.77 | 7.0 | 8.7 | yes |
+| +50 C | 1137 | 9.95 | 5.5 | 6.9 | marginal |
+| +60 C | 1177 | 10.30 | 2.4 | 3.0 | marginal |
+| +85 C | 1278 | 11.19 | 0.0 | 0.0 | **no**: REARM_REFUSED COIL_HOT |
 
-Where the table says no, the latch cannot be set: fail-safe (REARM is refused; the operator re-arms after the pack is charged or the coil has cooled). In normal operation (12.8-13.4 V, up to +50 C ambient) the margin is >= 3x the 4 ms operate time; at +85 C ambient and a 12 V pack it is marginal. D_RSET is a silicon diode on purpose: a Schottky's leakage at temperature (up to about 0.1 mA) into the 156 k CHAIN_END tap could hold CHAIN_END above the discharge threshold (back-feed, M1). A held or welded REARM (or a shorted U_SET) passes CHAIN_END x 1028 / 23 028 <= 0.65 V to the coil, below the 1.2 V must-release, and never charges C_SET. [C]
+Design limit: a set at the SET_READY threshold is guaranteed up to a **+45 C** board (coil) temperature; above it firmware reports COIL_HOT (a press may still set when C_SET has charged above the threshold). The limit is an assumption on the trailer environment [A]; raising it needs a higher threshold and so a higher minimum supply.
+
+### T12. Time from chain closure to SET_READY, and the minimum supply to arm (stage 4, N1)
+
+C_SET charges from CHAIN_END through D_RSET (0.4 V [A]) and R_SET 15 k; the 1.357 M divider limits the final voltage to 0.989 x (CHAIN_END - 0.4 V); tau 1.48 s (C_SET +/-20 %: 1.19-1.78 s). CHAIN_END is the pack voltage less F_CHAIN and the photo-MOS drops (< 0.1 V before latching) [C].
+
+| Pack (V) | Final C_SET (V) | To SET_READY, nominal (s) | Worst (C +20 %, threshold high) (s) |
+|---:|---:|---:|---:|
+| 11.0 | 10.38 | never | never |
+| 11.2 | 10.58 | never | never |
+| 11.4 | 10.78 | 11.3 | never |
+| 11.6 | 10.98 | 5.9 | never |
+| 12.0 | 11.37 | 4.4 | 6.0 |
+| 12.8 | 12.16 | 3.2 | 4.2 |
+| 13.3 | 12.66 | 2.8 | 3.6 |
+| 14.4 | 13.75 | 2.3 | 2.9 |
+
+**Minimum supply at which the robot can be armed: 11.7 V** (worst-case threshold; 11.4 V nominal). Below it SET_READY never comes and the firmware reports REARM_NOT_READY / SUPPLY_LOW; the firmware's own BATTERY_LOW stop is 11.2 V. A legitimate press with SET_READY high does not wait for anything else. Every interruption of CHAIN_END longer than 41-64 ms empties C_SET again (Q_SDIS, tau 0.1 s), shorter dips do not (C_SDB on the discharge gate). [C]
+
+### T13. REARM qualification and pulse timing (stage 4, N2)
+
+Set contact closes at t = 0 and stays closed (REARM_SET_RAW = 4.65-4.9 V from V5_AUX via 1 k / 47 k). Q_SETA conducts while SET_G exceeds its threshold (BSS138 0.8-1.5 V [D]). C_SF 2.2 uF and C_SC 1 uF X7R at +/-20 % (DC-bias derating at 5 V included in the -20 % corner [A]). Release of the set contact ends the pulse at once (D_SGN) [C, numerical].
+
+| Corner | Pulse can start after (ms) | Pulse length if held (ms) |
+|---|---:|---:|
+| earliest (C -20 %, 4.9 V, Vth 0.8 V) | 3.2 | 166 |
+| nominal (Vth 1.1 V) | 6.0 | 168 |
+| latest (C +20 %, 4.65 V, Vth 1.5 V) | 11.2 | 151 |
+| shortest pulse (C -20 %, 4.65 V, Vth 1.5 V) | 7.4 | 101 |
+
+Firmware guarantee: no set pulse can start before the set contact has been closed for the 'earliest' time above; both REARM contacts are sampled at 1 kHz on IOX_A (GPB2, GPB6), so every press that can set the latch is seen in at least 3 samples. A press released after the start but before K1 (<= 4 ms [U]) and U_HOLD (<= 3 ms [U]) have both closed can leave K1 sealed with RUN_HD dead: firmware treats it as REARM_REFUSED (PARTIAL), drops ARM_PERMIT 50 ms, non-fatal. Q_SETC gate (100 k / 470 nF): on 13-28 ms after SET_READY rises, off 37-67 ms after it falls (the falling hysteresis adds about 15 ms of dump before that). C_SET discharge gate (100 k || 56 k, 1 uF): discharge starts 41-64 ms after CHAIN_END dies, stops 6-13 ms after it returns. [C]
+
+### T14. Leakage into photo-MOS LEDs (stage 4, follow-up review N5)
+
+An element is held only if its LED gets a meaningful forward current. TLP241A: IFT (guaranteed on) <= 3 mA [U]; the current at which the output starts to conduct is not specified: **0.1 mA is assumed as the lowest current that may hold an element partly on** [A]. Leakage values are recalled family values [U] at the maximum reverse / off voltage; board temperature +60 C / +85 C. [C]
+
+| Element | Leakage path into the LED node | Leakage +60 C / +85 C | Shunt across the LED path | LED current (+85 C) | vs 0.1 mA |
+|---|---|---:|---|---:|---|
+| U_LS, U_HOLD (RUN_HD) - stage 3 | D_RUN B160 Schottky, RUN_12V held up, 14.6 V reverse | 1-3 mA / 3-10 mA | LEDs 1.5 k each, dividers >= 122 k | up to several mA | **fails** (N5) |
+| U_LS, U_HOLD (RUN_HD) - stage 4 | D_RUN S1G silicon, 14.6 V reverse | 2-5 uA / 5-20 uA | R_RHD 10 k to GND: RUN_HD <= 0.2 V (< LED Vf) | ~0 | ok |
+| U_LS, U_HOLD (RUN_HD) | U_HOLD off-state, K1_RUN live (K1 welded) | <= 1 uA / <= 10 uA [U] | R_RHD 10 k | ~0 | ok |
+| U_HOLD (HOLD_A) | Q_HSET BSS84 off, 5 V across | <= 1 uA / <= 10 uA [U] | R_HA 1.5 k + R_RHD 10 k to GND (0.12 V) | ~0 | ok |
+| U_SET | 4-FET stack off (BSS138), 3.7 V | <= 0.5 uA / <= 5 uA [U] | none needed (series) | <= 5 uA | ok |
+| U21, U21B, U22, U23, U24, U20 | driver BSS138 off (Q22, Q_LB, Q28, Q23, Q24, Q20) | <= 0.5 uA / <= 5 uA [U] | series | <= 5 uA | ok |
+| loop channels A/B inputs | loop self-test FETs Q_LTA/Q_LTB off-state into LOOP_F / LOOP_FB | <= 0.5 uA / <= 5 uA [U] | R69 / R_LB1 10 k | (not an LED) -50 mV on a 1.56 V signal, towards 'open' | ok |
+
+The K2/K3 coil-hold case of the review (G2RL must-release about 5 % of rated [U]) cannot arise in stage 4: U_LS cannot be held by leakage, so the coil return opens. [C]
 

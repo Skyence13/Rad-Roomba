@@ -13,6 +13,7 @@ Kinds of override
   RENUM   pin NUMBERS changed to the footprint's pad numbers, same pin names and nets
           (no electrical change; stage-1 numbers were recalled [U] or the package merges pins)
   LIB     symbol / footprint choice for the CAD library (no electrical change)
+  REMOVE  a part is removed (stage 4; expected MPN checked)  (netlist change -> STAGE2_CHANGE_REQUESTS.md)
 
 Plain Python, no rrkicad import: runs inside the KiCad container (board.py) and on the host
 (``python3 overrides.py`` prints the change log and re-runs the stage-1 style self-check).
@@ -179,7 +180,8 @@ def _r(ref, val, a, b, notes="", pkg="0603"):
 
 
 _CAP = {"10n": ("CC0603KRX7R9BB103", "Yageo", 50, False), "22n": ("CC0603KRX7R9BB223", "Yageo", 50, False),
-        "100n": ("CC0603KRX7R9BB104", "Yageo", 50, False), "1u": ("GRM188R71C105KA12D", "Murata", 16, True)}
+        "100n": ("CC0603KRX7R9BB104", "Yageo", 50, False), "1u": ("GRM188R71C105KA12D", "Murata", 16, True),
+        "470n": ("CC0603KRX7R7BB474", "Yageo", 16, True), "2.2u": ("GRM188R71C225KE11D", "Murata", 16, True)}
 
 
 def _c(ref, val, a, b, notes=""):
@@ -191,7 +193,8 @@ def _c(ref, val, a, b, notes=""):
 
 _DIODES = {"BAT54": ("BAT54W-7-F", "Diodes Inc.", "Schottky 30 V 0.2 A", "SOD-123", "Device:D_Schottky", "Diode_SMD:D_SOD-123", 1.2, 7),
            "1N4148W": ("1N4148W-7-F", "Diodes Inc.", "Switching diode 100 V 0.3 A", "SOD-123", "Device:D", "Diode_SMD:D_SOD-123", 1.2, 7),
-           "B160": ("B160-13-F", "Diodes Inc.", "Schottky 60 V 1 A", "SMA", "Device:D_Schottky", "Diode_SMD:D_SMA", 2.3, 14)}
+           "B160": ("B160-13-F", "Diodes Inc.", "Schottky 60 V 1 A", "SMA", "Device:D_Schottky", "Diode_SMD:D_SMA", 2.3, 14),
+           "S1G": ("S1G-13-F", "Diodes Inc.", "Rectifier 400 V 1 A, standard recovery, silicon", "SMA", "Device:D", "Diode_SMD:D_SMA", 2.3, 14)}
 
 
 def _d(ref, kind, a, k, notes="", verify=False):
@@ -295,15 +298,15 @@ S3_PART = [
 ]
 
 _TCA_D = dict(ref="U47", value="TCA9534", mpn="TCA9534PWR", manufacturer="Texas Instruments",
-              description="IOX_D: 8-bit I2C expander 0x22, inputs only: latch / hold / loop channel B / REARM set contact readbacks",
+              description="IOX_D: 8-bit I2C expander 0x22: latch / hold / loop channel B / set-ready / CH_N6A readbacks, loop self-test outputs P4/P7",
               package="TSSOP-16", symbol_hint="Interface_Expansion:TCA9534", footprint_hint="Package_SO:TSSOP-16_4.4x5mm_P0.65mm",
               pins={"1": ("A0", "GND"), "2": ("A1", "3V3"), "3": ("A2", "GND"), "4": ("P0", "LATCH_NC_RB"), "5": ("P1", "LATCH_RUN_RB"),
-                    "6": ("P2", "HEAD_LOOP2_OK_RB"), "7": ("P3", "REARM_SET_RB"), "8": ("GND", "GND"), "9": ("P4", "IOXD_P4"),
-                    "10": ("P5", "IOXD_P5"), "11": ("P6", "IOXD_P6"), "12": ("P7", "IOXD_P7"), "13": None, "14": ("SCL", "I2C_SYS_SCL"),
+                    "6": ("P2", "HEAD_LOOP2_OK_RB"), "7": ("P3", "BUS_CLAMP_ACTIVE"), "8": ("GND", "GND"), "9": ("P4", "LOOP_TEST_A"),
+                    "10": ("P5", "SET_READY_RB"), "11": ("P6", "CH_N6A_RB"), "12": ("P7", "LOOP_TEST_B"), "13": None, "14": ("SCL", "I2C_SYS_SCL"),
                     "15": ("SDA", "I2C_SYS_SDA"), "16": ("VCC", "3V3")},
               block="mcu", dnp=False, rating=None, tolerance=None, verify=True, height_mm=1.2, area_mm2=34,
-              notes="Same part and pin table as U45 (IOX_C, pin numbers recalled [U]). Address 0x22 (A1 high). P4 pulled up, P5-P7 pulled "
-                    "down through 10 k: fixed pattern 0x1 in the high nibble proves the device answers with live inputs. INT unused.")
+              notes="Same part and pin table as U45 (IOX_C, pin numbers recalled [U]). Address 0x22 (A1 high). Stage 4: P4/P7 are the loop "
+                    "self-test outputs (configuration 0x6F), read back through the input port; the stage-3 fixed pattern is gone. INT unused.")
 _TLV = dict(ref="U46", value="TLV3201", mpn="TLV3201AIDBVR", manufacturer="Texas Instruments",
             description="Comparator, CMOS input, push-pull output, 2.7-5.5 V: head-loop channel B (open / high-resistance loop)",
             package="SOT-23-5", symbol_hint=None, footprint_hint="Package_TO_SOT_SMD:SOT-23-5",
@@ -321,17 +324,23 @@ S3_ADD = [
     # ---- C1 set stage: edge of the set contact AND level of the aux contact -> U_SET connects C_SET to the coil
     ("S3-C1g", [_r("R_SSRC", "1k", "V5_AUX", "REARM_SET_SRC", "REARM set contact supply (J_BTN 1), current-limited"),
                 _r("R_SPD", "47k", "REARM_SET_RAW", "GND", "defines the open set contact"),
-                _r("R_SSER", "10k", "REARM_SET_RAW", "REARM_SET"), _c("C_SF", "10n", "REARM_SET", "GND"),
+                _r("R_SSER", "10k", "REARM_SET_RAW", "REARM_SET"), _c("C_SF", "2.2u", "REARM_SET", "GND", "S4 (N2): set qualification, the pulse cannot start before the set contact has been closed >= 3.2 ms (T13)"),
                 _d("D_SCL", "BAT54", "REARM_SET", "V5_AUX", "clamps a W-018 short to V12_AUX (1.2 mA through R_SSER)"),
                 _ESD_SET,
                 _c("C_SC", "1u", "REARM_SET", "SET_G", "AC coupling: one gate pulse per closing edge (tau 110 ms with R_SG + R_SSER)"),
                 _r("R_SG", "100k", "SET_G", "GND"), _d("D_SGN", "BAT54", "GND", "SET_G", "negative clamp / reset on release"),
-                _r("R_SRB", "47k", "REARM_SET", "REARM_SET_RB", "set contact readback to IOX_D P3 (series-isolated)"),
+                _r("R_SRB", "33k", "REARM_SET_RAW", "REARM_SET_RB", "S4 (N2): fast set-contact readback to IOX_A GPB6 (1 kHz)"),
+                _r("R_SRB2", "47k", "REARM_SET_RB", "GND", "33 k / 47 k: 2.7-2.9 V HIGH at the MCP23S17 input"),
                 _d("D_RB", "BAT54", "REARM_BTN_RAW", "REARM_BTN_D", "GPB2 cannot drive the aux contact node"),
                 _r("R_AG", "10k", "REARM_BTN_RAW", "REARM_AUX_G"), _r("R_AGP", "100k", "REARM_AUX_G", "GND"),
                 _c("C_AG", "10n", "REARM_AUX_G", "GND"),
                 _nfet("Q_SETA", "U_SET_K", "SET_G", "SET_S", "set coincidence, edge of the set contact"),
-                _nfet("Q_SETB", "SET_S", "REARM_AUX_G", "GND", "set coincidence, level of the aux contact"),
+                _nfet("Q_SETC", "SET_S", "SETC_G", "SET_S2", "S4 (N1): set only with SET_READY (C_SET >= 10.8 V): an early press leaves C_SET untouched"),
+                _nfet("Q_SETB", "SET_S2", "REARM_AUX_G", "GND", "set coincidence, level of the aux contact"),
+                _r("R_SCG", "100k", "SET_READY", "SETC_G"), _c("C_SCG", "470n", "SETC_G", "GND", "Q_SETC stays on 37-67 ms after SET_READY falls (the dump)"),
+                _r("R_SD1", "1M", "SET_CAP", "SET_DIV", "S4 (N1): reservoir divider to U33B"), _r("R_SD2", "348k", "SET_DIV", "GND"),
+                _r("R_SDH", "2.2M", "SET_READY", "SET_DIV", "hysteresis: rising 10.8 V, falling 9.3 V (T11)"), _c("C_SD", "10n", "SET_DIV", "GND"),
+                _r("R_SRP", "10k", "3V3", "SET_READY"), _r("R_SRR", "47k", "SET_READY", "SET_READY_RB", "readback to IOX_D P5 (series-isolated)"),
                 _r("R_USA", "470", "V5_AUX", "U_SET_A"),
                 _ssr("U_SET", "SET_CAP", "K1_SET", "U_SET_A", "U_SET_K", "REARM set switch C_SET -> K1 coil (on-board, via R96 0 ohm)"),
                 _r("R_USK", "100k", "V5_AUX", "U_SET_K", "holds Q_HSET off while the set stack is off"),
@@ -340,14 +349,18 @@ S3_ADD = [
                 _d("D_RSET", "1N4148W", "CHAIN_END", "RSET_A", "M1: C_SET charges from CHAIN_END but cannot feed it"),
                 _r("R_SDIS", "1k", "SET_CAP", "SET_DIS", "C_SET discharge (tau 0.1 s) while CHAIN_END is dead", pkg="1206"),
                 _nfet("Q_SDIS", "SET_DIS", "SDIS_G", "GND"), _r("R_SDG", "100k", "3V3", "SDIS_G"),
-                _nfet("Q_SDISB", "SDIS_G", "CHAIN_END_RB", "GND", "off (discharge on) when CHAIN_END is below about 2-4 V")],
+                _nfet("Q_SDISB", "SDIS_G", "SDISB_G", "GND", "off (discharge on) when CHAIN_END has been below about 3-4 V for 41-64 ms"),
+                _r("R_SDB1", "100k", "CHAIN_END", "SDISB_G", "S4 (m-B): own divider, IOX_B P17 no longer gates the discharge"),
+                _r("R_SDB2", "56k", "SDISB_G", "GND"), _c("C_SDB", "1u", "SDISB_G", "GND", "permit dips < 41 ms do not cost C_SET charge")],
      "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open"),
     # ---- C1 second, diverse hold element and K1 readbacks
     ("S3-C1h", [_ssr("U_HOLD", "K1_RUN", "RUN_HD", "HOLD_A", "GND", "second hold element in series with K1 pole B, self-holding from RUN_HD"),
                 _r("R_HA", "1.5k", "RUN_HD", "HOLD_A", "self-hold LED feed (5.9-8.9 mA at 10-14.6 V)", pkg="1206"),
                 _r("R_HS", "470", "HSET_D", "HOLD_A", "set feed (about 7.8 mA) from Q_HSET during the REARM pulse only"),
                 _d("D_HR", "1N4148W", "GND", "HOLD_A", "LED reverse protection (coil kick)"),
-                _d("D_RUN", "B160", "RUN_HD", "RUN_12V", "RUN_12V cannot back-feed RUN_HD / K1_RUN / CHAIN_END; isolates the K2/K3 kick from the chain", verify=True),
+                _d("D_RUN", "S1G", "RUN_HD", "RUN_12V", "RUN_12V cannot back-feed RUN_HD / K1_RUN / CHAIN_END; isolates the K2/K3 kick. "
+                   "S4 (N5): silicon (Schottky leakage at temperature could light U_LS / U_HOLD)", verify=True),
+                _r("R_RHD", "10k", "RUN_HD", "GND", "S4 (N5): bleed; any leakage into RUN_HD (D_RUN, U_HOLD off-state) stays below the LED forward voltage"),
                 _ssr("U_LS", "RELAY_RTN", "COIL_RTN", "LS_A", "GND", "low-side element in the K2/K3 coil return, LED from RUN_HD"),
                 _r("R_LSA", "1.5k", "RUN_HD", "LS_A", pkg="1206"), _d("D_LSR", "1N4148W", "GND", "LS_A", "LED reverse protection"),
                 _d("D_K1B", "BAT54", "3V3", "K1_BIAS"), _r("R_K1B", "47k", "K1_BIAS", "K1_SEAL_A", "3 V bias on K1 pole A common: NC readback valid with the chain dead"),
@@ -358,7 +371,7 @@ S3_ADD = [
      "C1/M6: U_HOLD (diverse hold), D_RUN, U_LS (low-side), K1 NC and K1_RUN readbacks, U9 own tap"),
     # ---- C2 head-loop channel B
     ("S3-C2b", [_r("R_LB1", "10k", "LOOP_SNS", "LOOP_FB", "channel B own filter (1 ms)"), _c("C_LB1", "100n", "LOOP_FB", "GND"),
-                _r("R_LB2", "39k", "V5_AUX", "LOOP_VB", "channel B own reference: 1.02 V = loop 2.70 kohm"), _r("R_LB3", "10k", "LOOP_VB", "GND"),
+                _r("R_LB2", "30.9k", "V5_AUX", "LOOP_VB", "channel B own reference: 1.22 V = loop 1.89 kohm (S4, N6: was 39 k / 2.70 kohm)"), _r("R_LB3", "10k", "LOOP_VB", "GND"),
                 _c("C_LB2", "100n", "LOOP_VB", "GND"), _TLV, _c("C_U46", "100n", "V5_AUX", "GND"),
                 _r("R_LBG", "100k", "HEAD_LOOP2_OK", "GND"), _r("R_LBR", "47k", "HEAD_LOOP2_OK", "HEAD_LOOP2_OK_RB", "readback to IOX_D P2 (series-isolated)"),
                 _nfet("Q_LB", "U21B_K", "HEAD_LOOP2_OK", "GND"), _r("R_21BA", "680", "V5_AUX", "U21B_A"),
@@ -368,16 +381,40 @@ S3_ADD = [
     ("S3-M2e", [_r("R_GA5", "47k", "HEAD_LOOP_OK_RB", "HEAD_LOOP_OK_IO"), _r("R_GA7", "47k", "LAB_KEY_N_RB", "LAB_KEY_N_IO"),
                 _r("R_GB7", "47k", "WDG_STROBE", "WDG_STROBE_IO"), _r("R_WDPD", "10k", "WDG_STROBE", "GND", "WDI LOW at reset; GPB7 via 47 k reaches 0.58 V < 0.3 VDD")],
      "M2: series isolation of the expander pins on chain-control nodes"),
-    ("S3-F1", [_TCA_D, _c("C_U47", "100n", "3V3", "GND"), _r("R_D4", "10k", "3V3", "IOXD_P4"), _r("R_D5", "10k", "IOXD_P5", "GND"),
-               _r("R_D6", "10k", "IOXD_P6", "GND"), _r("R_D7", "10k", "IOXD_P7", "GND")],
-     "new IOX_D for the stage-3 readbacks"),
+    ("S3-F1", [_TCA_D, _c("C_U47", "100n", "3V3", "GND")], "new IOX_D for the stage-3 readbacks (S4: pattern resistors R_D4-R_D7 withdrawn)"),
     ("S3-M6g", [_tp("TP60", "CH_N6A"), _tp("TP61", "K1_RUN"), _tp("TP62", "RELAY_RTN")], "test points for the new chain nodes"),
 ]
+S4_ADD = [
+    ("S4-N3", _tap("N6A", "CH_N6A", "CH_N6A_RB", "N3: CH_N6A readback (IOX_D P6)")
+     + [_nfet("Q_LTA", "LOOP_F", "LOOP_TEST_A", "GND", "N3 self-test: forces loop channel A to 'open' (can only open)"),
+        _r("R_LTA", "100k", "LOOP_TEST_A", "GND", "off at power-up (IOX_D pins are inputs)"),
+        _nfet("Q_LTB", "LOOP_FB", "LOOP_TEST_B", "GND", "N3 self-test: forces loop channel B to 'open' (can only open)"),
+        _r("R_LTB", "100k", "LOOP_TEST_B", "GND")],
+     "N3: readback between the two loop photo-MOS and a self-test that can only open a channel"),
+    ("S4-mC", [dict(_ESD_SET, ref="D_AUX", pins={"1": ("K1", "REARM_BTN_RAW"), "2": ("K2", "BTN_3V3"), "3": ("COM", "GND")},
+                    notes="15 V stand-off on the REARM aux pair (replaces D29, 5.5 V): survives V12_AUX on W-018.3/.4")],
+     "m-C: 15 V ESD on the aux contact lines"),
+]
+S3_ADD = S3_ADD + S4_ADD
 for _oid, _lst, _why in S3_ADD:
     for _p in _lst:
         ADD.append((_oid, _p, _why))
-NET.extend(S3_NET)
-PART.extend(S3_PART)
+S4_NET = [
+    ("S4-N1a", "U33", "5", ("2IN+", "GND"), ("2IN+", "SET_DIV"), "N1: spare U33B compares the set reservoir with CLAMP_REF (2.5 V)"),
+    ("S4-N1b", "U33", "7", None, ("2OUT", "SET_READY"), "N1: SET_READY (open collector, R_SRP 10 k to 3V3)"),
+    ("S4-N2a", "U43", "7", ("GPB6", "BUS_CLAMP_ACTIVE"), ("GPB6", "REARM_SET_RB"), "N2: set contact read at 1 kHz on IOX_A; BUS_CLAMP_ACTIVE moves to IOX_D P3"),
+]
+S4_PART = [
+    ("S4-N1c", "R_SET", {"value": ("22k", "15k"), "mpn": ("RC0603FR-0722KL", "RC0603FR-0715KL")},
+     "N1: charge tau 1.5 s; a held set stack still gives <= 0.94 V on the coil (must-release 1.2 V)"),
+]
+# parts removed (expected MPN checked against circuit.py)
+REMOVE = [
+    ("S4-mC", "D29", "TPD4E05U06DQAR", "m-C: 5.5 V array on lines that a W-018 short can take to 12 V; replaced by D_AUX (15 V). Its other "
+                                       "channels were already unused after S2-01c/d"),
+]
+NET.extend(S3_NET + S4_NET)
+PART.extend(S3_PART + S4_PART)
 
 
 class OverrideError(Exception):
@@ -420,6 +457,13 @@ def apply(parts):
         parts.append(p)
         byref[p["ref"]] = p
         log.append(dict(id=oid, kind="ADD", ref=p["ref"], pins=p["pins"], reason=why))
+    for oid, ref, mpn, why in REMOVE:
+        p = need(ref)
+        if p.get("mpn") != mpn:
+            raise OverrideError("%s: %s is %r in circuit.py, override expects %r" % (oid, ref, p.get("mpn"), mpn))
+        parts.remove(p)
+        del byref[ref]
+        log.append(dict(id=oid, kind="REMOVE", ref=ref, reason=why))
     for oid, refs, mapping, why in RENUM:
         for ref in refs:
             p = need(ref)

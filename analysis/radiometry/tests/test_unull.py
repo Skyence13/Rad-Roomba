@@ -51,3 +51,10 @@ def test_biased_low_window_inflates_and_biased_high_is_conservative():
 def test_gradient_bias_geometry():
     assert N.gradient_bias(0.2, L_window_m=2.0, mode="centred") == pytest.approx(0.0)
     assert N.gradient_bias(0.2, L_window_m=2.0, mode="past") == pytest.approx(-0.2)
+
+
+def test_realistic_footprint_behaves_like_weights_one():
+    real = N.LaneCase(R.cell_lane_weights(0.0, v=0.10), R.BETA_CAL, 0.05)
+    a = N.achieved_fast(real, 33.2, 50, A_MIS, "predictive")
+    b = N.achieved_fast(N.LaneCase(R.Lane(np.array([1.0]), np.array([1.0])), R.BETA_CAL, 1.0), 33.2, 50, A_MIS, "predictive")
+    assert abs(a - b) < 0.02 and a <= b + 1e-3

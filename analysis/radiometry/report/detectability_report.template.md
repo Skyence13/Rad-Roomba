@@ -243,6 +243,14 @@ Full numbers in [`model_rev3_checks.md`](model_rev3_checks.md); verdicts and pro
 - Any lane at α/m: the union bound holds when each lane holds α/m; the quoted min D#ᵢ holds only for activity extending beyond the cell (P(detect) at the quoted limit {{V:rev3_B_pcell_min}}–{{V:rev3_B_pcell_max}} for activity confined to the cell), and maxᵢ D#ᵢ is not a seam-patch limit (P {{V:rev3_B_pseam_min}}–{{V:rev3_B_pseam_max}}). Cost against an exact combined statistic up to {{V:rev3_B_cost_m4}} (m = 4).
 - One exact linear statistic over all lanes (Gil-Pelaez inversion, validated to {{V:rev3_C_gp_err}} relative tail error against exact convolution) gives a median D# of {{V:rev3_s01_C}} Bq/cm² on the s01-like plan, against {{V:rev3_s01_rev3}} for revision 3 and {{V:rev3_s01_rev2}} for revision 2.
 
+### 7.2 The null reference U_null (MODEL.md revision 4, §3)
+
+Numbers in [`model_rev4_unull.md`](model_rev4_unull.md); verdict and proposed wording in `../MODEL_REVIEW_rev4.md`. `calculated` with synthetic coefficients.
+
+- What the threshold needs from U_null is a number of reference counts, not a multiple of T_F. With the plug-in threshold, holding ≤ 1.05 × nominal at mission α takes up to {{V:rev4_plug_scan_mis_05}} counts (scan) and {{V:rev4_plug_rec_mis_05}} (recounts). With a predictive threshold (null distribution averaged over the posterior of U given the window), it takes ≤ {{V:rev4_pred_scan_mis_05}} and ≤ {{V:rev4_pred_rec_mis_05}}, at a D# cost ≤ {{V:rev4_cost_100_max}} at 100 counts.
+- Taking the larger of the past and future half-window means keeps steps and gradients from biasing U_null low (worst {{V:rev4_grad_max_halves}} × nominal at mission α). A centred mean gives up to {{V:rev4_grad_centred_max}} × at a step; a past-only mean up to {{V:rev4_grad_past_max}} ×.
+- Stationary recounts need no bracketing time when the other three lanes' references during the count are used, ratio-scaled. A pooled window needs that scaling too: a 1 % lane-ratio error gives {{V:rev4_pool_m1_mis}} × at mission α.
+
 ## 8. Measurements that replace the assumptions
 
 | Assumption | Measurement that replaces it | Design choice it drives |

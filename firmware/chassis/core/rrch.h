@@ -391,6 +391,8 @@ typedef struct {
     uint8_t n_unheld;
     uint64_t unheld_until_us;
     uint32_t latched_held_ms;   /* W-018: a REARM contact closed while latched */
+    bool held_drop, aux_raw_prev;
+    uint8_t n_xd_in_press;      /* IOX_D samples taken while the aux contact of the latest press was closed */
     uint16_t t_loop_high;
 } rrch_chain_t;
 

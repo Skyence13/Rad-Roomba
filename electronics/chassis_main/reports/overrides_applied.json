@@ -297,6 +297,48 @@
   "ref": "U9"
  },
  {
+  "id": "S4-N1a",
+  "kind": "NET",
+  "new": [
+   "2IN+",
+   "SET_DIV"
+  ],
+  "old": [
+   "2IN+",
+   "GND"
+  ],
+  "pin": "5",
+  "reason": "N1: spare U33B compares the set reservoir with CLAMP_REF (2.5 V)",
+  "ref": "U33"
+ },
+ {
+  "id": "S4-N1b",
+  "kind": "NET",
+  "new": [
+   "2OUT",
+   "SET_READY"
+  ],
+  "old": null,
+  "pin": "7",
+  "reason": "N1: SET_READY (open collector, R_SRP 10 k to 3V3)",
+  "ref": "U33"
+ },
+ {
+  "id": "S4-N2a",
+  "kind": "NET",
+  "new": [
+   "GPB6",
+   "REARM_SET_RB"
+  ],
+  "old": [
+   "GPB6",
+   "BUS_CLAMP_ACTIVE"
+  ],
+  "pin": "7",
+  "reason": "N2: set contact read at 1 kHz on IOX_A; BUS_CLAMP_ACTIVE moves to IOX_D P3",
+  "ref": "U43"
+ },
+ {
   "changes": {
    "footprint_hint": [
     "Connector_Molex:Molex_Micro-Fit_3.0_43045-0800_2x04_P3.00mm_Horizontal",
@@ -533,6 +575,22 @@
   "ref": "D35"
  },
  {
+  "changes": {
+   "mpn": [
+    "RC0603FR-0722KL",
+    "RC0603FR-0715KL"
+   ],
+   "value": [
+    "22k",
+    "15k"
+   ]
+  },
+  "id": "S4-N1c",
+  "kind": "PART",
+  "reason": "N1: charge tau 1.5 s; a held set stack still gives <= 0.94 V on the coil (must-release 1.2 V)",
+  "ref": "R_SET"
+ },
+ {
   "id": "S2-01e",
   "kind": "ADD",
   "pins": {
@@ -764,7 +822,7 @@
   "pins": {
    "1": [
     "1",
-    "REARM_SET"
+    "REARM_SET_RAW"
    ],
    "2": [
     "2",
@@ -773,6 +831,22 @@
   },
   "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
   "ref": "R_SRB"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "REARM_SET_RB"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "R_SRB2"
  },
  {
   "id": "S3-C1g",
@@ -864,6 +938,26 @@
   "pins": {
    "1": [
     "G",
+    "SETC_G"
+   ],
+   "2": [
+    "S",
+    "SET_S2"
+   ],
+   "3": [
+    "D",
+    "SET_S"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "Q_SETC"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "G",
     "REARM_AUX_G"
    ],
    "2": [
@@ -872,11 +966,139 @@
    ],
    "3": [
     "D",
-    "SET_S"
+    "SET_S2"
    ]
   },
   "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
   "ref": "Q_SETB"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SET_READY"
+   ],
+   "2": [
+    "2",
+    "SETC_G"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "R_SCG"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SETC_G"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "C_SCG"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SET_CAP"
+   ],
+   "2": [
+    "2",
+    "SET_DIV"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "R_SD1"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SET_DIV"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "R_SD2"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SET_READY"
+   ],
+   "2": [
+    "2",
+    "SET_DIV"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "R_SDH"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SET_DIV"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "C_SD"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "3V3"
+   ],
+   "2": [
+    "2",
+    "SET_READY"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "R_SRP"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SET_READY"
+   ],
+   "2": [
+    "2",
+    "SET_READY_RB"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "R_SRR"
  },
  {
   "id": "S3-C1g",
@@ -1028,7 +1250,7 @@
   "pins": {
    "1": [
     "G",
-    "CHAIN_END_RB"
+    "SDISB_G"
    ],
    "2": [
     "S",
@@ -1041,6 +1263,54 @@
   },
   "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
   "ref": "Q_SDISB"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "CHAIN_END"
+   ],
+   "2": [
+    "2",
+    "SDISB_G"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "R_SDB1"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SDISB_G"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "R_SDB2"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SDISB_G"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "C_SDB"
  },
  {
   "id": "S3-C1h",
@@ -1129,6 +1399,22 @@
   },
   "reason": "C1/M6: U_HOLD (diverse hold), D_RUN, U_LS (low-side), K1 NC and K1_RUN readbacks, U9 own tap",
   "ref": "D_RUN"
+ },
+ {
+  "id": "S3-C1h",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "RUN_HD"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "C1/M6: U_HOLD (diverse hold), D_RUN, U_LS (low-side), K1 NC and K1_RUN readbacks, U9 own tap",
+  "ref": "R_RHD"
  },
  {
   "id": "S3-C1h",
@@ -1700,15 +1986,15 @@
    ],
    "10": [
     "P5",
-    "IOXD_P5"
+    "SET_READY_RB"
    ],
    "11": [
     "P6",
-    "IOXD_P6"
+    "CH_N6A_RB"
    ],
    "12": [
     "P7",
-    "IOXD_P7"
+    "LOOP_TEST_B"
    ],
    "13": null,
    "14": [
@@ -1745,7 +2031,7 @@
    ],
    "7": [
     "P3",
-    "REARM_SET_RB"
+    "BUS_CLAMP_ACTIVE"
    ],
    "8": [
     "GND",
@@ -1753,10 +2039,10 @@
    ],
    "9": [
     "P4",
-    "IOXD_P4"
+    "LOOP_TEST_A"
    ]
   },
-  "reason": "new IOX_D for the stage-3 readbacks",
+  "reason": "new IOX_D for the stage-3 readbacks (S4: pattern resistors R_D4-R_D7 withdrawn)",
   "ref": "U47"
  },
  {
@@ -1772,72 +2058,8 @@
     "GND"
    ]
   },
-  "reason": "new IOX_D for the stage-3 readbacks",
+  "reason": "new IOX_D for the stage-3 readbacks (S4: pattern resistors R_D4-R_D7 withdrawn)",
   "ref": "C_U47"
- },
- {
-  "id": "S3-F1",
-  "kind": "ADD",
-  "pins": {
-   "1": [
-    "1",
-    "3V3"
-   ],
-   "2": [
-    "2",
-    "IOXD_P4"
-   ]
-  },
-  "reason": "new IOX_D for the stage-3 readbacks",
-  "ref": "R_D4"
- },
- {
-  "id": "S3-F1",
-  "kind": "ADD",
-  "pins": {
-   "1": [
-    "1",
-    "IOXD_P5"
-   ],
-   "2": [
-    "2",
-    "GND"
-   ]
-  },
-  "reason": "new IOX_D for the stage-3 readbacks",
-  "ref": "R_D5"
- },
- {
-  "id": "S3-F1",
-  "kind": "ADD",
-  "pins": {
-   "1": [
-    "1",
-    "IOXD_P6"
-   ],
-   "2": [
-    "2",
-    "GND"
-   ]
-  },
-  "reason": "new IOX_D for the stage-3 readbacks",
-  "ref": "R_D6"
- },
- {
-  "id": "S3-F1",
-  "kind": "ADD",
-  "pins": {
-   "1": [
-    "1",
-    "IOXD_P7"
-   ],
-   "2": [
-    "2",
-    "GND"
-   ]
-  },
-  "reason": "new IOX_D for the stage-3 readbacks",
-  "ref": "R_D7"
  },
  {
   "id": "S3-M6g",
@@ -1874,6 +2096,168 @@
   },
   "reason": "test points for the new chain nodes",
   "ref": "TP62"
+ },
+ {
+  "id": "S4-N3",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "CH_N6A"
+   ],
+   "2": [
+    "2",
+    "CH_N6A_RB"
+   ]
+  },
+  "reason": "N3: readback between the two loop photo-MOS and a self-test that can only open a channel",
+  "ref": "R_N6A1"
+ },
+ {
+  "id": "S4-N3",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "CH_N6A_RB"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "N3: readback between the two loop photo-MOS and a self-test that can only open a channel",
+  "ref": "R_N6A2"
+ },
+ {
+  "id": "S4-N3",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "CH_N6A_RB"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "N3: readback between the two loop photo-MOS and a self-test that can only open a channel",
+  "ref": "C_N6A"
+ },
+ {
+  "id": "S4-N3",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "K",
+    "3V3"
+   ],
+   "2": [
+    "A",
+    "CH_N6A_RB"
+   ]
+  },
+  "reason": "N3: readback between the two loop photo-MOS and a self-test that can only open a channel",
+  "ref": "D_N6A"
+ },
+ {
+  "id": "S4-N3",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "G",
+    "LOOP_TEST_A"
+   ],
+   "2": [
+    "S",
+    "GND"
+   ],
+   "3": [
+    "D",
+    "LOOP_F"
+   ]
+  },
+  "reason": "N3: readback between the two loop photo-MOS and a self-test that can only open a channel",
+  "ref": "Q_LTA"
+ },
+ {
+  "id": "S4-N3",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "LOOP_TEST_A"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "N3: readback between the two loop photo-MOS and a self-test that can only open a channel",
+  "ref": "R_LTA"
+ },
+ {
+  "id": "S4-N3",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "G",
+    "LOOP_TEST_B"
+   ],
+   "2": [
+    "S",
+    "GND"
+   ],
+   "3": [
+    "D",
+    "LOOP_FB"
+   ]
+  },
+  "reason": "N3: readback between the two loop photo-MOS and a self-test that can only open a channel",
+  "ref": "Q_LTB"
+ },
+ {
+  "id": "S4-N3",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "LOOP_TEST_B"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "N3: readback between the two loop photo-MOS and a self-test that can only open a channel",
+  "ref": "R_LTB"
+ },
+ {
+  "id": "S4-mC",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "K1",
+    "REARM_BTN_RAW"
+   ],
+   "2": [
+    "K2",
+    "BTN_3V3"
+   ],
+   "3": [
+    "COM",
+    "GND"
+   ]
+  },
+  "reason": "m-C: 15 V ESD on the aux contact lines",
+  "ref": "D_AUX"
+ },
+ {
+  "id": "S4-mC",
+  "kind": "REMOVE",
+  "reason": "m-C: 5.5 V array on lines that a W-018 short can take to 12 V; replaced by D_AUX (15 V). Its other channels were already unused after S2-01c/d",
+  "ref": "D29"
  },
  {
   "id": "S2-06a",

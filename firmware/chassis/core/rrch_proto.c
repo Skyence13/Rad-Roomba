@@ -134,7 +134,7 @@ static const char *const rst_names[6] = {"POWER_ON", "BROWNOUT", "PIN", "WATCHDO
 static const char *const loop_names[3] = {"OK", "OPEN", "SHORT"};
 static const char *const bt_names[4] = {"NONE", "RUNNING", "PASSED", "FAILED"};
 static const char *const btf_names[11] = {"PRECOND_VMOT", "PRECOND_RELAY", "LATCH_NOT_DROPPED", "RELAY_L", "RELAY_R", "VMOT_NOT_REMOVED", "BRIDGE_CURRENT_L", "BRIDGE_CURRENT_R", "WHEEL_MOVED", "K1_NOT_RELEASED", "K1_WELDED"};
-static const char *const ev_names[RRCH_EV_KIND_N] = {"BOOT", "BROWNOUT", "CHAIN", "HW_LATCH", "PERMIT", "J1", "J2", "BUTTON", "MODE", "PSTOP", "PSTOP_CLEAR", "HOLD", "REARM_REJECT", "OP_MODE", "CONFIG", "HEAD_POWER", "FAULT", "BRAKE_TEST", "LINK", "TOF"};
+static const char *const ev_names[RRCH_EV_KIND_N] = {"BOOT", "BROWNOUT", "CHAIN", "HW_LATCH", "PERMIT", "J1", "J2", "BUTTON", "MODE", "PSTOP", "PSTOP_CLEAR", "HOLD", "REARM_REJECT", "OP_MODE", "CONFIG", "HEAD_POWER", "FAULT", "BRAKE_TEST", "LINK", "TOF", "REARM_REFUSED"};
 static const char *const permit_why[6] = {"NORMAL", "UNCOMMANDED_MOTION", "STOP_ESCALATION", "BRAKE_TEST", "MODE", "HEAD_LOOP"};
 static const char *const hp_why[5] = {"HOST", "PRESENCE", "CHARGE", "EFUSE", "BOOT"};
 
@@ -489,8 +489,12 @@ static void op_state(ctx_t *x, int level)
     stationary_obj(x);
     rrc_jw_ku64(w, "rearm_nonce", c->rearm_nonce);
     if (level < 2) {
-        rrc_jw_kbool(w, "rearm_ready", !ch->latch && c->boot_done && ch->hw_live == 0u && c->out.arm_permit && ch->el[RRCH_EL_ARM_PERMIT] == RRCH_ELS_CLOSED &&
-                                       ch->el[RRCH_EL_ESTOP] == RRCH_ELS_CLOSED && ch->ce_high_ms >= 2000u /* C_SET recharged (stage 3 F12) */);
+        rrc_jw_kbool(w, "rearm_ready", !ch->latch && ch->rearm_why == RRCH_RREF_NONE); /* round 4 N1 */
+        if (!ch->latch && ch->rearm_refusal != RRCH_RREF_NONE) {
+            rrc_jw_kstr(w, "rearm_refusal", rrch_rref_names[ch->rearm_refusal]);
+        } else {
+            rrc_jw_knull(w, "rearm_refusal");
+        }
         kmask(w, "hold", c->hold, hold_names, 2);
         rrc_jw_ku64(w, "event_seq", c->ev_newest);
         rrc_jw_ku64(w, "uptime_us", c->now_us);
@@ -537,6 +541,14 @@ static void op_diag(ctx_t *x)
     rrc_jw_kbool(w, "latch_run", ch->k1_run);
     rrc_jw_kbool(w, "head_loop2_ok", ch->loop_b);
     rrc_jw_kbool(w, "rearm_set", ch->rearm_set);
+    rrc_jw_obj_end(w);
+    rrc_jw_key(w, "rearm"); /* (+) round 4 N1: what a REARM press meets now, from the conservative C_SET model */
+    rrc_jw_obj_begin(w);
+    rrc_jw_kstr(w, "why", ch->latch ? "LATCHED" : rrch_rref_names[ch->rearm_why]);
+    kf(w, "cset_model_v", ch->cset_model_v, 2);
+    kf(w, "cset_need_v", ch->cset_need_v, 2);
+    kf(w, "cset_target_v", ch->cset_target_v, 2);
+    rrc_jw_kbool(w, "iox_d_fast", rrch_iox_d_fast(c));
     rrc_jw_obj_end(w);
     if (ch->chain_end_known) {
         rrc_jw_kbool(w, "chain_end", ch->chain_end);
@@ -672,6 +684,9 @@ static void event_detail(rrch_t *c, rrc_jw_t *w, const rrch_event_t *e)
     case RRCH_EV_LINK:
         rrc_jw_kbool(w, "up", e->a != 0);
         rrc_jw_ki64(w, "session", e->b);
+        break;
+    case RRCH_EV_REARM_REFUSED:
+        rrc_jw_kstr(w, "why", rrch_rref_names[e->a % RRCH_RREF_N]);
         break;
     case RRCH_EV_TOF:
         rrc_jw_kstr(w, "id", rrch_tof_names[e->a]);

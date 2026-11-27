@@ -183,6 +183,7 @@
       "track_widths": [
         0.0,
         0.2,
+        0.25,
         0.4,
         0.8,
         1.0
@@ -514,6 +515,24 @@
       },
       {
         "bus_width": 12,
+        "clearance": 0.5,
+        "diff_pair_gap": 0.25,
+        "diff_pair_via_gap": 0.25,
+        "diff_pair_width": 0.25,
+        "line_style": 0,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "name": "CHAIN_CTRL",
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "priority": 1,
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 0.25,
+        "via_diameter": 0.6,
+        "via_drill": 0.3,
+        "wire_width": 6
+      },
+      {
+        "bus_width": 12,
         "clearance": 0.15,
         "diff_pair_gap": 0.25,
         "diff_pair_via_gap": 0.25,
@@ -523,7 +542,7 @@
         "microvia_drill": 0.1,
         "name": "HC_PACK",
         "pcb_color": "rgba(0, 0, 0, 0.000)",
-        "priority": 1,
+        "priority": 2,
         "schematic_color": "rgba(0, 0, 0, 0.000)",
         "track_width": 1.0,
         "via_diameter": 0.8,
@@ -541,7 +560,7 @@
         "microvia_drill": 0.1,
         "name": "HC_VMOT",
         "pcb_color": "rgba(0, 0, 0, 0.000)",
-        "priority": 2,
+        "priority": 3,
         "schematic_color": "rgba(0, 0, 0, 0.000)",
         "track_width": 0.8,
         "via_diameter": 0.8,
@@ -559,7 +578,7 @@
         "microvia_drill": 0.1,
         "name": "HC_BRANCH",
         "pcb_color": "rgba(0, 0, 0, 0.000)",
-        "priority": 3,
+        "priority": 4,
         "schematic_color": "rgba(0, 0, 0, 0.000)",
         "track_width": 0.8,
         "via_diameter": 0.8,
@@ -577,7 +596,7 @@
         "microvia_drill": 0.1,
         "name": "PWR_1A5",
         "pcb_color": "rgba(0, 0, 0, 0.000)",
-        "priority": 4,
+        "priority": 5,
         "schematic_color": "rgba(0, 0, 0, 0.000)",
         "track_width": 0.4,
         "via_diameter": 0.6,
@@ -595,7 +614,7 @@
         "microvia_drill": 0.1,
         "name": "SIG",
         "pcb_color": "rgba(0, 0, 0, 0.000)",
-        "priority": 5,
+        "priority": 6,
         "schematic_color": "rgba(0, 0, 0, 0.000)",
         "track_width": 0.2,
         "via_diameter": 0.6,
@@ -656,6 +675,118 @@
       {
         "netclass": "SAFETY_CHAIN",
         "pattern": "HANDS_LAMP_*"
+      },
+      {
+        "netclass": "CHAIN_CTRL",
+        "pattern": "U20_A"
+      },
+      {
+        "netclass": "CHAIN_CTRL",
+        "pattern": "U20_K"
+      },
+      {
+        "netclass": "CHAIN_CTRL",
+        "pattern": "U21_A"
+      },
+      {
+        "netclass": "CHAIN_CTRL",
+        "pattern": "U21_K"
+      },
+      {
+        "netclass": "CHAIN_CTRL",
+        "pattern": "U21B_A"
+      },
+      {
+        "netclass": "CHAIN_CTRL",
+        "pattern": "U21B_K"
+      },
+      {
+        "netclass": "CHAIN_CTRL",
+        "pattern": "U22_A"
+      },
+      {
+        "netclass": "CHAIN_CTRL",
+        "pattern": "U22_K"
+      },
+      {
+        "netclass": "CHAIN_CTRL",
+        "pattern": "U23_A"
+      },
+      {
+        "netclass": "CHAIN_CTRL",
+        "pattern": "U23_K"
+      },
+      {
+        "netclass": "CHAIN_CTRL",
+        "pattern": "U24_A"
+      },
+      {
+        "netclass": "CHAIN_CTRL",
+        "pattern": "U24_K"
+      },
+      {
+        "netclass": "CHAIN_CTRL",
+        "pattern": "U_SET_A"
+      },
+      {
+        "netclass": "CHAIN_CTRL",
+        "pattern": "U_SET_K"
+      },
+      {
+        "netclass": "CHAIN_CTRL",
+        "pattern": "HOLD_A"
+      },
+      {
+        "netclass": "CHAIN_CTRL",
+        "pattern": "LS_A"
+      },
+      {
+        "netclass": "CHAIN_CTRL",
+        "pattern": "HSET_D"
+      },
+      {
+        "netclass": "CHAIN_CTRL",
+        "pattern": "CHG_GATE"
+      },
+      {
+        "netclass": "CHAIN_CTRL",
+        "pattern": "ARM_PERMIT_G"
+      },
+      {
+        "netclass": "CHAIN_CTRL",
+        "pattern": "SET_G"
+      },
+      {
+        "netclass": "CHAIN_CTRL",
+        "pattern": "SETC_G"
+      },
+      {
+        "netclass": "CHAIN_CTRL",
+        "pattern": "REARM_AUX_G"
+      },
+      {
+        "netclass": "CHAIN_CTRL",
+        "pattern": "SET_S"
+      },
+      {
+        "netclass": "CHAIN_CTRL",
+        "pattern": "SET_S2"
+      },
+      {
+        "netclass": "CHAIN_CTRL",
+        "pattern": "SDIS_G"
+      },
+      {
+        "netclass": "CHAIN_CTRL",
+        "pattern": "SDISB_G"
+      },
+      {
+        "netclass": "CHAIN_CTRL",
+        "pattern": "HEAD_LOOP_OK_RB"
+      },
+      {
+        "netclass": "CHAIN_CTRL",
+        "pattern": "LAB_KEY_N_RB"
       },
       {
         "netclass": "HC_PACK",
