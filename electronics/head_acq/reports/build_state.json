@@ -12,6 +12,8 @@
     "parts": 1085,
     "sheets": 31
   },
+  "dsn_sha256": "75082d31d36a10dd7fbc6f79c1ca74f3c518890c26613e6faffe97a0397c59d2",
+  "dsn_unchanged": false,
   "escape": {
     "direct": 0,
     "enabled": false,
@@ -7047,14 +7049,14 @@
     "escape_via": null,
     "extra_args": [],
     "fanout": false,
-    "finisher": true,
+    "finisher": false,
     "layers": 6,
     "optimizer": true,
-    "passes": 60,
+    "passes": 40,
     "plane_fanout": true,
-    "retries": 1,
+    "retries": 0,
     "threads": null,
-    "timeout": 900
+    "timeout": 1080
   },
   "single_pin_nets": []
 }

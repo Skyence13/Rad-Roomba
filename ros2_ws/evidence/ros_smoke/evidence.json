@@ -38,7 +38,7 @@
    "ok": true,
    "holds": [
     {
-     "t_wall": 42.28,
+     "t_wall": 42.09,
      "reason": "OPERATOR_PAUSE",
      "task": "pair0:A+",
      "phase": "PASS"
@@ -74,19 +74,19 @@
    "hold": null,
    "loc": {
     "pose": [
-     1.22945554439909,
-     -0.3022427019163675,
-     0.00016970540482487393
+     1.246078822629287,
+     -0.30195889947673393,
+     0.000130925790132525
     ],
     "frame": "map (trailer): origin door-threshold centre, +x to bulkhead, +y left",
-    "uncertainty_2s_m": 0.0009789802858553027,
+    "uncertainty_2s_m": 0.0009881138127678403,
     "credit": true,
     "slip": false,
     "hold_request": false,
     "sigma": [
-     0.0004405123140284389,
-     0.00018838169362783204,
-     0.0003134647408176262
+     0.00044489026256905903,
+     0.00018830327541783382,
+     0.000323354570947624
     ]
    },
    "events": [
@@ -127,10 +127,10 @@
     "state": "ARMED",
     "block_reason": null,
     "block_detail": null,
-    "attachment": "e13b474d-0410-409f-80a8-fb91bbd4036e",
+    "attachment": "de804fe1-95b3-419e-ad18-e2cd57a63995",
     "head_id": "HEAD-DEMO-001",
-    "last_seq": 361,
-    "bound_us": 507.0018334036255
+    "last_seq": 362,
+    "bound_us": 788.196308855896
    },
    "chassis": {
     "link": "UP",
@@ -156,7 +156,7 @@
      "charge_state": "NONE"
     },
     "head_presence": "HEAD_DIRECT",
-    "time_bound_us": 765.125307890625
+    "time_bound_us": 636.8261655883789
    }
   },
   {
@@ -166,7 +166,7 @@
  ],
  "holds": [
   {
-   "t_wall": 42.28,
+   "t_wall": 42.09,
    "reason": "OPERATOR_PAUSE",
    "task": "pair0:A+",
    "phase": "PASS"

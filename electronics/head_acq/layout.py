@@ -188,7 +188,7 @@ def apply(board, parts):
         _hv_via_bands(board, vias)
         with open(os.path.join(HERE, "reports", "preroute_notes.json"), "w") as f:
             json.dump({"notes": notes, "hv_vias": vias}, f, indent=1)
-    board.route(escape=False, finisher=True, plane_fanout=True, retries=1, timeout=900, passes=60)
+    board.route(escape=False, finisher=False, plane_fanout=True, retries=0, timeout=1080, passes=40)
     board.autoplace_options(clearance=0.12, ic_halo=0.5, edge_margin=0.6, spread=0.0, grid=0.1)
 
 

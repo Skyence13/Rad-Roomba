@@ -379,21 +379,7 @@
       },
       "vias": 101
     },
-    "finisher": {
-      "failed": [
-        {
-          "ends": [
-            "Track [IO46] on F.Cu, length 0.5418 mm",
-            "Track [IO46] on F.Cu, length 1.0950 mm"
-          ],
-          "net": "IO46",
-          "why": "no free path (window board mm, grid 0.10)"
-        }
-      ],
-      "items": 0,
-      "routed": [],
-      "seconds": 12.5
-    },
+    "finisher": null,
     "plane_fanout": {
       "failed": [
         "C40 pad at (57.77, 26.75) [+5V]",

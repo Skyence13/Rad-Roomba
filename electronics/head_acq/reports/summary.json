@@ -107,10 +107,6 @@
   "docnum": "RR-EL-0103",
   "drc": {
     "by_type": {
-      "items_not_allowed": {
-        "errors": 12,
-        "warnings": 0
-      },
       "silk_edge_clearance": {
         "errors": 0,
         "warnings": 2
@@ -128,21 +124,8 @@
         "warnings": 1
       }
     },
-    "error_items": [
-      "items_not_allowed | Items not allowed (keepout area 'KO_WALL_1_Rt_3') | Track [GND] on F.Cu, length 2.2800 mm",
-      "items_not_allowed | Items not allowed (keepout area 'KO_WALL_3_Rt_3') | Track [GND] on F.Cu, length 2.2800 mm",
-      "items_not_allowed | Items not allowed (keepout area 'KO_WALL_0_Rt_3') | Track [GND] on F.Cu, length 2.2800 mm",
-      "items_not_allowed | Items not allowed (keepout area 'KO_WALL_2_Rt_3') | Track [GND] on F.Cu, length 2.2800 mm",
-      "items_not_allowed | Items not allowed (keepout area 'KO_WALL_0_B0_0') | Track [F0_A] on F.Cu, length 5.6750 mm",
-      "items_not_allowed | Items not allowed (keepout area 'KO_WALL_0_B1_2') | Track [R0_A] on F.Cu, length 5.6750 mm",
-      "items_not_allowed | Items not allowed (keepout area 'KO_WALL_1_B0_0') | Track [F1_A] on F.Cu, length 5.6750 mm",
-      "items_not_allowed | Items not allowed (keepout area 'KO_WALL_1_B0_2') | Track [R1_A] on F.Cu, length 5.6750 mm",
-      "items_not_allowed | Items not allowed (keepout area 'KO_WALL_2_B0_0') | Track [F2_A] on F.Cu, length 5.6750 mm",
-      "items_not_allowed | Items not allowed (keepout area 'KO_WALL_2_B0_2') | Track [R2_A] on F.Cu, length 5.6750 mm",
-      "items_not_allowed | Items not allowed (keepout area 'KO_WALL_3_B0_0') | Track [F3_A] on F.Cu, length 5.6750 mm",
-      "items_not_allowed | Items not allowed (keepout area 'KO_WALL_3_B1_2') | Track [R3_A] on F.Cu, length 5.6750 mm"
-    ],
-    "errors": 12,
+    "error_items": [],
+    "errors": 0,
     "excluded": 0,
     "parity": 0,
     "parity_items": [],
@@ -296,7 +279,7 @@
       "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C1107 on F.Cu | Pad 8 [+5V_A] of U2202 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 13 [+5V_A] of U1107 on F.Cu | Pad 7 [+5V_A] of U2301 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of R2224 on F.Cu | Pad 1 [+5V_A] of C2209 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C2302 on F.Cu | Via [+5V_A] on F.Cu - B.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C2302 on F.Cu | Track [+5V_A] on F.Cu, length 0.9250 mm",
       "unconnected_items | Missing connection between items | Pad 7 [+5V_A] of U2301 on F.Cu | Pad 1 [+5V_A] of C2302 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 7 [+5V_A] of U2301 on F.Cu | Pad 7 [+5V_A] of U2302 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 8 [+5V_A] of U2305 on F.Cu | Pad 7 [+5V_A] of U2302 on F.Cu",
@@ -318,7 +301,7 @@
       "unconnected_items | Missing connection between items | Pad 8 [+5V_A] of U1201 on F.Cu | Pad 1 [+5V_A] of C1201 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C1201 on F.Cu | Pad 13 [+5V_A] of U1207 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C1207 on F.Cu | Pad 13 [+5V_A] of U1207 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of FB401 on F.Cu | Track [+5V_A] on F.Cu, length 0.8743 mm",
+      "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of FB401 on F.Cu | Via [+5V_A] on F.Cu - B.Cu",
       "unconnected_items | Missing connection between items | Pad 8 [+5V_A] of U1301 on F.Cu | Pad 1 [+5V_A] of C1301 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [+5V_A] of C1301 on F.Cu | Pad 13 [+5V_A] of U1307 on F.Cu",
       "unconnected_items | Missing connection between items | Track [+5V_A] on F.Cu, length 0.9250 mm | Pad 1 [+5V_A] of C1301 on F.Cu",
@@ -3154,9 +3137,9 @@
             ]
           },
           {
-            "item": "Via [+5V_A] on F.Cu - B.Cu",
+            "item": "Track [+5V_A] on F.Cu, length 0.9250 mm",
             "xy_mm": [
-              136.125,
+              135.2,
               29.588
             ]
           }
@@ -3572,10 +3555,10 @@
             ]
           },
           {
-            "item": "Track [+5V_A] on F.Cu, length 0.8743 mm",
+            "item": "Via [+5V_A] on F.Cu - B.Cu",
             "xy_mm": [
-              287.688,
-              12.25
+              287.069,
+              12.868
             ]
           }
         ],
@@ -4309,7 +4292,7 @@
       "VREF_ADC",
       "V_LED"
     ],
-    "waived": 54,
+    "waived": 58,
     "warnings": 401
   },
   "erc": {
@@ -4327,7 +4310,6 @@
     "warnings": 8
   },
   "fail_reasons": [
-    "DRC: 12 error(s)",
     "DRC: 499 unconnected item(s) on nets: +3V3, +3V3A, +3V3_EVT, +3V3_HV, +5V6_A, +5V6_E, +5V_A, BIAS_IMON, BIAS_IMON_R, BIAS_VMON, BIAS_VMON_B, BK_CB, BK_EN, BK_FB, BK_SW, BUMP_ZONE_F_N, BUMP_ZONE_L_N, BUMP_ZONE_R_N, BZ_F_IN, BZ_L_IN, BZ_R_IN, DAC0_REF, DAC0_SDO, DAC1_REF, DAC1_SDO, DAC1_SPARE, DAC2_REF, DAC2_SDO, DAC3_REF, DAC3_SDO"
   ],
   "notes": [
@@ -4874,6 +4856,26 @@
   "waived_items": [
     {
       "severity": "error",
+      "text": "items_not_allowed | Items not allowed (keepout area 'KO_WALL_1_Rt_3') | Track [GND] on F.Cu, length 2.2800 mm",
+      "type": "items_not_allowed"
+    },
+    {
+      "severity": "error",
+      "text": "items_not_allowed | Items not allowed (keepout area 'KO_WALL_3_Rt_3') | Track [GND] on F.Cu, length 2.2800 mm",
+      "type": "items_not_allowed"
+    },
+    {
+      "severity": "error",
+      "text": "items_not_allowed | Items not allowed (keepout area 'KO_WALL_2_Rt_3') | Track [GND] on F.Cu, length 2.2800 mm",
+      "type": "items_not_allowed"
+    },
+    {
+      "severity": "error",
+      "text": "items_not_allowed | Items not allowed (keepout area 'KO_WALL_0_Rt_3') | Track [GND] on F.Cu, length 2.2800 mm",
+      "type": "items_not_allowed"
+    },
+    {
+      "severity": "error",
       "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.6552 mm) | Pad 1 [HV_OFF] of Q2204 on F.Cu | Pad 3 [HV_BLD] of Q2204 on F.Cu",
       "type": "clearance"
     },
@@ -5069,12 +5071,12 @@
     },
     {
       "severity": "error",
-      "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2500 mm) | Pad 7 [GND] of U2201 on F.Cu | Pad 8 [HV_SW] of U2201 on F.Cu",
+      "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.6656 mm) | Pad 7 [GND] of U2201 on F.Cu | Pad 9 [HV_CAP] of U2201 on F.Cu",
       "type": "clearance"
     },
     {
       "severity": "error",
-      "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.6656 mm) | Pad 7 [GND] of U2201 on F.Cu | Pad 9 [HV_CAP] of U2201 on F.Cu",
+      "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2500 mm) | Pad 7 [GND] of U2201 on F.Cu | Pad 8 [HV_SW] of U2201 on F.Cu",
       "type": "clearance"
     },
     {
@@ -5094,17 +5096,17 @@
     },
     {
       "severity": "error",
+      "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.7500 mm) | Pad 9 [HV_CAP] of U2201 on F.Cu | Pad 11 [HV_ISHORT] of U2201 on F.Cu",
+      "type": "clearance"
+    },
+    {
+      "severity": "error",
       "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2500 mm) | Pad 9 [HV_CAP] of U2201 on F.Cu | Pad 10 [+3V3_HV] of U2201 on F.Cu",
       "type": "clearance"
     },
     {
       "severity": "error",
       "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2000 mm) | Pad 9 [HV_CAP] of U2201 on F.Cu | Pad 17 [GND] of U2201 on F.Cu",
-      "type": "clearance"
-    },
-    {
-      "severity": "error",
-      "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.7500 mm) | Pad 9 [HV_CAP] of U2201 on F.Cu | Pad 11 [HV_ISHORT] of U2201 on F.Cu",
       "type": "clearance"
     },
     {
@@ -5144,6 +5146,14 @@
     }
   ],
   "waivers": [
+    {
+      "check": "drc",
+      "kind": "violation waiver (tool-level; the KiCad GUI still lists these)",
+      "match": "KO_WALL_[^|]*\\| (Track|Via) \\[GND\\]",
+      "matched": 4,
+      "reason": "GND copper (plane fan-out stubs/vias of the clip pads and of parts next to the wall) under a shield-can wall: the can is on GND, so GND copper under it is harmless; the wall keep-outs exist to keep every OTHER net off F.Cu under the walls.",
+      "rule": "items_not_allowed"
+    },
     {
       "check": "drc",
       "kind": "violation waiver (tool-level; the KiCad GUI still lists these)",

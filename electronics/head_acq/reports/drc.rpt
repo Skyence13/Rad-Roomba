@@ -2,43 +2,19 @@
 ** Created on (date removed for reproducibility) **
 ** Report includes: Errors, Warnings, Exclusions **
 
-** Found 467 DRC violations **
+** Found 459 DRC violations **
 [items_not_allowed]: Items not allowed (keepout area 'KO_WALL_1_Rt_3')
     Rule: keepout area 'KO_WALL_1_Rt_3'; error
     @(185.8800 mm, 210.6000 mm): Track [GND] on F.Cu, length 2.2800 mm
 [items_not_allowed]: Items not allowed (keepout area 'KO_WALL_3_Rt_3')
     Rule: keepout area 'KO_WALL_3_Rt_3'; error
     @(360.8800 mm, 210.6000 mm): Track [GND] on F.Cu, length 2.2800 mm
-[items_not_allowed]: Items not allowed (keepout area 'KO_WALL_0_Rt_3')
-    Rule: keepout area 'KO_WALL_0_Rt_3'; error
-    @(98.3800 mm, 210.6000 mm): Track [GND] on F.Cu, length 2.2800 mm
 [items_not_allowed]: Items not allowed (keepout area 'KO_WALL_2_Rt_3')
     Rule: keepout area 'KO_WALL_2_Rt_3'; error
     @(273.3800 mm, 210.6000 mm): Track [GND] on F.Cu, length 2.2800 mm
-[items_not_allowed]: Items not allowed (keepout area 'KO_WALL_0_B0_0')
-    Rule: keepout area 'KO_WALL_0_B0_0'; error
-    @(71.3700 mm, 243.0500 mm): Track [F0_A] on F.Cu, length 5.6750 mm
-[items_not_allowed]: Items not allowed (keepout area 'KO_WALL_0_B1_2')
-    Rule: keepout area 'KO_WALL_0_B1_2'; error
-    @(93.6200 mm, 243.0500 mm): Track [R0_A] on F.Cu, length 5.6750 mm
-[items_not_allowed]: Items not allowed (keepout area 'KO_WALL_1_B0_0')
-    Rule: keepout area 'KO_WALL_1_B0_0'; error
-    @(158.8700 mm, 243.0500 mm): Track [F1_A] on F.Cu, length 5.6750 mm
-[items_not_allowed]: Items not allowed (keepout area 'KO_WALL_1_B0_2')
-    Rule: keepout area 'KO_WALL_1_B0_2'; error
-    @(181.1200 mm, 243.0500 mm): Track [R1_A] on F.Cu, length 5.6750 mm
-[items_not_allowed]: Items not allowed (keepout area 'KO_WALL_2_B0_0')
-    Rule: keepout area 'KO_WALL_2_B0_0'; error
-    @(246.3700 mm, 243.0500 mm): Track [F2_A] on F.Cu, length 5.6750 mm
-[items_not_allowed]: Items not allowed (keepout area 'KO_WALL_2_B0_2')
-    Rule: keepout area 'KO_WALL_2_B0_2'; error
-    @(268.6200 mm, 243.0500 mm): Track [R2_A] on F.Cu, length 5.6750 mm
-[items_not_allowed]: Items not allowed (keepout area 'KO_WALL_3_B0_0')
-    Rule: keepout area 'KO_WALL_3_B0_0'; error
-    @(333.8700 mm, 243.0500 mm): Track [F3_A] on F.Cu, length 5.6750 mm
-[items_not_allowed]: Items not allowed (keepout area 'KO_WALL_3_B1_2')
-    Rule: keepout area 'KO_WALL_3_B1_2'; error
-    @(356.1200 mm, 243.0500 mm): Track [R3_A] on F.Cu, length 5.6750 mm
+[items_not_allowed]: Items not allowed (keepout area 'KO_WALL_0_Rt_3')
+    Rule: keepout area 'KO_WALL_0_Rt_3'; error
+    @(98.3800 mm, 210.6000 mm): Track [GND] on F.Cu, length 2.2800 mm
 [clearance]: Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.6552 mm)
     Rule: netclass 'HV'; error
     @(167.0625 mm, 176.5500 mm): Pad 1 [HV_OFF] of Q2204 on F.Cu
@@ -195,14 +171,14 @@
     Rule: netclass 'HV'; error
     @(157.7500 mm, 170.4375 mm): Pad 6 [HV_RAWF] of U2201 on F.Cu
     @(158.0000 mm, 169.0000 mm): Pad 17 [GND] of U2201 on F.Cu
-[clearance]: Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2500 mm)
-    Rule: netclass 'HV'; error
-    @(158.2500 mm, 170.4375 mm): Pad 7 [GND] of U2201 on F.Cu
-    @(158.7500 mm, 170.4375 mm): Pad 8 [HV_SW] of U2201 on F.Cu
 [clearance]: Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.6656 mm)
     Rule: netclass 'HV'; error
     @(158.2500 mm, 170.4375 mm): Pad 7 [GND] of U2201 on F.Cu
     @(159.4375 mm, 169.7500 mm): Pad 9 [HV_CAP] of U2201 on F.Cu
+[clearance]: Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2500 mm)
+    Rule: netclass 'HV'; error
+    @(158.2500 mm, 170.4375 mm): Pad 7 [GND] of U2201 on F.Cu
+    @(158.7500 mm, 170.4375 mm): Pad 8 [HV_SW] of U2201 on F.Cu
 [clearance]: Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2286 mm)
     Rule: netclass 'HV'; error
     @(158.7500 mm, 170.4375 mm): Pad 8 [HV_SW] of U2201 on F.Cu
@@ -215,6 +191,10 @@
     Rule: netclass 'HV'; error
     @(158.7500 mm, 170.4375 mm): Pad 8 [HV_SW] of U2201 on F.Cu
     @(158.0000 mm, 169.0000 mm): Pad 17 [GND] of U2201 on F.Cu
+[clearance]: Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.7500 mm)
+    Rule: netclass 'HV'; error
+    @(159.4375 mm, 169.7500 mm): Pad 9 [HV_CAP] of U2201 on F.Cu
+    @(159.4375 mm, 168.7500 mm): Pad 11 [HV_ISHORT] of U2201 on F.Cu
 [clearance]: Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2500 mm)
     Rule: netclass 'HV'; error
     @(159.4375 mm, 169.7500 mm): Pad 9 [HV_CAP] of U2201 on F.Cu
@@ -223,10 +203,6 @@
     Rule: netclass 'HV'; error
     @(159.4375 mm, 169.7500 mm): Pad 9 [HV_CAP] of U2201 on F.Cu
     @(158.0000 mm, 169.0000 mm): Pad 17 [GND] of U2201 on F.Cu
-[clearance]: Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.7500 mm)
-    Rule: netclass 'HV'; error
-    @(159.4375 mm, 169.7500 mm): Pad 9 [HV_CAP] of U2201 on F.Cu
-    @(159.4375 mm, 168.7500 mm): Pad 11 [HV_ISHORT] of U2201 on F.Cu
 [clearance]: Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.8000 mm)
     Rule: netclass 'HV'; error
     @(266.0000 mm, 230.1875 mm): Pad 1 [HV_BUS] of R701 on F.Cu
@@ -2252,7 +2228,7 @@
 [unconnected_items]: Missing connection between items
     Local override; error
     @(195.9750 mm, 202.0000 mm): Pad 1 [+5V_A] of C2302 on F.Cu
-    @(186.1250 mm, 218.4125 mm): Via [+5V_A] on F.Cu - B.Cu
+    @(185.2000 mm, 218.4125 mm): Track [+5V_A] on F.Cu, length 0.9250 mm
 [unconnected_items]: Missing connection between items
     Local override; error
     @(196.2500 mm, 199.4375 mm): Pad 7 [+5V_A] of U2301 on F.Cu
@@ -2340,7 +2316,7 @@
 [unconnected_items]: Missing connection between items
     Local override; error
     @(339.4875 mm, 223.4000 mm): Pad 1 [+5V_A] of FB401 on F.Cu
-    @(337.6875 mm, 235.7500 mm): Track [+5V_A] on F.Cu, length 0.8743 mm
+    @(337.0693 mm, 235.1318 mm): Via [+5V_A] on F.Cu - B.Cu
 [unconnected_items]: Missing connection between items
     Local override; error
     @(346.7250 mm, 197.0950 mm): Pad 8 [+5V_A] of U1301 on F.Cu
@@ -2600,7 +2576,7 @@
 [unconnected_items]: Missing connection between items
     Local override; error
     @(349.7500 mm, 209.4800 mm): Pad 1 [+3V3_EVT] of C822 on F.Cu
-    @(354.6375 mm, 194.8500 mm): Pad 5 [+3V3_EVT] of U1303 on F.Cu
+    @(354.6375 mm, 194.8500 mm): Track [+3V3_EVT] on F.Cu, length 0.6500 mm
 [unconnected_items]: Missing connection between items
     Local override; error
     @(350.9625 mm, 215.3500 mm): Pad 2 [+3V3_EVT] of D802 on F.Cu
@@ -2971,7 +2947,7 @@
     @(151.8375 mm, 179.2500 mm): Pad 1 [HV_BUS] of R2213 on F.Cu
 [unconnected_items]: Missing connection between items
     Local override; error
-    @(155.0500 mm, 205.0000 mm): Via [HV_BUS] on F.Cu - B.Cu
+    @(155.0500 mm, 230.1880 mm): Track [HV_BUS] on In2.Cu, length 25.1880 mm
     @(149.7500 mm, 183.9125 mm): Pad 1 [HV_BUS] of R2217 on F.Cu
 [unconnected_items]: Missing connection between items
     Local override; error

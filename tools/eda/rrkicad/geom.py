@@ -160,15 +160,20 @@ class Obstacles:
                 self._add(it)
                 self.pads_by_ref.setdefault(ref, []).append(it)
         for t in pcb.GetTracks():
+            locked = t.IsLocked()
             if t.GetClass() == "PCB_VIA":
                 p = t.GetPosition()
-                self.add_via(T(p.x), T(p.y), T(t.GetWidth(pcbnew.F_Cu)) / 2.0, T(t.GetDrillValue()), t.GetNetname())
+                it = self.add_via(T(p.x), T(p.y), T(t.GetWidth(pcbnew.F_Cu)) / 2.0, T(t.GetDrillValue()), t.GetNetname())
+                it["key"] = item_key(t)
             elif t.GetClass() == "PCB_TRACK":
                 a, e = t.GetStart(), t.GetEnd()
-                self.add_seg((T(a.x), T(a.y)), (T(e.x), T(e.y)), T(t.GetWidth()), t.GetLayerName(), t.GetNetname())
+                it = self.add_seg((T(a.x), T(a.y)), (T(e.x), T(e.y)), T(t.GetWidth()), t.GetLayerName(), t.GetNetname())
+                it["key"] = item_key(t)
             else:   # arcs: approximate by their chord + bulge bbox (conservative enough for rejection)
                 a, e = t.GetStart(), t.GetEnd()
-                self.add_seg((T(a.x), T(a.y)), (T(e.x), T(e.y)), T(t.GetWidth()) + 0.2, t.GetLayerName(), t.GetNetname())
+                it = self.add_seg((T(a.x), T(a.y)), (T(e.x), T(e.y)), T(t.GetWidth()) + 0.2, t.GetLayerName(), t.GetNetname())
+                locked = True     # never ripped up
+            it["locked"] = locked
 
     def add_via(self, x, y, r, drill, net):
         it = {"kind": "via", "x": x, "y": y, "r": r, "drill": drill, "net": net, "layers": set(self.cu),
@@ -181,6 +186,73 @@ class Obstacles:
               "bb": (min(a[0], b[0]) - w / 2, min(a[1], b[1]) - w / 2, max(a[0], b[0]) + w / 2, max(a[1], b[1]) + w / 2)}
         self._add(it)
         return it
+
+    def remove(self, it):
+        bb = it["bb"]
+        for i in range(int(math.floor(bb[0] / CELL)), int(math.floor(bb[2] / CELL)) + 1):
+            for j in range(int(math.floor(bb[1] / CELL)), int(math.floor(bb[3] / CELL)) + 1):
+                lst = self.cells.get((i, j))
+                if lst is not None:
+                    self.cells[(i, j)] = [x for x in lst if x is not it]
+        self.by_net[it["net"]] = [x for x in self.by_net.get(it["net"], []) if x is not it]
+
+    def hits_seg(self, a, b, w, layer, net):
+        """Other-net items a track a-b would violate; None if it hits something that is not an
+        item (edge, cut-out, keep-out)."""
+        if not self.board_ok_seg(a, b, w):
+            return None
+        for ko in self.keepouts:
+            if ko["tracks"] and layer in ko["layers"]:
+                if pip(a[0], a[1], ko["poly"]) or pip(b[0], b[1], ko["poly"]) or seg_poly_edge(a, b, ko["poly"]) < w / 2.0:
+                    return None
+        out = []
+        m = w / 2.0 + 1.0
+        for it in self.near(min(a[0], b[0]) - m, min(a[1], b[1]) - m, max(a[0], b[0]) + m, max(a[1], b[1]) + m):
+            if layer not in it["layers"] or (it["net"] == net and net != ""):
+                continue
+            c = self.clr(net, it["net"]) + w / 2.0
+            k = it["kind"]
+            if k == "via":
+                bad = pt_seg(it["x"], it["y"], a[0], a[1], b[0], b[1]) < c + it["r"]
+            elif k == "pad":
+                bad = pad_seg_dist(it, a, b) < c
+            else:
+                bad = seg_seg(a, b, it["a"], it["b"]) < c + it["w"] / 2.0
+            if bad:
+                out.append(it)
+        return out
+
+    def hits_via(self, x, y, r, drill, net):
+        """Like hits_seg for a through via (other-net copper on any layer, drills)."""
+        if not self.board_ok_point(x, y, r):
+            return None
+        for ko in self.keepouts:
+            if ko["vias"] and (pip(x, y, ko["poly"]) or pt_poly_edge(x, y, ko["poly"]) < r):
+                return None
+        rr = self.r
+        out = []
+        m = r + 1.0
+        for it in self.near(x - m, y - m, x + m, y + m):
+            same = it["net"] == net and net != ""
+            k = it["kind"]
+            bad = False
+            if k == "via":
+                d = math.hypot(x - it["x"], y - it["y"])
+                bad = d < drill / 2.0 + it["drill"] / 2.0 + rr.min_hole_to_hole + self.margin or \
+                    (not same and d < r + it["r"] + self.clr(net, it["net"]))
+            elif k == "pad":
+                d = pad_dist(it, x, y)
+                if it.get("drill") and math.hypot(x - it["cx"], y - it["cy"]) < drill / 2.0 + it["drill"] / 2.0 + rr.min_hole_to_hole + self.margin:
+                    bad = True
+                elif same:
+                    bad = d < r + 0.05 and not it.get("drill")
+                else:
+                    bad = d < r + self.clr(net, it["net"]) or d < drill / 2.0 + rr.min_hole_clearance + self.margin
+            elif not same:
+                bad = pt_seg(x, y, it["a"][0], it["a"][1], it["b"][0], it["b"][1]) < r + it["w"] / 2.0 + self.clr(net, it["net"])
+            if bad:
+                out.append(it)
+        return out
 
     # -------------------------------------------------------------- checks
     def board_ok_point(self, x, y, rad):
@@ -281,6 +353,17 @@ class Obstacles:
 
     def courtyard_of(self, ref):
         return [rect for rect, r in self.court if r == ref]
+
+
+def item_key(t):
+    """Stable identity of a track / via of a board (used to replay finisher rip-ups)."""
+    if t.GetClass() == "PCB_VIA":
+        p = t.GetPosition()
+        return ["via", t.GetNetname(), p.x, p.y]
+    a, b = (t.GetStart().x, t.GetStart().y), (t.GetEnd().x, t.GetEnd().y)
+    if b < a:
+        a, b = b, a
+    return ["seg", t.GetNetname(), t.GetLayerName(), a[0], a[1], b[0], b[1]]
 
 
 def pad_item(pad, ref, lid):

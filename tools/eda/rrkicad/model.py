@@ -197,7 +197,8 @@ class Board:
         self.routing = {"passes": 100, "threads": None, "timeout": None, "enabled": True, "extra_args": [],
                         "optimizer": True, "fanout": False, "plane_fanout": True, "retries": 2,
                         "escape": "auto", "escape_pitch": 0.65, "escape_min_pads": 16, "escape_layers": None, "escape_via": None,
-                        "escape_track": None, "escape_direct": True, "finisher": True}
+                        "escape_track": None, "escape_direct": True, "finisher": True,
+                        "finisher_ripup": True}
         self.autoplace = {"clearance": 0.3, "grid": 0.25, "edge_margin": 0.5, "ic_halo": 2.0, "rotations": (0, 90, 180, 270),
                           "spread": 0.35, "ic_keepaway": 1.0, "escape_keepaway": 2.0}
         self.stackup_notes = []

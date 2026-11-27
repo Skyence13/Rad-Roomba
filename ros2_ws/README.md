@@ -291,7 +291,11 @@ Carried from `STATUS.md` (read that file for the current, complete list):
   hand-off** — required before field use.
 - Serial transports untested (no hardware). Head DIAG archived but unused.
 - `colcon test` not part of the verified set.
-- Real-time tests (`ros`, `native`) are timing-sensitive on a loaded host; see STATUS "Failed or flaky".
+- Real-time tests (`ros`, `native`) are timing-sensitive: on a host with load average ~9–10 native_s02
+  failed 3 times with a chassis CMD_TIMEOUT (DRIVE cadence missed by the single-threaded loop) and
+  passed 3 times at low load; the final `tools/test.sh all` under load therefore exited non-zero.
+  Run them on an unloaded host; see STATUS "Failed or flaky".
+- Never edit `tools/test.sh` while it is running (bash reads it incrementally; see STATUS).
 
 Contract change requests: [`CONTRACT_CHANGE_REQUESTS.md`](CONTRACT_CHANGE_REQUESTS.md). UI changes vs
 the 0.3 operator document: `software/Operator_Interface_0.4_delta.md`.
