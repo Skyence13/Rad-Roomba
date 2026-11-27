@@ -2,7 +2,16 @@
 only prototype design values (wall, fits, fastener sizes, split stations) are defined here.  Units mm, base_link."""
 from __future__ import annotations
 
+import os
+
 from mechanical.common import params as P
+
+# ---- build switch: one parametric model, two builds.  RR_BUILD=x1c (default, this directory) or production
+# (mechanical/production: SLS skins in one piece each, machined pods and rims, cast tyres; same interfaces and checks).
+BUILD = os.environ.get("RR_BUILD", "x1c").strip().lower()
+if BUILD not in ("x1c", "production"):
+    raise ValueError(f"RR_BUILD must be x1c or production, not {BUILD!r}")
+PROD = BUILD == "production"
 
 HEAD_X1 = max(P.HEAD_ENV_E["x"][1], float(P.C["frames"]["head_envelope_rev_e_mm"]["x"][1]))   # 212.5: sprung leading rail (contract draft6)
 BED = (256.0, 256.0, 250.0)          # stock X1C: 256 x 256 plate, 250 mm printable height in the stock preset
@@ -18,6 +27,8 @@ MAT = {
     "SS304": {"rho": 7.9, "fill": 1.0, "color": "#8f959a"},
     "STEEL": {"rho": 7.85, "fill": 1.0, "color": "#70767b"},
     "G10": {"rho": 1.85, "fill": 1.0, "color": "#c9c27a"},
+    "PA11-SLS": {"rho": 1.04, "fill": 1.0, "color": "#2b2f33"},     # production: SLS PA11, fully dense (typical 1.03-1.05, UNVERIFIED)
+    "PU85A-CAST": {"rho": 1.12, "fill": 1.0, "color": "#17191b"},   # production: cast polyether PU 85 Shore A (typical, UNVERIFIED)
     "PMMA": {"rho": 1.19, "fill": 1.0, "color": "#3b1d1d"},
     "FOAM": {"rho": 0.06, "fill": 1.0, "color": "#e9e2c8"},
     "SIL": {"rho": 0.35, "fill": 1.0, "color": "#c7533f"},

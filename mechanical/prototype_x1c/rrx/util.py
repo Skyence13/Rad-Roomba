@@ -12,8 +12,11 @@ from OCP.BRepBndLib import BRepBndLib
 
 from mechanical.common import params as P
 
+import os as _os
+
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "out"
+BUILD = _os.environ.get("RR_BUILD", "x1c").strip().lower()
+OUT = (ROOT.parent / "production" / "out") if BUILD == "production" else ROOT / "out"
 CACHE = OUT / "cache"
 V = cq.Vector
 

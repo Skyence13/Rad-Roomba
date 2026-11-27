@@ -231,7 +231,10 @@ def motor_pod(s):
         pod = pod.cut(cyl(D.CLEAR["M3"] / 2, 10, (D.MOTOR_BCD / 2 * math.cos(a), yf - 1, ax_z + D.MOTOR_BCD / 2 * math.sin(a)), (0, 1, 0)))
     for x in (-20.0, 20.0):
         for y in (D.POD_Y0 + 5.0, 112.0):
-            pod = pod.cut(cyl(D.INSERT["M4"][0] / 2, D.INSERT["M4"][1], (x, y, Z1)))
+            if D.PROD:                                                # machined 6061 pod: M4 tapped 8 deep (no insert)
+                pod = pod.cut(cyl(D.TAP["M4"] / 2, 8.0, (x, y, Z1)))
+            else:
+                pod = pod.cut(cyl(D.INSERT["M4"][0] / 2, D.INSERT["M4"][1], (x, y, Z1)))
     pod = pod.cut(box(-4.0, 4.0, D.POD_Y0 - 1, D.POD_Y0 + 6.0, ax_z + D.POD_BORE_R - 1, ax_z + r_o + 1))   # encoder-lead notch
     return pod if s > 0 else mirror_y(pod)
 

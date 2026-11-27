@@ -18,8 +18,8 @@ General: closed chamber for ASA and PAHT-CF; glue stick on the textured PEI for 
 |---|---|---|---|---|---|---|---|---|---|
 | RRX-P01L | motor_pod_L | 1 | PAHT-CF | Euler XYZ [90, 0, 0] deg from the assembled pose: end face on the bed, tube axis vertical; no supports | none | 52.0 x 45.5 x 19.0 | OK | 14 | 1.3 |
 | RRX-P01R | motor_pod_R | 1 | PAHT-CF | Euler XYZ [-90, 0, 0] deg from the assembled pose: end face on the bed, tube axis vertical; no supports | none | 52.0 x 45.5 x 19.0 | OK | 14 | 1.3 |
-| RRX-P02L | receiver_channel_fitcheck_L | 1 | PAHT-CF | Euler XYZ [180, 0, 0] deg from the assembled pose: plate face on the bed (upside-down); no supports; FIT CHECK ONLY, the datum part is the machined RRX-F02 | none | 63.7 x 51.0 x 21.0 | OK | 17 | 1.5 |
-| RRX-P02R | receiver_channel_fitcheck_R | 1 | PAHT-CF | Euler XYZ [180, 0, 0] deg from the assembled pose: plate face on the bed (upside-down); no supports; FIT CHECK ONLY, the datum part is the machined RRX-F02 | none | 63.7 x 51.0 x 21.0 | OK | 17 | 1.5 |
+| RRX-P02L | receiver_channel_fitcheck_L | 1 | PAHT-CF | Euler XYZ [180, 0, 0] deg from the assembled pose: plate face on the bed (upside-down); no supports; FIT CHECK ONLY, the datum part is the machined RRX-F02 | none | 63.7 x 51.0 x 21.0 | OK | 15 | 1.3 |
+| RRX-P02R | receiver_channel_fitcheck_R | 1 | PAHT-CF | Euler XYZ [180, 0, 0] deg from the assembled pose: plate face on the bed (upside-down); no supports; FIT CHECK ONLY, the datum part is the machined RRX-F02 | none | 63.7 x 51.0 x 21.0 | OK | 14 | 1.3 |
 | RRX-P03L | cheek_fairing_L | 1 | ASA | Euler XYZ [0, 0, 0] deg from the assembled pose: upright as fitted; supports only under the ToF nose | upright as fitted; supports only under the ToF nose | 48.2 x 29.1 x 61.2 | OK | 17 | 1.2 |
 | RRX-P03R | cheek_fairing_R | 1 | ASA | Euler XYZ [0, 0, 0] deg from the assembled pose: upright as fitted; supports only under the ToF nose | upright as fitted; supports only under the ToF nose | 48.2 x 29.1 x 61.2 | OK | 17 | 1.2 |
 | RRX-P04 | dock_switch_bracket | 1 | PAHT-CF | Euler XYZ [180, 0, 0] deg from the assembled pose: plate face on the bed | plate face on the bed | 14.8 x 18.0 x 17.0 | OK | 3 | 0.5 |
@@ -63,7 +63,7 @@ General: closed chamber for ASA and PAHT-CF; glue stick on the textured PEI for 
 | RRX-P53 | tof_clip_std | 5 | ASA | Euler XYZ [0, 0, 0] deg from the assembled pose: flat; 5 off | flat; 5 off | 8.0 x 28.0 x 1.6 | OK | 0 | 0.3 |
 | RRX-P54 | tof_clip_shallow | 4 | ASA | Euler XYZ [0, 0, 0] deg from the assembled pose: flat; 4 off (shallow look-ahead / look-behind seats) | flat; 4 off (shallow look-ahead / look-behind seats) | 27.0 x 8.0 x 1.6 | OK | 0 | 0.3 |
 
-Printed mass by material (calculated): PAHT-CF 228 g, ASA 1510 g, TPU95A 129 g. Rough total machine time 123 h (rule of thumb).
+Printed mass by material (calculated): PAHT-CF 222 g, ASA 1510 g, TPU95A 129 g. Rough total machine time 122 h (rule of thumb).
 
 ## Plates (which parts share a plate)
 

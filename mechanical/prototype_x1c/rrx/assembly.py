@@ -137,6 +137,9 @@ def build(verbose=True):
             print(f"  {mod.__name__.split('.')[-1]:10s} {time.time() - t:6.1f} s  ({len(parts)} parts)", flush=True)
     purchased(add)
     head_placeholder(add)
+    if D.PROD:                                                      # production build: re-label process / material / PN (geometry already switched)
+        from . import production
+        production.apply(parts)
     names = [p.name for p in parts]
     dup = {n for n in names if names.count(n) > 1}
     if dup:

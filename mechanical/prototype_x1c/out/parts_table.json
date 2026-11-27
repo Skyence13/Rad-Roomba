@@ -1443,7 +1443,7 @@
   "dxf": null
  },
  {
-  "name": "receiver_shim_L",
+  "name": "receiver_shim_L_in",
   "orient_euler_xyz_deg": [
    0,
    0,
@@ -1457,16 +1457,45 @@
   "volume_cm3": 1.26,
   "bed_fit": "OK",
   "bed_note": "",
-  "pn": "RRX-F12L",
+  "pn": "RRX-F12",
   "kind": "fabricated",
   "material": "G10",
-  "qty": 1,
+  "qty": 2,
   "instances": [
-   "receiver_shim_L"
+   "receiver_shim_L_in",
+   "receiver_shim_R_in"
   ],
   "group": "receiver",
-  "note": "G-10 sheet, both faces surface ground 4.00 +-0.02, flatness 0.01; the L/R pair ground together; thermal break (DEC-045)",
+  "note": "G-10 sheet, inboard ear strip, both faces surface ground 4.00 +-0.02, flatness 0.01; one set ground together; thermal break (DEC-045)",
   "mass_each_g": 2.3,
+  "dxf": null
+ },
+ {
+  "name": "receiver_shim_L_out",
+  "orient_euler_xyz_deg": [
+   0,
+   0,
+   0
+  ],
+  "bbox_print": [
+   16.0,
+   8.5,
+   4.0
+  ],
+  "volume_cm3": 0.48,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "pn": "RRX-F13",
+  "kind": "fabricated",
+  "material": "G10",
+  "qty": 2,
+  "instances": [
+   "receiver_shim_L_out",
+   "receiver_shim_R_out"
+  ],
+  "group": "receiver",
+  "note": "G-10 sheet, outboard ear strip, both faces surface ground 4.00 +-0.02, flatness 0.01; one set ground together; thermal break (DEC-045)",
+  "mass_each_g": 0.9,
   "dxf": null
  },
  {
@@ -1578,33 +1607,6 @@
   "group": "receiver",
   "note": "machined 6061 (printed PAHT-CF copy RRX-P02x for fit check only); hangs on the G10 shim, no metal contact with the plate",
   "mass_each_g": 43.6,
-  "dxf": null
- },
- {
-  "name": "receiver_shim_R",
-  "orient_euler_xyz_deg": [
-   0,
-   0,
-   0
-  ],
-  "bbox_print": [
-   48.0,
-   8.5,
-   4.0
-  ],
-  "volume_cm3": 1.26,
-  "bed_fit": "OK",
-  "bed_note": "",
-  "pn": "RRX-F12R",
-  "kind": "fabricated",
-  "material": "G10",
-  "qty": 1,
-  "instances": [
-   "receiver_shim_R"
-  ],
-  "group": "receiver",
-  "note": "G-10 sheet, both faces surface ground 4.00 +-0.02, flatness 0.01; the L/R pair ground together; thermal break (DEC-045)",
-  "mass_each_g": 2.3,
   "dxf": null
  },
  {

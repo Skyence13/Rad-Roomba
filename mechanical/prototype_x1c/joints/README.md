@@ -131,8 +131,19 @@ Receiver channel at the rear land station (x = 8) with the head shoe. Plane x = 
 ![J12_receiver_station](J12_receiver_station.png)
 
 - dowel-pin land top = datum C (z 16.0)
-- roof pad 14.06 above the land; side pads fit the left shoe, float the right
-- parts cut: chassis_plate, receiver_channel_L, land_pin_L0, motor_pod_L, lower_hull_FL, head_shoe_L
+- roof pad 14.06 above the land on the rear bridge; bridge in a 1.5 mm plate pocket (air gap)
+- ears on the 4 mm G10 shim: no metal contact with the plate
+- parts cut: chassis_plate, receiver_channel_L, receiver_shim_L_in, receiver_shim_L_out, land_pin_L0, motor_pod_L, lower_hull_FL, head_shoe_L
+
+## J17 receiver break
+
+Receiver thermal break, left inboard ear line: M4 in G10 top-hat bushings, lower and upper location pins, G10 shim. Plane y = 70.5 mm, window (0, 62, 16, 42).
+
+![J17_receiver_break](J17_receiver_break.png)
+
+- M4 x 18 + DIN 6796 + ISO 7089 + G10 bushing, 1500 N / 1.2 N m
+- lower pins ear -> shim, upper pins plate -> shim; each touches metal on one side only
+- parts cut: chassis_plate, receiver_channel_L, receiver_shim_L_in, rx_pin_lower_L0, rx_pin_lower_L1, rx_pin_upper_L0, rx_pin_upper_L1, lower_hull_FL, motor_L
 
 ## J13 receiver long
 

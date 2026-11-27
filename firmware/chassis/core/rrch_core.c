@@ -677,6 +677,12 @@ void rrch_tick_1khz(rrch_t *c)
         rrch_fault_set(c, RRCH_FLT(TIMING), true);
     }
 
+    if (c->wd_high && c->ms - c->wd_strobe_ms >= 5u) {
+        if (c->hal.wdg_low) {
+            c->hal.wdg_low(c->hal.ctx);
+        }
+        c->wd_high = false;
+    }
     rrch_chain_step(c);
     if (!c->boot_done && c->ms >= 200u && c->chain.primed) {
         c->boot_done = true;
@@ -710,8 +716,17 @@ void rrch_tick_1khz(rrch_t *c)
      * element is never closed unsupervised */
     bool permit = c->boot_done && m != RRCH_MODE_FAULT && m != RRCH_MODE_BOOT && m != RRCH_MODE_SERVICE_CHARGE && m != RRCH_MODE_LAB &&
                   !c->permit_withdrawn && bt_permit && c->chain.pres != RRCH_PRES_FAULT && !(c->chain.hw_live & RRCH_HW(VMOT_FAULT)) &&
-                  c->chain.chain_end_known;
+                  c->chain.chain_end_known && !rrch_rearm_blocked(c) && !(c->faults & RRCH_FLT(LOOP_DISCREPANCY));
+    /* once withdrawn, ARM_PERMIT stays low for at least 50 ms: K1 releases 4 ms after its coil loses
+     * CHAIN_END; a shorter dip would let RUN_12V (HW_LATCH_RB) come back without REARM */
+    if (!c->out.arm_permit && c->permit_low_ms < 50u) {
+        c->permit_low_ms++;
+        permit = false;
+    }
     if (permit != c->out.arm_permit) {
+        if (!permit) {
+            c->permit_low_ms = 0;
+        }
         if (permit || !c->permit_withdrawn) {
             rrch_event(c, RRCH_EV_PERMIT, permit, permit ? 0 : (bt_permit ? 4 : 3), 0);
         }
@@ -758,8 +773,13 @@ void rrch_supervise_100hz(rrch_t *c)
     if (c->faults & RRCH_FLT_NO_STROBE_MASK) {
         ok = false; /* TIMING; PERMIT_STUCK_ON: open the chain at WDG_OK, upstream of the suspect ARM_PERMIT element */
     }
-    if (ok && !c->wd_inhibit_strobe) {
+    if (ok && !c->wd_inhibit_strobe && !c->wd_high) {
+        /* review m2: WDI is a 5 ms high pulse every 10 ms (the control tick takes it low again), so the
+         * TPS3430 sees one counted edge per 10 ms whether it counts rising, falling or both edges
+         * (both: 5 ms apart, inside the 2.2-23.4 ms window). A dead control tick leaves WDI high. */
         c->hal.wdg_strobe(c->hal.ctx);
+        c->wd_high = true;
+        c->wd_strobe_ms = c->ms;
     }
 }
 

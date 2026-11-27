@@ -460,6 +460,15 @@ Each statement holds under the stated condition and for the assumed parameter ra
 7. If alpha results are required, they need stationary dwell of at least 10 s and a measured standoff; at 10 mm the alpha response to ²³⁸U changes by tens of per cent for 2 mm of gap or a 35 K change in air temperature.
 8. If a fraction ε of surface signal reaches the reference, true signal is suppressed by kε; with a matched reference ε must be known to about 1 % absolute for a 1 % activity bias.
 
+### 7.1 MODEL.md revision 3 (section 6, IB-31): weighted sums and the multi-lane cell rule
+
+Full numbers in [`model_rev3_checks.md`](model_rev3_checks.md); verdicts and proposed wording in `../MODEL_REVIEW_rev3.md`. All values `calculated` (exact lattice convolution) or `simulated`, with synthetic coefficients.
+
+- Weighted sums, `poisson-exact`: **not conservative**. Achieved ÷ nominal false-alarm probability up to 1.66 in the beta window with U_null exact (1 full + one 0.1, α = 0.0125, U = 1.21 s⁻¹, T_F = 1.0 s, calibration terms none) and 4.41 in the alpha channel (all 0.10, 0.1 µSv/h, 1 s, α = 0.05 (weighted floor mean 0.0249 counts)). Realistic footprint weights in the beta window are conservative, at a sensitivity cost of 1.11–1.67 in r#.
+- The 20·T_F U_null window of section 3 by itself gives up to 1.41 × nominal at mission-level α (0.1 µSv/h, 1 s, all weights 1); 200·T_F gives 1.04. The pooled same-gate fallback gives up to 21.5 per lane.
+- Any lane at α/m: the union bound holds when each lane holds α/m; the quoted min D#ᵢ holds only for activity extending beyond the cell (P(detect) at the quoted limit 0.03–0.91 for activity confined to the cell), and maxᵢ D#ᵢ is not a seam-patch limit (P 0.04–0.82). Cost against an exact combined statistic up to 3.58 (m = 4).
+- One exact linear statistic over all lanes (Gil-Pelaez inversion, validated to 5.7e-08 relative tail error against exact convolution) gives a median D# of 0.143 Bq/cm² on the s01-like plan, against 0.252 for revision 3 and 0.190 for revision 2.
+
 ## 8. Measurements that replace the assumptions
 
 | Assumption | Measurement that replaces it | Design choice it drives |

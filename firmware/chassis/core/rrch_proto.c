@@ -123,7 +123,7 @@ static const char *const loop_names[3] = {"OK", "OPEN", "SHORT"};
 static const char *const bt_names[4] = {"NONE", "RUNNING", "PASSED", "FAILED"};
 static const char *const btf_names[9] = {"PRECOND_VMOT", "PRECOND_RELAY", "LATCH_NOT_DROPPED", "RELAY_L", "RELAY_R", "VMOT_NOT_REMOVED", "BRIDGE_CURRENT_L", "BRIDGE_CURRENT_R", "WHEEL_MOVED"};
 static const char *const ev_names[RRCH_EV_KIND_N] = {"BOOT", "BROWNOUT", "CHAIN", "HW_LATCH", "PERMIT", "J1", "J2", "BUTTON", "MODE", "PSTOP", "PSTOP_CLEAR", "HOLD", "REARM_REJECT", "OP_MODE", "CONFIG", "HEAD_POWER", "FAULT", "BRAKE_TEST", "LINK", "TOF"};
-static const char *const permit_why[5] = {"NORMAL", "UNCOMMANDED_MOTION", "STOP_ESCALATION", "BRAKE_TEST", "MODE"};
+static const char *const permit_why[6] = {"NORMAL", "UNCOMMANDED_MOTION", "STOP_ESCALATION", "BRAKE_TEST", "MODE", "HEAD_LOOP"};
 static const char *const hp_why[5] = {"HOST", "PRESENCE", "CHARGE", "EFUSE", "BOOT"};
 
 static int find_name(const rrc_json_t *d, int tok, const char *const *names, int n)
@@ -591,7 +591,7 @@ static void event_detail(rrch_t *c, rrc_jw_t *w, const rrch_event_t *e)
         break;
     case RRCH_EV_PERMIT:
         rrc_jw_kbool(w, "on", e->a != 0);
-        rrc_jw_kstr(w, "why", permit_why[e->b % 5]);
+        rrc_jw_kstr(w, "why", permit_why[e->b % 6]);
         break;
     case RRCH_EV_J1:
         rrc_jw_kstr(w, "from", rrch_pres_names[e->a]);

@@ -1,6 +1,6 @@
 {
  "interference": {
-  "pairs_evaluated": 394,
+  "pairs_evaluated": 438,
   "clashes": [],
   "declared_overlaps": [
    [
@@ -164,7 +164,7 @@
   ],
   "methods": {
    "boolean: contact film 0.030 mm thick": 1,
-   "mesh screen": 366,
+   "mesh screen": 410,
    "boolean": 21,
    "boolean: contact film 0.000 mm thick": 6
   },
@@ -377,7 +377,7 @@
   "parts_in_the_zone": [
    [
     "receiver_channel_L",
-    2778,
+    2384,
     65.7
    ],
    [
@@ -387,7 +387,7 @@
    ],
    [
     "receiver_channel_R",
-    2754,
+    2359,
     65.7
    ],
    [
@@ -485,6 +485,42 @@
     "ok": true
    },
    {
+    "item": "L G10 shim thickness",
+    "required": 4.0,
+    "measured": 4.0,
+    "ok": true
+   },
+   {
+    "item": "L shim top on the plate underside z",
+    "required": 33.0,
+    "measured": 33.0,
+    "ok": true
+   },
+   {
+    "item": "L ear top z (plate - shim)",
+    "required": 29.0,
+    "measured": 29.0,
+    "ok": true
+   },
+   {
+    "item": "L no metal contact channel -> plate (min gap >= 1.0 mm)",
+    "required": true,
+    "measured": true,
+    "ok": true
+   },
+   {
+    "item": "L lower pins clear the plate (min gap mm)",
+    "required": true,
+    "measured": true,
+    "ok": true
+   },
+   {
+    "item": "L upper pins clear the channel (min gap mm)",
+    "required": true,
+    "measured": true,
+    "ok": true
+   },
+   {
     "item": "R datum A: channel front face x",
     "required": 65.7,
     "measured": 65.7,
@@ -554,6 +590,42 @@
     "item": "R running clearance each side away from the lands",
     "required": 0.5,
     "measured": 0.5,
+    "ok": true
+   },
+   {
+    "item": "R G10 shim thickness",
+    "required": 4.0,
+    "measured": 4.0,
+    "ok": true
+   },
+   {
+    "item": "R shim top on the plate underside z",
+    "required": 33.0,
+    "measured": 33.0,
+    "ok": true
+   },
+   {
+    "item": "R ear top z (plate - shim)",
+    "required": 29.0,
+    "measured": 29.0,
+    "ok": true
+   },
+   {
+    "item": "R no metal contact channel -> plate (min gap >= 1.0 mm)",
+    "required": true,
+    "measured": true,
+    "ok": true
+   },
+   {
+    "item": "R lower pins clear the plate (min gap mm)",
+    "required": true,
+    "measured": true,
+    "ok": true
+   },
+   {
+    "item": "R upper pins clear the channel (min gap mm)",
+    "required": true,
+    "measured": true,
     "ok": true
    },
    {
@@ -1344,10 +1416,10 @@
  },
  "mass_cg": {
   "base_without_head": {
-   "mass": 6.71,
-   "x": -92.3,
+   "mass": 6.7,
+   "x": -92.48,
    "y": 1.15,
-   "z": 82.21
+   "z": 82.25
   },
   "groups": {
    "battery_bay": {
@@ -1381,8 +1453,8 @@
     "z": 88.0
    },
    "chassis": {
-    "mass_kg": 0.547,
-    "x": -65.1,
+    "mass_kg": 0.542,
+    "x": -65.9,
     "z": 35.2
    },
    "chs_main": {
@@ -1461,9 +1533,9 @@
     "z": 85.0
    },
    "receiver": {
-    "mass_kg": 0.2,
-    "x": 53.4,
-    "z": 35.8
+    "mass_kg": 0.196,
+    "x": 52.8,
+    "z": 35.3
    },
    "service_cover": {
     "mass_kg": 0.051,
@@ -1484,15 +1556,51 @@
   "items": [
    [
     "chassis_plate",
-    0.5379,
-    -67.1,
+    0.5329,
+    -67.9,
     35.0
    ],
    [
     "receiver_channel_L",
-    0.052,
-    37.2,
-    25.2
+    0.0438,
+    36.2,
+    22.8
+   ],
+   [
+    "receiver_shim_L_in",
+    0.0023,
+    31.7,
+    31.0
+   ],
+   [
+    "receiver_shim_L_out",
+    0.0009,
+    16.3,
+    31.0
+   ],
+   [
+    "rx_pin_lower_L0",
+    0.0008,
+    28.5,
+    27.5
+   ],
+   [
+    "rx_pin_lower_L1",
+    0.0008,
+    43.5,
+    27.5
+   ],
+   [
+    "rx_pin_upper_L0",
+    0.0008,
+    21.0,
+    33.0
+   ],
+   [
+    "rx_pin_upper_L1",
+    0.0008,
+    36.0,
+    33.0
    ],
    [
     "land_pin_L0",
@@ -1538,9 +1646,45 @@
    ],
    [
     "receiver_channel_R",
-    0.0517,
-    37.2,
-    25.2
+    0.0436,
+    36.2,
+    22.8
+   ],
+   [
+    "receiver_shim_R_in",
+    0.0023,
+    31.7,
+    31.0
+   ],
+   [
+    "receiver_shim_R_out",
+    0.0009,
+    16.3,
+    31.0
+   ],
+   [
+    "rx_pin_lower_R0",
+    0.0008,
+    28.5,
+    27.5
+   ],
+   [
+    "rx_pin_lower_R1",
+    0.0008,
+    43.5,
+    27.5
+   ],
+   [
+    "rx_pin_upper_R0",
+    0.0008,
+    21.0,
+    33.0
+   ],
+   [
+    "rx_pin_upper_R1",
+    0.0008,
+    36.0,
+    33.0
    ],
    [
     "land_pin_R0",
@@ -2254,59 +2398,59 @@
   "configurations": [
    {
     "head": "none (transport / LAB)",
-    "mass_kg": 6.71,
-    "cg_x": -92.3,
-    "cg_z": 82.2,
+    "mass_kg": 6.7,
+    "cg_x": -92.5,
+    "cg_z": 82.3,
     "caster_N": 29.8,
     "each_wheel_N": 18.0,
-    "caster_fraction": 0.452,
-    "tip_margin_forward_mm": 81.8,
-    "tip_margin_rearward_mm": 102.0,
-    "tip_margin_lateral_mm": 54.5,
-    "hang_angle_deg": -37.3,
-    "hang_angle_deg_old_bar_x-11": -44.8
+    "caster_fraction": 0.453,
+    "tip_margin_forward_mm": 81.9,
+    "tip_margin_rearward_mm": 101.8,
+    "tip_margin_lateral_mm": 54.3,
+    "hang_angle_deg": -37.4,
+    "hang_angle_deg_old_bar_x-11": -44.9
    },
    {
     "head": "prototype head RR-HD-X (1.862 kg)",
-    "mass_kg": 8.57,
-    "cg_x": -46.5,
-    "cg_z": 71.8,
+    "mass_kg": 8.56,
+    "cg_x": -46.6,
+    "cg_z": 71.9,
     "caster_N": 19.2,
-    "each_wheel_N": 32.5,
+    "each_wheel_N": 32.4,
     "caster_fraction": 0.228,
-    "tip_margin_forward_mm": 37.3,
-    "tip_margin_rearward_mm": 149.0,
+    "tip_margin_forward_mm": 37.4,
+    "tip_margin_rearward_mm": 148.9,
     "tip_margin_lateral_mm": 80.6,
     "hang_angle_deg": -10.2,
     "hang_angle_deg_old_bar_x-11": -21.1
    },
    {
     "head": "production head (2.082 kg)",
-    "mass_kg": 8.79,
-    "cg_x": -42.0,
-    "cg_z": 70.5,
+    "mass_kg": 8.78,
+    "cg_x": -42.1,
+    "cg_z": 70.6,
     "caster_N": 17.8,
     "each_wheel_N": 34.2,
     "caster_fraction": 0.206,
-    "tip_margin_forward_mm": 33.0,
-    "tip_margin_rearward_mm": 153.7,
+    "tip_margin_forward_mm": 33.1,
+    "tip_margin_rearward_mm": 153.6,
     "tip_margin_lateral_mm": 83.2,
-    "hang_angle_deg": -7.3,
+    "hang_angle_deg": -7.4,
     "hang_angle_deg_old_bar_x-11": -18.4
    },
    {
     "head": "production head + 15 % margin",
-    "mass_kg": 9.1,
+    "mass_kg": 9.09,
     "cg_x": -36.5,
-    "cg_z": 69.2,
+    "cg_z": 69.3,
     "caster_N": 16.0,
-    "each_wheel_N": 36.7,
+    "each_wheel_N": 36.6,
     "caster_fraction": 0.179,
-    "tip_margin_forward_mm": 27.6,
-    "tip_margin_rearward_mm": 159.4,
+    "tip_margin_forward_mm": 27.7,
+    "tip_margin_rearward_mm": 159.3,
     "tip_margin_lateral_mm": 86.4,
-    "hang_angle_deg": -3.9,
-    "hang_angle_deg_old_bar_x-11": -15.0
+    "hang_angle_deg": -4.0,
+    "hang_angle_deg_old_bar_x-11": -15.1
    }
   ],
   "mass_goal_kg": 12.0,
@@ -2394,7 +2538,7 @@
    ],
    [
     "chassis plate bending at x = -60 (aft masses 4.15 kg x 3 g; net width 199 mm x 4 mm, shells and tunnel ignored)",
-    18.5,
+    18.6,
     "MPa",
     "allow 240 (6061-T6) -> SF 12.9"
    ],
@@ -2417,10 +2561,10 @@
     "allow 240 (6061-T6) -> SF 18.1"
    ],
    [
-    "chassis plate bending at x = 30 (fore masses 2.20 kg x 3 g; net width 239 mm x 4 mm, shells and tunnel ignored)",
+    "chassis plate bending at x = 30 (fore masses 2.19 kg x 3 g; net width 239 mm x 4 mm, shells and tunnel ignored)",
     8.1,
     "MPa",
-    "allow 240 (6061-T6) -> SF 29.6"
+    "allow 240 (6061-T6) -> SF 29.7"
    ]
   ],
   "ok": true,
@@ -2429,7 +2573,7 @@
  "summary": {
   "no interference among real parts and purchased envelopes": [
    true,
-   "0 clash(es) in 394 pairs; 19 declared through-wall envelope overlaps"
+   "0 clash(es) in 438 pairs; 19 declared through-wall envelope overlaps"
   ],
   "internals inside the shell cavity": [
    true,
@@ -2449,11 +2593,11 @@
   ],
   "nothing below z = 50 ahead of x = 62 except latch / datum A": [
    true,
-   "[('receiver_channel_L', 2778, 65.7), ('land_pin_L1', 146, 64.0), ('receiver_channel_R', 2754, 65.7), ('land_pin_R1', 146, 64.0), ('head_latch', 1896, 108.0)]"
+   "[('receiver_channel_L', 2384, 65.7), ('land_pin_L1', 146, 64.0), ('receiver_channel_R', 2359, 65.7), ('land_pin_R1', 146, 64.0), ('head_latch', 1896, 108.0)]"
   ],
   "receiver interface matches mechanical_interfaces.md": [
    true,
-   "29/29 items"
+   "41/41 items"
   ],
   "every printed part fits the X1C bed in its print orientation": [
    true,

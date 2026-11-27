@@ -141,9 +141,9 @@ static void test_chain_elements(void)
         uint32_t st0 = t->sim.n_strobes;
         th_env(t, "{\"freeze_supervisor\":true}");
         th_run_silent(t, 60);
-        CHECK(t->sim.n_strobes == st0 && !t->sim.wdg_ok && !t->sim.latch);
-        CHECK(t->sim.core.chain.hw_latched & RRCH_HW(WATCHDOG));
-        CHECK(t->sim.core.faults & RRCH_FLT(TIMING)); /* the control tick noticed the dead supervisor as well */
+        /* TPS3430 trips 23.4 ms after the last counted edge; WDO opens U23 and (JP1) holds NRST for 200 ms */
+        CHECK(t->sim.n_strobes == st0 && !t->sim.wdg_ok && !t->sim.latch && t->sim.mcu_in_reset);
+        CHECK(fabs(t->sim.v) < 0.10);
         th_env(t, "{\"freeze_supervisor\":false}");
         th_run_silent(t, 600);
         strcpy(boot1, t->sim.core.boot_id);
@@ -165,8 +165,19 @@ static void test_chain_elements(void)
         th_env(t, "{\"freeze_background\":true}");
         th_run_silent(t, 480);
         CHECK(t->sim.wdg_ok && t->sim.n_resets == 0);
-        th_run_silent(t, 200);
-        CHECK(t->sim.n_resets == 1); /* stalled protocol/sensor loop is caught within ~0.6 s */
+        th_run_silent(t, 300);
+        CHECK(t->sim.n_resets == 1); /* stalled protocol/sensor loop is caught within ~0.6 s, reset after the 200 ms WDO pulse */
+        /* the strobe is a 5 ms pulse every 10 ms: valid whether the device counts falling, rising or both edges */
+        static const char *const edges[3] = {"{\"wdi_edge\":\"FALLING\"}", "{\"wdi_edge\":\"RISING\"}", "{\"wdi_edge\":\"BOTH\"}"};
+        for (int k = 0; k < 3; k++) {
+            t = th_new(110 + (uint64_t)k);
+            th_env(t, edges[k]);
+            th_run_silent(t, 3000);
+            CHECK(t->sim.wdg_ok && t->sim.n_resets == 0);
+            th_env(t, "{\"freeze_control\":true}"); /* WDI left high or low: no further counted edge */
+            th_run_silent(t, 60);
+            CHECK(!t->sim.wdg_ok);
+        }
     }
     SECTION("MCU_NOT_READY: uncommanded motion while armed withdraws ARM_PERMIT; VMOT_FAULT: traction supply missing");
     {
@@ -524,12 +535,15 @@ static void test_protective_reasons(void)
         CHECK(th_req(t, "DIAG", "{}") && th_is(t, "brake_test.state", "PASSED") && th_true(t, "brake_test.passed_since_boot"));
         CHECK(!th_req(t, "BRAKE_TEST", "{}") && th_status(t, "REJECTED")); /* needs ARMED_IDLE */
 
+        /* review C1: K1 welded. HW_LATCH_RB is the tap on RUN_12V, which comes from CHAIN_END, so the test's
+         * ARM_PERMIT drop removes it whether K1 is welded or not: the test cannot see the weld. It shows when
+         * ARM_PERMIT returns after the test: the latch reads set again with no REARM -> LATCH_NO_REARM. */
         t = armed(271);
         th_env(t, "{\"latch_weld\":true}");
-        CHECK(th_req(t, "BRAKE_TEST", "{}") && !th_true(t, "passed") && th_has(t, "fail", "LATCH_NOT_DROPPED"));
-        th_run(t, 200);
-        CHECK(th_mode(t, "FAULT") && th_has(t, "protective_stop_reasons", "BRAKE_TEST_FAIL") && th_has(t, "faults", "LATCH_STUCK"));
-        CHECK(!t->sim.core.out.arm_permit && !t->sim.core.out.bridge_awake);
+        CHECK(th_req(t, "BRAKE_TEST", "{}") && th_true(t, "passed"));
+        th_run(t, 300);
+        CHECK(th_mode(t, "FAULT") && th_has(t, "faults", "LATCH_NO_REARM"));
+        CHECK(!t->sim.core.out.arm_permit && !t->sim.core.out.bridge_awake && !t->sim.run12);
 
         t = th_new(272); /* no motion before a passed test */
         th_run_silent(t, 300);

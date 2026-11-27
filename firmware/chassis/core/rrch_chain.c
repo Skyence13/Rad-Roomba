@@ -70,11 +70,19 @@ static void di_changed(rrch_t *c, int i, bool v)
     }
 }
 
+/* A failed read keeps the last good sample (review m7): one I2C glitch must not drop the latch while
+ * driving. Freshness is judged in chain_end_step. */
 void rrch_iox_b_update(rrch_t *c, bool ok, bool chain_end, uint64_t t_us)
 {
-    c->chain.iox_b.ok = ok;
-    c->chain.iox_b.chain_end = chain_end;
-    c->chain.iox_b.t_us = t_us;
+    rrch_iox_b_t *b = &c->chain.iox_b;
+    b->ok = ok;
+    if (ok) {
+        b->chain_end = chain_end;
+        b->t_us = t_us;
+        b->fail_n = 0;
+    } else if (b->fail_n < 1000000u) {
+        b->fail_n++;
+    }
 }
 
 static rrch_el_state_t node_el(uint32_t st, uint32_t known, uint32_t bit)
@@ -113,11 +121,13 @@ static void chain_end_step(rrch_t *c)
     ch->permit_hist = (ch->permit_hist << 1) | (c->out.arm_permit ? 1u : 0u);
     ch->n9_hist = (ch->n9_hist << 1) | ((c->in.di & RRCH_DI(WDG_OK)) ? 1u : 0u);
     const rrch_iox_b_t *b = &ch->iox_b;
-    bool fresh = b->ok && b->t_us != 0u && b->t_us <= c->now_us && c->now_us - b->t_us <= 100000u;
+    /* review m7: while latched a sample up to 50 ms old is accepted (several consecutive failed reads at
+     * 100 Hz); arming (latch down) needs the last read to have succeeded */
+    bool fresh = b->t_us != 0u && b->t_us <= c->now_us && c->now_us - b->t_us <= 50000u && (ch->latch || b->fail_n == 0u);
     ch->chain_end_known = fresh;
     ch->chain_end = fresh && b->chain_end;
     rrch_fault_set(c, RRCH_FLT(IOX_B), c->boot_done && !fresh);
-    if (!b->ok || b->t_us == ch->iox_b_seen_us || b->t_us > c->now_us) {
+    if (b->t_us == 0u || b->t_us == ch->iox_b_seen_us || b->t_us > c->now_us) {
         return;
     }
     ch->iox_b_seen_us = b->t_us;
@@ -127,9 +137,28 @@ static void chain_end_step(rrch_t *c)
     }
     bool p_low = hist_all(ch->permit_hist, age, CE_SETTLE_MS, false), p_high = hist_all(ch->permit_hist, age, CE_SETTLE_MS, true);
     bool n9_live = hist_all(ch->n9_hist, age, CE_SETTLE_MS, true), n9_dead = hist_all(ch->n9_hist, age, CE_SETTLE_MS, false);
+    bool none_open = true; /* element states of the previous tick */
+    for (int e = 0; e < RRCH_EL_N; e++) {
+        none_open = none_open && ch->el[e] != RRCH_ELS_OPEN;
+    }
+    if (p_high && n9_live && b->chain_end && none_open && ch->t_implausible == 0u) {
+        ch->ce_live_us = b->t_us; /* really live through closed elements: C_SET is (being) charged from CHAIN_END */
+    }
+    /* review M1: on rev A, C_SET holds CHAIN_END (and nodes behind an opened element) up through R_SET
+     * for up to ~10 s after the chain was last live. "Live with ARM_PERMIT low" and "live behind a
+     * dead CH_N9" are judged only outside that window; meanwhile a latch rise with ARM_PERMIT low is
+     * fatal at once (LATCH_NO_REARM / LATCH_STUCK), which is what a stuck U24 would lead to. */
+    if (ch->backfeed) {
+        ch->n_stuck_on = ch->n_end_impl = 0;
+    }
+    if (ch->backfeed) {
+        ch->n_stuck_off = (p_high && n9_live && !b->chain_end) ? (uint8_t)(ch->n_stuck_off < 250u ? ch->n_stuck_off + 1u : 250u) : 0u;
+        goto judge;
+    }
     ch->n_stuck_on = (p_low && b->chain_end) ? (uint8_t)(ch->n_stuck_on < 250u ? ch->n_stuck_on + 1u : 250u) : 0u;
     ch->n_stuck_off = (p_high && n9_live && !b->chain_end) ? (uint8_t)(ch->n_stuck_off < 250u ? ch->n_stuck_off + 1u : 250u) : 0u;
     ch->n_end_impl = (n9_dead && b->chain_end) ? (uint8_t)(ch->n_end_impl < 250u ? ch->n_end_impl + 1u : 250u) : 0u;
+judge:
     if (ch->n_stuck_on >= 3u) {
         rrch_fault_set(c, RRCH_FLT(PERMIT_STUCK_ON), true); /* ARM_PERMIT element closed although commanded open */
     }
@@ -170,6 +199,9 @@ void rrch_chain_step(rrch_t *c)
         ch->latch = (in->di & RRCH_DI(HW_LATCH)) != 0;
         ch->rb_reported = raw;
         ch->primed = true;
+        /* after any reset C_SET may still be charged from before (it holds CHAIN_END for up to ~10 s,
+         * review M1): treat the boot like the end of a live period */
+        ch->ce_live_us = c->now_us > 0u ? c->now_us : 1u;
     }
 
     /* --- digital debounce --- */
@@ -212,10 +244,33 @@ void rrch_chain_step(rrch_t *c)
 
     /* --- interlock loop: hardware comparator and analog decode, report the worse --- */
     ch->loop_ohm = in->loop_ohm;
+    /* The hardware window (U30) passes 0.59-1.55 kOhm (safety_chain.md 2.2). The analog copy uses bands
+     * around it so that tolerances do not read as disagreement: OK 620-1500, OPEN > 1650, SHORT < 560,
+     * in between "marginal" (follows the comparator). */
     uint8_t cmp = (st & RRCH_DI(HEAD_LOOP_SHORT)) ? 2u : ((st & RRCH_DI(HEAD_LOOP_OK)) ? 0u : 1u);
-    uint8_t ana = (in->loop_ohm < 600u) ? 2u : ((in->loop_ohm > 1600u) ? 1u : 0u);
-    ch->loop_state = (cmp == 2u || ana == 2u) ? 2u : ((cmp == 1u || ana == 1u) ? 1u : 0u);
-    rrch_fault_set(c, RRCH_FLT(LOOP_DISCREPANCY), timer_run(&ch->t_loop_disc, cmp != ana, 200));
+    uint32_t lo = in->loop_ohm;
+    uint8_t ana = lo < 560u ? 2u : (lo > 1650u ? 1u : ((lo >= 620u && lo <= 1500u) ? 0u : 3u));
+    ch->ana3 = ana;
+    uint8_t anaw = ana == 3u ? cmp : ana;
+    ch->loop_state = (cmp == 2u || anaw == 2u) ? 2u : ((cmp == 1u || anaw == 1u) ? 1u : 0u);
+    bool disagree = ana != 3u && ((cmp == 0u) != (ana == 0u));
+    bool latched_now = (st & RRCH_DI(HW_LATCH)) != 0;
+    rrch_fault_set(c, RRCH_FLT(LOOP_DISCREPANCY), timer_run(&ch->t_loop_disc, disagree, 200));
+    /* review C2: while latched, the loop is not only a warning. Any opening seen by either channel
+     * (analog: 2 consecutive 1 kHz samples; comparator: immediate) withdraws ARM_PERMIT (U24 is upstream
+     * of K1, so the latch drops even if U21 is held closed) and latches STOP_ESCALATED; a disagreement
+     * lasting 5 ms while latched (the comparator lags the analog copy by about 1.5 ms) is LOOP_FAIL. */
+    bool ana_bad = timer_run(&ch->t_loop_ana, ana == 1u || ana == 2u, 2);
+    if (latched_now && c->boot_done && (ana_bad || cmp != 0u)) {
+        if (!c->permit_withdrawn) {
+            c->permit_withdrawn = true;
+            rrch_event(c, RRCH_EV_PERMIT, 0, 5, 0);
+        }
+        rrch_pstop(c, RRCH_SW(STOP_ESCALATED));
+    }
+    if (timer_run(&ch->t_loop_fail, latched_now && disagree, 5)) {
+        rrch_fault_set(c, RRCH_FLT(LOOP_FAIL), true);
+    }
     bool lab_code = ch->pres == RRCH_PRES_HEAD_VIA_LAB_EXTENSION || ch->pres == RRCH_PRES_LAB_EXTENSION_ONLY;
 
     /* --- node decode: which readbacks show their own element (upstream node live) --- */
@@ -237,7 +292,9 @@ void rrch_chain_step(rrch_t *c)
     /* a node that is live behind a dead upstream node: harness short to a live conductor, readback
      * fault, or a shorted photo-MOS U21/U22 (safety_chain.md section 6 rows 8, 16, 23, 31, 32) */
     bool impl = (n2 && !n1) || (n3 && !n2) || (n4a && !n3) || (n4 && !n4a) || (n5 && !n4) || (n8a && !n7) || (n8 && !n8a) || (n9 && !n8);
-    if (timer_run(&ch->t_implausible, impl, 20)) {
+    float bf_ms = CFG(c, CHAIN_BACKFEED_MS);
+    ch->backfeed = bf_ms > 0.0f && (float)(c->now_us - ch->ce_live_us) < bf_ms * 1000.0f;
+    if (timer_run(&ch->t_implausible, impl && !ch->backfeed, 20)) { /* back-fed nodes are not a fault (review M1) */
         rrch_fault_set(c, RRCH_FLT(CHAIN_IMPLAUSIBLE), true);
     }
     chain_end_step(c);
@@ -269,11 +326,14 @@ void rrch_chain_step(rrch_t *c)
         rrch_fault_set(c, RRCH_FLT(ESTOP_DISCREPANCY), true);
     }
     bool latch = (st & RRCH_DI(HW_LATCH)) != 0;
-    if (timer_run(&ch->t_latch_stuck, latch && !c->out.arm_permit, 100)) {
+    if (timer_run(&ch->t_latch_stuck, latch && !c->out.arm_permit && c->boot_done, 100)) {
         rrch_fault_set(c, RRCH_FLT(LATCH_STUCK), true);
     }
     if (timer_run(&ch->t_iox, !in->iox_ok, 5)) {
         rrch_fault_set(c, RRCH_FLT(IOX_A), true);
+    }
+    if (!in->io_cfg_ok) {
+        rrch_fault_set(c, RRCH_FLT(PIN_CONFIG), true); /* review M2/M3: a tap pin or expander pin not an input */
     }
     if (timer_run(&ch->t_adc, !in->adc_ok, 5)) {
         rrch_fault_set(c, RRCH_FLT(ADC), true);
@@ -309,7 +369,10 @@ void rrch_chain_step(rrch_t *c)
     if (ch->loop_state == 2u) {
         hw |= RRCH_HW(HEAD_LOOP_SHORT);
     }
-    if (!u22 || lab_code) {
+    /* U31 passes only a direct head (3.92-5.64 kOhm): with no head the comparator is open too, which is
+     * J1_ABSENT / presence FAULT, not LAB. LAB = LAB code decoded, or the comparator open while the
+     * decode says a direct head (disagreement, fail-safe). */
+    if (lab_code || (!u22 && ch->pres == RRCH_PRES_HEAD_DIRECT)) {
         hw |= RRCH_HW(LAB_KEY);
     }
     if (ch->el[RRCH_EL_BODY_BUMPER] == RRCH_ELS_OPEN) {
@@ -343,19 +406,65 @@ void rrch_chain_step(rrch_t *c)
     uint32_t prev_live = ch->hw_live;
     ch->hw_live = hw;
 
+    /* --- REARM qualification (review C1, m3; safety_chain.md rows 39, 40, 42, 43) ---
+     * HW_LATCH_RB is the tap on RUN_12V = CHAIN_END through K1 pole B: it reads high only while the chain
+     * is live AND K1 is closed. A rise is legitimate only within 250 ms after a REARM_BTN edge that the
+     * firmware saw while every element read closed, ARM_PERMIT was high and the latch was down. */
+    bool rb_now = (st & RRCH_DI(BTN_REARM)) != 0;
+    bool all_closed = true;
+    for (int e = 0; e < RRCH_EL_N; e++) {
+        all_closed = all_closed && ch->el[e] == RRCH_ELS_CLOSED;
+    }
+    if (rb_now && !ch->rearm_prev) {
+        ch->rearm_edge_us = c->now_us;
+        ch->rearm_edge_ok = all_closed && !latch && c->boot_done && c->out.arm_permit;
+        if (!ch->rearm_edge_ok && !latch) {
+            /* pressed before the chain closed: refuse it by holding ARM_PERMIT low for longer than the
+             * C_SET set pulse can hold K1 (245 ms above must-release, review m3) */
+            ch->rearm_block_until_us = c->now_us + 300000u;
+        }
+    }
+    ch->rearm_prev = rb_now;
+    ch->rearm_held_ms = rb_now ? (ch->rearm_held_ms < 0x7FFFFFFFu ? ch->rearm_held_ms + 1u : ch->rearm_held_ms) : 0u;
+    rrch_fault_set(c, RRCH_FLT(REARM_HELD), ch->rearm_held_ms > 2000u); /* held / welded REARM: permit withheld */
+    if (latch && !ch->latch) {
+        bool legit = ch->rearm_edge_ok && c->now_us - ch->rearm_edge_us <= 250000u + 1000u * (uint64_t)CFG(c, CHAIN_CLOSE_DEBOUNCE_MS);
+        ch->rearm_edge_ok = false;
+        if (!legit) {
+            rrch_fault_set(c, RRCH_FLT(LATCH_NO_REARM), true); /* welded K1, K1_SET short, RUN_12V short */
+        }
+    }
+    if (timer_run(&ch->t_latch_boot, latch && !c->boot_done, 20)) {
+        rrch_fault_set(c, RRCH_FLT(LATCH_NO_REARM), true); /* latch readback high at boot (ARM_PERMIT is low) */
+    }
+    /* an element known open while the latch still reads set: the hardware did not drop (K1 takes 4 ms,
+     * contact-to-resistor 10.5 ms; the loop has its own faster rule above) */
+    bool open_el = false;
+    for (int e = 0; e < RRCH_EL_N; e++) {
+        open_el = open_el || (e != RRCH_EL_HEAD_LOOP && ch->el[e] == RRCH_ELS_OPEN);
+    }
+    if (timer_run(&ch->t_no_drop, latch && open_el && c->boot_done, 30)) {
+        rrch_fault_set(c, RRCH_FLT(LATCH_NO_DROP), true);
+    }
+
     /* --- latched hardware reasons --- */
     if (latch != ch->latch) {
         ch->latch = latch;
         if (!latch) {
             ch->hw_latched = hw | prev_live; /* causes seen just before the drop count too */
             if (ch->hw_latched == 0 && !bt_running) {
-                ch->hw_latched = RRCH_HW(VMOT_FAULT); /* drop that no readback explains */
+                ch->hw_latched = RRCH_HW(LATCH_UNEXPLAINED); /* drop that no readback explains (contract draft7) */
             }
-        } else {
+        } else if (!(c->faults & (RRCH_FLT(LATCH_NO_REARM)))) {
             ch->hw_latched = 0;
         }
         rrch_event(c, RRCH_EV_HW_LATCH, latch, (int32_t)ch->hw_latched, 0);
     } else if (!latch && c->boot_done) {
         ch->hw_latched |= hw;
     }
+}
+
+bool rrch_rearm_blocked(const rrch_t *c)
+{
+    return !c->chain.latch && (c->now_us < c->chain.rearm_block_until_us || c->chain.rearm_held_ms > 2000u);
 }

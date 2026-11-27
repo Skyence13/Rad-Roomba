@@ -43,12 +43,14 @@ compute,printed,RRX-P51,cm5_tray,1,ASA,,"DESIGN (print to out/step, see print_sc
 charge,printed,RRX-P52,inlet_cover,1,ASA,,"DESIGN (print to out/step, see print_schedule.md)",out/step/inlet_cover.step,,
 tof,printed,RRX-P53,tof_clip_std,5,ASA,,"DESIGN (print to out/step, see print_schedule.md)",out/step/tof_clip_std.step,,
 tof,printed,RRX-P54,tof_clip_shallow,4,ASA,,"DESIGN (print to out/step, see print_schedule.md)",out/step/tof_clip_shallow.step,,
-chassis,fabricated,RRX-F01,chassis_plate,1,AL6061,"4 mm 6061-T6 laser/waterjet blank, countersunk and tapped per holes table; DXF in out/dxf",DESIGN (fabricate to the STEP/DXF),out/dxf/chassis_plate.dxf,,"4 mm 6061-T6 laser/waterjet blank, countersunk and tapped per holes table; DXF in out/dxf"
-receiver,fabricated,RRX-F02L,receiver_channel_L,1,AL6061,machined 6061 (printed PAHT-CF copy RRX-P02x for fit check only),DESIGN (fabricate to the STEP/DXF),out/fabricated/step/receiver_channel_L.step,,machined 6061 (printed PAHT-CF copy RRX-P02x for fit check only)
+chassis,fabricated,RRX-F01,chassis_plate,1,AL6061,"4 mm 6061-T6 laser/waterjet blank, countersunk, tapped and reamed per holes table; 4 receiver bridge pockets 1.5 deep milled from below; DXF in out/dxf",DESIGN (fabricate to the STEP/DXF),out/dxf/chassis_plate.dxf,,"4 mm 6061-T6 laser/waterjet blank, countersunk, tapped and reamed per holes table; 4 receiver bridge pockets 1.5 deep milled from below; DXF in out/dxf"
+receiver,fabricated,RRX-F02L,receiver_channel_L,1,AL6061,"machined 6061 (printed PAHT-CF copy RRX-P02x for fit check only); hangs on the G10 shim, no metal contact with the plate",DESIGN (fabricate to the STEP/DXF),out/fabricated/step/receiver_channel_L.step,,"machined 6061 (printed PAHT-CF copy RRX-P02x for fit check only); hangs on the G10 shim, no metal contact with the plate"
+receiver,fabricated,RRX-F12,receiver_shim_L_in,2,G10,"G-10 sheet, inboard ear strip, both faces surface ground 4.00 +-0.02, flatness 0.01; one set ground together; thermal break (DEC-045)",DESIGN (fabricate to the STEP/DXF),out/fabricated/step/receiver_shim_L_in.step,,"G-10 sheet, inboard ear strip, both faces surface ground 4.00 +-0.02, flatness 0.01; one set ground together; thermal break (DEC-045)"
+receiver,fabricated,RRX-F13,receiver_shim_L_out,2,G10,"G-10 sheet, outboard ear strip, both faces surface ground 4.00 +-0.02, flatness 0.01; one set ground together; thermal break (DEC-045)",DESIGN (fabricate to the STEP/DXF),out/fabricated/step/receiver_shim_L_out.step,,"G-10 sheet, outboard ear strip, both faces surface ground 4.00 +-0.02, flatness 0.01; one set ground together; thermal break (DEC-045)"
 drive,fabricated,RRX-F03,screw_ring,2,SS304,1 mm 304 laser-cut ring,DESIGN (fabricate to the STEP/DXF),out/dxf/screw_ring.dxf,,1 mm 304 laser-cut ring
 grip,fabricated,RRX-F05,grip_side_plate,2,AL6061,6 mm 6061-T6 laser cut; same blank both sides,DESIGN (fabricate to the STEP/DXF),out/dxf/grip_side_plate.dxf,,6 mm 6061-T6 laser cut; same blank both sides
 grip,fabricated,RRX-F06,grip_foot,2,AL6061,"25 x 25 x 3 6060 angle cut to 34 mm, 4 holes",DESIGN (fabricate to the STEP/DXF),out/fabricated/step/grip_foot.step,,"25 x 25 x 3 6060 angle cut to 34 mm, 4 holes"
-receiver,fabricated,RRX-F02R,receiver_channel_R,1,AL6061,machined 6061 (printed PAHT-CF copy RRX-P02x for fit check only),DESIGN (fabricate to the STEP/DXF),out/fabricated/step/receiver_channel_R.step,,machined 6061 (printed PAHT-CF copy RRX-P02x for fit check only)
+receiver,fabricated,RRX-F02R,receiver_channel_R,1,AL6061,"machined 6061 (printed PAHT-CF copy RRX-P02x for fit check only); hangs on the G10 shim, no metal contact with the plate",DESIGN (fabricate to the STEP/DXF),out/fabricated/step/receiver_channel_R.step,,"machined 6061 (printed PAHT-CF copy RRX-P02x for fit check only); hangs on the G10 shim, no metal contact with the plate"
 bridge,fabricated,RRX-F04,bridge_tray,1,AL5052,"2 mm 5052 laser cut; gap pad zone u 50..110, v 30..70",DESIGN (fabricate to the STEP/DXF),out/dxf/bridge_tray.dxf,,"2 mm 5052 laser cut; gap pad zone u 50..110, v 30..70"
 bridge,fabricated,RRX-F07,bridge_post,4,AL6061,"8 mm round bar x 41, M4 tapped both ends",DESIGN (fabricate to the STEP/DXF),out/fabricated/step/bridge_post.step,,"8 mm round bar x 41, M4 tapped both ends"
 grip,fabricated,RRX-F08,grip_bar,1,AL6061,"14 mm 6061-T6 round bar cut to 176 mm, ends drilled 5.0 x 15 and tapped M6 x 12",DESIGN (fabricate to the STEP/DXF),out/fabricated/step/grip_bar.step,,"14 mm 6061-T6 round bar cut to 176 mm, ends drilled 5.0 x 15 and tapped M6 x 12"
@@ -56,6 +58,7 @@ caster,fabricated,RRX-F09,caster_disc,1,SS304,"2.5 mm 304 laser cut, 4 x M4 tapp
 caster,fabricated,RRX-F10,caster_shim,1,SS304,1 mm 304 shim,DESIGN (fabricate to the STEP/DXF),out/dxf/caster_shim.dxf,,1 mm 304 shim
 receiver,fabricated,RRX-F11,latch_arm,1,AL6061,"4 mm 6061 laser cut, tapped M5 / M4",DESIGN (fabricate to the STEP/DXF),out/dxf/latch_arm.dxf,,"4 mm 6061 laser cut, tapped M5 / M4"
 tray,fabricated,RRX-F20,tray_base,1,PLY,"9 mm birch plywood or HDPE, 560 x 424, CNC/jigsaw; DXF",DESIGN (fabricate to the STEP/DXF),out/dxf/tray_base.dxf,,"9 mm birch plywood or HDPE, 560 x 424, CNC/jigsaw; DXF"
+receiver,purchased,RRX-H13,rx_pin_lower_L,8,STEEL,ISO 8734 4 m6 x 8 hardened dowel pin,standard part,,,
 receiver,purchased,RRX-H01,land_pin_L,4,STEEL,ISO 8734 4 m6 x 24 hardened dowel pin,standard part,,,
 bridge,purchased,RRX-H02,board_standoff,6,AL6061,M3 x 3 mm round spacer + M3x10 screw + nyloc nut under the tray,standard part,,,
 grip,purchased,RRX-H03,grip_screw,2,SS304,"M6 x 16 ISO 4762 A2-70 + M6 ISO 7089 washer, medium thread-lock",standard part,,,
@@ -81,8 +84,12 @@ connectors,purchased,RRX-H57,J2_receptacle,1,BRASS,"binder M12-A 8-pole female p
 tof,purchased,RRX-E03,tof_cliff_fl,11,FR4,"RR-TOF (custom, VL53L4ED)",contract outline,,,
 bumper,purchased,RRX-H53,bumper_sw_l,3,PBT,Omron D2HW-C201M,UNVERIFIED: dimensions PARTIAL,,,
 receiver,purchased,RRX-H54,head_latch,2,SS304,"over-centre draw latch, stainless, 25 mm glove loop (Southco C7 / Protex class)",UNVERIFIED selection; envelope from interfaces,,,
-A chassis,hardware,,socket cap screw,6,,M4 x 10 ISO 4762 A2-70,STD,,2.2,plate (from above) -> tapped ears of the receiver channels; medium thread-lock; datum joint
-A chassis,hardware,,dowel pin,4,,4 m6 x 10 ISO 8734,STD,,,"plate 4 H7 -> channel ear (right channel: one hole slotted 4 x 5); locates the head datum; press in the channel, slide in the plate"
+A chassis,hardware,,socket cap screw,6,,M4 x 18 ISO 4762 A2-70,STD,,1.2,"plate (from above) -> G10 bushing -> shim -> tapped ear of the receiver channel (7.1 mm engagement); thermal break joint: 1500 N preload, medium thread-lock; re-check torque at the first service"
+A chassis,hardware,,conical spring washer,6,,DIN 6796 4 A2,UNVERIFIED,,,"under each receiver screw head; keeps the preload against G10 creep (loss 6 % vs 57 % without, calculated)"
+A chassis,hardware,,flat washer,6,,ISO 7089 4 A2,STD,,,between the spring washer and the G10 bushing flange
+A chassis,hardware,,top-hat bushing,6,,"G-10, flange 10 x 1.0, sleeve 6.0 x 3.5, bore 4.3 (machined; PEEK-GF30 alternative)",UNVERIFIED,,,"6.0 mm plate hole of each receiver screw; insulates the screw from the plate; stock item not confirmed, make from G10 tube/rod if needed"
+A chassis,hardware,,dowel pin (lower),4,,4 m6 x 8 ISO 8734,STD,,,"pressed 5.5 into the channel ear (4 H7 blind), 2.5 into the G10 shim; second shim hole of each pair is a 4.6 x 4.0 slot; pin top 1.5 below the plate"
+A chassis,hardware,,dowel pin (upper),4,,4 m6 x 8 ISO 8734,STD,,,"pressed flush into the plate (4 H7), through the shim; tip in a 6.5 x 1.5 ear relief; no metal path across the shim: each pin set touches metal on one side only"
 A chassis,hardware,,push pin (dock switch),1,,"3 h8 x 6 stainless dowel, ends rounded",DESIGN,,,"left channel end wall, between shoe tip and D2HW plunger"
 A chassis,hardware,,pan head screw,2,,M3 x 8 ISO 7045 A2,STD,,0.6,plate -> dock switch bracket inserts
 A chassis,hardware,,pan head screw,6,,M3 x 10 ISO 7045 A2,STD,,0.6,plate -> cliff pod inserts

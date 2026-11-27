@@ -159,7 +159,7 @@ int main(void)
     {
         th_t *t = th_new(7);
         th_run_silent(t, 400);
-        static const struct { double ohm; uint8_t want; } lt[] = {{599, 2}, {600, 0}, {1000, 0}, {1600, 0}, {1700, 1}, {1e9, 1}, {0, 2}};
+        static const struct { double ohm; uint8_t want; } lt[] = {{580, 2}, {595, 0}, {1000, 0}, {1545, 0}, {1600, 1}, {1700, 1}, {1e9, 1}, {0, 2}}; /* U30 window 590-1550 */
         for (size_t i = 0; i < sizeof lt / sizeof lt[0]; i++) {
             t->sim.loop_ohm = lt[i].ohm;
             th_run_silent(t, 80);
@@ -221,13 +221,22 @@ int main(void)
     SECTION("IB-02: a node live behind a dead node (harness short, shorted photo-MOS) is a FAULT");
     {
         static const char *const env[3] = {"{\"hands_on\":true,\"chain_short\":\"CH_N4A\"}", "{\"loop_ohm\":1e9,\"chain_short\":\"CH_N6\"}", "{\"bumper_l\":true,\"chain_short\":\"CH_N8\"}"};
-        for (int k = 0; k < 3; k++) {
+        for (int k = 0; k < 6; k++) {
+            /* k < 3: board with the stage-3 R_SET diode (no back-feed, chain.backfeed_ms = 0): detected in 20 ms.
+             * k >= 3: rev A as built: C_SET may hold the nodes behind an opened element for ~10 s, so the check
+             * waits chain.backfeed_ms after CHAIN_END was last really live (review M1) */
             th_t *t = th_new(22 + (uint64_t)k);
+            if (k < 3) {
+                t->sim.cset_diode = true;
+                t->sim.core.cfg.v[RRCH_CFG_CHAIN_BACKFEED_MS] = 0.0f;
+            }
             th_run_silent(t, 400);
-            th_env(t, env[k]);
+            th_env(t, env[k % 3]);
             th_run_silent(t, 15);
             CHECK(!(t->sim.core.faults & RRCH_FLT(CHAIN_IMPLAUSIBLE))); /* 20 ms filter for the tap RC and photo-MOS delays */
-            th_run_silent(t, 30);
+            th_run_silent(t, k < 3 ? 30 : 11000);
+            CHECK(k < 3 || !(t->sim.core.faults & RRCH_FLT(CHAIN_IMPLAUSIBLE)));
+            th_run_silent(t, k < 3 ? 0 : 1200);
             CHECK((t->sim.core.faults & RRCH_FLT(CHAIN_IMPLAUSIBLE)) && t->sim.core.mode == RRCH_MODE_FAULT && !t->sim.core.out.arm_permit);
         }
         /* opening and closing elements in normal use never trips it */
@@ -250,7 +259,9 @@ int main(void)
         CHECK(th_req(t, "DIAG", "{}") && th_true(t, "chain_end") && th_is(t, "chain_state.ARM_PERMIT", "CLOSED"));
         /* stuck high (U24 shorted / PB10 stuck): seen at boot while ARM_PERMIT is low -> FAULT, strobe withheld,
          * the watchdog opens the chain at WDG_OK and resets the MCU (JP1) */
-        t = th_new(31);
+        t = th_new(31); /* board with the stage-3 R_SET diode (no back-feed): seen at boot */
+        t->sim.cset_diode = true;
+        t->sim.core.cfg.v[RRCH_CFG_CHAIN_BACKFEED_MS] = 0.0f;
         t->sim.permit_short = true;
         th_run_silent(t, 150);
         CHECK((t->sim.core.faults & RRCH_FLT(PERMIT_STUCK_ON)) && t->sim.core.mode == RRCH_MODE_FAULT);
@@ -259,19 +270,25 @@ int main(void)
         CHECK(t->sim.n_strobes == n0);
         th_run_silent(t, 500);
         CHECK(t->sim.n_resets >= 1u);
-        t->sim.rearm_ms = 200; /* the latch cannot be set */
-        th_run_silent(t, 30);
-        CHECK(!t->sim.latch);
+        /* a REARM now can pick K1 up (U24 is shorted, U23 closes between resets), but the firmware never
+         * accepts it: latch rise with ARM_PERMIT low -> LATCH_NO_REARM / LATCH_STUCK, strobe stopped */
+        t->sim.rearm_ms = 200;
+        bool drove = false;
+        for (int ms = 0; ms < 600; ms++) {
+            th_run_silent(t, 1);
+            drove = drove || (t->sim.core.out.bridge_awake && t->sim.run12);
+        }
+        CHECK(!drove && !t->sim.latch);
         /* the same fault appearing later is caught at the next ARM_PERMIT low (here a brake test) */
         t = th_new(32);
         CHECK(th_arm(t, "COMMISSIONING"));
         t->sim.permit_short = true;
         th_run(t, 200);
         CHECK(!(t->sim.core.faults & RRCH_FLT(PERMIT_STUCK_ON)));
-        (void)th_req(t, "BRAKE_TEST", "{}"); /* the latch cannot drop through ARM_PERMIT: the watchdog drops it */
-        CHECK(!t->sim.latch && (t->sim.n_resets >= 1u || (t->sim.core.faults & RRCH_FLT(PERMIT_STUCK_ON))));
-        th_run_silent(t, 100);
-        CHECK(t->sim.core.faults & RRCH_FLT(PERMIT_STUCK_ON)); /* again at the next boot */
+        (void)th_req(t, "BRAKE_TEST", "{}"); /* the latch cannot drop through ARM_PERMIT: LATCH_STUCK, the watchdog drops it */
+        CHECK(!t->sim.latch && (t->sim.n_resets >= 1u || (t->sim.core.faults & (RRCH_FLT(PERMIT_STUCK_ON) | RRCH_FLT(LATCH_STUCK)))));
+        th_run_silent(t, 400);
+        CHECK(t->sim.core.faults & (RRCH_FLT(PERMIT_STUCK_ON) | RRCH_FLT(LATCH_STUCK) | RRCH_FLT(LATCH_NO_REARM)) || t->sim.mcu_in_reset); /* again after the reset */
         /* stuck open (fails safe): permit commanded, CH_N9 live, CHAIN_END dead -> warning, MCU_NOT_READY, no re-arm */
         t = th_new(33);
         th_run_silent(t, 400);

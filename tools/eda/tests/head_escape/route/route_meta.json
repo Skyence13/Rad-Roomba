@@ -3,33 +3,33 @@
     {
       "kind": "first",
       "run": 1,
-      "seconds": 929.9,
+      "seconds": 941.1,
       "seed": 0,
-      "unconnected": 795
+      "unconnected": 797
     },
     {
       "kind": "continue",
       "run": 2,
-      "seconds": 945.0,
+      "seconds": 932.6,
       "seed": 1,
-      "unconnected": 741
+      "unconnected": 734
     },
     {
       "kind": "continue",
       "run": 3,
-      "seconds": 377.7,
+      "seconds": 929.2,
       "seed": 2,
-      "unconnected": 712
+      "unconnected": 709
     }
   ],
-  "dsn_sha256": "9f298efb5c23d114ba60fa06eb8dc54725e0adaa6c100a4200ca6aa62eec8da7",
+  "dsn_sha256": "f3c24f74f1002773f06a914015089e3808946a4dd5ffd4642a0213f47e557193",
   "freerouting": "v2.6.0 (build-date: 2026-11-25)",
   "log_tail": [
-    "[462C67\\A824CB] Auto-routing stage completed with timeout: started with 860 unrouted nets, completed in 351.75 seconds, final score: 582.04 (768 unrouted and 724 violations), using 335.82 total CPU seconds, 101.64 GB total allocated, and 798.8 MB peak heap usage.",
-    "[462C67\\A824CB] Job '462C67\\A824CB' finished with state: TIMED_OUT (elapsed: 5 minutes 56.20 seconds, finished at UTC: 2026-11-27T07:01:29.493805484Z)."
+    "[0516F4\\B0615E] Auto-routing stage completed with timeout: started with 837 unrouted nets, completed in 901.44 seconds, final score: 592.93 (748 unrouted and 663 violations), using 871.52 total CPU seconds, 257.03 GB total allocated, and 824.7 MB peak heap usage.",
+    "[0516F4\\B0615E] Job '0516F4\\B0615E' finished with state: TIMED_OUT (elapsed: 15 minutes 7.24 seconds, finished at UTC: 2026-11-27T11:38:53.535633314Z)."
   ],
   "passes_limit": 200,
-  "seconds": 2252.6,
+  "seconds": 2802.9,
   "threads": 4,
   "timed_out": false
 }

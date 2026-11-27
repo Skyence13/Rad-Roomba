@@ -1,0 +1,52 @@
+
+
+2026-11-27 12:23:33.087 INFO   Freerouting v2.6.0 (build-date: 2026-11-25)
+2026-11-27 12:23:33.388 INFO   Hardware: 4 CPU cores, 394 CPU score, 3072 MB RAM
+2026-11-27 12:23:33.392 WARN   GUI is disabled and you don't have a console available, so the only feedback from Freerouting is in the log.
+2026-11-27 12:23:34.557 WARN   The '-mp' command-line flag is deprecated and will be removed in a future release; use '--router.autorouter.max_passes' instead.
+2026-11-27 12:23:34.557 WARN   The '-mt' command-line flag is deprecated and will be removed in a future release; use '--router.max_threads=<n>' instead.
+2026-11-27 12:23:34.890 INFO   [5CAA50\9FCB9F] Loading board file 'RR-CHS-MAIN.retry.dsn'...
+2026-11-27 12:23:34.947 WARN   Non-ansi character '{' found at position 423871 just after ' '.
+2026-11-27 12:23:34.948 WARN   Non-ansi character '}' found at position 423877 just after ' '.
+2026-11-27 12:23:34.948 WARN   Non-ansi character '{' found at position 424612 just after '
+      '.
+2026-11-27 12:23:34.948 WARN   Non-ansi character '}' found at position 424616 just after '
+      '.
+2026-11-27 12:23:34.948 WARN   Non-ansi character '-' found at position 424617 just after '
+      '.
+2026-11-27 12:23:34.948 WARN   Non-ansi character '{' found at position 424644 just after ' '.
+2026-11-27 12:23:34.948 WARN   Non-ansi character '}' found at position 424648 just after ' '.
+2026-11-27 12:23:34.948 WARN   Non-ansi character '-' found at position 424649 just after ' '.
+2026-11-27 12:23:34.948 WARN   Non-ansi character '{' found at position 425065 just after ' '.
+2026-11-27 12:23:34.948 WARN   Non-ansi character '}' found at position 425069 just after ' '.
+2026-11-27 12:23:34.948 WARN   Non-ansi character '-' found at position 425070 just after ' '.
+2026-11-27 12:23:35.029 WARN   Non-ansi character '{' found at position 420045 just after ' '.
+2026-11-27 12:23:35.030 WARN   Non-ansi character '}' found at position 420051 just after ' '.
+2026-11-27 12:23:35.030 WARN   Non-ansi character '{' found at position 420786 just after '
+      '.
+2026-11-27 12:23:35.030 WARN   Non-ansi character '}' found at position 420790 just after '
+      '.
+2026-11-27 12:23:35.030 WARN   Non-ansi character '{' found at position 420818 just after ' '.
+2026-11-27 12:23:35.030 WARN   Non-ansi character '}' found at position 420822 just after ' '.
+2026-11-27 12:23:35.030 WARN   Non-ansi character '{' found at position 421239 just after ' '.
+2026-11-27 12:23:35.030 WARN   Non-ansi character '}' found at position 421243 just after ' '.
+2026-11-27 12:23:36.073 INFO   7 multi-pin net-tie cluster(s) identified and indexed.
+2026-11-27 12:23:36.095 INFO   Auto-detected differential pair: U2_IN (U2_INP, U2_INN)
+2026-11-27 12:23:36.095 INFO   Auto-detected differential pair: HEAD_HTR (HEAD_HTR_P, HEAD_HTR_N)
+2026-11-27 12:23:36.095 INFO   Auto-detected differential pair: MCU_USB (MCU_USB_DP, MCU_USB_DM)
+2026-11-27 12:23:36.095 INFO   Auto-detected differential pair: MCUC_USB (MCUC_USB_DP, MCUC_USB_DM)
+2026-11-27 12:23:36.095 INFO   Auto-detected differential pair: HUSBC (HUSBC_DP, HUSBC_DM)
+2026-11-27 12:23:36.095 INFO   Auto-detected differential pair: FT (FT_DP, FT_DM)
+2026-11-27 12:23:36.096 INFO   Auto-detected differential pair: SYNC (SYNC_P, SYNC_N)
+2026-11-27 12:23:36.103 INFO   [5CAA50\9FCB9F] Job '5CAA50\9FCB9F' started at 2026-11-27T12:23:36.102845437Z.
+2026-11-27 12:23:36.591 WARN   Design Warning: Board has 2 pre-existing clearance violation(s) in the loaded design (before routing):
+  - 2 unfixable violation(s) (cannot be resolved by Freerouting):
+      * 2 pin-to-pin clearance violations:
+          - U1.8 [net PSW_SRC] <-> U1.7 [net U1_OV]
+          - U1.6 [net U1_GATE] <-> U1.5 [net VBAT_RAW]
+  - 0 potentially fixable violations
+Notice: Freerouting does not modify component placement, board outlines, or fixed items.
+Resolving these 2 unfixable violation(s) is the responsibility of the board author in their EDA tool (e.g. KiCad).
+2026-11-27 12:23:36.835 INFO   [5CAA50\9FCB9F] Exit stubs: 1 fine-pitch pins whose way out meets the clearances exactly get 1 stubs (1 inward to a pad of their net, 0 bent in a fan; U3 1), router.autorouter.exit_stubs=true.
+2026-11-27 12:23:36.905 INFO   [5CAA50\9FCB9F] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=3.
+2026-11-27 12:23:37.176 INFO   [5CAA50\9FCB9F] Auto-routing stage started on board '063d60d1a0115b4c48d08649ca782888' with baseline score 26.04 for 1722 unrouted items.

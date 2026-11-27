@@ -29,8 +29,29 @@ typedef struct {
     uint8_t rstate[2];              /* 0 braked (NC closed), 1 connected (NO closed), 2 in transfer (both open) */
     int latch_set_ms;
     double k1_off_s, relay_t_s[2];  /* time since the coil supply went away / came back */
-    bool node[SIM_NODES];           /* chain node live (index SIM_N1..SIM_NEND) */
+    bool node[SIM_NODES];           /* chain node really live (index SIM_N1..SIM_NEND) */
+    bool held[SIM_NODES];           /* node held up only by C_SET back-feed through R_SET (review M1) */
+    double v_held;                  /* voltage of the held nodes */
     bool pole_b;
+    bool run12;                     /* RUN_12V = CHAIN_END through K1 pole B (HW_LATCH_RB taps it) */
+    double vc;                      /* C_SET voltage */
+    double k1_on_s, k1_pulse_s;     /* K1 coil energised time (pick-up), time since the REARM press (set pulse) */
+    /* review fault models (selectable) */
+    int k1_fault;                   /* 1 seal-in contact welded: coil follows CHAIN_END; 2 K1_SET shorted to V12_AUX in W-018 */
+    bool run12_short;               /* RUN_12V shorted to a supply on the board (M6) */
+    bool loop_cmp_stuck;            /* U30A cannot pull HEAD_LOOP_OK_RB low (pin 1 open, R74 short, pin 7-8 bridge) (C2) */
+    bool iox_drive_loop;            /* IOX_A GPA5 configured as an output driving HEAD_LOOP_OK_RB high (M2) */
+    bool io_cfg_fault;              /* a tap pin / expander direction reads back wrong (M2/M3) */
+    bool cset_diode;                /* stage-3 option: diode in series with R_SET, no back-feed */
+    bool cset_energy;               /* REARM sets K1 only with C_SET above 9 V (off by default: tests arm right after boot) */
+    /* TPS3430 window watchdog: WDI edges counted per wdi_mode (0 falling, 1 rising, 2 both); a counted edge
+     * closer than 2.2 ms to the previous one or none for 23.4 ms (tWDU min) asserts WDO for 200 ms; with
+     * JP1 closed WDO also holds NRST, so the MCU sits in reset for those 200 ms */
+    bool wdi;
+    uint8_t wdi_mode;
+    uint64_t wdi_last_us;
+    int wdo_low_ms;
+    bool jp1_open, mcu_in_reset;
     /* environment */
     bool mode_run, estop, hands_on, chg_cover_open, chg_plug, head_docked, bumper_l, bumper_r, j2;
     double pres_ohm, loop_ohm, vbat, soc, temp[3], tilt_deg;
@@ -48,9 +69,7 @@ typedef struct {
     double slip[2];
     uint8_t efuse_fault;
     /* watchdog model */
-    uint64_t last_strobe_us, wdg_arm_us;
     bool wdg_ok;
-    int wdg_reset_ms;
     uint32_t n_strobes, n_resets;
     /* link byte queues (CDC stream) */
     uint8_t rx[16384];

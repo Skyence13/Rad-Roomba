@@ -68,7 +68,7 @@ Worst per-lane ratio {{V:rev3_B_pooled_max}} ({{V:rev3_B_pooled_case}}). Monte C
 
 ### 2.2 Sensitivity cost against a combined test
 
-Activity uniform over the footprints; D# in Bq/cm² with u_rel(K) = 0. "Normal inverse-variance combination" is the revision-2 form (valid only at large counts); "exact combined statistic" is task C (section 3). Cost of rule B relative to C: m = 2 up to {{V:rev3_B_cost_m2}}, m = 4 up to {{V:rev3_B_cost_m4}} (minimum {{V:rev3_B_cost_min}}).
+Activity uniform over the footprints; D# in Bq/cm² with u_rel(K) = 0. "Normal inverse-variance combination" is the revision-2 form (valid only at large counts); "exact combined statistic" is task C (section 3). Cost of rule B relative to the normal combination with the same (Poisson-form) variances, i.e. of the union bound alone: m = 2 {{V:rev3_B_costn_m2}}, m = 4 {{V:rev3_B_costn_m4}}. Relative to C, which also drops the conservative Poisson form: m = 2 up to {{V:rev3_B_cost_m2}}, m = 4 up to {{V:rev3_B_cost_m4}} (minimum {{V:rev3_B_cost_min}}).
 
 {{T:rev3_B_combined}}
 

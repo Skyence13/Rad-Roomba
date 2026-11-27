@@ -495,7 +495,7 @@ void rrch_drive_step(rrch_t *c)
             int64_t dt = d->ticks[i] - d->rest_ticks[i];
             if ((float)(dt < 0 ? -dt : dt) > CFG(c, DRV_UNCMD_TICKS)) {
                 d->rest_ticks[i] = d->ticks[i];
-                rrch_pstop(c, RRCH_SW(ENCODER_FAULT));
+                rrch_pstop(c, RRCH_SW(ENCODER_FAULT) | RRCH_SW(STOP_ESCALATED));
                 if (!c->permit_withdrawn) {
                     c->permit_withdrawn = true;
                     rrch_event(c, RRCH_EV_PERMIT, 0, 1, 0);
@@ -513,6 +513,7 @@ void rrch_drive_step(rrch_t *c)
         }
         if (!d->at_rest && d->stop_ms > d->stop_deadline_ms && !c->permit_withdrawn) {
             c->permit_withdrawn = true;
+            rrch_pstop(c, RRCH_SW(STOP_ESCALATED));
             rrch_event(c, RRCH_EV_PERMIT, 0, 2, 0);
         }
     }

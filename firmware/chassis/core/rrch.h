@@ -31,13 +31,14 @@
 
 /* ---- enumerations (names spelled as in contract.yaml enums) ---- */
 #define RRCH_MODE_LIST(X) X(BOOT) X(SERVICE_CHARGE) X(LAB) X(STANDBY) X(ARMED_IDLE) X(MOVING) X(HOLD) X(PROTECTIVE_STOP) X(HW_INHIBIT) X(FAULT)
-#define RRCH_HW_LIST(X) X(MODE_NOT_RUN) X(ESTOP) X(HANDS_ON) X(CHARGER) X(HEAD_UNDOCKED) X(HEAD_LOOP_OPEN) X(HEAD_LOOP_SHORT) X(J1_ABSENT) X(LAB_KEY) X(BODY_BUMPER) X(WATCHDOG) X(MCU_NOT_READY) X(VMOT_FAULT)
-#define RRCH_SW_LIST(X) X(FIELD_FRONT) X(FIELD_REAR) X(FIELD_LEFT) X(FIELD_RIGHT) X(CLIFF_FL) X(CLIFF_FR) X(CLIFF_RL) X(CLIFF_RR) X(LOOKAHEAD_L) X(LOOKAHEAD_R) X(TOF_STALE) X(TOF_DISAGREE) X(CMD_TIMEOUT) X(HOST_LINK_LOST) X(STALL) X(ENCODER_FAULT) X(IMU_FAULT) X(TILT) X(BATTERY_LOW) X(TEMP_RANGE) X(HOST_REQUEST) X(HEAD_LINK) X(LOCALIZATION) X(BRAKE_TEST_FAIL)
+#define RRCH_HW_LIST(X) X(MODE_NOT_RUN) X(ESTOP) X(HANDS_ON) X(CHARGER) X(HEAD_UNDOCKED) X(HEAD_LOOP_OPEN) X(HEAD_LOOP_SHORT) X(J1_ABSENT) X(LAB_KEY) X(BODY_BUMPER) X(WATCHDOG) X(MCU_NOT_READY) X(VMOT_FAULT) X(LATCH_UNEXPLAINED)
+#define RRCH_SW_LIST(X) X(FIELD_FRONT) X(FIELD_REAR) X(FIELD_LEFT) X(FIELD_RIGHT) X(CLIFF_FL) X(CLIFF_FR) X(CLIFF_RL) X(CLIFF_RR) X(LOOKAHEAD_L) X(LOOKAHEAD_R) X(TOF_STALE) X(TOF_DISAGREE) X(CMD_TIMEOUT) X(HOST_LINK_LOST) X(STALL) X(ENCODER_FAULT) X(IMU_FAULT) X(TILT) X(BATTERY_LOW) X(TEMP_RANGE) X(HOST_REQUEST) X(HEAD_LINK) X(LOCALIZATION) X(BRAKE_TEST_FAIL) X(STOP_ESCALATED)
 #define RRCH_OPMODE_LIST(X) X(COMMISSIONING) X(SURVEY_SHARED) X(SURVEY_UNATTENDED) X(GUIDED) X(LAB) X(SERVICE)
 #define RRCH_PRES_LIST(X) X(ABSENT) X(HEAD_DIRECT) X(HEAD_VIA_LAB_EXTENSION) X(LAB_EXTENSION_ONLY) X(FAULT)
 #define RRCH_FLT_LIST(X) /* first group enters FAULT mode */ \
     X(ESTOP_DISCREPANCY) X(LATCH_STUCK) X(IOX_A) X(ADC) X(TIMING) X(PERMIT_STUCK_ON) X(CHAIN_IMPLAUSIBLE) \
-    X(PERMIT_STUCK_OFF) X(IOX_B) X(CONFIG_DEFAULTED) X(LOOP_DISCREPANCY) X(J1_PRES_FAULT) X(CHARGER_COMM) X(PMON_COMM) X(TOF_BUS) X(HEATER_SENSOR) \
+    X(LATCH_NO_REARM) X(LATCH_NO_DROP) X(LOOP_FAIL) X(PIN_CONFIG) \
+    X(PERMIT_STUCK_OFF) X(IOX_B) X(REARM_HELD) X(CONFIG_DEFAULTED) X(LOOP_DISCREPANCY) X(J1_PRES_FAULT) X(CHARGER_COMM) X(PMON_COMM) X(TOF_BUS) X(HEATER_SENSOR) \
     X(EFUSE_HEAD_PWR) X(EFUSE_HEAD_HTR) X(EFUSE_CHS_HTR) X(EFUSE_LIDAR) X(EFUSE_V5) X(BRIDGE_L) X(BRIDGE_R) X(BUS_CLAMP) \
     X(EVENT_OVERFLOW) X(BATTERY_WARN)
 /* IB-34 (lead decision, corrected mapping): two forward-looking (grip cheeks, over the head) and two rearward-looking
@@ -69,10 +70,12 @@ typedef enum { RRCH_TOF_LIST(X) RRCH_TOF_COUNT } rrch_tof_id_t;
 #define RRCH_HW(n) (1u << RRCH_HWI_##n)
 #define RRCH_SW(n) (1u << RRCH_SWI_##n)
 #define RRCH_FLT(n) (1u << RRCH_FLTI_##n)
-#define RRCH_FLT_FATAL_MASK (RRCH_FLT(ESTOP_DISCREPANCY) | RRCH_FLT(LATCH_STUCK) | RRCH_FLT(IOX_A) | RRCH_FLT(ADC) | RRCH_FLT(TIMING) | RRCH_FLT(PERMIT_STUCK_ON) | RRCH_FLT(CHAIN_IMPLAUSIBLE))
+#define RRCH_FLT_FATAL_MASK (RRCH_FLT(ESTOP_DISCREPANCY) | RRCH_FLT(LATCH_STUCK) | RRCH_FLT(IOX_A) | RRCH_FLT(ADC) | RRCH_FLT(TIMING) | RRCH_FLT(PERMIT_STUCK_ON) | \
+                             RRCH_FLT(CHAIN_IMPLAUSIBLE) | RRCH_FLT(LATCH_NO_REARM) | RRCH_FLT(LATCH_NO_DROP) | RRCH_FLT(LOOP_FAIL) | RRCH_FLT(PIN_CONFIG))
 /* fatal flags after which the supervisor stops the watchdog strobe (the chain is then opened at WDG_OK, upstream of a
  * suspect ARM_PERMIT element): electronics/analysis/chassis_safety_chain.md section 6, row 38 */
-#define RRCH_FLT_NO_STROBE_MASK (RRCH_FLT(TIMING) | RRCH_FLT(PERMIT_STUCK_ON))
+#define RRCH_FLT_NO_STROBE_MASK (RRCH_FLT(TIMING) | RRCH_FLT(PERMIT_STUCK_ON) | RRCH_FLT(LATCH_STUCK) | RRCH_FLT(LATCH_NO_REARM) | RRCH_FLT(LATCH_NO_DROP))
+/* (review C1: a latch that rose without an observed REARM or did not drop is treated like PERMIT_STUCK_ON) */
 
 extern const char *const rrch_mode_names[RRCH_MODE_N];
 extern const char *const rrch_hw_names[RRCH_HW_N];
@@ -126,6 +129,7 @@ typedef enum { RRCH_PANEL_AUTO = 0, RRCH_PANEL_ARRIVED, RRCH_PANEL_ATTENTION, RR
 typedef struct {            /* sampled by the port every 1 ms (control tick) */
     uint32_t di;            /* RRCH_DI() bits */
     bool iox_ok;            /* expander read path verified this tick */
+    bool io_cfg_ok;         /* review M2/M3: tap pins and expander directions read back as inputs without pulls */
     bool adc_ok;
     uint32_t pres_ohm;      /* J1 pin 7 to pin 2, saturate at 1 000 000 for open */
     uint32_t loop_ohm;      /* J1 5/6 loop, saturate at 1 000 000 */
@@ -163,9 +167,10 @@ typedef struct {            /* slow telemetry pushed by the port's background dr
 } rrch_power_t;
 
 typedef struct {            /* IOX_B input P17 = CHAIN_END_RB (CCR-E02), pushed by the port's background I2C driver */
-    bool ok;                /* read succeeded */
-    bool chain_end;         /* node after the ARM_PERMIT element is live */
-    uint64_t t_us;          /* chassis time of the read */
+    bool ok;                /* last read succeeded */
+    bool chain_end;         /* last good sample: node after the ARM_PERMIT element is live */
+    uint64_t t_us;          /* chassis time of the last good read */
+    uint32_t fail_n;        /* consecutive failed reads */
 } rrch_iox_b_t;
 
 typedef struct {
@@ -184,6 +189,7 @@ typedef struct {
     rrch_reset_cause_t (*reset_cause)(void *ctx);
     void (*irq_lock)(void *ctx);                             /* mask the control + supervisor ticks (may be NULL) */
     void (*irq_unlock)(void *ctx);
+    void (*wdg_low)(void *ctx);                              /* WDI back low (strobe = 5 ms high pulse every 10 ms); may be NULL */
 } rrch_hal_t;
 
 /* ---- configuration ---- */
@@ -261,10 +267,13 @@ typedef struct {
     X(HTR_DISAGREE_C, "heater.disagree_c", 15, 2, 40, "C") \
     X(CHAIN_CLOSE_DEBOUNCE_MS, "chain.close_debounce_ms", 50, 5, 500, "ms") \
     X(CHAIN_PRES_SETTLE_MS, "chain.pres_settle_ms", 20, 5, 500, "ms") \
+    /* review M1: C_SET back-feeds CHAIN_END through R_SET (rev A, no diode): readbacks behind an open element can read \
+     * live for up to ~10 s after CHAIN_END was last really live. 0 once the stage-3 R_SET diode is fitted. */ \
+    X(CHAIN_BACKFEED_MS, "chain.backfeed_ms", 12000, 0, 20000, "ms") \
     X(BRK_LATCH_DROP_MAX_MS, "brake.latch_drop_max_ms", 50, 5, 500, "ms") \
     X(BRK_VMOT_MIN_V, "brake.vmot_min_v", 9.0, 5, 12, "V") \
     X(BRK_VMOT_OFF_V, "brake.vmot_off_v", 1.0, 0.2, 5, "V") \
-    X(BRK_VMOT_DECAY_MAX_MS, "brake.vmot_decay_max_ms", 2500, 50, 5000, "ms") /* 1 kOhm bleed on 810 uF: tau 0.8 s, 3 tau (safety_chain 7.4) */ \
+    X(BRK_VMOT_DECAY_MAX_MS, "brake.vmot_decay_max_ms", 3500, 50, 6000, "ms") /* 1 kOhm bleed on 3 x 270 uF +20 % + 20 uF: 2.66 s from 14.6 V (review m1) */ \
     X(BRK_PROBE_DUTY, "brake.probe_duty_pct", 10, 2, 30, "%") \
     X(BRK_PROBE_I_MAX, "brake.probe_i_max_a", 0.1, 0.02, 1.0, "A")
 
@@ -333,6 +342,14 @@ typedef struct {
     /* IB-01: ARM_PERMIT readback through CHAIN_END_RB (IOX_B P17) */
     rrch_iox_b_t iox_b;
     uint64_t iox_b_seen_us;
+    /* review C1 / m3: REARM qualification, latch rise / drop supervision */
+    bool rearm_prev, rearm_edge_ok;
+    uint64_t rearm_edge_us, rearm_block_until_us;
+    uint32_t rearm_held_ms;
+    uint16_t t_no_drop, t_latch_boot, t_loop_ana, t_loop_fail;
+    uint8_t ana3;               /* analog loop: 0 OK, 1 OPEN, 2 SHORT, 3 marginal (between the bands) */
+    uint64_t ce_live_us;        /* last time CHAIN_END was really live (permit high, CH_N9 live): C_SET charged */
+    bool backfeed;              /* readbacks behind an open element may be held up by C_SET */
     uint32_t permit_hist, n9_hist; /* bit k: ARM_PERMIT output / raw CH_N9 readback k ms ago */
     uint8_t n_stuck_on, n_stuck_off, n_end_impl;
     bool chain_end_known, chain_end;
@@ -468,6 +485,7 @@ typedef struct rrch {
     uint32_t rearm_nonce;
     bool permit_withdrawn;
     uint32_t permit_rest_ms;
+    uint32_t permit_low_ms;
     bool arm_permit;
     rrch_chain_t chain;
     rrch_tof_t tof[RRCH_TOF_N];
@@ -501,6 +519,8 @@ typedef struct rrch {
     volatile uint32_t wd_ctl_count, wd_flow, wd_sup_count, wd_bg_count;
     uint32_t wd_ctl_seen, wd_bg_seen, wd_bg_age, wd_sup_seen_by_ctl, wd_sup_age;
     bool wd_inhibit_strobe;      /* test hook */
+    bool wd_high;                /* WDI high since the last strobe */
+    uint32_t wd_strobe_ms;
     rrch_proto_t proto;
 } rrch_t;
 
@@ -516,6 +536,7 @@ void rrch_iox_b_update(rrch_t *c, bool ok, bool chain_end, uint64_t t_us); /* ba
 /* ---- internal, shared between core files (also used by unit tests) ---- */
 rrch_pres_t rrch_pres_classify(uint32_t ohm);
 void rrch_chain_step(rrch_t *c);
+bool rrch_rearm_blocked(const rrch_t *c); /* REARM pressed early or held: ARM_PERMIT withheld */
 void rrch_fields_step(rrch_t *c);
 float rrch_stop_vcap(const rrch_cfg_t *cfg, float dist_m);
 float rrch_stop_distance(const rrch_cfg_t *cfg, float v);
