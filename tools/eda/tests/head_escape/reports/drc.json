@@ -15,51 +15,13 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "Pad 1 [HEAD_PWR_P] of L2001 on F.Cu",
+                    "description": "Track [HEAD_PWR_N] on F.Cu, length 2.4703 mm",
                     "pos": {
-                        "x": 145.9,
-                        "y": 226.6
+                        "x": 147.125,
+                        "y": 230.575
                     },
-                    "uuid": "03846ab0-21cc-4523-b467-aaf38248636e"
+                    "uuid": "adeab1eb-632d-4100-abee-92bf58ac0057"
                 },
-                {
-                    "description": "Pad 1 [HEAD_PWR_P] of D2001 on F.Cu",
-                    "pos": {
-                        "x": 146.0,
-                        "y": 233.65
-                    },
-                    "uuid": "59fe494a-918c-4ad0-92ed-9b9bdeac0bb9"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 1 [HEAD_PWR_P] of D2001 on F.Cu",
-                    "pos": {
-                        "x": 146.0,
-                        "y": 233.65
-                    },
-                    "uuid": "59fe494a-918c-4ad0-92ed-9b9bdeac0bb9"
-                },
-                {
-                    "description": "PTH pad 1 [HEAD_PWR_P] of J2001",
-                    "pos": {
-                        "x": 147.34,
-                        "y": 237.43
-                    },
-                    "uuid": "0b3b4760-a168-431e-a7e2-79181d5d258b"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
                 {
                     "description": "PTH pad 2 [HEAD_PWR_N] of J2001",
                     "pos": {
@@ -67,60 +29,6 @@
                         "y": 237.43
                     },
                     "uuid": "0ff04570-13ed-4a7b-a032-77a011789d62"
-                },
-                {
-                    "description": "Pad 2 [HEAD_PWR_N] of R2001 on F.Cu",
-                    "pos": {
-                        "x": 149.25,
-                        "y": 231.925
-                    },
-                    "uuid": "67f38a52-fbe4-4fe9-9a68-021a91685465"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 2 [HEAD_PWR_N] of D2001 on F.Cu",
-                    "pos": {
-                        "x": 146.0,
-                        "y": 229.35
-                    },
-                    "uuid": "5c6fd838-1c41-4e5e-8587-49bb85f636ee"
-                },
-                {
-                    "description": "Pad 2 [HEAD_PWR_N] of R2001 on F.Cu",
-                    "pos": {
-                        "x": 149.25,
-                        "y": 231.925
-                    },
-                    "uuid": "67f38a52-fbe4-4fe9-9a68-021a91685465"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 4 [HEAD_PWR_N] of L2001 on F.Cu",
-                    "pos": {
-                        "x": 147.1,
-                        "y": 226.6
-                    },
-                    "uuid": "113cfec0-c358-40e7-8984-c0ad442a5e61"
-                },
-                {
-                    "description": "Pad 2 [HEAD_PWR_N] of D2001 on F.Cu",
-                    "pos": {
-                        "x": 146.0,
-                        "y": 229.35
-                    },
-                    "uuid": "5c6fd838-1c41-4e5e-8587-49bb85f636ee"
                 }
             ],
             "severity": "error",
@@ -138,12 +46,12 @@
                     "uuid": "b186ea60-7110-4c3b-aa0e-f97f1f01bbd7"
                 },
                 {
-                    "description": "Pad 1 [HEAD_HTR_P] of D2601 on F.Cu",
+                    "description": "Pad 1 [HEAD_HTR_P] of R2610 on F.Cu",
                     "pos": {
-                        "x": 108.35,
-                        "y": 231.8
+                        "x": 127.81,
+                        "y": 225.4
                     },
-                    "uuid": "f34178cf-ef0e-4228-b0a5-e5b0848edfc3"
+                    "uuid": "44540ba7-e9e7-4d41-b224-4d52432951fd"
                 }
             ],
             "severity": "error",
@@ -152,14 +60,6 @@
         {
             "description": "Missing connection between items",
             "items": [
-                {
-                    "description": "Pad 1 [HEAD_HTR_P] of R2610 on F.Cu",
-                    "pos": {
-                        "x": 127.81,
-                        "y": 225.4
-                    },
-                    "uuid": "44540ba7-e9e7-4d41-b224-4d52432951fd"
-                },
                 {
                     "description": "Pad 1 [HEAD_HTR_P] of R2607 on F.Cu",
                     "pos": {
@@ -167,14 +67,7 @@
                         "y": 227.925
                     },
                     "uuid": "ee95688f-021f-469d-98c3-a28c747d85df"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
+                },
                 {
                     "description": "Pad 1 [HEAD_HTR_P] of R2610 on F.Cu",
                     "pos": {
@@ -182,14 +75,6 @@
                         "y": 225.4
                     },
                     "uuid": "44540ba7-e9e7-4d41-b224-4d52432951fd"
-                },
-                {
-                    "description": "Pad 1 [HEAD_HTR_P] of C2601 on F.Cu",
-                    "pos": {
-                        "x": 124.5,
-                        "y": 223.275
-                    },
-                    "uuid": "b186ea60-7110-4c3b-aa0e-f97f1f01bbd7"
                 }
             ],
             "severity": "error",
@@ -198,6 +83,37 @@
         {
             "description": "Missing connection between items",
             "items": [
+                {
+                    "description": "Pad 1 [HEAD_HTR_P] of R2607 on F.Cu",
+                    "pos": {
+                        "x": 129.5,
+                        "y": 227.925
+                    },
+                    "uuid": "ee95688f-021f-469d-98c3-a28c747d85df"
+                },
+                {
+                    "description": "Pad 3 [HEAD_HTR_P] of U2601 on F.Cu",
+                    "pos": {
+                        "x": 133.8625,
+                        "y": 228.45
+                    },
+                    "uuid": "83555381-ed32-4ae0-8e16-c56ff5fefe2c"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [HEAD_HTR_P] of R2607 on F.Cu",
+                    "pos": {
+                        "x": 129.5,
+                        "y": 227.925
+                    },
+                    "uuid": "ee95688f-021f-469d-98c3-a28c747d85df"
+                },
                 {
                     "description": "Pad 1 [HEAD_HTR_P] of R2601 on F.Cu",
                     "pos": {
@@ -205,14 +121,6 @@
                         "y": 232.8
                     },
                     "uuid": "e7f18954-7ba1-4b15-bc48-a1f4cce8e4aa"
-                },
-                {
-                    "description": "Pad 1 [HEAD_HTR_P] of R2607 on F.Cu",
-                    "pos": {
-                        "x": 129.5,
-                        "y": 227.925
-                    },
-                    "uuid": "ee95688f-021f-469d-98c3-a28c747d85df"
                 }
             ],
             "severity": "error",
@@ -236,29 +144,6 @@
                         "y": 237.43
                     },
                     "uuid": "2aa3d13f-b53e-4b1f-89ad-46cd4ec3752d"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 3 [HEAD_HTR_P] of U2601 on F.Cu",
-                    "pos": {
-                        "x": 133.8625,
-                        "y": 228.45
-                    },
-                    "uuid": "83555381-ed32-4ae0-8e16-c56ff5fefe2c"
-                },
-                {
-                    "description": "Pad 1 [HEAD_HTR_P] of R2607 on F.Cu",
-                    "pos": {
-                        "x": 129.5,
-                        "y": 227.925
-                    },
-                    "uuid": "ee95688f-021f-469d-98c3-a28c747d85df"
                 }
             ],
             "severity": "error",
@@ -8372,12 +8257,12 @@
                     "uuid": "ed96e7f6-a667-400b-a96a-460514315aa2"
                 },
                 {
-                    "description": "Track [DAC_SCK] on F.Cu, length 0.0005 mm",
+                    "description": "Pad 13 [DAC_SCK] of U2302 on F.Cu",
                     "pos": {
                         "x": 205.75,
-                        "y": 196.562
+                        "y": 196.5625
                     },
-                    "uuid": "e09ffcf5-9139-41d9-8af4-261a64edd01b"
+                    "uuid": "6b2eaad0-1442-46f2-8d66-5a9a72fcce2b"
                 }
             ],
             "severity": "error",
@@ -8525,12 +8410,12 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "Track [THR_ULD_F0] on F.Cu, length 0.2656 mm",
+                    "description": "Via [THR_ULD_F0] on F.Cu - B.Cu",
                     "pos": {
-                        "x": 193.835634,
+                        "x": 193.57,
                         "y": 198.26625
                     },
-                    "uuid": "deea5478-c4e9-4fc6-b4cc-bcad5618f2c9"
+                    "uuid": "269c90af-05cd-41d2-b6c6-1401e48e44cb"
                 },
                 {
                     "description": "Pad 1 [THR_ULD_F0] of R127 on F.Cu",
@@ -9100,12 +8985,12 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "Track [THR_LLD_R1] on F.Cu, length 0.7682 mm",
+                    "description": "Via [THR_LLD_R1] on F.Cu - B.Cu",
                     "pos": {
-                        "x": 211.75817,
+                        "x": 210.99,
                         "y": 198.831249
                     },
-                    "uuid": "2310f1b5-c6f6-4c9e-a4f9-572c7ae00b88"
+                    "uuid": "d02e839d-8965-48f3-b52f-0cad26bf7a7a"
                 },
                 {
                     "description": "Pad 1 [THR_LLD_R1] of R626 on F.Cu",
@@ -9974,12 +9859,12 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "Track [MON_BUS] on B.Cu, length 4.9780 mm",
+                    "description": "Via [MON_BUS] on F.Cu - B.Cu",
                     "pos": {
                         "x": 251.51,
                         "y": 167.2
                     },
-                    "uuid": "4a3df750-e881-484d-a17b-6e6f4206a739"
+                    "uuid": "c478cd51-0c87-46b5-8716-fd8c21afcd7f"
                 },
                 {
                     "description": "Pad 8 [MON_BUS] of U1107 on F.Cu",
@@ -10649,12 +10534,12 @@
                     "uuid": "3ceb6a54-e47e-468b-83bd-8389fc3a426e"
                 },
                 {
-                    "description": "Track [CLR_F1_N] on F.Cu, length 0.0035 mm",
+                    "description": "Pad 1 [CLR_F1_N] of U1105 on F.Cu",
                     "pos": {
-                        "x": 162.89,
-                        "y": 185.0475
+                        "x": 162.8875,
+                        "y": 185.05
                     },
-                    "uuid": "40e2c27e-00a2-41f9-bdc5-354b459ed02b"
+                    "uuid": "325a4921-62f0-4b3a-a837-fe334a2a7b70"
                 }
             ],
             "severity": "error",
@@ -11017,12 +10902,12 @@
                     "uuid": "cf712f96-6e85-4194-a645-a6b97e0fe271"
                 },
                 {
-                    "description": "Track [CLR_R0_N] on F.Cu, length 0.0673 mm",
+                    "description": "Pad 1 [CLR_R0_N] of U1006 on F.Cu",
                     "pos": {
-                        "x": 84.9351,
-                        "y": 185.0024
+                        "x": 84.8875,
+                        "y": 185.05
                     },
-                    "uuid": "dc485890-2432-433d-8ba7-ac4448958ade"
+                    "uuid": "4dae3265-bb62-4d6e-8ff3-7b4a04c12151"
                 }
             ],
             "severity": "error",
@@ -11483,6 +11368,121 @@
                         "y": 208.49
                     },
                     "uuid": "be15e4a8-7843-4d7a-8597-f983b1bd09df"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [LLD_F3] of R428 on F.Cu",
+                    "pos": {
+                        "x": 348.5,
+                        "y": 208.49
+                    },
+                    "uuid": "be15e4a8-7843-4d7a-8597-f983b1bd09df"
+                },
+                {
+                    "description": "Pad 1 [LLD_F3] of R1311 on F.Cu",
+                    "pos": {
+                        "x": 361.5,
+                        "y": 194.99
+                    },
+                    "uuid": "71abd409-9bd3-4681-987b-56ef5835e38f"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [BUSY_R1] of R1107 on F.Cu",
+                    "pos": {
+                        "x": 185.25,
+                        "y": 190.49
+                    },
+                    "uuid": "366325a0-2963-4cb3-b5f9-399879f00cb6"
+                },
+                {
+                    "description": "Pad 1 [BUSY_R1] of R1108 on F.Cu",
+                    "pos": {
+                        "x": 186.5,
+                        "y": 192.74
+                    },
+                    "uuid": "77c459c5-189d-495c-9cad-669b0854488b"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [BUSY_R1] of R1108 on F.Cu",
+                    "pos": {
+                        "x": 186.5,
+                        "y": 192.74
+                    },
+                    "uuid": "77c459c5-189d-495c-9cad-669b0854488b"
+                },
+                {
+                    "description": "Pad 21 [BUSY_R1] of U2401 on F.Cu",
+                    "pos": {
+                        "x": 222.0,
+                        "y": 178.175
+                    },
+                    "uuid": "7dc1bba4-f024-4bd2-8ab0-48ba99345daf"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [BUSY_F0] of R1002 on F.Cu",
+                    "pos": {
+                        "x": 99.0,
+                        "y": 182.26
+                    },
+                    "uuid": "c87d40cd-d340-49a9-a64b-39de53aa8b68"
+                },
+                {
+                    "description": "Pad 2 [BUSY_F0] of R1001 on F.Cu",
+                    "pos": {
+                        "x": 92.01,
+                        "y": 183.4
+                    },
+                    "uuid": "62e8c0d5-35f7-4fb3-9bb3-ed616ae5fe30"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 78 [BUSY_F0] of U2401 on F.Cu",
+                    "pos": {
+                        "x": 210.325,
+                        "y": 165.5
+                    },
+                    "uuid": "acd3edbe-3fba-4fde-9db6-80b93b3b1214"
+                },
+                {
+                    "description": "Pad 1 [BUSY_F0] of R1002 on F.Cu",
+                    "pos": {
+                        "x": 99.0,
+                        "y": 182.26
+                    },
+                    "uuid": "c87d40cd-d340-49a9-a64b-39de53aa8b68"
                 }
             ],
             "severity": "error",
@@ -12376,6 +12376,29 @@
             "type": "clearance"
         },
         {
+            "description": "Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.6656 mm)",
+            "items": [
+                {
+                    "description": "Pad 3 [HV_MON2] of U2201 on F.Cu",
+                    "pos": {
+                        "x": 156.5625,
+                        "y": 169.25
+                    },
+                    "uuid": "ec721314-f75c-41a2-a201-3ad7cc02a9da"
+                },
+                {
+                    "description": "Pad 5 [HV_MIR] of U2201 on F.Cu",
+                    "pos": {
+                        "x": 157.25,
+                        "y": 170.4375
+                    },
+                    "uuid": "e5f7cd4b-4fc8-4ed3-b572-bcd57f79eb97"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
             "description": "Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.9357 mm)",
             "items": [
                 {
@@ -12399,15 +12422,15 @@
             "type": "clearance"
         },
         {
-            "description": "Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.6656 mm)",
+            "description": "Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2286 mm)",
             "items": [
                 {
-                    "description": "Pad 3 [HV_MON2] of U2201 on F.Cu",
+                    "description": "Pad 4 [BIAS_IMON_R] of U2201 on F.Cu",
                     "pos": {
                         "x": 156.5625,
-                        "y": 169.25
+                        "y": 169.75
                     },
-                    "uuid": "ec721314-f75c-41a2-a201-3ad7cc02a9da"
+                    "uuid": "5640db6f-fa72-4788-b31d-81512d163b13"
                 },
                 {
                     "description": "Pad 5 [HV_MIR] of U2201 on F.Cu",
@@ -12445,16 +12468,8 @@
             "type": "clearance"
         },
         {
-            "description": "Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2286 mm)",
+            "description": "Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2000 mm)",
             "items": [
-                {
-                    "description": "Pad 4 [BIAS_IMON_R] of U2201 on F.Cu",
-                    "pos": {
-                        "x": 156.5625,
-                        "y": 169.75
-                    },
-                    "uuid": "5640db6f-fa72-4788-b31d-81512d163b13"
-                },
                 {
                     "description": "Pad 5 [HV_MIR] of U2201 on F.Cu",
                     "pos": {
@@ -12462,6 +12477,14 @@
                         "y": 170.4375
                     },
                     "uuid": "e5f7cd4b-4fc8-4ed3-b572-bcd57f79eb97"
+                },
+                {
+                    "description": "Pad 17 [GND] of U2201 on F.Cu",
+                    "pos": {
+                        "x": 158.0,
+                        "y": 169.0
+                    },
+                    "uuid": "ebb3aeb1-d013-440c-a22e-c27e3896d8b6"
                 }
             ],
             "severity": "error",
@@ -12517,12 +12540,12 @@
             "description": "Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2000 mm)",
             "items": [
                 {
-                    "description": "Pad 5 [HV_MIR] of U2201 on F.Cu",
+                    "description": "Pad 6 [HV_RAWF] of U2201 on F.Cu",
                     "pos": {
-                        "x": 157.25,
+                        "x": 157.75,
                         "y": 170.4375
                     },
-                    "uuid": "e5f7cd4b-4fc8-4ed3-b572-bcd57f79eb97"
+                    "uuid": "f61e6a4e-b763-434f-a988-656576707aab"
                 },
                 {
                     "description": "Pad 17 [GND] of U2201 on F.Cu",
@@ -12583,23 +12606,23 @@
             "type": "clearance"
         },
         {
-            "description": "Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2000 mm)",
+            "description": "Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.6656 mm)",
             "items": [
                 {
-                    "description": "Pad 6 [HV_RAWF] of U2201 on F.Cu",
+                    "description": "Pad 7 [GND] of U2201 on F.Cu",
                     "pos": {
-                        "x": 157.75,
+                        "x": 158.25,
                         "y": 170.4375
                     },
-                    "uuid": "f61e6a4e-b763-434f-a988-656576707aab"
+                    "uuid": "f1196f26-7ea4-4129-a7a9-878ddc5abdf2"
                 },
                 {
-                    "description": "Pad 17 [GND] of U2201 on F.Cu",
+                    "description": "Pad 9 [HV_CAP] of U2201 on F.Cu",
                     "pos": {
-                        "x": 158.0,
-                        "y": 169.0
+                        "x": 159.4375,
+                        "y": 169.75
                     },
-                    "uuid": "ebb3aeb1-d013-440c-a22e-c27e3896d8b6"
+                    "uuid": "7e4691ff-9bb0-4624-8841-99a39e7eb4e6"
                 }
             ],
             "severity": "error",
@@ -12623,29 +12646,6 @@
                         "y": 170.4375
                     },
                     "uuid": "1cd59fa5-0607-4d52-923b-036cd9a21bd7"
-                }
-            ],
-            "severity": "error",
-            "type": "clearance"
-        },
-        {
-            "description": "Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.6656 mm)",
-            "items": [
-                {
-                    "description": "Pad 7 [GND] of U2201 on F.Cu",
-                    "pos": {
-                        "x": 158.25,
-                        "y": 170.4375
-                    },
-                    "uuid": "f1196f26-7ea4-4129-a7a9-878ddc5abdf2"
-                },
-                {
-                    "description": "Pad 9 [HV_CAP] of U2201 on F.Cu",
-                    "pos": {
-                        "x": 159.4375,
-                        "y": 169.75
-                    },
-                    "uuid": "7e4691ff-9bb0-4624-8841-99a39e7eb4e6"
                 }
             ],
             "severity": "error",
@@ -12675,29 +12675,6 @@
             "type": "clearance"
         },
         {
-            "description": "Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2000 mm)",
-            "items": [
-                {
-                    "description": "Pad 8 [HV_SW] of U2201 on F.Cu",
-                    "pos": {
-                        "x": 158.75,
-                        "y": 170.4375
-                    },
-                    "uuid": "1cd59fa5-0607-4d52-923b-036cd9a21bd7"
-                },
-                {
-                    "description": "Pad 17 [GND] of U2201 on F.Cu",
-                    "pos": {
-                        "x": 158.0,
-                        "y": 169.0
-                    },
-                    "uuid": "ebb3aeb1-d013-440c-a22e-c27e3896d8b6"
-                }
-            ],
-            "severity": "error",
-            "type": "clearance"
-        },
-        {
             "description": "Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.6656 mm)",
             "items": [
                 {
@@ -12724,12 +12701,12 @@
             "description": "Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2000 mm)",
             "items": [
                 {
-                    "description": "Pad 9 [HV_CAP] of U2201 on F.Cu",
+                    "description": "Pad 8 [HV_SW] of U2201 on F.Cu",
                     "pos": {
-                        "x": 159.4375,
-                        "y": 169.75
+                        "x": 158.75,
+                        "y": 170.4375
                     },
-                    "uuid": "7e4691ff-9bb0-4624-8841-99a39e7eb4e6"
+                    "uuid": "1cd59fa5-0607-4d52-923b-036cd9a21bd7"
                 },
                 {
                     "description": "Pad 17 [GND] of U2201 on F.Cu",
@@ -12761,6 +12738,29 @@
                         "y": 169.25
                     },
                     "uuid": "69e0e88e-10f7-4180-8ed8-b0e4d4c930b0"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2000 mm)",
+            "items": [
+                {
+                    "description": "Pad 9 [HV_CAP] of U2201 on F.Cu",
+                    "pos": {
+                        "x": 159.4375,
+                        "y": 169.75
+                    },
+                    "uuid": "7e4691ff-9bb0-4624-8841-99a39e7eb4e6"
+                },
+                {
+                    "description": "Pad 17 [GND] of U2201 on F.Cu",
+                    "pos": {
+                        "x": 158.0,
+                        "y": 169.0
+                    },
+                    "uuid": "ebb3aeb1-d013-440c-a22e-c27e3896d8b6"
                 }
             ],
             "severity": "error",
@@ -12949,6 +12949,21 @@
             ],
             "severity": "error",
             "type": "clearance"
+        },
+        {
+            "description": "Via is not connected or connected on only one layer",
+            "items": [
+                {
+                    "description": "Via [HEAD_PWR_N] on F.Cu - B.Cu",
+                    "pos": {
+                        "x": 148.815,
+                        "y": 232.7
+                    },
+                    "uuid": "bf1799c8-be44-4997-8e11-7513a2223563"
+                }
+            ],
+            "severity": "warning",
+            "type": "via_dangling"
         },
         {
             "description": "Via is not connected or connected on only one layer",

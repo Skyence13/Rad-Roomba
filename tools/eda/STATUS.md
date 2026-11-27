@@ -46,13 +46,25 @@ Regressions (current code): RR-TOF-A PASS, RR-PANEL PASS (both 2 layers, DSN unc
 | RR-HEAD-ACQ copy (`tests/head_escape`) | escape on, zone nets excluded, `--budget 2400` (before the extended fan-out) | 1041 items; 930 s -> 795, 945 s -> 741, 378 s -> 712; finisher 6 routed in 900 s; **FAIL 707 open**, DRC 2 errors, parity 0, 71 min |
 | RR-HEAD-ACQ original (lead) | escape off, zone nets autorouted, no continue runs | 1 h 45 min -> 340 open, 3 DRC errors |
 | scale500 | 493 parts, 6 L | generation only (0 DRC errors from escape, 199 escape vias + 4 direct); not routed - the real boards were the better evidence |
+| RR-HEAD-ACQ copy | same + extended fan-out, `--budget 3000` (`tests/run_real_boards.sh`) | 941 s -> 797, 933 s -> 734, 929 s -> 709; finisher 6 of 200 in 971 s; final check exited 139 (segfault, not reproduced: re-running `_post` alone gave) **704 open, DRC 2 errors, parity 0** |
+| RR-CHS-MAIN copy | `tests/chassis_escape` | ERC 0/0 at schematic stage; not routed (stopped by the lead's change of plan) |
 
-Running (unattended, `tools/eda/tests/run_real_boards.sh`, results appended to
-`tools/eda/tests/real_boards_results.jsonl`): head copy `--budget 3000`, then chassis copy `--budget 3000`.
+Result lines: `tools/eda/tests/real_boards_results.jsonl`. Regressions at the end: RR-TOF-A PASS, RR-PANEL PASS
+(`build`, cached SES, ERC 0, DRC 0, unconnected 0, parity 0).
+
+## Long unattended run - commands
+`python3 tools/eda/rrkicad.py build <board.py>` with `route(timeout=..., passes=..., retries=..., restarts=...,
+optimizer=False, escape="auto"|False, zone_nets="auto"|"route")`; `--budget SEC` (+ `route(chunk=900, stall=2)`)
+for interruption-safe chunks; `--reroute` to ignore a cached SES. Progress: `route/progress.log`; best result:
+`route/<name>.ses` (+ `.ses.best` during the run); results: `reports/summary.json` (`drc.unconnected`, `drc.errors`,
+`drc.by_type`, `routing.*`), `reports/open_connections.txt`. Recipe: README "Recommended recipe".
 
 ## Honest assessment
 * 150-part boards with 0.5 mm ICs: complete automatically (6 layers in 1.5-6 min, 4 layers in 6-18 min).
-* 770-1090-part boards: the flow runs them without crashes and keeps its best state, but Freerouting reduces
-  the open count by only ~50 per 15-minute run late in the job; zero needs placement changes (room for plane
-  vias and escape rings), hand pre-routes for power/HV/analogue, frozen lane routes, several long runs and a
-  final manual pass in KiCad. See README "Real boards".
+* RR-HEAD-ACQ copy: escape + zone-net exclusion + 15-minute chunks gave 704-709 open after ~50 min of routing,
+  worse than the lead's plain 1 h 45 min run (340 open). Main reasons: 160+ plane pads without a via spot can no
+  longer be autorouted once zone nets are excluded (and the maze long fan-out is too slow there), and chunked jobs
+  restart Freerouting's pass schedule. For the final runs: fix placement (plane via spots), or `zone_nets="route"`,
+  one long uninterrupted Freerouting job, then continue runs and a manual finish in KiCad.
+* The escape/finisher machinery is what completes the 150-part stress boards; on the dense real boards it is not
+  yet an improvement over plain autorouting.

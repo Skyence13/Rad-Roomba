@@ -353,6 +353,25 @@ classes on top (first matching pattern wins).
   `drc.unconnected`; `drc.unconnected_listed` is how many KiCad's DRC report lists, it stops
   at 499).
 
+### Recommended recipe for the final runs on the large boards
+1. Placement first: every plane pad needs a via spot within ~4 mm (check `summary.json` →
+   `routing.plane_fanout.failed` after `build --no-route`; aim for 0), 2+ mm free around
+   fine-pitch ICs if escape is used, no DRC errors before routing.
+2. Hand pre-routes (`board.track` / `board.via`) for power trunks, HV, analogue, safety chain.
+3. Route lane 0 / the source block, then freeze it with `replicate()` (second build).
+4. Unless step 1 reached 0, keep zone nets routable: `route(zone_nets="route")`.
+   Escape: `escape="auto"` helps where the fine-pitch ICs have room (stress boards);
+   if `routing.escape.skipped` lists many "no legal escape position", use `escape=False`.
+5. One long run per DSN: `route(timeout=7200, passes=500, retries=2, restarts=0,
+   optimizer=False)` and `build board.py` (no `--budget`): one uninterrupted Freerouting job,
+   then continue runs from its result. Use `--budget SEC` (chunks of `chunk` s) only when
+   the job must survive interruptions - the best SES is then on disk after every chunk.
+6. Watch `route/progress.log`; results: `reports/summary.json` (`drc.unconnected`, `drc.errors`,
+   `drc.by_type`), `reports/open_connections.txt` (KiCad's list, max 499), `route/<name>.ses`.
+   A later `build` with an unchanged DSN re-uses the SES (and `route/finish.json`) without
+   routing; `build --reroute` starts again.
+7. Finish the remaining tens of connections in KiCad.
+
 ## Replicating blocks (identical lanes/channels)
 `board.replicate(pairs, dx, dy, routes=True)` — `pairs` is `{source_ref: destination_ref}`
 or a `(source_group, destination_group)` tuple (same parts in the same order).
@@ -512,40 +531,34 @@ What a board author should do (in order of effect):
 
 ### Real boards (measured on copies, 2026-11-27)
 `tests/head_escape/` = copy of RR-HEAD-ACQ (1085 parts, 326 x 96 mm, 6 layers, four replicated
-lanes with the lane-0 routes of the lead's earlier run replayed from `blocks.json`), escape on,
-zone nets not autorouted, `--budget 2400`, shared 4-core machine:
+lanes, lane-0 routes replayed from `blocks.json`), escape on, zone nets not autorouted:
 
-| step | result |
-|---|---|
-| generation (incl. escape, plane / extended / long fan-out) | ~15 min; escape 87 vias + 20 direct pre-routes (LQFP-100, 4 WQFN-16 DACs; 60 pads without a legal spot); plane fan-out 783 vias, 32 long fan-outs in the 600 s cap, 171 plane pads left without a plane connection |
-| Freerouting, 2400 s budget | 1041 items at start; first run 930 s -> 795 open, continue 945 s -> 741, continue 378 s -> **712** |
-| finisher (900 s) | 6 routed, the rest ran out of time |
-| result | **FAIL: 707 open** (about half of them zone-net pads without a plane connection), DRC 2 errors (a replicated lane via in a lane-1 keep-out; a footprint-level 0.2 mm clearance on U2001 that the DSN does not carry), parity 0; 71 min in total |
+| run | generation | Freerouting (KiCad open count after each run) | finisher | result |
+|---|---|---|---|---|
+| `--budget 2400` | 15 min; escape 87 vias + 20 direct (LQFP-100, 4 WQFN-16 DACs), fan-out 783 vias, 32 long fan-outs, 171 plane pads unconnected | 930 s -> 795, 945 s -> 741, 378 s -> 712 | 6 routed in 900 s | FAIL 707 open, DRC 2 errors, parity 0, 71 min |
+| `--budget 3000` (+ extended fan-out) | 15 min; fan-out 815 vias (32 extended), 8 long fan-outs, 163 plane pads unconnected | 941 s -> 797, 933 s -> 734, 929 s -> 709 | 6 of 200 tried in 971 s | FAIL **704 open**, DRC 2 errors, parity 0, 81 min |
 
-For comparison, the lead's run of the original definition (escape off, zone nets autorouted,
-no continue runs because they crashed): 1 h 45 min -> 340 open, 3 DRC errors.
-Throughput on this board is about 50 connections per 15-minute Freerouting run late in the
-job; the extended fan-out added afterwards gives 36 more plane pads their via (generation-
-only measurement: 819 fan-out vias, 12 long fan-outs, 155 pads left).
+Lead's plain run of the original definition (escape off, zone nets autorouted, one long
+Freerouting run): 1 h 45 min -> **340 open**, 3 DRC errors. So on this board the escape +
+zone-net exclusion + chunked continue runs were **not better than plain autorouting** - worse
+at equal effort. Best understanding of why:
+* zone nets excluded: 163-171 plane pads have no via spot (dense placement, HV clearances),
+  so their ~300 connections can no longer be done by Freerouting at all; the maze long
+  fan-out is too slow on this board (~20-50 s per pad) to take them over. On the plain run
+  Freerouting routed most of them as tracks;
+* chunking: each 15-minute chunk ends in a new Freerouting job that re-reads the board and
+  restarts its pass schedule; one uninterrupted job uses the time better on a 1000-item board
+  (~50 connections gained per chunk late in the job);
+* escape: 60 of the escape pads had no legal spot, and the via rings take routing space next
+  to dense lanes; on the stress boards (room around the ICs) it was what made them complete.
+The 2 DRC errors: a replicated lane via inside a lane-1 keep-out (copies are not keep-out
+checked) and a footprint-level 0.2 mm clearance at U2001 that the DSN does not carry. One
+build ended with exit code 139 (segfault) in the final check after the finisher; re-running
+that stage alone (`_post`) completed normally - not reproduced, cause unknown.
+RR-CHS-MAIN copy (`tests/chassis_escape/`): generation/ERC checked (0/0), not routed (run
+stopped by the lead's change of plan).
 
-What this means for the 600-1100-part boards: the flow handles them (no crashes, best state
-always on disk, progress log, connectivity counts beyond 499), but it does not route them to
-zero unattended in an hour. To get there the board author has to (in order of effect):
-1. make room for plane vias: every supply/GND pad needs a via spot within ~4 mm (extended
-   fan-out) - the 155-171 pads above are the list to work through (`summary.json` →
-   `routing.plane_fanout.failed`, with the reason); or pour the net on an outer layer there;
-2. keep 2+ mm around fine-pitch ICs free (escape ring) - 60 escape pads had no spot;
-3. route power / analogue / HV by hand or as pre-routes (`board.track`/`board.via`), and
-   freeze lane routes with `replicate()` once lane 0 is complete;
-4. then several budgeted runs (`--budget 3600` or more, an otherwise idle machine; the
-   result accumulates across builds only through `blocks.json`/pre-routes - a new DSN
-   starts Freerouting from scratch) and the finisher;
-5. finish the last tens of connections in KiCad by hand.
-`zone_nets="route"` gives the old behaviour (Freerouting routes zone nets as tracks), which
-may be the faster way to completion on a board whose planes are not yet reachable from
-every pad - at the price of power connections as thin routed tracks.
-
-Other generator tests: `tools/eda/tests/replicate/` (placement + route replication,
+Other generator tests:Other generator tests: `tools/eda/tests/replicate/` (placement + route replication,
 `waive`, `severity`), `tools/eda/tests/import_chassis|import_panel|import_head_acq/`
 (importer + schematic for the three stage-1 circuit definitions: 753/768, 24/24 and
 1081/1085 parts imported, the rest have no footprint yet; ERC 0 errors each).

@@ -133,7 +133,7 @@
       },
       "via_dangling": {
         "errors": 0,
-        "warnings": 27
+        "warnings": 28
       }
     },
     "error_items": [
@@ -145,19 +145,14 @@
     "parity": 0,
     "parity_items": [],
     "report": "reports/drc.json",
-    "unconnected": 709,
+    "unconnected": 704,
     "unconnected_items": [
-      "unconnected_items | Missing connection between items | Pad 1 [HEAD_PWR_P] of L2001 on F.Cu | Pad 1 [HEAD_PWR_P] of D2001 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 1 [HEAD_PWR_P] of D2001 on F.Cu | PTH pad 1 [HEAD_PWR_P] of J2001",
-      "unconnected_items | Missing connection between items | PTH pad 2 [HEAD_PWR_N] of J2001 | Pad 2 [HEAD_PWR_N] of R2001 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 2 [HEAD_PWR_N] of D2001 on F.Cu | Pad 2 [HEAD_PWR_N] of R2001 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 4 [HEAD_PWR_N] of L2001 on F.Cu | Pad 2 [HEAD_PWR_N] of D2001 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 1 [HEAD_HTR_P] of C2601 on F.Cu | Pad 1 [HEAD_HTR_P] of D2601 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 1 [HEAD_HTR_P] of R2610 on F.Cu | Pad 1 [HEAD_HTR_P] of R2607 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 1 [HEAD_HTR_P] of R2610 on F.Cu | Pad 1 [HEAD_HTR_P] of C2601 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 1 [HEAD_HTR_P] of R2601 on F.Cu | Pad 1 [HEAD_HTR_P] of R2607 on F.Cu",
+      "unconnected_items | Missing connection between items | Track [HEAD_PWR_N] on F.Cu, length 2.4703 mm | PTH pad 2 [HEAD_PWR_N] of J2001",
+      "unconnected_items | Missing connection between items | Pad 1 [HEAD_HTR_P] of C2601 on F.Cu | Pad 1 [HEAD_HTR_P] of R2610 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [HEAD_HTR_P] of R2607 on F.Cu | Pad 1 [HEAD_HTR_P] of R2610 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [HEAD_HTR_P] of R2607 on F.Cu | Pad 3 [HEAD_HTR_P] of U2601 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [HEAD_HTR_P] of R2607 on F.Cu | Pad 1 [HEAD_HTR_P] of R2601 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [HEAD_HTR_P] of R2601 on F.Cu | PTH pad 3 [HEAD_HTR_P] of J2001",
-      "unconnected_items | Missing connection between items | Pad 3 [HEAD_HTR_P] of U2601 on F.Cu | Pad 1 [HEAD_HTR_P] of R2607 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 2 [HEAD_HTR_N] of D2601 on F.Cu | PTH pad 2 [HEAD_HTR_N] of J2601",
       "unconnected_items | Missing connection between items | Pad 2 [HEAD_HTR_N] of C2601 on F.Cu | Pad 2 [HEAD_HTR_N] of D2601 on F.Cu",
       "unconnected_items | Missing connection between items | PTH pad 4 [HEAD_HTR_N] of J2001 | Pad 2 [HEAD_HTR_N] of C2601 on F.Cu",
@@ -346,101 +341,30 @@
       "unconnected_items | Missing connection between items | Pad 8 [+3V3_EVT] of U201 on F.Cu | Pad 1 [+3V3_EVT] of C207 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [+3V3_EVT] of C227 on F.Cu | Pad 1 [+3V3_EVT] of C207 on F.Cu",
       "unconnected_items | Missing connection between items | Pad 1 [+3V3_EVT] of C227 on F.Cu | Pad 2 [+3V3_EVT] of D203 on F.Cu",
-      "unconnected_items | Missing connection between items | Pad 4 [+3V3_EVT] of U206 on F.Cu | Pad 2 [+3V3_EVT] of D602 on F.Cu"
+      "unconnected_items | Missing connection between items | Pad 4 [+3V3_EVT] of U206 on F.Cu | Pad 2 [+3V3_EVT] of D602 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 4 [+3V3_EVT] of U206 on F.Cu | Pad 2 [+3V3_EVT] of D203 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [+3V3_EVT] of C622 on F.Cu | Pad 4 [+3V3_EVT] of U206 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [+3V3_EVT] of C622 on F.Cu | Track [+3V3_EVT] on F.Cu, length 0.6500 mm",
+      "unconnected_items | Missing connection between items | Pad 2 [+3V3_EVT] of D602 on F.Cu | Pad 1 [+3V3_EVT] of C607 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 8 [+3V3_EVT] of U604 on F.Cu | Pad 1 [+3V3_EVT] of C622 on F.Cu"
     ],
     "unconnected_listed": 499,
     "unrouted": [
       {
         "ends": [
           {
-            "item": "Pad 1 [HEAD_PWR_P] of L2001 on F.Cu",
+            "item": "Track [HEAD_PWR_N] on F.Cu, length 2.4703 mm",
             "xy_mm": [
-              95.9,
-              21.4
+              97.125,
+              17.425
             ]
           },
-          {
-            "item": "Pad 1 [HEAD_PWR_P] of D2001 on F.Cu",
-            "xy_mm": [
-              96.0,
-              14.35
-            ]
-          }
-        ],
-        "net": "HEAD_PWR_P"
-      },
-      {
-        "ends": [
-          {
-            "item": "Pad 1 [HEAD_PWR_P] of D2001 on F.Cu",
-            "xy_mm": [
-              96.0,
-              14.35
-            ]
-          },
-          {
-            "item": "PTH pad 1 [HEAD_PWR_P] of J2001",
-            "xy_mm": [
-              97.34,
-              10.57
-            ]
-          }
-        ],
-        "net": "HEAD_PWR_P"
-      },
-      {
-        "ends": [
           {
             "item": "PTH pad 2 [HEAD_PWR_N] of J2001",
             "xy_mm": [
               94.34,
               10.57
             ]
-          },
-          {
-            "item": "Pad 2 [HEAD_PWR_N] of R2001 on F.Cu",
-            "xy_mm": [
-              99.25,
-              16.075
-            ]
-          }
-        ],
-        "net": "HEAD_PWR_N"
-      },
-      {
-        "ends": [
-          {
-            "item": "Pad 2 [HEAD_PWR_N] of D2001 on F.Cu",
-            "xy_mm": [
-              96.0,
-              18.65
-            ]
-          },
-          {
-            "item": "Pad 2 [HEAD_PWR_N] of R2001 on F.Cu",
-            "xy_mm": [
-              99.25,
-              16.075
-            ]
-          }
-        ],
-        "net": "HEAD_PWR_N"
-      },
-      {
-        "ends": [
-          {
-            "item": "Pad 4 [HEAD_PWR_N] of L2001 on F.Cu",
-            "xy_mm": [
-              97.1,
-              21.4
-            ]
-          },
-          {
-            "item": "Pad 2 [HEAD_PWR_N] of D2001 on F.Cu",
-            "xy_mm": [
-              96.0,
-              18.65
-            ]
           }
         ],
         "net": "HEAD_PWR_N"
@@ -455,10 +379,10 @@
             ]
           },
           {
-            "item": "Pad 1 [HEAD_HTR_P] of D2601 on F.Cu",
+            "item": "Pad 1 [HEAD_HTR_P] of R2610 on F.Cu",
             "xy_mm": [
-              58.35,
-              16.2
+              77.81,
+              22.6
             ]
           }
         ],
@@ -466,37 +390,37 @@
       },
       {
         "ends": [
-          {
-            "item": "Pad 1 [HEAD_HTR_P] of R2610 on F.Cu",
-            "xy_mm": [
-              77.81,
-              22.6
-            ]
-          },
           {
             "item": "Pad 1 [HEAD_HTR_P] of R2607 on F.Cu",
             "xy_mm": [
               79.5,
               20.075
             ]
-          }
-        ],
-        "net": "HEAD_HTR_P"
-      },
-      {
-        "ends": [
+          },
           {
             "item": "Pad 1 [HEAD_HTR_P] of R2610 on F.Cu",
             "xy_mm": [
               77.81,
               22.6
             ]
+          }
+        ],
+        "net": "HEAD_HTR_P"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [HEAD_HTR_P] of R2607 on F.Cu",
+            "xy_mm": [
+              79.5,
+              20.075
+            ]
           },
           {
-            "item": "Pad 1 [HEAD_HTR_P] of C2601 on F.Cu",
+            "item": "Pad 3 [HEAD_HTR_P] of U2601 on F.Cu",
             "xy_mm": [
-              74.5,
-              24.725
+              83.863,
+              19.55
             ]
           }
         ],
@@ -504,18 +428,18 @@
       },
       {
         "ends": [
+          {
+            "item": "Pad 1 [HEAD_HTR_P] of R2607 on F.Cu",
+            "xy_mm": [
+              79.5,
+              20.075
+            ]
+          },
           {
             "item": "Pad 1 [HEAD_HTR_P] of R2601 on F.Cu",
             "xy_mm": [
               81.037,
               15.2
-            ]
-          },
-          {
-            "item": "Pad 1 [HEAD_HTR_P] of R2607 on F.Cu",
-            "xy_mm": [
-              79.5,
-              20.075
             ]
           }
         ],
@@ -535,25 +459,6 @@
             "xy_mm": [
               91.34,
               10.57
-            ]
-          }
-        ],
-        "net": "HEAD_HTR_P"
-      },
-      {
-        "ends": [
-          {
-            "item": "Pad 3 [HEAD_HTR_P] of U2601 on F.Cu",
-            "xy_mm": [
-              83.863,
-              19.55
-            ]
-          },
-          {
-            "item": "Pad 1 [HEAD_HTR_P] of R2607 on F.Cu",
-            "xy_mm": [
-              79.5,
-              20.075
             ]
           }
         ],
@@ -4149,6 +4054,101 @@
           }
         ],
         "net": "+3V3_EVT"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 4 [+3V3_EVT] of U206 on F.Cu",
+            "xy_mm": [
+              120.387,
+              34.85
+            ]
+          },
+          {
+            "item": "Pad 2 [+3V3_EVT] of D203 on F.Cu",
+            "xy_mm": [
+              115.213,
+              29.65
+            ]
+          }
+        ],
+        "net": "+3V3_EVT"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [+3V3_EVT] of C622 on F.Cu",
+            "xy_mm": [
+              124.75,
+              38.52
+            ]
+          },
+          {
+            "item": "Pad 4 [+3V3_EVT] of U206 on F.Cu",
+            "xy_mm": [
+              120.387,
+              34.85
+            ]
+          }
+        ],
+        "net": "+3V3_EVT"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [+3V3_EVT] of C622 on F.Cu",
+            "xy_mm": [
+              124.75,
+              38.52
+            ]
+          },
+          {
+            "item": "Track [+3V3_EVT] on F.Cu, length 0.6500 mm",
+            "xy_mm": [
+              129.637,
+              53.15
+            ]
+          }
+        ],
+        "net": "+3V3_EVT"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 2 [+3V3_EVT] of D602 on F.Cu",
+            "xy_mm": [
+              125.963,
+              32.65
+            ]
+          },
+          {
+            "item": "Pad 1 [+3V3_EVT] of C607 on F.Cu",
+            "xy_mm": [
+              135.3,
+              22.72
+            ]
+          }
+        ],
+        "net": "+3V3_EVT"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 8 [+3V3_EVT] of U604 on F.Cu",
+            "xy_mm": [
+              133.238,
+              37.475
+            ]
+          },
+          {
+            "item": "Pad 1 [+3V3_EVT] of C622 on F.Cu",
+            "xy_mm": [
+              124.75,
+              38.52
+            ]
+          }
+        ],
+        "net": "+3V3_EVT"
       }
     ],
     "unrouted_nets": [
@@ -4170,6 +4170,8 @@
       "BK_SW",
       "BUMP_ZONE_F_N",
       "BUMP_ZONE_L_N",
+      "BUSY_F0",
+      "BUSY_R1",
       "BUSY_R3",
       "BZ_F_IN",
       "BZ_L_IN",
@@ -4205,7 +4207,6 @@
       "HEAD_LOOP_RET",
       "HEAD_PRES_ID",
       "HEAD_PWR_N",
-      "HEAD_PWR_P",
       "HTR_CQB",
       "HTR_CUT",
       "HTR_CUTOUT_OK",
@@ -4305,7 +4306,7 @@
       "V_LED"
     ],
     "waived": 66,
-    "warnings": 435
+    "warnings": 436
   },
   "erc": {
     "by_type": {
@@ -4323,7 +4324,7 @@
   },
   "fail_reasons": [
     "DRC: 2 error(s)",
-    "DRC: 709 unconnected item(s) (499 listed by KiCad) on nets: +3V3, +3V3A, +3V3_EVT, +3V3_HV, +5V6_A, +5V6_E, +5V_A, ALPHA_F1, ALPHA_F2, BIAS_IMON, BIAS_IMON_R, BIAS_VMON_B, BK_CB, BK_EN, BK_FB, BK_SW, BUMP_ZONE_F_N, BUMP_ZONE_L_N, BUSY_R3, BZ_F_IN, BZ_L_IN, BZ_R_IN, CLR_F0_N, CLR_F1_N, CLR_F2_N, CLR_F3_N, CLR_R0_N, CLR_R1_N, CLR_R2_N, CLR_R3_N"
+    "DRC: 704 unconnected item(s) (499 listed by KiCad) on nets: +3V3, +3V3A, +3V3_EVT, +3V3_HV, +5V6_A, +5V6_E, +5V_A, ALPHA_F1, ALPHA_F2, BIAS_IMON, BIAS_IMON_R, BIAS_VMON_B, BK_CB, BK_EN, BK_FB, BK_SW, BUMP_ZONE_F_N, BUMP_ZONE_L_N, BUSY_F0, BUSY_R1, BUSY_R3, BZ_F_IN, BZ_L_IN, BZ_R_IN, CLR_F0_N, CLR_F1_N, CLR_F2_N, CLR_F3_N, CLR_R0_N, CLR_R1_N"
   ],
   "notes": [
     "U2001: 3D envelope uses the default height 1.0 mm (give height=)",
@@ -4992,7 +4993,843 @@
       },
       "vias": 87
     },
-    "finisher": null,
+    "finisher": {
+      "failed": [
+        {
+          "ends": [
+            "Pad 1 [HEAD_HTR_P] of R2610 on F.Cu",
+            "Pad 1 [HEAD_HTR_P] of R2607 on F.Cu"
+          ],
+          "net": "HEAD_HTR_P",
+          "why": "exact re-check failed: pad of HTR_CX; rip-up: exact re-check failed: pad of HTR_CX"
+        },
+        {
+          "net": "HEAD_HTR_P",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "HEAD_HTR_P",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "HEAD_HTR_P",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "HEAD_HTR_P",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "HEAD_HTR_N",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "HEAD_HTR_N",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "HEAD_HTR_N",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "HEAD_LOOP_OUT",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "HEAD_LOOP_RET",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "HEAD_PRES_ID",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "VIN_CM",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "VIN_CM",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "VIN_CM",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "VIN_CM",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "GND",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "GND",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "GND",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "GND",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "GND",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "GND",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "GND",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "GND",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "GND",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "GND",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "GND",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "GND",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "GND",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "GND",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "GND",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "GND",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "GND",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "GND",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "GND",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "GND",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "GND",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "EF_UVLO",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "EF_UVLO",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "EF_OVP",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "EF_OVP",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "EF_MODE",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "EF_MODE",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "EF_SHDN",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "EF_RTN",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "EF_RTN",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "EF_RTN",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "EF_RTN",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "EF_RTN",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "EF_RTN",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "VIN_EF",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "VIN_EF",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "VIN_EF",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "EF_IMON",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "EF_IMON",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "EF_ILIM",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "EF_DVDT",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "VIN_F",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "VIN_F",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "VIN_F",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "VIN_F",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "VIN_F",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "VIN_F",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "VIN_F",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "VIN_F",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "VIN_DMP",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "VIN_MON",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "VIN_MON",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "SHLD_J1",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "SHLD_J1",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "FRAME",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "FRAME",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "FRAME",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "FRAME",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "FRAME",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "FRAME",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "FRAME",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "FRAME",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "FRAME",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "FRAME",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "FRAME",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "FRAME",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "FRAME",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "FRAME",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "FRAME",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "FRAME",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "FRAME",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "LOOP_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "BZ_F_IN",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "BZ_F_IN",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "BUMP_ZONE_F_N",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "LOOP_B",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "BZ_L_IN",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "BZ_L_IN",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "BUMP_ZONE_L_N",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "LOOP_C",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "BZ_R_IN",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "BZ_R_IN",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "BK_EN",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "BK_FB",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "BK_FB",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "BK_FB",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "BK_CB",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "BK_SW",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "BK_SW",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V6_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V6_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V6_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V_A",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V6_E",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V6_E",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+5V6_E",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3_EVT",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3_EVT",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3_EVT",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3_EVT",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3_EVT",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3_EVT",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3_EVT",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3_EVT",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3_EVT",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3_EVT",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3_EVT",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3_EVT",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3_EVT",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3_EVT",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3_EVT",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3_EVT",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3_EVT",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3_EVT",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3_EVT",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3_EVT",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3_EVT",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3_EVT",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3_EVT",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3_EVT",
+          "why": "finisher time budget (900 s) used up"
+        },
+        {
+          "net": "+3V3_EVT",
+          "why": "finisher time budget (900 s) used up"
+        }
+      ],
+      "items": 22,
+      "removed": 0,
+      "routed": [
+        {
+          "net": "HEAD_PWR_P",
+          "rerouted_nets": [],
+          "ripped_up_items": 0,
+          "segments": 4,
+          "vias": 0,
+          "width": 0.4
+        },
+        {
+          "net": "HEAD_PWR_P",
+          "rerouted_nets": [],
+          "ripped_up_items": 0,
+          "segments": 1,
+          "vias": 0,
+          "width": 0.4
+        },
+        {
+          "net": "HEAD_PWR_N",
+          "rerouted_nets": [],
+          "ripped_up_items": 0,
+          "segments": 2,
+          "vias": 1,
+          "width": 0.4
+        },
+        {
+          "net": "HEAD_PWR_N",
+          "rerouted_nets": [],
+          "ripped_up_items": 0,
+          "segments": 2,
+          "vias": 0,
+          "width": 0.4
+        },
+        {
+          "net": "HEAD_PWR_N",
+          "rerouted_nets": [],
+          "ripped_up_items": 0,
+          "segments": 1,
+          "vias": 0,
+          "width": 0.4
+        },
+        {
+          "net": "HEAD_HTR_P",
+          "rerouted_nets": [],
+          "ripped_up_items": 0,
+          "segments": 9,
+          "vias": 2,
+          "width": 1.0
+        }
+      ],
+      "seconds": 971.3
+    },
     "plane_fanout": {
       "extended": [
         "R1310 [GND] 3.2 mm",
@@ -5215,18 +6052,18 @@
     },
     "routed": true,
     "stats": {
-      "dangling_tracks_removed": 3,
-      "finisher_items": null,
+      "dangling_tracks_removed": 4,
+      "finisher_items": 22,
       "finisher_removed": 0,
       "necked_tracks_widened": 0,
       "preroutes": 4832,
       "preroutes_missing_after_import": 0,
-      "track_length_mm": 14633.01,
-      "tracks": 5216,
-      "unconnected_after_fill": 709,
-      "unconnected_before_cleanup": 709,
+      "track_length_mm": 14667.25,
+      "tracks": 5234,
+      "unconnected_after_fill": 704,
+      "unconnected_before_cleanup": 704,
       "unused_escapes_removed": 0,
-      "vias": 1762
+      "vias": 1765
     }
   },
   "single_pin_nets": [],
@@ -5443,12 +6280,17 @@
     },
     {
       "severity": "error",
+      "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.6656 mm) | Pad 3 [HV_MON2] of U2201 on F.Cu | Pad 5 [HV_MIR] of U2201 on F.Cu",
+      "type": "clearance"
+    },
+    {
+      "severity": "error",
       "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.9357 mm) | Pad 3 [HV_MON2] of U2201 on F.Cu | Pad 6 [HV_RAWF] of U2201 on F.Cu",
       "type": "clearance"
     },
     {
       "severity": "error",
-      "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.6656 mm) | Pad 3 [HV_MON2] of U2201 on F.Cu | Pad 5 [HV_MIR] of U2201 on F.Cu",
+      "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2286 mm) | Pad 4 [BIAS_IMON_R] of U2201 on F.Cu | Pad 5 [HV_MIR] of U2201 on F.Cu",
       "type": "clearance"
     },
     {
@@ -5458,7 +6300,7 @@
     },
     {
       "severity": "error",
-      "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2286 mm) | Pad 4 [BIAS_IMON_R] of U2201 on F.Cu | Pad 5 [HV_MIR] of U2201 on F.Cu",
+      "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2000 mm) | Pad 5 [HV_MIR] of U2201 on F.Cu | Pad 17 [GND] of U2201 on F.Cu",
       "type": "clearance"
     },
     {
@@ -5473,7 +6315,7 @@
     },
     {
       "severity": "error",
-      "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2000 mm) | Pad 5 [HV_MIR] of U2201 on F.Cu | Pad 17 [GND] of U2201 on F.Cu",
+      "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2000 mm) | Pad 6 [HV_RAWF] of U2201 on F.Cu | Pad 17 [GND] of U2201 on F.Cu",
       "type": "clearance"
     },
     {
@@ -5488,7 +6330,7 @@
     },
     {
       "severity": "error",
-      "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2000 mm) | Pad 6 [HV_RAWF] of U2201 on F.Cu | Pad 17 [GND] of U2201 on F.Cu",
+      "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.6656 mm) | Pad 7 [GND] of U2201 on F.Cu | Pad 9 [HV_CAP] of U2201 on F.Cu",
       "type": "clearance"
     },
     {
@@ -5498,17 +6340,7 @@
     },
     {
       "severity": "error",
-      "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.6656 mm) | Pad 7 [GND] of U2201 on F.Cu | Pad 9 [HV_CAP] of U2201 on F.Cu",
-      "type": "clearance"
-    },
-    {
-      "severity": "error",
       "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2286 mm) | Pad 8 [HV_SW] of U2201 on F.Cu | Pad 9 [HV_CAP] of U2201 on F.Cu",
-      "type": "clearance"
-    },
-    {
-      "severity": "error",
-      "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2000 mm) | Pad 8 [HV_SW] of U2201 on F.Cu | Pad 17 [GND] of U2201 on F.Cu",
       "type": "clearance"
     },
     {
@@ -5518,12 +6350,17 @@
     },
     {
       "severity": "error",
-      "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2000 mm) | Pad 9 [HV_CAP] of U2201 on F.Cu | Pad 17 [GND] of U2201 on F.Cu",
+      "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2000 mm) | Pad 8 [HV_SW] of U2201 on F.Cu | Pad 17 [GND] of U2201 on F.Cu",
       "type": "clearance"
     },
     {
       "severity": "error",
       "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2500 mm) | Pad 9 [HV_CAP] of U2201 on F.Cu | Pad 10 [+3V3_HV] of U2201 on F.Cu",
+      "type": "clearance"
+    },
+    {
+      "severity": "error",
+      "text": "clearance | Clearance violation (netclass 'HV' clearance 1.0000 mm; actual 0.2000 mm) | Pad 9 [HV_CAP] of U2201 on F.Cu | Pad 17 [GND] of U2201 on F.Cu",
       "type": "clearance"
     },
     {
