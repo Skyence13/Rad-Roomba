@@ -6,6 +6,8 @@ Owner: head firmware lead. Applies to `interface/head_icd.md` (system design 0.3
 A 2.0 host that ignores this document interoperates with a 0.4 head, and a 0.4 host interoperates
 with a head that lacks the additions (it answers `UNSUPPORTED`).
 
+Firmware 0.5.0 adds board functions (IB-17), afterglow hold and idle-latch clearing (IB-18) and rev A rail-zone
+"not available" reporting (IB-21 closed for rev A); all additions are additive DIAG/STATUS/ENG members, ACQ 2.0 is unchanged.
 Evidence classes: `tool-checked` = exercised by `firmware/head/check.sh` on the emulator
 (`rr_head_sim`, the firmware core compiled for Linux) with the unmodified baseline tools;
 `simulated` = host model; `calculated`. Nothing is physically measured.
@@ -59,14 +61,16 @@ time; photon_ref has its own. A channel is `null`, with the segment flag shown, 
 | `REF_SATURATED`, or reference live fraction < 50 % | photon_ref | `SATURATED` |
 | live ticks = 0 or > gate ticks | that chain | `DEAD_TIME_UNKNOWN` |
 | lane `BASELINE_SHIFT` | all three | `DISCRIMINATOR_FAULT` |
-| lane `BIAS_OUT_OF_RANGE` | all three | `FLOOR_FAULT`, `REFERENCE_FAULT` |
+| lane `BIAS_OUT_OF_RANGE` (reported by the capture source) | all three | `FLOOR_FAULT`, `REFERENCE_FAULT` |
+| anode current monitor (IMON_CH) of the floor chain out of window | alpha, beta_window | `FLOOR_FAULT` (lane DIAG flag `BIAS_OUT_OF_RANGE`) |
+| anode current monitor of the reference chain out of window | photon_ref | `REFERENCE_FAULT` (lane DIAG flag `BIAS_OUT_OF_RANGE`) |
 | chain disabled in the setup, or front-end fault of a chain | that chain | `FLOOR_FAULT` or `REFERENCE_FAULT` |
 
 A measured zero stays `{"counts":0,"live_us":n}`. Global flags: `ACQ_FAULT` (latched: capture
 fault, gate timing, lost gate, gate timeout, deliberate fault), `HEATER_FAULT` (latched: plate
 sensor, cut-out, plate over-temperature, heater stuck on), `OVERTEMP` (latched: cut-out, plate
-over-temperature), `BIAS_OUT_OF_RANGE` (latched over-current trip, or live tracking error
-> 0.5 V), `HEAD_TEMP_OUT_OF_RANGE` and `UNDERVOLTAGE` (< 9.5 V) (live, per gate).
+over-temperature), `BIAS_OUT_OF_RANGE` (latched over-current trip or `BIAS_PERMIT`, live tracking error
+> 0.5 V, or any chain's anode monitor out of window), `HEAD_TEMP_OUT_OF_RANGE` and `UNDERVOLTAGE` (< 9.5 V) (live, per gate).
 
 ## 3. `DIAG` — engineering record per sequence (additive)
 
@@ -80,9 +84,9 @@ over-temperature), `BIAS_OUT_OF_RANGE` (latched over-current trip, or live track
 | `heater.on_us`, `heater.transition`, `heater.plate_c` | Heater on-time in the gate, **true if the heater state changed at the start of this gate** (the gate that contains the slew-limited edge), plate temperature (°C or null). |
 | `bias.set_v`, `bias.v`, `bias.ua` | Commanded and measured SiPM bias, total bias current. |
 | `temps.sipm_c[4]`, `temps.board_c` | Sensor temperatures, °C with 3 decimals or null. |
-| `supply_v`, `bumper_zones` | Head supply; bumper zones (`FRONT`, `LEFT`, `RIGHT`) seen closed during the gate (identification only — the series interlock loop never reaches the MCU). |
+| `supply_v`, `bumper_zones` | Head supply; bumper zones (`FRONT`, `LEFT`, `RIGHT`) seen closed during the gate (identification only — the series interlock loop never reaches the MCU). **Rev A has no rail-zone identification (IB-21 closed): the value is `null` = not available, not an empty list = no zone actuated.** |
 | `health` | Latched health codes at the end of the gate (§4 `FAULT_CLEAR`). |
-| `lanes[4]` | `id`, `alpha_raw`, `beta_raw`, `floor_reject`, `floor_live_ticks`, `ref_raw`, `ref_reject`, `ref_live_ticks`, `flags` (`FLOOR_SATURATED`, `REF_SATURATED`, `BIAS_OUT_OF_RANGE`, `BASELINE_SHIFT`, `FLOOR_INVALID`, `REF_INVALID`). Raw counters are reported even where the ACQ frame is null. |
+| `lanes[4]` | `id`, `alpha_raw`, `beta_raw`, `floor_reject`, `floor_live_ticks`, `ref_raw`, `ref_reject`, `ref_live_ticks`, `alpha_idle_clears` (ALPHA latches found set on the idle floor chain and cleared in this gate), `imon_na` (anode current of the floor and reference chain in nA, `null` = not measured; I = (V_trim - V)/4.99 k, 147 nA resolution), `flags` (`FLOOR_SATURATED`, `REF_SATURATED`, `BIAS_OUT_OF_RANGE`, `BASELINE_SHIFT`, `FLOOR_INVALID`, `REF_INVALID`). Raw counters are reported even where the ACQ frame is null. |
 | `width_bins_ns[3]` (optional) | Upper edges, in ns, of bins 0 … 2 of the pulse-width histograms (default 150, 400, 2000); bin 3 is open-ended. Present only if the head measures pulse widths. |
 | `lanes[n].floor_width_hist[4]`, `lanes[n].ref_width_hist[4]` (optional) | Number of classified events of that chain in the gate per bin of **time over threshold of the triggering low-threshold pulse** (raw comparator falling edge minus hardware-captured start). All classes together (floor: alpha + beta + reject); each count saturates at 65535; events whose width could not be measured are in no bin. Engineering pulse-shape handle only: classification is amplitude-based and does not use it. A field is absent for a chain without width capture. |
 
@@ -92,10 +96,10 @@ Hosts archive DIAG beside the raw frames; it never substitutes for a frame.
 
 | Op | When | Args → body |
 |---|---|---|
-| `STATUS` | any state | `{clear_bumper?: bool}` → `link` (`UNBOUND`/`HANDSHAKE`/`BOUND`), `armed`, `draining`, `uptime_us`, `reset_cause` (`POWER_ON`, `PIN`, `WATCHDOG`, `SOFTWARE`, `BROWNOUT`, `OTHER`), `span_us`, `next_seq`, `oldest_seq`, `newest_seq`, `buffer_frames`, `health[]`, `flags[]` (global ACQ flags as of now), `heater{enabled,on,plate_c,cutout_ok}`, `bias{on,set_v,v,ua}`, `temps{head_c,sipm_c[4],board_c}`, `supply_v`, `bumper{now[],latched[]}`, `link_stats{requests,retries,discarded}`. No counts, no identity. |
-| `FAULT_CLEAR` | any state | `{codes?: [..]}` (default all) → `{cleared[], health[]}`. Clears only latched codes whose cause is gone. Codes: `SOURCE`, `GATE_TIMING`, `RECORD_LOST`, `GATE_TIMEOUT`, `INJECTED`, `HEATER_SENSOR`, `HEATER_CUTOUT`, `HEATER_OVERTEMP`, `HEATER_STUCK`, `BIAS_TRIP`, `ENTROPY`, `STORAGE`, `WATCHDOG_RESET`. Latches never clear by themselves; the clearance procedure is the site's. |
+| `STATUS` | any state | `{clear_bumper?: bool}` → `link` (`UNBOUND`/`HANDSHAKE`/`BOUND`), `armed`, `draining`, `uptime_us`, `reset_cause` (`POWER_ON`, `PIN`, `WATCHDOG`, `SOFTWARE`, `BROWNOUT`, `OTHER`), `span_us`, `next_seq`, `oldest_seq`, `newest_seq`, `buffer_frames`, `health[]`, `flags[]` (global ACQ flags as of now), `heater{enabled,on,plate_c,cutout_ok}`, `bias{on,set_v,v,ua}`, `temps{head_c,sipm_c[4],board_c}`, `supply_v`, `bumper{available, now[]|null, latched[]|null}` (`available` false on rev A: not available), `expander{present, hv_permit, hv_inhibit, lid_open, efuse_fault, hw_rev}` (optional TCA9534; every field but `present` is `null` when absent, so lid state is then unknown), `imon{na[8], fault[]}` (chains F0..F3, R0..R3), `bias.out_v` (ramped command), `link_stats{requests,retries,discarded}`. No counts, no identity. |
+| `FAULT_CLEAR` | any state | `{codes?: [..]}` (default all) → `{cleared[], health[]}`. Clears only latched codes whose cause is gone. Codes: `BIAS_PERMIT` (permit latch tripped with HV_EN high: lid open, over-voltage or +5V_A low; clearable only with the inhibit bus released when the expander is present; the next control period then raises HV_EN again, ramping from 0), `SOURCE`, `GATE_TIMING`, `RECORD_LOST`, `GATE_TIMEOUT`, `INJECTED`, `HEATER_SENSOR`, `HEATER_CUTOUT`, `HEATER_OVERTEMP`, `HEATER_STUCK`, `BIAS_TRIP`, `ENTROPY`, `STORAGE`, `WATCHDOG_RESET`. Latches never clear by themselves; the clearance procedure is the site's. |
 | `ENG_FAULT` | any state | `{}` → `{health[]}`. Deliberately latches `INJECTED` (→ `ACQ_FAULT` in every following frame) to test the fault path end to end. |
-| `ENG_SETUP_GET` | any state | `{}` → `{setup:{thresholds{beta_lld[4],beta_uld[4],alpha[4],ref_lld[4],ref_uld[4]}, trim{floor[4],ref[4]}, bias{ref_mv,tc_uv_per_c,t_ref_mc}, pulser{enable,code}, heater{enable,setpoint_mc,max_duty_pct}, chain_enable}}` (DAC codes 0 … 4095). |
+| `ENG_SETUP_GET` | any state | `{}` → `{setup:{thresholds{beta_lld[4],beta_uld[4],alpha[4],ref_lld[4],ref_uld[4]}, trim{floor[4],ref[4]}, bias{ref_mv,tc_uv_per_c,t_ref_mc}, pulser{enable,code,channel,width_us,led_enable,led_code}, afterglow{alpha_hold_us}, heater{enable,setpoint_mc,max_duty_pct}, chain_enable}}` (DAC codes 0 … 4095). `bias.ref_mv` must lie in 20 000 … (fitted over-voltage trip - 1 V) = 30 500 on rev A. `afterglow.alpha_hold_us` 0 … 500 (default 150): after an alpha event the chain is held busy that long; counted as dead time in the live time (exact). `pulser.channel` 0 … 7 = F0 … F3, R0 … R3; `width_us` 1 … 100. |
 | `ENG_SETUP_SET` | not armed | Any subset of the `setup` members, plus `persist?: bool` → `{changed, bound, persisted}`. `BUSY` while armed, `BAD_ARG` on unknown members or out-of-range / inconsistent values, `UNSUPPORTED` on a head with a fixed descriptor. A change invalidates the binding (§2). |
 | `ENG_WAVE_ARM` | not armed | `{channel 0-7, samples 16-4096, pretrigger, slow_path?, trigger? 0\|1}` → `{}`; arms one monitor waveform capture. `FAULT` where the port has no capture (RR-HEAD-ACQ firmware 0.4). |
 | `ENG_WAVE_READ` | any state | `{offset, count ≤ 384}` → `{samples, period_ns, trigger_index, offset, count, format:"u16le", bytes_b64}`; `EMPTY` while waiting for the trigger. |
@@ -103,6 +107,14 @@ Hosts archive DIAG beside the raw frames; it never substitutes for a frame.
 Threshold scans are a host procedure: `ENG_SETUP_SET` per step, new handshake, ARM, READ. Every
 step has its own `setup_id`, so scan data cannot be mistaken for survey data. Survey methods
 (ratemeter search, scaler counts, step-and-count) are host-side; the head only reports gates.
+
+### Bias sequence and limits (CCR-HE-09, IB-18c)
+
+HV_SET is 0 when HV_EN rises, then ramps at 12.5 V per 100 ms (5 V/s at the DAC output); set-point law
+HV_BUS = 25 x V(HV_SET), 62.5 V full scale, 15.26 mV per step; BIAS_VMON read-back 1:25.2233; total current monitor
+8.0 mV/uA with a trip at 200 uA. Over-voltage trip as fitted on rev A: 31.55 V (calculated from R2217/R2218/R2219,
+R2222/R2223 and the 3.0 V reference of `circuit.py`; the budget quotes 31.5 V) - tool-checked against the circuit, not measured.
+BIAS_VMON uses 1 % divider resistors: +-1 % before calibration.
 
 ## 5. Descriptor additions
 
@@ -113,7 +125,7 @@ them unchanged.
 
 ## 6. Sizes and bus load at 1 Mbaud
 
-Measured on the emulator with `firmware/head/tests/test_sim_interop.py` (`tool-checked`; sizes are
+Measured on the emulator (firmware 0.5.0: DIAG grew by `alpha_idle_clears` and `imon_na`) with `firmware/head/tests/test_sim_interop.py` (`tool-checked`; sizes are
 complete wire records including TAB, CRC and LF; rates 0.5 – 4 / 80 / 60 s⁻¹ alpha / beta / ref):
 
 | Record | Bytes | Time on the wire |
@@ -122,7 +134,7 @@ complete wire records including TAB, CRC and LF; rates 0.5 – 4 / 80 / 60 s⁻�
 | ACQ reply, typical | 859 – 867 (mean 864) | 8.6 ms |
 | ACQ reply, worst case (all fields at schema maximum, 96-char sync id, all flags) — calculated | 1576 | 15.8 ms |
 | `EMPTY` reply | 73 | 0.73 ms |
-| `DIAG` reply, typical (with the width histograms; 962 bytes without) | 1226 | 12.3 ms |
+| `DIAG` reply, typical (with the width histograms) | 1404 | 14.0 ms |
 | `TIME` request / reply | 68 / 107 | 0.68 / 1.07 ms |
 | `SYNC` request / reply | 126 / 73 | 1.26 / 0.73 ms |
 | Descriptor transfer (1972 bytes in 3 chunks of ≤ 768; requests + replies ≈ 3.7 kB, calculated) | 1972 payload | ≈ 37 ms in total |
@@ -134,7 +146,7 @@ Bus load for the default 100 ms gate (calculated from the sizes above, 10 µs pe
 | one `READ` + ACQ reply | 9.5 % |
 | + one `EMPTY` poll per gate | 11.1 % |
 | + `TIME` and `SYNC` every 2 s | 11.3 % |
-| + `DIAG` for every gate | 24.4 % |
+| + `DIAG` for every gate | 26.2 % (calculated from 1404 bytes; 24.4 % in 0.4) |
 | + one retried `READ` (request and ACQ reply sent twice) in the same gate | 33.9 % |
 
 A 50 Hz host poll loop measured 15.9 % on the emulator in real-clock mode (12 gates, 68

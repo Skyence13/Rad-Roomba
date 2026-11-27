@@ -21,6 +21,9 @@ step "pin map against the ST pin database; generated header and README table are
 python3 "$HEAD/tools/check_pinmap.py"
 python3 "$HEAD/tools/gen_pinmap.py" --check
 
+step "board constants and pins against electronics/head_acq/design/circuit.py (read-only import)"
+python3 "$HEAD/tools/check_circuit.py"
+
 step "baseline 0.3 interface package is unmodified and its own tests still pass"
 (cd "$REPO" && grep -E '  (interface|examples)/' SHA256SUMS.txt | sha256sum -c --quiet -)
 (cd "$REPO/interface" && python3 test_interface.py 2>&1 | tail -3)

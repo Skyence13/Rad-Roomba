@@ -214,11 +214,13 @@ static uint32_t width_bin(const rrh_evtcap_t *e, const rrh_evt_in_t *in, uint32_
  * this it would be read with the next beta event. Cleared after RRH_IDLE_ALPHA_SERVICES services
  * in a row; one service is not enough because the capture flag of a real event can lag the latch
  * read-back by one service (the flags are sampled before the latch levels). */
-static void idle_alpha_service(rrh_evtcap_t *e, uint64_t now, const rrh_evt_in_t *in)
+static void idle_alpha_service(rrh_evtcap_t *e, uint64_t now, const rrh_evt_in_t *in, uint8_t busy_at_entry)
 {
     for (uint32_t lane = 0u; lane < RRH_LANES; lane++) {
         const uint8_t bit = (uint8_t)(1u << lane);
-        const bool idle_alpha = ((in->alpha & bit) != 0u) && ((e->pending & bit) == 0u);
+        /* the latch levels in `in` predate this service's own clears: a chain that was BUSY when the
+         * service began is not idle even if it has been cleared since */
+        const bool idle_alpha = ((in->alpha & bit) != 0u) && ((busy_at_entry & bit) == 0u) && ((e->pending & bit) == 0u);
         if (!idle_alpha) {
             e->idle_alpha_seen[lane] = 0u;
             continue;
@@ -281,6 +283,7 @@ void rrh_evtcap_service(rrh_evtcap_t *e, uint64_t now, const rrh_evt_in_t *in)
         }
     }
     /* 4. Classify and clear. */
+    const uint8_t busy_at_entry = e->pending;
     for (uint32_t ch = 0u; ch < RRH_EVT_CHAINS; ch++) {
         const uint8_t bit = (uint8_t)(1u << ch);
         if ((e->pending & bit) == 0u) {
@@ -373,7 +376,7 @@ void rrh_evtcap_service(rrh_evtcap_t *e, uint64_t now, const rrh_evt_in_t *in)
         }
     }
     /* 5. ALPHA latches on idle floor chains. */
-    idle_alpha_service(e, now, in);
+    idle_alpha_service(e, now, in, busy_at_entry);
 }
 
 bool rrh_evtcap_pop(rrh_evtcap_t *e, rrh_gate_record_t *rec)

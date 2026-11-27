@@ -20,12 +20,13 @@ could not be checked on the build host are marked UNVERIFIED where they occur.
 | `core/rrh_evtcap.c` | Event capture logic (classification, counters, measured live time, gate snapshots). Pure logic, used by the STM32 port and by host tests. |
 | `core/rrh_setup.c` | Setup (thresholds, trims, bias law, heater law), `setup_id` hash, descriptor builder (Rev E concept geometry from `contract.yaml`). |
 | `core/rrh_control.c` | Health and fault latching, bias temperature compensation, gate-aligned heater control. |
+| `core/rrh_board.c/.h` | Board constants with circuit designators (resistors of `circuit.py`) and the pure conversions derived from them: bias law, monitor scales, anode current, NTC tables, straps. Checked against the circuit by `tools/check_circuit.py`. |
 | `core/rrh_eng.c` | Additive ops: DIAG, STATUS, FAULT_CLEAR, ENG_FAULT, ENG_SETUP_GET/SET, ENG_WAVE_ARM/READ. |
 | `hal/rrh_hal.h` | The only boundary between core and hardware (about 20 functions). |
 | `port/host/` | `rr_head_sim`: HAL on a seeded Poisson source + sockets + fault injection. |
 | `port/stm32g474/` | Target port: clocks, TIM2/TIM5 capture + 100 kHz service interrupt, RS-485 USART, DACs, ADC, I2C, flash, IWDG. |
 | `tests/` | `test_core.c`, `test_evtcap.c` (host unit tests), `test_sim_interop.py` + `headsim.py` (emulator driven by the baseline tools). |
-| `tools/` | `check_pinmap.py`, `gen_pinmap.py`, ST pin-database subset, PlatformIO helper. |
+| `tools/` | `check_circuit.py` (constants and pins against `electronics/head_acq/design/circuit.py`), `check_pinmap.py`, `gen_pinmap.py`, ST pin-database subset, PlatformIO helper. |
 | `pinmap.yaml` | Pin map proposal for the electronics lead (source of the table below). |
 | `check.sh` | Builds and runs everything; non-zero exit on any failure. |
 
@@ -53,7 +54,7 @@ firmware/head/check.sh --no-target   # host only
 # by hand
 cmake -S firmware/head -B firmware/head/build/host -G Ninja      # ASan + UBSan, -Werror -Wconversion
 cmake --build firmware/head/build/host -j2
-ctest --test-dir firmware/head/build/host --output-on-failure    # 5 test programs
+ctest --test-dir firmware/head/build/host --output-on-failure    # 6 test programs
 cd firmware/head && pio run -e rr_head_acq                       # .pio/build/rr_head_acq/firmware.{elf,bin}
 ```
 
@@ -64,11 +65,15 @@ Tests (all on the host):
   fresh boot id + UNBOUND, reply cache, garbage on the link, frame mapping and every null rule,
   GAP/EMPTY and sequence continuity across DISARM/ARM, setup change invalidates the binding,
   LOCKED/HOLDOVER/UNSYNCED, heater control and fault latches, bias compensation, lost/bad gates.
+- `head_board_unit` (`tests/test_board.c`): every conversion against an independent floating-point evaluation of the circuit equation; the budget's strap table (HV_RAW 37.1 / 49.1 / 52.7 / 65.1 V, OVP 31.5 / 42.8 / 47.5 / 60.6 V) reproduced from the resistor values; NTC tables within 0.25 degC.
 - `head_evtcap_unit` (`tests/test_evtcap.c`): single events of each class, non-retriggering,
   acceptance window, forced clear, event straddling a gate boundary, Poisson rate sweep
   10 – 20000 s⁻¹, service-interrupt jitter, heater switching on boundaries, stop, FIFO overflow,
   pulse-width histogram (present and absent).
-  Every gate record is compared exactly with an independent hardware model.
+  Every gate record is compared exactly with an independent hardware model. Added for IB-18 and
+  the review questions: afterglow hold, idle ALPHA latch (including the lagging-capture case),
+  a latch clear whose blind interval crosses a gate boundary, services late by 37 us / 2.5 gates /
+  2.9 gates, chains held by 0.6 / 0.9 / 2.3 ms tails, and the rate sweep repeated with the 150 us hold.
 - `head_sim_interop` (`tests/test_sim_interop.py`): launches `rr_head_sim` and drives it with the
   unmodified `interface/wire_codec.py`, `head_discovery.py`, `check_frames.py`: byte-exact
   reproduction of the 0.3 example handshake, descriptor chunking + SHA-256, BIND, TIME/SYNC, ARM,
@@ -83,7 +88,7 @@ Tests (all on the host):
 |---|---|
 | MCU | STM32G474VET6, 512 kB flash, 128 kB RAM (SRAM1 + SRAM2 + CCM mapped contiguously at 0x2000 0000 by the ST linker script) |
 | Clock | 24 MHz TCXO → HSE bypass → PLL → 144 MHz SYSCLK (falls back to HSI16 and latches health `SOURCE` if the TCXO is absent) |
-| Size (`rr_head_acq`, `-Os`, GCC 12.3.1) | flash 35 520 bytes (6.8 %), static RAM 86 044 bytes (65.6 %) — tool-checked with `arm-none-eabi-size` |
+| Size (`rr_head_acq`, `-Os`, GCC 12.3.1) | flash 39 816 bytes (7.6 %), static RAM 94 220 bytes (71.9 %) — tool-checked with `arm-none-eabi-size` (firmware 0.5.0) |
 
 Memory map (default ST script `STM32G474RETX_FLASH.ld`; the RE and VE parts share die and memory):
 
@@ -135,6 +140,15 @@ arithmetically (`g0 + n · gate_ticks`), busy intervals are split at them exactl
 is counted in the gate that contains its clear time. A chain BUSY for more than 1 ms, or with its
 comparator high while the latch is clear, is flagged saturated (→ `SATURATED`, null counts).
 
+Afterglow hold and idle latches (IB-18, firmware 0.5): an event classified alpha is not cleared at
+once. The chain stays BUSY for `afterglow.alpha_hold_us` (default 150 us, setup member, 0 = off, at most
+500) counted from the service that found it ready, and is cleared by the first service after that with the
+comparator low. Class and pulse width are fixed when the event first becomes ready; the hold is inside
+[captured start, clear) and therefore inside the measured busy time, so live time stays exact (rate
+sweep below). An ALPHA latch found set on an idle floor chain is cleared after two consecutive services
+(one is not enough: the capture flag of a real event can lag the latch read-back by one service) and
+counted per gate (`alpha_idle_clears`, DIAG); its blind CLR interval is booked as dead time.
+
 Pulse width (optional engineering data): the raw, unlatched LLD comparator outputs are also on
 capture channels (TIM4 CH1-4 floor, TIM3 CH1-4 reference, falling edge). Falling capture minus
 BUSY start is the time over threshold of the triggering pulse (6.94 ns resolution, valid up to
@@ -152,7 +166,9 @@ Measured on the host model (`head_evtcap_unit`, simulated, 8 chains):
 | 5000 | 4772.5 | 5006.4 | 4.67 % |
 | 20000 | 16738.6 | 19994.2 | 16.3 % |
 
-i.e. about 9.7 µs of measured dead time per event. With ±6 µs service jitter and 0.1 % of the
+With the 150 us hold (default, 5 % alpha events on the floor chains in the model) the corrected rate stays
+within the same tolerance at every rate (10 ... 20000 s⁻¹: 10.01, 100.49, 999.90, 5003.2, 19977 s⁻¹; dead 21.0 % at 20000 s⁻¹ against
+16.3 % without the hold; simulated). i.e. about 9.7 µs of measured dead time per event without the hold. With ±6 µs service jitter and 0.1 % of the
 services 50 µs late the corrected rate stays unbiased (5003 s⁻¹ at 5000 s⁻¹); only the dead time
 grows. Deviation from the contract wording: the gate snapshot is taken by the service interrupt
 that follows the boundary (≤ 10 µs later) with exact arithmetic splitting, not by a separate
@@ -304,25 +320,71 @@ enters the same core as on the target.
 | `fault` `kind:"null_channel"` / `"saturate"` | `lane` 0-3 (omit = all), `chain` `"floor"`/`"ref"` (omit = both), `on` (default true). |
 | `fault` `kind:"thermal"` | `what`: `sipm_open`, `heater_sensor_open`, `cutout`, `overtemp`; `on`. |
 | `fault` `kind:"lost_gates"` / `"source_fail"` | `count` gate records dropped inside the head / ARM answers FAULT. |
-| `analog` | `sipm_c` (number, array or null), `heater_c`, `board_c`, `supply_v`, `bias_ua`, `bumper_zones` (bit mask), `cutout_ok`. |
+| `analog` | `sipm_c` (number, array or null), `heater_c`, `board_c`, `supply_v`, `bias_ua`, `bumper_zones` (bit mask), `cutout_ok`; board functions: `imon_ua` (number or array of 8: anode current per chain, default 1.0), `imon_valid` (mask), `imon_offset_uv`, `expander` (present), `lid_open`, `inhibit`, `efuse_fault`, `hw_rev`, `zones_available` (default false = rev A). The permit latch is modelled (set by a HV_EN edge without inhibit, cleared by any inhibit). |
 | `swap` | `serial`, optional `variant`, `ms`: another head on the same cable (new identity, empty storage, new boot). |
 | `advance` | `us` (manual clock only). |
-| `stats` / `ping` / `quit` | `stats` returns identity, link state, gate count and the totals of drawn counts per lane and channel. |
+| `stats` / `ping` / `quit` | `stats` returns identity, link state, gate count, the totals of drawn counts per lane and channel, and `board` (pulser, LED, hold, bias/permit as the model sees them). |
 
 Python helper for tests and benches: `tests/headsim.py` (`Sim`, `Link`, `Link.handshake()` built on
 the baseline tools).
 
+## Board functions added by IB-17 / IB-18 / IB-15 (firmware 0.5.0)
+
+| Function | Pin / part (circuit.py) | Firmware | Evidence |
+|---|---|---|---|
+| Per-chain anode current monitor | PE15 `IMON_CH` = ADC4_IN2; TMUX1108 U2703 addressed by MON_MUX_A[2:0] (PB5/PB7/PB9); R105 4.99 k sense; R108 10 k + C2704 100 nF | Background scan, 10 ms settle per step (10 x R108 C2704), I = (V_trim - V_TRIMDRV)/R105, 147 nA per LSB. Window: `RRH_IMON_MAX_NA` 200 uA (low end of the budget's 0.2 - 0.5 mA soft limit) or trim buffer at its rail; flagged after 200 ms (`RRH_IMON_HOLD_US`). Low-side window disabled (see placeholders) | pin and net tool-checked against circuit.py; scale calculated; logic tested on mock and emulator; ADC4 driver compiled only |
+| Per-lane `BIAS_OUT_OF_RANGE` | from the above | Per chain: floor chain out of window nulls alpha + beta_window with `FLOOR_FAULT`, reference chain nulls photon_ref with `REFERENCE_FAULT` (the meaning matches: that chain's SiPM is not held at its overvoltage); lane DIAG flag `BIAS_OUT_OF_RANGE`; global ACQ flag `BIAS_OUT_OF_RANGE`. Live, not latched. Currents in DIAG (`lanes[n].imon_na`) and STATUS (`imon`) | tested |
+| Test-pulse channel select | PF2/PF9/PF10 `PULSER_A0..2` -> 74LVC138 U2702 | `pulser.channel` (setup, hashed); GPIO outputs; `pulser.width_us` 1..100 | pins tool-checked; port compiled only |
+| LED pulser | PC12 `LED_STROBE` = TIM8_CH3N (AF4, checked in the ST pin database); amplitude U_DAC0 out 7 -> U2306A x2 | `pulser.led_enable`, `pulser.led_code`; 1 kHz, ~208 ns, same TIM8 period as the charge pulser; amplitude forced to 0 when disabled | compiled only; width UNVERIFIED (LED not chosen) |
+| Reserved sync input | PF1 `SYNC_IN` | input with pull-down, not used (J2 pins 5/6 hardware pulse stays unused) | pin tool-checked |
+| Expander (optional) | TCA9534 U2405 at 0x20: P0 MON_EXT (out, held 0), P1 HV_PERMIT, P2 HV_INH_N, P3 LID_G, P4 EF_FLT_N, P5/P6 HWREV | Read each control period and gate; STATUS `expander`; permit trip detected directly; absent -> fields null | circuit bits tool-checked; register map UNVERIFIED; emulator model tested |
+| Bias set-point law | U_DAC0 out 6 -> HV_SET; R2213 + R2214 + R2215 over R2215 = 25.0 | `code = mV x 4096 / 62500` (full scale 62.5 V, 15.26 mV per step); 0.4 used 0 ... 60 V over 4095 codes | calculated, tested; DAC output gain 1 UNVERIFIED |
+| Bias read-back | R2217 + R2218 + R2219 over R2219 = 25.2233 | firmware 0.4 divided by 25 (1 % error) | calculated, tested |
+| Bias limits | OVP R2222 10 k / R2223 7.15 k with VREF 3.0 V -> 31.55 V trip (`circuit.py`, budget 31.5 V); HV_RAW strap R2203 71.5 k -> 37.1 V | Set-points above trip - 1 V (30.5 V) are refused (`BAD_ARG`) and the temperature law is clamped there; per-family strap table in `rrh_straps`, `-DRRH_SIPM_FAMILY=n` | tool-checked against circuit.py |
+| Bias-on sequence (CCR-HE-09) | permit latch U2205 | HV_SET 0 -> HV_EN up -> ramp 12.5 V per 100 ms (= 5 V/s at HV_SET); `BIAS_PERMIT` health code when HV_EN is high and the permit is low (expander) or BIAS_VMON < 1 V after the ramp; recovery by `FAULT_CLEAR` (allowed only when the inhibit bus is released if the expander is present), which makes the next period raise HV_EN again | tested |
+| Lid interlock, rail zones | J2201 lid switch -> LID_G; rail-zone inputs | Lid state only through the expander (`lid_open`, `hv_inhibit`); without the expander "unknown" (null). **Rail zones: not available on rev A (IB-21 closed)**: DIAG `bumper_zones` is `null`, STATUS `bumper.available` is `false` with null lists, `clear_bumper` is a no-op. The HAL field `zones_available` is false in the STM32 port. | tested |
+
+### Placeholders and unverified constants
+
+| Constant | Where | Status / depends on |
+|---|---|---|
+| Default thresholds (8 p.e. LLD, 150 p.e. ULD, ALPHA 30 mV above baseline) | `rrh_config.h` `RRH_FAST_UV_PER_PE` 6900, `RRH_DEFAULT_*` | ASSUMED: 6.9 mV per p.e. is the budget's J60035 figure (2.2); baseline 0.600 V from R2310/R2311 (circuit). Firmware 0.4 defaults (code 200 = 0.12 V) were below the baseline: comparators permanently high. ALPHA overlaps the beta maximum in the budget |
+| `RRH_IMON_MAX_NA` 200 uA | `rrh_config.h` | electronics number (budget 5.1, 0.2 - 0.5 mA, low end); R105 |
+| `RRH_IMON_SAT_UV` 50 mV | `rrh_config.h` | UNVERIFIED: output swing of the trim buffer TLV9062 (U1001) near the rail |
+| `RRH_IMON_MIN_NA` 0 (disabled) | `rrh_config.h` | placeholder: healthy dark current at -25 degC (about 10 nA, calculated from 0.9 uA at 25 degC halving per 8 degC) is below the 147 nA resolution and the 0.3 uA offset of U1001 + ADC. A dead or disconnected channel is therefore NOT detected by this monitor |
+| `RRH_BIAS_CURRENT_MAX_UA` 200 uA | `rrh_config.h` | 80 % of the 250 uA monitor range (BIAS_IMON 8.0 mV/uA, R2206); 0.4 used 500 uA, which the monitor cannot reach. TPS61391 mirror gain 0.8 +-5 % and MON1 compliance (checklist B2) are datasheet figures, UNVERIFIED |
+| `RRH_BIAS_OVP_MARGIN_MV` 1000, `RRH_BIAS_TOLERANCE_MV` 500 | `rrh_config.h` | The BIAS_VMON divider top resistors R2217/R2218 are **1 %** parts (the budget assumes 0.1 %): +-0.3 V at 31 V before calibration; trip accuracy likewise. Comparator offset (U2203) and REF3030 accuracy UNVERIFIED |
+| `RRH_BIAS_RAMP_STEP_MV` 12500 | `rrh_config.h` | "ramp HV_SET <= 5 V/s" read literally (at the DAC output). If 5 V/s at HV_BUS was meant, set 500 |
+| DAC output gain / reference | `bsp_dac_init` (GAIN register 0), `RRH_DAC_VREF_MV` 2500 | UNVERIFIED (DAC60508 datasheet SLASEL1D not readable here); every threshold, trim, HV_SET, PULSER and LED value depends on it |
+| ADC clock / sample time, TMUX settling, I2C timing, TCA9534 registers, TIM8 complementary-output rule | `bsp.c` | UNVERIFIED, compiled only |
+| NTC curves for the SiPM carriers (R1016 ... R1316) and the heater plate (R2613) | `RRH_NTC_B3435` | ASSUMED B3435-class: the parts are supplied by others. The board NTC RT2201 is B3380 (circuit) |
+| Heater current (INA180A2 gain 50, 10 mOhm shunt = 0.5 V/A), supply divider 6.6 | derivable | divider used; heater current derivable but not read by the firmware |
+| Pulser charge model in the emulator (0.465 pC per p.e., 6.9 mV per p.e.) | `sim_hal.c` | SIMULATED constants of a J60035 |
+
+**Waveform capture** in the target port stays out of scope (ADC2 + DMA, arbitration with the IMON scan
+on the shared MON_MUX lines would be needed): `ENG_WAVE_ARM` answers `FAULT` on the target, as before.
+
+### Open electronics questions (see CONTRACT_CHANGE_REQUESTS.md)
+
+MON_MUX_A[2:0] drive both the IMON mux and the lane-monitor decoder U2701/lane muxes, so scanning IMON
+while counting repeatedly connects shaper taps (through 1 kohm) to MON_BUS; charge injection into the comparator
+inputs was not analysed. The scan runs while armed by default (`RRH_IMON_SCAN_WHILE_ARMED`); bench test B8-class needed.
+
+## Review of the event-capture questions (item 5)
+
+| Question | Result |
+|---|---|
+| Live-time accounting when a latch clear crosses a gate boundary | Event clears were already tested (reference chain, exaggerated latency). New: the blind CLR interval of an idle-latch clear and a held alpha both split exactly at the boundary; counts go to the gate containing the clear. Exact against the independent model, no defect. |
+| Service interrupt late by more than one period | Busy time runs to the actual clear, so lateness only adds dead time that is measured. Tested at 37 us, 2.5 and 2.9 gates (1 ms gates), boundaries inside the late service: exact. **Finding (not a defect of accounting):** a service late by more than 3 gates overflows the 4-slot FIFO and loses records (shown as a sequence gap + `RECORD_LOST`); at 100 ms gates that is 300 ms, far beyond any interrupt latency. |
+| Chain held busy by a long tail | 0.6 and 0.9 ms tails are counted once and fully booked as busy; a 2.3 ms tail is forced at 1 ms, flagged `SATURATED`, and the chain is flagged blind while the comparator stays high. Exact. A comparator that falls only after a forced clear leaves up to 3 services (30 us) in which a chain is blind but not flagged and not booked; the gate is flagged by the forced event anyway. |
+| **Defect found and fixed in 0.5 while adding IB-18a** | The first idle-latch implementation used the latch levels sampled before the service, so an alpha event cleared in the same service looked like an idle ALPHA latch. Fixed (`busy_at_entry`); covered by the sweep tests, which showed spurious idle clears before the fix. |
+| Defect found in 0.4 (not event capture) | The descriptor builder carried the pre-IB-11 envelope (x max 192.2 mm) while `contract.yaml` says 212.5 mm: `check.sh` failed on this checkout. Fixed. `RRH_BIAS_CURRENT_MAX_UA` = 500 uA and the default thresholds below the baseline were also unreachable / wrong, see placeholders. |
+
 ## Known gaps
 
-- No hardware test of any kind. Analog scale factors in `port/stm32g474/hal_stm32.c` and the DAC
-  transfer function of the bias converter are design placeholders.
-- Monitor waveform capture is implemented in the protocol and the emulator but not in the STM32
-  port (`ENG_WAVE_ARM` answers FAULT there).
-- No per-channel front-end monitor exists on rev A, so `FLOOR_FAULT`/`REFERENCE_FAULT` can only
-  come from a disabled chain or (emulator) injection; `BIAS_OUT_OF_RANGE` is global.
-- The descriptor builder emits `geometry_basis: CONCEPT` only; an as-built descriptor needs
-  measured geometry storage and a provisioning tool.
-- Identity (serial) comes from the EUI EEPROM or the MCU UID; descriptor id, revisions and
-  geometry id are compile-time defaults (`rrh_identity_defaults`) until a factory record exists.
-- Threshold scans are a host procedure over `ENG_SETUP_SET` (every step is a new `setup_id` and
-  needs a new handshake); there is no on-head scan op.
+- No hardware test of any kind. DAC gain, ADC4 scan, I2C expander, TIM8 outputs are compile-checked only.
+- Monitor waveform capture is implemented in the protocol and the emulator but not in the STM32 port.
+- Per-chain `FLOOR_FAULT`/`REFERENCE_FAULT` from the anode monitor cover over-current and an unheld anode only; a dead chain is not detected (placeholder above). `frontend_fault` stays 0 on the target.
+- The descriptor builder emits `geometry_basis: CONCEPT` only; an as-built descriptor needs measured geometry storage and a provisioning tool.
+- Identity (serial) comes from the EUI EEPROM or the MCU UID; descriptor id, revisions and geometry id are compile-time defaults (`rrh_identity_defaults`) until a factory record exists.
+- Threshold scans are a host procedure over `ENG_SETUP_SET` (every step is a new `setup_id` and needs a new handshake); there is no on-head scan op.

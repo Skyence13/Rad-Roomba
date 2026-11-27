@@ -862,6 +862,189 @@ static void test_misc_ops(void)
     CHECK(m.kicks > 0u);
 }
 
+
+/* ---- IB-17 / IB-18 / IB-15 ----------------------------------------------------------------- */
+static void test_setup_members_and_defaults(void)
+{
+    mock_reset();
+    boot();
+    /* default thresholds sit ABOVE the 0.600 V baseline (a code below it leaves the comparator high) */
+    const uint16_t base = rrh_board_threshold_code(0u);
+    for (uint32_t l = 0; l < RRH_LANES; l++) {
+        CHECK(core.setup.fe.threshold[l * 3u] > base);
+        CHECK(core.setup.fe.threshold[(l * 3u) + 2u] > base);
+        CHECK(core.setup.fe.threshold[12u + (l * 2u)] > base);
+    }
+    CHECK(core.setup.fe.alpha_hold_us == 150u);
+    handshake();
+    CHECK(send("ENG_SETUP_GET", "{}") && has("\"afterglow\":{\"alpha_hold_us\":150}") && has("\"channel\":0,\"width_us\":2"));
+    char old_id[100];
+    strcpy(old_id, core.setup_id);
+    CHECK(send("ENG_SETUP_SET", "{\"pulser\":{\"enable\":true,\"code\":500,\"channel\":6,\"width_us\":25,\"led_enable\":true,\"led_code\":900},"
+                                "\"afterglow\":{\"alpha_hold_us\":120}}") && status_is("OK") && has("\"changed\":true"));
+    CHECK((m.fe.pulser_channel == 6u) && (m.fe.pulser_width_us == 25u) && m.fe.led_enable && (m.fe.led_code == 900u));
+    CHECK((m.fe.alpha_hold_us == 120u) && m.fe.pulser_enable && (m.fe.pulser_code == 500u));
+    CHECK(strcmp(old_id, core.setup_id) != 0);
+    CHECK(core.link == RRH_LINK_UNBOUND);
+    handshake();
+    CHECK(send("ENG_SETUP_SET", "{\"pulser\":{\"channel\":8}}") && status_is("BAD_ARG"));
+    CHECK(send("ENG_SETUP_SET", "{\"pulser\":{\"width_us\":0}}") && status_is("BAD_ARG"));
+    CHECK(send("ENG_SETUP_SET", "{\"afterglow\":{\"alpha_hold_us\":501}}") && status_is("BAD_ARG"));
+    /* a set-point above the fitted over-voltage trip less the margin (30.5 V) is refused */
+    CHECK(send("ENG_SETUP_SET", "{\"bias\":{\"ref_mv\":31000}}") && status_is("BAD_ARG"));
+    CHECK(send("ENG_SETUP_SET", "{\"bias\":{\"ref_mv\":30500}}") && status_is("OK"));
+    /* persisted image round trip keeps the new members */
+    handshake();
+    CHECK(send("ENG_SETUP_SET", "{\"persist\":true}") && status_is("OK"));
+    boot();
+    CHECK((core.setup.fe.pulser_channel == 6u) && (core.setup.fe.alpha_hold_us == 120u) && (core.setup.fe.led_code == 900u));
+}
+
+static void test_bias_on_sequence_and_limits(void)
+{
+    mock_reset();
+    boot();
+    CHECK(!m.bias_on && (m.bias_mv == 0u));          /* HV_SET = 0 while disabled */
+    advance(100000u);
+    CHECK(m.bias_on && (m.bias_mv == 0u));           /* HV_EN rises with HV_SET = 0 */
+    uint32_t prev = 0u;
+    for (int i = 0; i < 4; i++) {
+        advance(100000u);
+        CHECK(m.bias_mv >= prev);
+        CHECK(m.bias_mv - prev <= RRH_BIAS_RAMP_STEP_MV); /* 5 V/s at HV_SET = 12.5 V per 100 ms at HV_BUS */
+        prev = m.bias_mv;
+    }
+    CHECK(m.bias_mv == 30000u);
+    CHECK(rrh_board_hv_code(m.bias_mv) == 1966u);     /* 30.000 V / 15.2588 mV */
+    /* hot head: the compensated target is clamped below the fitted OVP trip (31.5 V) less 1 V */
+    for (uint32_t l = 0; l < RRH_LANES; l++) {
+        m.analog.sipm_mc[l] = 70000;
+    }
+    advance(10000000u);
+    CHECK(m.bias_mv == rrh_board_bias_limit_mv());
+    CHECK(m.bias_mv < rrh_board_fitted_ovp_trip_mv());
+    /* total-current trip is reachable now: 250 uA is inside the monitor range, 500 uA never was */
+    m.analog.bias_ua = 250u;
+    advance(200000u);
+    CHECK(!m.bias_on && ((core.health & RRH_H_BIAS_TRIP) != 0u));
+}
+
+static void test_bias_permit_trip_and_recovery(void)
+{
+    mock_reset();
+    boot();
+    m.permit_ok = false; /* hardware permit latch tripped: HV_EN high, BIAS_VMON reads 0 */
+    advance(2000000u);
+    CHECK(!m.bias_on && ((core.health & RRH_H_BIAS_PERMIT) != 0u));
+    handshake();
+    CHECK(send("STATUS", "{}") && has("BIAS_PERMIT") && has("\"expander\":{\"present\":false,\"hv_permit\":null"));
+    m.permit_ok = true; /* cause gone (no expander: cannot be read, clearing is allowed) */
+    const uint32_t calls = m.bias_calls;
+    CHECK(send("FAULT_CLEAR", "{\"codes\":[\"BIAS_PERMIT\"]}") && has("\"cleared\":[\"BIAS_PERMIT\"]"));
+    advance(300000u);
+    CHECK(m.bias_on && (m.bias_calls > calls)); /* HV_EN raised again from zero */
+    /* with the expander: lid open -> inhibit bus low, permit low; detected in two periods, not clearable while open */
+    mock_reset();
+    boot();
+    m.exp.present = true;
+    m.exp.inputs = RRH_EXP_LID_G | RRH_EXP_EF_FLT_N; /* permit 0, inhibit active (INH_N low), lid open */
+    m.permit_ok = false;
+    advance(500000u);
+    CHECK(!m.bias_on && ((core.health & RRH_H_BIAS_PERMIT) != 0u));
+    handshake();
+    CHECK(send("STATUS", "{}") && has("\"hv_permit\":false,\"hv_inhibit\":true,\"lid_open\":true,\"efuse_fault\":false,\"hw_rev\":0"));
+    CHECK(send("FAULT_CLEAR", "{}") && has("\"cleared\":[]"));
+    m.exp.inputs = RRH_EXP_HV_PERMIT | RRH_EXP_HV_INH_N | RRH_EXP_EF_FLT_N; /* lid closed */
+    m.permit_ok = true;
+    CHECK(send("FAULT_CLEAR", "{}") && has("BIAS_PERMIT"));
+    advance(300000u);
+    CHECK(m.bias_on);
+    CHECK(send("STATUS", "{}") && has("\"lid_open\":false"));
+}
+
+static bool frame_flags_have(uint32_t seg, const char *needle)
+{
+    /* the segment object of lane `seg` in the last reply */
+    char key[24];
+    snprintf(key, sizeof key, "{\"id\":%u,", (unsigned)seg);
+    const char *p = strstr(rsp, key);
+    const char *e = (p == NULL) ? NULL : strstr(p, "]}");
+    if (e == NULL) {
+        return false;
+    }
+    const char *q = strstr(p, needle);
+    return (q != NULL) && (q < e + 2);
+}
+
+static void test_per_lane_bias_out_of_range(void)
+{
+    mock_reset();
+    boot();
+    handshake();
+    advance(1000000u); /* bias ramped and settled */
+    arm(100000u);
+    advance(500000u);
+    CHECK(send("READ", "{\"after_seq\":-1}") && status_is("OK") && has("\"flags\":[]"));
+    CHECK(!has("FLOOR_FAULT") && !has("REFERENCE_FAULT") && (core.imon_fault == 0u));
+    CHECK(core.imon_na[0] > 900u && core.imon_na[0] < 1100u); /* 1 uA programmed in the mock */
+    /* a short excursion (< RRH_IMON_HOLD_US) is not flagged */
+    m.imon_ua[1] = 400.0;
+    advance(100000u);
+    m.imon_ua[1] = 1.0;
+    advance(300000u);
+    CHECK(core.imon_fault == 0u);
+    /* floor chain of lane 1 over its 0.2 mA window, reference chain of lane 2 at its rail (buffer cannot sink it) */
+    m.imon_ua[1] = 300.0;
+    m.imon_ua[6] = 5000.0;
+    advance(600000u);
+    CHECK(core.imon_fault == ((1u << 1) | (1u << 6)));
+    const int64_t last = (int64_t)core.next_seq - 1;
+    CHECK(send("READ", "{\"after_seq\":%d}", (int)(last - 1)) && status_is("OK"));
+    /* ACQ: only the faulted chain is nulled and flagged; global BIAS_OUT_OF_RANGE */
+    CHECK(has("\"flags\":[\"BIAS_OUT_OF_RANGE\"]"));
+    CHECK(frame_flags_have(1u, "FLOOR_FAULT") && !frame_flags_have(1u, "REFERENCE_FAULT"));
+    CHECK(frame_flags_have(2u, "REFERENCE_FAULT") && !frame_flags_have(2u, "FLOOR_FAULT"));
+    CHECK(!frame_flags_have(0u, "FAULT") && !frame_flags_have(3u, "FAULT"));
+    CHECK(strstr(rsp, "{\"id\":1,\"alpha\":null,\"beta_window\":null,\"photon_ref\":{") != NULL); /* floor null, ref kept */
+    CHECK(strstr(rsp, "{\"id\":2,\"alpha\":{") != NULL && strstr(rsp, "\"photon_ref\":null") != NULL);
+    /* DIAG: lane flag and the per-chain currents; raw counts still reported */
+    CHECK(send("DIAG", "{\"seq\":%d}", (int)last) && status_is("OK"));
+    CHECK(has("\"imon_na\":[250100,"));
+    CHECK(has("\"flags\":[\"BIAS_OUT_OF_RANGE\"]"));
+    CHECK(send("STATUS", "{}") && has("\"fault\":[\"F1\",\"R2\"]"));
+    /* back in window: clears by itself (live condition, not latched) */
+    m.imon_ua[1] = 1.0;
+    m.imon_ua[6] = 1.0;
+    advance(400000u);
+    CHECK(core.imon_fault == 0u);
+    /* a chain the scan did not convert is "not measured": null, never a fault, never a zero */
+    m.imon.valid = (uint8_t)~(1u << 3);
+    advance(300000u);
+    CHECK(core.imon_fault == 0u && (core.imon_na[3] == RRH_IMON_NA_INVALID));
+    CHECK(send("STATUS", "{}") && has("\"na\":[1000,1000,1000,null,"));
+    /* bias off: not judged */
+    CHECK(send("DISARM", "{}") && status_is("OK"));
+    m.imon.valid = 0xFFu;
+    m.imon_ua[0] = 900.0;
+    core.health |= RRH_H_BIAS_PERMIT;
+    advance(1000000u);
+    CHECK(!m.bias_on && (core.imon_fault == 0u));
+}
+
+static void test_zones_not_available_and_lid(void)
+{
+    mock_reset();
+    boot();
+    handshake();
+    m.analog.bumper_zones = 0x07u; /* pins say "all closed": meaningless on rev A */
+    arm(100000u);
+    advance(400000u);
+    CHECK(send("READ", "{\"after_seq\":-1}") && status_is("OK"));
+    CHECK(send("DIAG", "{\"seq\":0}") && has("\"bumper_zones\":null"));
+    CHECK(send("STATUS", "{\"clear_bumper\":true}") && has("\"bumper\":{\"available\":false,\"now\":null,\"latched\":null}"));
+    CHECK(core.bumper_latched == 0u);
+}
+
 int main(void)
 {
     RUN(test_boot_state_is_unbound);
@@ -877,5 +1060,10 @@ int main(void)
     RUN(test_bias_compensation);
     RUN(test_lost_and_bad_gates);
     RUN(test_misc_ops);
+    RUN(test_setup_members_and_defaults);
+    RUN(test_bias_on_sequence_and_limits);
+    RUN(test_bias_permit_trip_and_recovery);
+    RUN(test_per_lane_bias_out_of_range);
+    RUN(test_zones_not_available_and_lid);
     return TEST_SUMMARY();
 }

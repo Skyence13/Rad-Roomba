@@ -545,6 +545,102 @@ class Acquisition(SimCase):
         self.assertAlmostEqual(beta[6] / beta[5], 0.5 * 1.2 / 1.1, delta=0.08)   # half a gate at the lower loss
 
 
+class BoardFunctions(SimCase):
+    """IB-17 / IB-18 through the emulator and the baseline tools: anode monitor, permit, expander, pulser, hold."""
+
+    def arm(self, **rates):
+        hello, reader = self.bound_reader()
+        self.sim.ctl(cmd="rates", **(rates or {"alpha": 0, "beta": 50, "ref": 50}))
+        self.sim.advance(1_500_000)      # bias ramped (3 control periods) and settled
+        self.link.ok("ARM", {"span_us": 100000})
+        return reader
+
+    def test_per_lane_bias_out_of_range_reaches_the_host(self):
+        reader = self.arm()
+        self.sim.advance(300_000)
+        self.sim.ctl(cmd="analog", imon_ua=[1, 1, 1, 1, 1, 1, 400, 1])   # reference chain of lane 2 over 0.2 mA
+        self.sim.advance(800_000)
+        frames, _ = read_all(self.link)
+        last = frames[-1]
+        ACQ.validate(last)
+        check_frames.validate_semantics(last)
+        seg = last["segments"][2]
+        self.assertEqual(seg["flags"], ["REFERENCE_FAULT"])
+        self.assertIsNone(seg["photon_ref"])
+        self.assertIsNotNone(seg["beta_window"])                 # the floor chain of that lane is untouched
+        self.assertIn("BIAS_OUT_OF_RANGE", last["flags"])
+        self.assertEqual(last["segments"][0]["flags"], [])
+        diag = self.link.ok("DIAG", {"seq": last["sequence"]})
+        self.assertGreater(diag["lanes"][2]["imon_na"][1], 200000)
+        self.assertIn("BIAS_OUT_OF_RANGE", diag["lanes"][2]["flags"])
+        self.assertEqual(diag["lanes"][2]["alpha_idle_clears"], 0)
+        st = self.link.ok("STATUS", {})
+        self.assertEqual(st["imon"]["fault"], ["R2"])
+        self.assertEqual(st["bumper"], {"available": False, "now": None, "latched": None})   # rev A: not available
+        self.assertIsNone(diag["bumper_zones"])
+
+    def test_tripped_permit_lid_and_recovery(self):
+        hello, reader = self.bound_reader()
+        self.sim.advance(1_500_000)
+        st = self.link.ok("STATUS", {})
+        self.assertTrue(st["bias"]["on"])
+        self.assertEqual(st["expander"], {"present": True, "hv_permit": True, "hv_inhibit": False,
+                                          "lid_open": False, "efuse_fault": False, "hw_rev": 0})
+        self.sim.ctl(cmd="analog", lid_open=True)
+        self.sim.advance(1_500_000)
+        st = self.link.ok("STATUS", {})
+        self.assertIn("BIAS_PERMIT", st["health"])
+        self.assertFalse(st["bias"]["on"])
+        self.assertTrue(st["expander"]["lid_open"] and st["expander"]["hv_inhibit"] and not st["expander"]["hv_permit"])
+        self.assertEqual(self.link.ok("FAULT_CLEAR", {})["cleared"], [])        # lid still open
+        self.sim.ctl(cmd="analog", lid_open=False)
+        self.assertIn("BIAS_PERMIT", self.link.ok("FAULT_CLEAR", {})["cleared"])
+        self.sim.advance(1_500_000)
+        st = self.link.ok("STATUS", {})
+        self.assertTrue(st["bias"]["on"] and "BIAS_PERMIT" not in st["health"])
+        self.assertTrue(self.sim.ctl(cmd="stats")["board"]["bias"]["permit"])
+        # without the expander the same trip is found from BIAS_VMON
+        self.sim.ctl(cmd="analog", expander=False, inhibit=True)
+        self.sim.advance(1_500_000)
+        st = self.link.ok("STATUS", {})
+        self.assertIn("BIAS_PERMIT", st["health"])
+        self.assertEqual(st["expander"]["present"], False)
+        self.assertIsNone(st["expander"]["lid_open"])
+
+    def test_setup_members_reach_the_board_model(self):
+        hello, reader = self.bound_reader()
+        self.link.ok("ENG_SETUP_SET", {"pulser": {"enable": True, "code": 1000, "channel": 5, "width_us": 30,
+                                                  "led_enable": True, "led_code": 2048},
+                                       "afterglow": {"alpha_hold_us": 100}})
+        board = self.sim.ctl(cmd="stats")["board"]
+        self.assertEqual(board["pulser"], {"enable": True, "channel": 5, "code": 1000, "width_us": 30,
+                                           "charge_fc": 61035})   # 100 pF x 0.61 mV x 1000
+        self.assertEqual(board["led"]["v_led_mv"], 2500)           # 2 x 1.25 V
+        self.assertEqual(board["alpha_hold_us"], 100)
+        self.assertEqual(self.sim.ctl(cmd="stats")["board"]["bias"]["hv_set_code"], 0)   # HV_SET starts at 0
+        hello, reader = self.bound_reader()
+        self.sim.ctl(cmd="rates", alpha=0, beta=0, ref=0)
+        self.sim.advance(1_000_000)
+        self.link.ok("ARM", {"span_us": 100000})
+        self.sim.advance(1_050_000)
+        frames, _ = read_all(self.link)
+        # 1000 charge pulses per second into reference chain 1 (R1): 61 fC.. = 131 p.e. -> inside REF_LLD..REF_ULD
+        counts = [f["segments"][1]["photon_ref"]["counts"] for f in frames[1:8]]   # Poisson draws around 100 per 0.1 s gate
+        self.assertTrue(all(60 <= c <= 140 for c in counts), counts)
+        self.assertTrue(all(f["segments"][0]["photon_ref"]["counts"] == 0 for f in frames))
+
+    def test_afterglow_hold_is_dead_time(self):
+        reader = self.arm(alpha=[2000, 0, 0, 0], beta=0, ref=0)
+        self.sim.advance(1_050_000)
+        frames, _ = read_all(self.link)
+        f = frames[5]
+        diag = self.link.ok("DIAG", {"seq": f["sequence"]})
+        lane = diag["lanes"][0]
+        dead = 14_400_000 - lane["floor_live_ticks"]
+        # 10 us + 150 us hold per alpha event (emulator, simulated)
+        self.assertAlmostEqual(dead / max(lane["alpha_raw"], 1), (10 + 150) * 144, delta=1)
+
+
 class NoWidthHistogram(SimCase):
     sim_args = ("--no-width-hist",)
 
