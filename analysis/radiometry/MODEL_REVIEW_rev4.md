@@ -10,13 +10,16 @@ The 200·T_F rule is stated in the wrong quantity and should be replaced. The th
 
 Probe of `rr_core` (`results/rev4_window_probe.csv`; "live" = the last evaluation during the run, which is what is exported; "final" = one evaluation of every cell at the end with all data):
 
-| Scenario (duration) | Cells | No lane decidable, live | Same, final evaluation | Failing lanes: counts in the window they had |
+| Scenario (duration) | Cells | No lane decidable: live export (rev 4) | Final evaluation (rev 4 rule) | Cells with < 100 / < 200 counts in the attachment record, lane or ratio-scaled pool (proposed rule) |
 |---|---|---|---|---|
-| s02 head reset (230 s, 3 attachment series) | 231 | 32 | 9 | live 68–812+, final 181–208 |
-| s15 (46 s) | 44 | 40 | 28 | live 104–207, final 802–812 |
+| s02 head resets (230 s, 3 attachment series) | 231 | 32 | 9 | 0 / 3 |
+| s03 protective stop (231 s) | 231 | 27 | 0 | 0 / 0 |
+| s04a blocked strip (461 s) | 405 | 28 | 0 | 0 / 0 |
+| s10 step-and-count (406 s) | 133 | 17 | 0 | 0 / 0 |
+| s15 (46 s) | 44 | 40 | 28 | 0 / 0 |
 
-(s03, s04, s10: see the CSV.) Three causes, two of them in the implementation:
-1. **Evaluation schedule (implementation, review C1).** A cell is re-evaluated only when it gains gates, using the reference data received so far. The window is truncated at "now" and frozen into the export. This accounts for 23 of the 32 undecidable cells in s02.
+Under the proposed rule, the expected fraction of undecidable cells is **0** in every probed scenario at α ≥ 10⁻³, including the 46 s run. At mission-level α (N_min = 200), 3 of 231 cells (1.3 %) of s02 remain undecidable, all in the 14.6 s attachment series after a head reset. The processing engineer's "about 12 %" was mostly the live-evaluation artefact: 27–40 cells live against 0–9 after a final evaluation. Three causes, two of them in the implementation:
+1. **Evaluation schedule (implementation, review C1).** A cell is re-evaluated only when it gains gates, using the reference data received so far. The window is truncated at "now" and frozen into the export. It accounts for 23 of 32 undecidable cells in s02 and all of them in s03, s04 and s10.
 2. **Window assembly (implementation).** The window is ±100·T_F around each gate under test, within one attachment's series. A head reset starts a new series, and the window is not extended to the side that has data. Every failing lane (100 %) lies within half a window of a series start or end; "not near the trailer ends" is because series ends are in time, not in position.
 3. **Requirement in seconds ∝ T_F (rule).** It cannot be met in a 46 s run (it needs 50 s per lane of pooled reference) even with a final evaluation. Yet the failing lanes held 181–812 counts, which is far more than the threshold needs.
 

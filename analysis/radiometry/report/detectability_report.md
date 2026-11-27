@@ -469,6 +469,14 @@ Full numbers in [`model_rev3_checks.md`](model_rev3_checks.md); verdicts and pro
 - Any lane at α/m: the union bound holds when each lane holds α/m; the quoted min D#ᵢ holds only for activity extending beyond the cell (P(detect) at the quoted limit 0.03–0.91 for activity confined to the cell), and maxᵢ D#ᵢ is not a seam-patch limit (P 0.04–0.82). Cost against an exact combined statistic up to 3.58 (m = 4).
 - One exact linear statistic over all lanes (Gil-Pelaez inversion, validated to 5.7e-08 relative tail error against exact convolution) gives a median D# of 0.143 Bq/cm² on the s01-like plan, against 0.252 for revision 3 and 0.190 for revision 2.
 
+### 7.2 The null reference U_null (MODEL.md revision 4, §3)
+
+Numbers in [`model_rev4_unull.md`](model_rev4_unull.md); verdict and proposed wording in `../MODEL_REVIEW_rev4.md`. `calculated` with synthetic coefficients.
+
+- What the threshold needs from U_null is a number of reference counts, not a multiple of T_F. With the plug-in threshold, holding ≤ 1.05 × nominal at mission α takes up to 1.00e+03 counts (scan) and 2.70e+03 (recounts). With a predictive threshold (null distribution averaged over the posterior of U given the window), it takes ≤ 98.8 and ≤ 175, at a D# cost ≤ 1.04 at 100 counts.
+- Taking the larger of the past and future half-window means keeps steps and gradients from biasing U_null low (worst 1.03 × nominal at mission α). A centred mean gives up to 12.2 × at a step; a past-only mean up to 120 ×.
+- Stationary recounts need no bracketing time when the other three lanes' references during the count are used, ratio-scaled. A pooled window needs that scaling too: a 1 % lane-ratio error gives 1.12 × at mission α.
+
 ## 8. Measurements that replace the assumptions
 
 | Assumption | Measurement that replaces it | Design choice it drives |
