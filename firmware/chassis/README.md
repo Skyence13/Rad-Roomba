@@ -4,17 +4,17 @@ Firmware for the STM32G474RET6 on RR-CHS-MAIN and its emulator `rr_chassis_sim`.
 
 **This is not a certified safety controller.** The hardwired traction chain (latch relay, brake relays, external window watchdog) removes traction energy without firmware. The firmware never opposes the chain, supervises and reports it, and adds a software protective-stop layer.
 
-**Status of evidence.** The hardware-independent core is exercised on a plant model: every number below is `simulated`. The pin map is `tool-checked` against ST pin data. The STM32 image compiles and links (`tool-checked`) and **has never run on hardware**. Device details recalled from memory are marked UNVERIFIED in the sources and in `pinmap.yaml`.
+**Status of evidence.** The hardware-independent core is exercised on a plant model: every number below is `simulated`. The pin map is `tool-checked` against ST pin data and against the RR-CHS-MAIN rev A netlist export (`electronics/chassis_main/out/pinmap.json`: every MCU pin, every expander pin, every ToF connector → mux channel). The INA228 and INA3221 register maps were checked against the TI datasheets (fetched 2026-11-27); the LTC4162-F register map is UNVERIFIED and its driver is disabled. The STM32 image compiles and links (`tool-checked`) and **has never run on hardware**. Device details recalled from memory are marked UNVERIFIED in the sources and in `pinmap.yaml`.
 
 ## Layout
 
 | Path | Content |
 |---|---|
-| `core/` | Portable C11 core: `rrch_proto.c` (protocol server), `rrch_core.c` (mode state machine, software stop latch, brake test, panel, heater, watchdog cross-checks, event log), `rrch_chain.c` (chain supervision, presence decode), `rrch_motion.c` (protective fields, drive loops, odometry, stationarity), `rrch_cfg.c` (persistent configuration), `rrch.h` (types + HAL) |
+| `core/` | Portable C11 core: `rrch_proto.c` (protocol server), `rrch_core.c` (mode state machine, software stop latch, brake test, panel, heater, watchdog cross-checks, event log), `rrch_chain.c` (chain supervision: node decode, ARM_PERMIT readback, presence decode), `rrch_motion.c` (protective fields, drive loops, odometry, stationarity), `rrch_cfg.c` (persistent configuration), `rrch_pwrdev.c` (INA228 / INA3221 register decode, UNVERIFIED LTC4162 table), `rrch.h` (types + HAL) |
 | `port/host/` | `sim.c` plant model + HAL, `sim_main.c` → `rr_chassis_sim` (TCP link, UDP environment) |
 | `port/stm32g474/` | PlatformIO project: `bsp.c`, `usb_cdc.c`, `main.c`, `tof_vl53l4ed.c` (stub), generated `board_pins.h` |
 | `tests/` | C unit tests on the plant, Python integration tests, `rrchs_client.py` |
-| `tools/` | `check_pinmap.py` (+ extracted LQFP64 pin facts) |
+| `tools/` | `check_pinmap.py` (+ extracted LQFP64 pin facts; cross-check against the board netlist export), `look_geometry.py` (look-sensor defaults from `mechanical/common/frames.yaml`) |
 | `../common/` | Shared library (framing, JSON, CRC, UUID) owned by the head firmware lead; used unmodified |
 
 ## Toolchain (pinned)
@@ -42,30 +42,39 @@ python3 tests/test_integration.py build/rr_chassis_sim
 (cd port/stm32g474 && pio run -e rr_chs_main)        # 8 MHz crystal; -e rr_chs_main_24mhz for 24 MHz
 ```
 
-Results observed on 2026-11-26 (`./check.sh`, exit 0): `test_chain` 245 checks, `test_state_machine` 1160 checks, `test_drive` 2464 checks, 8 Python integration tests — all passing. Target image: flash 80 648 bytes (text 80 140 + data 508) of 524 288, static RAM 23 436 bytes of 131 072 (hard-float, `-Os` PlatformIO default).
+Results observed on 2026-11-27 (`./check.sh`, exit 0): `test_chain` 311 checks, `test_state_machine` 1187 checks, `test_drive` 2476 checks, 9 Python integration tests, all passing. Target image: flash 83 280 bytes (text 82 772 + data 508) of 524 288, static RAM 23 524 bytes of 131 072 (hard-float, `-Os` PlatformIO default).
 
 ### Simulated drive performance (plant model, not measurements)
 
-Plant: two 150:1 gearmotors (R 2.2 Ω, L 2.3 mH, k_e 1.65 V·s/rad at the wheel, effective k_t 1.0 N·m/A, reflected inertia 0.012 kg·m², 67 rpm no load ≈ 0.36 m/s), 12 kg, 104 mm wheels, 270 mm track, Coulomb + viscous friction, 4.7 Ω brake resistors, 10 kHz integration. These are datasheet-level estimates; VT-003 replaces them.
+Plant (IB-03/IB-24, constants taken from `electronics/analysis/chassis_braking.py`, the electronics' brake model): two Pololu #2828 150:1 gearmotors, R 2.18 Ω (12 V / 5.5 A), back-EMF 31.7 V per m/s per motor (1.648 V·s/rad at the wheel), L 2.3 mH (emulator assumption), 12 kg, 104 mm wheels, 270 mm track. *Nominal* set (default): force constant = back-EMF constant (31.7 N/A, lossless gear), rotor inertia 1 × 10⁻⁶ kg m² = 8.3 kg reflected per motor, Coulomb friction 16.2 N total (3.5 N rolling + 2 × 0.2 A × 31.7). *Conservative* set: 17.4 N/A (catalogue stall torque), 2 × 10⁻⁶ kg m² (16.6 kg per motor), no friction. Brake loop 3.22 Ω (1.0 Ω resistor + 0.04 Ω contacts + winding). Hardwired chain timing from `chassis_braking_tables.md` T2: brake-relay coils lose supply at once, NO contacts open at 7.5 ms, NC contacts close on the resistor at 10.5 ms; K1 releases at 4 ms (bridges asleep, VMOT eFuse off); VMOT bleeds with τ 0.81 s; bridges chop at 2.68 A; IPROPI saturates at 2.68 A. 10 kHz integration.
 
 | Quantity | Simulated | Reference |
 |---|---|---|
-| Step to 0.10 m/s: rise 10–90 % / overshoot / steady-state error | 238 ms / 3.2 % / < 0.01 % | set-point ramp alone 267 ms (0.30 m/s²) |
-| Step to 0.20 m/s | 513 ms / 1.7 % / < 0.01 % | ramp alone 533 ms |
-| Stop from 0.20 m/s, controlled (0.40 m/s² ramp) | 50.6 mm, 500 ms | contract stop model 100 mm (0.15 s, 0.40 m/s², 20 mm) |
-| Stop from 0.20 m/s, software protective stop (1.0 m/s² ramp) | 21.0 mm, 202 ms | 100 mm |
-| Stop from 0.20 m/s, latch drop (E-stop / bumper, brake resistors, no firmware) | 14.8 mm, 182 ms | 100 mm |
-| Host stops sending at 0.20 m/s (last command ttl 200 ms) | 56.8 mm and 381 ms from the moment the host went silent to rest | v·ttl + model |
+| Step to 0.10 m/s: rise 10–90 % / overshoot / steady-state error | 240 ms / 3.0 % / < 0.01 % | set-point ramp alone 267 ms (0.30 m/s²) |
+| Step to 0.20 m/s | 515 ms / 1.6 % / < 0.01 % | ramp alone 533 ms |
+| Stop from 0.20 m/s, controlled (0.40 m/s² ramp) | 50.3 mm, 499 ms | contract stop model 100 mm (0.15 s, 0.40 m/s², 20 mm) |
+| Stop from 0.20 m/s, software protective stop (1.0 m/s² ramp) | 20.6 mm, 200 ms | 100 mm |
+| Host stops sending at 0.20 m/s (last command ttl 200 ms) | 56.4 mm and 379 ms from the moment the host went silent to rest | v·ttl + model |
 | `CMD_TIMEOUT` latch after the last accepted `DRIVE` (ttl 200 ms) | 200 ms | ≤ ttl + 1 ms |
-| Cliff sample at 0.20 m/s → rest | 21.8 mm | 100 mm |
-| Look-ahead floor loss at 0.20 m/s → rest | 100–102 mm of the 120 mm assumed | `look.ahead_m` |
-| Encoder dropout at 0.20 m/s → rest | 43.9 mm | — |
-| MCU reset at 0.20 m/s → rest (latch drop) | 14.6 mm | — |
+| Cliff sample at 0.20 m/s → rest | 23.8 mm | 100 mm |
+| Encoder dropout at 0.20 m/s → rest | 45.2 mm | — |
+| MCU reset at 0.20 m/s → rest (latch drop) | 8.4 mm | — |
+| Bumper trip at 0.20 m/s over the emulator sockets → rest | 8.9 mm (incl. UDP delivery) | — |
+| Look-ahead floor loss at 0.20 m/s (forward pair) → rest | 266–267 mm of the 285 mm to the rail | `look.fwd_ahead_m` |
+| Look-behind floor loss at −0.05 m/s (tail pair) → rest | 182 mm of the 201 mm behind the 0.290 m radius | `look.rev_ahead_m` |
 | Tick odometry vs ground truth (straight, arc, pivot, reverse) | ≤ 0.03 mm, ≤ 0.0001 rad | quantisation only; 5 % wheel slip shows as 27 mm / 0.09 rad over 0.5 m, as it must |
-| Blocked wheels: current after fold-back / `STALL` latch | 2.53 A / 547 ms | limit 2.5 A, 500 ms |
-| Brake test: latch drop / relays / VMOT decay | 6 ms / 13 ms / 107 ms | emulator relay model |
+| Blocked wheels: current after fold-back / `STALL` latch | 2.68 A (hardware chop) / 547 ms | limit 2.5 A, 500 ms |
+| Brake test: latch drop / relays / VMOT decay to 1 V | 5 ms / 9 ms / 2069 ms | emulator relay model; τ 0.8 s bleed |
 
-The latch-drop distance is shorter than the controlled stop only because the model's brake resistor and gearbox friction are generous; do not carry these numbers into a clearance argument.
+**Latch drop (E-stop or any contact element), distance from the chain opening to rest** (`test_drive`, plant alone, bridges driving the steady-state duty until K1 releases):
+
+| v0 | Nominal, simulated | Nominal, electronics | Conservative, simulated | Conservative, electronics |
+|---:|---:|---:|---:|---:|
+| 0.10 m/s | 3.6 mm (88 ms) | 3.8 mm | 14.2 mm | 14.3 mm |
+| 0.20 m/s | 8.5 mm (115 ms) | 8.7 mm | 28.5 mm | 28.5 mm |
+| 0.30 m/s | 13.7 mm (132 ms) | 13.9 mm | 42.7 mm | 42.8 mm |
+
+Electronics values: `chassis_braking.py` (`chassis_braking_tables.md` T3 for 0.10/0.20 m/s; 0.30 m/s computed with the same `brake()` function and 10.5 ms dead time — 0.30 m/s is above the 0.20 m/s contract ceiling and is a runaway case). All differences are below 4 %; the nominal simulation is slightly shorter because the plant also applies friction during the dead time and the 5 ms of driving before K1 releases are modelled, whereas the calculation coasts at v0 for the whole 10.5 ms. The conservative case has no friction and decays exponentially (time to 10⁻⁵ m/s ≈ 1.3 s). The firmware closed-loop E-stop case in `drive_report.txt` (8.5 mm from 0.20 m/s) agrees. These are `simulated` from `calculated` inputs; the rotor inertia is not published and dominates (spin-down test, `chassis_safety_chain.md` §8 step 12). Do not use the nominal column for clearance arguments.
 
 ## Emulator `rr_chassis_sim`
 
@@ -91,17 +100,20 @@ Pose is of `base_link` in the simulator's world frame (starts at 0,0,0; `{"pose"
 | `chg_cover_open`, `chg_plug` | bool | charger cover open / plug link present |
 | `pres_ohm`, `loop_ohm` | number | J1 pin-7 code resistor (4700 head, 1137 head via LAB extension, 1500 extension only, 1e9 unplugged) and interlock loop (1000 healthy) |
 | `press`, `press_ms` | `"REARM"` \| `"PAUSE"`, ms (default 200) | local buttons; REARM also sets the latch relay if the chain is healthy |
-| `tof` | `{"CLIFF_FL": 31, "REAR_C": null, "LOOK_LO": "INVALID"}` | range in mm, `null` = no target, any string = invalid. Ids as in the ICD |
-| `tof_stale` | `["LOOK_RI", …]` or `["ALL"]` or `[]` | sensors that stop delivering samples (the list replaces the previous one) |
+| `tof` | `{"CLIFF_FL": 31, "REAR_C": null, "LOOK_FL": "INVALID"}` | range in mm, `null` = no target, any string = invalid. Ids as in the ICD. Defaults: cliff 30, `LOOK_FL`/`LOOK_FR` 524, `LOOK_RL`/`LOOK_RR` 267 (level floor), rear no target |
+| `tof_stale` | `["LOOK_RR", …]` or `["ALL"]` or `[]` | sensors that stop delivering samples (the list replaces the previous one) |
 | `vbat`, `soc`, `temp_bay`, `temp_pack`, `temp_board`, `tilt_deg` | number | battery, temperatures, floor pitch |
 | `enc_dropout`, `block` | `"L"`, `"R"`, `"BOTH"`, `"NONE"` | encoder stops counting / wheel mechanically blocked |
 | `slip` | `[left, right]` 0…0.95 | wheel slip fraction |
 | `usb_stall`, `usb_down` | bool | host bytes are held back (delivered late on release) / USB reports not configured |
 | `imu_off`, `iox_fail`, `latch_weld`, `estop_a_stuck`, `nv_fail`, `efuse_fault` (bit mask) | | sensor and hardware faults |
+| `iox_b_fail`, `permit_short`, `permit_open` | bool | IOX_B (CHAIN_END_RB) not answering; ARM_PERMIT photo-MOS U24 shorted / open |
+| `chain_short` | `"CH_N1"`…`"CH_N9"`, `"CH_N4A"`, `"CH_N8A"`, `"CHAIN_END"`, `"NONE"` | chain node shorted to a live conductor (plausibility tests) |
+| `pmon_fail`, `branch_fail`, `charger_fail` | bool | INA228 / INA3221 / charger telemetry lost |
 | `freeze_control`, `freeze_supervisor`, `freeze_background` | bool | stop one firmware context (watchdog tests) |
 | `mcu_reset` | `"PIN"`, `"WATCHDOG"`, `"SOFTWARE"`, `"BROWNOUT"`, `"POWER_ON"` | reset the MCU now (plant keeps moving/braking) |
 
-The emulator contains the hardwired chain: latch relay with 5 ms release / 10 ms pull-in, brake relays 8 ms, VMOT decay 40 ms, a window watchdog (trip if no strobe for 35 ms or two strobes within 3 ms, MCU reset 50 ms later).
+The emulator contains the hardwired chain as node voltages (each readback is the node after its element, IB-02), the latch relay K1 (4 ms release, 10 ms pull-in), brake relays fed from CHAIN_END (NO open 7.5 ms, NC closed 10.5 ms after the supply goes, 8 ms pick-up), `BRAKE_x_RB` that reads garbage while the bridges are awake, `CHAIN_END_RB` pushed every 10 ms as the IOX_B read would, VMOT decay τ 0.81 s, the 2.68 A bridge chop, INA228/INA3221 register images decoded by the target code, and a window watchdog (trip if no strobe for 35 ms or two strobes within 3 ms, MCU reset 50 ms later). TRUTH additionally carries `emu_lag_us` (simulated time behind scaled wall time when the last batch of steps started) and `emu_rebases` (times the pacing gave up catching up and reset its time base; see IB-47 below).
 
 ## Flash and debug (hardware)
 
@@ -259,23 +271,29 @@ Connect the debug UART before applying power. Expected on a first successful tes
 1. **Before any firmware runs** (MCU erased or held in reset): ARM_PERMIT test point low, latch cannot be set with the REARM button, bridges asleep (nSLEEP low), heater and head branches off, 5 V compute rail up, FAULT annunciator lit by the hardware watchdog path. *Stop and investigate if the latch can be set or any branch is on.*
 2. **Banner** on the UART within 0.5 s of reset: `rr-chassis 0.4.0+stm32g474 RR-CHS 1.0 …`, then `reset=POWER_ON clock=HSE config=DEFAULTS boot_id=<uuid>`. *Investigate:* `clock=HSI-FALLBACK` (crystal not running), no banner (clock, UART pin, or the image is not running), a different `boot_id` appearing repeatedly (reset loop: watchdog window or supply).
 3. **Status line every second**: `t=<s> mode=… latch=0 permit=… hw=… live=… sw=… flt=… di=… vbat_mV=… vmot_mV=… pres_ohm=… usb=…`. Heartbeat LED (BOOT0/LED_STAT) flashes 100 ms per second; all five annunciators light for 0.2 s at boot, one chirp.
-4. With the dummy head docked, J1/J2 mated, E-stop released, covers shut: `mode=STANDBY`, `live=00000000`, READY blinking slowly, REARM lamp blinking, `pres_ohm` 4500–4900, `vbat_mV` equal to the supply within 2 %, `vmot_mV` < 1000. Expect `flt` to show `CONFIG_DEFAULTED`, `CHARGER_COMM`, `PMON_COMM`, `TOF_BUS` in this firmware revision (drivers not implemented) — FAULT LED blinks slowly.
-5. `mode=FAULT` at this point means: `ESTOP_DISCREPANCY` (one pole readback wrong), `IOX_A` (SPI expander or its sentinel wiring), `ADC`, or `LATCH_STUCK` (latch readback high with ARM_PERMIT low — **stop: wiring fault in the chain**). Read `DIAG` over USB for the flag names.
-6. Operate each chain element in turn and watch `live` change by exactly one bit and return (bit order: `MODE_NOT_RUN`=0, `ESTOP`=1, `HANDS_ON`=2, `CHARGER`=3, `HEAD_UNDOCKED`=4, `HEAD_LOOP_OPEN`=5, `HEAD_LOOP_SHORT`=6, `J1_ABSENT`=7, `LAB_KEY`=8, `BODY_BUMPER`=9, `WATCHDOG`=10, `MCU_NOT_READY`=11, `VMOT_FAULT`=12). *Investigate* any element that does not show, shows inverted, or shows together with another.
+4. With the dummy head docked, J1/J2 mated, E-stop released, covers shut: `mode=STANDBY`, `live=00000000`, READY blinking slowly, REARM lamp blinking, `pres_ohm` 4500–4900, `vbat_mV` equal to the supply within 2 %, `vmot_mV` < 1000. Expect `flt` to show `CONFIG_DEFAULTED`, `CHARGER_COMM` (LTC4162 driver disabled, register map unverified) and `TOF_BUS` (VL53L4ED driver missing) in this firmware revision — FAULT LED blinks slowly. `PMON_COMM` here means the INA228 or its identity check failed. `IOX_B` / `PERMIT_STUCK_OFF` here mean the CHAIN_END_RB read on IOX_B P17 is not working or reads low with every element closed: no arming is possible until it is fixed.
+5. `mode=FAULT` at this point means: `ESTOP_DISCREPANCY` (one pole readback wrong), `IOX_A` (SPI expander or its sentinel wiring), `ADC`, `LATCH_STUCK` (latch readback high with ARM_PERMIT low — **stop: wiring fault in the chain**), `PERMIT_STUCK_ON` (CHAIN_END live with ARM_PERMIT low: U24 or PB10 — **stop**; the firmware also stops strobing, so with JP1 closed the board resets every few hundred ms) or `CHAIN_IMPLAUSIBLE` (a chain node live behind a dead one: readback tap or harness short — **stop**). Read `DIAG` over USB for the flag names.
+6. Operate each chain element in turn and watch `live` change by exactly one bit and return (readbacks are node voltages: an element behind an open one is reported unknown, not as a second cause) (bit order: `MODE_NOT_RUN`=0, `ESTOP`=1, `HANDS_ON`=2, `CHARGER`=3, `HEAD_UNDOCKED`=4, `HEAD_LOOP_OPEN`=5, `HEAD_LOOP_SHORT`=6, `J1_ABSENT`=7, `LAB_KEY`=8, `BODY_BUMPER`=9, `WATCHDOG`=10, `MCU_NOT_READY`=11, `VMOT_FAULT`=12). *Investigate* any element that does not show, shows inverted, or shows together with another.
 7. Scope WDG_STROBE: one edge every 10 ms; WDG_OK high. Halt the CPU with the debugger: WDG_OK must drop and the latch must not be settable.
 8. Press REARM: `latch=1`, `vmot_mV` ≈ `vbat_mV`, both brake relays click. With no host connected the mode becomes `PROTECTIVE_STOP` (`HOST_LINK_LOST`) after 1 s — expected. *Stop if* the latch sets with any element open, or `vmot_mV` stays low (`VMOT_FAULT`).
 9. Connect USB: the device enumerates as CDC-ACM (placeholder VID:PID 1209:0001). `python3 tests/rrchs_client.py --port … STATE` needs a serial-port variant of the client; `HELLO` must return the banner's `boot_id`.
-10. Run `BRAKE_TEST`: expect `passed:true`, latch drop < 50 ms, VMOT below 1 V within the configured time, probe currents ≈ 0. *Stop and investigate any failure before commanding motion.* Press REARM again.
+10. Run `BRAKE_TEST` (keep polling, it takes about 2.2 s): expect `passed:true`, latch drop < 50 ms, VMOT below 1 V after about 2.1 s (τ 0.8 s bleed; limit 2.5 s), probe currents ≈ 0. *Stop and investigate any failure before commanding motion.* Press REARM again.
 11. First motion, wheels free, `COMMISSIONING`, 0.02 m/s: buzzer 1.5 s, then both wheels turn forward and both tick counters count **up**. *Stop if* a wheel runs away, turns the wrong way (`ENCODER_FAULT` within 0.1 s is the expected reaction to swapped encoder phases or a reversed motor), or the current reads zero while the wheel turns (IPROPI scaling).
 12. Press E-stop while turning: wheels stop at once without firmware action, `mode=HW_INHIBIT hw=00000002`, and nothing restarts on release.
 
 ## Known gaps (this revision)
 
 - No hardware test of anything. USB, ADC, timers, SPI/I²C device drivers, flash layout and the retained-RAM section are unproven; several register-level details are UNVERIFIED (listed in `bsp.c`, `pinmap.yaml`).
-- VL53L4ED driver is a stub (ST's ULD could not be obtained): on hardware all ToF sensors are OFFLINE and the firmware refuses every motion direction. Charger, pack monitor and branch monitor drivers are not written (battery voltage comes from the ADC; SoC, charge state and branch currents are null).
-- Protective fields use placeholder geometry (`look.*`, `cliff.*`, `rear.*`); the sensor mounting is not final.
+- VL53L4ED driver is a stub (ST's ULD could not be obtained, IB-04): on hardware all ToF sensors are OFFLINE and the firmware refuses every motion direction. INA228 (pack current, bus voltage) and INA3221 (branch currents) drivers are written against the TI datasheets but never run. The LTC4162-F driver is disabled because its register map is UNVERIFIED (IB-06): `CHARGER_COMM` stays raised, SoC and charge state are null/UNKNOWN; charge inhibit is hardware. With the selector in SERVICE the cover/plug chain nodes are dead, so on hardware SERVICE_CHARGE is recognised only once a verified charger driver reports input power (until then the mode shows HW_INHIBIT/MODE_NOT_RUN while charging; head power is forced off in hardware anyway).
+- The boot-time watchdog self-test (`chassis_safety_chain.md` §7 step 2) is not implemented (with JP1 closed it resets the MCU; needs a reset-surviving test record). The ARM_PERMIT/CHAIN_END check is implemented (IB-01).
+- Contract 0.4.0-draft7 enum additions `LATCH_UNEXPLAINED` / `STOP_ESCALATED` are not yet used.
+- Look-sensor geometry (`look.*`) comes from `mechanical/common/frames.yaml` (checked by `tools/look_geometry.py`); `cliff.*` and `rear.*` thresholds are still placeholders.
 - Stop-escalation by ARM_PERMIT withdrawal is tested for uncommanded motion; the "ramp did not finish in time" path has no fault injection in the plant.
 - The brake test proves the switching elements, not braking torque.
 - Motor current is not sampled synchronously with the PWM; TIM8 break input is not used.
 - The boot counter erases one flash page per boot (10 k boots).
 - Reply-time and control-tick execution-time budgets are not measured.
+
+## IB-47 note: localisation error on the native emulators (analysis, no fix)
+
+Within this package odometry is exact: ticks and `odom.t_us` are taken in the same control tick, a sample is at most 10 ms old when a `DRIVE` reply leaves, and the host-side integration of ticks matches truth to 0.03 mm (`test_drive`). A 10 ms age is 1–2 mm at 0.10–0.20 m/s, so the firmware cannot produce 12–16 mm. A transient offset of 60–100 ms between the chassis clock and the host clock would (0.20 m/s × 60–100 ms = 12–20 mm; 6–10 mm at 0.10 m/s). The emulator can create exactly that under host load: it paces simulated time against wall time and, when more than 100 ms behind, gives up catching up and resets its time base (`sim_main.c`); simulated time then stops for the length of the stall while the host clock runs on, the host's TIME fit is stepped by the stall, and DRIVE/TIME replies queued during a catch-up burst leave up to 100 ms of simulated time late. The host compares its estimate with the newest TRUTH datagram at its own wall time, so a stepped fit shows up directly as an x error until the fit is refreshed (2 s). The machine is shared with routing jobs (load averages of 11–19 on 4 cores were logged by the electronics build), which makes such stalls likely. This is a probable cause, not a proven one: re-run the scenario and log `emu_lag_us` / `emu_rebases` from TRUTH next to the error; if the error coincides with `emu_rebases` increments or `emu_lag_us` > 50 ms the cause is the emulator pacing and the remedy is on the test side (run with `--speed` < 1 on a loaded machine, or compare against truth by `chassis_us` instead of arrival time), not in the firmware.

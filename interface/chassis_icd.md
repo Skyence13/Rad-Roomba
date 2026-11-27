@@ -1,6 +1,6 @@
 # Chassis link interface control document — RR-CHS 1.0
 
-**Status: draft for design 0.4 (written against contract 0.4.0-draft4). Owner: chassis firmware lead.** Expands `interface/system/contract.yaml › chassis_link`. Where this document and the contract disagree, the contract wins and the disagreement is a defect to report. Machine-readable companion: [`chassis_link.schema.json`](chassis_link.schema.json). Reference implementation: `firmware/chassis/core/` (the same code runs in the emulator `rr_chassis_sim` and on the STM32G474).
+**Status: draft for design 0.4 (written against contract 0.4.0-draft4; IB-34 look-sensor set and the 0.290 m tail swept radius of 0.4.0-draft7 applied, the draft7 enum additions `LATCH_UNEXPLAINED` / `STOP_ESCALATED` not yet used). Owner: chassis firmware lead.** Board facts are those of RR-CHS-MAIN rev A stage 2 (`electronics/chassis_main/design/CONTRACT_CHANGE_REQUESTS.md` CCR-E02/E03, `electronics/analysis/chassis_safety_chain.md`), cross-checked against the netlist export by `firmware/chassis/tools/check_pinmap.py`. Expands `interface/system/contract.yaml › chassis_link`. Where this document and the contract disagree, the contract wins and the disagreement is a defect to report. Machine-readable companion: [`chassis_link.schema.json`](chassis_link.schema.json). Reference implementation: `firmware/chassis/core/` (the same code runs in the emulator `rr_chassis_sim` and on the STM32G474).
 
 Evidence classes: every behaviour described here is implemented in the firmware core and exercised against the emulator (`simulated`, see `firmware/chassis/tests/`). **Nothing has run on hardware.** All distances, times and thresholds are design values pending the physical braking and protection trials (VT-003/004/005/035).
 
@@ -167,7 +167,7 @@ Args: `{}`. Snapshot for the UI and diagnostics; poll at ≤ 5 Hz.
 | `mode` | enum `chassis_mode` | |
 | `op_mode` | enum `op_mode` | Selected profile (boot default `SERVICE`) |
 | `hw_latch` | bool | Hardware latch readback (true = traction energy available) |
-| `chain` | object | One bool per `safety_chain` id — `MODE_RUN`, `ESTOP`, `HANDS_ON`, `CHG_COVER`, `HEAD_DOCK`, `HEAD_LOOP`, `LAB_KEY_N`, `BODY_BUMPER`, `WDG_OK`, `ARM_PERMIT` — **live** readback, true = closed/healthy. `ESTOP` is true only if both poles are closed; `CHG_COVER` only if the cover is shut and the plug link absent. |
+| `chain` | object | One bool per `safety_chain` id — `MODE_RUN`, `ESTOP`, `HANDS_ON`, `CHG_COVER`, `HEAD_DOCK`, `HEAD_LOOP`, `LAB_KEY_N`, `BODY_BUMPER`, `WDG_OK`, `ARM_PERMIT` — **live** readback, true = element **known closed**. false = open **or unknown** (an element behind an open one cannot be seen, §4.1a); `DIAG.chain_state` tells the two apart. `ESTOP` is true only if both poles are closed; `CHG_COVER` only if the cover is shut and the plug link absent; `ARM_PERMIT` from `CHAIN_END_RB`. |
 | `hw_inhibit_reasons` | array of enum | **Latched** reasons (§5.2) |
 | `protective_stop_reasons` | array of enum | **Latched** reasons (§5.3) |
 | `head_presence` | enum `head_presence` | J1 pin-7 decode (§4.2) |
@@ -175,7 +175,7 @@ Args: `{}`. Snapshot for the UI and diagnostics; poll at ≤ 5 Hz.
 | `rails` | object | `vbat_v`, `vmot_v`, `ibat_a` (positive = discharge), `i_drive_a[2]` (left, right, magnitude), `i_head_a`, `i_head_htr_a`, `i_chs_htr_a`, `v5_v`. A value that could not be measured is `null`. |
 | `battery` | object | `soc_pct` (0–100 or null), `temp_c[2]` (charger thermistor, pack NTC; null if faulty), `charge_state` (`NONE`, `PRECHARGE`, `CC`, `CV`, `DONE`, `TEMP_INHIBIT`, `FAULT`, `UNKNOWN`) |
 | `temps` | object | `board_c`, `bay_c` |
-| `tof` | array[11] | `{id, range_mm, status, age_ms}`; `id` ∈ `CLIFF_FL, CLIFF_FR, CLIFF_RL, CLIFF_RR, LOOK_LO, LOOK_LI, LOOK_RI, LOOK_RO, REAR_L, REAR_C, REAR_R`; `status` ∈ `OK, NO_TARGET, INVALID, STALE, OFFLINE`; `range_mm` null unless `OK`; `age_ms` saturates at 9999 |
+| `tof` | array[11] | `{id, range_mm, status, age_ms}`; `id` ∈ `CLIFF_FL, CLIFF_FR, CLIFF_RL, CLIFF_RR, LOOK_FL, LOOK_RL, LOOK_RR, LOOK_FR, REAR_L, REAR_C, REAR_R` in this index order (IB-34: index 4 `LOOK_FL` J_TOF4 mux 0 ch 2, 5 `LOOK_RL` J_TOF5 mux 1 ch 2, 6 `LOOK_RR` J_TOF6 mux 0 ch 3, 7 `LOOK_FR` J_TOF7 mux 1 ch 3); `status` ∈ `OK, NO_TARGET, INVALID, STALE, OFFLINE`; `range_mm` null unless `OK`; `age_ms` saturates at 9999 |
 | `bumpers` | object | `body_l`, `body_r`: bool, true = pressed/open. `head_loop`: `OK`, `OPEN`, `SHORT`. `head_loop_ohm`: analog estimate (null above 100 kΩ) |
 | `panel` | object | `buttons`: `{rearm, pause}` bool pressed. `leds`: `{ready, moving, hold, fault, charge}` each `OFF`, `ON`, `BLINK_SLOW`, `BLINK_FAST`, `BLINK_2`. **(+)** `buzzer`: bool, `pattern`: requested host pattern |
 | `heater` | object | `chassis_duty_pct` (0–100); **(+)** `chassis_setpoint_c` (number or null = off), `sensor_ok` |
@@ -319,7 +319,7 @@ Keys are listed in §8.
 
 ### 3.13 BRAKE_TEST
 
-Args: `{}`. Runs the stationary brake-relay and VMOT-drop self-test (§6.8) and replies when it has finished (typically 0.8 s, at most 3 s). While it runs, any other request is answered `BUSY`; a retry of the `BRAKE_TEST` request itself with the same `id` returns the result when available.
+Args: `{}`. Runs the stationary brake-relay and VMOT-drop self-test (§6.8) and replies when it has finished (typically 2.2 s — VMOT decays through the 1 kΩ bleed on 810 µF, τ 0.8 s, to 1 V — at most 2.7 s). The host keeps polling meanwhile (answers `BUSY`), which also keeps the link supervision of §5.3 satisfied. While it runs, any other request is answered `BUSY`; a retry of the `BRAKE_TEST` request itself with the same `id` returns the result when available.
 
 Precondition: mode `ARMED_IDLE` (hardware latch set, at rest), or `PROTECTIVE_STOP` whose only latched reason is `BRAKE_TEST_FAIL` with the hardware latch set. Otherwise `REJECTED / NOT_ARMED_IDLE`.
 
@@ -355,7 +355,9 @@ Args: `{}`. Additive op (a chassis without it answers `UNSUPPORTED`). Complete r
 | `sw_active` | Protective-stop causes present now, latched or not. `REARM_SW` succeeds only if no latched reason is in this list (retreat-permitted causes excepted, §5.3). |
 | `faults` | Complete flag list (§5.5) |
 | `estop` | `a`, `b`: E-stop pole readbacks, true = closed |
-| `readbacks` | String of 22 characters `0`/`1`: debounced inputs in this order — `MODE_RUN, ESTOP_A, ESTOP_B, HANDS_ON, CHG_COVER, CHG_PLUG_LINK, HEAD_DOCK, HEAD_LOOP_OK, HEAD_LOOP_SHORT, LAB_KEY_N, BODY_BUMPER_L, BODY_BUMPER_R, WDG_OK, BRAKE_L, BRAKE_R, HW_LATCH, J2_PRES, BTN_REARM, BTN_PAUSE, DRV_FAULT_L, DRV_FAULT_R, BUS_CLAMP` (1 = closed/healthy/present/pressed; `HEAD_LOOP_SHORT`, `DRV_FAULT_x`, `BUS_CLAMP`: 1 = asserted; `CHG_PLUG_LINK`: 1 = plug link absent) |
+| `readbacks` | String of 23 characters `0`/`1`: debounced inputs in this order — `MODE_RUN, ESTOP_A, ESTOP_B, HANDS_ON, CHG_COVER, CHG_PLUG_LINK, HEAD_DOCK, HEAD_LOOP_OK, HEAD_LOOP_SHORT, LAB_KEY_N, BODY_BUMPER_L, BODY_BUMPER_R, WDG_OK, BRAKE_L, BRAKE_R, HW_LATCH, J2_PRES, BTN_REARM, BTN_PAUSE, DRV_FAULT_L, DRV_FAULT_R, BUS_CLAMP, CHAIN_END` (1 = node live / healthy / present / pressed; `HEAD_LOOP_SHORT`, `DRV_FAULT_x`, `BUS_CLAMP`: 1 = asserted; `CHG_PLUG_LINK`: 1 = node CH_N4 live, i.e. plug link absent). The chain readbacks are **node** taps (§4.1a); `BRAKE_x` holds its last valid value while the bridges are awake. |
+| `chain_state` **(+)** | One of `CLOSED`, `OPEN`, `UNKNOWN` per `safety_chain` id (§4.1a) |
+| `chain_end` **(+)** | `CHAIN_END_RB` (IOX_B P17, node after the ARM_PERMIT element), `null` while IOX_B cannot be read |
 | `pres_ohm` | J1 pin 7 resistance (saturates at 999999) |
 | `head_power` | `electronics`, `heater_enable`: actual switch state |
 | `brake_test` | `state` (`NONE`, `RUNNING`, `PASSED`, `FAILED`), `age_s` (null if never run), `passed_since_boot` |
@@ -382,6 +384,16 @@ All chain readbacks, the two connector-presence inputs and the buttons are sampl
 
 So an opening of any element, or an unplug of J1 or J2, lasting ≥ 2 ms always produces a pair of events (open, later closed) with chassis-clock timestamps, independent of host polling; shorter openings produce events whenever a 1 kHz sample falls inside them. Unit test: a 5 ms unplug pulse on J1 and on J2 yields the event pair.
 
+### 4.1a Node semantics, ARM_PERMIT readback, brake-relay readback (IB-01, IB-02)
+
+Electrical facts from the board (CCR-E02/E03, `chassis_safety_chain.md` §2.3/§2.4):
+
+- The readbacks `MODE_RUN`, `ESTOP_A`, `HANDS_ON`, `CHG_COVER`, `CHG_PLUG_LINK`, `HEAD_DOCK`, `BODY_BUMPER_L`, `BODY_BUMPER_R`, `WDG_OK` are taps on the chain nodes CH_N1 … CH_N9: a tap reads "the chain is live up to and including this element". `HEAD_LOOP_OK`/`HEAD_LOOP_SHORT`/`LAB_KEY_N` are comparator outputs (the input condition of the photo-MOS U21/U22; CH_N6/CH_N7 have no readback). `ESTOP_B` is a separate detector on the coil return. `CHAIN_END_RB` (IOX_B P17, read over I²C at 100 Hz, never driven) is the node after the ARM_PERMIT element.
+- **Element state.** An element is `CLOSED` if its node is live, `OPEN` if its upstream node is live and its own node dead, `UNKNOWN` if its upstream node is dead. `BODY_BUMPER_L` is known only while CH_N5 is live and both comparators say "closed". `ESTOP` = pole A (known while CH_N1 is live) and pole B (always known). `HEAD_LOOP`, `LAB_KEY_N` are always known (comparators + analog decode). `ARM_PERMIT` is known while CH_N9 is live and IOX_B is readable. Only `OPEN` elements become live causes (§4.4); a `CHAIN` event is logged when a known readback changes, never when it becomes unknown (so an E-stop press logs `ESTOP_A`/`ESTOP_B`, not every node behind it). With the selector in SERVICE the cover/plug elements are unknown; the charger is then recognised from its own telemetry (input power present), see `CHARGER` in §4.4.
+- **Plausibility.** A node live behind a dead upstream node for 20 ms (harness short to a live conductor, readback fault, shorted U21/U22 — single-fault rows 8, 16, 23, 31, 32) enters `FAULT` with `CHAIN_IMPLAUSIBLE`. The E-stop pole comparison (`ESTOP_DISCREPANCY`) is made only while CH_N1 is live.
+- **ARM_PERMIT readback.** Each `CHAIN_END_RB` sample is compared with the ARM_PERMIT output and the raw CH_N9 readback at the time of the sample, both stable for the 10 ms before it; three consecutive bad samples decide. `CHAIN_END` live with ARM_PERMIT low (U24 shorted / PB10 stuck, single-fault row 38) → `FAULT` `PERMIT_STUCK_ON` and the **watchdog strobe is withheld**, so the external watchdog opens the chain at WDG_OK upstream of the suspect element and (JP1 closed) resets the MCU; after the reset the check fails again during `BOOT`, so the chassis stays inhibited and shows the flag in the `BOOT` windows. `CHAIN_END` dead with ARM_PERMIT high and CH_N9 live → warning `PERMIT_STUCK_OFF`, cause `MCU_NOT_READY` (fails safe; no arming). `CHAIN_END` live behind a dead CH_N9 → `CHAIN_IMPLAUSIBLE`. While `CHAIN_END_RB` cannot be read for 100 ms (warning `IOX_B`) ARM_PERMIT is withheld: the element is never closed unsupervised. The check runs at boot (ARM_PERMIT low) and at every permit change.
+- **Brake relays.** `BRAKE_x_RB` (OR over both poles) is valid only while the bridges sleep: it is evaluated after the bridges have been commanded asleep, or the latch readback has been low, for 3 ms; otherwise its last valid value is held. After the latch is set the bridges stay asleep until both relays read "connected", so both relay pick-ups are proven on every arming before any PWM (a relay that does not pick up within 200 ms is `VMOT_FAULT`).
+
 ### 4.2 Head presence (J1 pin 7 to pin 2)
 
 | `head_presence` | Resistance window (Ω) |
@@ -405,7 +417,7 @@ The hardware window comparator (healthy 600–1600 Ω) is in the chain. The firm
 | `MODE_NOT_RUN` | `MODE_RUN` readback open |
 | `ESTOP` | Either E-stop pole open |
 | `HANDS_ON` | HANDS-ON button engaged (contact open) |
-| `CHARGER` | Charge-inlet cover open **or** charge-plug link present |
+| `CHARGER` | Charge-inlet cover element or plug-link element open (§4.1a), **or** the charger reports input power (needed when those nodes are dead upstream, e.g. selector in SERVICE) |
 | `HEAD_UNDOCKED` | Dock switch open |
 | `HEAD_LOOP_OPEN` | Loop above the window while J1 is present |
 | `HEAD_LOOP_SHORT` | Loop below the window |
@@ -413,8 +425,24 @@ The hardware window comparator (healthy 600–1600 Ω) is in the chain. The firm
 | `LAB_KEY` | `head_presence` shows the LAB resistor, or the hardware `LAB_KEY_N` element is open |
 | `BODY_BUMPER` | Either body bumper switch open |
 | `WATCHDOG` | External watchdog output not OK |
-| `MCU_NOT_READY` | Firmware is withholding `ARM_PERMIT` (boot, fault, charge/LAB mode, stop escalation, brake test, presence `FAULT`) |
-| `VMOT_FAULT` | Latch set but VMOT below `brake.vmot_min_v` for > 100 ms; latch dropped but VMOT still present after the decay time; brake-relay readback inconsistent with the latch for > 200 ms; or the latch dropped with no readback explaining it. While the condition is present the firmware also withholds ARM_PERMIT. |
+| `MCU_NOT_READY` | Firmware is withholding `ARM_PERMIT` (boot, fault, charge/LAB mode, stop escalation, brake test, presence `FAULT`, `CHAIN_END_RB` unreadable), or the ARM_PERMIT element does not close (`PERMIT_STUCK_OFF`) |
+| `VMOT_FAULT` | Latch set but VMOT below `brake.vmot_min_v` for > 100 ms; latch dropped but VMOT still present after the decay time; brake-relay readback (while valid, §4.1a) inconsistent with the latch for > 200 ms; or the latch dropped with no readback explaining it. While the condition is present the firmware also withholds ARM_PERMIT. |
+
+### 4.5 Board constants behind the readings (IB-02)
+
+From RR-CHS-MAIN rev A (CCR-E03; netlist export `electronics/chassis_main/out/pinmap.json`). Tool-checked against the netlist; not measured on a board.
+
+| Quantity | Value | Source |
+|---|---|---|
+| ADC reference VREF+ | 3.000 V ±0.2 % (REF3030, U14); also feeds the NTC and PRES_ID pull-ups and the DRV8874 VREF pins | CCR-E03 (a) |
+| Bridge current sense IPROPI | 2.49 kΩ → 1.1205 V/A (0.8925 A/V); the bridges chop in hardware at 2.68 A = VREF+/1.1205 V/A, which is also the ADC full scale (readings saturate there). `drive.i_limit_a` (2.5 A, max 2.6 A) folds back below it | CCR-E03 (b), CCR-E06 |
+| PRES_ID | 4.70 kΩ 0.1 % pull-up to VREF+ directly on J1 pin 7, no series resistance in the measured path | CCR-E03 (c) |
+| Interlock-loop analog copy | V = V5_AUX·1000/(2200 + R_loop) (1.00 kΩ source, 2 × 100 Ω, 1.00 kΩ sense); V5_AUX taken as 5.0 V nominal (UNVERIFIED tolerance; only the diverse analog copy depends on it, the comparator window is ratiometric) | `chassis_safety_chain.md` §2.2 |
+| Chain readbacks | node voltages, live up to and including the element (§4.1a); tap reads high above 7.4 V | CCR-E03 (d), §2.3 |
+| `BRAKE_x_RB` | OR over both relay poles, valid only with the bridges asleep | CCR-E03 (e), §2.4 |
+| VMOT after a latch drop | 1 kΩ bleed on 810 µF, τ 0.8 s | §2.1, §7 step 4 |
+| Watchdog window | TPS3430, CWD = NC, SET0 = 0, SET1 = 1: next strobe 2.2–23.4 ms after the previous one; firmware strobes every 10 ms; WDO → NRST through JP1 (normally closed): first strobe due within 23 ms of reset release | §2.2, CCR-E11 |
+| Latch-drop dead time to the brake resistor | 10.5 ms (contact element), brake loop 3.22 Ω | `chassis_braking_tables.md` T2/T1 |
 
 ---
 
@@ -454,11 +482,11 @@ Sensor-derived reasons are latched only while the hardware latch is set (`ARMED_
 | Reason | Set when | Cause considered cleared when |
 |---|---|---|
 | `CLIFF_FL`, `CLIFF_FR`, `CLIFF_RL`, `CLIFF_RR` | Confirmed cliff at that sensor (§6.3), or an unconfirmed drop/invalid/stale sample at that sensor while moving in a direction it guards | Sensor reports floor in range again |
-| `LOOKAHEAD_L`, `LOOKAHEAD_R` | The look-ahead speed cap for that side reached zero while moving forward | Both sensors of that side report nominal floor |
+| `LOOKAHEAD_L`, `LOOKAHEAD_R` | The look-ahead speed cap of the left / right sensor of the pair in the direction of travel (forward: `LOOK_FL`/`LOOK_FR`, reverse: `LOOK_RL`/`LOOK_RR`) reached zero while moving that way | All look sensors on that side report nominal floor |
 | `FIELD_REAR` | Rear proximity inside the stop distance while reversing | Rear ranges outside the stop distance |
 | `FIELD_FRONT`, `FIELD_LEFT`, `FIELD_RIGHT` | Host `STOP PROTECTIVE` with that reason (the MCU has no front/side ranging; head-rail contact is in the hardwired chain) | Immediately (host owns the cause) |
 | `TOF_STALE` | A sensor guarding the direction of travel delivered no valid new sample for `tof.max_age_ms` while moving in that direction | All sensors fresh |
-| `TOF_DISAGREE` | Both sensors of a look-ahead side read "nominal floor" yet differ by more than `look.pair_tol_mm`, or a cliff sensor reads below `cliff.floor_min_mm` (blocked window), for `tof.disagree_ms`, while moving in a guarded direction | Agreement restored |
+| `TOF_DISAGREE` | A cliff sensor reads below `cliff.floor_min_mm` (blocked window) for `tof.disagree_ms` while moving in a guarded direction (no look-pair comparison, §6.3) | Reading back above the limit |
 | `CMD_TIMEOUT` | TTL of a non-zero command ended without a newer accepted command | Immediately |
 | `HOST_LINK_LOST` | While armed: no valid request of any kind for `link.timeout_ms`, USB not configured/suspended, or a new `HELLO` while `MOVING`. Consequence: arming with no host connected ends in `PROTECTIVE_STOP` after `link.timeout_ms`, and the local button cannot clear it until a host is polling. | A valid request has been received within `link.timeout_ms` |
 | `STALL` | Wheel at the current limit with speed below 10 % of set-point for `drive.stall_ms` | At rest |
@@ -478,9 +506,9 @@ If, after any stop was demanded (protective stop, hold, command timeout, hardwar
 
 ### 5.5 FAULT
 
-Entered on: E-stop pole discrepancy > 200 ms (`ESTOP_DISCREPANCY`), latch readback high while ARM_PERMIT has been low > 100 ms (`LATCH_STUCK`, also the result of a brake test whose latch does not drop), expander read path dead for 5 ms (`IOX_A`), ADC not converting for 5 ms (`ADC`), supervision task not seen by the control tick for 50 ms (`TIMING`). Left only by an MCU reset (power cycle or NRST). In `FAULT` the chassis keeps answering the protocol and keeps strobing the watchdog (ARM_PERMIT low already holds the chain open), so the host can read the cause; only `TIMING` stops the strobe, and the watchdog then resets the MCU. `faults` lists the active flags.
+Entered on: E-stop pole discrepancy > 200 ms while CH_N1 is live (`ESTOP_DISCREPANCY`), ARM_PERMIT element closed while commanded open (`PERMIT_STUCK_ON`, §4.1a), a chain node live behind a dead one (`CHAIN_IMPLAUSIBLE`), latch readback high while ARM_PERMIT has been low > 100 ms (`LATCH_STUCK`, also the result of a brake test whose latch does not drop), expander read path dead for 5 ms (`IOX_A`), ADC not converting for 5 ms (`ADC`), supervision task not seen by the control tick for 50 ms (`TIMING`). Left only by an MCU reset (power cycle or NRST). In `FAULT` the chassis keeps answering the protocol and keeps strobing the watchdog (ARM_PERMIT low already holds the chain open), so the host can read the cause; only `TIMING` and `PERMIT_STUCK_ON` stop the strobe, and the watchdog then opens the chain and resets the MCU. `faults` lists the active flags.
 
-Warnings that do **not** enter `FAULT` (also listed in `faults`): `CONFIG_DEFAULTED`, `LOOP_DISCREPANCY`, `J1_PRES_FAULT`, `CHARGER_COMM`, `PMON_COMM`, `TOF_BUS`, `HEATER_SENSOR`, `EFUSE_HEAD_PWR`, `EFUSE_HEAD_HTR`, `EFUSE_CHS_HTR`, `EFUSE_LIDAR`, `EFUSE_V5`, `BRIDGE_L`, `BRIDGE_R`, `BUS_CLAMP`, `BATTERY_WARN`.
+Warnings that do **not** enter `FAULT` (also listed in `faults`): `PERMIT_STUCK_OFF`, `IOX_B` (both withhold ARM_PERMIT), `CONFIG_DEFAULTED`, `LOOP_DISCREPANCY`, `J1_PRES_FAULT`, `CHARGER_COMM`, `PMON_COMM`, `TOF_BUS`, `HEATER_SENSOR`, `EFUSE_HEAD_PWR`, `EFUSE_HEAD_HTR`, `EFUSE_CHS_HTR`, `EFUSE_LIDAR`, `EFUSE_V5`, `BRIDGE_L`, `BRIDGE_R`, `BUS_CLAMP`, `BATTERY_WARN`.
 
 ### 5.6 Transition table
 
@@ -558,18 +586,30 @@ Direction classes of a command: `fwd` (v > 0), `rev` (v < 0), `pivot` (v = 0, w 
 |---|---|---|---|
 | `CLIFF_FL`, `CLIFF_FR` | `fwd`, `pivot` | Range > `cliff.drop_mm`, invalid, stale or < `cliff.floor_min_mm` → those directions are refused (`DIR_INHIBITED`) | Same condition while moving in a guarded direction → `CLIFF_x` (drop/invalid), `TOF_STALE` or `TOF_DISAGREE`. Drop on `cliff.confirm_n` consecutive valid samples = **confirmed cliff** → `CLIFF_x` latched whenever armed, moving or not |
 | `CLIFF_RL`, `CLIFF_RR` | `rev`, `pivot` | as above | as above |
-| `LOOK_LO`+`LOOK_LI` (left), `LOOK_RI`+`LOOK_RO` (right) | `fwd` | Speed cap from the stop model, see below | Cap reaches zero while moving forward → `LOOKAHEAD_L` / `LOOKAHEAD_R`. Stale → `TOF_STALE`; pair disagreement (both nominal, see §5.3) → `TOF_DISAGREE` |
+| `LOOK_FL`, `LOOK_FR` (grip cheeks, looking forward over the head) | `fwd` | Forward speed cap from the stop model, see below; stale → forward refused | Cap reaches zero while moving forward → `LOOKAHEAD_L` (`LOOK_FL`) / `LOOKAHEAD_R` (`LOOK_FR`). Stale while moving forward → `TOF_STALE` |
+| `LOOK_RL`, `LOOK_RR` (tail, looking rearward) | `rev` | Reverse speed cap from the stop model; stale → reverse refused | Cap reaches zero while reversing → `LOOKAHEAD_L` (`LOOK_RL`) / `LOOKAHEAD_R` (`LOOK_RR`). Stale while reversing → `TOF_STALE` |
 | `REAR_L`, `REAR_C`, `REAR_R` | `rev` | Range < `rear.stop_mm` (or invalid/stale) → reverse refused; below `rear.slow_mm` the reverse cap follows the stop model | Inside stop distance while reversing → `FIELD_REAR`; stale while reversing → `TOF_STALE` |
 
 **Stop model** (contract): d(v) = v·t_delay + v²/(2·a_min) + m with `stop.t_delay_ms` = 150, `stop.a_min_mps2` = 0.40, `stop.margin_m` = 0.020. The largest speed that stops within an available distance D is v_cap(D) = −a·t + √(a²t² + 2a(D − m)) for D > m, else 0.
 
-**Look-ahead.** Each oblique sensor normally sees the floor at `look.nominal_mm` ± `look.tol_mm`. A longer or invalid reading means the floor ends (or cannot be seen) at most `look.ahead_m` ahead of the leading support point; a shorter reading means something stands on the floor at range × `look.cos_fwd` ahead. From the first abnormal sample the remaining distance is tracked with odometry: D = distance at detection − distance travelled since. The forward cap is the minimum of the op_mode cap and v_cap(D) over all four sensors; it is released when all sensors read nominal again. When the cap reaches zero during forward motion the reason is latched.
+**Look-ahead (IB-34).** Two oblique sensors look forward from the grip cheeks over the head (`LOOK_FL`, `LOOK_FR`) and two look rearward from the tail (`LOOK_RL`, `LOOK_RR`); poses from `mechanical/common/frames.yaml` (`tof_look_fwd_left/right`, `tof_look_rev_left/right`). Each pair acts only on motion in its own direction: the forward pair caps and stops forward travel, the tail pair reverse travel; `LOOKAHEAD_L`/`LOOKAHEAD_R` name the robot-left (+y) / robot-right sensor of the pair in the direction of travel, so the host enum is unchanged. The pair that is not in the direction of travel never stops the robot but is evaluated every tick: a stale sensor refuses its direction (`allow`), an abnormal reading caps it, and both show in `DIAG.sw_active` and the `TOF` events.
+
+Each sensor normally sees the level floor at its nominal range ± tolerance (`look.fwd_*` / `look.rev_*`). A longer, no-target or invalid reading means the floor ends (or cannot be seen) at most `ahead` beyond the leading rail (forward) or beyond the 0.290 m tail swept radius (rear); from the first abnormal sample the remaining distance is tracked with odometry (travel in the pair's direction): D = `ahead` − distance travelled since. A shorter reading means something stands in the field at D = `ahead` − (nominal − range)·`cos`. The cap of that direction is the minimum of the op_mode cap and v_cap(D) over its pair; it is released when both sensors read nominal again. When the cap reaches zero while moving that way the reason is latched.
+
+| Pair | Nominal floor range | Tolerance | `ahead` | `cos` (x share of the range) | Spot separation / spot diameter |
+|---|---:|---:|---:|---:|---|
+| forward (x 0.0015, z 0.162, 18° down) | 524 mm | 60 mm (≈ ±2° pitch, 18 mm drop) | 0.285 m beyond the rail (x 0.2125) | 0.946 | 286 mm / ≈ 166 mm |
+| rear (x −0.248, z 0.100, 22° down) | 267 mm | 40 mm (≈ ±3.5° pitch, 15 mm drop) | 0.201 m beyond the 0.290 m tail radius | 0.913 | 217 mm / ≈ 85 mm |
+
+Values are computed from frames.yaml by `firmware/chassis/tools/look_geometry.py` (`check.sh` fails if the defaults drift). The tolerances are a firmware choice (calculated from the ray elevation, not measured). With these geometries the full 0.20 m/s forward cap survives a detection at the nominal distance (v_cap(0.285 m) = 0.40 m/s); a stop latches before the edge reaches the rail (simulated: 267 mm of 285 mm travelled at 0.20 m/s).
+
+**No pair cross-comparison.** `TOF_DISAGREE` is not raised from the look pairs: the floor spots of the two partners are 286 mm (forward) / 217 mm (rear) apart against spot diameters of about 166 / 85 mm (18° full field), so their fields do not overlap and a real edge seen by one sensor only is legitimate. Each sensor is instead checked against its own expected range. `TOF_DISAGREE` remains for a blocked cliff window.
 
 There is no automatic retreat and no degraded running: a stale or invalid sensor in the direction of travel always ends in a latched stop.
 
 ### 6.4 Odometry
 
-`left_ticks`/`right_ticks` are the 16-bit hardware quadrature counters extended to signed 64 bits in the 1 kHz interrupt, 9600 counts per wheel revolution at the gearbox output, sign positive for forward rolling on both sides. Every 10th tick (100 Hz) the pair is latched together with the chassis clock read in the same interrupt (`odom.t_us`; jitter < 20 µs on target, exact in the emulator). The host integrates differences of cumulative ticks, so skipped polls lose nothing. Wheel radius and track live in the configuration (`cal.*`, nominal defaults 0.052 m and 0.270 m for the Rev E body) and are applied by the host for odometry and by the chassis for command conversion; neither side may use literals. The chassis firmware contains no dimension of the head or of the head mount: the look-ahead and cliff geometry is expressed relative to the sensors themselves through `look.*`, `cliff.*` and `rear.*`.
+`left_ticks`/`right_ticks` are the 16-bit hardware quadrature counters extended to signed 64 bits in the 1 kHz interrupt, 9600 counts per wheel revolution at the gearbox output, sign positive for forward rolling on both sides. Every 10th tick (100 Hz) the pair is latched together with the chassis clock read in the same interrupt (`odom.t_us`; jitter < 20 µs on target, exact in the emulator). The host integrates differences of cumulative ticks, so skipped polls lose nothing. Wheel radius and track live in the configuration (`cal.*`, nominal defaults 0.052 m and 0.270 m for the Rev E body) and are applied by the host for odometry and by the chassis for command conversion; neither side may use literals. The chassis firmware contains no dimension of the head or of the head mount: the look-ahead and cliff geometry is expressed relative to the sensors themselves through `look.*`, `cliff.*` and `rear.*` (the `look.*` defaults are derived offline from frames.yaml, including the leading-rail position and the 0.290 m tail swept radius, §6.3).
 
 ### 6.5 IMU and tilt
 
@@ -600,8 +640,8 @@ Default off. With a set-point: time-proportional output (2 s period) from a prop
 ### 6.8 Stationary brake test
 
 1. Preconditions: at rest, latch set, VMOT ≥ `brake.vmot_min_v`, both brake relays read "driving".
-2. ARM_PERMIT low. Measure the time to latch readback low (limit `brake.latch_drop_max_ms`, 50), to both relay readbacks "braked" (same limit) and to VMOT < `brake.vmot_off_v` (1.0 V; limit `brake.vmot_decay_max_ms`, 1000).
-3. With the latch down, wake the bridges and apply `brake.probe_duty_pct` (10 %) to each side for 100 ms. Motor current must stay below `brake.probe_i_max_a` (0.1 A) and the wheels must not move (< 10 ticks): the bridges are isolated from the motors and from VMOT.
+2. ARM_PERMIT low. Measure the time to latch readback low (limit `brake.latch_drop_max_ms`, 50), to both relay readbacks "braked" (same limit; the readback is valid because the bridges are asleep) and to VMOT < `brake.vmot_off_v` (1.0 V; limit `brake.vmot_decay_max_ms`, 2500). The ARM_PERMIT low phase also exercises the `CHAIN_END_RB` check (§4.1a).
+3. With the latch down, command the bridges awake (the board's U9 gate keeps them asleep without RUN_12V) and apply `brake.probe_duty_pct` (10 %) to each side for 100 ms. Motor current must stay below `brake.probe_i_max_a` (0.1 A) and the wheels must not move (< 10 ticks): the bridges are isolated from the motors and from VMOT.
 4. Bridges asleep, ARM_PERMIT high again, result logged as `BRAKE_TEST` event.
 
 The test proves the switching elements, not the braking torque; the stopping distance under dynamic braking is established by the moving trial VT-003.
@@ -642,7 +682,7 @@ Limits: an uncalibrated gyro zero-rate offset (BMI088: up to about 0.02 rad/s, U
 |---|---|---|
 | `BOOT` | `reset` (cause), `boot_count`, `fw`, `prev_mode`, `prev_uptime_s`, `brownout` (bool) | Start-up. `prev_*` come from a reset-surviving RAM record of the previous run (null after power-on). |
 | `BROWNOUT` | `vbat_v` | VBAT fell below `batt.brownout_v` (9.5 V) — also logged from the retained record after the reset it caused |
-| `CHAIN` | `el` (`MODE_RUN`, `ESTOP_A`, `ESTOP_B`, `HANDS_ON`, `CHG_COVER`, `CHG_PLUG_LINK`, `HEAD_DOCK`, `HEAD_LOOP_OK`, `HEAD_LOOP_SHORT`, `LAB_KEY_N`, `BODY_BUMPER_L`, `BODY_BUMPER_R`, `WDG_OK`, `BRAKE_L`, `BRAKE_R`), `closed` (bool) | Debounced transition of that readback |
+| `CHAIN` | `el` (`MODE_RUN`, `ESTOP_A`, `ESTOP_B`, `HANDS_ON`, `CHG_COVER`, `CHG_PLUG_LINK`, `HEAD_DOCK`, `HEAD_LOOP_OK`, `HEAD_LOOP_SHORT`, `LAB_KEY_N`, `BODY_BUMPER_L`, `BODY_BUMPER_R`, `WDG_OK`, `BRAKE_L`, `BRAKE_R`), `closed` (bool) | Debounced transition of that readback while its element is known (§4.1a) |
 | `HW_LATCH` | `set` (bool), `reasons` (latched set at that moment) | Latch readback transition |
 | `PERMIT` | `on` (bool), `why` (`NORMAL`, `UNCOMMANDED_MOTION`, `STOP_ESCALATION`, `BRAKE_TEST`, `MODE`) | ARM_PERMIT output change |
 | `J1` | `from`, `to` (`head_presence`), `ohm` | J1 presence class change |
@@ -692,11 +732,11 @@ Stored as 32-bit values in flash with CRC. `rw` = settable with `CONFIG_SET`. Ca
 | `drive.yaw_accel_radps2` | 1.5 | 0.2 | 3.0 | rad/s² | |
 | `drive.kp` | 0.12 | 0 | 2.0 | duty·s/rad | Wheel loop proportional gain (wheel angular speed) |
 | `drive.ki` | 2.5 | 0 | 50 | duty/rad | Wheel loop integral gain |
-| `drive.i_limit_a` | 2.5 | 0.5 | 5.0 | A | Per-motor current limit |
+| `drive.i_limit_a` | 2.5 | 0.5 | 2.6 | A | Per-motor current limit (fold-back below the 2.68 A hardware chop of the bridges, CCR-E03 b) |
 | `drive.stall_ms` | 500 | 100 | 2000 | ms | |
 | `drive.enc_fault_ms` | 100 | 20 | 500 | ms | |
 | `drive.uncmd_ticks` | 600 | 50 | 5000 | ticks | ≈ 20 mm of uncommanded travel at the nominal radius |
-| `drive.motor_r_ohm` | 2.2 | 0.5 | 10 | Ω | Motor model (encoder plausibility, feed-forward) |
+| `drive.motor_r_ohm` | 2.18 | 0.5 | 10 | Ω | Motor model (encoder plausibility, feed-forward) |
 | `drive.motor_ke` | 1.65 | 0.5 | 5 | V·s/rad | Back-EMF constant at the wheel |
 | `link.timeout_ms` | 1000 | 300 | 5000 | ms | Host link supervision while armed |
 | `alert.premotion_ms` | 1500 | 500 | 5000 | ms | Pre-motion alert |
@@ -708,11 +748,14 @@ Stored as 32-bit values in flash with CRC. `rw` = settable with `CONFIG_SET`. Ca
 | `cliff.drop_mm` | 60 | 20 | 200 | mm | Downward range above this = drop |
 | `cliff.floor_min_mm` | 8 | 0 | 50 | mm | Below this = blocked window |
 | `cliff.confirm_n` | 3 | 1 | 10 | samples | |
-| `look.nominal_mm` | 150 | 50 | 600 | mm | Oblique range to nominal floor |
-| `look.tol_mm` | 40 | 10 | 200 | mm | |
-| `look.ahead_m` | 0.12 | 0.03 | 0.50 | m | Floor intersection ahead of the leading support point |
-| `look.cos_fwd` | 0.80 | 0.3 | 1.0 | — | Horizontal forward fraction of the oblique range |
-| `look.pair_tol_mm` | 60 | 10 | 300 | mm | |
+| `look.fwd_nominal_mm` | 524 | 50 | 1000 | mm | Forward pair: range to the level floor (frames.yaml) |
+| `look.fwd_tol_mm` | 60 | 10 | 200 | mm | |
+| `look.fwd_ahead_m` | 0.285 | 0.03 | 0.60 | m | Floor point beyond the leading rail |
+| `look.fwd_cos` | 0.946 | 0.3 | 1.0 | — | x share of the oblique range |
+| `look.rev_nominal_mm` | 267 | 50 | 1000 | mm | Tail pair: range to the level floor |
+| `look.rev_tol_mm` | 40 | 10 | 200 | mm | |
+| `look.rev_ahead_m` | 0.201 | 0.03 | 0.60 | m | Floor point beyond the 0.290 m tail swept radius |
+| `look.rev_cos` | 0.913 | 0.3 | 1.0 | — | |
 | `rear.stop_mm` | 120 | 40 | 500 | mm | |
 | `rear.slow_mm` | 300 | 60 | 1000 | mm | |
 | `stop.t_delay_ms` | 150 | 20 | 500 | ms | Stop model |
@@ -739,7 +782,7 @@ Stored as 32-bit values in flash with CRC. `rw` = settable with `CONFIG_SET`. Ca
 | `brake.latch_drop_max_ms` | 50 | 5 | 500 | ms | |
 | `brake.vmot_min_v` | 9.0 | 5 | 12 | V | |
 | `brake.vmot_off_v` | 1.0 | 0.2 | 5 | V | |
-| `brake.vmot_decay_max_ms` | 1000 | 50 | 2500 | ms | |
+| `brake.vmot_decay_max_ms` | 2500 | 50 | 5000 | ms | 1 kΩ bleed on 810 µF: τ 0.8 s, 1 V reached after ≈ 2.1 s from 13 V (`chassis_safety_chain.md` §7: the window must allow 3 τ) |
 | `brake.probe_duty_pct` | 10 | 2 | 30 | % | |
 | `brake.probe_i_max_a` | 0.1 | 0.02 | 1.0 | A | |
 
@@ -761,3 +804,5 @@ Stored as 32-bit values in flash with CRC. `rw` = settable with `CONFIG_SET`. Ca
 - `alert.rest_ms` default (5 s) versus the step-and-count station time (§6.11).
 - A local PAUSE can at present be released remotely by `REARM_SW`; whether local pauses should require local release is an operating-procedure decision.
 - All field distances and the stop-model inputs are design values; VT-003/004/005/035 replace them.
+- Contract 0.4.0-draft7 adds `LATCH_UNEXPLAINED` (hw) and `STOP_ESCALATED` (sw); this revision still reports an unexplained drop as `VMOT_FAULT` and an escalation as `MCU_NOT_READY` (+ `PERMIT` event), see CCR-CHS-08.
+- The boot-time watchdog self-test of `chassis_safety_chain.md` §7 step 2 (withhold the strobe, expect WDG_OK to fall) is not implemented: with JP1 closed it resets the MCU and needs a reset-surviving test record.
