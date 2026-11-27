@@ -34,6 +34,10 @@ static void clear_accumulators(rrh_evtcap_t *e)
     memset(e->next_busy, 0, sizeof e->next_busy);
     memset(e->next_width_hist, 0, sizeof e->next_width_hist);
     e->next_saturated = 0u;
+    memset(e->ambig_alpha, 0, sizeof e->ambig_alpha);
+    memset(e->next_ambig_alpha, 0, sizeof e->next_ambig_alpha);
+    memset(e->forced_cnt, 0, sizeof e->forced_cnt);
+    memset(e->next_forced_cnt, 0, sizeof e->next_forced_cnt);
     memset(e->short_alpha, 0, sizeof e->short_alpha);
     memset(e->next_short_alpha, 0, sizeof e->next_short_alpha);
     memset(e->idle_clears, 0, sizeof e->idle_clears);
@@ -52,6 +56,8 @@ bool rrh_evtcap_start(rrh_evtcap_t *e, uint64_t first_gate_tick, uint32_t gate_t
     e->seq = 0u;
     e->fifo_tail = e->fifo_head; /* drop anything left from an earlier run */
     e->heater_prev = e->heater_state;
+    e->heater_acc = 0u;
+    e->heater_on_since = first_gate_tick;
     e->stopping = false;
     e->running = true;
     return true;
@@ -70,10 +76,19 @@ bool rrh_evtcap_stop(rrh_evtcap_t *e, uint64_t now_tick)
     return true;
 }
 
-static void heater_apply(rrh_evtcap_t *e, bool on)
+static void heater_apply(rrh_evtcap_t *e, bool on, uint64_t tick)
 {
     if (on != e->heater_state) {
+        if (e->heater_state) {
+            const uint64_t from = (e->heater_on_since > e->g0) ? e->heater_on_since : e->g0;
+            if (e->running && (tick > from)) {
+                e->heater_acc += tick - from; /* on-time up to the edge */
+            }
+        } else {
+            e->heater_on_since = tick;
+        }
         e->heater_state = on;
+        e->heater_edge = e->running || e->heater_edge;
         if (e->cfg.heater != NULL) {
             e->cfg.heater(e->cfg.ctx, on);
         }
@@ -85,7 +100,7 @@ void rrh_evtcap_abort(rrh_evtcap_t *e)
     e->running = false;
     e->stopping = false;
     e->fifo_tail = e->fifo_head;
-    heater_apply(e, e->heater_req);
+    heater_apply(e, e->heater_req, e->last_now);
 }
 
 bool rrh_evtcap_running(const rrh_evtcap_t *e)
@@ -98,14 +113,14 @@ bool rrh_evtcap_running(const rrh_evtcap_t *e)
 void rrh_evtcap_heater_force_off(rrh_evtcap_t *e)
 {
     e->heater_req = false;
-    heater_apply(e, false);
+    heater_apply(e, false, e->last_now);
 }
 
 void rrh_evtcap_heater_request(rrh_evtcap_t *e, bool on)
 {
     e->heater_req = on;
     if (!e->running) {
-        heater_apply(e, on); /* no gate boundaries to wait for */
+        heater_apply(e, on, e->last_now); /* no gate boundaries to wait for */
     }
 }
 
@@ -136,8 +151,15 @@ static void close_gate(rrh_evtcap_t *e)
         r->gate_start_tick = e->g0;
         r->gate_ticks = e->gate_ticks;
         r->tick_hz = e->cfg.tick_hz;
-        r->heater_on_ticks = e->heater_state ? e->gate_ticks : 0u;
-        r->heater_transition_in_gate = e->heater_state != e->heater_prev;
+        {
+            uint64_t on = e->heater_acc;
+            if (e->heater_state) {
+                const uint64_t from = (e->heater_on_since > e->g0) ? e->heater_on_since : e->g0;
+                on += (e->g1 > from) ? (e->g1 - from) : 0u;
+            }
+            r->heater_on_ticks = (on > e->gate_ticks) ? e->gate_ticks : (uint32_t)on; /* exact at the switch edges, not the state at close */
+        }
+        r->heater_transition_in_gate = (e->heater_state != e->heater_prev) || e->heater_edge;
         for (uint32_t lane = 0u; lane < RRH_LANES; lane++) {
             rrh_gate_lane_t *l = &r->lane[lane];
             const uint32_t fc = lane;
@@ -151,6 +173,9 @@ static void close_gate(rrh_evtcap_t *e)
             l->ref_live_ticks = live_of(e, rc);
             l->alpha_idle_clears = e->idle_clears[lane];
             l->alpha_short_counts = e->short_alpha[lane];
+            l->alpha_ambig_counts = e->ambig_alpha[lane];
+            l->floor_forced_counts = e->forced_cnt[fc];
+            l->ref_forced_counts = e->forced_cnt[rc];
             if ((((uint32_t)e->saturated >> fc) & 1u) != 0u) {
                 l->flags |= RRH_GF_FLOOR_SATURATED;
             }
@@ -178,6 +203,10 @@ static void close_gate(rrh_evtcap_t *e)
     memset(e->next_width_hist, 0, sizeof e->next_width_hist);
     memcpy(e->count, e->next_count, sizeof e->count);
     memcpy(e->busy, e->next_busy, sizeof e->busy);
+    memcpy(e->ambig_alpha, e->next_ambig_alpha, sizeof e->ambig_alpha);
+    memset(e->next_ambig_alpha, 0, sizeof e->next_ambig_alpha);
+    memcpy(e->forced_cnt, e->next_forced_cnt, sizeof e->forced_cnt);
+    memset(e->next_forced_cnt, 0, sizeof e->next_forced_cnt);
     memcpy(e->short_alpha, e->next_short_alpha, sizeof e->short_alpha);
     memset(e->next_short_alpha, 0, sizeof e->next_short_alpha);
     memcpy(e->idle_clears, e->next_idle_clears, sizeof e->idle_clears);
@@ -187,6 +216,8 @@ static void close_gate(rrh_evtcap_t *e)
     memset(e->next_busy, 0, sizeof e->next_busy);
     e->next_saturated = 0u;
     e->heater_prev = e->heater_state;
+    e->heater_edge = false;
+    e->heater_acc = 0u;
     e->g0 = e->g1;
     e->g1 += e->gate_ticks;
     e->seq++;
@@ -195,7 +226,7 @@ static void close_gate(rrh_evtcap_t *e)
         e->running = false;
         e->heater_req = false; /* the heater goes off with the final gate */
     }
-    heater_apply(e, e->heater_req);
+    heater_apply(e, e->heater_req, e->g0);
 }
 
 /* Book the busy interval [from, to) of a chain into the gate in progress and, beyond g1, into the
@@ -267,6 +298,7 @@ static void idle_alpha_service(rrh_evtcap_t *e, uint64_t now, const rrh_evt_in_t
 
 void rrh_evtcap_service(rrh_evtcap_t *e, uint64_t now, const rrh_evt_in_t *in)
 {
+    e->last_now = now;
     /* 1. Adopt events whose BUSY was captured since the last service. */
     const uint8_t fresh = (uint8_t)(in->busy & (uint8_t)~e->pending);
     for (uint32_t ch = 0u; (fresh != 0u) && (ch < RRH_EVT_CHAINS); ch++) {
@@ -314,6 +346,7 @@ void rrh_evtcap_service(rrh_evtcap_t *e, uint64_t now, const rrh_evt_in_t *in)
         uint32_t cls;
         uint32_t wbin;
         bool is_short = false;
+        bool is_ambig = false;
         if (in_hold) {
             /* class and width were decided when the event first became ready */
             /* The hold itself is never "too long" (it is bounded by RRH_ALPHA_HOLD_MAX_US); the
@@ -340,8 +373,13 @@ void rrh_evtcap_service(rrh_evtcap_t *e, uint64_t now, const rrh_evt_in_t *in)
                     const bool width_ok = (e->alpha_tot_min_ticks == 0u) ||
                                           ((((uint32_t)e->cfg.width_mask & (uint32_t)in->width_valid & (uint32_t)bit) != 0u) &&
                                            (in->width_ticks[ch] >= e->alpha_tot_min_ticks));
-                    is_short = !width_ok;
-                    cls = width_ok ? 0u : 2u; /* short ALPHA: a bright beta (or unmeasurable): reject, never alpha */
+                    /* a second pulse before classification: the captured width is the first pulse's, but the event is not one pulse */
+                    const bool unmeasured = (e->alpha_tot_min_ticks != 0u) &&
+                                            ((((uint32_t)e->cfg.width_mask & (uint32_t)in->width_valid & (uint32_t)bit) == 0u));
+                    const bool ok = width_ok && ((in->width_multi & bit) == 0u);
+                    is_short = !ok;
+                    is_ambig = is_short && (unmeasured || ((in->width_multi & bit) != 0u));
+                    cls = ok ? 0u : 2u; /* short ALPHA: a bright beta (or unmeasurable): reject, never alpha */
                 } else {
                     cls = ((in->uld & bit) != 0u) ? 2u : 1u;
                 }
@@ -385,6 +423,11 @@ void rrh_evtcap_service(rrh_evtcap_t *e, uint64_t now, const rrh_evt_in_t *in)
          * goes to the next gate. */
         if (forced) {
             if (clear < e->g1) {
+                e->forced_cnt[ch]++;
+            } else {
+                e->next_forced_cnt[ch]++;
+            }
+            if (clear < e->g1) {
                 e->saturated |= bit; /* over-long BUSY: not counted, the gate is flagged */
             } else {
                 e->next_saturated |= bit;
@@ -393,8 +436,10 @@ void rrh_evtcap_service(rrh_evtcap_t *e, uint64_t now, const rrh_evt_in_t *in)
             if (is_short) {
                 if (clear < e->g1) {
                     e->short_alpha[ch]++;
+                    e->ambig_alpha[ch] += is_ambig ? 1u : 0u;
                 } else {
                     e->next_short_alpha[ch]++;
+                    e->next_ambig_alpha[ch] += is_ambig ? 1u : 0u;
                 }
             }
             if (clear < e->g1) {

@@ -32,6 +32,8 @@ typedef struct {
     sim_rate_change_t sched[SIM_SCHED_MAX];
     uint32_t n_sched;
     double tau_floor_us, tau_ref_us;
+    double pileup_us;       /* a second floor pulse within this time of an event's start piles up (default 9 us: 4 us window + up to one 10 us service) */
+    bool width_overwrite;   /* emulate the firmware 0.4/0.5 STM32 port bug: the width capture is overwritten by the second pulse (piled-up bright betas become alphas) */
     double alpha_pe;   /* photo-electrons of a ZnS alpha event (default 1500) */
     double bright_pe;  /* photo-electrons of a bright beta event (default 120) */
     /* acquisition source */

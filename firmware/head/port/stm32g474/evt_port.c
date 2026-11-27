@@ -38,6 +38,7 @@ static uint64_t clear_cb(void *ctx, uint8_t chain)
     GPIOE->BSRR = 1uL << k_clr_pin[chain]; /* CLR high: the chain can latch again */
     g_busy &= (uint8_t)~(1u << chain);
     g_in.width_valid &= (uint8_t)~(1u << chain);
+    g_in.width_multi &= (uint8_t)~(1u << chain);
     return t + EVT_CLR_TICKS;
 }
 
@@ -91,11 +92,26 @@ void TIM6_DAC_IRQHandler(void)
                 continue;
             }
             const uint16_t cap = (uint16_t)(floor ? (&TIM4->CCR1)[n] : (&TIM3->CCR1)[n]); /* clears the flag */
+            /* CCxOF: a second capture arrived before this one was read; the register holds the LAST edge, not the first. */
+            const uint32_t of_bit = TIM_SR_CC1OF << n;
+            const bool overrun = ((floor ? sr4 : sr3) & of_bit) != 0u;
+            if (overrun) {
+                (floor ? TIM4 : TIM3)->SR = ~of_bit; /* write 0 to clear the overrun flag */
+            }
             if ((g_busy & (1u << ch)) != 0u) {
-                const uint16_t w = (uint16_t)(cap + (floor ? g_tim4_offset : g_tim3_offset) - (uint16_t)g_in.start_tick[ch]);
-                if (w < 0xC000u) { /* a capture from before the start shows up as a huge value */
-                    g_in.width_ticks[ch] = w;
-                    g_in.width_valid |= (uint8_t)(1u << ch);
+                if ((g_in.width_valid & (1u << ch)) != 0u) {
+                    /* Review M6a: the width of the FIRST falling edge after the BUSY start is kept (0.4 overwrote it, which made a
+                     * bright beta that piled up look like a long alpha). A later edge only marks the event ambiguous. */
+                    g_in.width_multi |= (uint8_t)(1u << ch);
+                } else {
+                    const uint16_t w = (uint16_t)(cap + (floor ? g_tim4_offset : g_tim3_offset) - (uint16_t)g_in.start_tick[ch]);
+                    if (w < 0xC000u) { /* a capture from before the start shows up as a huge value */
+                        g_in.width_ticks[ch] = w;
+                        g_in.width_valid |= (uint8_t)(1u << ch);
+                    }
+                    if (overrun) {
+                        g_in.width_multi |= (uint8_t)(1u << ch); /* the register held the last of several edges */
+                    }
                 }
             }
         }

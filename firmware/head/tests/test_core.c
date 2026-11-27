@@ -47,6 +47,7 @@ bool rrh_hal_entropy(uint8_t *buf, size_t len)
 }
 rrh_reset_cause_t rrh_hal_reset_cause(void) { return m.reset_cause; }
 void rrh_hal_watchdog_kick(void) { m.kicks++; }
+uint32_t rrh_hal_image_crc32(void) { return 0xC0DE0001u; }
 bool rrh_hal_acq_start(uint32_t span_us, rrh_epoch_t *epoch)
 {
     if (!m.start_ok) {
@@ -884,6 +885,8 @@ static void test_setup_members_and_defaults(void)
         CHECK(core.setup.fe.threshold[12u + (l * 2u)] > base);
     }
     CHECK(core.setup.fe.alpha_hold_us == 300u);
+    /* reference ULD: the fast amplitude at which a plastic event crosses the floor ALPHA level (30 mV x 18.8 = 564 mV = 81 p.e.) */
+    CHECK(core.setup.fe.threshold[13] == rrh_board_threshold_code(564000u));
     handshake();
     CHECK(send("ENG_SETUP_GET", "{}") && has("\"afterglow\":{\"alpha_hold_us\":300,\"alpha_min_tot_ns\":0}") && has("\"channel\":0,\"width_us\":2"));
     char old_id[100];
@@ -1243,6 +1246,91 @@ static void test_heater_overcurrent_cutoff(void)
     CHECK((core.setup.heater_oc_ma == 2800u) && (core.setup.heater_oc_ms == 100u));
 }
 
+
+static bool flags_of_frame_have_acq_fault(int seq)
+{
+    return send("READ", "{\"after_seq\":%d}", seq - 1) && status_is("OK") && has("\"flags\":[\"ACQ_FAULT\"]") &&
+           (body_int("sequence") == seq);
+}
+
+static void test_acq_fault_is_per_gate_and_clears_itself(void)
+{
+    mock_reset();
+    boot();
+    handshake();
+    arm(100000u);
+    advance(1000u + 100000u * 3u);
+    m.skip = 2u; /* two records lost by the source */
+    advance(100000u * 8u);
+    CHECK((core.health & RRH_H_RECORD_LOST) != 0u && (core.gates_lost_total == 2u) && (core.fault_events_total == 1u));
+    /* frames 0..2 fine; 3, 4 never existed (the sequence gap tells the host which gates are missing); frame 5 carries ACQ_FAULT once ... */
+    CHECK(flags_of_frame_have_acq_fault(5));
+    /* ... and none of the later ones does: one lost record no longer poisons the rest of the boot */
+    for (int seq = 6; seq < 9; seq++) {
+        CHECK(send("READ", "{\"after_seq\":%d}", seq - 1) && status_is("OK") && has("\"flags\":[]"));
+    }
+    CHECK(send("STATUS", "{}") && has("\"gates_lost\":2,\"fault_events\":1") && has("RECORD_LOST")); /* the latch stays for STATUS */
+    /* a timing fault: reported in that gate only */
+    m.gate_ticks_override = 4800048u;
+    advance(100000u);
+    m.gate_ticks_override = 0u;
+    advance(300000u);
+    CHECK((core.health & RRH_H_GATE_TIMING) != 0u && (core.fault_events_total >= 2u));
+    /* HELLO starts a new acquisition epoch: the stream latches are history, the totals survive, boot-wide faults are not touched */
+    core.health |= RRH_H_SOURCE;
+    CHECK(send("HELLO", "{}"));
+    CHECK((core.health & (RRH_H_RECORD_LOST | RRH_H_GATE_TIMING)) == 0u && ((core.health & RRH_H_SOURCE) != 0u));
+    CHECK(core.gates_lost_total == 2u);
+    /* a boot-wide clock fault and the deliberate test latch stay in every frame until FAULT_CLEAR */
+    handshake();
+    arm(100000u);
+    advance(500000u);
+    CHECK(send("READ", "{\"after_seq\":%d}", (int)core.next_seq - 2) && has("\"flags\":[\"ACQ_FAULT\"]"));
+}
+
+static void test_identity_build_and_calibration_id(void)
+{
+    mock_reset();
+    boot();
+    handshake();
+    CHECK(send("STATUS", "{}") && has("\"build\":{\"firmware\":\"rr-head-0.6.0\",\"build_id\":\"") && has("\"image_crc32\":\"C0DE0001\""));
+    CHECK(has("\"identity\":{\"serial\":\"UNIT-0001\",\"electronics_revision\":\"RR-HEAD-ACQ-A\""));
+    char cal0[24];
+    strcpy(cal0, core.cal_id);
+    CHECK(strncmp(cal0, "CAL1-", 5) == 0 && strlen(cal0) == 17u);
+    CHECK(has(cal0));
+    CHECK(send("DIAG", "{\"seq\":0}") || true);
+    CHECK(send("ENG_SETUP_SET", "{\"bias\":{\"vmon_ratio_e4\":254755}}") && status_is("OK"));
+    CHECK(strcmp(cal0, core.cal_id) != 0); /* a different calibration in force has a different identifier */
+    /* the same calibration on another head has another identifier (the serial is in the preimage) */
+    char cal1[24];
+    strcpy(cal1, core.cal_id);
+    rrh_identity_defaults(&ident, "UNIT-0002");
+    ident.allow_placeholder_thresholds = true;
+    rrh_core_init(&core, &ident);
+    CHECK(strcmp(cal1, core.cal_id) != 0 && strcmp(cal0, core.cal_id) != 0);
+    /* HELLO carries the serial and firmware, the descriptor the electronics revision: what a calibration binds to */
+    CHECK(send("HELLO", "{}") && has("\"head_id\":\"UNIT-0002\"") && has("\"firmware\":\"rr-head-0.6.0\""));
+}
+
+static void test_gatestat_joins_acq_by_sequence(void)
+{
+    mock_reset();
+    boot();
+    handshake();
+    m.lane_template[1].floor_live_ticks = 1000000u; /* a saturating lane: live fraction 21 % of 4 800 000 ticks */
+    arm(100000u);
+    advance(1000u + 100000u * 6u);
+    CHECK(send("GATESTAT", "{\"after_seq\":-1,\"limit\":3}") && status_is("OK") && has("\"seq\":0,") && has("\"seq\":2,") && !has("\"seq\":3,"));
+    CHECK(has("\"more\":true") && has("\"last_seq\":2"));
+    CHECK(has("\"lf\":[") && has("\"sc\":[0,2,0,0]")); /* lane 1: floor live fraction < 50 % = saturation cause bit 1 */
+    CHECK(send("GATESTAT", "{\"after_seq\":2,\"limit\":12}") && has("\"seq\":3,") && has("\"more\":false"));
+    CHECK(send("GATESTAT", "{\"after_seq\":99}") && status_is("EMPTY"));
+    CHECK(send("GATESTAT", "{\"limit\":13}") && status_is("BAD_ARG"));
+    CHECK(send("READ", "{\"after_seq\":2}") && status_is("OK") && (body_int("sequence") == 3)); /* same numbering as ACQ */
+    printf("    GATESTAT 3 gates: %zu bytes of JSON\n", strlen(rsp));
+}
+
 int main(void)
 {
     RUN(test_boot_state_is_unbound);
@@ -1268,5 +1356,8 @@ int main(void)
     RUN(test_bias_calibration_and_ramp_step);
     RUN(test_frame_potential_check);
     RUN(test_heater_overcurrent_cutoff);
+    RUN(test_acq_fault_is_per_gate_and_clears_itself);
+    RUN(test_identity_build_and_calibration_id);
+    RUN(test_gatestat_joins_acq_by_sequence);
     return TEST_SUMMARY();
 }

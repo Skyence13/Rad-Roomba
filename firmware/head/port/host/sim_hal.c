@@ -106,6 +106,7 @@ void sim_init(sim_t *s, uint64_t seed, bool manual)
     s->tau_floor_us = 10.0;
     s->tau_ref_us = 10.0;
     s->arm_delay_us = 2000u;
+    s->pileup_us = 9.0;
     s->alpha_pe = 1500.0;
     s->bright_pe = 120.0;
     s->tick_offset = 987654321u;
@@ -201,6 +202,12 @@ rrh_reset_cause_t rrh_hal_reset_cause(void)
 
 void rrh_hal_watchdog_kick(void)
 {
+}
+
+uint32_t rrh_hal_image_crc32(void)
+{
+    static const char id[] = RRH_FW_VERSION "/" RRH_BUILD_ID;
+    return rrc_crc32((const uint8_t *)id, sizeof id - 1u);
 }
 
 /* ---- acquisition source ---------------------------------------------------------------------- */
@@ -442,7 +449,31 @@ bool rrh_hal_acq_poll(rrh_gate_record_t *rec)
             const uint32_t n_brt = rng_poisson(s->rng, mean[l][5] * ff);
             const uint32_t n_cls[2] = {n_zns, n_brt};
             const outcome_t o_cls[2] = {o_zns, o_brt};
+            /* Pile-up: a second pulse on the chain before classification. The firmware keeps the first pulse's width and marks the
+             * event ambiguous: an ALPHA-latched event is then never alpha (alpha_short + alpha_ambig). With width_overwrite the 0.4/0.5
+             * port behaviour is reproduced instead: the width is the LAST pulse's, so piled-up bright betas look long and become alphas. */
+            const double p_pile = 1.0 - exp(-floor_true * s->pileup_us * 1e-6);
             for (uint32_t k = 0u; k < 2u; k++) {
+                uint32_t n_pile = ((o_cls[k] == OUT_ALPHA) || (o_cls[k] == OUT_SHORT)) ? rng_poisson(s->rng, (double)n_cls[k] * p_pile) : 0u;
+                if (n_pile > n_cls[k]) {
+                    n_pile = n_cls[k];
+                }
+                if (s->width_overwrite) {
+                    if (o_cls[k] == OUT_SHORT) {
+                        g->alpha_counts += n_pile;                 /* false alphas */
+                        g->floor_reject_counts += n_cls[k] - n_pile;
+                        g->alpha_short_counts += n_cls[k] - n_pile;
+                        continue;
+                    }
+                } else if (o_cls[k] == OUT_ALPHA) {
+                    g->alpha_counts += n_cls[k] - n_pile;
+                    g->floor_reject_counts += n_pile;
+                    g->alpha_short_counts += n_pile;
+                    g->alpha_ambig_counts += n_pile;
+                    continue;
+                } else if (o_cls[k] == OUT_SHORT) {
+                    g->alpha_ambig_counts += n_pile;
+                }
                 switch (o_cls[k]) {
                 case OUT_ALPHA: g->alpha_counts += n_cls[k]; break;
                 case OUT_BETA: g->beta_counts += n_cls[k]; break;

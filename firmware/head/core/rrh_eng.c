@@ -11,6 +11,7 @@
  *   ENG_WAVE_ARM {...}    not armed    arm a monitor waveform capture
  *   ENG_WAVE_READ {...}   any state    fetch captured samples in base64 chunks
  */
+#include <stdio.h>
 #include <string.h>
 
 #include "rrh_internal.h"
@@ -66,6 +67,98 @@ static void op_diag(rrh_core_t *c, const rrc_json_t *d, const rrc_req_t *req, rr
     rrc_rsp_end(w);
 }
 
+/* GATESTAT {after_seq?, limit?}: compact per-gate engineering counters of every retained gate after after_seq (oldest first), keyed by the SAME
+ * sequence numbers as ACQ so the two join exactly (review M6b). About 270 bytes per gate: a poll of 10 gates once a second is about 2.7 %
+ * of a 1 Mbaud bus (DIAG every gate would be 14 %). */
+static void put_arr4(rrc_jw_t *w, const char *key, const rrh_frame_t *f, uint32_t what)
+{
+    rrc_jw_key(w, key);
+    rrc_jw_arr_begin(w);
+    for (uint32_t l = 0u; l < RRH_LANES; l++) {
+        const rrh_frame_lane_t *x = &f->lane[l];
+        uint64_t v = 0u;
+        switch (what) {
+        case 0u: v = x->floor_reject; break;
+        case 1u: v = x->alpha_short; break;
+        case 2u: v = x->alpha_ambig; break;
+        case 3u: v = x->alpha_idle_clears; break;
+        case 4u: v = x->floor_forced; break;
+        case 5u: v = x->ref_forced; break;
+        case 6u: v = x->sat_cause; break;
+        case 7u: v = (f->gate_ticks == 0u) ? 0u : (((uint64_t)x->floor_live_ticks * 1000u) / f->gate_ticks); break;
+        case 8u: v = (f->gate_ticks == 0u) ? 0u : (((uint64_t)x->ref_live_ticks * 1000u) / f->gate_ticks); break;
+        case 9u: v = x->alpha; break;
+        case 10u: v = x->beta; break;
+        case 11u: v = x->ref; break;
+        default: v = x->ref_reject; break;
+        }
+        rrc_jw_u64(w, v);
+    }
+    rrc_jw_arr_end(w);
+}
+
+static void op_gatestat(rrh_core_t *c, const rrc_json_t *d, const rrc_req_t *req, rrc_jw_t *w)
+{
+    int64_t after = -1;
+    int64_t limit = 10;
+    if (c->link != RRH_LINK_BOUND) {
+        rrh_reply_status(w, req->id, "UNBOUND", NULL);
+        return;
+    }
+    const int ta = rrc_json_get(d, req->args, "after_seq");
+    const int tl = rrc_json_get(d, req->args, "limit");
+    if (((ta >= 0) && (!rrc_json_to_i64(d, ta, &after) || (after < -1) || (after > 9007199254740991LL))) ||
+        ((tl >= 0) && (!rrc_json_to_i64(d, tl, &limit) || (limit < 1) || (limit > 12)))) {
+        rrh_reply_status(w, req->id, "BAD_ARG", "args");
+        return;
+    }
+    const rrh_frame_t *oldest = rrh_acq_oldest(c);
+    const rrh_frame_t *f = rrh_acq_first_after(c, after);
+    if (oldest == NULL) {
+        rrh_reply_status(w, req->id, "EMPTY", NULL);
+        return;
+    }
+    if ((after >= 0) && ((uint64_t)after + 1u < oldest->sequence)) {
+        put_range_status(c, w, req->id, "GAP");
+        return;
+    }
+    if (f == NULL) {
+        rrh_reply_status(w, req->id, "EMPTY", NULL);
+        return;
+    }
+    rrc_rsp_begin(w, RRH_PROTO_VERSION, req->id, "OK");
+    rrc_jw_obj_begin(w);
+    rrc_jw_key(w, "gates");
+    rrc_jw_arr_begin(w);
+    int64_t n = 0;
+    uint64_t last = f->sequence;
+    while ((f != NULL) && (n < limit)) {
+        rrc_jw_obj_begin(w);
+        rrc_jw_ku64(w, "seq", f->sequence);
+        put_arr4(w, "fr", f, 0u);   /* floor rejects (above ULD, plus short ALPHA) */
+        put_arr4(w, "as", f, 1u);   /* ALPHA latch set, time over threshold short or unmeasured: not alpha */
+        put_arr4(w, "am", f, 2u);   /* part of as: unmeasured or ambiguous width (pile-up) */
+        put_arr4(w, "ic", f, 3u);   /* idle ALPHA latches cleared */
+        put_arr4(w, "ff", f, 4u);   /* forced clears, floor chain: stuck comparator / light leak */
+        put_arr4(w, "rf", f, 5u);   /* forced clears, reference chain */
+        put_arr4(w, "sc", f, 6u);   /* saturation cause bits: 1 floor forced/blind, 2 floor live < 50 %, 4 ref forced, 8 ref live < 50 % */
+        put_arr4(w, "lf", f, 7u);   /* floor live time, per mille of the gate */
+        put_arr4(w, "lr", f, 8u);   /* reference live time, per mille */
+        put_arr4(w, "ga", f, 9u);   /* gross alpha counts (also when the ACQ frame nulled them) */
+        put_arr4(w, "gb", f, 10u);  /* gross beta-window counts */
+        put_arr4(w, "gr", f, 11u);  /* gross reference counts */
+        rrc_jw_obj_end(w);
+        last = f->sequence;
+        n++;
+        f = rrh_acq_first_after(c, (int64_t)last);
+    }
+    rrc_jw_arr_end(w);
+    rrc_jw_kbool(w, "more", f != NULL);
+    rrc_jw_ku64(w, "last_seq", last);
+    rrc_jw_obj_end(w);
+    rrc_rsp_end(w);
+}
+
 static void op_status(rrh_core_t *c, const rrc_json_t *d, const rrc_req_t *req, rrc_jw_t *w)
 {
     static const char *const link_names[3] = {"UNBOUND", "HANDSHAKE", "BOUND"};
@@ -88,6 +181,30 @@ static void op_status(rrh_core_t *c, const rrc_json_t *d, const rrc_req_t *req, 
     rrc_jw_kbool(w, "draining", c->draining);
     rrc_jw_ku64(w, "uptime_us", rrh_hal_now_us());
     rrc_jw_kstr(w, "reset_cause", reset_names[c->reset_cause]);
+    /* Software and hardware identity for the mission archive (review C2/C3): stable for the whole boot */
+    rrc_jw_key(w, "build");
+    rrc_jw_obj_begin(w);
+    rrc_jw_kstr(w, "firmware", rrh_firmware_id(c));
+    rrc_jw_kstr(w, "build_id", RRH_BUILD_ID);
+    char crc_hex[9];
+    snprintf(crc_hex, sizeof crc_hex, "%08X", (unsigned)c->image_crc32);
+    rrc_jw_kstr(w, "image_crc32", crc_hex);
+    rrc_jw_kstr(w, "proto", RRH_PROTO_VERSION);
+    rrc_jw_kstr(w, "acq_format", RRH_ACQ_FORMAT);
+    rrc_jw_obj_end(w);
+    rrc_jw_key(w, "identity");
+    rrc_jw_obj_begin(w);
+    rrc_jw_kstr(w, "serial", c->ident.serial);
+    rrc_jw_kstr(w, "electronics_revision", c->ident.electronics_revision);
+    rrc_jw_kstr(w, "mechanical_revision", c->ident.mechanical_revision);
+    rrc_jw_kstr(w, "descriptor_id", c->ident.descriptor_id);
+    rrc_jw_kstr(w, "descriptor_sha256", c->descriptor_sha256);
+    rrc_jw_kstr(w, "setup_id", c->setup_id);
+    rrc_jw_kstr(w, "boot_id", c->boot_id);
+    rrc_jw_kstr(w, "cal_id", c->cal_id);
+    rrc_jw_obj_end(w);
+    rrc_jw_ku64(w, "gates_lost", c->gates_lost_total);
+    rrc_jw_ku64(w, "fault_events", c->fault_events_total);
     rrc_jw_ku64(w, "span_us", c->span_us);
     rrc_jw_ku64(w, "next_seq", c->next_seq);
     if (oldest != NULL) {
@@ -345,6 +462,7 @@ static void op_setup_set(rrh_core_t *c, const rrc_json_t *d, const rrc_req_t *re
     } else {
         c->setup = next; /* the BIAS_VMON calibration is not part of setup_id: no new binding needed */
     }
+    rrh_cal_id_compute(c, c->cal_id);
     if (persist) {
         const size_t n = rrh_setup_pack(&c->setup, blob, sizeof blob);
         if ((n == 0u) || !rrh_hal_nv_save(RRH_NV_SLOT_SETUP, blob, n)) {
@@ -448,6 +566,8 @@ bool rrh_eng_dispatch(rrh_core_t *c, const rrc_json_t *d, const rrc_req_t *req, 
 {
     if (op_is(d, req, "DIAG")) {
         op_diag(c, d, req, w);
+    } else if (op_is(d, req, "GATESTAT")) {
+        op_gatestat(c, d, req, w);
     } else if (op_is(d, req, "STATUS")) {
         op_status(c, d, req, w);
     } else if (op_is(d, req, "FAULT_CLEAR")) {

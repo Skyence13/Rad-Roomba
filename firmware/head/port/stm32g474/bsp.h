@@ -28,6 +28,7 @@ void bsp_tick_isr_update(void); /* called by the 100 kHz service interrupt */
 void bsp_delay_us(uint32_t us);
 rrh_reset_cause_t bsp_reset_cause(void);
 void bsp_watchdog_kick(void);
+uint32_t bsp_image_crc32(void); /* CRC-32 over the program image in flash (vector table to the end of .data) */
 bool bsp_rng_words(uint32_t *out, size_t n);
 void bsp_uid(uint8_t out[12]);
 void bsp_led(bool status_on, bool fault_on);

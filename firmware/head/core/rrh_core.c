@@ -61,6 +61,9 @@ static void op_hello(rrh_core_t *c, const rrc_req_t *req, rrc_jw_t *w)
     stop_acquisition_now(c);
     rrh_acq_reset(c);
     c->bumper_latched = 0u;
+    /* A new attachment is a new acquisition epoch: faults of the discarded stream are history (counted in STATUS gates_lost / fault_events) */
+    c->health = (uint16_t)(c->health & (uint16_t)~(RRH_H_RECORD_LOST | RRH_H_GATE_TIMING | RRH_H_GATE_TIMEOUT));
+    c->acq_event_pending = false;
     c->link = RRH_LINK_HANDSHAKE;
 
     reply_begin_ok(w, req->id);
@@ -466,6 +469,8 @@ void rrh_core_init(rrh_core_t *c, const rrh_identity_t *ident)
     c->link = RRH_LINK_UNBOUND;
     rrh_acq_reset(c);
     rrh_control_init(c);
+    rrh_cal_id_compute(c, c->cal_id);
+    c->image_crc32 = rrh_hal_image_crc32();
 }
 
 void rrh_core_poll(rrh_core_t *c)
@@ -479,6 +484,8 @@ void rrh_core_poll(rrh_core_t *c)
         const uint64_t limit = ((uint64_t)c->span_us * RRH_GATE_TIMEOUT_SPANS) + 50000u;
         if (rrc_time_since(now, c->last_gate_us) > limit) {
             c->health |= RRH_H_GATE_TIMEOUT;
+            c->acq_event_pending = true;
+            c->fault_events_total++;
             c->last_gate_us = now;
         }
     } else if (!c->draining && c->heater_on) {

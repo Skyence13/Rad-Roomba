@@ -43,6 +43,7 @@ bool rrh_hal_entropy(uint8_t *buf, size_t len)
 }
 
 rrh_reset_cause_t rrh_hal_reset_cause(void) { return bsp_reset_cause(); }
+uint32_t rrh_hal_image_crc32(void) { return bsp_image_crc32(); }
 void rrh_hal_watchdog_kick(void) { bsp_watchdog_kick(); }
 
 bool rrh_hal_acq_start(uint32_t span_us, rrh_epoch_t *epoch) { return evt_port_start(span_us, epoch); }

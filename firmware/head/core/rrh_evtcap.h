@@ -56,6 +56,9 @@ typedef struct {
     /* Optional: time over threshold of the pulse that set BUSY (raw LLD falling edge minus the
      * captured start). width_valid bit n set = width_ticks[n] is valid for the pending event. */
     uint8_t width_valid;
+    /* Bit n set: a second falling edge (or a capture overrun) was seen on chain n after its BUSY start, so the stored width is the
+     * FIRST pulse's but another pulse piled up before classification: the event is ambiguous and must never be called alpha. */
+    uint8_t width_multi;
     uint32_t width_ticks[RRH_EVT_CHAINS];
 } rrh_evt_in_t;
 
@@ -104,6 +107,10 @@ typedef struct {
     uint8_t held_wbin[RRH_EVT_CHAINS];
     uint8_t width_wait[RRH_LANES];          /* services an ALPHA event waited for its falling-edge capture */
     uint8_t idle_alpha_seen[RRH_LANES];    /* consecutive services with ALPHA set on an idle floor chain */
+    uint32_t ambig_alpha[RRH_LANES];
+    uint32_t next_ambig_alpha[RRH_LANES];
+    uint32_t forced_cnt[RRH_EVT_CHAINS];
+    uint32_t next_forced_cnt[RRH_EVT_CHAINS];
     uint32_t short_alpha[RRH_LANES];       /* ALPHA latch set, width below the limit or unmeasured: floor reject, counted here */
     uint32_t next_short_alpha[RRH_LANES];
     uint32_t idle_clears[RRH_LANES];       /* accumulators of the gate in progress */
@@ -120,6 +127,9 @@ typedef struct {
     uint64_t next_busy[RRH_EVT_CHAINS];
     uint8_t next_saturated;
     bool heater_state, heater_prev, heater_req;
+    uint64_t heater_on_since, heater_acc; /* on-time accumulated at the switch edges within the gate in progress (review m3) */
+    uint64_t last_now;
+    bool heater_edge; /* the switch changed state during the gate in progress (or at its first tick) */
     /* completed gates */
     rrh_gate_record_t fifo[RRH_EVT_FIFO];
     volatile uint32_t fifo_head, fifo_tail;

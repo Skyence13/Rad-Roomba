@@ -194,6 +194,9 @@ static void map_lane(rrh_frame_lane_t *o, const rrh_gate_lane_t *in, const rrh_g
     o->gate_flags = in->flags;
     o->alpha_idle_clears = in->alpha_idle_clears;
     o->alpha_short = in->alpha_short_counts;
+    o->alpha_ambig = in->alpha_ambig_counts;
+    o->floor_forced = in->floor_forced_counts;
+    o->ref_forced = in->ref_forced_counts;
     o->imon_na[0] = RRH_IMON_NA_INVALID;
     o->imon_na[1] = RRH_IMON_NA_INVALID;
 
@@ -211,6 +214,7 @@ static void map_lane(rrh_frame_lane_t *o, const rrh_gate_lane_t *in, const rrh_g
             (((uint64_t)in->floor_live_ticks * 100u) < ((uint64_t)rec->gate_ticks * RRH_MIN_LIVE_PERCENT))) {
             o->null_mask |= floor;
             o->seg_flags |= RRH_SF_SATURATED;
+            o->sat_cause |= 2u;
         }
     }
     if ((in->ref_live_ticks == 0u) || (in->ref_live_ticks > rec->gate_ticks)) {
@@ -222,13 +226,16 @@ static void map_lane(rrh_frame_lane_t *o, const rrh_gate_lane_t *in, const rrh_g
             (((uint64_t)in->ref_live_ticks * 100u) < ((uint64_t)rec->gate_ticks * RRH_MIN_LIVE_PERCENT))) {
             o->null_mask |= RRH_CH_REF;
             o->seg_flags |= RRH_SF_SATURATED;
+            o->sat_cause |= 8u;
         }
     }
     if ((in->flags & RRH_GF_FLOOR_SATURATED) != 0u) {
+        o->sat_cause |= 1u;
         o->null_mask |= floor;
         o->seg_flags |= RRH_SF_SATURATED;
     }
     if ((in->flags & RRH_GF_REF_SATURATED) != 0u) {
+        o->sat_cause |= 4u;
         o->null_mask |= RRH_CH_REF;
         o->seg_flags |= RRH_SF_SATURATED;
     }
@@ -267,14 +274,18 @@ static void on_gate(rrh_core_t *c, const rrh_gate_record_t *rec)
      * sequence numbers, so the loss is visible to the host as a sequence gap. */
     if (rec->sequence != c->expect_src_seq) {
         c->health |= RRH_H_RECORD_LOST;
+        c->acq_event_pending = true;
+        c->fault_events_total++;
         if (rec->sequence > c->expect_src_seq) {
             c->next_seq += (uint64_t)(rec->sequence - c->expect_src_seq);
+            c->gates_lost_total += (uint32_t)(rec->sequence - c->expect_src_seq);
         }
         c->have_prev_tick = false;
     }
     c->expect_src_seq = rec->sequence + 1u;
     if (rec->source_fault) {
-        c->health |= RRH_H_SOURCE;
+        c->acq_event_pending = true; /* this gate only; RRH_H_SOURCE stays the boot-wide clock / self-test fault */
+        c->fault_events_total++;
     }
 
     /* Equal, contiguous gates: the length must be exactly the armed span and each gate must
@@ -292,6 +303,8 @@ static void on_gate(rrh_core_t *c, const rrh_gate_record_t *rec)
     }
     if (!timing_ok) {
         c->health |= RRH_H_GATE_TIMING;
+        c->acq_event_pending = true;
+        c->fault_events_total++;
     }
     if ((rec->tick_hz == 0u) || (rec->tick_hz != c->epoch.tick_hz) || (rec->gate_start_tick < c->epoch.tick) ||
         (span < RRH_SPAN_MIN_US) || (span > RRH_SPAN_MAX_US)) {
@@ -331,6 +344,7 @@ static void on_gate(rrh_core_t *c, const rrh_gate_record_t *rec)
     c->bias_writes_gate = 0u;
     f->health = c->health;
     f->acq_flags = rrh_control_acq_flags(c);
+    c->acq_event_pending = false; /* reported in this frame, once */
     f->head_mc = rrh_control_head_mc(c);
     f->heater_on_us = (uint32_t)rrc_ticks_to_us(rec->heater_on_ticks, rec->tick_hz);
     f->heater_transition = rec->heater_transition_in_gate;
@@ -523,6 +537,12 @@ void rrh_acq_write_diag(const rrh_core_t *c, const rrh_frame_t *f, rrc_jw_t *w)
     rrc_jw_ku64(w, "tick_hz", f->tick_hz);
     rrc_jw_ku64(w, "gate_start_tick", f->gate_start_tick);
     rrc_jw_ku64(w, "gate_ticks", f->gate_ticks);
+    rrc_jw_key(w, "cal");
+    rrc_jw_obj_begin(w);
+    rrc_jw_kstr(w, "id", c->cal_id);
+    rrc_jw_ku64(w, "vmon_ratio_e4", c->setup.vmon_ratio_e4);
+    rrc_jw_kbool(w, "vmon_calibrated", c->setup.vmon_calibrated);
+    rrc_jw_obj_end(w);
     rrc_jw_key(w, "heater");
     rrc_jw_obj_begin(w);
     rrc_jw_ku64(w, "on_us", f->heater_on_us);
@@ -584,6 +604,13 @@ void rrh_acq_write_diag(const rrh_core_t *c, const rrh_frame_t *f, rrc_jw_t *w)
         put_flag_names(w, l->gate_flags, k_gate_flags, 6u);
         rrc_jw_ku64(w, "alpha_idle_clears", l->alpha_idle_clears);
         rrc_jw_ku64(w, "alpha_short", l->alpha_short);
+        rrc_jw_ku64(w, "alpha_ambig", l->alpha_ambig);
+        rrc_jw_key(w, "forced");
+        rrc_jw_arr_begin(w);
+        rrc_jw_u64(w, l->floor_forced);
+        rrc_jw_u64(w, l->ref_forced);
+        rrc_jw_arr_end(w);
+        rrc_jw_ku64(w, "sat_cause", l->sat_cause);
         rrc_jw_key(w, "imon_na");
         rrc_jw_arr_begin(w);
         for (uint32_t g = 0u; g < 2u; g++) {

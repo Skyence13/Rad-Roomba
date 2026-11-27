@@ -36,12 +36,20 @@ void rrh_setup_device_thresholds(rrh_setup_t *s)
     const uint16_t lld = rrh_board_threshold_code((uint32_t)d->lld_pe * d->fast_uv_per_pe);
     const uint16_t uld = rrh_board_threshold_code(uld_uv);
     const uint16_t alpha = rrh_board_threshold_code(d->alpha_uv);
+    /* Reference chain (review M6b): it has no ALPHA comparator, so bright plastic events were kept there while the floor beta window
+     * dropped them. Its ULD default is the fast amplitude at which a plastic event crosses the floor ALPHA level
+     * (ALPHA x FAST/SLOW(beta), 564 mV = 81 p.e. for J60035), so both chains remove the same bright population. */
+    uint32_t ref_uld_uv = (uint32_t)(((uint64_t)d->alpha_uv * d->beta_ratio_x10) / 10u);
+    if (ref_uld_uv > uld_uv) {
+        ref_uld_uv = uld_uv;
+    }
+    const uint16_t ref_uld = rrh_board_threshold_code(ref_uld_uv);
     for (uint32_t lane = 0u; lane < RRH_LANES; lane++) {
         s->fe.threshold[(lane * 3u) + 0u] = lld;   /* BETA_LLD */
         s->fe.threshold[(lane * 3u) + 1u] = uld;   /* BETA_ULD */
         s->fe.threshold[(lane * 3u) + 2u] = alpha; /* ALPHA (slow path) */
         s->fe.threshold[12u + (lane * 2u) + 0u] = lld; /* REF_LLD */
-        s->fe.threshold[12u + (lane * 2u) + 1u] = uld; /* REF_ULD */
+        s->fe.threshold[12u + (lane * 2u) + 1u] = ref_uld; /* REF_ULD */
     }
 }
 
@@ -749,4 +757,24 @@ bool rrh_descriptor_rebuild(rrh_core_t *c)
     rrc_sha256(c->descriptor, c->descriptor_len, dg);
     rrc_hex_lower(dg, sizeof dg, c->descriptor_sha256);
     return c->descriptor_len > 0u;
+}
+
+void rrh_cal_id_compute(const rrh_core_t *c, char out[24])
+{
+    static const char domain[] = "RRH-CAL-1";
+    uint8_t dg[RRC_SHA256_LEN];
+    char hex[RRC_SHA256_HEX_LEN + 1u];
+    uint8_t v[5];
+    rrc_sha256_t ctx;
+    put_be(v, 0u, c->setup.vmon_ratio_e4, 4u);
+    v[4] = c->setup.vmon_calibrated ? 1u : 0u;
+    rrc_sha256_init(&ctx);
+    rrc_sha256_update(&ctx, domain, sizeof domain);
+    rrc_sha256_update(&ctx, c->ident.serial, strlen(c->ident.serial) + 1u);
+    rrc_sha256_update(&ctx, v, sizeof v);
+    rrc_sha256_final(&ctx, dg);
+    rrc_hex_lower(dg, sizeof dg, hex);
+    memcpy(out, "CAL1-", 5u);
+    memcpy(&out[5], hex, 12u);
+    out[17] = '\0';
 }

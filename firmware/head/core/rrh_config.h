@@ -3,7 +3,10 @@
 #ifndef RRH_CONFIG_H
 #define RRH_CONFIG_H
 
-#define RRH_FW_VERSION "rr-head-0.5.2"
+#define RRH_FW_VERSION "rr-head-0.6.0"
+#ifndef RRH_BUILD_ID
+#define RRH_BUILD_ID "unversioned" /* set by the build: git commit (+ "-dirty"); see CMakeLists.txt and tools/pio_common.py */
+#endif
 #define RRH_PROTO_VERSION "2.0"
 #define RRH_ACQ_FORMAT "2.0"
 #define RRH_HEAD_TYPE "FOUR_LANE_ZNS_PLASTIC_WITH_REFERENCE"

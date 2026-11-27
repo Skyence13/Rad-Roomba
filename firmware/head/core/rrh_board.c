@@ -13,8 +13,8 @@ static const uint16_t k_ntc_tab[2][NTC_N] = {
      1347u, 1203u, 1072u, 954u, 849u, 755u, 672u, 598u, 533u, 476u, 425u, 380u, 341u, 306u, 276u, 249u, 224u}};
 
 const rrh_device_t rrh_devices[RRH_DEVICE_COUNT] = {
-    {"J60035", 290u, 10u, 6930u, 30000u},  {"J30035", 180u, 9u, 12200u, 41500u}, {"S14160", 215u, 10u, 8200u, 31200u},
-    {"S13360", 190u, 7u, 6300u, 23000u},   {"NUVMT", 200u, 23u, 24000u, 95000u}, {"4xJ60035", 655u, 12u, 2800u, 17800u}};
+    {"J60035", 290u, 10u, 6930u, 188u, 30000u},  {"J30035", 180u, 9u, 12200u, 318u, 41500u}, {"S14160", 215u, 10u, 8200u, 251u, 31200u},
+    {"S13360", 190u, 7u, 6300u, 285u, 23000u},   {"NUVMT", 200u, 23u, 24000u, 255u, 95000u}, {"4xJ60035", 655u, 12u, 2800u, 90u, 17800u}};
 
 const rrh_strap_t rrh_straps[RRH_STRAP_COUNT] = {
     {"onsemi J/C", 71500u, 7150u}, {"Hamamatsu S14160", 53600u, 13000u}, {"Broadcom NUV-MT", 49900u, 16900u},

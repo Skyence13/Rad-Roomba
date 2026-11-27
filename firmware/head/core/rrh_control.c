@@ -390,7 +390,10 @@ void rrh_control_on_gate(rrh_core_t *c, const rrh_gate_record_t *rec)
 uint8_t rrh_control_acq_flags(const rrh_core_t *c)
 {
     uint8_t f = c->live_flags;
-    if ((c->health & (RRH_H_SOURCE | RRH_H_GATE_TIMING | RRH_H_RECORD_LOST | RRH_H_GATE_TIMEOUT | RRH_H_INJECTED)) != 0u) {
+    /* ACQ_FAULT is a per-gate condition (review M5): persistent only for the boot-wide clock / self-test fault and the deliberate test
+     * latch; a lost record, a timing violation, a source fault of one gate or a gate timeout is reported once, in the next frame
+     * (sequence numbers show which gates are missing). The latched RECORD_LOST / GATE_TIMING / GATE_TIMEOUT stay in STATUS. */
+    if (((c->health & (RRH_H_SOURCE | RRH_H_INJECTED)) != 0u) || c->acq_event_pending) {
         f |= RRH_AF_ACQ_FAULT;
     }
     if ((c->health & RRH_H_HEATER_ANY) != 0u) {

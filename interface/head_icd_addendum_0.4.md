@@ -128,6 +128,31 @@ HV_BUS = 25 x V(HV_SET), 62.5 V full scale, 15.26 mV per step; BIAS_VMON read-ba
 R2222/R2223 and the 3.0 V reference of `circuit.py`; the budget quotes 31.5 V) - tool-checked against the circuit, not measured.
 BIAS_VMON uses 1 % divider resistors: +-1 % before calibration.
 
+### Acquisition faults, identity and per-gate diagnostics (firmware 0.6.0, data-path review)
+
+* **`ACQ_FAULT` is a per-gate condition.** A lost gate record, a gate whose length or contiguity is wrong, a source fault of one gate or a gate timeout
+  sets it in the **next frame delivered** (once). The missing gates are the skipped sequence numbers; no frame exists for them and the host must not credit
+  their area. Persistent `ACQ_FAULT`: boot-wide clock or self-test fault (`SOURCE`) and the deliberate test latch (`INJECTED`), until `FAULT_CLEAR`. The latches
+  `RECORD_LOST`, `GATE_TIMING`, `GATE_TIMEOUT` stay in STATUS `health` until `FAULT_CLEAR` or `HELLO` (a new attachment is a new acquisition epoch);
+  STATUS `gates_lost` and `fault_events` are cumulative since boot. `WATCHDOG_RESET`, `ENTROPY`, `STORAGE` reach no ACQ flag: the host reads STATUS
+  (`reset_cause`, `health`) when it opens a session.
+* **`GATESTAT {after_seq?: -1.., limit?: 1..12}`** (bound only) → `{gates:[{seq, fr[4], as[4], am[4], ic[4], ff[4], rf[4], sc[4], lf[4], lr[4], ga[4], gb[4], gr[4]}],
+  more, last_seq}`; `EMPTY`, `GAP` (with `oldest_seq`/`newest_seq`) and `BAD_ARG` as READ. Per lane: `fr` floor rejects, `as` ALPHA latched but not alpha (width short,
+  unmeasured or ambiguous), `am` the part of `as` caused by an unmeasured/ambiguous width (pile-up), `ic` idle ALPHA clears, `ff`/`rf` forced clears of the floor/reference
+  chain, `sc` saturation cause bits (1 floor forced or blind, 2 floor live < 50 %, 4 reference forced or blind, 8 reference live < 50 %), `lf`/`lr` live time per mille of
+  the gate, `ga`/`gb`/`gr` gross alpha, beta-window and reference counts (also when ACQ nulled them). Same sequence numbers and retention (160) as ACQ: join exactly.
+  About 210 bytes per gate; 10 gates once a second = 2.1 kB = 2.2 % of a 1 Mbaud bus (DIAG per gate would be 14 %).
+* **Alpha class and pile-up:** the width of the first falling edge after the BUSY start is used; a second edge or a capture overrun makes the event ambiguous and an ALPHA-latched
+  ambiguous event is never alpha (floor reject, `alpha_short`, `alpha_ambig`). Beta window = LLD to ULD and not ALPHA-latched; rejects are not counted. The reference
+  chain has no ALPHA comparator: its default REF_ULD equals the fast amplitude at which a plastic event crosses the floor ALPHA level, so both chains drop the same bright
+  population.
+* **Identity:** HELLO `head_id` (serial) and `firmware`; descriptor `serial`, `electronics_revision`, `mechanical_revision`, `geometry_id`; `setup_id` identifies settings, not a unit.
+  STATUS `build{firmware, build_id, image_crc32, proto, acq_format}` and `identity{serial, electronics_revision, mechanical_revision, descriptor_id, descriptor_sha256,
+  setup_id, boot_id, cal_id}`. `cal_id` names the per-board calibration outside `setup_id` (BIAS_VMON ratio) and is repeated in every DIAG as `cal{id, vmon_ratio_e4, vmon_calibrated}`.
+* **Saturation:** ACQ `SATURATED` (floor forced clear or live fraction < 50 %) cannot tell "rate too high" from "stuck comparator"; GATESTAT `sc`, `ff`, `rf`, `lf`, `lr` and
+  the gross counts do: low live without forced clears is a rate to alarm on; forced clears are a stuck comparator or light leak.
+* `heater_on_ticks` (DIAG `heater.on_us`, ACQ `duty_pct`) is accumulated at the switch edges: a gate with a forced cut shows a partial on-time and the transition marker.
+
 ### Heater transition marker
 
 ACQ 2.0 has no member for it. It travels in DIAG `heater.transition` (per retained gate). The same information is in every ACQ

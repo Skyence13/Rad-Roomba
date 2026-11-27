@@ -323,6 +323,10 @@ static const char *cmd_analog(void)
     if (j_num(rrc_json_get(&g_doc, 0, "vmon_true_ratio_e4"), &v) && (v > 100000.0)) {
         g_sim.vmon_true_ratio_e4 = (uint32_t)v;
     }
+    g_sim.width_overwrite = j_flag("width_overwrite", g_sim.width_overwrite);
+    if (j_num(rrc_json_get(&g_doc, 0, "pileup_us"), &v) && (v >= 0.0) && (v < 1000.0)) {
+        g_sim.pileup_us = v;
+    }
     g_sim.exp_present = j_flag("expander", g_sim.exp_present);
     g_sim.lid_open = j_flag("lid_open", g_sim.lid_open);
     g_sim.inhibit = j_flag("inhibit", g_sim.inhibit);

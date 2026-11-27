@@ -614,12 +614,12 @@ class BoardFunctions(SimCase):
 
     def test_setup_members_reach_the_board_model(self):
         hello, reader = self.bound_reader()
-        self.link.ok("ENG_SETUP_SET", {"pulser": {"enable": True, "code": 1000, "channel": 5, "width_us": 30,
+        self.link.ok("ENG_SETUP_SET", {"pulser": {"enable": True, "code": 500, "channel": 5, "width_us": 30,
                                                   "led_enable": True, "led_code": 2048},
                                        "afterglow": {"alpha_hold_us": 100}})
         board = self.sim.ctl(cmd="stats")["board"]
-        self.assertEqual(board["pulser"], {"enable": True, "channel": 5, "code": 1000, "width_us": 30,
-                                           "charge_fc": 61035})   # 100 pF x 0.61 mV x 1000
+        self.assertEqual(board["pulser"], {"enable": True, "channel": 5, "code": 500, "width_us": 30,
+                                           "charge_fc": 30518})   # 100 pF x 0.61 mV x 500
         self.assertEqual(board["led"]["v_led_mv"], 2500)           # 2 x 1.25 V
         self.assertEqual(board["alpha_hold_us"], 100)
         self.assertEqual(self.sim.ctl(cmd="stats")["board"]["bias"]["hv_set_code"], 0)   # HV_SET starts at 0
@@ -688,6 +688,52 @@ class BoardFunctions(SimCase):
         self.assertTrue(any(marked))
         self.assertTrue(all(f["thermal"]["duty_pct"] in (0, 100) for f in frames))
 
+    def test_pileup_false_alphas_old_port_versus_fixed_port(self):
+        """Review M6a: floor rate R on lane 0 with bright betas (120 p.e.); a second pulse within ~9 us piles up.
+        Old width bookkeeping (last edge overwrites): the piled-up bright betas become alphas at rate b x R x 9 us.
+        Fixed: they are never alpha and are counted in alpha_ambig."""
+        results = {}
+        for overwrite in (True, False):
+            hello, reader = self.bound_reader()
+            self.sim.ctl(cmd="analog", width_overwrite=overwrite)
+            self.sim.ctl(cmd="rates", alpha=0, beta=[4000, 0, 0, 0], bright_beta=[1000, 0, 0, 0], ref=0, bright_pe=120)
+            self.sim.advance(300_000)
+            self.link.ok("ARM", {"span_us": 100000})
+            self.sim.advance(5_050_000)
+            frames, _ = read_all(self.link)
+            gs = self.link.ok("GATESTAT", {"after_seq": frames[-12]["sequence"], "limit": 10})["gates"]
+            alpha = sum(f["segments"][0]["alpha"]["counts"] for f in frames)
+            amb = sum(g["am"][0] for g in gs)
+            results[overwrite] = (alpha, amb, len(frames), gs)
+            self.link.ok("DISARM", {})
+            self.sim.advance(300_000)
+        t = results[True][2] * 0.1
+        expect = 1000 * (1 - 2.718281828 ** (-5000 * 9e-6))      # bright events per second that pile up
+        print("    pile-up at 5000/s floor rate: old port %.1f false alphas/s (expected %.1f), fixed port %d alphas, %d ambiguous in the last 10 gates"
+              % (results[True][0] / t, expect, results[False][0], results[False][1]))
+        self.assertGreater(results[True][0] / t, 0.6 * expect)
+        self.assertEqual(results[False][0], 0)
+        self.assertGreater(results[False][1], 0)
+
+    def test_gatestat_is_joinable_and_cheap(self):
+        hello, reader = self.bound_reader()
+        self.sim.ctl(cmd="rates", alpha=[5, 0, 0, 0], beta=50, ref=50, bright_beta=[50, 0, 0, 0])
+        self.sim.advance(300_000)
+        self.link.ok("ARM", {"span_us": 100000})
+        self.sim.advance(2_050_000)
+        frames, _ = read_all(self.link)
+        rsp = self.link.request("GATESTAT", {"after_seq": -1, "limit": 10})
+        self.assertEqual(rsp["status"], "OK")
+        gs = rsp["body"]["gates"]
+        self.assertEqual([g["seq"] for g in gs], [f["sequence"] for f in frames[:10]])      # same sequence numbers as ACQ
+        for g, f in zip(gs, frames):
+            diag = self.link.ok("DIAG", {"seq": f["sequence"]})
+            for k, name in (("as", "alpha_short"), ("am", "alpha_ambig"), ("fr", "floor_reject"), ("ic", "alpha_idle_clears")):
+                self.assertEqual(g[k], [lane[name] for lane in diag["lanes"]])
+        self.assertTrue(rsp["body"]["more"])
+        nbytes = len(json.dumps(rsp["body"], separators=(",", ":")))
+        print("    GATESTAT 10 gates: %d bytes of body = %.1f %% of a 1 Mbaud bus once a second" % (nbytes, (nbytes + 100) * 10e-6 * 100))
+
     def test_afterglow_hold_is_dead_time(self):
         reader = self.arm(alpha=[2000, 0, 0, 0], beta=0, ref=0)
         self.sim.advance(1_050_000)
@@ -697,7 +743,7 @@ class BoardFunctions(SimCase):
         lane = diag["lanes"][0]
         dead = 14_400_000 - lane["floor_live_ticks"]
         # 10 us + 150 us hold per alpha event (emulator, simulated)
-        self.assertAlmostEqual(dead / max(lane["alpha_raw"], 1), (10 + 300) * 144, delta=1)
+        self.assertAlmostEqual(dead / max(lane["alpha_raw"], 1), (10 + 300) * 144, delta=1500)   # piled-up alphas (never held) pay 10 us only
 
 
 class StrictPlaceholders(SimCase):

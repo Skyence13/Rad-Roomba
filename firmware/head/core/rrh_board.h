@@ -130,6 +130,7 @@ typedef struct {
     uint16_t tot_cut_ns;     /* alpha time-over-threshold cut, mid-gap between brightest beta (240 p.e.) and weakest alpha (150 p.e.) at LLD 10 */
     uint8_t lld_pe;          /* default BETA_LLD / REF_LLD in p.e.: dark triggers < 0.05 /s per chain at +10 degC, typical DCR (T6) */
     uint16_t fast_uv_per_pe; /* FAST output per photo-electron (T2) */
+    uint16_t beta_ratio_x10; /* FAST/SLOW per p.e. for plastic light x 10 (T13): the fast amplitude that crosses the ALPHA level for a plastic event */
     uint32_t alpha_uv;       /* default ALPHA level above baseline: 0.9 x the SLOW output of the weakest assumed alpha (150 p.e.; FAST x 0.2117 / T13 ratio) */
 } rrh_device_t;
 #define RRH_DEVICE_COUNT 6u /* device id 1 ... 6; 0 = not set */

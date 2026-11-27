@@ -36,6 +36,8 @@ typedef enum {
 } rrh_reset_cause_t;
 rrh_reset_cause_t rrh_hal_reset_cause(void);
 void rrh_hal_watchdog_kick(void);
+/* CRC-32 (zlib) of the running program image (flash on the target; the version + build strings on the emulator): STATUS build.image_crc32 */
+uint32_t rrh_hal_image_crc32(void);
 
 /* ---- acquisition source (event capture: MCU timers + latches, or the emulator) ----------------- */
 #define RRH_GF_FLOOR_SATURATED 0x01u   /* contract flag */
@@ -53,6 +55,9 @@ typedef struct {
     uint32_t ref_counts;
     uint32_t ref_reject_counts;
     uint32_t ref_live_ticks;
+    uint32_t alpha_ambig_counts; /* subset of alpha_short: width unmeasured or ambiguous (second pulse before classification) - never alpha */
+    uint32_t floor_forced_counts; /* forced clears (BUSY beyond the maximum hold) on the floor / reference chain in this gate: a stuck comparator, not a high rate */
+    uint32_t ref_forced_counts;
     uint32_t alpha_short_counts; /* ALPHA latch set but time over threshold below the limit (or unmeasured): counted as floor reject, not alpha (DIAG only) */
     uint32_t alpha_idle_clears; /* ALPHA latch found set on the idle floor chain and cleared (engineering, DIAG only) */
     uint8_t flags; /* RRH_GF_* */

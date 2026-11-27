@@ -21,6 +21,7 @@ static uint32_t g_gate = 100000u * US; /* gate length in ticks (100 ms; some tes
 #define GATE g_gate
 static uint32_t g_hold = 0u;           /* afterglow hold in ticks; 0 for the legacy tests */
 static uint32_t g_tot_min = 0u;        /* alpha width condition in ticks; 0 for the legacy tests */
+static bool g_port_overwrite;       /* emulate the 0.4/0.5 STM32 width bookkeeping: the last falling edge overwrites the width */
 static uint8_t g_width_delay[RRH_EVT_CHAINS]; /* services for which the falling-edge capture is not yet visible */
 
 /* ---- hardware model ------------------------------------------------------------------------ */
@@ -31,6 +32,7 @@ typedef struct {
     uint64_t lld_high_until;
     bool uld, alpha;
     uint64_t width;
+    bool multi;   /* a second pulse piled up before classification */
     uint64_t accepted, lost;
 } chain_t;
 
@@ -42,6 +44,8 @@ static uint64_t truth_busy[MAX_GATES][RRH_EVT_CHAINS];
 static uint32_t truth_count[MAX_GATES][RRH_EVT_CHAINS][3];
 static uint32_t truth_idle[MAX_GATES][RRH_LANES];
 static uint32_t truth_short[MAX_GATES][RRH_LANES];
+static uint32_t truth_ambig[MAX_GATES][RRH_LANES];
+static uint32_t truth_forced[MAX_GATES][RRH_EVT_CHAINS];
 static uint8_t g_width_mask = 0xFFu;
 static uint32_t heater_calls;
 static bool heater_level;
@@ -52,7 +56,9 @@ static uint32_t class_of(uint32_t ch)
         if (hw[ch].alpha) {
             /* alpha only with a measured width >= the limit; otherwise a reject (and counted as short) */
             const bool measured = (g_width_mask & (1u << ch)) != 0u;
-            return (g_tot_min == 0u || (measured && (hw[ch].width >= g_tot_min))) ? 0u : 2u;
+            const uint64_t wd = g_port_overwrite ? (hw[ch].lld_high_until - hw[ch].start) : hw[ch].width;
+            const bool amb = hw[ch].multi && !g_port_overwrite;
+            return (g_tot_min == 0u || (measured && (wd >= g_tot_min) && !amb)) ? 0u : 2u;
         }
         return hw[ch].uld ? 2u : 1u;
     }
@@ -100,7 +106,13 @@ static uint64_t clear_cb(void *ctx, uint8_t ch)
                 truth_count[gi][ch][k]++;
                 if ((ch < 4u) && hw[ch].alpha && (k == 2u)) {
                     truth_short[gi][ch]++;
+                    const bool measured = (g_width_mask & (1u << ch)) != 0u;
+                    if (!measured || (hw[ch].multi && !g_port_overwrite)) {
+                        truth_ambig[gi][ch]++;
+                    }
                 }
+            } else {
+                truth_forced[gi][ch]++;
             }
         }
         uint64_t a = (hw[ch].start > g_first_gate) ? hw[ch].start : g_first_gate;
@@ -141,6 +153,7 @@ static void pulse(uint32_t ch, uint64_t t, uint32_t cls, uint32_t width)
     c->start = t;
     c->lld_high_until = t + width;
     c->width = width;
+    c->multi = false;
     if (ch < 4u) {
         c->alpha = cls == 0u;
         c->uld = cls == 2u;
@@ -167,7 +180,10 @@ static void service_at(uint64_t t)
                 /* the port's falling-edge capture: time over threshold of the triggering pulse */
                 if (g_width_delay[ch] == 0u) {
                     in.width_valid |= bit;
-                    in.width_ticks[ch] = (uint32_t)(hw[ch].lld_high_until - hw[ch].start);
+                    in.width_ticks[ch] = (uint32_t)(g_port_overwrite ? (hw[ch].lld_high_until - hw[ch].start) : hw[ch].width);
+                    if (hw[ch].multi && !g_port_overwrite) {
+                        in.width_multi |= bit;
+                    }
                 } else {
                     g_width_delay[ch]--;
                 }
@@ -193,6 +209,8 @@ static void setup(uint64_t first_gate)
     memset(truth_count, 0, sizeof truth_count);
     memset(truth_idle, 0, sizeof truth_idle);
     memset(truth_short, 0, sizeof truth_short);
+    memset(truth_ambig, 0, sizeof truth_ambig);
+    memset(truth_forced, 0, sizeof truth_forced);
     memset(g_width_delay, 0, sizeof g_width_delay);
     heater_calls = 0u;
     heater_level = false;
@@ -225,6 +243,9 @@ static void check_record(const rrh_gate_record_t *r, uint32_t gi)
         CHECK(g->ref_reject_counts == truth_count[gi][l + 4u][1]);
         CHECK(g->alpha_idle_clears == truth_idle[gi][l]);
         CHECK(g->alpha_short_counts == truth_short[gi][l]);
+        CHECK(g->alpha_ambig_counts == truth_ambig[gi][l]);
+        CHECK(g->floor_forced_counts == truth_forced[gi][l]);
+        CHECK(g->ref_forced_counts == truth_forced[gi][l + 4u]);
         CHECK((uint64_t)g->floor_live_ticks + truth_busy[gi][l] == GATE);      /* live + busy = span, exactly */
         CHECK((uint64_t)g->ref_live_ticks + truth_busy[gi][l + 4u] == GATE);
     }
@@ -784,6 +805,73 @@ static void test_bright_beta_is_not_alpha(void)
     g_tot_min = 0u;
 }
 
+
+/* A second pulse on a busy chain: the BUSY latch ignores it, but the raw comparator makes another falling edge. */
+static void second_pulse(uint32_t ch, uint64_t end)
+{
+    hw[ch].multi = true;
+    if (end > hw[ch].lld_high_until) {
+        hw[ch].lld_high_until = end;
+    }
+}
+
+static void test_pileup_never_makes_an_alpha(void)
+{
+    rrh_gate_record_t r;
+    g_tot_min = 36u; /* 250 ns */
+    /* (1) fixed port: first width kept, second edge flags the event; bright beta (158 ns) + a second pulse 2 us later */
+    setup(0u);
+    run_services(0u, 1000u * US);
+    const uint64_t t = 1000u * US + 9u;
+    pulse(1u, t, 0u, 22u);                         /* bright beta: ALPHA set, 22 ticks = 158 ns */
+    pulse(0u, t, 0u, 6u * US);                     /* a true alpha, then a second pulse before classification */
+    second_pulse(0u, t + 2u * US + 20u * US);
+    second_pulse(1u, t + 3u * US);                 /* the second pulse of the bright beta: ends 3 us after its start */
+    run_services(1000u * US + 2u * SERVICE, GATE + SERVICE);
+    CHECK(rrh_evtcap_pop(&ec, &r));
+    check_record(&r, 0u);
+    CHECK((r.lane[1].alpha_counts == 0u) && (r.lane[1].alpha_short_counts == 1u) && (r.lane[1].alpha_ambig_counts == 1u));
+    CHECK((r.lane[0].alpha_counts == 0u) && (r.lane[0].alpha_short_counts == 1u) && (r.lane[0].alpha_ambig_counts == 1u)); /* alpha efficiency loss is counted */
+    CHECK(r.lane[1].floor_reject_counts == 1u && r.lane[1].beta_counts == 0u);
+    /* (2) the 0.4/0.5 port (last edge overwrites the width, no flag): the same bright beta becomes an ALPHA - the C1 failure returns */
+    g_port_overwrite = true;
+    setup(0u);
+    run_services(0u, 1000u * US);
+    pulse(1u, t, 0u, 22u);
+    second_pulse(1u, t + 3u * US);
+    run_services(1000u * US + SERVICE, GATE + SERVICE);
+    CHECK(rrh_evtcap_pop(&ec, &r));
+    check_record(&r, 0u);
+    CHECK(r.lane[1].alpha_counts == 1u && r.lane[1].alpha_ambig_counts == 0u);
+    g_port_overwrite = false;
+    /* (3) forced clears are counted per chain and gate */
+    setup(0u);
+    run_services(0u, 1000u * US);
+    pulse(6u, 1000u * US + 3u, 0u, 3000u * US);
+    run_services(1000u * US + SERVICE, GATE + SERVICE);
+    CHECK(rrh_evtcap_pop(&ec, &r));
+    check_record(&r, 0u);
+    CHECK(r.lane[2].ref_forced_counts == 1u && r.lane[2].floor_forced_counts == 0u);
+    g_tot_min = 0u;
+}
+
+static void test_heater_on_time_is_exact_at_the_edges(void)
+{
+    rrh_gate_record_t r;
+    setup(0u);
+    run_services(0u, GATE / 2u);
+    rrh_evtcap_heater_request(&ec, true);          /* acts on the boundary */
+    run_services(GATE / 2u + SERVICE, GATE + 2u * SERVICE);
+    run_services(GATE + 3u * SERVICE, 2u * GATE / 1u - GATE / 4u);
+    CHECK(rrh_evtcap_pop(&ec, &r) && r.heater_on_ticks == 0u);
+    rrh_evtcap_heater_force_off(&ec);              /* mid-gate 2: the switch opens at once */
+    run_services(2u * GATE - GATE / 4u + SERVICE, 2u * GATE + 3u * SERVICE);
+    CHECK(rrh_evtcap_pop(&ec, &r));
+    /* on from the boundary (tick GATE) to the last service before the force-off: partial, not "all or nothing" */
+    CHECK(r.heater_on_ticks > (GATE * 6u) / 10u && r.heater_on_ticks < GATE && r.heater_transition_in_gate);
+    CHECK(!heater_level);
+}
+
 int main(void)
 {
     RUN(test_single_events_of_each_class);
@@ -799,5 +887,7 @@ int main(void)
     RUN(test_chain_held_by_a_long_tail);
     RUN(test_poisson_sweep_with_afterglow_hold);
     RUN(test_bright_beta_is_not_alpha);
+    RUN(test_pileup_never_makes_an_alpha);
+    RUN(test_heater_on_time_is_exact_at_the_edges);
     return TEST_SUMMARY();
 }

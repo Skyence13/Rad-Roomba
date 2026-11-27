@@ -18,6 +18,17 @@ add_subdirectory(../common common)
 
 set(RRH_WARN -Wall -Wextra -Werror -Wconversion -Wshadow -Wstrict-prototypes -Wmissing-prototypes)
 
+execute_process(COMMAND git rev-parse --short=12 HEAD WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} OUTPUT_VARIABLE RRH_GIT_COMMIT
+                OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
+execute_process(COMMAND git status --porcelain -- . WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} OUTPUT_VARIABLE RRH_GIT_DIRTY
+                OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
+if(RRH_GIT_COMMIT)
+  if(RRH_GIT_DIRTY)
+    set(RRH_GIT_COMMIT "${RRH_GIT_COMMIT}-dirty")
+  endif()
+  add_compile_definitions(RRH_BUILD_ID="${RRH_GIT_COMMIT}")
+endif()
+
 add_library(rrh_core STATIC core/rrh_core.c core/rrh_acq.c core/rrh_setup.c core/rrh_control.c core/rrh_eng.c
                             core/rrh_evtcap.c core/rrh_board.c)
 target_include_directories(rrh_core PUBLIC core hal)

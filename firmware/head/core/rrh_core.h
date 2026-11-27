@@ -125,6 +125,9 @@ typedef struct {
     uint8_t seg_flags;                  /* RRH_SF_* */
     uint8_t gate_flags;                 /* RRH_GF_* as delivered (DIAG), plus BIAS_OUT_OF_RANGE from the anode monitor */
     uint32_t alpha_idle_clears;         /* DIAG */
+    uint32_t alpha_ambig;               /* DIAG: part of alpha_short caused by an unmeasured or ambiguous width (pile-up) */
+    uint32_t floor_forced, ref_forced;  /* DIAG: forced clears in the gate (stuck comparator / light leak), not a high rate */
+    uint8_t sat_cause;                  /* DIAG / GATESTAT: bit0 floor forced or blind (SATURATED flag), bit1 floor live < 50 %, bit2 ref forced/blind, bit3 ref live < 50 % */
     uint32_t alpha_short;               /* DIAG: ALPHA latch set, time over threshold short/unmeasured: counted as floor reject */
     uint32_t imon_na[2];                /* DIAG: anode current of the floor and reference chain, RRH_IMON_NA_INVALID = not measured */
 } rrh_frame_lane_t;
@@ -232,6 +235,12 @@ typedef struct {
     uint32_t bias_out_mv;     /* what the port was told: ramps from 0 to bias_cmd_mv after bias-on */
     bool bias_on;
     uint32_t bias_settle;     /* control periods since the last set-point change */
+    /* Acquisition-stream faults (M5): reported once, in the next frame, not in every later one. The health latches stay for STATUS. */
+    bool acq_event_pending;
+    uint32_t gates_lost_total;   /* sequence numbers skipped by lost records since boot */
+    uint32_t fault_events_total; /* lost record / timing fault / source fault / gate timeout events since boot */
+    char cal_id[24];             /* identifier of the per-board calibration in force (BIAS_VMON ratio) */
+    uint32_t image_crc32;        /* CRC-32 of the running program image */
     uint32_t imon_steps_prev;  /* mux steps counted at the previous frame */
     uint32_t frame_ref_uv;     /* MON_ADC reference (frame potential at the last quiet reading) */
     bool frame_ref_valid;

@@ -717,6 +717,12 @@ static void watchdog_init(void)
 
 void bsp_watchdog_kick(void) { IWDG->KR = 0xAAAAu; }
 
+uint32_t bsp_image_crc32(void)
+{
+    const uintptr_t end = (uintptr_t)&_sidata + ((uintptr_t)&_edata - (uintptr_t)&_sdata);
+    return rrc_crc32((const uint8_t *)0x08000000u, (size_t)(end - 0x08000000u));
+}
+
 bool bsp_rng_words(uint32_t *out, size_t n)
 {
     bool ok = true;

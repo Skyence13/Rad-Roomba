@@ -18,6 +18,8 @@ void rrh_setup_to_json(const rrh_setup_t *s, rrc_jw_t *w);
 /* Applies the members present in the JSON object `obj` to *s. false = BAD_ARG. */
 bool rrh_setup_from_json(rrh_setup_t *s, const rrc_json_t *doc, int obj);
 const char *rrh_firmware_id(const rrh_core_t *c);
+/* "CAL1-" + 12 hex digits of SHA-256(domain | head serial | BIAS_VMON ratio | calibrated flag): names the per-board calibration in force */
+void rrh_cal_id_compute(const rrh_core_t *c, char out[24]);
 /* (Re)derive setup_id, descriptor bytes and descriptor SHA-256 from identity + setup. */
 bool rrh_descriptor_rebuild(rrh_core_t *c);
 
