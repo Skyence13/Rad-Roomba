@@ -1,0 +1,131 @@
+(footprint "L_Wuerth_WE-LQS-5040"
+	(version 20241229)
+	(generator "rrkicad")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(descr "Wurth WE-LQS 5040 (74404054220) 5 x 5 x 4 mm: two-terminal land, pad size estimated from the 5 x 5 mm body [verify against the Wurth land pattern]")
+	(property "Reference" "REF**"
+		(at 0 -3.55 0)
+		(layer "F.SilkS")
+		(uuid "705b336b-c004-5260-8a52-fe08652961f4")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.12)
+			)
+		)
+	)
+	(property "Value" "L_Wuerth_WE-LQS-5040"
+		(at 0 3.55 0)
+		(layer "F.Fab")
+		(uuid "f79af6a3-5fec-56e7-81ad-706b8f91b1c3")
+		(effects
+			(font
+				(size 0.6 0.6)
+				(thickness 0.09)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "40cf9005-2ce7-57a4-81b4-205a82777934")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.12)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "4e732bc4-b6f6-5f47-8704-c62326693988")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.12)
+			)
+		)
+	)
+	(attr smd)
+	(fp_rect
+		(start -2.5 -2.5)
+		(end 2.5 2.5)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.Fab")
+		(uuid "b61b4814-31d0-56d7-89f6-aaaac02a190c")
+	)
+	(fp_rect
+		(start -2.75 -2.75)
+		(end 2.75 2.75)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "d5baffcf-a2e5-5e9b-816c-09f081631604")
+	)
+	(fp_line
+		(start -2.5 -2.61)
+		(end 2.5 -2.61)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "39bf7726-8ea2-5033-8763-aaa3aa3dc75a")
+	)
+	(fp_line
+		(start -2.5 2.61)
+		(end 2.5 2.61)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "e6a637c9-3c3a-516b-89db-86cb0784412e")
+	)
+	(fp_circle
+		(center -2 -2)
+		(end -1.9 -2)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.Fab")
+		(uuid "daa9599d-8dca-5208-8739-462c33afe54e")
+	)
+	(fp_text user "${REFERENCE}"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(uuid "35d68a7a-44e1-59bf-892d-fb3a00715c16")
+		(effects
+			(font
+				(size 0.5 0.5)
+				(thickness 0.08)
+			)
+		)
+	)
+	(pad "1" smd rect
+		(at -1.8 0 0)
+		(size 1.4 4.2)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "b69f339e-4905-5f56-81a0-6720bc7efdca")
+	)
+	(pad "2" smd rect
+		(at 1.8 0 0)
+		(size 1.4 4.2)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "25a2c582-7d32-5e3a-8e75-df00a263a272")
+	)
+	(embedded_fonts no)
+)

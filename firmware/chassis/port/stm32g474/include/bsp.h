@@ -10,16 +10,22 @@
 #include "board_pins.h"
 #include "rrch.h"
 
-/* board constants that depend on the schematic (placeholders until the electronics lead freezes values) */
-#define RR_VREF 3.3f
-#define RR_DIV_VBAT ((47.0f + 10.0f) / 10.0f)   /* VMOT_SENSE and VBAT_SENSE dividers 47k/10k */
-#define RR_DIV_V5 2.0f
-#define RR_PRES_PULLUP_OHM 4700.0f              /* HEAD_PRES_ID pull-up to VREF+ */
-#define RR_LOOP_PULLUP_OHM 1000.0f              /* PLACEHOLDER: depends on the loop source circuit */
-#define RR_IPROPI_V_PER_A 0.45f                 /* UNVERIFIED: DRV8874 IPROPI gain x RIPROPI (1 kOhm) */
+/* board constants of RR-CHS-MAIN rev A (IB-02; electronics/chassis_main/design/CONTRACT_CHANGE_REQUESTS.md CCR-E03 and
+ * the netlist export electronics/chassis_main/out/pinmap.json). Not measured on a board. */
+#define RR_VREF 3.000f                          /* VREF+ = REF3030 (U14), +-0.2 % (CCR-E03 a) */
+#define RR_DIV_VBAT ((47.0f + 10.0f) / 10.0f)   /* VMOT_SENSE and VBAT_SENSE dividers 47k/10k (R139/R140, R11/R12) */
+#define RR_DIV_V5 2.0f                          /* V5_SENSE 10k/10k (R33/R34) */
+#define RR_PRES_PULLUP_OHM 4700.0f              /* HEAD_PRES_ID pull-up R77 to VREF+, no series R in the measured path (CCR-E03 c) */
+/* J1 loop sense (safety_chain.md 2.2): V = V5_AUX x R71 / (R70 + 2 x 100 + R_loop + R71), R70 = R71 = 1.00 kOhm.
+ * V5_AUX is not measured: nominal 5.0 V (UNVERIFIED tolerance; only this analog copy depends on it) */
+#define RR_LOOP_V5AUX 5.0f
+#define RR_LOOP_RSENSE 1000.0f
+#define RR_LOOP_RSERIES 1200.0f                 /* R70 + 2 x 100 Ohm */
+#define RR_IPROPI_V_PER_A 1.1205f               /* RIPROPI 2.49 kOhm (R153/R155) x 450 uA/A (CCR-E03 b); 0.8925 A/V */
+#define RR_IPROPI_TRIP_A (RR_VREF / RR_IPROPI_V_PER_A) /* 2.68 A: hardware chop = ADC full scale */
 #define RR_NTC_R0 10000.0f
 #define RR_NTC_BETA 3435.0f
-#define RR_NTC_PULLUP 10000.0f
+#define RR_NTC_PULLUP 10000.0f                  /* R215 / R217 / NTC_BOARD pull-up to VREF+ */
 #define RR_PWM_HZ 20000u
 #define RR_WDG_STROBE_PERIOD_MS 10u
 

@@ -5,6 +5,8 @@ Checks: every pin exists in the package, LQFP64 number matches, the claimed peri
 available on that pin, the alternate-function number matches, no pin is used twice, every I/O is
 accounted for. Optionally emits the C header used by the STM32 port and the README table.
 
+Also (when electronics/chassis_main/out/pinmap.json exists) cross-checks every MCU pin, every expander
+pin and every ToF connector -> mux channel against the board's netlist export.
 Usage:
   check_pinmap.py                      # verify only (exit 1 on any mismatch)
   check_pinmap.py --emit-header FILE   # also write board_pins.h
@@ -89,6 +91,64 @@ def check(pm, facts):
     return errors
 
 
+NETLIST = os.path.join(ROOT, "..", "..", "electronics", "chassis_main", "out", "pinmap.json")
+EXPANDER_REF = {"IOX_A": "U43", "IOX_B": "U44", "IOX_C": "U45"}
+NET_ALIAS = {"SENTINEL": "WDG_STROBE"}  # IOX_A GPB7 is wired to the strobe net on purpose
+
+
+def check_netlist(pm):
+    """Returns (errors, summary). The netlist export is the electronics' as-built record (read only)."""
+    if not os.path.exists(NETLIST):
+        return [], "netlist export not found: cross-check skipped"
+    with open(NETLIST) as f:
+        d = json.load(f)
+    parts = {p["ref"]: p for p in d["parts"]}
+    nets = d["nets"]
+    errors, n = [], 0
+
+    def net_ok(sig, net):
+        want = NET_ALIAS.get(sig, sig)
+        return net in (want, want + "_ADC", "MCU_" + want)
+
+    mcu = {x["pin"]: x for x in parts["U20M"]["pins"]}
+    for p in pm["pins"]:
+        x = mcu.get(str(p["lqfp64"]))
+        n += 1
+        if x is None or not net_ok(p["signal"], x["net"]):
+            errors.append(f"netlist: MCU pin {p['lqfp64']} ({p['pin']}) is net {x and x['net']}, pinmap says {p['signal']}")
+    for xname, ref in EXPANDER_REF.items():
+        byname = {x["name"]: x["net"] for x in parts[ref]["pins"]}
+        for pin, dd in pm["expanders"][xname]["pins"].items():
+            n += 1
+            if not net_ok(dd["signal"], byname.get(pin)):
+                errors.append(f"netlist: {xname} ({ref}) {pin} is net {byname.get(pin)}, pinmap says {dd['signal']}")
+
+    def two_pin_other(ref, net):
+        ps = parts[ref]["pins"]
+        if len(ps) != 2:
+            return None
+        return ps[1]["net"] if ps[0]["net"] == net else ps[0]["net"]
+
+    for idx, c in pm["i2c"]["I2C_TOF"]["mux_channels"].items():
+        conn = c.get("connector")
+        if not conn or conn not in parts:
+            errors.append(f"netlist: ToF {idx} {c['id']}: connector {conn} not on the board")
+            continue
+        sda = {x["pin"]: x["net"] for x in parts[conn]["pins"]}.get("3")
+        found = set()
+        for m in nets.get(sda, []):
+            ref = m.split(".")[0]
+            if ref.startswith("R"):
+                o = two_pin_other(ref, sda)
+                mm = re.match(r"TOF(\d)(\d)_SDA$", o or "")
+                if mm:
+                    found.add((int(mm.group(1)), int(mm.group(2))))
+        n += 1
+        if found != {(c["mux"], c["ch"])}:
+            errors.append(f"netlist: ToF {idx} {c['id']} on {conn} reaches mux/channel {sorted(found)}, pinmap says {(c['mux'], c['ch'])}")
+    return errors, f"netlist cross-check against {os.path.relpath(NETLIST, ROOT)}: {n} items"
+
+
 def port_pin(name):
     m = re.match(r"P([A-G])(\d+)$", name)
     return m.group(1), int(m.group(2))
@@ -121,6 +181,13 @@ def emit_header(pm, path):
             bank, bit = m.group(1), int(m.group(2))
             base = 8 if bank in ("B", "1") else 0
             lines.append(f"#define {xname}_BIT_{d['signal']} {base + bit}u")
+        if xname == "IOX_B":
+            mask = 0
+            for pin, d in x["pins"].items():
+                m = re.match(r"P([01])(\d)$", pin)
+                if d.get("dir") == "in":
+                    mask |= 1 << (8 * int(m.group(1)) + int(m.group(2)))
+            lines.append(f"#define IOX_B_INPUT_MASK 0x{mask:04X}u /* configuration register bits = 1 (input); never driven */")
     lines.append("")
     for d in pm["i2c"]["I2C_SYS"]["devices"] + pm["i2c"]["I2C_TOF"]["devices"]:
         ref = re.sub(r"\W+", "_", d["ref"]).strip("_").upper()
@@ -177,11 +244,14 @@ def main():
     a = ap.parse_args()
     pm, facts = load()
     errors = check(pm, facts)
+    nerr, nsum = check_netlist(pm)
+    errors += nerr
     for e in errors:
         print("PINMAP ERROR:", e)
     if errors:
         return 1
     print(f"pinmap.yaml: {len(pm['pins'])} native pins tool-checked against LQFP64 pin data: OK")
+    print(f"pinmap.yaml: {nsum}: OK")
     if a.emit_header:
         emit_header(pm, a.emit_header)
         print("wrote", a.emit_header)

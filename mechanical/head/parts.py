@@ -708,7 +708,7 @@ LINER_T = 0.5
 def lid_liner():
     """0.5 mm closed-cell liner under the lid, inside the fence line (the 0.9 mm cover clearance allows no more)."""
     return box(84.0, FENCE_FRONT_X - 3.0, -FENCE_SIDE_Y + 3.0, FENCE_SIDE_Y - 3.0, H.Z_LID0 - LINER_T, H.Z_LID0).cut(
-        box(j1_zone()[0] - 1, j1_zone()[1] + 1, j1_zone()[2] - 1, j1_zone()[3] + 1, 30, 50))
+        box(H.LID_OPENING[0] - 0.5, H.LID_OPENING[1] + 0.5, H.LID_OPENING[2] - 0.5, H.LID_OPENING[3] + 0.5, 30, 50))
 
 
 # =============================================================================================== dummy head, cradle, gauges

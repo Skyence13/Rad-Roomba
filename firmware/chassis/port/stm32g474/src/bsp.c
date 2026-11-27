@@ -4,14 +4,16 @@
  * datasheets/reference manuals and must be checked on the bench (see README "First power-up").
  * Not implemented in this revision (the core reports them as warnings and stays safe):
  *   - VL53L4ED ranging (stub, see tof_vl53l4ed.c)      -> all ToF OFFLINE, motion inhibited
- *   - charger (LTC4162) and pack monitor (INA228)      -> CHARGER_COMM / PMON_COMM, VBAT from the ADC
- *   - branch current monitor (INA3221)                 -> branch currents reported null
+ *   - charger (LTC4162-FAD): register map UNVERIFIED (IB-06), driver disabled -> CHARGER_COMM
+ * Implemented, never run: INA228 pack monitor, INA3221 branch monitor (TI register maps checked against
+ * the datasheets, core/rrch_pwrdev.c), IOX_B P17 = CHAIN_END_RB input (IB-01).
  *   - PWM-synchronous current sampling (currents are sampled free-running and low-passed)
  */
 #include <math.h>
 #include <string.h>
 
 #include "bsp.h"
+#include "rrch_pwrdev.h"
 
 #define P(sig) PIN_##sig##_PORT, PIN_##sig##_PIN
 #define RD(sig) ((PIN_##sig##_PORT->IDR & PIN_##sig##_PIN) != 0u)
@@ -332,6 +334,16 @@ static uint32_t ratio_ohm(uint16_t raw, float pullup)
     return (uint32_t)(pullup * x / (1.0f - x));
 }
 
+static uint32_t loop_ohm(uint16_t raw)
+{
+    float v = adc_v(raw);
+    if (v < 0.05f) {
+        return 1000000u; /* open loop or unplugged */
+    }
+    float r = RR_LOOP_V5AUX * RR_LOOP_RSENSE / v - RR_LOOP_RSERIES - RR_LOOP_RSENSE;
+    return r < 0.0f ? 0u : (r > 1.0e6f ? 1000000u : (uint32_t)r);
+}
+
 static float ntc_c(uint16_t raw)
 {
     float x = (float)raw / 4095.0f;
@@ -411,6 +423,36 @@ static bool i2c_rd_reg(I2C_HandleTypeDef *bus, uint8_t addr7, uint8_t reg, uint8
     return HAL_I2C_Mem_Read(bus, (uint16_t)(addr7 << 1), reg, I2C_MEMADD_SIZE_8BIT, data, n, 5) == HAL_OK;
 }
 
+/* INA228 pack monitor (SLYS021A): ADCRANGE 1, SHUNT_CAL for 1 mOhm / 100 uA LSB; ADC_CONFIG left at its
+ * reset value FB68h (continuous bus, shunt and temperature). Identity checked before use. */
+static bool pmon_ok, branch_ok;
+static bool i2c_rd16(uint8_t addr, uint8_t reg, uint8_t b[2]);
+static void pmon_init(void)
+{
+    uint8_t mfr[2], dev[2];
+    pmon_ok = i2c_rd16(I2C_ADDR_PMON, RR_INA228_REG_MANUFACTURER_ID, mfr) && i2c_rd16(I2C_ADDR_PMON, RR_INA228_REG_DEVICE_ID, dev) &&
+              rr_ina228_id_ok(mfr, dev);
+    if (pmon_ok) {
+        uint16_t cal = rr_ina228_shunt_cal(RR_PMON_CURRENT_LSB, RR_PMON_SHUNT_OHM, true);
+        uint8_t c1[3] = {RR_INA228_REG_CONFIG, (uint8_t)(RR_INA228_CONFIG_ADCRANGE >> 8), (uint8_t)RR_INA228_CONFIG_ADCRANGE};
+        uint8_t c2[3] = {RR_INA228_REG_SHUNT_CAL, (uint8_t)(cal >> 8), (uint8_t)cal};
+        pmon_ok = i2c_wr(&hi2c_sys, I2C_ADDR_PMON, c1, 3) && i2c_wr(&hi2c_sys, I2C_ADDR_PMON, c2, 3);
+    }
+}
+
+/* INA3221 branch monitor (SBOS576C): reset configuration 7127h is used as is (all channels, continuous). */
+static void branch_init(void)
+{
+    uint8_t mfr[2], die[2];
+    branch_ok = i2c_rd16(I2C_ADDR_BRANCH, RR_INA3221_REG_MANUFACTURER_ID, mfr) && i2c_rd16(I2C_ADDR_BRANCH, RR_INA3221_REG_DIE_ID, die) &&
+                rr_ina3221_id_ok(mfr, die);
+}
+
+static bool i2c_rd16(uint8_t addr, uint8_t reg, uint8_t b[2])
+{
+    return i2c_rd_reg(&hi2c_sys, addr, reg, b, 2);
+}
+
 static void i2c_init(void)
 {
     __HAL_RCC_I2C1_CLK_ENABLE();
@@ -428,10 +470,13 @@ static void i2c_init(void)
      * request not asserted, ToF held in reset until the driver starts them, head power off. */
     iox_b_want = (uint16_t)(1u << IOX_B_BIT_V12_LIDAR_EN);
     uint8_t out[3] = {0x02, (uint8_t)iox_b_want, (uint8_t)(iox_b_want >> 8)};
-    uint8_t cfg[3] = {0x06, 0x00, 0x00};
+    /* every pin an output except IOX_B_INPUT_MASK (P17 = CHAIN_END_RB, CCR-E02: never driven) */
+    uint8_t cfg[3] = {0x06, (uint8_t)IOX_B_INPUT_MASK, (uint8_t)(IOX_B_INPUT_MASK >> 8)};
     iox_b_ok = i2c_wr(&hi2c_sys, IOX_B_I2C_ADDR, out, 3) && i2c_wr(&hi2c_sys, IOX_B_I2C_ADDR, cfg, 3);
     iox_b_cur = iox_b_ok ? iox_b_want : 0xFFFFu;
     tof_ok = tof_init(&hi2c_tof);
+    pmon_init();
+    branch_init();
 }
 
 /* ------------------------------------------------------------------ non-volatile storage
@@ -537,7 +582,7 @@ static void h_read(void *ctx, rrch_in_t *in)
     __HAL_ADC_CLEAR_FLAG(&hadc1, ADC_FLAG_EOS);
     __HAL_ADC_CLEAR_FLAG(&hadc2, ADC_FLAG_EOS);
     in->pres_ohm = ratio_ohm(adc1_buf[A1_PRES], RR_PRES_PULLUP_OHM);
-    in->loop_ohm = ratio_ohm(adc1_buf[A1_LOOP], RR_LOOP_PULLUP_OHM);
+    in->loop_ohm = loop_ohm(adc1_buf[A1_LOOP]);
     in->vmot_v = adc_v(adc1_buf[A1_VMOT]) * RR_DIV_VBAT;
     in->vbat_v = adc_v(adc1_buf[A1_VBAT]) * RR_DIV_VBAT;
     in->v5_v = adc_v(adc1_buf[A1_V5]) * RR_DIV_V5;
@@ -745,16 +790,49 @@ void bsp_background(rrch_t *core)
         }
         tof_idx = (tof_idx + 1) % RRCH_TOF_N;
     }
-    /* 10 Hz: eFuse faults and bus health. Charger / pack monitor / branch monitor drivers are not
-     * implemented: reported as not-ok so the core raises CHARGER_COMM and PMON_COMM. */
+    /* 100 Hz: IOX_B input port 1 for P17 = CHAIN_END_RB (UNVERIFIED register 0x01, TCA9535 class) */
+    static uint32_t t_iox_b;
+    if (now - t_iox_b >= 10u) {
+        t_iox_b = now;
+        uint8_t hi = 0;
+        bool ok = i2c_rd_reg(&hi2c_sys, IOX_B_I2C_ADDR, 0x01, &hi, 1);
+        uint64_t t = bsp_now_us();
+        core->hal.irq_lock(NULL);
+        rrch_iox_b_update(core, ok, ok && ((hi >> (IOX_B_BIT_CHAIN_END_RB - 8u)) & 1u) != 0u, t);
+        core->hal.irq_unlock(NULL);
+    }
+    /* 10 Hz: eFuse faults, bus health, INA228 pack and INA3221 branch telemetry. The charger driver is
+     * disabled (LTC4162 register map UNVERIFIED, IB-06): charger_ok false -> CHARGER_COMM. */
     if (now - t_slow >= 100u) {
         t_slow = now;
         rrch_power_t p;
         uint8_t in = 0xFF;
         memset(&p, 0, sizeof p);
         p.soc_pct = -1.0f;
-        p.chg_temp_c = p.i_head_a = p.i_head_htr_a = p.i_chs_htr_a = NAN;
+        p.chg_temp_c = p.i_head_a = p.i_head_htr_a = p.i_chs_htr_a = p.vbat_pmon_v = p.ibat_a = NAN;
         p.charge_state = RRCH_CHG_UNKNOWN;
+        p.charger_ok = false;
+        if (!pmon_ok) {
+            pmon_init();
+        }
+        uint8_t b3[3];
+        if (pmon_ok && i2c_rd_reg(&hi2c_sys, I2C_ADDR_PMON, RR_INA228_REG_VBUS, b3, 3)) {
+            p.vbat_pmon_v = rr_ina228_vbus_v(b3);
+            if (i2c_rd_reg(&hi2c_sys, I2C_ADDR_PMON, RR_INA228_REG_CURRENT, b3, 3)) {
+                p.ibat_a = rr_ina228_current_a(b3, RR_PMON_CURRENT_LSB);
+                p.pmon_ok = true;
+            }
+        }
+        if (!branch_ok) {
+            branch_init();
+        }
+        float *dst[3] = {&p.i_head_a, &p.i_head_htr_a, &p.i_chs_htr_a};
+        for (unsigned ch = 0; branch_ok && ch < 3u; ch++) {
+            uint8_t b2[2];
+            if (i2c_rd16(I2C_ADDR_BRANCH, RR_INA3221_REG_SHUNT(ch), b2)) {
+                *dst[ch] = (float)(rr_ina3221_shunt_v(b2) / rr_branch_shunt_ohm[ch]);
+            }
+        }
         if (i2c_rd_reg(&hi2c_sys, IOX_C_I2C_ADDR, 0x00, &in, 1)) { /* UNVERIFIED: TCA9534 input register 0 */
             p.efuse_fault = (uint8_t)(~in & 0x1Fu);
         }

@@ -1,24 +1,24 @@
 {
  "generated_by": "mechanical/head/checks.py",
- "contract_version": "0.4.0-draft6",
+ "contract_version": "0.4.0-draft7",
  "checks": [
   {
    "check": "no interference, prototype assembly, rails at rest",
    "status": "pass",
    "evidence": "tool-checked",
-   "detail": "463 candidate pairs intersected; overlaps: none"
+   "detail": "518 candidate pairs intersected; overlaps: none"
   },
   {
    "check": "no interference, production assembly, rails at rest",
    "status": "pass",
    "evidence": "tool-checked",
-   "detail": "315 candidate pairs intersected; overlaps: none"
+   "detail": "322 candidate pairs intersected; overlaps: none"
   },
   {
    "check": "no interference, dummy assembly, rails at rest",
    "status": "pass",
    "evidence": "tool-checked",
-   "detail": "184 candidate pairs intersected; overlaps: none"
+   "detail": "182 candidate pairs intersected; overlaps: none"
   },
   {
    "check": "no interference, leading rail travel 17 mm, 3 mm insert",
@@ -75,10 +75,58 @@
    "detail": "side strip underside z = 7.00 (3 mm set) / 5.00 (5 mm set); 5 mm set vs head: 10 pairs, overlaps none"
   },
   {
-   "check": "eight M2.5 board standoffs and PCB underside match board_envelopes.yaml",
+   "check": "eight M2.5 board standoffs and PCB underside match params.HEAD_ACQ (board file comparison below)",
    "status": "pass",
    "evidence": "tool-checked",
-   "detail": "standoff tops [(87.7, -87.5, 34.5), (87.7, 0.0, 34.5), (87.7, 87.5, 34.5), (131.2, -158.0, 34.5), (131.2, 158.0, 34.5), (174.7, -87.5, 34.5), (174.7, 0.0, 34.5), (174.7, 87.5, 34.5)]; yaml [(87.7, -87.5, 34.5), (87.7, 0.0, 34.5), (87.7, 87.5, 34.5), (131.2, -158.0, 34.5), (131.2, 158.0, 34.5), (174.7, -87.5, 34.5), (174.7, 0.0, 34.5), (174.7, 87.5, 34.5)]"
+   "detail": "standoff tops [(87.7, -87.5, 34.5), (87.7, 0.0, 34.5), (113.2, 87.5, 34.5), (131.2, -158.0, 34.5), (131.2, 158.0, 34.5), (174.7, -87.5, 34.5), (174.7, 0.0, 34.5), (174.7, 87.5, 34.5)]"
+  },
+  {
+   "check": "mechanical/common interface records follow the as-built board (IB-52: board_envelopes.yaml holes, HEAD_PIGTAIL_EXIT)",
+   "status": "deviation",
+   "evidence": "design note",
+   "detail": "params.HEAD_PIGTAIL_EXIT J1 y 87.5 vs head port y 76.2 (CR-M03 a); owner mechanical/common (head model already follows the board file)"
+  },
+  {
+   "check": "RR-HEAD-ACQ as built vs head: 8 mounting holes (H2801..H2808) = model standoffs = spreader clinch holes",
+   "status": "pass",
+   "evidence": "tool-checked against electronics/head_acq/RR-HEAD-ACQ.kicad_pcb",
+   "detail": "board file [(87.7, -87.5), (87.7, 0.0), (113.2, 87.5), (131.2, -158.0), (131.2, 158.0), (174.7, -87.5), (174.7, 0.0), (174.7, 87.5)]; H1 (H2801) at u/v (75.5, 30.0) = base (113.2, 87.5) (CR-M02)"
+  },
+  {
+   "check": "RR-HEAD-ACQ as built vs head: 4 shield cans: outline v 8.25..40.25 (CR-M01), 2 mouse holes at the anode U.FL pads (CR-M04), 12 clips on the wall line each",
+   "status": "pass",
+   "evidence": "tool-checked against electronics/head_acq/RR-HEAD-ACQ.kicad_pcb",
+   "detail": "lane 0 outline u/v (13.75, 8.25, 49.75, 40.25) = model x/y [91.45, 123.45, 113.25, 149.25]; mouse holes du [-10.38, 11.87] (board) = anode pads [-10.38, 11.87] = model [-10.38, 11.87], open in the can solid; clips on the wall mid-plane 12/12 per can"
+  },
+  {
+   "check": "RR-HEAD-ACQ as built vs head: J1 cable port at the J2001 centre (CR-M03 a); Micro-Fit bodies = hp.MICROFIT_BODY_U",
+   "status": "pass",
+   "evidence": "tool-checked against electronics/head_acq/RR-HEAD-ACQ.kicad_pcb",
+   "detail": "J2001 body u 73.015..100.665 -> centre y 76.16; port y 76.20 (P.HEAD_PIGTAIL_EXIT); J2601 body u 50.255..71.905"
+  },
+  {
+   "check": "RR-HEAD-ACQ as built vs head: 1073 component bodies (board-file courtyard x 3D envelope height; Micro-Fit at 8.3 mm) vs every head part",
+   "status": "fail",
+   "evidence": "tool-checked against electronics/head_acq/RR-HEAD-ACQ.kicad_pcb",
+   "detail": "3104 candidate pairs intersected; overlaps: [('J2001', 'lid_liner', 0.93)]; height-zone violations (6.0 top / 8.3 J1 landing / top side only): none; smallest clearance to the lid / liner / blister above a body: 0.60 mm (J2001)"
+  },
+  {
+   "check": "RR-HEAD-ACQ as built vs head: mated Micro-Fit plug keep-outs (CR-M03: v -8.4..1.5, IB-19 height) clear of standoffs, fences, cut-out, NTC, bond screws, lid",
+   "status": "pass",
+   "evidence": "tool-checked against electronics/head_acq/RR-HEAD-ACQ.kicad_pcb",
+   "detail": "keep-outs x 74.8..84.7, y 62.34..112.75, z 36.1..44.4: in the prototype and production assemblies (interference checks above, parts plug_ko_J2001 / plug_ko_J2601)"
+  },
+  {
+   "check": "spreader plate: every hole pair keeps >= 1.0 mm web (countersinks at 5.2 mm)",
+   "status": "pass",
+   "evidence": "tool-checked",
+   "detail": "smallest web 2.00 mm between (174.7, 87.5) (board standoff M2.5 x 2.5 (cli) and (168.0, 87.5) (M2.5 into rib insert, counters)"
+  },
+  {
+   "check": "J1 landing harness: free length behind the mated J2001 / J2601 plugs for the wire exit and bend (CR-M03 layout)",
+   "status": "deviation",
+   "evidence": "tool-checked geometry + calculated allowance",
+   "detail": "plug backs at x 74.8 (v -8.4); rear wall inner face x 72.8: 2.0 mm (prototype comb wall: 1.4 mm) against about 8 mm needed (calculated: AWG 18 conductor about 2.1 mm OD UNVERIFIED, bend radius >= 2 x OD + 2 mm straight behind the housing). The J2001 wires must also converge to the 7.5 mm cable at the port within that length (pins at y 65.7..86.7, port y 76.2). Not buildable as laid out: needs a board-side change (headers moved >= 6 mm forward of the rear edge, or top-entry headers) -- lead decision"
   },
   {
    "check": "board height limits: 6.0 top / 2.0 bottom, >= 6.3 mm clear under the lid, >= 8.3 mm over J1_LANDING",
@@ -129,7 +177,7 @@
    "detail": "hook centre x 104.0, hook z 47.5..49.8 (latch box z 46.0..60.0), width 30 (latch box 24); no latch load in the lid or in a printed part"
   },
   {
-   "check": "J1 / J2 cable ports at the interface positions (71.7, +-87.5, 39.0) in the rear wall",
+   "check": "J1 / J2 cable ports in the rear wall at (71.7, 76.2, 39.0) (CR-M03) / (71.7, -87.5, 39.0)",
    "status": "pass",
    "evidence": "tool-checked",
    "detail": "wall x 70.2..72.8; slot floor z 33.5; cable top z 42.75 under the lid at 43.0"
@@ -138,13 +186,13 @@
    "check": "rail switch positions vs params.HEAD_RAIL_SWITCHES (layout placeholders)",
    "status": "deviation",
    "evidence": "design note",
-   "detail": "designed {'rail_sw_front': (182.6, 87.5, 37.3), 'rail_sw_left': (73.8, 156.75, 20.75), 'rail_sw_right': (73.8, -156.75, 20.75)} vs placeholders {'rail_sw_front': (184.2, 0.0, 21.0), 'rail_sw_left': (131.2, 168.5, 21.0), 'rail_sw_right': (131.2, -168.5, 21.0)}: the placeholders lie inside the optical stack / on the split plane; frames.yaml needs the designed values"
+   "detail": "designed {'rail_sw_front': (182.6, 87.5, 37.3), 'rail_sw_left': (73.8, 156.75, 20.75), 'rail_sw_right': (73.8, -156.75, 20.75)} vs placeholders {'rail_sw_front': (182.6, 87.5, 37.3), 'rail_sw_left': (73.8, 156.75, 20.75), 'rail_sw_right': (73.8, -156.75, 20.75)}: the placeholders lie inside the optical stack / on the split plane; frames.yaml needs the designed values"
   },
   {
    "check": "FRAME net isolated from the receiver metal in BOTH builds (R2801 fitted in both; J1 pin 2 the only DC ground path)",
    "status": "pass",
    "evidence": "tool-checked",
-   "detail": "prototype: smallest air gap 0.50 mm near (78.7, 117.5, 30.0); production: smallest air gap 0.30 mm near (70.2, -20.0, 29.5). Barriers: 0.5 mm G10 isolators under the T-heads, 0.3 mm air round the T-heads in the pockets, insulating shoulder washers under the T-head screws, bridge 0.3 mm behind the frame, keeper 0.6 mm above the lid (+ 0.1 mm polyimide tape); production adds anodise on shoes and pockets (second barrier)"
+   "detail": "prototype: smallest air gap 0.35 mm near (79.0, 104.5, 29.5); production: smallest air gap 0.30 mm near (70.2, -20.0, 29.5). Barriers: 0.5 mm G10 isolators under the T-heads, 0.3 mm air round the T-heads in the pockets, insulating shoulder washers under the T-head screws, bridge 0.3 mm behind the frame, keeper 0.6 mm above the lid (+ 0.1 mm polyimide tape); production adds anodise on shoes and pockets (second barrier)"
   },
   {
    "check": "every printed part fits the X1C in its print orientation (240 x 240 x 250 usable after 8 mm margins)",
@@ -162,13 +210,13 @@
    "check": "EMI fence bond pitch to the spreader <= 50 mm (prototype; bond = screw or standoff clamping the foot, clamping tool-checked)",
    "status": "pass",
    "evidence": "tool-checked",
-   "detail": "largest gap front 48.0, side 31.2, rear 48.5 mm (fence ends included); standoffs meant to clamp a foot but not on one: none; standoffs in the chimney zones (on the spreader, not bond points): ['77.5,+31.5', '77.5,-31.5', '77.5,+57.0', '77.5,-57.0', '77.5,+144.5', '77.5,-144.5']"
+   "detail": "largest gap front 48.0, side 31.2, rear 48.5 mm (fence ends included); standoffs meant to clamp a foot but not on one: none; standoffs in the chimney zones (on the spreader, not bond points): ['77.5,+31.5', '77.5,-31.5', '77.5,+57.0', '77.5,-57.0', '77.5,+144.5', '77.5,-144.5', '77.5,+117.5']"
   },
   {
    "check": "cover = shear panel: lid fasteners round a closed loop at <= 40 mm pitch, all on hard seats at the lid underside",
-   "status": "pass",
+   "status": "fail",
    "evidence": "tool-checked",
-   "detail": "35 M3 screws (17 into standoffs on the spreader, 18 into frame bosses); largest neighbour distance 40.0 mm between (77.5, -104.5) and (77.5, -144.5); standoff tops z 43.00 / 43.00, boss tops z 43.00"
+   "detail": "34 M3 screws (16 into standoffs on the spreader, 18 into frame bosses); largest neighbour distance 60.5 mm between (77.5, +117.5) and (77.5, +57.0); standoff tops z 43.00 / 43.00, boss tops z 43.00"
   },
   {
    "check": "insulating jacket (RR-HD-S-131/132, standard cold configuration) inside z <= 50, clear of the latch box, rails and receiver",
@@ -186,7 +234,7 @@
    "check": "transport covers clip on without touching the films or any part except their seats",
    "status": "pass",
    "evidence": "tool-checked",
-   "detail": "45 pairs; overlaps: none; cover rests touch the cassette borders only (z 7.7 vs film z 10)"
+   "detail": "47 pairs; overlaps: none; cover rests touch the cassette borders only (z 7.7 vs film z 10)"
   },
   {
    "check": "shield openings: no slot longer than 20 mm except the cable entries",
@@ -198,13 +246,13 @@
    "check": "dummy head mass and CG representative of the prototype head (+-10 g, +-3 mm x/y, +-5 mm z)",
    "status": "pass",
    "evidence": "calculated from model volumes x handbook densities",
-   "detail": "dummy 1864 g vs 1864 g; CG offset +0.1 / +0.5 / -2.2 mm; steel ballast 1.72 mm per lane"
+   "detail": "dummy 1863 g vs 1862 g; CG offset +0.1 / +0.5 / -2.2 mm; steel ballast 1.72 mm per lane"
   },
   {
    "check": "head mass vs the 1.67 kg (prototype) / 2.10 kg (production) used in mech_calcs.md",
    "status": "deviation",
    "evidence": "calculated",
-   "detail": "prototype 1864 g, production 2083 g (model volumes, OEM modules assumed 102 g per lane)"
+   "detail": "prototype 1862 g, production 2082 g (model volumes, OEM modules assumed 102 g per lane)"
   },
   {
    "check": "20 N at the front outer window corner: deflection target < 0.5 mm with the lid fitted",
@@ -235,9 +283,161 @@
    "status": "pass",
    "evidence": "analysis of the model geometry (not a light test)",
    "detail": "22 joints tabulated in head_report.md; joints that rely on a gasket only: L03, L04, L10, L14"
+  },
+  {
+   "check": "heater demand within the fitted heater: baseline (+10 C at the SiPM carrier, -20 / -25 C, still air 12 W/m2K, jacket, 1.2 W electronics) <= 30 W at 12 V",
+   "status": "pass",
+   "evidence": "calculated",
+   "detail": "prototype -20 C: 16.9 W; prototype -25 C: 19.8 W; production -20 C: 17.2 W; production -25 C: 20.1 W. Sensitivity 25 W/m2K: prototype -20 C 25.7 W; prototype -25 C 30.2 W; production -20 C 26.1 W; production -25 C 30.7 W (> 30 W at -25 C: ['prototype', 'production']). At 10 V the films give 20.8 W; branch limit 4.0 A x 12 V = 48 W (the films, not the branch, limit). Cut-out opens 45 C (UNVERIFIED): stuck-on heater at 15 V in +20 C would settle at 99 C without it"
   }
  ],
  "data": {
+  "board_fit": {
+   "source": {
+    "file": "electronics/head_acq/RR-HEAD-ACQ.kicad_pcb",
+    "bytes": 13705839,
+    "mtime_utc": "2026-11-27 03:46:27",
+    "aux_axis_origin": [
+     50.0,
+     248.0
+    ],
+    "footprints": 1085
+   },
+   "cans": [
+    {
+     "lane": 0,
+     "outline_uv": [
+      13.75,
+      8.25,
+      49.75,
+      40.25
+     ],
+     "model_bbox_x_y": [
+      91.45,
+      123.45,
+      113.25,
+      149.25
+     ],
+     "outline_ok": true,
+     "mouse_du_board": [
+      -10.38,
+      11.87
+     ],
+     "anode_pad_du": [
+      -10.38,
+      11.87
+     ],
+     "mouse_holes_open_in_model": true,
+     "clips_on_wall": 12,
+     "clips_clear_of_mouse_holes": true
+    },
+    {
+     "lane": 1,
+     "outline_uv": [
+      101.25,
+      8.25,
+      137.25,
+      40.25
+     ],
+     "model_bbox_x_y": [
+      91.45,
+      123.45,
+      25.75,
+      61.75
+     ],
+     "outline_ok": true,
+     "mouse_du_board": [
+      -10.38,
+      11.87
+     ],
+     "anode_pad_du": [
+      -10.38,
+      11.87
+     ],
+     "mouse_holes_open_in_model": true,
+     "clips_on_wall": 12,
+     "clips_clear_of_mouse_holes": true
+    },
+    {
+     "lane": 2,
+     "outline_uv": [
+      188.75,
+      8.25,
+      224.75,
+      40.25
+     ],
+     "model_bbox_x_y": [
+      91.45,
+      123.45,
+      -61.75,
+      -25.75
+     ],
+     "outline_ok": true,
+     "mouse_du_board": [
+      -10.38,
+      11.87
+     ],
+     "anode_pad_du": [
+      -10.38,
+      11.87
+     ],
+     "mouse_holes_open_in_model": true,
+     "clips_on_wall": 12,
+     "clips_clear_of_mouse_holes": true
+    },
+    {
+     "lane": 3,
+     "outline_uv": [
+      276.25,
+      8.25,
+      312.25,
+      40.25
+     ],
+     "model_bbox_x_y": [
+      91.45,
+      123.45,
+      -149.25,
+      -113.25
+     ],
+     "outline_ok": true,
+     "mouse_du_board": [
+      -10.38,
+      11.87
+     ],
+     "anode_pad_du": [
+      -10.38,
+      11.87
+     ],
+     "mouse_holes_open_in_model": true,
+     "clips_on_wall": 12,
+     "clips_clear_of_mouse_holes": true
+    }
+   ],
+   "component_pairs_tested": 3104,
+   "plug_keepouts_xyz": {
+    "J2001": [
+     74.8,
+     62.335,
+     36.1,
+     84.7,
+     89.985,
+     44.4
+    ],
+    "J2601": [
+     74.8,
+     91.095,
+     36.1,
+     84.7,
+     112.745,
+     44.4
+    ]
+   }
+  },
+  "j1_wire_exit_mm": {
+   "to_rear_wall": 2.0,
+   "to_prototype_comb": 1.4,
+   "required": 8.0
+  },
   "rail_front_face": {
    "unloaded_x": 212.2,
    "full_stroke_x": 195.2,
@@ -246,7 +446,7 @@
    "residual_strip_full_stroke_mm": 14.0
   },
   "frame_to_receiver_gap_mm": {
-   "prototype": 0.5,
+   "prototype": 0.35,
    "production": 0.3
   },
   "printed_parts": [
@@ -615,21 +815,21 @@
    ]
   },
   "mass_prototype": {
-   "mass_g": 1864.3,
+   "mass_g": 1862.4,
    "cg_mm": [
-    118.39,
-    0.36,
-    34.51
+    118.44,
+    -0.14,
+    34.5
    ],
-   "mass_without_pigtails_g": 1744.3,
+   "mass_without_pigtails_g": 1742.4,
    "cg_without_pigtails_mm": [
-    126.62,
-    0.11,
-    28.21
+    126.69,
+    0.01,
+    28.19
    ],
    "largest_items_g": {
-    "lid": 212.3,
-    "spreader": 200.5,
+    "lid": 209.9,
+    "spreader": 200.6,
     "pcb": 145.0,
     "frame_L": 96.7,
     "frame_R": 95.6,
@@ -643,22 +843,22 @@
    }
   },
   "mass_production": {
-   "mass_g": 2083.4,
+   "mass_g": 2081.7,
    "cg_mm": [
-    119.94,
-    0.33,
+    119.99,
+    -0.12,
     32.94
    ],
-   "mass_without_pigtails_g": 1963.4,
+   "mass_without_pigtails_g": 1961.7,
    "cg_without_pigtails_mm": [
-    127.35,
-    0.1,
-    27.25
+    127.41,
+    0.01,
+    27.24
    ],
    "largest_items_g": {
     "frame": 431.4,
-    "lid": 212.3,
-    "spreader": 200.5,
+    "lid": 209.9,
+    "spreader": 200.6,
     "pcb": 145.0,
     "shoe_L": 62.3,
     "shoe_R": 62.3,
@@ -671,26 +871,26 @@
    }
   },
   "mass_dummy": {
-   "mass_g": 1864.5,
+   "mass_g": 1862.6,
    "cg_mm": [
-    118.47,
-    0.82,
+    118.5,
+    0.35,
     32.28
    ],
-   "mass_without_pigtails_g": 1744.5,
+   "mass_without_pigtails_g": 1742.6,
    "cg_without_pigtails_mm": [
-    126.71,
-    0.61,
-    25.83
+    126.75,
+    0.53,
+    25.82
    ],
    "largest_items_g": {
-    "lid": 212.3,
-    "spreader": 200.5,
+    "lid": 209.9,
+    "spreader": 200.6,
     "dummy_board": 168.7,
     "S0_ballast": 106.1,
+    "S3_ballast": 106.1,
     "S1_ballast": 106.1,
     "S2_ballast": 106.1,
-    "S3_ballast": 106.1,
     "frame_L": 96.7,
     "frame_R": 95.6,
     "shoe_L": 62.3,
@@ -705,10 +905,10 @@
      "pitch": 0.09773406492912665,
      "roll_incl_joint": 0.041455014861280934,
      "wing_bending": 0.0005467981138346201,
-     "wing_twist": 0.00955737798296762,
-     "total": 0.14929325588720982,
+     "wing_twist": 0.010275284699401364,
+     "total": 0.15001116260364356,
      "EI_Nm2": 1893.2899906572197,
-     "GJ_Nm2": 291.6594912294623,
+     "GJ_Nm2": 271.2820210385411,
      "k_joint_Nm_per_rad": 1351.7801524674549
     },
     "lid removed (service state)": {
@@ -723,29 +923,29 @@
     },
     "roll_if_joint_rigid": 0.01611120290691253,
     "modes_hz": {
-     "pitch on the mount": 79.18619016894408,
-     "roll on the mount": 247.2688876383431,
-     "halves rocking about the y = 0 joint": 173.398023282573,
-     "wing bending": 3377.040024096215
+     "pitch on the mount": 79.22684647460153,
+     "roll on the mount": 247.3958420915622,
+     "halves rocking about the y = 0 joint": 173.48705046041715,
+     "wing bending": 3378.773886669274
     },
-    "f1_hz": 79.18619016894408,
+    "f1_hz": 79.22684647460153,
     "joint_terms_Nm_per_rad": {
      "spreader alone (2 mm)": 38.413876543209874,
      "lid alone (2 mm)": 39.94498765432098,
      "spreader + lid as a couple through the lid fasteners near the joint (slip model)": 993.100362343998,
      "rear bridge plate (3 x 13 on edge, T-head to T-head)": 280.3209259259259
     },
-    "mass_kg": 1.8642915314862525
+    "mass_kg": 1.862378650637058
    },
    "prototype, split PA-CF (conditioned, E x 0.5)": {
     "lid fitted (all screws)": {
      "pitch": 0.09773406492912665,
      "roll_incl_joint": 0.041455014861280934,
      "wing_bending": 0.0006460364434572634,
-     "wing_twist": 0.009883634885491046,
-     "total": 0.14971875111935587,
+     "wing_twist": 0.010653365788829038,
+     "total": 0.15048848202269385,
      "EI_Nm2": 1602.4597471517363,
-     "GJ_Nm2": 282.03186705045,
+     "GJ_Nm2": 261.6543968595288,
      "k_joint_Nm_per_rad": 1351.7801524674549
     },
     "lid removed (service state)": {
@@ -760,29 +960,29 @@
     },
     "roll_if_joint_rigid": 0.01611120290691253,
     "modes_hz": {
-     "pitch on the mount": 79.18619016894408,
-     "roll on the mount": 247.2688876383431,
-     "halves rocking about the y = 0 joint": 173.398023282573,
-     "wing bending": 3106.856560813247
+     "pitch on the mount": 79.22684647460153,
+     "roll on the mount": 247.3958420915622,
+     "halves rocking about the y = 0 joint": 173.48705046041715,
+     "wing bending": 3108.451703977741
     },
-    "f1_hz": 79.18619016894408,
+    "f1_hz": 79.22684647460153,
     "joint_terms_Nm_per_rad": {
      "spreader alone (2 mm)": 38.413876543209874,
      "lid alone (2 mm)": 39.94498765432098,
      "spreader + lid as a couple through the lid fasteners near the joint (slip model)": 993.100362343998,
      "rear bridge plate (3 x 13 on edge, T-head to T-head)": 280.3209259259259
     },
-    "mass_kg": 1.8642915314862525
+    "mass_kg": 1.862378650637058
    },
    "prototype, split PETG-CF frame": {
     "lid fitted (all screws)": {
      "pitch": 0.09773406492912665,
      "roll_incl_joint": 0.041455014861280934,
      "wing_bending": 0.0006035413286360589,
-     "wing_twist": 0.009756469115330079,
-     "total": 0.14954909023437368,
+     "wing_twist": 0.01050576945728624,
+     "total": 0.15029839057632985,
      "EI_Nm2": 1715.2883269367578,
-     "GJ_Nm2": 285.7078690097092,
+     "GJ_Nm2": 265.330398818788,
      "k_joint_Nm_per_rad": 1351.7801524674549
     },
     "lid removed (service state)": {
@@ -797,29 +997,29 @@
     },
     "roll_if_joint_rigid": 0.01611120290691253,
     "modes_hz": {
-     "pitch on the mount": 79.18619016894408,
-     "roll on the mount": 247.2688876383431,
-     "halves rocking about the y = 0 joint": 173.398023282573,
-     "wing bending": 3214.372504222168
+     "pitch on the mount": 79.22684647460153,
+     "roll on the mount": 247.3958420915622,
+     "halves rocking about the y = 0 joint": 173.48705046041715,
+     "wing bending": 3216.0228489445212
     },
-    "f1_hz": 79.18619016894408,
+    "f1_hz": 79.22684647460153,
     "joint_terms_Nm_per_rad": {
      "spreader alone (2 mm)": 38.413876543209874,
      "lid alone (2 mm)": 39.94498765432098,
      "spreader + lid as a couple through the lid fasteners near the joint (slip model)": 993.100362343998,
      "rear bridge plate (3 x 13 on edge, T-head to T-head)": 280.3209259259259
     },
-    "mass_kg": 1.8642915314862525
+    "mass_kg": 1.862378650637058
    },
    "production, one-piece 6061 frame": {
     "lid fitted (all screws)": {
      "pitch": 0.02443351623228166,
      "roll_incl_joint": 0.0063738023521439,
      "wing_bending": 0.00016504634846474582,
-     "wing_twist": 0.005427164151797193,
-     "total": 0.0363995290846875,
+     "wing_twist": 0.005651378146281732,
+     "total": 0.03662374307917204,
      "EI_Nm2": 6272.464707418014,
-     "GJ_Nm2": 513.6199904837825,
+     "GJ_Nm2": 493.24252029286134,
      "k_joint_Nm_per_rad": 15040.478104538675
     },
     "lid removed (service state)": {
@@ -834,12 +1034,12 @@
     },
     "roll_if_joint_rigid": 0.004061785266769044,
     "modes_hz": {
-     "pitch on the mount": 149.8126815830781,
-     "roll on the mount": 467.8090340011489,
-     "halves rocking about the y = 0 joint": 543.0636468274204,
-     "wing bending": 5814.5469974008565
+     "pitch on the mount": 149.87478418222813,
+     "roll on the mount": 468.0029572165292,
+     "halves rocking about the y = 0 joint": 543.2887657133216,
+     "wing bending": 5816.957330608984
     },
-    "f1_hz": 149.8126815830781,
+    "f1_hz": 149.87478418222813,
     "joint_terms_Nm_per_rad": {
      "spreader alone (2 mm)": 38.413876543209874,
      "lid alone (2 mm)": 39.94498765432098,
@@ -847,7 +1047,7 @@
      "rear bridge plate (3 x 13 on edge, T-head to T-head)": 280.3209259259259,
      "one-piece aluminium frame walls": 12590.197952071221
     },
-    "mass_kg": 2.0834139113209535
+    "mass_kg": 2.0816876888156224
    }
   },
   "rails": {
@@ -1221,109 +1421,1006 @@
    }
   ],
   "thermal": {
+   "_assumptions": {
+    "ambient_c": [
+     -20.0,
+     -25.0
+    ],
+    "set_point_c": 10.0,
+    "set_point_option_c": 5.0,
+    "h_ext_w_m2k": {
+     "still air": 12.0,
+     "moving / draught": 25.0
+    },
+    "h_in_w_m2k": 6.0,
+    "electronics_credit_w": 1.2,
+    "electronics_max_w_not_credited": 2.1,
+    "floor_gap_mm": 10.0,
+    "emissivity": 0.9,
+    "receiver_body_side_w_per_k_per_shoe": 0.07,
+    "jacket": "RR-HD-S-131/132 fitted below 0 C (standard cold configuration); no-jacket shown"
+   },
    "_jacket_coverage": {
     "top_area_m2": 0.04088699999999999,
-    "cap_covered_m2": 0.03714030991332049,
-    "cap_fraction": 0.9083647592956319,
+    "cap_covered_m2": 0.037203927164555665,
+    "cap_fraction": 0.9099206878605833,
     "front_band_m2": 0.004318000000000001,
+    "liner_m2": 0.028962400000000003,
     "side_area_m2": 0.0320505
    },
-   "prototype, still air, liner only": {
-    "UA_W_per_K": 0.4675603261826965,
-    "heater_W_at_-20C_setpoint_+5C": 6.6890081545674125,
-    "heater_W_at_-25C_setpoint_+10C": 11.364611416394379,
-    "split": {
-     "top": 0.15470756756756754,
-     "sides": 0.12390657216494846,
-     "windows": 0.09980848153214775,
-     "underside": 0.02913770491803276,
-     "mount+cables": 0.06
+   "_receiver": {
+    "prototype": {
+     "G10 isolators (2)": 0.5915999999999999,
+     "air gaps round the T-heads (2)": 0.16441043478260867,
+     "T-head screws through insulating washers (8)": 0.13315864861715593,
+     "keeper over the lid": 0.04196571428571429,
+     "bridge behind the rear wall": 0.11025826771653544,
+     "total": 1.0413930654020143
+    },
+    "production": {
+     "G10 isolators (2)": 0.5915999999999999,
+     "air gaps round the T-heads (2)": 0.252096,
+     "T-head screws through insulating washers (8)": 0.13315864861715593,
+     "keeper over the lid": 0.04196571428571429,
+     "bridge behind the rear wall": 0.186704,
+     "total": 1.2055243629028702
     }
    },
-   "prototype, still air, standard cold (liner + 3 mm jacket)": {
-    "UA_W_per_K": 0.42898973628530057,
-    "heater_W_at_-20C_setpoint_+5C": 5.7247434071325145,
-    "heater_W_at_-25C_setpoint_+10C": 10.01464076998552,
-    "split": {
-     "top": 0.12029183637375705,
-     "sides": 0.11975171346136303,
-     "windows": 0.09980848153214775,
-     "underside": 0.02913770491803276,
-     "mount+cables": 0.06
+   "_cables": {
+    "still air": {
+     "J1": 0.02177269641785708,
+     "J2": 0.015883876608013926
+    },
+    "moving / draught": {
+     "J1": 0.03142618034458446,
+     "J2": 0.0229264010885291
     }
    },
-   "prototype, draught 3 m/s, liner only": {
-    "UA_W_per_K": 0.5228364401333234,
-    "heater_W_at_-20C_setpoint_+5C": 8.070911003333086,
-    "heater_W_at_-25C_setpoint_+10C": 13.299275404666318,
-    "split": {
-     "top": 0.18504892241379306,
-     "sides": 0.14884133126934987,
-     "windows": 0.09980848153214775,
-     "underside": 0.02913770491803276,
-     "mount+cables": 0.06
+   "cases": [
+    {
+     "build": "prototype",
+     "ambient_c": -20.0,
+     "set_point_c": 10.0,
+     "h_ext_w_m2k": 12.0,
+     "air": "still air",
+     "jacket": true,
+     "receiver_boundary": "body channels (0.07 W/K per shoe)",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 0.603,
+     "heater_power_w": 16.9,
+     "within_30w_films": true,
+     "within_20w8_at_10v": true,
+     "split_w_per_k": {
+      "top": 0.122,
+      "sides": 0.12,
+      "windows (floor gap)": 0.143,
+      "underside frame (floor gap)": 0.026,
+      "receiver shoes": 0.156,
+      "cables J1 + J2": 0.038
+     },
+     "h_floor_w_m2k": 5.98
+    },
+    {
+     "build": "prototype",
+     "ambient_c": -20.0,
+     "set_point_c": 10.0,
+     "h_ext_w_m2k": 12.0,
+     "air": "still air",
+     "jacket": true,
+     "receiver_boundary": "BOUND: receiver metal at ambient",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 1.489,
+     "heater_power_w": 43.5,
+     "within_30w_films": false,
+     "within_20w8_at_10v": false,
+     "split_w_per_k": {
+      "top": 0.122,
+      "sides": 0.12,
+      "windows (floor gap)": 0.143,
+      "underside frame (floor gap)": 0.026,
+      "receiver shoes": 1.041,
+      "cables J1 + J2": 0.038
+     },
+     "h_floor_w_m2k": 5.98
+    },
+    {
+     "build": "prototype",
+     "ambient_c": -25.0,
+     "set_point_c": 10.0,
+     "h_ext_w_m2k": 12.0,
+     "air": "still air",
+     "jacket": true,
+     "receiver_boundary": "body channels (0.07 W/K per shoe)",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 0.601,
+     "heater_power_w": 19.8,
+     "within_30w_films": true,
+     "within_20w8_at_10v": true,
+     "split_w_per_k": {
+      "top": 0.122,
+      "sides": 0.12,
+      "windows (floor gap)": 0.141,
+      "underside frame (floor gap)": 0.025,
+      "receiver shoes": 0.156,
+      "cables J1 + J2": 0.038
+     },
+     "h_floor_w_m2k": 5.88
+    },
+    {
+     "build": "prototype",
+     "ambient_c": -25.0,
+     "set_point_c": 10.0,
+     "h_ext_w_m2k": 12.0,
+     "air": "still air",
+     "jacket": true,
+     "receiver_boundary": "BOUND: receiver metal at ambient",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 1.487,
+     "heater_power_w": 50.8,
+     "within_30w_films": false,
+     "within_20w8_at_10v": false,
+     "split_w_per_k": {
+      "top": 0.122,
+      "sides": 0.12,
+      "windows (floor gap)": 0.141,
+      "underside frame (floor gap)": 0.025,
+      "receiver shoes": 1.041,
+      "cables J1 + J2": 0.038
+     },
+     "h_floor_w_m2k": 5.88
+    },
+    {
+     "build": "prototype",
+     "ambient_c": -20.0,
+     "set_point_c": 5.0,
+     "h_ext_w_m2k": 12.0,
+     "air": "still air",
+     "jacket": true,
+     "receiver_boundary": "body channels (0.07 W/K per shoe)",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 0.601,
+     "heater_power_w": 13.8,
+     "within_30w_films": true,
+     "within_20w8_at_10v": true,
+     "split_w_per_k": {
+      "top": 0.122,
+      "sides": 0.12,
+      "windows (floor gap)": 0.141,
+      "underside frame (floor gap)": 0.025,
+      "receiver shoes": 0.156,
+      "cables J1 + J2": 0.038
+     },
+     "h_floor_w_m2k": 5.88
+    },
+    {
+     "build": "prototype",
+     "ambient_c": -25.0,
+     "set_point_c": 5.0,
+     "h_ext_w_m2k": 12.0,
+     "air": "still air",
+     "jacket": true,
+     "receiver_boundary": "body channels (0.07 W/K per shoe)",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 0.599,
+     "heater_power_w": 16.8,
+     "within_30w_films": true,
+     "within_20w8_at_10v": true,
+     "split_w_per_k": {
+      "top": 0.122,
+      "sides": 0.12,
+      "windows (floor gap)": 0.139,
+      "underside frame (floor gap)": 0.025,
+      "receiver shoes": 0.156,
+      "cables J1 + J2": 0.038
+     },
+     "h_floor_w_m2k": 5.78
+    },
+    {
+     "build": "prototype",
+     "ambient_c": -20.0,
+     "set_point_c": 10.0,
+     "h_ext_w_m2k": 12.0,
+     "air": "still air",
+     "jacket": false,
+     "receiver_boundary": "body channels (0.07 W/K per shoe)",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 0.643,
+     "heater_power_w": 18.1,
+     "within_30w_films": true,
+     "within_20w8_at_10v": true,
+     "split_w_per_k": {
+      "top": 0.157,
+      "sides": 0.124,
+      "windows (floor gap)": 0.143,
+      "underside frame (floor gap)": 0.026,
+      "receiver shoes": 0.156,
+      "cables J1 + J2": 0.038
+     },
+     "h_floor_w_m2k": 5.98
+    },
+    {
+     "build": "prototype",
+     "ambient_c": -25.0,
+     "set_point_c": 10.0,
+     "h_ext_w_m2k": 12.0,
+     "air": "still air",
+     "jacket": false,
+     "receiver_boundary": "body channels (0.07 W/K per shoe)",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 0.641,
+     "heater_power_w": 21.2,
+     "within_30w_films": true,
+     "within_20w8_at_10v": false,
+     "split_w_per_k": {
+      "top": 0.157,
+      "sides": 0.124,
+      "windows (floor gap)": 0.141,
+      "underside frame (floor gap)": 0.025,
+      "receiver shoes": 0.156,
+      "cables J1 + J2": 0.038
+     },
+     "h_floor_w_m2k": 5.88
+    },
+    {
+     "build": "prototype",
+     "ambient_c": -20.0,
+     "set_point_c": 5.0,
+     "h_ext_w_m2k": 12.0,
+     "air": "still air",
+     "jacket": false,
+     "receiver_boundary": "body channels (0.07 W/K per shoe)",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 0.641,
+     "heater_power_w": 14.8,
+     "within_30w_films": true,
+     "within_20w8_at_10v": true,
+     "split_w_per_k": {
+      "top": 0.157,
+      "sides": 0.124,
+      "windows (floor gap)": 0.141,
+      "underside frame (floor gap)": 0.025,
+      "receiver shoes": 0.156,
+      "cables J1 + J2": 0.038
+     },
+     "h_floor_w_m2k": 5.88
+    },
+    {
+     "build": "prototype",
+     "ambient_c": -25.0,
+     "set_point_c": 5.0,
+     "h_ext_w_m2k": 12.0,
+     "air": "still air",
+     "jacket": false,
+     "receiver_boundary": "body channels (0.07 W/K per shoe)",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 0.639,
+     "heater_power_w": 18.0,
+     "within_30w_films": true,
+     "within_20w8_at_10v": true,
+     "split_w_per_k": {
+      "top": 0.157,
+      "sides": 0.124,
+      "windows (floor gap)": 0.139,
+      "underside frame (floor gap)": 0.025,
+      "receiver shoes": 0.156,
+      "cables J1 + J2": 0.038
+     },
+     "h_floor_w_m2k": 5.78
+    },
+    {
+     "build": "prototype",
+     "ambient_c": -20.0,
+     "set_point_c": 10.0,
+     "h_ext_w_m2k": 25.0,
+     "air": "moving / draught",
+     "jacket": true,
+     "receiver_boundary": "body channels (0.07 W/K per shoe)",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 0.897,
+     "heater_power_w": 25.7,
+     "within_30w_films": true,
+     "within_20w8_at_10v": false,
+     "split_w_per_k": {
+      "top": 0.14,
+      "sides": 0.143,
+      "windows (floor gap)": 0.331,
+      "underside frame (floor gap)": 0.04,
+      "receiver shoes": 0.188,
+      "cables J1 + J2": 0.054
+     },
+     "h_floor_w_m2k": 25.0
+    },
+    {
+     "build": "prototype",
+     "ambient_c": -20.0,
+     "set_point_c": 10.0,
+     "h_ext_w_m2k": 25.0,
+     "air": "moving / draught",
+     "jacket": true,
+     "receiver_boundary": "BOUND: receiver metal at ambient",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 1.75,
+     "heater_power_w": 51.3,
+     "within_30w_films": false,
+     "within_20w8_at_10v": false,
+     "split_w_per_k": {
+      "top": 0.14,
+      "sides": 0.143,
+      "windows (floor gap)": 0.331,
+      "underside frame (floor gap)": 0.04,
+      "receiver shoes": 1.041,
+      "cables J1 + J2": 0.054
+     },
+     "h_floor_w_m2k": 25.0
+    },
+    {
+     "build": "prototype",
+     "ambient_c": -25.0,
+     "set_point_c": 10.0,
+     "h_ext_w_m2k": 25.0,
+     "air": "moving / draught",
+     "jacket": true,
+     "receiver_boundary": "body channels (0.07 W/K per shoe)",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 0.897,
+     "heater_power_w": 30.2,
+     "within_30w_films": false,
+     "within_20w8_at_10v": false,
+     "split_w_per_k": {
+      "top": 0.14,
+      "sides": 0.143,
+      "windows (floor gap)": 0.331,
+      "underside frame (floor gap)": 0.04,
+      "receiver shoes": 0.188,
+      "cables J1 + J2": 0.054
+     },
+     "h_floor_w_m2k": 25.0
+    },
+    {
+     "build": "prototype",
+     "ambient_c": -25.0,
+     "set_point_c": 10.0,
+     "h_ext_w_m2k": 25.0,
+     "air": "moving / draught",
+     "jacket": true,
+     "receiver_boundary": "BOUND: receiver metal at ambient",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 1.75,
+     "heater_power_w": 60.0,
+     "within_30w_films": false,
+     "within_20w8_at_10v": false,
+     "split_w_per_k": {
+      "top": 0.14,
+      "sides": 0.143,
+      "windows (floor gap)": 0.331,
+      "underside frame (floor gap)": 0.04,
+      "receiver shoes": 1.041,
+      "cables J1 + J2": 0.054
+     },
+     "h_floor_w_m2k": 25.0
+    },
+    {
+     "build": "prototype",
+     "ambient_c": -20.0,
+     "set_point_c": 5.0,
+     "h_ext_w_m2k": 25.0,
+     "air": "moving / draught",
+     "jacket": true,
+     "receiver_boundary": "body channels (0.07 W/K per shoe)",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 0.897,
+     "heater_power_w": 21.2,
+     "within_30w_films": true,
+     "within_20w8_at_10v": false,
+     "split_w_per_k": {
+      "top": 0.14,
+      "sides": 0.143,
+      "windows (floor gap)": 0.331,
+      "underside frame (floor gap)": 0.04,
+      "receiver shoes": 0.188,
+      "cables J1 + J2": 0.054
+     },
+     "h_floor_w_m2k": 25.0
+    },
+    {
+     "build": "prototype",
+     "ambient_c": -25.0,
+     "set_point_c": 5.0,
+     "h_ext_w_m2k": 25.0,
+     "air": "moving / draught",
+     "jacket": true,
+     "receiver_boundary": "body channels (0.07 W/K per shoe)",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 0.897,
+     "heater_power_w": 25.7,
+     "within_30w_films": true,
+     "within_20w8_at_10v": false,
+     "split_w_per_k": {
+      "top": 0.14,
+      "sides": 0.143,
+      "windows (floor gap)": 0.331,
+      "underside frame (floor gap)": 0.04,
+      "receiver shoes": 0.188,
+      "cables J1 + J2": 0.054
+     },
+     "h_floor_w_m2k": 25.0
+    },
+    {
+     "build": "prototype",
+     "ambient_c": -20.0,
+     "set_point_c": 10.0,
+     "h_ext_w_m2k": 25.0,
+     "air": "moving / draught",
+     "jacket": false,
+     "receiver_boundary": "body channels (0.07 W/K per shoe)",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 0.951,
+     "heater_power_w": 27.3,
+     "within_30w_films": true,
+     "within_20w8_at_10v": false,
+     "split_w_per_k": {
+      "top": 0.189,
+      "sides": 0.149,
+      "windows (floor gap)": 0.331,
+      "underside frame (floor gap)": 0.04,
+      "receiver shoes": 0.188,
+      "cables J1 + J2": 0.054
+     },
+     "h_floor_w_m2k": 25.0
+    },
+    {
+     "build": "prototype",
+     "ambient_c": -25.0,
+     "set_point_c": 10.0,
+     "h_ext_w_m2k": 25.0,
+     "air": "moving / draught",
+     "jacket": false,
+     "receiver_boundary": "body channels (0.07 W/K per shoe)",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 0.951,
+     "heater_power_w": 32.1,
+     "within_30w_films": false,
+     "within_20w8_at_10v": false,
+     "split_w_per_k": {
+      "top": 0.189,
+      "sides": 0.149,
+      "windows (floor gap)": 0.331,
+      "underside frame (floor gap)": 0.04,
+      "receiver shoes": 0.188,
+      "cables J1 + J2": 0.054
+     },
+     "h_floor_w_m2k": 25.0
+    },
+    {
+     "build": "prototype",
+     "ambient_c": -20.0,
+     "set_point_c": 5.0,
+     "h_ext_w_m2k": 25.0,
+     "air": "moving / draught",
+     "jacket": false,
+     "receiver_boundary": "body channels (0.07 W/K per shoe)",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 0.951,
+     "heater_power_w": 22.6,
+     "within_30w_films": true,
+     "within_20w8_at_10v": false,
+     "split_w_per_k": {
+      "top": 0.189,
+      "sides": 0.149,
+      "windows (floor gap)": 0.331,
+      "underside frame (floor gap)": 0.04,
+      "receiver shoes": 0.188,
+      "cables J1 + J2": 0.054
+     },
+     "h_floor_w_m2k": 25.0
+    },
+    {
+     "build": "prototype",
+     "ambient_c": -25.0,
+     "set_point_c": 5.0,
+     "h_ext_w_m2k": 25.0,
+     "air": "moving / draught",
+     "jacket": false,
+     "receiver_boundary": "body channels (0.07 W/K per shoe)",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 0.951,
+     "heater_power_w": 27.3,
+     "within_30w_films": true,
+     "within_20w8_at_10v": false,
+     "split_w_per_k": {
+      "top": 0.189,
+      "sides": 0.149,
+      "windows (floor gap)": 0.331,
+      "underside frame (floor gap)": 0.04,
+      "receiver shoes": 0.188,
+      "cables J1 + J2": 0.054
+     },
+     "h_floor_w_m2k": 25.0
+    },
+    {
+     "build": "production",
+     "ambient_c": -20.0,
+     "set_point_c": 10.0,
+     "h_ext_w_m2k": 12.0,
+     "air": "still air",
+     "jacket": true,
+     "receiver_boundary": "body channels (0.07 W/K per shoe)",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 0.612,
+     "heater_power_w": 17.2,
+     "within_30w_films": true,
+     "within_20w8_at_10v": true,
+     "split_w_per_k": {
+      "top": 0.122,
+      "sides": 0.124,
+      "windows (floor gap)": 0.143,
+      "underside frame (floor gap)": 0.027,
+      "receiver shoes": 0.159,
+      "cables J1 + J2": 0.038
+     },
+     "h_floor_w_m2k": 5.98
+    },
+    {
+     "build": "production",
+     "ambient_c": -20.0,
+     "set_point_c": 10.0,
+     "h_ext_w_m2k": 12.0,
+     "air": "still air",
+     "jacket": true,
+     "receiver_boundary": "BOUND: receiver metal at ambient",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 1.658,
+     "heater_power_w": 48.5,
+     "within_30w_films": false,
+     "within_20w8_at_10v": false,
+     "split_w_per_k": {
+      "top": 0.122,
+      "sides": 0.124,
+      "windows (floor gap)": 0.143,
+      "underside frame (floor gap)": 0.027,
+      "receiver shoes": 1.206,
+      "cables J1 + J2": 0.038
+     },
+     "h_floor_w_m2k": 5.98
+    },
+    {
+     "build": "production",
+     "ambient_c": -25.0,
+     "set_point_c": 10.0,
+     "h_ext_w_m2k": 12.0,
+     "air": "still air",
+     "jacket": true,
+     "receiver_boundary": "body channels (0.07 W/K per shoe)",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 0.61,
+     "heater_power_w": 20.1,
+     "within_30w_films": true,
+     "within_20w8_at_10v": true,
+     "split_w_per_k": {
+      "top": 0.122,
+      "sides": 0.124,
+      "windows (floor gap)": 0.141,
+      "underside frame (floor gap)": 0.026,
+      "receiver shoes": 0.159,
+      "cables J1 + J2": 0.038
+     },
+     "h_floor_w_m2k": 5.88
+    },
+    {
+     "build": "production",
+     "ambient_c": -25.0,
+     "set_point_c": 10.0,
+     "h_ext_w_m2k": 12.0,
+     "air": "still air",
+     "jacket": true,
+     "receiver_boundary": "BOUND: receiver metal at ambient",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 1.656,
+     "heater_power_w": 56.8,
+     "within_30w_films": false,
+     "within_20w8_at_10v": false,
+     "split_w_per_k": {
+      "top": 0.122,
+      "sides": 0.124,
+      "windows (floor gap)": 0.141,
+      "underside frame (floor gap)": 0.026,
+      "receiver shoes": 1.206,
+      "cables J1 + J2": 0.038
+     },
+     "h_floor_w_m2k": 5.88
+    },
+    {
+     "build": "production",
+     "ambient_c": -20.0,
+     "set_point_c": 5.0,
+     "h_ext_w_m2k": 12.0,
+     "air": "still air",
+     "jacket": true,
+     "receiver_boundary": "body channels (0.07 W/K per shoe)",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 0.61,
+     "heater_power_w": 14.0,
+     "within_30w_films": true,
+     "within_20w8_at_10v": true,
+     "split_w_per_k": {
+      "top": 0.122,
+      "sides": 0.124,
+      "windows (floor gap)": 0.141,
+      "underside frame (floor gap)": 0.026,
+      "receiver shoes": 0.159,
+      "cables J1 + J2": 0.038
+     },
+     "h_floor_w_m2k": 5.88
+    },
+    {
+     "build": "production",
+     "ambient_c": -25.0,
+     "set_point_c": 5.0,
+     "h_ext_w_m2k": 12.0,
+     "air": "still air",
+     "jacket": true,
+     "receiver_boundary": "body channels (0.07 W/K per shoe)",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 0.608,
+     "heater_power_w": 17.0,
+     "within_30w_films": true,
+     "within_20w8_at_10v": true,
+     "split_w_per_k": {
+      "top": 0.122,
+      "sides": 0.124,
+      "windows (floor gap)": 0.139,
+      "underside frame (floor gap)": 0.026,
+      "receiver shoes": 0.159,
+      "cables J1 + J2": 0.038
+     },
+     "h_floor_w_m2k": 5.78
+    },
+    {
+     "build": "production",
+     "ambient_c": -20.0,
+     "set_point_c": 10.0,
+     "h_ext_w_m2k": 12.0,
+     "air": "still air",
+     "jacket": false,
+     "receiver_boundary": "body channels (0.07 W/K per shoe)",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 0.652,
+     "heater_power_w": 18.3,
+     "within_30w_films": true,
+     "within_20w8_at_10v": true,
+     "split_w_per_k": {
+      "top": 0.157,
+      "sides": 0.128,
+      "windows (floor gap)": 0.143,
+      "underside frame (floor gap)": 0.027,
+      "receiver shoes": 0.159,
+      "cables J1 + J2": 0.038
+     },
+     "h_floor_w_m2k": 5.98
+    },
+    {
+     "build": "production",
+     "ambient_c": -25.0,
+     "set_point_c": 10.0,
+     "h_ext_w_m2k": 12.0,
+     "air": "still air",
+     "jacket": false,
+     "receiver_boundary": "body channels (0.07 W/K per shoe)",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 0.65,
+     "heater_power_w": 21.5,
+     "within_30w_films": true,
+     "within_20w8_at_10v": false,
+     "split_w_per_k": {
+      "top": 0.157,
+      "sides": 0.128,
+      "windows (floor gap)": 0.141,
+      "underside frame (floor gap)": 0.026,
+      "receiver shoes": 0.159,
+      "cables J1 + J2": 0.038
+     },
+     "h_floor_w_m2k": 5.88
+    },
+    {
+     "build": "production",
+     "ambient_c": -20.0,
+     "set_point_c": 5.0,
+     "h_ext_w_m2k": 12.0,
+     "air": "still air",
+     "jacket": false,
+     "receiver_boundary": "body channels (0.07 W/K per shoe)",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 0.65,
+     "heater_power_w": 15.0,
+     "within_30w_films": true,
+     "within_20w8_at_10v": true,
+     "split_w_per_k": {
+      "top": 0.157,
+      "sides": 0.128,
+      "windows (floor gap)": 0.141,
+      "underside frame (floor gap)": 0.026,
+      "receiver shoes": 0.159,
+      "cables J1 + J2": 0.038
+     },
+     "h_floor_w_m2k": 5.88
+    },
+    {
+     "build": "production",
+     "ambient_c": -25.0,
+     "set_point_c": 5.0,
+     "h_ext_w_m2k": 12.0,
+     "air": "still air",
+     "jacket": false,
+     "receiver_boundary": "body channels (0.07 W/K per shoe)",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 0.648,
+     "heater_power_w": 18.2,
+     "within_30w_films": true,
+     "within_20w8_at_10v": true,
+     "split_w_per_k": {
+      "top": 0.157,
+      "sides": 0.128,
+      "windows (floor gap)": 0.139,
+      "underside frame (floor gap)": 0.026,
+      "receiver shoes": 0.159,
+      "cables J1 + J2": 0.038
+     },
+     "h_floor_w_m2k": 5.78
+    },
+    {
+     "build": "production",
+     "ambient_c": -20.0,
+     "set_point_c": 10.0,
+     "h_ext_w_m2k": 25.0,
+     "air": "moving / draught",
+     "jacket": true,
+     "receiver_boundary": "body channels (0.07 W/K per shoe)",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 0.91,
+     "heater_power_w": 26.1,
+     "within_30w_films": true,
+     "within_20w8_at_10v": false,
+     "split_w_per_k": {
+      "top": 0.14,
+      "sides": 0.149,
+      "windows (floor gap)": 0.331,
+      "underside frame (floor gap)": 0.043,
+      "receiver shoes": 0.193,
+      "cables J1 + J2": 0.054
+     },
+     "h_floor_w_m2k": 25.0
+    },
+    {
+     "build": "production",
+     "ambient_c": -20.0,
+     "set_point_c": 10.0,
+     "h_ext_w_m2k": 25.0,
+     "air": "moving / draught",
+     "jacket": true,
+     "receiver_boundary": "BOUND: receiver metal at ambient",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 1.922,
+     "heater_power_w": 56.5,
+     "within_30w_films": false,
+     "within_20w8_at_10v": false,
+     "split_w_per_k": {
+      "top": 0.14,
+      "sides": 0.149,
+      "windows (floor gap)": 0.331,
+      "underside frame (floor gap)": 0.043,
+      "receiver shoes": 1.206,
+      "cables J1 + J2": 0.054
+     },
+     "h_floor_w_m2k": 25.0
+    },
+    {
+     "build": "production",
+     "ambient_c": -25.0,
+     "set_point_c": 10.0,
+     "h_ext_w_m2k": 25.0,
+     "air": "moving / draught",
+     "jacket": true,
+     "receiver_boundary": "body channels (0.07 W/K per shoe)",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 0.91,
+     "heater_power_w": 30.7,
+     "within_30w_films": false,
+     "within_20w8_at_10v": false,
+     "split_w_per_k": {
+      "top": 0.14,
+      "sides": 0.149,
+      "windows (floor gap)": 0.331,
+      "underside frame (floor gap)": 0.043,
+      "receiver shoes": 0.193,
+      "cables J1 + J2": 0.054
+     },
+     "h_floor_w_m2k": 25.0
+    },
+    {
+     "build": "production",
+     "ambient_c": -25.0,
+     "set_point_c": 10.0,
+     "h_ext_w_m2k": 25.0,
+     "air": "moving / draught",
+     "jacket": true,
+     "receiver_boundary": "BOUND: receiver metal at ambient",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 1.922,
+     "heater_power_w": 66.1,
+     "within_30w_films": false,
+     "within_20w8_at_10v": false,
+     "split_w_per_k": {
+      "top": 0.14,
+      "sides": 0.149,
+      "windows (floor gap)": 0.331,
+      "underside frame (floor gap)": 0.043,
+      "receiver shoes": 1.206,
+      "cables J1 + J2": 0.054
+     },
+     "h_floor_w_m2k": 25.0
+    },
+    {
+     "build": "production",
+     "ambient_c": -20.0,
+     "set_point_c": 5.0,
+     "h_ext_w_m2k": 25.0,
+     "air": "moving / draught",
+     "jacket": true,
+     "receiver_boundary": "body channels (0.07 W/K per shoe)",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 0.91,
+     "heater_power_w": 21.6,
+     "within_30w_films": true,
+     "within_20w8_at_10v": false,
+     "split_w_per_k": {
+      "top": 0.14,
+      "sides": 0.149,
+      "windows (floor gap)": 0.331,
+      "underside frame (floor gap)": 0.043,
+      "receiver shoes": 0.193,
+      "cables J1 + J2": 0.054
+     },
+     "h_floor_w_m2k": 25.0
+    },
+    {
+     "build": "production",
+     "ambient_c": -25.0,
+     "set_point_c": 5.0,
+     "h_ext_w_m2k": 25.0,
+     "air": "moving / draught",
+     "jacket": true,
+     "receiver_boundary": "body channels (0.07 W/K per shoe)",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 0.91,
+     "heater_power_w": 26.1,
+     "within_30w_films": true,
+     "within_20w8_at_10v": false,
+     "split_w_per_k": {
+      "top": 0.14,
+      "sides": 0.149,
+      "windows (floor gap)": 0.331,
+      "underside frame (floor gap)": 0.043,
+      "receiver shoes": 0.193,
+      "cables J1 + J2": 0.054
+     },
+     "h_floor_w_m2k": 25.0
+    },
+    {
+     "build": "production",
+     "ambient_c": -20.0,
+     "set_point_c": 10.0,
+     "h_ext_w_m2k": 25.0,
+     "air": "moving / draught",
+     "jacket": false,
+     "receiver_boundary": "body channels (0.07 W/K per shoe)",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 0.965,
+     "heater_power_w": 27.7,
+     "within_30w_films": true,
+     "within_20w8_at_10v": false,
+     "split_w_per_k": {
+      "top": 0.189,
+      "sides": 0.155,
+      "windows (floor gap)": 0.331,
+      "underside frame (floor gap)": 0.043,
+      "receiver shoes": 0.193,
+      "cables J1 + J2": 0.054
+     },
+     "h_floor_w_m2k": 25.0
+    },
+    {
+     "build": "production",
+     "ambient_c": -25.0,
+     "set_point_c": 10.0,
+     "h_ext_w_m2k": 25.0,
+     "air": "moving / draught",
+     "jacket": false,
+     "receiver_boundary": "body channels (0.07 W/K per shoe)",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 0.965,
+     "heater_power_w": 32.6,
+     "within_30w_films": false,
+     "within_20w8_at_10v": false,
+     "split_w_per_k": {
+      "top": 0.189,
+      "sides": 0.155,
+      "windows (floor gap)": 0.331,
+      "underside frame (floor gap)": 0.043,
+      "receiver shoes": 0.193,
+      "cables J1 + J2": 0.054
+     },
+     "h_floor_w_m2k": 25.0
+    },
+    {
+     "build": "production",
+     "ambient_c": -20.0,
+     "set_point_c": 5.0,
+     "h_ext_w_m2k": 25.0,
+     "air": "moving / draught",
+     "jacket": false,
+     "receiver_boundary": "body channels (0.07 W/K per shoe)",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 0.965,
+     "heater_power_w": 22.9,
+     "within_30w_films": true,
+     "within_20w8_at_10v": false,
+     "split_w_per_k": {
+      "top": 0.189,
+      "sides": 0.155,
+      "windows (floor gap)": 0.331,
+      "underside frame (floor gap)": 0.043,
+      "receiver shoes": 0.193,
+      "cables J1 + J2": 0.054
+     },
+     "h_floor_w_m2k": 25.0
+    },
+    {
+     "build": "production",
+     "ambient_c": -25.0,
+     "set_point_c": 5.0,
+     "h_ext_w_m2k": 25.0,
+     "air": "moving / draught",
+     "jacket": false,
+     "receiver_boundary": "body channels (0.07 W/K per shoe)",
+     "electronics_credit_w": 1.2,
+     "ua_w_per_k": 0.965,
+     "heater_power_w": 27.7,
+     "within_30w_films": true,
+     "within_20w8_at_10v": false,
+     "split_w_per_k": {
+      "top": 0.189,
+      "sides": 0.155,
+      "windows (floor gap)": 0.331,
+      "underside frame (floor gap)": 0.043,
+      "receiver shoes": 0.193,
+      "cables J1 + J2": 0.054
+     },
+     "h_floor_w_m2k": 25.0
+    }
+   ],
+   "thermal_mass_j_per_k": {
+    "prototype": 2042,
+    "production": 2180
+   },
+   "warmup_from_-25c_soak": {
+    "prototype": {
+     "ua_w_per_k": 0.601,
+     "tau_min": 57.0,
+     "warmup_min_30w_12v": 63.54198412197117,
+     "warmup_min_20w8_10v": 177.76452160171897,
+     "steady_c_heater_stuck_on_15v_at_+20c": 99.0,
+     "steady_c_full_30w_at_-25c": 27.0
+    },
+    "production": {
+     "ua_w_per_k": 0.61,
+     "tau_min": 60.0,
+     "warmup_min_30w_12v": 68.64051206433783,
+     "warmup_min_20w8_10v": 208.84525144785394,
+     "steady_c_heater_stuck_on_15v_at_+20c": 97.0,
+     "steady_c_full_30w_at_-25c": 26.0
     }
    },
-   "prototype, draught 3 m/s, standard cold (liner + 3 mm jacket)": {
-    "UA_W_per_K": 0.47014484073543195,
-    "heater_W_at_-20C_setpoint_+5C": 6.7536210183857985,
-    "heater_W_at_-25C_setpoint_+10C": 11.455069425740117,
-    "split": {
-     "top": 0.13806670878656044,
-     "sides": 0.14313194549869102,
-     "windows": 0.09980848153214775,
-     "underside": 0.02913770491803276,
-     "mount+cables": 0.06
-    }
-   },
-   "production, still air, liner only": {
-    "UA_W_per_K": 0.47317681933109185,
-    "heater_W_at_-20C_setpoint_+5C": 6.829420483277296,
-    "heater_W_at_-25C_setpoint_+10C": 11.561188676588216,
-    "split": {
-     "top": 0.15470756756756754,
-     "sides": 0.12819366741161825,
-     "windows": 0.09980848153214775,
-     "underside": 0.030467102819758278,
-     "mount+cables": 0.06
-    }
-   },
-   "production, still air, standard cold (liner + 3 mm jacket)": {
-    "UA_W_per_K": 0.4343517158523093,
-    "heater_W_at_-20C_setpoint_+5C": 5.858792896307733,
-    "heater_W_at_-25C_setpoint_+10C": 10.202310054830825,
-    "split": {
-     "top": 0.12029183637375705,
-     "sides": 0.12378429512664622,
-     "windows": 0.09980848153214775,
-     "underside": 0.030467102819758278,
-     "mount+cables": 0.06
-    }
-   },
-   "production, draught 3 m/s, liner only": {
-    "UA_W_per_K": 0.5303953782092752,
-    "heater_W_at_-20C_setpoint_+5C": 8.25988445523188,
-    "heater_W_at_-25C_setpoint_+10C": 13.563838237324632,
-    "split": {
-     "top": 0.18504892241379306,
-     "sides": 0.15507087144357604,
-     "windows": 0.09980848153214775,
-     "underside": 0.030467102819758278,
-     "mount+cables": 0.06
-    }
-   },
-   "production, draught 3 m/s, standard cold (liner + 3 mm jacket)": {
-    "UA_W_per_K": 0.47728884205873184,
-    "heater_W_at_-20C_setpoint_+5C": 6.9322210514682965,
-    "heater_W_at_-25C_setpoint_+10C": 11.705109472055614,
-    "split": {
-     "top": 0.13806670878656044,
-     "sides": 0.14894654892026538,
-     "windows": 0.09980848153214775,
-     "underside": 0.030467102819758278,
-     "mount+cables": 0.06
-    }
-   }
+   "_option": "Option set-point +5 C (labelled option, not the baseline): head_afe_budget.md section 3.2 shows the lowest usable BETA_LLD falling with temperature (8-9 p.e. at +10 C, 7-8 at -20 C) and crosstalk-limited below about 0 C, so +5 C costs no threshold against +10 C; +5 C is also inside the +5..+10 C bond-line range assumed for the OEM modules (head_report.md section 8). It is NOT chosen as the baseline because the OEM carrier / bond-line limits are unknown (no OEM drawing) and the project uses +10 C."
   },
   "oem_dependent": [
    {
@@ -1389,9 +2486,9 @@
   }
  },
  "summary": {
-  "pass": 36,
-  "fail": 0,
-  "deviation": 3
+  "pass": 41,
+  "fail": 2,
+  "deviation": 5
  },
- "runtime_s": 123.3
+ "runtime_s": 257.0
 }

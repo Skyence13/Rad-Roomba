@@ -163,7 +163,7 @@
     "RR_ZONE_PWR"
   ],
   "dsn_sha256": "6ba0a85d20c39b03e854537ca154bc87f6bd9a7edc2c26bba7089903207c4d5c",
-  "dsn_unchanged": false,
+  "dsn_unchanged": true,
   "escape": {
     "direct": 0,
     "enabled": true,
@@ -218,30 +218,7 @@
     },
     "vias": 101
   },
-  "finisher": {
-    "failed": [],
-    "items": 8,
-    "removed": 0,
-    "routed": [
-      {
-        "net": "+5V",
-        "rerouted_nets": [],
-        "ripped_up_items": 0,
-        "segments": 2,
-        "vias": 0,
-        "width": 0.4
-      },
-      {
-        "net": "+5V",
-        "rerouted_nets": [],
-        "ripped_up_items": 0,
-        "segments": 5,
-        "vias": 1,
-        "width": 0.4
-      }
-    ],
-    "seconds": 3.4
-  },
+  "finisher": null,
   "gen_warnings": [
     "U50: 3D envelope uses the default height 1.0 mm (give height=)",
     "U51: 3D envelope uses the default height 1.0 mm (give height=)",
@@ -1248,7 +1225,7 @@
       "[A3ABE3\\8A47CF] Job 'A3ABE3\\8A47CF' finished with state: COMPLETED (elapsed: 1 minute 17.81 seconds, finished at UTC: 2026-11-27T07:30:29.083082090Z)."
     ],
     "passes_limit": 30,
-    "reused": false,
+    "reused": true,
     "seconds": 83.6,
     "threads": 4,
     "timed_out": false

@@ -110,6 +110,16 @@ def run_drc(board, paths, waivers=None, state=None):
         m = re.search(r"\[([^\]]+)\]", ends[0]["item"]) if ends else None
         detail.append({"net": m.group(1) if m else "?", "ends": ends})
     res["unrouted"] = detail
+    # the full list KiCad gives (it stops at 499) with board coordinates, one line per open connection
+    with open(os.path.join(paths.reports, "open_connections.txt"), "w") as f:
+        f.write("# %d open connection(s) by the board's connectivity count; KiCad's DRC lists %d.\n" % (
+            max(len(unconn), res.get("unconnected", 0)), len(unconn)))
+        for u in unconn:
+            ends = []
+            for it in u.get("items", []):
+                pos = it.get("pos") or {}
+                ends.append("%s @(%.3f, %.3f)" % (it.get("description", ""), pos.get("x", 0) - ox, oy - pos.get("y", 0)))
+            f.write("  <->  ".join(ends) + "\n")
     par = _classify(parity, waivers, "drc")
     res["parity"] = par["errors"] + par["warnings"]
     res["parity_items"] = [_text(p)[:300] for p in parity if not p.get("excluded")][:200]

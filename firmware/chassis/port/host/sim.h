@@ -41,6 +41,7 @@ typedef struct {
     /* fault injection */
     bool enc_dropout[2], block[2], usb_stall, usb_down, imu_off, iox_fail, latch_weld, estop_a_stuck;
     bool iox_b_fail, permit_short, permit_open; /* IOX_B not answering; ARM_PERMIT photo-MOS U24 shorted / open */
+    bool pmon_fail, branch_fail, charger_fail; /* INA228 / INA3221 / charger not answering */
     int chain_short;                /* node shorted to a live conductor (SIM_N1..SIM_NEND), 0 = none */
     bool plant_only;                /* firmware not stepped, watchdog model off (stop-distance studies) */
     bool freeze_control, freeze_supervisor, freeze_background;
@@ -64,6 +65,10 @@ typedef struct {
     rrch_reset_cause_t reset_cause;
     uint16_t enc_raw[2];
     double enc_frozen[2];
+    /* real-time pacing diagnostics of rr_chassis_sim (IB-47): lag of simulated behind scaled wall time when the
+     * last batch of steps started, and the number of times the pacing gave up catching up (time base reset) */
+    uint64_t emu_lag_us;
+    uint32_t emu_rebases;
     rrch_t core;
 } sim_t;
 

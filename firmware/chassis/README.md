@@ -122,20 +122,20 @@ Nothing here has been done on a board; these are the intended procedures.
 
 | Pin | LQFP64 | Signal | Function | AF | Dir | Reset state / note |
 |---|---:|---|---|---|---|---|
-| PC13 | 2 | `WDG_OK_RB` | GPIO | GPIO | in | Watchdog output state as seen by the chain: HIGH = watchdog satisfied. |
-| PC14 | 3 | `BRAKE_L_RB` | GPIO | GPIO | in | Left DPDT brake relay: HIGH = motor connected to bridge (relay energised), LOW = motor across brake resisto... |
+| PC13 | 2 | `WDG_OK_RB` | GPIO | GPIO | in | Tap on chain node CH_N9 (after U23 WDG_OK): HIGH = chain live up to and including WDG_OK (CCR-E03 d). Low a... |
+| PC14 | 3 | `BRAKE_L_RB` | GPIO | GPIO | in | Left brake relay K2 (G2RL-2): HIGH = at least one motor terminal connected to the bridge, LOW = both poles ... |
 | PC15 | 4 | `BRAKE_R_RB` | GPIO | GPIO | in | Right brake relay, as above. |
 | PF0 | 5 | `OSC_IN` | RCC_OSC_IN | ANALOG | in | HSE crystal. |
 | PF1 | 6 | `OSC_OUT` | RCC_OSC_OUT | ANALOG | out |  |
-| PC0 | 8 | `HEAD_PRES_ID` | ADC1_IN6 | ANALOG | in | J1 pin 7. 4.70 kOhm 0.1% pull-up to VREF+, 1 kOhm series + 10 nF + TVS at the connector. Code resistor retu... |
-| PC1 | 9 | `HEAD_LOOP_SENSE` | ADC1_IN7 | ANALOG | in | Analog copy of the J1 5/6 interlock-loop measurement (loop resistance), diverse from the hardware window co... |
-| PC2 | 10 | `NTC_BAY` | ADC1_IN8 | ANALOG | in | 10 kOhm B3435-class NTC in the battery bay air/plate, 10.0 kOhm 0.1% pull-up to VREF+. Used for heater regu... |
-| PC3 | 11 | `NTC_PACK` | ADC1_IN9 | ANALOG | in | Second NTC on the pack surface (heater plausibility + battery.temp_c[1]). The charger measures its own pack... |
-| PA0 | 12 | `IPROPI_L` | ADC1_IN1 | ANALOG | in | DRV8874-class IPROPI left bridge. RIPROPI to AGND sized for 3.0 V at 6.5 A; RC 1 kOhm/10 nF at pin. Scale i... |
+| PC0 | 8 | `HEAD_PRES_ID` | ADC1_IN6 | ANALOG | in | J1 pin 7 (J_HEAD1 pin 7). 4.70 kOhm 0.1 % pull-up (R77) to VREF+ directly on the connector node; no series ... |
+| PC1 | 9 | `HEAD_LOOP_SENSE` | ADC1_IN7 | ANALOG | in | Analog copy of the J1 5/6 loop sense voltage (lower 1.00 kOhm R71), 10 kOhm series (R76), BAT54 clamp, 10 n... |
+| PC2 | 10 | `NTC_BAY` | ADC1_IN8 | ANALOG | in | 10 kOhm B3435-class NTC (J_NTC pin 1) in the battery bay, 10.0 kOhm pull-up (R215) to VREF+ 3.000 V, 1 kOhm... |
+| PC3 | 11 | `NTC_PACK` | ADC1_IN9 | ANALOG | in | Second NTC on the pack surface (J_NTC pin 3, R217 pull-up, R218 series; heater plausibility + battery.temp_... |
+| PA0 | 12 | `IPROPI_L` | ADC1_IN1 | ANALOG | in | DRV8874 IPROPI left bridge. RIPROPI 2.49 kOhm (R153) -> 1.1205 V/A, i.e. 0.8925 A/V (CCR-E03 b); 1 kOhm ser... |
 | PA1 | 13 | `IPROPI_R` | ADC2_IN2 | ANALOG | in | As IPROPI_L, right bridge. ADC1+ADC2 dual simultaneous sampling at PWM centre. |
-| PA2 | 14 | `VMOT_SENSE` | ADC1_IN3 | ANALOG | in | VMOT (after latch relay) divider 47k/10k (16.0 V -> 2.81 V), 100 nF. Safety-relevant readback: must read ~0... |
+| PA2 | 14 | `VMOT_SENSE` | ADC1_IN3 | ANALOG | in | VMOT divider 47k/10k (16.0 V -> 2.81 V; full scale 17.1 V at VREF+ 3.000 V), 100 nF. Safety-relevant readba... |
 | PA3 | 17 | `VBAT_SENSE` | ADC1_IN4 | ANALOG | in | VBAT_SW divider 47k/10k. Fast brown-out logging and I2C-independent low-battery check (INA228 is the accura... |
-| PA4 | 18 | `IMU_CS_ACC_N` | GPIO | GPIO | out | high via 10k pull-up. BMI088 accelerometer CSB1. |
+| PA4 | 18 | `IMU_CS_ACC_N` | GPIO | GPIO | out | high via 10k pull-up. BMI088 (U42) accelerometer CSB1 (pin 14). Stage 2 S2-05: U42 pin 2 tied to GND (GNDA ... |
 | PA5 | 19 | `SPI1_SCK` | SPI1_SCK | AF5 | out | SPI mode 3, <= 5 MHz. Shared: BMI088 accel, BMI088 gyro, IOX_A. |
 | PA6 | 20 | `SPI1_MISO` | SPI1_MISO | AF5 | in | 33 Ohm series at sources. |
 | PA7 | 21 | `SPI1_MOSI` | SPI1_MOSI | AF5 | out |  |
@@ -146,9 +146,9 @@ Nothing here has been done on a board; these are the intended procedures.
 | PB2 | 26 | `BUZZER` | TIM5_CH1 | AF2 | out | low via 10k pull-down (silent). Pre-motion alert. Low-side FET to a self-oscillating buzzer (GPIO level) or... |
 | PB10 | 30 | `ARM_PERMIT` | GPIO | GPIO | out | LOW via 4.7k pull-down (chain open). Chain element ARM_PERMIT, active high. Must not be bridged by any debu... |
 | PB11 | 33 | `WDG_STROBE` | GPIO | GPIO | out | static (no edges) -> watchdog times out. WDI of the external window watchdog (TPS3430 class). Firmware stro... |
-| PB12 | 34 | `ESTOP_A_RB` | GPIO | GPIO | in | E-stop pole A (high side of latch coil) closed = HIGH. Opto/level-shifted, 10k pull-down, 1 ms RC. |
-| PB13 | 35 | `ESTOP_B_RB` | GPIO | GPIO | in | E-stop pole B (low side). A/B disagreement > 100 ms is reported as a fault. |
-| PB14 | 36 | `HEAD_HTR_EN` | GPIO | GPIO | out | low via 10k pull-down (off). J1 3/4 heater branch eFuse enable. |
+| PB12 | 34 | `ESTOP_A_RB` | GPIO | GPIO | in | Tap on chain node CH_N2 (after E-stop pole A): 100k/56k + 22 nF + Schottky clamp. HIGH = chain live up to a... |
+| PB13 | 35 | `ESTOP_B_RB` | GPIO | GPIO | in | E-stop pole B (COIL_RTN, low side of all three coils) through a P-MOSFET detector: HIGH = pole closed. Inde... |
+| PB14 | 36 | `HEAD_HTR_EN` | GPIO | GPIO | out | low via 10k pull-down (off). J1 3/4 heater branch eFuse U17 enable (TPS259470). Stage 2: limit 3343/845 = 3... |
 | PB15 | 37 | `CHS_HTR_EN` | GPIO | GPIO | out | low via 10k pull-down (off). Chassis/bay heater eFuse enable; slow PWM (1 s period) from the heater regulat... |
 | PC6 | 38 | `MOT_L_IN1` | TIM8_CH1 | AF4 | out | low via 10k pull-down. DRV8874-class IN1, 20 kHz centre-aligned PWM. |
 | PC7 | 39 | `MOT_L_IN2` | TIM8_CH2 | AF4 | out | low via 10k pull-down. IN2. |
@@ -165,7 +165,7 @@ Nothing here has been done on a board; these are the intended procedures.
 | PC10 | 52 | `DBG_TX` | USART3_TX | AF7 | out | Debug console 115200 8N1, 3.3 V, 3-pin header + GND. |
 | PC11 | 53 | `DBG_RX` | USART3_RX | AF7 | in | 10k pull-up. |
 | PC12 | 54 | `J2_PRES_RB` | GPIO | GPIO | in | J2 pin 7 (linked to BUS_GND in the head plug) through a comparator/inverter: HIGH = J2 mated. 1 ms sampling... |
-| PD2 | 55 | `HW_LATCH_RB` | GPIO | GPIO | in | Latch relay state (auxiliary contact or coil-voltage opto): HIGH = latched. Also usable as TIM8 break input... |
+| PD2 | 55 | `HW_LATCH_RB` | GPIO | GPIO | in | Tap on RUN_12V (K1 pole B output): HIGH = latched. RUN_12V also enables the VMOT eFuse and gates nSLEEP thr... |
 | PB3 | 56 | `SWO_SPARE` | SYS_JTDO-SWO | AF0 | out | SWO trace by default. Spare GPIO on a test point; solder-jumper option to IOX_A INTA/INTB (interrupt-on-cha... |
 | PB4 | 57 | `ENC_R_A` | TIM3_CH1 | AF2 | in | Right encoder A after 5 V->3.3 V Schmitt buffer (encoder outputs need 5 V pull-ups). 100 pF. UNVERIFIED: PB... |
 | PB5 | 58 | `ENC_R_B` | TIM3_CH2 | AF2 | in | Right encoder B. |
@@ -178,24 +178,24 @@ Nothing here has been done on a board; these are the intended procedures.
 
 | Expander pin | Signal | Note |
 |---|---|---|
-| GPA0 | `MODE_RUN_RB` | Master switch in RUN = HIGH |
-| GPA1 | `HANDS_ON_RB` | HANDS-ON inhibit NOT pressed (contact closed) = HIGH |
-| GPA2 | `CHG_COVER_RB` | Charge inlet cover shut = HIGH |
-| GPA3 | `CHG_PLUG_LINK_RB` | Charge plug link ABSENT (chain contact closed) = HIGH |
-| GPA4 | `HEAD_DOCK_RB` | Dock switch: head seated and latched = HIGH |
-| GPA5 | `HEAD_LOOP_OK_RB` | Window comparator: loop 0.6-1.6 kOhm = HIGH |
-| GPA6 | `HEAD_LOOP_SHORT_RB` | Comparator: loop below window (short) = HIGH |
-| GPA7 | `LAB_KEY_N_RB` | Hardware PRES_ID comparator says 'no LAB resistor' (chain contact closed) = HIGH |
-| GPB0 | `BODY_BUMPER_L_RB` | Left/rear-left body bumper NC switch closed = HIGH |
-| GPB1 | `BODY_BUMPER_R_RB` | Right/rear-right body bumper closed = HIGH |
+| GPA0 | `MODE_RUN_RB` | Node CH_N1: selector in RUN = HIGH |
+| GPA1 | `HANDS_ON_RB` | Node CH_N3: live through HANDS-ON (not pressed) |
+| GPA2 | `CHG_COVER_RB` | Node CH_N4A: live through the inlet cover switch (shut) |
+| GPA3 | `CHG_PLUG_LINK_RB` | Node CH_N4: live through U20 (plug link absent and inlet dead) |
+| GPA4 | `HEAD_DOCK_RB` | Node CH_N5: live through the dock switch |
+| GPA5 | `HEAD_LOOP_OK_RB` | Comparator U30 output (drives U21): loop 0.59-1.55 kOhm = HIGH. Not a node; CH_N6/CH_N7 have test points only |
+| GPA6 | `HEAD_LOOP_SHORT_RB` | Comparator U32A (diverse from U30): loop below window (short) = HIGH |
+| GPA7 | `LAB_KEY_N_RB` | Comparator U31 output (drives U22): PRES_ID 3.92-5.64 kOhm (head, no LAB resistor) = HIGH |
+| GPB0 | `BODY_BUMPER_L_RB` | Node CH_N8A (after U21, U22 and J_BUMP_L); known only while CH_N5 is live and GPA5/GPA7 are HIGH |
+| GPB1 | `BODY_BUMPER_R_RB` | Node CH_N8 (after J_BUMP_R, rear-right corner since stage 2) |
 | GPB2 | `REARM_BTN` | Local REARM/Start pressed = HIGH (second, isolated contact of the button or opto across the set path; the first contact is in the latch set path) |
-| GPB3 | `PAUSE_BTN` | Local PAUSE/Stop pressed = HIGH |
+| GPB3 | `PAUSE_BTN` | Local PAUSE/Stop pressed = HIGH. Stage 2 (S2-01): button on its own connector J_PAUSE (JST GH 5-way, rear-right): pin 1 PAUSE_3V3 (own 1 kOhm supply R_PAUSE), pin 2 PAUSE_BTN_RAW -> R131 -> here, pin 3 V12_AUX lamp +, pin 4 LAMP_PAUSE_K (Q56 from IOX_B P06); ESD D_PAUSE. J_BTN pins 5/8 no longer used |
 | GPB4 | `DRV_L_NFAULT` | LOW = left bridge fault (open drain, 10k pull-up) |
 | GPB5 | `DRV_R_NFAULT` | LOW = right bridge fault |
 | GPB6 | `BUS_CLAMP_ACTIVE` | Brake chopper / bus clamp conducting = HIGH |
 | GPB7 | `SENTINEL` | Wired to the WDG_STROBE net (PB11): firmware checks that this bit follows the strobe it generates, which proves the expander read path is live. |
 
-**IOX_B** - TCA9535 / PCA9535 class (16-bit, I2C) on I2C_SYS, address 0x20
+**IOX_B** - TCA9535 (U44, TCA9535PWR) on I2C_SYS, address 0x20
 
 | Expander pin | Signal | Note |
 |---|---|---|
@@ -205,16 +205,16 @@ Nothing here has been done on a board; these are the intended procedures.
 | P03 | `LED_FAULT` | Additionally OR-ed in hardware with NOT WDG_OK so a dead MCU shows FAULT |
 | P04 | `LED_CHARGE` |  |
 | P05 | `LAMP_REARM` | REARM button illumination |
-| P06 | `LAMP_PAUSE` |  |
+| P06 | `LAMP_PAUSE` | Q56 low side -> J_PAUSE pin 4 (stage 2) |
 | P07 | `LED_STAT2` | Second on-board status LED (protocol activity) |
-| P10 | `HEAD_PWR_EN` | default off (pull-down). J1 1/2 eFuse enable. Forced off by firmware in SERVICE_CHARGE; recommend also gating in hardware with the charger-present signal. |
+| P10 | `HEAD_PWR_EN` | default off (pull-down). J1 1/2 (J_HEAD1 1/2) eFuse U16 enable, 1.5 A. Forced off by firmware in SERVICE_CHARGE and in hardware while the charge inlet is live. |
 | P11 | `V12_LIDAR_EN` | default on (pull-up). Holds across MCU reset |
 | P12 | `V5_CM5_OFF_REQ` | default not asserted (pull-down) = rail ON. Only asserted for a deliberate compute power cycle; the 5 V rail stays up across MCU resets and with the MCU unprogrammed. |
 | P13 | `TOF_XSHUT_CLIFF` | default low (sensors held in reset). Shared XSHUT of the 4 cliff sensors |
 | P14 | `TOF_XSHUT_LOOK` | default low. Shared XSHUT of the 4 look-ahead sensors |
 | P15 | `TOF_XSHUT_REAR` | default low. Shared XSHUT of the 3 rear sensors |
 | P16 | `TOF_MUX_NRST` | default low. Reset of both TCA9548A (bus recovery) |
-| P17 | `SPARE_OUT` |  |
+| P17 | `CHAIN_END_RB` | INPUT, never driven (CCR-E02, IB-01): tap on node CHAIN_END after the ARM_PERMIT photo-MOS U24 (100k/56k, BAT54 clamp). HIGH = whole chain live except E-stop pole B. Read at 100 Hz; compared with the ARM_PERMIT output (PERMIT_STUCK_ON / PERMIT_STUCK_OFF). |
 
 **IOX_C** - TCA9534 / PCA9534 class (8-bit, I2C) on I2C_SYS, address 0x21
 
@@ -237,10 +237,10 @@ Nothing here has been done on a board; these are the intended procedures.
 | 1 | `CLIFF_FR` | 1 | 0 | TOF_XSHUT_CLIFF | downward cliff, front-right |
 | 2 | `CLIFF_RL` | 0 | 1 | TOF_XSHUT_CLIFF | downward cliff, rear-left |
 | 3 | `CLIFF_RR` | 1 | 1 | TOF_XSHUT_CLIFF | downward cliff, rear-right |
-| 4 | `LOOK_LO` | 0 | 2 | TOF_XSHUT_LOOK | oblique look-ahead, left outer |
-| 5 | `LOOK_LI` | 1 | 2 | TOF_XSHUT_LOOK | oblique look-ahead, left inner (pair partner of LOOK_LO) |
-| 6 | `LOOK_RI` | 0 | 3 | TOF_XSHUT_LOOK | oblique look-ahead, right inner |
-| 7 | `LOOK_RO` | 1 | 3 | TOF_XSHUT_LOOK | oblique look-ahead, right outer (pair partner of LOOK_RI) |
+| 4 | `LOOK_FL` | 0 | 2 | TOF_XSHUT_LOOK | oblique, forward over the head from the left grip cheek; guards forward travel (pair partner LOOK_FR on mux 1) |
+| 5 | `LOOK_RL` | 1 | 2 | TOF_XSHUT_LOOK | oblique, rearward from the tail, left; guards reverse travel (pair partner LOOK_RR on mux 0) |
+| 6 | `LOOK_RR` | 0 | 3 | TOF_XSHUT_LOOK | oblique, rearward from the tail, right |
+| 7 | `LOOK_FR` | 1 | 3 | TOF_XSHUT_LOOK | oblique, forward over the head from the right grip cheek |
 | 8 | `REAR_L` | 0 | 4 | TOF_XSHUT_REAR | rear proximity left |
 | 9 | `REAR_C` | 1 | 4 | TOF_XSHUT_REAR | rear proximity centre |
 | 10 | `REAR_R` | 0 | 5 | TOF_XSHUT_REAR | rear proximity right |

@@ -475,6 +475,14 @@ class _Router:
         r = self.remaining()
         return r is not None and r < 180
 
+    def only_zone_left(self, n_open):
+        """True when the open connections can all be zone-net pads without a plane connection
+        (Freerouting ignores those nets - more autorouter runs cannot help; the finisher can)."""
+        st = json.load(open(self.state_p))
+        if not st.get("dsn_ignore_classes"):
+            return False
+        return n_open <= len((st.get("plane_fanout") or {}).get("failed", []))
+
     def route(self, dsn_sha):
         """Returns (route_info, open) of the best result; route/<name>.ses holds it."""
         retries = int(self.opts.get("retries", 0))
@@ -487,6 +495,9 @@ class _Router:
         info["dsn_sha256"] = dsn_sha
         best_open, best_info, _ = self.adopt(info, "first", 0, None, None)
         for r in range(0, restarts + 1):
+            if best_open and self.only_zone_left(best_open):
+                log("routing: %d open <= zone-net pads without a plane connection -> no more autorouter runs" % best_open)
+                break
             if r > 0:
                 if not best_open or self.out_of_time():
                     break
@@ -499,7 +510,7 @@ class _Router:
                 best_open, best_info, _ = self.adopt(info, "restart", 1000 * r, best_open, best_info)
             # continue runs from the current best routed board (with a budget: until it stalls)
             n, stall = 0, 0
-            while best_open and not self.out_of_time():
+            while best_open and not self.out_of_time() and not self.only_zone_left(best_open):
                 if self.deadline is None and n >= retries:
                     break
                 if self.deadline is not None and stall >= stall_max:

@@ -15,6 +15,15 @@ optional convenience; the owner slices from the STEP/STL/3MF exports in Bambu St
 | assembly.md + img/ (10 rendered stages), joints/ (16 true-size sections) | done (generated) |
 | README.md, CHANGE_REQUESTS.md | done |
 
+## Follow-on 2026-11-27 (lead decisions on CR-01..CR-09)
+
+All CRs closed (see CHANGE_REQUESTS.md). Applied here: CR-04 grip bar aft (sleeve x -42.5..-17.5, bar screw x -25, side-plate
+cheek x -32..-18 through a moved roof slot, fairing nose carries the forward look-ahead ToF at x 1.5, shoulder/deck split
+moved to x -38, deck joint screw at z 116 dropped (its boss reached the side plate)); CR-08 Pause/Stop moved outboard to
+y -122 (from `mechanical/common`); IB-26 bolt-on clamp resistor removed; IB-34 ToF names (tof_look_fwd_left/right,
+tof_look_rev_left/right); head masses and envelope taken from `mechanical/common` (P.HEAD_MASS, x 212.5).
+`mechanical/common` was updated in the same pass (owner of that pass: this engineer).
+
 ## Run times (shared 4-core machine)
 
 Warm BREP cache: about 4-6 min for everything. Cold (empty `out/cache`): the shell pieces take 20-25 min on the shared CPU

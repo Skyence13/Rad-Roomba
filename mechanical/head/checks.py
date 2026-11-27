@@ -219,8 +219,7 @@ def board_fit(builds):
         out_ok = all(abs(a - b_) <= tol for a, b_ in ((x0, b[0]), (x1, b[3]), (y0, b[1]), (y1, b[4]))) and abs(b[2] - oz) < 1e-6 and abs(b[5] - oz - c["height"]) < 1e-6
         lc = (u0 + u1) / 2
         mice = sorted(round((r[0] + r[2]) / 2 - lc, 3) for r in c["fab_rects_uv"] if abs((r[2] - r[0]) - H.MOUSE_W) < 0.01 and abs(r[1] - v0) < 0.01)
-        anodes = sorted(round(fp[f"J{100 * (lane + 1) + 1}"]["pads_uv"][0][1] - lc, 3), ) + [round(fp[f"J{100 * (lane + 5) + 1}"]["pads_uv"][0][1] - lc, 3)]
-        anodes = sorted(anodes)
+        anodes = sorted(round(fp[f"J{100 * (lane + c_) + 1}"]["pads_uv"][0][1] - lc, 3) for c_ in (1, 5))    # floor / reference anode U.FL, pad 1 (centre)
         can = T.shield_can(lane)
         holes_open = all(volume(can.intersect(box(x0 - 0.5, x0 + 0.5, P.SEG_Y[lane] - du - 0.6, P.SEG_Y[lane] - du + 0.6, oz + 0.2, oz + 1.0))) < 1e-6 for du in H.CAN_MOUSE_DU)
         mice_ok = mice == sorted(H.CAN_MOUSE_DU) and anodes == sorted(H.CAN_MOUSE_DU) and holes_open
@@ -365,8 +364,34 @@ def run():
     want = sorted(tuple(round(v, 3) for v in h["base_link_xyz_mm"]) for h in env["mounting"]["holes"])
     got = sorted((round(x, 3), round(y, 3), round(H.Z_SPR1 + H.STANDOFF_BOARD_H, 3)) for x, y, _ in T.board_holes())
     sp_holes = {(round(x, 3), round(y, 3)) for x, y, d, why in T.spreader_holes() if "board standoff" in why}
-    ok = want == got and sp_holes == {(a, b) for a, b, _ in want} and abs(bounds(T.pcb())[2] - env["origin_base_link_mm"][2]) < 1e-6
-    add("eight M2.5 board standoffs and PCB underside match board_envelopes.yaml", "pass" if ok else "fail", f"standoff tops {got}; yaml {want}")
+    holes_p = sorted((round(x, 3), round(y, 3), round(H.Z_SPR1 + H.STANDOFF_BOARD_H, 3)) for x, y in
+                     [P.board_to_base(H.ACQ["origin"], u, v)[:2] for u, v in H.ACQ["holes_uv"]])
+    ok = got == holes_p and sp_holes == {(a, b) for a, b, _ in got} and abs(bounds(T.pcb())[2] - env["origin_base_link_mm"][2]) < 1e-6
+    add("eight M2.5 board standoffs and PCB underside match params.HEAD_ACQ (board file comparison below)", "pass" if ok else "fail", f"standoff tops {got}")
+    # interface records owned by mechanical/common must follow the as-built board (IB-52); the head model follows the board file
+    stale = []
+    if want != got:
+        stale.append(f"board_envelopes.yaml hole table {[w for w in want if w not in got]} vs as built {[g for g in got if g not in want]}")
+    if abs(H.PORT["J1"][1] - H.PORT_Y["J1"]) > 1e-6:
+        stale.append(f"params.HEAD_PIGTAIL_EXIT J1 y {H.PORT['J1'][1]} vs head port y {H.PORT_Y['J1']} (CR-M03 a)")
+    add("mechanical/common interface records follow the as-built board (IB-52: board_envelopes.yaml holes, HEAD_PIGTAIL_EXIT)", "deviation" if stale else "pass",
+        "; ".join(stale) + ("; owner mechanical/common (head model already follows the board file)" if stale else "board_envelopes.yaml and params agree with the head"), "design note")
+    fit_rows, fit_data = board_fit(builds)
+    res["data"]["board_fit"] = fit_data
+    for item, ok_, det in fit_rows:
+        add(f"RR-HEAD-ACQ as built vs head: {item}", "pass" if ok_ else "fail", det, "tool-checked against electronics/head_acq/RR-HEAD-ACQ.kicad_pcb")
+    web = spreader_hole_web()
+    add("spreader plate: every hole pair keeps >= 1.0 mm web (countersinks at 5.2 mm)", "pass" if web[0] >= 1.0 else "fail",
+        f"smallest web {web[0]:.2f} mm between {web[1][0]} ({web[1][1]}) and {web[1][2]} ({web[1][3]})")
+    plugs = [b_ for _, b_ in [(r, bounds(k)) for r, k in T.microfit_plugs()]]
+    behind = min(b_[0] for b_ in plugs) - H.BAY_X0
+    behind_p = min(b_[0] for b_ in plugs) - (T.FENCE_REAR_X + H.FENCE_T)
+    res["data"]["j1_wire_exit_mm"] = {"to_rear_wall": round(behind, 2), "to_prototype_comb": round(behind_p, 2), "required": H.WIRE_EXIT_MIN}
+    add("J1 landing harness: free length behind the mated J2001 / J2601 plugs for the wire exit and bend (CR-M03 layout)", "deviation" if behind < H.WIRE_EXIT_MIN else "pass",
+        f"plug backs at x {min(b_[0] for b_ in plugs):.1f} (v -8.4); rear wall inner face x {H.BAY_X0}: {behind:.1f} mm (prototype comb wall: {behind_p:.1f} mm) against about "
+        f"{H.WIRE_EXIT_MIN:g} mm needed (calculated: AWG 18 conductor about 2.1 mm OD UNVERIFIED, bend radius >= 2 x OD + 2 mm straight behind the housing). "
+        "The J2001 wires must also converge to the 7.5 mm cable at the port within that length (pins at y 65.7..86.7, port y 76.2). "
+        "Not buildable as laid out: needs a board-side change (headers moved >= 6 mm forward of the rear edge, or top-entry headers) -- lead decision", "tool-checked geometry + calculated allowance")
     top, bot, j1 = T.pcb_keepouts()
     lid_under = bounds(T.lid())[2]
     liner_under = lid_under - T.LINER_T
@@ -417,8 +442,8 @@ def run():
     ok = abs(kx - rc["latch_keeper"][0]) < 1e-6 and kp[5] <= P.HEAD_ENV_E_CEILING["z"][1] and kp[5] >= lb[4] and -15.0 <= lb[2] and 15.0 >= lb[3]
     add("latch keeper at (104, 0), hook inside the latch box, load path keeper -> hinge -> bridge -> T-heads -> x-stop shoulders (aluminium)", "pass" if ok else "fail",
         f"hook centre x {kx:.1f}, hook z 47.5..{kp[5]:.1f} (latch box z {lb[4]}..{lb[5]}), width 30 (latch box 24); no latch load in the lid or in a printed part")
-    okp = all(abs(H.PORT[n][1] - s * H.SHOE_Y) < 1e-6 and H.XR < H.PORT[n][0] < H.BAY_X0 and H.PORT_SLOT_Z0 + H.CABLE_D[n] / 2 <= H.PORT[n][2] <= H.Z_LID0 - H.CABLE_D[n] / 2 + 0.01 for n, s in (("J1", 1), ("J2", -1)))
-    add("J1 / J2 cable ports at the interface positions (71.7, +-87.5, 39.0) in the rear wall", "pass" if okp else "fail", f"wall x {H.XR}..{H.BAY_X0}; slot floor z {H.PORT_SLOT_Z0}; cable top z {H.PORT['J1'][2] + H.CABLE_D['J1'] / 2:.2f} under the lid at {H.Z_LID0}")
+    okp = all(abs(H.PORT_Y[n] - (76.2 if n == "J1" else -H.SHOE_Y)) < 1e-6 and H.XR < H.PORT[n][0] < H.BAY_X0 and H.PORT_SLOT_Z0 + H.CABLE_D[n] / 2 <= H.PORT[n][2] <= H.Z_LID0 - H.CABLE_D[n] / 2 + 0.01 for n, s in (("J1", 1), ("J2", -1)))
+    add("J1 / J2 cable ports in the rear wall at (71.7, 76.2, 39.0) (CR-M03) / (71.7, -87.5, 39.0)", "pass" if okp else "fail", f"wall x {H.XR}..{H.BAY_X0}; slot floor z {H.PORT_SLOT_Z0}; cable top z {H.PORT['J1'][2] + H.CABLE_D['J1'] / 2:.2f} under the lid at {H.Z_LID0}")
     sw = {"rail_sw_front": (H.PIN_X, H.SHOE_Y, 37.3), "rail_sw_left": (H.XR + 3.6, H.SW_SIDE["y"], H.SW_SIDE["z"]), "rail_sw_right": (H.XR + 3.6, -H.SW_SIDE["y"], H.SW_SIDE["z"])}
     add("rail switch positions vs params.HEAD_RAIL_SWITCHES (layout placeholders)", "deviation",
         f"designed {sw} vs placeholders {P.HEAD_RAIL_SWITCHES}: the placeholders lie inside the optical stack / on the split plane; frames.yaml needs the designed values", "design note")
@@ -452,12 +477,21 @@ def run():
         f"standoffs in the chimney zones (on the spreader, not bond points): {[k for k, v in clamp.items() if v is None]}")
     res["data"]["bond_points"] = bpts
     n, dmax, pair = lid_pitch()
+    pts = T.lid_loop()
+    long_ = [(pts[k], pts[(k + 1) % len(pts)]) for k in range(len(pts)) if math.dist(pts[k], pts[(k + 1) % len(pts)]) > H.LID_PITCH_MAX + 1e-6]
+    in_bay = all(a[0] < 90 and b[0] < 90 and min(a[1], b[1]) >= 57.0 - 1e-6 and max(a[1], b[1]) <= 117.5 + 1e-6 for a, b in long_)
     seats = [bounds(T.lid_standoffs(True))[5], bounds(T.lid_standoffs(False))[5], bounds(T.lid_standoffs(True))[2]]
     boss_top = max(bounds(p.shape)[5] for p in builds["prototype"] if p.name.startswith("frame"))
-    add(f"cover = shear panel: lid fasteners round a closed loop at <= {H.LID_PITCH_MAX:g} mm pitch, all on hard seats at the lid underside",
-        "pass" if dmax <= H.LID_PITCH_MAX + 1e-6 and all(abs(z - H.Z_LID0) < 1e-6 for z in seats[:2] + [boss_top]) else "fail",
+    hard = all(abs(z - H.Z_LID0) < 1e-6 for z in seats[:2] + [boss_top])
+    # gasket-compression loss in the long bay (calculated): lid 2 mm + bonded 1 mm blister as a simply supported strip under the gasket line load
+    q, wb, span = 0.075 * 2.6, 20.0, dmax                      # 75 kPa closed-cell silicone at 33 % (UNVERIFIED) x 2.6 mm land; 20 mm effective width
+    sag = 5 * q * span ** 4 / (384 * 69000.0 * wb * 3.0 ** 3 / 12)
+    st_ = "pass" if not long_ and hard else ("deviation" if in_bay and hard else "fail")
+    add(f"cover = shear panel: lid fasteners round a closed loop at <= {H.LID_PITCH_MAX:g} mm pitch, all on hard seats at the lid underside", st_,
         f"{n} M3 screws ({len(T.lid_holes())} into standoffs on the spreader, {len(T.lid_boss_xy())} into frame bosses); largest neighbour distance {dmax:.1f} mm between "
-        f"({pair[0][0]:.1f}, {pair[0][1]:+.1f}) and ({pair[1][0]:.1f}, {pair[1][1]:+.1f}); standoff tops z {seats[0]:.2f} / {seats[1]:.2f}, boss tops z {boss_top:.2f}")
+        f"({pair[0][0]:.1f}, {pair[0][1]:+.1f}) and ({pair[1][0]:.1f}, {pair[1][1]:+.1f}); standoff tops z {seats[0]:.2f} / {seats[1]:.2f}, boss tops z {boss_top:.2f}. "
+        + (f"Only span over 40 mm: the J1 bay on the rear line, forced by CR-M03 (no standoff can stand under the mated plugs, y 62.3..112.7); the lid there is "
+           f"doubled by the bonded 1 mm blister; calculated gasket-line sag over the bay {sag:.3f} mm against 0.4 mm gasket compression" if long_ else ""))
     jk = [p for p in builds["prototype"] if p.name.startswith("jacket")]
     lb_ = P.RECEIVER["latch_box"]
     latch = box(lb_[0], lb_[1], lb_[2], lb_[3], lb_[4], lb_[5])
@@ -521,7 +555,27 @@ def run():
     no_los = all(r["turns"] > 0 or "gasket" in r["barriers"] or "solid" in r["barriers"] or "film" in r["barriers"] or "elastomer" in r["barriers"] for r in res["data"]["light_paths"])
     add("light-path analysis: every joint has a labyrinth turn or an opaque compressed barrier (no open line of sight)", "pass" if no_los else "fail",
         f"{len(res['data']['light_paths'])} joints tabulated in head_report.md; joints that rely on a gasket only: " + ", ".join(r["id"] for r in res["data"]["light_paths"] if r["turns"] == 0 and "solid" not in r["barriers"]), "analysis of the model geometry (not a light test)")
-    res["data"]["thermal"] = C.thermal()
+    th = C.thermal(builds)
+    res["data"]["thermal"] = th
+    base = [c for c in th["cases"] if c["set_point_c"] == C.T_SET_C and c["jacket"] and c["h_ext_w_m2k"] == 12.0 and c["receiver_boundary"].startswith("body")]
+    sens = [c for c in th["cases"] if c["set_point_c"] == C.T_SET_C and c["jacket"] and c["h_ext_w_m2k"] == 25.0 and c["receiver_boundary"].startswith("body")]
+    worst = max(c["heater_power_w"] for c in base)
+    add(f"heater demand within the fitted heater: baseline (+{C.T_SET_C:g} C at the SiPM carrier, -20 / -25 C, still air 12 W/m2K, jacket, 1.2 W electronics) <= {C.HEATER_FILMS_W:g} W at 12 V",
+        "pass" if worst <= C.HEATER_FILMS_W else "fail",
+        "; ".join(f"{c['build']} {c['ambient_c']:g} C: {c['heater_power_w']:.1f} W" for c in base)
+        + f". Sensitivity 25 W/m2K: " + "; ".join(f"{c['build']} {c['ambient_c']:g} C {c['heater_power_w']:.1f} W" for c in sens)
+        + f" (> 30 W at -25 C: {[c['build'] for c in sens if c['heater_power_w'] > C.HEATER_FILMS_W] or 'none'}). At 10 V the films give {C.HEATER_AT_10V_W:g} W; "
+        f"branch limit 4.0 A x 12 V = 48 W (the films, not the branch, limit). Cut-out opens {C.CUTOUT_OPEN_C:g} C (UNVERIFIED): stuck-on heater at 15 V in +20 C "
+        f"would settle at {th['warmup_from_-25c_soak']['prototype']['steady_c_heater_stuck_on_15v_at_+20c']:.0f} C without it", "calculated")
+    summary = {"generated_by": "mechanical/head/checks.py (calc.thermal)", "evidence": "calculated (lumped steady state; nothing measured)", "issue": "IB-39",
+               "assumptions": th["_assumptions"], "installed": {"heater_films_w_at_12v": C.HEATER_FILMS_W, "heater_w_at_10v": C.HEATER_AT_10V_W,
+                                                             "branch_limit_a": P.POWER_C["rails"]["HEAD_HTR"]["limit_a"], "heater_peak_at_12v_contract_w": P.POWER_C["head_allocation_w"]["heater_peak_at_12v"],
+                                                             "cutout_open_c": C.CUTOUT_OPEN_C},
+               "cases": [{k: c[k] for k in ("build", "ambient_c", "set_point_c", "h_ext_w_m2k", "jacket", "receiver_boundary", "electronics_credit_w", "ua_w_per_k", "heater_power_w")}
+                         for c in th["cases"]],
+               "baseline_w": {f"{c['build']}_{c['ambient_c']:g}C": c["heater_power_w"] for c in base},
+               "thermal_mass_j_per_k": th.get("thermal_mass_j_per_k"), "warmup_from_-25c_soak": th.get("warmup_from_-25c_soak")}
+    (OUT / "thermal_summary.json").write_text(json.dumps(summary, indent=1))
     res["data"]["oem_dependent"] = [dict(zip(("oem_quantity", "head_dimension", "adjustment"), r)) for r in C.OEM_DEPENDENT]
     res["data"]["bond_pitch_mm"] = bp
     res["summary"] = {s_: sum(1 for c in res["checks"] if c["status"] == s_) for s_ in ("pass", "fail", "deviation")}

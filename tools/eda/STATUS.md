@@ -1,105 +1,58 @@
 # rrkicad status (EDA infrastructure work package)
 
-Last update: 2026-11-27. All results below were tool-checked (KiCad 9.0.9 DRC/ERC, Freerouting 2.6.0)
-unless marked "not yet run".
+Last update: 2026-11-27. Every result below was tool-checked (KiCad 9.0.9 ERC/DRC with schematic parity,
+Freerouting 2.6.0) on a shared 4-core machine; nothing here is estimated unless it says so.
 
-## Implemented
-| feature | where | state |
+## What the flow does now (additions in this work package)
+| feature | where | API |
 |---|---|---|
-| Fine-pitch escape (fan-out) for IC pads, locked pre-routes, exported to the DSN as fixed wiring of the net | `rrkicad/escape.py`, `rrkicad/geom.py` | implemented; generation tested on STRESS-150 (101 of 101 connected pads of U1 LQFP-64 + U2 QFN-48 escaped, 0 DRC errors before routing) |
-| Via in the exposed pad (thermal pad) of plane nets in the plane fan-out | `rrkicad/fanout.py` | implemented, **not yet tested** in a routed build |
-| Wider auto-arrange keep-away around escaped ICs (`autoplace_options(escape_keepaway=2.0)`) | `rrkicad/autoplace.py` | implemented, used by STRESS-150 |
-| Finisher: grid A* maze router for connections still open after Freerouting (exact re-check, stored in `route/finish.json`, re-applied on cached builds) | `rrkicad/finisher.py`, `cli.py` stage `_finish` | implemented; a via-map inversion bug was found and fixed; on the OLD STRESS-150-6L result (no escape) it routed 0 of 4 (no free path without rip-up) |
-| `summary.json` → `routing.escape`, `routing.plane_fanout`, `routing.finisher` | `checks.py` | implemented |
+| Fine-pitch escape: stub + via ring (two staggered, fanned rows), plane pads under QFPs, direct pre-route to a nearby passive, local search; locked pre-routes exported to the DSN as fixed wiring of the net | `rrkicad/escape.py`, `rrkicad/geom.py` | `route(escape="auto"/True/False, escape_pitch=0.65, escape_min_pads=16, escape_via, escape_track, escape_layers, escape_direct)`, `part(escape=...)`, `autoplace_options(escape_keepaway=2.0)` |
+| Plane fan-out: pairwise clearance, footprint rule areas + net-tie copper as obstacles, via in exposed pads, **extended fan-out** (via spot up to 4 mm, straight/L stub), **long fan-out** (maze route to a via inside the own plane, incl. through-hole pins outside their plane) | `fanout.py`, `finisher.plane_connect` | `long_fanout_seconds=600` |
+| Zone nets never autorouted on 4/6 layers (DSN classes `RR_ZONE_*` ignored by Freerouting) | `pcb.export_dsn` | `route(zone_nets="auto"/"exclude"/"route")` |
+| Routing session: first run, seeded continue runs from the routed board, fresh restarts with another seed, wall-clock budget with capped chunks, quick imports, best SES always on disk (`.ses.best`), `route/progress.log`; no more runs when only zone-net pads are open | `cli._Router` | `build --budget SEC`, `route(retries=2, restarts=1, budget, chunk=900, stall=2, fr_fallback="none")` |
+| Finisher: grid A* (0.05/0.1 mm), cluster start/goal, smoothing, exact re-check, rip-up-and-reroute of autorouter copper (bounded, all-or-nothing), stored in `route/finish.json` and replayed on cached builds | `rrkicad/finisher.py` | `route(finisher=True, finisher_ripup=True, finisher_seconds=900)` |
+| Reports: unconnected = connectivity count (not capped at 499), `reports/open_connections.txt`, `routing.escape / plane_fanout / finisher` in summary.json | `checks.py` | - |
 
-API added (backwards compatible): `board.route(escape="auto"|True|False, escape_pitch=0.65,
-escape_layers=None, escape_via=None, escape_track=None, escape_direct=True, finisher=True)`,
-`part(..., escape=None|True|False)`, `board.autoplace_options(escape_keepaway=2.0)`.
-`escape="auto"` = on for 4/6-layer boards only, so 2-layer boards (RR-TOF-A, RR-PANEL) are unchanged.
-
-## Measured (tool-checked)
-Regressions with the new code: RR-TOF-A PASS (2 layers, escape off, DSN unchanged -> cached SES);
-RR-PANEL PASS (rerouted by its engineer with this code, 2 layers, escape off).
-
-| run | code state | Freerouting | result |
+## Defects reported by the board engineers (IB-45, IB-54)
+| # | defect | fix | verified |
 |---|---|---|---|
-| STRESS-150 #1 | escape, before EP via | run 1 608 s (timeout) -> 1 open (QFN exposed pad), continue 29 s -> 0 | PASS, DRC 0 err / 27 warn (via_dangling), parity 0, 822 s total |
-| STRESS-150 #2 | + via in exposed pad, fallback=continue | run 1 243 s -> 0 open | PASS, DRC 0 err / 24 warn, 286 s total |
-| STRESS-150-6L #1 | same as #2 (+ paste-aperture fix) | run 1 112 s -> 0 open | PASS, DRC 0 err / 6 warn, 166 s total |
+| 1 | continue run crashes in `_edge_guard` ('SwigPyObject' ... 'NewOutline') | root cause: objects created after `BOARD.Remove()` in the same pcbnew process get broken SWIG proxies; export_dsn adds rule areas first, removes last | yes: head copy ran 2 continue runs on a board with outer pours |
+| 2 | post-stage crash in the unused-escape clean-up; finisher then ran on an un-imported board | same root cause: victims collected first, removed in one step; finisher replay moved into the import subprocess; `_post` records the imported SES hash and the host checks it before the finisher | yes: all builds since (stress, head copy, cached replays) |
+| 3 | fan-out vias checked with their own net-class clearance only | pairwise clearance (larger class) | yes: head copy, no fan-out clearance errors |
+| 4 | fan-out ignores footprint rule areas and net-tie copper (via through NT1) | both are obstacles for fan-out / escape / finisher; DSN gets via keep-outs (+ same-layer track keep-outs minus the tie's pads) over net-tie copper | code; the chassis copy (has NT1) is in the running chain |
+| 5 | "no parts" rule area exported as a full B.Cu routing keep-out | rule areas banning neither tracks nor vias are not exported | code (the chassis engineer had removed that area) |
+| 6 | summary unconnected capped at 499 | connectivity count + `unconnected_listed` | yes: head copy 707 / 958 reported |
+| 7 | replicated block vias co-located with fan-out vias (66-199 warnings) | replay skips copper already on the board; save stores only router copper + definition pre-routes, de-duplicated | yes: head copy 0 `holes_co_located` (original: 199) |
+| 8 | local footprints need >= 1 pad | pad-less allowed with body=/courtyard= | code only |
+| 9 | importer ignores local symbol hints | `rr_local:NAME` hints accepted | code only |
+| 10 | auto-arranger ignores replicate destinations | copies' spots must be free and are reserved | code only (both real boards place explicitly) |
+| - | BOM-excluded footprints need `bom=False` for parity | unchanged, documented KiCad behaviour | - |
+| open | replicated copies not checked against keep-outs (head copy: 1 via in a lane-1 keep-out) | - | open |
+| open | footprint-level clearance overrides not passed to Freerouting (head copy: 1 clearance error at U2001) | - | open |
 
-| STRESS-150 #3 | final escape code, before seeded continues / rip-up | run 1 549 s -> 1 open (IO46), continue 47 s -> 1 | **FAIL**, 1 open; finisher (no rip-up then): no free path - region walled off by autorouter tracks (flood-fill plot) |
+## Measured
+Regressions (current code): RR-TOF-A PASS, RR-PANEL PASS (both 2 layers, DSN unchanged, cached SES).
 
-Bugs found and fixed on the way: SES-import result corrupted by SWIG leak notices on stdout (import step
-"failed"; now passed through a file); unused-escape clean-up removed escapes of still-open nets (now only
-on a fully connected board); finisher via map inverted.
+| board | flow | result |
+|---|---|---|
+| STRESS-150 (4 L) | before this work package | FAIL, 6 of 377 open after 25 min |
+| STRESS-150 (4 L) | escape + continues + restart, runs A/B | PASS x2, 18 min each (restart needed) |
+| STRESS-150 (4 L) | final code (zone nets excluded, long fan-out, fallback none) | **PASS**, first run 274 s -> 0 open, 337 s total, DRC 0 err, parity 0 |
+| STRESS-150-6L | before | FAIL, 4 open after 22 min |
+| STRESS-150-6L | escape, runs A/B | PASS x2, 90 s each |
+| STRESS-150-6L | final code | **PASS**: 84 s -> 2 open (zone-net pads), finisher routed both; 335 s total (before the "no runs for zone-only leftovers" change: 4 futile runs included) |
+| finisher test | 6L copy, copper of 7 nets deleted (8 open) | 8/8 routed in 36 s, PASS |
+| rip-up test | 4L, 4 open | 2/4 routed with rip-up (7 / 13 nets rerouted), DRC 0 errors |
+| RR-HEAD-ACQ copy (`tests/head_escape`) | escape on, zone nets excluded, `--budget 2400` (before the extended fan-out) | 1041 items; 930 s -> 795, 945 s -> 741, 378 s -> 712; finisher 6 routed in 900 s; **FAIL 707 open**, DRC 2 errors, parity 0, 71 min |
+| RR-HEAD-ACQ original (lead) | escape off, zone nets autorouted, no continue runs | 1 h 45 min -> 340 open, 3 DRC errors |
+| scale500 | 493 parts, 6 L | generation only (0 DRC errors from escape, 199 escape vias + 4 direct); not routed - the real boards were the better evidence |
 
-Since then: continue runs use a different item-order seed each and do not stop at the first
-non-improving run; finisher got cluster start/goal sets, path smoothing, a coarse grid for big windows,
-and rip-up-and-reroute (bounded cascade, all-or-nothing). On the STRESS-150 #3 leftover the rip-up
-cascade ran 264 s and was undone (AUX06 could not be reconnected) - so the 4-layer stress board is
-borderline: 2 of 3 fresh runs passed.
+Running (unattended, `tools/eda/tests/run_real_boards.sh`, results appended to
+`tools/eda/tests/real_boards_results.jsonl`): head copy `--budget 3000`, then chassis copy `--budget 3000`.
 
-Finisher test (scratch copy of a passing STRESS-150-6L, routed copper of 7 nets deleted -> 8 open):
-8 of 8 routed in 36 s, PASS, DRC 0 errors (1 track_dangling warning).
-
-Repeat of STRESS-150 with the same code gave the identical failure (IO46, 512 s + 2 continues):
-**a fresh Freerouting run is deterministic for a given DSN** (single-threaded routing pass, optimizer off),
-so "twice in a row" only means something across a change of DSN or seed.
-
-Tried and rejected: MCU decoupling on the bottom side of the 4-layer board -> 5 open after run 1, 4 after
-continues (B.Cu under the MCU is half of the 4-layer routing capacity). In that run the rip-up finisher
-routed 2 of the 4 (IO00 rerouting 7 nets, IO43 rerouting 13 nets; DRC 0 errors), 2 stayed open.
-
-Added: `restarts=1` (fresh Freerouting run with another item-order seed when connections stay open after
-the continue runs; best kept), `finisher_seconds=900`.
-Formal series with this code (fresh route each, tool-checked):
-| board | run | Freerouting attempts (s -> open) | total wall | result |
-|---|---|---|---|---|
-| STRESS-150 | 1 | 462 -> 1, continue 56 -> 1, continue 47 -> 1, restart (seed 1000) 305 -> 0 | 1089 s | PASS, DRC 0 err / 17 warn, parity 0 |
-| STRESS-150 | 2 | 426 -> 1, 54 -> 1, 39 -> 1, restart 314 -> 0 | 1039 s | PASS, DRC 0 err / 17 warn, parity 0 |
-| STRESS-150-6L | 1 | 62 -> 0 | 90 s | PASS, DRC 0 err / 3 warn, parity 0 |
-| STRESS-150-6L | 2 | 63 -> 0 | 90 s | PASS, DRC 0 err / 3 warn, parity 0 |
-The two runs of each board use the same DSN, so they reproduce (deterministic router); they show the
-result is stable, not that it is independent of luck. Finisher not needed in these runs.
-
-Scale test `tests/scale500/` (493 parts, 160 x 100 mm, 6 layers, LQFP-100 + LQFP-64 + 2 QFN + 2 TSSOP,
-40 SOT-23(-5), 13 connectors): generates; escape 199 vias + 4 direct on U1-U4, 1 pad without a legal
-position; not yet routed.
-
-Feedback from RR-CHS-MAIN (its engineer's `--no-route` build, read-only look): escape made 133 vias but
-153 pads had no legal position - mostly vias that would land in courtyards of tightly placed neighbours,
-and many small 10-pad 0.5 mm parts (USON-10 ESD arrays). Since then `escape_min_pads=16` (default)
-leaves small packages to the autorouter.
-
-## Defects reported by the board engineers (IB-45, IB-54) - 2026-11-27
-| # | defect | cause | fix | verified |
-|---|---|---|---|---|
-| 1 | continue run crashes in `_edge_guard` ('SwigPyObject' has no 'NewOutline') | pcbnew: objects created after `BOARD.Remove()` in the same process get broken SWIG proxies (boards with outer-layer pours remove zones before the edge guard) | export_dsn adds all rule areas first, removes last | pending (head copy) |
-| 2 | post-stage crash in the unused-escape clean-up; host then ran the finisher on an un-imported board | same SWIG cause (clean-up ran after `_remove_dangling` had removed items) | all victims collected first, removed in one step at the end; finisher replay moved into the import subprocess; `_post` records the SHA of the SES it imported and the host starts the finisher only if it matches | pending |
-| 3 | fan-out vias checked only with their own net-class clearance | fanout.py used the via net's class | pairwise clearance (larger of both classes) for vias and stubs | generation runs: STRESS-150 / head copy DRC 0 clearance errors from fan-out |
-| 4 | fan-out ignores footprint-internal rule areas and net-tie copper | not loaded | both loaded as obstacles (fan-out, escape, finisher); DSN gets via keep-outs (+ same-layer track keep-outs minus the tie's pads) over net-tie copper | code only (no net tie in the test boards) |
-| 5 | footprint-only rule area exported as a full B.Cu routing keep-out | KiCad DSN export | rule areas banning neither tracks nor vias are not exported | code only |
-| 6 | `summary.json` unconnected capped at 499 | KiCad DRC list limit | count from the board's connectivity; `unconnected_listed` kept | head copy: 958 reported (499 listed) |
-| 7 | replicated block vias co-located with fan-out vias | definition pre-routes every lane AND blocks.json replays them; duplicates inside blocks.json; generator copper stored | replay skips items identical to existing copper; save de-duplicates and stores only router copper + definition pre-routes | pending |
-| 8 | local footprints need >= 1 pad | explicit error | pad-less allowed with body=/courtyard= | code only |
-| 9 | importer ignores local symbol hints | only stock libs checked | `rr_local:NAME` hints accepted when defined on the board | code only |
-| 10 | auto-arranger ignores replicate destinations | not modelled | copies' spots must be free and are reserved | code only |
-| - | BOM-excluded footprints need `bom=False` for parity | KiCad parity semantics | not changed (documented behaviour) | - |
-
-Also new: zone nets excluded from autorouting on 4/6 layers (ignored DSN classes; verified: Freerouting log "200 ignored" pins on STRESS-150),
-long fan-out (maze-routed pad -> via in own plane; STRESS-150: 6 of 6 pads that had no fan-out via),
-`--budget` / `route(budget, chunk, stall)` with best-SES-always-on-disk and `route/progress.log`, Freerouting fallback `none` by default.
-
-## Real boards (copies under tests/, originals untouched)
-RR-HEAD-ACQ copy `tests/head_escape/` (1085 parts, 6 layers, 4 replicated lanes, lane routes from the
-lead's run replayed from blocks.json; escape on; zone nets excluded; `--budget 2400`):
-generation: escape 87 vias + 20 direct pre-routes on the LQFP-100 and the WQFN-16 DACs (60 pads without a legal
-spot - dense neighbours), plane fan-out 783 vias + 32 long fan-outs within the 600 s cap, 171 plane pads without
-a plane connection (these cannot be autorouted any more, by design). Routing: start 1041 items (Freerouting count);
-first run 930 s -> 795 open (KiCad count), continue 945 s -> 741 ... (running).
-Long fan-out speed on this board: ~20-50 s per pad (Python maze search on a shared CPU) - too slow for 150+ pads;
-the cheap extended fan-out (via spots up to 4 mm, straight/L stub) added since gives 36 more pads their via in
-seconds (measured on a generation-only copy: 819 fan-out vias, 12 long fan-outs, 155 pads left).
-
-## Next
-1. Finish the repeatability series. 2. Route the scale test. 3. README results section.
+## Honest assessment
+* 150-part boards with 0.5 mm ICs: complete automatically (6 layers in 1.5-6 min, 4 layers in 6-18 min).
+* 770-1090-part boards: the flow runs them without crashes and keeps its best state, but Freerouting reduces
+  the open count by only ~50 per 15-minute run late in the job; zero needs placement changes (room for plane
+  vias and escape rings), hand pre-routes for power/HV/analogue, frozen lane routes, several long runs and a
+  final manual pass in KiCad. See README "Real boards".

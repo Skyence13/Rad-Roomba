@@ -306,6 +306,48 @@ class TestMotion(Base):
         st = self.wait_mode("HW_INHIBIT", 1.0)
         self.assertEqual(st["hw_inhibit_reasons"], ["CHARGER"])
 
+    def test_chain_nodes_permit_readback_and_look_pairs(self):
+        """IB-01 / IB-02 / IB-34 through the protocol: node semantics, CHAIN_END_RB, direction-specific look pairs."""
+        self.arm()
+        d = self.ok("DIAG")
+        self.assertTrue(d["chain_end"])
+        self.assertEqual(set(d["chain_state"].values()), {"CLOSED"})
+        self.assertEqual(len(d["readbacks"]), 23)
+        # reversing with the forward pair blind and a rear-pair sensor fine: no stop
+        self.start_moving(-0.05)
+        self.env.set(tof={"LOOK_FL": "INVALID"})
+        reps = self.drive_for(-0.05, 0.0, 0.6)
+        self.assertEqual((reps[-1]["mode"], reps[-1]["stops"]["sw"]), ("MOVING", []))
+        # the tail pair in the direction of travel stops it, reason by side
+        self.env.set(tof={"LOOK_RR": None})
+        reps = self.drive_for(-0.05, 0.0, 6.0, until=lambda r: r["mode"] == "PROTECTIVE_STOP")
+        self.assertIn("LOOKAHEAD_R", reps[-1]["stops"]["sw"])
+        self.env.set(tof={"LOOK_FL": 524, "LOOK_RR": 267})
+        self.idle(0.5)
+        status, b = self.link.rearm_sw()
+        self.assertEqual((status, b["mode"]), ("OK", "ARMED_IDLE"))
+        # selector to SERVICE: everything behind it is UNKNOWN, only MODE_NOT_RUN is a reason
+        self.env.set(mode_run=False)
+        st = self.wait_mode("HW_INHIBIT", 1.0)
+        self.assertEqual(st["hw_inhibit_reasons"], ["MODE_NOT_RUN"])
+        d = self.ok("DIAG")
+        self.assertEqual((d["chain_state"]["MODE_RUN"], d["chain_state"]["HANDS_ON"], d["chain_state"]["HEAD_LOOP"]), ("OPEN", "UNKNOWN", "CLOSED"))
+        self.assertNotIn("ESTOP_DISCREPANCY", d["faults"])
+        self.env.set(mode_run=True)
+        self.idle(0.3)
+        # ARM_PERMIT element that does not close: warning, no re-arm possible
+        self.env.set(permit_open=True)
+        self.idle(0.3)
+        st = self.ok("STATE")
+        self.assertIn("PERMIT_STUCK_OFF", st["faults"])
+        self.assertEqual((st["chain"]["ARM_PERMIT"], st["rearm_ready"]), (False, False))
+        self.env.set(press="REARM")
+        self.idle(0.3)
+        self.assertFalse(self.env.latest()["latch"])
+        self.env.set(permit_open=False)
+        self.idle(0.3)
+        self.assertNotIn("PERMIT_STUCK_OFF", self.ok("STATE")["faults"])
+
     def test_link_stall_stops_within_ttl(self):
         self.arm()
         self.start_moving(0.20)

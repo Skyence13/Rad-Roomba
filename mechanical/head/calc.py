@@ -477,3 +477,26 @@ OEM_DEPENDENT = [
     ("Optical seal of the carrier to the guide edge (opaque potting assumed)", "light paths L12, L13", "black foam plug at the coax notch; dark-count cross-talk test"),
     ("Thermal limits of the bond lines (heater set-point +5..+10 C assumed)", "heater on the spreader, 1.5 W/cm2 max film", "set-point is firmware"),
 ]
+
+
+# ------------------------------------------------------------------------------------------------ rail-switch harness reach (S2-L6)
+def harness_routes(fp):
+    """Lead length from each D2HW to its board connector along the routing of production/README.md section 6 (calculated, mm): side switches up the
+    potted channel (11 mm), along the side strip to the front strip (x 180), along the front strip, 5 mm into the GH-4; front / lid switch along the
+    front strip. Connector positions from the board file (J2002 F, J2003 L, J2004 R per design/circuit.py loop order; J2201 lid)."""
+    def at(ref):
+        r = fp[ref]
+        return 83.2 + r["v"], 163.0 - r["u"]
+    sw = {"front (J2002)": ((183.25, H.SHOE_Y), "J2002", False), "left (J2003)": ((H.XR + 3.6, H.SW_SIDE["y"]), "J2003", True),
+          "right (J2004, S2-L6 u 144.6)": ((H.XR + 3.6, -H.SW_SIDE["y"]), "J2004", True), "lid (J2201)": ((183.25, -H.SHOE_Y), "J2201", False)}
+    out = {}
+    for name, ((x, y), ref, side) in sw.items():
+        cx, cy = at(ref)
+        if side:
+            length = 11.0 + (180.0 - x) + abs(y - cy) + (180.0 - cx) + 5.0
+        else:
+            length = abs(y - cy) + abs(x - cx) + 5.0
+        out[name] = {"connector_base_xy": (round(cx, 1), round(cy, 1)), "route_mm": round(length, 0)}
+    # the right switch to the edge of the old landing (u 150 = y 13.0) for comparison
+    out["right switch to the stage-1 landing edge (u 150)"] = {"route_mm": round(11.0 + (180.0 - H.XR - 3.6) + abs(-H.SW_SIDE["y"] - 13.0) + (180.0 - 175.2) + 5.0, 0)}
+    return out

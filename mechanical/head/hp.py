@@ -147,8 +147,9 @@ SW_SIDE = {"x": XR, "y": 156.75, "z": 20.75}                  # side switch pock
 # switch (Omron D2HW-C201M, PARTIAL data: see purchased_and_fabricated.csv)
 SW = {"l": 13.3, "t": 5.3, "h": 7.0, "plunger": 1.5, "pt_max": 1.0, "ot_min": 1.1, "md": 0.25, "of_max_n": 0.75}
 
-# ports, vent. Port y is the interface value P.HEAD_PIGTAIL_EXIT: J1 y 76.2 (CR-M03 (a): J2001 centre u 86.8), J2 y -87.5.
-PORT_Y = {"J1": PORT["J1"][1], "J2": PORT["J2"][1]}
+# ports, vent. J1 at y 76.2 = CR-M03 (a) (electronics/head_acq/STAGE2_CHANGE_REQUESTS.md: J2001 centre, board u 86.8); head mechanical owns the port
+# (mechanical/common P.HEAD_PIGTAIL_EXIT still lists y 87.5: reported by the interface-record check). x and z from the interface (71.7, 39.0).
+PORT_Y = {"J1": 76.2, "J2": PORT["J2"][1]}
 PORT_SLOT_HY, PORT_SLOT_Z0 = 5.5, 33.5
 
 # ----------------------------------------------------------------------------- RR-HEAD-ACQ as built (IB-52; checks.py compares every value below

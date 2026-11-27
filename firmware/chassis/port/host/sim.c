@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "sim.h"
+#include "rrch_pwrdev.h"
 
 #define CPR_PER_RAD ((double)RRCH_ENCODER_CPR / 6.283185307179586)
 #define SUBSTEPS 10
@@ -443,18 +444,32 @@ void sim_step_ms(sim_t *s)
         rrch_iox_b_update(&s->core, !s->iox_b_fail, s->node[SIM_NEND], s->t_us - s->boot_us);
     }
     if (ms % 100u == 0u) {
+        /* power telemetry: INA228 and INA3221 register images built from the plant and decoded by the same
+         * code as on the target (core/rrch_pwrdev.c); charger telemetry is an abstract model (the LTC4162
+         * driver is disabled on the target until its register map is verified, IB-06) */
         rrch_power_t pw = {0};
-        pw.pmon_ok = pw.charger_ok = pw.tof_bus_ok = true;
-        pw.ibat_a = (float)(0.9 + fabs(s->i[0]) + fabs(s->i[1]) + (s->core.out.head_pwr_en ? 0.4 : 0.0) + (s->core.out.chs_htr_on ? 2.0 : 0.0));
+        pw.tof_bus_ok = true;
+        pw.charger_ok = !s->charger_fail;
+        double ibat = 0.9 + fabs(s->i[0]) + fabs(s->i[1]) + (s->core.out.head_pwr_en ? 0.4 : 0.0) + (s->core.out.head_htr_en ? 1.2 : 0.0) +
+                      (s->core.out.chs_htr_on ? 2.0 : 0.0);
+        uint8_t r3[3];
+        pw.pmon_ok = !s->pmon_fail;
+        rr_ina228_encode_s20((int32_t)lround(s->vbat / 195.3125e-6), r3);
+        pw.vbat_pmon_v = pw.pmon_ok ? rr_ina228_vbus_v(r3) : NAN;
+        rr_ina228_encode_s20((int32_t)lround(ibat / RR_PMON_CURRENT_LSB), r3);
+        pw.ibat_a = pw.pmon_ok ? rr_ina228_current_a(r3, RR_PMON_CURRENT_LSB) : NAN;
+        double ib[3] = {s->core.out.head_pwr_en ? 0.4 : 0.0, s->core.out.head_htr_en ? 1.2 : 0.0, s->core.out.chs_htr_on ? 2.0 : 0.0};
+        float *dst[3] = {&pw.i_head_a, &pw.i_head_htr_a, &pw.i_chs_htr_a};
+        for (int k = 0; k < 3; k++) {
+            uint8_t r2[2];
+            rr_ina3221_encode_shunt(ib[k] * rr_branch_shunt_ohm[k], r2);
+            *dst[k] = s->branch_fail ? NAN : (float)(rr_ina3221_shunt_v(r2) / rr_branch_shunt_ohm[k]);
+        }
         pw.soc_pct = (float)s->soc;
         pw.chg_temp_c = (float)s->temp[1];
         pw.charge_state = s->chg_plug ? RRCH_CHG_CC : RRCH_CHG_NONE;
-        pw.i_head_a = s->core.out.head_pwr_en ? 0.4f : 0.0f;
-        pw.i_head_htr_a = s->core.out.head_htr_en ? 1.2f : 0.0f;
-        pw.i_chs_htr_a = s->core.out.chs_htr_on ? 2.0f : 0.0f;
         pw.efuse_fault = s->efuse_fault;
         pw.chg_input = s->chg_plug; /* a fitted plug carries the 24 V inlet in this model */
-        pw.vbat_pmon_v = (float)s->vbat;
         rrch_power_update(&s->core, &pw);
     }
     if (!s->freeze_control) {
@@ -557,7 +572,7 @@ bool sim_env_apply(sim_t *s, const char *json, size_t len)
     B("head_docked", head_docked) B("bumper_l", bumper_l) B("bumper_r", bumper_r) B("j2", j2)
     B("usb_stall", usb_stall) B("usb_down", usb_down) B("imu_off", imu_off) B("iox_fail", iox_fail) B("latch_weld", latch_weld)
     B("estop_a_stuck", estop_a_stuck) B("freeze_control", freeze_control) B("freeze_supervisor", freeze_supervisor)
-    B("freeze_background", freeze_background) B("nv_fail", nv_fail) B("iox_b_fail", iox_b_fail) B("permit_short", permit_short) B("permit_open", permit_open)
+    B("freeze_background", freeze_background) B("nv_fail", nv_fail) B("iox_b_fail", iox_b_fail) B("permit_short", permit_short) B("permit_open", permit_open) B("pmon_fail", pmon_fail) B("branch_fail", branch_fail) B("charger_fail", charger_fail)
     N("pres_ohm", pres_ohm) N("loop_ohm", loop_ohm) N("vbat", vbat) N("soc", soc) N("temp_bay", temp[0]) N("temp_pack", temp[1])
     N("temp_board", temp[2]) N("tilt_deg", tilt_deg)
 #undef B
@@ -684,6 +699,8 @@ size_t sim_truth_json(const sim_t *s, char *buf, size_t cap)
     rrc_jw_kstr(&w, "mode", rrch_mode_names[s->core.mode]);
     rrc_jw_kstr(&w, "boot_id", s->core.boot_id);
     rrc_jw_ku64(&w, "mcu_resets", s->n_resets);
+    rrc_jw_ku64(&w, "emu_lag_us", s->emu_lag_us);
+    rrc_jw_ku64(&w, "emu_rebases", s->emu_rebases);
     rrc_jw_obj_end(&w);
     return rrc_jw_ok(&w) ? rrc_jw_len(&w) : 0u;
 }

@@ -29,8 +29,9 @@ Both mount the repository at the same absolute path, run as the calling uid with
 |---|---|---|
 | 1 `_gen` | KiCad container | evaluate `board.py`; resolve symbols; write `.kicad_pro`, `sym-lib-table`, `fp-lib-table`, `rr_local.kicad_sym`, `rr_local.pretty/`, root + one `.kicad_sch` per group; export the KiCad netlist from the generated schematic and **cross-check it pin-by-pin against the definition**; build the unrouted `.kicad_pcb` with pcbnew (pad nets come from that netlist); auto-arrange unplaced parts; copy replicated blocks; plane fan-out vias; export `route/<name>.dsn` (with 25 um extra clearance and edge keep-outs for the autorouter) |
 | 2 route | Freerouting container | `route/<name>.dsn` → `route/<name>.ses` (+ `freerouting.log`, `route_meta.json`). Skipped when the DSN hash is unchanged and a SES exists (so reruns are deterministic); `--reroute` forces it |
-| 3 `_post` | KiCad container | import SES into the pristine generated board, verify pre-routes are untouched, widen tracks the router necked below the fab minimum, remove dangling stubs, fill zones, add fab notes/dimensions, save; ERC; DRC with schematic parity; outputs; `reports/summary.json` |
-| 4 continue | both | only while connections are open: up to `retries` further Freerouting runs starting from the routed board (see Routing notes) |
+| 3 `_post` | KiCad container | import SES into the pristine generated board (separate process), verify pre-routes are untouched, replay `route/finish.json`, widen tracks the router necked below the fab minimum, remove dangling stubs (and unused escape vias on a fully connected board), fill zones, add fab notes/dimensions, save; ERC; DRC with schematic parity; outputs; `reports/summary.json`, `reports/open_connections.txt` |
+| 4 continue / restart | both | only while connections are open: continue runs from the routed board, fresh restarts with other seeds, optionally within `--budget` (quick imports in between, best SES kept; see "Completion strategy" and "Long routing jobs") |
+| 5 finisher | KiCad container | only while connections are still open: maze router with rip-up, then step 3 again |
 
 Files per board directory:
 ```
@@ -263,7 +264,8 @@ classes on top (first matching pattern wins).
     segments do it with clearance (`escape_direct`);
   - skipped (listed with the reason in `summary.json` → `routing.escape.skipped`):
     no-connect pins, pins tied only to an adjacent pin, square/round pads (BGA), and pads
-    with no legal position (left to the autorouter, also listed as a build note).
+    with no legal position (left to the autorouter, also listed as a build note; for zone nets on
+    4/6 layers: left to the finisher).
   All checks are exact geometry (`rrkicad/geom.py`): copper clearance of both net classes
   + the 25 um DSN margin, hole-to-hole, hole clearance, board edge, cut-outs, via
   keep-outs, other parts' courtyards (vias stay outside them), existing fan-out vias. The
@@ -477,9 +479,9 @@ bottom side. Shared 4-core machine, KiCad 9.0.9, Freerouting 2.6.0; all results 
 | STRESS-150-6L before escape | 607 -> 8, 289 -> 4, 227 -> 4 | 22 min | FAIL, 4 open |
 | STRESS-150 escape, run A / B (same DSN) | 462 -> 1, 56 -> 1, 47 -> 1, restart 305 -> **0** (B: 426, 54, 39, restart 314 -> 0) | 18 min each | **PASS** x2, DRC 0 errors, parity 0 |
 | STRESS-150-6L escape, run A / B | 62 -> **0** (B: 63 -> 0) | 90 s each | **PASS** x2, DRC 0 errors, parity 0 |
-| STRESS-150 escape + zone nets not autorouted + finisher (current flow) | 226 -> 1, continues / restart -> 1; finisher routed the last one (+5V through-hole pin outside its plane) | 11 min | **PASS**, DRC 0 errors, parity 0 |
-
-(Since then that through-hole pin is handled by the long fan-out at generation time.)
+| STRESS-150 escape + zone nets not autorouted + finisher (intermediate) | 226 -> 1, continues / restart -> 1; finisher routed the last one (+5V through-hole pin outside its plane) | 11 min | **PASS**, DRC 0 errors, parity 0 |
+| STRESS-150, final code (+ extended / long fan-out incl. through-hole pins) | 274 -> **0** | 337 s | **PASS**, DRC 0 errors, parity 0 |
+| STRESS-150-6L, final code | 84 -> 2 (zone-net pads whose long fan-out failed); finisher routed both | 335 s | **PASS**, DRC 0 errors, parity 0 |
 Notes: a fresh Freerouting run is deterministic for a given DSN and seed (the two runs of each
 board reproduce each other); what changes the outcome is the DSN or the seed - hence
 `restarts`. Earlier 4-layer variants of the escape code passed directly in 243-549 s

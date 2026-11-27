@@ -189,6 +189,7 @@ int main(int argc, char **argv)
 
         /* ---- simulated time ---- */
         double target = (wall() - t0) * speed * 1e6 + (double)t_base;
+        sim.emu_lag_us = target > (double)sim.t_us ? (uint64_t)(target - (double)sim.t_us) : 0u;
         int steps = 0;
         while ((double)sim.t_us + 1000.0 <= target && steps < 100) {
             sim_step_ms(&sim);
@@ -219,6 +220,11 @@ int main(int argc, char **argv)
         if (steps == 100) { /* fell behind (debugger, load): do not try to catch up */
             t0 = wall();
             t_base = sim.t_us;
+            sim.emu_rebases++;
+            if (!quiet) {
+                printf("[%10.3f] fell behind real time by %.0f ms: time base reset (host clock fits see a step)\n", (double)sim.t_us * 1e-6,
+                       (double)sim.emu_lag_us * 1e-3);
+            }
         }
         if (duration > 0.0 && (double)sim.t_us * 1e-6 >= duration) {
             break;
@@ -241,7 +247,7 @@ int main(int argc, char **argv)
         struct timeval tv = {0, (suseconds_t)(speed >= 2.0 ? 200 : 500)};
         select(mx + 1, &rf, NULL, NULL, &tv);
     }
-    printf("rr_chassis_sim: stopped at t=%.3f s, pose x=%.4f y=%.4f yaw=%.4f, %u watchdog strobes, %u MCU resets\n", (double)sim.t_us * 1e-6, sim.x, sim.y,
-           sim.yaw, sim.n_strobes, sim.n_resets);
+    printf("rr_chassis_sim: stopped at t=%.3f s, pose x=%.4f y=%.4f yaw=%.4f, %u watchdog strobes, %u MCU resets, %u time-base resets\n", (double)sim.t_us * 1e-6,
+           sim.x, sim.y, sim.yaw, sim.n_strobes, sim.n_resets, sim.emu_rebases);
     return 0;
 }

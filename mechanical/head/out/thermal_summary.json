@@ -1,0 +1,501 @@
+{
+ "generated_by": "mechanical/head/checks.py (calc.thermal)",
+ "evidence": "calculated (lumped steady state; nothing measured)",
+ "issue": "IB-39",
+ "assumptions": {
+  "ambient_c": [
+   -20.0,
+   -25.0
+  ],
+  "set_point_c": 10.0,
+  "set_point_option_c": 5.0,
+  "h_ext_w_m2k": {
+   "still air": 12.0,
+   "moving / draught": 25.0
+  },
+  "h_in_w_m2k": 6.0,
+  "electronics_credit_w": 1.2,
+  "electronics_max_w_not_credited": 2.1,
+  "floor_gap_mm": 10.0,
+  "emissivity": 0.9,
+  "receiver_body_side_w_per_k_per_shoe": 0.07,
+  "jacket": "RR-HD-S-131/132 fitted below 0 C (standard cold configuration); no-jacket shown"
+ },
+ "installed": {
+  "heater_films_w_at_12v": 30.0,
+  "heater_w_at_10v": 20.8,
+  "branch_limit_a": 4.0,
+  "heater_peak_at_12v_contract_w": 30.0,
+  "cutout_open_c": 45.0
+ },
+ "cases": [
+  {
+   "build": "prototype",
+   "ambient_c": -20.0,
+   "set_point_c": 10.0,
+   "h_ext_w_m2k": 12.0,
+   "jacket": true,
+   "receiver_boundary": "body channels (0.07 W/K per shoe)",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 0.603,
+   "heater_power_w": 16.9
+  },
+  {
+   "build": "prototype",
+   "ambient_c": -20.0,
+   "set_point_c": 10.0,
+   "h_ext_w_m2k": 12.0,
+   "jacket": true,
+   "receiver_boundary": "BOUND: receiver metal at ambient",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 1.489,
+   "heater_power_w": 43.5
+  },
+  {
+   "build": "prototype",
+   "ambient_c": -25.0,
+   "set_point_c": 10.0,
+   "h_ext_w_m2k": 12.0,
+   "jacket": true,
+   "receiver_boundary": "body channels (0.07 W/K per shoe)",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 0.601,
+   "heater_power_w": 19.8
+  },
+  {
+   "build": "prototype",
+   "ambient_c": -25.0,
+   "set_point_c": 10.0,
+   "h_ext_w_m2k": 12.0,
+   "jacket": true,
+   "receiver_boundary": "BOUND: receiver metal at ambient",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 1.487,
+   "heater_power_w": 50.8
+  },
+  {
+   "build": "prototype",
+   "ambient_c": -20.0,
+   "set_point_c": 5.0,
+   "h_ext_w_m2k": 12.0,
+   "jacket": true,
+   "receiver_boundary": "body channels (0.07 W/K per shoe)",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 0.601,
+   "heater_power_w": 13.8
+  },
+  {
+   "build": "prototype",
+   "ambient_c": -25.0,
+   "set_point_c": 5.0,
+   "h_ext_w_m2k": 12.0,
+   "jacket": true,
+   "receiver_boundary": "body channels (0.07 W/K per shoe)",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 0.599,
+   "heater_power_w": 16.8
+  },
+  {
+   "build": "prototype",
+   "ambient_c": -20.0,
+   "set_point_c": 10.0,
+   "h_ext_w_m2k": 12.0,
+   "jacket": false,
+   "receiver_boundary": "body channels (0.07 W/K per shoe)",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 0.643,
+   "heater_power_w": 18.1
+  },
+  {
+   "build": "prototype",
+   "ambient_c": -25.0,
+   "set_point_c": 10.0,
+   "h_ext_w_m2k": 12.0,
+   "jacket": false,
+   "receiver_boundary": "body channels (0.07 W/K per shoe)",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 0.641,
+   "heater_power_w": 21.2
+  },
+  {
+   "build": "prototype",
+   "ambient_c": -20.0,
+   "set_point_c": 5.0,
+   "h_ext_w_m2k": 12.0,
+   "jacket": false,
+   "receiver_boundary": "body channels (0.07 W/K per shoe)",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 0.641,
+   "heater_power_w": 14.8
+  },
+  {
+   "build": "prototype",
+   "ambient_c": -25.0,
+   "set_point_c": 5.0,
+   "h_ext_w_m2k": 12.0,
+   "jacket": false,
+   "receiver_boundary": "body channels (0.07 W/K per shoe)",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 0.639,
+   "heater_power_w": 18.0
+  },
+  {
+   "build": "prototype",
+   "ambient_c": -20.0,
+   "set_point_c": 10.0,
+   "h_ext_w_m2k": 25.0,
+   "jacket": true,
+   "receiver_boundary": "body channels (0.07 W/K per shoe)",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 0.897,
+   "heater_power_w": 25.7
+  },
+  {
+   "build": "prototype",
+   "ambient_c": -20.0,
+   "set_point_c": 10.0,
+   "h_ext_w_m2k": 25.0,
+   "jacket": true,
+   "receiver_boundary": "BOUND: receiver metal at ambient",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 1.75,
+   "heater_power_w": 51.3
+  },
+  {
+   "build": "prototype",
+   "ambient_c": -25.0,
+   "set_point_c": 10.0,
+   "h_ext_w_m2k": 25.0,
+   "jacket": true,
+   "receiver_boundary": "body channels (0.07 W/K per shoe)",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 0.897,
+   "heater_power_w": 30.2
+  },
+  {
+   "build": "prototype",
+   "ambient_c": -25.0,
+   "set_point_c": 10.0,
+   "h_ext_w_m2k": 25.0,
+   "jacket": true,
+   "receiver_boundary": "BOUND: receiver metal at ambient",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 1.75,
+   "heater_power_w": 60.0
+  },
+  {
+   "build": "prototype",
+   "ambient_c": -20.0,
+   "set_point_c": 5.0,
+   "h_ext_w_m2k": 25.0,
+   "jacket": true,
+   "receiver_boundary": "body channels (0.07 W/K per shoe)",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 0.897,
+   "heater_power_w": 21.2
+  },
+  {
+   "build": "prototype",
+   "ambient_c": -25.0,
+   "set_point_c": 5.0,
+   "h_ext_w_m2k": 25.0,
+   "jacket": true,
+   "receiver_boundary": "body channels (0.07 W/K per shoe)",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 0.897,
+   "heater_power_w": 25.7
+  },
+  {
+   "build": "prototype",
+   "ambient_c": -20.0,
+   "set_point_c": 10.0,
+   "h_ext_w_m2k": 25.0,
+   "jacket": false,
+   "receiver_boundary": "body channels (0.07 W/K per shoe)",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 0.951,
+   "heater_power_w": 27.3
+  },
+  {
+   "build": "prototype",
+   "ambient_c": -25.0,
+   "set_point_c": 10.0,
+   "h_ext_w_m2k": 25.0,
+   "jacket": false,
+   "receiver_boundary": "body channels (0.07 W/K per shoe)",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 0.951,
+   "heater_power_w": 32.1
+  },
+  {
+   "build": "prototype",
+   "ambient_c": -20.0,
+   "set_point_c": 5.0,
+   "h_ext_w_m2k": 25.0,
+   "jacket": false,
+   "receiver_boundary": "body channels (0.07 W/K per shoe)",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 0.951,
+   "heater_power_w": 22.6
+  },
+  {
+   "build": "prototype",
+   "ambient_c": -25.0,
+   "set_point_c": 5.0,
+   "h_ext_w_m2k": 25.0,
+   "jacket": false,
+   "receiver_boundary": "body channels (0.07 W/K per shoe)",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 0.951,
+   "heater_power_w": 27.3
+  },
+  {
+   "build": "production",
+   "ambient_c": -20.0,
+   "set_point_c": 10.0,
+   "h_ext_w_m2k": 12.0,
+   "jacket": true,
+   "receiver_boundary": "body channels (0.07 W/K per shoe)",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 0.612,
+   "heater_power_w": 17.2
+  },
+  {
+   "build": "production",
+   "ambient_c": -20.0,
+   "set_point_c": 10.0,
+   "h_ext_w_m2k": 12.0,
+   "jacket": true,
+   "receiver_boundary": "BOUND: receiver metal at ambient",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 1.658,
+   "heater_power_w": 48.5
+  },
+  {
+   "build": "production",
+   "ambient_c": -25.0,
+   "set_point_c": 10.0,
+   "h_ext_w_m2k": 12.0,
+   "jacket": true,
+   "receiver_boundary": "body channels (0.07 W/K per shoe)",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 0.61,
+   "heater_power_w": 20.1
+  },
+  {
+   "build": "production",
+   "ambient_c": -25.0,
+   "set_point_c": 10.0,
+   "h_ext_w_m2k": 12.0,
+   "jacket": true,
+   "receiver_boundary": "BOUND: receiver metal at ambient",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 1.656,
+   "heater_power_w": 56.8
+  },
+  {
+   "build": "production",
+   "ambient_c": -20.0,
+   "set_point_c": 5.0,
+   "h_ext_w_m2k": 12.0,
+   "jacket": true,
+   "receiver_boundary": "body channels (0.07 W/K per shoe)",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 0.61,
+   "heater_power_w": 14.0
+  },
+  {
+   "build": "production",
+   "ambient_c": -25.0,
+   "set_point_c": 5.0,
+   "h_ext_w_m2k": 12.0,
+   "jacket": true,
+   "receiver_boundary": "body channels (0.07 W/K per shoe)",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 0.608,
+   "heater_power_w": 17.0
+  },
+  {
+   "build": "production",
+   "ambient_c": -20.0,
+   "set_point_c": 10.0,
+   "h_ext_w_m2k": 12.0,
+   "jacket": false,
+   "receiver_boundary": "body channels (0.07 W/K per shoe)",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 0.652,
+   "heater_power_w": 18.3
+  },
+  {
+   "build": "production",
+   "ambient_c": -25.0,
+   "set_point_c": 10.0,
+   "h_ext_w_m2k": 12.0,
+   "jacket": false,
+   "receiver_boundary": "body channels (0.07 W/K per shoe)",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 0.65,
+   "heater_power_w": 21.5
+  },
+  {
+   "build": "production",
+   "ambient_c": -20.0,
+   "set_point_c": 5.0,
+   "h_ext_w_m2k": 12.0,
+   "jacket": false,
+   "receiver_boundary": "body channels (0.07 W/K per shoe)",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 0.65,
+   "heater_power_w": 15.0
+  },
+  {
+   "build": "production",
+   "ambient_c": -25.0,
+   "set_point_c": 5.0,
+   "h_ext_w_m2k": 12.0,
+   "jacket": false,
+   "receiver_boundary": "body channels (0.07 W/K per shoe)",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 0.648,
+   "heater_power_w": 18.2
+  },
+  {
+   "build": "production",
+   "ambient_c": -20.0,
+   "set_point_c": 10.0,
+   "h_ext_w_m2k": 25.0,
+   "jacket": true,
+   "receiver_boundary": "body channels (0.07 W/K per shoe)",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 0.91,
+   "heater_power_w": 26.1
+  },
+  {
+   "build": "production",
+   "ambient_c": -20.0,
+   "set_point_c": 10.0,
+   "h_ext_w_m2k": 25.0,
+   "jacket": true,
+   "receiver_boundary": "BOUND: receiver metal at ambient",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 1.922,
+   "heater_power_w": 56.5
+  },
+  {
+   "build": "production",
+   "ambient_c": -25.0,
+   "set_point_c": 10.0,
+   "h_ext_w_m2k": 25.0,
+   "jacket": true,
+   "receiver_boundary": "body channels (0.07 W/K per shoe)",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 0.91,
+   "heater_power_w": 30.7
+  },
+  {
+   "build": "production",
+   "ambient_c": -25.0,
+   "set_point_c": 10.0,
+   "h_ext_w_m2k": 25.0,
+   "jacket": true,
+   "receiver_boundary": "BOUND: receiver metal at ambient",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 1.922,
+   "heater_power_w": 66.1
+  },
+  {
+   "build": "production",
+   "ambient_c": -20.0,
+   "set_point_c": 5.0,
+   "h_ext_w_m2k": 25.0,
+   "jacket": true,
+   "receiver_boundary": "body channels (0.07 W/K per shoe)",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 0.91,
+   "heater_power_w": 21.6
+  },
+  {
+   "build": "production",
+   "ambient_c": -25.0,
+   "set_point_c": 5.0,
+   "h_ext_w_m2k": 25.0,
+   "jacket": true,
+   "receiver_boundary": "body channels (0.07 W/K per shoe)",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 0.91,
+   "heater_power_w": 26.1
+  },
+  {
+   "build": "production",
+   "ambient_c": -20.0,
+   "set_point_c": 10.0,
+   "h_ext_w_m2k": 25.0,
+   "jacket": false,
+   "receiver_boundary": "body channels (0.07 W/K per shoe)",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 0.965,
+   "heater_power_w": 27.7
+  },
+  {
+   "build": "production",
+   "ambient_c": -25.0,
+   "set_point_c": 10.0,
+   "h_ext_w_m2k": 25.0,
+   "jacket": false,
+   "receiver_boundary": "body channels (0.07 W/K per shoe)",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 0.965,
+   "heater_power_w": 32.6
+  },
+  {
+   "build": "production",
+   "ambient_c": -20.0,
+   "set_point_c": 5.0,
+   "h_ext_w_m2k": 25.0,
+   "jacket": false,
+   "receiver_boundary": "body channels (0.07 W/K per shoe)",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 0.965,
+   "heater_power_w": 22.9
+  },
+  {
+   "build": "production",
+   "ambient_c": -25.0,
+   "set_point_c": 5.0,
+   "h_ext_w_m2k": 25.0,
+   "jacket": false,
+   "receiver_boundary": "body channels (0.07 W/K per shoe)",
+   "electronics_credit_w": 1.2,
+   "ua_w_per_k": 0.965,
+   "heater_power_w": 27.7
+  }
+ ],
+ "baseline_w": {
+  "prototype_-20C": 16.9,
+  "prototype_-25C": 19.8,
+  "production_-20C": 17.2,
+  "production_-25C": 20.1
+ },
+ "thermal_mass_j_per_k": {
+  "prototype": 2042,
+  "production": 2180
+ },
+ "warmup_from_-25c_soak": {
+  "prototype": {
+   "ua_w_per_k": 0.601,
+   "tau_min": 57.0,
+   "warmup_min_30w_12v": 63.54198412197117,
+   "warmup_min_20w8_10v": 177.76452160171897,
+   "steady_c_heater_stuck_on_15v_at_+20c": 99.0,
+   "steady_c_full_30w_at_-25c": 27.0
+  },
+  "production": {
+   "ua_w_per_k": 0.61,
+   "tau_min": 60.0,
+   "warmup_min_30w_12v": 68.64051206433783,
+   "warmup_min_20w8_10v": 208.84525144785394,
+   "steady_c_heater_stuck_on_15v_at_+20c": 97.0,
+   "steady_c_full_30w_at_-25c": 26.0
+  }
+ }
+}

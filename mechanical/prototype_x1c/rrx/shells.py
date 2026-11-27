@@ -230,7 +230,7 @@ def insert_boss_x(x_face, y, z, side, m="M3"):
 
 
 DOWELS = {"nose": {"zs_side": (81.0,)}, "deck": {"zs_side": (108.0,), "ys_roof": (95.0,)}}
-DECK_JOINT = {"zs_side": (100.0, 116.0), "ys_roof": (104.0,)}      # x = X_DECK screws: above the wheel arch (r 56 reaches z 93 at x -38)
+DECK_JOINT = {"zs_side": (100.0,), "ys_roof": (104.0,)}      # x = X_DECK screws: above the wheel arch (r 56 reaches z 93 at x -38); no screw at z 116: its boss would reach the grip side plate
 
 
 def dowel_bores(x, key, sgn=1):
@@ -318,7 +318,7 @@ def shoulder(s):
         p = p.cut(box(CHEEK_X0, D.GRIP_PLATE_FRONT_X, D.GRIP_PLATE_Y[0] - 3.4, D.GRIP_PLATE_Y[0] - 0.3, 90, 220))     # look-ahead ToF lead slot beside the side plate (under the fairing)
         p = p.cut(tongue_keepout())
         return perim_screws(p, "shoulder", (1,))
-    p = cached(["shoulder", 16, DECK_JOINT, DOWELS, R, D.X_NOSE, D.X_DECK, PERIM_DEG, COVER_SCREWS], b)
+    p = cached(["shoulder", 17, DECK_JOINT, DOWELS, R, D.X_NOSE, D.X_DECK, PERIM_DEG, COVER_SCREWS], b)
     return p if s > 0 else mirror_y(p)
 
 
@@ -345,7 +345,7 @@ def rear_deck(s):
         return perim_screws(p, "deck", (1,))
 
     def b():
-        p = cached(["rear_deck_base", 15, DECK_JOINT, DOWELS, R, D.X_DECK, HUMP_X, PERIM_DEG, COVER_SCREWS], base)
+        p = cached(["rear_deck_base", 16, DECK_JOINT, DOWELS, R, D.X_DECK, HUMP_X, PERIM_DEG, COVER_SCREWS], base)
         p = p if s > 0 else mirror_y(p)
         feats = []
         for name in ("tof_look_rev_" + {"l": "left", "r": "right"}[tag], "tof_prox_r" + tag):
@@ -377,7 +377,7 @@ def rear_deck(s):
         feats.append((box(DOOR_PEG[0] - 5, DOOR_PEG[0] + 3.5, s * D.HATCH_JAMB[0], s * (D.HATCH_JAMB[1] + 6.5), DOOR_PEG[1] - 5.5, DOOR_PEG[1] + 5.5),
                       cyl(D.INSERT["M4"][0] / 2, D.INSERT["M4"][1] + 1.0, (DOOR_PEG[0], s * D.HATCH_JAMB[0], DOOR_PEG[1]), (0, s, 0))))
         return _features(p, feats).cut(tongue_keepout())                 # features (ToF seats) must clear the hull tongue too
-    key = ["rear_deck", tag, 19, COVER_SCREWS, S.SEAT, R, D.X_DECK, HUMP_X, PERIM_DEG, P.TOF_SENSORS, P.PANEL_CONTROLS, P.CHARGE_INLET, D.BUMPER_DIR]
+    key = ["rear_deck", tag, 20, COVER_SCREWS, S.SEAT, R, D.X_DECK, HUMP_X, PERIM_DEG, P.TOF_SENSORS, P.PANEL_CONTROLS, P.CHARGE_INLET, D.BUMPER_DIR]
     if tag == "r":
         key.append(("inlet_seat", S.INLET_COVER_T, 2))
     return cached(key, b)

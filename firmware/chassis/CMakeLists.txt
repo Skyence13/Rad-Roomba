@@ -13,7 +13,7 @@ option(RR_CHASSIS_SANITIZE "AddressSanitizer + UBSan for the unit tests" ON)
 set(RR_COMMON_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 add_subdirectory(../common ${CMAKE_BINARY_DIR}/rr_common)
 
-set(CORE_SRC core/rrch_cfg.c core/rrch_chain.c core/rrch_motion.c core/rrch_core.c core/rrch_proto.c)
+set(CORE_SRC core/rrch_cfg.c core/rrch_chain.c core/rrch_motion.c core/rrch_core.c core/rrch_proto.c core/rrch_pwrdev.c)
 set(WARN -Wall -Wextra -Werror -Wshadow -Wstrict-prototypes -Wmissing-prototypes -Wdouble-promotion)
 
 add_library(rr_chassis_core STATIC ${CORE_SRC})

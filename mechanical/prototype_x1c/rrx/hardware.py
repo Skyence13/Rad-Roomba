@@ -82,7 +82,7 @@ def rows():
     add("F grip", "end cap", "push-in cap 11 mm, PE", 2, "screw-head pockets of the fairings", "UNVERIFIED")
     # G  lid
     add("G lid", "button head screw + bonded sealing washer", "M3 x 10 ISO 7380 A2 + M3 EPDM bonded washer", N_PERIM, "lid/nose skirt -> tongue inserts (radial)", torque="0.5")
-    add("G lid", "pan head screw", "M3 x 12 ISO 7045 A2", 4 + 6, "nose/shoulder (2 per side) and shoulder/deck (3 per side) flanges", torque="0.6")
+    add("G lid", "pan head screw", "M3 x 12 ISO 7045 A2", 4 + 4, "nose/shoulder (2 per side) and shoulder/deck (2 per side: flank z 100 + roof) flanges", torque="0.6")
     add("G lid", "dowel pin", "3 m6 x 8 ISO 2338", 2 + 4, "lid joint alignment", note="1 per side at x = 47, 2 per side at x = %.0f" % D.X_DECK)
     add("G lid", "countersunk screw", "M3 x 8 ISO 10642 A2", 2 * len(HUMP_SCREW_X), "hump walls (from inside) -> deck curb inserts", torque="0.5")
     add("G lid", "captive panel screw", "M3 x 10 reduced-shank captive screw + retaining washer", len(COVER_SCREWS), "saddle service cover", "UNVERIFIED", "0.5")

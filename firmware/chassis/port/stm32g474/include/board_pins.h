@@ -159,7 +159,8 @@
 #define IOX_B_BIT_TOF_XSHUT_LOOK 12u
 #define IOX_B_BIT_TOF_XSHUT_REAR 13u
 #define IOX_B_BIT_TOF_MUX_NRST 14u
-#define IOX_B_BIT_SPARE_OUT 15u
+#define IOX_B_BIT_CHAIN_END_RB 15u
+#define IOX_B_INPUT_MASK 0x8000u /* configuration register bits = 1 (input); never driven */
 #define IOX_C_I2C_ADDR 0x21u
 #define IOX_C_BIT_HEAD_PWR_NFLT 0u
 #define IOX_C_BIT_HEAD_HTR_NFLT 1u
@@ -182,10 +183,10 @@
     { 1u, 0u }, /* 1 CLIFF_FR */ \
     { 0u, 1u }, /* 2 CLIFF_RL */ \
     { 1u, 1u }, /* 3 CLIFF_RR */ \
-    { 0u, 2u }, /* 4 LOOK_LO */ \
-    { 1u, 2u }, /* 5 LOOK_LI */ \
-    { 0u, 3u }, /* 6 LOOK_RI */ \
-    { 1u, 3u }, /* 7 LOOK_RO */ \
+    { 0u, 2u }, /* 4 LOOK_FL */ \
+    { 1u, 2u }, /* 5 LOOK_RL */ \
+    { 0u, 3u }, /* 6 LOOK_RR */ \
+    { 1u, 3u }, /* 7 LOOK_FR */ \
     { 0u, 4u }, /* 8 REAR_L */ \
     { 1u, 4u }, /* 9 REAR_C */ \
     { 0u, 5u }, /* 10 REAR_R */ \

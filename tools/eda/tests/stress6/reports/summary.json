@@ -327,7 +327,7 @@
         "[A3ABE3\\8A47CF] Job 'A3ABE3\\8A47CF' finished with state: COMPLETED (elapsed: 1 minute 17.81 seconds, finished at UTC: 2026-11-27T07:30:29.083082090Z)."
       ],
       "passes_limit": 30,
-      "reused": false,
+      "reused": true,
       "seconds": 83.6,
       "threads": 4,
       "timed_out": false
@@ -386,30 +386,7 @@
       },
       "vias": 101
     },
-    "finisher": {
-      "failed": [],
-      "items": 8,
-      "removed": 0,
-      "routed": [
-        {
-          "net": "+5V",
-          "rerouted_nets": [],
-          "ripped_up_items": 0,
-          "segments": 2,
-          "vias": 0,
-          "width": 0.4
-        },
-        {
-          "net": "+5V",
-          "rerouted_nets": [],
-          "ripped_up_items": 0,
-          "segments": 5,
-          "vias": 1,
-          "width": 0.4
-        }
-      ],
-      "seconds": 3.4
-    },
+    "finisher": null,
     "plane_fanout": {
       "extended": [
         "C101 [+3V3] 3.9 mm",

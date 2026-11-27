@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "harness.h"
+#include "rrch_pwrdev.h"
 
 /* Counts events of a kind in the core ring after seq `after`; optionally matching a and b. */
 static int count_ev(th_t *t, uint32_t after, rrch_ev_kind_t kind, int a, int b)
@@ -317,6 +318,42 @@ int main(void)
         t->sim.bumper_r = true;
         th_run_silent(t, 30);
         CHECK(!(t->sim.core.chain.state & (RRCH_DI(BRAKE_L) | RRCH_DI(BRAKE_R))) && count_ev(t, s0, RRCH_EV_CHAIN, RRCH_DII_BRAKE_L, 0) == 1);
+    }
+
+    SECTION("IB-05: INA228 / INA3221 decode against datasheet values; LTC4162 stays disabled (UNVERIFIED)");
+    {
+        /* INA3221 SBOS576C 8.2.2 worked example: VSHUNT = -80 mV -> C180h */
+        uint8_t b2[2] = {0xC1, 0x80};
+        CHECK(fabsf(rr_ina3221_shunt_v(b2) + 0.080f) < 1e-6f);
+        rr_ina3221_encode_shunt(-0.080, b2);
+        CHECK(b2[0] == 0xC1 && b2[1] == 0x80);
+        uint8_t fs[2] = {0x7F, 0xF8}; /* full scale 163.8 mV / 32.76 V (decimal 7FF8) */
+        CHECK(fabsf(rr_ina3221_shunt_v(fs) - 0.1638f) < 1e-5f && fabsf(rr_ina3221_bus_v(fs) - 32.76f) < 1e-3f);
+        uint8_t mfr[2] = {0x54, 0x49}, die[2] = {0x32, 0x20}, bad[2] = {0x22, 0x81};
+        CHECK(rr_ina3221_id_ok(mfr, die) && !rr_ina3221_id_ok(mfr, bad));
+        /* INA228 SLYS021A: equation (2) x4 at ADCRANGE 1; DEVICE_ID reset 2281h */
+        CHECK(rr_ina228_shunt_cal(RR_PMON_CURRENT_LSB, RR_PMON_SHUNT_OHM, true) == 5243u);
+        CHECK(rr_ina228_shunt_cal(RR_PMON_CURRENT_LSB, RR_PMON_SHUNT_OHM, false) == 1311u);
+        CHECK(rr_ina228_id_ok(mfr, bad) && !rr_ina228_id_ok(mfr, die));
+        uint8_t b3[3];
+        rr_ina228_encode_s20(66560, b3); /* 13.0 V / 195.3125 uV */
+        CHECK(fabsf(rr_ina228_vbus_v(b3) - 13.0f) < 1e-4f);
+        rr_ina228_encode_s20(-12345, b3);
+        CHECK(rr_ina228_s20(b3) == -12345 && fabsf(rr_ina228_current_a(b3, 1e-4) + 1.2345f) < 1e-5f);
+        uint8_t t2[2] = {0x0C, 0x80}; /* 3200 x 7.8125 m degC = 25 C */
+        CHECK(fabsf(rr_ina228_dietemp_c(t2) - 25.0f) < 1e-4f);
+        uint8_t q5[5] = {0xFF, 0xFF, 0xFF, 0xFF, 0xF6}; /* -10 LSB */
+        CHECK(fabs(rr_ina228_charge_c(q5, 1e-4) + 1e-3) < 1e-12);
+        CHECK(RR_LTC4162_REGMAP_VERIFIED == 0 && rr_ltc4162_regs_unverified_n > 0u);
+        /* in the emulator the telemetry runs through the same decode; loss raises the warnings, nothing unsafe */
+        th_t *t = th_new(50);
+        th_run_silent(t, 2600);
+        CHECK(!(t->sim.core.faults & (RRCH_FLT(PMON_COMM) | RRCH_FLT(CHARGER_COMM))) && fabsf(t->sim.core.pwr.vbat_pmon_v - 13.0f) < 0.01f);
+        CHECK(th_req(t, "STATE", "{}") && fabs(th_num(t, "rails.ibat_a") - 0.9) < 0.02 && th_num(t, "rails.i_head_a") == 0.0);
+        th_env(t, "{\"pmon_fail\":true,\"branch_fail\":true,\"charger_fail\":true}");
+        th_run_silent(t, 300);
+        CHECK((t->sim.core.faults & RRCH_FLT(PMON_COMM)) && (t->sim.core.faults & RRCH_FLT(CHARGER_COMM)) && !(t->sim.core.faults & RRCH_FLT_FATAL_MASK));
+        CHECK(th_req(t, "STATE", "{}") && rrc_json_is_null(&t->doc, th_get(t, "rails.ibat_a")) && rrc_json_is_null(&t->doc, th_get(t, "rails.i_head_htr_a")));
     }
 
     SECTION("stop model: v_cap is the inverse of the stopping distance");

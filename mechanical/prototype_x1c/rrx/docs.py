@@ -328,7 +328,7 @@ JOINTS = [
     ("J01_perimeter_lap", "x", -122.0, (120, 152, 48, 80), "Lid / lower hull perimeter lap joint at a screw station",
      ["4 x 2.5 silicone foam on the 1.78 mm land gap (z 61.9..63.68)", "tongue 3 mm inside the lid skirt, 9 mm high: shingled, water cannot climb", "radial M3 x 10 + bonded washer into the tongue insert"]),
     ("J02_lid_flange_x-38", "z", 100.0, (-56, -20, 96, 130), "Shoulder / rear deck bolted flange joint (x = -38)",
-     ["4 mm flanges, 9 mm deep, faces set back 0.25 mm each for the 1 mm gasket", "M3 x 12 into insert bosses at z 100 / 116 and on the roof; 3 mm dowels at z 108 and on the roof", "flanges start above the hull tongue and stop at the wheel arch"]),
+     ["4 mm flanges, 9 mm deep, faces set back 0.25 mm each for the 1 mm gasket", "M3 x 12 into insert bosses at z 100 and on the roof; 3 mm dowels at z 108 and on the roof", "flanges start above the hull tongue and stop at the wheel arch"]),
     ("J03_nose_flange_x47", "z", 74.0, (30, 64, 66, 98), "Nose cowl / shoulder flange joint (x = 47)", ["nose is one piece across the centre line: no joint on the nose top", "M3 x 12 + 3 mm dowel per side"]),
     ("J04_hump_curb", "x", -124.0, (44, 80, 104, 154), "Hump wall / rear deck coaming joint", ["hump wall passes down through the deck opening; deck curb 6 mm bolted to it (M3 x 8 countersunk from inside)", "1 mm gasket between wall and curb + sealant fillet outside"]),
     ("J05_saddle_cover_side", "x", -25.0, (66, 106, 90, 180), "Saddle well wall, cover ledge, grip side plate through the shoulder slot, cheek fairing on the roof, grip bar",
