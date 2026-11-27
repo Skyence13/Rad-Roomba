@@ -26,7 +26,10 @@ board.zone("+5V", ["In2.Cu"], polygon=[(0, 0), (30, 0), (30, 30), (0, 30)], conn
 # no GND pours on the outer signal layers: every GND/power pad gets its own plane via (plane fan-out)
 board.text("{name} rev {rev} {date}", 50, 2.0, size=1.2)
 # measured: 25 passes ~6.5 min -> 4 connections left open; 40 passes / wider spacing was not better
-board.route(passes=30, timeout=600, optimizer=False)
+board.route(passes=30, timeout=600, optimizer=False,
+            # Freerouting's default fallback chain ends in a from-scratch re-route after stagnation;
+            # keep only "continue" (rrkicad's own continue runs and the finisher handle leftovers)
+            extra_args=["--router.autorouter.fallback_strategies=continue"])
 
 # ------------------------------------------------------------------- power
 pw = board.group("power", "Power input and 3V3 regulator", notes="Screw terminal 5 V in, LDO to 3V3.")
