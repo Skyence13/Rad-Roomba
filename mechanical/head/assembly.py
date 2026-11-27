@@ -122,6 +122,7 @@ def build(build="prototype", projection=3.0, travel=0.0):
         for ref, ko in T.microfit_plugs():
             _p(P, f"plug_ko_{ref}", f"EL-KO-{ref}", ko, "MIXED", "envelope", "elec",
                f"keep-out of the mated {ref} Micro-Fit plug over the rear strip (CR-M03 v -8.4..1.5, {H.MICROFIT_H_ALLOW:g} mm IB-19 height; UNVERIFIED plug drawing)", mass_g=0.0)
+        _p(P, "plug_ko_J2501", "EL-KO-J2501", T.gh8_plug(), "MIXED", "envelope", "elec", "keep-out of the mated J2501 GH-8 plug (CR-M08, UNVERIFIED housing data)", mass_g=0.0)
         _p(P, "thermal_cutout", "PUR-TCO", T.thermal_cutout(), "MIXED", "purchased", "elec", "bimetal thermal cut-out in series with the heater, on the spreader tab", mass_g=1.5)
         _p(P, "desiccant", "PUR-DES-1G", T.desiccant(), "MIXED", "purchased", "elec", "4 desiccant pouches (about 0.5 g each) + indicator card, front strip between the lid bosses", mass_g=3.0, hard=False)
         _p(P, "ntc", "PUR-NTC-10K", T.ntc(), "MIXED", "purchased", "elec", "10 k NTC ring-lug sensor on the spreader (heater regulation, board J-heater connector)", mass_g=0.5)

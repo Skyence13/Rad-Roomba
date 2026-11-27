@@ -34,6 +34,14 @@
   cables), option +5 C, warm-up; `out/thermal_summary.json`. IB-11: 15.6 mm after trip in both builds (calculated).
 - production/README.md section 4 already described the isolated scheme (no change needed beyond a note); section 6 harness rewritten.
 
+## Session 2026-11-27 b (board stage 3: CR-M06..M08, S3-03/05, review M5, H-03)
+- CR-M06: plugs v -1.4..8.5; lid opening x 81.5..103.2 (blister to v 20), rear flange back to 2.0, standoff back at (77.5, +90.3), cut-out to y 81..87.5;
+  J1 harness check now a calculated fan-in (pass with thin-wall AWG 20 <= 1.6 mm OD); P-clip not fitted (grommet = strain relief).
+- CR-M07: side clips v 23.5 / 29.0 / 34.75 checked from the board file. CR-M08: J2501 plug keep-out solid; standoff (77.5, -104.5) -> (77.5, -117.5) (T-head
+  washer at -111.5 blocks -109); extra rear-comb bond screw (80.3, -104.5); -y rear lid span 47 mm (deviation).
+- Frame contact per hole tool-checked (pad nets, parts on each frame net, copper keep-out radius from the board file). M5: insulated heater parts + PI pads,
+  nylon lug screw, 100 V >= 10 MOhm check (assembly notes, production E9). H-03: J1 heater conductors AWG 20 (cable spec, thermal cable term).
+
 ## Open (lead decisions / other work packages): see README.md "Open items" and head_report.md section 2
 - Switch positions for frames.yaml, mass vs mech_calcs, 27 mm fence-foot window, M2.5 rib screws vs the M3 rule.
 - Not modelled: loop-lead notch in the front fence, vent baffle, coax / harness solids, drawing sheets for bridge / keeper / cassette.

@@ -33,13 +33,18 @@ SUPPLIER = {
     "PUR-SO-M3x11": ("round female spacer M3 x 11, OD 4.5, aluminium (Wurth 9701xx / Ettinger class)", "UNVERIFIED", ""),
     "PUR-M16-8": ("binder M16 IP67 8-pole male cable connector, shieldable (series 423 / 723 family)", "PARTIAL", "envelope from mechanical/common/purchased/parts.yaml j1_receptacle"),
     "PUR-M12-8": ("binder M12-A 8-pole male cable connector, shieldable (series 763 family)", "UNVERIFIED", "envelope from parts.yaml j2_receptacle"),
-    "PUR-CABLE-J1": ("shielded PUR cable 2 x 18 AWG + 2 x 20 AWG + 4 x 24 AWG, OD 7.5, -40 C flex, 150 mm free length", "UNVERIFIED", "OD drives the grommet bore"),
+    "PUR-CABLE-J1": ("shielded PUR cable 4 x 20 AWG + 3 x 24 AWG (heater pair AWG 20, stage-3 H-03), OD 7.5, -40 C flex, 150 mm free length; conductors inside the head thin-wall "
+                     "ETFE / XL-PE, AWG 20 OD <= 1.6 mm (fan-in to J2001 in 9 mm, head_report.md); Micro-Fit 43030-0007 terminals", "UNVERIFIED", "OD drives the grommet bore"),
     "PUR-CABLE-J2": ("shielded PUR cable 4 x 2 x 24 AWG twisted pairs, OD 6.5, -40 C flex, 150 mm free length", "UNVERIFIED", "OD drives the grommet bore"),
     "PUR-VENT-M6": ("ePTFE membrane vent M6 x 0.75, black housing (GORE / Amphenol LTW class)", "UNVERIFIED", ""),
     "PUR-FILM": ("aluminised PET entrance film, areal density per radiometry (TBD by detector physics)", "UNVERIFIED", "die-cut 110 x 81.8 with 4 holes"),
-    "PUR-HEATER": ("polyimide heater zone 76 x 96, 7.5 W at 12 V, PSA backed (Minco / Holroyd class)", "UNVERIFIED", "zone size from the model; 4 zones may be one film"),
-    "PUR-TCO": ("bimetal thermal cut-out, normally closed, opens 45 C (KSD-01F / Airpax 67F class)", "UNVERIFIED", "in series with HEAD_HTR"),
-    "PUR-NTC-10K": ("10 k NTC ring-lug sensor M3 (Vishay / TDK class)", "UNVERIFIED", "regulation input of the board heater controller"),
+    "PUR-HEATER": ("polyimide heater zone 76 x 96, 7.5 W at 12 V, element fully encapsulated between two polyimide layers (>= 25 um each), PSA backed (Minco / Holroyd class)", "UNVERIFIED",
+                   "M5 insulation: the polyimide cover layer is the dielectric to the spreader; specify >= 100 MOhm at 100 V element-to-surface and no exposed tab metal on the spreader side"),
+    "PUR-TCO": ("bimetal thermal cut-out, normally closed, opens 45 C, ISOLATED CASE variant (plastic / insulated cap; >= 100 MOhm case-to-terminals at 100 V) (KSD-01F / Airpax 67F class)", "UNVERIFIED",
+                "in series with the heater element (low side); M5: bonded on a 0.1 mm polyimide pad PUR-PI-PAD, never screwed metal-to-spreader"),
+    "PUR-NTC-10K": ("10 k NTC ring-lug sensor M3, ISOLATED LUG (bead potted, >= 100 MOhm leads-to-lug at 100 V) (Vishay / TDK class)", "UNVERIFIED",
+                    "regulation input of the board heater controller; M5: lug on a 0.1 mm polyimide pad + nylon M3 screw/washer as second barrier"),
+    "PUR-PI-PAD": ("polyimide film 0.1 mm with PSA, die-cut pads 8 x 10 (cut-out) and dia 8 (NTC lug)", "UNVERIFIED", "M5 second insulation barrier on the spreader"),
     "PUR-DES-1G": ("silica gel pouch about 0.5 g, 4 off, + humidity indicator card", "UNVERIFIED", "3.0 cm3 space in the front strip"),
     "PUR-GSK-LID": ("lid gasket die-cut, closed-cell silicone 1.2 mm (prototype black; production conductive Ni/graphite silicone)", "UNVERIFIED", ""),
     "PUR-GSK-CAS": ("cassette gasket die-cut, black closed-cell silicone 0.8 mm", "UNVERIFIED", ""),
@@ -65,6 +70,8 @@ SCREWS_NOT_MODELLED = [  # (pn, description, qty prototype, qty production)
     ("PUR-M3-BONDSEAL", "bonded sealing washer M3 (steel + NBR/silicone, -40 C), under every lid screw", T.lid_count(), T.lid_count()),
     ("PUR-M3-ISOWASH", "insulating shoulder washer M3 (PA66 / G10): T-head screws (FRAME isolated from the shoes, both builds)", 8, 8),
     ("PUR-PI-TAPE", "polyimide tape 0.1 mm, 30 x 45 mm, on the lid under the keeper (isolation)", 1, 1),
+    ("PUR-PI-PAD", "polyimide insulating pads 0.1 mm under the thermal cut-out and the NTC lug (review M5)", 2, 2),
+    ("PUR-M3-NYLON", "M3 x 6 polyamide screw + polyamide washer for the NTC lug (review M5)", 1, 1),
     ("PUR-INS-M2.5", "heat-set insert M2.5 in the printed frame (ribs 10, rear zone 6, cassettes 16, bail blocks 6)", 38, 0),
     ("PUR-INS-M3", "heat-set insert M3 in the printed lid bosses", 18, 0),
     ("PUR-DOWEL-3x6", "dowel pin 3 x 6 h8, split-joint location", 2, 0),
@@ -217,18 +224,22 @@ Heater zones, pads and rib gasket strips are bonded to the spreader underside be
 edge under the frame lip, lower it, then: 10 x M2.5 CSK into the rib inserts, 6 x M2.5 pan into the rear-zone inserts (they also clamp the EMI comb foot -- fit
 the comb first in step 5 order if preferred), 8 x M3 low-head with insulating shoulder washers into the T-heads. Lid standoffs from below with M3 x 6 CSK
 ({sum(1 for x, y in T.lid_holes() if T.standoff_on_foot(x, y))} x 10.5 mm on fence feet, {sum(1 for x, y in T.lid_holes() if not T.standoff_on_foot(x, y))} x 11 mm in the chimney zones; none in the J1 plug zone
-y 62..113, CR-M03). Board standoffs are clinched in the spreader (H1 at (113.2, 87.5), CR-M02). Thermal cut-out on the spreader at (77..81.6, 82..88.5), under the J2001 plug.
+y 62..113 except (77.5, 90.3) between the J2001 and J2601 wire groups, stage 3). Board standoffs are clinched in the spreader (H1 at (113.2, 87.5), CR-M02).
+Thermal cut-out (isolated-case type) on a 0.1 mm polyimide pad at (77..81.6, 81..87.5); NTC lug on a polyimide pad with a nylon M3 screw (review M5).
 
 **5. EMI fences, board, shield cans, switches, cables** -- ![step 5](assembly/step_05.png)
 Rear comb (liners into the chimneys around the coax), side and front fences; their feet are clamped by the standoffs and screws (bond points <= 50 mm,
 tool-checked); on the +y middle foot (under the J1 plugs) 2 x M2.5 x 3 pan at (80.3, 70.5) / (80.3, 104.5) into the tapped spreader -- fit them BEFORE the board. Front-switch saddle (shim the trip point: see section "Checks"), lid-switch saddle. Board on the eight standoffs (8 x M2.5 with serrated
 washers = FRAME bond), lane shield cans clipped on, coax to the board rear edge (bend radius >= 6 mm). J1 / J2 pigtails through the split grommets into
-the U-slots (J1 at y 76.2, CR-M03), plugs onto J2001 / J2601 / J2501 (J1 harness: open item, head_report.md 'J1 landing harness').
+the U-slots (J1 at y 76.2, CR-M03); the J1 jacket ends in the grommet and the thin-wall wires fan in over the 9 mm behind the J2001 plug (no internal
+P-clip: the grommet is the strain relief). Plugs onto J2001 / J2601 / J2501.
+**Insulation check (review M5), before the board is connected:** 100 V insulation tester between the heater circuit (J2601 plug pins: element, cut-out,
+NTC leads, shorted together) and the spreader: >= 10 MOhm. Record the value.
 Rail-switch leads to J2002 (front), J2003 (left), J2004 (right, u 144.6 = y +18.4, S2-L6), J2201 (lid): cut lengths in head_report.md section 12. Desiccant pouches into the front strip, indicator card visible.
 
 **6. Lid** -- ![step 6](assembly/step_06.png)
 Lid gasket on the wall top land, liner under the lid. {T.lid_count()} x M3 button head + bonded washer: {len(T.lid_holes())} into the standoffs, 18 into the wall bosses; tighten from the
-centre outward. Blister (J1 landing and mated-plug clearance, 8.9 mm) is bonded over the lid opening, clamped by the two rear screws at y 57.0 / 117.5 and riveted at the front. Keeper plate swings down over the lid (its
+centre outward. Blister (J1 landing and mated-plug clearance, 8.9 mm) is bonded over the lid opening, clamped by the three rear screws at y 57.0 / 90.3 / 117.5 and riveted at the front. Keeper plate swings down over the lid (its
 hole clears the screw at (77.5, 0); 0.1 mm polyimide tape on the lid under it), hinge pin with circlips. **Insulating jacket (standard cold configuration,
 required below 0 C):** degrease the lid and the frame front face, press the cap RR-HD-S-131 onto the lid (PSA; its 9 mm holes line up with the 35 lid screws, so
 the lid is later removed with the cap on it; cut-out round the keeper and the latch box) and the front band RR-HD-S-132 onto the front face above the bail blocks.
@@ -275,7 +286,8 @@ inserts; the shoes are isolated from the frame exactly as in the prototype (G10 
 1. ![step 1](assembly/step_01.png) Frame on the fixture (shoe datums A/B/C); shoes with G10 isolators, rear bridge (M4 2.0 N m); megger check FRAME to shoes >= 10 Mohm.
 2. ![step 2](assembly/step_02.png) Side rails, guide pins, side switches (preset 0.40 mm), rods, springs, stop pins.
 3. ![step 3](assembly/step_03.png) Lane kits from above; stack-height check.
-4. ![step 4](assembly/step_04.png) Spreader (heater, pads, rib gaskets bonded), standoffs (11 mm), board, cans, switches, grommets, desiccant, cut-out, NTC.
+4. ![step 4](assembly/step_04.png) Spreader (heater, pads, rib gaskets bonded), standoffs (11 mm), cut-out and NTC on polyimide pads (M5), board, cans, switches, grommets, desiccant.
+   Before the board is connected: 100 V insulation check heater circuit (J2601 plug pins shorted) to frame >= 10 MOhm (review M5).
 5. ![step 5](assembly/step_05.png) Lid with conductive gasket, {T.lid_count()} x M3 + bonded washers (18 into tapped frame bosses), blister, polyimide tape, keeper; insulating jacket cap RR-HD-S-131 (PSA on the lid, screws reachable through its holes) and front band RR-HD-S-132 (standard cold configuration).
 6. ![step 6](assembly/step_06.png) Cassettes (CNC 6061, black anodise) and leading rail.
 

@@ -156,6 +156,15 @@ def write(res):
                 "the internal P-clip has nothing to hold (no jacket inside: see the harness deviation)"),
                ("CR-M05", "blister 8.9 mm kept, header height UNVERIFIED", "kept; headers AND mated plugs checked at 8.3 mm (IB-19 allowance) -- all clear"),
                ("S2-L6", "J2004 at u 144.6", "no part change; harness length below"),
-           ]), "", "Rail-switch lead lengths (calculated, S2-L6): " + "; ".join(f"{k}: {v['route_mm']:.0f} mm" for k, v in d.get("harness_routes", {}).items())
+               ("CR-M06 (stage 3)", "J2001 / J2601 7 mm forward, plugs v -1.4..8.5, blister to v 20", "lid opening x 81.5..103.2 + blister; rear flange back to 2.0 mm; standoff back at (77.5, +90.3) "
+                "(rear pitch <= 40 again); cut-out to y 81..87.5; J1 jacket ends in the grommet, wires fan in over 9 mm (thin-wall AWG 20 <= 1.6 mm OD); no P-clip"),
+               ("CR-M07 (stage 3)", "can side clips at v 23.5 / 29.0 / 34.75", "no model change (clips are board parts); checked on the wall line; drawing note"),
+               ("CR-M08 (stage 3)", "J2501 GH-8 plug keep-out u 255.0..269.6, v -6.5..0.75, z 36.1..40.4", "keep-out solid in both assemblies; standoff (77.5, -104.5) -> (77.5, -109.2)"),
+               ("S3-03 / S3-05", "F2801 + R2801 at H1; one frame net per hole", "every hole has a metal clinch standoff in the Al spreader + screw + serrated washer (table below)"),
+               ("M5 (review)", "heater circuit insulated from the spreader", "encapsulated films, isolated-case cut-out and isolated-lug NTC on 0.1 mm polyimide pads, nylon lug screw; 100 V >= 10 MOhm check (assembly, E9)"),
+           ]), "",
+           _t(["Hole", "u, v", "base x, y", "Board net(s)", "Board parts on the net", "Copper keep-out r (mm)", "Washer edge to foreign copper (mm)", "Metal standoff in both builds"],
+              [(f["hole"], f"{f['uv'][0]}, {f['uv'][1]}", f"{f['base'][0]}, {f['base'][1]}", ", ".join(f["board_nets"]), ", ".join(f["board_parts_on_net"]) or "-",
+                f["copper_keepout_r"], f["washer_to_foreign_copper_mm"], "yes" if f["standoff_metal_both_builds"] else "NO") for f in bf.get("frame_contacts", [])]), "", "Rail-switch lead lengths (calculated, S2-L6): " + "; ".join(f"{k}: {v['route_mm']:.0f} mm" for k, v in d.get("harness_routes", {}).items())
            + ". D2HW-C201M lead length UNVERIFIED: splice to the GH-4 harness where shorter.", ""]
     (OUT / "head_report.md").write_text("\n".join(md))

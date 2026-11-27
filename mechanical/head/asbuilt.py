@@ -74,15 +74,30 @@ def load(path: str = str(PCB)):
             p0, p1 = _xform(at, float(r_.group(1)), float(r_.group(2))), _xform(at, float(r_.group(3)), float(r_.group(4)))
             rects.append((round(min(p0[0], p1[0]) - ox, 4), round(oy - max(p0[1], p1[1]), 4), round(max(p0[0], p1[0]) - ox, 4), round(oy - min(p0[1], p1[1]), 4)))
         rec["fab_rects_uv"] = rects
-        pads = []
-        for pm in re.finditer(r"\(pad \"([^\"]*)\" (\w+) (\w+)\s*\(at ([-\d.]+) ([-\d.]+)", blk):
+        pads, pad_info = [], []
+        for pb in re.split(r"\n\t\t\(pad ", blk)[1:]:
+            pm = re.match(r"\"([^\"]*)\" (\w+) (\w+)\s*\(at ([-\d.]+) ([-\d.]+)", pb)
+            if not pm:
+                continue
             px, py = _xform((at[0], at[1], at[2]), float(pm.group(4)), float(pm.group(5)))
+            sz = re.search(r"\(size ([-\d.]+) ([-\d.]+)\)", pb)
+            net = re.search(r'\(net (?:\d+ )?"([^"]*)"\)', pb)
             pads.append((pm.group(1), round(px - ox, 4), round(oy - py, 4)))
+            pad_info.append({"num": pm.group(1), "u": round(px - ox, 4), "v": round(oy - py, 4), "shape": pm.group(3),
+                             "size": (float(sz.group(1)), float(sz.group(2))) if sz else None, "net": net.group(1) if net else None})
         rec["pads_uv"] = pads
+        rec["pads"] = pad_info
         out[ref] = rec
+    zones = {}
+    for zm in re.finditer(r"\n\t\(zone\b(.*?)\n\t\)", txt, re.S):
+        z = zm.group(1)
+        nm = re.search(r'\(name "([^"]+)"\)', z)
+        if nm and nm.group(1).startswith("KO_H28"):
+            pts = [(float(a_) - ox, oy - float(b_)) for a_, b_ in re.findall(r"\(xy ([-\d.]+) ([-\d.]+)\)", z)]
+            zones[nm.group(1)] = pts
     st = Path(path).stat()
     meta = {"file": str(Path(path).relative_to(REPO)), "bytes": st.st_size, "mtime_utc": time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(st.st_mtime)),
-            "aux_axis_origin": (ox, oy), "footprints": len(out)}
+            "aux_axis_origin": (ox, oy), "footprints": len(out), "hole_keepouts": zones}
     return out, meta
 
 

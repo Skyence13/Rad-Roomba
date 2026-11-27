@@ -198,7 +198,7 @@ def board_fit(builds):
     (item, ok, detail). Everything is read from the board file; the model values come from hp.py / parts.py."""
     from . import asbuilt as AB
     fp, meta = board_asbuilt()
-    rows, data = [], {"source": meta}
+    rows, data = [], {"source": {k: v for k, v in meta.items() if k != "hole_keepouts"}}
     tol = 0.01
     # (a) mounting holes: board file vs model standoffs vs spreader holes
     holes = sorted((round(AB.to_base(r["u"], r["v"])[0], 3), round(AB.to_base(r["u"], r["v"])[1], 3)) for k, r in fp.items() if k.startswith("H28"))
@@ -287,13 +287,44 @@ def board_fit(builds):
     rows.append((f"{sum(1 for k in fp if not k.startswith(BOARD_SKIP))} component bodies (board-file courtyard x 3D envelope height; Micro-Fit at {H.MICROFIT_H_ALLOW:g} mm) vs every head part",
                  not hits and not over, f"{n} candidate pairs intersected; overlaps: {hits or 'none'}; height-zone violations (6.0 top / 8.3 J1 landing / top side only): {over or 'none'}; "
                  f"smallest clearance to the lid / liner / blister above a body: {worst[0]:.2f} mm ({worst[1]})"))
+    # (f) frame contact at every mounting hole (stage 3, S3-03 / S3-05): each hole is its own frame net on the board
+    nets_of = {}
+    for ref, r in fp.items():
+        for pd in r.get("pads", []):
+            if pd["net"]:
+                nets_of.setdefault(pd["net"], set()).add(ref)
+    metal = ("BRASS", "AL6061", "SS304", "STEEL", "AL5052")
+    so = {b_: next(p for p in builds[b_] if p.name == "board_standoffs") for b_ in ("prototype", "production")}
+    spr_ok = all(next(p for p in builds[b_] if p.name == "spreader").material in metal for b_ in so)
+    fc = []
+    screw_r = 2.75          # M2.5 serrated (lock) washer OD 5.5 under the pan head (recalled DIN 6798 A, UNVERIFIED); pan head r 2.25
+    for k in range(1, 9):
+        ref = f"H280{k}"
+        r = fp[ref]
+        nets = sorted({pd["net"] for pd in r["pads"] if pd["net"]})
+        others = sorted(set().union(*[nets_of.get(n, set()) for n in nets]) - {ref})
+        pad_r = max(max(pd["size"]) for pd in r["pads"] if pd["size"]) / 2
+        ko = meta["hole_keepouts"].get(f"KO_{ref}")
+        ko_r = min(math.dist((r["u"], r["v"]), q) for q in ko) if ko else None
+        xb, yb = AB.to_base(r["u"], r["v"])[:2]
+        has_so = any(math.dist((xb, yb), (cx, cy)) < 0.01 for cx, cy, _ in T.board_holes())
+        fc.append({"hole": ref, "uv": (r["u"], r["v"]), "base": (round(xb, 1), round(yb, 1)), "board_nets": nets, "board_parts_on_net": others,
+                   "pad_r": pad_r, "copper_keepout_r": round(ko_r, 2) if ko_r else None, "standoff_metal_both_builds": has_so and all(q.material in metal for q in so.values()) and spr_ok,
+                   "washer_to_foreign_copper_mm": round(ko_r - screw_r, 2) if ko_r else None})
+    data["frame_contacts"] = fc
+    expects = [f for f in fc if f["board_parts_on_net"]]
+    rows.append(("frame contact at every hole the board relies on (F2801/R2801 at H1, capacitors / J2 shield parts at H2..H8): metal standoff clinched in the "
+                 "aluminium spreader + M2.5 screw and serrated washer on the hole pad, both builds", all(f["standoff_metal_both_builds"] for f in fc),
+                 "; ".join(f"{f['hole']} {'/'.join(f['board_nets'])} ({', '.join(f['board_parts_on_net'][:4]) or 'no part'})" for f in fc)
+                 + f"; {len(expects)} holes carry parts, all 8 have the metal stack. H3 washer edge to the edge of its copper keep-out (BUS_GND side): "
+                 f"{next(f for f in fc if f['hole'] == 'H2803')['washer_to_foreign_copper_mm']} mm (pad r {next(f for f in fc if f['hole'] == 'H2803')['pad_r']:.2f})"))
     # (e) mated Micro-Fit plug keep-outs: their interference with the head is part of the assembly interference check; record the rear-strip numbers
     plugs = {ref: bounds(ko) for ref, ko in T.microfit_plugs()}
     data["plug_keepouts_xyz"] = plugs
     back = min(b[0] for b in plugs.values())
-    rows.append(("mated Micro-Fit plug keep-outs (CR-M03: v -8.4..1.5, IB-19 height) clear of standoffs, fences, cut-out, NTC, bond screws, lid", True,
+    rows.append((f"mated plug keep-outs (Micro-Fit CR-M06 v {H.PLUG_V[0]:g}..{H.PLUG_V[1]:g} at the IB-19 height; J2501 GH-8 CR-M08) clear of standoffs, fences, cut-out, NTC, bond screws, lid", True,
                  f"keep-outs x {back:.1f}..{max(b[3] for b in plugs.values()):.1f}, y {min(b[1] for b in plugs.values()):.2f}..{max(b[4] for b in plugs.values()):.2f}, "
-                 f"z {oz:.1f}..{oz + H.MICROFIT_H_ALLOW:.1f}: in the prototype and production assemblies (interference checks above, parts plug_ko_J2001 / plug_ko_J2601)"))
+                 f"z {oz:.1f}..{oz + H.MICROFIT_H_ALLOW:.1f}: in the prototype and production assemblies (interference checks above, parts plug_ko_J2001 / plug_ko_J2601 / plug_ko_J2501)"))
     return rows, data
 
 
@@ -385,13 +416,16 @@ def run():
         f"smallest web {web[0]:.2f} mm between {web[1][0]} ({web[1][1]}) and {web[1][2]} ({web[1][3]})")
     plugs = [b_ for _, b_ in [(r, bounds(k)) for r, k in T.microfit_plugs()]]
     behind = min(b_[0] for b_ in plugs) - H.BAY_X0
-    behind_p = min(b_[0] for b_ in plugs) - (T.FENCE_REAR_X + H.FENCE_T)
-    res["data"]["j1_wire_exit_mm"] = {"to_rear_wall": round(behind, 2), "to_prototype_comb": round(behind_p, 2), "required": H.WIRE_EXIT_MIN}
-    add("J1 landing harness: free length behind the mated J2001 / J2601 plugs for the wire exit and bend (CR-M03 layout)", "deviation" if behind < H.WIRE_EXIT_MIN else "pass",
-        f"plug backs at x {min(b_[0] for b_ in plugs):.1f} (v -8.4); rear wall inner face x {H.BAY_X0}: {behind:.1f} mm (prototype comb wall: {behind_p:.1f} mm) against about "
-        f"{H.WIRE_EXIT_MIN:g} mm needed (calculated: AWG 18 conductor about 2.1 mm OD UNVERIFIED, bend radius >= 2 x OD + 2 mm straight behind the housing). "
-        "The J2001 wires must also converge to the 7.5 mm cable at the port within that length (pins at y 65.7..86.7, port y 76.2). "
-        "Not buildable as laid out: needs a board-side change (headers moved >= 6 mm forward of the rear edge, or top-entry headers) -- lead decision", "tool-checked geometry + calculated allowance")
+    fan = {"prototype (to the comb wall x %.1f)" % (T.FENCE_REAR_X + H.FENCE_T): C.j1_fan_in(board_asbuilt()[0], T.FENCE_REAR_X + H.FENCE_T),
+           "production (to the rear wall x %.1f)" % H.BAY_X0: C.j1_fan_in(board_asbuilt()[0], H.BAY_X0)}
+    res["data"]["j1_wire_exit_mm"] = {"to_rear_wall": round(behind, 2), "required_single_bend": H.WIRE_EXIT_MIN, "fan_in": fan}
+    ok = behind >= H.WIRE_EXIT_MIN and all(v["ok"] for v in fan.values())
+    add("J1 landing harness buildable: wire exit + bend behind the mated J2001 / J2601 plugs and fan-in of the J2001 wires to the 7.5 mm cable at the port", "pass" if ok else "fail",
+        f"plug backs at x {min(b_[0] for b_ in plugs):.1f} (v {H.PLUG_V[0]:g}, CR-M06): {behind:.1f} mm to the rear wall (>= {H.WIRE_EXIT_MIN:g} for one bend). Fan-in (R = 2 x OD, 2 mm "
+        "straight behind the housing, S-bend into the jacket bundle r 2.75): " + "; ".join(f"{k}: {v['available_mm']} mm available, worst pin {max(v['rows'], key=lambda r: r['x_needed_mm'])['pin']} "
+        f"needs {max(r['x_needed_mm'] for r in v['rows'])} mm, largest wire OD that fits {v['max_od_that_fits_mm']} mm" for k, v in fan.items())
+        + f". Requires thin-wall hook-up wire inside the head: AWG 20 OD <= {min(v['max_od_that_fits_mm'] for v in fan.values()):.2f} mm (assumed {H.J1_WIRE_OD['20']}, ETFE / XL-PE class, UNVERIFIED); "
+        "a standard PVC UL1007 AWG 20 (about 1.9 mm, recalled) does not fit", "calculated on tool-checked positions")
     top, bot, j1 = T.pcb_keepouts()
     lid_under = bounds(T.lid())[2]
     liner_under = lid_under - T.LINER_T
@@ -479,19 +513,20 @@ def run():
     n, dmax, pair = lid_pitch()
     pts = T.lid_loop()
     long_ = [(pts[k], pts[(k + 1) % len(pts)]) for k in range(len(pts)) if math.dist(pts[k], pts[(k + 1) % len(pts)]) > H.LID_PITCH_MAX + 1e-6]
-    in_bay = all(a[0] < 90 and b[0] < 90 and min(a[1], b[1]) >= 57.0 - 1e-6 and max(a[1], b[1]) <= 117.5 + 1e-6 for a, b in long_)
+    in_bay = all(a[0] < 90 and b[0] < 90 and min(a[1], b[1]) >= -117.5 - 1e-6 and max(a[1], b[1]) <= -70.5 + 1e-6 for a, b in long_)
     seats = [bounds(T.lid_standoffs(True))[5], bounds(T.lid_standoffs(False))[5], bounds(T.lid_standoffs(True))[2]]
     boss_top = max(bounds(p.shape)[5] for p in builds["prototype"] if p.name.startswith("frame"))
     hard = all(abs(z - H.Z_LID0) < 1e-6 for z in seats[:2] + [boss_top])
     # gasket-compression loss in the long bay (calculated): lid 2 mm + bonded 1 mm blister as a simply supported strip under the gasket line load
     q, wb, span = 0.075 * 2.6, 20.0, dmax                      # 75 kPa closed-cell silicone at 33 % (UNVERIFIED) x 2.6 mm land; 20 mm effective width
-    sag = 5 * q * span ** 4 / (384 * 69000.0 * wb * 3.0 ** 3 / 12)
+    sag = 5 * q * span ** 4 / (384 * 69000.0 * wb * 2.0 ** 3 / 12)   # 2 mm lid only (no blister on the -y side)
     st_ = "pass" if not long_ and hard else ("deviation" if in_bay and hard else "fail")
     add(f"cover = shear panel: lid fasteners round a closed loop at <= {H.LID_PITCH_MAX:g} mm pitch, all on hard seats at the lid underside", st_,
         f"{n} M3 screws ({len(T.lid_holes())} into standoffs on the spreader, {len(T.lid_boss_xy())} into frame bosses); largest neighbour distance {dmax:.1f} mm between "
         f"({pair[0][0]:.1f}, {pair[0][1]:+.1f}) and ({pair[1][0]:.1f}, {pair[1][1]:+.1f}); standoff tops z {seats[0]:.2f} / {seats[1]:.2f}, boss tops z {boss_top:.2f}. "
-        + (f"Only span over 40 mm: the J1 bay on the rear line, forced by CR-M03 (no standoff can stand under the mated plugs, y 62.3..112.7); the lid there is "
-           f"doubled by the bonded 1 mm blister; calculated gasket-line sag over the bay {sag:.3f} mm against 0.4 mm gasket compression" if long_ else ""))
+        + (f"Only span over 40 mm: the -y rear line between (77.5, -70.5) and (77.5, -117.5), forced by CR-M08 (J2501 GH-8 plug keep-out y -106.6..-92.0, the J2 port at "
+           f"y -87.5 with its wires, T-head screw washers at y -77.5 / -97.5 / -111.5); calculated gasket-line sag over the span {sag:.3f} mm against 0.4 mm gasket compression. "
+           "The +y J1 bay is back to <= 40 mm (standoff (77.5, +90.3), stage 3)" if long_ else ""))
     jk = [p for p in builds["prototype"] if p.name.startswith("jacket")]
     lb_ = P.RECEIVER["latch_box"]
     latch = box(lb_[0], lb_[1], lb_[2], lb_[3], lb_[4], lb_[5])

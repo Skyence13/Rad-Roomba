@@ -164,6 +164,7 @@ def overlaps(parts, folder, workers=3, timeout=150.0, screen_tol=2.0, log=print)
         byn[n].shape.exportBrep(str(folder / f"{n}.brep"))
     exact = {}
     if flagged:
+        timeout = float(os.environ.get("RR_BOOL_TIMEOUT", timeout))   # the one-piece production skins need minutes per pair (result cached)
         res = _exact(flagged, folder, max(1, min(workers, (os.cpu_count() or 2) - 1)), timeout, log)
         exact = {ab: r for ab, r in res.items() if r[1].startswith("boolean")}
     for f in folder.glob("*.brep"):                     # exact results are cached in exact_cache.json; the BREPs are scratch

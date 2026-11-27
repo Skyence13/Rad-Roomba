@@ -87,8 +87,8 @@ def _frame(kind):
         cuts.append(box(74.6, H.XR + H.SW["h"] + 0.2, s * 148.3, s * 150.2, H.SW_SIDE["z"] - 2.0, H.Z_SPR0 + 0.02))
         yp = H.PORT_Y["J1" if s > 0 else "J2"]
         cuts.append(box(H.XR - 1, H.BAY_X0 + 1, yp - H.PORT_SLOT_HY, yp + H.PORT_SLOT_HY, H.PORT_SLOT_Z0, 60))                             # cable port U-slot (J1 y 76.2, CR-M03)
-        if s > 0 and kind != "P":                                                                                                         # relief under the rear-comb bond-screw tips
-            cuts += [cyl(1.5, 0.8, (x, y, H.Z_SPR0 - 0.8)) for x, y in H.REAR_BOND]
+        if kind != "P":                                                                                                                  # relief under the rear-comb bond-screw tips
+            cuts += [cyl(1.5, 0.8, (x, y, H.Z_SPR0 - 0.8)) for x, y in H.REAR_BOND if y * s > 0]
         for dy in (-6.0, 6.0):                                                                                                            # bail block inserts (outer blocks)
             cuts.append(cyl(INS_R[kind == 'P'], 5.2, (H.XF + 0.02, s * 130.0 + dy, 25.7), (-1, 0, 0)))
         cuts.append(box(H.BAY_X1 - 0.02, H.BAY_X1 + 0.6, ys - 8.0, ys + 8.0, H.Z_SPR1 + 0.2, H.Z_WALL_TOP + 1))                            # switch relief (front rail switch left, lid switch right)
@@ -250,7 +250,7 @@ def lid_all_holes():
     return lid_holes() + lid_boss_xy()
 
 
-BLISTER = (71.0, 5.5, 53.0, 122.0)      # J1 blister: rear edge over the lid rear strip (bond overlap 3.5 mm behind the opening), front edge 5.5 beyond the
+BLISTER = (74.5, 5.5, 53.0, 122.0)      # J1 blister: rear edge over the lid rear strip (bond overlap 7 mm behind the opening), front edge 5.5 beyond the
                                          # opening (rivets), y 53..122 so the rear-line lid screws at y 57.0 / 117.5 seat fully on it (clamp + bond)
 
 
@@ -647,6 +647,15 @@ def microfit_plugs(height=None):
     return out
 
 
+def gh8_plug():
+    """CR-M08 keep-out of the mated J2501 GH-8 plug (housing + crimp / strain; recalled by electronics, UNVERIFIED)."""
+    (u0, u1), (v0, v1), h = H.GH8_PLUG["J2501"]
+    oz = H.ACQ["origin"][2] + H.ACQ["thickness"]
+    x0, y1 = P_board(u0, v0)[:2]
+    x1, y0 = P_board(u1, v1)[:2]
+    return box(x0, x1, y0, y1, oz, oz + h)
+
+
 def shield_can(i=None):
     """RR-HEAD-SHLD-A lane shield can 36.0 x 32.0 x 5.0, 0.2 mm wall. Local frame: x = v from the rear wall, y = -du. Mouse holes 2.0 x 1.2 at
     du -10.38 / +11.87 (CR-M04: anode U.FL centre pads of the translated channel layout, S2-L3); position on the board v 8.25..40.25 (CR-M01)."""
@@ -675,7 +684,7 @@ def pigtail(name):
     z = H.PORT[name][2]
     r = H.CABLE_D[name] / 2
     e = L.env("j1_receptacle" if name == "J1" else "j2_receptacle")
-    p0, p1 = ((H.ACQ["origin"][0] + H.PLUG_V[0] - 0.2) if name == "J1" else 76.0, y, z), (H.XR - 12.0, y, z)   # J1 cable ends at the mated J2001 plug back
+    p0, p1 = (H.BAY_X0 - 0.05 if name == "J1" else 76.0, y, z), (H.XR - 12.0, y, z)   # J1 jacket ends at the grommet; the wires fan in to J2001 (calc.j1_fan_in)
     d = V(-0.55, -0.25 * s, 0.80).normalized()
     p2 = (p1[0] + d.x * 120, p1[1] + d.y * 120, p1[2] + d.z * 120)
     cable = fuse_all([cyl2(r, p0, p1), cq.Solid.makeSphere(r, V(*p1)), cyl2(r, p1, p2)])
@@ -702,8 +711,9 @@ def ntc():
 
 def thermal_cutout():
     """On the spreader through a window in the comb foot. Moved from y 115.5..122.0 (now the CR-M03 lid standoff at y 117.5) to y 82.0..88.5, between
-    the T-head screws at y 77.5 / 97.5, under the mated J2001 plug (top z 35.4 vs plug bottom z 36.1: tool-checked against the plug keep-out)."""
-    return box(77.0, 81.6, H.SHOE_Y - 5.5, H.SHOE_Y + 1.0, H.Z_SPR1, H.Z_SPR1 + 3.4)
+    the T-head screw washer at y 77.5 (r 3.0) and the stage-3 lid standoff at (77.5, 90.3); behind the plugs (x >= 81.8) since CR-M06, the J2001 wires pass
+    over it (top z 35.4)."""
+    return box(77.0, 81.6, H.SHOE_Y - 6.5, H.SHOE_Y + 0.0, H.Z_SPR1, H.Z_SPR1 + 3.4)
 
 
 LINER_T = 0.5

@@ -3,7 +3,7 @@
  "evidence_class": "simulated",
  "against": "Python protocol fakes (rr_core.fakes), virtual clock",
  "seed": 18,
- "sim_time_s": 212.68,
+ "sim_time_s": 214.12,
  "checks": [
   {
    "check": "replay of the raw archive reproduces every product bit-for-bit",
@@ -15,15 +15,26 @@
    "ok": true
   },
   {
-   "check": "manifest records weighted_sum_variance and the cell decision rule (MODEL.md rev 3, IB-31)",
+   "check": "manifest records weighted_sum_variance and the cell decision rule (MODEL.md rev 4)",
    "ok": true,
    "assumptions": {
     "cov_FU": 0.0,
     "spatial_response": "uniform top-hat (MODEL.md 5)",
-    "weighted_sum_variance": "poisson_form_conservative",
-    "cell_variance": "MODEL.md rev 3 section 6: Poisson form evaluated with the footprint-weighted sums (variance taken as the weighted count; over-states the variance of a weighted sum, so thresholds and D# are conservative)",
-    "cell_decision": "per-lane-exact/any-lane/alpha-over-m (MODEL.md rev 3 section 6): flagged when any contributing lane exceeds its own threshold at alpha/m; quoted D* and D# are the minima over the lanes at (alpha/m, beta); the cell value and uncertainties are the inverse-variance combination; single-lane scaler recounts have m = 1",
-    "u0": "MODEL.md 3 R1: lane window excluding gates under test; fallback four-lane pooled"
+    "weighted_sum_variance": "exact_coefficients",
+    "cell_variance": "MODEL.md rev 4 sections 2 and 6: footprint weights (0.05 lattice) are coefficients of the individual gate counts; variance contribution w^2 lambda; reported low-count variance max(sum w^2 N, sum w^2 lambda0)",
+    "cell_decision": "linear-exact/combined+per-lane/0.8-0.2 (MODEL.md rev 4 section 6): combined statistic at 0.8 alpha or any contributing lane's own statistic at 0.2 alpha / m; thresholds and D# from the exact distribution (Gil-Pelaez / lattice, rr_core.linstat); D* and D# are those of the combined test; cell value and uncertainties are the inverse-null-variance combination; stationary recounts are the same rule with m = 1",
+    "evaluator": {
+     "methods": [
+      "linear-exact/gil-pelaez",
+      "linear-exact/lattice"
+     ],
+     "check": "tail at t* recomputed with half the quadrature step agrees to 1e-3 relative, else `no decision \u2014 evaluator check failed`",
+     "cache_quantisation": {
+      "u_null_log_step": 0.0025,
+      "live_time_step_s": 0.001
+     }
+    },
+    "u0": "MODEL.md 3 R1 rev 4: window >= 200 T_F excluding the gates under test (lane window, else four-lane pooled window); never a same-gate pool; otherwise `no decision \u2014 null reference unavailable`"
    }
   },
   {
@@ -34,7 +45,7 @@
   {
    "check": "raw segments sealed with digests",
    "ok": true,
-   "entries": 33121
+   "entries": 33270
   }
  ],
  "passed": true,
@@ -42,14 +53,14 @@
  "coverage": {
   "target_area_m2": 3.0,
   "areas_m2": {
-   "UNVISITED": 1.1397000000000002,
+   "UNVISITED": 1.13955,
    "ACCEPTABLE": 0.0,
-   "INSUFFICIENT_SENSITIVITY": 1.8603,
+   "INSUFFICIENT_SENSITIVITY": 1.8604500000000002,
    "INVALID_DATA": 0.0,
    "BLOCKED": 0.0,
    "EXCLUDED": 0.0
   },
-  "valid_exposure_fraction": 0.6201,
+  "valid_exposure_fraction": 0.6201500000000001,
   "acceptable_fraction": 0.0,
   "sub_cell_m": 0.005,
   "decision_cell_m": 0.1,
@@ -59,15 +70,15 @@
   "limit_us": 10000.0,
   "fits": 116,
   "max_gate_bound_us": 838.0520796923137,
-  "median_gate_bound_us": 800.7588848223019
+  "median_gate_bound_us": 800.7620848775125
  },
  "link_stats": {
-  "tx": 10620,
-  "rx": 10617,
+  "tx": 10691,
+  "rx": 10688,
   "bad_lines": 2,
   "stale": 0,
   "duplicates": 0,
-  "gates": 2095,
+  "gates": 2110,
   "gaps": 0,
   "retries": 4,
   "unassigned_frames": 0,
@@ -75,8 +86,8 @@
   "time_exchanges_rejected": 0
  },
  "localization_error_vs_truth_m": {
-  "max_x_m": 0.0016682294482897042,
-  "max_y_m": 0.0011778412132127103
+  "max_x_m": 0.0017353310287499535,
+  "max_y_m": 0.0012212736935244273
  },
  "plan": {
   "n_pairs": 2,
@@ -99,93 +110,119 @@
  "flags": [
   {
    "id": "HS-0001",
-   "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 2,
-   "x_m": 1.6443799128716834,
-   "y_m": -0.2337943659217134,
-   "D": 0.24795461808291372,
-   "u_total": 0.13135998673723132,
-   "D_star": 0.1813186274366344,
-   "D_hash": 0.4972595345596802,
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 1,
+   "x_m": 0.2891276627989384,
+   "y_m": -0.2039217803467922,
+   "D": 0.15437099023113232,
+   "u_total": 0.09162629110120207,
+   "D_star": 0.14716184743884944,
+   "D_hash": 0.3489088614046396,
    "location": {
-    "distance_from_door_m": 1.644,
+    "distance_from_door_m": 0.289,
     "wall": "right wall",
-    "distance_from_wall_m": 0.266,
-    "text": "1.64 m from the door threshold, 0.27 m from the right wall"
+    "distance_from_wall_m": 0.296,
+    "text": "0.29 m from the door threshold, 0.30 m from the right wall"
    }
   },
   {
    "id": "HS-0002",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 2,
-   "x_m": 2.444653761592044,
-   "y_m": -0.23378953320867324,
-   "D": 0.21018328516210918,
-   "u_total": 0.1431406143223104,
-   "D_star": 0.1979690063165339,
-   "D_hash": 0.5500451010997658,
+   "x_m": 1.039748726798128,
+   "y_m": 0.10226612184051641,
+   "D": 0.17334760725152315,
+   "u_total": 0.10938299839834621,
+   "D_star": 0.13839861396838524,
+   "D_hash": 0.33098097964599316,
    "location": {
-    "distance_from_door_m": 2.445,
-    "wall": "right wall",
-    "distance_from_wall_m": 0.266,
-    "text": "2.44 m from the door threshold, 0.27 m from the right wall"
+    "distance_from_door_m": 1.04,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.398,
+    "text": "1.04 m from the door threshold, 0.40 m from the left wall"
+   }
+  },
+  {
+   "id": "HS-0003",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 1,
+   "x_m": 1.5443029681975966,
+   "y_m": 0.1641902673155945,
+   "D": 1.3099478119834163,
+   "u_total": 0.24041734176347596,
+   "D_star": 0.11812765033010957,
+   "D_hash": 0.27459343242126794,
+   "location": {
+    "distance_from_door_m": 1.544,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.336,
+    "text": "1.54 m from the door threshold, 0.34 m from the left wall"
    }
   },
   {
    "id": "HS-0004",
-   "kind": "INVESTIGATION_LEVEL",
-   "source_lane": 1,
-   "x_m": 1.5390394042253268,
-   "y_m": 0.16281743405647356,
-   "D": 1.3882087636077183,
-   "u_total": 0.2752493225822728,
-   "D_star": 0.20070186294705783,
-   "D_hash": 0.46252181584296026,
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 0,
+   "x_m": 2.3523685096015554,
+   "y_m": 0.27742830636366195,
+   "D": 0.11562676461282487,
+   "u_total": 0.07911717117508364,
+   "D_star": 0.1206306547102139,
+   "D_hash": 0.2808431608318457,
    "location": {
-    "distance_from_door_m": 1.539,
+    "distance_from_door_m": 2.352,
     "wall": "left wall",
-    "distance_from_wall_m": 0.337,
-    "text": "1.54 m from the door threshold, 0.34 m from the left wall"
+    "distance_from_wall_m": 0.223,
+    "text": "2.35 m from the door threshold, 0.22 m from the left wall"
    }
   },
   {
    "id": "HS-0005",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 3,
-   "x_m": 2.4441570528414864,
-   "y_m": 0.32131744032909765,
-   "D": 0.23964756587579092,
-   "u_total": 0.1608590036671097,
-   "D_star": 0.2213915233448995,
-   "D_hash": 0.5955393584897749,
+   "x_m": 0.2024289069261262,
+   "y_m": -0.02659380064159894,
+   "D": 0.18037542903934695,
+   "u_total": 0.11606511668247226,
+   "D_star": 0.17676761560996096,
+   "D_hash": 0.43286010337666997,
    "location": {
-    "distance_from_door_m": 2.444,
-    "wall": "left wall",
-    "distance_from_wall_m": 0.179,
-    "text": "2.44 m from the door threshold, 0.18 m from the left wall"
+    "distance_from_door_m": 0.202,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.473,
+    "text": "0.20 m from the door threshold, 0.47 m from the right wall"
    }
   },
   {
    "id": "HS-0006",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 2,
-   "x_m": 0.25389326435159804,
-   "y_m": 0.23373724277414423,
-   "D": 0.21232688598813798,
-   "u_total": 0.1416213767358573,
-   "D_star": 0.14529072289402756,
-   "D_hash": 0.42909750396664137,
+   "x_m": 0.18949012110055374,
+   "y_m": 0.19014990688822447,
+   "D": 0.19254493995059974,
+   "u_total": 0.13764709249020732,
+   "D_star": 0.1916344774225181,
+   "D_hash": 0.4753374187897057,
    "location": {
-    "distance_from_door_m": 0.254,
+    "distance_from_door_m": 0.189,
     "wall": "left wall",
-    "distance_from_wall_m": 0.266,
-    "text": "0.25 m from the door threshold, 0.27 m from the left wall"
+    "distance_from_wall_m": 0.31,
+    "text": "0.19 m from the door threshold, 0.31 m from the left wall"
    }
   }
  ],
- "scan_detections": 1,
+ "scan_detections": 0,
  "observations": [],
- "journal_entries": 33121,
+ "decision_status": {
+  "cells_with_gates": 231,
+  "no_decision": 29,
+  "no_decision_text": [
+   "no decision \u2014 null reference unavailable"
+  ],
+  "no_decision_within_0.5m_of_an_end": 9,
+  "cells_within_0.5m_of_an_end": 71
+ },
+ "journal_entries": 33270,
  "segments": 2,
  "products": [
   "calibration.json",
@@ -209,22 +246,22 @@
  ],
  "product_sha256": {
   "calibration.json": "3c246b889453729593dad6ceea9c0c6a15ad5d36ce7387fa6324263386786960",
-  "cells.csv": "a4aae9e434a3fd958bb9950356117baa0b058f4afcfd50c2d0de750d1e33ba80",
-  "cells.geojson": "ddc0adf77a3655064944cb317166cb66a0e3301562a4e495b377822d615d013f",
-  "clock_fits.ndjson": "ea1f467e8399facf34af04f3278bff7187af0dcee51cbe4ce996793032964ce4",
-  "coverage.png": "dd6c9916ab9d569167dc0d5f0841882fa07ff26f9ed181c27c76d33bcedbcc41",
-  "flags.json": "1a0e50aa9b07d49a6dd17ac8a0fe4d5a94d475dcbb94c9860d580c31855bcb14",
-  "gaps.json": "a1789a08ae35d1796c5fe95b9515070a8d27f775abc07fe0b170224111fff8b4",
-  "gates.csv": "5eef599b129cceb09140f96a291a31356f163808ff67476e9edcb559ece9892f",
+  "cells.csv": "6164768873df7bf8730f838172b32f9aa41db295350f887900a385876186710a",
+  "cells.geojson": "ac27611f77e1056b61490c14a3ab8993c930d189b0c7128271f374e393228846",
+  "clock_fits.ndjson": "228911ba03970de184d61698bee967052b0929c598e50bc333acf4da495f49be",
+  "coverage.png": "b9c9175daa4bf47588354562b15e4add1a84c2ba9e26b5d79114f9a4dcdd02d2",
+  "flags.json": "2724244210ddfb1ca5770c0546ea9bd901b3314a04a2dbb82ca4c5e93769778e",
+  "gaps.json": "c34b4c19254f13b56a28f8923dabe83e633b55ff3255447fdcf5f24187834b3e",
+  "gates.csv": "53e46f921d0f30ff0249b2ad5ecc3509254a478762c9108aace6402dc0b54315",
   "grid.json": "b1193a616edcd1b6884ec2fb1d48e0c0ec57f7cfd14e0a2b7fb32429b3345a4e",
-  "map_activity.svg": "084d99aa78a8b54f42bc1f678b9973dfac9e9aaa93fb65700d41d35bf0e3e4d8",
-  "map_coverage.svg": "6f6b952cd1aff7a766ea79b684b017dc63afd7a7e16e64e1cb1cf46cb199355f",
+  "map_activity.svg": "086c88050947c7a9631c2234226acf29ffd966afd41420b3372dcc9b0f8c50fa",
+  "map_coverage.svg": "4b5f411616d9b4948464128f3a7c6a9b520e0c7cfa7bbc2e1c9c87bb692bd896",
   "observations.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
-  "poses.csv": "8da3780b453c7b70910fff42f8fdfeca2ea80b218777fe6369c684890103fe9f",
+  "poses.csv": "7aaff5ebf07a6bb05fe523369020b0499ce8cedb0b077a5d4e522d0ea7685185",
   "profile.json": "1b14d43984b66d1981b0876c4d8e2b8ca1b69373e06f51caa4de4515f85d5375",
-  "residuals.json": "0aa2b6cd1cc758ddafee9cc56d1df99da605b8ebd675e60a5a9de2ad0cdbaa25",
-  "summary.txt": "6b7ce1f8f0faba54a31067819474355230e804e5747bc8a1cf0d4b8afff8ee6c",
-  "survey_manifest.json": "c405b9363bb952cc67417093e9d861dacf2b35dfd82407a6d1697fac7244853b",
+  "residuals.json": "6bd390a907e68f4ace5ddb931bb6ee112a0b050e8627e6bbbbd585bd87ed3f0e",
+  "summary.txt": "a56e0369353ba311a08ad29a0ef6fe8bd365423876f16ac638ca6d5484f4e8f0",
+  "survey_manifest.json": "7b54f529942984bd51fe13b42f87bc2bf4311ad202746a5c212ba90b96ad15ce",
   "transforms.json": "6d67b4270ada788e726c0d294567d23aa84b0fa1c7ad28b625a5ee853c98c87b"
  }
 }

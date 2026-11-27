@@ -74,12 +74,11 @@ Hand-written: this file, `production/README.md` (fabrication / test pack), `STAT
 
 ## Open items (details: head_report.md section 2, STATUS.md)
 
-1. **J1 landing harness (DEVIATION, IB-52 / CR-M03):** the mated J2001 / J2601 plugs end 2.0 mm (prototype comb: 1.4 mm) in front of the rear wall; about
-   8 mm is needed for the wire exit and bend, and the J2001 wires must fan in to the 7.5 mm cable at y 76.2. Needs a board-side decision (headers moved
-   >= 6 mm forward, or top-entry headers). The head fits the board as built (tool-checked); the harness cannot be made as laid out.
-2. **Lid fastener pitch (DEVIATION):** 60.5 mm on the rear line over the J1 bay (y 57.0..117.5): no standoff can stand under the mated plugs; bonded
-   blister doubles the lid there, calculated gasket-line sag 0.03 mm.
-3. **mechanical/common records (DEVIATION):** `params.HEAD_PIGTAIL_EXIT` still lists J1 at y 87.5 (head port is at 76.2, CR-M03).
+1. Closed by stage 3 (CR-M06): J2001 / J2601 7 mm forward; 9.0 mm behind the mated plugs. J1 harness buildable as laid out with thin-wall AWG 20 inside the head
+   (OD <= 1.6 mm, ETFE / XL-PE class, UNVERIFIED; calculated fan-in check); no internal P-clip (the grommet is the strain relief).
+2. **Lid fastener pitch (DEVIATION):** 47 mm on the -y rear line (77.5, -70.5)..(77.5, -117.5): the CR-M08 J2501 GH-8 plug keep-out, the J2 port and the T-head
+   screw washers leave no standoff position; calculated gasket-line sag 0.07 mm. The +y J1 bay is <= 40 mm again (standoff (77.5, +90.3)).
+3. Frame bond (S3-03 / S3-05): every one of the 8 holes has a metal clinch standoff in the aluminium spreader + screw / serrated washer, both builds (table in head_report.md section 12).
 4. **Heater / receiver (IB-39, finding):** baseline 16.9-20.1 W fits the 30 W films; moving air at -25 C needs 30.2-30.7 W; with conductive body channels
    (receiver metal at ambient) 43-66 W -- the G10 isolator (IB-38) is a weak thermal break. Body receiver material must stay insulating or the T-head gets a thermal break.
 5. `params.HEAD_RAIL_SWITCHES` placeholders vs the designed switch positions (frames.yaml update) -- unchanged.

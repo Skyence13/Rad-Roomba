@@ -71,7 +71,7 @@ def lid(path):
     for xx, yy in T.lid_all_holes():
         if ba < xx < bb and bc < yy < bd:
             m.add_circle((xx, yy), 1.7, dxfattribs={"layer": "CUT"})
-    _txt(m, "RR-HD-S-123 J1 BLISTER 1.0 AL; 2 x dia 2.5 rivet (front), 2 x dia 3.4 lid screws (rear, y 57.0 / 117.5); conductive epoxy bead round the opening", (ba, bc - 12), 2.5)
+    _txt(m, "RR-HD-S-123 J1 BLISTER 1.0 AL; 2 x dia 2.5 rivet (front), 3 x dia 3.4 lid screws (rear, y 57.0 / 90.3 / 117.5); conductive epoxy bead round the opening", (ba, bc - 12), 2.5)
     d.saveas(path.with_name("RR-HD-S-123_j1_blister.dxf"))
 
 
@@ -144,7 +144,7 @@ def fences(folder):
     for n in ("J1", "J2"):
         _rect(m, H.PORT_Y[n] - H.PORT_SLOT_HY, H.PORT_Y[n] + H.PORT_SLOT_HY, zdev(H.PORT_SLOT_Z0), y_wall1 + ba + top + 0.01)
     m.add_circle((H.VENT[1], zdev(H.VENT[2])), 2.5, dxfattribs={"layer": "CUT"})
-    _txt(m, "RR-HD-X-126 EMI REAR COMB 0.5 AL 5052-H32; feet UP 90, top flange UP 90, chimney liner side flanges UP 90 (toward the lanes); foot holes: match-drill from RR-HD-S-121; top flange 1.5 wide; +y middle foot: two 5.2 x 7.4 tabs at y 70.5 / 104.5 for the M2.5 bond screws (STEP is master)",
+    _txt(m, "RR-HD-X-126 EMI REAR COMB 0.5 AL 5052-H32; feet UP 90, top flange UP 90, chimney liner side flanges UP 90 (toward the lanes); foot holes: match-drill from RR-HD-S-121; +y middle foot: two 5.2 x 7.4 tabs at y 70.5 / 104.5 for the M2.5 bond screws (STEP is master)",
          (-160, y_wall1 + 8), 2.2)
     d.saveas(folder / "RR-HD-X-126_fence_rear_comb.dxf")
 

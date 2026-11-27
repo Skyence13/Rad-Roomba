@@ -356,7 +356,7 @@ def receiver_conductance(build):
 def cable_conductance(h):
     """J1 / J2 pigtails as infinite copper fins (conservative: tanh -> 1), conductors per contract J1/J2 pin tables + an assumed 1.0 mm2 braid."""
     awg = {18: 0.823, 20: 0.519, 24: 0.205}
-    cables = {"J1": (2 * awg[20] + 2 * awg[18] + 3 * awg[24] + 1.0, H.CABLE_D["J1"]), "J2": (8 * awg[24] + 1.0, H.CABLE_D["J2"])}
+    cables = {"J1": (4 * awg[20] + 3 * awg[24] + 1.0, H.CABLE_D["J1"]), "J2": (8 * awg[24] + 1.0, H.CABLE_D["J2"])}   # heater pair AWG 20 (stage 3 H-03)
     return {k: math.sqrt(h * math.pi * d / 1000 * K_CU * a / 1e6) for k, (a, d) in cables.items()}
 
 
@@ -500,3 +500,33 @@ def harness_routes(fp):
     # the right switch to the edge of the old landing (u 150 = y 13.0) for comparison
     out["right switch to the stage-1 landing edge (u 150)"] = {"route_mm": round(11.0 + (180.0 - H.XR - 3.6) + abs(-H.SW_SIDE["y"] - 13.0) + (180.0 - 175.2) + 5.0, 0)}
     return out
+
+
+# ------------------------------------------------------------------------------------------------ J1 harness inside the head (stage 3, CR-M06)
+J1_PIN_AWG = {"1": "20", "2": "20", "3": "20", "4": "20", "5": "24", "6": "24", "7": "24"}   # contract J1 pin table; heater pair AWG 20 (S3 H-03); pin 8 NC
+
+
+def j1_fan_in(fp, x_wall):
+    """Each J2001 wire from the plug back to the J1 jacket at the port (y = H.PORT_Y['J1']): 2 mm straight behind the housing, then an S-bend of two
+    arcs at R = 2 x OD (a 90-degree pair plus a lateral run when the offset exceeds 2R) ending straight at the wall face x_wall, inside the jacket
+    bundle radius. Returns rows and the largest wire OD that fits (calculated; wire OD and bundle radius UNVERIFIED)."""
+    pins = {n: y for n, (u, v) in ((p[0], (p[1], p[2])) for p in fp["J2001"]["pads_uv"]) for y in [163.0 - u] if n in J1_PIN_AWG}
+    x_plug = H.ACQ["origin"][0] + H.PLUG_V[0]
+    avail = x_plug - x_wall
+    rows, od_max = [], 99.0
+    for n, y in sorted(pins.items(), key=lambda t: int(t[0])):
+        od = H.J1_WIRE_OD[J1_PIN_AWG[n]]
+        off = abs(y - H.PORT_Y["J1"])
+
+        def need(o):
+            r = 2 * o
+            d = max(off - (H.J1_BUNDLE_R - o / 2), 0.0)
+            xb = 2 * r * math.sqrt(1 - (1 - d / (2 * r)) ** 2) if d <= 2 * r else 2 * r
+            return 2.0 + xb
+        lo, hi = 0.3, 4.0
+        for _ in range(40):
+            mid = (lo + hi) / 2
+            lo, hi = (mid, hi) if need(mid) <= avail else (lo, mid)
+        od_max = min(od_max, lo)
+        rows.append({"pin": n, "awg": J1_PIN_AWG[n], "y": round(y, 2), "offset_mm": round(off, 2), "od_mm": od, "x_needed_mm": round(need(od), 2), "ok": need(od) <= avail + 1e-9})
+    return {"plug_back_x": x_plug, "wall_x": x_wall, "available_mm": round(avail, 2), "rows": rows, "max_od_that_fits_mm": round(od_max, 2), "ok": all(r["ok"] for r in rows)}

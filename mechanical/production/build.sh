@@ -7,4 +7,5 @@ VENV="/tmp/claude-0/-home-user-Rad-Roomba/243ed1e7-dcf1-5450-82ee-f4f91fbe9462/s
 PY="${PY:-${RR_PY:-$([ -x "$VENV" ] && echo "$VENV" || echo python3)}}"
 cd "$ROOT"
 export RR_BUILD=production
+export RR_BOOL_TIMEOUT="${RR_BOOL_TIMEOUT:-1200}"   # exact boolean of the two one-piece skins takes about 7 min (cached afterwards)
 exec "$PY" -m mechanical.production.build "$@"

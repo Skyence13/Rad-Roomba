@@ -85,16 +85,15 @@ the lead's acceptance.
 
 ## 6. Harness routing inside the head
 
-- **J1 pigtail** (power, heater pair, loop, PRES_ID): grommet in the rear wall at (71.7, +76.2, 39.0) (CR-M03, IB-52: centred on J2001) -> mated
-  J2001 plug at the board rear edge (Micro-Fit, mating face rearward, plug over the rear strip x 74.8..84.7, y 62.3..90.0). **Open item (head_report.md
-  check "J1 landing harness", DEVIATION):** only 2.0 mm (1.4 mm to the prototype comb) remain between the plug backs and the rear wall, so there is no
-  room for the wire exit, the bend and the fan-in to the 7.5 mm cable; the internal P-clip of the old layout has nothing to hold and is not fitted. Needs a
-  board-side decision (headers >= 6 mm forward of the rear edge or top-entry headers) before the J1 harness can be made.
-- **Heater / NTC / cut-out** (J2601, 6-way Micro-Fit beside J2001, plug over x 74.8..84.7, y 91.1..112.7): heater film tails up through the S0 chimney
-  notch; thermal cut-out on the spreader at (77..81.6, 82..88.5), in series in the heater element loop (low side, head_afe_budget.md section 9); spreader
-  NTC at (81, 109). Both sit under the mated plugs (tops z 35.4 / 33.6 against the plug keep-out from z 36.1, tool-checked). Same wire-exit open item as J1.
-- **J2 pigtail** (RS-485, BUS_5V, sync, J2_PRES): grommet at (71.7, -87.5, 39.0) -> J2501 GH-8 at u 262.3 (y -99.3). The GH-8 plug overhang behind the
-  board edge is not given in the electronics files: the lid standoff at (77.5, -104.5) leaves 3.4 mm behind the board edge in that y range (UNVERIFIED fit).
+- **J1 pigtail** (power, heater pair AWG 20, loop, PRES_ID): grommet in the rear wall at (71.7, +76.2, 39.0) (CR-M03) -> mated J2001 plug (stage 3,
+  CR-M06: headers 7 mm forward, plug over x 81.8..91.7, y 62.3..90.0). The jacket ends in the grommet (its three ribs are the strain relief; no internal
+  P-clip: no jacket inside); the conductors fan in over the 9.0 mm behind the plug (prototype 8.4 mm to the comb wall). Calculated in head_report.md
+  (check "J1 landing harness buildable"): fits with thin-wall AWG 20 of OD <= 1.6 mm at R = 2 x OD; a standard PVC UL1007 AWG 20 does not.
+- **Heater / NTC / cut-out** (J2601 beside J2001, plug over x 81.8..91.7, y 91.1..112.7): wires turn +y along the rear strip to the S0 chimney notch
+  (film tails), the isolated-case thermal cut-out on a polyimide pad at (77..81.6, 81..87.5) (low side of the element) and the isolated-lug NTC at (81, 109).
+  Lid standoff (77.5, +90.3) stands between the J2001 and J2601 wire groups.
+- **J2 pigtail** (RS-485, BUS_5V, sync, J2_PRES): grommet at (71.7, -87.5, 39.0) -> J2501 GH-8 at u 262.3 (y -99.3); mated-plug keep-out of CR-M08
+  (x 76.7..83.95, y -106.6..-92.0) is clear: the lid standoff moved from (77.5, -104.5) to (77.5, -109.2).
 - **SiPM coax** (16 x U.FL class): from each carrier up through the chimney insert channel, R >= 6 mm bend, to the AFE_STRIP rear-edge connector pair at
   the lane centre (u +-13).
 - **Rail switches** (NC loop): front switch at (183, +87.5) and lid interlock at (183, -87.5) in the front strip; side switches at (73.8, +-156.75) with
@@ -152,3 +151,4 @@ Every intervention that opens the light-tight volume (lid, spreader, cassette) i
 | E6 | Loop and presence | J1 pins 5/6 and 7/2 | 1.00 kOhm +-1 %, 4.70 kOhm +-1 %, J2 pin 7-4 linked |
 | E7 | FRAME isolation | insulation tester FRAME (spreader) to each shoe shoulder and to the keeper, 50 V | >= 10 Mohm, both builds (R2801 fitted) |
 | E8 | Heater chain | zone resistances, cut-out continuity, NTC at 20 C | per heater datasheet; NTC 10 k +-3 % |
+| E9 | Heater insulation (review M5) | before the board is connected: 100 V insulation tester, J2601 plug pins (element, cut-out, NTC, shorted) to the spreader | >= 10 MOhm, both builds; films, isolated-case cut-out and isolated NTC lug on 0.1 mm polyimide pads (BOM PUR-HEATER / PUR-TCO / PUR-NTC-10K / PUR-PI-PAD, part data UNVERIFIED) |

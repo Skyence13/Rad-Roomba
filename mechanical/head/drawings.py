@@ -279,9 +279,9 @@ def fab():
     # ---------------- sheet 5: lid, blister, shield can
     fig = D.sheet("LID, J1 BLISTER AND LANE SHIELD CAN", "RR-HD-S-122 / RR-HD-S-123 / RR-HEAD-SHLD-A", notes=[
         f"LID: 5052-H32 2.00, chromate conversion inside (conductive), black anodise or powder coat outside. Flatness 0.2. {T.lid_count()} x dia 3.4 for M3 button head + bonded sealing washer: {len(T.lid_holes())} standoffs (labelled) + 18 frame bosses (front x 184.2, sides y +-168.4).",
-        f"BLISTER: 1.0 aluminium, bonded with conductive epoxy bead + 2 x dia 2.4 blind rivets (front) and clamped by two lid screws (rear, y 57.0 / 117.5) over the {H.LID_OPENING[1] - H.LID_OPENING[0]:.1f} x {H.LID_OPENING[3] - H.LID_OPENING[2]:.1f} opening (J2001 / J2601 headers and mated plugs, 8.9 mm above the PCB top; IB-19, IB-52).",
+        f"BLISTER: 1.0 aluminium, bonded with conductive epoxy bead + 2 x dia 2.4 blind rivets (front) and clamped by three lid screws (rear, y 57.0 / 90.3 / 117.5) over the {H.LID_OPENING[1] - H.LID_OPENING[0]:.1f} x {H.LID_OPENING[3] - H.LID_OPENING[2]:.1f} opening (J2001 / J2601 headers to v 20 and mated plugs from v -1.4, 8.9 mm above the PCB top; IB-19, IB-52, CR-M06).",
         "SHIELD CAN RR-HEAD-SHLD-A: 0.20 tin-plated steel (or C770 nickel silver), folded 5-sided can 36.0 x 32.0 x 5.0 outside (+0/-0.1), corners open <= 0.3; two mouse holes 2.0 x 1.2 in the rear wall for the anode traces;",
-        "mouse holes at du -10.38 / +11.87 (CR-M04, anode U.FL pads); held by 12 SMT clips on board GND -- not connected to the lid. Flat pattern: RR-HEAD-SHLD-A_lane_shield_can.dxf. Positions on the board: du -18..+18, v 8.25..40.25 about each lane centre (CR-M01)."])
+        "mouse holes at du -10.38 / +11.87 (CR-M04, anode U.FL pads); held by 12 SMT clips on board GND (side walls at v 23.5 / 29.0 / 34.75, CR-M07: dimples follow) -- not connected to the lid. Flat pattern: RR-HEAD-SHLD-A_lane_shield_can.dxf. Positions on the board: du -18..+18, v 8.25..40.25 about each lane centre (CR-M01)."])
     ld = T.lid().fuse(T.j1_blister())
     ax = _hlr_ax(fig, (14, 150, 392, 130), ld, "top", "LID WITH BLISTER, TOP VIEW", margin=16)
     i = H.LID_INSET
