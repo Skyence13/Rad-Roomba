@@ -1,0 +1,45 @@
+
+
+2026-11-27 00:50:15.293 INFO   Freerouting v2.6.0 (build-date: 2026-11-25)
+2026-11-27 00:50:16.109 INFO   Hardware: 4 CPU cores, 114 CPU score, 6144 MB RAM
+2026-11-27 00:50:16.114 WARN   GUI is disabled and you don't have a console available, so the only feedback from Freerouting is in the log.
+2026-11-27 00:50:17.748 WARN   The '-mp' command-line flag is deprecated and will be removed in a future release; use '--router.autorouter.max_passes' instead.
+2026-11-27 00:50:17.752 WARN   The '-mt' command-line flag is deprecated and will be removed in a future release; use '--router.max_threads=<n>' instead.
+2026-11-27 00:50:19.979 INFO   [D84BFA\36BB67] Loading board file 'RR-CHS-MAIN.dsn'...
+2026-11-27 00:50:43.748 INFO   The board's own vias decide: router.autorouter.via_in_pad = true.
+2026-11-27 00:50:43.868 INFO   7 multi-pin net-tie cluster(s) identified and indexed.
+2026-11-27 00:50:43.974 INFO   Auto-detected differential pair: U2_IN (U2_INP, U2_INN)
+2026-11-27 00:50:43.978 INFO   Auto-detected differential pair: HEAD_HTR (HEAD_HTR_P, HEAD_HTR_N)
+2026-11-27 00:50:43.978 INFO   Auto-detected differential pair: MCU_USB (MCU_USB_DP, MCU_USB_DM)
+2026-11-27 00:50:43.979 INFO   Auto-detected differential pair: MCUC_USB (MCUC_USB_DP, MCUC_USB_DM)
+2026-11-27 00:50:43.979 INFO   Auto-detected differential pair: HUSBC (HUSBC_DP, HUSBC_DM)
+2026-11-27 00:50:43.979 INFO   Auto-detected differential pair: FT (FT_DP, FT_DM)
+2026-11-27 00:50:43.979 INFO   Auto-detected differential pair: SYNC (SYNC_P, SYNC_N)
+2026-11-27 00:50:44.468 INFO   [D84BFA\36BB67] Job 'D84BFA\36BB67' started at 2026-11-27T00:50:44.467816486Z.
+2026-11-27 00:50:48.386 WARN   Design Warning: Board has 25 pre-existing clearance violation(s) in the loaded design (before routing):
+  - 25 unfixable violation(s) (cannot be resolved by Freerouting):
+      * 6 pin-to-pin clearance violations (first 5 shown):
+          - U1.8 [net PSW_SRC] <-> U1.7 [net U1_OV]
+          - U1.7 [net U1_OV] <-> U1.6 [net U1_GATE]
+          - U1.6 [net U1_GATE] <-> U1.5 [net VBAT_RAW]
+          - U1.4 [net U1_VCAP] <-> U1.3 [net unconnected-(U1-Pad3)]
+          - U1.3 [net unconnected-(U1-Pad3)] <-> U1.2 [net GND]
+      * 19 fixed trace/via clearance violations (first 5 shown):
+          - FixedVia#10387 [net IMU_CS_GYR_N] <-> ObstacleArea#242
+          - FixedVia#10387 [net IMU_CS_GYR_N] <-> ObstacleArea#244
+          - FixedVia#10387 [net IMU_CS_GYR_N] <-> ObstacleArea#245
+          - FixedVia#10387 [net IMU_CS_GYR_N] <-> ObstacleArea#246
+          - FixedVia#10387 [net IMU_CS_GYR_N] <-> ObstacleArea#247
+  - 0 potentially fixable violations
+Notice: Freerouting does not modify component placement, board outlines, or fixed items.
+Resolving these 25 unfixable violation(s) is the responsibility of the board author in their EDA tool (e.g. KiCad).
+2026-11-27 00:50:50.129 INFO   [D84BFA\36BB67] Exit stubs: 2 fine-pitch pins whose way out meets the clearances exactly get 2 stubs (1 inward to a pad of their net, 0 bent in a fan; U3 1, U42 1; 1 left out, their ends out of the router's reach), router.autorouter.exit_stubs=true.
+2026-11-27 00:50:51.557 INFO   [D84BFA\36BB67] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=3.
+2026-11-27 00:50:55.891 INFO   [D84BFA\36BB67] Auto-routing stage started on board 'ccdd2f61b7a7ab33c2974ba333fe0b35' with baseline score 231.77 for 1169 unrouted items.
+2026-11-27 01:03:46.195 INFO   [D84BFA\36BB67] Auto-routing pass #1 on board 'ccdd2f61b7a7ab33c2974ba333fe0b35' was completed in 769.30 seconds with score 403.27 (802 unrouted and 25 violations), using 486.34 CPU seconds and the job allocated 148.24 GB of memory so far.
+2026-11-27 01:03:49.555 INFO   [D84BFA\36BB67] Routing fallback skipped: the pass loop stopped at its cancelled with 802 unrouted, 0 new violations (25 total), score 403.27.
+2026-11-27 01:03:50.472 INFO   [D84BFA\36BB67] Auto-routing stage completed with timeout: started with 1169 unrouted nets, completed in 778.00 seconds, final score: 403.27 (802 unrouted and 25 violations), using 486.34 total CPU seconds, 148.24 GB total allocated, and 2530.9 MB peak heap usage.
+2026-11-27 01:03:50.718 INFO   [D84BFA\36BB67] Exit stubs: 2 released as ordinary copper, 1 split where routes join them, 2 unused pieces removed; 16 connection(s) of their nets open.
+2026-11-27 01:03:51.319 INFO   [D84BFA\36BB67] Job 'D84BFA\36BB67' finished with state: TIMED_OUT (elapsed: 13 minutes 6.85 seconds, finished at UTC: 2026-11-27T01:03:51.318087958Z).
+2026-11-27 01:03:51.321 INFO   Saving output file '/home/user/Rad-Roomba/electronics/chassis_main/route/RR-CHS-MAIN.ses' (SES)...
+2026-11-27 01:03:51.328 INFO   Successfully saved output file '/home/user/Rad-Roomba/electronics/chassis_main/route/RR-CHS-MAIN.ses' (178369 bytes).

@@ -43,7 +43,8 @@ def settings(b):
     via = o.get("escape_via") or (max(r.min_via_dia, r.min_via_drill + 2 * r.min_annular), r.min_via_drill)
     dia, drill = float(via[0]), float(via[1])
     tw = float(o.get("escape_track") or r.min_track)
-    return {"pitch": float(o.get("escape_pitch", 0.65)), "via_dia": dia, "via_drill": drill, "track": tw,
+    return {"pitch": float(o.get("escape_pitch", 0.65)), "min_pads": int(o.get("escape_min_pads", 16)),
+            "via_dia": dia, "via_drill": drill, "track": tw,
             "layers": list(o.get("escape_layers") or [l for l in b.copper_layers if l not in b.plane_layers and l != "F.Cu"]),
             "direct": bool(o.get("escape_direct", True))}
 
@@ -77,7 +78,7 @@ def is_candidate(part, info, st):
         return False
     if part.escape is True:
         return True
-    return info["pitch"] < st["pitch"] - 1e-6 and len(info["perim"]) >= 8
+    return info["pitch"] < st["pitch"] - 1e-6 and len(info["perim"]) >= st["min_pads"]
 
 
 def footprint_info(bld, part):
@@ -172,6 +173,8 @@ def escape(bld):
             pcb.Add(v)
             obs.add_via(via[0], via[1], vr, vdr, net)
         handled.add(pad_key(ref, it))
+        if via is not None and kind != "direct" and net not in plane_nets:
+            stats.setdefault("_vias", []).append([round(via[0], 4), round(via[1], 4), net])
         ps = stats["parts"].setdefault(ref, {})
         ps[kind] = ps.get(kind, 0) + 1
         if kind in ("ring", "inward"):
@@ -453,7 +456,7 @@ def escape(bld):
                         break
             if not done:
                 skip(ref, it, "no legal escape position" + (" inside its own plane polygon" if plane else ""))
-                stats.setdefault("debug", []).append("%s.%s planned: %s; last: %s" % (ref, it["num"], it.get("_why0"), it.get("_why")))
+                stats.setdefault("skipped_detail", []).append("%s.%s planned: %s; last: %s" % (ref, it["num"], it.get("_why0"), it.get("_why")))
     return stats, handled
 
 

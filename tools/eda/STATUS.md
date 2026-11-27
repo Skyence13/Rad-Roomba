@@ -17,15 +17,30 @@ escape_layers=None, escape_via=None, escape_track=None, escape_direct=True, fini
 `part(..., escape=None|True|False)`, `board.autoplace_options(escape_keepaway=2.0)`.
 `escape="auto"` = on for 4/6-layer boards only, so 2-layer boards (RR-TOF-A, RR-PANEL) are unchanged.
 
-## Measured
-* STRESS-150 (4 layers), one fresh route with escape (before the exposed-pad via change):
-  Freerouting run 1 608 s (timeout) -> 1 open (U2 exposed pad GND), continue run 2 29 s -> 0 open.
-  **PASS**: ERC 0, DRC 0 errors / 27 warnings (via_dangling: unused escape vias), unconnected 0, parity 0.
-  Total build 822 s. Repeat run: not yet done.
-* STRESS-150-6L with escape: not yet run.
-* Scale test (~500 parts, 160 x 100 mm, 6 layers): not yet built.
-* Regressions RR-TOF-A / RR-PANEL after these changes: not yet run.
+## Measured (tool-checked)
+Regressions with the new code: RR-TOF-A PASS (2 layers, escape off, DSN unchanged -> cached SES);
+RR-PANEL PASS (rerouted by its engineer with this code, 2 layers, escape off).
+
+| run | code state | Freerouting | result |
+|---|---|---|---|
+| STRESS-150 #1 | escape, before EP via | run 1 608 s (timeout) -> 1 open (QFN exposed pad), continue 29 s -> 0 | PASS, DRC 0 err / 27 warn (via_dangling), parity 0, 822 s total |
+| STRESS-150 #2 | + via in exposed pad, fallback=continue | run 1 243 s -> 0 open | PASS, DRC 0 err / 24 warn, 286 s total |
+| STRESS-150-6L #1 | same as #2 (+ paste-aperture fix) | run 1 112 s -> 0 open | PASS, DRC 0 err / 6 warn, 166 s total |
+
+Formal repeatability series with the final code (2x 4-layer, 2x 6-layer, fresh route each): running.
+Before this work package the same boards ended with 4-6 of 377 connections open after 22-25 min.
+
+Finisher: on the OLD STRESS-150-6L result (no escape, pads boxed in) it routed 0 of 4 (no free path,
+it does not rip up). Not yet exercised on a board where it is needed.
+
+Scale test `tests/scale500/` (493 parts, 160 x 100 mm, 6 layers, LQFP-100 + LQFP-64 + 2 QFN + 2 TSSOP,
+40 SOT-23(-5), 13 connectors): generates; escape 199 vias + 4 direct on U1-U4, 1 pad without a legal
+position; not yet routed.
+
+Feedback from RR-CHS-MAIN (its engineer's `--no-route` build, read-only look): escape made 133 vias but
+153 pads had no legal position - mostly vias that would land in courtyards of tightly placed neighbours,
+and many small 10-pad 0.5 mm parts (USON-10 ESD arrays). Since then `escape_min_pads=16` (default)
+leaves small packages to the autorouter.
 
 ## Next
-1. Regressions (RR-TOF-A, RR-PANEL). 2. STRESS-150 + STRESS-150-6L twice each from a fresh route.
-3. Scale test. 4. README update.
+1. Finish the repeatability series. 2. Route the scale test. 3. README results section.

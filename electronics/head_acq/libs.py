@@ -29,13 +29,13 @@ from rrkicad.model import stable_uuid
 
 # ------------------------------------------------------------------------------------- lane shield can geometry
 CAN_W, CAN_D, CAN_H, CAN_WALL = 36.0, 32.0, 5.0, 0.2       # outside u-width, v-depth, height, wall
-CAN_V0 = 7.5                                                # rear outer face (v); stage 1 / mech drawing: 5.5 (CR-M01)
+CAN_V0 = 8.25                                               # rear outer face (v); stage 1 / mech drawing: 5.5 (CR-M01)
 CAN_V1 = CAN_V0 + CAN_D                                     # front outer face 39.5
 MOUSE_W, MOUSE_H = 2.0, 1.2                                 # mouse hole in the rear wall (mech drawing)
 # anode mouse holes (du about the lane centre) - follow the anode U.FL positions of the lane block (CR-M04)
 MOUSE_DU = (-10.38, 11.87)
 # clip positions (du, v, rot): 3 per side, on the wall centre line
-CLIPS = ([(du, CAN_V0 + 0.1, 0) for du in (-15.0, 7.0, 15.5)] +
+CLIPS = ([(du, CAN_V0 + 0.1, 0) for du in (-6.5, 2.5, 15.0)] +
          [(du, CAN_V1 - 0.1, 0) for du in (-12.0, 0.0, 12.0)] +
          [(-CAN_W / 2 + 0.1, v, 90) for v in (CAN_V0 + 7.0, CAN_V0 + 16.0, CAN_V0 + 25.0)] +
          [(CAN_W / 2 - 0.1, v, 90) for v in (CAN_V0 + 7.0, CAN_V0 + 16.0, CAN_V0 + 25.0)])

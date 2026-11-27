@@ -1,124 +1,33 @@
 
 
-2026-11-26 20:06:19.294 INFO   Freerouting v2.6.0 (build-date: 2026-11-25)
-2026-11-26 20:06:19.653 INFO   Hardware: 4 CPU cores, 248 CPU score, 3072 MB RAM
-2026-11-26 20:06:19.657 WARN   GUI is disabled and you don't have a console available, so the only feedback from Freerouting is in the log.
-2026-11-26 20:06:20.933 WARN   The '-mp' command-line flag is deprecated and will be removed in a future release; use '--router.autorouter.max_passes' instead.
-2026-11-26 20:06:20.938 WARN   The '-mt' command-line flag is deprecated and will be removed in a future release; use '--router.max_threads=<n>' instead.
-2026-11-26 20:06:21.580 INFO   [CAA16F\D8858E] Loading board file 'STRESS-150-6L.retry.dsn'...
-2026-11-26 20:06:24.743 WARN   DSN file 'STRESS-150-6L.retry.dsn' was loaded with 24 warning(s).
-2026-11-26 20:06:24.834 INFO   The board's own vias decide: router.autorouter.via_in_pad = true.
-2026-11-26 20:06:24.904 INFO   [CAA16F\D8858E] Job 'CAA16F\D8858E' started at 2026-11-26T20:06:24.903680430Z.
-2026-11-26 20:06:25.652 WARN   Design Warning: Board has 57 pre-existing clearance violation(s) in the loaded design (before routing):
-  - 57 unfixable violation(s) (cannot be resolved by Freerouting):
+2026-11-27 00:40:59.706 INFO   Freerouting v2.6.0 (build-date: 2026-11-25)
+2026-11-27 00:41:00.276 INFO   Hardware: 4 CPU cores, 182 CPU score, 3072 MB RAM
+2026-11-27 00:41:00.288 WARN   GUI is disabled and you don't have a console available, so the only feedback from Freerouting is in the log.
+2026-11-27 00:41:01.705 WARN   The '-mp' command-line flag is deprecated and will be removed in a future release; use '--router.autorouter.max_passes' instead.
+2026-11-27 00:41:01.719 WARN   The '-mt' command-line flag is deprecated and will be removed in a future release; use '--router.max_threads=<n>' instead.
+2026-11-27 00:41:02.375 INFO   [077855\1F847D] Loading board file 'STRESS-150-6L.dsn'...
+2026-11-27 00:41:04.518 INFO   The board's own vias decide: router.autorouter.via_in_pad = true.
+2026-11-27 00:41:04.541 INFO   [077855\1F847D] Job '077855\1F847D' started at 2026-11-27T00:41:04.541514357Z.
+2026-11-27 00:41:05.156 WARN   Design Warning: Board has 56 pre-existing clearance violation(s) in the loaded design (before routing):
+  - 56 unfixable violation(s) (cannot be resolved by Freerouting):
       * 56 pin-to-pin clearance violations (first 5 shown):
           - U2.49 [net GND] <-> U2.48 [net +3V3]
           - U2.49 [net GND] <-> U2.46 [net IO50]
           - U2.49 [net GND] <-> U2.45 [net IO49]
           - U2.49 [net GND] <-> U2.44 [net unconnected-(U2-BOOT0-Pad44)]
           - U2.49 [net GND] <-> U2.43 [net IO48]
-      * 1 fixed trace/via clearance violations:
-          - FixedTrace#3065 [net IO50] <-> U1.37 [net IO51]
   - 0 potentially fixable violations
 Notice: Freerouting does not modify component placement, board outlines, or fixed items.
-Resolving these 57 unfixable violation(s) is the responsibility of the board author in their EDA tool (e.g. KiCad).
-2026-11-26 20:06:25.914 INFO   [CAA16F\D8858E] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=4.
-2026-11-26 20:06:26.610 INFO   [CAA16F\D8858E] Auto-routing stage started on board 'c01454e644ca3b07ee40bfd33683c1c6' with baseline score 973.79 for 8 unrouted items.
-2026-11-26 20:06:35.691 INFO   [CAA16F\D8858E] Auto-routing pass #1 on board 'c01454e644ca3b07ee40bfd33683c1c6' was completed in 8.73 seconds with score 986.90 (4 unrouted and 57 violations), using 6.20 CPU seconds and the job allocated 2.18 GB of memory so far.
-2026-11-26 20:06:42.059 INFO   [CAA16F\D8858E] Auto-routing pass #2 on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 5.83 seconds with score 986.90 (4 unrouted and 57 violations), using 11.62 CPU seconds and the job allocated 4.49 GB of memory so far.
-2026-11-26 20:06:47.462 INFO   [CAA16F\D8858E] Auto-routing pass #3 on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 5.29 seconds with score 986.90 (4 unrouted and 57 violations), using 15.95 CPU seconds and the job allocated 6.42 GB of memory so far.
-2026-11-26 20:06:48.111 INFO   [CAA16F\D8858E] Auto-routing pass #4 on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 0.47 seconds with score 986.90 (4 unrouted and 57 violations), using 16.67 CPU seconds and the job allocated 6.76 GB of memory so far.
-2026-11-26 20:06:53.315 INFO   [CAA16F\D8858E] Auto-routing pass #5 on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 5.10 seconds with score 986.90 (4 unrouted and 57 violations), using 21.21 CPU seconds and the job allocated 8.75 GB of memory so far.
-2026-11-26 20:06:58.713 INFO   [CAA16F\D8858E] Auto-routing pass #6 on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 5.34 seconds with score 986.90 (4 unrouted and 57 violations), using 25.80 CPU seconds and the job allocated 10.70 GB of memory so far.
-2026-11-26 20:06:59.135 INFO   [CAA16F\D8858E] Auto-routing pass #7 on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 0.37 seconds with score 986.90 (4 unrouted and 57 violations), using 26.62 CPU seconds and the job allocated 11.11 GB of memory so far.
-2026-11-26 20:06:59.542 INFO   [CAA16F\D8858E] Auto-routing pass #8 on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 0.34 seconds with score 986.90 (4 unrouted and 57 violations), using 26.62 CPU seconds and the job allocated 11.11 GB of memory so far.
-2026-11-26 20:07:04.646 INFO   [CAA16F\D8858E] Auto-routing pass #9 on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 5.04 seconds with score 986.90 (4 unrouted and 57 violations), using 31.27 CPU seconds and the job allocated 13.19 GB of memory so far.
-2026-11-26 20:07:04.991 INFO   [CAA16F\D8858E] Auto-routing pass #10 on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 0.29 seconds with score 986.90 (4 unrouted and 57 violations), using 32.17 CPU seconds and the job allocated 13.60 GB of memory so far.
-2026-11-26 20:07:10.232 INFO   [CAA16F\D8858E] Auto-routing pass #11 on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 5.18 seconds with score 986.90 (4 unrouted and 57 violations), using 36.95 CPU seconds and the job allocated 15.64 GB of memory so far.
-2026-11-26 20:07:10.628 INFO   [CAA16F\D8858E] Auto-routing pass #12 on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 0.23 seconds with score 986.90 (4 unrouted and 57 violations), using 36.95 CPU seconds and the job allocated 15.64 GB of memory so far.
-2026-11-26 20:07:11.032 INFO   [CAA16F\D8858E] Auto-routing pass #13 on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 0.31 seconds with score 986.90 (4 unrouted and 57 violations), using 37.72 CPU seconds and the job allocated 16.06 GB of memory so far.
-2026-11-26 20:07:11.323 INFO   [CAA16F\D8858E] Auto-routing pass #14 on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 0.24 seconds with score 986.90 (4 unrouted and 57 violations), using 37.72 CPU seconds and the job allocated 16.06 GB of memory so far.
-2026-11-26 20:07:11.772 INFO   [CAA16F\D8858E] Auto-routing pass #15 on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 0.36 seconds with score 986.90 (4 unrouted and 57 violations), using 37.72 CPU seconds and the job allocated 16.06 GB of memory so far.
-2026-11-26 20:07:16.362 INFO   [CAA16F\D8858E] Auto-routing pass #16 on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 4.53 seconds with score 986.90 (4 unrouted and 57 violations), using 42.50 CPU seconds and the job allocated 18.32 GB of memory so far.
-2026-11-26 20:07:21.282 INFO   [CAA16F\D8858E] Auto-routing pass #17 on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 4.86 seconds with score 986.90 (4 unrouted and 57 violations), using 47.34 CPU seconds and the job allocated 20.51 GB of memory so far.
-2026-11-26 20:07:21.569 INFO   [CAA16F\D8858E] Auto-routing pass #18 on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 0.21 seconds with score 986.90 (4 unrouted and 57 violations), using 47.34 CPU seconds and the job allocated 20.51 GB of memory so far.
-2026-11-26 20:07:21.650 INFO   [CAA16F\D8858E] The router's score (986.90) has not improved by more than 0.5 points in the last 10 passes (4 items still unconnected). Stopping the auto-router.
-The following connections could not be routed -- please review your design (e.g. check pad clearances, trace width rules, and available routing space):
-  Net 'IO37' (1 unrouted connection):
-    - U2-6  ->  U1-25
-  Net 'IO38' (1 unrouted connection):
-    - U2-2  ->  U1-26
-  Net 'IO46' (1 unrouted connection):
-    - U2-41  ->  U1-30
-  Net 'AUX00' (1 unrouted connection):
-    - U2-22  ->  J4-1
-2026-11-26 20:07:22.162 INFO   [CAA16F\D8858E] Routing fallback: the default configuration stopped at stagnation with 4 unrouted, 0 new violations (57 total), score 986.90; trying 1 alternative strategy, then continuing the best board.
-2026-11-26 20:07:22.607 INFO   [CAA16F\D8858E] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=4.
-2026-11-26 20:07:22.930 INFO   [CAA16F\D8858E] Auto-routing stage started on board '619055fdce6dcdf64ade3a9dc8acb84b' with baseline score 986.90 for 4 unrouted items.
-2026-11-26 20:07:28.470 INFO   [CAA16F\D8858E] Auto-routing pass #1 [continue] on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 5.33 seconds with score 986.90 (4 unrouted and 57 violations), using 53.47 CPU seconds and the job allocated 23.03 GB of memory so far.
-2026-11-26 20:07:33.602 INFO   [CAA16F\D8858E] Auto-routing pass #2 [continue] on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 5.09 seconds with score 986.90 (4 unrouted and 57 violations), using 58.04 CPU seconds and the job allocated 25.15 GB of memory so far.
-2026-11-26 20:07:38.890 INFO   [CAA16F\D8858E] Auto-routing pass #3 [continue] on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 5.22 seconds with score 986.90 (4 unrouted and 57 violations), using 62.75 CPU seconds and the job allocated 27.20 GB of memory so far.
-2026-11-26 20:07:39.139 INFO   [CAA16F\D8858E] Auto-routing pass #4 [continue] on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 0.20 seconds with score 986.90 (4 unrouted and 57 violations), using 63.62 CPU seconds and the job allocated 27.57 GB of memory so far.
-2026-11-26 20:07:43.930 INFO   [CAA16F\D8858E] Auto-routing pass #5 [continue] on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 4.74 seconds with score 986.90 (4 unrouted and 57 violations), using 67.43 CPU seconds and the job allocated 29.38 GB of memory so far.
-2026-11-26 20:07:48.543 INFO   [CAA16F\D8858E] Auto-routing pass #6 [continue] on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 4.56 seconds with score 986.90 (4 unrouted and 57 violations), using 72.26 CPU seconds and the job allocated 31.76 GB of memory so far.
-2026-11-26 20:07:48.835 INFO   [CAA16F\D8858E] Auto-routing pass #7 [continue] on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 0.23 seconds with score 986.90 (4 unrouted and 57 violations), using 72.26 CPU seconds and the job allocated 31.76 GB of memory so far.
-2026-11-26 20:07:49.107 INFO   [CAA16F\D8858E] Auto-routing pass #8 [continue] on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 0.22 seconds with score 986.90 (4 unrouted and 57 violations), using 73.13 CPU seconds and the job allocated 32.24 GB of memory so far.
-2026-11-26 20:07:53.965 INFO   [CAA16F\D8858E] Auto-routing pass #9 [continue] on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 4.80 seconds with score 986.90 (4 unrouted and 57 violations), using 77.00 CPU seconds and the job allocated 34.00 GB of memory so far.
-2026-11-26 20:07:54.229 INFO   [CAA16F\D8858E] Auto-routing pass #10 [continue] on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 0.22 seconds with score 986.90 (4 unrouted and 57 violations), using 77.96 CPU seconds and the job allocated 34.42 GB of memory so far.
-2026-11-26 20:07:59.494 INFO   [CAA16F\D8858E] Auto-routing pass #11 [continue] on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 5.22 seconds with score 986.90 (4 unrouted and 57 violations), using 82.53 CPU seconds and the job allocated 36.55 GB of memory so far.
-2026-11-26 20:07:59.937 INFO   [CAA16F\D8858E] Auto-routing pass #12 [continue] on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 0.33 seconds with score 986.90 (4 unrouted and 57 violations), using 82.53 CPU seconds and the job allocated 36.55 GB of memory so far.
-2026-11-26 20:08:00.241 INFO   [CAA16F\D8858E] Auto-routing pass #13 [continue] on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 0.22 seconds with score 986.90 (4 unrouted and 57 violations), using 83.52 CPU seconds and the job allocated 36.92 GB of memory so far.
-2026-11-26 20:08:00.562 INFO   [CAA16F\D8858E] Auto-routing pass #14 [continue] on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 0.27 seconds with score 986.90 (4 unrouted and 57 violations), using 83.52 CPU seconds and the job allocated 36.92 GB of memory so far.
-2026-11-26 20:08:00.826 INFO   [CAA16F\D8858E] Auto-routing pass #15 [continue] on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 0.22 seconds with score 986.90 (4 unrouted and 57 violations), using 83.52 CPU seconds and the job allocated 36.92 GB of memory so far.
-2026-11-26 20:08:05.863 INFO   [CAA16F\D8858E] Auto-routing pass #16 [continue] on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 5.00 seconds with score 986.90 (4 unrouted and 57 violations), using 88.25 CPU seconds and the job allocated 39.20 GB of memory so far.
-2026-11-26 20:08:10.783 INFO   [CAA16F\D8858E] Auto-routing pass #17 [continue] on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 4.87 seconds with score 986.90 (4 unrouted and 57 violations), using 92.98 CPU seconds and the job allocated 41.43 GB of memory so far.
-2026-11-26 20:08:11.114 INFO   [CAA16F\D8858E] Auto-routing pass #18 [continue] on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 0.26 seconds with score 986.90 (4 unrouted and 57 violations), using 93.89 CPU seconds and the job allocated 41.84 GB of memory so far.
-2026-11-26 20:08:11.205 INFO   [CAA16F\D8858E] The router's score (986.90) has not improved by more than 0.5 points in the last 10 passes (4 items still unconnected). Stopping the auto-router.
-The following connections could not be routed -- please review your design (e.g. check pad clearances, trace width rules, and available routing space):
-  Net 'IO37' (1 unrouted connection):
-    - U2-6  ->  U1-25
-  Net 'IO38' (1 unrouted connection):
-    - U2-2  ->  U1-26
-  Net 'IO46' (1 unrouted connection):
-    - U2-41  ->  U1-30
-  Net 'AUX00' (1 unrouted connection):
-    - U2-22  ->  J4-1
-2026-11-26 20:08:11.786 INFO   [CAA16F\D8858E] Routing fallback continuation 'continue': 4 unrouted, 0 new violations (57 total), score 986.90 after stagnation.
-2026-11-26 20:08:11.840 INFO   [CAA16F\D8858E] Routing fallback: stopping residual continuations after 'continue' did not improve the incumbent.
-2026-11-26 20:08:12.078 INFO   [CAA16F\D8858E] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=4.
-2026-11-26 20:08:12.645 INFO   [CAA16F\D8858E] Auto-routing stage started on board 'c01454e644ca3b07ee40bfd33683c1c6' with baseline score 973.79 for 8 unrouted items.
-2026-11-26 20:08:22.821 INFO   [CAA16F\D8858E] Auto-routing pass #1 [continue-auto-neck] on board 'c01454e644ca3b07ee40bfd33683c1c6' was completed in 9.99 seconds with score 986.90 (4 unrouted and 57 violations), using 103.83 CPU seconds and the job allocated 46.06 GB of memory so far.
-2026-11-26 20:08:33.177 INFO   [CAA16F\D8858E] Auto-routing pass #2 [continue-auto-neck] on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 10.09 seconds with score 986.90 (4 unrouted and 57 violations), using 113.85 CPU seconds and the job allocated 50.50 GB of memory so far.
-2026-11-26 20:08:43.899 INFO   [CAA16F\D8858E] Auto-routing pass #3 [continue-auto-neck] on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 10.66 seconds with score 986.90 (4 unrouted and 57 violations), using 122.85 CPU seconds and the job allocated 54.34 GB of memory so far.
-2026-11-26 20:08:44.272 INFO   [CAA16F\D8858E] Auto-routing pass #4 [continue-auto-neck] on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 0.31 seconds with score 986.90 (4 unrouted and 57 violations), using 123.64 CPU seconds and the job allocated 54.73 GB of memory so far.
-2026-11-26 20:08:53.636 INFO   [CAA16F\D8858E] Auto-routing pass #5 [continue-auto-neck] on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 9.32 seconds with score 986.90 (4 unrouted and 57 violations), using 131.92 CPU seconds and the job allocated 58.69 GB of memory so far.
-2026-11-26 20:09:04.645 INFO   [CAA16F\D8858E] Auto-routing pass #6 [continue-auto-neck] on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 10.96 seconds with score 986.90 (4 unrouted and 57 violations), using 141.01 CPU seconds and the job allocated 62.84 GB of memory so far.
-2026-11-26 20:09:05.012 INFO   [CAA16F\D8858E] Auto-routing pass #7 [continue-auto-neck] on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 0.29 seconds with score 986.90 (4 unrouted and 57 violations), using 141.01 CPU seconds and the job allocated 62.84 GB of memory so far.
-2026-11-26 20:09:05.379 INFO   [CAA16F\D8858E] Auto-routing pass #8 [continue-auto-neck] on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 0.31 seconds with score 986.90 (4 unrouted and 57 violations), using 141.90 CPU seconds and the job allocated 63.32 GB of memory so far.
-2026-11-26 20:09:16.859 INFO   [CAA16F\D8858E] Auto-routing pass #9 [continue-auto-neck] on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 11.42 seconds with score 986.90 (4 unrouted and 57 violations), using 150.58 CPU seconds and the job allocated 67.26 GB of memory so far.
-2026-11-26 20:09:17.250 INFO   [CAA16F\D8858E] Auto-routing pass #10 [continue-auto-neck] on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 0.34 seconds with score 986.90 (4 unrouted and 57 violations), using 151.46 CPU seconds and the job allocated 67.74 GB of memory so far.
-2026-11-26 20:09:31.245 INFO   [CAA16F\D8858E] Auto-routing pass #11 [continue-auto-neck] on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 13.92 seconds with score 986.90 (4 unrouted and 57 violations), using 160.70 CPU seconds and the job allocated 71.89 GB of memory so far.
-2026-11-26 20:09:31.814 INFO   [CAA16F\D8858E] Auto-routing pass #12 [continue-auto-neck] on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 0.48 seconds with score 986.90 (4 unrouted and 57 violations), using 160.70 CPU seconds and the job allocated 71.89 GB of memory so far.
-2026-11-26 20:09:32.368 INFO   [CAA16F\D8858E] Auto-routing pass #13 [continue-auto-neck] on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 0.40 seconds with score 986.90 (4 unrouted and 57 violations), using 161.32 CPU seconds and the job allocated 72.27 GB of memory so far.
-2026-11-26 20:09:32.724 INFO   [CAA16F\D8858E] Auto-routing pass #14 [continue-auto-neck] on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 0.30 seconds with score 986.90 (4 unrouted and 57 violations), using 161.32 CPU seconds and the job allocated 72.27 GB of memory so far.
-2026-11-26 20:09:33.072 INFO   [CAA16F\D8858E] Auto-routing pass #15 [continue-auto-neck] on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 0.30 seconds with score 986.90 (4 unrouted and 57 violations), using 161.32 CPU seconds and the job allocated 72.27 GB of memory so far.
-2026-11-26 20:09:47.217 INFO   [CAA16F\D8858E] Auto-routing pass #16 [continue-auto-neck] on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 14.10 seconds with score 986.90 (4 unrouted and 57 violations), using 170.76 CPU seconds and the job allocated 76.64 GB of memory so far.
-2026-11-26 20:10:02.881 INFO   [CAA16F\D8858E] Auto-routing pass #17 [continue-auto-neck] on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 15.54 seconds with score 986.90 (4 unrouted and 57 violations), using 180.62 CPU seconds and the job allocated 80.85 GB of memory so far.
-2026-11-26 20:10:03.349 INFO   [CAA16F\D8858E] Auto-routing pass #18 [continue-auto-neck] on board '619055fdce6dcdf64ade3a9dc8acb84b' was completed in 0.41 seconds with score 986.90 (4 unrouted and 57 violations), using 180.62 CPU seconds and the job allocated 80.85 GB of memory so far.
-2026-11-26 20:10:03.459 INFO   [CAA16F\D8858E] The router's score (986.90) has not improved by more than 0.5 points in the last 10 passes (4 items still unconnected). Stopping the auto-router.
-The following connections could not be routed -- please review your design (e.g. check pad clearances, trace width rules, and available routing space):
-  Net 'IO37' (1 unrouted connection):
-    - U2-6  ->  U1-25
-  Net 'IO38' (1 unrouted connection):
-    - U2-2  ->  U1-26
-  Net 'IO46' (1 unrouted connection):
-    - U2-41  ->  U1-30
-  Net 'AUX00' (1 unrouted connection):
-    - U2-22  ->  J4-1
-2026-11-26 20:10:04.021 INFO   [CAA16F\D8858E] Routing fallback 'continue-auto-neck': 4 unrouted, 0 new violations (57 total), score 986.90 after stagnation.
-2026-11-26 20:10:04.101 INFO   [CAA16F\D8858E] Routing fallback: no alternative replaced the board the continuations ran on; not continuing it again.
-2026-11-26 20:10:04.102 INFO   [CAA16F\D8858E] Routing fallback chose 'default': 4 unrouted, 0 new violations (57 total), score 986.90.
-2026-11-26 20:10:04.317 INFO   [CAA16F\D8858E] Auto-routing stage completed: started with 8 unrouted nets, completed in 218.19 seconds, final score: 986.90 (4 unrouted and 57 violations), using 181.18 total CPU seconds, 81.16 GB total allocated, and 1079.0 MB peak heap usage.
-2026-11-26 20:10:04.364 INFO   [CAA16F\D8858E] Job 'CAA16F\D8858E' finished with state: COMPLETED (elapsed: 3 minutes 39.45 seconds, finished at UTC: 2026-11-26T20:10:04.357733915Z).
-2026-11-26 20:10:04.392 INFO   Saving output file '/home/user/Rad-Roomba/tools/eda/tests/stress6/route/STRESS-150-6L.retry.ses' (SES)...
-2026-11-26 20:10:04.394 INFO   Successfully saved output file '/home/user/Rad-Roomba/tools/eda/tests/stress6/route/STRESS-150-6L.retry.ses' (224188 bytes).
+Resolving these 56 unfixable violation(s) is the responsibility of the board author in their EDA tool (e.g. KiCad).
+2026-11-27 00:41:05.665 INFO   [077855\1F847D] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=4.
+2026-11-27 00:41:06.141 INFO   [077855\1F847D] Auto-routing stage started on board 'b4e9884438b135e22bdfa94405cfecb8' with baseline score 393.94 for 185 unrouted items.
+2026-11-27 00:42:00.702 INFO   [077855\1F847D] Auto-routing pass #1 on board 'b4e9884438b135e22bdfa94405cfecb8' was completed in 54.43 seconds with score 868.96 (40 unrouted and 56 violations), using 28.89 CPU seconds and the job allocated 10.86 GB of memory so far.
+2026-11-27 00:42:21.716 INFO   [077855\1F847D] Auto-routing pass #2 on board '7e32cd59c2154622f8af6783d2546007' was completed in 20.51 seconds with score 937.76 (19 unrouted and 56 violations), using 43.86 CPU seconds and the job allocated 16.89 GB of memory so far.
+2026-11-27 00:42:36.480 INFO   [077855\1F847D] Auto-routing pass #3 on board 'a084747a7774e353caedf07c542a639d' was completed in 14.38 seconds with score 980.34 (6 unrouted and 56 violations), using 54.92 CPU seconds and the job allocated 21.48 GB of memory so far.
+2026-11-27 00:42:44.212 INFO   [077855\1F847D] Auto-routing pass #4 on board 'a81665eb25b8d5418e41547472f3563f' was completed in 7.48 seconds with score 990.17 (3 unrouted and 56 violations), using 60.32 CPU seconds and the job allocated 23.63 GB of memory so far.
+2026-11-27 00:42:47.532 INFO   [077855\1F847D] Auto-routing pass #5 on board 'e0e0b797aae9abf310c100215cdbfb53' was completed in 2.90 seconds with score 1000.00 (0 unrouted and 56 violations), using 63.22 CPU seconds and the job allocated 24.76 GB of memory so far.
+2026-11-27 00:42:48.135 INFO   [077855\1F847D] Auto-routing pass #6 on board 'e7213d0527fb4848d01392dd34ad1ddf' was completed in 0.14 seconds with score 1000.00 (0 unrouted and 56 violations), using 63.22 CPU seconds and the job allocated 24.76 GB of memory so far.
+2026-11-27 00:42:49.247 INFO   [077855\1F847D] Auto-routing stage completed: started with 185 unrouted nets, completed in 103.44 seconds, final score: 1000.00 (0 unrouted and 56 violations), using 63.81 total CPU seconds, 24.84 GB total allocated, and 385.7 MB peak heap usage.
+2026-11-27 00:42:49.296 INFO   [077855\1F847D] Job '077855\1F847D' finished with state: COMPLETED (elapsed: 1 minute 44.74 seconds, finished at UTC: 2026-11-27T00:42:49.279501128Z).
+2026-11-27 00:42:49.315 INFO   Saving output file '/home/user/Rad-Roomba/tools/eda/tests/stress6/route/STRESS-150-6L.ses' (SES)...
+2026-11-27 00:42:49.320 INFO   Successfully saved output file '/home/user/Rad-Roomba/tools/eda/tests/stress6/route/STRESS-150-6L.ses' (75327 bytes).

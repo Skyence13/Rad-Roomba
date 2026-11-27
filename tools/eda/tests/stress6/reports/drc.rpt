@@ -2,25 +2,27 @@
 ** Created on (date removed for reproducibility) **
 ** Report includes: Errors, Warnings, Exclusions **
 
-** Found 0 DRC violations **
+** Found 6 DRC violations **
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(68.6414 mm, 89.8456 mm): Via [IO02] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(68.6414 mm, 92.1056 mm): Via [IO06] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(84.9313 mm, 92.0853 mm): Via [IO11] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(78.7297 mm, 83.0516 mm): Via [IO15] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(78.1647 mm, 83.6964 mm): Via [IO16] on F.Cu - B.Cu
+[via_dangling]: Via is not connected or connected on only one layer
+    Local override; warning
+    @(101.1221 mm, 83.4742 mm): Via [IO40] on F.Cu - B.Cu
 
-** Found 4 unconnected pads **
-[unconnected_items]: Missing connection between items
-    Local override; error
-    @(77.0000 mm, 96.9250 mm): Pad 25 [IO37] of U1 on F.Cu
-    @(102.2500 mm, 81.4375 mm): Pad 6 [IO37] of U2 on F.Cu
-[unconnected_items]: Missing connection between items
-    Local override; error
-    @(77.5000 mm, 96.9250 mm): Pad 26 [IO38] of U1 on F.Cu
-    @(100.2500 mm, 81.4375 mm): Pad 2 [IO38] of U2 on F.Cu
-[unconnected_items]: Missing connection between items
-    Local override; error
-    @(79.5000 mm, 96.9250 mm): Pad 30 [IO46] of U1 on F.Cu
-    @(99.0625 mm, 77.2500 mm): Pad 41 [IO46] of U2 on F.Cu
-[unconnected_items]: Missing connection between items
-    Local override; error
-    @(105.9375 mm, 76.2500 mm): Pad 22 [AUX00] of U2 on F.Cu
-    @(147.2500 mm, 77.0000 mm): PTH pad 1 [AUX00] of J4
+** Found 0 unconnected pads **
 
 ** Found 0 Footprint errors **
 

@@ -153,8 +153,18 @@ g.part("U9", sym, "MYSENSOR", fp, mfr="...", mpn="...", pins={"VDD": "+3V3", "OU
 board.route(passes=100, threads=None, timeout=None, optimizer=True, enabled=True, extra_args=[],
             plane_fanout=True,     # rrkicad's own track+via beside every SMD pad of plane nets (see Routing notes)
             retries=2,             # extra "continue" autorouter runs while connections are open
-            fanout=False)          # Freerouting's own fan-out stage (escape via on every SMD pin; rarely useful)
-board.autoplace_options(clearance=0.3, ic_halo=2.0, edge_margin=0.5, grid=0.25, spread=0.35, rotations=(0, 90, 180, 270))
+            fanout=False,          # Freerouting's own fan-out stage (escape via on every SMD pin; rarely useful)
+            escape="auto",         # fine-pitch escape (see Routing notes): "auto" = on for 4/6 layers, True, False
+            escape_pitch=0.65,     #   ICs whose pad pitch is below this get escaped ...
+            escape_min_pads=16,    #   ... and that have at least this many perimeter pads
+            escape_via=None,       #   (dia, drill) of escape vias; default = the fab minimum via of Rules
+            escape_track=None,     #   stub width; default Rules.min_track
+            escape_layers=None,    #   informational: target layer recorded per via (through vias reach all layers)
+            escape_direct=True,    #   short direct pre-route to a nearby two-pad passive instead of a via
+            finisher=True)         # built-in maze router for the last open connections (see Routing notes)
+# per part: g.part(..., escape=None | True | False)   None = decided by pad pitch, True = force, False = never
+board.autoplace_options(clearance=0.3, ic_halo=2.0, edge_margin=0.5, grid=0.25, spread=0.35, rotations=(0, 90, 180, 270),
+                        escape_keepaway=2.0)   # free band (mm) around the courtyard of escaped ICs (auto-arranged neighbours)
 board.waive("drc", "silk_overlap", "Reference text overlaps on the dense RF corner; assembly uses the Fab layer.",
             match=r"R1[0-9]")                             # regex on the violation text; None = all of that type
 board.severity("drc", "silk_over_copper", "ignore", "Silk is clipped by the fab's solder-mask subtraction.")
@@ -211,6 +221,59 @@ classes on top (first matching pattern wins).
   plane areas; do not rely on zone priority for splits).
   If you also pour a plane net on the outer layers, use `connect="solid"` for that pour
   (or leave the outer layers unpoured): thermal spokes next to fan-out tracks get starved.
+* **Fine-pitch escape (4/6 layers by default).** Before routing, every IC whose pad pitch is
+  below `escape_pitch` (0.65 mm; QFP, QFN, TSSOP-0.5, ...) and has at least
+  `escape_min_pads` (16) perimeter pads, or that has `escape=True`, gets
+  its pin escapes as locked pre-routes (`rrkicad/escape.py`):
+  - signal pads: a short stub (`escape_track`, default `min_track`) out of the pad tip and a
+    via on a ring outside the package, alternating between two staggered radii. The ring is
+    *fanned*: neighbouring vias are spaced by via radius + half stub + clearance of the two
+    nets, so the stub of an outer-row via passes between two inner-row vias with full
+    clearance even with 0.6 mm vias at 0.5 mm pitch (the inner radius grows until every
+    outer stub clears its neighbours' vias). Pads whose planned spot is blocked get a local
+    search over further radii / lateral offsets, then (packages without exposed pad) a
+    position under the package;
+  - plane-net pads: via *under* the package for QFP-like parts (keeps the ring free),
+    otherwise a ring position whose via lies inside the net's own plane polygon;
+  - pads whose net reaches a two-pad passive (pull-up, series R placed `near=` the pin)
+    within 4 mm: a direct pre-route to that pad instead of a via, when one or two straight
+    segments do it with clearance (`escape_direct`);
+  - skipped (listed with the reason in `summary.json` → `routing.escape.skipped`):
+    no-connect pins, pins tied only to an adjacent pin, square/round pads (BGA), and pads
+    with no legal position (left to the autorouter, also listed as a build note).
+  All checks are exact geometry (`rrkicad/geom.py`): copper clearance of both net classes
+  + the 25 um DSN margin, hole-to-hole, hole clearance, board edge, cut-outs, via
+  keep-outs, other parts' courtyards (vias stay outside them), existing fan-out vias. The
+  items are exported to the DSN as fixed wiring *of their net*, so Freerouting starts from
+  the escape vias. `summary.json` → `routing.escape`: per part pitch / ring / inward / direct
+  / skipped counts, totals, via and stub size. Escape vias the router did not use (it
+  connected at the pad instead) are removed with their stub after the SES import (only
+  escape vias, only if connectivity does not get worse). The escape runs before the plane
+  fan-out; the plane fan-out puts a via in the centre of exposed/thermal pads.
+  Small fine-pitch parts (< 16 pads: USON-10 ESD arrays, SOT-563, ...) are left to the
+  autorouter by default: it escapes them reliably, and a via ring around a flow-through
+  ESD array works against its layout; force one with `escape=True`.
+  The auto-arranger keeps `escape_keepaway` (2 mm) free around
+  escaped ICs; explicitly placed neighbours are the author's responsibility (a pad whose
+  via would land in a neighbour's courtyard is skipped and reported).
+* **Finisher.** If connections are still open after the autorouter (and its continue runs),
+  `finisher=True` runs a plain grid maze router (A*, 0.05 mm grid, 8 directions, through
+  vias between signal layers, never on plane layers) for each open connection KiCad's DRC
+  reports, on a clearance-inflated occupancy grid (both net classes' clearance + half the
+  track width; vias against copper on every layer, drills, same-net SMD pads; edge,
+  cut-outs, keep-outs), in a window that grows 6 mm -> 15 mm -> whole board. Every path is
+  re-checked with exact geometry before it is added; it does not rip up anything, so it
+  only finishes connections that have a free path. Results go to `route/finish.json`
+  (keyed to the SES hash, re-applied on cached builds; keep it under version control with
+  the SES); `summary.json` → `routing.finisher` lists what it routed and what not and why.
+  DRC checks the result like everything else; nothing is ever marked connected by the
+  finisher itself. Slow in Python on large windows (minutes per hopeless connection).
+* Freerouting reports "N pin-to-pin clearance violations" in `route/freerouting.log` for
+  QFN exposed pads vs. their perimeter pads: that is the footprint's own pad spacing under
+  the 25 um DSN margin, fixed items it cannot change; KiCad DRC is the reference.
+* Freerouting's default fallback chain ends in `continue-auto-neck`, a from-scratch re-route
+  after stagnation that can eat the whole timeout; the stress/scale tests pass
+  `extra_args=["--router.autorouter.fallback_strategies=continue"]`.
 * Zones on signal layers are *not* given to the autorouter: those nets are routed with
   real tracks and the pour is added afterwards (2-layer boards: see RR-TOF-A, with GND
   stitching vias from `board.via`).
@@ -305,8 +368,8 @@ optimiser is multi-threaded) — which is why the SES is cached.
 * Net labels are always global; there is no per-sheet local net scope.
 * 2, 4 or 6 copper layers; through vias only; no differential-pair or length tuning
   (net-class diff-pair fields are written but the autorouter ignores them).
-* Fully automatic routing does not complete on boards with 0.5 mm-pitch ICs (see the
-  stress test): expect to pre-route a handful of pin escapes per fine-pitch IC pair.
+* Fine-pitch escape handles perimeter packages (QFP/QFN/SO/TSSOP); BGA (round pads) is
+  skipped. Escape vias are through vias (no blind/buried/micro vias).
 * Auto-arrange is a greedy helper (top/bottom side per part, courtyard rectangles). It
   avoids overlaps and keep-outs but knows nothing about signal integrity; place
   connectors, sensitive analogue parts and anything mechanical explicitly.

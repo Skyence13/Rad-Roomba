@@ -120,6 +120,8 @@ def plane_fanout(bld, skip=None):
             court.add(rect, {"rect": rect, "ref": ref})
         part = b._refs.get(ref)
         for pad in fp.Pads():
+            if not pad.IsOnCopperLayer():
+                continue            # paste-only apertures (e.g. inside a QFN exposed pad)
             bb = pad.GetBoundingBox()
             rect = (pcbnew.ToMM(bb.GetLeft()), pcbnew.ToMM(bb.GetTop()), pcbnew.ToMM(bb.GetRight()), pcbnew.ToMM(bb.GetBottom()))
             tht = pad.GetDrillSize().x > 0

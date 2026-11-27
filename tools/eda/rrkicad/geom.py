@@ -113,6 +113,7 @@ class Obstacles:
         self._clr = {}
         self.why = ""
         self.pads_by_ref = {}
+        self.by_net = {}
         self._load(bld.pcb)
 
     # ------------------------------------------------------------- loading
@@ -127,6 +128,7 @@ class Obstacles:
         return self._clr[key]
 
     def _add(self, it):
+        self.by_net.setdefault(it["net"], []).append(it)
         bb = it["bb"]
         for i in range(int(math.floor(bb[0] / CELL)), int(math.floor(bb[2] / CELL)) + 1):
             for j in range(int(math.floor(bb[1] / CELL)), int(math.floor(bb[3] / CELL)) + 1):

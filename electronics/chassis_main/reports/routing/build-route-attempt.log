@@ -1,0 +1,39 @@
+[rrkicad] definition: 771 parts, 432 nets, 12 groups
+[rrkicad] schematic: 18 sheet(s): power_entry, charger, rails, branches, chain, chain_2, chain_3, drive, drive_2, mcu, mcu_2, tof, tof_2, head_link, panel_io, test, mech
+[rrkicad] netlist cross-check OK (771 components, 549 nets incl. unconnected)
+[rrkicad] plane fan-out: 537 via(s) on 3V3, GND, VBAT_SW, VMOT, VSYS, 154 pad(s) left to the autorouter
+[rrkicad] escape: 82 via(s), 2 direct pre-route(s) on U20M, U3, U42, U61, U8; 64 pad(s) skipped {"no legal escape position": 36, "no legal escape position inside its own plane polygon": 21, "not connected (single-pin net)": 7}
+[rrkicad] DSN exported (changed)
+[rrkicad] routing: freerouting passes<=100 threads=3 timeout=780s
+    [D84BFA\36BB67] Auto-routing pass #1 on board 'ccdd2f61b7a7ab33c2974ba333fe0b35' was completed in 769.30 seconds with score 403.27 (802 unrouted and 2
+[rrkicad] routing finished in 819.6 s
+Traceback (most recent call last):
+  File "/home/user/Rad-Roomba/tools/eda/rrkicad.py", line 10, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/user/Rad-Roomba/tools/eda/rrkicad/cli.py", line 580, in main
+    return stage_post(a.board, routed=not a.no_route,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/Rad-Roomba/tools/eda/rrkicad/cli.py", line 264, in stage_post
+    info = pcb.finish_pcb(board, paths, ses=(ses or paths.ses) if routed else None)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/Rad-Roomba/tools/eda/rrkicad/pcb.py", line 909, in finish_pcb
+    info.update(run("1"))
+                ^^^^^^^^
+  File "/home/user/Rad-Roomba/tools/eda/rrkicad/pcb.py", line 903, in run
+    raise RuntimeError("SES import step failed:\n" + r.stdout[-2000:] + r.stderr[-2000:])
+RuntimeError: SES import step failed:
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/home/user/Rad-Roomba/tools/eda/rrkicad/pcb.py", line 867, in import_ses
+    info["unused_escapes_removed"] = _remove_unused_escapes(pcb, os.path.join(os.path.dirname(ses), "escape_vias.json")) \
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/Rad-Roomba/tools/eda/rrkicad/pcb.py", line 968, in _remove_unused_escapes
+    tracks = [t for t in pcb.GetTracks() if t.GetClass() == "PCB_TRACK"]
+                         ^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/pcbnew.py", line 20412, in GetTracks
+    def GetTracks(self):              return list(self.Tracks())
+                                             ^^^^^^^^^^^^^^^^^^^
+TypeError: 'SwigPyObject' object is not iterable
+
+[rrkicad] routing: 1165 connection(s) still open -> finisher

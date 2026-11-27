@@ -154,3 +154,4 @@ for p in board.parts:
 
 # ----------------------------------------------------------------- rails, classes, outline, copper, placement
 placement.setup(board)
+placement.routing(board)

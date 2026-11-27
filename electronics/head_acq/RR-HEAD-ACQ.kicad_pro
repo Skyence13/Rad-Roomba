@@ -182,7 +182,10 @@
       ],
       "track_widths": [
         0.0,
-        0.2
+        0.2,
+        0.25,
+        0.4,
+        1.0
       ],
       "tuning_pattern_settings": {
         "diff_pair_defaults": {
@@ -218,6 +221,10 @@
         {
           "diameter": 0.6,
           "drill": 0.3
+        },
+        {
+          "diameter": 1.0,
+          "drill": 0.5
         }
       ],
       "zones_allow_external_fillets": false
@@ -486,6 +493,114 @@
         "via_diameter": 0.6,
         "via_drill": 0.3,
         "wire_width": 6
+      },
+      {
+        "bus_width": 12,
+        "clearance": 1.0,
+        "diff_pair_gap": 0.25,
+        "diff_pair_via_gap": 0.25,
+        "diff_pair_width": 0.25,
+        "line_style": 0,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "name": "HV",
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "priority": 0,
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 0.25,
+        "via_diameter": 0.6,
+        "via_drill": 0.3,
+        "wire_width": 6
+      },
+      {
+        "bus_width": 12,
+        "clearance": 1.0,
+        "diff_pair_gap": 0.25,
+        "diff_pair_via_gap": 0.25,
+        "diff_pair_width": 1.0,
+        "line_style": 0,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "name": "HEATER",
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "priority": 1,
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 1.0,
+        "via_diameter": 1.0,
+        "via_drill": 0.5,
+        "wire_width": 6
+      },
+      {
+        "bus_width": 12,
+        "clearance": 0.15,
+        "diff_pair_gap": 0.25,
+        "diff_pair_via_gap": 0.25,
+        "diff_pair_width": 0.4,
+        "line_style": 0,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "name": "POWER",
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "priority": 2,
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 0.4,
+        "via_diameter": 0.6,
+        "via_drill": 0.3,
+        "wire_width": 6
+      },
+      {
+        "bus_width": 12,
+        "clearance": 0.25,
+        "diff_pair_gap": 0.25,
+        "diff_pair_via_gap": 0.25,
+        "diff_pair_width": 0.4,
+        "line_style": 0,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "name": "ISOLATED",
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "priority": 3,
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 0.4,
+        "via_diameter": 0.6,
+        "via_drill": 0.3,
+        "wire_width": 6
+      },
+      {
+        "bus_width": 12,
+        "clearance": 0.25,
+        "diff_pair_gap": 0.25,
+        "diff_pair_via_gap": 0.25,
+        "diff_pair_width": 0.25,
+        "line_style": 0,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "name": "DIFF",
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "priority": 4,
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 0.25,
+        "via_diameter": 0.6,
+        "via_drill": 0.3,
+        "wire_width": 6
+      },
+      {
+        "bus_width": 12,
+        "clearance": 0.3,
+        "diff_pair_gap": 0.25,
+        "diff_pair_via_gap": 0.25,
+        "diff_pair_width": 0.2,
+        "line_style": 0,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "name": "SENSITIVE",
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "priority": 5,
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 0.2,
+        "via_diameter": 0.6,
+        "via_drill": 0.3,
+        "wire_width": 6
       }
     ],
     "meta": {
@@ -493,7 +608,216 @@
     },
     "net_colors": null,
     "netclass_assignments": null,
-    "netclass_patterns": []
+    "netclass_patterns": [
+      {
+        "netclass": "HV",
+        "pattern": "HV_BUS"
+      },
+      {
+        "netclass": "HV",
+        "pattern": "HV_RAW"
+      },
+      {
+        "netclass": "HV",
+        "pattern": "HV_RAWF"
+      },
+      {
+        "netclass": "HV",
+        "pattern": "HV_SW"
+      },
+      {
+        "netclass": "HV",
+        "pattern": "HV_MIR"
+      },
+      {
+        "netclass": "HV",
+        "pattern": "HV_G"
+      },
+      {
+        "netclass": "HV",
+        "pattern": "HV_BLD"
+      },
+      {
+        "netclass": "HV",
+        "pattern": "HV_BFBM"
+      },
+      {
+        "netclass": "HV",
+        "pattern": "HV_FBM"
+      },
+      {
+        "netclass": "HV",
+        "pattern": "HV_MDM"
+      },
+      {
+        "netclass": "HV",
+        "pattern": "HV_CAP"
+      },
+      {
+        "netclass": "HV",
+        "pattern": "[FR]?_HV1"
+      },
+      {
+        "netclass": "HV",
+        "pattern": "[FR]?_HVF"
+      },
+      {
+        "netclass": "HEATER",
+        "pattern": "HEAD_HTR_P"
+      },
+      {
+        "netclass": "HEATER",
+        "pattern": "HEAD_HTR_N"
+      },
+      {
+        "netclass": "HEATER",
+        "pattern": "HTR_PS"
+      },
+      {
+        "netclass": "HEATER",
+        "pattern": "HTR_SW"
+      },
+      {
+        "netclass": "POWER",
+        "pattern": "GND"
+      },
+      {
+        "netclass": "POWER",
+        "pattern": "+5V_A"
+      },
+      {
+        "netclass": "POWER",
+        "pattern": "+3V3"
+      },
+      {
+        "netclass": "POWER",
+        "pattern": "+3V3_EVT"
+      },
+      {
+        "netclass": "POWER",
+        "pattern": "+5V6"
+      },
+      {
+        "netclass": "POWER",
+        "pattern": "+5V6_A"
+      },
+      {
+        "netclass": "POWER",
+        "pattern": "+5V6_E"
+      },
+      {
+        "netclass": "POWER",
+        "pattern": "+3V3A"
+      },
+      {
+        "netclass": "POWER",
+        "pattern": "+3V3_HV"
+      },
+      {
+        "netclass": "POWER",
+        "pattern": "VIN_*"
+      },
+      {
+        "netclass": "POWER",
+        "pattern": "HEAD_PWR_*"
+      },
+      {
+        "netclass": "POWER",
+        "pattern": "BK_SW"
+      },
+      {
+        "netclass": "POWER",
+        "pattern": "TCXO_VDD"
+      },
+      {
+        "netclass": "POWER",
+        "pattern": "EF_RTN"
+      },
+      {
+        "netclass": "POWER",
+        "pattern": "[FR]?_V5"
+      },
+      {
+        "netclass": "POWER",
+        "pattern": "FRAME"
+      },
+      {
+        "netclass": "ISOLATED",
+        "pattern": "BUS_*"
+      },
+      {
+        "netclass": "ISOLATED",
+        "pattern": "J2_PRES"
+      },
+      {
+        "netclass": "ISOLATED",
+        "pattern": "SYNC_RX_B"
+      },
+      {
+        "netclass": "DIFF",
+        "pattern": "RS485_DP"
+      },
+      {
+        "netclass": "DIFF",
+        "pattern": "RS485_DN"
+      },
+      {
+        "netclass": "DIFF",
+        "pattern": "SYNC_P"
+      },
+      {
+        "netclass": "DIFF",
+        "pattern": "SYNC_N"
+      },
+      {
+        "netclass": "SENSITIVE",
+        "pattern": "[FR]?_A"
+      },
+      {
+        "netclass": "SENSITIVE",
+        "pattern": "[FR]?_PINA"
+      },
+      {
+        "netclass": "SENSITIVE",
+        "pattern": "[FR]?_PIN"
+      },
+      {
+        "netclass": "SENSITIVE",
+        "pattern": "[FR]?_PFB"
+      },
+      {
+        "netclass": "SENSITIVE",
+        "pattern": "[FR]?_PG"
+      },
+      {
+        "netclass": "SENSITIVE",
+        "pattern": "[FR]?_FS"
+      },
+      {
+        "netclass": "SENSITIVE",
+        "pattern": "[FR]?_FFB"
+      },
+      {
+        "netclass": "SENSITIVE",
+        "pattern": "[FR]?_TRIM"
+      },
+      {
+        "netclass": "SENSITIVE",
+        "pattern": "[FR]?_TPI"
+      },
+      {
+        "netclass": "SENSITIVE",
+        "pattern": "[FR]?_SI"
+      },
+      {
+        "netclass": "SENSITIVE",
+        "pattern": "[FR]?_SS"
+      },
+      {
+        "netclass": "SENSITIVE",
+        "pattern": "[FR]?_SFB"
+      }
+    ]
   },
   "pcbnew": {
     "last_paths": {

@@ -90,7 +90,11 @@ for name in ORDER:
 # project-local symbols are passed per ref (the importer only resolves stock symbol hints itself)
 local_syms = {p["ref"]: p["symbol_hint"] for p in parts if str(p.get("symbol_hint", "")).startswith("rr_local:")}
 circuit = types.SimpleNamespace(PARTS=parts)
-report = from_circuit(board, circuit, symbols=local_syms, titles=TITLES)
+HAVE_LAYOUT = os.path.exists(os.path.join(HERE, "layout.py"))
+if HAVE_LAYOUT:
+    import layout                                 # noqa: E402
+place = layout.placement() if HAVE_LAYOUT else {}
+report = from_circuit(board, circuit, symbols=local_syms, titles=TITLES, place=place)
 os.makedirs(os.path.join(HERE, "reports"), exist_ok=True)
 with open(os.path.join(HERE, "reports", "import_report.json"), "w") as f:
     json.dump(report, f, indent=1, sort_keys=True)
@@ -103,6 +107,5 @@ board.rail("FRAME", style="gnd")
 
 board.outline_rect(326.0, 96.0, radius=1.0, origin="corner")
 
-if os.path.exists(os.path.join(HERE, "layout.py")):      # placement, zones, net classes, pre-routes
-    import layout                                 # noqa: E402
+if HAVE_LAYOUT:                                    # replication, zones, net classes, keep-outs, pre-routes
     layout.apply(board, parts)

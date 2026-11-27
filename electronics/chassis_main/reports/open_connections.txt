@@ -1,0 +1,695 @@
+# Routing attempt 2026-11-27: KiCad ratsnest = 802 open connections after one Freerouting run (778 s, 1 pass).
+# KiCad DRC lists only the first 499 of them (KiCad report limit). Board frame mm (X right, Y up; X = page x - 50, Y = 188 - page y).
+# Per-net count of the listed items:
+#   V5_AUX                 27
+#   3V3                    14
+#   VREF_3V0               13
+#   V5_BUCK                10
+#   VBAT_RAW               8
+#   VBAT_SW                8
+#   CHG_VIN                8
+#   COIL_RTN               8
+#   PSW_SRC                7
+#   RUN_12V                7
+#   HW_LATCH_RB            7
+#   VSYS                   6
+#   EN_SYS                 5
+#   CHG_VIN_DIV            5
+#   V12_AUX                5
+#   CHG_GATE               5
+#   NRST                   5
+#   HANDS_ON_RB            5
+#   PACK_NTC               4
+#   CHG_TEMP_OK            4
+#   V5_CM5                 4
+#   3V3A                   4
+#   WDG_FAULT              4
+#   CH_N2                  4
+#   LOOP_F                 4
+#   WDG_OK                 4
+#   CHAIN_END              4
+#   MODE_RUN_RB            4
+#   CHG_COVER_RB           4
+#   CHG_PLUG_LINK_RB       4
+#   CHAIN_END_RB           4
+#   ESTOP_B_RB_G           4
+#   J2_PRES_RB_G           4
+#   LAMP_G                 4
+#   VMOT_SENSE             4
+#   CLAMP_G                4
+#   PACK_PRES_N            3
+#   U1_GATE                3
+#   I2C_SYS_SDA            3
+#   VBAT_SENSE             3
+#   U3_V2P5                3
+#   U3_NTC                 3
+#   U3_CELLS0              3
+#   U3_CELLS1              3
+#   HEAD_HTR_F             3
+#   HEAD_HTR_EN_G          3
+#   HEAD_HTR_P             3
+#   CHS_HTR_P              3
+#   V12_LIDAR              3
+#   HEAD_PWR_P             3
+#   LOOP_VLO               3
+#   HEAD_LOOP_SENSE        3
+#   HEAD_PRES_ID           3
+#   PRES_F                 3
+#   LAB_KEY_N_RB           3
+#   ARM_PERMIT             3
+#   K1_COIL_P              3
+#   ESTOP_A_RB             3
+#   HEAD_DOCK_RB           3
+#   BODY_BUMPER_L_RB       3
+#   BODY_BUMPER_R_RB       3
+#   WDG_OK_RB              3
+#   REARM_BTN              3
+#   PAUSE_BTN              3
+#   CLAMP_DIV              3
+#   OUT2_L                 3
+#   IPROPI_L               3
+#   PLUG_LINK              2
+#   GND                    2
+#   U1_OV                  2
+#   VBAT_PROT              2
+#   CHG_F                  2
+#   Q3_G                   2
+#   U3_CLP                 2
+#   U3_CSP                 2
+#   U3_INTVCC              2
+#   U10_FB                 2
+#   V5_SENSE               2
+#   U13_EN                 2
+#   CHS_HTR_F              2
+#   HEAD_PWR_F             2
+#   HEAD_PWR_EN_G          2
+#   HEAD_PWR_E             2
+#   U17_ILM                2
+#   CHS_HTR_EN_G           2
+#   CH_N0                  2
+#   CH_N1                  2
+#   CH_N3                  2
+#   CH_N7                  2
+#   CH_N8A                 2
+#   SET_CAP                2
+#   BTN_3V3                2
+#   REARM_BTN_RAW          2
+#   HEAD_LOOP_OUT          2
+#   HEAD_LOOP_RET          2
+#   LOOP_SNS               2
+#   LOOP_VHI               2
+#   J2_PRES                2
+#   LAB_VHI                2
+#   LAB_VLO                2
+#   HEAD_LOOP_SHORT_RB     2
+#   COLD_THR               2
+#   NTC_PACK_ADC           2
+#   WDG_STROBE             2
+#   ESTOP_B_RB             2
+#   PAUSE_BTN_RAW          2
+#   PAUSE_3V3              2
+#   U8_EN                  2
+#   VMOT                   2
+#   CLAMP_VG               2
+#   CLAMP_R                2
+#   CLAMP_F                2
+#   BUS_CLAMP_ACTIVE       2
+#   DRV_L_NFAULT           2
+#   IPROPI_L_RAW           2
+#   OUT1_L                 2
+#   MOT_L_A                2
+#   BRK_THR                2
+#   BRAKE_L_RB             2
+#   MOTC_L_A               2
+#   MOTC_L_B               2
+#   ENC_L_5V               2
+#   CHG_IN                 1
+#   U1_VCAP                1
+#   Q1_G                   1
+#   Q2_G                   1
+#   U1_SLEW                1
+#   U1_OVT                 1
+#   EN_SRC                 1
+#   U2_INP                 1
+#   U2_INN                 1
+#   I2C_SYS_SCL            1
+#   U3_BATFET              1
+#   U3_SW                  1
+#   U3_VCC                 1
+#   V5_PGOOD               1
+#   U10_RT                 1
+#   U10_SW                 1
+#   U10_RBOOT              1
+#   V5_CM5_NFLT            1
+#   U13_ILM                1
+#   V5_CM5_OFF_REQ         1
+#   U11_FB                 1
+#   U11_SW                 1
+#   U12_FB                 1
+#   U12_SW                 1
+#   HEAD_PWR_NFLT          1
+#   U16_DVDT               1
+#   U16_ILM                1
+#   HEAD_HTR_NFLT          1
+#   CHS_HTR_NFLT           1
+#   U18_ILM                1
+#   LIDAR_EN_G             1
+#   V12_LIDAR_NFLT         1
+#   U19_ILM                1
+#   HEAD_PWR_EN            1
+#   CHS_HTR_EN             1
+#   V12_LIDAR_EN           1
+#   BUS5V_NFLT             1
+#   BUS_5V                 1
+#   HANDS_LAMP_P           1
+#   HANDS_LAMP_K           1
+#   CH_N4A                 1
+#   CH_N4                  1
+#   CH_N5                  1
+#   CH_N8                  1
+#   K1_SET                 1
+#   LAMP_REARM_K           1
+#   LOOP_SRC               1
+#   HEAD_LOOP_OK_RB        1
+#   HEAD_PRES_ID_ADC       1
+#   WDG_RST                1
+#   ARM_PERMIT_G           1
+#   K1_SEAL_A              1
+#   K1_CL                  1
+#   J2_PRES_RB             1
+#   LAMP_PAUSE_K           1
+#   U8_ITMR                1
+#   U8_IMON                1
+#   VMOT_PG                1
+#   U8_DVDT                1
+#   DRV_NSLEEP_G           1
+#   CLAMP_REF              1
+#   MOT_L_IN1              1
+#   MOT_L_IN2              1
+#   U5_IMODE               1
+#   U5_CPH                 1
+#   BRK_L_A                1
+#   BRK_L_B                1
+#   MOT_L_B                1
+#   K2_CL                  1
+#   BIAS_L                 1
+#   BRAKE_L_ISO            1
+VBAT_RAW               Pad 5 [VBAT_RAW] of Q1 on F.Cu                ( 133.50,  31.05) <-> Pad 2 [VBAT_RAW] of C3 on B.Cu                ( 140.03,  35.00)
+VBAT_RAW               Pad 5 [VBAT_RAW] of Q1 on F.Cu                ( 133.50,  31.05) <-> Pad 5 [VBAT_RAW] of U1 on F.Cu                ( 129.64,  39.53)
+VBAT_RAW               Pad 5 [VBAT_RAW] of Q1 on F.Cu                ( 133.50,  31.05) <-> Pad 1 [VBAT_RAW] of R7 on B.Cu                ( 123.32,  26.75)
+VBAT_RAW               Pad 1 [VBAT_RAW] of C1 on B.Cu                ( 143.78,  35.00) <-> Pad 2 [VBAT_RAW] of C3 on B.Cu                ( 140.03,  35.00)
+VBAT_RAW               PTH pad 1 [VBAT_RAW] of J_PWR                 ( 145.25,  30.35) <-> Pad 1 [VBAT_RAW] of R4 on B.Cu                ( 146.00,  34.93)
+VBAT_RAW               PTH pad 2 [VBAT_RAW] of J_PWR                 ( 145.25,  26.15) <-> PTH pad 1 [VBAT_RAW] of J_PWR                 ( 145.25,  30.35)
+VBAT_RAW               Pad 1 [VBAT_RAW] of R4 on B.Cu                ( 146.00,  34.93) <-> Pad 1 [VBAT_RAW] of C1 on B.Cu                ( 143.78,  35.00)
+VBAT_RAW               Pad 1 [VBAT_RAW] of R4 on B.Cu                ( 146.00,  34.93) <-> Pad 1 [VBAT_RAW] of D1 on F.Cu                ( 156.50,  35.85)
+CHG_IN                 PTH pad 3 [CHG_IN] of J_PWR                   ( 145.25,  21.95) <-> Pad 1 [CHG_IN] of F_CHG on F.Cu               ( 147.54,  36.50)
+PLUG_LINK              Pad 2 [PLUG_LINK] of R64 on B.Cu              ( 132.32,  24.75) <-> Pad 1 [PLUG_LINK] of D9 on B.Cu               ( 121.20,  22.56)
+PLUG_LINK              PTH pad 4 [PLUG_LINK] of J_PWR                ( 145.25,  17.75) <-> Pad 2 [PLUG_LINK] of R64 on B.Cu              ( 132.32,  24.75)
+GND                    Via [GND] on F.Cu - B.Cu                      (  39.78,  49.57) <-> Pad 47 [GND] of U20M on F.Cu                  (  37.67,  50.25)
+GND                    Track [GND] on F.Cu, length 0.6700 mm         (  79.75,  32.55) <-> Track [GND] on F.Cu, length 0.5000 mm         (  77.55,  34.25)
+PACK_NTC               Pad 2 [PACK_NTC] of Q6 on F.Cu                ( 112.81,  48.80) <-> Pad 1 [PACK_NTC] of C24 on B.Cu               ( 115.53,  25.50)
+PACK_NTC               Pad 1 [PACK_NTC] of C24 on B.Cu               ( 115.53,  25.50) <-> Pad 2 [PACK_NTC] of D9 on B.Cu                ( 119.30,  22.56)
+PACK_NTC               Pad 1 [PACK_NTC] of J_PAUX on F.Cu            ( 116.12,  20.65) <-> Pad 2 [PACK_NTC] of D9 on B.Cu                ( 119.30,  22.56)
+PACK_NTC               Pad 2 [PACK_NTC] of R24 on F.Cu               ( 118.18,  59.50) <-> Pad 2 [PACK_NTC] of Q6 on F.Cu                ( 112.81,  48.80)
+PACK_PRES_N            Pad 1 [PACK_PRES_N] of TP1 on B.Cu            (  16.25,  73.50) <-> Pad 4 [PACK_PRES_N] of D_PAUSE on B.Cu        (  95.87,  18.25)
+PACK_PRES_N            Pad 2 [PACK_PRES_N] of R13 on B.Cu            ( 116.82,  21.00) <-> Pad 4 [PACK_PRES_N] of D_PAUSE on B.Cu        (  95.87,  18.25)
+PACK_PRES_N            Pad 2 [PACK_PRES_N] of J_PAUX on F.Cu         ( 117.38,  20.65) <-> Pad 2 [PACK_PRES_N] of R13 on B.Cu            ( 116.82,  21.00)
+EN_SYS                 Track [EN_SYS] on F.Cu, length 2.3237 mm      (  52.90,  32.70) <-> Pad 2 [EN_SYS] of J_MODE on F.Cu              (  20.80,   3.70)
+EN_SYS                 Pad 1 [EN_SYS] of R8 on F.Cu                  ( 115.00,  43.68) <-> Track [EN_SYS] on F.Cu, length 0.4178 mm      (  73.64,  28.13)
+EN_SYS                 Pad 1 [EN_SYS] of C4 on F.Cu                  ( 117.25,  43.72) <-> Pad 1 [EN_SYS] of R8 on F.Cu                  ( 115.00,  43.68)
+EN_SYS                 Pad 1 [EN_SYS] of U1 on F.Cu                  ( 127.36,  41.47) <-> Pad 1 [EN_SYS] of C4 on F.Cu                  ( 117.25,  43.72)
+EN_SYS                 Pad 1 [EN_SYS] of TP51 on B.Cu                ( 129.50,   3.50) <-> Pad 1 [EN_SYS] of U1 on F.Cu                  ( 127.36,  41.47)
+U1_VCAP                Pad 4 [U1_VCAP] of U1 on F.Cu                 ( 127.36,  39.53) <-> Pad 1 [U1_VCAP] of C3 on B.Cu                 ( 138.47,  35.00)
+U1_GATE                Pad 1 [U1_GATE] of R3 on F.Cu                 ( 129.32,  43.50) <-> Pad 6 [U1_GATE] of U1 on F.Cu                 ( 129.64,  40.18)
+U1_GATE                Pad 6 [U1_GATE] of U1 on F.Cu                 ( 129.64,  40.18) <-> Pad 1 [U1_GATE] of R1 on F.Cu                 ( 129.25,  28.82)
+U1_GATE                Pad 1 [U1_GATE] of R2 on F.Cu                 ( 137.75,  36.57) <-> Pad 6 [U1_GATE] of U1 on F.Cu                 ( 129.64,  40.18)
+U1_OV                  Pad 1 [U1_OV] of R5 on F.Cu                   ( 131.43,  43.50) <-> Pad 7 [U1_OV] of U1 on F.Cu                   ( 129.64,  40.82)
+U1_OV                  Pad 2 [U1_OV] of R6 on F.Cu                   ( 135.18,  43.00) <-> Pad 1 [U1_OV] of R5 on F.Cu                   ( 131.43,  43.50)
+PSW_SRC                Pad 2 [PSW_SRC] of C2 on F.Cu                 ( 127.00,  27.22) <-> Pad 1 [PSW_SRC] of Q1 on F.Cu                 ( 131.59,  27.10)
+PSW_SRC                Pad 8 [PSW_SRC] of U1 on F.Cu                 ( 129.64,  41.47) <-> Pad 1 [PSW_SRC] of Q2 on F.Cu                 ( 131.59,  35.10)
+PSW_SRC                Pad 1 [PSW_SRC] of Q2 on F.Cu                 ( 131.59,  35.10) <-> Pad 2 [PSW_SRC] of Q2 on F.Cu                 ( 132.87,  35.10)
+PSW_SRC                Pad 1 [PSW_SRC] of Q1 on F.Cu                 ( 131.59,  27.10) <-> Pad 2 [PSW_SRC] of Q1 on F.Cu                 ( 132.87,  27.10)
+PSW_SRC                Pad 2 [PSW_SRC] of Q2 on F.Cu                 ( 132.87,  35.10) <-> Pad 3 [PSW_SRC] of Q2 on F.Cu                 ( 134.13,  35.10)
+PSW_SRC                Pad 2 [PSW_SRC] of Q1 on F.Cu                 ( 132.87,  27.10) <-> Pad 3 [PSW_SRC] of Q1 on F.Cu                 ( 134.13,  27.10)
+PSW_SRC                Pad 3 [PSW_SRC] of Q1 on F.Cu                 ( 134.13,  27.10) <-> Pad 3 [PSW_SRC] of Q2 on F.Cu                 ( 134.13,  35.10)
+Q1_G                   Pad 2 [Q1_G] of R1 on F.Cu                    ( 129.25,  27.18) <-> Pad 4 [Q1_G] of Q1 on F.Cu                    ( 135.41,  27.10)
+Q2_G                   Pad 4 [Q2_G] of Q2 on F.Cu                    ( 135.41,  35.10) <-> Pad 2 [Q2_G] of R2 on F.Cu                    ( 137.75,  34.93)
+VBAT_PROT              Pad 1 [VBAT_PROT] of R_SH1 on F.Cu            ( 127.70,  31.04) <-> Pad 5 [VBAT_PROT] of Q2 on F.Cu               ( 133.50,  39.05)
+VBAT_PROT              Pad 5 [VBAT_PROT] of Q2 on F.Cu               ( 133.50,  39.05) <-> Pad 1 [VBAT_PROT] of R9 on F.Cu               ( 125.57,  43.75)
+U1_SLEW                Pad 1 [U1_SLEW] of C2 on F.Cu                 ( 127.00,  28.78) <-> Pad 2 [U1_SLEW] of R3 on F.Cu                 ( 127.68,  43.50)
+U1_OVT                 Pad 1 [U1_OVT] of R6 on F.Cu                  ( 136.82,  43.00) <-> Pad 2 [U1_OVT] of R4 on B.Cu                  ( 146.00,  36.57)
+EN_SRC                 Pad 1 [EN_SRC] of J_MODE on F.Cu              (  18.80,   3.70) <-> Pad 2 [EN_SRC] of R7 on B.Cu                  ( 121.68,  26.75)
+VBAT_SW                Track [VBAT_SW] on In2.Cu, length 21.8659 mm  (  21.18,   8.72) <-> Pad 5 [VBAT_SW] of U19 on B.Cu                (  16.75,  28.00)
+VBAT_SW                Track [VBAT_SW] on In2.Cu, length 3.4094 mm   (  21.53,  35.49) <-> Via [VBAT_SW] on F.Cu - B.Cu                  (  42.00,  77.03)
+VBAT_SW                Pad 1 [VBAT_SW] of C66 on B.Cu                (  45.03,  84.00) <-> Pad 2 [VBAT_SW] of U15 on F.Cu                (  45.14,  83.33)
+VBAT_SW                Pad 15 [VBAT_SW] of U15 on F.Cu               (  46.67,  84.86) <-> Track [VBAT_SW] on B.Cu, length 0.9250 mm     (  45.03,  84.00)
+VBAT_SW                Via [VBAT_SW] on F.Cu - B.Cu                  (  69.50,  22.43) <-> Pad 1 [VBAT_SW] of R11 on F.Cu                (  24.17,  37.25)
+VBAT_SW                Track [VBAT_SW] on B.Cu, length 0.3270 mm     ( 121.24,  46.52) <-> Track [VBAT_SW] on F.Cu, length 0.6500 mm     ( 116.56,  53.68)
+VBAT_SW                Pad 8 [VBAT_SW] of U2 on F.Cu                 ( 123.20,  40.60) <-> Track [VBAT_SW] on B.Cu, length 1.0250 mm     ( 125.00,  41.03)
+VBAT_SW                Track [VBAT_SW] on B.Cu, length 0.5752 mm     ( 127.53,  45.92) <-> Pad 9 [VBAT_SW] of U3 on F.Cu                 ( 126.75,  47.55)
+U2_INP                 Track [U2_INP] on F.Cu, length 1.4250 mm      ( 123.93,  42.32) <-> Pad 1 [U2_INP] of C5 on F.Cu                  ( 122.28,  46.00)
+U2_INN                 Pad 2 [U2_INN] of C5 on F.Cu                  ( 120.72,  46.00) <-> Track [U2_INN] on In3.Cu, length 2.2670 mm    ( 123.84,  42.56)
+3V3                    Pad 5 [3V3] of U37 on B.Cu                    (  13.14,  70.00) <-> Track [3V3] on F.Cu, length 1.8306 mm         (  13.36,  69.77)
+3V3                    Via [3V3] on F.Cu - B.Cu                      (  39.86,  27.21) <-> Track [3V3] on B.Cu, length 1.4496 mm         (  47.25,  21.22)
+3V3                    Track [3V3] on F.Cu, length 0.6010 mm         (  45.60,  81.56) <-> Track [3V3] on In2.Cu, length 5.6672 mm       (  52.85,  73.07)
+3V3                    Track [3V3] on B.Cu, length 1.9774 mm         (  47.25,  20.03) <-> Pad 1 [3V3] of R196 on B.Cu                   (  57.83,  21.00)
+3V3                    Track [3V3] on B.Cu, length 1.3081 mm         (  57.83,  21.00) <-> Pad 1 [3V3] of R32 on F.Cu                    (  59.08,  29.00)
+3V3                    Pad 16 [3V3] of U5 on F.Cu                    (  59.72,  58.86) <-> Track [3V3] on In3.Cu, length 8.1023 mm       (  49.95,  61.77)
+3V3                    Track [3V3] on B.Cu, length 2.2352 mm         (  62.33,  69.39) <-> Track [3V3] on In3.Cu, length 8.1023 mm       (  49.95,  61.77)
+3V3                    Track [3V3] on B.Cu, length 5.7500 mm         (  58.75,  21.93) <-> Track [3V3] on In3.Cu, length 7.5148 mm       (  67.86,  29.19)
+3V3                    Pad 11 [3V3] of U42 on F.Cu                   (  80.50,  65.74) <-> Track [3V3] on B.Cu, length 4.1236 mm         (  76.84,  67.50)
+3V3                    Track [3V3] on F.Cu, length 12.9937 mm        (  81.14,  56.95) <-> Pad 11 [3V3] of U42 on F.Cu                   (  80.50,  65.74)
+3V3                    Pad 10 [3V3] of U40 on B.Cu                   (  92.47,  22.00) <-> Track [3V3] on B.Cu, length 0.2444 mm         (  92.30,  24.17)
+3V3                    Track [3V3] on B.Cu, length 0.4096 mm         ( 122.28,  40.41) <-> Pad 6 [3V3] of U2 on F.Cu                     ( 123.20,  39.60)
+3V3                    Track [3V3] on B.Cu, length 0.5165 mm         ( 129.79,  49.50) <-> Track [3V3] on In3.Cu, length 0.2459 mm       ( 121.72,  40.72)
+3V3                    Pad 17 [3V3] of U3 on F.Cu                    ( 129.95,  49.25) <-> Track [3V3] on B.Cu, length 2.4640 mm         ( 131.53,  47.76)
+I2C_SYS_SDA            Track [I2C_SYS_SDA] on In2.Cu, length 3.8344  (  35.92,  57.51) <-> Pad 2 [I2C_SYS_SDA] of R211 on F.Cu           (  13.25,  62.17)
+I2C_SYS_SDA            Pad 15 [I2C_SYS_SDA] of U45 on B.Cu           (  46.86,  39.38) <-> Pad 4 [I2C_SYS_SDA] of U2 on F.Cu             ( 118.80,  40.10)
+I2C_SYS_SDA            Pad 4 [I2C_SYS_SDA] of U2 on F.Cu             ( 118.80,  40.10) <-> Track [I2C_SYS_SDA] on B.Cu, length 1.8057 mm ( 134.53,  41.78)
+I2C_SYS_SCL            Track [I2C_SYS_SCL] on B.Cu, length 3.4104 mm (  47.78,  40.03) <-> Track [I2C_SYS_SCL] on F.Cu, length 0.0812 mm ( 118.80,  39.60)
+VBAT_SENSE             Pad 1 [VBAT_SENSE] of C10 on F.Cu             (  22.03,  39.00) <-> Pad 2 [VBAT_SENSE] of R11 on F.Cu             (  25.83,  37.25)
+VBAT_SENSE             Pad 1 [VBAT_SENSE] of R12 on F.Cu             (  22.33,  41.25) <-> Pad 1 [VBAT_SENSE] of C10 on F.Cu             (  22.03,  39.00)
+VBAT_SENSE             Pad 2 [VBAT_SENSE] of R11 on F.Cu             (  25.83,  37.25) <-> Via [VBAT_SENSE] on F.Cu - B.Cu               (  26.82,  38.48)
+CHG_F                  Pad 1 [CHG_F] of D2 on F.Cu                   ( 147.85,  41.00) <-> Pad 2 [CHG_F] of F_CHG on F.Cu                ( 152.46,  36.50)
+CHG_F                  Pad 2 [CHG_F] of Q3 on F.Cu                   ( 151.26,  48.00) <-> Pad 1 [CHG_F] of D2 on F.Cu                   ( 147.85,  41.00)
+Q3_G                   Pad 1 [Q3_G] of R14 on F.Cu                   ( 141.07,  50.75) <-> Pad 1 [Q3_G] of Q3 on F.Cu                    ( 144.96,  50.28)
+Q3_G                   Pad 2 [Q3_G] of D3 on F.Cu                    ( 141.15,  53.25) <-> Pad 1 [Q3_G] of R14 on F.Cu                   ( 141.07,  50.75)
+CHG_VIN                Pad 1 [CHG_VIN] of Q4 on F.Cu                 ( 135.56,  47.97) <-> Pad 1 [CHG_VIN] of D3 on F.Cu                 ( 137.85,  53.25)
+CHG_VIN                Pad 1 [CHG_VIN] of Q4 on F.Cu                 ( 135.56,  47.97) <-> Pad 1 [CHG_VIN] of U3 on F.Cu                 ( 126.05,  51.75)
+CHG_VIN                Pad 2 [CHG_VIN] of Q4 on F.Cu                 ( 135.56,  47.32) <-> Pad 3 [CHG_VIN] of Q4 on F.Cu                 ( 135.56,  46.68)
+CHG_VIN                Pad 2 [CHG_VIN] of Q4 on F.Cu                 ( 135.56,  47.32) <-> Pad 1 [CHG_VIN] of Q4 on F.Cu                 ( 135.56,  47.97)
+CHG_VIN                Pad 3 [CHG_VIN] of Q4 on F.Cu                 ( 135.56,  46.68) <-> Pad 1 [CHG_VIN] of R26 on F.Cu                ( 138.50,  40.82)
+CHG_VIN                Pad 1 [CHG_VIN] of R26 on F.Cu                ( 138.50,  40.82) <-> Pad 1 [CHG_VIN] of C11 on F.Cu                ( 141.50,  43.22)
+CHG_VIN                Pad 1 [CHG_VIN] of C11 on F.Cu                ( 141.50,  43.22) <-> Pad 1 [CHG_VIN] of C12 on F.Cu                ( 144.50,  43.03)
+CHG_VIN                Pad 1 [CHG_VIN] of C12 on F.Cu                ( 144.50,  43.03) <-> Pad 3 [CHG_VIN] of Q3 on F.Cu                 ( 144.96,  45.72)
+U3_CLP                 Pad 5 [U3_CLP] of Q4 on F.Cu                  ( 137.60,  47.00) <-> Pad 3 [U3_CLP] of U3 on F.Cu                  ( 126.05,  50.75)
+U3_CLP                 Pad 1 [U3_CLP] of R_SNSI on F.Cu              ( 141.00,  45.54) <-> Pad 5 [U3_CLP] of Q4 on F.Cu                  ( 137.60,  47.00)
+VSYS                   Pad 1 [VSYS] of C34 on B.Cu                   (  48.03,  30.75) <-> Pad 1 [VSYS] of C33 on B.Cu                   (  43.72,  36.00)
+VSYS                   Pad 1 [VSYS] of C35 on B.Cu                   (  49.03,  45.25) <-> Pad 1 [VSYS] of C33 on B.Cu                   (  43.72,  36.00)
+VSYS                   Pad 1 [VSYS] of C32 on B.Cu                   (  50.75,  23.72) <-> Pad 1 [VSYS] of C34 on B.Cu                   (  48.03,  30.75)
+VSYS                   Via [VSYS] on F.Cu - B.Cu                     (  54.85,  33.30) <-> Pad 1 [VSYS] of C34 on B.Cu                   (  48.03,  30.75)
+VSYS                   Via [VSYS] on F.Cu - B.Cu                     ( 118.60,  54.00) <-> Track [VSYS] on In3.Cu, length 3.9448 mm      (  85.66,  36.36)
+VSYS                   Pad 1 [VSYS] of TP42 on B.Cu                  ( 135.50,  17.50) <-> Via [VSYS] on F.Cu - B.Cu                     ( 125.27,  46.58)
+U3_BATFET              Pad 4 [U3_BATFET] of Q5 on F.Cu               ( 116.56,  53.03) <-> Pad 6 [U3_BATFET] of U3 on F.Cu               ( 126.05,  49.25)
+U3_CSP                 Pad 2 [U3_CSP] of L1 on F.Cu                  ( 129.66,  57.50) <-> Pad 7 [U3_CSP] of U3 on F.Cu                  ( 126.05,  48.75)
+U3_CSP                 Pad 1 [U3_CSP] of R_SNSB on F.Cu              ( 133.50,  56.04) <-> Pad 2 [U3_CSP] of L1 on F.Cu                  ( 129.66,  57.50)
+U3_SW                  Pad 10 [U3_SW] of U3 on F.Cu                  ( 127.25,  47.55) <-> Pad 1 [U3_SW] of L1 on F.Cu                   ( 126.34,  57.50)
+U3_INTVCC              Pad 2 [U3_INTVCC] of R21 on F.Cu              ( 117.75,  49.18) <-> Pad 2 [U3_INTVCC] of R18 on F.Cu              ( 120.00,  49.18)
+U3_INTVCC              Pad 2 [U3_INTVCC] of R18 on F.Cu              ( 120.00,  49.18) <-> Pad 15 [U3_INTVCC] of U3 on F.Cu              ( 129.95,  48.25)
+U3_V2P5                Pad 16 [U3_V2P5] of U3 on F.Cu                ( 129.95,  48.75) <-> Pad 1 [U3_V2P5] of C15 on F.Cu                ( 133.72,  53.00)
+U3_V2P5                Pad 2 [U3_V2P5] of R19 on F.Cu                ( 136.00,  55.68) <-> Pad 1 [U3_V2P5] of C15 on F.Cu                ( 133.72,  53.00)
+U3_V2P5                Pad 2 [U3_V2P5] of R22 on F.Cu                ( 138.25,  55.68) <-> Pad 2 [U3_V2P5] of R19 on F.Cu                ( 136.00,  55.68)
+U3_NTC                 Pad 1 [U3_NTC] of R24 on F.Cu                 ( 119.82,  59.50) <-> Pad 3 [U3_NTC] of Q6 on F.Cu                  ( 114.69,  49.75)
+U3_NTC                 Track [U3_NTC] on B.Cu, length 3.1373 mm      ( 131.22,  57.03) <-> Pad 1 [U3_NTC] of R24 on F.Cu                 ( 119.82,  59.50)
+U3_NTC                 Track [U3_NTC] on B.Cu, length 4.8802 mm      ( 131.22,  52.15) <-> Pad 2 [U3_NTC] of R23 on F.Cu                 ( 134.07,  61.25)
+U3_CELLS0              Pad 1 [U3_CELLS0] of R18 on F.Cu              ( 120.00,  50.82) <-> Pad 26 [U3_CELLS0] of U3 on F.Cu              ( 127.75,  52.45)
+U3_CELLS0              Pad 26 [U3_CELLS0] of U3 on F.Cu              ( 127.75,  52.45) <-> Pad 1 [U3_CELLS0] of R17 on F.Cu              ( 123.57,  58.50)
+U3_CELLS0              Pad 26 [U3_CELLS0] of U3 on F.Cu              ( 127.75,  52.45) <-> Pad 1 [U3_CELLS0] of R19 on F.Cu              ( 136.00,  57.32)
+U3_CELLS1              Pad 1 [U3_CELLS1] of R21 on F.Cu              ( 117.75,  50.82) <-> Pad 27 [U3_CELLS1] of U3 on F.Cu              ( 127.25,  52.45)
+U3_CELLS1              Pad 27 [U3_CELLS1] of U3 on F.Cu              ( 127.25,  52.45) <-> Pad 1 [U3_CELLS1] of R20 on F.Cu              ( 123.57,  60.75)
+U3_CELLS1              Pad 27 [U3_CELLS1] of U3 on F.Cu              ( 127.25,  52.45) <-> Pad 1 [U3_CELLS1] of R22 on F.Cu              ( 138.25,  57.32)
+U3_VCC                 Pad 1 [U3_VCC] of C23 on F.Cu                 ( 119.78,  57.25) <-> Pad 2 [U3_VCC] of R16 on F.Cu                 ( 122.25,  54.07)
+CHG_TEMP_OK            Pad 7 [CHG_TEMP_OK] of U32 on B.Cu            (  33.47,  57.37) <-> Pad 2 [CHG_TEMP_OK] of R89 on B.Cu            (  32.00,  41.07)
+CHG_TEMP_OK            Pad 1 [CHG_TEMP_OK] of R88 on B.Cu            (  54.83,  71.00) <-> Pad 7 [CHG_TEMP_OK] of U32 on B.Cu            (  33.47,  57.37)
+CHG_TEMP_OK            Pad 1 [CHG_TEMP_OK] of R88 on B.Cu            (  54.83,  71.00) <-> Pad 1 [CHG_TEMP_OK] of Q6 on F.Cu             ( 112.81,  50.70)
+CHG_TEMP_OK            Pad 1 [CHG_TEMP_OK] of TP54 on B.Cu           ( 152.50,  42.25) <-> Pad 1 [CHG_TEMP_OK] of Q6 on F.Cu             ( 112.81,  50.70)
+CHG_VIN_DIV            Pad 1 [CHG_VIN_DIV] of Q32 on F.Cu            (  63.94,  76.80) <-> Pad 1 [CHG_VIN_DIV] of Q31 on F.Cu            (  66.44,  71.05)
+CHG_VIN_DIV            Pad 1 [CHG_VIN_DIV] of Q21 on F.Cu            (  85.94,  71.80) <-> Pad 1 [CHG_VIN_DIV] of Q31 on F.Cu            (  66.44,  71.05)
+CHG_VIN_DIV            Pad 2 [CHG_VIN_DIV] of R26 on F.Cu            ( 138.50,  39.18) <-> Pad 1 [CHG_VIN_DIV] of R27 on F.Cu            ( 140.75,  38.07)
+CHG_VIN_DIV            Pad 2 [CHG_VIN_DIV] of R26 on F.Cu            ( 138.50,  39.18) <-> Pad 1 [CHG_VIN_DIV] of Q21 on F.Cu            (  85.94,  71.80)
+CHG_VIN_DIV            Pad 1 [CHG_VIN_DIV] of R27 on F.Cu            ( 140.75,  38.07) <-> Pad 1 [CHG_VIN_DIV] of C25 on F.Cu            ( 143.00,  38.03)
+V5_BUCK                Pad 1 [V5_BUCK] of R33 on F.Cu                (  39.83,  37.25) <-> Pad 1 [V5_BUCK] of R30 on F.Cu                (  45.92,  35.75)
+V5_BUCK                Pad 1 [V5_BUCK] of R33 on F.Cu                (  39.83,  37.25) <-> Pad 1 [V5_BUCK] of R37 on F.Cu                (  36.17,  27.75)
+V5_BUCK                Pad 1 [V5_BUCK] of C29 on B.Cu                (  48.97,  36.00) <-> Pad 1 [V5_BUCK] of C31 on B.Cu                (  48.97,  33.25)
+V5_BUCK                Pad 1 [V5_BUCK] of C29 on B.Cu                (  48.97,  36.00) <-> Pad 1 [V5_BUCK] of R30 on F.Cu                (  45.92,  35.75)
+V5_BUCK                Pad 1 [V5_BUCK] of C31 on B.Cu                (  48.97,  33.25) <-> Pad 1 [V5_BUCK] of C30 on B.Cu                (  50.50,  28.97)
+V5_BUCK                Pad 1 [V5_BUCK] of C28 on F.Cu                (  49.00,  44.03) <-> Pad 1 [V5_BUCK] of C29 on B.Cu                (  48.97,  36.00)
+V5_BUCK                Pad 1 [V5_BUCK] of C30 on B.Cu                (  50.50,  28.97) <-> Pad 1 [V5_BUCK] of C39 on B.Cu                (  47.78,  24.50)
+V5_BUCK                Pad 5 [V5_BUCK] of U13 on F.Cu                (  50.75,  29.00) <-> Pad 1 [V5_BUCK] of C30 on B.Cu                (  50.50,  28.97)
+V5_BUCK                Pad 1 [V5_BUCK] of U10 on F.Cu                (  51.95,  35.75) <-> Pad 1 [V5_BUCK] of C29 on B.Cu                (  48.97,  36.00)
+V5_BUCK                Pad 2 [V5_BUCK] of L2 on F.Cu                 (  62.52,  34.30) <-> Pad 1 [V5_BUCK] of U10 on F.Cu                (  51.95,  35.75)
+U10_FB                 Track [U10_FB] on F.Cu, length 0.1809 mm      (  47.58,  35.57) <-> Pad 2 [U10_FB] of C28 on F.Cu                 (  49.00,  42.47)
+U10_FB                 Track [U10_FB] on F.Cu, length 0.1809 mm      (  47.58,  35.57) <-> Pad 1 [U10_FB] of R31 on F.Cu                 (  43.83,  34.50)
+V5_PGOOD               Track [V5_PGOOD] on F.Cu, length 0.6060 mm    (  51.34,  33.75) <-> Pad 2 [V5_PGOOD] of R32 on F.Cu               (  57.42,  29.00)
+U10_RT                 Pad 1 [U10_RT] of R28 on F.Cu                 (  47.58,  33.50) <-> Pad 6 [U10_RT] of U10 on F.Cu                 (  51.95,  33.25)
+U10_SW                 Pad 2 [U10_SW] of R29 on F.Cu                 (  53.67,  29.00) <-> Track [U10_SW] on F.Cu, length 2.0679 mm      (  54.37,  32.26)
+U10_RBOOT              Pad 1 [U10_RBOOT] of R29 on F.Cu              (  55.33,  29.00) <-> Track [U10_RBOOT] on F.Cu, length 1.1653 mm   (  52.90,  36.30)
+V5_SENSE               Track [V5_SENSE] on In2.Cu, length 3.6453 mm  (  31.11,  35.22) <-> Pad 1 [V5_SENSE] of C36 on F.Cu               (  30.53,  33.50)
+V5_SENSE               Track [V5_SENSE] on F.Cu, length 1.3225 mm    (  32.25,  41.32) <-> Pad 2 [V5_SENSE] of R33 on F.Cu               (  38.17,  37.25)
+U13_EN                 Pad 2 [U13_EN] of R37 on F.Cu                 (  37.83,  27.75) <-> Track [U13_EN] on In2.Cu, length 2.4287 mm    (  47.81,  34.52)
+U13_EN                 Track [U13_EN] on In2.Cu, length 5.0398 mm    (  45.66,  42.22) <-> Pad 1 [U13_EN] of R38 on F.Cu                 (  42.75,  40.43)
+V5_CM5_NFLT            Pad 9 [V5_CM5_NFLT] of U45 on B.Cu            (  46.86,  43.28) <-> Track [V5_CM5_NFLT] on In3.Cu, length 8.4982  (  37.99,  29.83)
+V5_CM5                 PTH pad 2 [V5_CM5] of J_CM5                   (   9.76,  16.12) <-> PTH pad 1 [V5_CM5] of J_CM5                   (   9.76,  13.12)
+V5_CM5                 Pad 1 [V5_CM5] of C40 on B.Cu                 (  43.72,  30.75) <-> PTH pad 2 [V5_CM5] of J_CM5                   (   9.76,  16.12)
+V5_CM5                 Pad 6 [V5_CM5] of U13 on F.Cu                 (  51.25,  29.00) <-> Pad 1 [V5_CM5] of C40 on B.Cu                 (  43.72,  30.75)
+V5_CM5                 Pad 1 [V5_CM5] of TP43 on B.Cu                ( 131.00,  14.00) <-> Pad 6 [V5_CM5] of U13 on F.Cu                 (  51.25,  29.00)
+U13_ILM                Pad 1 [U13_ILM] of TP2 on B.Cu                (  38.25,  49.75) <-> Pad 9 [U13_ILM] of U13 on F.Cu                (  51.85,  29.25)
+V5_CM5_OFF_REQ         Track [V5_CM5_OFF_REQ] on B.Cu, length 0.6687 (  46.86,  53.28) <-> Pad 1 [V5_CM5_OFF_REQ] of Q10 on F.Cu         (  46.95,  44.44)
+U11_FB                 Track [U11_FB] on F.Cu, length 1.0491 mm      (  72.41,  22.97) <-> Pad 1 [U11_FB] of R41 on F.Cu                 (  75.92,  28.25)
+U11_SW                 Track [U11_SW] on F.Cu, length 1.2267 mm      (  67.64,  30.45) <-> Pad 2 [U11_SW] of C41 on F.Cu                 (  73.75,  24.97)
+U12_FB                 Pad 1 [U12_FB] of R43 on F.Cu                 (  79.68,  28.25) <-> Track [U12_FB] on In2.Cu, length 1.9094 mm    (  76.98,  24.21)
+U12_SW                 Track [U12_SW] on F.Cu, length 0.0800 mm      (  73.64,  30.45) <-> Pad 2 [U12_SW] of C45 on F.Cu                 (  77.53,  26.00)
+V5_AUX                 Pad 1 [V5_AUX] of R73 on B.Cu                 (   8.92,  55.00) <-> Pad 1 [V5_AUX] of R70 on B.Cu                 (  14.67,  51.25)
+V5_AUX                 Pad 1 [V5_AUX] of R70 on B.Cu                 (  14.67,  51.25) <-> Track [V5_AUX] on B.Cu, length 3.3163 mm      (  21.37,  56.09)
+V5_AUX                 Pad 1 [V5_AUX] of R75 on F.Cu                 (  15.50,  63.83) <-> Pad 1 [V5_AUX] of C47 on B.Cu                 (  16.50,  62.03)
+V5_AUX                 Pad 1 [V5_AUX] of R75 on F.Cu                 (  15.50,  63.83) <-> Pad 1 [V5_AUX] of F1 on B.Cu                  (   3.60,  89.75)
+V5_AUX                 Pad 1 [V5_AUX] of C47 on B.Cu                 (  16.50,  62.03) <-> Track [V5_AUX] on B.Cu, length 3.3163 mm      (  21.37,  56.09)
+V5_AUX                 Pad 1 [V5_AUX] of C72 on B.Cu                 (  23.72,  36.75) <-> Pad 1 [V5_AUX] of C78 on B.Cu                 (  23.97,  44.00)
+V5_AUX                 Pad 1 [V5_AUX] of C85 on B.Cu                 (  28.25,  44.03) <-> Pad 1 [V5_AUX] of C78 on B.Cu                 (  23.97,  44.00)
+V5_AUX                 Pad 1 [V5_AUX] of C85 on B.Cu                 (  28.25,  44.03) <-> Track [V5_AUX] on B.Cu, length 1.5036 mm      (  30.83,  53.15)
+V5_AUX                 Track [V5_AUX] on B.Cu, length 1.2045 mm      (  29.33,  53.15) <-> Pad 8 [V5_AUX] of U30 on B.Cu                 (  22.47,  56.09)
+V5_AUX                 Track [V5_AUX] on B.Cu, length 0.1060 mm      (  32.00,  39.53) <-> Pad 1 [V5_AUX] of C85 on B.Cu                 (  28.25,  44.03)
+V5_AUX                 Pad 1 [V5_AUX] of R83 on F.Cu                 (  34.92,  59.25) <-> Pad 8 [V5_AUX] of U32 on B.Cu                 (  33.47,  56.09)
+V5_AUX                 Pad 1 [V5_AUX] of R83 on F.Cu                 (  34.92,  59.25) <-> Pad 8 [V5_AUX] of U31 on B.Cu                 (  46.47,  56.59)
+V5_AUX                 Pad 8 [V5_AUX] of U31 on B.Cu                 (  46.47,  56.59) <-> Track [V5_AUX] on B.Cu, length 6.5921 mm      (  55.66,  61.16)
+V5_AUX                 Track [V5_AUX] on B.Cu, length 5.1579 mm      (  51.00,  65.82) <-> Pad 1 [V5_AUX] of R65 on B.Cu                 (  45.08,  88.50)
+V5_AUX                 Track [V5_AUX] on F.Cu, length 0.5645 mm      (  56.47,  61.41) <-> Pad 1 [V5_AUX] of C118 on B.Cu                (  62.97,  71.00)
+V5_AUX                 Pad 1 [V5_AUX] of J_PANEL on F.Cu             (  58.42,  13.25) <-> Track [V5_AUX] on F.Cu, length 1.1314 mm      (  45.06,  40.45)
+V5_AUX                 Pad 1 [V5_AUX] of R63 on F.Cu                 (  68.92,  71.75) <-> Pad 1 [V5_AUX] of C118 on B.Cu                (  62.97,  71.00)
+V5_AUX                 Pad 1 [V5_AUX] of R62 on F.Cu                 (  71.50,  77.42) <-> Pad 1 [V5_AUX] of R63 on F.Cu                 (  68.92,  71.75)
+V5_AUX                 Pad 1 [V5_AUX] of R62 on F.Cu                 (  71.50,  77.42) <-> Pad 1 [V5_AUX] of R189 on F.Cu                (  75.75,  87.58)
+V5_AUX                 Pad 1 [V5_AUX] of R42 on F.Cu                 (  79.07,  23.75) <-> Pad 2 [V5_AUX] of L4 on F.Cu                  (  75.30,  35.00)
+V5_AUX                 Pad 1 [V5_AUX] of R42 on F.Cu                 (  79.07,  23.75) <-> Pad 1 [V5_AUX] of J_PANEL on F.Cu             (  58.42,  13.25)
+V5_AUX                 Pad 1 [V5_AUX] of R42 on F.Cu                 (  79.07,  23.75) <-> Pad 1 [V5_AUX] of TP45 on B.Cu                ( 138.50,   6.75)
+V5_AUX                 Pad 1 [V5_AUX] of C130 on B.Cu                ( 107.53,  71.00) <-> Pad 1 [V5_AUX] of R189 on F.Cu                (  75.75,  87.58)
+V5_AUX                 Track [V5_AUX] on F.Cu, length 0.3182 mm      ( 110.97,  69.50) <-> Pad 1 [V5_AUX] of R282 on F.Cu                ( 121.93,  77.75)
+V5_AUX                 Track [V5_AUX] on F.Cu, length 1.2700 mm      ( 119.53,  83.36) <-> Pad 1 [V5_AUX] of R282 on F.Cu                ( 121.93,  77.75)
+V5_AUX                 Track [V5_AUX] on In3.Cu, length 4.2426 mm    ( 131.47,  85.91) <-> Pad 1 [V5_AUX] of R285 on F.Cu                ( 134.50,  81.34)
+V5_AUX                 Pad 1 [V5_AUX] of R285 on F.Cu                ( 134.50,  81.34) <-> Pad 1 [V5_AUX] of F2 on B.Cu                  ( 149.75,  69.60)
+VREF_3V0               Pad 1 [VREF_3V0] of C50 on B.Cu               (  15.00,  57.72) <-> Pad 1 [VREF_3V0] of C51 on B.Cu               (  28.47,  51.25)
+VREF_3V0               Pad 1 [VREF_3V0] of C50 on B.Cu               (  15.00,  57.72) <-> Pad 1 [VREF_3V0] of R219 on F.Cu              (   6.17,  42.25)
+VREF_3V0               Pad 1 [VREF_3V0] of C51 on B.Cu               (  28.47,  51.25) <-> Track [VREF_3V0] on In3.Cu, length 0.4711 mm  (  34.72,  44.67)
+VREF_3V0               Pad 1 [VREF_3V0] of C143 on B.Cu              (  31.75,  21.28) <-> Pad 1 [VREF_3V0] of C144 on B.Cu              (  29.50,  21.28)
+VREF_3V0               Pad 1 [VREF_3V0] of C143 on B.Cu              (  31.75,  21.28) <-> Track [VREF_3V0] on F.Cu, length 1.0450 mm    (  33.75,  41.32)
+VREF_3V0               Pad 1 [VREF_3V0] of R86 on B.Cu               (  40.83,  77.00) <-> Pad 1 [VREF_3V0] of R77 on B.Cu               (  11.00,  91.08)
+VREF_3V0               Track [VREF_3V0] on In3.Cu, length 4.2214 mm  (  41.01,  42.60) <-> Pad 1 [VREF_3V0] of R79 on B.Cu               (  49.00,  62.08)
+VREF_3V0               Pad 1 [VREF_3V0] of R79 on B.Cu               (  49.00,  62.08) <-> Pad 1 [VREF_3V0] of R86 on B.Cu               (  40.83,  77.00)
+VREF_3V0               Pad 5 [VREF_3V0] of U5 on F.Cu                (  62.33,  53.14) <-> Pad 1 [VREF_3V0] of R79 on B.Cu               (  49.00,  62.08)
+VREF_3V0               Pad 5 [VREF_3V0] of U5 on F.Cu                (  62.33,  53.14) <-> Pad 5 [VREF_3V0] of U6 on F.Cu                (  98.32,  53.14)
+VREF_3V0               Pad 1 [VREF_3V0] of R217 on B.Cu              (  93.50,  15.32) <-> Pad 1 [VREF_3V0] of R215 on B.Cu              (  88.00,  15.32)
+VREF_3V0               Pad 1 [VREF_3V0] of R217 on B.Cu              (  93.50,  15.32) <-> Pad 1 [VREF_3V0] of TP46 on B.Cu              ( 131.00,   8.75)
+VREF_3V0               Pad 5 [VREF_3V0] of U6 on F.Cu                (  98.32,  53.14) <-> Pad 1 [VREF_3V0] of R217 on B.Cu              (  93.50,  15.32)
+3V3A                   Pad 1 [3V3A] of C52 on B.Cu                   (  13.25,  61.97) <-> Pad 1 [3V3A] of D11 on F.Cu                   (  15.85,  45.25)
+3V3A                   Pad 1 [3V3A] of D11 on F.Cu                   (  15.85,  45.25) <-> Pad 1 [3V3A] of C53 on B.Cu                   (  32.75,  52.47)
+3V3A                   Pad 1 [3V3A] of C53 on B.Cu                   (  32.75,  52.47) <-> Track [3V3A] on F.Cu, length 1.0450 mm        (  34.25,  41.32)
+3V3A                   Pad 2 [3V3A] of FB_A on B.Cu                  (  36.00,  61.29) <-> Pad 1 [3V3A] of C53 on B.Cu                   (  32.75,  52.47)
+CHS_HTR_F              Pad 1 [CHS_HTR_F] of C63 on F.Cu              (  59.50,  76.03) <-> Pad 1 [CHS_HTR_F] of U15 on F.Cu              (  45.14,  83.97)
+CHS_HTR_F              Pad 1 [CHS_HTR_F] of C63 on F.Cu              (  59.50,  76.03) <-> Track [CHS_HTR_F] on In3.Cu, length 2.7064 mm ( 150.04,  24.10)
+HEAD_PWR_F             Pad 2 [HEAD_PWR_F] of R_SH2 on F.Cu           (  42.00,  80.96) <-> Track [HEAD_PWR_F] on F.Cu, length 2.2182 mm  (  48.86,  83.33)
+HEAD_PWR_F             Track [HEAD_PWR_F] on F.Cu, length 2.2182 mm  (  48.86,  83.33) <-> Pad 5 [HEAD_PWR_F] of U16 on F.Cu             (  49.75,  78.00)
+HEAD_HTR_F             Pad 1 [HEAD_HTR_F] of C60 on F.Cu             (  45.25,  89.22) <-> Pad 2 [HEAD_HTR_F] of R_SH3 on F.Cu           (  42.00,  89.96)
+HEAD_HTR_F             Pad 14 [HEAD_HTR_F] of U15 on F.Cu            (  47.33,  84.86) <-> Pad 5 [HEAD_HTR_F] of U17 on F.Cu             (  51.75,  86.00)
+HEAD_HTR_F             Pad 14 [HEAD_HTR_F] of U15 on F.Cu            (  47.33,  84.86) <-> Pad 1 [HEAD_HTR_F] of C60 on F.Cu             (  45.25,  89.22)
+HEAD_PWR_EN_G          Track [HEAD_PWR_EN_G] on In3.Cu, length 5.721 (  54.87,  78.90) <-> Pad 2 [HEAD_PWR_EN_G] of R52 on F.Cu          (  55.25,  74.33)
+HEAD_PWR_EN_G          Pad 2 [HEAD_PWR_EN_G] of R52 on F.Cu          (  55.25,  74.33) <-> Pad 3 [HEAD_PWR_EN_G] of Q31 on F.Cu          (  64.56,  72.00)
+HEAD_PWR_NFLT          Pad 4 [HEAD_PWR_NFLT] of U45 on B.Cu          (  41.14,  40.68) <-> Track [HEAD_PWR_NFLT] on F.Cu, length 0.0366  (  48.75,  71.61)
+HEAD_PWR_E             Pad 1 [HEAD_PWR_E] of L5 on F.Cu              (  53.81,  78.00) <-> Pad 6 [HEAD_PWR_E] of U16 on F.Cu             (  50.25,  78.00)
+HEAD_PWR_E             Pad 1 [HEAD_PWR_E] of C67 on F.Cu             (  57.53,  72.00) <-> Pad 1 [HEAD_PWR_E] of L5 on F.Cu              (  53.81,  78.00)
+U16_DVDT               Pad 1 [U16_DVDT] of C55 on F.Cu               (  47.28,  77.00) <-> Pad 7 [U16_DVDT] of U16 on F.Cu               (  50.85,  77.25)
+U16_ILM                Pad 1 [U16_ILM] of TP3 on B.Cu                (  34.25,  48.25) <-> Pad 1 [U16_ILM] of R44 on F.Cu                (  50.75,  75.33)
+HEAD_HTR_EN_G          Pad 2 [HEAD_HTR_EN_G] of R54 on F.Cu          (  39.50,  79.83) <-> Track [HEAD_HTR_EN_G] on F.Cu, length 0.6887  (  51.15,  86.75)
+HEAD_HTR_EN_G          Pad 3 [HEAD_HTR_EN_G] of Q33 on F.Cu          (  57.06,  85.25) <-> Track [HEAD_HTR_EN_G] on In2.Cu, length 1.922 (  56.29,  88.12)
+HEAD_HTR_EN_G          Pad 3 [HEAD_HTR_EN_G] of Q32 on F.Cu          (  62.06,  77.75) <-> Pad 3 [HEAD_HTR_EN_G] of Q33 on F.Cu          (  57.06,  85.25)
+HEAD_HTR_NFLT          Pad 5 [HEAD_HTR_NFLT] of U45 on B.Cu          (  41.14,  41.32) <-> Track [HEAD_HTR_NFLT] on In2.Cu, length 9.597 (  52.16,  74.36)
+HEAD_HTR_P             Pad 1 [HEAD_HTR_P] of D5 on F.Cu              (  49.00,  89.85) <-> PTH pad 3 [HEAD_HTR_P] of J_HEAD1             (  26.15,  85.25)
+HEAD_HTR_P             Pad 6 [HEAD_HTR_P] of U17 on F.Cu             (  52.25,  86.00) <-> Pad 1 [HEAD_HTR_P] of D5 on F.Cu              (  49.00,  89.85)
+HEAD_HTR_P             Pad 1 [HEAD_HTR_P] of C69 on F.Cu             (  66.28,  78.25) <-> Pad 6 [HEAD_HTR_P] of U17 on F.Cu             (  52.25,  86.00)
+U17_ILM                Pad 9 [U17_ILM] of U17 on F.Cu                (  52.85,  86.25) <-> Pad 1 [U17_ILM] of TP4 on B.Cu                (  28.75,  48.00)
+U17_ILM                Pad 1 [U17_ILM] of R46 on F.Cu                (  54.75,  86.08) <-> Pad 9 [U17_ILM] of U17 on F.Cu                (  52.85,  86.25)
+CHS_HTR_EN_G           Pad 3 [CHS_HTR_EN_G] of Q34 on B.Cu           ( 134.50,  34.06) <-> Pad 2 [CHS_HTR_EN_G] of R56 on B.Cu           ( 132.32,  27.00)
+CHS_HTR_EN_G           Track [CHS_HTR_EN_G] on B.Cu, length 0.2772 m ( 148.95,  34.73) <-> Pad 3 [CHS_HTR_EN_G] of Q34 on B.Cu           ( 134.50,  34.06)
+CHS_HTR_NFLT           Pad 6 [CHS_HTR_NFLT] of U45 on B.Cu           (  41.14,  41.97) <-> Track [CHS_HTR_NFLT] on B.Cu, length 1.8014 m ( 137.35,  27.77)
+CHS_HTR_P              Pad 1 [CHS_HTR_P] of D7 on B.Cu               ( 134.35,  11.00) <-> PTH pad 1 [CHS_HTR_P] of J_HTR                ( 145.62,   9.76)
+CHS_HTR_P              PTH pad 1 [CHS_HTR_P] of J_HTR                ( 145.62,   9.76) <-> Pad 1 [CHS_HTR_P] of C71 on B.Cu              ( 157.25,  13.22)
+CHS_HTR_P              Pad 1 [CHS_HTR_P] of C71 on B.Cu              ( 157.25,  13.22) <-> Pad 6 [CHS_HTR_P] of U18 on B.Cu              ( 152.75,  24.00)
+U18_ILM                Pad 1 [U18_ILM] of TP5 on B.Cu                (  42.25,  24.25) <-> Track [U18_ILM] on In2.Cu, length 2.9782 mm   ( 154.61,  15.43)
+LIDAR_EN_G             Pad 2 [LIDAR_EN_G] of R58 on B.Cu             (  20.92,  32.50) <-> Pad 1 [LIDAR_EN_G] of U19 on B.Cu             (  16.15,  27.25)
+V12_LIDAR_NFLT         Track [V12_LIDAR_NFLT] on In3.Cu, length 0.58 (  20.17,  30.25) <-> Pad 7 [V12_LIDAR_NFLT] of U45 on B.Cu         (  41.14,  42.62)
+V12_LIDAR              PTH pad 1 [V12_LIDAR] of J_LIDAR              (   9.76,  27.12) <-> Pad 6 [V12_LIDAR] of U19 on B.Cu              (  17.25,  28.00)
+V12_LIDAR              Pad 1 [V12_LIDAR] of C70 on B.Cu              (  17.03,  35.00) <-> Pad 1 [V12_LIDAR] of D6 on B.Cu               (   9.85,  35.00)
+V12_LIDAR              Pad 6 [V12_LIDAR] of U19 on B.Cu              (  17.25,  28.00) <-> Pad 1 [V12_LIDAR] of C70 on B.Cu              (  17.03,  35.00)
+U19_ILM                Pad 1 [U19_ILM] of TP6 on B.Cu                (  23.25,  25.00) <-> Track [U19_ILM] on B.Cu, length 0.1318 mm     (  19.58,  27.66)
+HEAD_PWR_EN            Pad 13 [HEAD_PWR_EN] of U44 on B.Cu           (  46.86,  54.57) <-> Pad 1 [HEAD_PWR_EN] of R52 on F.Cu            (  55.25,  72.67)
+CHS_HTR_EN             Pad 1 [CHS_HTR_EN] of R56 on B.Cu             ( 130.68,  27.00) <-> Track [CHS_HTR_EN] on F.Cu, length 1.0899 mm  (  38.99,  45.03)
+V12_LIDAR_EN           Pad 1 [V12_LIDAR_EN] of R58 on B.Cu           (  22.58,  32.50) <-> Pad 14 [V12_LIDAR_EN] of U44 on B.Cu          (  46.86,  53.93)
+WDG_FAULT              Pad 3 [WDG_FAULT] of Q29 on B.Cu              (  98.69,  24.50) <-> Pad 1 [WDG_FAULT] of Q57 on B.Cu              (  76.94,  11.95)
+WDG_FAULT              Pad 3 [WDG_FAULT] of Q29 on B.Cu              (  98.69,  24.50) <-> Pad 1 [WDG_FAULT] of Q33 on F.Cu              (  58.94,  84.30)
+WDG_FAULT              Pad 2 [WDG_FAULT] of R92 on B.Cu              ( 100.93,  25.75) <-> Pad 3 [WDG_FAULT] of Q29 on B.Cu              (  98.69,  24.50)
+WDG_FAULT              Pad 1 [WDG_FAULT] of Q34 on B.Cu              ( 133.55,  35.94) <-> Pad 2 [WDG_FAULT] of R92 on B.Cu              ( 100.93,  25.75)
+HEAD_PWR_P             Pad 1 [HEAD_PWR_P] of D4 on F.Cu              (  39.85,  95.50) <-> PTH pad 1 [HEAD_PWR_P] of J_HEAD1             (  17.75,  85.25)
+HEAD_PWR_P             Pad 1 [HEAD_PWR_P] of C68 on F.Cu             (  47.03,  97.25) <-> Pad 1 [HEAD_PWR_P] of D4 on F.Cu              (  39.85,  95.50)
+HEAD_PWR_P             Pad 2 [HEAD_PWR_P] of L5 on F.Cu              (  56.19,  78.00) <-> Pad 1 [HEAD_PWR_P] of C68 on F.Cu             (  47.03,  97.25)
+BUS5V_NFLT             Track [BUS5V_NFLT] on F.Cu, length 1.4875 mm  ( 116.14,  87.05) <-> Pad 1 [BUS5V_NFLT] of TP7 on B.Cu             (  38.25,  41.75)
+BUS_5V                 Pad 3 [BUS_5V] of J_HEAD2 on F.Cu             ( 134.38,  94.60) <-> Track [BUS_5V] on In2.Cu, length 1.6335 mm    ( 116.45,  90.16)
+CH_N0                  Pad 2 [CH_N0] of F_CHAIN on B.Cu              (  23.00,   4.10) <-> Pad 3 [CH_N0] of J_MODE on F.Cu               (  22.80,   3.70)
+CH_N0                  Pad 1 [CH_N0] of TP50 on B.Cu                 ( 126.25,   4.50) <-> Pad 2 [CH_N0] of F_CHAIN on B.Cu              (  23.00,   4.10)
+CH_N1                  Pad 1 [CH_N1] of R97 on B.Cu                  (  72.58,  10.75) <-> Pad 4 [CH_N1] of J_MODE on F.Cu               (  24.80,   3.70)
+CH_N1                  Pad 1 [CH_N1] of J_ESTOP on F.Cu              (  88.80,   3.70) <-> Pad 1 [CH_N1] of R97 on B.Cu                  (  72.58,  10.75)
+CH_N2                  Pad 1 [CH_N2] of R99 on B.Cu                  (  83.32,  10.75) <-> Pad 2 [CH_N2] of J_ESTOP on F.Cu              (  90.80,   3.70)
+CH_N2                  Pad 2 [CH_N2] of J_ESTOP on F.Cu              (  90.80,   3.70) <-> Pad 1 [CH_N2] of R125 on B.Cu                 (  93.68,   4.50)
+CH_N2                  Pad 1 [CH_N2] of R125 on B.Cu                 (  93.68,   4.50) <-> Pad 1 [CH_N2] of R126 on B.Cu                 (  93.68,   6.75)
+CH_N2                  Pad 1 [CH_N2] of J_HANDS on F.Cu              ( 103.80,   3.70) <-> Pad 1 [CH_N2] of R125 on B.Cu                 (  93.68,   4.50)
+COIL_RTN               PTH pad A2 [COIL_RTN] of K2                   (  20.60,  72.80) <-> Pad 2 [COIL_RTN] of D34 on B.Cu               (  10.65,  63.75)
+COIL_RTN               Pad 2 [COIL_RTN] of D31 on B.Cu               (  47.50,  80.85) <-> PTH pad A2 [COIL_RTN] of K2                   (  20.60,  72.80)
+COIL_RTN               PTH pad 12 [COIL_RTN] of K1                   (  84.00,  33.08) <-> Pad 2 [COIL_RTN] of D31 on B.Cu               (  47.50,  80.85)
+COIL_RTN               Pad 1 [COIL_RTN] of R119 on B.Cu              (  89.32,  10.00) <-> Pad 2 [COIL_RTN] of D14 on B.Cu               (  91.00,  12.10)
+COIL_RTN               Pad 2 [COIL_RTN] of D14 on B.Cu               (  91.00,  12.10) <-> PTH pad 12 [COIL_RTN] of K1                   (  84.00,  33.08)
+COIL_RTN               Pad 3 [COIL_RTN] of J_ESTOP on F.Cu           (  92.80,   3.70) <-> Pad 1 [COIL_RTN] of R119 on B.Cu              (  89.32,  10.00)
+COIL_RTN               Pad 3 [COIL_RTN] of J_ESTOP on F.Cu           (  92.80,   3.70) <-> Pad 1 [COIL_RTN] of TP40 on B.Cu              ( 126.25,  10.00)
+COIL_RTN               Pad 1 [COIL_RTN] of TP40 on B.Cu              ( 126.25,  10.00) <-> PTH pad A2 [COIL_RTN] of K3                   ( 139.40,  65.30)
+CH_N3                  Pad 1 [CH_N3] of R101 on B.Cu                 (  93.07,  10.00) <-> Pad 2 [CH_N3] of J_HANDS on F.Cu              ( 105.80,   3.70)
+CH_N3                  Pad 2 [CH_N3] of J_HANDS on F.Cu              ( 105.80,   3.70) <-> Pad 1 [CH_N3] of J_COVER on F.Cu              ( 120.80,   3.70)
+HANDS_LAMP_P           Pad 2 [HANDS_LAMP_P] of R125 on B.Cu          (  95.32,   4.50) <-> Pad 3 [HANDS_LAMP_P] of J_HANDS on F.Cu       ( 107.80,   3.70)
+HANDS_LAMP_K           Pad 3 [HANDS_LAMP_K] of Q27 on B.Cu           ( 109.50,   4.06) <-> Pad 4 [HANDS_LAMP_K] of J_HANDS on F.Cu       ( 109.80,   3.70)
+CH_N4A                 Pad 2 [CH_N4A] of J_COVER on F.Cu             ( 122.80,   3.70) <-> Track [CH_N4A] on In3.Cu, length 0.1377 mm    (  83.76,  76.73)
+CH_N4                  Pad 1 [CH_N4] of J_DOCK on F.Cu               (  68.50,  91.00) <-> Track [CH_N4] on F.Cu, length 1.9099 mm       (  74.18,  80.90)
+CH_N5                  Track [CH_N5] on F.Cu, length 0.7715 mm       (  27.73,  58.32) <-> Pad 3 [CH_N5] of J_DOCK on F.Cu               (  72.50,  91.00)
+CH_N7                  Pad 1 [CH_N7] of J_BUMP_L on F.Cu             (  60.80,   3.70) <-> Pad 1 [CH_N7] of TP9 on B.Cu                  (  70.25,  27.50)
+CH_N7                  Pad 1 [CH_N7] of TP9 on B.Cu                  (  70.25,  27.50) <-> Pad 4 [CH_N7] of U22 on F.Cu                  (  48.77,  59.27)
+CH_N8A                 Pad 1 [CH_N8A] of R109 on B.Cu                (  61.08,  10.00) <-> Pad 2 [CH_N8A] of J_BUMP_L on F.Cu            (  62.80,   3.70)
+CH_N8A                 Pad 2 [CH_N8A] of J_BUMP_L on F.Cu            (  62.80,   3.70) <-> Pad 1 [CH_N8A] of J_BUMP_R on F.Cu            ( 133.80,   3.70)
+CH_N8                  Pad 2 [CH_N8] of J_BUMP_R on F.Cu             ( 135.80,   3.70) <-> Track [CH_N8] on In3.Cu, length 1.5059 mm     (  95.81,  21.33)
+SET_CAP                Pad 1 [SET_CAP] of J_BTN on F.Cu              (  37.80,   3.70) <-> Pad 2 [SET_CAP] of R_SET on B.Cu              (  53.42,  10.50)
+SET_CAP                Pad 2 [SET_CAP] of R_SET on B.Cu              (  53.42,  10.50) <-> Pad 1 [SET_CAP] of C_SET on F.Cu              ( 101.30,  32.50)
+K1_SET                 Pad 2 [K1_SET] of J_BTN on F.Cu               (  39.80,   3.70) <-> Pad 1 [K1_SET] of R96 on B.Cu                 (  47.92,   8.00)
+BTN_3V3                Pad 4 [BTN_3V3] of D29 on B.Cu                (  40.14,   4.25) <-> Pad 3 [BTN_3V3] of J_BTN on F.Cu              (  41.80,   3.70)
+BTN_3V3                Pad 3 [BTN_3V3] of J_BTN on F.Cu              (  41.80,   3.70) <-> Pad 2 [BTN_3V3] of R128 on B.Cu               (  42.00,   3.93)
+REARM_BTN_RAW          Pad 1 [REARM_BTN_RAW] of R129 on B.Cu         (  39.00,   9.93) <-> Pad 1 [REARM_BTN_RAW] of D29 on B.Cu          (  40.14,   5.75)
+REARM_BTN_RAW          Pad 1 [REARM_BTN_RAW] of D29 on B.Cu          (  40.14,   5.75) <-> Pad 4 [REARM_BTN_RAW] of J_BTN on F.Cu        (  43.80,   3.70)
+V12_AUX                Pad 6 [V12_AUX] of J_BTN on F.Cu              (  47.80,   3.70) <-> Pad 2 [V12_AUX] of J_PANEL on F.Cu            (  59.67,  13.25)
+V12_AUX                Pad 1 [V12_AUX] of J_AUX on F.Cu              (  66.90,  20.65) <-> Pad 2 [V12_AUX] of J_PANEL on F.Cu            (  59.67,  13.25)
+V12_AUX                Pad 1 [V12_AUX] of J_AUX on F.Cu              (  66.90,  20.65) <-> Pad 3 [V12_AUX] of J_PAUSE on F.Cu            ( 101.40,  13.25)
+V12_AUX                Pad 3 [V12_AUX] of J_PAUSE on F.Cu            ( 101.40,  13.25) <-> Pad 1 [V12_AUX] of TP59 on B.Cu               ( 120.75,  19.75)
+V12_AUX                Pad 1 [V12_AUX] of TP59 on B.Cu               ( 120.75,  19.75) <-> Pad 2 [V12_AUX] of F_AUX on B.Cu              ( 107.90,  73.50)
+LAMP_REARM_K           Pad 7 [LAMP_REARM_K] of J_BTN on F.Cu         (  49.80,   3.70) <-> Pad 3 [LAMP_REARM_K] of Q55 on B.Cu           (  52.50,   6.31)
+CHG_GATE               Pad 2 [CHG_GATE] of R63 on F.Cu               (  70.58,  71.75) <-> Pad 1 [CHG_GATE] of Q20 on F.Cu               (  72.55,  71.81)
+CHG_GATE               Pad 1 [CHG_GATE] of C74 on F.Cu               (  76.50,  71.97) <-> Pad 1 [CHG_GATE] of Q20 on F.Cu               (  72.55,  71.81)
+CHG_GATE               Pad 1 [CHG_GATE] of D8 on F.Cu                (  78.60,  72.25) <-> Pad 1 [CHG_GATE] of C74 on F.Cu               (  76.50,  71.97)
+CHG_GATE               Pad 3 [CHG_GATE] of Q21 on F.Cu               (  84.06,  72.75) <-> Pad 1 [CHG_GATE] of D8 on F.Cu                (  78.60,  72.25)
+CHG_GATE               Pad 1 [CHG_GATE] of R64 on B.Cu               ( 130.68,  24.75) <-> Pad 3 [CHG_GATE] of Q21 on F.Cu               (  84.06,  72.75)
+LOOP_SRC               Pad 1 [LOOP_SRC] of R66 on B.Cu               (  40.83,  85.00) <-> Pad 2 [LOOP_SRC] of R65 on B.Cu               (  43.42,  88.50)
+HEAD_LOOP_OUT          PTH pad 5 [HEAD_LOOP_OUT] of J_HEAD1          (  34.55,  85.25) <-> Pad 2 [HEAD_LOOP_OUT] of R66 on B.Cu          (  39.17,  85.00)
+HEAD_LOOP_OUT          Pad 2 [HEAD_LOOP_OUT] of R66 on B.Cu          (  39.17,  85.00) <-> Pad 1 [HEAD_LOOP_OUT] of D10 on B.Cu          (  39.31,  87.05)
+HEAD_LOOP_RET          Pad 1 [HEAD_LOOP_RET] of R67 on B.Cu          (  13.25,  89.42) <-> PTH pad 6 [HEAD_LOOP_RET] of J_HEAD1          (  17.75,  79.75)
+HEAD_LOOP_RET          PTH pad 6 [HEAD_LOOP_RET] of J_HEAD1          (  17.75,  79.75) <-> Pad 2 [HEAD_LOOP_RET] of D10 on B.Cu          (  39.31,  88.95)
+LOOP_SNS               Pad 1 [LOOP_SNS] of R69 on B.Cu               (  11.67,  66.25) <-> Pad 2 [LOOP_SNS] of R67 on B.Cu               (  13.25,  91.08)
+LOOP_SNS               Pad 2 [LOOP_SNS] of R67 on B.Cu               (  13.25,  91.08) <-> Pad 1 [LOOP_SNS] of R68 on B.Cu               (  13.25,  93.17)
+LOOP_F                 Pad 1 [LOOP_F] of R76 on B.Cu                 (   8.25,  58.82) <-> Track [LOOP_F] on B.Cu, length 3.0431 mm      (  17.15,  58.63)
+LOOP_F                 Track [LOOP_F] on B.Cu, length 3.0431 mm      (  17.15,  58.63) <-> Pad 2 [LOOP_F] of R69 on B.Cu                 (  13.33,  66.25)
+LOOP_F                 Pad 3 [LOOP_F] of U32 on B.Cu                 (  28.53,  58.63) <-> Track [LOOP_F] on B.Cu, length 4.9500 mm      (  22.47,  58.63)
+LOOP_F                 Pad 1 [LOOP_F] of TP52 on B.Cu                ( 146.75,  46.50) <-> Pad 3 [LOOP_F] of U32 on B.Cu                 (  28.53,  58.63)
+LOOP_VHI               Track [LOOP_VHI] on B.Cu, length 0.8004 mm    (  11.07,  60.04) <-> Pad 1 [LOOP_VHI] of R71 on B.Cu               (  12.75,  53.43)
+LOOP_VHI               Pad 1 [LOOP_VHI] of R71 on B.Cu               (  12.75,  53.43) <-> Pad 2 [LOOP_VHI] of R70 on B.Cu               (  16.33,  51.25)
+LOOP_VLO               Pad 1 [LOOP_VLO] of R72 on B.Cu               (  12.33,  57.25) <-> Pad 2 [LOOP_VLO] of R71 on B.Cu               (  12.75,  55.07)
+LOOP_VLO               Pad 1 [LOOP_VLO] of C77 on B.Cu               (  12.52,  51.25) <-> Pad 2 [LOOP_VLO] of R71 on B.Cu               (  12.75,  55.07)
+LOOP_VLO               Pad 2 [LOOP_VLO] of R71 on B.Cu               (  12.75,  55.07) <-> Track [LOOP_VLO] on B.Cu, length 0.0648 mm    (  10.58,  54.94)
+HEAD_LOOP_OK_RB        Track [HEAD_LOOP_OK_RB] on B.Cu, length 3.761 (  17.53,  54.79) <-> Pad 1 [HEAD_LOOP_OK_RB] of Q22 on F.Cu        (  15.30,  51.81)
+HEAD_LOOP_SENSE        Pad 1 [HEAD_LOOP_SENSE] of C79 on F.Cu        (  18.75,  47.97) <-> Pad 2 [HEAD_LOOP_SENSE] of D11 on F.Cu        (  19.15,  45.25)
+HEAD_LOOP_SENSE        Pad 1 [HEAD_LOOP_SENSE] of C79 on F.Cu        (  18.75,  47.97) <-> Pad 2 [HEAD_LOOP_SENSE] of R76 on B.Cu        (   8.25,  57.18)
+HEAD_LOOP_SENSE        Via [HEAD_LOOP_SENSE] on F.Cu - B.Cu          (  24.55,  46.76) <-> Pad 2 [HEAD_LOOP_SENSE] of D11 on F.Cu        (  19.15,  45.25)
+HEAD_PRES_ID           Pad 2 [HEAD_PRES_ID] of R77 on B.Cu           (  11.00,  89.42) <-> PTH pad 7 [HEAD_PRES_ID] of J_HEAD1           (  21.95,  79.75)
+HEAD_PRES_ID           PTH pad 7 [HEAD_PRES_ID] of J_HEAD1           (  21.95,  79.75) <-> Pad 1 [HEAD_PRES_ID] of D12 on B.Cu           (  40.05,  81.69)
+HEAD_PRES_ID           Pad 1 [HEAD_PRES_ID] of R78 on B.Cu           (  38.75,  61.33) <-> Pad 1 [HEAD_PRES_ID] of D12 on B.Cu           (  40.05,  81.69)
+PRES_F                 Pad 1 [PRES_F] of C80 on B.Cu                 (  38.75,  57.53) <-> Track [PRES_F] on B.Cu, length 2.2350 mm      (  41.53,  59.13)
+PRES_F                 Pad 1 [PRES_F] of C80 on B.Cu                 (  38.75,  57.53) <-> Pad 1 [PRES_F] of R84 on B.Cu                 (  32.08,  43.25)
+PRES_F                 Pad 1 [PRES_F] of TP53 on B.Cu                ( 150.00,  46.50) <-> Pad 6 [PRES_F] of U31 on B.Cu                 (  46.47,  59.13)
+J2_PRES                Pad 2 [J2_PRES] of D12 on B.Cu                (  41.95,  81.69) <-> Pad 1 [J2_PRES] of R122 on B.Cu               ( 120.32,  93.00)
+J2_PRES                Pad 1 [J2_PRES] of R122 on B.Cu               ( 120.32,  93.00) <-> Pad 7 [J2_PRES] of J_HEAD2 on F.Cu            ( 129.38,  94.60)
+LAB_VHI                Pad 5 [LAB_VHI] of U31 on B.Cu                (  46.47,  60.41) <-> Pad 1 [LAB_VHI] of R80 on B.Cu                (  36.50,  55.43)
+LAB_VHI                Track [LAB_VHI] on B.Cu, length 2.5050 mm     (  46.50,  60.42) <-> Pad 1 [LAB_VHI] of C81 on B.Cu                (  48.75,  67.97)
+LAB_VLO                Track [LAB_VLO] on In3.Cu, length 1.1172 mm   (  40.73,  57.07) <-> Pad 1 [LAB_VLO] of R81 on B.Cu                (  48.75,  64.17)
+LAB_VLO                Pad 1 [LAB_VLO] of C82 on B.Cu                (  42.22,  45.50) <-> Track [LAB_VLO] on In3.Cu, length 4.2350 mm   (  36.50,  57.07)
+LAB_KEY_N_RB           Pad 28 [LAB_KEY_N_RB] of U43 on B.Cu          (  21.50,  39.78) <-> Pad 2 [LAB_KEY_N_RB] of R82 on B.Cu           (  34.25,  43.32)
+LAB_KEY_N_RB           Pad 2 [LAB_KEY_N_RB] of R82 on B.Cu           (  34.25,  43.32) <-> Pad 1 [LAB_KEY_N_RB] of Q28 on F.Cu           (  41.55,  51.81)
+LAB_KEY_N_RB           Pad 1 [LAB_KEY_N_RB] of Q28 on F.Cu           (  41.55,  51.81) <-> Pad 1 [LAB_KEY_N_RB] of U31 on B.Cu           (  41.53,  56.59)
+HEAD_PRES_ID_ADC       Track [HEAD_PRES_ID_ADC] on F.Cu, length 2.96 (  26.33,  47.25) <-> Pad 1 [HEAD_PRES_ID_ADC] of C84 on F.Cu       (  18.50,  42.78)
+HEAD_LOOP_SHORT_RB     Pad 27 [HEAD_LOOP_SHORT_RB] of U43 on B.Cu    (  21.50,  40.43) <-> Pad 2 [HEAD_LOOP_SHORT_RB] of R85 on B.Cu     (  26.00,  41.82)
+HEAD_LOOP_SHORT_RB     Pad 2 [HEAD_LOOP_SHORT_RB] of R85 on B.Cu     (  26.00,  41.82) <-> Pad 1 [HEAD_LOOP_SHORT_RB] of U32 on B.Cu     (  28.53,  56.09)
+COLD_THR               Pad 1 [COLD_THR] of R87 on B.Cu               (  48.75,  71.67) <-> Track [COLD_THR] on In3.Cu, length 3.3641 mm  (  35.81,  77.00)
+COLD_THR               Pad 2 [COLD_THR] of R88 on B.Cu               (  53.17,  71.00) <-> Pad 1 [COLD_THR] of R87 on B.Cu               (  48.75,  71.67)
+NTC_PACK_ADC           Track [NTC_PACK_ADC] on In2.Cu, length 2.5034 (  24.55,  45.63) <-> Pad 1 [NTC_PACK_ADC] of C155 on F.Cu          (   9.27,  37.75)
+NTC_PACK_ADC           Track [NTC_PACK_ADC] on In2.Cu, length 8.1375 (  26.32,  48.80) <-> Pad 2 [NTC_PACK_ADC] of R218 on B.Cu          (  84.18,  16.00)
+WDG_STROBE             Pad 7 [WDG_STROBE] of U40 on B.Cu             (  92.47,  23.50) <-> Pad 1 [WDG_STROBE] of TP24 on B.Cu            ( 122.00,  36.50)
+WDG_STROBE             Pad 7 [WDG_STROBE] of U40 on B.Cu             (  92.47,  23.50) <-> Track [WDG_STROBE] on F.Cu, length 1.4425 mm  (  36.23,  43.25)
+WDG_OK                 Pad 1 [WDG_OK] of Q23 on F.Cu                 (  83.70,  21.69) <-> Pad 2 [WDG_OK] of JP1 on F.Cu                 (  79.65,  21.00)
+WDG_OK                 Pad 8 [WDG_OK] of U40 on B.Cu                 (  92.47,  23.00) <-> Pad 1 [WDG_OK] of Q23 on F.Cu                 (  83.70,  21.69)
+WDG_OK                 Pad 1 [WDG_OK] of Q29 on B.Cu                 (  96.81,  23.55) <-> Pad 2 [WDG_OK] of R90 on B.Cu                 (  94.50,  23.18)
+WDG_OK                 Pad 1 [WDG_OK] of TP25 on B.Cu                ( 122.00,  11.00) <-> Pad 1 [WDG_OK] of Q29 on B.Cu                 (  96.81,  23.55)
+WDG_RST                Pad 1 [WDG_RST] of D13 on B.Cu                (  27.15,  30.00) <-> Pad 1 [WDG_RST] of JP1 on F.Cu                (  78.35,  21.00)
+NRST                   Pad 2 [NRST] of R192 on B.Cu                  (  20.75,  21.07) <-> Pad 1 [NRST] of C147 on B.Cu                  (  22.97,  21.00)
+NRST                   Pad 2 [NRST] of R192 on B.Cu                  (  20.75,  21.07) <-> Pad 10 [NRST] of J_SWD on F.Cu                (  21.95,  28.96)
+NRST                   Pad 10 [NRST] of J_SWD on F.Cu                (  21.95,  28.96) <-> Pad 2 [NRST] of D13 on B.Cu                   (  23.85,  30.00)
+NRST                   Pad 1 [NRST] of SW1 on F.Cu                   (  28.12,  37.00) <-> Pad 2 [NRST] of D13 on B.Cu                   (  23.85,  30.00)
+NRST                   Pad 1 [NRST] of SW1 on F.Cu                   (  28.12,  37.00) <-> Track [NRST] on B.Cu, length 2.2868 mm        (  24.55,  47.89)
+CHAIN_END              Pad 1 [CHAIN_END] of R115 on B.Cu             (  81.32,  29.00) <-> Pad 1 [CHAIN_END] of R_SET on B.Cu            (  55.08,  10.50)
+CHAIN_END              PTH pad 9 [CHAIN_END] of K1                   (  91.62,  33.08) <-> Pad 1 [CHAIN_END] of R115 on B.Cu             (  81.32,  29.00)
+CHAIN_END              Track [CHAIN_END] on B.Cu, length 3.9851 mm   ( 105.22,  25.43) <-> PTH pad 9 [CHAIN_END] of K1                   (  91.62,  33.08)
+CHAIN_END              Pad 1 [CHAIN_END] of TP38 on B.Cu             ( 122.00,   4.50) <-> Track [CHAIN_END] on F.Cu, length 3.9868 mm   ( 109.31,  23.87)
+ARM_PERMIT_G           Pad 2 [ARM_PERMIT_G] of R95 on F.Cu           (  45.58,  46.75) <-> Pad 1 [ARM_PERMIT_G] of Q24 on F.Cu           (  81.81,  15.45)
+ARM_PERMIT             Pad 30 [ARM_PERMIT] of U20M on F.Cu           (  34.75,  41.32) <-> Pad 1 [ARM_PERMIT] of R94 on F.Cu             (  41.75,  44.18)
+ARM_PERMIT             Pad 1 [ARM_PERMIT] of R94 on F.Cu             (  41.75,  44.18) <-> Pad 1 [ARM_PERMIT] of R95 on F.Cu             (  43.92,  46.75)
+ARM_PERMIT             Pad 1 [ARM_PERMIT] of TP26 on B.Cu            ( 123.50,  32.25) <-> Pad 1 [ARM_PERMIT] of R95 on F.Cu             (  43.92,  46.75)
+K1_COIL_P              Pad 2 [K1_COIL_P] of R96 on B.Cu              (  49.58,   8.00) <-> Pad 2 [K1_COIL_P] of D15 on B.Cu              (  83.75,  25.40)
+K1_COIL_P              PTH pad 1 [K1_COIL_P] of K1                   (  84.00,  28.00) <-> Pad 2 [K1_COIL_P] of D15 on B.Cu              (  83.75,  25.40)
+K1_COIL_P              PTH pad 5 [K1_COIL_P] of K1                   (  94.16,  28.00) <-> PTH pad 1 [K1_COIL_P] of K1                   (  84.00,  28.00)
+K1_SEAL_A              PTH pad 4 [K1_SEAL_A] of K1                   (  91.62,  28.00) <-> Pad 1 [K1_SEAL_A] of D_SEAL on B.Cu           (  99.10,  28.25)
+RUN_12V                PTH pad A1 [RUN_12V] of K2                    (  20.60,  65.30) <-> Pad 2 [RUN_12V] of D35 on B.Cu                (   6.15,  61.00)
+RUN_12V                Pad 2 [RUN_12V] of D32 on B.Cu                (  50.25,  80.85) <-> Pad 1 [RUN_12V] of R133 on B.Cu               (  56.92,  71.00)
+RUN_12V                Pad 2 [RUN_12V] of D32 on B.Cu                (  50.25,  80.85) <-> PTH pad A1 [RUN_12V] of K2                    (  20.60,  65.30)
+RUN_12V                Pad 1 [RUN_12V] of R117 on B.Cu               (  77.58,  29.00) <-> PTH pad 8 [RUN_12V] of K1                     (  94.16,  33.08)
+RUN_12V                Pad 1 [RUN_12V] of R117 on B.Cu               (  77.58,  29.00) <-> Pad 1 [RUN_12V] of R133 on B.Cu               (  56.92,  71.00)
+RUN_12V                PTH pad 8 [RUN_12V] of K1                     (  94.16,  33.08) <-> Pad 1 [RUN_12V] of TP39 on B.Cu               ( 129.75,  18.25)
+RUN_12V                Pad 1 [RUN_12V] of TP39 on B.Cu               ( 129.75,  18.25) <-> PTH pad A1 [RUN_12V] of K3                    ( 139.40,  72.80)
+K1_CL                  Pad 1 [K1_CL] of D15 on B.Cu                  (  83.75,  22.10) <-> Pad 1 [K1_CL] of D14 on B.Cu                  (  91.00,  15.40)
+MODE_RUN_RB            Pad 1 [MODE_RUN_RB] of R98 on B.Cu            (  28.17,  40.25) <-> Pad 1 [MODE_RUN_RB] of C87 on B.Cu            (  28.50,  38.03)
+MODE_RUN_RB            Pad 1 [MODE_RUN_RB] of R98 on B.Cu            (  28.17,  40.25) <-> Pad 21 [MODE_RUN_RB] of U43 on B.Cu           (  21.50,  44.32)
+MODE_RUN_RB            Pad 1 [MODE_RUN_RB] of C87 on B.Cu            (  28.50,  38.03) <-> Pad 2 [MODE_RUN_RB] of D16 on B.Cu            (  30.60,  37.00)
+MODE_RUN_RB            Pad 2 [MODE_RUN_RB] of D16 on B.Cu            (  30.60,  37.00) <-> Pad 2 [MODE_RUN_RB] of R97 on B.Cu            (  70.92,  10.75)
+ESTOP_A_RB             Track [ESTOP_A_RB] on In3.Cu, length 3.0698 m (  41.91,  45.34) <-> Pad 1 [ESTOP_A_RB] of R100 on F.Cu            (  41.75,  47.93)
+ESTOP_A_RB             Pad 1 [ESTOP_A_RB] of C88 on F.Cu             (  43.97,  49.00) <-> Pad 1 [ESTOP_A_RB] of R100 on F.Cu            (  41.75,  47.93)
+ESTOP_A_RB             Pad 2 [ESTOP_A_RB] of R99 on B.Cu             (  81.68,  10.75) <-> Pad 2 [ESTOP_A_RB] of D17 on F.Cu             (  48.00,  46.60)
+HANDS_ON_RB            Pad 22 [HANDS_ON_RB] of U43 on B.Cu           (  21.50,  43.68) <-> Pad 1 [HANDS_ON_RB] of C89 on B.Cu            (  26.53,  33.50)
+HANDS_ON_RB            Pad 1 [HANDS_ON_RB] of R102 on B.Cu           (  28.75,  34.32) <-> Pad 1 [HANDS_ON_RB] of C89 on B.Cu            (  26.53,  33.50)
+HANDS_ON_RB            Pad 2 [HANDS_ON_RB] of D18 on B.Cu            (  30.85,  34.25) <-> Pad 1 [HANDS_ON_RB] of R102 on B.Cu           (  28.75,  34.32)
+HANDS_ON_RB            Pad 2 [HANDS_ON_RB] of D18 on B.Cu            (  30.85,  34.25) <-> Pad 1 [HANDS_ON_RB] of Q25 on B.Cu            (  33.80,  24.44)
+HANDS_ON_RB            Pad 1 [HANDS_ON_RB] of Q25 on B.Cu            (  33.80,  24.44) <-> Pad 2 [HANDS_ON_RB] of R101 on B.Cu           (  91.43,  10.00)
+CHG_COVER_RB           Pad 1 [CHG_COVER_RB] of C90 on B.Cu           (  12.02,  44.75) <-> Pad 2 [CHG_COVER_RB] of D19 on B.Cu           (  12.15,  42.25)
+CHG_COVER_RB           Pad 23 [CHG_COVER_RB] of U43 on B.Cu          (  21.50,  43.03) <-> Pad 2 [CHG_COVER_RB] of D19 on B.Cu           (  12.15,  42.25)
+CHG_COVER_RB           Pad 23 [CHG_COVER_RB] of U43 on B.Cu          (  21.50,  43.03) <-> Pad 1 [CHG_COVER_RB] of R104 on B.Cu          (  35.92,  36.75)
+CHG_COVER_RB           Pad 1 [CHG_COVER_RB] of R104 on B.Cu          (  35.92,  36.75) <-> Pad 2 [CHG_COVER_RB] of R103 on F.Cu          (  68.92,  74.00)
+CHG_PLUG_LINK_RB       Pad 2 [CHG_PLUG_LINK_RB] of D20 on B.Cu       (  12.15,  39.50) <-> Pad 24 [CHG_PLUG_LINK_RB] of U43 on B.Cu      (  21.50,  42.38)
+CHG_PLUG_LINK_RB       Pad 24 [CHG_PLUG_LINK_RB] of U43 on B.Cu      (  21.50,  42.38) <-> Pad 1 [CHG_PLUG_LINK_RB] of C91 on B.Cu       (  30.97,  31.75)
+CHG_PLUG_LINK_RB       Pad 1 [CHG_PLUG_LINK_RB] of C91 on B.Cu       (  30.97,  31.75) <-> Pad 1 [CHG_PLUG_LINK_RB] of R106 on B.Cu      (  36.17,  34.50)
+CHG_PLUG_LINK_RB       Pad 1 [CHG_PLUG_LINK_RB] of R106 on B.Cu      (  36.17,  34.50) <-> Pad 2 [CHG_PLUG_LINK_RB] of R105 on F.Cu      (  71.17,  82.25)
+HEAD_DOCK_RB           Pad 1 [HEAD_DOCK_RB] of C92 on B.Cu           (   8.27,  44.75) <-> Pad 1 [HEAD_DOCK_RB] of R108 on B.Cu          (   9.83,  47.00)
+HEAD_DOCK_RB           Pad 1 [HEAD_DOCK_RB] of R108 on B.Cu          (   9.83,  47.00) <-> Pad 2 [HEAD_DOCK_RB] of D21 on B.Cu           (   8.90,  49.50)
+HEAD_DOCK_RB           Track [HEAD_DOCK_RB] on B.Cu, length 1.3342 m (  21.50,  41.72) <-> Pad 2 [HEAD_DOCK_RB] of R107 on F.Cu          (  28.50,  56.68)
+BODY_BUMPER_L_RB       Via [BODY_BUMPER_L_RB] on F.Cu - B.Cu         (   6.75,  39.22) <-> Pad 1 [BODY_BUMPER_L_RB] of R110 on B.Cu      (   7.08,  37.00)
+BODY_BUMPER_L_RB       Pad 2 [BODY_BUMPER_L_RB] of D22 on B.Cu       (   7.15,  34.50) <-> Pad 1 [BODY_BUMPER_L_RB] of R110 on B.Cu      (   7.08,  37.00)
+BODY_BUMPER_L_RB       Track [BODY_BUMPER_L_RB] on B.Cu, length 0.36 (  14.68,  39.59) <-> Pad 2 [BODY_BUMPER_L_RB] of R109 on B.Cu      (  59.42,  10.00)
+BODY_BUMPER_R_RB       Track [BODY_BUMPER_R_RB] on B.Cu, length 1.64 (  14.50,  40.43) <-> Pad 1 [BODY_BUMPER_R_RB] of R112 on B.Cu      (  29.25,  29.57)
+BODY_BUMPER_R_RB       Pad 1 [BODY_BUMPER_R_RB] of C94 on B.Cu       (  28.22,  25.75) <-> Pad 1 [BODY_BUMPER_R_RB] of R112 on B.Cu      (  29.25,  29.57)
+BODY_BUMPER_R_RB       Pad 1 [BODY_BUMPER_R_RB] of R112 on B.Cu      (  29.25,  29.57) <-> Pad 2 [BODY_BUMPER_R_RB] of R111 on F.Cu      (  78.18,  18.25)
+WDG_OK_RB              Track [WDG_OK_RB] on In2.Cu, length 2.4438 mm (  29.22,  54.95) <-> Pad 2 [WDG_OK_RB] of D24 on F.Cu              (  29.60,  60.75)
+WDG_OK_RB              Track [WDG_OK_RB] on In3.Cu, length 1.5532 mm (  30.05,  48.97) <-> Pad 2 [WDG_OK_RB] of R113 on F.Cu             (  74.42,  20.50)
+WDG_OK_RB              Pad 1 [WDG_OK_RB] of C95 on F.Cu              (  33.72,  56.75) <-> Track [WDG_OK_RB] on In2.Cu, length 0.5549 mm (  30.95,  56.68)
+CHAIN_END_RB           Pad 1 [CHAIN_END_RB] of C96 on B.Cu           (  36.25,  32.28) <-> Pad 1 [CHAIN_END_RB] of R116 on B.Cu          (  38.50,  32.32)
+CHAIN_END_RB           Pad 1 [CHAIN_END_RB] of R116 on B.Cu          (  38.50,  32.32) <-> Pad 2 [CHAIN_END_RB] of D25 on B.Cu           (  38.00,  28.65)
+CHAIN_END_RB           Pad 20 [CHAIN_END_RB] of U44 on B.Cu          (  46.86,  50.03) <-> Pad 1 [CHAIN_END_RB] of R116 on B.Cu          (  38.50,  32.32)
+CHAIN_END_RB           Pad 2 [CHAIN_END_RB] of R115 on B.Cu          (  79.68,  29.00) <-> Pad 20 [CHAIN_END_RB] of U44 on B.Cu          (  46.86,  50.03)
+HW_LATCH_RB            Pad 2 [HW_LATCH_RB] of D26 on F.Cu            (  16.65,  49.25) <-> Track [HW_LATCH_RB] on F.Cu, length 1.0450 mm (  32.75,  52.68)
+HW_LATCH_RB            Track [HW_LATCH_RB] on F.Cu, length 0.3889 mm (  32.75,  51.63) <-> Pad 1 [HW_LATCH_RB] of R118 on F.Cu           (  45.42,  52.00)
+HW_LATCH_RB            Via [HW_LATCH_RB] on F.Cu - B.Cu              (  33.00,  51.08) <-> Pad 1 [HW_LATCH_RB] of Q26 on F.Cu            (  27.70,  31.19)
+HW_LATCH_RB            Pad 1 [HW_LATCH_RB] of C97 on F.Cu            (  48.75,  62.22) <-> Pad 1 [HW_LATCH_RB] of R118 on F.Cu           (  45.42,  52.00)
+HW_LATCH_RB            Pad 2 [HW_LATCH_RB] of U9 on F.Cu             (  78.86,  56.00) <-> Pad 2 [HW_LATCH_RB] of R117 on B.Cu           (  75.92,  29.00)
+HW_LATCH_RB            Pad 2 [HW_LATCH_RB] of U9 on F.Cu             (  78.86,  56.00) <-> Pad 1 [HW_LATCH_RB] of C97 on F.Cu            (  48.75,  62.22)
+HW_LATCH_RB            Pad 1 [HW_LATCH_RB] of TP27 on B.Cu           ( 126.75,  37.25) <-> Pad 2 [HW_LATCH_RB] of U9 on F.Cu             (  78.86,  56.00)
+ESTOP_B_RB_G           Pad 2 [ESTOP_B_RB_G] of D27 on F.Cu           (   8.40,  32.75) <-> Pad 2 [ESTOP_B_RB_G] of R120 on F.Cu          (  10.08,  21.50)
+ESTOP_B_RB_G           Pad 2 [ESTOP_B_RB_G] of R120 on F.Cu          (  10.08,  21.50) <-> Pad 1 [ESTOP_B_RB_G] of C98 on F.Cu           (  13.77,   7.50)
+ESTOP_B_RB_G           Pad 2 [ESTOP_B_RB_G] of R120 on F.Cu          (  10.08,  21.50) <-> Pad 1 [ESTOP_B_RB_G] of Q_ESTOP on F.Cu       (  33.94,  28.05)
+ESTOP_B_RB_G           Pad 2 [ESTOP_B_RB_G] of R119 on B.Cu          (  87.68,  10.00) <-> Pad 1 [ESTOP_B_RB_G] of Q_ESTOP on F.Cu       (  33.94,  28.05)
+ESTOP_B_RB             Pad 1 [ESTOP_B_RB] of R121 on F.Cu            (  29.75,  31.32) <-> Pad 3 [ESTOP_B_RB] of Q_ESTOP on F.Cu         (  32.06,  29.00)
+ESTOP_B_RB             Track [ESTOP_B_RB] on F.Cu, length 0.5500 mm  (  36.63,  44.25) <-> Pad 1 [ESTOP_B_RB] of R121 on F.Cu            (  29.75,  31.32)
+J2_PRES_RB_G           Pad 1 [J2_PRES_RB_G] of C99 on F.Cu           (   8.77,  72.50) <-> Pad 2 [J2_PRES_RB_G] of D28 on F.Cu           (   3.00,  67.40)
+J2_PRES_RB_G           Pad 2 [J2_PRES_RB_G] of R123 on F.Cu          (  12.58,  72.50) <-> Pad 1 [J2_PRES_RB_G] of C99 on F.Cu           (   8.77,  72.50)
+J2_PRES_RB_G           Pad 2 [J2_PRES_RB_G] of R123 on F.Cu          (  12.58,  72.50) <-> Pad 1 [J2_PRES_RB_G] of Q_J2PRE on F.Cu       (  16.95,  67.94)
+J2_PRES_RB_G           Pad 1 [J2_PRES_RB_G] of Q_J2PRE on F.Cu       (  16.95,  67.94) <-> Pad 2 [J2_PRES_RB_G] of R122 on B.Cu          ( 118.68,  93.00)
+J2_PRES_RB             Pad 3 [J2_PRES_RB] of Q_J2PRE on F.Cu         (  16.00,  66.06) <-> Track [J2_PRES_RB] on F.Cu, length 1.8719 mm  (  16.08,  52.43)
+LAMP_G                 Pad 3 [LAMP_G] of Q25 on B.Cu                 (  34.75,  22.56) <-> Pad 3 [LAMP_G] of Q26 on F.Cu                 (  26.75,  29.31)
+LAMP_G                 Pad 1 [LAMP_G] of R127 on B.Cu                (  41.25,  10.32) <-> Pad 3 [LAMP_G] of Q25 on B.Cu                 (  34.75,  22.56)
+LAMP_G                 Pad 1 [LAMP_G] of R127 on B.Cu                (  41.25,  10.32) <-> Pad 2 [LAMP_G] of R126 on B.Cu                (  95.32,   6.75)
+LAMP_G                 Pad 2 [LAMP_G] of R126 on B.Cu                (  95.32,   6.75) <-> Pad 1 [LAMP_G] of Q27 on B.Cu                 ( 108.55,   5.94)
+REARM_BTN              Pad 1 [REARM_BTN] of C100 on B.Cu             (   4.50,  44.22) <-> Pad 1 [REARM_BTN] of R130 on B.Cu             (   4.58,  42.00)
+REARM_BTN              Pad 1 [REARM_BTN] of R130 on B.Cu             (   4.58,  42.00) <-> Pad 3 [REARM_BTN] of U43 on B.Cu              (  14.50,  41.07)
+REARM_BTN              Pad 2 [REARM_BTN] of R129 on B.Cu             (  39.00,  11.57) <-> Pad 3 [REARM_BTN] of U43 on B.Cu              (  14.50,  41.07)
+PAUSE_BTN_RAW          Pad 1 [PAUSE_BTN_RAW] of D_PAUSE on B.Cu      (  95.87,  16.75) <-> Pad 1 [PAUSE_BTN_RAW] of R131 on B.Cu         (  86.07,  18.25)
+PAUSE_BTN_RAW          Pad 2 [PAUSE_BTN_RAW] of J_PAUSE on F.Cu      ( 100.15,  13.25) <-> Pad 1 [PAUSE_BTN_RAW] of D_PAUSE on B.Cu      (  95.87,  16.75)
+PAUSE_BTN              Pad 4 [PAUSE_BTN] of U43 on B.Cu              (  14.50,  41.72) <-> Pad 1 [PAUSE_BTN] of C101 on B.Cu             (   3.27,  37.00)
+PAUSE_BTN              Pad 1 [PAUSE_BTN] of R132 on B.Cu             (  18.25,  23.07) <-> Pad 4 [PAUSE_BTN] of U43 on B.Cu              (  14.50,  41.72)
+PAUSE_BTN              Pad 1 [PAUSE_BTN] of R132 on B.Cu             (  18.25,  23.07) <-> Pad 2 [PAUSE_BTN] of R131 on B.Cu             (  84.43,  18.25)
+PAUSE_3V3              Pad 2 [PAUSE_3V3] of D_PAUSE on B.Cu          (  95.87,  17.25) <-> Pad 2 [PAUSE_3V3] of R_PAUSE on B.Cu          (  98.75,  13.43)
+PAUSE_3V3              Pad 2 [PAUSE_3V3] of R_PAUSE on B.Cu          (  98.75,  13.43) <-> Pad 1 [PAUSE_3V3] of J_PAUSE on F.Cu          (  98.90,  13.25)
+LAMP_PAUSE_K           Pad 3 [LAMP_PAUSE_K] of Q56 on B.Cu           (  92.75,  17.56) <-> Pad 4 [LAMP_PAUSE_K] of J_PAUSE on F.Cu       ( 102.65,  13.25)
+U8_EN                  Track [U8_EN] on F.Cu, length 2.1197 mm       (  76.88,  33.25) <-> Pad 2 [U8_EN] of R133 on B.Cu                 (  58.58,  71.00)
+U8_EN                  Pad 1 [U8_EN] of C102 on F.Cu                 (  77.75,  16.03) <-> Track [U8_EN] on F.Cu, length 0.6153 mm       (  75.06,  18.76)
+U8_ITMR                Track [U8_ITMR] on F.Cu, length 0.2013 mm     (  78.09,  31.69) <-> Pad 1 [U8_ITMR] of C103 on F.Cu               (  81.25,  11.53)
+U8_IMON                Pad 1 [U8_IMON] of TP10 on B.Cu               (  78.25,  22.25) <-> Pad 1 [U8_IMON] of R136 on F.Cu               (  79.00,  12.32)
+VMOT_PG                Via [VMOT_PG] on F.Cu - B.Cu                  (  78.73,  16.27) <-> Pad 2 [VMOT_PG] of R137 on F.Cu               (  76.75,  10.82)
+U8_DVDT                Pad 15 [U8_DVDT] of U8 on F.Cu                (  81.45,  34.25) <-> Pad 1 [U8_DVDT] of C104 on F.Cu               (  83.50,  11.53)
+VMOT                   Pad 1 [VMOT] of R139 on F.Cu                  (  20.42,  36.75) <-> Via [VMOT] on F.Cu - B.Cu                     (  61.80,  43.60)
+VMOT                   Track [VMOT] on F.Cu, length 0.2828 mm        ( 111.05,  60.53) <-> Pad 1 [VMOT] of TP47 on B.Cu                  ( 147.25,  39.25)
+VMOT_SENSE             Pad 1 [VMOT_SENSE] of C108 on F.Cu            (  18.25,  39.03) <-> Pad 2 [VMOT_SENSE] of R139 on F.Cu            (  22.08,  36.75)
+VMOT_SENSE             Pad 2 [VMOT_SENSE] of R139 on F.Cu            (  22.08,  36.75) <-> Pad 1 [VMOT_SENSE] of R140 on F.Cu            (  25.75,  35.07)
+VMOT_SENSE             Pad 1 [VMOT_SENSE] of R140 on F.Cu            (  25.75,  35.07) <-> Pad 1 [VMOT_SENSE] of TP28 on B.Cu            ( 126.00,  27.00)
+VMOT_SENSE             Pad 14 [VMOT_SENSE] of U20M on F.Cu           (  26.33,  44.25) <-> Pad 2 [VMOT_SENSE] of R139 on F.Cu            (  22.08,  36.75)
+DRV_NSLEEP_G           Track [DRV_NSLEEP_G] on F.Cu, length 1.1247 m (  61.03,  53.14) <-> Pad 1 [DRV_NSLEEP_G] of R142 on F.Cu          (  49.00,  65.92)
+CLAMP_DIV              Track [CLAMP_DIV] on In3.Cu, length 6.0155 mm ( 107.00,  54.42) <-> Pad 1 [CLAMP_DIV] of R145 on F.Cu             ( 113.50,  58.68)
+CLAMP_DIV              Track [CLAMP_DIV] on In3.Cu, length 6.0155 mm ( 107.00,  54.42) <-> Pad 1 [CLAMP_DIV] of C112 on F.Cu             ( 103.50,  70.97)
+CLAMP_DIV              Pad 2 [CLAMP_DIV] of R146 on F.Cu             ( 115.75,  58.82) <-> Pad 1 [CLAMP_DIV] of R145 on F.Cu             ( 113.50,  58.68)
+CLAMP_REF              Pad 1 [CLAMP_REF] of C111 on F.Cu             ( 113.50,  54.97) <-> Track [CLAMP_REF] on In2.Cu, length 2.1793 mm ( 109.71,  53.38)
+CLAMP_G                Pad 2 [CLAMP_G] of R147 on F.Cu               ( 101.25,  70.92) <-> Pad 1 [CLAMP_G] of R151 on F.Cu               (  92.07,  71.00)
+CLAMP_G                Pad 1 [CLAMP_G] of R146 on F.Cu               ( 115.75,  57.18) <-> Track [CLAMP_G] on F.Cu, length 0.7227 mm     ( 104.56,  46.53)
+CLAMP_G                Pad 1 [CLAMP_G] of R146 on F.Cu               ( 115.75,  57.18) <-> Pad 2 [CLAMP_G] of R147 on F.Cu               ( 101.25,  70.92)
+CLAMP_G                Pad 1 [CLAMP_G] of TP55 on B.Cu               ( 153.25,  46.50) <-> Pad 1 [CLAMP_G] of R146 on F.Cu               ( 115.75,  57.18)
+CLAMP_VG               Pad 2 [CLAMP_VG] of R148 on F.Cu              (  99.07,  72.25) <-> Pad 1 [CLAMP_VG] of R147 on F.Cu              ( 101.25,  72.58)
+CLAMP_VG               Pad 1 [CLAMP_VG] of R147 on F.Cu              ( 101.25,  72.58) <-> Pad 1 [CLAMP_VG] of D30 on F.Cu               ( 100.65,  75.00)
+CLAMP_R                Pad 5 [CLAMP_R] of Q40 on F.Cu                ( 106.60,  47.50) <-> Pad 2 [CLAMP_R] of R149 on F.Cu               ( 108.96,  52.50)
+CLAMP_R                Track [CLAMP_R] on F.Cu, length 0.5996 mm     ( 108.96,  57.60) <-> Pad 2 [CLAMP_R] of R149 on F.Cu               ( 108.96,  52.50)
+CLAMP_F                Pad 1 [CLAMP_F] of R150 on F.Cu               ( 103.04,  57.00) <-> Pad 1 [CLAMP_F] of W1 on F.Cu                 (  97.50,  67.50)
+CLAMP_F                Pad 1 [CLAMP_F] of R149 on F.Cu               ( 103.04,  52.50) <-> Pad 1 [CLAMP_F] of R150 on F.Cu               ( 103.04,  57.00)
+BUS_CLAMP_ACTIVE       Pad 1 [BUS_CLAMP_ACTIVE] of R152 on B.Cu      (   8.83,  52.00) <-> Pad 7 [BUS_CLAMP_ACTIVE] of U43 on B.Cu       (  14.50,  43.68)
+BUS_CLAMP_ACTIVE       Pad 7 [BUS_CLAMP_ACTIVE] of U43 on B.Cu       (  14.50,  43.68) <-> Pad 2 [BUS_CLAMP_ACTIVE] of R151 on F.Cu      (  90.43,  71.00)
+MOT_L_IN1              Track [MOT_L_IN1] on F.Cu, length 0.5873 mm   (  38.91,  45.59) <-> Via [MOT_L_IN1] on F.Cu - B.Cu                (  59.43,  52.85)
+MOT_L_IN2              Pad 2 [MOT_L_IN2] of U5 on F.Cu               (  60.38,  53.14) <-> Pad 1 [MOT_L_IN2] of R158 on F.Cu             (  86.43,  75.75)
+DRV_L_NFAULT           Pad 5 [DRV_L_NFAULT] of U43 on B.Cu           (  14.50,  42.38) <-> Pad 4 [DRV_L_NFAULT] of U5 on F.Cu            (  61.67,  53.14)
+DRV_L_NFAULT           Pad 4 [DRV_L_NFAULT] of U5 on F.Cu            (  61.67,  53.14) <-> Pad 2 [DRV_L_NFAULT] of R156 on F.Cu          (  71.25,  84.42)
+IPROPI_L_RAW           Pad 1 [IPROPI_L_RAW] of R153 on F.Cu          (  60.75,  80.67) <-> Pad 6 [IPROPI_L_RAW] of U5 on F.Cu            (  62.97,  53.14)
+IPROPI_L_RAW           Pad 1 [IPROPI_L_RAW] of R154 on F.Cu          (  75.00,  82.17) <-> Pad 1 [IPROPI_L_RAW] of R153 on F.Cu          (  60.75,  80.67)
+U5_IMODE               Pad 7 [U5_IMODE] of U5 on F.Cu                (  63.62,  53.14) <-> Pad 1 [U5_IMODE] of R155 on F.Cu              (  77.25,  82.17)
+OUT1_L                 Track [OUT1_L] on In2.Cu, length 5.0683 mm    (  46.37,  59.46) <-> Pad 1 [OUT1_L] of R159 on B.Cu                (  56.09,  73.25)
+OUT1_L                 Pad 1 [OUT1_L] of R159 on B.Cu                (  56.09,  73.25) <-> Pad 1 [OUT1_L] of R163 on B.Cu                (  56.17,  77.75)
+OUT2_L                 Pad 1 [OUT2_L] of R160 on B.Cu                (  56.09,  75.50) <-> PTH pad 24 [OUT2_L] of K2                     (  45.60,  72.80)
+OUT2_L                 Pad 1 [OUT2_L] of R164 on B.Cu                (  59.92,  74.75) <-> Pad 1 [OUT2_L] of R160 on B.Cu                (  56.09,  75.50)
+OUT2_L                 Pad 10 [OUT2_L] of U5 on F.Cu                 (  63.62,  58.86) <-> Pad 1 [OUT2_L] of R164 on B.Cu                (  59.92,  74.75)
+U5_CPH                 Pad 13 [U5_CPH] of U5 on F.Cu                 (  61.67,  58.86) <-> Pad 1 [U5_CPH] of C115 on F.Cu                (  62.12,  61.60)
+IPROPI_L               Pad 1 [IPROPI_L] of C113 on F.Cu              (  16.25,  42.78) <-> Track [IPROPI_L] on F.Cu, length 1.0450 mm    (  26.33,  45.25)
+IPROPI_L               Track [IPROPI_L] on F.Cu, length 0.5500 mm    (  27.37,  45.25) <-> Pad 2 [IPROPI_L] of R154 on F.Cu              (  75.00,  83.83)
+IPROPI_L               Pad 1 [IPROPI_L] of TP29 on B.Cu              ( 129.00,  41.50) <-> Pad 2 [IPROPI_L] of R154 on F.Cu              (  75.00,  83.83)
+BRK_L_A                Pad 1 [BRK_L_A] of R161 on B.Cu               (  32.50,  66.09) <-> PTH pad 12 [BRK_L_A] of K2                    (  35.60,  65.30)
+MOT_L_A                Pad 1 [MOT_L_A] of FB1 on F.Cu                (   3.00,  69.42) <-> PTH pad 11 [MOT_L_A] of K2                    (  40.60,  65.30)
+MOT_L_A                PTH pad 11 [MOT_L_A] of K2                    (  40.60,  65.30) <-> Pad 2 [MOT_L_A] of R162 on B.Cu               (  52.75,  80.84)
+BRK_L_B                Pad 2 [BRK_L_B] of R161 on B.Cu               (  32.50,  72.01) <-> PTH pad 22 [BRK_L_B] of K2                    (  35.60,  72.80)
+MOT_L_B                Pad 1 [MOT_L_B] of FB2 on F.Cu                (   9.33,  89.75) <-> PTH pad 21 [MOT_L_B] of K2                    (  40.60,  72.80)
+K2_CL                  Pad 1 [K2_CL] of D31 on B.Cu                  (  47.50,  84.15) <-> Pad 1 [K2_CL] of D32 on B.Cu                  (  50.25,  84.15)
+BIAS_L                 Pad 1 [BIAS_L] of R162 on B.Cu                (  52.75,  82.66) <-> Pad 1 [BIAS_L] of D33 on B.Cu                 (  53.00,  84.60)
+BRK_THR                Pad 1 [BRK_THR] of C137 on F.Cu               (  77.97,  86.00) <-> Pad 2 [BRK_THR] of R189 on F.Cu               (  75.75,  85.92)
+BRK_THR                Pad 1 [BRK_THR] of C137 on F.Cu               (  77.97,  86.00) <-> Track [BRK_THR] on F.Cu, length 0.0149 mm     (  81.68,  82.24)
+BRAKE_L_ISO            Pad 7 [BRAKE_L_ISO] of U35 on F.Cu            (  56.47,  60.14) <-> Pad 2 [BRAKE_L_ISO] of R165 on F.Cu           (  73.50,  85.92)
+BRAKE_L_RB             Pad 2 [BRAKE_L_RB] of R166 on F.Cu            (  13.83,  46.75) <-> Pad 3 [BRAKE_L_RB] of U20M on F.Cu            (  26.33,  49.75)
+BRAKE_L_RB             Pad 3 [BRAKE_L_RB] of U20M on F.Cu            (  26.33,  49.75) <-> Pad 3 [BRAKE_L_RB] of Q41 on F.Cu             (  14.81,  71.00)
+MOTC_L_A               Pad 2 [MOTC_L_A] of FB1 on F.Cu               (   3.00,  72.58) <-> Pad 1 [MOTC_L_A] of C119 on B.Cu              (   8.50,  72.53)
+MOTC_L_A               Pad 1 [MOTC_L_A] of C119 on B.Cu              (   8.50,  72.53) <-> PTH pad 1 [MOTC_L_A] of J_MOT_L               (   9.76,  78.12)
+MOTC_L_B               Pad 1 [MOTC_L_B] of C120 on B.Cu              (   8.75,  89.47) <-> Pad 2 [MOTC_L_B] of FB2 on F.Cu               (   6.17,  89.75)
+MOTC_L_B               PTH pad 2 [MOTC_L_B] of J_MOT_L               (   9.76,  81.12) <-> Pad 1 [MOTC_L_B] of C120 on B.Cu              (   8.75,  89.47)
+ENC_L_5V               Pad 2 [ENC_L_5V] of F1 on B.Cu                (   6.40,  89.75) <-> PTH pad 3 [ENC_L_5V] of J_MOT_L               (   9.76,  84.12)
+ENC_L_5V               Pad 1 [ENC_L_5V] of R167 on B.Cu              (   9.42,  95.50) <-> Pad 1 [ENC_L_5V] of C121 on B.Cu              (   9.48,  93.25)

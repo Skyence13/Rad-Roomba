@@ -64,13 +64,14 @@ PLACE = {
     "J_HEAD2": (132.5, 96.45, 180, "F"),                # front edge, u 125.2..139.8, GH side entry facing +v
     # ---- rear-left cluster: CLIK-Mate safety row (v 1.7..11.2), GH signal rows (v 11.9..18.6, 19.3..26.0)
     "J_MODE": (23.8, 6.2, 0, "F"), "J_BTN": (44.8, 6.2, 0, "F"), "J_BUMP_L": (61.8, 6.2, 0, "F"),
-    "J_PANEL": (23.55, 15.2, 0, "F"), "J_TOF2": (39.55, 15.2, 0, "F"), "J_TOF8": (53.05, 15.2, 0, "F"), "J_TOF9": (66.55, 15.2, 0, "F"),
+    # GH row ordered by cable length: the longest runs (REAR_C, REAR_L) sit nearest the corner exit
+    "J_TOF9": (21.05, 15.2, 0, "F"), "J_TOF8": (34.55, 15.2, 0, "F"), "J_TOF2": (48.05, 15.2, 0, "F"), "J_PANEL": (64.05, 15.2, 0, "F"),
     "J_TOF5": (21.05, 22.6, 0, "F"), "J_USB_MCU": (33.9, 22.6, 0, "F"), "J_USB_HEAD": (46.1, 22.6, 0, "F"),
     "J_DBG": (57.8, 22.6, 0, "F"), "J_AUX": (68.15, 22.6, 0, "F"),
     # ---- rear-right cluster (IB-12 / IB-33): CLIK-Mate safety row, GH signal rows
     "J_ESTOP": (91.8, 6.2, 0, "F"), "J_HANDS": (107.8, 6.2, 0, "F"), "J_COVER": (122.8, 6.2, 0, "F"), "J_BUMP_R": (134.8, 6.2, 0, "F"),
     "J_NTC": (89.8, 15.2, 0, "F"), "J_PAUSE": (101.4, 15.2, 0, "F"), "J_TOF3": (114.05, 15.2, 0, "F"), "J_TOF10": (127.55, 15.2, 0, "F"),
-    "J_TOF6": (118.0, 22.6, 0, "F"), "J_PAUX": (131.6, 22.6, 0, "F"),
+    "J_TOF6": (131.2, 22.6, 0, "F"), "J_PAUX": (118.0, 22.6, 0, "F"),
     # ---- front centre: cliff ToF and dock switch (v 89..98), clear of H5
     "J_TOF0": (58.0, 94.0, 0, "F"), "J_DOCK": (70.5, 93.5, 0, "F"), "J_TOF1": (96.0, 94.0, 0, "F"),
     # ---- look-ahead ToF (outer): inboard of the motor connectors, cable forward over J_MOT_x
@@ -84,7 +85,7 @@ PLACE = {
     # ---- bulk capacitors (10 x 10.5 mm, top)
     "C7": (118.95, 33.0, 0, "F"),        # VBAT_SW bulk next to R_SH1 / J_PWR
     "C20": (149.0, 57.5, 0, "F"),       # VSYS bulk (charger)
-    "C106": (66.0, 44.0, 0, "F"), "C105": (80.0, 44.0, 0, "F"), "C107": (94.0, 44.0, 0, "F"),   # VMOT bulk between U8 and the bridges
+    "C106": (66.0, 43.6, 0, "F"), "C105": (80.0, 44.0, 0, "F"), "C107": (94.0, 44.0, 0, "F"),   # VMOT bulk between U8 and the bridges
     "C_SET": (105.5, 32.5, 0, "F"),     # set-pulse capacitor next to K1
     # ---- power entry (pack current enters and leaves within 40 mm of J_PWR)
     "Q1": (133.5, 30.0, 90, "F"), "Q2": (133.5, 38.0, 90, "F"), "R_SH1": (127.7, 34.0, 90, "F"),
@@ -94,15 +95,15 @@ PLACE = {
     "Q4": (137.0, 47.0, 0, "F"), "R_SNSI": (141.0, 47.0, 90, "F"), "U3": (128.0, 50.0, 0, "F"), "L1": (128.0, 57.5, 0, "F"),
     "R_SNSB": (133.5, 57.5, 90, "F"), "Q5": (118.0, 54.0, 0, "F"),
     # ---- rails (row v 27..38 on the pad)
-    "U13": (51.0, 29.0, 0, "F"), "U10": (53.5, 34.5, 0, "F"), "L2": (60.5, 34.5, 0, "F"),
+    "U13": (51.0, 29.0, 0, "F"), "U10": (53.5, 34.5, 0, "F"), "L2": (60.5, 34.3, 0, "F"),
     "U11": (66.5, 29.5, 0, "F"), "L3": (67.5, 35.0, 0, "F"), "U12": (72.5, 29.5, 0, "F"), "L4": (73.5, 35.0, 0, "F"),
     "U14": (46.0, 39.5, 0, "F"),
     # ---- drive (on the gap pad)
-    "U8": (79.5, 34.5, 0, "F"), "U5": (62.0, 54.0, 90, "F"), "U6": (98.0, 54.0, 90, "F"), "U9": (80.0, 56.0, 0, "F"),
+    "U8": (79.5, 34.5, 0, "F"), "U5": (62.0, 56.0, 90, "F"), "U6": (98.0, 56.0, 90, "F"), "U9": (80.0, 56.0, 0, "F"),
     "U33": (106.0, 41.5, 0, "F"), "U34": (110.5, 46.0, 0, "F"), "Q40": (106.0, 47.5, 0, "F"),
-    "R149": (106.0, 52.5, 0, "F"), "R150": (106.0, 57.0, 0, "F"), "F_CLAMP": (98.0, 61.0, 0, "F"), "W1": (98.0, 66.5, 0, "F"),
+    "R149": (106.0, 52.5, 0, "F"), "R150": (106.0, 57.0, 0, "F"), "F_CLAMP": (92.0, 66.5, 0, "F"), "W1": (100.0, 67.5, 0, "F"),
     "R161": (32.5, 69.05, 90, "B"), "R179": (127.5, 69.05, 90, "B"),   # brake resistors under the relays, next to the NC pads
-    "U35": (54.0, 59.5, 0, "F"), "U36": (106.0, 62.5, 0, "F"),
+    "U35": (54.0, 59.5, 0, "F"), "U36": (108.5, 67.6, 0, "F"),
     "U37": (12.0, 70.0, 0, "B"), "U38": (142.0, 81.0, 0, "B"),
     # ---- branches: head branch next to J_HEAD1 (front-left), chassis heater at J_HTR, LiDAR at J_LIDAR
     "R_SH2": (42.0, 79.5, 90, "F"), "R_SH3": (42.0, 87.0, 90, "F"), "U15": (47.0, 83.0, 0, "F"),
@@ -124,11 +125,25 @@ PLACE = {
     # ---- head link
     "U60": (46.1, 27.5, 0, "B"), "U61": (58.0, 27.0, 0, "B"),
     "U62": (132.0, 87.0, 0, "F"), "L60": (138.0, 90.0, 0, "F"), "D60": (126.0, 90.5, 0, "F"), "U63": (122.0, 84.0, 0, "F"),
+    # ---- parts the guidance wants at the pins (placed by hand, top side):
+    # bridge charge pump / VM decoupling (U5/U6 pins 9-16 face -v), crystal network, U10 boot / VCC capacitors
+    "C115": (61.35, 61.6, 180, "F"), "C114": (63.5, 63.4, 0, "F"), "C116": (66.0, 61.6, 90, "F"), "C117": (68.4, 61.6, 90, "F"),
+    "C127": (97.35, 61.6, 180, "F"), "C126": (99.5, 63.4, 0, "F"), "C128": (102.0, 61.6, 90, "F"), "C129": (104.4, 62.0, 90, "F"),
+    "C145": (22.0, 45.4, 0, "F"), "C146": (22.0, 52.6, 0, "F"), "R191": (24.4, 52.8, 90, "F"),
+    "C27": (53.2, 38.2, 0, "F"), "C26": (49.6, 35.3, 90, "F"),
     # ---- mechanical: holes at the envelope positions, fiducials as in circuit.py
     "H1": HOLES["H1"] + (0, "F"), "H2": HOLES["H2"] + (0, "F"), "H3": HOLES["H3"] + (0, "F"),
     "H4": HOLES["H4"] + (0, "F"), "H5": HOLES["H5"] + (0, "F"), "H6": HOLES["H6"] + (0, "F"),
     "FID1": (12.0, 38.0, 0, "F"), "FID2": (157.5, 60.0, 0, "F"), "FID3": (12.0, 92.0, 0, "F"),
 }
+
+# frozen auto-arranged passives (tools/freeze_auto.py); explicit entries above win
+try:
+    from placement_auto import AUTO
+    for _k, _v in AUTO.items():
+        PLACE.setdefault(_k, _v)
+except ImportError:
+    AUTO = {}
 
 # explicit near= hints for parts that are not passives of a single IC
 NEAR = {}
@@ -174,6 +189,14 @@ def auto_near(board):
             for num, net in p.pins.items():
                 if net and net not in RAILS:
                     pin_index.setdefault(net, []).append((p, num))
+    try:
+        import json as _json, os as _os
+        _d = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "reports")
+        _os.makedirs(_d, exist_ok=True)
+        with open(_os.path.join(_d, "near_anchors.json"), "w") as _f:
+            _json.dump(dict(sorted(dict(anchor, **NEAR).items())), _f, indent=0)
+    except OSError:
+        pass
     for p in unplaced:
         if p.ref in NEAR:
             p.near = NEAR[p.ref]
@@ -185,12 +208,20 @@ def auto_near(board):
         while a and a not in PLACE and a not in seen:
             seen.add(a)
             a = (NEAR.get(a) or anchor.get(a) or "").split(".")[0]
-        in_pad = False
+        # side: same side as the explicitly placed anchor part (decoupling and series parts next to their pins);
+        # bottom for anchors that are through-hole (relays, Micro-Fit/Mini-Fit) or on the bottom; test points bottom
+        side = "B"
         if a in PLACE:
-            ax, ay = PLACE[a][0], PLACE[a][1]
-            in_pad = THERMAL[0] - 2.0 <= ax <= THERMAL[2] + 2.0 and THERMAL[1] - 2.0 <= ay <= THERMAL[3] + 2.0
-        if SMALL_BOTTOM_OK.match(_fpname(p)) and not in_pad:
-            p.side = "B"
+            aside = PLACE[a][3]
+            fp = board.part(a).footprint or ""
+            tht = any(t in fp for t in ("Relay_THT", "Mini-Fit", "Micro-Fit", "MountingHole"))
+            side = aside if not (tht or a.startswith("J")) else "B"
+        if p.ref.startswith("TP"):
+            side = "B"
+            p.near = None
+        if not SMALL_BOTTOM_OK.match(_fpname(p)):
+            side = "F"
+        p.side = side
     return anchor
 
 
@@ -219,8 +250,12 @@ def setup(board):
     for h, (x, y) in HOLES.items():
         # parts and vias out of the 7 mm screw-head area; tracks may leave the hole pad (H1/H3 GND bond, others via 1M||10n)
         board.keepout("KO_" + h, circle=(x, y, HOLE_KO), tracks=False, vias=True, copper=False, pads=False, footprints=False)
-    board.keepout("KO_THERMAL_BOTTOM", polygon=[(THERMAL[0], THERMAL[1]), (THERMAL[2], THERMAL[1]), (THERMAL[2], THERMAL[3]), (THERMAL[0], THERMAL[3])],
-                  layers=("B.Cu",), tracks=False, vias=False, copper=False, pads=False, footprints=True)
+    # Bottom-side parts ban on the gap pad: needed only while the auto-arranger runs.  rrkicad exports this
+    # footprint-only rule area to Freerouting as a full B.Cu keep-out (tool defect), which would block all bottom
+    # routing on 60 x 40 mm, so it is left out once the placement is frozen (tools/fitcheck.py checks the rule).
+    if not AUTO:
+      board.keepout("KO_THERMAL_BOTTOM", polygon=[(THERMAL[0], THERMAL[1]), (THERMAL[2], THERMAL[1]), (THERMAL[2], THERMAL[3]), (THERMAL[0], THERMAL[3])],
+                    layers=("B.Cu",), tracks=False, vias=False, copper=False, pads=False, footprints=True)
 
     # IMU: no vias under the package (layout_guidance.md section 6.11; replaces the stock footprint's own rule area)
     board.keepout("KO_IMU_VIAS", polygon=[(IMU[0] - 2.6, IMU[1] - 1.9), (IMU[0] + 2.6, IMU[1] - 1.9), (IMU[0] + 2.6, IMU[1] + 1.9), (IMU[0] - 2.6, IMU[1] + 1.9)],
@@ -238,4 +273,11 @@ def setup(board):
                connect="solid", name="P_VBAT_SW")
     board.zone("VBAT_SW", ["In4.Cu"], polygon=[(0.5, 63.0), (57.0, 63.0), (57.0, 99.5), (0.5, 99.5)], connect="solid", name="P_VBAT_SW_FL")
 
+    board.autoplace_options(clearance=0.25, spread=0.2, ic_halo=1.5)
     auto_near(board)
+
+
+def routing(board):
+    """Autorouter settings for the stage-2 attempt: one Freerouting run of at most 13 min (shared 4-core host),
+    rrkicad's fine-pitch escape (default for 6 layers) and the finisher; no continue runs (time budget)."""
+    board.route(passes=100, threads=3, timeout=780, retries=0, escape="auto", finisher=True)

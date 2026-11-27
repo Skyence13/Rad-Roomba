@@ -334,6 +334,11 @@ class Builder:
         for sk in esc["skipped"]:
             if "no legal escape position" in sk:
                 self.warnings.append("escape: " + sk + " (left to the autorouter)")
+        # signal escape vias (KiCad mm): the post-route clean-up may drop the ones the router did not use
+        import json
+        with open(os.path.join(self.paths.route_dir, "escape_vias.json"), "w") as f:
+            json.dump(esc.pop("_vias", []), f)
+            f.write("\n")
         self.escape = esc
         fan = {"plane_nets": [], "vias": 0, "failed": []}
         if b.routing.get("plane_fanout", True):
@@ -859,6 +864,8 @@ def import_ses(name, pcb_path, ses, clean="1", min_track="0"):
     pcb.BuildConnectivity()
     info["unconnected_before_cleanup"] = int(pcb.GetConnectivity().GetUnconnectedCount(True))
     info["dangling_tracks_removed"] = _remove_dangling(pcb) if clean == "1" else 0
+    info["unused_escapes_removed"] = _remove_unused_escapes(pcb, os.path.join(os.path.dirname(ses), "escape_vias.json")) \
+        if clean == "1" else 0
     pcbnew.SaveBoard(pcb_path, pcb, True)
     return info
 
@@ -882,16 +889,22 @@ def finish_pcb(board, paths, ses=None):
         import shutil
         unrouted = paths.pcb + ".unrouted"
         shutil.copyfile(paths.pcb, unrouted)
+        # the result goes through a file: SWIG prints leak notices on stdout when the process exits
+        res_path = paths.pcb + ".import.json"
         code = ("import json,sys; from rrkicad import pcb; "
-                "print('RRJSON'+json.dumps(pcb.import_ses(*sys.argv[1:6])))")
+                "r = pcb.import_ses(*sys.argv[1:6]); open(sys.argv[6], 'w').write(json.dumps(r))")
 
         def run(clean):
-            r = subprocess.run([sys.executable, "-c", code, board.name, paths.pcb, ses, clean, str(board.rules.min_track)],
-                               capture_output=True, text=True)
-            lines = [l for l in r.stdout.splitlines() if l.startswith("RRJSON")]
-            if r.returncode != 0 or not lines:
+            if os.path.exists(res_path):
+                os.remove(res_path)
+            r = subprocess.run([sys.executable, "-c", code, board.name, paths.pcb, ses, clean, str(board.rules.min_track),
+                                res_path], capture_output=True, text=True)
+            if r.returncode != 0 or not os.path.exists(res_path):
                 raise RuntimeError("SES import step failed:\n" + r.stdout[-2000:] + r.stderr[-2000:])
-            return json.loads(lines[-1][6:])
+            with open(res_path) as f:
+                out = json.load(f)
+            os.remove(res_path)
+            return out
         try:
             info.update(run("1"))
             pcb, after = load_filled()
@@ -938,6 +951,55 @@ def finish_pcb(board, paths, ses=None):
     _fab_notes(board, pcb, fr, drills, n_via)
     pcbnew.SaveBoard(paths.pcb, pcb, True)
     return info
+
+
+def _remove_unused_escapes(pcb, listing):
+    """Drop escape via + stub pairs the router never used (the via touches nothing but its own
+    stub): they are dead-end antennas and give via_dangling warnings.  Only vias listed by the
+    escape generator are considered; the caller re-checks connectivity and redoes the import
+    without clean-up if anything got worse."""
+    import json
+    if not os.path.exists(listing):
+        return 0
+    with open(listing) as f:
+        want = {(MM(x), MM(y), n) for x, y, n in json.load(f)}
+    if not want:
+        return 0
+    tracks = [t for t in pcb.GetTracks() if t.GetClass() == "PCB_TRACK"]
+    ends = {}
+    for t in tracks:
+        for p in (t.GetStart(), t.GetEnd()):
+            ends.setdefault((p.x, p.y), []).append(t)
+    tol = MM(0.002)
+    victims = []
+    for v in [t for t in pcb.GetTracks() if t.GetClass() == "PCB_VIA" and t.IsLocked()]:
+        p = v.GetPosition()
+        key = None
+        for (x, y, n) in want:
+            if abs(x - p.x) <= tol and abs(y - p.y) <= tol and n == v.GetNetname():
+                key = (x, y, n)
+                break
+        if key is None:
+            continue
+        touching = [t for t in tracks if t.GetNetCode() == v.GetNetCode() and
+                    (t.HitTest(p, v.GetWidth(pcbnew.F_Cu) // 2) or t.GetStart() == p or t.GetEnd() == p)]
+        if len(touching) != 1 or not touching[0].IsLocked():
+            continue
+        # walk the locked stub back towards the pad while each node joins exactly two stub segments
+        chain = [touching[0]]
+        node = touching[0].GetStart() if touching[0].GetEnd() == p else touching[0].GetEnd()
+        while True:
+            nxt = [t for t in ends.get((node.x, node.y), []) if t not in chain]
+            if len(nxt) != 1 or not nxt[0].IsLocked() or nxt[0].GetNetCode() != v.GetNetCode():
+                break
+            chain.append(nxt[0])
+            node = nxt[0].GetStart() if nxt[0].GetEnd() == node else nxt[0].GetEnd()
+        victims.append(v)
+        victims += chain
+    n_via = sum(1 for it in victims if it.GetClass() == "PCB_VIA")
+    for it in victims:
+        pcb.Remove(it)
+    return n_via
 
 
 def _remove_dangling(pcb):
