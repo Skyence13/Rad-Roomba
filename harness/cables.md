@@ -85,9 +85,9 @@ At **both ends** of every cable, within 30 mm of the connector: a sleeve with `W
 | W-040 | ToF carrier REAR_R (RR-TOF #10): main board J_TOF10 to the carrier J1 | 6 | 290 | 300 |  |
 | W-041 | Chassis/bay heater with its bimetal cut-out: main board J_HTR to the heater plate | 3 | 220 | 300 |  |
 | W-042 | Bay NTC and pack-surface NTC to main board J_NTC | 4 | 220 | - |  |
-| W-101 | Head J1 captive pigtail: head board J2001 to the J1 plug | 8 | 290 | 350 |  |
+| W-101 | Head J1 captive pigtail: head board J2001 to the J1 plug | 8 | 300 | 350 |  |
 | W-102 | Head J2 captive pigtail: head board J2501 to the J2 plug (plug link pin 7 to pin 4) | 9 | 300 | - |  |
-| W-103 | Head heater film, bimetal cut-out and spreader NTC: head board J2601 to the heater assembly | 7 | 100 | 350 |  |
+| W-103 | Head heater film, bimetal cut-out and spreader NTC: head board J2601 to the heater assembly | 7 | 110 | 350 |  |
 | W-104 | Head rail switch front (series element of the interlock loop): head board J2002 to the switch | 2 | 90 | - |  |
 | W-105 | Head rail switch right (series element of the interlock loop): head board J2003 to the switch | 2 | 270 | - |  |
 | W-106 | Head rail switch left (series element of the interlock loop): head board J2004 to the switch | 2 | 280 | - |  |
@@ -791,7 +791,7 @@ Open length items: (a) **IB-34 mapping (lead decision, OD-1 closed)**: J_TOF4 = 
 
 ### W-101  Head J1 captive pigtail: head board J2001 to the J1 plug
 
-* **Length:** 290 mm (inside the head: board J2001 (u 86.8, v 10.6, mating face rearward, stage 2) to the rear-wall port = 17.6 mm path + 2 x 25 mm + 20 mm; outside: 200 mm free length (mechanical_interfaces.md allows 150..200; straight-line port to plug rear is 142 mm, plus bends at 40 mm radius, so 150 mm is too short)). *Estimated from layout, confirm on first build.*
+* **Length:** 300 mm (inside the head: board J2001 (u 86.8, v 10.6, mating face rearward, stage 2) to the rear-wall port = 17.6 mm path + 2 x 25 mm + 20 mm; outside: 200 mm free length (mechanical_interfaces.md allows 150..200; straight-line port to plug rear is 142 mm, plus bends at 40 mm radius, so 150 mm is too short)). *Estimated from layout, confirm on first build.*
 * **Construction:** Same construction as W-008 (shielded multicore, twisted pairs P1 power, P2 heater, P3 loop), captive: sealed strain relief in the head rear wall at (71.7, 76.2, 39) (CR-M03, moved from y 87.5), cable leaves toward -x/+z, clipped to the shoe root. OD <= 7.5 mm.
 * **Shield / bonding:** Braid: 360 degrees to the J1 plug backshell (-> chassis through the mated shell) AND drain wire to the head board pad TP2004. This is the contract: hard bond at the chassis, 1 Mohm || 10 nF at the head.
 * **Protection upstream:** HEAD_PWR eFuse TPS259470 (RILM 2.21 k) 1.51 A; contract limit 1.5 A; head side TPS26600 eFuse 1.0 A (pins 1-2); HEAD_HTR eFuse TPS259470 (RILM 825 ohm) 4.05 A (3.6-4.4 A), contract limit 4.0 A; independent low-side bimetal cut-out on the head heater (pins 3-4); No fuse: signal conductors, series-limited (loop through 1.00 kohm; PRES_ID through the 4.70 kohm pull-up) [circuit.py]
@@ -801,14 +801,14 @@ Open length items: (a) **IB-34 mapping (lead decision, OD-1 closed)**: J_TOF4 = 
 
 | Wire | From (conn.pin) | To (conn.pin) | Net (from -> to) | AWG | Colour | Insulation | Pair | Length |
 |---|---|---|---|---|---|---|---|---|
-| W-101.1 | HEAD.J2001.1 | J1P.1 | HEAD_PWR_P | 20 | RD | SI | P1 | 290 |
-| W-101.2 | HEAD.J2001.2 | J1P.2 | HEAD_PWR_N | 20 | BK | SI | P1 | 290 |
-| W-101.3 | HEAD.J2001.3 | J1P.3 | HEAD_HTR_P | 18 | OG | SI | P2 | 290 |
-| W-101.4 | HEAD.J2001.4 | J1P.4 | HEAD_HTR_N | 18 | BN | SI | P2 | 290 |
-| W-101.5 | HEAD.J2001.5 | J1P.5 | HEAD_LOOP_OUT | 24 | GN | SI | P3 | 290 |
-| W-101.6 | HEAD.J2001.6 | J1P.6 | HEAD_LOOP_RET | 24 | GY | SI | P3 | 290 |
-| W-101.7 | HEAD.J2001.7 | J1P.7 | HEAD_PRES_ID | 24 | VT | SI | - | 290 |
-| W-101.S | HEAD.TP2004.1 | J1P.SH | SHLD_J1 | 24 | bare | SI | - | 130 |
+| W-101.1 | HEAD.J2001.1 | J1P.1 | HEAD_PWR_P | 20 | RD | SI | P1 | 300 |
+| W-101.2 | HEAD.J2001.2 | J1P.2 | HEAD_PWR_N | 20 | BK | SI | P1 | 300 |
+| W-101.3 | HEAD.J2001.3 | J1P.3 | HEAD_HTR_P | 18 | OG | SI | P2 | 300 |
+| W-101.4 | HEAD.J2001.4 | J1P.4 | HEAD_HTR_N | 18 | BN | SI | P2 | 300 |
+| W-101.5 | HEAD.J2001.5 | J1P.5 | HEAD_LOOP_OUT | 24 | GN | SI | P3 | 300 |
+| W-101.6 | HEAD.J2001.6 | J1P.6 | HEAD_LOOP_RET | 24 | GY | SI | P3 | 300 |
+| W-101.7 | HEAD.J2001.7 | J1P.7 | HEAD_PRES_ID | 24 | VT | SI | - | 300 |
+| W-101.S | HEAD.TP2004.1 | J1P.SH | SHLD_J1 | 24 | bare | SI | - | 70 |
 
 ### W-102  Head J2 captive pigtail: head board J2501 to the J2 plug (plug link pin 7 to pin 4)
 
@@ -830,11 +830,11 @@ Open length items: (a) **IB-34 mapping (lead decision, OD-1 closed)**: J_TOF4 = 
 | W-102.6 | HEAD.J2501.6 | J2P.6 | SYNC_N | 26 | GY | FEP | P3 | 300 |
 | W-102.7 | HEAD.J2501.7 | J2P.7 | J2_PRES | 26 | VT | FEP | P4 | 300 |
 | W-102.L | J2P.7 | J2P.4 | J2_PRES -> BUS_GND | 26 | VT | FEP | - | 20 |
-| W-102.S | HEAD.TP2501.1 | J2P.SH | SHLD_J2 | 26 | bare | FEP | - | 110 |
+| W-102.S | HEAD.TP2501.1 | J2P.SH | SHLD_J2 | 26 | bare | FEP | - | 50 |
 
 ### W-103  Head heater film, bimetal cut-out and spreader NTC: head board J2601 to the heater assembly
 
-* **Length:** 100 mm (routed path 28 mm + 2 x 20 mm termination/strain relief + 30 mm service loop = 98 mm, rounded up to 100 mm). *Estimated from layout, confirm on first build.*
+* **Length:** 110 mm (routed path 34 mm + 2 x 20 mm termination/strain relief + 30 mm service loop = 104 mm, rounded up to 110 mm). *Estimated from layout, confirm on first build.*
 * **Construction:** Heater circuit AWG 18 pair (supply and return twisted) plus AWG 24 sense and an AWG 26 NTC pair. Assembly (per J2601): HTR_SW -> 4.8 ohm element -> CUTOUT_SENSE -> bimetal cut-out (low side) -> HEAD_HTR_N. Tail comes up the rear chimney at y = +87.5. J2601 pin 6 not wired.
 * **Shield / bonding:** none inside the shielded head
 * **Protection upstream:** HEAD_HTR eFuse TPS259470 (RILM 825 ohm) 4.05 A (3.6-4.4 A), contract limit 4.0 A; independent low-side bimetal cut-out on the head heater; cut-out status reads 'tripped' when the feed is off (by design)
@@ -844,13 +844,13 @@ Open length items: (a) **IB-34 mapping (lead decision, OD-1 closed)**: J_TOF4 = 
 
 | Wire | From (conn.pin) | To (conn.pin) | Net (from -> to) | AWG | Colour | Insulation | Pair | Length |
 |---|---|---|---|---|---|---|---|---|
-| W-103.1 | HEAD.J2601.1 | HEAD-HEATER.1 | HTR_SW | 18 | OG | SI | - | 100 |
-| W-103.2 | HEAD.J2601.3 | SPL-HCUT.1 | HTR_CUT | 24 | VT | SI | - | 100 |
-| W-103.3 | HEAD-HEATER.2 | SPL-HCUT.2 | HTR_CUT | 18 | BN | SI | - | 100 |
-| W-103.4 | SPL-HCUT.3 | HEAD-CUTOUT.1 | HTR_CUT | 18 | BN | SI | - | 100 |
-| W-103.5 | HEAD-CUTOUT.2 | HEAD.J2601.2 | HEAD_HTR_N | 18 | BN | SI | - | 100 |
-| W-103.6 | NTC-SPR.a | HEAD.J2601.4 | NTC_HTR | 24 | WH | FEP | P1 | 100 |
-| W-103.7 | NTC-SPR.b | HEAD.J2601.5 | GND | 24 | BK | FEP | P1 | 100 |
+| W-103.1 | HEAD.J2601.1 | HEAD-HEATER.1 | HTR_SW | 18 | OG | SI | - | 110 |
+| W-103.2 | HEAD.J2601.3 | SPL-HCUT.1 | HTR_CUT | 24 | VT | SI | - | 110 |
+| W-103.3 | HEAD-HEATER.2 | SPL-HCUT.2 | HTR_CUT | 18 | BN | SI | - | 110 |
+| W-103.4 | SPL-HCUT.3 | HEAD-CUTOUT.1 | HTR_CUT | 18 | BN | SI | - | 110 |
+| W-103.5 | HEAD-CUTOUT.2 | HEAD.J2601.2 | HEAD_HTR_N | 18 | BN | SI | - | 110 |
+| W-103.6 | NTC-SPR.a | HEAD.J2601.4 | NTC_HTR | 24 | WH | FEP | P1 | 110 |
+| W-103.7 | NTC-SPR.b | HEAD.J2601.5 | GND | 24 | BK | FEP | P1 | 110 |
 
 ### W-104  Head rail switch front (series element of the interlock loop): head board J2002 to the switch
 

@@ -268,20 +268,20 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "Track [GND] on B.Cu, length 1.2750 mm",
-                    "pos": {
-                        "x": 93.475,
-                        "y": 104.0
-                    },
-                    "uuid": "d5cd4022-ebb1-4818-9a8e-94555874f3f9"
-                },
-                {
                     "description": "Pad 3 [GND] of U15 on F.Cu",
                     "pos": {
                         "x": 95.1375,
                         "y": 105.325
                     },
                     "uuid": "34391f34-eff5-40e9-9c6f-7e4206ced5fe"
+                },
+                {
+                    "description": "Track [GND] on B.Cu, length 1.2750 mm",
+                    "pos": {
+                        "x": 93.475,
+                        "y": 104.0
+                    },
+                    "uuid": "d5cd4022-ebb1-4818-9a8e-94555874f3f9"
                 }
             ],
             "severity": "error",
@@ -360,20 +360,20 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "Pad 2 [GND] of NT1 on F.Cu",
-                    "pos": {
-                        "x": 165.5,
-                        "y": 146.5
-                    },
-                    "uuid": "bfeed7ef-3c52-47c2-acce-4fec389f4e1c"
-                },
-                {
                     "description": "Via [GND] on F.Cu - B.Cu",
                     "pos": {
                         "x": 167.625,
                         "y": 146.4
                     },
                     "uuid": "8126ce56-d0e6-4ba6-ae0a-64f764398d7e"
+                },
+                {
+                    "description": "Pad 2 [GND] of NT1 on F.Cu",
+                    "pos": {
+                        "x": 165.5,
+                        "y": 146.5
+                    },
+                    "uuid": "bfeed7ef-3c52-47c2-acce-4fec389f4e1c"
                 }
             ],
             "severity": "error",
@@ -383,20 +383,20 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "Track [GND] on B.Cu, length 1.0000 mm",
-                    "pos": {
-                        "x": 177.725,
-                        "y": 138.5
-                    },
-                    "uuid": "0af09dd3-843e-4a94-9ac7-750c9f528f9f"
-                },
-                {
                     "description": "Pad 29 [GND] of U3 on F.Cu",
                     "pos": {
                         "x": 178.0,
                         "y": 138.0
                     },
                     "uuid": "5e6a2bc7-98ac-4b0c-ad68-f287bc8f11f0"
+                },
+                {
+                    "description": "Track [GND] on B.Cu, length 1.0000 mm",
+                    "pos": {
+                        "x": 177.725,
+                        "y": 138.5
+                    },
+                    "uuid": "0af09dd3-843e-4a94-9ac7-750c9f528f9f"
                 }
             ],
             "severity": "error",
@@ -1932,12 +1932,12 @@
                     "uuid": "8593afa1-6652-41fa-9a0a-30855b4e79c4"
                 },
                 {
-                    "description": "Track [3V3] on B.Cu, length 6.3655 mm",
+                    "description": "Track [3V3] on B.Cu, length 8.8566 mm",
                     "pos": {
-                        "x": 105.4,
-                        "y": 164.774999
+                        "x": 114.2,
+                        "y": 165.774999
                     },
-                    "uuid": "b5df1d82-d602-4f96-a98b-5e46c64a6c3d"
+                    "uuid": "c645a8d3-7463-4661-b6a6-5e6a855b8618"
                 }
             ],
             "severity": "error",
@@ -3350,12 +3350,12 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "Via [I2C_SYS_SDA] on F.Cu - B.Cu",
+                    "description": "Track [I2C_SYS_SDA] on F.Cu, length 0.5500 mm",
                     "pos": {
-                        "x": 86.08,
+                        "x": 86.63,
                         "y": 140.25
                     },
-                    "uuid": "2815bb07-baa8-4d20-89fc-5b765b6db335"
+                    "uuid": "d8ab3568-ad59-4a36-bff9-e06c340b4e1b"
                 },
                 {
                     "description": "Pad 2 [I2C_SYS_SDA] of R211 on F.Cu",
@@ -3519,12 +3519,12 @@
                     "uuid": "7984e08d-4686-44c9-b404-d2cf8c2f64a0"
                 },
                 {
-                    "description": "Via [I2C_SYS_SDA] on F.Cu - B.Cu",
+                    "description": "Track [I2C_SYS_SDA] on F.Cu, length 0.3430 mm",
                     "pos": {
-                        "x": 181.03644,
+                        "x": 180.693414,
                         "y": 138.290624
                     },
-                    "uuid": "8cd7e5bd-223f-496f-a2ff-85f5bdb038da"
+                    "uuid": "4859554b-68f3-4c18-80a9-384bfb4dec78"
                 }
             ],
             "severity": "error",
@@ -3703,12 +3703,12 @@
                     "uuid": "083eb270-4e99-4b0e-9745-bcb32bf6ec48"
                 },
                 {
-                    "description": "Track [I2C_SYS_SCL] on F.Cu, length 0.9424 mm",
+                    "description": "Via [I2C_SYS_SCL] on F.Cu - B.Cu",
                     "pos": {
-                        "x": 180.674048,
+                        "x": 181.61644,
                         "y": 137.725624
                     },
-                    "uuid": "5b12d0c2-59cb-4fb2-8743-373ca785ca31"
+                    "uuid": "cb840198-efc5-4a45-b4e9-f28ba4a12d4f"
                 }
             ],
             "severity": "error",
@@ -4416,12 +4416,12 @@
                     "uuid": "1b6a0e76-1a79-41eb-894c-af52d0e55418"
                 },
                 {
-                    "description": "Via [VSYS] on F.Cu - B.Cu",
+                    "description": "Track [VSYS] on F.Cu, length 2.0000 mm",
                     "pos": {
                         "x": 174.55,
-                        "y": 135.75
+                        "y": 137.75
                     },
-                    "uuid": "e666768a-a3da-4992-b6f0-7301d80e597a"
+                    "uuid": "1c124cf2-1131-4748-9ffe-8e6689d68402"
                 }
             ],
             "severity": "error",
@@ -10181,20 +10181,20 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "Pad 1 [CH_N7] of TP9 on B.Cu",
+                    "description": "Pad 1 [CH_N7] of J_BUMP_L on F.Cu",
                     "pos": {
-                        "x": 164.0,
-                        "y": 137.5
+                        "x": 110.8,
+                        "y": 184.3
                     },
-                    "uuid": "d5a9178c-1bbb-419b-8bfd-4e73bc84f944"
+                    "uuid": "62df1650-6a8c-4a1e-b2ea-4f50734f4e93"
                 },
                 {
-                    "description": "Pad 4 [CH_N7] of U22 on F.Cu",
+                    "description": "Pad 1 [CH_N7] of TP9 on B.Cu",
                     "pos": {
-                        "x": 98.765,
-                        "y": 128.73
+                        "x": 121.0,
+                        "y": 185.0
                     },
-                    "uuid": "41f4f7cb-7c35-4a55-b3e6-96f2775f9ed4"
+                    "uuid": "d5a9178c-1bbb-419b-8bfd-4e73bc84f944"
                 }
             ],
             "severity": "error",
@@ -11490,75 +11490,6 @@
         }
     ],
     "violations": [
-        {
-            "description": "Items shorting two nets (nets TOF2_GPIO1 and CH_N7)",
-            "items": [
-                {
-                    "description": "Pad 1 [TOF2_GPIO1] of TP14 on B.Cu",
-                    "pos": {
-                        "x": 166.5,
-                        "y": 137.75
-                    },
-                    "uuid": "9c018841-7a1d-4591-9def-f0a1dcc33086"
-                },
-                {
-                    "description": "Pad 1 [CH_N7] of TP9 on B.Cu",
-                    "pos": {
-                        "x": 164.0,
-                        "y": 137.5
-                    },
-                    "uuid": "d5a9178c-1bbb-419b-8bfd-4e73bc84f944"
-                }
-            ],
-            "severity": "error",
-            "type": "shorting_items"
-        },
-        {
-            "description": "Courtyards overlap",
-            "items": [
-                {
-                    "description": "Footprint TP14",
-                    "pos": {
-                        "x": 166.5,
-                        "y": 137.75
-                    },
-                    "uuid": "ad63e21c-a48b-42f5-a1f2-5ae5ac0c8f7f"
-                },
-                {
-                    "description": "Footprint TP9",
-                    "pos": {
-                        "x": 164.0,
-                        "y": 137.5
-                    },
-                    "uuid": "f686ed6e-81e4-4b6b-8336-4b034fac3e43"
-                }
-            ],
-            "severity": "error",
-            "type": "courtyards_overlap"
-        },
-        {
-            "description": "Rear solder mask aperture bridges items with different nets",
-            "items": [
-                {
-                    "description": "Pad 1 [TOF2_GPIO1] of TP14 on B.Cu",
-                    "pos": {
-                        "x": 166.5,
-                        "y": 137.75
-                    },
-                    "uuid": "9c018841-7a1d-4591-9def-f0a1dcc33086"
-                },
-                {
-                    "description": "Pad 1 [CH_N7] of TP9 on B.Cu",
-                    "pos": {
-                        "x": 164.0,
-                        "y": 137.5
-                    },
-                    "uuid": "d5a9178c-1bbb-419b-8bfd-4e73bc84f944"
-                }
-            ],
-            "severity": "error",
-            "type": "solder_mask_bridge"
-        },
         {
             "description": "Via is not connected or connected on only one layer",
             "items": [
@@ -13570,21 +13501,6 @@
             "description": "Silkscreen clipped by solder mask",
             "items": [
                 {
-                    "description": "Rectangle of TP14 on B.Silkscreen",
-                    "pos": {
-                        "x": 164.4,
-                        "y": 138.95
-                    },
-                    "uuid": "c3e4448e-6eaf-42f4-8ae0-55f3ab3ce82c"
-                }
-            ],
-            "severity": "warning",
-            "type": "silk_over_copper"
-        },
-        {
-            "description": "Silkscreen clipped by solder mask",
-            "items": [
-                {
                     "description": "Reference field of U45",
                     "pos": {
                         "x": 94.0,
@@ -13621,21 +13537,6 @@
                         "y": 185.5
                     },
                     "uuid": "193595a1-be77-4d2c-9235-d3292c015011"
-                }
-            ],
-            "severity": "warning",
-            "type": "silk_over_copper"
-        },
-        {
-            "description": "Silkscreen clipped by solder mask",
-            "items": [
-                {
-                    "description": "Rectangle of TP9 on B.Silkscreen",
-                    "pos": {
-                        "x": 161.9,
-                        "y": 138.7
-                    },
-                    "uuid": "cd9abdef-5fff-4910-9b21-d1137ee8d27d"
                 }
             ],
             "severity": "warning",
@@ -14695,29 +14596,6 @@
             "description": "Silkscreen overlap",
             "items": [
                 {
-                    "description": "Rectangle of TP14 on B.Silkscreen",
-                    "pos": {
-                        "x": 164.4,
-                        "y": 138.95
-                    },
-                    "uuid": "c3e4448e-6eaf-42f4-8ae0-55f3ab3ce82c"
-                },
-                {
-                    "description": "Rectangle of TP9 on B.Silkscreen",
-                    "pos": {
-                        "x": 161.9,
-                        "y": 138.7
-                    },
-                    "uuid": "cd9abdef-5fff-4910-9b21-d1137ee8d27d"
-                }
-            ],
-            "severity": "warning",
-            "type": "silk_overlap"
-        },
-        {
-            "description": "Silkscreen overlap",
-            "items": [
-                {
                     "description": "Reference field of U41",
                     "pos": {
                         "x": 83.9,
@@ -14925,29 +14803,6 @@
             "description": "Silkscreen overlap",
             "items": [
                 {
-                    "description": "Segment of Q53 on B.Silkscreen",
-                    "pos": {
-                        "x": 118.81,
-                        "y": 181.26
-                    },
-                    "uuid": "ba53084a-be0e-45db-a932-3ec0d19d808f"
-                },
-                {
-                    "description": "Reference field of Q54",
-                    "pos": {
-                        "x": 119.6,
-                        "y": 180.5
-                    },
-                    "uuid": "dc401893-a082-443b-a1a6-9c78a1386728"
-                }
-            ],
-            "severity": "warning",
-            "type": "silk_overlap"
-        },
-        {
-            "description": "Silkscreen overlap",
-            "items": [
-                {
                     "description": "Polygon of Q50 on B.Silkscreen",
                     "pos": {
                         "x": 115.55,
@@ -14962,6 +14817,29 @@
                         "y": 180.5
                     },
                     "uuid": "b828ff3f-122d-4d38-b32c-220073ac6857"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen overlap",
+            "items": [
+                {
+                    "description": "Segment of Q53 on B.Silkscreen",
+                    "pos": {
+                        "x": 118.81,
+                        "y": 181.26
+                    },
+                    "uuid": "ba53084a-be0e-45db-a932-3ec0d19d808f"
+                },
+                {
+                    "description": "Reference field of Q54",
+                    "pos": {
+                        "x": 119.6,
+                        "y": 180.5
+                    },
+                    "uuid": "dc401893-a082-443b-a1a6-9c78a1386728"
                 }
             ],
             "severity": "warning",

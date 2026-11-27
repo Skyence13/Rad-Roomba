@@ -302,8 +302,8 @@ K_G10, K_PA66, K_GUIDE, K_CU = 0.29, 0.25, 0.19, 390.0     # W/m K: G10 through-
 SIGMA, EMISSIVITY = 5.67e-8, 0.9                           # frame underside / film and floor both taken as 0.9 (conservative for the loss)
 # IB-39 assumption set (one set for the project; mechanical/common/calc/thermal.py uses the same):
 T_AMBIENT_C = (-20.0, -25.0)          # RQ-029 operating / qualification ambient
-T_SET_C = 10.0                        # regulated set-point at the SiPM carrier (baseline)
-T_SET_OPTION_C = 5.0                  # labelled option, reason in thermal()["_option"]
+T_SET_C = float(P.POWER_C["thermal_policy"]["head_setpoint_c"])   # baseline set-point at the SiPM carrier: +5 C (contract draft9, owner decision 2026-11-27)
+T_SET_OPTION_C = 10.0                 # comparison case: the former +10 C set-point (IB-39 first assumption set)
 H_EXT = {"still air": 12.0, "moving / draught": 25.0}      # W/m2 K incl. radiation; 25 = sensitivity
 H_IN = 6.0                            # W/m2 K inside the closed head (natural convection)
 FLOOR_GAP = 0.010                     # m: film plane z 10 above the floor (near-floor air layer, stable: hot above cold -> conduction only)
@@ -420,7 +420,7 @@ def warmup_min(c, ua, p, t_amb, t_set):
 def thermal(builds=None):
     """IB-39: heater power to hold the SiPM carrier at the set-point, one assumption set (calculated, lumped steady state)."""
     out = {"_assumptions": {
-        "ambient_c": list(T_AMBIENT_C), "set_point_c": T_SET_C, "set_point_option_c": T_SET_OPTION_C, "h_ext_w_m2k": dict(H_EXT), "h_in_w_m2k": H_IN,
+        "ambient_c": list(T_AMBIENT_C), "set_point_c": T_SET_C, "set_point_comparison_c": T_SET_OPTION_C, "h_ext_w_m2k": dict(H_EXT), "h_in_w_m2k": H_IN,
         "electronics_credit_w": P_ELEC_TYP, "electronics_max_w_not_credited": P_ELEC_MAX, "floor_gap_mm": FLOOR_GAP * 1000, "emissivity": EMISSIVITY,
         "receiver_body_side_w_per_k_per_shoe": G_BODY_PER_SHOE, "jacket": "RR-HD-S-131/132 fitted below 0 C (standard cold configuration); no-jacket shown"}}
     a_cap, a_front, a_liner = _COV()
@@ -456,10 +456,10 @@ def thermal(builds=None):
                      "steady_c_heater_stuck_on_15v_at_+20c": round(20.0 + (46.9 + P_ELEC_MAX) / ua_case(b, 12.0, True, 20.0, 20.0)[0], 0),
                      "steady_c_full_30w_at_-25c": round(-25.0 + (HEATER_FILMS_W + P_ELEC_TYP) / ua, 0)}
         out["warmup_from_-25c_soak"] = wu
-    out["_option"] = (f"Option set-point +{T_SET_OPTION_C:g} C (labelled option, not the baseline): head_afe_budget.md section 3.2 shows the lowest usable BETA_LLD falling "
-                      "with temperature (8-9 p.e. at +10 C, 7-8 at -20 C) and crosstalk-limited below about 0 C, so +5 C costs no threshold against +10 C; "
-                      "+5 C is also inside the +5..+10 C bond-line range assumed for the OEM modules (head_report.md section 8). It is NOT chosen as the "
-                      "baseline because the OEM carrier / bond-line limits are unknown (no OEM drawing) and the project uses +10 C.")
+    out["_option"] = (f"Baseline +{T_SET_C:g} C is the owner decision (contract power.thermal_policy.head_setpoint_c, draft9). It is on the safe side for dark counts: "
+                      "the electronics' default LLD of 10 p.e. (STAGE2_CHANGE_REQUESTS.md S3-10) was derived for the +10 C dark rate, and the dark rate falls with "
+                      "temperature (halving about every 8 C, head_afe_budget.md section 3.2). The OEM carrier / bond-line limits are still unknown (RFQ). "
+                      f"+{T_SET_OPTION_C:g} C is kept only as a comparison case.")
     return out
 
 

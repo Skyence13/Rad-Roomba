@@ -45,7 +45,7 @@ C_BODY = 1.0 * 1100 + 1.2 * 900 + 2.0 * 1300 + 1.2 * 500 + 0.8 * 1000       # pa
 
 
 # ---- one assumption set for every thermal calculation (IB-39)
-T_SET_C = 10.0                 # regulated set-point at the controlled point (bay: battery-pack skin NTC; head: SiPM carrier)
+T_SET_C = float(P.POWER_C["thermal_policy"]["head_setpoint_c"])   # head set-point at the SiPM carrier from the contract (draft9: +5 C)
 H_STILL, H_MOVING = 12.0, 25.0  # W/m2 K: still air (primary), moving air (sensitivity)
 # chassis self-heat inside the shell at the TYPICAL budget (electronics/analysis/power_budget.md section 1, pack terminals):
 # cm5_run 7.61 + logic 1.88 + relays_armed 0.94 + protection_quies 0.15 + 35 % of drive_cold 5.67 (motor/bridge losses inside
@@ -80,6 +80,31 @@ def preheat_time(ua, p_w, g, t0=-25.0, t_end=None, dt=10.0, t_max=6 * 3600):
         if tp >= t_end:
             return t / 60
     return None
+
+
+def _bound_text():
+    import json
+    try:
+        d = json.loads((P.REPO / "mechanical" / "head" / "out" / "thermal_summary.json").read_text(encoding="utf-8"))
+        w = [c["heater_power_w"] for c in d["cases"] if str(c.get("receiver_boundary", "")).startswith("BOUND") and c.get("set_point_c") == T_SET_C]
+        if w:
+            return f"{min(w):.0f}..{max(w):.0f} W at +{T_SET_C:.0f} C in the head summary, against 30 W fitted"
+        w = [(c["heater_power_w"], c["set_point_c"]) for c in d["cases"] if str(c.get("receiver_boundary", "")).startswith("BOUND")]
+        return (f"{min(v for v, _ in w):.0f}..{max(v for v, _ in w):.0f} W at +{w[0][1]:.0f} C in the current head summary (no bound rows at +{T_SET_C:.0f} C yet), "
+                "against 30 W fitted") if w else "no bound rows in the head summary"
+    except (OSError, ValueError, KeyError):
+        return "head summary not readable"
+
+
+def _rb_text():
+    from .receiver_break import H_EXT, body_side_per_shoe, conductance, head_delta_w, head_receiver_side
+    g = conductance()[0]["total"]
+    gh, _ = head_receiver_side()
+    out = []
+    for hn, h in H_EXT.items():
+        bs, _ = body_side_per_shoe(g, h)
+        out.append(f"{bs:.2f} W/K per shoe in {hn} (+{head_delta_w(gh, 2 * bs, T_SET_C):.1f} W at -25 C)" if gh else f"{bs:.2f} W/K per shoe in {hn}")
+    return "; ".join(out) + f" against the 0.07 W/K case at the +{T_SET_C:.0f} C set-point"
 
 
 def head_reference():
@@ -172,8 +197,9 @@ def run():
     if ref:
         md.append("Head heater power from `mechanical/head/out/thermal_summary.json` (head engineer, real head geometry, same assumption set), "
                   "**0.07 W/K-per-shoe receiver case only. These figures depend on the receiver thermal break (section 9, DEC-045 / IB-64):** "
-                  "without it the channels run at plate temperature and the head's 'receiver metal at ambient' bound applies (43..66 W, above the 30 W fitted). "
-                  "With the break as built the calculated body side is 0.11 W/K per shoe in still air (0.14 at 25 W/m2K), i.e. up to +1.8 / +3.3 W on the rows below (section 9).\n")
+                  "without it the channels run at plate temperature and the head's 'receiver metal at ambient' bound applies (" + _bound_text() + "). "
+                  "With the break as built the calculated body side is "
+                  + _rb_text() + " (section 9). Rows at other set-points (comparison) are in the head summary.\n")
         md += ref
         key["head_htr"] = "see mechanical/head/out/thermal_summary.json"
     else:

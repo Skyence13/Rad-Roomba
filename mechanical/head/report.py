@@ -92,15 +92,18 @@ def write(res):
     for b in ("prototype", "production"):
         for h in (12.0, 25.0):
             for jac in (True, False):
-                c20, c25 = pick(b, h, jac, 10.0, -20.0), pick(b, h, jac, 10.0, -25.0)
-                o20, o25 = pick(b, h, jac, 5.0, -20.0), pick(b, h, jac, 5.0, -25.0)
+                c20, c25 = pick(b, h, jac, A_["set_point_c"], -20.0), pick(b, h, jac, A_["set_point_c"], -25.0)
+                o20, o25 = pick(b, h, jac, A_["set_point_comparison_c"], -20.0), pick(b, h, jac, A_["set_point_comparison_c"], -25.0)
                 rows.append((b, f"{h:g}", "yes" if jac else "no", f"{c20['ua_w_per_k']:.2f}", f"**{c20['heater_power_w']:.1f}**", f"**{c25['heater_power_w']:.1f}**",
                              f"{o20['heater_power_w']:.1f} / {o25['heater_power_w']:.1f}"))
-    bound = [pick(b, h, True, 10.0, ta, "BOUND") for b in ("prototype", "production") for h in (12.0, 25.0) for ta in (-20.0, -25.0)]
-    sp = pick("prototype", 12.0, True, 10.0, -25.0)["split_w_per_k"]
+    bound = [pick(b, h, True, A_["set_point_c"], ta, "BOUND") for b in ("prototype", "production") for h in (12.0, 25.0) for ta in (-20.0, -25.0)]
+    sp = pick("prototype", 12.0, True, A_["set_point_c"], -25.0)["split_w_per_k"]
+    def margin(b, h, ta, w):
+        return w - pick(b, h, True, A_["set_point_c"], ta)["heater_power_w"]
     wu = th.get("warmup_from_-25c_soak", {})
     md += ["## 9. Thermal: heater power, one assumption set (IB-39; calculated, lumped steady state -- nothing measured)", "",
            f"**Assumption set** (same as `mechanical/common/calc/thermal.py`): ambient -20 C and -25 C; regulated set-point **+{A_['set_point_c']:g} C at the SiPM carrier** "
+           "(contract draft9 power.thermal_policy.head_setpoint_c, owner decision; +10 C kept as a labelled comparison) "
            f"(the floor carrier sits on the floor guide, so the window path is taken from the floor-guide mid-plane at the set-point; the rest of the interior is lumped at "
            f"the set-point); electronics self-heat credited at the **typical {A_['electronics_credit_w']:g} W** only (`electronics/analysis/head_afe_budget.md` section 8: "
            f"1.20 W typical, 2.10 W maximum at J1; `electronics/analysis/power_budget.md` carries only the 5 W contract target for the head, no typical value); "
@@ -108,28 +111,32 @@ def write(res):
            f"RR-HD-S-131 / -132 fitted below 0 C (cap covers {cov['cap_covered_m2']:.4f} of {cov['top_area_m2']:.4f} m2, front band {cov['front_band_m2']:.4f} m2; "
            "both ambients are below 0 C, so the jacket is the baseline and the no-jacket case is shown); 0.5 mm liner under the lid.", "",
            "**Conduction paths included:** (1) floor side: windows and frame underside across the 10 mm near-floor air layer (conduction k 0.024 / 10 mm, stable "
-           f"stratification) + radiation to the floor (emissivity 0.9 / 0.9) = {pick('prototype', 12.0, True, 10.0, -25.0)['h_floor_w_m2k']:.1f} W/m2K at -25 C; in the "
+           f"stratification) + radiation to the floor (emissivity 0.9 / 0.9) = {pick('prototype', 12.0, True, A_['set_point_c'], -25.0)['h_floor_w_m2k']:.1f} W/m2K at -25 C; in the "
            "25 W/m2K sensitivity the floor side gets 25 W/m2K too (bound); (2) receiver shoes: spreader -> 0.5 mm G10 isolators (k 0.29) + 0.3 mm air round the "
            "T-heads + the 8 T-head screws through insulating washers + keeper and bridge air gaps = "
            f"{rec['prototype']['total']:.2f} W/K (prototype) / {rec['production']['total']:.2f} W/K (production) from the model geometry, in series with the body side "
            f"{A_['receiver_body_side_w_per_k_per_shoe']:g} W/K per shoe (RR-X PAHT-CF channels with steel dowel lands on the chassis plate at ambient, STATED ASSUMPTION) "
            "+ exposed bridge / keeper faces; (3) J1 / J2 pigtails as infinite copper fins (contract conductor gauges + 1 mm2 braid, UNVERIFIED). "
            "Heater = UA x (set-point - ambient) - 1.2 W.", "",
-           _t(["Build", "h ext (W/m2K)", "Jacket", "UA at -20 C (W/K)", "Heater at -20 C, +10 C (W)", "Heater at -25 C, +10 C (W)", "Option +5 C: -20 / -25 C (W)"], rows), "",
+           _t(["Build", "h ext (W/m2K)", "Jacket", "UA at -20 C (W/K)", f"Heater at -20 C, +{A_['set_point_c']:g} C BASELINE (W)", f"Heater at -25 C, +{A_['set_point_c']:g} C BASELINE (W)",
+               f"Comparison +{A_['set_point_comparison_c']:g} C (former): -20 / -25 C (W)"], rows), "",
            "UA split, prototype, still air, jacket, -25 C (W/K): " + ", ".join(f"{k} {v:.3f}" for k, v in sp.items()) + ".", "",
            "**Bound -- receiver metal at ambient** (e.g. an aluminium body channel bolted to a cold chassis): "
            + "; ".join(f"{c['build']} {c['h_ext_w_m2k']:g} W/m2K {c['ambient_c']:g} C: {c['heater_power_w']:.1f} W" for c in bound)
            + ". The 0.5 mm G10 isolator under each T-head (IB-38) is a good electrical barrier but a poor thermal one (0.30 W/K per shoe, clamped to the heated "
            "spreader): the heater fits only because the RR-X body channels are printed. Any body with conductive channels needs a thermal break in the receiver "
            "(thicker / smaller-area isolator or a PEEK / G10 T-head cap) -- flagged for the lead.", "",
-           f"**Option +{A_['set_point_option_c']:g} C (not the baseline):** {th['_option']}", "",
+           f"**Set-point:** {th['_option']}", "",
            f"**Against the installed heater:** four 7.5 W polyimide films = 30 W at 12 V (BOM PUR-HEATER; = 4.8 ohm element, head_afe_budget.md section 9; contract "
            "heater_peak_at_12v 30 W); the HEAD_HTR branch limit 4.0 A x 12 V = 48 W is not the limit. At 10 V (end of discharge) the films give 20.8 W. "
-           "Baseline (still air, jacket): fits at 12 V in both builds at both ambients; at 10 V the -25 C case has under 1 W margin. Moving air at -25 C needs about "
-           "30-31 W: at or just over the films; with the jacket off, more. Thermal cut-out PUR-TCO opens at 45 C (UNVERIFIED part data): normal regulation never reaches it; "
+           "Margins of the +5 C baseline with the jacket (fitted heater minus demand, W; prototype / production): "
+           + "; ".join(f"{hn} {ta:g} C: {margin('prototype', h, ta, 30.0):+.1f} / {margin('production', h, ta, 30.0):+.1f} at 12 V, "
+                       f"{margin('prototype', h, ta, 20.8):+.1f} / {margin('production', h, ta, 20.8):+.1f} at 10 V"
+                       for hn, h in (("still air", 12.0), ("25 W/m2K", 25.0)) for ta in (-20.0, -25.0))
+           + ". Negative = demand above the heater. Thermal cut-out PUR-TCO opens at 45 C (UNVERIFIED part data): normal regulation never reaches it; "
            + (f"a stuck-on heater at 15 V in +20 C would settle near {wu['prototype']['steady_c_heater_stuck_on_15v_at_+20c']:.0f} C, so the cut-out is the protection." if wu else ""), ""]
     if wu:
-        md += [f"**Warm-up from a -25 C soak to +10 C** (lumped, thermal mass {th['thermal_mass_j_per_k']['prototype']} J/K prototype / {th['thermal_mass_j_per_k']['production']} J/K "
+        md += [f"**Warm-up from a -25 C soak to +{A_['set_point_c']:g} C** (lumped, thermal mass {th['thermal_mass_j_per_k']['prototype']} J/K prototype / {th['thermal_mass_j_per_k']['production']} J/K "
                "production from the model masses x handbook c_p; still air, jacket; the optical stack lags the spreader): "
                + "; ".join(f"{b}: {v['warmup_min_30w_12v']:.0f} min at 30 W (12 V), " + (f"{v['warmup_min_20w8_10v']:.0f} min at 20.8 W (10 V)" if v['warmup_min_20w8_10v'] else "10 V never reaches it")
                            + f", time constant {v['tau_min']:.0f} min" for b, v in wu.items()) + ". Machine-readable summary: `out/thermal_summary.json`.", ""]

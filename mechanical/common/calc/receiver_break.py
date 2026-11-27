@@ -93,15 +93,20 @@ def body_side_per_shoe(g_plate, h, boot=False):
 
 def head_receiver_side():
     """Head interior -> receiver metal (W/K, both shoes) back-calculated from the head engineer's two published cases at -25 C,
-    +10 C, still air, jacket: UA(bound) - UA(0.07/shoe) = G - G B / (G + B), B = 0.14."""
+    contract set-point (else +10 C), still air, jacket: UA(bound) - UA(0.07/shoe) = G - G B / (G + B), B = 0.14."""
     import json
     try:
         d = json.loads(HEAD_SUMMARY.read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return None, None
-    pick = lambda rb: next((c for c in d.get("cases", []) if c["build"] == "prototype" and c["ambient_c"] == -25.0 and c["set_point_c"] == 10.0
-                             and c["h_ext_w_m2k"] == 12.0 and c["jacket"] and c["receiver_boundary"].startswith(rb)), None)
-    base, bound = pick("body"), pick("BOUND")
+    sp = float(P.POWER_C["thermal_policy"]["head_setpoint_c"])
+    pick = lambda rb, t: next((c for c in d.get("cases", []) if c["build"] == "prototype" and c["ambient_c"] == -25.0 and c["set_point_c"] == t
+                               and c["h_ext_w_m2k"] == 12.0 and c["jacket"] and c["receiver_boundary"].startswith(rb)), None)
+    base = bound = None
+    for t in (sp, 10.0):                                             # same set-point for both cases (G is set-point independent)
+        base, bound = pick("body", t), pick("BOUND", t)
+        if base and bound:
+            break
     if not (base and bound):
         return None, None
     du, b = bound["ua_w_per_k"] - base["ua_w_per_k"], 2 * 0.07
@@ -109,8 +114,9 @@ def head_receiver_side():
     return g, base
 
 
-def head_delta_w(g_head, b_total, t_set=10.0, t_amb=-25.0):
+def head_delta_w(g_head, b_total, t_set=None, t_amb=-25.0):
     """Extra head heater power (W) against the 0.07 W/K-per-shoe case for a body side of b_total (W/K, both shoes)."""
+    t_set = float(P.POWER_C["thermal_policy"]["head_setpoint_c"]) if t_set is None else t_set
     ua = lambda b: g_head * b / (g_head + b)
     return (ua(b_total) - ua(0.14)) * (t_set - t_amb)
 
@@ -253,7 +259,7 @@ def run():
               f"itself hangs in the outside air under the plate ({CHANNEL_EXT_AREA * 1e4:.0f} cm2 exposed), and the shoe reaches it through metal contacts "
               f"(taken as {G_HEAD_SHOE_INTERFACE} W/K per shoe, ASSUMED). Head interior -> receiver metal back-calculated from the head engineer's two published cases: "
               + (f"{gh:.2f} W/K for both shoes." if gh else "head summary not found.") + "\n")
-    md.append(table(["Air", "Channel exterior", "Channel convection (W/K)", "Body side per shoe (W/K)", "Head heater vs the 0.07 W/K case at -25 C, +10 C (W)"], rows))
+    md.append(table(["Air", "Channel exterior", "Channel convection (W/K)", "Body side per shoe (W/K)", f"Head heater vs the 0.07 W/K case at -25 C, +{P.POWER_C['thermal_policy']['head_setpoint_c']:.0f} C (W)"], rows))
     md.append("\nReading: with the break the body side per shoe is close to the head's 0.07 W/K assumption and the head heater moves by a few watts at most, "
               "against 43..66 W without it. The head rows quoted in section 7 are therefore valid **only with this break fitted**; the residual is the channel's own "
               "exposed surface, which a 3 mm closed-cell foam boot over the channel sides would halve (option, not built: it would cover the wipe-down surfaces).")

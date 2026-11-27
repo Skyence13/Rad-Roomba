@@ -55,8 +55,8 @@ Keying / coding: polarised housing; SAFETY family, yellow wire; cannot mate GH/M
 
 | Pin | Net | Wire(s) |
 |---|---|---|
-| 1 | SET_CAP | W-018.1 |
-| 2 | K1_SET | W-018.2 |
+| 1 | REARM_SET_SRC | W-018.1 |
+| 2 | REARM_SET_RAW | W-018.2 |
 | 3 | BTN_3V3 | W-018.3 |
 | 4 | REARM_BTN_RAW | W-018.4 |
 | 5 | NC | - |

@@ -32,16 +32,15 @@ models and the drill origin all use this frame.
 
 ## What is tool-checked (and what is not)
 
-| Check | Result (last `--no-route` build) |
+| Check | Result (last `--no-route` build, stage 3, 2026-11-27) |
 |---|---|
-| ERC | 0 errors, 0 warnings (`reports/erc_warnings_review.md`) |
-| Netlist cross-check: generated schematic → KiCad netlist vs definition, pin by pin | OK, 771 components (the definition = circuit.py + overrides; `overrides.py` lists every difference to circuit.py) |
-| Part fields | all 771 have reference, value, footprint, MPN, manufacturer (checked on `out/RR-CHS-MAIN.net`) |
-| DRC (placement) | 0 errors; warnings: silk 119, dangling escape vias 57; schematic parity 0; courtyard overlaps 0; 499 unconnected (unrouted) |
-| Envelope | `tools/fitcheck.py`: no part outside the outline, no bottom part in the gap-pad area; bottom parts are all ≤ 3 mm packages (SOIC/TSSOP/SOT/0603…/SMB 2.4 mm); no part > 12 mm in the front corners; hole keep-outs (7 mm) as rule areas |
-| Utilisation (courtyard area / 16 000 mm²) | **top 55.6 %, bottom 20.3 %** |
+| ERC | 0 errors, 0 warnings |
+| Netlist cross-check: generated schematic → KiCad netlist vs definition, pin by pin | OK, 843 components, 587 nets incl. unconnected pins (definition = circuit.py + overrides S2/S3) |
+| DRC (placement, incl. the stage-3 custom chain rules) | **0 errors**; 200 warnings (silk overlap 67, silk over copper 65, silk edge 9, dangling escape vias 59); schematic parity 0; courtyard overlaps 0; **1215 unconnected = board not routed** |
+| Envelope | `tools/fitcheck.py`: no part outside the outline, no bottom part in the gap-pad area (KO_THERMAL_BOTTOM rule area reinstated in stage 3) |
+| Utilisation (courtyard area / 16 000 mm²) | top 59.1 %, bottom 21.7 % |
 
-Not tool-checked: the functional clearances of `layout_guidance.md` §5 (see "Clearances"), current capacity of the routed copper,
+Not tool-checked: 1.0 mm between adjacent chain nodes (see "Clearances"), current capacity of the routed copper,
 impedance of the USB / RS-485 pairs, thermal performance, real component heights (3D models are bounding-box envelopes).
 
 ## Placement

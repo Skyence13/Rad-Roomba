@@ -86,8 +86,8 @@ connectors:
     board: RR-CHS-MAIN
     pin_geometry_status: UNVERIFIED (no manufacturer drawing in the sources; see pin_views.md, geometry family 'single')
     pins:
-      "1": {net: SET_CAP, awg_rec: 24, wires: [W-018.1]}
-      "2": {net: K1_SET, awg_rec: 24, wires: [W-018.2]}
+      "1": {net: REARM_SET_SRC, wires: [W-018.1]}
+      "2": {net: REARM_SET_RAW, wires: [W-018.2]}
       "3": {net: BTN_3V3, awg_rec: 24, wires: [W-018.3]}
       "4": {net: REARM_BTN_RAW, awg_rec: 24, wires: [W-018.4]}
       "5": {net: NC, wires: []}
@@ -1370,7 +1370,7 @@ connectors:
       "5": {net: L3_AUX3V3, wires: [W-111.5]}
       "6": {net: GND, wires: [W-111.6]}
   - id: HEAD.J2001
-    location: 'RR-HEAD-ACQ (head), stage-2 placement: centre (u, v) = (86.8, 10.6) mm (out/pinmap.json)'
+    location: 'RR-HEAD-ACQ (head), stage-2 placement: centre (u, v) = (86.8, 17.6) mm (out/pinmap.json)'
     function: J1 pigtail landing (board pin n = contract J1 pin n)
     kind: board_header
     family: Micro-Fit 3.0 right-angle THT, 8 circuits
@@ -1576,7 +1576,7 @@ connectors:
       "7": {net: J2_PRES, wires: [W-102.7]}
       "8": {net: NC, wires: []}
   - id: HEAD.J2601
-    location: 'RR-HEAD-ACQ (head), stage-2 placement: centre (u, v) = (61.1, 10.6) mm (out/pinmap.json)'
+    location: 'RR-HEAD-ACQ (head), stage-2 placement: centre (u, v) = (61.1, 17.6) mm (out/pinmap.json)'
     function: 'heater film tail + spreader NTC. Heater assembly: HTR_SW -> element 4.8 R -> CUTOUT_SENSE -> bimetal cut-out (low side) -> HTR_RET'
     kind: board_header
     family: Micro-Fit 3.0 right-angle THT, 6 circuits
