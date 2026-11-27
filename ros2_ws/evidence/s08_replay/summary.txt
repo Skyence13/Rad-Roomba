@@ -17,16 +17,14 @@ WHERE THE ROBOT MEASURED
 
 HOW SENSITIVE IT WAS
   decision cells with data 231; sensitivity sufficient (D# < goal, envelope ok) 0
-  D# median 0.292  best 0.225  worst 1.636 Bq/cm2 (beta_window)
+  D# median 0.289  best 0.224  worst 1.758 Bq/cm2 (beta_window)
   time sync: max gate bound 838.0520796923137 us (limit 10000)
 
 WHAT STILL NEEDS ATTENTION
-  HS-0001 INVESTIGATION_LEVEL lane 1 D=0.154 +/- 0.092 Bq/cm2 at 0.29 m from the door threshold, 0.30 m from the right wall status OK
-  HS-0002 UNRESOLVED_EXCEEDANCE lane 2 D=0.173 +/- 0.109 Bq/cm2 at 1.04 m from the door threshold, 0.40 m from the left wall status OK
-  HS-0003 INVESTIGATION_LEVEL lane 1 D=1.310 +/- 0.240 Bq/cm2 at 1.54 m from the door threshold, 0.34 m from the left wall status OK
-  HS-0004 UNRESOLVED_EXCEEDANCE lane 0 D=0.116 +/- 0.079 Bq/cm2 at 2.35 m from the door threshold, 0.22 m from the left wall status OK
-  HS-0005 UNRESOLVED_EXCEEDANCE lane 3 D=0.180 +/- 0.116 Bq/cm2 at 0.20 m from the door threshold, 0.47 m from the right wall status OK
-  HS-0006 UNRESOLVED_EXCEEDANCE lane 2 D=0.193 +/- 0.138 Bq/cm2 at 0.19 m from the door threshold, 0.31 m from the left wall status OK
+  HS-0001 INVESTIGATION_LEVEL lane 1 D=0.153 +/- 0.090 Bq/cm2 at 0.29 m from the door threshold, 0.30 m from the right wall status OK
+  HS-0002 UNRESOLVED_EXCEEDANCE lane 2 D=0.175 +/- 0.109 Bq/cm2 at 1.04 m from the door threshold, 0.40 m from the left wall status OK
+  HS-0003 INVESTIGATION_LEVEL lane 1 D=1.313 +/- 0.242 Bq/cm2 at 1.55 m from the door threshold, 0.33 m from the left wall status OK
+  HS-0004 UNRESOLVED_EXCEEDANCE lane 0 D=0.119 +/- 0.080 Bq/cm2 at 2.35 m from the door threshold, 0.22 m from the left wall status OK
   scan-stage detections below the investigation level awaiting a recount under the two-stage rule: 0
   unresolved floor INSUFFICIENT_SENSITIVITY: 1.8604 m2 (rectangles in residuals.json)
   unresolved floor UNVISITED: 1.1396 m2 (rectangles in residuals.json)

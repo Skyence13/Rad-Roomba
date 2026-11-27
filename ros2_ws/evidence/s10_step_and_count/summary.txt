@@ -8,7 +8,7 @@ alpha_scan 0.05  alpha_recount 0.000285  beta 0.05  decision cells 180
 
 WHERE THE ROBOT MEASURED
   valid exposure on 42.3 % of the target floor (1.800 m2)
-  UNVISITED                    1.0312 m2
+  UNVISITED                    1.0311 m2
   ACCEPTABLE                   0.4619 m2
   INSUFFICIENT_SENSITIVITY     0.3004 m2
   INVALID_DATA                 0.0066 m2
@@ -23,8 +23,8 @@ HOW SENSITIVE IT WAS
 WHAT STILL NEEDS ATTENTION
   HS-0001 INVESTIGATION_LEVEL lane 2 D=0.628 +/- 0.115 Bq/cm2 at 1.00 m from the door threshold, 0.40 m from the right wall status OK
   scan-stage detections below the investigation level awaiting a recount under the two-stage rule: 1
-  unresolved floor INSUFFICIENT_SENSITIVITY: 0.3003 m2 (rectangles in residuals.json)
+  unresolved floor INSUFFICIENT_SENSITIVITY: 0.3004 m2 (rectangles in residuals.json)
   unresolved floor INVALID_DATA: 0.0066 m2 (rectangles in residuals.json)
-  unresolved floor UNVISITED: 1.0312 m2 (rectangles in residuals.json)
+  unresolved floor UNVISITED: 1.0311 m2 (rectangles in residuals.json)
 
 A release-status entry is a radiation-protection decision under the site procedure; this report is not one.

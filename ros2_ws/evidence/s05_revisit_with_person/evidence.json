@@ -30,7 +30,7 @@
   {
    "check": "person in the swept path: stopped short of the person",
    "ok": true,
-   "gap_m": 0.16494440000422986
+   "gap_m": 0.16494440000547764
   },
   {
    "check": "item left open",
@@ -63,7 +63,7 @@
   {
    "check": "Expose with a person behind: reverse held before contact",
    "ok": true,
-   "moved_m": 0.07968329999685554,
+   "moved_m": 0.07968329999683378,
    "accepted": true,
    "stops": {
     "hw": [],
@@ -75,12 +75,12 @@
   {
    "check": "rear clearance stayed positive",
    "ok": true,
-   "rear_gap_m": 0.1485167000046928
+   "rear_gap_m": 0.1485167000057132
   },
   {
    "check": "Expose with the person beside the route: completed",
    "ok": true,
-   "back_m": 0.34994719913374267,
+   "back_m": 0.3499428991354043,
    "reason": null
   }
  ],
@@ -109,8 +109,8 @@
   "median_gate_bound_us": 796.8741080612946
  },
  "link_stats": {
-  "tx": 16048,
-  "rx": 16045,
+  "tx": 16049,
+  "rx": 16046,
   "bad_lines": 0,
   "stale": 0,
   "duplicates": 0,
@@ -148,8 +148,8 @@
    "id": "HS-0004",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 2,
-   "x_m": 0.3540531159322749,
-   "y_m": -0.10251107076209609,
+   "x_m": 0.35385284639710646,
+   "y_m": -0.10251076451316292,
    "D": 0.17602253313186697,
    "u_total": 0.0999516847033211,
    "D_star": 0.14684258862498895,
@@ -165,10 +165,10 @@
    "id": "HS-0005",
    "kind": "INVESTIGATION_LEVEL",
    "source_lane": 1,
-   "x_m": 1.5418990538356492,
-   "y_m": 0.16782064868579225,
-   "D": 1.2323116109789223,
-   "u_total": 0.23392275106343793,
+   "x_m": 1.5422529400084153,
+   "y_m": 0.16762889203122683,
+   "D": 1.2440435211486927,
+   "u_total": 0.23560808483663406,
    "D_star": 0.11965462030199954,
    "D_hash": 0.27804285475529,
    "location": {
@@ -182,8 +182,8 @@
    "id": "HS-0006",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 0,
-   "x_m": 2.8385939228612025,
-   "y_m": 0.2775304820354677,
+   "x_m": 2.8387688278959686,
+   "y_m": 0.27753053649106346,
    "D": 0.2141621201408413,
    "u_total": 0.10615778472950663,
    "D_star": 0.1526500121131906,
@@ -199,8 +199,8 @@
    "id": "HS-0007",
    "kind": "INVESTIGATION_LEVEL",
    "source_lane": 3,
-   "x_m": 2.4533641784076687,
-   "y_m": 0.321307816555622,
+   "x_m": 2.4531643133705425,
+   "y_m": 0.3213081302929096,
    "D": 0.3131968425816786,
    "u_total": 0.15246548279540154,
    "D_star": 0.2139474430680202,

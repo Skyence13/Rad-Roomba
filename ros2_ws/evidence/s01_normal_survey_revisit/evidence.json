@@ -29,7 +29,7 @@
   {
    "check": "detection goal met on part of the floor at this speed (D# < 0.20)",
    "ok": true,
-   "best": 0.10378367091260804
+   "best": 0.10376157436253886
   },
   {
    "check": "robot waits at rest in REVIEW (no unsolicited motion)",
@@ -54,7 +54,7 @@
   {
    "check": "true lane centre within 10 mm of the saved footprint",
    "ok": true,
-   "true_err": 0.0019339998902479162
+   "true_err": 0.0019297944235405447
   },
   {
    "check": "revisit used the flag's source lane",
@@ -68,7 +68,7 @@
   {
    "check": "Expose reversed by the contract offset 0.35 m (+/- 10 mm)",
    "ok": true,
-   "back": 0.3499136880681335
+   "back": 0.34990738806846133
   },
   {
    "check": "item EXPOSED with hand-probe directions",
@@ -108,8 +108,8 @@
   "median_gate_bound_us": 794.6812063758707
  },
  "link_stats": {
-  "tx": 55692,
-  "rx": 55689,
+  "tx": 55693,
+  "rx": 55690,
   "bad_lines": 0,
   "stale": 0,
   "duplicates": 0,
@@ -147,8 +147,8 @@
    "id": "HS-0006",
    "kind": "INVESTIGATION_LEVEL",
    "source_lane": 1,
-   "x_m": 1.5459663290304055,
-   "y_m": 0.17659939307114303,
+   "x_m": 1.5459537664163727,
+   "y_m": 0.1765993457206952,
    "D": 0.7719394701062534,
    "u_total": 0.1253729960739857,
    "D_star": 0.048394929229512856,
@@ -164,8 +164,8 @@
    "id": "HS-0010",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 0,
-   "x_m": 2.8322703536912477,
-   "y_m": 0.42136123423984373,
+   "x_m": 2.832330216038467,
+   "y_m": 0.42136131201005067,
    "D": 0.16719439510338766,
    "u_total": 0.08654309731174292,
    "D_star": 0.12882052008338268,
@@ -193,13 +193,13 @@
   0.14625
  ],
  "D_hash_median": 0.12802909142579594,
- "D_hash_best": 0.10378367091260804,
+ "D_hash_best": 0.10376157436253886,
  "acceptable_fraction": 0.6902500000000001,
- "flag_position_error_vs_patch_m": 0.030364773201552973,
- "revisit_error_estimated_m": 0.001707508897390603,
- "revisit_error_true_m": 0.0019339998902479162,
- "revisit_uncertainty_2s_m": 0.0005359493437365352,
+ "flag_position_error_vs_patch_m": 0.030364328677763987,
+ "revisit_error_estimated_m": 0.0016963302704676856,
+ "revisit_error_true_m": 0.0019297944235405447,
+ "revisit_uncertainty_2s_m": 0.0005359187845445037,
  "revisit_lane": 1,
- "expose_reverse_m": 0.3499136880681335,
- "park_error_true_m": 0.001007779679427176
+ "expose_reverse_m": 0.34990738806846133,
+ "park_error_true_m": 0.001008326871776508
 }

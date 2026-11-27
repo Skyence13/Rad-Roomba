@@ -8,22 +8,22 @@ alpha_scan 0.05  alpha_recount 0.000171  beta 0.05  decision cells 300
 
 WHERE THE ROBOT MEASURED
   valid exposure on 31.1 % of the target floor (3.000 m2)
-  UNVISITED                    2.0661 m2
+  UNVISITED                    2.0657 m2
   ACCEPTABLE                   0.0000 m2
-  INSUFFICIENT_SENSITIVITY     0.9340 m2
+  INSUFFICIENT_SENSITIVITY     0.9343 m2
   INVALID_DATA                 0.0000 m2
   BLOCKED                      0.0000 m2
   EXCLUDED                     0.0000 m2
 
 HOW SENSITIVE IT WAS
   decision cells with data 140; sensitivity sufficient (D# < goal, envelope ok) 0
-  D# median 0.515  best 0.270  worst 1.776 Bq/cm2 (beta_window)
-  time sync: max gate bound 4096.450472660517 us (limit 10000)
+  D# median 0.527  best 0.265  worst 1.771 Bq/cm2 (beta_window)
+  time sync: max gate bound 4095.9505726605175 us (limit 10000)
 
 WHAT STILL NEEDS ATTENTION
-  HS-0001 INVESTIGATION_LEVEL lane 1 D=1.460 +/- 0.268 Bq/cm2 at 1.54 m from the door threshold, 0.31 m from the right wall status OK
-  scan-stage detections below the investigation level awaiting a recount under the two-stage rule: 1
-  unresolved floor INSUFFICIENT_SENSITIVITY: 0.9340 m2 (rectangles in residuals.json)
-  unresolved floor UNVISITED: 2.0660 m2 (rectangles in residuals.json)
+  HS-0001 INVESTIGATION_LEVEL lane 1 D=1.472 +/- 0.269 Bq/cm2 at 1.53 m from the door threshold, 0.31 m from the right wall status OK
+  scan-stage detections below the investigation level awaiting a recount under the two-stage rule: 2
+  unresolved floor INSUFFICIENT_SENSITIVITY: 0.9343 m2 (rectangles in residuals.json)
+  unresolved floor UNVISITED: 2.0657 m2 (rectangles in residuals.json)
 
 A release-status entry is a radiation-protection decision under the site procedure; this report is not one.

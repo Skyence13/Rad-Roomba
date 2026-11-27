@@ -38,8 +38,8 @@
    "flags": [
     [
      "HS-0001",
-     1.0026402957333378,
-     -0.10247796881174932
+     1.0026402607862082,
+     -0.10247807358600802
     ]
    ]
   },
@@ -71,15 +71,15 @@
  "coverage": {
   "target_area_m2": 1.8,
   "areas_m2": {
-   "UNVISITED": 1.031175,
-   "ACCEPTABLE": 0.46185000000000004,
-   "INSUFFICIENT_SENSITIVITY": 0.30035,
+   "UNVISITED": 1.031125,
+   "ACCEPTABLE": 0.46187500000000004,
+   "INSUFFICIENT_SENSITIVITY": 0.300375,
    "INVALID_DATA": 0.006625000000000001,
    "BLOCKED": 0.0,
    "EXCLUDED": 0.0
   },
-  "valid_exposure_fraction": 0.4234444444444444,
-  "acceptable_fraction": 0.25658333333333333,
+  "valid_exposure_fraction": 0.42347222222222225,
+  "acceptable_fraction": 0.25659722222222225,
   "sub_cell_m": 0.005,
   "decision_cell_m": 0.1,
   "position_allowance_m": 0.01
@@ -88,11 +88,11 @@
   "limit_us": 10000.0,
   "fits": 207,
   "max_gate_bound_us": 838.0520796923137,
-  "median_gate_bound_us": 796.7151659350991
+  "median_gate_bound_us": 796.7151658158923
  },
  "link_stats": {
-  "tx": 20416,
-  "rx": 20413,
+  "tx": 20417,
+  "rx": 20414,
   "bad_lines": 0,
   "stale": 0,
   "duplicates": 0,
@@ -130,8 +130,8 @@
    "id": "HS-0001",
    "kind": "INVESTIGATION_LEVEL",
    "source_lane": 2,
-   "x_m": 1.0026402957333378,
-   "y_m": -0.10247796881174932,
+   "x_m": 1.0026402607862082,
+   "y_m": -0.10247807358600802,
    "D": 0.6278210653793559,
    "u_total": 0.11481564122460808,
    "D_star": 0.13795215248808806,
@@ -158,7 +158,7 @@
  "stations": 53,
  "stations_invalid": 1,
  "station_preset_s": 3.0,
- "D_hash_median": 0.18354063150486666,
+ "D_hash_median": 0.18354049221913335,
  "note": "station pitch 0.10 m with a 100 mm aperture eroded by 10 mm per side leaves 20 mm uncredited stripes between stations; pitch <= L - 2e = 0.08 m closes them (CONTRACT_CHANGE_REQUESTS CR-05)",
- "unvisited_m2": 1.031175
+ "unvisited_m2": 1.031125
 }

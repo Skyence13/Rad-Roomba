@@ -163,10 +163,10 @@
    ]
   ],
   "methods": {
+   "mesh screen": 410,
    "boolean": 21,
-   "boolean: contact film 0.000 mm thick": 6,
    "boolean: contact film 0.030 mm thick": 1,
-   "mesh screen": 410
+   "boolean: contact film 0.000 mm thick": 6
   },
   "slowest_pairs_s": [
    [
@@ -2411,7 +2411,7 @@
     "hang_angle_deg_old_bar_x-11": -44.9
    },
    {
-    "head": "prototype head RR-HD-X (1.862 kg)",
+    "head": "prototype head RR-HD-X (1.864 kg)",
     "mass_kg": 8.56,
     "cg_x": -46.6,
     "cg_z": 71.9,
@@ -2425,14 +2425,14 @@
     "hang_angle_deg_old_bar_x-11": -21.1
    },
    {
-    "head": "production head (2.082 kg)",
+    "head": "production head (2.083 kg)",
     "mass_kg": 8.78,
     "cg_x": -42.1,
     "cg_z": 70.6,
     "caster_N": 17.8,
     "each_wheel_N": 34.2,
     "caster_fraction": 0.206,
-    "tip_margin_forward_mm": 33.1,
+    "tip_margin_forward_mm": 33.0,
     "tip_margin_rearward_mm": 153.6,
     "tip_margin_lateral_mm": 83.2,
     "hang_angle_deg": -7.4,
@@ -2440,16 +2440,16 @@
    },
    {
     "head": "production head + 15 % margin",
-    "mass_kg": 9.09,
+    "mass_kg": 9.1,
     "cg_x": -36.5,
     "cg_z": 69.3,
     "caster_N": 16.0,
     "each_wheel_N": 36.6,
     "caster_fraction": 0.179,
-    "tip_margin_forward_mm": 27.7,
+    "tip_margin_forward_mm": 27.6,
     "tip_margin_rearward_mm": 159.3,
     "tip_margin_lateral_mm": 86.4,
-    "hang_angle_deg": -4.0,
+    "hang_angle_deg": -3.9,
     "hang_angle_deg_old_bar_x-11": -15.1
    }
   ],
@@ -2564,7 +2564,7 @@
     "chassis plate bending at x = 30 (fore masses 2.19 kg x 3 g; net width 239 mm x 4 mm, shells and tunnel ignored)",
     8.1,
     "MPa",
-    "allow 240 (6061-T6) -> SF 29.7"
+    "allow 240 (6061-T6) -> SF 29.6"
    ]
   ],
   "ok": true,

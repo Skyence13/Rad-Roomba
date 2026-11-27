@@ -3,7 +3,7 @@
  "evidence_class": "simulated",
  "against": "Python protocol fakes (rr_core.fakes), virtual clock",
  "seed": 12,
- "sim_time_s": 230.56,
+ "sim_time_s": 230.58,
  "checks": [
   {
    "check": "mcu_reset: mission HOLD on head link loss",
@@ -50,7 +50,7 @@
   {
    "check": "cable_disconnect: session closed",
    "ok": true,
-   "reason": "TIMEOUT:READ"
+   "reason": "CONTINUITY:J2:{\"present\": false}"
   },
   {
    "check": "cable_disconnect: chassis latched PROTECTIVE_STOP/HEAD_LINK",
@@ -101,14 +101,14 @@
  "coverage": {
   "target_area_m2": 3.0,
   "areas_m2": {
-   "UNVISITED": 1.1407500000000002,
+   "UNVISITED": 1.1408,
    "ACCEPTABLE": 0.0,
-   "INSUFFICIENT_SENSITIVITY": 1.85925,
+   "INSUFFICIENT_SENSITIVITY": 1.8592000000000002,
    "INVALID_DATA": 0.0,
    "BLOCKED": 0.0,
    "EXCLUDED": 0.0
   },
-  "valid_exposure_fraction": 0.61975,
+  "valid_exposure_fraction": 0.6197333333333334,
   "acceptable_fraction": 0.0,
   "sub_cell_m": 0.005,
   "decision_cell_m": 0.1,
@@ -118,24 +118,24 @@
   "limit_us": 10000.0,
   "fits": 128,
   "max_gate_bound_us": 838.0520796923137,
-  "median_gate_bound_us": 800.7531849363017
+  "median_gate_bound_us": 800.7638848415136
  },
  "link_stats": {
-  "tx": 11326,
-  "rx": 11320,
+  "tx": 11333,
+  "rx": 11330,
   "bad_lines": 0,
   "stale": 0,
   "duplicates": 0,
-  "gates": 2231,
+  "gates": 2233,
   "gaps": 0,
-  "retries": 4,
+  "retries": 2,
   "unassigned_frames": 0,
   "time_exchanges": 128,
   "time_exchanges_rejected": 0
  },
  "localization_error_vs_truth_m": {
-  "max_x_m": 0.001705004232934737,
-  "max_y_m": 0.0011770087619784042
+  "max_x_m": 0.0017143154324044119,
+  "max_y_m": 0.0011945363469544334
  },
  "plan": {
   "n_pairs": 2,
@@ -160,29 +160,29 @@
    "id": "HS-0003",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 1,
-   "x_m": 1.049535748758966,
-   "y_m": 0.17935327414891297,
-   "D": 0.1329923180949309,
-   "u_total": 0.07504399189599631,
-   "D_star": 0.12030188760615992,
-   "D_hash": 0.2790629564280452,
+   "x_m": 1.0498239451033737,
+   "y_m": 0.179607006639862,
+   "D": 0.13858359971577647,
+   "u_total": 0.07559447364579072,
+   "D_star": 0.12086559206523259,
+   "D_hash": 0.2805166754307013,
    "location": {
     "distance_from_door_m": 1.05,
     "wall": "left wall",
-    "distance_from_wall_m": 0.321,
+    "distance_from_wall_m": 0.32,
     "text": "1.05 m from the door threshold, 0.32 m from the left wall"
    }
   },
   {
-   "id": "HS-0006",
+   "id": "HS-0007",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 3,
-   "x_m": 1.365808612566498,
-   "y_m": 0.32126536084669155,
-   "D": 0.2849384968574459,
-   "u_total": 0.15885444228001028,
-   "D_star": 0.22437136347692635,
-   "D_hash": 0.554629773032675,
+   "x_m": 1.3658085404829519,
+   "y_m": 0.32127183153626365,
+   "D": 0.28177572703912585,
+   "u_total": 0.15923110817506056,
+   "D_star": 0.22529223706706605,
+   "D_hash": 0.5572651636549587,
    "location": {
     "distance_from_door_m": 1.366,
     "wall": "left wall",
@@ -191,13 +191,13 @@
    }
   },
   {
-   "id": "HS-0007",
+   "id": "HS-0008",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 3,
-   "x_m": 0.29695076430064193,
-   "y_m": 0.32123044833745523,
+   "x_m": 0.2969471530885684,
+   "y_m": 0.3212329339859369,
    "D": 0.250197471783985,
-   "u_total": 0.1546896073397491,
+   "u_total": 0.15472200753593723,
    "D_star": 0.22262534242057894,
    "D_hash": 0.5516718838152558,
    "location": {
@@ -208,7 +208,7 @@
    }
   }
  ],
- "scan_detections": 4,
+ "scan_detections": 5,
  "observations": [],
  "decision_status": {
   "cells_with_gates": 231,
@@ -225,8 +225,8 @@
   "last_trusted_seq": 157
  },
  "cable_disconnect": {
-  "x_at_fault_m": 1.4005612814779016,
-  "close_reason": "TIMEOUT:READ",
-  "last_trusted_seq": 1180
+  "x_at_fault_m": 1.4005443656908874,
+  "close_reason": "CONTINUITY:J2:{\"present\": false}",
+  "last_trusted_seq": 1181
  }
 }

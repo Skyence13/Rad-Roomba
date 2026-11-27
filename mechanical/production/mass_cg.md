@@ -7,9 +7,9 @@ Body without head: 7.36 kg at x -90.7, z 81.6 mm.
 | Head | Mass (kg) | CG x (mm) | CG z (mm) | Caster share | Tip margin fwd / rear / lateral (mm) | Hang angle on the grip (deg) |
 |---|---|---|---|---|---|---|
 | none (transport / LAB) | 7.36 | -90.7 | 81.6 | 44 % | 80.2 / 103.7 / 55.4 | -36.4 |
-| prototype head RR-HD-X (1.862 kg) | 9.23 | -48.4 | 72.1 | 24 % | 39.2 / 147.0 / 79.5 | -11.3 |
-| production head (2.082 kg) | 9.44 | -44.2 | 70.9 | 22 % | 35.1 / 151.4 / 82.0 | -8.7 |
-| production head + 15 % margin | 9.76 | -39.0 | 69.6 | 19 % | 30.0 / 156.8 / 85.0 | -5.4 |
+| prototype head RR-HD-X (1.864 kg) | 9.23 | -48.4 | 72.1 | 24 % | 39.2 / 147.1 / 79.6 | -11.3 |
+| production head (2.083 kg) | 9.45 | -44.2 | 70.9 | 22 % | 35.1 / 151.4 / 82.0 | -8.7 |
+| production head + 15 % margin | 9.76 | -38.9 | 69.7 | 19 % | 30.0 / 156.8 / 85.0 | -5.4 |
 
 ## Mass by group (kg, calculated)
 

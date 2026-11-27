@@ -19,12 +19,12 @@ Counts from the two models (prototype: `prototype_x1c/out/parts_table.json`, `ch
 | Mass with head 'prototype head RR-HD-X' (kg) | 8.56 | 9.23 | +0.67 |
 | CG x with head 'prototype head RR-HD-X' (mm) | -46.6 | -48.4 | -1.80 |
 | Forward tip margin with head 'prototype head RR-HD-X' (mm) | 37.4 | 39.2 | +1.80 |
-| Mass with head 'production head' (kg) | 8.78 | 9.44 | +0.66 |
+| Mass with head 'production head' (kg) | 8.78 | 9.45 | +0.67 |
 | CG x with head 'production head' (mm) | -42.1 | -44.2 | -2.10 |
-| Forward tip margin with head 'production head' (mm) | 33.1 | 35.1 | +2.00 |
-| Mass with head 'production head + 15 % margin' (kg) | 9.09 | 9.76 | +0.67 |
-| CG x with head 'production head + 15 % margin' (mm) | -36.5 | -39.0 | -2.50 |
-| Forward tip margin with head 'production head + 15 % margin' (mm) | 27.7 | 30.0 | +2.30 |
+| Forward tip margin with head 'production head' (mm) | 33.0 | 35.1 | +2.10 |
+| Mass with head 'production head + 15 % margin' (kg) | 9.1 | 9.76 | +0.66 |
+| CG x with head 'production head + 15 % margin' (mm) | -36.5 | -38.9 | -2.40 |
+| Forward tip margin with head 'production head + 15 % margin' (mm) | 27.6 | 30.0 | +2.40 |
 
 ## Per-unit process content (calculated from the solids)
 

@@ -16,10 +16,10 @@
    "drift_ppm": 20.0,
    "gates": 31,
    "rejected_for_time": 0,
-   "max_abs_time_error_us": 315.54189014434814,
+   "max_abs_time_error_us": 315.58188927173615,
    "max_bound_us": 815.6821021092868,
    "median_bound_us": 791.6825815422487,
-   "position_error_at_0.10_mps_mm": 0.03155418901443481
+   "position_error_at_0.10_mps_mm": 0.03155818892717362
   },
   {
    "check": "nominal 0.2 ms: bound within the 10 ms mapping limit, data accepted",
@@ -36,10 +36,10 @@
    "drift_ppm": 80.0,
    "gates": 31,
    "rejected_for_time": 0,
-   "max_abs_time_error_us": 315.9062362909317,
-   "max_bound_us": 3815.995023452146,
-   "median_bound_us": 3791.996952865164,
-   "position_error_at_0.10_mps_mm": 0.03159062362909317
+   "max_abs_time_error_us": 316.5212676525116,
+   "max_bound_us": 3815.8998225516057,
+   "median_bound_us": 3791.901730705559,
+   "position_error_at_0.10_mps_mm": 0.031652126765251164
   },
   {
    "check": "3 ms symmetric latency, 80 ppm drift: bound within the 10 ms mapping limit, data accepted",
@@ -56,10 +56,10 @@
    "drift_ppm": -60.0,
    "gates": 31,
    "rejected_for_time": 0,
-   "max_abs_time_error_us": 3316.126224398613,
-   "max_bound_us": 3816.020402057693,
-   "median_bound_us": 3792.018956123443,
-   "position_error_at_0.10_mps_mm": 0.33161262243986134
+   "max_abs_time_error_us": 3315.907719016075,
+   "max_bound_us": 3815.8775421132777,
+   "median_bound_us": 3791.8760961790276,
+   "position_error_at_0.10_mps_mm": 0.3315907719016075
   },
   {
    "check": "asymmetric 0.2 / 6 ms: bound within the 10 ms mapping limit, data accepted",
@@ -76,10 +76,10 @@
    "drift_ppm": 20.0,
    "gates": 31,
    "rejected_for_time": 31,
-   "max_abs_time_error_us": 315.44897079467773,
+   "max_abs_time_error_us": 315.6134068965912,
    "max_bound_us": 12818.479172669944,
    "median_bound_us": 12792.479703271363,
-   "position_error_at_0.10_mps_mm": 0.031544897079467775
+   "position_error_at_0.10_mps_mm": 0.03156134068965912
   },
   {
    "check": "12 ms latency (bound above the 10 ms limit): data rejected (no lane eligible)",
@@ -98,7 +98,7 @@
   {
    "check": "moving survey with injected offset/latency: hotspot mapped within 20 mm along track",
    "ok": true,
-   "err": 0.0012669041202075793
+   "err": 0.014303102459442885
   }
  ],
  "passed": true,
@@ -106,14 +106,14 @@
  "coverage": {
   "target_area_m2": 3.0,
   "areas_m2": {
-   "UNVISITED": 2.06605,
+   "UNVISITED": 2.06575,
    "ACCEPTABLE": 0.0,
-   "INSUFFICIENT_SENSITIVITY": 0.9339500000000001,
+   "INSUFFICIENT_SENSITIVITY": 0.93425,
    "INVALID_DATA": 0.0,
    "BLOCKED": 0.0,
    "EXCLUDED": 0.0
   },
-  "valid_exposure_fraction": 0.3113166666666667,
+  "valid_exposure_fraction": 0.3114166666666667,
   "acceptable_fraction": 0.0,
   "sub_cell_m": 0.005,
   "decision_cell_m": 0.1,
@@ -122,11 +122,11 @@
  "time_sync": {
   "limit_us": 10000.0,
   "fits": 47,
-  "max_gate_bound_us": 4096.450472660517,
-  "median_gate_bound_us": 3806.4134469242476
+  "max_gate_bound_us": 4095.9505726605175,
+  "median_gate_bound_us": 3806.4134669226455
  },
  "link_stats": {
-  "tx": 3473,
+  "tx": 3474,
   "rx": 3470,
   "bad_lines": 0,
   "stale": 0,
@@ -165,21 +165,21 @@
    "id": "HS-0001",
    "kind": "INVESTIGATION_LEVEL",
    "source_lane": 1,
-   "x_m": 1.5437330958797923,
-   "y_m": -0.1900636800579181,
-   "D": 1.4604097507244613,
-   "u_total": 0.26782605861661624,
-   "D_star": 0.12253501874508145,
-   "D_hash": 0.28464451062940826,
+   "x_m": 1.530696897540557,
+   "y_m": -0.19006002874048072,
+   "D": 1.4720127331850692,
+   "u_total": 0.2692150390750232,
+   "D_star": 0.12112085049517135,
+   "D_hash": 0.2810713382572024,
    "location": {
-    "distance_from_door_m": 1.544,
+    "distance_from_door_m": 1.531,
     "wall": "right wall",
     "distance_from_wall_m": 0.31,
-    "text": "1.54 m from the door threshold, 0.31 m from the right wall"
+    "text": "1.53 m from the door threshold, 0.31 m from the right wall"
    }
   }
  ],
- "scan_detections": 1,
+ "scan_detections": 2,
  "observations": [],
  "decision_status": {
   "cells_with_gates": 140,
@@ -200,10 +200,10 @@
    "drift_ppm": 20.0,
    "gates": 31,
    "rejected_for_time": 0,
-   "max_abs_time_error_us": 315.54189014434814,
+   "max_abs_time_error_us": 315.58188927173615,
    "max_bound_us": 815.6821021092868,
    "median_bound_us": 791.6825815422487,
-   "position_error_at_0.10_mps_mm": 0.03155418901443481
+   "position_error_at_0.10_mps_mm": 0.03155818892717362
   },
   {
    "case": "3 ms symmetric latency, 80 ppm drift",
@@ -214,10 +214,10 @@
    "drift_ppm": 80.0,
    "gates": 31,
    "rejected_for_time": 0,
-   "max_abs_time_error_us": 315.9062362909317,
-   "max_bound_us": 3815.995023452146,
-   "median_bound_us": 3791.996952865164,
-   "position_error_at_0.10_mps_mm": 0.03159062362909317
+   "max_abs_time_error_us": 316.5212676525116,
+   "max_bound_us": 3815.8998225516057,
+   "median_bound_us": 3791.901730705559,
+   "position_error_at_0.10_mps_mm": 0.031652126765251164
   },
   {
    "case": "asymmetric 0.2 / 6 ms",
@@ -228,10 +228,10 @@
    "drift_ppm": -60.0,
    "gates": 31,
    "rejected_for_time": 0,
-   "max_abs_time_error_us": 3316.126224398613,
-   "max_bound_us": 3816.020402057693,
-   "median_bound_us": 3792.018956123443,
-   "position_error_at_0.10_mps_mm": 0.33161262243986134
+   "max_abs_time_error_us": 3315.907719016075,
+   "max_bound_us": 3815.8775421132777,
+   "median_bound_us": 3791.8760961790276,
+   "position_error_at_0.10_mps_mm": 0.3315907719016075
   },
   {
    "case": "12 ms latency (bound above the 10 ms limit)",
@@ -242,12 +242,12 @@
    "drift_ppm": 20.0,
    "gates": 31,
    "rejected_for_time": 31,
-   "max_abs_time_error_us": 315.44897079467773,
+   "max_abs_time_error_us": 315.6134068965912,
    "max_bound_us": 12818.479172669944,
    "median_bound_us": 12792.479703271363,
-   "position_error_at_0.10_mps_mm": 0.031544897079467775
+   "position_error_at_0.10_mps_mm": 0.03156134068965912
   }
  ],
- "moving_hotspot_along_track_error_m": 0.0012669041202075793,
+ "moving_hotspot_along_track_error_m": 0.014303102459442885,
  "chassis_time_bound_us": 2155.100400238419
 }
