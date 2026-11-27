@@ -135,7 +135,7 @@ def service(parts):
         y0, y1 = sorted((s * (P.WHEEL_Y + P.TYRE_WIDTH / 2 + 0.5), s * (P.WHEEL_Y + P.TYRE_WIDTH / 2 + 60)))
         out[f"wheel_{tag}_axial_removal"] = {"what": "104 mm disc swept 60 mm outboard", "blocked_by": LY.box_free(robot, (-P.WHEEL_R, P.WHEEL_R, y0, y1, 0.5, P.WHEEL_D))}
     he = P.HEAD_ENV_E
-    out["head_removal_sweep_+x"] = {"what": "head envelope swept 66 mm forward", "blocked_by": LY.box_free(robot, (he["x"][1] + 0.5, he["x"][1] + 66, he["y"][0], he["y"][1], he["z"][0], he["z"][1]))}
+    out["head_removal_sweep_+x"] = {"what": "head envelope swept 66 mm forward", "blocked_by": LY.box_free(robot, (D.HEAD_X1 + 0.5, D.HEAD_X1 + 66, he["y"][0], he["y"][1], he["z"][0], he["z"][1]))}
     sx0, sx1 = S["x"]
     out["service_cover_lift"] = {"what": "cover lifted straight up to the underside of the grip bar (45 mm), then slid forward over the nose",
                                  "blocked_by": LY.box_free(robot, (sx0 + 0.4, sx1 - 0.4, -S["half_y"] + 0.4, S["half_y"] - 0.4, S["floor_z"][1] + 0.1, Gp["bar_bottom_z"] - 0.5))}
@@ -226,7 +226,12 @@ def receiver_check(parts):
 LUMPED = [   # not modelled as solids; values from the common mass budget (estimates)
     ("harness (power, sensor, Ethernet, USB)", 0.450, -60.0, 0.0, 85.0), ("fasteners, inserts, standoffs", 0.250, -60.0, 0.0, 70.0),
     ("foam liner 5 mm + gaskets", 0.150, -97.0, 0.0, 80.0), ("RR-TOF harness ends, NTCs, cut-out, vent, light pipes", 0.040, -120.0, 0.0, 95.0)]
-HEADS = {"none (transport / LAB)": None, "prototype printed head": (1.67, 118.5, 28.3), "heaviest head (production + 15 %)": (2.10, 119.2, 27.3)}
+HEADS = {   # (kg, x, z) incl. pigtails: mechanical/head/out/head_report.md section 3 (calculated by the head engineer, 2026-11-26)
+    "none (transport / LAB)": None,
+    "prototype head RR-HD-X (1.864 kg)": (1.864, 118.4, 34.5),
+    "production head (2.083 kg)": (2.083, 119.9, 32.9),
+    "production head + 15 % margin": (2.396, 119.9, 32.9)}
+HEAD_PROTO = "prototype head RR-HD-X (1.864 kg)"
 
 
 def mass_cg(parts):
@@ -289,7 +294,7 @@ def plate_bending(M):
     """Chassis plate as a beam when the robot hangs on the grip: everything is lifted through the two foot lines
     (x -56..-22); the plate carries the masses ahead of and behind them in bending.  -> rows (calculated)."""
     items = [(m, x) for _, m, x, _ in M["items"]] + [(m, x) for _, m, x, _, _ in LUMPED]
-    head = HEADS["prototype printed head"]
+    head = HEADS[HEAD_PROTO]
     items.append((head[0], head[1]))
     t = D.PLATE_Z[1] - D.PLATE_Z[0]
     rows = []

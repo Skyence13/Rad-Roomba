@@ -98,7 +98,7 @@ def purchased(add):
 
 def head_placeholder(add):
     he, RC = P.HEAD_ENV_E, P.RECEIVER
-    env = box(he["x"][0] + 2.8, he["x"][1], he["y"][0], he["y"][1], he["z"][0], he["z"][1])
+    env = box(he["x"][0] + 2.8, D.HEAD_X1, he["y"][0], he["y"][1], he["z"][0], he["z"][1])
     add(Part("HEAD", "head_envelope", env, "placeholder", "-", "head_placeholder", color="#344c51", internal=False, mass=0.0, mates={"head_latch", "head_shoe_L", "head_shoe_R"}))
     for tag, s in (("L", 1), ("R", -1)):
         yc = s * RC["shoe_y"]

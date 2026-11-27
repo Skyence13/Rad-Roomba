@@ -14,6 +14,16 @@
   },
   "dsn_sha256": "c246955d7bd9cfcabec93a677e0c3737c96c50d3e7bfce36d96f9e13a6377ecb",
   "dsn_unchanged": true,
+  "escape": {
+    "direct": 0,
+    "enabled": false,
+    "inward": 0,
+    "parts": {},
+    "skipped": [],
+    "skipped_by_reason": {},
+    "vias": 0
+  },
+  "finisher": null,
   "gen_warnings": [],
   "generated_files": [
     "RR-TOF-A.kicad_sch",
@@ -120,6 +130,7 @@
   },
   "route_stats": {
     "dangling_tracks_removed": 0,
+    "finisher_items": null,
     "necked_tracks_widened": 0,
     "preroutes": 9,
     "preroutes_missing_after_import": 0,
@@ -132,8 +143,15 @@
   "routed": true,
   "routing": {
     "enabled": true,
+    "escape": "auto",
+    "escape_direct": true,
+    "escape_layers": null,
+    "escape_pitch": 0.65,
+    "escape_track": null,
+    "escape_via": null,
     "extra_args": [],
     "fanout": false,
+    "finisher": true,
     "layers": 2,
     "optimizer": true,
     "passes": 100,

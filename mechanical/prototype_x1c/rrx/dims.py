@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from mechanical.common import params as P
 
+HEAD_X1 = max(P.HEAD_ENV_E["x"][1], float(P.C["frames"]["head_envelope_rev_e_mm"]["x"][1]))   # 212.5: sprung leading rail (contract draft6)
 BED = (256.0, 256.0, 250.0)          # stock X1C: 256 x 256 plate, 250 mm printable height in the stock preset
 BED_MARGIN = 3.0
 

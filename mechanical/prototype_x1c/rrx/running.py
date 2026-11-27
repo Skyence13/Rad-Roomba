@@ -122,12 +122,12 @@ def bumper_centre():
 
 
 # ----------------------------------------------------------------------------------------------- transport tray
-TRAY = {"x": (-305.0, 235.0), "half_y": 212.0, "t": 9.0}
+TRAY = {"x": (-305.0, 255.0), "half_y": 212.0, "t": 9.0}
 
 
 def tray_base():
     b = box(TRAY["x"][0], TRAY["x"][1], -TRAY["half_y"], TRAY["half_y"], -TRAY["t"], 0.0)
-    for x in (-270.0, 150.0):
+    for x in (-270.0, 70.0):
         for y in (-185.0, 185.0):
             b = b.cut(cq.Workplane("XY", origin=(x, y, -TRAY["t"] - 1)).slot2D(60, 25, 90).extrude(TRAY["t"] + 2).val())      # hand slots / strap slots
     return b
@@ -151,7 +151,7 @@ def tray_caster_cup():
 
 def tray_head_guard(s):
     he = P.HEAD_ENV_E
-    x1, hy = he["x"][1] + 4.0, he["y"][1] + 4.0
+    x1, hy = D.HEAD_X1 + 4.0, he["y"][1] + 4.0
     g = fuse(box(x1, x1 + 8.0, hy - 110.0, hy + 8.0, 0, 55.0), box(x1 - 115.0, x1 + 8.0, hy, hy + 8.0, 0, 55.0),
              box(x1 - 115.0, x1 + 8.0, hy - 6.0, hy + 26.0, 0, 4.0), box(x1 - 18.0, x1 + 26.0, hy - 110.0, hy + 8.0, 0, 4.0)).cut(
         box(x1 - 115.0, x1, hy - 110.0, hy, 0.6, 60.0))
@@ -179,7 +179,7 @@ def build(add):
         add(Part(f"RRX-P41{tag}", f"tray_head_guard_{tag}", tray_head_guard(s), "printed", "ASA", "tray", color="#6b767c", hard=False, internal=False, orient=(0, 0, 0), print_note="flat, no supports"))
     add(Part("RRX-P34", "bumper_centre", bumper_centre(), "printed", "ASA", "bumper", color="#22262a", internal=False, orient=(0, 0, 0),
              print_note="as fitted; no supports", mates={"hatch_door", "bumper_side_L", "bumper_side_R"}))
-    add(Part("RRX-F20", "tray_base", tray_base(), "fabricated", "PLY", "tray", color="#c8b48a", hard=False, internal=False, note="9 mm birch plywood or HDPE, 540 x 424, CNC/jigsaw; DXF"))
+    add(Part("RRX-F20", "tray_base", tray_base(), "fabricated", "PLY", "tray", color="#c8b48a", hard=False, internal=False, note="9 mm birch plywood or HDPE, 560 x 424, CNC/jigsaw; DXF"))
     add(Part("RRX-P42", "tray_caster_cup", tray_caster_cup(), "printed", "ASA", "tray", color="#6b767c", hard=False, internal=False, orient=(0, 0, 0), print_note="flat"))
     # small sensor / control parts
     pt, _ = S.panel_tray()

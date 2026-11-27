@@ -99,16 +99,24 @@ def export_assembly(parts, path=None):
     path = path or OUT / "RRX_assembly.step"
     asm = cq.Assembly(name="RRX_prototype_assembly")
     groups = {}
+    real_head = (ROOT.parent / "head" / "prototype" / "RR-HD-X-000_head_assembly_prototype.step").exists()
     for p in parts:
+        if real_head and (p.name == "head_envelope" or p.name.startswith("head_shoe_")):
+            continue
         g = groups.setdefault(p.subasm, cq.Assembly(name="sub_" + p.subasm))
         g.add(p.shape, name=p.name, color=cq.Color(p.color) if isinstance(p.color, str) else p.color)
     for g in groups.values():
         asm.add(g)
-    head = P.OUT / "RR_E_head_layout.step"
+    real = ROOT.parent / "head" / "prototype" / "RR-HD-X-000_head_assembly_prototype.step"
+    head, label = (real, "head_RR-HD-X-000_prototype_from_mechanical_head") if real.exists() else (P.OUT / "RR_E_head_layout.step", "head_layout_placeholder_from_mechanical_common")
     if head.exists():
         try:
-            asm.add(cq.importers.importStep(str(head)).val(), name="head_layout_placeholder_from_mechanical_common", color=cq.Color(0.2, 0.3, 0.32, 0.4))
-        except Exception:  # noqa: BLE001
-            pass
+            objs = cq.importers.importStep(str(head)).vals()
+            comp = cq.Compound.makeCompound([o for o in objs if isinstance(o, cq.Shape)])
+            asm.add(comp, name=label, color=cq.Color(0.2, 0.3, 0.32, 1.0))
+            bb = comp.BoundingBox()
+            print(f"  head in the assembly: {head.name}, bbox x {bb.xmin:.1f}..{bb.xmax:.1f}, z {bb.zmin:.1f}..{bb.zmax:.1f}")
+        except Exception as e:  # noqa: BLE001
+            print(f"  head STEP not added: {e}")
     asm.export(str(path))
     return path

@@ -14,6 +14,16 @@
   },
   "dsn_sha256": "41ea1939f938cfb45f4628a21a82e9ca7d95b05a95743176049c8c33392746e4",
   "dsn_unchanged": true,
+  "escape": {
+    "direct": 0,
+    "enabled": false,
+    "inward": 0,
+    "parts": {},
+    "skipped": [],
+    "skipped_by_reason": {},
+    "vias": 0
+  },
+  "finisher": null,
   "gen_warnings": [],
   "generated_files": [
     "RR-PANEL.kicad_sch",
@@ -185,28 +195,22 @@
     "GND"
   ],
   "route_info": {
-    "attempts": [
-      {
-        "run": 1,
-        "seconds": 15.5,
-        "unconnected": 0
-      }
-    ],
     "dsn_sha256": "41ea1939f938cfb45f4628a21a82e9ca7d95b05a95743176049c8c33392746e4",
     "freerouting": "v2.6.0 (build-date: 2026-11-25)",
     "log_tail": [
-      "[8094F8\\C2D448] Auto-routing stage completed: started with 34 unrouted nets, completed in 5.34 seconds, final score: 1000.00 (0 unrouted and 0 violations), using 1.10 total CPU seconds, 0.27 GB total allocated, and 139.7 MB peak heap usage.",
-      "[8094F8\\C2D448] Optimization stage completed:. Baseline router score: 1000.00, baseline optimizer score: -191.95, final router score: 1000.00, final optimizer score: 0.00, completed in 4.61 seconds, using 2.00 total CPU seconds, 0.99 GB total allocated, and 111.7 MB peak heap usage.",
-      "[8094F8\\C2D448] Job '8094F8\\C2D448' finished with state: COMPLETED (elapsed: 10.76 seconds, finished at UTC: 2026-11-26T20:20:33.301002842Z)."
+      "[D13D28\\DECD82] Auto-routing stage completed: started with 34 unrouted nets, completed in 2.49 seconds, final score: 1000.00 (0 unrouted and 0 violations), using 1.01 total CPU seconds, 0.22 GB total allocated, and 18.8 MB peak heap usage.",
+      "[D13D28\\DECD82] Optimization stage completed:. Baseline router score: 1000.00, baseline optimizer score: -191.95, final router score: 1000.00, final optimizer score: 0.00, completed in 1.52 seconds, using 1.84 total CPU seconds, 0.99 GB total allocated, and 76.7 MB peak heap usage.",
+      "[D13D28\\DECD82] Job 'D13D28\\DECD82' finished with state: COMPLETED (elapsed: 4.34 seconds, finished at UTC: 2026-11-27T00:33:08.329089979Z)."
     ],
     "passes_limit": 60,
-    "reused": true,
-    "seconds": 15.5,
+    "reused": false,
+    "seconds": 12.8,
     "threads": 4,
     "timed_out": false
   },
   "route_stats": {
     "dangling_tracks_removed": 0,
+    "finisher_items": null,
     "necked_tracks_widened": 0,
     "preroutes": 15,
     "preroutes_missing_after_import": 0,
@@ -219,8 +223,15 @@
   "routed": true,
   "routing": {
     "enabled": true,
+    "escape": "auto",
+    "escape_direct": true,
+    "escape_layers": null,
+    "escape_pitch": 0.65,
+    "escape_track": null,
+    "escape_via": null,
     "extra_args": [],
     "fanout": false,
+    "finisher": true,
     "layers": 2,
     "optimizer": true,
     "passes": 60,

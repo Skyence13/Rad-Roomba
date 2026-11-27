@@ -132,9 +132,25 @@
       "threads": 4,
       "timed_out": false
     },
+    "escape": {
+      "direct": 0,
+      "enabled": false,
+      "inward": 0,
+      "parts": {},
+      "skipped": [],
+      "skipped_by_reason": {},
+      "vias": 0
+    },
+    "finisher": null,
+    "plane_fanout": {
+      "failed": [],
+      "plane_nets": [],
+      "vias": 0
+    },
     "routed": true,
     "stats": {
       "dangling_tracks_removed": 0,
+      "finisher_items": null,
       "necked_tracks_widened": 0,
       "preroutes": 9,
       "preroutes_missing_after_import": 0,
