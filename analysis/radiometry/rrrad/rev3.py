@@ -33,7 +33,7 @@ EXACT_ALPHA_BELOW = 1e-3     # estimator.py, MODEL.md section 3 (R2)
 EXACT_COUNTS_BELOW = 30.0
 MIN_W = 0.10                 # MODEL.md section 5 (R5)
 
-__all__ = ["Cal", "Lane", "kappa", "select_method", "rule_threshold", "rule_dhash", "truth_stat",
+__all__ = ["Cal", "Lane", "truth_tail", "kappa", "select_method", "rule_threshold", "rule_dhash", "truth_stat",
            "u0_nodes", "lane_false_alarm", "power_at", "true_rate_for_power", "exact_dhash_rate",
            "cell_any_lane_false_alarm", "pooled_u0_lane_false_alarm", "cell_lane_weights",
            "PATTERNS", "pattern_lane", "Combined", "variance_overstatement", "n_eff"]
@@ -182,7 +182,7 @@ def rule_dhash(U0, T_F, T_U, cal: Cal, alpha, beta, method="auto", with_K=True):
 
 
 # --------------------------------------------------------------------------- the statistic actually computed
-def truth_stat(lane: Lane, cal: Cal, U, rho=0.0, f=None, span_w=None, sig=None, T_F=None) -> L.LinStat:
+def truth_stat(lane: Lane, cal: Cal, U, rho=0.0, f=None, span_w=0.05, sig=None, T_F=None) -> L.LinStat:
     """r = S_F/T_F - k S_U/T_U - b with Poisson gate counts (T_U = T_F, same gates).
 
     rho: net surface rate (1/s) on a fully covered footprint; f_j the fraction of gate j's footprint
@@ -194,6 +194,18 @@ def truth_stat(lane: Lane, cal: Cal, U, rho=0.0, f=None, span_w=None, sig=None, 
     lam = np.concatenate(((cal.k * U + cal.b) * lane.t + rho * f * lane.t, U * lane.t))
     span = (span_w / T) if (span_w is not None and cal.k == 1.0) else None
     return L.LinStat(a, lam, -cal.b, cal.sig(U) if sig is None else sig, span)
+
+
+def truth_tail(lane: Lane, cal: Cal, U, rho=0.0, f=None, span_w=0.05, sig=None) -> L.AtomTail:
+    """Exact tail object of the weighted-sum statistic (see truth_stat).  k = 1: one lattice;
+    k != 1: floor and reference lattices with incommensurate spans, combined by outer sum."""
+    if cal.k == 1.0:
+        return L._LatticeTail(truth_stat(lane, cal, U, rho, f, span_w, sig))
+    T = lane.T
+    f = np.ones_like(lane.w) if f is None else np.asarray(f, float)
+    X = L.LinStat(lane.w / T, (cal.k * U + cal.b) * lane.t + rho * f * lane.t, 0.0, 0.0, span_w / T)
+    Y = L.LinStat(-cal.k * lane.w / T, U * lane.t, 0.0, 0.0, cal.k * span_w / T)
+    return L.two_lattice_tail(X, Y, cal.sig(U) if sig is None else sig, -cal.b)
 
 
 def u0_nodes(U, T_window, max_enum=400, n_quant=60):
@@ -217,19 +229,19 @@ def u0_nodes(U, T_window, max_enum=400, n_quant=60):
     return vals, probs / probs.sum()
 
 
-def lane_false_alarm(lane: Lane, cal: Cal, U, alpha, method="auto", window_factor=20.0, span_w=None,
-                     sig_truth=None):
+def lane_false_alarm(lane: Lane, cal: Cal, U, alpha, method="auto", window_factor=20.0, span_w=0.05,
+                     sig_truth=None, max_enum=400, n_quant=60):
     """Achieved P(r > r*) on a clean cell.  r from the weighted sums (exact); r* as processed, at the
     U_null of an independent window of window_factor*T_F (None: U_null = U exactly).
     Returns (achieved, achieved_with_U_null_exact, method)."""
     T = lane.T
-    tl = L._LatticeTail(truth_stat(lane, cal, U, span_w=span_w, sig=sig_truth))
+    tl = truth_tail(lane, cal, U, span_w=span_w, sig=sig_truth)
     m = select_method(alpha, U, T, cal) if method == "auto" else method
     r0, _ = rule_threshold(U, T, T, cal, alpha, m)
     a0 = float(tl(r0)[0])
     if window_factor is None:
         return a0, a0, m
-    vals, probs = u0_nodes(U, window_factor * T)
+    vals, probs = u0_nodes(U, window_factor * T, max_enum, n_quant)
     acc = 0.0
     for U0, pr in zip(vals, probs):
         r_star, _ = rule_threshold(U0, T, T, cal, alpha, m)
@@ -237,21 +249,28 @@ def lane_false_alarm(lane: Lane, cal: Cal, U, alpha, method="auto", window_facto
     return acc, a0, m
 
 
-def power_at(lane: Lane, cal: Cal, U, r_star, rho, f=None, span_w=None):
-    return float(L._LatticeTail(truth_stat(lane, cal, U, rho, f, span_w))(r_star)[0])
+def power_at(lane: Lane, cal: Cal, U, r_star, rho, f=None, span_w=0.05):
+    return float(truth_tail(lane, cal, U, rho, f, span_w)(r_star)[0])
 
 
-def true_rate_for_power(lane: Lane, cal: Cal, U, r_star, beta, f=None, span_w=None):
+def true_rate_for_power(lane: Lane, cal: Cal, U, r_star, beta, f=None, span_w=0.05):
     """Net rate rho at which the weighted-sum statistic exceeds r* with probability 1 - beta (exact)."""
     return L.solve_for_power(lambda x: power_at(lane, cal, U, r_star, x, f, span_w), 1.0 - beta,
                              hi=max(abs(r_star), 1.0 / lane.T) * 2.0)
 
 
-def exact_dhash_rate(lane: Lane, cal: Cal, U, alpha, beta, span_w=None, f=None):
+def exact_dhash_rate(lane: Lane, cal: Cal, U, alpha, beta, span_w=0.05, f=None):
     """Optimal (exact-distribution) threshold and r# of the weighted-sum statistic: method (C), one lane."""
-    st = truth_stat(lane, cal, U, span_w=span_w)
-    t = L.lattice_threshold(st, alpha)
+    tl = truth_tail(lane, cal, U, span_w=span_w)
+    t = _atom_threshold(tl, alpha)
     return t, true_rate_for_power(lane, cal, U, t, beta, f, span_w)
+
+
+def _atom_threshold(tl: L.AtomTail, alpha):
+    if tl.sig <= 0:
+        return float(tl.vals[int(np.argmax(tl.sf_gt <= alpha))])
+    lo, hi = tl.vals[0] - 10 * tl.sig, tl.vals[-1] + 10 * tl.sig
+    return float(brentq(lambda x: float(tl(x)[0]) - alpha, lo, hi, xtol=1e-12 * (hi - lo)))
 
 
 # --------------------------------------------------------------------------- several lanes
@@ -260,19 +279,35 @@ def _gh(n=64):
     return x, w / w.sum()
 
 
-def cell_any_lane_false_alarm(lanes, cals, U, alpha, method="auto", span_w=None, common=True, n_gh=64):
-    """P(any lane flags) on a clean cell, every lane tested at alpha/m with its own processed threshold
-    (U_null = U).  The common calibration term U*e, e ~ N(0, u_common(k)), is shared by all lanes and
-    integrated by Gauss-Hermite; counts and lane calibration terms are independent.
+def any_lane_limits(lanes, cals, U, alpha, beta, method="auto", with_K=False):
+    """Per-lane (r*, method, D#) of the revision-3 rule at alpha/m (U_null = U).  D# in Bq/cm2 with the
+    section-3 u_rel(K) factor if with_K, else with u_rel(K) = 0."""
+    m = len(lanes)
+    out = []
+    for lane, cal in zip(lanes, cals):
+        c = cal if with_K else Cal(cal.k, cal.b, cal.u_k_lane, cal.u_k_common, cal.u_b, cal.cov_kb, cal.K, 0.0)
+        meth = select_method(alpha / m, U, lane.T, cal) if method == "auto" else method
+        r_star, _ = rule_threshold(U, lane.T, lane.T, cal, alpha / m, meth)
+        out.append((r_star, meth, rule_dhash(U, lane.T, lane.T, c, alpha / m, beta, meth, with_K=True)))
+    return out
+
+
+def cell_any_lane_false_alarm(lanes, cals, U, alpha, method="auto", span_w=0.05, common=True, n_gh=64,
+                              D=0.0, f=None, active=None):
+    """P(any lane flags), every lane tested at alpha/m with its own processed threshold (U_null = U).
+    The common calibration term U*e, e ~ N(0, u_common(k)), is shared by all lanes and integrated by
+    Gauss-Hermite; counts and lane calibration terms are independent.  With D > 0 (Bq/cm2) the lanes in
+    `active` (default all) see activity with footprint fractions f[i] (default 1): detection probability.
     Returns (P_cell, [per-lane P], union bound)."""
     m = len(lanes)
     a_l = alpha / m
     xs, ws = _gh(n_gh)
     per, cond = [], []
-    for lane, cal in zip(lanes, cals):
+    for i, (lane, cal) in enumerate(zip(lanes, cals)):
         sig_lane = np.sqrt(cal.var_lane(U))
-        st = truth_stat(lane, cal, U, span_w=span_w, sig=0.0)
-        tl = L._LatticeTail(st)
+        on = active is None or active[i]
+        fi = None if f is None else f[i]
+        tl = truth_tail(lane, cal, U, rho=cal.K * D if on else 0.0, f=fi, span_w=span_w, sig=0.0)
         meth = select_method(a_l, U, lane.T, cal) if method == "auto" else method
         r_star, _ = rule_threshold(U, lane.T, lane.T, cal, a_l, meth)
         sc = U * cal.u_k_common if common else 0.0
@@ -410,3 +445,64 @@ class Combined:
             st = L.LinStat(st.a, st.lam, st.mu, float(np.hypot(st.sig, u_rel_K * gain)))
             return float(L.tail(st, t, method)[0])
         return t, L.solve_for_power(power, 1.0 - beta, hi=1.0)
+
+
+def rev2_combined(lanes, cals, U0, alpha, beta, with_K=False):
+    """Revision-2 style cell test: inverse-variance combination of the lanes' D with a NORMAL threshold,
+    variances in the Poisson form of the weighted sums (as processing evaluated them) and the common
+    calibration term added after combination.  Returns (D*, D#, c, sd0)."""
+    v_lane = np.array([((cal.k * U0 + cal.b) / l.T + cal.k ** 2 * U0 / l.T + cal.var_lane(U0)) / cal.K ** 2
+                       for l, cal in zip(lanes, cals)])
+    c = (1.0 / v_lane) / np.sum(1.0 / v_lane)
+    common = float(np.sum([ci * U0 * cal.u_k_common / cal.K for ci, cal in zip(c, cals)]))
+    sd0 = float(np.sqrt(np.sum(c ** 2 * v_lane) + common ** 2))
+    c1 = float(np.sum([ci ** 2 / (cal.K * l.T) for ci, l, cal in zip(c, lanes, cals)]))
+    ka, kb = kappa(alpha), kappa(beta)
+    u = float(np.dot(c, [cal.u_rel_K for cal in cals])) if with_K else 0.0
+    ys = ka * sd0
+    a = 1.0 - kb ** 2 * u ** 2
+    p_ = 2.0 * ys + kb ** 2 * c1
+    q_ = ys ** 2 - kb ** 2 * sd0 ** 2
+    return ys, float((p_ + np.sqrt(max(p_ * p_ - 4.0 * a * q_, 0.0))) / (2.0 * a)), c, sd0
+
+
+def split_rule_dhash(lanes, cals, U0, alpha, beta, s_lane, method="gp", u_rel_K=0.0, n_gh=48):
+    """Candidate revision-4 rule with a parallel per-lane test: flag when the combined statistic exceeds its
+    exact threshold at (1 - s_lane)*alpha OR any lane exceeds its exact lane threshold at s_lane*alpha/m
+    (union bound: cell false alarm <= alpha).  s_lane = 0: combined test only.
+    Returns dict: D# for activity uniform over all footprints ("uniform") and, for each lane i, for activity
+    over that lane's footprint only ("lane<i>").  P(detect) of the OR rule is at least the larger of the two
+    tests' probabilities, so solving max(P_combined, P_lane) = 1 - beta gives an upper (conservative)
+    detection limit."""
+    m = len(lanes)
+    C = Combined(lanes, cals, U0)
+    a_c = (1.0 - s_lane) * alpha
+    res = {}
+    t_c = C.threshold(a_c, method)
+    s0 = C.stat()
+
+    def p_comb(D, mask):
+        st = C.stat(D=D, lane_mask=mask)
+        gain = st.mean - s0.mean
+        st = L.LinStat(st.a, st.lam, st.mu, float(np.hypot(st.sig, u_rel_K * gain)))
+        return float(L.tail(st, t_c, method)[0])
+
+    lane_thr = []
+    if s_lane > 0:
+        for l, cal in zip(lanes, cals):
+            tl = truth_tail(l, cal, U0)
+            lane_thr.append(_atom_threshold(tl, s_lane * alpha / m))
+
+    def p_lane(i, D):
+        if s_lane <= 0:
+            return 0.0
+        l, cal = lanes[i], cals[i]
+        tl = truth_tail(l, cal, U0, rho=cal.K * D, sig=float(np.hypot(cal.sig(U0), u_rel_K * D)))
+        return float(tl(lane_thr[i])[0])
+
+    res["uniform"] = L.solve_for_power(lambda D: max(p_comb(D, None), max(p_lane(i, D) for i in range(m))), 1 - beta)
+    for i in range(m):
+        mask = [j == i for j in range(m)]
+        res[f"lane{i}"] = L.solve_for_power(lambda D: max(p_comb(D, mask), p_lane(i, D)), 1 - beta)
+    res["c"] = C.c
+    return res

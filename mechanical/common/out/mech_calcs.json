@@ -308,23 +308,57 @@
   "grip_sigma_mpa": 5.166059504132231
  },
  "gap": {
+  "static_worst": 1.5772291809275782,
+  "static_rss": 0.7136875363342612,
+  "static_worst_prebreak": 1.5276187363834424,
+  "rx_body_before": 0.11114814814814815,
+  "rx_body_after": 0.1607585926922841,
   "touch_3mm": 4.3478260869565215,
   "touch_5mm": 3.105590062111801,
-  "touch_3mm_static": 3.4680306905370846,
-  "touch_5mm_static": 2.225794665692364,
-  "static_wc": 1.4164705882352941,
-  "static_rss": 0.6953463700879322,
-  "band_lo": 5.42677559912854,
-  "band_hi": 14.573224400871458,
+  "touch_3mm_static": 3.368180632964237,
+  "touch_5mm_static": 2.1259446081195166,
+  "static_wc": 1.5772291809275782,
+  "band_lo": 5.266017006436256,
+  "band_hi": 14.733982993563743,
   "rep_feature": 2.0
  },
  "thermal": {
   "body_ua": 1.1401462407221792,
-  "chs_htr_m20": 21.639887221665376,
-  "chs_htr_m25": 27.34061842527627,
-  "chs_htr_m25_moving": 35.04740184829713,
+  "body_ua_moving": 1.3603400528084895,
+  "discharge_hold_w": {
+   "still -20C": 0,
+   "still -25C": 4.537693610832688,
+   "moving -20C": 1.038900528084893,
+   "moving -25C": 7.840600792127342
+  },
+  "preheat_hold_bay_w": {
+   "still -20C": 28.50365601805448,
+   "still -25C": 34.20438722166538,
+   "moving -20C": 34.00850132021224,
+   "moving -25C": 40.810201584254685
+  },
+  "preheat_hold_packskin_w": {
+   "still -20C": 9.828020893080282,
+   "still -25C": 11.793625071696338,
+   "moving -20C": 10.408959793936715,
+   "moving -25C": 12.490751752724057
+  },
+  "preheat_time_min": {
+   "still 20W G0.6": 94.66666666666667,
+   "still 20W G1.2": 200.0,
+   "still 36W G0.6": 39.166666666666664,
+   "still 36W G1.2": 54.5,
+   "moving 20W G0.6": 95.83333333333333,
+   "moving 20W G1.2": 264.5,
+   "moving 36W G0.6": 39.333333333333336,
+   "moving 36W G1.2": 55.0
+  },
+  "chs_htr_m20": 0,
+  "chs_htr_m25": 4.537693610832688,
+  "chs_htr_m25_moving": 7.840600792127342,
   "chs_internal_typ_w": 12.5645,
   "set_point_c": 10.0,
+  "pad_w": 20.0,
   "head_htr": "see mechanical/head/out/thermal_summary.json"
  },
  "motion": {
@@ -333,6 +367,118 @@
   "vmax_in_lead": 0.05135528725660043,
   "lookahead_edge_clearance": 17.34302223090687,
   "lookahead_lead_mm": 106.94290189183442
+ },
+ "receiver_break": {
+  "g_per_channel": 0.08084730952385197,
+  "paths": {
+   "G10 shim strips": 0.033451618433712624,
+   "3 screws through G10 top-hat bushings": 0.026480584435746402,
+   "2 lower pins (air + G10 fringe)": 0.005462182427041454,
+   "2 upper pins (ear relief air + G10 fringe)": 0.006072070280858352,
+   "roof bridges under the plate pockets (1.5 mm air)": 0.007071999999999999,
+   "wall tops between the stations (4 mm air)": 0.0019565,
+   "radiation across the gaps": 0.0003523539464931346,
+   "total": 0.08084730952385197
+  },
+  "target": 0.1,
+  "body_side": {
+   "still air": {
+    "per_shoe": 0.10620452154470823,
+    "head_delta_w": 1.8384612903590498
+   },
+   "still air boot": {
+    "per_shoe": 0.0884550295815638,
+    "head_delta_w": 0.9651980403045384
+   },
+   "moving air": {
+    "per_shoe": 0.13943034527431203,
+    "head_delta_w": 3.3437373798130596
+   },
+   "moving air boot": {
+    "per_shoe": 0.09457888007925822,
+    "head_delta_w": 1.2723344981455995
+   }
+  },
+  "head_g": 1.0089408096258832,
+  "tolerance": {
+   "before": {
+    "worst": 0.057,
+    "rss": 0.03640054944640259,
+    "corner_worst": 0.11114814814814815,
+    "corner_rss": 0.06524585770662993
+   },
+   "after": {
+    "worst": 0.09307340750709892,
+    "rss": 0.04256614512917182,
+    "corner_worst": 0.1607585926922841,
+    "corner_rss": 0.07019366090163434
+   }
+  },
+  "preload": {
+   "F": 1500.0,
+   "torque": 1.2,
+   "p_washer": 30.552860615945352,
+   "p_flange_plate": 29.841551829730378,
+   "p_shim_avg": 10.089197946245456,
+   "p_shim_local": 15.433206602850456,
+   "util_max": 0.07362135088179603,
+   "creep_mm": 0.002747231347233966,
+   "embed_mm": 0.011,
+   "k_b": 115274.82993197278,
+   "k_m": 137507.12208829008,
+   "k_joint": 62706.65285428304,
+   "k_disc": 6666.666666666667,
+   "loss_rigid": 862.042863798518,
+   "loss_disc": 82.84096054518423,
+   "residual": 1417.1590394548157,
+   "slip_capacity_per_channel": 850.2954236728896,
+   "latch_per_channel": 100.0,
+   "slip_margin": 8.502954236728895,
+   "grip_unloaded": 11.1
+  },
+  "thread": {
+   "screw": "M4 x 18 ISO 4762 A2-70",
+   "grip": 10.875,
+   "engagement": 7.125,
+   "engagement_d": 1.78125,
+   "ear_t": 7.5,
+   "tip_inside_ear": 0.375,
+   "strip_n": 11120.29551591179,
+   "bolt_n": 6146.0,
+   "ratio": 1.8093549488955076,
+   "before": {
+    "screw": "M4 x 10",
+    "engagement": 6.0,
+    "engagement_d": 1.5
+   }
+  },
+  "stiffness": {
+   "k_shim_land": 557526.9738952104,
+   "k_bridge": 35060.04477915733,
+   "bridge_t": 2.5,
+   "builds": {
+    "prototype PA-CF (dry)": {
+     "k_c": 1500.0,
+     "k_eff": 1465.3653942139053,
+     "corner0": 0.16432081016340153,
+     "corner1": 0.1670113644110516,
+     "f1_0": 84.17136881786726,
+     "f1_1": 83.19394636829392,
+     "pitch0": 84.17136881786726,
+     "pitch1": 83.19394636829392
+    },
+    "production 6061": {
+     "k_c": 6000.0,
+     "k_eff": 5506.351023180065,
+     "corner0": 0.0356731273394573,
+     "corner1": 0.03822448762661552,
+     "f1_0": 149.21988819515198,
+     "f1_1": 142.94962878320123,
+     "pitch0": 149.21988819515198,
+     "pitch1": 142.94962878320123
+    }
+   }
+  }
  },
  "mount_trade": {
   "A": {

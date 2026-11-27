@@ -31,6 +31,9 @@ STATIC = [   # (term, +- mm at the outer corners, basis)
     ("Head frame flatness and film plane", 0.3, "assumed print/machining tolerance over 350 mm"),
     ("Static cantilever deflection (self weight)", 0.1, "section 4"),
 ]
+from .receiver_break import tolerance_stack as _rx_tol    # noqa: E402  (body-side datum-C term, IB-64)
+_RX = _rx_tol()
+STATIC.append(("Body-side datum-C height: plate -> land pins, incl. the G10 break (front corner)", _RX["after"]["corner_worst"], "section 9 (was +-%.2f before the break)" % _RX["before"]["corner_worst"]))
 
 
 def plane(hl, hr, hc):
@@ -70,6 +73,11 @@ def run():
     worst = sum(b for _, b, _ in STATIC)
     rss = sum(b * b for _, b, _ in STATIC) ** 0.5
     md.append(f"\nStatic band at an outer corner: +-{worst:.2f} mm worst case, +-{rss:.2f} mm RSS.\n")
+    w0 = worst - _RX["after"]["corner_worst"] + _RX["before"]["corner_worst"]
+    r0 = (rss ** 2 - _RX["after"]["corner_worst"] ** 2 + _RX["before"]["corner_worst"] ** 2) ** 0.5
+    md.append(f"Body-side datum-C row before / after the receiver thermal break: +-{_RX['before']['corner_worst']:.2f} / +-{_RX['after']['corner_worst']:.2f} mm; "
+              f"static band with the pre-break value +-{w0:.2f} worst / +-{r0:.2f} RSS (the row was not carried before IB-64).\n")
+    key.update(static_worst=worst, static_rss=rss, static_worst_prebreak=w0, rx_body_before=_RX["before"]["corner_worst"], rx_body_after=_RX["after"]["corner_worst"])
     md.append("### Floor features (quasi-static, one feature at a time)\n")
     sizes = (1.5, 3.0, 5.0)
     rows = []

@@ -60,11 +60,11 @@ a configuration is the union over all approved features and speeds.
 
 | Item | Proposed limit | Basis |
 |---|---|---|
-| Static loaded gap, each corner | 10.0 +- 0.5 mm | static term budget (+-1.42 mm worst case calculated) |
+| Static loaded gap, each corner | 10.0 +- 0.5 mm | static term budget (+-1.58 mm worst case calculated) |
 | Static corner-to-corner spread | <= 0.6 mm | head flatness + roll set-up |
 | 20 N corner deflection | <= 1.0 mm, returns within 0.1 mm | receiver stiffness target |
 | Head refit repeatability | <= 0.2 mm at any corner | RQ-015 |
-| Dynamic gap on the approved floor envelope | within the calibrated interval; proposal 7.0 .. 13.0 mm | calculated band 5.4 .. 14.6 mm for 2 mm features |
+| Dynamic gap on the approved floor envelope | within the calibrated interval; proposal 7.0 .. 13.0 mm | calculated band 5.3 .. 14.7 mm for 2 mm features |
 | Rail clearance, 3 mm insert | never below 1.0 mm on approved features, no HEAD_LOOP trip | nuisance stops |
 | Rail clearance, 5 mm insert | report trips per feature; expected to touch at about 3.1 mm features | calculated |
 

@@ -1,0 +1,577 @@
+dose_rate_uSv_h,U_cps,dwell_s,T_F_weighted_s,weight_pattern,calibration_terms,alpha,method,method_selected_by_section3,poisson_form_variance_overstatement,achieved_over_nominal_Unull_window20TF,achieved_over_nominal_Unull_exact,same_for_all_weights_1_window,same_for_all_weights_1_Unull_exact
+0.1,3.319,1.0,1,all 1,declared,0.05,normal,False,1.0000,1.07891,1.19518,1.07891,1.19518
+0.1,3.319,1.0,1,all 1,declared,0.05,poisson-exact,True,1.0000,1.01479,1.00000,1.01479,1.00000
+0.1,3.319,1.0,1,all 1,declared,0.001,normal,False,1.0000,1.71495,1.86786,1.71495,1.86786
+0.1,3.319,1.0,1,all 1,declared,0.001,poisson-exact,True,1.0000,1.13709,1.00000,1.13709,1.00000
+0.1,3.319,1.0,1,all 1,declared,1.14e-05,normal,False,1.0000,4.97277,4.70009,4.97277,4.70009
+0.1,3.319,1.0,1,all 1,declared,1.14e-05,poisson-exact,True,1.0000,1.41042,1.00000,1.41042,1.00000
+0.1,3.319,1.0,1,all 1,none,0.05,normal,False,1.0000,1.08110,1.32120,1.08110,1.32120
+0.1,3.319,1.0,1,all 1,none,0.05,poisson-exact,True,1.0000,0.66809,0.62208,0.66809,0.62208
+0.1,3.319,1.0,1,all 1,none,0.001,normal,False,1.0000,1.68828,1.88884,1.68828,1.88884
+0.1,3.319,1.0,1,all 1,none,0.001,poisson-exact,True,1.0000,0.70088,0.62956,0.70088,0.62956
+0.1,3.319,1.0,1,all 1,none,1.14e-05,normal,False,1.0000,4.95434,4.89955,4.95434,4.89955
+0.1,3.319,1.0,1,all 1,none,1.14e-05,poisson-exact,True,1.0000,0.75672,0.33397,0.75672,0.33397
+0.1,3.319,1.0,1,1 full + partials 0.1-0.9,declared,0.05,normal,False,1.4286,0.53571,0.51831,1.07891,1.19518
+0.1,3.319,1.0,1,1 full + partials 0.1-0.9,declared,0.05,poisson-exact,True,1.4286,0.50976,0.47403,1.01479,1.00000
+0.1,3.319,1.0,1,1 full + partials 0.1-0.9,declared,0.001,normal,False,1.4286,0.29634,0.23431,1.71495,1.86786
+0.1,3.319,1.0,1,1 full + partials 0.1-0.9,declared,0.001,poisson-exact,True,1.4286,0.18204,0.15215,1.13709,1.00000
+0.1,3.319,1.0,1,1 full + partials 0.1-0.9,declared,1.14e-05,normal,False,1.4286,0.29989,0.16067,4.97277,4.70009
+0.1,3.319,1.0,1,1 full + partials 0.1-0.9,declared,1.14e-05,poisson-exact,True,1.4286,0.05943,0.02188,1.41042,1.00000
+0.1,3.319,1.0,1,1 full + partials 0.1-0.9,none,0.05,normal,False,1.4286,0.53685,0.54030,1.08110,1.32120
+0.1,3.319,1.0,1,1 full + partials 0.1-0.9,none,0.05,poisson-exact,True,1.4286,0.48885,0.44337,0.66809,0.62208
+0.1,3.319,1.0,1,1 full + partials 0.1-0.9,none,0.001,normal,False,1.4286,0.29652,0.23558,1.68828,1.88884
+0.1,3.319,1.0,1,1 full + partials 0.1-0.9,none,0.001,poisson-exact,True,1.4286,0.18665,0.15238,0.70088,0.62956
+0.1,3.319,1.0,1,1 full + partials 0.1-0.9,none,1.14e-05,normal,False,1.4286,0.30046,0.15035,4.95434,4.89955
+0.1,3.319,1.0,1,1 full + partials 0.1-0.9,none,1.14e-05,poisson-exact,True,1.4286,0.06009,0.01783,0.75672,0.33397
+0.1,3.319,1.0,1,7 full + one 0.1,declared,0.05,normal,False,1.0128,1.05126,1.13046,1.07891,1.19518
+0.1,3.319,1.0,1,7 full + one 0.1,declared,0.05,poisson-exact,True,1.0128,1.00037,0.97806,1.01479,1.00000
+0.1,3.319,1.0,1,7 full + one 0.1,declared,0.001,normal,False,1.0128,1.62881,1.71013,1.71495,1.86786
+0.1,3.319,1.0,1,7 full + one 0.1,declared,0.001,poisson-exact,True,1.0128,1.11275,1.00665,1.13709,1.00000
+0.1,3.319,1.0,1,7 full + one 0.1,declared,1.14e-05,normal,False,1.0128,4.59541,4.08871,4.97277,4.70009
+0.1,3.319,1.0,1,7 full + one 0.1,declared,1.14e-05,poisson-exact,True,1.0128,1.35118,0.87247,1.41042,1.00000
+0.1,3.319,1.0,1,7 full + one 0.1,none,0.05,normal,False,1.0128,1.05845,1.25310,1.08110,1.32120
+0.1,3.319,1.0,1,7 full + one 0.1,none,0.05,poisson-exact,True,1.0128,0.85675,0.80156,0.66809,0.62208
+0.1,3.319,1.0,1,7 full + one 0.1,none,0.001,normal,False,1.0128,1.61829,1.76140,1.68828,1.88884
+0.1,3.319,1.0,1,7 full + one 0.1,none,0.001,poisson-exact,True,1.0128,1.02646,0.92965,0.70088,0.62956
+0.1,3.319,1.0,1,7 full + one 0.1,none,1.14e-05,normal,False,1.0128,4.60590,4.26866,4.95434,4.89955
+0.1,3.319,1.0,1,7 full + one 0.1,none,1.14e-05,poisson-exact,True,1.0128,1.22397,0.55321,0.75672,0.33397
+0.1,3.319,1.0,1,all 0.5,declared,0.05,normal,False,2.0000,0.22987,0.23404,1.07891,1.19518
+0.1,3.319,1.0,1,all 0.5,declared,0.05,poisson-exact,True,2.0000,0.21762,0.19865,1.01479,1.00000
+0.1,3.319,1.0,1,all 0.5,declared,0.001,normal,False,2.0000,0.02433,0.01477,1.71495,1.86786
+0.1,3.319,1.0,1,all 0.5,declared,0.001,poisson-exact,True,2.0000,0.01213,0.00797,1.13709,1.00000
+0.1,3.319,1.0,1,all 0.5,declared,1.14e-05,normal,False,2.0000,0.00453,0.00131,4.97277,4.70009
+0.1,3.319,1.0,1,all 0.5,declared,1.14e-05,poisson-exact,True,2.0000,0.00042,0.00008,1.41042,1.00000
+0.1,3.319,1.0,1,all 0.5,none,0.05,normal,False,2.0000,0.22845,0.25683,1.08110,1.32120
+0.1,3.319,1.0,1,all 0.5,none,0.05,poisson-exact,True,2.0000,0.15378,0.13019,0.66809,0.62208
+0.1,3.319,1.0,1,all 0.5,none,0.001,normal,False,2.0000,0.02421,0.01469,1.68828,1.88884
+0.1,3.319,1.0,1,all 0.5,none,0.001,poisson-exact,True,2.0000,0.00838,0.00516,0.70088,0.62956
+0.1,3.319,1.0,1,all 0.5,none,1.14e-05,normal,False,2.0000,0.00443,0.00136,4.95434,4.89955
+0.1,3.319,1.0,1,all 0.5,none,1.14e-05,poisson-exact,True,2.0000,0.00026,0.00003,0.75672,0.33397
+0.1,3.319,1.0,1,all 0.10,declared,0.05,normal,False,10.0000,0.00001,0.00000,1.07891,1.19518
+0.1,3.319,1.0,1,all 0.10,declared,0.05,poisson-exact,True,10.0000,0.00002,0.00000,1.01479,1.00000
+0.1,3.319,1.0,1,all 0.10,declared,0.001,normal,False,10.0000,0.00000,0.00000,1.71495,1.86786
+0.1,3.319,1.0,1,all 0.10,declared,0.001,poisson-exact,True,10.0000,0.00000,0.00000,1.13709,1.00000
+0.1,3.319,1.0,1,all 0.10,declared,1.14e-05,normal,False,10.0000,0.00000,0.00000,4.97277,4.70009
+0.1,3.319,1.0,1,all 0.10,declared,1.14e-05,poisson-exact,True,10.0000,0.00000,0.00000,1.41042,1.00000
+0.1,3.319,1.0,1,all 0.10,none,0.05,normal,False,10.0000,0.00001,0.00000,1.08110,1.32120
+0.1,3.319,1.0,1,all 0.10,none,0.05,poisson-exact,True,10.0000,0.00002,0.00000,0.66809,0.62208
+0.1,3.319,1.0,1,all 0.10,none,0.001,normal,False,10.0000,0.00000,0.00000,1.68828,1.88884
+0.1,3.319,1.0,1,all 0.10,none,0.001,poisson-exact,True,10.0000,0.00000,0.00000,0.70088,0.62956
+0.1,3.319,1.0,1,all 0.10,none,1.14e-05,normal,False,10.0000,0.00000,0.00000,4.95434,4.89955
+0.1,3.319,1.0,1,all 0.10,none,1.14e-05,poisson-exact,True,10.0000,0.00000,0.00000,0.75672,0.33397
+0.1,3.319,1.0,0.99,realistic: lane centred,declared,0.05,normal,False,1.3497,0.60274,0.58460,1.07891,1.19518
+0.1,3.319,1.0,0.99,realistic: lane centred,declared,0.05,poisson-exact,True,1.3497,0.57154,0.52685,1.01479,1.00000
+0.1,3.319,1.0,0.99,realistic: lane centred,declared,0.001,normal,False,1.3497,0.40945,0.33006,1.71495,1.86786
+0.1,3.319,1.0,0.99,realistic: lane centred,declared,0.001,poisson-exact,True,1.3497,0.25578,0.20832,1.13709,1.00000
+0.1,3.319,1.0,0.99,realistic: lane centred,declared,1.14e-05,normal,False,1.3497,0.50625,0.28565,4.97277,4.70009
+0.1,3.319,1.0,0.99,realistic: lane centred,declared,1.14e-05,poisson-exact,True,1.3497,0.10950,0.03991,1.41042,1.00000
+0.1,3.319,1.0,0.99,realistic: lane centred,none,0.05,normal,False,1.3497,0.60136,0.57969,1.08110,1.32120
+0.1,3.319,1.0,0.99,realistic: lane centred,none,0.05,poisson-exact,True,1.3497,0.55994,0.50258,0.66809,0.62208
+0.1,3.319,1.0,0.99,realistic: lane centred,none,0.001,normal,False,1.3497,0.40904,0.32255,1.68828,1.88884
+0.1,3.319,1.0,0.99,realistic: lane centred,none,0.001,poisson-exact,True,1.3497,0.26813,0.21247,0.70088,0.62956
+0.1,3.319,1.0,0.99,realistic: lane centred,none,1.14e-05,normal,False,1.3497,0.50440,0.27448,4.95434,4.89955
+0.1,3.319,1.0,0.99,realistic: lane centred,none,1.14e-05,poisson-exact,True,1.3497,0.11764,0.03275,0.75672,0.33397
+0.1,3.319,1.0,0.82,realistic: lane 30 mm off centre,declared,0.05,normal,False,1.5984,0.42345,0.40383,1.07891,1.19518
+0.1,3.319,1.0,0.82,realistic: lane 30 mm off centre,declared,0.05,poisson-exact,True,1.5984,0.46942,0.55171,1.01479,1.00000
+0.1,3.319,1.0,0.82,realistic: lane 30 mm off centre,declared,0.001,normal,False,1.5984,0.16985,0.12158,1.71495,1.86786
+0.1,3.319,1.0,0.82,realistic: lane 30 mm off centre,declared,0.001,poisson-exact,True,1.5984,0.09015,0.08645,1.13709,1.00000
+0.1,3.319,1.0,0.82,realistic: lane 30 mm off centre,declared,1.14e-05,normal,False,1.5984,0.13612,0.05651,4.97277,4.70009
+0.1,3.319,1.0,0.82,realistic: lane 30 mm off centre,declared,1.14e-05,poisson-exact,True,1.5984,0.01874,0.00403,1.41042,1.00000
+0.1,3.319,1.0,0.82,realistic: lane 30 mm off centre,none,0.05,normal,False,1.5984,0.42166,0.40988,1.08110,1.32120
+0.1,3.319,1.0,0.82,realistic: lane 30 mm off centre,none,0.05,poisson-exact,True,1.5984,0.49065,0.61233,0.66809,0.62208
+0.1,3.319,1.0,0.82,realistic: lane 30 mm off centre,none,0.001,normal,False,1.5984,0.17028,0.12349,1.68828,1.88884
+0.1,3.319,1.0,0.82,realistic: lane 30 mm off centre,none,0.001,poisson-exact,True,1.5984,0.09281,0.09530,0.70088,0.62956
+0.1,3.319,1.0,0.82,realistic: lane 30 mm off centre,none,1.14e-05,normal,False,1.5984,0.13567,0.05400,4.95434,4.89955
+0.1,3.319,1.0,0.82,realistic: lane 30 mm off centre,none,1.14e-05,poisson-exact,True,1.5984,0.02018,0.00307,0.75672,0.33397
+0.1,3.319,1.0,0.59,realistic: cell centred on a seam,declared,0.05,normal,False,2.2562,0.17734,0.15854,1.07891,1.19518
+0.1,3.319,1.0,0.59,realistic: cell centred on a seam,declared,0.05,poisson-exact,True,2.2562,0.19137,0.09434,1.01479,1.00000
+0.1,3.319,1.0,0.59,realistic: cell centred on a seam,declared,0.001,normal,False,2.2562,0.02034,0.00919,1.71495,1.86786
+0.1,3.319,1.0,0.59,realistic: cell centred on a seam,declared,0.001,poisson-exact,True,2.2562,0.00825,0.00319,1.13709,1.00000
+0.1,3.319,1.0,0.59,realistic: cell centred on a seam,declared,1.14e-05,normal,False,2.2562,0.00642,0.00082,4.97277,4.70009
+0.1,3.319,1.0,0.59,realistic: cell centred on a seam,declared,1.14e-05,poisson-exact,True,2.2562,0.00026,0.00003,1.41042,1.00000
+0.1,3.319,1.0,0.59,realistic: cell centred on a seam,none,0.05,normal,False,2.2562,0.17749,0.15659,1.08110,1.32120
+0.1,3.319,1.0,0.59,realistic: cell centred on a seam,none,0.05,poisson-exact,True,2.2562,0.19524,0.08059,0.66809,0.62208
+0.1,3.319,1.0,0.59,realistic: cell centred on a seam,none,0.001,normal,False,2.2562,0.02020,0.00941,1.68828,1.88884
+0.1,3.319,1.0,0.59,realistic: cell centred on a seam,none,0.001,poisson-exact,True,2.2562,0.00898,0.00317,0.70088,0.62956
+0.1,3.319,1.0,0.59,realistic: cell centred on a seam,none,1.14e-05,normal,False,2.2562,0.00645,0.00083,4.95434,4.89955
+0.1,3.319,1.0,0.59,realistic: cell centred on a seam,none,1.14e-05,poisson-exact,True,2.2562,0.00028,0.00003,0.75672,0.33397
+0.1,3.319,10.0,10,all 1,declared,0.05,normal,True,1.0000,1.00624,1.00419,1.00624,1.00419
+0.1,3.319,10.0,10,all 1,declared,0.05,poisson-exact,False,1.0000,1.00203,1.00000,1.00203,1.00000
+0.1,3.319,10.0,10,all 1,declared,0.001,normal,True,1.0000,1.09576,1.07700,1.09576,1.07700
+0.1,3.319,10.0,10,all 1,declared,0.001,poisson-exact,False,1.0000,1.01722,1.00000,1.01722,1.00000
+0.1,3.319,10.0,10,all 1,declared,1.14e-05,normal,False,1.0000,1.34309,1.27260,1.34309,1.27260
+0.1,3.319,10.0,10,all 1,declared,1.14e-05,poisson-exact,True,1.0000,1.05455,1.00000,1.05455,1.00000
+0.1,3.319,10.0,10,all 1,none,0.05,normal,True,1.0000,1.02234,1.10227,1.02234,1.10227
+0.1,3.319,10.0,10,all 1,none,0.05,poisson-exact,False,1.0000,0.87521,0.86397,0.87521,0.86397
+0.1,3.319,10.0,10,all 1,none,0.001,normal,True,1.0000,1.09508,0.92049,1.09508,0.92049
+0.1,3.319,10.0,10,all 1,none,0.001,poisson-exact,False,1.0000,0.84215,0.92049,0.84215,0.92049
+0.1,3.319,10.0,10,all 1,none,1.14e-05,normal,False,1.0000,1.35138,1.45529,1.35138,1.45529
+0.1,3.319,10.0,10,all 1,none,1.14e-05,poisson-exact,True,1.0000,0.82705,0.87880,0.82705,0.87880
+0.1,3.319,10.0,10,1 full + partials 0.1-0.9,declared,0.05,normal,True,1.4286,0.50831,0.50650,1.00624,1.00419
+0.1,3.319,10.0,10,1 full + partials 0.1-0.9,declared,0.05,poisson-exact,False,1.4286,0.50545,0.50365,1.00203,1.00000
+0.1,3.319,10.0,10,1 full + partials 0.1-0.9,declared,0.001,normal,True,1.4286,0.13767,0.13326,1.09576,1.07700
+0.1,3.319,10.0,10,1 full + partials 0.1-0.9,declared,0.001,poisson-exact,False,1.4286,0.12426,0.12033,1.01722,1.00000
+0.1,3.319,10.0,10,1 full + partials 0.1-0.9,declared,1.14e-05,normal,False,1.4286,0.03396,0.03065,1.34309,1.27260
+0.1,3.319,10.0,10,1 full + partials 0.1-0.9,declared,1.14e-05,poisson-exact,True,1.4286,0.02430,0.02196,1.05455,1.00000
+0.1,3.319,10.0,10,1 full + partials 0.1-0.9,none,0.05,normal,True,1.4286,0.50004,0.50589,1.02234,1.10227
+0.1,3.319,10.0,10,1 full + partials 0.1-0.9,none,0.05,poisson-exact,False,1.4286,0.48228,0.47371,0.87521,0.86397
+0.1,3.319,10.0,10,1 full + partials 0.1-0.9,none,0.001,normal,True,1.4286,0.13148,0.12441,1.09508,0.92049
+0.1,3.319,10.0,10,1 full + partials 0.1-0.9,none,0.001,poisson-exact,False,1.4286,0.11757,0.13126,0.84215,0.92049
+0.1,3.319,10.0,10,1 full + partials 0.1-0.9,none,1.14e-05,normal,False,1.4286,0.03145,0.02896,1.35138,1.45529
+0.1,3.319,10.0,10,1 full + partials 0.1-0.9,none,1.14e-05,poisson-exact,True,1.4286,0.02231,0.02349,0.82705,0.87880
+0.1,3.319,10.0,10,7 full + one 0.1,declared,0.05,normal,True,1.0128,0.98519,0.98314,1.00624,1.00419
+0.1,3.319,10.0,10,7 full + one 0.1,declared,0.05,poisson-exact,False,1.0128,0.98102,0.97899,1.00203,1.00000
+0.1,3.319,10.0,10,7 full + one 0.1,declared,0.001,normal,True,1.0128,1.02902,1.01101,1.09576,1.07700
+0.1,3.319,10.0,10,7 full + one 0.1,declared,0.001,poisson-exact,False,1.0128,0.95447,0.93795,1.01722,1.00000
+0.1,3.319,10.0,10,7 full + one 0.1,declared,1.14e-05,normal,False,1.0128,1.20309,1.13858,1.34309,1.27260
+0.1,3.319,10.0,10,7 full + one 0.1,declared,1.14e-05,poisson-exact,True,1.0128,0.94208,0.89229,1.05455,1.00000
+0.1,3.319,10.0,10,7 full + one 0.1,none,0.05,normal,True,1.0128,0.98793,1.00546,1.02234,1.10227
+0.1,3.319,10.0,10,7 full + one 0.1,none,0.05,poisson-exact,False,1.0128,0.96123,0.94908,0.87521,0.86397
+0.1,3.319,10.0,10,7 full + one 0.1,none,0.001,normal,True,1.0128,1.02964,0.99028,1.09508,0.92049
+0.1,3.319,10.0,10,7 full + one 0.1,none,0.001,poisson-exact,False,1.0128,0.95331,1.04171,0.84215,0.92049
+0.1,3.319,10.0,10,7 full + one 0.1,none,1.14e-05,normal,False,1.0128,1.20580,1.17829,1.35138,1.45529
+0.1,3.319,10.0,10,7 full + one 0.1,none,1.14e-05,poisson-exact,True,1.0128,0.94619,1.00544,0.82705,0.87880
+0.1,3.319,10.0,10,all 0.5,declared,0.05,normal,True,2.0000,0.21519,0.21385,1.00624,1.00419
+0.1,3.319,10.0,10,all 0.5,declared,0.05,poisson-exact,False,2.0000,0.21358,0.21225,1.00203,1.00000
+0.1,3.319,10.0,10,all 0.5,declared,0.001,normal,True,2.0000,0.00909,0.00856,1.09576,1.07700
+0.1,3.319,10.0,10,all 0.5,declared,0.001,poisson-exact,False,2.0000,0.00790,0.00744,1.01722,1.00000
+0.1,3.319,10.0,10,all 0.5,declared,1.14e-05,normal,False,2.0000,0.00025,0.00020,1.34309,1.27260
+0.1,3.319,10.0,10,all 0.5,declared,1.14e-05,poisson-exact,True,2.0000,0.00015,0.00013,1.05455,1.00000
+0.1,3.319,10.0,10,all 0.5,none,0.05,normal,True,2.0000,0.20467,0.21634,1.02234,1.10227
+0.1,3.319,10.0,10,all 0.5,none,0.05,poisson-exact,False,2.0000,0.17784,0.17324,0.87521,0.86397
+0.1,3.319,10.0,10,all 0.5,none,0.001,normal,True,2.0000,0.00777,0.00655,1.09508,0.92049
+0.1,3.319,10.0,10,all 0.5,none,0.001,poisson-exact,False,2.0000,0.00575,0.00655,0.84215,0.92049
+0.1,3.319,10.0,10,all 0.5,none,1.14e-05,normal,False,2.0000,0.00019,0.00016,1.35138,1.45529
+0.1,3.319,10.0,10,all 0.5,none,1.14e-05,poisson-exact,True,2.0000,0.00010,0.00010,0.82705,0.87880
+0.1,3.319,10.0,10,all 0.10,declared,0.05,normal,True,10.0000,0.00002,0.00001,1.00624,1.00419
+0.1,3.319,10.0,10,all 0.10,declared,0.05,poisson-exact,False,10.0000,0.00001,0.00001,1.00203,1.00000
+0.1,3.319,10.0,10,all 0.10,declared,0.001,normal,True,10.0000,0.00000,0.00000,1.09576,1.07700
+0.1,3.319,10.0,10,all 0.10,declared,0.001,poisson-exact,False,10.0000,0.00000,0.00000,1.01722,1.00000
+0.1,3.319,10.0,10,all 0.10,declared,1.14e-05,normal,False,10.0000,0.00000,0.00000,1.34309,1.27260
+0.1,3.319,10.0,10,all 0.10,declared,1.14e-05,poisson-exact,True,10.0000,0.00000,0.00000,1.05455,1.00000
+0.1,3.319,10.0,10,all 0.10,none,0.05,normal,True,10.0000,0.00000,0.00000,1.02234,1.10227
+0.1,3.319,10.0,10,all 0.10,none,0.05,poisson-exact,False,10.0000,0.00000,0.00000,0.87521,0.86397
+0.1,3.319,10.0,10,all 0.10,none,0.001,normal,True,10.0000,0.00000,0.00000,1.09508,0.92049
+0.1,3.319,10.0,10,all 0.10,none,0.001,poisson-exact,False,10.0000,0.00000,0.00000,0.84215,0.92049
+0.1,3.319,10.0,10,all 0.10,none,1.14e-05,normal,False,10.0000,0.00000,0.00000,1.35138,1.45529
+0.1,3.319,10.0,10,all 0.10,none,1.14e-05,poisson-exact,True,10.0000,0.00000,0.00000,0.82705,0.87880
+0.1,3.319,10.0,9.92,realistic: lane centred,declared,0.05,normal,True,1.3526,0.57191,0.57003,1.00624,1.00419
+0.1,3.319,10.0,9.92,realistic: lane centred,declared,0.05,poisson-exact,False,1.3526,0.56883,0.56696,1.00203,1.00000
+0.1,3.319,10.0,9.92,realistic: lane centred,declared,0.001,normal,True,1.3526,0.19789,0.19210,1.09576,1.07700
+0.1,3.319,10.0,9.92,realistic: lane centred,declared,0.001,poisson-exact,False,1.3526,0.17940,0.17420,1.01722,1.00000
+0.1,3.319,10.0,9.92,realistic: lane centred,declared,1.14e-05,normal,False,1.3526,0.06486,0.05907,1.34309,1.27260
+0.1,3.319,10.0,9.92,realistic: lane centred,declared,1.14e-05,poisson-exact,True,1.3526,0.04709,0.04294,1.05455,1.00000
+0.1,3.319,10.0,9.92,realistic: lane centred,none,0.05,normal,True,1.3526,0.56502,0.55852,1.02234,1.10227
+0.1,3.319,10.0,9.92,realistic: lane centred,none,0.05,poisson-exact,False,1.3526,0.54412,0.52432,0.87521,0.86397
+0.1,3.319,10.0,9.92,realistic: lane centred,none,0.001,normal,True,1.3526,0.19107,0.18431,1.09508,0.92049
+0.1,3.319,10.0,9.92,realistic: lane centred,none,0.001,poisson-exact,False,1.3526,0.17401,0.17965,0.84215,0.92049
+0.1,3.319,10.0,9.92,realistic: lane centred,none,1.14e-05,normal,False,1.3526,0.06119,0.05649,1.35138,1.45529
+0.1,3.319,10.0,9.92,realistic: lane centred,none,1.14e-05,poisson-exact,True,1.3526,0.04466,0.04183,0.82705,0.87880
+0.1,3.319,10.0,8.26,realistic: lane 30 mm off centre,declared,0.05,normal,True,1.6051,0.38713,0.38510,1.00624,1.00419
+0.1,3.319,10.0,8.26,realistic: lane 30 mm off centre,declared,0.05,poisson-exact,False,1.6051,0.38449,0.38249,1.00203,1.00000
+0.1,3.319,10.0,8.26,realistic: lane 30 mm off centre,declared,0.001,normal,True,1.6051,0.06031,0.05747,1.09576,1.07700
+0.1,3.319,10.0,8.26,realistic: lane 30 mm off centre,declared,0.001,poisson-exact,False,1.6051,0.05286,0.05040,1.01722,1.00000
+0.1,3.319,10.0,8.26,realistic: lane 30 mm off centre,declared,1.14e-05,normal,False,1.6051,0.00804,0.00690,1.34309,1.27260
+0.1,3.319,10.0,8.26,realistic: lane 30 mm off centre,declared,1.14e-05,poisson-exact,True,1.6051,0.00521,0.00448,1.05455,1.00000
+0.1,3.319,10.0,8.26,realistic: lane 30 mm off centre,none,0.05,normal,True,1.6051,0.37921,0.37477,1.02234,1.10227
+0.1,3.319,10.0,8.26,realistic: lane 30 mm off centre,none,0.05,poisson-exact,False,1.6051,0.36249,0.33895,0.87521,0.86397
+0.1,3.319,10.0,8.26,realistic: lane 30 mm off centre,none,0.001,normal,True,1.6051,0.05678,0.05351,1.09508,0.92049
+0.1,3.319,10.0,8.26,realistic: lane 30 mm off centre,none,0.001,poisson-exact,False,1.6051,0.05031,0.04848,0.84215,0.92049
+0.1,3.319,10.0,8.26,realistic: lane 30 mm off centre,none,1.14e-05,normal,False,1.6051,0.00729,0.00636,1.35138,1.45529
+0.1,3.319,10.0,8.26,realistic: lane 30 mm off centre,none,1.14e-05,poisson-exact,True,1.6051,0.00477,0.00452,0.82705,0.87880
+0.1,3.319,10.0,5.9,realistic: cell centred on a seam,declared,0.05,normal,False,2.2180,0.15516,0.15322,1.00624,1.00419
+0.1,3.319,10.0,5.9,realistic: cell centred on a seam,declared,0.05,poisson-exact,True,2.2180,0.15353,0.15162,1.00203,1.00000
+0.1,3.319,10.0,5.9,realistic: cell centred on a seam,declared,0.001,normal,False,2.2180,0.00367,0.00325,1.09576,1.07700
+0.1,3.319,10.0,5.9,realistic: cell centred on a seam,declared,0.001,poisson-exact,True,2.2180,0.00291,0.00259,1.01722,1.00000
+0.1,3.319,10.0,5.9,realistic: cell centred on a seam,declared,1.14e-05,normal,False,2.2180,0.00006,0.00004,1.34309,1.27260
+0.1,3.319,10.0,5.9,realistic: cell centred on a seam,declared,1.14e-05,poisson-exact,True,2.2180,0.00003,0.00002,1.05455,1.00000
+0.1,3.319,10.0,5.9,realistic: cell centred on a seam,none,0.05,normal,False,2.2180,0.14897,0.14710,1.02234,1.10227
+0.1,3.319,10.0,5.9,realistic: cell centred on a seam,none,0.05,poisson-exact,True,2.2180,0.14432,0.11411,0.87521,0.86397
+0.1,3.319,10.0,5.9,realistic: cell centred on a seam,none,0.001,normal,False,2.2180,0.00327,0.00283,1.09508,0.92049
+0.1,3.319,10.0,5.9,realistic: cell centred on a seam,none,0.001,poisson-exact,True,2.2180,0.00267,0.00283,0.84215,0.92049
+0.1,3.319,10.0,5.9,realistic: cell centred on a seam,none,1.14e-05,normal,False,2.2180,0.00005,0.00003,1.35138,1.45529
+0.1,3.319,10.0,5.9,realistic: cell centred on a seam,none,1.14e-05,poisson-exact,True,2.2180,0.00002,0.00002,0.82705,0.87880
+1.0,33.19,1.0,1,all 1,declared,0.05,normal,True,1.0000,1.00230,0.99994,1.00230,0.99994
+1.0,33.19,1.0,1,all 1,declared,0.05,poisson-exact,False,1.0000,1.00236,1.00000,1.00236,1.00000
+1.0,33.19,1.0,1,all 1,declared,0.001,normal,True,1.0000,1.06650,1.04526,1.06650,1.04526
+1.0,33.19,1.0,1,all 1,declared,0.001,poisson-exact,False,1.0000,1.02026,1.00000,1.02026,1.00000
+1.0,33.19,1.0,1,all 1,declared,1.14e-05,normal,False,1.0000,1.26297,1.18580,1.26297,1.18580
+1.0,33.19,1.0,1,all 1,declared,1.14e-05,poisson-exact,True,1.0000,1.06481,1.00000,1.06481,1.00000
+1.0,33.19,1.0,1,all 1,none,0.05,normal,True,1.0000,1.01082,1.11620,1.01082,1.11620
+1.0,33.19,1.0,1,all 1,none,0.05,poisson-exact,False,1.0000,0.87578,0.86739,0.87578,0.86739
+1.0,33.19,1.0,1,all 1,none,0.001,normal,True,1.0000,1.06608,1.15947,1.06608,1.15947
+1.0,33.19,1.0,1,all 1,none,0.001,poisson-exact,False,1.0000,0.83656,0.77178,0.83656,0.77178
+1.0,33.19,1.0,1,all 1,none,1.14e-05,normal,False,1.0000,1.26180,0.96890,1.26180,0.96890
+1.0,33.19,1.0,1,all 1,none,1.14e-05,poisson-exact,True,1.0000,0.82826,0.96890,0.82826,0.96890
+1.0,33.19,1.0,1,1 full + partials 0.1-0.9,declared,0.05,normal,True,1.4286,0.50382,0.50174,1.00230,0.99994
+1.0,33.19,1.0,1,1 full + partials 0.1-0.9,declared,0.05,poisson-exact,False,1.4286,0.50386,0.50177,1.00236,1.00000
+1.0,33.19,1.0,1,1 full + partials 0.1-0.9,declared,0.001,normal,True,1.4286,0.13137,0.12647,1.06650,1.04526
+1.0,33.19,1.0,1,1 full + partials 0.1-0.9,declared,0.001,poisson-exact,False,1.4286,0.12358,0.11898,1.02026,1.00000
+1.0,33.19,1.0,1,1 full + partials 0.1-0.9,declared,1.14e-05,normal,False,1.4286,0.03077,0.02728,1.26297,1.18580
+1.0,33.19,1.0,1,1 full + partials 0.1-0.9,declared,1.14e-05,poisson-exact,True,1.4286,0.02429,0.02155,1.06481,1.00000
+1.0,33.19,1.0,1,1 full + partials 0.1-0.9,none,0.05,normal,True,1.4286,0.49658,0.49474,1.01082,1.11620
+1.0,33.19,1.0,1,1 full + partials 0.1-0.9,none,0.05,poisson-exact,False,1.4286,0.48469,0.47814,0.87578,0.86739
+1.0,33.19,1.0,1,1 full + partials 0.1-0.9,none,0.001,normal,True,1.4286,0.12601,0.12279,1.06608,1.15947
+1.0,33.19,1.0,1,1 full + partials 0.1-0.9,none,0.001,poisson-exact,False,1.4286,0.11736,0.10374,0.83656,0.77178
+1.0,33.19,1.0,1,1 full + partials 0.1-0.9,none,1.14e-05,normal,False,1.4286,0.02871,0.02511,1.26180,0.96890
+1.0,33.19,1.0,1,1 full + partials 0.1-0.9,none,1.14e-05,poisson-exact,True,1.4286,0.02260,0.02701,0.82826,0.96890
+1.0,33.19,1.0,1,7 full + one 0.1,declared,0.05,normal,True,1.0128,0.98117,0.97881,1.00230,0.99994
+1.0,33.19,1.0,1,7 full + one 0.1,declared,0.05,poisson-exact,False,1.0128,0.98122,0.97887,1.00236,1.00000
+1.0,33.19,1.0,1,7 full + one 0.1,declared,0.001,normal,True,1.0128,1.00080,0.98043,1.06650,1.04526
+1.0,33.19,1.0,1,7 full + one 0.1,declared,0.001,poisson-exact,False,1.0128,0.95693,0.93751,1.02026,1.00000
+1.0,33.19,1.0,1,7 full + one 0.1,declared,1.14e-05,normal,False,1.0128,1.12970,1.05916,1.26297,1.18580
+1.0,33.19,1.0,1,7 full + one 0.1,declared,1.14e-05,poisson-exact,True,1.0128,0.95062,0.89150,1.06481,1.00000
+1.0,33.19,1.0,1,7 full + one 0.1,none,0.05,normal,True,1.0128,0.98250,0.98509,1.01082,1.11620
+1.0,33.19,1.0,1,7 full + one 0.1,none,0.05,poisson-exact,False,1.0128,0.96142,0.95235,0.87578,0.86739
+1.0,33.19,1.0,1,7 full + one 0.1,none,0.001,normal,True,1.0128,1.00052,1.00937,1.06608,1.15947
+1.0,33.19,1.0,1,7 full + one 0.1,none,0.001,poisson-exact,False,1.0128,0.94721,0.87431,0.83656,0.77178
+1.0,33.19,1.0,1,7 full + one 0.1,none,1.14e-05,normal,False,1.0128,1.13067,1.03462,1.26180,0.96890
+1.0,33.19,1.0,1,7 full + one 0.1,none,1.14e-05,poisson-exact,True,1.0128,0.94875,1.10979,0.82826,0.96890
+1.0,33.19,1.0,1,all 0.5,declared,0.05,normal,True,2.0000,0.21196,0.21043,1.00230,0.99994
+1.0,33.19,1.0,1,all 0.5,declared,0.05,poisson-exact,False,2.0000,0.21198,0.21045,1.00236,1.00000
+1.0,33.19,1.0,1,all 0.5,declared,0.001,normal,True,2.0000,0.00849,0.00790,1.06650,1.04526
+1.0,33.19,1.0,1,all 0.5,declared,0.001,poisson-exact,False,2.0000,0.00780,0.00727,1.02026,1.00000
+1.0,33.19,1.0,1,all 0.5,declared,1.14e-05,normal,False,2.0000,0.00021,0.00017,1.26297,1.18580
+1.0,33.19,1.0,1,all 0.5,declared,1.14e-05,poisson-exact,True,2.0000,0.00015,0.00012,1.06481,1.00000
+1.0,33.19,1.0,1,all 0.5,none,0.05,normal,True,2.0000,0.20271,0.22014,1.01082,1.11620
+1.0,33.19,1.0,1,all 0.5,none,0.05,poisson-exact,False,2.0000,0.17851,0.17491,0.87578,0.86739
+1.0,33.19,1.0,1,all 0.5,none,0.001,normal,True,2.0000,0.00739,0.00696,1.06608,1.15947
+1.0,33.19,1.0,1,all 0.5,none,0.001,poisson-exact,False,2.0000,0.00575,0.00471,0.83656,0.77178
+1.0,33.19,1.0,1,all 0.5,none,1.14e-05,normal,False,2.0000,0.00017,0.00012,1.26180,0.96890
+1.0,33.19,1.0,1,all 0.5,none,1.14e-05,poisson-exact,True,2.0000,0.00010,0.00012,0.82826,0.96890
+1.0,33.19,1.0,1,all 0.10,declared,0.05,normal,True,10.0000,0.00001,0.00001,1.00230,0.99994
+1.0,33.19,1.0,1,all 0.10,declared,0.05,poisson-exact,False,10.0000,0.00001,0.00001,1.00236,1.00000
+1.0,33.19,1.0,1,all 0.10,declared,0.001,normal,True,10.0000,0.00000,0.00000,1.06650,1.04526
+1.0,33.19,1.0,1,all 0.10,declared,0.001,poisson-exact,False,10.0000,0.00000,0.00000,1.02026,1.00000
+1.0,33.19,1.0,1,all 0.10,declared,1.14e-05,normal,False,10.0000,0.00000,0.00000,1.26297,1.18580
+1.0,33.19,1.0,1,all 0.10,declared,1.14e-05,poisson-exact,True,10.0000,0.00000,0.00000,1.06481,1.00000
+1.0,33.19,1.0,1,all 0.10,none,0.05,normal,True,10.0000,0.00000,0.00000,1.01082,1.11620
+1.0,33.19,1.0,1,all 0.10,none,0.05,poisson-exact,False,10.0000,0.00000,0.00000,0.87578,0.86739
+1.0,33.19,1.0,1,all 0.10,none,0.001,normal,True,10.0000,0.00000,0.00000,1.06608,1.15947
+1.0,33.19,1.0,1,all 0.10,none,0.001,poisson-exact,False,10.0000,0.00000,0.00000,0.83656,0.77178
+1.0,33.19,1.0,1,all 0.10,none,1.14e-05,normal,False,10.0000,0.00000,0.00000,1.26180,0.96890
+1.0,33.19,1.0,1,all 0.10,none,1.14e-05,poisson-exact,True,10.0000,0.00000,0.00000,0.82826,0.96890
+1.0,33.19,1.0,0.99,realistic: lane centred,declared,0.05,normal,True,1.3497,0.56998,0.56780,1.00230,0.99994
+1.0,33.19,1.0,0.99,realistic: lane centred,declared,0.05,poisson-exact,False,1.3497,0.57002,0.56785,1.00236,1.00000
+1.0,33.19,1.0,0.99,realistic: lane centred,declared,0.001,normal,True,1.3497,0.19217,0.18562,1.06650,1.04526
+1.0,33.19,1.0,0.99,realistic: lane centred,declared,0.001,poisson-exact,False,1.3497,0.18123,0.17507,1.02026,1.00000
+1.0,33.19,1.0,0.99,realistic: lane centred,declared,1.14e-05,normal,False,1.3497,0.06063,0.05434,1.26297,1.18580
+1.0,33.19,1.0,0.99,realistic: lane centred,declared,1.14e-05,poisson-exact,True,1.3497,0.04835,0.04335,1.06481,1.00000
+1.0,33.19,1.0,0.99,realistic: lane centred,none,0.05,normal,True,1.3497,0.56396,0.56220,1.01082,1.11620
+1.0,33.19,1.0,0.99,realistic: lane centred,none,0.05,poisson-exact,False,1.3497,0.55064,0.53529,0.87578,0.86739
+1.0,33.19,1.0,0.99,realistic: lane centred,none,0.001,normal,True,1.3497,0.18618,0.18127,1.06608,1.15947
+1.0,33.19,1.0,0.99,realistic: lane centred,none,0.001,poisson-exact,False,1.3497,0.17607,0.14625,0.83656,0.77178
+1.0,33.19,1.0,0.99,realistic: lane centred,none,1.14e-05,normal,False,1.3497,0.05759,0.05258,1.26180,0.96890
+1.0,33.19,1.0,0.99,realistic: lane centred,none,1.14e-05,poisson-exact,True,1.3497,0.04629,0.04906,0.82826,0.96890
+1.0,33.19,1.0,0.82,realistic: lane 30 mm off centre,declared,0.05,normal,False,1.5984,0.38687,0.38452,1.00230,0.99994
+1.0,33.19,1.0,0.82,realistic: lane 30 mm off centre,declared,0.05,poisson-exact,True,1.5984,0.38694,0.38459,1.00236,1.00000
+1.0,33.19,1.0,0.82,realistic: lane 30 mm off centre,declared,0.001,normal,False,1.5984,0.05907,0.05583,1.06650,1.04526
+1.0,33.19,1.0,0.82,realistic: lane 30 mm off centre,declared,0.001,poisson-exact,True,1.5984,0.05442,0.05145,1.02026,1.00000
+1.0,33.19,1.0,0.82,realistic: lane 30 mm off centre,declared,1.14e-05,normal,False,1.5984,0.00767,0.00642,1.26297,1.18580
+1.0,33.19,1.0,0.82,realistic: lane 30 mm off centre,declared,1.14e-05,poisson-exact,True,1.5984,0.00559,0.00468,1.06481,1.00000
+1.0,33.19,1.0,0.82,realistic: lane 30 mm off centre,none,0.05,normal,False,1.5984,0.38004,0.38005,1.01082,1.11620
+1.0,33.19,1.0,0.82,realistic: lane 30 mm off centre,none,0.05,poisson-exact,True,1.5984,0.37716,0.31469,0.87578,0.86739
+1.0,33.19,1.0,0.82,realistic: lane 30 mm off centre,none,0.001,normal,False,1.5984,0.05605,0.05367,1.06608,1.15947
+1.0,33.19,1.0,0.82,realistic: lane 30 mm off centre,none,0.001,poisson-exact,True,1.5984,0.05245,0.06361,0.83656,0.77178
+1.0,33.19,1.0,0.82,realistic: lane 30 mm off centre,none,1.14e-05,normal,False,1.5984,0.00702,0.00585,1.26180,0.96890
+1.0,33.19,1.0,0.82,realistic: lane 30 mm off centre,none,1.14e-05,poisson-exact,True,1.5984,0.00520,0.00468,0.82826,0.96890
+1.0,33.19,1.0,0.59,realistic: cell centred on a seam,declared,0.05,normal,False,2.2562,0.14411,0.14196,1.00230,0.99994
+1.0,33.19,1.0,0.59,realistic: cell centred on a seam,declared,0.05,poisson-exact,True,2.2562,0.14420,0.14202,1.00236,1.00000
+1.0,33.19,1.0,0.59,realistic: cell centred on a seam,declared,0.001,normal,False,2.2562,0.00284,0.00246,1.06650,1.04526
+1.0,33.19,1.0,0.59,realistic: cell centred on a seam,declared,0.001,poisson-exact,True,2.2562,0.00244,0.00211,1.02026,1.00000
+1.0,33.19,1.0,0.59,realistic: cell centred on a seam,declared,1.14e-05,normal,False,2.2562,0.00004,0.00002,1.26297,1.18580
+1.0,33.19,1.0,0.59,realistic: cell centred on a seam,declared,1.14e-05,poisson-exact,True,2.2562,0.00002,0.00001,1.06481,1.00000
+1.0,33.19,1.0,0.59,realistic: cell centred on a seam,none,0.05,normal,False,2.2562,0.13893,0.13701,1.01082,1.11620
+1.0,33.19,1.0,0.59,realistic: cell centred on a seam,none,0.05,poisson-exact,True,2.2562,0.13636,0.10476,0.87578,0.86739
+1.0,33.19,1.0,0.59,realistic: cell centred on a seam,none,0.001,normal,False,2.2562,0.00256,0.00216,1.06608,1.15947
+1.0,33.19,1.0,0.59,realistic: cell centred on a seam,none,0.001,poisson-exact,True,2.2562,0.00228,0.00155,0.83656,0.77178
+1.0,33.19,1.0,0.59,realistic: cell centred on a seam,none,1.14e-05,normal,False,2.2562,0.00003,0.00002,1.26180,0.96890
+1.0,33.19,1.0,0.59,realistic: cell centred on a seam,none,1.14e-05,poisson-exact,True,2.2562,0.00002,0.00002,0.82826,0.96890
+1.0,33.19,10.0,10,all 1,declared,0.05,normal,True,1.0000,1.00035,1.00009,1.00035,1.00009
+1.0,33.19,10.0,10,all 1,declared,0.05,poisson-exact,False,1.0000,1.00026,1.00000,1.00026,1.00000
+1.0,33.19,10.0,10,all 1,declared,0.001,normal,True,1.0000,1.00684,1.00434,1.00684,1.00434
+1.0,33.19,10.0,10,all 1,declared,0.001,poisson-exact,False,1.0000,1.00249,1.00000,1.00249,1.00000
+1.0,33.19,10.0,10,all 1,declared,1.14e-05,normal,False,1.0000,1.02462,1.01626,1.02462,1.01626
+1.0,33.19,10.0,10,all 1,declared,1.14e-05,poisson-exact,True,1.0000,1.00822,1.00000,1.00822,1.00000
+1.0,33.19,10.0,10,all 1,none,0.05,normal,True,1.0000,1.00141,1.00267,1.00141,1.00267
+1.0,33.19,10.0,10,all 1,none,0.05,poisson-exact,False,1.0000,0.96005,0.92527,0.96005,0.92527
+1.0,33.19,10.0,10,all 1,none,0.001,normal,True,1.0000,1.00681,1.06001,1.00681,1.06001
+1.0,33.19,10.0,10,all 1,none,0.001,poisson-exact,False,1.0000,0.93875,0.93076,0.93875,0.93076
+1.0,33.19,10.0,10,all 1,none,1.14e-05,normal,False,1.0000,1.02800,1.02059,1.02800,1.02059
+1.0,33.19,10.0,10,all 1,none,1.14e-05,poisson-exact,True,1.0000,0.92425,0.85930,0.92425,0.85930
+1.0,33.19,10.0,10,1 full + partials 0.1-0.9,declared,0.05,normal,True,1.4286,0.55738,0.55714,1.00035,1.00009
+1.0,33.19,10.0,10,1 full + partials 0.1-0.9,declared,0.05,poisson-exact,False,1.4286,0.55732,0.55707,1.00026,1.00000
+1.0,33.19,10.0,10,1 full + partials 0.1-0.9,declared,0.001,normal,True,1.4286,0.16419,0.16347,1.00684,1.00434
+1.0,33.19,10.0,10,1 full + partials 0.1-0.9,declared,0.001,poisson-exact,False,1.4286,0.16325,0.16254,1.00249,1.00000
+1.0,33.19,10.0,10,1 full + partials 0.1-0.9,declared,1.14e-05,normal,False,1.4286,0.03815,0.03760,1.02462,1.01626
+1.0,33.19,10.0,10,1 full + partials 0.1-0.9,declared,1.14e-05,poisson-exact,True,1.4286,0.03734,0.03679,1.00822,1.00000
+1.0,33.19,10.0,10,1 full + partials 0.1-0.9,none,0.05,normal,True,1.4286,0.49344,0.49246,1.00141,1.00267
+1.0,33.19,10.0,10,1 full + partials 0.1-0.9,none,0.05,poisson-exact,False,1.4286,0.49037,0.46641,0.96005,0.92527
+1.0,33.19,10.0,10,1 full + partials 0.1-0.9,none,0.001,normal,True,1.4286,0.11221,0.11105,1.00681,1.06001
+1.0,33.19,10.0,10,1 full + partials 0.1-0.9,none,0.001,poisson-exact,False,1.4286,0.11051,0.10905,0.93875,0.93076
+1.0,33.19,10.0,10,1 full + partials 0.1-0.9,none,1.14e-05,normal,False,1.4286,0.01918,0.01873,1.02800,1.02059
+1.0,33.19,10.0,10,1 full + partials 0.1-0.9,none,1.14e-05,poisson-exact,True,1.4286,0.01846,0.01660,0.92425,0.85930
+1.0,33.19,10.0,10,7 full + one 0.1,declared,0.05,normal,True,1.0128,0.98164,0.98137,1.00035,1.00009
+1.0,33.19,10.0,10,7 full + one 0.1,declared,0.05,poisson-exact,False,1.0128,0.98155,0.98128,1.00026,1.00000
+1.0,33.19,10.0,10,7 full + one 0.1,declared,0.001,normal,True,1.0128,0.95029,0.94788,1.00684,1.00434
+1.0,33.19,10.0,10,7 full + one 0.1,declared,0.001,poisson-exact,False,1.0128,0.94614,0.94374,1.00249,1.00000
+1.0,33.19,10.0,10,7 full + one 0.1,declared,1.14e-05,normal,False,1.0128,0.92307,0.91537,1.02462,1.01626
+1.0,33.19,10.0,10,7 full + one 0.1,declared,1.14e-05,poisson-exact,True,1.0128,0.90814,0.90057,1.00822,1.00000
+1.0,33.19,10.0,10,7 full + one 0.1,none,0.05,normal,True,1.0128,0.97877,0.97739,1.00141,1.00267
+1.0,33.19,10.0,10,7 full + one 0.1,none,0.05,poisson-exact,False,1.0128,0.97403,0.93863,0.96005,0.92527
+1.0,33.19,10.0,10,7 full + one 0.1,none,0.001,normal,True,1.0128,0.94249,0.93610,1.00681,1.06001
+1.0,33.19,10.0,10,7 full + one 0.1,none,0.001,poisson-exact,False,1.0128,0.93186,0.92386,0.93875,0.93076
+1.0,33.19,10.0,10,7 full + one 0.1,none,1.14e-05,normal,False,1.0128,0.91158,0.89827,1.02800,1.02059
+1.0,33.19,10.0,10,7 full + one 0.1,none,1.14e-05,poisson-exact,True,1.0128,0.88634,0.82351,0.92425,0.85930
+1.0,33.19,10.0,10,all 0.5,declared,0.05,normal,True,2.0000,0.28679,0.28658,1.00035,1.00009
+1.0,33.19,10.0,10,all 0.5,declared,0.05,poisson-exact,False,2.0000,0.28674,0.28654,1.00026,1.00000
+1.0,33.19,10.0,10,all 0.5,declared,0.001,normal,True,2.0000,0.01994,0.01980,1.00684,1.00434
+1.0,33.19,10.0,10,all 0.5,declared,0.001,poisson-exact,False,2.0000,0.01980,0.01965,1.00249,1.00000
+1.0,33.19,10.0,10,all 0.5,declared,1.14e-05,normal,False,2.0000,0.00081,0.00079,1.02462,1.01626
+1.0,33.19,10.0,10,all 0.5,declared,1.14e-05,poisson-exact,True,2.0000,0.00078,0.00077,1.00822,1.00000
+1.0,33.19,10.0,10,all 0.5,none,0.05,normal,True,2.0000,0.20041,0.19404,1.00141,1.00267
+1.0,33.19,10.0,10,all 0.5,none,0.05,poisson-exact,False,2.0000,0.19305,0.18029,0.96005,0.92527
+1.0,33.19,10.0,10,all 0.5,none,0.001,normal,True,2.0000,0.00632,0.00654,1.00681,1.06001
+1.0,33.19,10.0,10,all 0.5,none,0.001,poisson-exact,False,2.0000,0.00589,0.00577,0.93875,0.93076
+1.0,33.19,10.0,10,all 0.5,none,1.14e-05,normal,False,2.0000,0.00010,0.00009,1.02800,1.02059
+1.0,33.19,10.0,10,all 0.5,none,1.14e-05,poisson-exact,True,2.0000,0.00009,0.00008,0.92425,0.85930
+1.0,33.19,10.0,10,all 0.10,declared,0.05,normal,True,10.0000,0.00415,0.00414,1.00035,1.00009
+1.0,33.19,10.0,10,all 0.10,declared,0.05,poisson-exact,False,10.0000,0.00415,0.00414,1.00026,1.00000
+1.0,33.19,10.0,10,all 0.10,declared,0.001,normal,True,10.0000,0.00000,0.00000,1.00684,1.00434
+1.0,33.19,10.0,10,all 0.10,declared,0.001,poisson-exact,False,10.0000,0.00000,0.00000,1.00249,1.00000
+1.0,33.19,10.0,10,all 0.10,declared,1.14e-05,normal,False,10.0000,0.00000,0.00000,1.02462,1.01626
+1.0,33.19,10.0,10,all 0.10,declared,1.14e-05,poisson-exact,True,10.0000,0.00000,0.00000,1.00822,1.00000
+1.0,33.19,10.0,10,all 0.10,none,0.05,normal,True,10.0000,0.00000,0.00000,1.00141,1.00267
+1.0,33.19,10.0,10,all 0.10,none,0.05,poisson-exact,False,10.0000,0.00000,0.00000,0.96005,0.92527
+1.0,33.19,10.0,10,all 0.10,none,0.001,normal,True,10.0000,0.00000,0.00000,1.00681,1.06001
+1.0,33.19,10.0,10,all 0.10,none,0.001,poisson-exact,False,10.0000,0.00000,0.00000,0.93875,0.93076
+1.0,33.19,10.0,10,all 0.10,none,1.14e-05,normal,False,10.0000,0.00000,0.00000,1.02800,1.02059
+1.0,33.19,10.0,10,all 0.10,none,1.14e-05,poisson-exact,True,10.0000,0.00000,0.00000,0.92425,0.85930
+1.0,33.19,10.0,9.92,realistic: lane centred,declared,0.05,normal,True,1.3526,0.61403,0.61377,1.00035,1.00009
+1.0,33.19,10.0,9.92,realistic: lane centred,declared,0.05,poisson-exact,False,1.3526,0.61396,0.61370,1.00026,1.00000
+1.0,33.19,10.0,9.92,realistic: lane centred,declared,0.001,normal,True,1.3526,0.22233,0.22143,1.00684,1.00434
+1.0,33.19,10.0,9.92,realistic: lane centred,declared,0.001,poisson-exact,False,1.3526,0.22110,0.22020,1.00249,1.00000
+1.0,33.19,10.0,9.92,realistic: lane centred,declared,1.14e-05,normal,False,1.3526,0.06625,0.06536,1.02462,1.01626
+1.0,33.19,10.0,9.92,realistic: lane centred,declared,1.14e-05,poisson-exact,True,1.3526,0.06489,0.06402,1.00822,1.00000
+1.0,33.19,10.0,9.92,realistic: lane centred,none,0.05,normal,True,1.3526,0.55795,0.55771,1.00141,1.00267
+1.0,33.19,10.0,9.92,realistic: lane centred,none,0.05,poisson-exact,False,1.3526,0.56105,0.57527,0.96005,0.92527
+1.0,33.19,10.0,9.92,realistic: lane centred,none,0.001,normal,True,1.3526,0.16513,0.16384,1.00681,1.06001
+1.0,33.19,10.0,9.92,realistic: lane centred,none,0.001,poisson-exact,False,1.3526,0.16357,0.15154,0.93875,0.93076
+1.0,33.19,10.0,9.92,realistic: lane centred,none,1.14e-05,normal,False,1.3526,0.03871,0.03826,1.02800,1.02059
+1.0,33.19,10.0,9.92,realistic: lane centred,none,1.14e-05,poisson-exact,True,1.3526,0.03771,0.03826,0.92425,0.85930
+1.0,33.19,10.0,8.26,realistic: lane 30 mm off centre,declared,0.05,normal,True,1.6051,0.43645,0.43618,1.00035,1.00009
+1.0,33.19,10.0,8.26,realistic: lane 30 mm off centre,declared,0.05,poisson-exact,False,1.6051,0.43639,0.43612,1.00026,1.00000
+1.0,33.19,10.0,8.26,realistic: lane 30 mm off centre,declared,0.001,normal,True,1.6051,0.07615,0.07567,1.00684,1.00434
+1.0,33.19,10.0,8.26,realistic: lane 30 mm off centre,declared,0.001,poisson-exact,False,1.6051,0.07555,0.07508,1.00249,1.00000
+1.0,33.19,10.0,8.26,realistic: lane 30 mm off centre,declared,1.14e-05,normal,False,1.6051,0.00944,0.00924,1.02462,1.01626
+1.0,33.19,10.0,8.26,realistic: lane 30 mm off centre,declared,1.14e-05,poisson-exact,True,1.6051,0.00916,0.00897,1.00822,1.00000
+1.0,33.19,10.0,8.26,realistic: lane 30 mm off centre,none,0.05,normal,True,1.6051,0.37218,0.37258,1.00141,1.00267
+1.0,33.19,10.0,8.26,realistic: lane 30 mm off centre,none,0.05,poisson-exact,False,1.6051,0.36714,0.36047,0.96005,0.92527
+1.0,33.19,10.0,8.26,realistic: lane 30 mm off centre,none,0.001,normal,True,1.6051,0.04613,0.04567,1.00681,1.06001
+1.0,33.19,10.0,8.26,realistic: lane 30 mm off centre,none,0.001,poisson-exact,False,1.6051,0.04546,0.04320,0.93875,0.93076
+1.0,33.19,10.0,8.26,realistic: lane 30 mm off centre,none,1.14e-05,normal,False,1.6051,0.00380,0.00370,1.02800,1.02059
+1.0,33.19,10.0,8.26,realistic: lane 30 mm off centre,none,1.14e-05,poisson-exact,True,1.6051,0.00365,0.00334,0.92425,0.85930
+1.0,33.19,10.0,5.9,realistic: cell centred on a seam,declared,0.05,normal,True,2.2180,0.19481,0.19454,1.00035,1.00009
+1.0,33.19,10.0,5.9,realistic: cell centred on a seam,declared,0.05,poisson-exact,False,2.2180,0.19477,0.19450,1.00026,1.00000
+1.0,33.19,10.0,5.9,realistic: cell centred on a seam,declared,0.001,normal,True,2.2180,0.00583,0.00574,1.00684,1.00434
+1.0,33.19,10.0,5.9,realistic: cell centred on a seam,declared,0.001,poisson-exact,False,2.2180,0.00574,0.00566,1.00249,1.00000
+1.0,33.19,10.0,5.9,realistic: cell centred on a seam,declared,1.14e-05,normal,False,2.2180,0.00009,0.00008,1.02462,1.01626
+1.0,33.19,10.0,5.9,realistic: cell centred on a seam,declared,1.14e-05,poisson-exact,True,2.2180,0.00008,0.00008,1.00822,1.00000
+1.0,33.19,10.0,5.9,realistic: cell centred on a seam,none,0.05,normal,True,2.2180,0.14343,0.14314,1.00141,1.00267
+1.0,33.19,10.0,5.9,realistic: cell centred on a seam,none,0.05,poisson-exact,False,2.2180,0.14174,0.13166,0.96005,0.92527
+1.0,33.19,10.0,5.9,realistic: cell centred on a seam,none,0.001,normal,True,2.2180,0.00218,0.00215,1.00681,1.06001
+1.0,33.19,10.0,5.9,realistic: cell centred on a seam,none,0.001,poisson-exact,False,2.2180,0.00213,0.00240,0.93875,0.93076
+1.0,33.19,10.0,5.9,realistic: cell centred on a seam,none,1.14e-05,normal,False,2.2180,0.00001,0.00001,1.02800,1.02059
+1.0,33.19,10.0,5.9,realistic: cell centred on a seam,none,1.14e-05,poisson-exact,True,2.2180,0.00001,0.00001,0.92425,0.85930
+3.0,99.56,1.0,1,all 1,declared,0.05,normal,True,1.0000,1.00072,0.99991,1.00072,0.99991
+3.0,99.56,1.0,1,all 1,declared,0.05,poisson-exact,False,1.0000,1.00081,1.00000,1.00081,1.00000
+3.0,99.56,1.0,1,all 1,declared,0.001,normal,True,1.0000,1.02116,1.01380,1.02116,1.01380
+3.0,99.56,1.0,1,all 1,declared,0.001,poisson-exact,False,1.0000,1.00725,1.00000,1.00725,1.00000
+3.0,99.56,1.0,1,all 1,declared,1.14e-05,normal,False,1.0000,1.08122,1.05627,1.08122,1.05627
+3.0,99.56,1.0,1,all 1,declared,1.14e-05,poisson-exact,True,1.0000,1.02360,1.00000,1.02360,1.00000
+3.0,99.56,1.0,1,all 1,none,0.05,normal,True,1.0000,1.01267,1.03453,1.01267,1.03453
+3.0,99.56,1.0,1,all 1,none,0.05,poisson-exact,False,1.0000,0.91878,0.89310,0.91878,0.89310
+3.0,99.56,1.0,1,all 1,none,0.001,normal,True,1.0000,1.02729,0.93426,1.02729,0.93426
+3.0,99.56,1.0,1,all 1,none,0.001,poisson-exact,False,1.0000,0.89353,0.93426,0.89353,0.93426
+3.0,99.56,1.0,1,all 1,none,1.14e-05,normal,False,1.0000,1.08290,1.00215,1.08290,1.00215
+3.0,99.56,1.0,1,all 1,none,1.14e-05,poisson-exact,True,1.0000,0.87563,0.73213,0.87563,0.73213
+3.0,99.56,1.0,1,1 full + partials 0.1-0.9,declared,0.05,normal,True,1.4286,0.51522,0.51449,1.00072,0.99991
+3.0,99.56,1.0,1,1 full + partials 0.1-0.9,declared,0.05,poisson-exact,False,1.4286,0.51528,0.51455,1.00081,1.00000
+3.0,99.56,1.0,1,1 full + partials 0.1-0.9,declared,0.001,normal,True,1.4286,0.13134,0.12958,1.02116,1.01380
+3.0,99.56,1.0,1,1 full + partials 0.1-0.9,declared,0.001,poisson-exact,False,1.4286,0.12890,0.12717,1.00725,1.00000
+3.0,99.56,1.0,1,1 full + partials 0.1-0.9,declared,1.14e-05,normal,False,1.4286,0.02675,0.02559,1.08122,1.05627
+3.0,99.56,1.0,1,1 full + partials 0.1-0.9,declared,1.14e-05,poisson-exact,True,1.4286,0.02481,0.02373,1.02360,1.00000
+3.0,99.56,1.0,1,1 full + partials 0.1-0.9,none,0.05,normal,True,1.4286,0.49431,0.49242,1.01267,1.03453
+3.0,99.56,1.0,1,1 full + partials 0.1-0.9,none,0.05,poisson-exact,False,1.4286,0.48221,0.46391,0.91878,0.89310
+3.0,99.56,1.0,1,1 full + partials 0.1-0.9,none,0.001,normal,True,1.4286,0.11570,0.11446,1.02729,0.93426
+3.0,99.56,1.0,1,1 full + partials 0.1-0.9,none,0.001,poisson-exact,False,1.4286,0.11173,0.11829,0.89353,0.93426
+3.0,99.56,1.0,1,1 full + partials 0.1-0.9,none,1.14e-05,normal,False,1.4286,0.02134,0.02026,1.08290,1.00215
+3.0,99.56,1.0,1,1 full + partials 0.1-0.9,none,1.14e-05,poisson-exact,True,1.4286,0.01939,0.01491,0.87563,0.73213
+3.0,99.56,1.0,1,7 full + one 0.1,declared,0.05,normal,True,1.0128,0.98015,0.97934,1.00072,0.99991
+3.0,99.56,1.0,1,7 full + one 0.1,declared,0.05,poisson-exact,False,1.0128,0.98024,0.97943,1.00081,1.00000
+3.0,99.56,1.0,1,7 full + one 0.1,declared,0.001,normal,True,1.0128,0.95866,0.95159,1.02116,1.01380
+3.0,99.56,1.0,1,7 full + one 0.1,declared,0.001,poisson-exact,False,1.0128,0.94546,0.93850,1.00725,1.00000
+3.0,99.56,1.0,1,7 full + one 0.1,declared,1.14e-05,normal,False,1.0128,0.96557,0.94278,1.08122,1.05627
+3.0,99.56,1.0,1,7 full + one 0.1,declared,1.14e-05,poisson-exact,True,1.0128,0.91353,0.89200,1.02360,1.00000
+3.0,99.56,1.0,1,7 full + one 0.1,none,0.05,normal,True,1.0128,0.97942,0.97704,1.01267,1.03453
+3.0,99.56,1.0,1,7 full + one 0.1,none,0.05,poisson-exact,False,1.0128,0.96114,0.93436,0.91878,0.89310
+3.0,99.56,1.0,1,7 full + one 0.1,none,0.001,normal,True,1.0128,0.95736,0.95216,1.02729,0.93426
+3.0,99.56,1.0,1,7 full + one 0.1,none,0.001,poisson-exact,False,1.0128,0.93281,0.97543,0.89353,0.93426
+3.0,99.56,1.0,1,7 full + one 0.1,none,1.14e-05,normal,False,1.0128,0.96376,0.93561,1.08290,1.00215
+3.0,99.56,1.0,1,7 full + one 0.1,none,1.14e-05,poisson-exact,True,1.0128,0.89826,0.75031,0.87563,0.73213
+3.0,99.56,1.0,1,all 0.5,declared,0.05,normal,True,2.0000,0.22838,0.22782,1.00072,0.99991
+3.0,99.56,1.0,1,all 0.5,declared,0.05,poisson-exact,False,2.0000,0.22842,0.22786,1.00081,1.00000
+3.0,99.56,1.0,1,all 0.5,declared,0.001,normal,True,2.0000,0.00989,0.00965,1.02116,1.01380
+3.0,99.56,1.0,1,all 0.5,declared,0.001,poisson-exact,False,2.0000,0.00964,0.00940,1.00725,1.00000
+3.0,99.56,1.0,1,all 0.5,declared,1.14e-05,normal,False,2.0000,0.00024,0.00022,1.08122,1.05627
+3.0,99.56,1.0,1,all 0.5,declared,1.14e-05,poisson-exact,True,2.0000,0.00021,0.00020,1.02360,1.00000
+3.0,99.56,1.0,1,all 0.5,none,0.05,normal,True,2.0000,0.20098,0.19974,1.01267,1.03453
+3.0,99.56,1.0,1,all 0.5,none,0.05,poisson-exact,False,2.0000,0.18431,0.17463,0.91878,0.89310
+3.0,99.56,1.0,1,all 0.5,none,0.001,normal,True,2.0000,0.00662,0.00615,1.02729,0.93426
+3.0,99.56,1.0,1,all 0.5,none,0.001,poisson-exact,False,2.0000,0.00574,0.00615,0.89353,0.93426
+3.0,99.56,1.0,1,all 0.5,none,1.14e-05,normal,False,2.0000,0.00011,0.00011,1.08290,1.00215
+3.0,99.56,1.0,1,all 0.5,none,1.14e-05,poisson-exact,True,2.0000,0.00009,0.00006,0.87563,0.73213
+3.0,99.56,1.0,1,all 0.10,declared,0.05,normal,True,10.0000,0.00010,0.00010,1.00072,0.99991
+3.0,99.56,1.0,1,all 0.10,declared,0.05,poisson-exact,False,10.0000,0.00010,0.00010,1.00081,1.00000
+3.0,99.56,1.0,1,all 0.10,declared,0.001,normal,True,10.0000,0.00000,0.00000,1.02116,1.01380
+3.0,99.56,1.0,1,all 0.10,declared,0.001,poisson-exact,False,10.0000,0.00000,0.00000,1.00725,1.00000
+3.0,99.56,1.0,1,all 0.10,declared,1.14e-05,normal,False,10.0000,0.00000,0.00000,1.08122,1.05627
+3.0,99.56,1.0,1,all 0.10,declared,1.14e-05,poisson-exact,True,10.0000,0.00000,0.00000,1.02360,1.00000
+3.0,99.56,1.0,1,all 0.10,none,0.05,normal,True,10.0000,0.00000,0.00000,1.01267,1.03453
+3.0,99.56,1.0,1,all 0.10,none,0.05,poisson-exact,False,10.0000,0.00000,0.00000,0.91878,0.89310
+3.0,99.56,1.0,1,all 0.10,none,0.001,normal,True,10.0000,0.00000,0.00000,1.02729,0.93426
+3.0,99.56,1.0,1,all 0.10,none,0.001,poisson-exact,False,10.0000,0.00000,0.00000,0.89353,0.93426
+3.0,99.56,1.0,1,all 0.10,none,1.14e-05,normal,False,10.0000,0.00000,0.00000,1.08290,1.00215
+3.0,99.56,1.0,1,all 0.10,none,1.14e-05,poisson-exact,True,10.0000,0.00000,0.00000,0.87563,0.73213
+3.0,99.56,1.0,0.99,realistic: lane centred,declared,0.05,normal,True,1.3497,0.57964,0.57888,1.00072,0.99991
+3.0,99.56,1.0,0.99,realistic: lane centred,declared,0.05,poisson-exact,False,1.3497,0.57971,0.57895,1.00081,1.00000
+3.0,99.56,1.0,0.99,realistic: lane centred,declared,0.001,normal,True,1.3497,0.18978,0.18745,1.02116,1.01380
+3.0,99.56,1.0,0.99,realistic: lane centred,declared,0.001,poisson-exact,False,1.3497,0.18639,0.18410,1.00725,1.00000
+3.0,99.56,1.0,0.99,realistic: lane centred,declared,1.14e-05,normal,False,1.3497,0.05211,0.05004,1.08122,1.05627
+3.0,99.56,1.0,0.99,realistic: lane centred,declared,1.14e-05,poisson-exact,True,1.3497,0.04846,0.04654,1.02360,1.00000
+3.0,99.56,1.0,0.99,realistic: lane centred,none,0.05,normal,True,1.3497,0.56113,0.55977,1.01267,1.03453
+3.0,99.56,1.0,0.99,realistic: lane centred,none,0.05,poisson-exact,False,1.3497,0.55422,0.51870,0.91878,0.89310
+3.0,99.56,1.0,0.99,realistic: lane centred,none,0.001,normal,True,1.3497,0.17202,0.17062,1.02729,0.93426
+3.0,99.56,1.0,0.99,realistic: lane centred,none,0.001,poisson-exact,False,1.3497,0.16824,0.16534,0.89353,0.93426
+3.0,99.56,1.0,0.99,realistic: lane centred,none,1.14e-05,normal,False,1.3497,0.04388,0.04215,1.08290,1.00215
+3.0,99.56,1.0,0.99,realistic: lane centred,none,1.14e-05,poisson-exact,True,1.3497,0.04048,0.04215,0.87563,0.73213
+3.0,99.56,1.0,0.82,realistic: lane 30 mm off centre,declared,0.05,normal,True,1.5984,0.39750,0.39668,1.00072,0.99991
+3.0,99.56,1.0,0.82,realistic: lane 30 mm off centre,declared,0.05,poisson-exact,False,1.5984,0.39757,0.39675,1.00081,1.00000
+3.0,99.56,1.0,0.82,realistic: lane 30 mm off centre,declared,0.001,normal,True,1.5984,0.05854,0.05738,1.02116,1.01380
+3.0,99.56,1.0,0.82,realistic: lane 30 mm off centre,declared,0.001,poisson-exact,False,1.5984,0.05706,0.05593,1.00725,1.00000
+3.0,99.56,1.0,0.82,realistic: lane 30 mm off centre,declared,1.14e-05,normal,False,1.5984,0.00627,0.00587,1.08122,1.05627
+3.0,99.56,1.0,0.82,realistic: lane 30 mm off centre,declared,1.14e-05,poisson-exact,True,1.5984,0.00565,0.00529,1.02360,1.00000
+3.0,99.56,1.0,0.82,realistic: lane 30 mm off centre,none,0.05,normal,True,1.5984,0.37712,0.37435,1.01267,1.03453
+3.0,99.56,1.0,0.82,realistic: lane 30 mm off centre,none,0.05,poisson-exact,False,1.5984,0.37914,0.41689,0.91878,0.89310
+3.0,99.56,1.0,0.82,realistic: lane 30 mm off centre,none,0.001,normal,True,1.5984,0.04973,0.04917,1.02729,0.93426
+3.0,99.56,1.0,0.82,realistic: lane 30 mm off centre,none,0.001,poisson-exact,False,1.5984,0.04828,0.04722,0.89353,0.93426
+3.0,99.56,1.0,0.82,realistic: lane 30 mm off centre,none,1.14e-05,normal,False,1.5984,0.00469,0.00443,1.08290,1.00215
+3.0,99.56,1.0,0.82,realistic: lane 30 mm off centre,none,1.14e-05,poisson-exact,True,1.5984,0.00427,0.00348,0.87563,0.73213
+3.0,99.56,1.0,0.59,realistic: cell centred on a seam,declared,0.05,normal,True,2.2562,0.15173,0.15097,1.00072,0.99991
+3.0,99.56,1.0,0.59,realistic: cell centred on a seam,declared,0.05,poisson-exact,False,2.2562,0.15179,0.15103,1.00081,1.00000
+3.0,99.56,1.0,0.59,realistic: cell centred on a seam,declared,0.001,normal,True,2.2562,0.00278,0.00264,1.02116,1.01380
+3.0,99.56,1.0,0.59,realistic: cell centred on a seam,declared,0.001,poisson-exact,False,2.2562,0.00265,0.00252,1.00725,1.00000
+3.0,99.56,1.0,0.59,realistic: cell centred on a seam,declared,1.14e-05,normal,False,2.2562,0.00003,0.00002,1.08122,1.05627
+3.0,99.56,1.0,0.59,realistic: cell centred on a seam,declared,1.14e-05,poisson-exact,True,2.2562,0.00002,0.00002,1.02360,1.00000
+3.0,99.56,1.0,0.59,realistic: cell centred on a seam,none,0.05,normal,True,2.2562,0.13633,0.13655,1.01267,1.03453
+3.0,99.56,1.0,0.59,realistic: cell centred on a seam,none,0.05,poisson-exact,False,2.2562,0.13891,0.14190,0.91878,0.89310
+3.0,99.56,1.0,0.59,realistic: cell centred on a seam,none,0.001,normal,True,2.2562,0.00198,0.00189,1.02729,0.93426
+3.0,99.56,1.0,0.59,realistic: cell centred on a seam,none,0.001,poisson-exact,False,2.2562,0.00190,0.00165,0.89353,0.93426
+3.0,99.56,1.0,0.59,realistic: cell centred on a seam,none,1.14e-05,normal,False,2.2562,0.00001,0.00001,1.08290,1.00215
+3.0,99.56,1.0,0.59,realistic: cell centred on a seam,none,1.14e-05,poisson-exact,True,2.2562,0.00001,0.00001,0.87563,0.73213
+3.0,99.56,10.0,10,all 1,declared,0.05,normal,True,1.0000,1.00012,1.00001,1.00012,1.00001
+3.0,99.56,10.0,10,all 1,declared,0.05,poisson-exact,False,1.0000,1.00011,1.00000,1.00011,1.00000
+3.0,99.56,10.0,10,all 1,declared,0.001,normal,True,1.0000,1.00193,1.00083,1.00193,1.00083
+3.0,99.56,10.0,10,all 1,declared,0.001,poisson-exact,False,1.0000,1.00109,1.00000,1.00109,1.00000
+3.0,99.56,10.0,10,all 1,declared,1.14e-05,normal,False,1.0000,1.00688,1.00320,1.00688,1.00320
+3.0,99.56,10.0,10,all 1,declared,1.14e-05,poisson-exact,True,1.0000,1.00368,1.00000,1.00368,1.00000
+3.0,99.56,10.0,10,all 1,none,0.05,normal,True,1.0000,1.00021,0.99941,1.00021,0.99941
+3.0,99.56,10.0,10,all 1,none,0.05,poisson-exact,False,1.0000,0.97747,0.99941,0.97747,0.99941
+3.0,99.56,10.0,10,all 1,none,0.001,normal,True,1.0000,1.00204,0.96915,1.00204,0.96915
+3.0,99.56,10.0,10,all 1,none,0.001,poisson-exact,False,1.0000,0.96375,0.96915,0.96375,0.96915
+3.0,99.56,10.0,10,all 1,none,1.14e-05,normal,False,1.0000,1.00749,0.97578,1.00749,0.97578
+3.0,99.56,10.0,10,all 1,none,1.14e-05,poisson-exact,True,1.0000,0.95373,0.97578,0.95373,0.97578
+3.0,99.56,10.0,10,1 full + partials 0.1-0.9,declared,0.05,normal,True,1.4286,0.64780,0.64770,1.00012,1.00001
+3.0,99.56,10.0,10,1 full + partials 0.1-0.9,declared,0.05,poisson-exact,False,1.4286,0.64780,0.64769,1.00011,1.00000
+3.0,99.56,10.0,10,1 full + partials 0.1-0.9,declared,0.001,normal,True,1.4286,0.26119,0.26074,1.00193,1.00083
+3.0,99.56,10.0,10,1 full + partials 0.1-0.9,declared,0.001,poisson-exact,False,1.4286,0.26092,0.26047,1.00109,1.00000
+3.0,99.56,10.0,10,1 full + partials 0.1-0.9,declared,1.14e-05,normal,False,1.4286,0.08766,0.08716,1.00688,1.00320
+3.0,99.56,10.0,10,1 full + partials 0.1-0.9,declared,1.14e-05,poisson-exact,True,1.4286,0.08731,0.08681,1.00368,1.00000
+3.0,99.56,10.0,10,1 full + partials 0.1-0.9,none,0.05,normal,True,1.4286,0.49316,0.49427,1.00021,0.99941
+3.0,99.56,10.0,10,1 full + partials 0.1-0.9,none,0.05,poisson-exact,False,1.4286,0.49187,0.50679,0.97747,0.99941
+3.0,99.56,10.0,10,1 full + partials 0.1-0.9,none,0.001,normal,True,1.4286,0.11110,0.11114,1.00204,0.96915
+3.0,99.56,10.0,10,1 full + partials 0.1-0.9,none,0.001,poisson-exact,False,1.4286,0.11033,0.11114,0.96375,0.96915
+3.0,99.56,10.0,10,1 full + partials 0.1-0.9,none,1.14e-05,normal,False,1.4286,0.01849,0.01853,1.00749,0.97578
+3.0,99.56,10.0,10,1 full + partials 0.1-0.9,none,1.14e-05,poisson-exact,True,1.4286,0.01822,0.01879,0.95373,0.97578
+3.0,99.56,10.0,10,7 full + one 0.1,declared,0.05,normal,True,1.0128,0.98529,0.98518,1.00012,1.00001
+3.0,99.56,10.0,10,7 full + one 0.1,declared,0.05,poisson-exact,False,1.0128,0.98528,0.98517,1.00011,1.00000
+3.0,99.56,10.0,10,7 full + one 0.1,declared,0.001,normal,True,1.0128,0.95707,0.95600,1.00193,1.00083
+3.0,99.56,10.0,10,7 full + one 0.1,declared,0.001,poisson-exact,False,1.0128,0.95627,0.95520,1.00109,1.00000
+3.0,99.56,10.0,10,7 full + one 0.1,declared,1.14e-05,normal,False,1.0128,0.92678,0.92333,1.00688,1.00320
+3.0,99.56,10.0,10,7 full + one 0.1,declared,1.14e-05,poisson-exact,True,1.0128,0.92380,0.92036,1.00368,1.00000
+3.0,99.56,10.0,10,7 full + one 0.1,none,0.05,normal,True,1.0128,0.97859,0.98025,1.00021,0.99941
+3.0,99.56,10.0,10,7 full + one 0.1,none,0.05,poisson-exact,False,1.0128,0.97662,0.99868,0.97747,0.99941
+3.0,99.56,10.0,10,7 full + one 0.1,none,0.001,normal,True,1.0128,0.93763,0.93813,1.00204,0.96915
+3.0,99.56,10.0,10,7 full + one 0.1,none,0.001,poisson-exact,False,1.0128,0.93286,0.93813,0.96375,0.96915
+3.0,99.56,10.0,10,7 full + one 0.1,none,1.14e-05,normal,False,1.0128,0.89384,0.89590,1.00749,0.97578
+3.0,99.56,10.0,10,7 full + one 0.1,none,1.14e-05,poisson-exact,True,1.0128,0.88433,0.90496,0.95373,0.97578
+3.0,99.56,10.0,10,all 0.5,declared,0.05,normal,True,2.0000,0.42180,0.42170,1.00012,1.00001
+3.0,99.56,10.0,10,all 0.5,declared,0.05,poisson-exact,False,2.0000,0.42180,0.42170,1.00011,1.00000
+3.0,99.56,10.0,10,all 0.5,declared,0.001,normal,True,2.0000,0.06767,0.06751,1.00193,1.00083
+3.0,99.56,10.0,10,all 0.5,declared,0.001,poisson-exact,False,2.0000,0.06759,0.06742,1.00109,1.00000
+3.0,99.56,10.0,10,all 0.5,declared,1.14e-05,normal,False,2.0000,0.00745,0.00739,1.00688,1.00320
+3.0,99.56,10.0,10,all 0.5,declared,1.14e-05,poisson-exact,True,2.0000,0.00741,0.00735,1.00368,1.00000
+3.0,99.56,10.0,10,all 0.5,none,0.05,normal,True,2.0000,0.20026,0.20419,1.00021,0.99941
+3.0,99.56,10.0,10,all 0.5,none,0.05,poisson-exact,False,2.0000,0.19617,0.20419,0.97747,0.99941
+3.0,99.56,10.0,10,all 0.5,none,0.001,normal,True,2.0000,0.00625,0.00606,1.00204,0.96915
+3.0,99.56,10.0,10,all 0.5,none,0.001,poisson-exact,False,2.0000,0.00601,0.00606,0.96375,0.96915
+3.0,99.56,10.0,10,all 0.5,none,1.14e-05,normal,False,2.0000,0.00009,0.00009,1.00749,0.97578
+3.0,99.56,10.0,10,all 0.5,none,1.14e-05,poisson-exact,True,2.0000,0.00009,0.00009,0.95373,0.97578
+3.0,99.56,10.0,10,all 0.10,declared,0.05,normal,True,10.0000,0.07598,0.07594,1.00012,1.00001
+3.0,99.56,10.0,10,all 0.10,declared,0.05,poisson-exact,False,10.0000,0.07598,0.07594,1.00011,1.00000
+3.0,99.56,10.0,10,all 0.10,declared,0.001,normal,True,10.0000,0.00027,0.00026,1.00193,1.00083
+3.0,99.56,10.0,10,all 0.10,declared,0.001,poisson-exact,False,10.0000,0.00027,0.00026,1.00109,1.00000
+3.0,99.56,10.0,10,all 0.10,declared,1.14e-05,normal,False,10.0000,0.00000,0.00000,1.00688,1.00320
+3.0,99.56,10.0,10,all 0.10,declared,1.14e-05,poisson-exact,True,10.0000,0.00000,0.00000,1.00368,1.00000
+3.0,99.56,10.0,10,all 0.10,none,0.05,normal,True,10.0000,0.00000,0.00000,1.00021,0.99941
+3.0,99.56,10.0,10,all 0.10,none,0.05,poisson-exact,False,10.0000,0.00000,0.00000,0.97747,0.99941
+3.0,99.56,10.0,10,all 0.10,none,0.001,normal,True,10.0000,0.00000,0.00000,1.00204,0.96915
+3.0,99.56,10.0,10,all 0.10,none,0.001,poisson-exact,False,10.0000,0.00000,0.00000,0.96375,0.96915
+3.0,99.56,10.0,10,all 0.10,none,1.14e-05,normal,False,10.0000,0.00000,0.00000,1.00749,0.97578
+3.0,99.56,10.0,10,all 0.10,none,1.14e-05,poisson-exact,True,10.0000,0.00000,0.00000,0.95373,0.97578
+3.0,99.56,10.0,9.92,realistic: lane centred,declared,0.05,normal,True,1.3526,0.69293,0.69282,1.00012,1.00001
+3.0,99.56,10.0,9.92,realistic: lane centred,declared,0.05,poisson-exact,False,1.3526,0.69292,0.69281,1.00011,1.00000
+3.0,99.56,10.0,9.92,realistic: lane centred,declared,0.001,normal,True,1.3526,0.32225,0.32173,1.00193,1.00083
+3.0,99.56,10.0,9.92,realistic: lane centred,declared,0.001,poisson-exact,False,1.3526,0.32192,0.32140,1.00109,1.00000
+3.0,99.56,10.0,9.92,realistic: lane centred,declared,1.14e-05,normal,False,1.3526,0.12849,0.12780,1.00688,1.00320
+3.0,99.56,10.0,9.92,realistic: lane centred,declared,1.14e-05,poisson-exact,True,1.3526,0.12799,0.12730,1.00368,1.00000
+3.0,99.56,10.0,9.92,realistic: lane centred,none,0.05,normal,True,1.3526,0.55763,0.55685,1.00021,0.99941
+3.0,99.56,10.0,9.92,realistic: lane centred,none,0.05,poisson-exact,False,1.3526,0.55912,0.56189,0.97747,0.99941
+3.0,99.56,10.0,9.92,realistic: lane centred,none,0.001,normal,True,1.3526,0.16352,0.16329,1.00204,0.96915
+3.0,99.56,10.0,9.92,realistic: lane centred,none,0.001,poisson-exact,False,1.3526,0.16270,0.17081,0.96375,0.96915
+3.0,99.56,10.0,9.92,realistic: lane centred,none,1.14e-05,normal,False,1.3526,0.03745,0.03740,1.00749,0.97578
+3.0,99.56,10.0,9.92,realistic: lane centred,none,1.14e-05,poisson-exact,True,1.3526,0.03706,0.03918,0.95373,0.97578
+3.0,99.56,10.0,8.26,realistic: lane 30 mm off centre,declared,0.05,normal,True,1.6051,0.53447,0.53436,1.00012,1.00001
+3.0,99.56,10.0,8.26,realistic: lane 30 mm off centre,declared,0.05,poisson-exact,False,1.6051,0.53447,0.53435,1.00011,1.00000
+3.0,99.56,10.0,8.26,realistic: lane 30 mm off centre,declared,0.001,normal,True,1.6051,0.14301,0.14268,1.00193,1.00083
+3.0,99.56,10.0,8.26,realistic: lane 30 mm off centre,declared,0.001,poisson-exact,False,1.6051,0.14280,0.14247,1.00109,1.00000
+3.0,99.56,10.0,8.26,realistic: lane 30 mm off centre,declared,1.14e-05,normal,False,1.6051,0.02927,0.02904,1.00688,1.00320
+3.0,99.56,10.0,8.26,realistic: lane 30 mm off centre,declared,1.14e-05,poisson-exact,True,1.6051,0.02910,0.02887,1.00368,1.00000
+3.0,99.56,10.0,8.26,realistic: lane 30 mm off centre,none,0.05,normal,True,1.6051,0.37182,0.37160,1.00021,0.99941
+3.0,99.56,10.0,8.26,realistic: lane 30 mm off centre,none,0.05,poisson-exact,False,1.6051,0.36976,0.36877,0.97747,0.99941
+3.0,99.56,10.0,8.26,realistic: lane 30 mm off centre,none,0.001,normal,True,1.6051,0.04547,0.04530,1.00204,0.96915
+3.0,99.56,10.0,8.26,realistic: lane 30 mm off centre,none,0.001,poisson-exact,False,1.6051,0.04531,0.04301,0.96375,0.96915
+3.0,99.56,10.0,8.26,realistic: lane 30 mm off centre,none,1.14e-05,normal,False,1.6051,0.00362,0.00360,1.00749,0.97578
+3.0,99.56,10.0,8.26,realistic: lane 30 mm off centre,none,1.14e-05,poisson-exact,True,1.6051,0.00357,0.00363,0.95373,0.97578
+3.0,99.56,10.0,5.9,realistic: cell centred on a seam,declared,0.05,normal,True,2.2180,0.28836,0.28823,1.00012,1.00001
+3.0,99.56,10.0,5.9,realistic: cell centred on a seam,declared,0.05,poisson-exact,False,2.2180,0.28836,0.28823,1.00011,1.00000
+3.0,99.56,10.0,5.9,realistic: cell centred on a seam,declared,0.001,normal,True,2.2180,0.02020,0.02010,1.00193,1.00083
+3.0,99.56,10.0,5.9,realistic: cell centred on a seam,declared,0.001,poisson-exact,False,2.2180,0.02014,0.02004,1.00109,1.00000
+3.0,99.56,10.0,5.9,realistic: cell centred on a seam,declared,1.14e-05,normal,False,2.2180,0.00082,0.00080,1.00688,1.00320
+3.0,99.56,10.0,5.9,realistic: cell centred on a seam,declared,1.14e-05,poisson-exact,True,2.2180,0.00081,0.00080,1.00368,1.00000
+3.0,99.56,10.0,5.9,realistic: cell centred on a seam,none,0.05,normal,True,2.2180,0.14311,0.14344,1.00021,0.99941
+3.0,99.56,10.0,5.9,realistic: cell centred on a seam,none,0.05,poisson-exact,False,2.2180,0.14390,0.14960,0.97747,0.99941
+3.0,99.56,10.0,5.9,realistic: cell centred on a seam,none,0.001,normal,True,2.2180,0.00212,0.00212,1.00204,0.96915
+3.0,99.56,10.0,5.9,realistic: cell centred on a seam,none,0.001,poisson-exact,False,2.2180,0.00210,0.00210,0.96375,0.96915
+3.0,99.56,10.0,5.9,realistic: cell centred on a seam,none,1.14e-05,normal,False,2.2180,0.00001,0.00001,1.00749,0.97578
+3.0,99.56,10.0,5.9,realistic: cell centred on a seam,none,1.14e-05,poisson-exact,True,2.2180,0.00001,0.00001,0.95373,0.97578

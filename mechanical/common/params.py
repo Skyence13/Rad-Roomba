@@ -281,6 +281,30 @@ RECEIVER = {
     "chin_cut": (62.0, 50.0),                              # lower hull removed for x > 62 below z = 50 (nose overhangs the head by 36 mm)
     "contact_k_printed": 1500.0, "contact_k_aluminium": 6000.0,   # N/mm per bearing land -- STATED ASSUMPTION for all mount options
 }
+# Receiver thermal break (contract draft8 power.thermal_policy.head_receiver_thermal_break, DEC-045, IB-64).
+# Each channel hangs under the plate on a ground G10 shim; no metal part bridges the shim (screws in G10 top-hat bushings,
+# the location dowels split into two staggered sets so that each set engages metal on one side of the shim only).
+# Datum C (z 16) and the land pins (centre z 14) are unchanged: the channel ears are lowered by the shim thickness and the
+# two roof bridges at the land stations stand up into 1.5 mm pockets milled in the plate underside (1.5 mm air gap).
+RECEIVER_BREAK = {
+    "shim_material": "NEMA G-10 (FR4 class) glass-epoxy laminate, both faces surface ground",
+    "shim_t": 4.0, "shim_t_tol": 0.02, "shim_flatness": 0.01,             # mm; the two shims of a set ground together
+    "k_shim_w_mk": 0.30,             # through-thickness, handbook class value for G-10/FR4 (0.25..0.30) -- UNVERIFIED for the purchased sheet
+    "e_shim_flatwise_mpa": 10000.0,  # compressive modulus normal to the laminate -- ASSUMED handbook class, UNVERIFIED
+    "shim_creep_factor": 1.3,        # total / elastic strain after ~1e5 h at <= 25 % of flatwise strength, RT -- ASSUMED, UNVERIFIED
+    "shim_dy": (12.5, 21.0),         # |dy| band of the shim strips about the channel centre line (ear footprint minus the spine)
+    "ear_top_z": CHASSIS_PLATE_Z[0] - 4.0, "ear_t": 7.5,                  # ear top = plate underside - shim
+    "bridge_x": ((2.0, 13.0), (56.0, HEAD_MOUNT[0])),                     # roof bridges over the slot at the two land stations
+    "bridge_top_z": CHASSIS_PLATE_Z[0], "plate_pocket_depth": 1.5, "pocket_margin": 1.0,
+    "screw": "M4 x 18 ISO 4762 A2-70", "screw_preload_n": 1500.0, "screw_torque_nm": 1.2,
+    "disc_spring": "DIN 6796 4 A2 conical spring washer (d1 4.3, d2 9, h 1.3, s 1.0; flat load about 2 kN) -- UNVERIFIED",
+    "washer": "ISO 7089 4 A2 (OD 9 x 0.8)",
+    "bushing": {"flange_od": 10.0, "flange_t": 1.0, "sleeve_od": 6.0, "sleeve_len": 3.5, "id": 4.3, "material": "G-10 machined top-hat bushing (PEEK-GF30 alternative) -- UNVERIFIED stock item"},
+    "pins_lower": ((28.5, -17.0), (43.5, -17.0)),   # 4 m6 x 8 pressed 5.5 into the ear, 2.5 into the shim; top 1.5 below the plate
+    "pins_upper": ((21.0, -17.0), (36.0, -17.0)),   # 4 m6 x 8 pressed flush into the plate, through the shim; tip in a 6.5 x 1.5 ear relief
+    "pin_relief": (6.5, 1.5),
+    "target_w_per_k": 0.10,          # per channel, body side (task statement / DEC-045)
+}
 
 # --------------------------------------------------------------------------- boards (envelopes confirmed/corrected here)
 # Board frame convention (both big boards): origin at the rear-left corner seen from above with robot-forward up,

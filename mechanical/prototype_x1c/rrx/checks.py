@@ -218,6 +218,16 @@ def receiver_check(parts):
         free = probe.cut(ch.shape)
         ys = LY.bounds(max(free.Solids(), key=lambda q: q.Volume()))
         row(f"{tag} running clearance each side away from the lands", RC["channel_clear"], (ys[4] - ys[1] - RC["shoe_width"]) / 2)
+        RB = P.RECEIVER_BREAK                                        # thermal break (DEC-045, IB-64)
+        sh, plate = byn[f"receiver_shim_{tag}"], byn["chassis_plate"]
+        row(f"{tag} G10 shim thickness", RB["shim_t"], sh.bb[5] - sh.bb[2])
+        row(f"{tag} shim top on the plate underside z", P.CHASSIS_PLATE_Z[0], sh.bb[5])
+        row(f"{tag} ear top z (plate - shim)", RB["ear_top_z"], max(LY.bounds(q)[5] for q in ch.shape.intersect(box(30.0, 40.0, -300, 300, 0, 40)).Solids()))
+        row(f"{tag} no metal contact channel -> plate (min gap >= 1.0 mm)", True, float(ch.shape.distance(plate.shape)) >= 1.0 - 1e-6)
+        lo = [byn[n] for n in byn if n.startswith(f"rx_pin_lower_{tag}")]
+        up = [byn[n] for n in byn if n.startswith(f"rx_pin_upper_{tag}")]
+        row(f"{tag} lower pins clear the plate (min gap mm)", True, len(lo) == 2 and min(float(q.shape.distance(plate.shape)) for q in lo) >= 1.0)
+        row(f"{tag} upper pins clear the channel (min gap mm)", True, len(up) == 2 and min(float(q.shape.distance(ch.shape)) for q in up) >= 1.0)
     sw = byn["head_dock_switch"]
     row("HEAD_DOCK switch body centre y", P.HEAD_DOCK_SWITCH[1], (sw.bb[1] + sw.bb[4]) / 2)
     row("HEAD_DOCK switch body centre z", P.HEAD_DOCK_SWITCH[2], (sw.bb[2] + sw.bb[5]) / 2)

@@ -17,6 +17,7 @@ MAT = {
     "AL5052": {"rho": 2.68, "fill": 1.0, "color": "#b9bdc1"},
     "SS304": {"rho": 7.9, "fill": 1.0, "color": "#8f959a"},
     "STEEL": {"rho": 7.85, "fill": 1.0, "color": "#70767b"},
+    "G10": {"rho": 1.85, "fill": 1.0, "color": "#c9c27a"},
     "PMMA": {"rho": 1.19, "fill": 1.0, "color": "#3b1d1d"},
     "FOAM": {"rho": 0.06, "fill": 1.0, "color": "#e9e2c8"},
     "SIL": {"rho": 0.35, "fill": 1.0, "color": "#c7533f"},

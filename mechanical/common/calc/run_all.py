@@ -5,7 +5,7 @@ import json
 import sys
 
 from .. import params as P
-from . import gap, mass_cg, motion, mount_trade, structure, thermal
+from . import gap, mass_cg, motion, mount_trade, receiver_break, structure, thermal
 
 
 def main():
@@ -15,7 +15,7 @@ def main():
             "**Every result in this file is evidence class `calculated`** (closed-form, rigid-body or lumped models with the tabulated inputs); "
             "nothing is simulated by FEA or physically measured. Inputs marked ASSUMED / UNVERIFIED need supplier or test confirmation.\n")
     sections, keys = [head], {}
-    for mod in (mass_cg, structure, gap, thermal, motion):
+    for mod in (mass_cg, structure, gap, thermal, motion, receiver_break):
         md, key = mod.run()
         sections.append(md)
         keys[mod.__name__.split(".")[-1]] = key
@@ -36,7 +36,11 @@ def main():
                       "gap_band": [round(keys["gap"]["band_lo"], 1), round(keys["gap"]["band_hi"], 1)],
                       "touch_3mm": round(keys["gap"]["touch_3mm"], 1), "touch_5mm": round(keys["gap"]["touch_5mm"], 1),
                       "head_htr": keys["thermal"]["head_htr"],
-                      "chs_htr": [round(keys["thermal"]["chs_htr_m20"]), round(keys["thermal"]["chs_htr_m25"])]}, indent=1))
+                      "bay_discharge_hold_w_still_m20_m25": [round(keys["thermal"]["chs_htr_m20"], 1), round(keys["thermal"]["chs_htr_m25"], 1)],
+                      "bay_preheat_min_20w_still": round(keys["thermal"]["preheat_time_min"]["still 20W G0.6"] or -1),
+                      "receiver_break_w_per_k_per_channel": round(keys["receiver_break"]["g_per_channel"], 3)}, indent=1))
+    if keys["receiver_break"]["g_per_channel"] > P.RECEIVER_BREAK["target_w_per_k"]:
+        fails.append("receiver thermal break above the %.2f W/K target" % P.RECEIVER_BREAK["target_w_per_k"])
     if mk["worst_fwd_tip_mm"] <= 0:
         print("WARNING (finding, not a build failure): forward tip margin <= 0 without ballast -- see mech_calcs.md section 1")
     for x in fails:

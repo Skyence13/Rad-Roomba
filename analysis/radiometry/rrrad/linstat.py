@@ -31,7 +31,7 @@ import numpy as np
 from scipy.optimize import brentq
 from scipy.special import ndtr
 
-__all__ = ["LinStat", "aggregate", "lattice_pmf", "tail_lattice", "tail_gp", "tail_spa", "tail",
+__all__ = ["LinStat", "AtomTail", "two_lattice_tail", "aggregate", "lattice_pmf", "tail_lattice", "tail_gp", "tail_spa", "tail",
            "threshold", "lattice_threshold", "solve_for_power"]
 
 
@@ -74,9 +74,14 @@ def aggregate(a, lam, decimals=12):
     a = np.asarray(a, float)
     lam = np.asarray(lam, float)
     keep = (lam > 0) & (a != 0)
-    key = np.round(a[keep], decimals)
+    if not np.any(keep):
+        return np.zeros(0), np.zeros(0)
+    scale = float(np.max(np.abs(a[keep])))
+    key = np.round(a[keep] / scale, decimals)          # relative rounding: merges float noise only
     u, inv = np.unique(key, return_inverse=True)
-    return u, np.bincount(inv, weights=lam[keep], minlength=u.size)
+    first = np.zeros(u.size, int)
+    first[inv[::-1]] = np.arange(inv.size)[::-1]
+    return a[keep][first], np.bincount(inv, weights=lam[keep], minlength=u.size)
 
 
 # --------------------------------------------------------------------------- exact lattice evaluator
@@ -111,18 +116,20 @@ def lattice_pmf(stat: LinStat, span: float | None = None, tail_sd: float = 15.0,
     return lo, span, pmf / pmf.sum()
 
 
-class _LatticeTail:
-    """P(S > x) from a lattice pmf, vectorised over x, with the Gaussian term in closed form."""
+class AtomTail:
+    """P(S > x) for a discrete distribution (sorted atoms vals, probabilities pmf) plus N(0, sig^2)."""
 
-    def __init__(self, stat: LinStat, span=None, **kw):
-        self.lo, self.span, self.pmf = lattice_pmf(stat, span, **kw)
-        self.vals = (self.lo + np.arange(self.pmf.size)) * self.span + stat.mu
-        self.sig = stat.sig
-        # sf_strict[i] = P(value > vals[i])
+    def __init__(self, vals, pmf, sig=0.0, span=None):
+        o = np.argsort(vals, kind="stable")
+        self.vals, self.pmf, self.sig = np.asarray(vals, float)[o], np.asarray(pmf, float)[o], float(sig)
+        self.span = span if span is not None else (float(np.min(np.diff(self.vals))) if self.vals.size > 1 else 1.0)
+        self._cum()
+
+    def _cum(self):
         rc = np.cumsum(self.pmf[::-1])[::-1]
-        self.sf_ge = rc                                     # P(value >= vals[i])
+        self.sf_ge = rc
         self.sf_gt = np.concatenate((rc[1:], [0.0]))
-
+        # sf_strict[i] = P(value > vals[i])
     def __call__(self, x):
         x = np.atleast_1d(np.asarray(x, float))
         out = np.empty(x.shape)
@@ -144,6 +151,27 @@ class _LatticeTail:
         """Smallest lattice value > x (for a strict-inequality decision)."""
         i = np.searchsorted(self.vals, x + 1e-9 * self.span, side="right")
         return self.vals[min(i, self.vals.size - 1)]
+
+
+class _LatticeTail(AtomTail):
+    """Exact tail of a lattice LinStat (pmf by FFT)."""
+
+    def __init__(self, stat: LinStat, span=None, **kw):
+        self.lo, span, pmf = lattice_pmf(stat, span, **kw)
+        AtomTail.__init__(self, (self.lo + np.arange(pmf.size)) * span + stat.mu, pmf, stat.sig, span)
+
+
+def two_lattice_tail(X: LinStat, Y: LinStat, sig: float, mu: float = 0.0, min_p: float = 1e-20) -> AtomTail:
+    """Exact tail of X + Y + mu + N(0, sig^2) for two independent lattice statistics with different
+    (incommensurate) spans, by the outer sum of their atoms (atoms below min_p dropped)."""
+    lx, sx, px = lattice_pmf(X)
+    ly, sy, py = lattice_pmf(Y)
+    vx = (lx + np.arange(px.size)) * sx + X.mu
+    vy = (ly + np.arange(py.size)) * sy + Y.mu
+    kx, ky = px > min_p, py > min_p
+    v = (vx[kx][:, None] + vy[ky][None, :]).ravel() + mu
+    p = (px[kx][:, None] * py[ky][None, :]).ravel()
+    return AtomTail(v, p / p.sum(), sig, span=min(sx, sy))
 
 
 def tail_lattice(stat: LinStat, x, span=None, **kw):

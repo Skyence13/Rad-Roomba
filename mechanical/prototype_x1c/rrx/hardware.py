@@ -12,7 +12,7 @@ from mechanical.common import params as P
 
 from . import dims as D
 from .shells import COVER_SCREWS, HUMP_SCREW_X, perim_stations
-from .structure import CLIFF_SCREWS, RX_DOWELS, RX_SCREWS, sole_screw_xy
+from .structure import CLIFF_SCREWS, RX_PINS_LOWER, RX_PINS_UPPER, RX_SCREWS, sole_screw_xy
 
 N_SOLE = len(sole_screw_xy())
 N_PERIM = len(perim_stations())
@@ -32,8 +32,16 @@ def rows():
         R.append({"subassembly": sub, "item": item, "spec": spec, "qty": qty, "where": where, "status": status, "torque_Nm": torque, "note": note})
 
     # A  chassis plate, receiver, caster, front sensors
-    add("A chassis", "socket cap screw", "M4 x 10 ISO 4762 A2-70", 2 * len(RX_SCREWS), "plate (from above) -> tapped ears of the receiver channels", torque="2.2", note="medium thread-lock; datum joint")
-    add("A chassis", "dowel pin", "4 m6 x 10 ISO 8734", 2 * len(RX_DOWELS), "plate 4 H7 -> channel ear (right channel: one hole slotted 4 x 5)", note="locates the head datum; press in the channel, slide in the plate")
+    add("A chassis", "socket cap screw", "M4 x 18 ISO 4762 A2-70", 2 * len(RX_SCREWS), "plate (from above) -> G10 bushing -> shim -> tapped ear of the receiver channel (7.1 mm engagement)",
+        torque="1.2", note="thermal break joint: 1500 N preload, medium thread-lock; re-check torque at the first service")
+    add("A chassis", "conical spring washer", "DIN 6796 4 A2", 2 * len(RX_SCREWS), "under each receiver screw head", "UNVERIFIED", note="keeps the preload against G10 creep (loss 6 % vs 57 % without, calculated)")
+    add("A chassis", "flat washer", "ISO 7089 4 A2", 2 * len(RX_SCREWS), "between the spring washer and the G10 bushing flange")
+    add("A chassis", "top-hat bushing", "G-10, flange 10 x 1.0, sleeve 6.0 x 3.5, bore 4.3 (machined; PEEK-GF30 alternative)", 2 * len(RX_SCREWS),
+        "6.0 mm plate hole of each receiver screw", "UNVERIFIED", note="insulates the screw from the plate; stock item not confirmed, make from G10 tube/rod if needed")
+    add("A chassis", "dowel pin (lower)", "4 m6 x 8 ISO 8734", 2 * len(RX_PINS_LOWER), "pressed 5.5 into the channel ear (4 H7 blind), 2.5 into the G10 shim",
+        note="second shim hole of each pair is a 4.6 x 4.0 slot; pin top 1.5 below the plate")
+    add("A chassis", "dowel pin (upper)", "4 m6 x 8 ISO 8734", 2 * len(RX_PINS_UPPER), "pressed flush into the plate (4 H7), through the shim; tip in a 6.5 x 1.5 ear relief",
+        note="no metal path across the shim: each pin set touches metal on one side only")
     add("A chassis", "push pin (dock switch)", "3 h8 x 6 stainless dowel, ends rounded", 1, "left channel end wall, between shoe tip and D2HW plunger", "DESIGN")
     add("A chassis", "pan head screw", "M3 x 8 ISO 7045 A2", 2, "plate -> dock switch bracket inserts", torque="0.6")
     add("A chassis", "pan head screw", "M3 x 10 ISO 7045 A2", 2 * len(CLIFF_SCREWS), "plate -> cliff pod inserts", torque="0.6")

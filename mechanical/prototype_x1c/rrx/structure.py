@@ -16,7 +16,11 @@ Z0, Z1 = D.PLATE_Z
 RC = D.RC
 SIDES = (("L", 1), ("R", -1))
 RX_SCREWS = [(14.0, -17.0), (50.0, -17.0), (14.0, 17.0)]      # (x, dy from the channel centre; -dy = inboard)
-RX_DOWELS = [(24.0, -17.0), (40.0, -17.0)]
+RB = P.RECEIVER_BREAK                                              # G10 thermal break (DEC-045, IB-64)
+RX_PINS_LOWER = [tuple(v) for v in RB["pins_lower"]]               # pressed in the ear, engage the shim only
+RX_PINS_UPPER = [tuple(v) for v in RB["pins_upper"]]               # pressed in the plate, through the shim, tip in an ear relief
+RX_DOWELS = RX_PINS_LOWER + RX_PINS_UPPER                          # all location pins (count for the hardware list)
+EAR_TOP = RB["ear_top_z"]
 CLIFF_SCREWS = [(30.5, 104.0), (30.5, 115.5), (54.5, 115.0)]       # rear pair + one ahead, all aft of the x-stop flange (x 59.7)
 
 
@@ -27,10 +31,14 @@ def plate_holes():
     H = []
     for _, s in SIDES:
         yc = s * RC["shoe_y"]
-        for x, dy in RX_SCREWS:                                    # receiver channel: 3 x M4 from above + 2 dowels
-            H.append((x, yc + s * dy, D.CLEAR["M4"], "thru", "receiver channel M4 cap screw from above into the tapped ear"))
-        for x, dy in RX_DOWELS:
-            H.append((x, yc + s * dy, 4.0, "ream", "receiver locating dowel 4 m6 (plate hole 4 H7)"))
+        for x, dy in RX_SCREWS:                                    # receiver channel: 3 x M4 from above through G10 top-hat bushings
+            H.append((x, yc + s * dy, RB["bushing"]["sleeve_od"], "thru", "receiver M4 x 18 in a G10 top-hat bushing (sleeve 6.0 in the plate), into the tapped ear"))
+        for x, dy in RX_PINS_UPPER:
+            H.append((x, yc + s * dy, 4.0, "ream", "upper location pin 4 m6 x 8 pressed flush from above (plate hole 4 H7) -> G10 shim"))
+        for (bx0, bx1) in RB["bridge_x"]:                          # pockets over the channel roof bridges (1.5 mm air gap)
+            m = RB["pocket_margin"]
+            a, b = bx0 - m, min(bx1 + m, D.BEAM_X[1] + 5.0)
+            H.append(((a + b) / 2, yc, 0.0, f"pocket {b - a:.1f}x{RC['channel_width'] + 2 * m:.1f} depth {RB['plate_pocket_depth']} from below", "receiver roof-bridge clearance pocket (thermal break)"))
         for x in (-20.0, 20.0):                                    # motor pod feet, M4 countersunk from below into inserts
             for y in (D.POD_Y0 + 5.0, 112.0):
                 H.append((x, s * y, D.CLEAR["M4"], "csk_bottom", "motor pod foot M4"))
@@ -106,6 +114,10 @@ def chassis_plate():
         if kind.startswith("window"):
             s = s.cut(box(x - 10.75, x + 10.75, y - 8.75, y + 8.75, Z0 - 1, Z1 + 1))
             continue
+        if kind.startswith("pocket"):
+            lx, ly = (float(v) for v in kind.split()[1].split("x"))
+            s = s.cut(box(x - lx / 2, x + lx / 2, y - ly / 2, y + ly / 2, Z0 - 1, Z0 + RB["plate_pocket_depth"]))
+            continue
         s = s.cut(cyl(d / 2, 6, (x, y, Z0 - 1)))
         if kind == "csk_bottom":
             m = min(D.CSK, key=lambda k: abs(D.CLEAR[k] - d))
@@ -119,34 +131,66 @@ def receiver_channel(s):
     s = +1 left (fitted in y), -1 right (floating)."""
     yc = s * RC["shoe_y"]
     x0, x1 = RC["channel_x"]
-    zb, zt = RC["channel_z"]
+    zb = RC["channel_z"][0]
+    zt = EAR_TOP                                                    # ears and walls: plate underside - G10 shim
+    zr = RB["bridge_top_z"]                                         # roof bridges at the stations stand up into the plate pockets
     w = RC["channel_width"] / 2
     sz0, sz1 = RC["shoe_z"]
     hw = RC["shoe_width"] / 2
     blk = box(x0, x1, yc - w, yc + w, zb, zt)
+    for bx0, bx1 in RB["bridge_x"]:
+        blk = blk.fuse(box(bx0, bx1, yc - w, yc + w, zt - 1.0, zr))
     fx0, fx1 = D.RX_FLANGE_X
     flange = box(fx0, fx1, yc - hw - 0.5 - D.RX_PAD[0] - 1.0, yc + hw + 0.5 + D.RX_PAD[0] + 1.0, zb, zt)   # x-stop pads each side of the shoe
-    ears = fuse(box(8.0, 56.0, yc - s * 21.0, yc - s * 11.0, zt - 6.0, zt),            # inboard ear, full length
-                box(8.0, 24.0, yc + s * 11.0, yc + s * 21.0, zt - 6.0, zt))             # outboard ear, short (cliff pod ahead of it)
+    et = RB["ear_t"]
+    ears = fuse(box(8.0, 56.0, yc - s * 21.0, yc - s * 11.0, zt - et, zt),            # inboard ear, full length
+                box(8.0, 24.0, yc + s * 11.0, yc + s * 21.0, zt - et, zt))             # outboard ear, short (cliff pod ahead of it)
     blk = fuse(blk, flange, ears)
     c = D.RX_SLOT_CLEAR
-    slot = box(x0 + 1.5, fx1 + 1, yc - hw - c, yc + hw + c, zb - 1, sz1 + c)     # open underneath and to the front
+    slot = box(x0 + 1.5, fx1 + 1, yc - hw - c, yc + hw + c, zb - 1, sz1 + c)     # open underneath, to the front and (between the stations) on top
     blk = blk.cut(slot)
     fit_y = D.RX_FIT_Y_LEFT if s > 0 else D.RX_FLOAT_Y_RIGHT
     for xs in RC["land_x"]:                                          # station pads left standing when the slot is milled
         a, b = xs - D.RX_STATION_LEN / 2, min(xs + D.RX_STATION_LEN / 2, fx1)
         blk = blk.fuse(box(a, b, yc - hw - c, yc - hw - fit_y, sz0 + 0.5, sz1 + c))      # y pads start 0.5 above datum C (no tangency with the pin bore)
         blk = blk.fuse(box(a, b, yc + hw + fit_y, yc + hw + c, sz0 + 0.5, sz1 + c))
-        blk = blk.fuse(box(a, b, yc - hw - c, yc + hw + c, sz1 + D.RX_FIT_Z, sz1 + c))     # roof pad = hold-down
+        blk = blk.fuse(box(a, b, yc - hw - c, yc + hw + c, sz1 + D.RX_FIT_Z, sz1 + c))     # roof pad on the bridge = hold-down
         blk = blk.cut(cyl(D.RX_LAND_PIN_D / 2, 2 * w + 2, (xs, yc - w - 1, sz0 - D.RX_LAND_PIN_D / 2), (0, 1, 0)))   # reamed 4 H7 cross hole
     blk = blk.clean()
     for x, dy in RX_SCREWS:
-        blk = blk.cut(cyl(D.TAP["M4"] / 2, 7, (x, yc + s * dy, zt - 6.5)))
-    for x, dy in RX_DOWELS:
-        blk = blk.cut(cyl(2.0, 5, (x, yc + s * dy, zt - 4.0)))
+        blk = blk.cut(cyl(D.TAP["M4"] / 2, et + 1, (x, yc + s * dy, zt - et - 0.5)))
+    for x, dy in RX_PINS_LOWER:                                      # 4 H7 blind 6 deep, pin pressed 5.5, stands 2.5 into the shim
+        blk = blk.cut(cyl(2.0, 6.0, (x, yc + s * dy, zt - 6.0)))
+    rd, rh = RB["pin_relief"]
+    for x, dy in RX_PINS_UPPER:                                      # relief for the upper pin tip (air, no contact)
+        blk = blk.cut(cyl(rd / 2, rh + 0.5, (x, yc + s * dy, zt - rh)))
     if s > 0:                                                         # push-pin bore for the HEAD_DOCK switch
         blk = blk.cut(cyl(1.6, 4, (x0 - 1, yc, P.HEAD_DOCK_SWITCH[2]), (1, 0, 0)))
     return blk
+
+
+def receiver_shim(s):
+    """Ground G10 shim strips under the two ears of one channel (z = ear top .. plate underside), with screw and pin holes."""
+    yc = s * RC["shoe_y"]
+    d0, d1 = RB["shim_dy"]
+    z0, z1 = EAR_TOP, EAR_TOP + RB["shim_t"]
+    sh = fuse(box(8.0, 56.0, yc - s * d1, yc - s * d0, z0, z1), box(8.0, 24.0, yc + s * d0, yc + s * d1, z0, z1))
+    for x, dy in RX_SCREWS:
+        sh = sh.cut(cyl(2.25, 6, (x, yc + s * dy, z0 - 1)))
+    for i, (x, dy) in enumerate(RX_PINS_LOWER + RX_PINS_UPPER):
+        if i in (1, 3):                                              # second hole of each pin pair: slot along the pair line
+            sh = sh.cut(box(x - 2.3, x + 2.3, yc + s * dy - 2.0, yc + s * dy + 2.0, z0 - 1, z1 + 1))
+        else:
+            sh = sh.cut(cyl(2.0, 6, (x, yc + s * dy, z0 - 1)))
+    return sh.clean()
+
+
+def location_pins(s):
+    """Lower pins (in the ear, 2.5 into the shim) and upper pins (pressed flush in the plate, through the shim)."""
+    yc = s * RC["shoe_y"]
+    lo = [cyl(2.0, 8.0, (x, yc + s * dy, EAR_TOP - 5.5)) for x, dy in RX_PINS_LOWER]
+    up = [cyl(2.0, 8.0, (x, yc + s * dy, Z1 - 8.0)) for x, dy in RX_PINS_UPPER]
+    return lo, up
 
 
 def land_pins(s):
@@ -378,7 +422,17 @@ def build(add):
              note="4 mm 6061-T6 laser/waterjet blank, countersunk and tapped per holes table; DXF in out/dxf", mates={"*"}))
     for tag, s in SIDES:
         add(Part(f"RRX-F02{tag}", f"receiver_channel_{tag}", receiver_channel(s), "fabricated", "AL6061", "receiver", color=AL, internal=False,
-                 note="machined 6061 (printed PAHT-CF copy RRX-P02x for fit check only)", mates={"chassis_plate", f"land_pin_{tag}", "dock_switch_bracket", f"head_shoe_{tag}"}))
+                 note="machined 6061 (printed PAHT-CF copy RRX-P02x for fit check only); hangs on the G10 shim, no metal contact with the plate", mates={f"receiver_shim_{tag}", f"rx_pin_lower_{tag}*", f"land_pin_{tag}", "dock_switch_bracket", f"head_shoe_{tag}"}))
+        add(Part(f"RRX-F12{tag}", f"receiver_shim_{tag}", receiver_shim(s), "fabricated", "G10", "receiver", color="#c9c27a", internal=False,
+                 note="G-10 sheet, both faces surface ground 4.00 +-0.02, flatness 0.01; the L/R pair ground together; thermal break (DEC-045)",
+                 mates={"chassis_plate", f"receiver_channel_{tag}", f"rx_pin_*_{tag}*"}))
+        lo, up = location_pins(s)
+        for i, pin in enumerate(lo):
+            add(Part("RRX-H13", f"rx_pin_lower_{tag}{i}", pin, "purchased", "STEEL", "receiver", color="#5d6166", internal=False,
+                     mpn="ISO 8734 4 m6 x 8 hardened dowel pin", verified="standard part", mates={f"receiver_channel_{tag}", f"receiver_shim_{tag}"}))
+        for i, pin in enumerate(up):
+            add(Part("RRX-H13", f"rx_pin_upper_{tag}{i}", pin, "purchased", "STEEL", "receiver", color="#5d6166", internal=False,
+                     mpn="ISO 8734 4 m6 x 8 hardened dowel pin", verified="standard part", mates={"chassis_plate", f"receiver_shim_{tag}"}))
         for i, pin in enumerate(land_pins(s)):
             add(Part("RRX-H01", f"land_pin_{tag}{i}", pin, "purchased", "STEEL", "receiver", color="#5d6166", internal=False,
                      mpn="ISO 8734 4 m6 x 24 hardened dowel pin", verified="standard part", mates={f"receiver_channel_{tag}", f"head_shoe_{tag}"}))
