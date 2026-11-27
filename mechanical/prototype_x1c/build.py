@@ -28,6 +28,11 @@ def main(argv=None):
     OUT.mkdir(exist_ok=True)
     print("[1/6] building parts", flush=True)
     parts = assembly.build()
+    from .rrx import util
+    stale = [f for f in util.CACHE.glob("*.brep") if f.name not in util.USED]
+    for f in stale:
+        f.unlink()
+    print(f"  BREP cache: {len(util.USED)} entries used, {len(stale)} stale removed", flush=True)
     bad = [p.name for p in parts if not p.shape.isValid() or (p.kind in ("printed", "fabricated") and len(p.shape.Solids()) != 1)]
     if bad:
         print("  WARNING invalid or multi-body parts:", bad)

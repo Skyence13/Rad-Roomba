@@ -10,14 +10,17 @@ import time
 from pathlib import Path
 
 
+FILM = 0.05        # mm: an overlap whose mean thickness (2 V / A) is below this is a coincident-face contact, not a clash
 PAIR_SCRIPT = r"""
 import json, sys
 import cadquery as cq
 from OCP.BRepAlgoAPI import BRepAlgoAPI_Common
 a = cq.Shape.importBrep(sys.argv[1]); b = cq.Shape.importBrep(sys.argv[2])
 op = BRepAlgoAPI_Common(a.wrapped, b.wrapped)
-v = sum(s.Volume() for s in cq.Shape.cast(op.Shape()).Solids()) if op.IsDone() else float("nan")
-print(json.dumps({"v": v}))
+sol = cq.Shape.cast(op.Shape()).Solids() if op.IsDone() else []
+v = sum(s.Volume() for s in sol) if op.IsDone() else float("nan")
+area = sum(s.Area() for s in sol)
+print(json.dumps({"v": v, "t": (2.0 * v / area) if area > 0 else 0.0}))
 """
 
 
@@ -50,14 +53,15 @@ def _exact(pairs, folder, workers, timeout, log):
         try:
             r = subprocess.run([sys.executable, "-c", PAIR_SCRIPT, str(folder / f"{a}.brep"), str(folder / f"{b}.brep")],
                                capture_output=True, text=True, timeout=timeout)
-            v = json.loads(r.stdout.strip().splitlines()[-1])["v"]
-            res = (v, "boolean")
+            js = json.loads(r.stdout.strip().splitlines()[-1])
+            v, th = js["v"], js["t"]
+            res = (v, "boolean" if th >= FILM else f"boolean: contact film {th:.3f} mm thick")
         except subprocess.TimeoutExpired:
             log(f"    pair {a} x {b}: boolean > {timeout:.0f} s, screening volume kept")
             res = (None, "timeout")
         except Exception as e:  # noqa: BLE001
             res = (None, f"error: {str(e)[:60]}")
-        if res[1] == "boolean":
+        if res[1].startswith("boolean"):
             cache[key] = list(res)
         return ab, res + (round(time.time() - t, 1),)
     with ThreadPoolExecutor(max_workers=workers) as ex:
@@ -161,7 +165,7 @@ def overlaps(parts, folder, workers=3, timeout=150.0, screen_tol=2.0, log=print)
     exact = {}
     if flagged:
         res = _exact(flagged, folder, max(1, min(workers, (os.cpu_count() or 2) - 1)), timeout, log)
-        exact = {ab: r for ab, r in res.items() if r[1] == "boolean"}
+        exact = {ab: r for ab, r in res.items() if r[1].startswith("boolean")}
     rows = []
     for a, b, v in screened:
         if (a, b) in exact:

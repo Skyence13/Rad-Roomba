@@ -57,12 +57,15 @@ def interference(parts, vol_tol=5.0, log=print):
     t0 = time.time()
     rows = overlaps(hard, CACHE.parent / "_interference", log=log)
     clash, declared = [], []
+    films = []
     for a, b, v, method, dt in rows:
-        if not v <= vol_tol:
+        if "contact film" in method:
+            films.append((a, b, round(v, 1), method))
+        elif not v <= vol_tol:
             (declared if is_mate(byn[a], byn[b]) else clash).append((a, b, round(v, 1), method))
     slow = sorted(((dt, a, b, m) for a, b, v, m, dt in rows), reverse=True)[:5]
     log(f"  interference: {len(rows)} candidate pairs, {len(clash)} clash(es), {len(declared)} declared envelope overlaps, {time.time() - t0:.0f} s")
-    return {"pairs_evaluated": len(rows), "clashes": sorted(clash, key=lambda c: -c[2] if c[2] == c[2] else 0), "declared_overlaps": sorted(declared, key=lambda c: -c[2]),
+    return {"pairs_evaluated": len(rows), "clashes": sorted(clash, key=lambda c: -c[2] if c[2] == c[2] else 0), "declared_overlaps": sorted(declared, key=lambda c: -c[2]), "contact_films": films,
             "methods": {m: sum(1 for r in rows if r[3] == m) for m in {r[3] for r in rows}}, "slowest_pairs_s": slow}
 
 

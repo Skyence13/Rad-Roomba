@@ -1,14 +1,14 @@
 
 
-2026-11-27 00:40:59.706 INFO   Freerouting v2.6.0 (build-date: 2026-11-25)
-2026-11-27 00:41:00.276 INFO   Hardware: 4 CPU cores, 182 CPU score, 3072 MB RAM
-2026-11-27 00:41:00.288 WARN   GUI is disabled and you don't have a console available, so the only feedback from Freerouting is in the log.
-2026-11-27 00:41:01.705 WARN   The '-mp' command-line flag is deprecated and will be removed in a future release; use '--router.autorouter.max_passes' instead.
-2026-11-27 00:41:01.719 WARN   The '-mt' command-line flag is deprecated and will be removed in a future release; use '--router.max_threads=<n>' instead.
-2026-11-27 00:41:02.375 INFO   [077855\1F847D] Loading board file 'STRESS-150-6L.dsn'...
-2026-11-27 00:41:04.518 INFO   The board's own vias decide: router.autorouter.via_in_pad = true.
-2026-11-27 00:41:04.541 INFO   [077855\1F847D] Job '077855\1F847D' started at 2026-11-27T00:41:04.541514357Z.
-2026-11-27 00:41:05.156 WARN   Design Warning: Board has 56 pre-existing clearance violation(s) in the loaded design (before routing):
+2026-11-27 02:52:51.646 INFO   Freerouting v2.6.0 (build-date: 2026-11-25)
+2026-11-27 02:52:52.006 INFO   Hardware: 4 CPU cores, 388 CPU score, 3072 MB RAM
+2026-11-27 02:52:52.010 WARN   GUI is disabled and you don't have a console available, so the only feedback from Freerouting is in the log.
+2026-11-27 02:52:53.150 WARN   The '-mp' command-line flag is deprecated and will be removed in a future release; use '--router.autorouter.max_passes' instead.
+2026-11-27 02:52:53.153 WARN   The '-mt' command-line flag is deprecated and will be removed in a future release; use '--router.max_threads=<n>' instead.
+2026-11-27 02:52:53.486 INFO   [C720A3\C35E62] Loading board file 'STRESS-150-6L.dsn'...
+2026-11-27 02:52:54.393 INFO   The board's own vias decide: router.autorouter.via_in_pad = true.
+2026-11-27 02:52:54.428 INFO   [C720A3\C35E62] Job 'C720A3\C35E62' started at 2026-11-27T02:52:54.427933630Z.
+2026-11-27 02:52:54.707 WARN   Design Warning: Board has 56 pre-existing clearance violation(s) in the loaded design (before routing):
   - 56 unfixable violation(s) (cannot be resolved by Freerouting):
       * 56 pin-to-pin clearance violations (first 5 shown):
           - U2.49 [net GND] <-> U2.48 [net +3V3]
@@ -19,15 +19,15 @@
   - 0 potentially fixable violations
 Notice: Freerouting does not modify component placement, board outlines, or fixed items.
 Resolving these 56 unfixable violation(s) is the responsibility of the board author in their EDA tool (e.g. KiCad).
-2026-11-27 00:41:05.665 INFO   [077855\1F847D] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=4.
-2026-11-27 00:41:06.141 INFO   [077855\1F847D] Auto-routing stage started on board 'b4e9884438b135e22bdfa94405cfecb8' with baseline score 393.94 for 185 unrouted items.
-2026-11-27 00:42:00.702 INFO   [077855\1F847D] Auto-routing pass #1 on board 'b4e9884438b135e22bdfa94405cfecb8' was completed in 54.43 seconds with score 868.96 (40 unrouted and 56 violations), using 28.89 CPU seconds and the job allocated 10.86 GB of memory so far.
-2026-11-27 00:42:21.716 INFO   [077855\1F847D] Auto-routing pass #2 on board '7e32cd59c2154622f8af6783d2546007' was completed in 20.51 seconds with score 937.76 (19 unrouted and 56 violations), using 43.86 CPU seconds and the job allocated 16.89 GB of memory so far.
-2026-11-27 00:42:36.480 INFO   [077855\1F847D] Auto-routing pass #3 on board 'a084747a7774e353caedf07c542a639d' was completed in 14.38 seconds with score 980.34 (6 unrouted and 56 violations), using 54.92 CPU seconds and the job allocated 21.48 GB of memory so far.
-2026-11-27 00:42:44.212 INFO   [077855\1F847D] Auto-routing pass #4 on board 'a81665eb25b8d5418e41547472f3563f' was completed in 7.48 seconds with score 990.17 (3 unrouted and 56 violations), using 60.32 CPU seconds and the job allocated 23.63 GB of memory so far.
-2026-11-27 00:42:47.532 INFO   [077855\1F847D] Auto-routing pass #5 on board 'e0e0b797aae9abf310c100215cdbfb53' was completed in 2.90 seconds with score 1000.00 (0 unrouted and 56 violations), using 63.22 CPU seconds and the job allocated 24.76 GB of memory so far.
-2026-11-27 00:42:48.135 INFO   [077855\1F847D] Auto-routing pass #6 on board 'e7213d0527fb4848d01392dd34ad1ddf' was completed in 0.14 seconds with score 1000.00 (0 unrouted and 56 violations), using 63.22 CPU seconds and the job allocated 24.76 GB of memory so far.
-2026-11-27 00:42:49.247 INFO   [077855\1F847D] Auto-routing stage completed: started with 185 unrouted nets, completed in 103.44 seconds, final score: 1000.00 (0 unrouted and 56 violations), using 63.81 total CPU seconds, 24.84 GB total allocated, and 385.7 MB peak heap usage.
-2026-11-27 00:42:49.296 INFO   [077855\1F847D] Job '077855\1F847D' finished with state: COMPLETED (elapsed: 1 minute 44.74 seconds, finished at UTC: 2026-11-27T00:42:49.279501128Z).
-2026-11-27 00:42:49.315 INFO   Saving output file '/home/user/Rad-Roomba/tools/eda/tests/stress6/route/STRESS-150-6L.ses' (SES)...
-2026-11-27 00:42:49.320 INFO   Successfully saved output file '/home/user/Rad-Roomba/tools/eda/tests/stress6/route/STRESS-150-6L.ses' (75327 bytes).
+2026-11-27 02:52:54.901 INFO   [C720A3\C35E62] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=4.
+2026-11-27 02:52:55.160 INFO   [C720A3\C35E62] Auto-routing stage started on board 'b4e9884438b135e22bdfa94405cfecb8' with baseline score 393.94 for 185 unrouted items.
+2026-11-27 02:53:21.134 INFO   [C720A3\C35E62] Auto-routing pass #1 on board 'b4e9884438b135e22bdfa94405cfecb8' was completed in 25.87 seconds with score 868.96 (40 unrouted and 56 violations), using 24.54 CPU seconds and the job allocated 10.24 GB of memory so far.
+2026-11-27 02:53:35.216 INFO   [C720A3\C35E62] Auto-routing pass #2 on board '7e32cd59c2154622f8af6783d2546007' was completed in 13.91 seconds with score 937.76 (19 unrouted and 56 violations), using 38.10 CPU seconds and the job allocated 15.97 GB of memory so far.
+2026-11-27 02:53:45.272 INFO   [C720A3\C35E62] Auto-routing pass #3 on board 'a084747a7774e353caedf07c542a639d' was completed in 9.89 seconds with score 980.34 (6 unrouted and 56 violations), using 47.88 CPU seconds and the job allocated 20.37 GB of memory so far.
+2026-11-27 02:53:50.567 INFO   [C720A3\C35E62] Auto-routing pass #4 on board 'a81665eb25b8d5418e41547472f3563f' was completed in 5.13 seconds with score 990.17 (3 unrouted and 56 violations), using 53.73 CPU seconds and the job allocated 22.98 GB of memory so far.
+2026-11-27 02:53:52.659 INFO   [C720A3\C35E62] Auto-routing pass #5 on board 'e0e0b797aae9abf310c100215cdbfb53' was completed in 1.93 seconds with score 1000.00 (0 unrouted and 56 violations), using 55.69 CPU seconds and the job allocated 23.81 GB of memory so far.
+2026-11-27 02:53:52.922 INFO   [C720A3\C35E62] Auto-routing pass #6 on board 'e7213d0527fb4848d01392dd34ad1ddf' was completed in 0.10 seconds with score 1000.00 (0 unrouted and 56 violations), using 55.69 CPU seconds and the job allocated 23.81 GB of memory so far.
+2026-11-27 02:53:53.403 INFO   [C720A3\C35E62] Auto-routing stage completed: started with 185 unrouted nets, completed in 58.39 seconds, final score: 1000.00 (0 unrouted and 56 violations), using 55.69 total CPU seconds, 23.81 GB total allocated, and 296.6 MB peak heap usage.
+2026-11-27 02:53:53.417 INFO   [C720A3\C35E62] Job 'C720A3\C35E62' finished with state: COMPLETED (elapsed: 58.99 seconds, finished at UTC: 2026-11-27T02:53:53.416156226Z).
+2026-11-27 02:53:53.422 INFO   Saving output file '/home/user/Rad-Roomba/tools/eda/tests/stress6/route/STRESS-150-6L.ses' (SES)...
+2026-11-27 02:53:53.424 INFO   Successfully saved output file '/home/user/Rad-Roomba/tools/eda/tests/stress6/route/STRESS-150-6L.ses' (75327 bytes).

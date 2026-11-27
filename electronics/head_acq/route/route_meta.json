@@ -2,18 +2,18 @@
   "attempts": [
     {
       "run": 1,
-      "seconds": 571.7,
-      "unconnected": 1090
+      "seconds": 6336.7,
+      "unconnected": 340
     }
   ],
-  "dsn_sha256": "0600ab197f5acaf760b059e70c4bdbeabc6a7b08e1d87ea80861fed929e5ff99",
+  "dsn_sha256": "bf4366091db28b6feed9c82ae23f9c5e3c9cc065e3883117cab1a144d935399d",
   "freerouting": "v2.6.0 (build-date: 2026-11-25)",
   "log_tail": [
-    "[8C7AF9\\8FE9CB] Auto-routing stage completed with timeout: started with 1475 unrouted nets, completed in 545.81 seconds, final score: 401.90 (1099 unrouted and 552 violations), using 513.84 total CPU seconds, 158.33 GB total allocated, and 1357.8 MB peak heap usage.",
-    "[8C7AF9\\8FE9CB] Job '8C7AF9\\8FE9CB' finished with state: TIMED_OUT (elapsed: 9 minutes 10.12 seconds, finished at UTC: 2026-11-27T01:53:35.352742145Z)."
+    "[4F9C6C\\7E7D8F] Auto-routing stage completed with timeout: started with 1428 unrouted nets, completed in 6303.54 seconds, final score: 805.71 (357 unrouted and 552 violations), using 5997.05 total CPU seconds, 1977.67 GB total allocated, and 1152.9 MB peak heap usage.",
+    "[4F9C6C\\7E7D8F] Job '4F9C6C\\7E7D8F' finished with state: TIMED_OUT (elapsed: 1 hour 45 minutes 9.47 seconds, finished at UTC: 2026-11-27T03:46:09.944092653Z)."
   ],
   "passes_limit": 40,
-  "seconds": 571.7,
+  "seconds": 6336.7,
   "threads": 4,
   "timed_out": false
 }

@@ -613,8 +613,12 @@ def run(board, paths, fr, ses_sha, drc_unrouted):
             items = list(old.get("items", []))
             removed = list(old.get("remove", []))
     ripup = board.routing.get("finisher_ripup", True)
+    budget = float(board.routing.get("finisher_seconds", 900))
     for u in drc_unrouted:
         net = u["net"]
+        if time.time() - t0 > budget:
+            failed.append({"net": net, "why": "finisher time budget (%g s) used up" % budget})
+            continue
         if len(u["ends"]) != 2 or net == "?":
             failed.append({"net": net, "why": "unparsed DRC item"})
             continue
@@ -651,8 +655,8 @@ def run(board, paths, fr, ses_sha, drc_unrouted):
             n = queue.pop(0)
             while True:
                 steps += 1
-                if steps > 30:
-                    ok, why = False, "rip-up cascade too long"
+                if steps > 40:
+                    ok, why = False, "rip-up cascade too long (40 steps)"
                     break
                 comps = [c for c in _components(obs.by_net.get(n, [])) if c]
                 if len(comps) <= 1:

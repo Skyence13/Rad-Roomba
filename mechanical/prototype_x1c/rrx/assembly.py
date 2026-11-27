@@ -67,8 +67,9 @@ def purchased(add):
         ctl = P.PANEL_CONTROLS[name]
         head, body = L.panel_device(kind)
         side = "rear_deck_L" if ctl["xyz"][1] > 0 else "rear_deck_R"
-        add(Part("RRX-H50", f"{name}_operator", place(head, ctl["xyz"], ctl["normal"]), "purchased", "PA", "controls", color=C["ctl"], internal=False, mass=0.0, mates={f"{name}_body", side}))
-        add(Part("RRX-H50", f"{name}_body", place(body, ctl["xyz"], ctl["normal"]), "purchased", "PA", "controls", color=C["ctl"], internal=False, mass=L.mass(kind),
+        pn = {"estop": "RRX-H50", "mode_selector": "RRX-H55", "pushbutton_22": "RRX-H56"}[kind]
+        add(Part(pn, f"{name}_operator", place(head, ctl["xyz"], ctl["normal"]), "purchased", "PA", "controls", color=C["ctl"], internal=False, mass=0.0, mates={f"{name}_body", side}))
+        add(Part(pn, f"{name}_body", place(body, ctl["xyz"], ctl["normal"]), "purchased", "PA", "controls", color=C["ctl"], internal=False, mass=L.mass(kind),
                  mpn=L.PARTS[kind]["mpn"], verified=str(L.PARTS[kind]["verification"])[:60], mates={f"{name}_operator", side}))
     rec, _ = L.inlet()
     ci = P.CHARGE_INLET

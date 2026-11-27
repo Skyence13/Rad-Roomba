@@ -153,6 +153,7 @@ g.part("U9", sym, "MYSENSOR", fp, mfr="...", mpn="...", pins={"VDD": "+3V3", "OU
 board.route(passes=100, threads=None, timeout=None, optimizer=True, enabled=True, extra_args=[],
             plane_fanout=True,     # rrkicad's own track+via beside every SMD pad of plane nets (see Routing notes)
             retries=2,             # extra "continue" autorouter runs while connections are open
+            restarts=1,            # then fresh autorouter runs with another item-order seed (best result kept)
             fanout=False,          # Freerouting's own fan-out stage (escape via on every SMD pin; rarely useful)
             escape="auto",         # fine-pitch escape (see Routing notes): "auto" = on for 4/6 layers, True, False
             escape_pitch=0.65,     #   ICs whose pad pitch is below this get escaped ...
@@ -162,7 +163,8 @@ board.route(passes=100, threads=None, timeout=None, optimizer=True, enabled=True
             escape_layers=None,    #   informational: target layer recorded per via (through vias reach all layers)
             escape_direct=True,    #   short direct pre-route to a nearby two-pad passive instead of a via
             finisher=True,         # built-in maze router for the last open connections (see Routing notes)
-            finisher_ripup=True)   #   ... allowed to rip up and reroute autorouter copper of other signal nets
+            finisher_ripup=True,   #   ... allowed to rip up and reroute autorouter copper of other signal nets
+            finisher_seconds=900)  #   ... time budget
 # per part: g.part(..., escape=None | True | False)   None = decided by pad pitch, True = force, False = never
 board.autoplace_options(clearance=0.3, ic_halo=2.0, edge_margin=0.5, grid=0.25, spread=0.35, rotations=(0, 90, 180, 270),
                         escape_keepaway=2.0)   # free band (mm) around the courtyard of escaped ICs (auto-arranged neighbours)
@@ -268,7 +270,7 @@ classes on top (first matching pattern wins).
   copper of other signal nets* at a cost, rips up what the new path violates, and
   reconnects every ripped net (which may in turn rip up further autorouter copper, never
   pre-routes, escape/fan-out copper, nets with zones or the finisher's own new copper);
-  at most 30 steps per open connection, and the whole transaction is undone if any ripped
+  at most 40 steps per open connection (`finisher_seconds` caps the whole finisher), and the whole transaction is undone if any ripped
   net cannot be reconnected. Results go to `route/finish.json`
   (added items and ripped-up items, keyed to the SES hash, re-applied on cached builds; keep
   it under version control with the SES); `summary.json` → `routing.finisher` lists what it routed and what not and why.
@@ -292,7 +294,11 @@ classes on top (first matching pattern wins).
   routed board; fresh rip-up budget concentrated on the failed nets), up to
   `retries` times, keeping a run only if it reduces the open count. Each continue run uses
   a different Freerouting item-order seed (`--router.autorouter.item_order_seed`); a run
-  that does not improve is discarded and the next seed is tried. Freerouting itself
+  that does not improve is discarded and the next seed is tried. If connections are still
+  open after that, Freerouting starts once more from scratch with another item-order seed
+  (`restarts`, default 1; a fresh run is deterministic for a given DSN and seed, so repeating
+  it unchanged is pointless) followed by its own continue runs; the result with fewer open
+  connections is kept. Then the finisher (below) takes what is left. Freerouting itself
   also switches strategy when it stagnates (visible in `route/freerouting.log`).
   What is still open afterwards is reported, never hidden: `summary.json` →
   `drc.unrouted` lists every open connection with net, both end items and their board

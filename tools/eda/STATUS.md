@@ -42,7 +42,17 @@ borderline: 2 of 3 fresh runs passed.
 Finisher test (scratch copy of a passing STRESS-150-6L, routed copper of 7 nets deleted -> 8 open):
 8 of 8 routed in 36 s, PASS, DRC 0 errors (1 track_dangling warning).
 
-Formal repeatability series with the current code (2x 4-layer, 2x 6-layer, fresh route each): running.
+Repeat of STRESS-150 with the same code gave the identical failure (IO46, 512 s + 2 continues):
+**a fresh Freerouting run is deterministic for a given DSN** (single-threaded routing pass, optimizer off),
+so "twice in a row" only means something across a change of DSN or seed.
+
+Tried and rejected: MCU decoupling on the bottom side of the 4-layer board -> 5 open after run 1, 4 after
+continues (B.Cu under the MCU is half of the 4-layer routing capacity). In that run the rip-up finisher
+routed 2 of the 4 (IO00 rerouting 7 nets, IO43 rerouting 13 nets; DRC 0 errors), 2 stayed open.
+
+Added: `restarts=1` (fresh Freerouting run with another item-order seed when connections stay open after
+the continue runs; best kept), `finisher_seconds=900`.
+Formal series (2x 4-layer, 2x 6-layer) with this code: running.
 
 Scale test `tests/scale500/` (493 parts, 160 x 100 mm, 6 layers, LQFP-100 + LQFP-64 + 2 QFN + 2 TSSOP,
 40 SOT-23(-5), 13 connectors): generates; escape 199 vias + 4 direct on U1-U4, 1 pad without a legal

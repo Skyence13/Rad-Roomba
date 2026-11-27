@@ -76,8 +76,17 @@ def tongue_ring():
     def b():
         a = loft(inset_rows(R["upper_inner"], c, 0.0))
         i = loft(inset_rows(R["upper_inner"], c + t, 0.0))
-        return box(-400, 200, -200, 200, ZL, ZL + h).intersect(a).cut(i).intersect(UI())     # never outside the lid inner skin (nose curvature)
-    return cached(["TONGUE", 2, R["upper_inner"], D.TONGUE, ZL], b)
+        return box(-400, 200, -200, 200, ZL, ZL + h).intersect(a).cut(i).intersect(scaled_xy(UI(), 1.0 - c / 120.0))   # >= ~0.3 mm inside the lid skin everywhere
+    return cached(["TONGUE", 3, R["upper_inner"], D.TONGUE, ZL], b)
+
+
+def scaled_xy(shape, f):
+    """Shape scaled by f in x and y about the body section centre (x = mid of tail and nose, y = 0); z unchanged."""
+    from OCP.BRepBuilderAPI import BRepBuilderAPI_GTransform
+    from OCP.gp import gp_GTrsf, gp_Mat, gp_XYZ
+    cx = (P.BODY_TAIL_X + P.BODY_NOSE_X) / 2
+    g = gp_GTrsf(gp_Mat(f, 0, 0, 0, f, 0, 0, 0, 1), gp_XYZ(cx * (1 - f), 0, 0))
+    return cq.Shape.cast(BRepBuilderAPI_GTransform(shape.wrapped, g, True).Shape())
 
 
 def skin_frame(theta_deg, z, surface="inner", part="upper"):
@@ -122,7 +131,7 @@ def tongue_keepout():
             q = tuple(pt[i] - n[i] * D.TONGUE[0] for i in range(3))
             k = k.fuse(place(cyl(4.7, 8.1, (0, 0, -7.8)), q, n))
         return k
-    return cached(["TONGUE_KEEP", 1, R["upper_inner"], D.TONGUE, ZL, PERIM_DEG], b)
+    return cached(["TONGUE_KEEP", 2, R["upper_inner"], D.TONGUE, ZL, PERIM_DEG], b)
 
 
 def arch_cut():
@@ -182,7 +191,7 @@ def lower_master():
                      box(D.FOOT_X[0] - 1, D.FOOT_X[1] + 1, s * 60.0, s * (D.GRIP_PLATE_Y[1] + 0.6), Z1 - 0.1, Z1 + 26.5))
         sh = cut(sh, *internal_clearance())
         return sh.clean()
-    return cached(["lower_master", 11, R, D.PLATE_INSET, D.BEAM_X, D.BEAM_HALF_Y, B, D.TONGUE, D.HATCH_JAMB, D.POD_Y0, D.FOOT_X, D.GRIP_PLATE_Y, P.RECEIVER["chin_cut"]], b)
+    return cached(["lower_master", 12, R, D.PLATE_INSET, D.BEAM_X, D.BEAM_HALF_Y, B, D.TONGUE, D.HATCH_JAMB, D.POD_Y0, D.FOOT_X, D.GRIP_PLATE_Y, P.RECEIVER["chin_cut"]], b)
 
 
 def internal_clearance():
@@ -288,7 +297,7 @@ def nose_cowl():
         n = perim_screws(n, "nose").cut(tongue_keepout())
         n = n.cut(cyl(4.0, 12, (58.0, 0.0, LEDGE_Z[0] + 8.0), (1, 0, 0)))                                   # J1/J2 lead pass to the board front edge
         return n
-    return cached(["nose_cowl", 11, DOWELS, R, D.X_NOSE, P.J_RECEPTACLES, LATCH_ARM_Z, PERIM_DEG, LATCH_ARM_X1, LATCH_SCREW_X], b)
+    return cached(["nose_cowl", 12, DOWELS, R, D.X_NOSE, P.J_RECEPTACLES, LATCH_ARM_Z, PERIM_DEG, LATCH_ARM_X1, LATCH_SCREW_X], b)
 
 
 def shoulder(s):
@@ -307,7 +316,7 @@ def shoulder(s):
         p = p.cut(box(-21.0, -2.0, D.GRIP_PLATE_Y[0] - 3.4, D.GRIP_PLATE_Y[0] - 0.3, 90, 220))     # look-ahead ToF lead slot beside the side plate (under the fairing)
         p = p.cut(tongue_keepout())
         return perim_screws(p, "shoulder", (1,))
-    p = cached(["shoulder", 11, DECK_JOINT, DOWELS, R, D.X_NOSE, D.X_DECK, PERIM_DEG, COVER_SCREWS], b)
+    p = cached(["shoulder", 12, DECK_JOINT, DOWELS, R, D.X_NOSE, D.X_DECK, PERIM_DEG, COVER_SCREWS], b)
     return p if s > 0 else mirror_y(p)
 
 
@@ -334,7 +343,7 @@ def rear_deck(s):
         return perim_screws(p, "deck", (1,))
 
     def b():
-        p = cached(["rear_deck_base", 11, DECK_JOINT, DOWELS, R, D.X_DECK, HUMP_X, PERIM_DEG, COVER_SCREWS], base)
+        p = cached(["rear_deck_base", 12, DECK_JOINT, DOWELS, R, D.X_DECK, HUMP_X, PERIM_DEG, COVER_SCREWS], base)
         p = p if s > 0 else mirror_y(p)
         feats = []
         for name in ("tof_look_r" + tag, "tof_prox_r" + tag):
@@ -366,7 +375,7 @@ def rear_deck(s):
         feats.append((box(DOOR_PEG[0] - 5, DOOR_PEG[0] + 3.5, s * D.HATCH_JAMB[0], s * (D.HATCH_JAMB[1] + 6.5), DOOR_PEG[1] - 5.5, DOOR_PEG[1] + 5.5),
                       cyl(D.INSERT["M4"][0] / 2, D.INSERT["M4"][1] + 1.0, (DOOR_PEG[0], s * D.HATCH_JAMB[0], DOOR_PEG[1]), (0, s, 0))))
         return _features(p, feats)
-    key = ["rear_deck", tag, 15, COVER_SCREWS, S.SEAT, R, D.X_DECK, HUMP_X, PERIM_DEG, P.TOF_SENSORS, P.PANEL_CONTROLS, P.CHARGE_INLET, D.BUMPER_DIR]
+    key = ["rear_deck", tag, 16, COVER_SCREWS, S.SEAT, R, D.X_DECK, HUMP_X, PERIM_DEG, P.TOF_SENSORS, P.PANEL_CONTROLS, P.CHARGE_INLET, D.BUMPER_DIR]
     if tag == "r":
         key.append(("inlet_seat", S.INLET_COVER_T, 2))
     return cached(key, b)
@@ -457,7 +466,7 @@ def lower_piece(front, s):
         return p.clean()
 
     def b():
-        p = cached(["lower_base", front, 13, SPLICE_Z, R, D.X_LOWER, PERIM_DEG, D.TONGUE, D.POSTS, P.CM5_POSE], base)
+        p = cached(["lower_base", front, 14, SPLICE_Z, R, D.X_LOWER, PERIM_DEG, D.TONGUE, D.POSTS, P.CM5_POSE], base)
         p = p if s > 0 else mirror_y(p)
         if not front:
             blk, hole = bumper_switch_seat(s)
@@ -469,7 +478,7 @@ def lower_piece(front, s):
                 a, c, _ = S.device_seat(pt, n, hole_d=12.2, face_d=20.0, boss_d=24.0, notch=False, panel_t=4.0)
                 p = p.fuse(a.intersect(LO())).cut(c)
         return p
-    return cached(["lower_piece", tag, 14, S.SEAT, R, D.X_LOWER, PERIM_DEG, P.TOF_SENSORS, D.HATCH_JAMB], b)
+    return cached(["lower_piece", tag, 15, S.SEAT, R, D.X_LOWER, PERIM_DEG, P.TOF_SENSORS, D.HATCH_JAMB], b)
 
 
 # ----------------------------------------------------------------------------------------------- hatch frame and door

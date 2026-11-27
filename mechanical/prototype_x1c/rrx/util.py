@@ -106,11 +106,15 @@ def biggest(shape):
     return max(s, key=lambda q: q.Volume()) if s else shape
 
 
+USED = set()     # cache files used in this run (build.py prunes the rest)
+
+
 def cached(key, builder):
     """BREP cache keyed on the parameters (and source digest) that define the shape."""
     CACHE.mkdir(parents=True, exist_ok=True)
     digest = hashlib.sha1(json.dumps(key, sort_keys=True, default=str).encode()).hexdigest()[:16]
     path = CACHE / f"{key[0]}_{digest}.brep"
+    USED.add(path.name)
     if path.exists():
         return cq.Shape.importBrep(str(path))
     shape = builder()

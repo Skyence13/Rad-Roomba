@@ -438,30 +438,39 @@ def _host_build(a, board_py):
         ses = os.path.join(bdir, "route", name + ".ses")
         rdsn = os.path.join(bdir, "route", name + ".retry.dsn")
         rses = os.path.join(bdir, "route", name + ".retry.ses")
-        n = 1
-        while open_now > 0 and n <= retries:
-            n += 1
-            log("routing: %d connection(s) still open -> continue run %d" % (open_now, n))
-            if _container(["_retrydsn", board_py]) != 0:
-                break
-            # a different item order per continue run: a run that did not help is not repeated identically
-            info = run_freerouting(board_py, rdsn, rses, a, ["--router.autorouter.item_order_seed=%d" % (n - 1)])
+        dsn = os.path.join(bdir, "route", name + ".dsn")
+        restarts = int(st.get("routing", {}).get("restarts", 1))
+        ctx = {"board_py": board_py, "a": a, "state_p": state_p, "ses": ses, "rdsn": rdsn, "rses": rses,
+               "attempts": attempts, "retries": retries}
+        open_now, route_info, rc_c = _continue_runs(ctx, route_info, open_now, 0)
+        rc = rc if rc_c is None else rc_c
+        r = 0
+        while open_now > 0 and r < restarts:
+            # Freerouting is deterministic for a given DSN and item order: start once more from
+            # scratch with another item-order seed, keep whichever result leaves fewer open
+            r += 1
+            log("routing: %d connection(s) open after the continue runs -> fresh restart %d (other seed)" % (open_now, r))
+            shutil.copyfile(ses, ses + ".best")
+            best = (open_now, route_info, rc)
+            info = run_freerouting(board_py, dsn, ses, a, ["--router.autorouter.item_order_seed=%d" % (1000 * r)])
             if info is None:
+                shutil.copyfile(ses + ".best", ses)
+                os.remove(ses + ".best")
                 break
-            shutil.copyfile(ses, ses + ".prev")
-            shutil.copyfile(rses, ses)
-            merged = dict(route_info, seconds=round(route_info.get("seconds", 0) + info["seconds"], 1),
-                          log_tail=info.get("log_tail"))
-            rc2 = _container(["_post", board_py, "--route-info", json.dumps(merged)])
-            st = json.load(open(state_p))
-            new_open = (st.get("route_stats") or {}).get("unconnected_after_fill", 0)
-            attempts.append({"run": n, "seconds": info["seconds"], "unconnected": new_open})
-            if new_open < open_now:
-                open_now, rc, route_info = new_open, rc2, merged
-                os.remove(ses + ".prev")
-            else:   # not better: restore the previous result, try the next seed (if any retries are left)
-                shutil.copyfile(ses + ".prev", ses)
-                os.remove(ses + ".prev")
+            info["dsn_sha256"] = route_info.get("dsn_sha256")
+            info["restart"] = r
+            rc2 = _container(["_post", board_py, "--route-info", json.dumps(info)])
+            o2 = (json.load(open(state_p)).get("route_stats") or {}).get("unconnected_after_fill", 0)
+            attempts.append({"run": len(attempts) + 1, "restart": r, "seconds": info["seconds"], "unconnected": o2})
+            o2, info, rc3 = _continue_runs(ctx, info, o2, 1000 * r)
+            rc2 = rc2 if rc3 is None else rc3
+            if o2 < best[0]:
+                open_now, route_info, rc = o2, info, rc2
+                os.remove(ses + ".best")
+            else:
+                shutil.copyfile(ses + ".best", ses)
+                os.remove(ses + ".best")
+                open_now, route_info = best[0], best[1]
                 rc = _container(["_post", board_py, "--route-info", json.dumps(route_info)])
         for f in (rdsn, rses):
             if os.path.exists(f):
@@ -486,6 +495,39 @@ def _host_build(a, board_py):
     log("total build time %.1f s" % (time.time() - t0))
     return rc
 
+
+
+def _continue_runs(ctx, route_info, open_now, seed_base):
+    """Up to `retries` Freerouting runs continuing from the current result (each with another
+    item-order seed); a run is kept only if it reduces the open count.  Returns
+    (open, route_info, rc of the last _post or None)."""
+    board_py, a, state_p, ses = ctx["board_py"], ctx["a"], ctx["state_p"], ctx["ses"]
+    rdsn, rses, attempts = ctx["rdsn"], ctx["rses"], ctx["attempts"]
+    rc = None
+    n = 0
+    while open_now > 0 and n < ctx["retries"]:
+        n += 1
+        log("routing: %d connection(s) still open -> continue run %d" % (open_now, len(attempts) + 1))
+        if _container(["_retrydsn", board_py]) != 0:
+            break
+        info = run_freerouting(board_py, rdsn, rses, a, ["--router.autorouter.item_order_seed=%d" % (seed_base + n)])
+        if info is None:
+            break
+        shutil.copyfile(ses, ses + ".prev")
+        shutil.copyfile(rses, ses)
+        merged = dict(route_info, seconds=round(route_info.get("seconds", 0) + info["seconds"], 1),
+                      log_tail=info.get("log_tail"))
+        rc2 = _container(["_post", board_py, "--route-info", json.dumps(merged)])
+        new_open = (json.load(open(state_p)).get("route_stats") or {}).get("unconnected_after_fill", 0)
+        attempts.append({"run": len(attempts) + 1, "seconds": info["seconds"], "unconnected": new_open, "continue": True})
+        if new_open < open_now:
+            open_now, rc, route_info = new_open, rc2, merged
+            os.remove(ses + ".prev")
+        else:   # not better: restore the previous result, try the next seed (if any retries are left)
+            shutil.copyfile(ses + ".prev", ses)
+            os.remove(ses + ".prev")
+            rc = _container(["_post", board_py, "--route-info", json.dumps(route_info)])
+    return open_now, route_info, rc
 
 
 def run_freerouting(board_py, dsn, ses, a, more_args=()):

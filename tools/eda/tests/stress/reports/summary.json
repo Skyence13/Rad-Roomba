@@ -174,7 +174,7 @@
     "by_type": {
       "via_dangling": {
         "errors": 0,
-        "warnings": 29
+        "warnings": 17
       }
     },
     "error_items": [],
@@ -183,36 +183,12 @@
     "parity": 0,
     "parity_items": [],
     "report": "reports/drc.json",
-    "unconnected": 1,
-    "unconnected_items": [
-      "unconnected_items | Missing connection between items | Track [IO46] on F.Cu, length 0.5418 mm | Track [IO46] on F.Cu, length 1.0950 mm"
-    ],
-    "unrouted": [
-      {
-        "ends": [
-          {
-            "item": "Track [IO46] on F.Cu, length 0.5418 mm",
-            "xy_mm": [
-              48.213,
-              57.828
-            ]
-          },
-          {
-            "item": "Track [IO46] on F.Cu, length 1.0950 mm",
-            "xy_mm": [
-              29.5,
-              38.075
-            ]
-          }
-        ],
-        "net": "IO46"
-      }
-    ],
-    "unrouted_nets": [
-      "IO46"
-    ],
+    "unconnected": 0,
+    "unconnected_items": [],
+    "unrouted": [],
+    "unrouted_nets": [],
     "waived": 0,
-    "warnings": 29
+    "warnings": 17
   },
   "erc": {
     "by_type": {},
@@ -223,9 +199,7 @@
     "waived": 0,
     "warnings": 0
   },
-  "fail_reasons": [
-    "DRC: 1 unconnected item(s) on nets: IO46"
-  ],
+  "fail_reasons": [],
   "notes": [
     "U50: 3D envelope uses the default height 1.0 mm (give height=)",
     "U51: 3D envelope uses the default height 1.0 mm (give height=)",
@@ -308,29 +282,37 @@
       "attempts": [
         {
           "run": 1,
-          "seconds": 511.9,
+          "seconds": 426.3,
           "unconnected": 1
         },
         {
+          "continue": true,
           "run": 2,
-          "seconds": 35.4,
+          "seconds": 54.2,
           "unconnected": 1
         },
         {
+          "continue": true,
           "run": 3,
-          "seconds": 33.5,
+          "seconds": 38.5,
           "unconnected": 1
+        },
+        {
+          "restart": 1,
+          "run": 4,
+          "seconds": 314.1,
+          "unconnected": 0
         }
       ],
       "dsn_sha256": "89cc898861dcb7390ed5a9490d36fba2c94ae69ae7608153ac90aaff45cd92a1",
       "freerouting": "v2.6.0 (build-date: 2026-11-25)",
       "log_tail": [
-        "[6F6B36\\820661] Auto-routing stage completed: started with 183 unrouted nets, completed in 503.89 seconds, final score: 996.72 (1 unrouted and 56 violations), using 360.85 total CPU seconds, 182.93 GB total allocated, and 678.8 MB peak heap usage.",
-        "[6F6B36\\820661] Job '6F6B36\\820661' finished with state: COMPLETED (elapsed: 8 minutes 25.10 seconds, finished at UTC: 2026-11-27T01:40:36.128481666Z)."
+        "[77A99C\\EBDEEE] Auto-routing stage completed: started with 183 unrouted nets, completed in 307.19 seconds, final score: 1000.00 (0 unrouted and 56 violations), using 263.44 total CPU seconds, 134.43 GB total allocated, and 512.3 MB peak heap usage.",
+        "[77A99C\\EBDEEE] Job '77A99C\\EBDEEE' finished with state: COMPLETED (elapsed: 5 minutes 8.36 seconds, finished at UTC: 2026-11-27T02:50:28.995794142Z)."
       ],
       "passes_limit": 30,
-      "reused": false,
-      "seconds": 511.9,
+      "restart": 1,
+      "seconds": 314.1,
       "threads": 4,
       "timed_out": false
     },
@@ -384,22 +366,7 @@
       },
       "vias": 101
     },
-    "finisher": {
-      "failed": [
-        {
-          "ends": [
-            "Track [IO46] on F.Cu, length 0.5418 mm",
-            "Track [IO46] on F.Cu, length 1.0950 mm"
-          ],
-          "net": "IO46",
-          "why": "rip-up undone: could not reconnect ripped net AUX06: no free path even with rip-up (window board, grid 0.10)"
-        }
-      ],
-      "items": 0,
-      "removed": 0,
-      "routed": [],
-      "seconds": 227.3
-    },
+    "finisher": null,
     "plane_fanout": {
       "failed": [
         "C40 pad at (57.77, 26.75) [+5V]",
@@ -419,20 +386,20 @@
     "routed": true,
     "stats": {
       "dangling_tracks_removed": 0,
-      "finisher_items": 0,
+      "finisher_items": null,
       "necked_tracks_widened": 0,
       "preroutes": 743,
       "preroutes_missing_after_import": 0,
-      "track_length_mm": 4735.58,
-      "tracks": 2061,
-      "unconnected_after_fill": 1,
-      "unconnected_before_cleanup": 1,
-      "unused_escapes_removed": 0,
-      "vias": 486
+      "track_length_mm": 4799.27,
+      "tracks": 1860,
+      "unconnected_after_fill": 0,
+      "unconnected_before_cleanup": 0,
+      "unused_escapes_removed": 9,
+      "vias": 448
     }
   },
   "single_pin_nets": [],
-  "status": "fail",
+  "status": "pass",
   "title": "rrkicad stress test",
   "tools": {
     "kicad": "9.0.9"

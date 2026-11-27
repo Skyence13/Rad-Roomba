@@ -136,7 +136,8 @@ def write_plates(table):
 def write_bom(parts, table):
     rows = []
     for kind in ("fabricated", "purchased"):
-        for rec in unique_parts(parts, kind):
+        bom_parts = [q for q in parts if not (q.material == "KEEPOUT" or q.group == "head_placeholder" or q.name.endswith("_operator"))]
+        for rec in unique_parts(bom_parts, kind):
             p = rec["part"]
             t = next((r for r in table if r["pn"] == p.pn), {})
             status = "DESIGN (fabricate to the STEP/DXF)" if kind == "fabricated" else (p.verified or "see parts.yaml")
@@ -326,15 +327,18 @@ def write_images(parts, log=print):
 JOINTS = [
     ("J01_perimeter_lap", "x", -122.0, (120, 152, 48, 80), "Lid / lower hull perimeter lap joint at a screw station",
      ["4 x 2.5 silicone foam on the 1.78 mm land gap (z 61.9..63.68)", "tongue 3 mm inside the lid skirt, 9 mm high: shingled, water cannot climb", "radial M3 x 10 + bonded washer into the tongue insert"]),
-    ("J02_lid_flange_x-45", "z", 76.0, (-62, -28, 112, 146), "Shoulder / rear deck bolted flange joint (x = -45)",
-     ["4 mm flanges, 9 mm deep, faces set back 0.25 mm each for the 1 mm gasket", "M3 x 12 into an insert boss; 3 mm dowels at z 87 and on the roof"]),
+    ("J02_lid_flange_x-36", "z", 100.0, (-54, -18, 96, 130), "Shoulder / rear deck bolted flange joint (x = -36)",
+     ["4 mm flanges, 9 mm deep, faces set back 0.25 mm each for the 1 mm gasket", "M3 x 12 into insert bosses at z 100 / 116 and on the roof; 3 mm dowels at z 108 and on the roof", "flanges start above the hull tongue and stop at the wheel arch"]),
     ("J03_nose_flange_x47", "z", 74.0, (30, 64, 66, 98), "Nose cowl / shoulder flange joint (x = 47)", ["nose is one piece across the centre line: no joint on the nose top", "M3 x 12 + 3 mm dowel per side"]),
     ("J04_hump_curb", "x", -124.0, (44, 80, 104, 154), "Hump wall / rear deck coaming joint", ["hump wall passes down through the deck opening; deck curb 6 mm bolted to it (M3 x 8 countersunk from inside)", "1 mm gasket between wall and curb + sealant fillet outside"]),
-    ("J05_saddle_cover_side", "x", -11.0, (66, 106, 90, 134), "Saddle well wall, cover ledge, captive screw, grip side plate slot and cheek fairing",
-     ["cover 3 mm PAHT-CF on a 6 x 2 gasket; captive M3 into the ledge boss", "side plate passes through a slot sealed with RTV under the fairing"]),
-    ("J06_cover_rear_hump_ledge", "y", 0.0, (-84, -50, 90, 156), "Saddle cover rear edge on the hump ledge", ["hump front wall = rear wall of the well", "board rear edge and cassette shown for clearance"]),
-    ("J07_hatch_frame_top", "y", 35.0, (-252, -212, 118, 168), "Hatch frame, door end plate, hump end and draw latch (top of the hatch)",
-     ["door end plate seals on the frame face through a 3 x 2 gasket", "latch on the hump roof pulls the catch on the door +x"]),
+    ("J05_saddle_cover_side", "x", -11.0, (66, 106, 90, 180), "Saddle well wall, cover ledge, grip side plate through the shoulder slot, cheek fairing on the roof, grip bar",
+     ["cover 3 mm PAHT-CF on a 6 x 2 gasket (no side screws: the board's 18 mm envelope reaches the ledge)", "side plate passes through a slot covered and RTV-sealed by the fairing; ToF lead slot beside it"]),
+    ("J06_cover_rear_corner", "x", -65.5, (56, 92, 80, 115), "Saddle cover rear-corner captive screw into the rear-deck ledge boss over the board corner",
+     ["boss underside z 97.6 = 13.0 mm above the PCB (CCR-E08 rear-corner zone 12 mm)", "board, bridge tray and top-part envelope shown"]),
+    ("J07_hatch_frame_top", "y", 35.0, (-252, -212, 118, 168), "Hatch frame, door end-plate ring, hump end and draw latch (top of the hatch)",
+     ["door end-plate ring seals on the frame face through a 3 x 2 gasket", "latch on the hump roof pulls the catch on the door +x"]),
+    ("J16_cassette_latch", "y", 0.0, (-252, -190, 36, 172), "Cassette latch: index plunger through the hump roof into the lid, folded handle, door interlock finger",
+     ["plunger pin drops 2.4 mm into the lid hole when the cassette is home (coupler mated)", "door finger stops 0.5 mm behind the home position: the door closes only on a latched cassette"]),
     ("J08_door_peg", "z", 100.0, (-254, -224, 42, 72), "Door hook slot on the jamb peg, jamb / frame joint", ["door hangs on two M4 dog-point pegs (hook-and-swing)", "skirt fits inside the jamb; frame ring is the gasket land"]),
     ("J09_sole_plate_edge", "x", None, None, "Lower hull sole ring on the chassis plate edge", ["hull wraps the plate edge; M3 countersunk from below into the sole insert", "RTV bead in the corner; plate underside flush with the hull"]),
     ("J10_hull_splice", "z", 52.0, (-88, -54, 116, 148), "Lower hull front / rear splice (x = -71)", ["flange + M3 + insert, 1 mm gasket"]),
@@ -388,6 +392,9 @@ def write_report(R, table, parts, timing):
         w(f"- {a} x {b}: {v} mm3 ({m})")
     w("\n**Declared through-wall envelope overlaps** (the purchased envelope is deliberately larger than its cut-out, e.g. a 30 mm switch body behind a 22.3 mm hole, or two mated parts modelled line-to-line):\n")
     for a, b, v, m in I["declared_overlaps"]:
+        w(f"- {a} x {b}: {v} mm3 ({m})")
+    w("\n**Coincident-face contact films** (overlap whose mean thickness 2V/A < 0.05 mm: the two parts share a surface; not a clash):\n")
+    for a, b, v, m in I.get("contact_films", []):
         w(f"- {a} x {b}: {v} mm3 ({m})")
     w(f"\nEvaluation methods: {I['methods']} ('sampled' = boolean did not finish within the time limit; overlap volume from a 1 mm point grid). Slowest pairs: {I['slowest_pairs_s']}.\n")
     w("\n## 3. Containment, floor contact, sensor rays (tool-checked)\n")
