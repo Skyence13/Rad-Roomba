@@ -1,0 +1,247 @@
+{
+ "scenario": "s10_step_and_count",
+ "evidence_class": "simulated",
+ "against": "Python protocol fakes (rr_core.fakes), virtual clock",
+ "seed": 20,
+ "sim_time_s": 405.84,
+ "checks": [
+  {
+   "check": "local Pause cleared remotely by the controlling operator, resume accepted",
+   "ok": true,
+   "result": {
+    "accepted": true
+   },
+   "mode": "ARMED_IDLE"
+  },
+  {
+   "check": "mission complete",
+   "ok": true
+  },
+  {
+   "check": "the interrupted station count was invalidated and repeated",
+   "ok": true,
+   "invalid": [
+    "T000-S003"
+   ]
+  },
+  {
+   "check": "only static SCALER gates earn credit; moving gates archived without credit",
+   "ok": true
+  },
+  {
+   "check": "every cell records method and stage",
+   "ok": true
+  },
+  {
+   "check": "hot spot flagged from static counts",
+   "ok": true,
+   "flags": [
+    [
+     "HS-0002",
+     0.9897349701084358,
+     -0.16208958185802436
+    ]
+   ]
+  },
+  {
+   "check": "alert.rest_ms raised for the series and restored afterwards (logged CONFIG_SET)",
+   "ok": true,
+   "cfgs": [
+    {
+     "key": "alert.rest_ms",
+     "value": 8500.0,
+     "why": "STEP_AND_COUNT series",
+     "ev": "config_set",
+     "t_us": 1006081000,
+     "state": "SCAN"
+    },
+    {
+     "key": "alert.rest_ms",
+     "value": 2000.0,
+     "why": "restore after STEP_AND_COUNT",
+     "ev": "config_set",
+     "t_us": 1405821000,
+     "state": "SCAN"
+    }
+   ]
+  }
+ ],
+ "passed": true,
+ "field_use_approved": false,
+ "coverage": {
+  "target_area_m2": 1.8,
+  "areas_m2": {
+   "UNVISITED": 0.8103250000000001,
+   "ACCEPTABLE": 0.7388750000000001,
+   "INSUFFICIENT_SENSITIVITY": 0.14852500000000002,
+   "INVALID_DATA": 0.00045000000000000004,
+   "BLOCKED": 0.0,
+   "EXCLUDED": 0.0,
+   "NO_DECISION": 0.0,
+   "INCOMPLETE_COVERAGE": 0.021825,
+   "ALARM": 0.08,
+   "ACQUISITION_GAP": 0.0
+  },
+  "valid_exposure_fraction": 0.5489027777777777,
+  "acceptable_fraction": 0.4104861111111111,
+  "sub_cell_m": 0.005,
+  "decision_cell_m": 0.1,
+  "position_allowance_m": 0.01,
+  "provisional": false
+ },
+ "time_sync": {
+  "limit_us": 10000.0,
+  "fits": 207,
+  "max_gate_bound_us": 838.0033213786841,
+  "median_gate_bound_us": 796.853962920742
+ },
+ "link_stats": {
+  "tx": 20621,
+  "rx": 20618,
+  "bad_lines": 0,
+  "stale": 0,
+  "duplicates": 0,
+  "gates": 4039,
+  "gaps": 0,
+  "retries": 2,
+  "unassigned_frames": 0,
+  "time_exchanges": 207,
+  "time_exchanges_rejected": 0
+ },
+ "localization_error_vs_truth_m": {
+  "max_x_m": 0.0013580685366351708,
+  "max_y_m": 0.0011757465723502836
+ },
+ "plan": {
+  "n_pairs": 2,
+  "offset_m": 0.04375,
+  "pair_stride_m": 0.33625,
+  "seam_overlap_per_side_m": 0.01625,
+  "predicted_residual": {
+   "left_wall_strip_m": 0.1487,
+   "right_wall_strip_m": 0.1487,
+   "door_end_strip_m": 0.1413,
+   "front_end_strip_m": 0.0713,
+   "end_zone_single_heading_m": {
+    "door": 0.3399,
+    "front": 0.3399
+   },
+   "note": "wall strips are set by the in-place turn radius of the outline; see README coverage section"
+  },
+  "estimated_time_s": 431.6
+ },
+ "flags": [
+  {
+   "id": "HS-0001",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 3,
+   "x_m": 0.6440835036003606,
+   "y_m": -0.32128855978540644,
+   "D": 0.10340404251174899,
+   "u_total": 0.0697235409437067,
+   "D_star": 0.10279690893099556,
+   "D_hash": 0.24265477730576787,
+   "location": {
+    "distance_from_door_m": 0.644,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.179,
+    "text": "0.64 m from the door threshold, 0.18 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0002",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 1,
+   "x_m": 0.9897349701084358,
+   "y_m": -0.16208958185802436,
+   "D": 0.5862605049628828,
+   "u_total": 0.10931860410891045,
+   "D_star": 0.07915839068747443,
+   "D_hash": 0.17481227371106806,
+   "location": {
+    "distance_from_door_m": 0.99,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.338,
+    "text": "0.99 m from the door threshold, 0.34 m from the right wall"
+   }
+  }
+ ],
+ "scan_detections": 2,
+ "observations": [],
+ "decision_status": {
+  "cells_with_gates": 120,
+  "no_decision": 0,
+  "no_decision_text": [],
+  "no_decision_within_0.5m_of_an_end": 0,
+  "cells_within_0.5m_of_an_end": 56
+ },
+ "rev5": {
+  "cells_with_data": 120,
+  "status": {
+   "INCOMPLETE COVERAGE": 7,
+   "ACCEPTABLE": 80,
+   "SENSITIVITY INSUFFICIENT": 25,
+   "ALARM": 8
+  },
+  "status_reasons": {
+   "D# above the detection goal": 25,
+   "coverage 0.26 < 0.5": 2,
+   "flagged by combined": 2,
+   "flagged by combined+lane1+lane2": 2,
+   "coverage 0.46 < 0.5": 1,
+   "coverage 0.39 < 0.5": 1,
+   "flagged by combined+lane1": 1,
+   "flagged by lane1": 1
+  },
+  "acceptable_fraction": 0.4104861111111111,
+  "median_D_hash": 0.16751197156476252,
+  "undecidable_recorded": 0,
+  "undecidable_provisional_live": 0,
+  "alarm_bookkeeping": {
+   "provisional alarm not confirmed": 4,
+   "recorded alarm (provisional alarm confirmed)": 8
+  },
+  "flags": {
+   "UNRESOLVED_EXCEEDANCE:provisional alarm not confirmed": 1,
+   "INVESTIGATION_LEVEL:recorded alarm": 1,
+   "SCAN_DETECTION:provisional alarm not confirmed": 2
+  },
+  "review_queue_items": 1,
+  "recount_required_flags": 3,
+  "one_sided_cells": 19,
+  "one_sided_alarm_cells_needing_recount": 0,
+  "search_preroll_s": [],
+  "recorded_evaluation": null,
+  "revisit": 0,
+  "position_credit": {
+   "samples": 4034,
+   "credited_fraction": 0.9997521070897373,
+   "credited_with_true_error_above_budget": 0,
+   "fraction_of_credited_above_budget": 0.0,
+   "max_true_error_when_credited_m": 0.001545643565476171,
+   "max_true_error_m": 0.001545643565476171,
+   "no_credit_reasons_samples": {
+    "X_RESIDUAL": 1
+   },
+   "localizer": {
+    "wheel_scale": {
+     "estimate": 5.108753468782487e-05,
+     "sigma": 0.00012994194054786673
+    },
+    "stats": {
+     "x_fixes": 4886,
+     "x_rejects": 1,
+     "big_corrections": 0,
+     "max_correction_m": 0.001235779032719169,
+     "deferred_scans": 26
+    }
+   }
+  }
+ },
+ "stations": 53,
+ "stations_invalid": 1,
+ "station_preset_s": 3.0,
+ "D_hash_median": 0.16751197156476252,
+ "note": "station pitch 0.10 m with a 100 mm aperture eroded by 10 mm per side leaves 20 mm uncredited stripes between stations; pitch <= L - 2e = 0.08 m closes them (CONTRACT_CHANGE_REQUESTS CR-05)",
+ "unvisited_m2": 0.8103250000000001
+}

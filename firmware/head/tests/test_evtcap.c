@@ -1,0 +1,893 @@
+/* Host tests of the event-capture logic with a synthetic model of the latch hardware:
+ * single events of every class, non-retriggering, acceptance window, forced clear, events that
+ * straddle a gate boundary, a Poisson rate sweep 10..20000 1/s and service-interrupt jitter.
+ * "Truth" is accumulated independently in the hardware model and compared EXACTLY with the
+ * gate records (counts per class per gate, busy ticks split at the boundaries). */
+#include <math.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "rrc_test.h"
+#include "rrh_evtcap.h"
+
+#define TICK_HZ 144000000u
+#define US 144u                 /* ticks per microsecond */
+#define SERVICE (10u * US)      /* 100 kHz */
+#define WINDOW (4u * US)
+#define MAX_HOLD (1000u * US)
+#define BLIND 30u               /* CLR low + latch recovery, booked for a clear that ends no event */
+#define MAX_GATES 700u
+static uint32_t g_gate = 100000u * US; /* gate length in ticks (100 ms; some tests use 1 ms) */
+#define GATE g_gate
+static uint32_t g_hold = 0u;           /* afterglow hold in ticks; 0 for the legacy tests */
+static uint32_t g_tot_min = 0u;        /* alpha width condition in ticks; 0 for the legacy tests */
+static bool g_port_overwrite;       /* emulate the 0.4/0.5 STM32 width bookkeeping: the last falling edge overwrites the width */
+static uint8_t g_width_delay[RRH_EVT_CHAINS]; /* services for which the falling-edge capture is not yet visible */
+
+/* ---- hardware model ------------------------------------------------------------------------ */
+typedef struct {
+    bool busy;
+    uint64_t start;
+    uint64_t ready_at;      /* latch can accept an edge again from this tick */
+    uint64_t lld_high_until;
+    bool uld, alpha;
+    uint64_t width;
+    bool multi;   /* a second pulse piled up before classification */
+    uint64_t accepted, lost;
+} chain_t;
+
+static chain_t hw[RRH_EVT_CHAINS];
+static rrh_evtcap_t ec;
+static uint64_t g_now, g_first_gate;
+static uint32_t g_clear_latency = 40u; /* ticks from service entry to the first clear */
+static uint64_t truth_busy[MAX_GATES][RRH_EVT_CHAINS];
+static uint32_t truth_count[MAX_GATES][RRH_EVT_CHAINS][3];
+static uint32_t truth_idle[MAX_GATES][RRH_LANES];
+static uint32_t truth_short[MAX_GATES][RRH_LANES];
+static uint32_t truth_ambig[MAX_GATES][RRH_LANES];
+static uint32_t truth_forced[MAX_GATES][RRH_EVT_CHAINS];
+static uint8_t g_width_mask = 0xFFu;
+static uint32_t heater_calls;
+static bool heater_level;
+
+static uint32_t class_of(uint32_t ch)
+{
+    if (ch < 4u) {
+        if (hw[ch].alpha) {
+            /* alpha only with a measured width >= the limit; otherwise a reject (and counted as short) */
+            const bool measured = (g_width_mask & (1u << ch)) != 0u;
+            const uint64_t wd = g_port_overwrite ? (hw[ch].lld_high_until - hw[ch].start) : hw[ch].width;
+            const bool amb = hw[ch].multi && !g_port_overwrite;
+            return (g_tot_min == 0u || (measured && (wd >= g_tot_min) && !amb)) ? 0u : 2u;
+        }
+        return hw[ch].uld ? 2u : 1u;
+    }
+    return hw[ch].uld ? 1u : 0u;
+}
+
+static uint64_t clear_cb(void *ctx, uint8_t ch)
+{
+    (void)ctx;
+    const uint64_t t = g_now + g_clear_latency + (20u * ch);
+    if (!hw[ch].busy) {
+        /* idle clear (ALPHA latch set without BUSY): counted for DIAG in the gate that contains t,
+         * the blind interval [t - BLIND, t) is dead time, split at the gate boundaries */
+        if (t >= g_first_gate) {
+            const uint64_t gi = (t - g_first_gate) / GATE;
+            if ((gi < MAX_GATES) && (ch < RRH_LANES)) {
+                truth_idle[gi][ch]++;
+            }
+            uint64_t a = (t - BLIND > g_first_gate) ? (t - BLIND) : g_first_gate;
+            while (a < t) {
+                const uint64_t g = (a - g_first_gate) / GATE;
+                const uint64_t end = g_first_gate + ((g + 1u) * (uint64_t)GATE);
+                const uint64_t b = (t < end) ? t : end;
+                if (g < MAX_GATES) {
+                    truth_busy[g][ch] += b - a;
+                }
+                a = b;
+            }
+        }
+        hw[ch].alpha = false;
+        hw[ch].uld = false;
+        hw[ch].ready_at = t;
+        return t;
+    }
+    /* independent bookkeeping: the event belongs to the gate that contains t; its busy
+     * interval [start, t) is split at every gate boundary */
+    if (t >= g_first_gate) {
+        const uint64_t gi = (t - g_first_gate) / GATE;
+        if (gi < MAX_GATES) {
+            /* The firmware asks for a clear either because the comparator is low (ready) or, after the
+             * maximum hold, although it is still high (forced): the model needs only the comparator. */
+            const bool forced = g_now < hw[ch].lld_high_until;
+            if (!forced) {
+                const uint32_t k = class_of(ch);
+                truth_count[gi][ch][k]++;
+                if ((ch < 4u) && hw[ch].alpha && (k == 2u)) {
+                    truth_short[gi][ch]++;
+                    const bool measured = (g_width_mask & (1u << ch)) != 0u;
+                    if (!measured || (hw[ch].multi && !g_port_overwrite)) {
+                        truth_ambig[gi][ch]++;
+                    }
+                }
+            } else {
+                truth_forced[gi][ch]++;
+            }
+        }
+        uint64_t a = (hw[ch].start > g_first_gate) ? hw[ch].start : g_first_gate;
+        while (a < t) {
+            const uint64_t g = (a - g_first_gate) / GATE;
+            const uint64_t end = g_first_gate + ((g + 1u) * (uint64_t)GATE);
+            const uint64_t b = (t < end) ? t : end;
+            if (g < MAX_GATES) {
+                truth_busy[g][ch] += b - a;
+            }
+            a = b;
+        }
+    }
+    hw[ch].busy = false;
+    hw[ch].uld = false;
+    hw[ch].alpha = false;
+    hw[ch].ready_at = t;
+    return t;
+}
+
+static void heater_cb(void *ctx, bool on)
+{
+    (void)ctx;
+    heater_calls++;
+    heater_level = on;
+}
+
+/* A pulse on chain ch at tick t: cls as in the firmware (floor 0 alpha, 1 beta, 2 reject;
+ * reference 0 count, 1 reject); the comparator stays high for `width` ticks. */
+static void pulse(uint32_t ch, uint64_t t, uint32_t cls, uint32_t width)
+{
+    chain_t *c = &hw[ch];
+    if (c->busy || (t < c->ready_at) || (t < c->lld_high_until)) {
+        c->lost++; /* non-retriggerable: no new edge, nothing changes */
+        return;
+    }
+    c->busy = true;
+    c->start = t;
+    c->lld_high_until = t + width;
+    c->width = width;
+    c->multi = false;
+    if (ch < 4u) {
+        c->alpha = cls == 0u;
+        c->uld = cls == 2u;
+    } else {
+        c->uld = cls == 1u;
+    }
+    c->accepted++;
+}
+
+static void service_at(uint64_t t)
+{
+    rrh_evt_in_t in;
+    memset(&in, 0, sizeof in);
+    g_now = t;
+    for (uint32_t ch = 0; ch < RRH_EVT_CHAINS; ch++) {
+        const uint8_t bit = (uint8_t)(1u << ch);
+        if (hw[ch].busy) {
+            in.busy |= bit;
+            in.start_tick[ch] = hw[ch].start;
+        }
+        if (t >= hw[ch].lld_high_until) {
+            in.lld_low |= bit;
+            if (hw[ch].busy) {
+                /* the port's falling-edge capture: time over threshold of the triggering pulse */
+                if (g_width_delay[ch] == 0u) {
+                    in.width_valid |= bit;
+                    in.width_ticks[ch] = (uint32_t)(g_port_overwrite ? (hw[ch].lld_high_until - hw[ch].start) : hw[ch].width);
+                    if (hw[ch].multi && !g_port_overwrite) {
+                        in.width_multi |= bit;
+                    }
+                } else {
+                    g_width_delay[ch]--;
+                }
+            }
+        }
+        if (hw[ch].uld) {
+            in.uld |= bit;
+        }
+        if (hw[ch].alpha) {
+            in.alpha |= bit;
+        }
+    }
+    rrh_evtcap_service(&ec, t, &in);
+}
+
+static void setup(uint64_t first_gate)
+{
+    /* width histogram on all chains, bin edges 150 ns, 400 ns, 2 us */
+    const rrh_evt_cfg_t cfg = {TICK_HZ, WINDOW, MAX_HOLD, clear_cb, heater_cb, NULL, g_width_mask,
+                               {(150u * US) / 1000u, (400u * US) / 1000u, 2u * US}, {150u, 400u, 2000u}, BLIND};
+    memset(hw, 0, sizeof hw);
+    memset(truth_busy, 0, sizeof truth_busy);
+    memset(truth_count, 0, sizeof truth_count);
+    memset(truth_idle, 0, sizeof truth_idle);
+    memset(truth_short, 0, sizeof truth_short);
+    memset(truth_ambig, 0, sizeof truth_ambig);
+    memset(truth_forced, 0, sizeof truth_forced);
+    memset(g_width_delay, 0, sizeof g_width_delay);
+    heater_calls = 0u;
+    heater_level = false;
+    g_clear_latency = 40u;
+    g_first_gate = first_gate;
+    rrh_evtcap_init(&ec, &cfg);
+    rrh_evtcap_set_alpha_hold(&ec, g_hold);
+    rrh_evtcap_set_alpha_tot_min(&ec, g_tot_min);
+    CHECK(rrh_evtcap_start(&ec, first_gate, GATE));
+}
+
+static void run_services(uint64_t from, uint64_t to)
+{
+    for (uint64_t t = from; t <= to; t += SERVICE) {
+        service_at(t);
+    }
+}
+
+/* Compare one popped record with the independent truth of gate index gi. */
+static void check_record(const rrh_gate_record_t *r, uint32_t gi)
+{
+    CHECK(r->gate_start_tick == g_first_gate + ((uint64_t)r->sequence * GATE));
+    CHECK((r->gate_ticks == GATE) && (r->tick_hz == TICK_HZ));
+    for (uint32_t l = 0; l < RRH_LANES; l++) {
+        const rrh_gate_lane_t *g = &r->lane[l];
+        CHECK(g->alpha_counts == truth_count[gi][l][0]);
+        CHECK(g->beta_counts == truth_count[gi][l][1]);
+        CHECK(g->floor_reject_counts == truth_count[gi][l][2]);
+        CHECK(g->ref_counts == truth_count[gi][l + 4u][0]);
+        CHECK(g->ref_reject_counts == truth_count[gi][l + 4u][1]);
+        CHECK(g->alpha_idle_clears == truth_idle[gi][l]);
+        CHECK(g->alpha_short_counts == truth_short[gi][l]);
+        CHECK(g->alpha_ambig_counts == truth_ambig[gi][l]);
+        CHECK(g->floor_forced_counts == truth_forced[gi][l]);
+        CHECK(g->ref_forced_counts == truth_forced[gi][l + 4u]);
+        CHECK((uint64_t)g->floor_live_ticks + truth_busy[gi][l] == GATE);      /* live + busy = span, exactly */
+        CHECK((uint64_t)g->ref_live_ticks + truth_busy[gi][l + 4u] == GATE);
+    }
+}
+
+/* ---- tests ------------------------------------------------------------------------------------ */
+static void test_single_events_of_each_class(void)
+{
+    rrh_gate_record_t r;
+    setup(1000u * US);
+    const uint64_t t0 = 2000u * US;
+    run_services(0u, t0);                     /* idle until just before the events */
+    pulse(0u, t0 + 7u, 0u, 300u);            /* floor 0: alpha */
+    pulse(1u, t0 + 300u, 1u, 100u);          /* floor 1: beta */
+    pulse(2u, t0 + 900u, 2u, 100u);          /* floor 2: reject */
+    pulse(4u, t0 + 50u, 0u, 100u);           /* ref 0: count */
+    pulse(5u, t0 + 1300u, 1u, 100u);         /* ref 1: reject */
+    run_services(t0 + SERVICE, 1000u * US + GATE + SERVICE);
+    CHECK(rrh_evtcap_pop(&ec, &r));
+    check_record(&r, 0u);
+    CHECK(r.sequence == 0u);
+    CHECK((r.lane[0].alpha_counts == 1u) && (r.lane[0].beta_counts == 0u) && (r.lane[0].floor_reject_counts == 0u));
+    CHECK((r.lane[1].alpha_counts == 0u) && (r.lane[1].beta_counts == 1u) && (r.lane[1].floor_reject_counts == 0u));
+    CHECK((r.lane[2].alpha_counts == 0u) && (r.lane[2].beta_counts == 0u) && (r.lane[2].floor_reject_counts == 1u));
+    CHECK((r.lane[0].ref_counts == 1u) && (r.lane[0].ref_reject_counts == 0u));
+    CHECK((r.lane[1].ref_counts == 0u) && (r.lane[1].ref_reject_counts == 1u));
+    CHECK((r.lane[3].beta_counts == 0u) && (r.lane[3].floor_live_ticks == GATE) && (r.lane[3].flags == 0u)); /* a true zero */
+    /* pulse widths: 300 ticks = 2.08 us -> last bin; 100 ticks = 694 ns -> bin 2 (400 ns .. 2 us) */
+    CHECK((r.width_mask == 0xFFu) && (r.width_edges_ns[0] == 150u) && (r.width_edges_ns[2] == 2000u));
+    CHECK((r.width_hist[0][3] == 1u) && (r.width_hist[0][0] + r.width_hist[0][1] + r.width_hist[0][2] == 0u));
+    CHECK((r.width_hist[1][2] == 1u) && (r.width_hist[2][2] == 1u) && (r.width_hist[4][2] == 1u) && (r.width_hist[5][2] == 1u));
+    CHECK(r.width_hist[3][0] + r.width_hist[3][1] + r.width_hist[3][2] + r.width_hist[3][3] == 0u);
+    /* dead time of the alpha event: from the captured start to the measured clear, which is the
+     * first service at least one window after the start (+ the model's clear latency) */
+    const uint64_t first_service = (((t0 + 7u + WINDOW) + SERVICE - 1u) / SERVICE) * SERVICE;
+    CHECK(GATE - r.lane[0].floor_live_ticks == (first_service + 40u) - (t0 + 7u));
+    CHECK(ec.total_events == 5u);
+}
+
+static void test_non_retriggering_window_and_forced_clear(void)
+{
+    rrh_gate_record_t r;
+    setup(0u);
+    /* second and third pulse while BUSY: no effect at all */
+    pulse(1u, 500u * US, 1u, 100u);
+    pulse(1u, 500u * US + 200u, 2u, 100u);
+    pulse(1u, 500u * US + 400u, 0u, 100u);
+    CHECK((hw[1].accepted == 1u) && (hw[1].lost == 2u));
+    /* not classified before the window has elapsed, however often the service runs */
+    service_at(500u * US + 100u);
+    service_at(500u * US + WINDOW - 1u);
+    CHECK(hw[1].busy && (ec.total_events == 0u));
+    service_at(500u * US + WINDOW);
+    CHECK(!hw[1].busy && (ec.total_events == 1u));
+    service_at(500u * US + WINDOW + 10u);
+    CHECK(ec.total_events == 1u); /* one event, one count */
+    /* a long pulse (slow alpha tail): classification waits for the comparator to return low */
+    pulse(0u, 2000u * US, 0u, 60u * US);
+    run_services(2000u * US, 2000u * US + 50u * US);
+    CHECK(hw[0].busy && (ec.total_events == 1u));
+    run_services(2000u * US + 60u * US, 2000u * US + 70u * US);
+    CHECK(!hw[0].busy && (ec.total_events == 2u));
+    /* comparator stuck high: forced clear after the maximum hold, flagged, not counted */
+    pulse(6u, 5000u * US, 0u, 5000u * US);
+    run_services(5000u * US, 5000u * US + 1100u * US);
+    CHECK(!hw[6].busy && (ec.total_forced == 1u) && (ec.total_events == 2u));
+    run_services(6200u * US, GATE + SERVICE);
+    CHECK(rrh_evtcap_pop(&ec, &r));
+    check_record(&r, 0u);
+    CHECK((r.lane[2].flags & RRH_GF_REF_SATURATED) != 0u);
+    CHECK(r.lane[2].ref_counts == 0u);
+    CHECK(GATE - r.lane[2].ref_live_ticks >= MAX_HOLD);
+    CHECK((r.lane[1].beta_counts == 1u) && (r.lane[0].alpha_counts == 1u) && (r.lane[1].flags == 0u));
+    /* blind chain: comparator high, latch not set -> flagged in that gate (never a clean zero) */
+    hw[7].lld_high_until = GATE + 50000u * US;
+    run_services(GATE + 2u * SERVICE, 2u * GATE + SERVICE);
+    CHECK(rrh_evtcap_pop(&ec, &r));
+    CHECK((r.lane[3].flags & RRH_GF_REF_SATURATED) != 0u);
+    CHECK((r.lane[0].flags == 0u) && (r.lane[2].flags == 0u));
+}
+
+static void test_event_straddling_a_gate_boundary(void)
+{
+    rrh_gate_record_t a, b;
+    setup(0u);
+    run_services(0u, GATE - 2u * SERVICE);
+    /* (1) reference chain 1: ready at the last service BEFORE the boundary, but the clear itself
+     *     lands after it (exaggerated clear latency): the boundary is crossed inside one service */
+    const uint64_t s2 = GATE - SERVICE - WINDOW - 5u;
+    pulse(5u, s2, 0u, 100u);
+    g_clear_latency = SERVICE + 300u;
+    service_at(GATE - SERVICE);
+    g_clear_latency = 40u;
+    /* (2) floor chain 1: starts 3 us before the boundary, window still open at the boundary
+     *     service, classified by the next one */
+    const uint64_t s1 = GATE - 3u * US;
+    pulse(1u, s1, 1u, 100u);
+    run_services(GATE, 2u * GATE + SERVICE);
+    CHECK(rrh_evtcap_pop(&ec, &a) && rrh_evtcap_pop(&ec, &b));
+    check_record(&a, 0u);
+    check_record(&b, 1u);
+    /* counted once, in the gate that contains the clear */
+    CHECK((a.lane[1].beta_counts == 0u) && (b.lane[1].beta_counts == 1u));
+    CHECK((a.lane[1].ref_counts == 0u) && (b.lane[1].ref_counts == 1u));
+    /* busy time split exactly at the boundary */
+    CHECK(GATE - a.lane[1].floor_live_ticks == 3u * US);
+    CHECK(GATE - b.lane[1].floor_live_ticks == SERVICE + 40u + 20u); /* boundary .. clear at the second service */
+    CHECK(GATE - a.lane[1].ref_live_ticks == GATE - s2);
+    CHECK(GATE - b.lane[1].ref_live_ticks == (GATE - SERVICE + SERVICE + 300u + 100u) - GATE);
+    CHECK((a.sequence == 0u) && (b.sequence == 1u));
+    CHECK(b.gate_start_tick == a.gate_start_tick + a.gate_ticks);   /* contiguous, equal gates */
+}
+
+static uint64_t rng_state;
+static double rnd(void)
+{
+    rng_state ^= rng_state >> 12;
+    rng_state ^= rng_state << 25;
+    rng_state ^= rng_state >> 27;
+    return ((double)((rng_state * 0x2545F4914F6CDD1DuLL) >> 11) + 0.5) / 9007199254740992.0;
+}
+
+/* Poisson arrivals of `rate` per second on all 8 chains for `seconds`; services at 100 kHz with
+ * optional jitter (ticks) and occasional late services. Returns via pointers the totals. */
+static void poisson_run(double rate, double seconds, uint32_t jitter, bool hiccups, double *counted_rate,
+                        double *corrected_rate, double *dead_fraction)
+{
+    static uint64_t next[RRH_EVT_CHAINS];
+    const double mean_gap = (double)TICK_HZ / rate;
+    const uint32_t gates = (uint32_t)(seconds * 10.0);
+    rrh_gate_record_t r;
+    static rrh_gate_record_t prev;
+    bool have_prev = false;
+    setup(SERVICE * 5u);
+    for (uint32_t ch = 0; ch < RRH_EVT_CHAINS; ch++) {
+        next[ch] = (uint64_t)(-log(rnd()) * mean_gap);
+    }
+    uint64_t counts = 0u, live = 0u, popped = 0u;
+    const uint64_t end = g_first_gate + ((uint64_t)gates * GATE) + (3u * SERVICE);
+    uint64_t t = 0u;
+    while (t <= end) {
+        uint64_t ts = t;
+        if (jitter != 0u) {
+            ts += (uint64_t)(rnd() * (double)jitter);
+        }
+        if (hiccups && (rnd() < 0.001)) {
+            ts += 5u * SERVICE; /* a service that comes 50 us late */
+            t += 5u * SERVICE;
+        }
+        for (uint32_t ch = 0; ch < RRH_EVT_CHAINS; ch++) {
+            while (next[ch] <= ts) {
+                const double u = rnd();
+                uint32_t cls;
+                uint32_t width;
+                if (ch < 4u) {
+                    cls = (u < 0.05) ? 0u : ((u < 0.15) ? 2u : 1u);
+                    width = (cls == 0u) ? (6u * US) : 40u; /* alpha pulses are long, fast ones ~0.3 us */
+                } else {
+                    cls = (u < 0.1) ? 1u : 0u;
+                    width = 40u;
+                }
+                pulse(ch, next[ch], cls, width);
+                next[ch] += 1u + (uint64_t)(-log(rnd()) * mean_gap);
+            }
+        }
+        service_at(ts);
+        while (rrh_evtcap_pop(&ec, &r)) {
+            CHECK(r.sequence == popped);
+            /* Exact agreement with the hardware model. A record is compared one gate later, when
+             * every event that was still open at its closing boundary has been cleared and booked
+             * by the model as well. */
+            if (have_prev && (prev.sequence < MAX_GATES)) {
+                check_record(&prev, prev.sequence);
+            }
+            prev = r;
+            have_prev = true;
+            for (uint32_t l = 0; l < RRH_LANES; l++) {
+                /* width histogram: every classified event is in exactly one bin; alpha pulses
+                 * (6 us) in the last bin, everything else (40 ticks = 278 ns) in bin 1 */
+                CHECK(r.width_hist[l][3] == r.lane[l].alpha_counts);
+                CHECK(r.width_hist[l][1] == r.lane[l].beta_counts + r.lane[l].floor_reject_counts);
+                CHECK(r.width_hist[4u + l][1] == r.lane[l].ref_counts + r.lane[l].ref_reject_counts);
+                CHECK((r.width_hist[l][0] == 0u) && (r.width_hist[l][2] == 0u));
+                CHECK(r.lane[l].flags == 0u);
+                counts += (uint64_t)r.lane[l].alpha_counts + r.lane[l].beta_counts + r.lane[l].floor_reject_counts +
+                          r.lane[l].ref_counts + r.lane[l].ref_reject_counts;
+                live += (uint64_t)r.lane[l].floor_live_ticks + r.lane[l].ref_live_ticks;
+            }
+            popped++;
+        }
+        t += SERVICE;
+    }
+    CHECK(popped == gates);
+    CHECK(ec.lost_gates == 0u);
+    /* conservation: every accepted hardware event is in exactly one gate (at most one per chain
+     * may still be open or fall into the unfinished gate at the end) */
+    uint64_t accepted = 0u;
+    for (uint32_t ch = 0; ch < RRH_EVT_CHAINS; ch++) {
+        accepted += hw[ch].accepted;
+    }
+    CHECK((accepted >= counts) && ((accepted - counts) <= 2u * RRH_EVT_CHAINS + (uint64_t)(rate * 8.0 * 1e-4 * 4.0)));
+    const double total_s = (double)gates * 0.1 * 8.0; /* chain-seconds */
+    *counted_rate = (double)counts / total_s;
+    *corrected_rate = (double)counts / ((double)live / (double)TICK_HZ);
+    *dead_fraction = 1.0 - (((double)live / (double)TICK_HZ) / total_s);
+}
+
+static void test_poisson_rate_sweep(void)
+{
+    static const double rates[] = {10.0, 100.0, 1000.0, 5000.0, 20000.0};
+    static const double secs[] = {60.0, 20.0, 5.0, 2.0, 2.0};
+    rng_state = 0x1234567887654321uLL;
+    for (size_t i = 0; i < sizeof rates / sizeof rates[0]; i++) {
+        double counted, corrected, dead;
+        poisson_run(rates[i], secs[i], 0u, false, &counted, &corrected, &dead);
+        const double n = rates[i] * secs[i] * 8.0;
+        const double tol = (4.0 / sqrt(n)) + 0.002; /* 4 sigma of the Poisson total + 0.2 % */
+        printf("    true %8.1f /s  counted %9.2f /s  live-time corrected %9.2f /s  dead %6.3f %%  (tolerance %.2f %%)\n",
+               rates[i], counted, corrected, dead * 100.0, tol * 100.0);
+        CHECK(fabs((corrected / rates[i]) - 1.0) < tol);       /* measured live time recovers the true rate */
+        CHECK(counted <= rates[i] * (1.0 + tol));
+        if (rates[i] >= 5000.0) {
+            CHECK(counted < rates[i] * 0.97);                  /* losses are real at high rate ... */
+            CHECK(dead > 0.03);                                /* ... and visible as dead time */
+        }
+        /* mean dead time per event stays between the window and window + one service period + clear latency */
+        const double per_event_us = (dead / counted) * 1e6;
+        CHECK((per_event_us >= 4.0) && (per_event_us <= 4.0 + 10.0 + 2.5 + 6.0));
+    }
+}
+
+static void test_service_jitter_tolerance(void)
+{
+    double counted, corrected, dead, counted0, corrected0, dead0;
+    rng_state = 0xDEADBEEFCAFEF00DuLL;
+    poisson_run(5000.0, 3.0, 0u, false, &counted0, &corrected0, &dead0);
+    rng_state = 0xDEADBEEFCAFEF00DuLL;
+    /* up to 6 us of jitter on every service and one in a thousand arriving 50 us late */
+    poisson_run(5000.0, 3.0, 6u * US, true, &counted, &corrected, &dead);
+    printf("    jitter-free: corrected %.1f /s, dead %.3f %%;  jittered: corrected %.1f /s, dead %.3f %%\n", corrected0,
+           dead0 * 100.0, corrected, dead * 100.0);
+    const double tol = (4.0 / sqrt(5000.0 * 3.0 * 8.0)) + 0.002;
+    CHECK(fabs((corrected / 5000.0) - 1.0) < tol);   /* still unbiased: the dead time is measured */
+    CHECK(dead > dead0);                             /* jitter only costs live time, and that is accounted */
+}
+
+static void test_gates_heater_stop_and_overflow(void)
+{
+    rrh_gate_record_t r;
+    setup(0u);
+    /* heater: requested mid-gate, switched only on the boundary; the first gate after the switch is marked */
+    run_services(0u, GATE / 2u);
+    rrh_evtcap_heater_request(&ec, true);
+    CHECK((heater_calls == 0u) && !heater_level);
+    run_services(GATE / 2u + SERVICE, GATE + SERVICE);
+    CHECK((heater_calls == 1u) && heater_level);
+    CHECK(rrh_evtcap_pop(&ec, &r) && (r.heater_on_ticks == 0u) && !r.heater_transition_in_gate);
+    run_services(GATE + 2u * SERVICE, 2u * GATE + SERVICE);
+    CHECK(rrh_evtcap_pop(&ec, &r) && (r.heater_on_ticks == GATE) && r.heater_transition_in_gate);
+    run_services(2u * GATE + 2u * SERVICE, 3u * GATE + SERVICE);
+    CHECK(rrh_evtcap_pop(&ec, &r) && (r.heater_on_ticks == GATE) && !r.heater_transition_in_gate);
+    /* disabled chain: cleared, never counted, live 0 + INVALID */
+    rrh_evtcap_set_chain_enable(&ec, 0xFBu);
+    pulse(2u, 3u * GATE + 1000u, 1u, 100u);
+    pulse(3u, 3u * GATE + 1000u, 1u, 100u);
+    /* stop in the middle of gate 3: that gate is completed, then nothing more; heater off with it */
+    run_services(3u * GATE + 2u * SERVICE, 3u * GATE + GATE / 3u);
+    CHECK(rrh_evtcap_stop(&ec, 3u * GATE + GATE / 3u));
+    CHECK(rrh_evtcap_running(&ec) && heater_level);
+    run_services(3u * GATE + GATE / 3u + SERVICE, 5u * GATE);
+    CHECK(rrh_evtcap_pop(&ec, &r) && (r.sequence == 3u));
+    CHECK((r.lane[2].flags == RRH_GF_FLOOR_INVALID) && (r.lane[2].floor_live_ticks == 0u) && (r.lane[2].beta_counts == 0u));
+    CHECK((r.lane[3].flags == 0u) && (r.lane[3].beta_counts == 1u));
+    CHECK(!rrh_evtcap_pop(&ec, &r) && !rrh_evtcap_running(&ec));
+    CHECK(!heater_level && (heater_calls == 2u));
+    CHECK(!hw[2].busy); /* the disabled chain was still cleared */
+    /* stop before the first gate started: nothing is delivered */
+    CHECK(rrh_evtcap_start(&ec, 6u * GATE, GATE));
+    CHECK(!rrh_evtcap_stop(&ec, 5u * GATE + 10u) && !rrh_evtcap_running(&ec));
+    /* main loop not popping: after RRH_EVT_FIFO - 1 stored gates further ones are dropped and counted */
+    g_first_gate = 10u * GATE;
+    CHECK(rrh_evtcap_start(&ec, g_first_gate, GATE));
+    run_services(10u * GATE, 16u * GATE + SERVICE);
+    CHECK(ec.lost_gates == 6u - (RRH_EVT_FIFO - 1u));
+    uint32_t got = 0u, last = 0u;
+    while (rrh_evtcap_pop(&ec, &r)) {
+        last = r.sequence;
+        got++;
+    }
+    CHECK((got == RRH_EVT_FIFO - 1u) && (last == RRH_EVT_FIFO - 2u));
+    run_services(16u * GATE + 2u * SERVICE, 17u * GATE + SERVICE);
+    CHECK(rrh_evtcap_pop(&ec, &r) && (r.sequence == 6u)); /* the loss is visible as a sequence skip */
+    rrh_evtcap_abort(&ec);
+    CHECK(!rrh_evtcap_running(&ec));
+    /* a port without width measurement: the record says so and the histogram stays empty */
+    g_width_mask = 0u;
+    setup(20u * GATE);
+    g_width_mask = 0xFFu;
+    run_services(20u * GATE, 20u * GATE + 5u * SERVICE);
+    pulse(1u, 20u * GATE + 5u * SERVICE + 3u, 1u, 100u);
+    run_services(20u * GATE + 6u * SERVICE, 21u * GATE + SERVICE);
+    CHECK(rrh_evtcap_pop(&ec, &r) && (r.lane[1].beta_counts == 1u) && (r.width_mask == 0u));
+    CHECK(r.width_hist[1][0] + r.width_hist[1][1] + r.width_hist[1][2] + r.width_hist[1][3] == 0u);
+    rrh_evtcap_abort(&ec);
+    /* without gates a heater request acts at once */
+    rrh_evtcap_heater_request(&ec, true);
+    CHECK(heater_level);
+    rrh_evtcap_heater_request(&ec, false);
+    CHECK(!heater_level);
+}
+
+
+static rrh_gate_record_t g_coll[64];
+static uint32_t g_ncoll;
+static void collect(void)
+{
+    while ((g_ncoll < 64u) && rrh_evtcap_pop(&ec, &g_coll[g_ncoll])) {
+        g_ncoll++;
+    }
+}
+static void run_collect(uint64_t from, uint64_t to)
+{
+    for (uint64_t t = from; t <= to; t += SERVICE) {
+        service_at(t);
+        collect();
+    }
+}
+
+/* ---- IB-18 and the event-capture review questions ---------------------------------------------- */
+static void with_gate(uint32_t ticks) { g_gate = ticks; }
+static void default_gate(void) { g_gate = 100000u * US; }
+
+static void test_alpha_afterglow_hold(void)
+{
+    rrh_gate_record_t r;
+    g_hold = 150u * US;
+    setup(0u);
+    run_services(0u, 1000u * US);
+    const uint64_t t0 = 1000u * US + 7u;
+    pulse(0u, t0, 0u, 6u * US);                  /* alpha, comparator high 6 us */
+    pulse(1u, t0, 1u, 40u);                      /* beta on another chain: no hold */
+    run_services(1000u * US + SERVICE, 1000u * US + 60u * US);
+    CHECK(hw[0].busy && !hw[1].busy);            /* alpha chain still held, beta chain cleared */
+    pulse(0u, 1000u * US + 30u * US, 1u, 40u);   /* a pulse during the hold: ignored (BUSY) */
+    CHECK(hw[0].lost == 1u);
+    run_services(1000u * US + 60u * US + SERVICE, 1000u * US + 400u * US);
+    CHECK(!hw[0].busy && (ec.total_held == 1u) && (ec.total_events == 2u));
+    /* ready at the first service >= start + window with the comparator low (here the one after 6 us),
+     * cleared by the first service >= ready + hold */
+    run_services(1000u * US + 400u * US + SERVICE, GATE + SERVICE);
+    CHECK(rrh_evtcap_pop(&ec, &r));
+    check_record(&r, 0u);                        /* counts and busy equal the independent model, exactly */
+    CHECK(r.lane[0].alpha_counts == 1u);
+    const uint64_t ready = (((t0 + 6u * US) + SERVICE - 1u) / SERVICE) * SERVICE;
+    const uint64_t clear = ((ready + 150u * US + SERVICE - 1u) / SERVICE) * SERVICE + 40u;
+    CHECK(GATE - r.lane[0].floor_live_ticks == clear - t0);
+    CHECK(GATE - r.lane[1].floor_live_ticks < 20u * US); /* the beta chain paid no hold */
+    /* afterglow keeps the comparator high beyond the hold: wait for it to fall; counted once */
+    default_gate();
+    setup(0u);
+    run_services(0u, 500u * US);
+    pulse(2u, 500u * US + 3u, 0u, 400u * US);    /* high for 400 us > window + hold */
+    run_services(500u * US + SERVICE, 1200u * US);
+    CHECK(!hw[2].busy && (ec.total_events == 1u) && (ec.total_forced == 0u));
+    /* high 1.1 ms: still high when the hold has run out and the maximum hold has passed -> forced, flagged */
+    setup(0u);
+    run_services(0u, 500u * US);
+    pulse(3u, 500u * US + 3u, 0u, 1100u * US);
+    run_services(500u * US + SERVICE, 2000u * US);
+    CHECK(!hw[3].busy && (ec.total_forced == 1u) && (ec.total_events == 0u));
+    g_hold = 0u;
+}
+
+static void test_idle_alpha_latch_is_cleared(void)
+{
+    rrh_gate_record_t r;
+    setup(0u);
+    run_services(0u, 1000u * US);
+    hw[2].alpha = true;                           /* slow light below BETA_LLD: ALPHA set, BUSY not */
+    service_at(1000u * US + SERVICE);
+    CHECK(hw[2].alpha);                           /* one service is not enough */
+    service_at(1000u * US + 2u * SERVICE);
+    CHECK(!hw[2].alpha && (ec.total_idle_alpha_clears == 1u));
+    /* a real alpha event whose capture flag lags the latch read-back by one service must NOT be wiped */
+    const uint64_t t = 3000u * US;
+    run_services(1000u * US + 3u * SERVICE, t);
+    pulse(1u, t + 5u, 0u, 300u);
+    const uint8_t keep = hw[1].busy;
+    (void)keep;
+    hw[1].busy = false;                           /* hidden from the port for this service ... */
+    hw[1].alpha = true;
+    service_at(t + SERVICE);
+    CHECK(hw[1].alpha && (ec.total_idle_alpha_clears == 1u));
+    hw[1].busy = true;
+    run_services(t + 2u * SERVICE, t + 40u * SERVICE);
+    CHECK(ec.total_idle_alpha_clears == 1u && (ec.total_events == 1u));
+    run_services(t + 41u * SERVICE, GATE + SERVICE);
+    CHECK(rrh_evtcap_pop(&ec, &r));
+    check_record(&r, 0u);
+    CHECK(r.lane[2].alpha_idle_clears == 1u);
+    CHECK(r.lane[1].alpha_counts == 1u);          /* class survived */
+    CHECK(GATE - r.lane[2].floor_live_ticks == BLIND); /* the blind clear is dead time, nothing else */
+}
+
+static void test_latch_clear_crossing_a_gate_boundary(void)
+{
+    rrh_gate_record_t a, b;
+    with_gate(1000u * US);                        /* 1 ms gates: several boundaries inside a late service */
+    setup(0u);
+    run_services(0u, GATE - 3u * SERVICE);
+    /* (1) idle ALPHA clear whose blind interval [t-30, t) straddles the boundary */
+    hw[0].alpha = true;
+    service_at(GATE - 2u * SERVICE);
+    g_clear_latency = 2u * SERVICE - 10u;         /* clear returns GATE + SERVICE - 10 - 10... just past the boundary */
+    service_at(GATE - SERVICE);
+    g_clear_latency = 40u;
+    CHECK(!hw[0].alpha);
+    run_services(GATE, 3u * GATE);
+    CHECK(rrh_evtcap_pop(&ec, &a) && rrh_evtcap_pop(&ec, &b));
+    check_record(&a, 0u);
+    check_record(&b, 1u);
+    CHECK(a.lane[0].alpha_idle_clears + b.lane[0].alpha_idle_clears == 1u);
+    CHECK((GATE - a.lane[0].floor_live_ticks) + (GATE - b.lane[0].floor_live_ticks) == BLIND);
+    default_gate();
+}
+
+static void test_service_late_by_more_than_one_period(void)
+{
+    rrh_gate_record_t r;
+    uint32_t got = 0u;
+    g_ncoll = 0u;
+    with_gate(1000u * US);
+    setup(0u);
+    run_collect(0u, 3000u * US);
+    /* events start, end, and sit BUSY while the service interrupt is blocked for 37 us, 2.5 gates and 4 gates */
+    static const uint32_t late_us[3] = {37u, 2500u, 2900u}; /* a service late by more than 3 gates overflows the 4-slot FIFO: see README */
+    uint64_t t = 3000u * US;
+    for (uint32_t i = 0; i < 3u; i++) {
+        pulse(0u, t + 100u, 1u, 40u);
+        pulse(5u, t + 200u, 0u, 40u);
+        pulse(1u, t + 300u, 0u, 100u);            /* alpha */
+        t += (uint64_t)late_us[i] * US;
+        service_at(t);                            /* the late service: boundaries passed inside it */
+        collect();
+        run_collect(t + SERVICE, t + 400u * US);
+        t += 400u * US + SERVICE;
+    }
+    run_collect(t, t + 3u * GATE);
+    for (uint32_t i = 0; i + 1u < g_ncoll; i++) {
+        r = g_coll[i];
+        check_record(&r, r.sequence);             /* live + busy == span and counts == model, in every gate */
+        got++;
+    }
+    CHECK(got >= 10u);
+    CHECK(ec.total_events == 9u);                 /* every event counted exactly once, none forced */
+    CHECK(ec.total_forced == 0u && ec.lost_gates == 0u);
+    default_gate();
+}
+
+static void test_chain_held_by_a_long_tail(void)
+{
+    rrh_gate_record_t r;
+    g_ncoll = 0u;
+    with_gate(1000u * US);
+    setup(0u);
+    run_collect(0u, 2000u * US);
+    pulse(4u, 2000u * US + 5u, 0u, 600u * US);    /* reference chain: 600 us tail */
+    run_collect(2000u * US + SERVICE, 2500u * US);
+    pulse(6u, 2500u * US + 3u, 0u, 2300u * US);   /* 2.3 ms: forced at the maximum hold, then blind while still high */
+    run_collect(2500u * US + SERVICE, 2900u * US);
+    pulse(5u, 2900u * US + 3u, 0u, 900u * US);    /* 900 us tail across the 3 ms boundary: split exactly, counted in gate 3 */
+    run_collect(2900u * US + SERVICE, 6000u * US);
+    CHECK(ec.total_events == 2u && ec.total_forced == 1u);
+    uint32_t sat = 0u;
+    for (uint32_t i = 0; i + 1u < g_ncoll; i++) {
+        r = g_coll[i];
+        check_record(&r, r.sequence);
+        if (r.sequence == 2u) {
+            CHECK(r.lane[0].ref_counts == 1u);
+            CHECK(r.lane[0].floor_live_ticks == GATE && (GATE - r.lane[0].ref_live_ticks) >= 600u * US);
+        }
+        if ((r.lane[2].flags & RRH_GF_REF_SATURATED) != 0u) {
+            sat++;                                 /* forced event and the blind tail flag the gates they touch */
+        }
+    }
+    CHECK(sat >= 2u);
+    default_gate();
+}
+
+static void test_poisson_sweep_with_afterglow_hold(void)
+{
+    static const double rates[] = {10.0, 100.0, 1000.0, 5000.0, 20000.0};
+    static const double secs[] = {60.0, 20.0, 5.0, 2.0, 2.0};
+    g_hold = 300u * US;
+    rng_state = 0x1234567887654321uLL;
+    for (size_t i = 0; i < sizeof rates / sizeof rates[0]; i++) {
+        double counted, corrected, dead;
+        poisson_run(rates[i], secs[i], 0u, false, &counted, &corrected, &dead);
+        const double n = rates[i] * secs[i] * 8.0;
+        const double tol = (4.0 / sqrt(n)) + 0.002;    /* the same tolerance as the sweep without the hold */
+        printf("    hold 300 us: true %8.1f /s  counted %9.2f /s  corrected %9.2f /s  dead %6.3f %%\n", rates[i], counted,
+               corrected, dead * 100.0);
+        CHECK(fabs((corrected / rates[i]) - 1.0) < tol);
+        /* 5 % alpha events on the floor chains pay the hold: mean dead time per event grows by about 0.05 x 150 us / 2 */
+        const double per_event_us = (dead / counted) * 1e6;
+        CHECK((per_event_us >= 4.0) && (per_event_us <= 4.0 + 10.0 + 2.5 + 6.0 + 5.0));
+    }
+    g_hold = 0u;
+}
+
+
+static void test_bright_beta_is_not_alpha(void)
+{
+    rrh_gate_record_t r;
+    g_tot_min = 36u;                                  /* 250 ns at 144 MHz */
+    setup(0u);
+    run_services(0u, 1000u * US);
+    const uint64_t t = 1000u * US + 9u;
+    pulse(0u, t, 0u, 6u * US);                        /* ZnS alpha: long pulse, ALPHA set -> alpha */
+    pulse(1u, t, 0u, 22u);                            /* bright beta: ALPHA set, 158 ns -> reject + alpha_short, NOT alpha */
+    pulse(2u, t, 1u, 22u);                            /* ordinary beta: ALPHA clear -> beta window */
+    run_services(1000u * US + SERVICE, 1000u * US + 300u * US);
+    pulse(3u, 1000u * US + 300u * US + 3u, 0u, 36u);  /* exactly at the limit: alpha */
+    run_services(1000u * US + 300u * US + SERVICE, 1000u * US + 700u * US);
+    pulse(3u, 1000u * US + 700u * US + 3u, 0u, 35u);  /* one tick short: reject */
+    run_services(1000u * US + 700u * US + SERVICE, GATE + SERVICE);
+    CHECK(rrh_evtcap_pop(&ec, &r));
+    check_record(&r, 0u);                             /* equals the independent model, exactly */
+    CHECK((r.lane[0].alpha_counts == 1u) && (r.lane[0].alpha_short_counts == 0u));
+    CHECK((r.lane[1].alpha_counts == 0u) && (r.lane[1].floor_reject_counts == 1u) && (r.lane[1].alpha_short_counts == 1u));
+    CHECK((r.lane[1].beta_counts == 0u));             /* neither channel gains it */
+    CHECK((r.lane[2].beta_counts == 1u) && (r.lane[2].alpha_counts == 0u) && (r.lane[2].alpha_short_counts == 0u));
+    CHECK((r.lane[3].alpha_counts == 1u) && (r.lane[3].alpha_short_counts == 1u) && (r.lane[3].floor_reject_counts == 1u));
+    /* the old rule (no width condition) calls the bright beta an alpha: this is what the test must fail on */
+    g_tot_min = 0u;
+    setup(0u);
+    run_services(0u, 1000u * US);
+    pulse(1u, 1000u * US + 9u, 0u, 22u);
+    run_services(1000u * US + SERVICE, GATE + SERVICE);
+    CHECK(rrh_evtcap_pop(&ec, &r) && (r.lane[1].alpha_counts == 1u));
+    /* a port that measures no widths: ALPHA events are never alpha (they are counted as short) */
+    g_tot_min = 36u;
+    g_width_mask = 0u;
+    setup(0u);
+    g_width_mask = 0xFFu;
+    run_services(0u, 1000u * US);
+    pulse(0u, 1000u * US + 9u, 0u, 6u * US);
+    run_services(1000u * US + SERVICE, GATE + SERVICE);
+    CHECK(rrh_evtcap_pop(&ec, &r) && (r.lane[0].alpha_counts == 0u) && (r.lane[0].alpha_short_counts == 1u));
+    /* the falling-edge capture can lag the comparator level by one service: wait, do not call the alpha short */
+    setup(0u);
+    run_services(0u, 1000u * US);
+    g_width_delay[0] = 1u;
+    pulse(0u, 1000u * US + 9u, 0u, 6u * US);
+    run_services(1000u * US + SERVICE, GATE + SERVICE);
+    CHECK(rrh_evtcap_pop(&ec, &r) && (r.lane[0].alpha_counts == 1u) && (r.lane[0].alpha_short_counts == 0u));
+    g_tot_min = 0u;
+}
+
+
+/* A second pulse on a busy chain: the BUSY latch ignores it, but the raw comparator makes another falling edge. */
+static void second_pulse(uint32_t ch, uint64_t end)
+{
+    hw[ch].multi = true;
+    if (end > hw[ch].lld_high_until) {
+        hw[ch].lld_high_until = end;
+    }
+}
+
+static void test_pileup_never_makes_an_alpha(void)
+{
+    rrh_gate_record_t r;
+    g_tot_min = 36u; /* 250 ns */
+    /* (1) fixed port: first width kept, second edge flags the event; bright beta (158 ns) + a second pulse 2 us later */
+    setup(0u);
+    run_services(0u, 1000u * US);
+    const uint64_t t = 1000u * US + 9u;
+    pulse(1u, t, 0u, 22u);                         /* bright beta: ALPHA set, 22 ticks = 158 ns */
+    pulse(0u, t, 0u, 6u * US);                     /* a true alpha, then a second pulse before classification */
+    second_pulse(0u, t + 2u * US + 20u * US);
+    second_pulse(1u, t + 3u * US);                 /* the second pulse of the bright beta: ends 3 us after its start */
+    run_services(1000u * US + 2u * SERVICE, GATE + SERVICE);
+    CHECK(rrh_evtcap_pop(&ec, &r));
+    check_record(&r, 0u);
+    CHECK((r.lane[1].alpha_counts == 0u) && (r.lane[1].alpha_short_counts == 1u) && (r.lane[1].alpha_ambig_counts == 1u));
+    CHECK((r.lane[0].alpha_counts == 0u) && (r.lane[0].alpha_short_counts == 1u) && (r.lane[0].alpha_ambig_counts == 1u)); /* alpha efficiency loss is counted */
+    CHECK(r.lane[1].floor_reject_counts == 1u && r.lane[1].beta_counts == 0u);
+    /* (2) the 0.4/0.5 port (last edge overwrites the width, no flag): the same bright beta becomes an ALPHA - the C1 failure returns */
+    g_port_overwrite = true;
+    setup(0u);
+    run_services(0u, 1000u * US);
+    pulse(1u, t, 0u, 22u);
+    second_pulse(1u, t + 3u * US);
+    run_services(1000u * US + SERVICE, GATE + SERVICE);
+    CHECK(rrh_evtcap_pop(&ec, &r));
+    check_record(&r, 0u);
+    CHECK(r.lane[1].alpha_counts == 1u && r.lane[1].alpha_ambig_counts == 0u);
+    g_port_overwrite = false;
+    /* (3) forced clears are counted per chain and gate */
+    setup(0u);
+    run_services(0u, 1000u * US);
+    pulse(6u, 1000u * US + 3u, 0u, 3000u * US);
+    run_services(1000u * US + SERVICE, GATE + SERVICE);
+    CHECK(rrh_evtcap_pop(&ec, &r));
+    check_record(&r, 0u);
+    CHECK(r.lane[2].ref_forced_counts == 1u && r.lane[2].floor_forced_counts == 0u);
+    g_tot_min = 0u;
+}
+
+static void test_heater_on_time_is_exact_at_the_edges(void)
+{
+    rrh_gate_record_t r;
+    setup(0u);
+    run_services(0u, GATE / 2u);
+    rrh_evtcap_heater_request(&ec, true);          /* acts on the boundary */
+    run_services(GATE / 2u + SERVICE, GATE + 2u * SERVICE);
+    run_services(GATE + 3u * SERVICE, 2u * GATE / 1u - GATE / 4u);
+    CHECK(rrh_evtcap_pop(&ec, &r) && r.heater_on_ticks == 0u);
+    rrh_evtcap_heater_force_off(&ec);              /* mid-gate 2: the switch opens at once */
+    run_services(2u * GATE - GATE / 4u + SERVICE, 2u * GATE + 3u * SERVICE);
+    CHECK(rrh_evtcap_pop(&ec, &r));
+    /* on from the boundary (tick GATE) to the last service before the force-off: partial, not "all or nothing" */
+    CHECK(r.heater_on_ticks > (GATE * 6u) / 10u && r.heater_on_ticks < GATE && r.heater_transition_in_gate);
+    CHECK(!heater_level);
+}
+
+int main(void)
+{
+    RUN(test_single_events_of_each_class);
+    RUN(test_non_retriggering_window_and_forced_clear);
+    RUN(test_event_straddling_a_gate_boundary);
+    RUN(test_poisson_rate_sweep);
+    RUN(test_service_jitter_tolerance);
+    RUN(test_gates_heater_stop_and_overflow);
+    RUN(test_alpha_afterglow_hold);
+    RUN(test_idle_alpha_latch_is_cleared);
+    RUN(test_latch_clear_crossing_a_gate_boundary);
+    RUN(test_service_late_by_more_than_one_period);
+    RUN(test_chain_held_by_a_long_tail);
+    RUN(test_poisson_sweep_with_afterglow_hold);
+    RUN(test_bright_beta_is_not_alpha);
+    RUN(test_pileup_never_makes_an_alpha);
+    RUN(test_heater_on_time_is_exact_at_the_edges);
+    return TEST_SUMMARY();
+}

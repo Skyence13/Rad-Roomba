@@ -1,0 +1,357 @@
+{
+    "$schema": "https://schemas.kicad.org/erc.v1.json",
+    "coordinate_units": "mm",
+    "date": "",
+    "included_severities": [
+        "error",
+        "warning",
+        "exclusion"
+    ],
+    "kicad_version": "9.0.9",
+    "sheets": [
+        {
+            "path": "/",
+            "uuid_path": "/9e923294-c438-55d9-8efc-7b5c261ae8f2",
+            "violations": []
+        },
+        {
+            "path": "/POWER_IN/",
+            "uuid_path": "/9e923294-c438-55d9-8efc-7b5c261ae8f2/631f6c4d-efb4-572a-8552-87384ad43ee3",
+            "violations": []
+        },
+        {
+            "path": "/POWER_REG/",
+            "uuid_path": "/9e923294-c438-55d9-8efc-7b5c261ae8f2/0d8e73a4-7f00-57fd-8d9c-ced2bb9fd180",
+            "violations": []
+        },
+        {
+            "path": "/HEATER/",
+            "uuid_path": "/9e923294-c438-55d9-8efc-7b5c261ae8f2/6259735f-6cb3-5b6b-800e-dd64905ad412",
+            "violations": []
+        },
+        {
+            "path": "/BIAS/",
+            "uuid_path": "/9e923294-c438-55d9-8efc-7b5c261ae8f2/09a6cfc9-67c8-5190-8e5b-893a624b2499",
+            "violations": []
+        },
+        {
+            "path": "/BIAS_2/",
+            "uuid_path": "/9e923294-c438-55d9-8efc-7b5c261ae8f2/eaa963c6-0a80-5856-8dbf-2402f0ddb3f6",
+            "violations": []
+        },
+        {
+            "path": "/DAC/",
+            "uuid_path": "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55f605e9-797c-5be1-8729-fdc9bfb11093",
+            "violations": []
+        },
+        {
+            "path": "/MONITOR/",
+            "uuid_path": "/9e923294-c438-55d9-8efc-7b5c261ae8f2/d87f1895-c088-5729-8e6c-1517ac5b3e98",
+            "violations": []
+        },
+        {
+            "path": "/MCU/",
+            "uuid_path": "/9e923294-c438-55d9-8efc-7b5c261ae8f2/ff8fa429-9182-570c-89a4-a9c7207dfa97",
+            "violations": []
+        },
+        {
+            "path": "/COMM_ISOLATED/",
+            "uuid_path": "/9e923294-c438-55d9-8efc-7b5c261ae8f2/52c6215f-6a58-55d0-8129-c226dce043b9",
+            "violations": []
+        },
+        {
+            "path": "/LANE0_FLOOR/",
+            "uuid_path": "/9e923294-c438-55d9-8efc-7b5c261ae8f2/756f1948-2434-5aea-8f92-7ebf82529df0",
+            "violations": []
+        },
+        {
+            "path": "/LANE0_FLOOR_2/",
+            "uuid_path": "/9e923294-c438-55d9-8efc-7b5c261ae8f2/d23e3e0c-e8f4-5870-8dbd-4f6ca9969f47",
+            "violations": []
+        },
+        {
+            "path": "/LANE0_REF/",
+            "uuid_path": "/9e923294-c438-55d9-8efc-7b5c261ae8f2/1cda2c89-f3d7-55dd-8bc0-3474e40accad",
+            "violations": []
+        },
+        {
+            "path": "/LANE0_LOGIC/",
+            "uuid_path": "/9e923294-c438-55d9-8efc-7b5c261ae8f2/6a980d5f-6c0e-57aa-866d-f4858cc1fbb4",
+            "violations": [
+                {
+                    "description": "Pins of type Bidirectional and Power output are connected",
+                    "items": [
+                        {
+                            "description": "Symbol U1007 Pin 11 [S6, Bidirectional, Line]",
+                            "pos": {
+                                "x": 2.54,
+                                "y": 1.905
+                            },
+                            "uuid": "858a5f30-99e3-59b5-8411-a9fc0d9535c6"
+                        },
+                        {
+                            "description": "Symbol #FLG002 Pin 1 [Power output, Line]",
+                            "pos": {
+                                "x": 0.5842,
+                                "y": 9.6012
+                            },
+                            "uuid": "d360b4dc-1c96-543a-8906-789e41fb17a6"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "pin_to_pin"
+                },
+                {
+                    "description": "Pins of type Bidirectional and Power output are connected",
+                    "items": [
+                        {
+                            "description": "Symbol U1007 Pin 9 [S8, Bidirectional, Line]",
+                            "pos": {
+                                "x": 2.54,
+                                "y": 1.9558
+                            },
+                            "uuid": "23bbb478-fbf8-5720-87c4-5ae085f24135"
+                        },
+                        {
+                            "description": "Symbol #FLG002 Pin 1 [Power output, Line]",
+                            "pos": {
+                                "x": 0.5842,
+                                "y": 9.6012
+                            },
+                            "uuid": "d360b4dc-1c96-543a-8906-789e41fb17a6"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "pin_to_pin"
+                }
+            ]
+        },
+        {
+            "path": "/LANE0_LOGIC_2/",
+            "uuid_path": "/9e923294-c438-55d9-8efc-7b5c261ae8f2/03d05883-b5b1-56cd-8588-9381688fbe43",
+            "violations": []
+        },
+        {
+            "path": "/LANE1_FLOOR/",
+            "uuid_path": "/9e923294-c438-55d9-8efc-7b5c261ae8f2/6abc2c02-7011-5c09-82be-eeb54fbb00e9",
+            "violations": []
+        },
+        {
+            "path": "/LANE1_FLOOR_2/",
+            "uuid_path": "/9e923294-c438-55d9-8efc-7b5c261ae8f2/61999647-5781-5af3-859f-5e311aa99a0f",
+            "violations": []
+        },
+        {
+            "path": "/LANE1_REF/",
+            "uuid_path": "/9e923294-c438-55d9-8efc-7b5c261ae8f2/55178c3f-c7bf-5c51-8169-9ac5341965f4",
+            "violations": []
+        },
+        {
+            "path": "/LANE1_LOGIC/",
+            "uuid_path": "/9e923294-c438-55d9-8efc-7b5c261ae8f2/d908b7bd-b7b9-5eb0-8cc8-5bb340446b4f",
+            "violations": [
+                {
+                    "description": "Pins of type Bidirectional and Power output are connected",
+                    "items": [
+                        {
+                            "description": "Symbol U1107 Pin 11 [S6, Bidirectional, Line]",
+                            "pos": {
+                                "x": 2.54,
+                                "y": 1.905
+                            },
+                            "uuid": "6366cb93-2291-5ed5-8bcd-5ff468e5bf2e"
+                        },
+                        {
+                            "description": "Symbol #FLG002 Pin 1 [Power output, Line]",
+                            "pos": {
+                                "x": 0.5842,
+                                "y": 9.6012
+                            },
+                            "uuid": "d360b4dc-1c96-543a-8906-789e41fb17a6"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "pin_to_pin"
+                },
+                {
+                    "description": "Pins of type Bidirectional and Power output are connected",
+                    "items": [
+                        {
+                            "description": "Symbol U1107 Pin 9 [S8, Bidirectional, Line]",
+                            "pos": {
+                                "x": 2.54,
+                                "y": 1.9558
+                            },
+                            "uuid": "fad3cb11-4995-5541-8fa8-3a5958a5fe34"
+                        },
+                        {
+                            "description": "Symbol #FLG002 Pin 1 [Power output, Line]",
+                            "pos": {
+                                "x": 0.5842,
+                                "y": 9.6012
+                            },
+                            "uuid": "d360b4dc-1c96-543a-8906-789e41fb17a6"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "pin_to_pin"
+                }
+            ]
+        },
+        {
+            "path": "/LANE1_LOGIC_2/",
+            "uuid_path": "/9e923294-c438-55d9-8efc-7b5c261ae8f2/b78a01e1-4fdd-5331-8a9d-aa21c81c5329",
+            "violations": []
+        },
+        {
+            "path": "/LANE2_FLOOR/",
+            "uuid_path": "/9e923294-c438-55d9-8efc-7b5c261ae8f2/8a637f62-e86e-579b-8d80-0ca211370627",
+            "violations": []
+        },
+        {
+            "path": "/LANE2_FLOOR_2/",
+            "uuid_path": "/9e923294-c438-55d9-8efc-7b5c261ae8f2/b20a0997-20b6-5252-8845-612fa8acad85",
+            "violations": []
+        },
+        {
+            "path": "/LANE2_REF/",
+            "uuid_path": "/9e923294-c438-55d9-8efc-7b5c261ae8f2/79d8c40e-c7ec-51bd-8582-1a3f362cf3e0",
+            "violations": []
+        },
+        {
+            "path": "/LANE2_LOGIC/",
+            "uuid_path": "/9e923294-c438-55d9-8efc-7b5c261ae8f2/b2b6e7c8-5b5d-5c5e-867f-5afcb30887f6",
+            "violations": [
+                {
+                    "description": "Pins of type Bidirectional and Power output are connected",
+                    "items": [
+                        {
+                            "description": "Symbol U1207 Pin 11 [S6, Bidirectional, Line]",
+                            "pos": {
+                                "x": 2.54,
+                                "y": 1.905
+                            },
+                            "uuid": "18bcd410-d953-5f2c-86d6-e8022271f126"
+                        },
+                        {
+                            "description": "Symbol #FLG002 Pin 1 [Power output, Line]",
+                            "pos": {
+                                "x": 0.5842,
+                                "y": 9.6012
+                            },
+                            "uuid": "d360b4dc-1c96-543a-8906-789e41fb17a6"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "pin_to_pin"
+                },
+                {
+                    "description": "Pins of type Bidirectional and Power output are connected",
+                    "items": [
+                        {
+                            "description": "Symbol U1207 Pin 9 [S8, Bidirectional, Line]",
+                            "pos": {
+                                "x": 2.54,
+                                "y": 1.9558
+                            },
+                            "uuid": "6863e386-6d73-5d2f-8231-47c354e02388"
+                        },
+                        {
+                            "description": "Symbol #FLG002 Pin 1 [Power output, Line]",
+                            "pos": {
+                                "x": 0.5842,
+                                "y": 9.6012
+                            },
+                            "uuid": "d360b4dc-1c96-543a-8906-789e41fb17a6"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "pin_to_pin"
+                }
+            ]
+        },
+        {
+            "path": "/LANE2_LOGIC_2/",
+            "uuid_path": "/9e923294-c438-55d9-8efc-7b5c261ae8f2/b6d4fb3d-e667-5b0e-882c-d8d35a77cc98",
+            "violations": []
+        },
+        {
+            "path": "/LANE3_FLOOR/",
+            "uuid_path": "/9e923294-c438-55d9-8efc-7b5c261ae8f2/66863e46-bce7-56bf-8c17-e8ff7fc0f3e5",
+            "violations": []
+        },
+        {
+            "path": "/LANE3_FLOOR_2/",
+            "uuid_path": "/9e923294-c438-55d9-8efc-7b5c261ae8f2/dde35649-e9fe-582a-82e1-de8e1c550a10",
+            "violations": []
+        },
+        {
+            "path": "/LANE3_REF/",
+            "uuid_path": "/9e923294-c438-55d9-8efc-7b5c261ae8f2/1ee64a99-5d9c-5058-8e6d-bed5e4a50dbb",
+            "violations": []
+        },
+        {
+            "path": "/LANE3_LOGIC/",
+            "uuid_path": "/9e923294-c438-55d9-8efc-7b5c261ae8f2/31b10892-f7c1-55f7-8334-63800fa9126b",
+            "violations": [
+                {
+                    "description": "Pins of type Bidirectional and Power output are connected",
+                    "items": [
+                        {
+                            "description": "Symbol U1307 Pin 11 [S6, Bidirectional, Line]",
+                            "pos": {
+                                "x": 2.54,
+                                "y": 1.905
+                            },
+                            "uuid": "e19424e2-c53e-55ef-89b9-9af41ae5b5da"
+                        },
+                        {
+                            "description": "Symbol #FLG002 Pin 1 [Power output, Line]",
+                            "pos": {
+                                "x": 0.5842,
+                                "y": 9.6012
+                            },
+                            "uuid": "d360b4dc-1c96-543a-8906-789e41fb17a6"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "pin_to_pin"
+                },
+                {
+                    "description": "Pins of type Bidirectional and Power output are connected",
+                    "items": [
+                        {
+                            "description": "Symbol U1307 Pin 9 [S8, Bidirectional, Line]",
+                            "pos": {
+                                "x": 2.54,
+                                "y": 1.9558
+                            },
+                            "uuid": "fb4e093f-d639-58d8-8680-ea04ff0fcf96"
+                        },
+                        {
+                            "description": "Symbol #FLG002 Pin 1 [Power output, Line]",
+                            "pos": {
+                                "x": 0.5842,
+                                "y": 9.6012
+                            },
+                            "uuid": "d360b4dc-1c96-543a-8906-789e41fb17a6"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "pin_to_pin"
+                }
+            ]
+        },
+        {
+            "path": "/LANE3_LOGIC_2/",
+            "uuid_path": "/9e923294-c438-55d9-8efc-7b5c261ae8f2/e2c13b25-74ce-5a8c-8b7d-3f0cc46bc0c8",
+            "violations": []
+        },
+        {
+            "path": "/MECH/",
+            "uuid_path": "/9e923294-c438-55d9-8efc-7b5c261ae8f2/f3cab475-c5cf-5838-87bb-94bab849015a",
+            "violations": []
+        }
+    ],
+    "source": "RR-HEAD-ACQ.kicad_sch"
+}

@@ -1,0 +1,19 @@
+** Drc report for REPL-TEST.kicad_pcb **
+** Created on (date removed for reproducibility) **
+** Report includes: Errors, Warnings, Exclusions **
+
+** Found 2 DRC violations **
+[silk_overlap]: Silkscreen overlap
+    Rule: board setup constraints silk; warning
+    @(77.0800 mm, 91.7500 mm): Reference field of R22
+    @(78.0000 mm, 92.6000 mm): Reference field of U2
+[silk_overlap]: Silkscreen overlap
+    Rule: board setup constraints silk; warning
+    @(58.0000 mm, 92.6000 mm): Reference field of U1
+    @(57.0800 mm, 91.7500 mm): Reference field of R21
+
+** Found 0 unconnected pads **
+
+** Found 0 Footprint errors **
+
+** End of Report **

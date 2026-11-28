@@ -1,0 +1,127 @@
+(footprint "L_CommonMode_TDK_ACM4520"
+	(version 20241229)
+	(generator "rrkicad")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(descr "TDK ACM4520 common-mode choke 4.5 x 2.0 mm, pads 1/4 input side, 2/3 output side (geometry FROM MEMORY - verify against the TDK drawing)")
+	(property "Reference" "REF**"
+		(at 0 -2.05 0)
+		(layer "F.SilkS")
+		(uuid "0c81a650-9286-5d25-8c48-db5fb4af6229")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.12)
+			)
+		)
+	)
+	(property "Value" "L_CommonMode_TDK_ACM4520"
+		(at 0 2.05 0)
+		(layer "F.Fab")
+		(uuid "5f6ce000-377f-5bcc-8fb5-19c939c71899")
+		(effects
+			(font
+				(size 0.6 0.6)
+				(thickness 0.09)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "b7e99c03-fed6-5867-86be-788f6ebdb1ae")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.12)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "c3df7d11-b3d3-5a77-8acb-7a32b73e912e")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.12)
+			)
+		)
+	)
+	(attr smd)
+	(fp_rect
+		(start -2.25 -1)
+		(end 2.25 1)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.Fab")
+		(uuid "08da5a60-e6e8-50d6-851d-4bacfc25a29d")
+	)
+	(fp_rect
+		(start -2.5 -1.25)
+		(end 2.5 1.25)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "739068fa-f144-59e2-84dd-441bb05b388e")
+	)
+	(fp_circle
+		(center -1.75 -0.5)
+		(end -1.65 -0.5)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.Fab")
+		(uuid "a3c265df-95ca-5671-8f17-57910c26ff66")
+	)
+	(fp_text user "${REFERENCE}"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(uuid "378b3c33-49b9-5585-8c59-446e70d51ecf")
+		(effects
+			(font
+				(size 0.5 0.5)
+				(thickness 0.08)
+			)
+		)
+	)
+	(pad "1" smd roundrect
+		(at -1.6 -0.6 0)
+		(size 0.9 0.7)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.25)
+		(uuid "f88de706-bffe-599b-843f-c4648b10620b")
+	)
+	(pad "2" smd roundrect
+		(at 1.6 -0.6 0)
+		(size 0.9 0.7)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.25)
+		(uuid "bc3694d3-3851-5fb3-8f4b-a04f2342fec0")
+	)
+	(pad "3" smd roundrect
+		(at 1.6 0.6 0)
+		(size 0.9 0.7)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.25)
+		(uuid "c65df70c-8834-5c01-8a4a-3e80e1b45a1b")
+	)
+	(pad "4" smd roundrect
+		(at -1.6 0.6 0)
+		(size 0.9 0.7)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.25)
+		(uuid "0b72c9b6-bce3-5ee4-8b31-cfe80fc8d1af")
+	)
+	(embedded_fonts no)
+)

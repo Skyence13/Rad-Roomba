@@ -1,0 +1,50 @@
+# Rad Roomba chassis firmware - host build: core library, emulator, unit tests.
+# The STM32G474 target is built with PlatformIO (port/stm32g474/platformio.ini).
+cmake_minimum_required(VERSION 3.16)
+project(rr_chassis C)
+
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE RelWithDebInfo)
+endif()
+
+option(RR_CHASSIS_SANITIZE "AddressSanitizer + UBSan for the unit tests" ON)
+set(RR_COMMON_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+add_subdirectory(../common ${CMAKE_BINARY_DIR}/rr_common)
+
+set(CORE_SRC core/rrch_cfg.c core/rrch_chain.c core/rrch_motion.c core/rrch_core.c core/rrch_proto.c core/rrch_pwrdev.c)
+set(WARN -Wall -Wextra -Werror -Wshadow -Wstrict-prototypes -Wmissing-prototypes -Wdouble-promotion)
+
+add_library(rr_chassis_core STATIC ${CORE_SRC})
+target_include_directories(rr_chassis_core PUBLIC core)
+target_link_libraries(rr_chassis_core PUBLIC rr_common m)
+target_compile_options(rr_chassis_core PRIVATE ${WARN})
+target_compile_definitions(rr_chassis_core PUBLIC RRCH_FW_SUFFIX="+sim")
+
+add_library(rr_chassis_simlib STATIC port/host/sim.c)
+target_include_directories(rr_chassis_simlib PUBLIC port/host)
+target_link_libraries(rr_chassis_simlib PUBLIC rr_chassis_core)
+target_compile_options(rr_chassis_simlib PRIVATE -Wall -Wextra -Werror)
+
+add_executable(rr_chassis_sim port/host/sim_main.c)
+target_link_libraries(rr_chassis_sim PRIVATE rr_chassis_simlib)
+target_compile_options(rr_chassis_sim PRIVATE -Wall -Wextra -Werror)
+
+enable_testing()
+set(RR_CHASSIS_TESTS "")
+foreach(cand test_state_machine test_drive test_chain test_review test_rearm)
+  if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/tests/${cand}.c)
+    list(APPEND RR_CHASSIS_TESTS ${cand})
+  endif()
+endforeach()
+foreach(t ${RR_CHASSIS_TESTS})
+  add_executable(${t} tests/${t}.c tests/harness.c)
+  target_link_libraries(${t} PRIVATE rr_chassis_simlib)
+  target_compile_options(${t} PRIVATE -Wall -Wextra -Werror)
+  if(RR_CHASSIS_SANITIZE)
+    target_compile_options(${t} PRIVATE -fsanitize=address,undefined -fno-sanitize-recover=all)
+    target_link_options(${t} PRIVATE -fsanitize=address,undefined)
+  endif()
+  add_test(NAME ${t} COMMAND ${t})
+endforeach()

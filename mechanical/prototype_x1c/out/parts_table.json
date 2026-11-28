@@ -1,0 +1,1776 @@
+[
+ {
+  "name": "motor_pod_L",
+  "orient_euler_xyz_deg": [
+   90,
+   0,
+   0
+  ],
+  "bbox_print": [
+   52.0,
+   45.5,
+   19.0
+  ],
+  "volume_cm3": 16.03,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 3900,
+  "open_edges": 0,
+  "mesh_volume_cm3": 16.02,
+  "pn": "RRX-P01L",
+  "kind": "printed",
+  "material": "PAHT-CF",
+  "qty": 1,
+  "instances": [
+   "motor_pod_L"
+  ],
+  "group": "drive",
+  "print_note": "end face on the bed, tube axis vertical; no supports",
+  "mass_each_g": 14.4,
+  "note": ""
+ },
+ {
+  "name": "cheek_fairing_L",
+  "orient_euler_xyz_deg": [
+   0,
+   0,
+   0
+  ],
+  "bbox_print": [
+   48.23,
+   29.05,
+   61.16
+  ],
+  "volume_cm3": 20.65,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 2686,
+  "open_edges": 0,
+  "mesh_volume_cm3": 20.69,
+  "pn": "RRX-P03L",
+  "kind": "printed",
+  "material": "ASA",
+  "qty": 1,
+  "instances": [
+   "cheek_fairing_L"
+  ],
+  "group": "grip",
+  "print_note": "upright as fitted; supports only under the ToF nose",
+  "mass_each_g": 15.9,
+  "note": ""
+ },
+ {
+  "name": "motor_pod_R",
+  "orient_euler_xyz_deg": [
+   -90,
+   0,
+   0
+  ],
+  "bbox_print": [
+   52.0,
+   45.5,
+   19.0
+  ],
+  "volume_cm3": 16.03,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 3900,
+  "open_edges": 0,
+  "mesh_volume_cm3": 16.02,
+  "pn": "RRX-P01R",
+  "kind": "printed",
+  "material": "PAHT-CF",
+  "qty": 1,
+  "instances": [
+   "motor_pod_R"
+  ],
+  "group": "drive",
+  "print_note": "end face on the bed, tube axis vertical; no supports",
+  "mass_each_g": 14.4,
+  "note": ""
+ },
+ {
+  "name": "cheek_fairing_R",
+  "orient_euler_xyz_deg": [
+   0,
+   0,
+   0
+  ],
+  "bbox_print": [
+   48.23,
+   29.05,
+   61.16
+  ],
+  "volume_cm3": 20.65,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 2686,
+  "open_edges": 0,
+  "mesh_volume_cm3": 20.69,
+  "pn": "RRX-P03R",
+  "kind": "printed",
+  "material": "ASA",
+  "qty": 1,
+  "instances": [
+   "cheek_fairing_R"
+  ],
+  "group": "grip",
+  "print_note": "upright as fitted; supports only under the ToF nose",
+  "mass_each_g": 15.9,
+  "note": ""
+ },
+ {
+  "name": "dock_switch_bracket",
+  "orient_euler_xyz_deg": [
+   180,
+   0,
+   0
+  ],
+  "bbox_print": [
+   14.8,
+   18.0,
+   17.0
+  ],
+  "volume_cm3": 3.7,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 660,
+  "open_edges": 0,
+  "mesh_volume_cm3": 3.7,
+  "pn": "RRX-P04",
+  "kind": "printed",
+  "material": "PAHT-CF",
+  "qty": 1,
+  "instances": [
+   "dock_switch_bracket"
+  ],
+  "group": "receiver",
+  "print_note": "plate face on the bed",
+  "mass_each_g": 3.3,
+  "note": ""
+ },
+ {
+  "name": "grip_sleeve",
+  "orient_euler_xyz_deg": [
+   90,
+   0,
+   0
+  ],
+  "bbox_print": [
+   25.0,
+   22.0,
+   167.0
+  ],
+  "volume_cm3": 55.48,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 428,
+  "open_edges": 0,
+  "mesh_volume_cm3": 55.46,
+  "pn": "RRX-P05",
+  "kind": "printed",
+  "material": "ASA",
+  "qty": 1,
+  "instances": [
+   "grip_sleeve"
+  ],
+  "group": "grip",
+  "print_note": "standing on one end (166 mm tall), brim",
+  "mass_each_g": 42.7,
+  "note": ""
+ },
+ {
+  "name": "front_bulkhead",
+  "orient_euler_xyz_deg": [
+   0,
+   0,
+   0
+  ],
+  "bbox_print": [
+   28.7,
+   121.47,
+   15.0
+  ],
+  "volume_cm3": 10.48,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 904,
+  "open_edges": 0,
+  "mesh_volume_cm3": 10.45,
+  "pn": "RRX-P06",
+  "kind": "printed",
+  "material": "PAHT-CF",
+  "qty": 1,
+  "instances": [
+   "front_bulkhead"
+  ],
+  "group": "chassis",
+  "print_note": "as fitted, plate face on the bed",
+  "mass_each_g": 9.4,
+  "note": ""
+ },
+ {
+  "name": "battery_tunnel",
+  "orient_euler_xyz_deg": [
+   0,
+   0,
+   0
+  ],
+  "bbox_print": [
+   214.0,
+   138.0,
+   61.8
+  ],
+  "volume_cm3": 92.55,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 4554,
+  "open_edges": 0,
+  "mesh_volume_cm3": 92.55,
+  "pn": "RRX-P10",
+  "kind": "printed",
+  "material": "ASA",
+  "qty": 1,
+  "instances": [
+   "battery_tunnel"
+  ],
+  "group": "battery_bay",
+  "print_note": "as fitted (floor on the bed); no supports except the coupler window bridge",
+  "mass_each_g": 71.3,
+  "note": ""
+ },
+ {
+  "name": "floor_plug",
+  "orient_euler_xyz_deg": [
+   180,
+   0,
+   0
+  ],
+  "bbox_print": [
+   91.7,
+   84.0,
+   5.0
+  ],
+  "volume_cm3": 33.86,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 240,
+  "open_edges": 0,
+  "mesh_volume_cm3": 33.86,
+  "pn": "RRX-P11",
+  "kind": "printed",
+  "material": "ASA",
+  "qty": 1,
+  "instances": [
+   "floor_plug"
+  ],
+  "group": "battery_bay",
+  "print_note": "flange on the bed; 15 % gyroid infill (insulation)",
+  "mass_each_g": 26.1,
+  "note": ""
+ },
+ {
+  "name": "battery_cassette",
+  "orient_euler_xyz_deg": [
+   0,
+   0,
+   0
+  ],
+  "bbox_print": [
+   161.0,
+   109.0,
+   105.3
+  ],
+  "volume_cm3": 175.45,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 1804,
+  "open_edges": 0,
+  "mesh_volume_cm3": 175.45,
+  "pn": "RRX-P12",
+  "kind": "printed",
+  "material": "ASA",
+  "qty": 1,
+  "instances": [
+   "battery_cassette"
+  ],
+  "group": "cassette",
+  "print_note": "open top up; supports only under the two hinge lugs",
+  "mass_each_g": 135.2,
+  "note": ""
+ },
+ {
+  "name": "cassette_lid",
+  "orient_euler_xyz_deg": [
+   180,
+   0,
+   0
+  ],
+  "bbox_print": [
+   150.9,
+   105.8,
+   5.6
+  ],
+  "volume_cm3": 40.71,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 656,
+  "open_edges": 0,
+  "mesh_volume_cm3": 40.71,
+  "pn": "RRX-P13",
+  "kind": "printed",
+  "material": "ASA",
+  "qty": 1,
+  "instances": [
+   "cassette_lid"
+  ],
+  "group": "cassette",
+  "print_note": "top face on the bed; tongue prints as a 3 mm ledge",
+  "mass_each_g": 31.4,
+  "note": ""
+ },
+ {
+  "name": "coupler_carrier",
+  "orient_euler_xyz_deg": [
+   0,
+   90,
+   0
+  ],
+  "bbox_print": [
+   20.2,
+   52.0,
+   4.0
+  ],
+  "volume_cm3": 0.95,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 860,
+  "open_edges": 0,
+  "mesh_volume_cm3": 0.95,
+  "pn": "RRX-P14",
+  "kind": "printed",
+  "material": "PAHT-CF",
+  "qty": 1,
+  "instances": [
+   "coupler_carrier"
+  ],
+  "group": "cassette",
+  "print_note": "flat",
+  "mass_each_g": 0.9,
+  "note": ""
+ },
+ {
+  "name": "cassette_handle",
+  "orient_euler_xyz_deg": [
+   0,
+   90,
+   0
+  ],
+  "bbox_print": [
+   60.5,
+   72.6,
+   3.5
+  ],
+  "volume_cm3": 3.31,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 652,
+  "open_edges": 0,
+  "mesh_volume_cm3": 3.3,
+  "pn": "RRX-P15",
+  "kind": "printed",
+  "material": "PAHT-CF",
+  "qty": 1,
+  "instances": [
+   "cassette_handle"
+  ],
+  "group": "cassette",
+  "print_note": "flat (arms and bar on the bed)",
+  "mass_each_g": 3.0,
+  "note": ""
+ },
+ {
+  "name": "spacer_9ah",
+  "orient_euler_xyz_deg": [
+   0,
+   0,
+   0
+  ],
+  "bbox_print": [
+   149.0,
+   95.0,
+   33.5
+  ],
+  "volume_cm3": 72.43,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 28,
+  "open_edges": 0,
+  "mesh_volume_cm3": 72.43,
+  "pn": "RRX-P16",
+  "kind": "printed",
+  "material": "ASA",
+  "qty": 1,
+  "instances": [
+   "spacer_9ah"
+  ],
+  "group": "cassette_option",
+  "print_note": "open side up",
+  "mass_each_g": 55.8,
+  "note": "only with the 9 Ah PSL-SC-1290 pack; shown for reference, not in the interference set"
+ },
+ {
+  "name": "lower_hull_FL",
+  "orient_euler_xyz_deg": [
+   180,
+   0,
+   0
+  ],
+  "bbox_print": [
+   133.19,
+   140.51,
+   38.84
+  ],
+  "volume_cm3": 42.75,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 2878,
+  "open_edges": 8,
+  "mesh_volume_cm3": 42.69,
+  "pn": "RRX-P20L",
+  "kind": "printed",
+  "material": "ASA",
+  "qty": 1,
+  "instances": [
+   "lower_hull_FL"
+  ],
+  "group": "lower_hull",
+  "print_note": "upside-down: gasket land (z 61.9) on the bed, tongue hangs below -> print the tongue first on a 9 mm support raft OR use tree supports under the land; supports inside under the chine and sole ring",
+  "mass_each_g": 32.9,
+  "note": ""
+ },
+ {
+  "name": "lower_hull_FR",
+  "orient_euler_xyz_deg": [
+   180,
+   0,
+   0
+  ],
+  "bbox_print": [
+   133.19,
+   140.51,
+   38.84
+  ],
+  "volume_cm3": 42.75,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 2878,
+  "open_edges": 8,
+  "mesh_volume_cm3": 42.69,
+  "pn": "RRX-P20R",
+  "kind": "printed",
+  "material": "ASA",
+  "qty": 1,
+  "instances": [
+   "lower_hull_FR"
+  ],
+  "group": "lower_hull",
+  "print_note": "upside-down: gasket land (z 61.9) on the bed, tongue hangs below -> print the tongue first on a 9 mm support raft OR use tree supports under the land; supports inside under the chine and sole ring",
+  "mass_each_g": 32.9,
+  "note": ""
+ },
+ {
+  "name": "lower_hull_RL",
+  "orient_euler_xyz_deg": [
+   180,
+   0,
+   0
+  ],
+  "bbox_print": [
+   191.33,
+   145.2,
+   38.84
+  ],
+  "volume_cm3": 98.81,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 3714,
+  "open_edges": 4,
+  "mesh_volume_cm3": 99.02,
+  "pn": "RRX-P21L",
+  "kind": "printed",
+  "material": "ASA",
+  "qty": 1,
+  "instances": [
+   "lower_hull_RL"
+  ],
+  "group": "lower_hull",
+  "print_note": "upside-down: gasket land (z 61.9) on the bed, tongue hangs below -> print the tongue first on a 9 mm support raft OR use tree supports under the land; supports inside under the chine and sole ring",
+  "mass_each_g": 76.1,
+  "note": ""
+ },
+ {
+  "name": "lower_hull_RR",
+  "orient_euler_xyz_deg": [
+   180,
+   0,
+   0
+  ],
+  "bbox_print": [
+   191.33,
+   145.2,
+   38.84
+  ],
+  "volume_cm3": 97.23,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 4132,
+  "open_edges": 4,
+  "mesh_volume_cm3": 97.17,
+  "pn": "RRX-P21R",
+  "kind": "printed",
+  "material": "ASA",
+  "qty": 1,
+  "instances": [
+   "lower_hull_RR"
+  ],
+  "group": "lower_hull",
+  "print_note": "upside-down: gasket land (z 61.9) on the bed, tongue hangs below -> print the tongue first on a 9 mm support raft OR use tree supports under the land; supports inside under the chine and sole ring",
+  "mass_each_g": 74.9,
+  "note": ""
+ },
+ {
+  "name": "nose_cowl",
+  "orient_euler_xyz_deg": [
+   0,
+   90,
+   0
+  ],
+  "bbox_print": [
+   83.12,
+   187.09,
+   55.1
+  ],
+  "volume_cm3": 117.33,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 6460,
+  "open_edges": 0,
+  "mesh_volume_cm3": 115.38,
+  "pn": "RRX-P22",
+  "kind": "printed",
+  "material": "ASA",
+  "qty": 1,
+  "instances": [
+   "nose_cowl"
+  ],
+  "group": "lid",
+  "print_note": "standing on the rear joint face (x = 47 plane on the bed), nose tip up; tree supports under the lip step and inside the tip",
+  "mass_each_g": 90.4,
+  "note": ""
+ },
+ {
+  "name": "shoulder_L",
+  "orient_euler_xyz_deg": [
+   0,
+   -90,
+   0
+  ],
+  "bbox_print": [
+   69.66,
+   128.42,
+   84.5
+  ],
+  "volume_cm3": 39.3,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 4046,
+  "open_edges": 0,
+  "mesh_volume_cm3": 38.08,
+  "pn": "RRX-P23L",
+  "kind": "printed",
+  "material": "ASA",
+  "qty": 1,
+  "instances": [
+   "shoulder_L"
+  ],
+  "group": "lid",
+  "print_note": "standing on the rear joint face (x = -38 plane on the bed); supports under the well ledge",
+  "mass_each_g": 30.3,
+  "note": ""
+ },
+ {
+  "name": "rear_deck_L",
+  "orient_euler_xyz_deg": [
+   0,
+   0,
+   0
+  ],
+  "bbox_print": [
+   224.8,
+   146.39,
+   76.99
+  ],
+  "volume_cm3": 172.6,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 11198,
+  "open_edges": 0,
+  "mesh_volume_cm3": 169.09,
+  "pn": "RRX-P24L",
+  "kind": "printed",
+  "material": "ASA",
+  "qty": 1,
+  "instances": [
+   "rear_deck_L"
+  ],
+  "group": "lid",
+  "print_note": "as fitted (perimeter land on the bed); tree supports inside under the deck roof and sensor bosses",
+  "mass_each_g": 133.0,
+  "note": ""
+ },
+ {
+  "name": "shoulder_R",
+  "orient_euler_xyz_deg": [
+   0,
+   -90,
+   0
+  ],
+  "bbox_print": [
+   69.66,
+   128.42,
+   84.5
+  ],
+  "volume_cm3": 39.3,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 4046,
+  "open_edges": 0,
+  "mesh_volume_cm3": 38.08,
+  "pn": "RRX-P23R",
+  "kind": "printed",
+  "material": "ASA",
+  "qty": 1,
+  "instances": [
+   "shoulder_R"
+  ],
+  "group": "lid",
+  "print_note": "standing on the rear joint face (x = -38 plane on the bed); supports under the well ledge",
+  "mass_each_g": 30.3,
+  "note": ""
+ },
+ {
+  "name": "rear_deck_R",
+  "orient_euler_xyz_deg": [
+   0,
+   0,
+   0
+  ],
+  "bbox_print": [
+   224.8,
+   146.97,
+   76.99
+  ],
+  "volume_cm3": 172.09,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 9718,
+  "open_edges": 0,
+  "mesh_volume_cm3": 170.36,
+  "pn": "RRX-P24R",
+  "kind": "printed",
+  "material": "ASA",
+  "qty": 1,
+  "instances": [
+   "rear_deck_R"
+  ],
+  "group": "lid",
+  "print_note": "as fitted (perimeter land on the bed); tree supports inside under the deck roof and sensor bosses",
+  "mass_each_g": 132.6,
+  "note": ""
+ },
+ {
+  "name": "battery_hump",
+  "orient_euler_xyz_deg": [
+   0,
+   90,
+   0
+  ],
+  "bbox_print": [
+   66.0,
+   121.0,
+   167.8
+  ],
+  "volume_cm3": 132.51,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 3560,
+  "open_edges": 0,
+  "mesh_volume_cm3": 132.51,
+  "pn": "RRX-P25",
+  "kind": "printed",
+  "material": "ASA",
+  "qty": 1,
+  "instances": [
+   "battery_hump"
+  ],
+  "group": "lid",
+  "print_note": "standing on the front face (x = -69.2 plane on the bed), roof vertical; supports only under the brow",
+  "mass_each_g": 102.1,
+  "note": ""
+ },
+ {
+  "name": "saddle_cover",
+  "orient_euler_xyz_deg": [
+   0,
+   0,
+   0
+  ],
+  "bbox_print": [
+   115.2,
+   163.2,
+   3.0
+  ],
+  "volume_cm3": 56.23,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 1468,
+  "open_edges": 0,
+  "mesh_volume_cm3": 56.23,
+  "pn": "RRX-P26",
+  "kind": "printed",
+  "material": "PAHT-CF",
+  "qty": 1,
+  "instances": [
+   "saddle_cover"
+  ],
+  "group": "service_cover",
+  "print_note": "flat",
+  "mass_each_g": 50.7,
+  "note": ""
+ },
+ {
+  "name": "hatch_frame",
+  "orient_euler_xyz_deg": [
+   0,
+   90,
+   0
+  ],
+  "bbox_print": [
+   111.8,
+   125.0,
+   3.0
+  ],
+  "volume_cm3": 4.95,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 1232,
+  "open_edges": 0,
+  "mesh_volume_cm3": 4.95,
+  "pn": "RRX-P27",
+  "kind": "printed",
+  "material": "PAHT-CF",
+  "qty": 1,
+  "instances": [
+   "hatch_frame"
+  ],
+  "group": "battery_bay",
+  "print_note": "flat (ring on the bed), no supports",
+  "mass_each_g": 4.5,
+  "note": ""
+ },
+ {
+  "name": "hatch_door",
+  "orient_euler_xyz_deg": [
+   0,
+   -90,
+   0
+  ],
+  "bbox_print": [
+   110.7,
+   115.4,
+   41.35
+  ],
+  "volume_cm3": 102.71,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 1292,
+  "open_edges": 0,
+  "mesh_volume_cm3": 102.58,
+  "pn": "RRX-P28",
+  "kind": "printed",
+  "material": "ASA",
+  "qty": 1,
+  "instances": [
+   "hatch_door"
+  ],
+  "group": "hatch",
+  "print_note": "skirt/end-plate face (x = -233 plane) on the bed, tail apex up; tree supports inside under the apex",
+  "mass_each_g": 79.1,
+  "note": ""
+ },
+ {
+  "name": "wheel_rim",
+  "orient_euler_xyz_deg": [
+   -90,
+   0,
+   0
+  ],
+  "bbox_print": [
+   89.0,
+   89.0,
+   25.0
+  ],
+  "volume_cm3": 45.45,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 3516,
+  "open_edges": 0,
+  "mesh_volume_cm3": 45.38,
+  "pn": "RRX-P30",
+  "kind": "printed",
+  "material": "PAHT-CF",
+  "qty": 2,
+  "instances": [
+   "wheel_rim_L",
+   "wheel_rim_R"
+  ],
+  "group": "wheel",
+  "print_note": "outboard face on the bed, axis vertical; no supports (web bridges 8 holes)",
+  "mass_each_g": 40.9,
+  "note": ""
+ },
+ {
+  "name": "tyre",
+  "orient_euler_xyz_deg": [
+   -90,
+   0,
+   0
+  ],
+  "bbox_print": [
+   104.0,
+   104.0,
+   25.0
+  ],
+  "volume_cm3": 66.0,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 612,
+  "open_edges": 0,
+  "mesh_volume_cm3": 65.78,
+  "pn": "RRX-P31",
+  "kind": "printed",
+  "material": "TPU95A",
+  "qty": 2,
+  "instances": [
+   "tyre_L",
+   "tyre_R"
+  ],
+  "group": "wheel",
+  "print_note": "axis vertical; 4 walls, 20 % gyroid; print slow and dry",
+  "mass_each_g": 64.4,
+  "note": ""
+ },
+ {
+  "name": "cliff_pod_L",
+  "orient_euler_xyz_deg": [
+   180,
+   0,
+   0
+  ],
+  "bbox_print": [
+   33.2,
+   57.5,
+   30.5
+  ],
+  "volume_cm3": 6.56,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 754,
+  "open_edges": 0,
+  "mesh_volume_cm3": 6.56,
+  "pn": "RRX-P32L",
+  "kind": "printed",
+  "material": "PAHT-CF",
+  "qty": 1,
+  "instances": [
+   "cliff_pod_L"
+  ],
+  "group": "front_sensors",
+  "print_note": "plate face on the bed (upside-down); supports under the bezel step only",
+  "mass_each_g": 5.9,
+  "note": ""
+ },
+ {
+  "name": "bumper_side_L",
+  "orient_euler_xyz_deg": [
+   0,
+   0,
+   0
+  ],
+  "bbox_print": [
+   50.08,
+   71.18,
+   20.0
+  ],
+  "volume_cm3": 9.77,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 1418,
+  "open_edges": 0,
+  "mesh_volume_cm3": 9.77,
+  "pn": "RRX-P33L",
+  "kind": "printed",
+  "material": "ASA",
+  "qty": 1,
+  "instances": [
+   "bumper_side_L"
+  ],
+  "group": "bumper",
+  "print_note": "as fitted (band edge on the bed); bosses need small supports",
+  "mass_each_g": 7.5,
+  "note": ""
+ },
+ {
+  "name": "tray_chock_L",
+  "orient_euler_xyz_deg": [
+   0,
+   0,
+   0
+  ],
+  "bbox_print": [
+   92.0,
+   34.0,
+   30.0
+  ],
+  "volume_cm3": 26.54,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 526,
+  "open_edges": 0,
+  "mesh_volume_cm3": 26.68,
+  "pn": "RRX-P40L",
+  "kind": "printed",
+  "material": "ASA",
+  "qty": 1,
+  "instances": [
+   "tray_chock_L"
+  ],
+  "group": "tray",
+  "print_note": "flat",
+  "mass_each_g": 20.4,
+  "note": ""
+ },
+ {
+  "name": "tray_head_guard_L",
+  "orient_euler_xyz_deg": [
+   0,
+   0,
+   0
+  ],
+  "bbox_print": [
+   141.0,
+   136.0,
+   55.0
+  ],
+  "volume_cm3": 121.14,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 888,
+  "open_edges": 0,
+  "mesh_volume_cm3": 121.14,
+  "pn": "RRX-P41L",
+  "kind": "printed",
+  "material": "ASA",
+  "qty": 1,
+  "instances": [
+   "tray_head_guard_L"
+  ],
+  "group": "tray",
+  "print_note": "flat, no supports",
+  "mass_each_g": 93.3,
+  "note": ""
+ },
+ {
+  "name": "cliff_pod_R",
+  "orient_euler_xyz_deg": [
+   180,
+   0,
+   0
+  ],
+  "bbox_print": [
+   33.2,
+   57.5,
+   30.5
+  ],
+  "volume_cm3": 6.56,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 754,
+  "open_edges": 0,
+  "mesh_volume_cm3": 6.56,
+  "pn": "RRX-P32R",
+  "kind": "printed",
+  "material": "PAHT-CF",
+  "qty": 1,
+  "instances": [
+   "cliff_pod_R"
+  ],
+  "group": "front_sensors",
+  "print_note": "plate face on the bed (upside-down); supports under the bezel step only",
+  "mass_each_g": 5.9,
+  "note": ""
+ },
+ {
+  "name": "bumper_side_R",
+  "orient_euler_xyz_deg": [
+   0,
+   0,
+   0
+  ],
+  "bbox_print": [
+   50.08,
+   71.18,
+   20.0
+  ],
+  "volume_cm3": 9.77,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 1418,
+  "open_edges": 0,
+  "mesh_volume_cm3": 9.77,
+  "pn": "RRX-P33R",
+  "kind": "printed",
+  "material": "ASA",
+  "qty": 1,
+  "instances": [
+   "bumper_side_R"
+  ],
+  "group": "bumper",
+  "print_note": "as fitted (band edge on the bed); bosses need small supports",
+  "mass_each_g": 7.5,
+  "note": ""
+ },
+ {
+  "name": "tray_chock_R",
+  "orient_euler_xyz_deg": [
+   0,
+   0,
+   0
+  ],
+  "bbox_print": [
+   92.0,
+   34.0,
+   30.0
+  ],
+  "volume_cm3": 26.54,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 526,
+  "open_edges": 0,
+  "mesh_volume_cm3": 26.68,
+  "pn": "RRX-P40R",
+  "kind": "printed",
+  "material": "ASA",
+  "qty": 1,
+  "instances": [
+   "tray_chock_R"
+  ],
+  "group": "tray",
+  "print_note": "flat",
+  "mass_each_g": 20.4,
+  "note": ""
+ },
+ {
+  "name": "tray_head_guard_R",
+  "orient_euler_xyz_deg": [
+   0,
+   0,
+   0
+  ],
+  "bbox_print": [
+   141.0,
+   136.0,
+   55.0
+  ],
+  "volume_cm3": 121.14,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 888,
+  "open_edges": 0,
+  "mesh_volume_cm3": 121.14,
+  "pn": "RRX-P41R",
+  "kind": "printed",
+  "material": "ASA",
+  "qty": 1,
+  "instances": [
+   "tray_head_guard_R"
+  ],
+  "group": "tray",
+  "print_note": "flat, no supports",
+  "mass_each_g": 93.3,
+  "note": ""
+ },
+ {
+  "name": "bumper_centre",
+  "orient_euler_xyz_deg": [
+   0,
+   0,
+   0
+  ],
+  "bbox_print": [
+   17.17,
+   168.0,
+   20.0
+  ],
+  "volume_cm3": 17.71,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 1004,
+  "open_edges": 0,
+  "mesh_volume_cm3": 17.71,
+  "pn": "RRX-P34",
+  "kind": "printed",
+  "material": "ASA",
+  "qty": 1,
+  "instances": [
+   "bumper_centre"
+  ],
+  "group": "bumper",
+  "print_note": "as fitted; no supports",
+  "mass_each_g": 13.6,
+  "note": ""
+ },
+ {
+  "name": "tray_caster_cup",
+  "orient_euler_xyz_deg": [
+   0,
+   0,
+   0
+  ],
+  "bbox_print": [
+   68.0,
+   68.0,
+   10.0
+  ],
+  "volume_cm3": 19.08,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 1016,
+  "open_edges": 0,
+  "mesh_volume_cm3": 19.03,
+  "pn": "RRX-P42",
+  "kind": "printed",
+  "material": "ASA",
+  "qty": 1,
+  "instances": [
+   "tray_caster_cup"
+  ],
+  "group": "tray",
+  "print_note": "flat",
+  "mass_each_g": 14.7,
+  "note": ""
+ },
+ {
+  "name": "panel_tray",
+  "orient_euler_xyz_deg": [
+   180,
+   0,
+   0
+  ],
+  "bbox_print": [
+   72.5,
+   39.0,
+   10.0
+  ],
+  "volume_cm3": 3.88,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 1378,
+  "open_edges": 0,
+  "mesh_volume_cm3": 3.88,
+  "pn": "RRX-P50",
+  "kind": "printed",
+  "material": "ASA",
+  "qty": 1,
+  "instances": [
+   "panel_tray"
+  ],
+  "group": "controls",
+  "print_note": "ears on the bed (upside-down)",
+  "mass_each_g": 3.0,
+  "note": ""
+ },
+ {
+  "name": "cm5_tray",
+  "orient_euler_xyz_deg": [
+   0,
+   0,
+   0
+  ],
+  "bbox_print": [
+   87.0,
+   36.0,
+   9.0
+  ],
+  "volume_cm3": 8.74,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 1356,
+  "open_edges": 0,
+  "mesh_volume_cm3": 8.74,
+  "pn": "RRX-P51",
+  "kind": "printed",
+  "material": "ASA",
+  "qty": 1,
+  "instances": [
+   "cm5_tray"
+  ],
+  "group": "compute",
+  "print_note": "base on the bed; deck bridges between the four legs (supports under the deck)",
+  "mass_each_g": 6.7,
+  "note": ""
+ },
+ {
+  "name": "inlet_cover",
+  "orient_euler_xyz_deg": [
+   180,
+   0,
+   0
+  ],
+  "bbox_print": [
+   36.0,
+   49.0,
+   14.0
+  ],
+  "volume_cm3": 6.63,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 396,
+  "open_edges": 0,
+  "mesh_volume_cm3": 6.63,
+  "pn": "RRX-P52",
+  "kind": "printed",
+  "material": "ASA",
+  "qty": 1,
+  "instances": [
+   "inlet_cover"
+  ],
+  "group": "charge",
+  "print_note": "lid face on the bed (upside-down); no supports",
+  "mass_each_g": 5.1,
+  "note": ""
+ },
+ {
+  "name": "tof_clip_std",
+  "orient_euler_xyz_deg": [
+   0,
+   0,
+   0
+  ],
+  "bbox_print": [
+   6.4,
+   28.0,
+   6.9
+  ],
+  "volume_cm3": 0.41,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 460,
+  "open_edges": 0,
+  "mesh_volume_cm3": 0.41,
+  "pn": "RRX-P53",
+  "kind": "printed",
+  "material": "ASA",
+  "qty": 5,
+  "instances": [
+   "tof_clip_cliff_rl",
+   "tof_clip_cliff_rr",
+   "tof_clip_prox_rc",
+   "tof_clip_prox_rl",
+   "tof_clip_prox_rr"
+  ],
+  "group": "tof",
+  "print_note": "flat; 5 off",
+  "mass_each_g": 0.3,
+  "note": ""
+ },
+ {
+  "name": "tof_clip_shallow",
+  "orient_euler_xyz_deg": [
+   0,
+   0,
+   0
+  ],
+  "bbox_print": [
+   27.0,
+   6.4,
+   3.7
+  ],
+  "volume_cm3": 0.32,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 460,
+  "open_edges": 0,
+  "mesh_volume_cm3": 0.32,
+  "pn": "RRX-P54",
+  "kind": "printed",
+  "material": "ASA",
+  "qty": 4,
+  "instances": [
+   "tof_clip_look_fwd_left",
+   "tof_clip_look_fwd_right",
+   "tof_clip_look_rev_left",
+   "tof_clip_look_rev_right"
+  ],
+  "group": "tof",
+  "print_note": "flat; 4 off (shallow look-ahead / look-behind seats)",
+  "mass_each_g": 0.2,
+  "note": ""
+ },
+ {
+  "name": "receiver_channel_fitcheck_L",
+  "orient_euler_xyz_deg": [
+   180,
+   0,
+   0
+  ],
+  "bbox_print": [
+   63.7,
+   51.0,
+   21.0
+  ],
+  "volume_cm3": 16.05,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 2648,
+  "open_edges": 4,
+  "mesh_volume_cm3": 16.05,
+  "pn": "RRX-P02L",
+  "kind": "printed",
+  "material": "PAHT-CF",
+  "qty": 1,
+  "instances": [
+   "receiver_channel_fitcheck_L"
+  ],
+  "group": "receiver_option",
+  "print_note": "plate face on the bed (upside-down); no supports; FIT CHECK ONLY, the datum part is the machined RRX-F02",
+  "mass_each_g": 14.5,
+  "note": "optional"
+ },
+ {
+  "name": "receiver_channel_fitcheck_R",
+  "orient_euler_xyz_deg": [
+   180,
+   0,
+   0
+  ],
+  "bbox_print": [
+   63.7,
+   51.0,
+   21.0
+  ],
+  "volume_cm3": 15.95,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "triangles": 2440,
+  "open_edges": 4,
+  "mesh_volume_cm3": 15.96,
+  "pn": "RRX-P02R",
+  "kind": "printed",
+  "material": "PAHT-CF",
+  "qty": 1,
+  "instances": [
+   "receiver_channel_fitcheck_R"
+  ],
+  "group": "receiver_option",
+  "print_note": "plate face on the bed (upside-down); no supports; FIT CHECK ONLY, the datum part is the machined RRX-F02",
+  "mass_each_g": 14.4,
+  "note": "optional"
+ },
+ {
+  "name": "chassis_plate",
+  "orient_euler_xyz_deg": [
+   0,
+   0,
+   0
+  ],
+  "bbox_print": [
+   300.0,
+   239.0,
+   4.0
+  ],
+  "volume_cm3": 196.12,
+  "bed_fit": "NO",
+  "bed_note": "300.0 x 239.0 x 4.0 exceeds 250 x 250 x 253",
+  "pn": "RRX-F01",
+  "kind": "fabricated",
+  "material": "AL6061",
+  "qty": 1,
+  "instances": [
+   "chassis_plate"
+  ],
+  "group": "chassis",
+  "note": "4 mm 6061-T6 laser/waterjet blank, countersunk, tapped and reamed per holes table; 4 receiver bridge pockets 1.5 deep milled from below; DXF in out/dxf",
+  "mass_each_g": 529.5,
+  "dxf": "out/dxf/chassis_plate.dxf"
+ },
+ {
+  "name": "receiver_channel_L",
+  "orient_euler_xyz_deg": [
+   0,
+   0,
+   0
+  ],
+  "bbox_print": [
+   63.7,
+   51.0,
+   21.0
+  ],
+  "volume_cm3": 16.05,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "pn": "RRX-F02L",
+  "kind": "fabricated",
+  "material": "AL6061",
+  "qty": 1,
+  "instances": [
+   "receiver_channel_L"
+  ],
+  "group": "receiver",
+  "note": "machined 6061 (printed PAHT-CF copy RRX-P02x for fit check only); hangs on the G10 shim, no metal contact with the plate",
+  "mass_each_g": 43.3,
+  "dxf": null
+ },
+ {
+  "name": "receiver_shim_L_in",
+  "orient_euler_xyz_deg": [
+   0,
+   0,
+   0
+  ],
+  "bbox_print": [
+   56.0,
+   10.0,
+   4.0
+  ],
+  "volume_cm3": 1.8,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "pn": "RRX-F12",
+  "kind": "fabricated",
+  "material": "G10",
+  "qty": 2,
+  "instances": [
+   "receiver_shim_L_in",
+   "receiver_shim_R_in"
+  ],
+  "group": "receiver",
+  "note": "G-10 sheet, inboard ear strip, both faces surface ground 4.00 +-0.02, flatness 0.01; one set ground together; thermal break (DEC-045)",
+  "mass_each_g": 3.3,
+  "dxf": null
+ },
+ {
+  "name": "screw_ring",
+  "orient_euler_xyz_deg": [
+   90,
+   0,
+   0
+  ],
+  "bbox_print": [
+   39.0,
+   39.0,
+   1.0
+  ],
+  "volume_cm3": 0.67,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "pn": "RRX-F03",
+  "kind": "fabricated",
+  "material": "SS304",
+  "qty": 2,
+  "instances": [
+   "screw_ring_L",
+   "screw_ring_R"
+  ],
+  "group": "drive",
+  "note": "1 mm 304 laser-cut ring",
+  "mass_each_g": 5.3,
+  "dxf": "out/dxf/screw_ring.dxf"
+ },
+ {
+  "name": "grip_side_plate",
+  "orient_euler_xyz_deg": [
+   90,
+   0,
+   0
+  ],
+  "bbox_print": [
+   38.0,
+   137.0,
+   6.0
+  ],
+  "volume_cm3": 13.38,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "pn": "RRX-F05",
+  "kind": "fabricated",
+  "material": "AL6061",
+  "qty": 2,
+  "instances": [
+   "grip_side_plate_L",
+   "grip_side_plate_R"
+  ],
+  "group": "grip",
+  "note": "6 mm 6061-T6 laser cut; same blank both sides",
+  "mass_each_g": 36.1,
+  "dxf": "out/dxf/grip_side_plate.dxf"
+ },
+ {
+  "name": "grip_foot",
+  "orient_euler_xyz_deg": [
+   0,
+   0,
+   0
+  ],
+  "bbox_print": [
+   34.0,
+   25.0,
+   25.0
+  ],
+  "volume_cm3": 4.51,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "pn": "RRX-F06",
+  "kind": "fabricated",
+  "material": "AL6061",
+  "qty": 2,
+  "instances": [
+   "grip_foot_L",
+   "grip_foot_R"
+  ],
+  "group": "grip",
+  "note": "25 x 25 x 3 6060 angle cut to 34 mm, 4 holes",
+  "mass_each_g": 12.2,
+  "dxf": null
+ },
+ {
+  "name": "receiver_channel_R",
+  "orient_euler_xyz_deg": [
+   0,
+   0,
+   0
+  ],
+  "bbox_print": [
+   63.7,
+   51.0,
+   21.0
+  ],
+  "volume_cm3": 15.95,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "pn": "RRX-F02R",
+  "kind": "fabricated",
+  "material": "AL6061",
+  "qty": 1,
+  "instances": [
+   "receiver_channel_R"
+  ],
+  "group": "receiver",
+  "note": "machined 6061 (printed PAHT-CF copy RRX-P02x for fit check only); hangs on the G10 shim, no metal contact with the plate",
+  "mass_each_g": 43.1,
+  "dxf": null
+ },
+ {
+  "name": "bridge_tray",
+  "orient_euler_xyz_deg": [
+   0,
+   0,
+   0
+  ],
+  "bbox_print": [
+   104.0,
+   164.0,
+   2.0
+  ],
+  "volume_cm3": 33.05,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "pn": "RRX-F04",
+  "kind": "fabricated",
+  "material": "AL5052",
+  "qty": 1,
+  "instances": [
+   "bridge_tray"
+  ],
+  "group": "bridge",
+  "note": "2 mm 5052 laser cut; gap pad zone u 50..110, v 30..70",
+  "mass_each_g": 88.6,
+  "dxf": "out/dxf/bridge_tray.dxf"
+ },
+ {
+  "name": "bridge_post",
+  "orient_euler_xyz_deg": [
+   0,
+   0,
+   0
+  ],
+  "bbox_print": [
+   8.0,
+   8.0,
+   41.0
+  ],
+  "volume_cm3": 1.94,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "pn": "RRX-F07",
+  "kind": "fabricated",
+  "material": "AL6061",
+  "qty": 4,
+  "instances": [
+   "bridge_post_0",
+   "bridge_post_1",
+   "bridge_post_2",
+   "bridge_post_3"
+  ],
+  "group": "bridge",
+  "note": "8 mm round bar x 41, M4 tapped from below, M3 tapped from above",
+  "mass_each_g": 5.3,
+  "dxf": null
+ },
+ {
+  "name": "grip_bar",
+  "orient_euler_xyz_deg": [
+   0,
+   0,
+   0
+  ],
+  "bbox_print": [
+   14.0,
+   176.0,
+   14.0
+  ],
+  "volume_cm3": 26.62,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "pn": "RRX-F08",
+  "kind": "fabricated",
+  "material": "AL6061",
+  "qty": 1,
+  "instances": [
+   "grip_bar"
+  ],
+  "group": "grip",
+  "note": "14 mm 6061-T6 round bar cut to 176 mm, ends drilled 5.0 x 15 and tapped M6 x 12",
+  "mass_each_g": 71.9,
+  "dxf": null
+ },
+ {
+  "name": "caster_disc",
+  "orient_euler_xyz_deg": [
+   0,
+   0,
+   0
+  ],
+  "bbox_print": [
+   60.0,
+   60.0,
+   2.5
+  ],
+  "volume_cm3": 6.84,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "pn": "RRX-F09",
+  "kind": "fabricated",
+  "material": "SS304",
+  "qty": 1,
+  "instances": [
+   "caster_disc"
+  ],
+  "group": "caster",
+  "note": "2.5 mm 304 laser cut, 4 x M4 tapped",
+  "mass_each_g": 54.0,
+  "dxf": "out/dxf/caster_disc.dxf"
+ },
+ {
+  "name": "caster_shim",
+  "orient_euler_xyz_deg": [
+   0,
+   0,
+   0
+  ],
+  "bbox_print": [
+   46.0,
+   46.0,
+   1.0
+  ],
+  "volume_cm3": 1.46,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "pn": "RRX-F10",
+  "kind": "fabricated",
+  "material": "SS304",
+  "qty": 1,
+  "instances": [
+   "caster_shim"
+  ],
+  "group": "caster",
+  "note": "1 mm 304 shim",
+  "mass_each_g": 11.5,
+  "dxf": "out/dxf/caster_shim.dxf"
+ },
+ {
+  "name": "latch_arm",
+  "orient_euler_xyz_deg": [
+   0,
+   0,
+   0
+  ],
+  "bbox_print": [
+   62.5,
+   80.0,
+   4.0
+  ],
+  "volume_cm3": 10.84,
+  "bed_fit": "OK",
+  "bed_note": "",
+  "pn": "RRX-F11",
+  "kind": "fabricated",
+  "material": "AL6061",
+  "qty": 1,
+  "instances": [
+   "latch_arm"
+  ],
+  "group": "receiver",
+  "note": "4 mm 6061 laser cut, tapped M5 / M4",
+  "mass_each_g": 29.3,
+  "dxf": "out/dxf/latch_arm.dxf"
+ },
+ {
+  "name": "tray_base",
+  "orient_euler_xyz_deg": [
+   0,
+   0,
+   0
+  ],
+  "bbox_print": [
+   560.0,
+   424.0,
+   9.0
+  ],
+  "volume_cm3": 2088.99,
+  "bed_fit": "NO",
+  "bed_note": "560.0 x 424.0 x 9.0 exceeds 250 x 250 x 253",
+  "pn": "RRX-F20",
+  "kind": "fabricated",
+  "material": "PLY",
+  "qty": 1,
+  "instances": [
+   "tray_base"
+  ],
+  "group": "tray",
+  "note": "9 mm birch plywood or HDPE, 560 x 424, CNC/jigsaw; DXF",
+  "mass_each_g": 0.0,
+  "dxf": "out/dxf/tray_base.dxf"
+ }
+]

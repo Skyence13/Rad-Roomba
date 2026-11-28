@@ -1,0 +1,309 @@
+{
+ "scenario": "s15_no_auto_resume",
+ "evidence_class": "simulated",
+ "against": "Python protocol fakes (rr_core.fakes), virtual clock",
+ "seed": 29,
+ "sim_time_s": 64.32,
+ "checks": [
+  {
+   "check": "bumper: HOLD with a hardware inhibit",
+   "ok": true
+  },
+  {
+   "check": "REARM pressed too early (element just closed, discharge time not over) is refused and reported",
+   "ok": true,
+   "refusal": "NOT_READY"
+  },
+  {
+   "check": "bumper: chassis back in ARMED_IDLE, mission still in HOLD",
+   "ok": true
+  },
+  {
+   "check": "bumper: zero non-zero DRIVE for 5 s after the inhibit cleared and the latch was re-armed",
+   "ok": true,
+   "n": 0
+  },
+  {
+   "check": "bumper: explicit resume accepted",
+   "ok": true
+  },
+  {
+   "check": "bumper: motion resumes only after the command, on the same task",
+   "ok": true,
+   "task": "pair0:A+",
+   "n": 98
+  },
+  {
+   "check": "pause accepted",
+   "ok": true
+  },
+  {
+   "check": "pause + inhibit cleared + re-armed: zero non-zero DRIVE, still HOLD",
+   "ok": true,
+   "n": 0
+  },
+  {
+   "check": "explicit resume accepted after the pause",
+   "ok": true
+  },
+  {
+   "check": "resumes the paused task only",
+   "ok": true,
+   "task": "pair0:A+",
+   "paused": "pair0:A+"
+  },
+  {
+   "check": "link restored: mission in HOLD",
+   "ok": true,
+   "state": "HOLD",
+   "reason": "CHASSIS_LINK_DOWN"
+  },
+  {
+   "check": "link restored: zero non-zero DRIVE after the restore",
+   "ok": true,
+   "n": 0
+  },
+  {
+   "check": "software re-arm after the link loss still moves nothing",
+   "ok": true,
+   "n": 0
+  },
+  {
+   "check": "explicit resume accepted after the link loss",
+   "ok": true
+  },
+  {
+   "check": "resumes the interrupted task",
+   "ok": true,
+   "task": "pair0:A+",
+   "was": "pair0:A+"
+  },
+  {
+   "check": "prompt: REARM not offered before rearm_ready; an early press is refused NOT_READY and shown with its action",
+   "ok": true,
+   "before": {
+    "press_rearm": false,
+    "text": "Do not press REARM yet",
+    "reasons": [
+     "waiting: REARM is offered about 3 s after the chain closes (set stage ready, loop self-test passed), not while REARM is held"
+    ],
+    "warnings": [],
+    "refused": null
+   },
+   "after": {
+    "press_rearm": false,
+    "text": "Do not press REARM yet",
+    "reasons": [
+     "last REARM press refused: NOT_READY - press again when the REARM lamp is steady"
+    ],
+    "warnings": [],
+    "refused": "last REARM press refused: NOT_READY - press again when the REARM lamp is steady"
+   }
+  },
+  {
+   "check": "a 4 ms tap is refused TOO_SHORT, reported; nothing latched",
+   "ok": true,
+   "prompt": {
+    "press_rearm": true,
+    "text": "Press REARM once on the robot (briefly)",
+    "reasons": [],
+    "warnings": [],
+    "refused": "last REARM press refused: TOO_SHORT - press REARM a little longer (a short tap does not set)"
+   }
+  },
+  {
+   "check": "a REARM press held 5 s after the rise drops the latch (REARM_HELD) and the operator is told to press briefly",
+   "ok": true,
+   "prompt": {
+    "press_rearm": true,
+    "text": "Press REARM once on the robot (briefly)",
+    "reasons": [],
+    "warnings": [],
+    "refused": "last REARM press refused: REARM_HELD_AFTER_SET - release REARM: press it briefly, do not hold it"
+   },
+   "reasons": [
+    "REARM_HELD"
+   ]
+  },
+  {
+   "check": "BATTERY_REARM_LOW: the operator is asked to change or charge the pack before the next stop",
+   "ok": true,
+   "prompt": {
+    "press_rearm": true,
+    "text": "Press REARM once on the robot (briefly)",
+    "reasons": [],
+    "warnings": [
+     "battery low for re-arming (VBAT <= 12.0 V): change or charge the pack before the next stop"
+    ],
+    "refused": "last REARM press refused: REARM_HELD_AFTER_SET - release REARM: press it briefly, do not hold it"
+   }
+  },
+  {
+   "check": "after all of it: still HOLD, nothing moved without a resume",
+   "ok": true
+  },
+  {
+   "check": "fault flags, including a name this software does not know, are shown as reported",
+   "ok": true,
+   "shown": [
+    "PERMIT_STUCK_ON",
+    "CHAIN_IMPLAUSIBLE",
+    "SOME_FLAG_FROM_A_NEWER_FIRMWARE"
+   ]
+  },
+  {
+   "check": "DIAG reply with chain_state, chain_end and a 23-character readbacks string is received and archived",
+   "ok": true
+  }
+ ],
+ "passed": true,
+ "field_use_approved": false,
+ "coverage": {
+  "target_area_m2": 3.0,
+  "areas_m2": {
+   "UNVISITED": 2.7066250000000003,
+   "ACCEPTABLE": 0.0,
+   "INSUFFICIENT_SENSITIVITY": 0.271075,
+   "INVALID_DATA": 0.0,
+   "BLOCKED": 0.0,
+   "EXCLUDED": 0.0,
+   "NO_DECISION": 0.0,
+   "INCOMPLETE_COVERAGE": 0.0123,
+   "ALARM": 0.01,
+   "ACQUISITION_GAP": 0.0
+  },
+  "valid_exposure_fraction": 0.09729166666666667,
+  "acceptable_fraction": 0.0,
+  "sub_cell_m": 0.005,
+  "decision_cell_m": 0.1,
+  "position_allowance_m": 0.01,
+  "provisional": false
+ },
+ "time_sync": {
+  "limit_us": 10000.0,
+  "fits": 37,
+  "max_gate_bound_us": 838.0033213786841,
+  "median_gate_bound_us": 806.9163617919731
+ },
+ "link_stats": {
+  "tx": 3206,
+  "rx": 3202,
+  "bad_lines": 0,
+  "stale": 0,
+  "duplicates": 0,
+  "gates": 624,
+  "gaps": 0,
+  "retries": 2,
+  "unassigned_frames": 0,
+  "time_exchanges": 37,
+  "time_exchanges_rejected": 0
+ },
+ "localization_error_vs_truth_m": {
+  "max_x_m": 0.011351217210056719,
+  "max_y_m": 0.00019525124706956665
+ },
+ "plan": {
+  "n_pairs": 2,
+  "offset_m": 0.04375,
+  "pair_stride_m": 0.33625,
+  "seam_overlap_per_side_m": 0.01625,
+  "predicted_residual": {
+   "left_wall_strip_m": 0.1487,
+   "right_wall_strip_m": 0.1487,
+   "door_end_strip_m": 0.1413,
+   "front_end_strip_m": 0.0713,
+   "end_zone_single_heading_m": {
+    "door": 0.3399,
+    "front": 0.3399
+   },
+   "note": "wall strips are set by the in-place turn radius of the outline; see README coverage section"
+  },
+  "estimated_time_s": 244.2
+ },
+ "flags": [
+  {
+   "id": "HS-0001",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 3,
+   "x_m": 0.7446640010576563,
+   "y_m": -0.32110270419964854,
+   "D": 0.20338190311440557,
+   "u_total": 0.09968750609672596,
+   "D_star": 0.1421347533567947,
+   "D_hash": 0.33755699928818644,
+   "location": {
+    "distance_from_door_m": 0.745,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.179,
+    "text": "0.74 m from the door threshold, 0.18 m from the right wall"
+   }
+  }
+ ],
+ "scan_detections": 0,
+ "observations": [],
+ "decision_status": {
+  "cells_with_gates": 44,
+  "no_decision": 0,
+  "no_decision_text": [],
+  "no_decision_within_0.5m_of_an_end": 0,
+  "cells_within_0.5m_of_an_end": 4
+ },
+ "rev5": {
+  "cells_with_data": 44,
+  "status": {
+   "INCOMPLETE COVERAGE": 5,
+   "SENSITIVITY INSUFFICIENT": 38,
+   "ALARM": 1
+  },
+  "status_reasons": {
+   "D# above the detection goal": 38,
+   "coverage 0.15 < 0.5": 1,
+   "coverage 0.48 < 0.5": 1,
+   "coverage 0.21 < 0.5": 1,
+   "flagged by combined; one-sided reference: recount required before an investigation is reported": 1,
+   "coverage 0.20 < 0.5": 1,
+   "coverage 0.19 < 0.5": 1
+  },
+  "acceptable_fraction": 0.0,
+  "median_D_hash": 0.47703102345637277,
+  "undecidable_recorded": 0,
+  "undecidable_provisional_live": 2,
+  "alarm_bookkeeping": {
+   "provisional alarm not confirmed": 1,
+   "alarm found at final evaluation": 1
+  },
+  "flags": {
+   "INVESTIGATION_LEVEL:recorded alarm": 1
+  },
+  "review_queue_items": 1,
+  "recount_required_flags": 1,
+  "one_sided_cells": 18,
+  "one_sided_alarm_cells_needing_recount": 1,
+  "search_preroll_s": [],
+  "recorded_evaluation": null,
+  "revisit": 0,
+  "position_credit": {
+   "samples": 619,
+   "credited_fraction": 1.0,
+   "credited_with_true_error_above_budget": 22,
+   "fraction_of_credited_above_budget": 0.035541195476575124,
+   "max_true_error_when_credited_m": 0.011392281211226415,
+   "max_true_error_m": 0.011392281211226415,
+   "no_credit_reasons_samples": {},
+   "localizer": {
+    "wheel_scale": {
+     "estimate": -0.0002858811165402097,
+     "sigma": 0.00039523167262371395
+    },
+    "stats": {
+     "x_fixes": 615,
+     "x_rejects": 1,
+     "big_corrections": 0,
+     "max_correction_m": 0.0013033916235730195,
+     "deferred_scans": 50
+    }
+   }
+  }
+ },
+ "nonzero_drives_total": 837
+}

@@ -1,0 +1,734 @@
+{
+ "summary": {
+  "volumetric interference": "PASS -- none",
+  "containment in Rev E cavity": "PASS -- all internal parts inside",
+  "head inside the proposed envelope (CCR-11) and the contract z ceiling": "PASS -- x 68.8..212.2, z 7.0..48.0; shoes reach back to x 4.0",
+  "wheel and caster on the floor plane": "PASS -- z = 0 +- 0.05",
+  "ToF centre rays": "PASS -- all 11 clear",
+  "LiDAR scan plane": "PASS -- clear",
+  "service sweeps (battery, wheels, head, grip hand zone)": "PASS -- free",
+  "J1/J2 coupling-nut grasp zone (45 mm radial) free": "PASS -- free (see service section)",
+  "cable corridors": "PASS -- free"
+ },
+ "extents": {
+  "overall x (tail .. leading rail)": "-271.9 .. 212.2  (length 484.1)",
+  "overall y": "-175.0 .. 175.0  (width 350.0)",
+  "overall z": "0.0 .. 230.0",
+  "body shell x / y / z": "-271.9..102.4 / -146.4..146.4 / 32.9..166.0  (Rev D: -165.0..102.3 / +-112.6 / 32.9..117.6)",
+  "width across tyres": "295.0",
+  "head envelope x / y / z": "68.8..212.2 / -175.0..175.0 / 7.0..48.0; shoes to x 4.0  (contract ceiling z (5.0, 50.0))",
+  "swept radius about base_link: tail / head outer corner": "278 / 275",
+  "ground clearance: body underside / receiver channels / head rail": "32.9 / 12.0 / 7.0",
+  "lowest non-running-gear solids": "head_frame_E 9.6; S0_Guard_webs 9.6; S1_Guard_webs 9.6; S2_Guard_webs 9.6",
+  "caster contact / wheel contact z": "0.00 / 0.00",
+  "grip bar z / LiDAR top z": "153.0..175.0 / 230.0"
+ },
+ "clash": [],
+ "close": [
+  [
+   "chassis_plate",
+   "caster",
+   0.95
+  ],
+  [
+   "chassis_plate",
+   "battery_tunnel_wall_L",
+   1.0
+  ],
+  [
+   "chassis_plate",
+   "battery_tunnel_wall_R",
+   1.0
+  ],
+  [
+   "chassis_plate",
+   "chassis_heater_pad",
+   1.2
+  ],
+  [
+   "chassis_plate",
+   "tof_cliff_fl",
+   1.75
+  ],
+  [
+   "chassis_plate",
+   "tof_cliff_fr",
+   1.75
+  ],
+  [
+   "receiver_channel_L",
+   "tof_cliff_fl",
+   1.0
+  ],
+  [
+   "receiver_channel_L",
+   "head_shoe_L",
+   0.5
+  ],
+  [
+   "receiver_channel_R",
+   "tof_cliff_fr",
+   1.0
+  ],
+  [
+   "receiver_channel_R",
+   "head_shoe_R",
+   0.5
+  ],
+  [
+   "head_latch_envelope",
+   "head_cover_E",
+   1.0
+  ],
+  [
+   "head_latch_envelope",
+   "head_jacket_E",
+   1.0
+  ],
+  [
+   "caster_bracket",
+   "battery_cassette",
+   1.0
+  ],
+  [
+   "caster_bracket",
+   "chassis_heater_pad",
+   0.5
+  ],
+  [
+   "motor_L",
+   "wheel_L",
+   1.0
+  ],
+  [
+   "motor_L",
+   "electronics_bridge",
+   0.5
+  ],
+  [
+   "motor_L",
+   "grip_leg_L",
+   0.5
+  ],
+  [
+   "motor_R",
+   "wheel_R",
+   1.0
+  ],
+  [
+   "motor_R",
+   "electronics_bridge",
+   0.5
+  ],
+  [
+   "motor_R",
+   "grip_leg_R",
+   0.5
+  ],
+  [
+   "bridge_post_0",
+   "CM5_carrier_assembly",
+   1.0
+  ],
+  [
+   "battery_cassette",
+   "battery_tunnel_wall_L",
+   1.0
+  ],
+  [
+   "battery_cassette",
+   "battery_tunnel_wall_R",
+   1.0
+  ],
+  [
+   "battery_cassette",
+   "chassis_heater_pad",
+   1.3
+  ],
+  [
+   "battery_tunnel_wall_L",
+   "CM5_carrier_assembly",
+   1.0
+  ],
+  [
+   "CM5_carrier_assembly",
+   "rearm_start_body",
+   0.91
+  ],
+  [
+   "Leading_contact_rail",
+   "Side_contact_rail_right",
+   0.56
+  ],
+  [
+   "Leading_contact_rail",
+   "Side_contact_rail_left",
+   0.56
+  ],
+  [
+   "Leading_contact_rail",
+   "head_frame_E",
+   0.4
+  ],
+  [
+   "Side_contact_rail_right",
+   "Wing_tip_contact_return_right",
+   0.19
+  ],
+  [
+   "Side_contact_rail_right",
+   "head_frame_E",
+   1.0
+  ],
+  [
+   "Side_contact_rail_left",
+   "Wing_tip_contact_return_left",
+   0.19
+  ],
+  [
+   "Side_contact_rail_left",
+   "head_frame_E",
+   1.0
+  ],
+  [
+   "S0_Reference_guide",
+   "head_spreader_plate",
+   1.5
+  ],
+  [
+   "S0_Reference_guide",
+   "head_cover_E",
+   1.5
+  ],
+  [
+   "S0_Floor_carrier",
+   "head_frame_E",
+   1.0
+  ],
+  [
+   "S0_Reference_SiPM",
+   "S0_retention_pad_and_heater",
+   0.4
+  ],
+  [
+   "S0_Reference_carrier",
+   "head_frame_E",
+   1.0
+  ],
+  [
+   "S0_Reference_carrier",
+   "S0_retention_pad_and_heater",
+   1.1
+  ],
+  [
+   "S1_Reference_guide",
+   "head_spreader_plate",
+   1.5
+  ],
+  [
+   "S1_Floor_carrier",
+   "head_frame_E",
+   1.0
+  ],
+  [
+   "S1_Reference_SiPM",
+   "S1_retention_pad_and_heater",
+   0.4
+  ],
+  [
+   "S1_Reference_carrier",
+   "head_frame_E",
+   1.0
+  ],
+  [
+   "S1_Reference_carrier",
+   "S1_retention_pad_and_heater",
+   1.1
+  ],
+  [
+   "S2_Reference_guide",
+   "head_spreader_plate",
+   1.5
+  ],
+  [
+   "S2_Floor_carrier",
+   "head_frame_E",
+   1.0
+  ],
+  [
+   "S2_Reference_SiPM",
+   "S2_retention_pad_and_heater",
+   0.4
+  ],
+  [
+   "S2_Reference_carrier",
+   "head_frame_E",
+   1.0
+  ],
+  [
+   "S2_Reference_carrier",
+   "S2_retention_pad_and_heater",
+   1.1
+  ],
+  [
+   "S3_Reference_guide",
+   "head_spreader_plate",
+   1.5
+  ],
+  [
+   "S3_Reference_guide",
+   "head_cover_E",
+   1.5
+  ],
+  [
+   "S3_Floor_carrier",
+   "head_frame_E",
+   1.0
+  ],
+  [
+   "S3_Reference_SiPM",
+   "S3_retention_pad_and_heater",
+   0.4
+  ],
+  [
+   "S3_Reference_carrier",
+   "head_frame_E",
+   1.0
+  ],
+  [
+   "S3_Reference_carrier",
+   "S3_retention_pad_and_heater",
+   1.1
+  ],
+  [
+   "head_shoe_L",
+   "head_cover_E",
+   0.4
+  ],
+  [
+   "head_shoe_R",
+   "head_cover_E",
+   0.4
+  ],
+  [
+   "head_spreader_plate",
+   "RR-HEAD-ACQ_bottom_parts",
+   0.5
+  ],
+  [
+   "head_spreader_plate",
+   "head_cover_E",
+   0.6
+  ],
+  [
+   "RR-HEAD-ACQ_top_parts",
+   "head_cover_E",
+   0.9
+  ]
+ ],
+ "outside": [],
+ "service": {
+  "battery_removal_sweep": {
+   "direction": "-x (rearward through the tail-cap hatch)",
+   "travel_mm": 165.0,
+   "blocked_by": []
+  },
+  "grip_hand_zone": {
+   "box": "45 mm in front of the bar and below it, 25 mm behind it below the bar (fingertips), 45 mm behind it at bar height and above; 130 mm wide (CR-04)",
+   "blocked_by": []
+  },
+  "J1_coupling_nut_clearance": {
+   "required_mm": 45.0,
+   "grasp_zone": "annulus nut radius .. nut radius + 45 mm over the nut length (2..24 mm above the skin), all solids incl. the body skin",
+   "blocked_by": [],
+   "nearest_3d_mm_excl_skin": [
+    [
+     23.7,
+     "saddle_service_cover"
+    ],
+    [
+     38.4,
+     "RR-CHS-MAIN_top_parts"
+    ],
+    [
+     46.9,
+     "J2_receptacle"
+    ],
+    [
+     49.3,
+     "RR-CHS-MAIN_pcb"
+    ]
+   ]
+  },
+  "J2_coupling_nut_clearance": {
+   "required_mm": 45.0,
+   "grasp_zone": "annulus nut radius .. nut radius + 45 mm over the nut length (2..24 mm above the skin), all solids incl. the body skin",
+   "blocked_by": [],
+   "nearest_3d_mm_excl_skin": [
+    [
+     24.7,
+     "saddle_service_cover"
+    ],
+    [
+     39.5,
+     "RR-CHS-MAIN_top_parts"
+    ],
+    [
+     47.8,
+     "J1_receptacle"
+    ],
+    [
+     49.4,
+     "J1_mated_plug"
+    ]
+   ]
+  },
+  "charge_inlet_access": {
+   "probe": "point 30 mm outboard of the inlet on its axis",
+   "nearest": [
+    [
+     27.2,
+     "upper_fairing_E"
+    ],
+    [
+     36.2,
+     "lower_hull_E"
+    ],
+    [
+     58.9,
+     "bumper_sw_r"
+    ],
+    [
+     62.1,
+     "hands_on_body"
+    ]
+   ],
+   "min_mm": 27.2
+  },
+  "wheel_L_axial_removal": {
+   "blocked_by": []
+  },
+  "wheel_R_axial_removal": {
+   "blocked_by": []
+  },
+  "head_removal_sweep_+x": {
+   "blocked_by": []
+  }
+ },
+ "corridors": {
+  "hump_side_left": {
+   "box": [
+    -118,
+    -72,
+    62,
+    76,
+    100,
+    116
+   ],
+   "use": "LiDAR Ethernet/12 V, RR-PANEL, rear ToF and deck controls to the board rear corners",
+   "blocked_by": []
+  },
+  "left_gutter": {
+   "box": [
+    -69,
+    -5,
+    99,
+    105,
+    84,
+    92
+   ],
+   "use": "left motor/encoder, left look-ahead ToF, USB/5 V to CM5",
+   "blocked_by": []
+  },
+  "right_gutter": {
+   "box": [
+    -69,
+    -5,
+    -105,
+    -99,
+    84,
+    92
+   ],
+   "use": "pack feed from the coupler, charge feed, right motor/encoder, E-stop loop",
+   "blocked_by": []
+  },
+  "front_bay": {
+   "box": [
+    36,
+    62,
+    -30,
+    30,
+    56,
+    90
+   ],
+   "use": "J1/J2 feeds, front cliff ToF, dock switch",
+   "blocked_by": []
+  },
+  "under_bridge_right": {
+   "box": [
+    -12,
+    20,
+    -41,
+    -20,
+    40,
+    76
+   ],
+   "use": "pack feed from the coupler between the motor ends to the right gutter",
+   "blocked_by": []
+  },
+  "left_bay_over_cm5": {
+   "box": [
+    -102,
+    -75,
+    59,
+    80,
+    78,
+    90
+   ],
+   "use": "CM5 USB/Ethernet/antenna pigtails, selector and REARM leads",
+   "blocked_by": []
+  },
+  "right_bay": {
+   "box": [
+    -155,
+    -100,
+    -90,
+    -60,
+    45,
+    76
+   ],
+   "use": "charge inlet feed, HANDS-ON/Pause leads, right rear ToF, bumper switch",
+   "blocked_by": []
+  }
+ },
+ "rays": [
+  {
+   "sensor": "tof_cliff_fl",
+   "start": [
+    46.0,
+    109.5,
+    31.0
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "floor_hit_xy_range": [
+    46.0,
+    109.5,
+    31.0
+   ],
+   "centre_ray_hits": [],
+   "cone_edge_hits": {}
+  },
+  {
+   "sensor": "tof_cliff_fr",
+   "start": [
+    46.0,
+    -109.5,
+    31.0
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "floor_hit_xy_range": [
+    46.0,
+    -109.5,
+    31.0
+   ],
+   "centre_ray_hits": [],
+   "cone_edge_hits": {}
+  },
+  {
+   "sensor": "tof_cliff_rl",
+   "start": [
+    -241.7,
+    78.3,
+    41.0
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "floor_hit_xy_range": [
+    -241.7,
+    78.3,
+    41.0
+   ],
+   "centre_ray_hits": [],
+   "cone_edge_hits": {}
+  },
+  {
+   "sensor": "tof_cliff_rr",
+   "start": [
+    -241.7,
+    -78.3,
+    41.0
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "floor_hit_xy_range": [
+    -241.7,
+    -78.3,
+    41.0
+   ],
+   "centre_ray_hits": [],
+   "cone_edge_hits": {}
+  },
+  {
+   "sensor": "tof_look_fwd_left",
+   "start": [
+    1.5,
+    91.0,
+    162.0
+   ],
+   "dir": [
+    0.946,
+    0.099,
+    -0.309
+   ],
+   "floor_hit_xy_range": [
+    497.4,
+    143.1,
+    524.2
+   ],
+   "centre_ray_hits": [],
+   "cone_edge_hits": {}
+  },
+  {
+   "sensor": "tof_look_fwd_right",
+   "start": [
+    1.5,
+    -91.0,
+    162.0
+   ],
+   "dir": [
+    0.946,
+    -0.099,
+    -0.309
+   ],
+   "floor_hit_xy_range": [
+    497.4,
+    -143.1,
+    524.2
+   ],
+   "centre_ray_hits": [],
+   "cone_edge_hits": {}
+  },
+  {
+   "sensor": "tof_look_rev_left",
+   "start": [
+    -247.6,
+    65.6,
+    100.0
+   ],
+   "dir": [
+    -0.913,
+    0.161,
+    -0.375
+   ],
+   "floor_hit_xy_range": [
+    -491.4,
+    108.6,
+    266.9
+   ],
+   "centre_ray_hits": [],
+   "cone_edge_hits": {}
+  },
+  {
+   "sensor": "tof_look_rev_right",
+   "start": [
+    -247.6,
+    -65.6,
+    100.0
+   ],
+   "dir": [
+    -0.913,
+    -0.161,
+    -0.375
+   ],
+   "floor_hit_xy_range": [
+    -491.4,
+    -108.6,
+    266.9
+   ],
+   "centre_ray_hits": [],
+   "cone_edge_hits": {}
+  },
+  {
+   "sensor": "tof_prox_rc",
+   "start": [
+    -236.0,
+    0.0,
+    158.0
+   ],
+   "dir": [
+    -1.0,
+    0.0,
+    -0.0
+   ],
+   "floor_hit_xy_range": null,
+   "centre_ray_hits": [],
+   "cone_edge_hits": {}
+  },
+  {
+   "sensor": "tof_prox_rl",
+   "start": [
+    -249.3,
+    82.0,
+    80.0
+   ],
+   "dir": [
+    -0.819,
+    0.574,
+    -0.0
+   ],
+   "floor_hit_xy_range": null,
+   "centre_ray_hits": [],
+   "cone_edge_hits": {}
+  },
+  {
+   "sensor": "tof_prox_rr",
+   "start": [
+    -249.3,
+    -82.0,
+    80.0
+   ],
+   "dir": [
+    -0.819,
+    -0.574,
+    -0.0
+   ],
+   "floor_hit_xy_range": null,
+   "centre_ray_hits": [],
+   "cone_edge_hits": {}
+  }
+ ],
+ "lidar": {
+  "scan_z": 210.0,
+  "blocked": []
+ },
+ "head_bounds": [
+  4.0,
+  -175.0,
+  7.0,
+  212.2,
+  175.0,
+  48.0
+ ],
+ "body_bounds": [
+  -271.8530617169119,
+  -146.3882656985567,
+  32.918882519513225,
+  102.35411332970963,
+  146.38826569855505,
+  166.0
+ ]
+}

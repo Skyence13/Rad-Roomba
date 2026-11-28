@@ -1,0 +1,774 @@
+{
+ "scenario": "s11_search_then_count_inline",
+ "evidence_class": "simulated",
+ "against": "Python protocol fakes (rr_core.fakes), virtual clock",
+ "seed": 22,
+ "sim_time_s": 229.34,
+ "checks": [
+  {
+   "check": "inline: robot stopped inside the pass for the scaler count",
+   "ok": true
+  },
+  {
+   "check": "mission complete",
+   "ok": true
+  },
+  {
+   "check": "ratemeter alarm at the hot spot",
+   "ok": true,
+   "alarms": 1,
+   "observations": 1
+  },
+  {
+   "check": "alarming lane parked over the spot for the count (within 30 mm of the patch centre along track)",
+   "ok": true,
+   "achieved": [
+    1.5421697413231337,
+    -0.14625739528319914
+   ]
+  },
+  {
+   "check": "scaler count valid (stationary, no stop event inside) and decided at alpha_recount",
+   "ok": true,
+   "outcome": "EXCEEDS_INVESTIGATION_LEVEL",
+   "result": {
+    "D": 2.1339941964327935,
+    "u_stat": 0.10198221366652344,
+    "u_total": 0.33598825549792755,
+    "D_star": 0.1617692460161898,
+    "D_hash": 0.27458306653400083,
+    "T_F": 9.891090000000004,
+    "detected": true,
+    "method": "linear-exact/gil-pelaez/predictive-U(N=33.0)/provisional-no-check",
+    "m": 1,
+    "alpha_lane": 0.00017096303211345723,
+    "status": "OK"
+   }
+  },
+  {
+   "check": "scaler result consistent with the injected patch (lane-average 2.0 Bq/cm2 +/- 30 %)",
+   "ok": true,
+   "D": 2.1339941964327935
+  },
+  {
+   "check": "floor that only saw the search stage is reported with stage SEARCH",
+   "ok": true
+  },
+  {
+   "check": "ratemeter view available (per-lane rate with alarm set-point)",
+   "ok": true
+  }
+ ],
+ "passed": true,
+ "field_use_approved": false,
+ "coverage": {
+  "target_area_m2": 3.0,
+  "areas_m2": {
+   "UNVISITED": 1.016475,
+   "ACCEPTABLE": 0.01,
+   "INSUFFICIENT_SENSITIVITY": 1.7998,
+   "INVALID_DATA": 0.0,
+   "BLOCKED": 0.0,
+   "EXCLUDED": 0.0,
+   "NO_DECISION": 0.0,
+   "INCOMPLETE_COVERAGE": 0.043725,
+   "ALARM": 0.13,
+   "ACQUISITION_GAP": 0.0
+  },
+  "valid_exposure_fraction": 0.6581750000000001,
+  "acceptable_fraction": 0.0033333333333333335,
+  "sub_cell_m": 0.005,
+  "decision_cell_m": 0.1,
+  "position_allowance_m": 0.01,
+  "provisional": false
+ },
+ "time_sync": {
+  "limit_us": 10000.0,
+  "fits": 119,
+  "max_gate_bound_us": 838.0033213786841,
+  "median_gate_bound_us": 798.9081218375636
+ },
+ "link_stats": {
+  "tx": 11620,
+  "rx": 11617,
+  "bad_lines": 0,
+  "stale": 0,
+  "duplicates": 0,
+  "gates": 2274,
+  "gaps": 0,
+  "retries": 2,
+  "unassigned_frames": 0,
+  "time_exchanges": 119,
+  "time_exchanges_rejected": 0
+ },
+ "localization_error_vs_truth_m": {
+  "max_x_m": 0.0020334345559653855,
+  "max_y_m": 0.001241521720946298
+ },
+ "plan": {
+  "n_pairs": 2,
+  "offset_m": 0.04375,
+  "pair_stride_m": 0.33625,
+  "seam_overlap_per_side_m": 0.01625,
+  "predicted_residual": {
+   "left_wall_strip_m": 0.1487,
+   "right_wall_strip_m": 0.1487,
+   "door_end_strip_m": 0.1413,
+   "front_end_strip_m": 0.0713,
+   "end_zone_single_heading_m": {
+    "door": 0.3399,
+    "front": 0.3399
+   },
+   "note": "wall strips are set by the in-place turn radius of the outline; see README coverage section"
+  },
+  "estimated_time_s": 244.2
+ },
+ "flags": [
+  {
+   "id": "HS-0001",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 1,
+   "x_m": 1.152216002443195,
+   "y_m": -0.16061546437334706,
+   "D": 0.1256324595675207,
+   "u_total": 0.06970059623153223,
+   "D_star": 0.10691083434242676,
+   "D_hash": 0.24743112723499605,
+   "location": {
+    "distance_from_door_m": 1.152,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.339,
+    "text": "1.15 m from the door threshold, 0.34 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0002",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 1,
+   "x_m": 1.5517630246928575,
+   "y_m": -0.15500148896039864,
+   "D": 1.3520112295186464,
+   "u_total": 0.23031745480048593,
+   "D_star": 0.09159577344861308,
+   "D_hash": 0.20719446386774915,
+   "location": {
+    "distance_from_door_m": 1.552,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.345,
+    "text": "1.55 m from the door threshold, 0.34 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0003",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 1,
+   "x_m": 1.9945295967853889,
+   "y_m": -0.15726962631199132,
+   "D": 0.14894070537792975,
+   "u_total": 0.0737815164698044,
+   "D_star": 0.11252064924685135,
+   "D_hash": 0.25884208974889883,
+   "location": {
+    "distance_from_door_m": 1.995,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.343,
+    "text": "1.99 m from the door threshold, 0.34 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0004",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 3,
+   "x_m": 2.3089323912660293,
+   "y_m": -0.014931379022729528,
+   "D": 0.45771837517349967,
+   "u_total": 0.3198852522681988,
+   "D_star": 0.45034564276842565,
+   "D_hash": 1.2681407490516703,
+   "location": {
+    "distance_from_door_m": 2.309,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.485,
+    "text": "2.31 m from the door threshold, 0.49 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0005",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 0,
+   "x_m": 0.8675248709974658,
+   "y_m": -0.2774940665164214,
+   "D": 0.1568014104943847,
+   "u_total": 0.09666370026300314,
+   "D_star": 0.14887572020295892,
+   "D_hash": 0.3529904134259359,
+   "location": {
+    "distance_from_door_m": 0.868,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.223,
+    "text": "0.87 m from the door threshold, 0.22 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0006",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 0,
+   "x_m": 0.300237691241073,
+   "y_m": -0.2774694514926572,
+   "D": 0.4108802341474374,
+   "u_total": 0.3301334646449166,
+   "D_star": 0.40428901079447344,
+   "D_hash": 1.2300109137286352,
+   "location": {
+    "distance_from_door_m": 0.3,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.223,
+    "text": "0.30 m from the door threshold, 0.22 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0007",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 0,
+   "x_m": 2.2987187066595824,
+   "y_m": 0.2775251643652389,
+   "D": 0.20299228006512632,
+   "u_total": 0.104871326228211,
+   "D_star": 0.15419148542779734,
+   "D_hash": 0.36371254381172813,
+   "location": {
+    "distance_from_door_m": 2.299,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.222,
+    "text": "2.30 m from the door threshold, 0.22 m from the left wall"
+   }
+  },
+  {
+   "id": "HS-0008",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 0,
+   "x_m": 2.6002086893206133,
+   "y_m": 0.27751716189521813,
+   "D": 0.7184836603311171,
+   "u_total": 0.3988114848269613,
+   "D_star": 0.4240547446650265,
+   "D_hash": 1.2986510136713385,
+   "location": {
+    "distance_from_door_m": 2.6,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.222,
+    "text": "2.60 m from the door threshold, 0.22 m from the left wall"
+   }
+  },
+  {
+   "id": "HS-0009",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 3,
+   "x_m": 2.6403202478858914,
+   "y_m": 0.01500603065443236,
+   "D": 0.21748179898398248,
+   "u_total": 0.10052534864735799,
+   "D_star": 0.15261778150355787,
+   "D_hash": 0.35663043753581686,
+   "location": {
+    "distance_from_door_m": 2.64,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.485,
+    "text": "2.64 m from the door threshold, 0.48 m from the left wall"
+   }
+  },
+  {
+   "id": "HS-0010",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 0,
+   "x_m": 2.865103811480078,
+   "y_m": 0.2775230729192467,
+   "D": 0.8413237205581244,
+   "u_total": 0.4954347600342947,
+   "D_star": 0.42065333673909516,
+   "D_hash": 1.49685484949696,
+   "location": {
+    "distance_from_door_m": 2.865,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.222,
+    "text": "2.87 m from the door threshold, 0.22 m from the left wall"
+   }
+  }
+ ],
+ "scan_detections": 0,
+ "observations": [
+  {
+   "id": "OBS-0001",
+   "flag": null,
+   "lane": 1,
+   "valid": true,
+   "invalid_reason": "COUNT_END",
+   "outcome": "EXCEEDS_INVESTIGATION_LEVEL",
+   "stage": "SCALER",
+   "mode": "PRESET_TIME",
+   "alpha": 0.00017096303211345723,
+   "beta": 0.05,
+   "n_gates": 99,
+   "pose": [
+    1.4109693106153163,
+    -0.19000610363079734,
+    -9.844895439489525e-06
+   ],
+   "target_xy": [
+    1.5405893847417294,
+    -0.14624719252140472
+   ],
+   "achieved_xy": [
+    1.5421697413231337,
+    -0.14625739528319914
+   ],
+   "t_end_us": 1037921000,
+   "lanes": [
+    {
+     "lane": 0,
+     "D": 0.0806166955550478,
+     "u_stat": 0.04628575847951935,
+     "u_total": 0.04817248103955525,
+     "D_star": 0.16863711282912286,
+     "D_hash": 0.28630635291313594,
+     "T_F": 9.891090000000004,
+     "detected": false,
+     "method": "linear-exact/gil-pelaez/predictive-U(N=33.0)/provisional-no-check",
+     "m": 1,
+     "alpha_lane": 0.00017096303211345723,
+     "status": "OK",
+     "N_F": 63.0,
+     "N_U": 40.0,
+     "U0": 5.070239836149007,
+     "u0_method": "pooled:one-sided:N=126/25.2s",
+     "u0": {
+      "n_min": 125,
+      "dwell_seq": [
+       257,
+       355
+      ],
+      "past_only": false,
+      "source": "pooled",
+      "windows": [
+       {
+        "seq_lo": 194,
+        "seq_hi": 256,
+        "n": 126.0,
+        "t_s": 25.19243999999975,
+        "mean": 5.00150045013509,
+        "centre_m": 1.2394571285014404,
+        "side": "before",
+        "span_m": 0.10736557363579902
+       },
+       {
+        "seq_lo": 123,
+        "seq_hi": 193,
+        "n": 126.0,
+        "t_s": 28.391479999999987,
+        "mean": 4.437951103640954,
+        "centre_m": 0.8544864476735992,
+        "side": "before",
+        "span_m": 0.7648500009346955
+       }
+      ],
+      "two_sided": false,
+      "gradient_per_m": 0.31016124349488644,
+      "one_sided": true,
+      "selected": 0,
+      "estimator": "one-sided local-linear extrapolation 1.5 U_B - 0.5 U_A",
+      "extrapolated": true,
+      "projected_bias": -0.015538978077045185,
+      "U0": 5.070239836149007,
+      "N_post": 33.04609642301711,
+      "T_post": 6.517659418674872,
+      "lane_ratio": 0.9596774193548387,
+      "ratio_counts": [
+       119.0,
+       496.0
+      ],
+      "status": "OK",
+      "fallback": "own-lane (ratio not qualified or too few counts in the other lanes)"
+     },
+     "envelope_ok": true
+    },
+    {
+     "lane": 1,
+     "D": 2.1339941964327935,
+     "u_stat": 0.10198221366652344,
+     "u_total": 0.33598825549792755,
+     "D_star": 0.1617692460161898,
+     "D_hash": 0.27458306653400083,
+     "T_F": 9.891090000000004,
+     "detected": true,
+     "method": "linear-exact/gil-pelaez/predictive-U(N=33.0)/provisional-no-check",
+     "m": 1,
+     "alpha_lane": 0.00017096303211345723,
+     "status": "OK",
+     "N_F": 558.0,
+     "N_U": 35.0,
+     "U0": 4.942418663809116,
+     "u0_method": "pooled:one-sided:N=126/25.2s",
+     "u0": {
+      "n_min": 125,
+      "dwell_seq": [
+       257,
+       355
+      ],
+      "past_only": false,
+      "source": "pooled",
+      "windows": [
+       {
+        "seq_lo": 194,
+        "seq_hi": 256,
+        "n": 126.0,
+        "t_s": 25.19243999999975,
+        "mean": 5.00150045013509,
+        "centre_m": 1.2394571285014404,
+        "side": "before",
+        "span_m": 0.10736557363579902
+       },
+       {
+        "seq_lo": 123,
+        "seq_hi": 193,
+        "n": 126.0,
+        "t_s": 28.391479999999987,
+        "mean": 4.437951103640954,
+        "centre_m": 0.8544864476735992,
+        "side": "before",
+        "span_m": 0.7648500009346955
+       }
+      ],
+      "two_sided": false,
+      "gradient_per_m": 0.31016124349488644,
+      "one_sided": true,
+      "selected": 0,
+      "estimator": "one-sided local-linear extrapolation 1.5 U_B - 0.5 U_A",
+      "extrapolated": true,
+      "projected_bias": -0.015538978077045185,
+      "U0": 4.942418663809116,
+      "N_post": 32.81045656975271,
+      "T_post": 6.638542543958777,
+      "lane_ratio": 0.935483870967742,
+      "ratio_counts": [
+       116.0,
+       496.0
+      ],
+      "status": "OK",
+      "fallback": "own-lane (ratio not qualified or too few counts in the other lanes)"
+     },
+     "envelope_ok": true
+    },
+    {
+     "lane": 2,
+     "D": 0.001528610632617236,
+     "u_stat": 0.044298639674145664,
+     "u_total": 0.044570479255300395,
+     "D_star": 0.16786832436421412,
+     "D_hash": 0.28454816738440364,
+     "T_F": 9.891090000000004,
+     "detected": false,
+     "method": "linear-exact/gil-pelaez/predictive-U(N=34.0)/provisional-no-check",
+     "m": 1,
+     "alpha_lane": 0.00017096303211345723,
+     "status": "OK",
+     "N_F": 41.0,
+     "N_U": 36.0,
+     "U0": 5.49631041061531,
+     "u0_method": "pooled:one-sided:N=126/25.2s",
+     "u0": {
+      "n_min": 125,
+      "dwell_seq": [
+       257,
+       355
+      ],
+      "past_only": false,
+      "source": "pooled",
+      "windows": [
+       {
+        "seq_lo": 194,
+        "seq_hi": 256,
+        "n": 126.0,
+        "t_s": 25.19243999999975,
+        "mean": 5.00150045013509,
+        "centre_m": 1.2394571285014404,
+        "side": "before",
+        "span_m": 0.10736557363579902
+       },
+       {
+        "seq_lo": 123,
+        "seq_hi": 193,
+        "n": 126.0,
+        "t_s": 28.391479999999987,
+        "mean": 4.437951103640954,
+        "centre_m": 0.8544864476735992,
+        "side": "before",
+        "span_m": 0.7648500009346955
+       }
+      ],
+      "two_sided": false,
+      "gradient_per_m": 0.31016124349488644,
+      "one_sided": true,
+      "selected": 0,
+      "estimator": "one-sided local-linear extrapolation 1.5 U_B - 0.5 U_A",
+      "extrapolated": true,
+      "projected_bias": -0.015538978077045185,
+      "U0": 5.49631041061531,
+      "N_post": 33.773130576850576,
+      "T_post": 6.14469126627615,
+      "lane_ratio": 1.0403225806451613,
+      "ratio_counts": [
+       129.0,
+       496.0
+      ],
+      "status": "OK",
+      "fallback": "own-lane (ratio not qualified or too few counts in the other lanes)"
+     },
+     "envelope_ok": true
+    },
+    {
+     "lane": 3,
+     "D": 0.027196507739494186,
+     "u_stat": 0.04792323999375451,
+     "u_total": 0.04852198372738364,
+     "D_star": 0.18147638500290814,
+     "D_hash": 0.30723401511400206,
+     "T_F": 9.891090000000004,
+     "detected": false,
+     "method": "linear-exact/gil-pelaez/predictive-U(N=34.0)/provisional-no-check",
+     "m": 1,
+     "alpha_lane": 0.00017096303211345723,
+     "status": "OK",
+     "N_F": 56.0,
+     "N_U": 45.0,
+     "U0": 5.624131582955202,
+     "u0_method": "pooled:one-sided:N=126/25.2s",
+     "u0": {
+      "n_min": 125,
+      "dwell_seq": [
+       257,
+       355
+      ],
+      "past_only": false,
+      "source": "pooled",
+      "windows": [
+       {
+        "seq_lo": 194,
+        "seq_hi": 256,
+        "n": 126.0,
+        "t_s": 25.19243999999975,
+        "mean": 5.00150045013509,
+        "centre_m": 1.2394571285014404,
+        "side": "before",
+        "span_m": 0.10736557363579902
+       },
+       {
+        "seq_lo": 123,
+        "seq_hi": 193,
+        "n": 126.0,
+        "t_s": 28.391479999999987,
+        "mean": 4.437951103640954,
+        "centre_m": 0.8544864476735992,
+        "side": "before",
+        "span_m": 0.7648500009346955
+       }
+      ],
+      "two_sided": false,
+      "gradient_per_m": 0.31016124349488644,
+      "one_sided": true,
+      "selected": 0,
+      "estimator": "one-sided local-linear extrapolation 1.5 U_B - 0.5 U_A",
+      "extrapolated": true,
+      "projected_bias": -0.015538978077045185,
+      "U0": 5.624131582955202,
+      "N_post": 33.97528911732727,
+      "T_post": 6.040984037481382,
+      "lane_ratio": 1.0645161290322582,
+      "ratio_counts": [
+       132.0,
+       496.0
+      ],
+      "status": "OK",
+      "fallback": "own-lane (ratio not qualified or too few counts in the other lanes)"
+     },
+     "envelope_ok": true
+    }
+   ],
+   "result": {
+    "D": 2.1339941964327935,
+    "u_stat": 0.10198221366652344,
+    "u_total": 0.33598825549792755,
+    "D_star": 0.1617692460161898,
+    "D_hash": 0.27458306653400083,
+    "T_F": 9.891090000000004,
+    "detected": true,
+    "method": "linear-exact/gil-pelaez/predictive-U(N=33.0)/provisional-no-check",
+    "m": 1,
+    "alpha_lane": 0.00017096303211345723,
+    "status": "OK"
+   }
+  }
+ ],
+ "decision_status": {
+  "cells_with_gates": 232,
+  "no_decision": 0,
+  "no_decision_text": [],
+  "no_decision_within_0.5m_of_an_end": 0,
+  "cells_within_0.5m_of_an_end": 72
+ },
+ "rev5": {
+  "cells_with_data": 232,
+  "status": {
+   "INCOMPLETE COVERAGE": 14,
+   "SENSITIVITY INSUFFICIENT": 204,
+   "ALARM": 13,
+   "ACCEPTABLE": 1
+  },
+  "status_reasons": {
+   "D# above the detection goal": 204,
+   "coverage 0.35 < 0.5": 6,
+   "flagged by combined": 5,
+   "coverage 0.39 < 0.5": 2,
+   "coverage 0.26 < 0.5": 2,
+   "flagged by combined; one-sided reference: recount required before an investigation is reported": 2,
+   "coverage 0.21 < 0.5": 2,
+   "flagged by lane1": 1
+  },
+  "acceptable_fraction": 0.0033333333333333335,
+  "median_D_hash": 0.26747570071220106,
+  "undecidable_recorded": 0,
+  "undecidable_provisional_live": 0,
+  "alarm_bookkeeping": {
+   "provisional alarm not confirmed": 12,
+   "recorded alarm (provisional alarm confirmed)": 13
+  },
+  "flags": {
+   "INVESTIGATION_LEVEL:recorded alarm": 3,
+   "INVESTIGATION_LEVEL:provisional alarm not confirmed": 4,
+   "UNRESOLVED_EXCEEDANCE:recorded alarm": 3
+  },
+  "review_queue_items": 6,
+  "recount_required_flags": 7,
+  "one_sided_cells": 65,
+  "one_sided_alarm_cells_needing_recount": 3,
+  "search_preroll_s": [
+   1.24
+  ],
+  "recorded_evaluation": null,
+  "revisit": 0,
+  "position_credit": {
+   "samples": 2269,
+   "credited_fraction": 1.0,
+   "credited_with_true_error_above_budget": 0,
+   "fraction_of_credited_above_budget": 0.0,
+   "max_true_error_when_credited_m": 0.0020714963280096155,
+   "max_true_error_m": 0.0020714963280096155,
+   "no_credit_reasons_samples": {},
+   "localizer": {
+    "wheel_scale": {
+     "estimate": 7.864024999465396e-05,
+     "sigma": 8.820408106074381e-05
+    },
+    "stats": {
+     "x_fixes": 2851,
+     "x_rejects": 0,
+     "big_corrections": 0,
+     "max_correction_m": 0.0009304037522169262,
+     "deferred_scans": 26
+    }
+   }
+  }
+ },
+ "policy": "INLINE",
+ "alarms": [
+  {
+   "lane": 1,
+   "xy": [
+    1.5405893847417294,
+    -0.14624719252140472
+   ],
+   "pose": [
+    1.4093840105110902,
+    -0.18998107267167152,
+    -0.00012286219182968203
+   ],
+   "D_search": 1.3227407870236152,
+   "task": "T000",
+   "t_us": 1020421000,
+   "alarm_record": {
+    "D": 0.668557250599003,
+    "D_star": 0.5858590062115804,
+    "U0": 4.304570059542456,
+    "u0_source": "pooled-past",
+    "u0_N": 103.90895596239486,
+    "method": "linear-exact/gil-pelaez/predictive-U(N=104.0)",
+    "alpha": 1e-05,
+    "provisional": true
+   },
+   "ev": "search_alarm",
+   "state": "SCAN"
+  }
+ ],
+ "ratemeter": {
+  "0": {
+   "rate": 3.00270243218897,
+   "net": 0.5606994312886999,
+   "alarm_level": 18.167563950484617,
+   "alarm": false,
+   "D": 0.024085027117212193,
+   "D_star": 0.5847717991320707,
+   "U0": 4.102793338001404,
+   "u0_source": "pooled-past",
+   "u0_N": 103.90895596239486,
+   "method": "linear-exact/gil-pelaez/predictive-U(N=104.0)",
+   "alpha": 1e-05,
+   "t_us": 1229288767.1509569,
+   "provisional": true
+  },
+  "1": {
+   "rate": 9.00810729656691,
+   "net": 3.3258628832429125,
+   "alarm_level": 18.413476196473184,
+   "alarm": false,
+   "D": 0.1358604118971778,
+   "D_star": 0.5578542080746869,
+   "U0": 4.102793338001404,
+   "u0_source": "pooled-past",
+   "u0_N": 103.90895596239486,
+   "method": "linear-exact/gil-pelaez/predictive-U(N=104.0)",
+   "alpha": 1e-05,
+   "t_us": 1229288767.1509569,
+   "provisional": true
+  },
+  "2": {
+   "rate": 6.00540486437794,
+   "net": 4.476031382333327,
+   "alarm_level": 18.093650394588565,
+   "alarm": false,
+   "D": 0.18650130759722194,
+   "D_star": 0.5637541902454146,
+   "U0": 4.102793338001404,
+   "u0_source": "pooled-past",
+   "u0_N": 103.90895596239486,
+   "method": "linear-exact/gil-pelaez/predictive-U(N=104.0)",
+   "alpha": 1e-05,
+   "t_us": 1229288767.1509569,
+   "provisional": true
+  },
+  "3": {
+   "rate": 3.00270243218897,
+   "net": 0.5215988911266511,
+   "alarm_level": 18.197751234229813,
+   "alarm": false,
+   "D": 0.02287714434766014,
+   "D_star": 0.5966088707691054,
+   "U0": 4.102793338001404,
+   "u0_source": "pooled-past",
+   "u0_N": 103.90895596239486,
+   "method": "linear-exact/gil-pelaez/predictive-U(N=104.0)",
+   "alpha": 1e-05,
+   "t_us": 1229288767.1509569,
+   "provisional": true
+  }
+ },
+ "false_alarm_counts": 0
+}

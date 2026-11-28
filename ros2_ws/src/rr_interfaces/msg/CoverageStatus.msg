@@ -1,0 +1,10 @@
+std_msgs/Header header
+float32 target_area_m2
+float32 acceptable_m2
+float32 insufficient_sensitivity_m2
+float32 invalid_data_m2
+float32 blocked_m2
+float32 unvisited_m2
+float32 excluded_m2
+float32 valid_exposure_fraction
+bool field_use_approved

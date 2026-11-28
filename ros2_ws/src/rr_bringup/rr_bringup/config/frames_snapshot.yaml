@@ -1,0 +1,361 @@
+# Rad Roomba static frames for the robot software (base_link -> sensors, head, controls, connectors).
+generated_by: mechanical/common/gen_interfaces.py from params.py -- do not edit by hand
+contract_version: 0.4.0-draft4
+parent: base_link
+units:
+  xyz: m
+  rpy: rad
+  dir: unit vector in base_link
+status: 'Rev E body adopted (DEC-039). Head mount option C (DEC-041 study) is implemented here and PENDING contract change CCR-11. Evidence class: calculated.'
+frames:
+  lidar_link:
+    xyz:
+    - -0.15
+    - 0.0
+    - 0.21
+    rpy:
+    - 0
+    - 0
+    - 0
+    note: scan plane; height above the LiDAR base is UNVERIFIED (assumed 60 mm). 270 deg field centred on +x, blind sector to the rear.
+  imu_link:
+    xyz:
+    - 0.0
+    - 0.0
+    - 0.0851
+    rpy:
+    - 0.0
+    - 0.0
+    - 0.0
+    note: 'reserved BMI088 footprint on RR-CHS-MAIN at board (u, v) = (80, 67): directly above base_link'
+  head_mount:
+    xyz:
+    - 0.0657
+    - 0.0
+    - 0.032
+    rpy:
+    - 0
+    - 0
+    - 0
+    note: 'mount option C (CCR-11): x-stop plane of the twin-shoe receiver; contract 0.4.0-draft4 still says (0.1385, 0, 0.032). Head-internal geometry relative to
+      this frame is unchanged.'
+  seg0_aperture:
+    xyz:
+    - 0.1312
+    - 0.13125
+    - 0.01
+    rpy:
+    - 0
+    - 0
+    - 0
+    parent_alt: head_mount
+    xyz_in_head_mount:
+    - 0.0655
+    - 0.13125
+    - -0.022
+    size_xy:
+    - 0.1
+    - 0.08
+    note: centre of the entrance film, normal -z
+  seg1_aperture:
+    xyz:
+    - 0.1312
+    - 0.04375
+    - 0.01
+    rpy:
+    - 0
+    - 0
+    - 0
+    parent_alt: head_mount
+    xyz_in_head_mount:
+    - 0.0655
+    - 0.04375
+    - -0.022
+    size_xy:
+    - 0.1
+    - 0.08
+    note: centre of the entrance film, normal -z
+  seg2_aperture:
+    xyz:
+    - 0.1312
+    - -0.04375
+    - 0.01
+    rpy:
+    - 0
+    - 0
+    - 0
+    parent_alt: head_mount
+    xyz_in_head_mount:
+    - 0.0655
+    - -0.04375
+    - -0.022
+    size_xy:
+    - 0.1
+    - 0.08
+    note: centre of the entrance film, normal -z
+  seg3_aperture:
+    xyz:
+    - 0.1312
+    - -0.13125
+    - 0.01
+    rpy:
+    - 0
+    - 0
+    - 0
+    parent_alt: head_mount
+    xyz_in_head_mount:
+    - 0.0655
+    - -0.13125
+    - -0.022
+    size_xy:
+    - 0.1
+    - 0.08
+    note: centre of the entrance film, normal -z
+tof:
+  tof_cliff_fl:
+    xyz:
+    - 0.046
+    - 0.1095
+    - 0.031
+    dir:
+    - 0.0
+    - 0.0
+    - -1.0
+    purpose: 'downward cliff on the outboard end of the chassis front beam: 46 mm ahead of the axle, 13 mm inboard of the left tyre'
+    fov_full_deg: 18.0
+  tof_cliff_fr:
+    xyz:
+    - 0.046
+    - -0.1095
+    - 0.031
+    dir:
+    - 0.0
+    - 0.0
+    - -1.0
+    purpose: downward cliff on the outboard end of the chassis front beam, right
+    fov_full_deg: 18.0
+  tof_cliff_rl:
+    xyz:
+    - -0.24171
+    - 0.0783
+    - 0.041
+    dir:
+    - 0.0
+    - 0.0
+    - -1.0
+    purpose: downward cliff, rear left of the caster (reverse and pivot)
+    fov_full_deg: 18.0
+  tof_cliff_rr:
+    xyz:
+    - -0.24171
+    - -0.0783
+    - 0.041
+    dir:
+    - 0.0
+    - 0.0
+    - -1.0
+    purpose: downward cliff, rear right of the caster (reverse and pivot)
+    fov_full_deg: 18.0
+  tof_look_fl:
+    xyz:
+    - 0.0015
+    - 0.091
+    - 0.162
+    dir:
+    - 0.94585
+    - 0.09941
+    - -0.30902
+    purpose: 'oblique look-ahead over the head, left: floor/drop-off ahead of the leading rail'
+    fov_full_deg: 18.0
+  tof_look_fr:
+    xyz:
+    - 0.0015
+    - -0.091
+    - 0.162
+    dir:
+    - 0.94585
+    - -0.09941
+    - -0.30902
+    purpose: oblique look-ahead over the head, right
+    fov_full_deg: 18.0
+  tof_look_rl:
+    xyz:
+    - -0.24763
+    - 0.0656
+    - 0.1
+    dir:
+    - -0.9131
+    - 0.161
+    - -0.37461
+    purpose: 'oblique look-behind, left: floor/drop-off behind the tail before reverse'
+    fov_full_deg: 18.0
+  tof_look_rr:
+    xyz:
+    - -0.24763
+    - -0.0656
+    - 0.1
+    dir:
+    - -0.9131
+    - -0.161
+    - -0.37461
+    purpose: oblique look-behind, right
+    fov_full_deg: 18.0
+  tof_prox_rc:
+    xyz:
+    - -0.236
+    - 0.0
+    - 0.158
+    dir:
+    - -1.0
+    - 0.0
+    - -0.0
+    purpose: rear proximity, centre (in the brow above the battery hatch)
+    fov_full_deg: 18.0
+  tof_prox_rl:
+    xyz:
+    - -0.24933
+    - 0.08204
+    - 0.08
+    dir:
+    - -0.81915
+    - 0.57358
+    - -0.0
+    purpose: rear proximity, left quarter
+    fov_full_deg: 18.0
+  tof_prox_rr:
+    xyz:
+    - -0.24933
+    - -0.08204
+    - 0.08
+    dir:
+    - -0.81915
+    - -0.57358
+    - -0.0
+    purpose: rear proximity, right quarter
+    fov_full_deg: 18.0
+panel_controls:
+  estop:
+    xyz:
+    - -0.12
+    - -0.098
+    - 0.13087
+    normal:
+    - -0.0173
+    - -0.3413
+    - 0.9398
+    desc: latching E-stop, 22 mm, 2 NC positive opening (ESTOP)
+  hands_on:
+    xyz:
+    - -0.172
+    - -0.097
+    - 0.12518
+    normal:
+    - -0.1899
+    - -0.415
+    - 0.8898
+    desc: HANDS-ON maintained illuminated pushbutton (HANDS_ON)
+  mode_selector:
+    xyz:
+    - -0.135
+    - 0.098
+    - 0.13029
+    normal:
+    - -0.0793
+    - 0.4098
+    - 0.9087
+    desc: master OFF / SERVICE / RUN selector (MODE_RUN)
+  rearm_start:
+    xyz:
+    - -0.172
+    - 0.097
+    - 0.12518
+    normal:
+    - -0.1899
+    - 0.415
+    - 0.8898
+    desc: REARM / Start, guarded momentary NO
+  pause_stop:
+    xyz:
+    - -0.084
+    - -0.112
+    - 0.12197
+    normal:
+    - 0.0491
+    - -0.5205
+    - 0.8524
+    desc: Pause / Stop momentary
+  annunciator:
+    xyz:
+    - -0.08
+    - 0.097
+    - 0.13071
+    normal:
+    - 0.0291
+    - 0.3855
+    - 0.9223
+    desc: 'RR-PANEL: five status light pipes + buzzer port, left deck beside the grip, long axis along x'
+connectors:
+  J1:
+    xyz:
+    - 0.072
+    - 0.032
+    - 0.11686
+    mating_axis:
+    - 0.6246
+    - 0.2901
+    - 0.7251
+    family: M16 circular, 8-pole, IEC 61076-2-106, screw locking, IP67 mated, shielded
+    side: left
+  J2:
+    xyz:
+    - 0.072
+    - -0.032
+    - 0.11686
+    mating_axis:
+    - 0.6246
+    - -0.2901
+    - 0.7251
+    family: M12 A-coded, 8-pole, IEC 61076-2-101, screw locking, IP67 mated, shielded
+    side: right
+  charge_inlet:
+    xyz:
+    - -0.20107
+    - -0.12475
+    - 0.088
+    mating_axis:
+    - -0.3788
+    - -0.9255
+    - 0.0
+    desc: charge inlet (M12 L-coded) under a hinged cover with cover switch, right rear quarter
+  head_pigtail_exits:
+    J1:
+    - 0.0717
+    - 0.0875
+    - 0.039
+    J2:
+    - 0.0717
+    - -0.0875
+    - 0.039
+kinematics:
+  track_m: 0.27
+  wheel_radius_m: 0.052
+  axle_height_m: 0.052
+  caster_swivel_xy_m:
+  - -0.195
+  - 0.0
+  note: track and caster are the contract values (0.4.0-draft4)
+footprint:
+  body_x_m:
+  - -0.2718
+  - 0.102
+  head_envelope_m:
+    x:
+    - 0.066
+    - 0.1922
+    y:
+    - -0.175
+    - 0.175
+    z:
+    - 0.005
+    - 0.045
+  note: tool-checked extents are in out/layout_report.md

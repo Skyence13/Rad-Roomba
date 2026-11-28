@@ -1,0 +1,100 @@
+(footprint "WirePads_2x2.5mm_P5.0mm"
+	(version 20241229)
+	(generator "rrkicad")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(descr "Two 2.5 x 2.5 mm wire pads (W1, optional external clamp resistor, DNP)")
+	(property "Reference" "REF**"
+		(at 0 -2.3 0)
+		(layer "F.SilkS")
+		(uuid "37b647c8-4772-5a90-8125-6ce78134900a")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.12)
+			)
+		)
+	)
+	(property "Value" "WirePads_2x2.5mm_P5.0mm"
+		(at 0 2.3 0)
+		(layer "F.Fab")
+		(uuid "3b1fa827-e87b-5ec1-8e91-75613c58ca47")
+		(effects
+			(font
+				(size 0.6 0.6)
+				(thickness 0.09)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "6ffc9f9a-ee00-53a2-8f17-f4e0403856ee")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.12)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "80c684af-1068-59da-8452-8b7e3f728e5a")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.12)
+			)
+		)
+	)
+	(attr smd)
+	(fp_rect
+		(start -3.75 -1.25)
+		(end 3.75 1.25)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.Fab")
+		(uuid "711e05d5-debd-5582-8956-8e9467ead613")
+	)
+	(fp_rect
+		(start -4 -1.5)
+		(end 4 1.5)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "2048f1f9-794c-5765-87c9-9b902e3159ca")
+	)
+	(fp_text user "${REFERENCE}"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(uuid "66252814-bfd6-5765-8230-6c3914c146bf")
+		(effects
+			(font
+				(size 0.5 0.5)
+				(thickness 0.08)
+			)
+		)
+	)
+	(pad "1" smd rect
+		(at -2.5 0 0)
+		(size 2.5 2.5)
+		(layers "F.Cu" "F.Mask")
+		(uuid "07906cb4-c51d-523a-8da5-26c3b5b5c348")
+	)
+	(pad "2" smd rect
+		(at 2.5 0 0)
+		(size 2.5 2.5)
+		(layers "F.Cu" "F.Mask")
+		(uuid "99a2527b-25ba-5f9b-8e75-43dea6ea35fc")
+	)
+	(embedded_fonts no)
+)

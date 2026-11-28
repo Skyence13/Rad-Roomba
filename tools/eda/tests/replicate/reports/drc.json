@@ -1,0 +1,62 @@
+{
+    "$schema": "https://schemas.kicad.org/drc.v1.json",
+    "coordinate_units": "mm",
+    "date": "",
+    "included_severities": [
+        "error",
+        "warning",
+        "exclusion"
+    ],
+    "kicad_version": "9.0.9",
+    "schematic_parity": [],
+    "source": "REPL-TEST.kicad_pcb",
+    "unconnected_items": [],
+    "violations": [
+        {
+            "description": "Silkscreen overlap",
+            "items": [
+                {
+                    "description": "Reference field of R22",
+                    "pos": {
+                        "x": 77.08,
+                        "y": 91.75
+                    },
+                    "uuid": "14561279-7a0b-4552-bfbc-c6579e429bd9"
+                },
+                {
+                    "description": "Reference field of U2",
+                    "pos": {
+                        "x": 78.0,
+                        "y": 92.6
+                    },
+                    "uuid": "c004539c-296e-4961-ac45-9a1068315c4a"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen overlap",
+            "items": [
+                {
+                    "description": "Reference field of U1",
+                    "pos": {
+                        "x": 58.0,
+                        "y": 92.6
+                    },
+                    "uuid": "2a6dd9ae-4ae8-4838-85ec-773d6e466a92"
+                },
+                {
+                    "description": "Reference field of R21",
+                    "pos": {
+                        "x": 57.08,
+                        "y": 91.75
+                    },
+                    "uuid": "42474162-9603-40aa-b243-4f85f77500b6"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        }
+    ]
+}

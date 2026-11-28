@@ -1,0 +1,393 @@
+{
+  "autoplaced": [
+    "J4",
+    "J2",
+    "J3",
+    "J5",
+    "J6",
+    "U2",
+    "U1",
+    "C1",
+    "C2",
+    "D1",
+    "R1",
+    "R2",
+    "C3",
+    "C10",
+    "C11",
+    "C12",
+    "C13",
+    "C14",
+    "C15",
+    "C16",
+    "C17",
+    "C18",
+    "C19",
+    "C30",
+    "C31",
+    "C32",
+    "C33",
+    "C34",
+    "R100",
+    "U100",
+    "C100",
+    "R200",
+    "R101",
+    "U101",
+    "C101",
+    "R201",
+    "R102",
+    "U102",
+    "C102",
+    "R202",
+    "R103",
+    "U103",
+    "C103",
+    "R203",
+    "R104",
+    "U104",
+    "C104",
+    "R204",
+    "R105",
+    "U105",
+    "C105",
+    "R205",
+    "R106",
+    "U106",
+    "C106",
+    "R206",
+    "R107",
+    "U107",
+    "C107",
+    "R207",
+    "R108",
+    "U108",
+    "C108",
+    "R208",
+    "R109",
+    "U109",
+    "C109",
+    "R209",
+    "R110",
+    "U110",
+    "C110",
+    "R210",
+    "R111",
+    "U111",
+    "C111",
+    "R211",
+    "R112",
+    "U112",
+    "C112",
+    "R212",
+    "R113",
+    "U113",
+    "C113",
+    "R213",
+    "R114",
+    "U114",
+    "C114",
+    "R214",
+    "R115",
+    "U115",
+    "C115",
+    "R215",
+    "R116",
+    "U116",
+    "C116",
+    "R216",
+    "R117",
+    "U117",
+    "C117",
+    "R217",
+    "R118",
+    "U118",
+    "C118",
+    "R218",
+    "R119",
+    "U119",
+    "C119",
+    "R219",
+    "U4",
+    "C40",
+    "U50",
+    "C50",
+    "R50",
+    "U51",
+    "C51",
+    "R51",
+    "U52",
+    "C52",
+    "R52",
+    "U53",
+    "C53",
+    "R53",
+    "R60",
+    "R61",
+    "R62",
+    "R63",
+    "R300",
+    "R301",
+    "R302",
+    "R303",
+    "R304",
+    "R305",
+    "R306",
+    "R307",
+    "R308",
+    "R309",
+    "R310",
+    "R311",
+    "R312",
+    "R313",
+    "R314",
+    "R315",
+    "R316",
+    "R317",
+    "R318",
+    "R319"
+  ],
+  "board": "STRESS-150",
+  "board_bbox_mm": [
+    0.0,
+    0.0,
+    100.0,
+    80.0
+  ],
+  "bom": {
+    "missing_mpn": [],
+    "verify": [
+      "U50",
+      "U51",
+      "U52",
+      "U53"
+    ]
+  },
+  "counts": {
+    "nets": 132,
+    "parts": 150,
+    "sheets": 7
+  },
+  "date": "2026-11-25",
+  "docnum": "RR-EL-TEST",
+  "drc": {
+    "by_type": {
+      "via_dangling": {
+        "errors": 0,
+        "warnings": 13
+      }
+    },
+    "error_items": [],
+    "errors": 0,
+    "excluded": 0,
+    "parity": 0,
+    "parity_items": [],
+    "report": "reports/drc.json",
+    "unconnected": 0,
+    "unconnected_items": [],
+    "unconnected_listed": 0,
+    "unrouted": [],
+    "unrouted_nets": [],
+    "waived": 0,
+    "warnings": 13
+  },
+  "erc": {
+    "by_type": {},
+    "error_items": [],
+    "errors": 0,
+    "excluded": 0,
+    "report": "reports/erc.json",
+    "waived": 0,
+    "warnings": 0
+  },
+  "fail_reasons": [],
+  "notes": [
+    "U50: 3D envelope uses the default height 1.0 mm (give height=)",
+    "U51: 3D envelope uses the default height 1.0 mm (give height=)",
+    "U52: 3D envelope uses the default height 1.0 mm (give height=)",
+    "U53: 3D envelope uses the default height 1.0 mm (give height=)",
+    "J5: 3D envelope uses the default height 1.0 mm (give height=)",
+    "J6: 3D envelope uses the default height 1.0 mm (give height=)"
+  ],
+  "outputs": [
+    {
+      "ok": true,
+      "output": "out/STRESS-150-schematic.pdf"
+    },
+    {
+      "ok": true,
+      "output": "out/gerber/*.g*"
+    },
+    {
+      "ok": true,
+      "output": "out/gerber/*.drl + drill map"
+    },
+    {
+      "ok": true,
+      "output": "out/STRESS-150-pos.csv"
+    },
+    {
+      "ok": true,
+      "output": "out/STRESS-150-bom.csv"
+    },
+    {
+      "ok": true,
+      "output": "out/pinmap.json"
+    },
+    {
+      "ok": true,
+      "output": "out/STRESS-150.net"
+    },
+    {
+      "ok": true,
+      "output": "out/STRESS-150-fab.pdf"
+    },
+    {
+      "ok": true,
+      "output": "out/STRESS-150-assembly-top.pdf"
+    },
+    {
+      "ok": true,
+      "output": "out/STRESS-150-assembly-bottom.pdf"
+    },
+    {
+      "ok": true,
+      "output": "out/STRESS-150-copper.pdf"
+    },
+    {
+      "ok": true,
+      "output": "out/STRESS-150.step"
+    },
+    {
+      "ok": true,
+      "output": "out/STRESS-150-render-top.png"
+    },
+    {
+      "ok": true,
+      "output": "out/STRESS-150-render-bottom.png"
+    }
+  ],
+  "pwr_flags": [
+    "+5V",
+    "GND"
+  ],
+  "rev": "X",
+  "routing": {
+    "autorouter": {
+      "attempts": [
+        {
+          "kind": "first",
+          "run": 1,
+          "seconds": 273.7,
+          "seed": 0,
+          "unconnected": 0
+        }
+      ],
+      "dsn_sha256": "7fc92914c68ed632ab211cbf9c5f65e36b64beae434d50abf1faccde82258c34",
+      "freerouting": "v2.6.0 (build-date: 2026-11-25)",
+      "log_tail": [
+        "[33128D\\5EE886] Auto-routing stage completed: started with 176 unrouted nets, completed in 264.87 seconds, final score: 1000.00 (0 unrouted and 56 violations), using 194.43 total CPU seconds, 87.05 GB total allocated, and 538.3 MB peak heap usage.",
+        "[33128D\\5EE886] Job '33128D\\5EE886' finished with state: COMPLETED (elapsed: 4 minutes 26.08 seconds, finished at UTC: 2026-11-27T07:27:57.418704044Z)."
+      ],
+      "passes_limit": 30,
+      "reused": false,
+      "seconds": 273.7,
+      "threads": 4,
+      "timed_out": false
+    },
+    "escape": {
+      "direct": 0,
+      "enabled": true,
+      "inward": 10,
+      "layers": [
+        "B.Cu"
+      ],
+      "parts": {
+        "U1": {
+          "exposed_pad": false,
+          "inward": 10,
+          "pads": 64,
+          "pitch": 0.5,
+          "ring": 54
+        },
+        "U2": {
+          "exposed_pad": true,
+          "pads": 49,
+          "pitch": 0.5,
+          "ring": 37,
+          "skipped": 11
+        }
+      },
+      "pitch_limit": 0.65,
+      "skipped": [
+        "U2.37 [unconnected-(U2-PA14-Pad37)]: not connected (single-pin net)",
+        "U2.38 [unconnected-(U2-PA15-Pad38)]: not connected (single-pin net)",
+        "U2.44 [unconnected-(U2-BOOT0-Pad44)]: not connected (single-pin net)",
+        "U2.17 [unconnected-(U2-PA7-Pad17)]: not connected (single-pin net)",
+        "U2.34 [unconnected-(U2-PA13-Pad34)]: not connected (single-pin net)",
+        "U2.33 [unconnected-(U2-PA12-Pad33)]: not connected (single-pin net)",
+        "U2.32 [unconnected-(U2-PA11-Pad32)]: not connected (single-pin net)",
+        "U2.31 [unconnected-(U2-PA10-Pad31)]: not connected (single-pin net)",
+        "U2.30 [unconnected-(U2-PA9-Pad30)]: not connected (single-pin net)",
+        "U2.29 [unconnected-(U2-PA8-Pad29)]: not connected (single-pin net)",
+        "U2.7 [unconnected-(U2-NRST-Pad7)]: not connected (single-pin net)"
+      ],
+      "skipped_by_reason": {
+        "not connected (single-pin net)": 11
+      },
+      "track": 0.15,
+      "via": [
+        0.6,
+        0.3
+      ],
+      "via_target_layers": {
+        "B.Cu": 101
+      },
+      "vias": 101
+    },
+    "finisher": null,
+    "plane_fanout": {
+      "extended": [
+        "U104 [+3V3] 3.3 mm"
+      ],
+      "failed": [],
+      "long_fanout": [
+        "C102 [+3V3] 11.9 mm",
+        "U102 [+3V3] 9.1 mm",
+        "U3 [+3V3] 6.2 mm",
+        "J4 [+5V] 53.3 mm",
+        "C40 [+5V] 28.5 mm",
+        "U4 [+5V] 26.1 mm"
+      ],
+      "plane_nets": [
+        "+3V3",
+        "+5V",
+        "GND"
+      ],
+      "vias": 174
+    },
+    "routed": true,
+    "stats": {
+      "dangling_tracks_removed": 0,
+      "finisher_items": null,
+      "finisher_removed": 0,
+      "necked_tracks_widened": 0,
+      "preroutes": 782,
+      "preroutes_missing_after_import": 0,
+      "track_length_mm": 4547.77,
+      "tracks": 1832,
+      "unconnected_after_fill": 0,
+      "unconnected_before_cleanup": 0,
+      "unused_escapes_removed": 12,
+      "vias": 442
+    }
+  },
+  "single_pin_nets": [],
+  "status": "pass",
+  "title": "rrkicad stress test",
+  "tools": {
+    "kicad": "9.0.9"
+  },
+  "waived_items": [],
+  "waivers": []
+}

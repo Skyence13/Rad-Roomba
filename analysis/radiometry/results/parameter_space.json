@@ -1,0 +1,199 @@
+{
+ "note": "Assumption register. No entry is a measured property of the Rad Roomba detector.",
+ "sources": {
+  "H7": "Mirion CSPevo AB-100 datasheet SPC-651-EN-A (docs/Sources.csv H7)",
+  "NIST": "NIST X-ray mass attenuation coefficient tables (Al, Fe, vinyltoluene, air)",
+  "DECAY": "evaluated decay data (DDEP/ENSDF), transcribed from memory, not re-verified"
+ },
+ "assumptions": [
+  {
+   "symbol": "A_a",
+   "quantity": "aperture area",
+   "nominal": 80.0,
+   "range": "80",
+   "unit": "cm2",
+   "basis_and_source": "design 0.3 Rev D layout (80 mm x 100 mm)",
+   "status": "design value"
+  },
+  {
+   "symbol": "L/v",
+   "quantity": "dwell of an interior point, one pass",
+   "nominal": 1.0,
+   "range": "1 (0.10 m/s)",
+   "unit": "s",
+   "basis_and_source": "MODEL.md section 5",
+   "status": "design value"
+  },
+  {
+   "symbol": "H",
+   "quantity": "ambient dose rate on the trailer floor",
+   "nominal": 0.1,
+   "range": "0.05-5 (stress case 10)",
+   "unit": "uSv/h",
+   "basis_and_source": "natural background ~0.1; elevated near ore, loaded conveyances and mill yards; no site data",
+   "status": "ASSUMED - needs site survey"
+  },
+  {
+   "symbol": "S_beta",
+   "quantity": "floor beta-window photon response",
+   "nominal": 33.18518518518518,
+   "range": "15-90",
+   "unit": "1/s per uSv/h",
+   "basis_and_source": "Mirion AB-100 42 (1/s)/(uSv/h) for Cs-137, 101.25 cm2 [H7], scaled by area to 80 cm2; range covers spectrum (x0.8 ore-like to x1.8 concentrate-like in the thin-tile model), housing and threshold",
+   "status": "ASSUMED from another product"
+  },
+  {
+   "symbol": "S_alpha",
+   "quantity": "floor alpha-channel photon response",
+   "nominal": 0.1580246913580247,
+   "range": "0.05-0.5",
+   "unit": "1/s per uSv/h",
+   "basis_and_source": "AB-100 0.2 (1/s)/(uSv/h) [H7] scaled by area",
+   "status": "ASSUMED from another product"
+  },
+  {
+   "symbol": "b_beta",
+   "quantity": "beta-window rate not tracked by the reference",
+   "nominal": 0.5,
+   "range": "0-2",
+   "unit": "1/s",
+   "basis_and_source": "AB-100 background <= 5 1/s at <= 0.1 uSv/h, 4.0 used for its MDA [H7]; 4.2 predicted from S alone",
+   "status": "ASSUMED"
+  },
+  {
+   "symbol": "b_alpha",
+   "quantity": "alpha-channel intrinsic background",
+   "nominal": 0.01,
+   "range": "0.005-0.05",
+   "unit": "1/s",
+   "basis_and_source": "AB-100 <= 0.05 1/s, 0.01 used for MDA [H7], scaled",
+   "status": "ASSUMED from another product"
+  },
+  {
+   "symbol": "k",
+   "quantity": "floor/reference photon count ratio",
+   "nominal": 1.0,
+   "range": "1 (matched tile); 0.3; 0.1 (reference 3x/10x more sensitive)",
+   "unit": "-",
+   "basis_and_source": "matched thin tile gives k ~ 1; a thicker reference tile raises photon interactions roughly in proportion to thickness (NIST mu for vinyltoluene)",
+   "status": "ASSUMED - design variable"
+  },
+  {
+   "symbol": "u(k)/k",
+   "quantity": "relative uncertainty of k incl. spectral mismatch",
+   "nominal": 0.03,
+   "range": "0-0.10",
+   "unit": "-",
+   "basis_and_source": "fit component ~1 %; spectral component between ore-like and concentrate-like fields 0.4-19.0 % in the shield-attenuation model (results/k_spectral_mismatch.csv); other mechanisms unmodelled",
+   "status": "ASSUMED - needs measurement"
+  },
+  {
+   "symbol": "u(b)",
+   "quantity": "uncertainty of the offset",
+   "nominal": 0.05,
+   "range": "0-0.2",
+   "unit": "1/s",
+   "basis_and_source": "long clean-floor run",
+   "status": "ASSUMED"
+  },
+  {
+   "symbol": "T_U/T_F",
+   "quantity": "reference live time per floor live time",
+   "nominal": 1.0,
+   "range": "1; 4 (four lanes pooled); 10 (running mean)",
+   "unit": "-",
+   "basis_and_source": "design choice; pooling/averaging assumes the field is uniform over the pooled extent",
+   "status": "design variable"
+  },
+  {
+   "symbol": "sigma_delta",
+   "quantity": "relative non-uniformity of the photon field (uncompensated)",
+   "nominal": 0.2,
+   "range": "0-0.5",
+   "unit": "-",
+   "basis_and_source": "gradients along a 16 m trailer, door end, neighbouring loads, time variation; no site data",
+   "status": "ASSUMED - needs site survey"
+  },
+  {
+   "symbol": "T_0",
+   "quantity": "background count time, uncompensated",
+   "nominal": 60.0,
+   "range": "10-600",
+   "unit": "s",
+   "basis_and_source": "procedure choice",
+   "status": "ASSUMED"
+  },
+  {
+   "symbol": "K_beta",
+   "quantity": "beta-window response",
+   "nominal": 24.0,
+   "range": "8-100",
+   "unit": "1/s per Bq/cm2",
+   "basis_and_source": "AB-100 contact responses [H7] x 80 cm2 x geometry; the value depends on what 1 Bq/cm2 means (results/K_beta_basis.csv); nominal = Cl-36-equivalent",
+   "status": "ASSUMED - dominated by the undefined measurand"
+  },
+  {
+   "symbol": "u_rel(K_beta)",
+   "quantity": "relative uncertainty of K_beta",
+   "nominal": 0.15,
+   "range": "0.10-0.30",
+   "unit": "-",
+   "basis_and_source": "source certificate, standoff, self-absorption, floor finish",
+   "status": "ASSUMED"
+  },
+  {
+   "symbol": "K_alpha",
+   "quantity": "alpha-channel response at 10 mm",
+   "nominal": 6.0,
+   "range": "1.5-13",
+   "unit": "1/s per Bq/cm2 (alpha)",
+   "basis_and_source": "range model anchored to AB-100 Pu-239 [H7]: thin natural U 7.7, all ore alphas ~13, thick/dusty deposits lower",
+   "status": "ASSUMED - model, not data"
+  },
+  {
+   "symbol": "u_rel(K_alpha)",
+   "quantity": "relative uncertainty of K_alpha",
+   "nominal": 0.35,
+   "range": "0.3-0.6",
+   "unit": "-",
+   "basis_and_source": "standoff (-15 to -30 %/mm for U-238), air density, self-absorption",
+   "status": "ASSUMED"
+  },
+  {
+   "symbol": "alpha,beta",
+   "quantity": "per-decision error probabilities",
+   "nominal": 0.05,
+   "range": "0.05; Sidak value for the mission",
+   "unit": "-",
+   "basis_and_source": "MODEL.md section 3 default; site profile owns them",
+   "status": "site decision"
+  },
+  {
+   "symbol": "A_mission",
+   "quantity": "per-mission false-investigation allowance",
+   "nominal": 0.05,
+   "range": "0.05 (P>=1); also expected counts 1-20",
+   "unit": "-",
+   "basis_and_source": "not defined by the site",
+   "status": "site decision"
+  },
+  {
+   "symbol": "n",
+   "quantity": "independent decision areas per trailer",
+   "nominal": 4480,
+   "range": "1333-5000",
+   "unit": "-",
+   "basis_and_source": "2.5 m x 16 m; 28 lane tracks x 160 cells of 0.1 m",
+   "status": "derived"
+  },
+  {
+   "symbol": "eps",
+   "quantity": "fraction of floor surface signal appearing in the reference",
+   "nominal": 0.0,
+   "range": "0-0.2",
+   "unit": "-",
+   "basis_and_source": "depends on the beta shield between the tiles (Pa-234m 2.27 MeV, Bi-214 3.27 MeV end points)",
+   "status": "ASSUMED - needs measurement"
+  }
+ ]
+}

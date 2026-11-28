@@ -1,0 +1,11 @@
+scenario,evaluation,beta_cells,cells_with_a_lane_without_window_rev4,cells_without_any_lane_window_rev4,attachment_series,T_F_median_s,T_F_median_failing_lanes_s,failing_lanes_window_counts_min,failing_lanes_window_counts_median,failing_lanes_within_half_window_of_series_start_or_end,failing_lanes,cells_window_lt_50_counts,cells_window_lt_100_counts,cells_window_lt_200_counts,cells_lt_100_counts_whole_attachment_lane_or_pooled,cells_lt_200_counts_whole_attachment_lane_or_pooled,cells_lt_100_counts_whole_attachment_lane_only,cells_lt_200_counts_whole_attachment_lane_only
+s02_head_reset_and_disconnect,live,231,69,32,3,0.90,1.16,68,812,73,73,0,12,22,4,11,37,61
+s02_head_reset_and_disconnect,final,231,11,9,3,0.90,0.90,181,208,11,11,0,7,19,0,3,27,27
+s03_protective_stop,live,231,46,27,1,0.89,1.05,84,728,46,46,3,9,20,2,7,8,28
+s03_protective_stop,final,231,0,0,1,0.89,,,,0,0,2,6,17,0,0,0,0
+s04_blocked_strip,live,405,53,28,1,0.90,1.01,94,723,54,54,4,16,34,1,5,20,30
+s04_blocked_strip,final,405,0,0,1,0.90,,,,0,0,0,15,39,0,0,0,0
+s10_step_and_count,live,133,33,17,1,2.61,2.90,93,1874,39,39,0,1,2,1,2,3,6
+s10_step_and_count,final,133,0,0,1,2.61,,,,0,0,0,0,0,0,0,0,0
+s15_no_auto_resume,live,44,40,40,1,0.99,0.99,104,207,40,40,0,0,16,0,16,44,44
+s15_no_auto_resume,final,44,28,28,1,0.99,0.99,802,812,28,28,0,0,0,0,0,0,11

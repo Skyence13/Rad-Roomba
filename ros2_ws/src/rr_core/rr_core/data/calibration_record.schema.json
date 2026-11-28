@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "analysis/radiometry/schemas/calibration_record.schema.json",
+  "title": "Rad Roomba head calibration record (MODEL.md section 1, revision 5)",
+  "type": "object",
+  "required": ["format_version", "synthetic", "field_use_approved", "calibration_id", "identity", "validity_envelope",
+               "reference_rate_ratios", "time_over_threshold_cut", "lanes"],
+  "properties": {
+    "format_version": {"type": "string"},
+    "synthetic": {"type": "boolean"},
+    "field_use_approved": {"type": "boolean"},
+    "calibration_id": {"type": "string", "minLength": 1},
+    "identity": {
+      "type": "object",
+      "required": ["head_serial", "electronics_revision", "firmware", "setup_id", "cal_id"],
+      "properties": {
+        "head_serial": {"type": "string", "minLength": 1},
+        "electronics_revision": {"type": "string", "minLength": 1},
+        "firmware": {"type": "string", "minLength": 1},
+        "setup_id": {"type": "string", "minLength": 1},
+        "cal_id": {"type": "string", "minLength": 1},
+        "synthetic": {"type": "boolean"},
+        "note": {"type": "string"}
+      }
+    },
+    "validity_envelope": {
+      "type": "object",
+      "required": ["setup_id", "reference_rate_cps", "head_temperature_C", "standoff_mm", "speed_m_s"],
+      "properties": {
+        "setup_id": {"type": "string"},
+        "reference_rate_cps": {"$ref": "#/$defs/range"},
+        "head_temperature_C": {"$ref": "#/$defs/range"},
+        "standoff_mm": {"$ref": "#/$defs/range"},
+        "speed_m_s": {"$ref": "#/$defs/range"}
+      }
+    },
+    "reference_rate_ratios": {
+      "type": "object",
+      "required": ["values", "relative_standard_uncertainty"],
+      "properties": {
+        "values": {"type": "array", "items": {"type": "number", "exclusiveMinimum": 0}, "minItems": 4, "maxItems": 4},
+        "relative_standard_uncertainty": {"type": "number", "minimum": 0}
+      }
+    },
+    "time_over_threshold_cut": {
+      "type": "object",
+      "required": ["applies_to", "rejected_fraction_qualified_range"],
+      "properties": {
+        "applies_to": {"type": "array", "items": {"enum": ["floor_beta_window", "reference"]}, "minItems": 2}
+      }
+    },
+    "lanes": {
+      "type": "array", "minItems": 4, "maxItems": 4,
+      "items": {
+        "type": "object",
+        "required": ["lane_index", "classes"],
+        "properties": {
+          "lane_index": {"type": "integer", "minimum": 0, "maximum": 3},
+          "classes": {
+            "type": "object",
+            "required": ["beta_window", "alpha_like"],
+            "additionalProperties": {"$ref": "#/$defs/class"}
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "range": {"type": "object", "required": ["min", "max"],
+              "properties": {"min": {"type": "number"}, "max": {"type": "number"}}},
+    "class": {
+      "type": "object",
+      "required": ["k", "b_cps", "u_k", "u_b_cps", "cov_kb_cps", "u_k_components", "K_cps_per_Bq_cm2", "u_rel_K"],
+      "properties": {
+        "k": {"type": "number", "exclusiveMinimum": 0},
+        "b_cps": {"type": "number"},
+        "u_k": {"type": "number", "minimum": 0},
+        "u_b_cps": {"type": "number", "exclusiveMinimum": 0},
+        "cov_kb_cps": {"type": "number"},
+        "u_k_components": {"type": "object", "required": ["fit", "spectral_mismatch_relative"]},
+        "K_cps_per_Bq_cm2": {"type": "number", "exclusiveMinimum": 0},
+        "u_rel_K": {"type": "number", "minimum": 0}
+      }
+    }
+  }
+}

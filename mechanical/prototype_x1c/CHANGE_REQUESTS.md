@@ -1,0 +1,80 @@
+# RR-X prototype body -- deviations from `mechanical/common` and change requests
+
+Owner of `mechanical/common` (params, interfaces): mechanical lead. This package imports every interface value from
+`mechanical/common/params.py`; nothing in that directory was edited. Items below are either **deviations** this package
+made inside its own parts (outer skin and every interface position unchanged unless stated) or **requests** that need the
+lead's decision. Numbers are design values, *calculated* or *tool-checked* as marked; see `out/prototype_report.md`.
+
+## Deviations taken in this package (no action needed unless the lead objects)
+
+| ID | Item | Interface / common says | Prototype does | Why |
+|---|---|---|---|---|
+| D-01 | Chassis front beam plan form | front beam x 2.0..62.0, \|y\| <= 99.5 | the beam is part of the 4 mm 6061 chassis plate, extended aft to x = -26 and widened to \|y\| <= 119.5 | the interface itself puts the front cliff ToF apertures at y = +-109.5 "on the chassis front beam, outboard end", outside the 99.5 beam, and the motor pods (y 98.5..117.5) must stand on the same beam (interface section 3). 3.0 mm to the tyre inner face (tool-checked, no interference). |
+| D-02 | Receiver channel x extent | channel envelope x 2.0..64.0 with the x-stop (datum A) at x = 65.7 | channel block x 2.0..65.7: x-stop flange x 59.7..65.7 with 16 x 14 pads each side of the shoe | the interface's own datum A (channel front faces at 65.7) lies 1.7 mm ahead of its stated envelope; the head envelope starts at 66.0 (0.3 mm left). |
+| D-03 | Battery hump rear end | hump outer x -233.0..-70.5 | printed hump x -230.0..-70.5; the 3 mm ring x -233..-230 is the separate PAHT-CF hatch frame (gasket land of the door) | outer form unchanged. |
+| D-04 | Charge-inlet cover height | parts.yaml candidate cover 36 x 36 x 8 | 36 x 36, 5 mm above the receptacle nose (3 mm air), seated on a flat spot face (plinth) | keeps the closed cover inside the 295 mm tyre width (shared rule 8.3). Receptacle position and axis unchanged. |
+| D-05 | Wheel hub | wheel "select to fit", hub_l 16 | Pololu #1999 confirmed as the M3 version: 25.4 x 9.2 mm, six M3 tapped holes, 6.8 g (VERIFIED, pololu.com spec page, 2026-11-26); bolt circle 19.05 mm UNVERIFIED -> 3.6 mm rim holes | wheel envelope (104 x 25) unchanged. |
+| D-06 | Grip bar construction | mech_calcs: printed bar with a 10 mm core / layout: 25 x 22 bar | 14 mm solid 6061-T6 bar on 2 x M6 into its tapped ends, printed 25 x 22 sleeve; side-plate cheek front edge x -8.6 | the first engineer's 16 x 2 tube on an M8 rod collided with the look-ahead ToF seats behind the (interface) apertures at x 1.5; the look-ahead seats are made shallow (6.3 mm) and the bar moved to x -15.5. Bar section and position of the hand surface unchanged. |
+| D-07 | Battery cassette latch | "positive latch with captive release; hatch cannot close unless the cassette is latched; rear pull handle >= 45 mm glove clearance" | captive spring index plunger (pull knob) through the hump roof into the cassette lid; fold-flat pull handle (47.5 mm finger gap); interlock finger on the door that stops 0.5 mm behind the home position of the cassette | the first engineer's cam bail could not stand up inside the tail cap (the tail is about 11 mm deep behind the cassette at \|y\| 51, z 102: tool-checked clash with the door). Interface values (cassette envelope, removal, coupler) unchanged. |
+| D-08 | Saddle-cover fixing | "gasketed, captive screws" | 6 captive M3: 4 on the front ledge (ahead of the board edge x 33) and 2 in the rear corners | the RR-CHS-MAIN 18 mm top envelope reaches the ledge underside (z 102.6): screw bosses can only hang below the ledge where the board is limited to 12 mm (rear corners, CCR-E08) or outside the board. See CR-06. |
+| D-10 | Battery tunnel at the tail | bay guide walls \|y\| 55.5..58 from the plate to z 100, x -230..-73.5 | walls, feet and gate trimmed to the Rev E inner skin; the hull keeps its full skin there | tool-checked: the wall corner at (-230, +-58, 37) lies 5.8 mm outside the inner skin (half-breadth 52.2 at that height). The common layout's containment tool clamps z to the floor and did not see it. Cassette envelope and removal path unaffected (sweep checked). |
+| D-11 | Lid perimeter screws | -- | 7 radial M3 per side (nose 20/40 deg, shoulder 50 deg, deck 85/100/120/140 deg); no station in the tail quarter | stations at 150..160 deg collided with the rear proximity ToF seat or reached into the hatch opening; the tail is held by the hatch frame, jambs and hump. |
+| D-09 | Shell split stations (design values, not interface) | -- | lid: nose cowl x >= 47, shoulders x -38..47, rear decks x <= -38, hump; lower hull split at x = -71 and y = 0 | the -45 station of the first engineer cut through the RR-PANEL tray; after CR-04 -38 lies between the grip slots (x -32.5..-17.5) and the tray (ends x -44.0). |
+
+## Status of the requests (lead decisions 2026-11-27)
+
+| ID | Decision | Applied |
+|---|---|---|
+| CR-01 | accepted | `params.RECEIVER` channel_x (2.0, 65.7) and front_beam \|y\| 119.5; interfaces text regenerated |
+| CR-02 | accepted | parts.yaml wheel hub_l 9.2 (Pololu #1999 M3) |
+| CR-03 | accepted | parts.yaml charge-inlet cover 36 x 36 x 5 |
+| CR-04 | accepted | `P.GRIP` center_x -30, hand zone 45 front/below, 25 behind below the bar, 45 behind at bar height; common layout and prototype rebuilt (bar sleeve x -42.5..-17.5, bar screw x -25, side-plate cheek x -32..-18, shoulder/deck split moved to x -38, look-ahead ToF kept at x 1.5 on a forward fairing nose) |
+| CR-05 | recorded | no geometry change |
+| CR-06 | accepted | board_envelopes.yaml RR-CHS-MAIN zone REAR_CORNER_LOW (12 mm) |
+| CR-07 | accepted | mechanical_interfaces.md section 5 note |
+| CR-08 | accepted with a change | Pause/Stop moved 10 mm OUTBOARD to (-84, -122), not aft: an aft move of >= 6 mm clears the IB-12 space but closes the gap to the E-stop mushroom to below zero (calculated); body depth stays 50 mm UNVERIFIED (+3 mm checked) |
+| CR-09 | accepted | contract tail swept radius 0.290 m (lead); bumper unchanged |
+
+All closed.
+
+## Requests to the lead (as submitted)
+
+| ID | Request | Why (evidence) | Affects |
+|---|---|---|---|
+| CR-01 | Record in `mechanical_interfaces.md` section 1 that the channel block runs to the x-stop plane (x 2.0..65.7) and the front beam to \|y\| 119.5 (D-01, D-02) | the interface text is self-contradictory as written | production body (same interface); nothing changes for the head |
+| CR-02 | `parts.yaml` `wheel.hub_l`: 16 -> 9.2 and hub = Pololu #1999 (M3) (D-05) | verified spec page | layout envelope only |
+| CR-03 | `parts.yaml` `charge_inlet.cover`: 36 x 36 x 8 -> 36 x 36 x 5 (D-04) | tyre-width rule | layout envelope only |
+| CR-04 | **IB-10 carry attitude: move the grip bar aft** from centre x = -11 to x = **-30** (bar x -42.5..-17.5, z unchanged) and define the grip hand zone as 45 mm in front of and below the bar and 25 mm behind it below z 153 (fingertips; the palm is above the hump top at z 150) | hang angle with the prototype head about -21 deg now, about -10 deg with the bar at -30 (calculated, report section 7). Ballast would need about 1.9 kg in the nose. | `P.GRIP`, `layout.py` hand-zone boxes, both body builds; the look-ahead ToF can stay at x 1.5 on a forward fairing extension |
+| CR-05 | CCR-E08 answers for chassis electronics: (a) the combined 8-way Mini-Fit J_PWR (right edge, v 14.5..33.6) has 23 mm of free space beyond the board edge for the mated plug and the 2-into-1 loom; J_HEAD1 (Mini-Fit 2x5, 12.8 mm, front edge u 14.5..37.8) has 15 mm ahead of the edge up to 13 mm above the PCB; (c) 12 mm clear height is kept over the rear corners and the front-centre strip; the body puts two cover-screw bosses over the rear corners with their underside 13.0 mm above the PCB; RR-PANEL: its tray has cable notches in both long walls for the top-side J1/J2 (all tool-checked keep-out boxes, report section 10) | as checked | chassis electronics |
+| CR-09 | IB-48 swept radius for the robot software: tail of the shell 271.8 mm from the axle centre (tail-cap door), **289.2 mm including the rear bumper** (centre segment, x -286.8); front body 158.4 mm; head envelope corner 275.3 mm (x 212.5, y 175). The software's 278 mm covers the shell but not the bumper: use 290 mm, or ask for a flatter bumper (it stands 9.5..15 mm off the skin for its 8 mm stroke) | tool-checked, report section 10 | robot software, chassis firmware fields |
+| CR-06 | `board_envelopes.yaml` RR-CHS-MAIN: add the rear-corner zones u 0..45 / 112..160, v 0..20 / 0..22 with `top_max: 12.0` (the electronics engineer's own CCR-E08 request) | the saddle-cover rear screws rely on it (D-08) | chassis electronics, both body builds |
+
+| CR-07 | `mechanical_interfaces.md` section 5: note that the bay guide walls end inside the hull skin at the tail corners (D-10) | interface geometry vs the Rev E section law | production body |
+| CR-08 | IB-12 / CCR-E08: the Pause/Stop device body (interface position (-84, -112, 122), parts.yaml depth 50 mm UNVERIFIED) reaches into the rear-right connector space behind the board (u 142..160, x -79..-67, z 84.6..96.6); confirm the real depth of the Harmony XB5 body or move Pause/Stop 15 mm aft | tool-checked keep-out box, report section 10 | chassis electronics, lead |
+
+## IB-10 (carry attitude) and IB-12
+
+IB-10: calculated hang angles are in `out/prototype_report.md` section 7 (with the bar at x = -11, as built, and with the
+CR-04 position). IB-12: the rear-edge connector space of 18 mm each side of the hump is free in this body (tool-checked
+keep-out box behind the board edge, report section 10).
+
+## Requests from the receiver thermal break (2026-11-27, DEC-045 / IB-64)
+
+| Id | Request | Basis | Owner |
+|---|---|---|---|
+| CR-10 | Head `calc.py` `G_BODY_PER_SHOE`: the comment still describes printed PAHT-CF channels. The body now has machined 6061 channels on a G-10 break: 0.081 W/K per channel to the plate (calculated), but the channel's own exposed surface (about 45 cm2 under the plate) adds convection, so the body side per shoe is 0.11 W/K in still air and 0.14 W/K at 25 W/m2K (shoe-to-channel metal contact taken as 0.5 W/K, ASSUMED). Effect on the head heater against the 0.07 case: +1.8 W / +3.3 W at -25 C (calculated from the head's own published cases). Please update the basis text and, if wanted, the sensitivity rows; or ask for a foam boot on the channels (halves the residual, option not built). | `mechanical/common/out/mech_calcs.md` section 9 | head |
+| CR-11 | `mechanical/production/out/cache/*.brep` were captured by the work-in-progress snapshot commit; `mechanical/production/.gitignore` now ignores `out/`. Please untrack them (`git rm -r --cached mechanical/production/out`). | regenerable cache | lead (git) |
+
+## Requests from the fit review (2026-11-28, docs/reviews/REVIEW_cad_pcb_harness_fit.md)
+
+The body was changed wherever a mechanical move closes a finding (STATUS.md, fit-review pass).  Requests to other owners:
+
+| Id | To | Request | Reason / alternative rejected |
+|---|---|---|---|
+| CR-12 | harness | Take every robot cable length and route from `mechanical/common/out/cable_routes.yaml` (polyline, OD / bend radius used, clip points with the part each clip sits on, route + 2 x 25 mm termination + 40 mm loop). W-020 now runs from the dock-switch bracket along the plate underside to the grommet at (28, 58); W-030 / W-031 rise through the cliff-pod bays (plate window); W-034 / W-037 drop through the new 10 x 7 mm roof slots under the fairing noses. | Straight-line lengths crossed solids (M4). |
+| CR-13 | harness | Production (one-piece lid): every lid-mounted device lead (5 ToF, 5 controls, RR-PANEL, LiDAR, charge inlet, J1/J2 receptacles) needs an in-line disconnect parked on the bridge-tray edge, with >= 80 mm service loop, so the lid can be lowered / lifted (M8). Part numbers to be chosen by the harness owner. | Rejected: a lid bulkhead connector (one more sealed penetration, no space on the deck). |
+| CR-14 | harness | Motor leads leave at the encoder end of the can (y +-42.5) and run in front of the can (x 18..26) to J_MOT_L/R; the pod notch at the gearbox end is not used (m6). Motor suppression capacitors and the can strap: the strap bond point is a plate M3 tapped hole to be added when the harness owner fixes the strap length (open). | Body has no bond hole yet: open item. |
+| CR-15 | electronics (chassis) | M9: thirteen vertical headers on the rear edge (u 28..140) against the board_envelopes rule "no connectors on the rear edge between u 20 and 140": the body routes their leads to the two rear corners inside the 12 mm zone budget only if each lead leaves vertically and turns along the edge; please confirm or fan the rear headers out to the side edges at the next revision. The body cannot raise the cover locally without moving the grip hand zone. | Rejected: raising the saddle cover 8 mm over the rear band (breaks the CR-04 hand zone). |
+| CR-16 | electronics (chassis) | m1: J_PWR (Mini-Fit Jr 12.8 mm) stands in REAR_CORNER_LOW (12 mm) at v 14.5..22; it clears the cover boss (tool-checked) -- please shorten the zone to v 0..12 in board_envelopes or accept in writing. J_HEAD1 carries a 7.0 mm envelope while the same family J_PWR carries 12.8: one height for the 5569 family please. | Body checks use the board-file heights as given. |
+| CR-17 | electronics (ToF carrier) | C3 / o1: accepted as is by the body (seats now use the real outline, the sensor 2.4 mm off the outline centre, J1 relief and a clip on the header-free half). Optional: a vertical (top-entry) GH header would shorten the seat relief; not required. GHR plug dimensions are family estimates + 1 mm margin (UNVERIFIED): please add the JST drawing values to harness/connectors.yaml. | - |
+| CR-18 | head | M6 + lead request: the body J1 / J2 receptacles moved to the nose front, skin angle +-12 deg, z 96, axis 20 deg up and 8 deg outward (`mechanical/common/params.py` J_RECEPTACLES, frames.yaml, interfaces section 1). Docked pigtail corridor to route against: PIGTAIL_CORRIDOR (boot -> rise -> loop over the plug end at the cable bend radius -> plug rear), apex about z 125 (was 195..226), free length about 274 mm (J1) / 262 mm (J2): not shorter than before, because a forward-facing plug needs a 180 deg return loop at the 40 / 35 mm bend radius. Please re-route the pigtails against the corridor (keep-free tube OD + 4 mm, tool-checked clear of the body, of both look-ahead ToF cones by >= 20 mm and 50+ mm below the LiDAR plane), re-place the parked-plug holsters if they are under the new plug path, and drop the shoe-root clip. | Rejected: receptacles facing rearward-down over the boots (shortest pigtail): the 45 mm grasp annulus round the coupling nut would then reach into the head (head top z 45); level forward axes put the nose skin into the grasp zone. |

@@ -1,0 +1,306 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Four-lane head discovery descriptor revision 1",
+  "type": "object",
+  "required": [
+    "version",
+    "descriptor_id",
+    "serial",
+    "head_type",
+    "mechanical_revision",
+    "electronics_revision",
+    "geometry_id",
+    "setup_id",
+    "geometry_basis",
+    "frame",
+    "coordinate_units",
+    "axes",
+    "envelope_m",
+    "mount_to_window_normal",
+    "nominal_window_standoff_m",
+    "bumper_projection_below_window_m",
+    "measured_registration_uncertainty_m",
+    "electrical",
+    "channel_order",
+    "acq_format",
+    "capabilities",
+    "gate_range_us",
+    "qualified_standoff_m",
+    "qualified_detector_temperature_C",
+    "segments",
+    "spatial_response_record_id"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "const": "1.0"
+    },
+    "descriptor_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 96
+    },
+    "serial": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 96
+    },
+    "head_type": {
+      "const": "FOUR_LANE_ZNS_PLASTIC_WITH_REFERENCE"
+    },
+    "mechanical_revision": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 96
+    },
+    "electronics_revision": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 96
+    },
+    "geometry_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 96
+    },
+    "setup_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 96
+    },
+    "geometry_basis": {
+      "enum": [
+        "CONCEPT",
+        "AS_BUILT"
+      ]
+    },
+    "frame": {
+      "const": "head_mount"
+    },
+    "coordinate_units": {
+      "const": "m"
+    },
+    "axes": {
+      "const": [
+        "forward",
+        "left",
+        "up"
+      ]
+    },
+    "envelope_m": {
+      "type": "object",
+      "required": [
+        "min",
+        "max"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "min": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "max": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        }
+      }
+    },
+    "mount_to_window_normal": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "nominal_window_standoff_m": {
+      "type": "number",
+      "minimum": 0
+    },
+    "bumper_projection_below_window_m": {
+      "type": "number",
+      "minimum": 0
+    },
+    "measured_registration_uncertainty_m": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "electrical": {
+      "type": "object",
+      "required": [
+        "supply_range_V",
+        "electronics_power_allocation_W",
+        "heater_power_allocation_W"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "supply_range_V": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": 0
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "electronics_power_allocation_W": {
+          "type": "number",
+          "minimum": 0
+        },
+        "heater_power_allocation_W": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "channel_order": {
+      "const": [
+        "alpha",
+        "beta_window",
+        "photon_ref"
+      ]
+    },
+    "acq_format": {
+      "enum": [
+        "1.0",
+        "2.0"
+      ],
+      "description": "Acquisition payload version required by this head."
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 96
+      },
+      "uniqueItems": true
+    },
+    "gate_range_us": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 1000000
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "qualified_standoff_m": {
+      "anyOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": 0
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "qualified_detector_temperature_C": {
+      "anyOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "segments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "center_m",
+          "sensitive_polygon_m",
+          "window_to_effective_plane_m",
+          "reference_center_m"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3
+          },
+          "center_m": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 3,
+            "maxItems": 3
+          },
+          "sensitive_polygon_m": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            "minItems": 4,
+            "maxItems": 4
+          },
+          "window_to_effective_plane_m": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "reference_center_m": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 3,
+                "maxItems": 3
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "spatial_response_record_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1,
+      "maxLength": 96
+    }
+  }
+}

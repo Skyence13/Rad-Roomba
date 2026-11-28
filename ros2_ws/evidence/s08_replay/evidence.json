@@ -1,0 +1,555 @@
+{
+ "scenario": "s08_replay",
+ "evidence_class": "simulated",
+ "against": "Python protocol fakes (rr_core.fakes), virtual clock",
+ "seed": 18,
+ "sim_time_s": 214.16,
+ "checks": [
+  {
+   "check": "replay of the raw archive reproduces every product bit-for-bit",
+   "ok": true,
+   "differing": []
+  },
+  {
+   "check": "second replay identical to the first",
+   "ok": true
+  },
+  {
+   "check": "manifest records weighted_sum_variance and the cell decision rule (MODEL.md rev 5)",
+   "ok": true,
+   "assumptions": {
+    "cov_FU": 0.0,
+    "spatial_response": "uniform top-hat (MODEL.md 5)",
+    "weighted_sum_variance": "exact_coefficients",
+    "cell_decision": "linear-exact/combined+per-lane/0.8-0.2 (MODEL.md rev 5 section 6); predictive threshold over 12 posterior nodes of each lane's U_null sub-window (Gamma(N + 1/2, scale 1/T)); lanes of different attachments are separate terms, each with its own bound calibration; common k terms fully correlated (diagonal parts at the nodes, cross terms at the point values)",
+    "evaluator": {
+     "method": "linear-exact/gil-pelaez/predictive-U(N=...)",
+     "check": "tail at t* recomputed with half the quadrature step agrees to 1e-3 relative, else `no decision \u2014 evaluator check failed`"
+    },
+    "u0": {
+     "rule": "MODEL.md rev 5 section 3: two sub-windows of >= N_min reference counts nearest to the dwell (before / after, else both on one side), larger mean; lane window unless it spans > 2 m, then the ratio-scaled four-lane pool; gradient guard 2 %; recounts: other three lanes during the recount",
+     "n_min_table": [
+      [
+       0.01,
+       30
+      ],
+      [
+       0.001,
+       75
+      ],
+      [
+       0.0001,
+       125
+      ],
+      [
+       1e-06,
+       200
+      ]
+     ],
+     "max_span_m": 2.0,
+     "gradient_limit": null,
+     "implementation_choices": {
+      "dwell": "the dwell of a lane is the contiguous run of the cell's member gates (sequence numbers) holding the largest weight of that lane in the attachment; sub-windows are built outward from its edges, nearest first, with every member gate of the cell (any lane, any pass) contributing nothing",
+      "n_min_alpha": "N_min for the smallest alpha of the tests sharing the reference: 0.2 alpha / m for m >= 2; m = 1 is one test at alpha (scan cell or recount); below 1e-6: 200 (z_alpha / z_1e-6)^2 (computed)",
+      "span": "span of a sub-window = travel distance (path length of the gate mid poses) from the dwell edge to its far end; the lane source is used only if every used sub-window spans <= 2 m",
+      "gradient": "relative difference of the two sub-window means per metre between their centres (stored); one-sided (rev 6): U_null = max(U_B, 1.5 U_B - 0.5 U_A), N_eff = 1/(2.25/n_B + 0.25/n_A) when extrapolated; decision marked `one-sided reference`; a flagged one-sided cell needs a recount before it is reported as an investigation",
+      "pool": "pooled: sum of the four lanes' valid reference counts and live times (a per-lane rate); lane ratio = (n_lane/t_lane)/(n_all/t_all) over the attachment outside the cell's dwell; U_null = ratio x pooled sub-window mean; posterior Gamma(N_eff + 1/2, scale U_null/N_eff)",
+      "recount": "recount: the other three lanes' reference counts during the recount gates, ratio-scaled (ratio qualified when lane and other-lane counts over the attachment outside the recount are >= N_min each), N_eff = 1/(1/N_others + 1/n_lane + 1/n_others,att); otherwise the lane's own two-sub-window rule around the recount",
+      "search": "search stage (rev 6): ONE past four-lane pooled sub-window of N_scan(alpha_scan) counts (25 / 50 / 105), scaled by the calibration record's lane ratio (its relative uncertainty u_r adds 1/u_r^2 counts in quadrature), predictive threshold; reference gates reused across a pause or re-arm only within the attachment, within 2 m of the head and younger than 10 min; no alarm before the sub-window is complete"
+     }
+    },
+    "uncertainty_components": "per cell: u_stat (counting), u_cal_lane (lane-specific k, b terms), u_cal_common_k (spectral part of k, common to all lanes), u_cal_K (|D| u_rel(K)); standard (k = 1), Bq/cm2; only u_stat averages down"
+   }
+  },
+  {
+   "check": "products compared",
+   "ok": true,
+   "n": 20
+  },
+  {
+   "check": "tools/recompute_cell.py reproduces D, D*, D#, decision and status of named cells from the archive, calibration and profile",
+   "ok": true,
+   "cells": [
+    {
+     "ix": 4,
+     "iy": 1
+    },
+    {
+     "ix": 5,
+     "iy": 1
+    },
+    {
+     "ix": 5,
+     "iy": 2
+    },
+    {
+     "ix": 20,
+     "iy": 2
+    },
+    {
+     "ix": 2,
+     "iy": 1
+    },
+    {
+     "ix": 6,
+     "iy": 1
+    },
+    {
+     "ix": 1,
+     "iy": 1
+    },
+    {
+     "ix": 3,
+     "iy": 1
+    }
+   ],
+   "statuses": [
+    "ACCEPTABLE",
+    "ALARM",
+    "INCOMPLETE COVERAGE",
+    "SENSITIVITY INSUFFICIENT"
+   ],
+   "mismatches": []
+  },
+  {
+   "check": "independent rrrad cross-check (raw frames + exported members): D, D*, D#, decision agree (1e-5) for m <= 2 cells",
+   "ok": true,
+   "cells": [
+    [
+     [
+      "4",
+      "1"
+     ],
+     2,
+     {
+      "D": 1.6168151170471246e-16,
+      "D_star": 2.1722254893337698e-07,
+      "D_hash": 1.1602406042140359e-07
+     },
+     true,
+     true
+    ],
+    [
+     [
+      "2",
+      "1"
+     ],
+     1,
+     {
+      "D": 1.2455772578338115e-15,
+      "D_star": 6.872565488294626e-16,
+      "D_hash": 1.022354607682959e-11
+     },
+     false,
+     true
+    ],
+    [
+     [
+      "1",
+      "1"
+     ],
+     1,
+     {
+      "D": 0.0,
+      "D_star": 8.534516199517901e-16,
+      "D_hash": 8.899271469259234e-10
+     },
+     false,
+     true
+    ]
+   ]
+  },
+  {
+   "check": "raw segments sealed with digests",
+   "ok": true,
+   "entries": 46096
+  }
+ ],
+ "passed": true,
+ "field_use_approved": false,
+ "coverage": {
+  "target_area_m2": 3.0,
+  "areas_m2": {
+   "UNVISITED": 0.9964500000000001,
+   "ACCEPTABLE": 0.02,
+   "INSUFFICIENT_SENSITIVITY": 1.8345500000000001,
+   "INVALID_DATA": 0.0,
+   "BLOCKED": 0.0,
+   "EXCLUDED": 0.0,
+   "NO_DECISION": 0.0,
+   "INCOMPLETE_COVERAGE": 0.039,
+   "ALARM": 0.11,
+   "ACQUISITION_GAP": 0.0
+  },
+  "valid_exposure_fraction": 0.6583833333333334,
+  "acceptable_fraction": 0.006666666666666667,
+  "sub_cell_m": 0.005,
+  "decision_cell_m": 0.1,
+  "position_allowance_m": 0.01,
+  "provisional": false
+ },
+ "time_sync": {
+  "limit_us": 10000.0,
+  "fits": 116,
+  "max_gate_bound_us": 838.0033213786841,
+  "median_gate_bound_us": 800.9212816935753
+ },
+ "link_stats": {
+  "tx": 10805,
+  "rx": 10802,
+  "bad_lines": 2,
+  "stale": 0,
+  "duplicates": 0,
+  "gates": 2110,
+  "gaps": 0,
+  "retries": 4,
+  "unassigned_frames": 0,
+  "time_exchanges": 116,
+  "time_exchanges_rejected": 0
+ },
+ "localization_error_vs_truth_m": {
+  "max_x_m": 0.0017620175048725928,
+  "max_y_m": 0.0012321660748217667
+ },
+ "plan": {
+  "n_pairs": 2,
+  "offset_m": 0.04375,
+  "pair_stride_m": 0.33625,
+  "seam_overlap_per_side_m": 0.01625,
+  "predicted_residual": {
+   "left_wall_strip_m": 0.1487,
+   "right_wall_strip_m": 0.1487,
+   "door_end_strip_m": 0.1413,
+   "front_end_strip_m": 0.0713,
+   "end_zone_single_heading_m": {
+    "door": 0.3399,
+    "front": 0.3399
+   },
+   "note": "wall strips are set by the in-place turn radius of the outline; see README coverage section"
+  },
+  "estimated_time_s": 244.2
+ },
+ "flags": [
+  {
+   "id": "HS-0001",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 0,
+   "x_m": 0.32929020065784564,
+   "y_m": -0.28041709966061856,
+   "D": 0.17166820945069092,
+   "u_total": 0.09434415484952755,
+   "D_star": 0.1424986059645998,
+   "D_hash": 0.3356101417593444,
+   "location": {
+    "distance_from_door_m": 0.329,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.22,
+    "text": "0.33 m from the door threshold, 0.22 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0002",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 0,
+   "x_m": 1.1943388487544329,
+   "y_m": -0.058820912606059594,
+   "D": 0.39040689077626944,
+   "u_total": 0.2798574702973113,
+   "D_star": 0.3317781299491335,
+   "D_hash": 0.9373047106134768,
+   "location": {
+    "distance_from_door_m": 1.194,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.441,
+    "text": "1.19 m from the door threshold, 0.44 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0003",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 1,
+   "x_m": 2.0558956586549724,
+   "y_m": -0.146303162713647,
+   "D": 0.18886436150176344,
+   "u_total": 0.13157277900698267,
+   "D_star": 0.17154811672634757,
+   "D_hash": 0.4408533765028477,
+   "location": {
+    "distance_from_door_m": 2.056,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.354,
+    "text": "2.06 m from the door threshold, 0.35 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0004",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 3,
+   "x_m": 2.2647729710336795,
+   "y_m": -0.32125037971500636,
+   "D": 0.22734614487795446,
+   "u_total": 0.13499045955978187,
+   "D_star": 0.19391604500696574,
+   "D_hash": 0.4905523576267236,
+   "location": {
+    "distance_from_door_m": 2.265,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.179,
+    "text": "2.26 m from the door threshold, 0.18 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0005",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 0,
+   "x_m": 2.5557121167389196,
+   "y_m": -0.058775194838454975,
+   "D": 0.8413237205581244,
+   "u_total": 0.6954183322437409,
+   "D_star": 0.8382555387230788,
+   "D_hash": 2.812559274816863,
+   "location": {
+    "distance_from_door_m": 2.556,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.441,
+    "text": "2.56 m from the door threshold, 0.44 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0006",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 3,
+   "x_m": 1.2677600387203498,
+   "y_m": -0.3212942589335437,
+   "D": 0.17520560554198095,
+   "u_total": 0.111895275676,
+   "D_star": 0.16741376014312162,
+   "D_hash": 0.40955214444509624,
+   "location": {
+    "distance_from_door_m": 1.268,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.179,
+    "text": "1.27 m from the door threshold, 0.18 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0008",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 0,
+   "x_m": 0.23784692387917633,
+   "y_m": -0.27752649900390597,
+   "D": 0.2280424075461276,
+   "u_total": 0.14335549456830396,
+   "D_star": 0.2022066363968469,
+   "D_hash": 0.5186635789207289,
+   "location": {
+    "distance_from_door_m": 0.238,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.222,
+    "text": "0.24 m from the door threshold, 0.22 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0009",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 2,
+   "x_m": 1.0603434427172325,
+   "y_m": 0.10262762312268835,
+   "D": 0.1616583622618865,
+   "u_total": 0.09835234616481994,
+   "D_star": 0.12167210041526728,
+   "D_hash": 0.2895190762627391,
+   "location": {
+    "distance_from_door_m": 1.06,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.397,
+    "text": "1.06 m from the door threshold, 0.40 m from the left wall"
+   }
+  },
+  {
+   "id": "HS-0010",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 1,
+   "x_m": 1.5486316853701054,
+   "y_m": 0.16596968176103555,
+   "D": 1.2513498978368394,
+   "u_total": 0.2278806903721119,
+   "D_star": 0.11642879461758879,
+   "D_hash": 0.2670782732471501,
+   "location": {
+    "distance_from_door_m": 1.549,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.334,
+    "text": "1.55 m from the door threshold, 0.33 m from the left wall"
+   }
+  },
+  {
+   "id": "HS-0011",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 3,
+   "x_m": 2.1212014411487514,
+   "y_m": -0.003925960758708741,
+   "D": 0.22234557202362998,
+   "u_total": 0.10742299336975247,
+   "D_star": 0.16913088558702888,
+   "D_hash": 0.4002878614970034,
+   "location": {
+    "distance_from_door_m": 2.121,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.496,
+    "text": "2.12 m from the door threshold, 0.50 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0012",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 0,
+   "x_m": 2.368755787653305,
+   "y_m": 0.2775307235754714,
+   "D": 0.1655534118397446,
+   "u_total": 0.09811229773321065,
+   "D_star": 0.15233834676285968,
+   "D_hash": 0.3581114054964697,
+   "location": {
+    "distance_from_door_m": 2.369,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.222,
+    "text": "2.37 m from the door threshold, 0.22 m from the left wall"
+   }
+  },
+  {
+   "id": "HS-0013",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 0,
+   "x_m": 2.8841126367300736,
+   "y_m": 0.3183871451367586,
+   "D": 0.4418418870122696,
+   "u_total": 0.2614276297598301,
+   "D_star": 0.35263497228516033,
+   "D_hash": 0.9400561314982622,
+   "location": {
+    "distance_from_door_m": 2.884,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.182,
+    "text": "2.88 m from the door threshold, 0.18 m from the left wall"
+   }
+  }
+ ],
+ "scan_detections": 1,
+ "observations": [],
+ "decision_status": {
+  "cells_with_gates": 232,
+  "no_decision": 0,
+  "no_decision_text": [],
+  "no_decision_within_0.5m_of_an_end": 0,
+  "cells_within_0.5m_of_an_end": 72
+ },
+ "rev5": {
+  "cells_with_data": 232,
+  "status": {
+   "INCOMPLETE COVERAGE": 12,
+   "SENSITIVITY INSUFFICIENT": 207,
+   "ALARM": 11,
+   "ACCEPTABLE": 2
+  },
+  "status_reasons": {
+   "D# above the detection goal": 207,
+   "coverage 0.35 < 0.5": 6,
+   "flagged by combined": 3,
+   "flagged by combined+lane:A1:L1": 3,
+   "coverage 0.39 < 0.5": 2,
+   "coverage 0.26 < 0.5": 1,
+   "flagged by combined+lane3": 1,
+   "coverage 0.21 < 0.5": 1
+  },
+  "acceptable_fraction": 0.006666666666666667,
+  "median_D_hash": 0.2670782732471501,
+  "undecidable_recorded": 0,
+  "undecidable_provisional_live": 0,
+  "alarm_bookkeeping": {
+   "provisional alarm not confirmed": 15,
+   "recorded alarm (provisional alarm confirmed)": 11
+  },
+  "flags": {
+   "INVESTIGATION_LEVEL:recorded alarm": 4,
+   "INVESTIGATION_LEVEL:provisional alarm not confirmed": 3,
+   "UNRESOLVED_EXCEEDANCE:provisional alarm not confirmed": 5,
+   "SCAN_DETECTION:provisional alarm not confirmed": 1
+  },
+  "review_queue_items": 4,
+  "recount_required_flags": 8,
+  "one_sided_cells": 63,
+  "one_sided_alarm_cells_needing_recount": 0,
+  "search_preroll_s": [],
+  "recorded_evaluation": null,
+  "revisit": 0,
+  "position_credit": {
+   "samples": 2117,
+   "credited_fraction": 1.0,
+   "credited_with_true_error_above_budget": 0,
+   "fraction_of_credited_above_budget": 0.0,
+   "max_true_error_when_credited_m": 0.0018105227931067558,
+   "max_true_error_m": 0.0018105227931067558,
+   "no_credit_reasons_samples": {},
+   "localizer": {
+    "wheel_scale": {
+     "estimate": 1.9330252072252556e-05,
+     "sigma": 8.865793715363759e-05
+    },
+    "stats": {
+     "x_fixes": 2685,
+     "x_rejects": 0,
+     "big_corrections": 0,
+     "max_correction_m": 0.001095618906765901,
+     "deferred_scans": 26
+    }
+   }
+  }
+ },
+ "journal_entries": 46096,
+ "segments": 4,
+ "products": [
+  "README.txt",
+  "calibration.json",
+  "cell_members.csv",
+  "cells.csv",
+  "cells.geojson",
+  "clock_fits.ndjson",
+  "coverage.png",
+  "flags.json",
+  "gaps.json",
+  "gates.csv",
+  "grid.json",
+  "map_activity.svg",
+  "map_coverage.svg",
+  "observations.json",
+  "poses.csv",
+  "profile.json",
+  "residuals.json",
+  "summary.txt",
+  "survey_manifest.json",
+  "transforms.json"
+ ],
+ "product_sha256": {
+  "README.txt": "a06bf5ad71140ac5ed81c7b272ea482c8e3dc1bc9c7444056f752aee88c7c61a",
+  "calibration.json": "76f61826d5b628937d1f77e43ecb7833f9b46d51f6146a736cc366010288ae6c",
+  "cell_members.csv": "6340f95464be85d9cc4786f7b69b85b77e7e2eb9a459d102ed9279da1281a822",
+  "cells.csv": "fd849a01167b3ccf74fe3463d9c653e6d9e8bd007f8aed7c2eb02963ec6ef599",
+  "cells.geojson": "bb22f4941182331d2bae0edcfafdbd80ed2960cba23d2767b21e25df2ce20143",
+  "clock_fits.ndjson": "d15126100103a834eb548053a0428327e3615988336e19801de6c05a2e333783",
+  "coverage.png": "f29a6e5b9352815f1f60ce157eff1deace1a72fdf770111794c303fbe871bc53",
+  "flags.json": "4050f3991add45f799f3390ca464d6ec13150638e261456022293c15bdde0aaf",
+  "gaps.json": "0ade27752795c32c5d5ff2a16abaea23682b0c50e456c46e004270e0e7b1d11c",
+  "gates.csv": "c4e0d4d6c52a0db93d6457a0e74636f698b573c25a4e8d45099d062ebf0fdf50",
+  "grid.json": "d7731db47cf2ebf25ace2475350b8b5347aef30ff672abf29806353ddd12b4dc",
+  "map_activity.svg": "07f47774fd26cce7c39c9d9f7d0db756ad039e07680b5a082f391cf0639ab770",
+  "map_coverage.svg": "27586e7a8148757fc09043c50b719e743094c57d58d4b3df48fd595f768bbc99",
+  "observations.json": "f6150c751b5fe04c3c3efc045eaca350981ffe0713ab4e4610ccf9aaf398a878",
+  "poses.csv": "e67fd0f29afa99fdb1b10454fc10e3c696e1818cd90f2599c74da8e5c699b395",
+  "profile.json": "9867334915ab3e1ce57f435125dd2f6fe328813dcea5a4d5e095da32a0ab36cb",
+  "residuals.json": "a61164c8dbb7ca1146ba8e8e0804ad017bddf3643a49747a89abb278a15ef214",
+  "summary.txt": "09db8b30fa37463599d9cd7b7f7e795e1daa1eed5d0e67fbf497c529aea375b1",
+  "survey_manifest.json": "1783da634a8730939088ff38db9e42115baa762cd80fba15ab718b1523b78ca5",
+  "transforms.json": "0f2d9017710bbc525f1ce5de25b8db9b06f002f727a521913aa69f53e1d7bb26"
+ }
+}

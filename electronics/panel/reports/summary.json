@@ -1,0 +1,181 @@
+{
+  "autoplaced": [],
+  "board": "RR-PANEL",
+  "board_bbox_mm": [
+    0.0,
+    0.0,
+    70.0,
+    24.0
+  ],
+  "bom": {
+    "missing_mpn": [],
+    "verify": [
+      "LED1",
+      "LED2",
+      "LED3",
+      "LED4",
+      "LED5",
+      "BZ1"
+    ]
+  },
+  "counts": {
+    "nets": 15,
+    "parts": 24,
+    "sheets": 6
+  },
+  "date": "2026-11-26",
+  "docnum": "RR-EL-0102",
+  "drc": {
+    "by_type": {},
+    "error_items": [],
+    "errors": 0,
+    "excluded": 0,
+    "parity": 0,
+    "parity_items": [],
+    "report": "reports/drc.json",
+    "unconnected": 0,
+    "unconnected_items": [],
+    "unconnected_listed": 0,
+    "unrouted": [],
+    "unrouted_nets": [],
+    "waived": 0,
+    "warnings": 0
+  },
+  "erc": {
+    "by_type": {},
+    "error_items": [],
+    "errors": 0,
+    "excluded": 0,
+    "report": "reports/erc.json",
+    "waived": 0,
+    "warnings": 0
+  },
+  "fail_reasons": [],
+  "notes": [],
+  "outputs": [
+    {
+      "ok": true,
+      "output": "out/RR-PANEL-schematic.pdf"
+    },
+    {
+      "ok": true,
+      "output": "out/gerber/*.g*"
+    },
+    {
+      "ok": true,
+      "output": "out/gerber/*.drl + drill map"
+    },
+    {
+      "ok": true,
+      "output": "out/RR-PANEL-pos.csv"
+    },
+    {
+      "ok": true,
+      "output": "out/RR-PANEL-bom.csv"
+    },
+    {
+      "ok": true,
+      "output": "out/pinmap.json"
+    },
+    {
+      "ok": true,
+      "output": "out/RR-PANEL.net"
+    },
+    {
+      "ok": true,
+      "output": "out/RR-PANEL-fab.pdf"
+    },
+    {
+      "ok": true,
+      "output": "out/RR-PANEL-assembly-top.pdf"
+    },
+    {
+      "ok": true,
+      "output": "out/RR-PANEL-assembly-bottom.pdf"
+    },
+    {
+      "ok": true,
+      "output": "out/RR-PANEL-copper.pdf"
+    },
+    {
+      "ok": true,
+      "output": "out/RR-PANEL.step"
+    },
+    {
+      "ok": true,
+      "output": "out/RR-PANEL-render-top.png"
+    },
+    {
+      "ok": true,
+      "output": "out/RR-PANEL-render-bottom.png"
+    }
+  ],
+  "pwr_flags": [
+    "V5_AUX",
+    "V12_AUX",
+    "GND"
+  ],
+  "rev": "A",
+  "routing": {
+    "autorouter": {
+      "attempts": [
+        {
+          "run": 1,
+          "seconds": 12.8,
+          "unconnected": 0
+        }
+      ],
+      "dsn_sha256": "41ea1939f938cfb45f4628a21a82e9ca7d95b05a95743176049c8c33392746e4",
+      "freerouting": "v2.6.0 (build-date: 2026-11-25)",
+      "log_tail": [
+        "[D13D28\\DECD82] Auto-routing stage completed: started with 34 unrouted nets, completed in 2.49 seconds, final score: 1000.00 (0 unrouted and 0 violations), using 1.01 total CPU seconds, 0.22 GB total allocated, and 18.8 MB peak heap usage.",
+        "[D13D28\\DECD82] Optimization stage completed:. Baseline router score: 1000.00, baseline optimizer score: -191.95, final router score: 1000.00, final optimizer score: 0.00, completed in 1.52 seconds, using 1.84 total CPU seconds, 0.99 GB total allocated, and 76.7 MB peak heap usage.",
+        "[D13D28\\DECD82] Job 'D13D28\\DECD82' finished with state: COMPLETED (elapsed: 4.34 seconds, finished at UTC: 2026-11-27T00:33:08.329089979Z)."
+      ],
+      "passes_limit": 60,
+      "reused": true,
+      "seconds": 12.8,
+      "threads": 4,
+      "timed_out": false
+    },
+    "escape": {
+      "direct": 0,
+      "enabled": false,
+      "inward": 0,
+      "parts": {},
+      "skipped": [],
+      "skipped_by_reason": {},
+      "vias": 0
+    },
+    "finisher": null,
+    "plane_fanout": {
+      "failed": [],
+      "long_fanout": [],
+      "plane_nets": [],
+      "vias": 0
+    },
+    "routed": true,
+    "stats": {
+      "dangling_tracks_removed": 0,
+      "finisher_items": null,
+      "finisher_removed": 0,
+      "necked_tracks_widened": 0,
+      "preroutes": 15,
+      "preroutes_missing_after_import": 0,
+      "track_length_mm": 542.78,
+      "tracks": 140,
+      "unconnected_after_fill": 0,
+      "unconnected_before_cleanup": 0,
+      "unused_escapes_removed": 0,
+      "vias": 33
+    }
+  },
+  "single_pin_nets": [],
+  "status": "pass",
+  "title": "Annunciator panel",
+  "tools": {
+    "kicad": "9.0.9"
+  },
+  "waived_items": [],
+  "waivers": []
+}

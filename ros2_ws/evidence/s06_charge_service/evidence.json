@@ -1,0 +1,67 @@
+{
+ "scenario": "s06_charge_service",
+ "evidence_class": "simulated",
+ "against": "Python protocol fakes (rr_core.fakes), virtual clock",
+ "seed": 16,
+ "sim_time_s": 34.06,
+ "checks": [
+  {
+   "check": "chassis in SERVICE_CHARGE, mission SERVICE",
+   "ok": true
+  },
+  {
+   "check": "every traction command refused server-side",
+   "ok": true,
+   "reasons": {
+    "arm": "CHARGE_SERVICE: traction inhibited while the charger is connected",
+    "start": "CHARGE_SERVICE: traction inhibited while the charger is connected",
+    "resume": "CHARGE_SERVICE: traction inhibited while the charger is connected",
+    "next": "CHARGE_SERVICE: traction inhibited while the charger is connected",
+    "expose": "CHARGE_SERVICE: traction inhibited while the charger is connected",
+    "park": "CHARGE_SERVICE: traction inhibited while the charger is connected",
+    "preflight": "CHARGE_SERVICE: traction inhibited while the charger is connected"
+   }
+  },
+  {
+   "check": "DRIVE rejected by the chassis in SERVICE_CHARGE",
+   "ok": true
+  },
+  {
+   "check": "head acquisition off in Charge/Service (head power forced off -> attachment closed)",
+   "ok": true,
+   "head_state": "DISABLED"
+  },
+  {
+   "check": "data export works in Charge/Service",
+   "ok": true
+  },
+  {
+   "check": "settings: RP edits a profile with explicit units (3000 Bq/m2 -> 0.30 Bq/cm2, new revision)",
+   "ok": true
+  },
+  {
+   "check": "running mission keeps its original profile snapshot",
+   "ok": true
+  },
+  {
+   "check": "status shows charge/service and traction inhibited",
+   "ok": true
+  },
+  {
+   "check": "unplugging leaves the robot inactive until deliberate setup",
+   "ok": true,
+   "mode": "HW_INHIBIT"
+  }
+ ],
+ "passed": true,
+ "field_use_approved": false,
+ "refused": {
+  "arm": "CHARGE_SERVICE: traction inhibited while the charger is connected",
+  "start": "CHARGE_SERVICE: traction inhibited while the charger is connected",
+  "resume": "CHARGE_SERVICE: traction inhibited while the charger is connected",
+  "next": "CHARGE_SERVICE: traction inhibited while the charger is connected",
+  "expose": "CHARGE_SERVICE: traction inhibited while the charger is connected",
+  "park": "CHARGE_SERVICE: traction inhibited while the charger is connected",
+  "preflight": "CHARGE_SERVICE: traction inhibited while the charger is connected"
+ }
+}

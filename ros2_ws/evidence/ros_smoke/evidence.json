@@ -1,0 +1,173 @@
+{
+ "scenario": "ros_smoke",
+ "evidence_class": "simulated",
+ "against": "Python protocol fakes over TCP 5540/5550",
+ "real_time": true,
+ "deterministic": false,
+ "checks": [
+  {
+   "check": "services available",
+   "ok": true
+  },
+  {
+   "check": "head bound and armed: gates published",
+   "ok": true,
+   "gates": 21
+  },
+  {
+   "check": "start refused before bring-up (prerequisites)",
+   "ok": true,
+   "reason": "STATE:CONFIGURE"
+  },
+  {
+   "check": "arm accepted after datum, REARM, brake test, REARM",
+   "ok": true,
+   "result": "{\"accepted\": true}"
+  },
+  {
+   "check": "start accepted; repeated idempotency key returns the same receipt",
+   "ok": true
+  },
+  {
+   "check": "mission SCAN",
+   "ok": true,
+   "state": "SCAN"
+  },
+  {
+   "check": "no HOLD during the first 25 s of the scan",
+   "ok": true,
+   "holds": [
+    {
+     "t_wall": 41.83,
+     "reason": "OPERATOR_PAUSE",
+     "task": "pair0:A+",
+     "phase": "PASS"
+    }
+   ],
+   "state": "SCAN",
+   "safety": {
+    "traction_inhibited": false,
+    "hw": [],
+    "sw": [],
+    "hold": []
+   }
+  },
+  {
+   "check": "credited coverage grows",
+   "ok": true,
+   "fraction": 0.07083333283662796
+  },
+  {
+   "check": "eligible lane-gates received",
+   "ok": true,
+   "eligible": 1444,
+   "gates": 361
+  },
+  {
+   "check": "coverage flagged not approved for field use",
+   "ok": true
+  },
+  {
+   "check": "web interface serves the live state",
+   "ok": true,
+   "mission": "SCAN",
+   "hold": null,
+   "events": [
+    [
+     "link_down",
+     "TIMEOUT:ENG_SETUP_GET",
+     null,
+     null
+    ],
+    [
+     "session_open",
+     null,
+     null,
+     null
+    ],
+    [
+     "plan",
+     null,
+     null,
+     null
+    ],
+    [
+     "command",
+     "STATE:CONFIGURE",
+     null,
+     null
+    ],
+    [
+     "command",
+     null,
+     null,
+     null
+    ],
+    [
+     "command",
+     null,
+     null,
+     null
+    ],
+    [
+     "command",
+     null,
+     null,
+     null
+    ],
+    [
+     "command",
+     null,
+     null,
+     null
+    ],
+    [
+     "task_start",
+     null,
+     null,
+     null
+    ]
+   ]
+  },
+  {
+   "check": "export service wrote the product set",
+   "ok": true
+  },
+  {
+   "check": "stand-alone head_driver_node: binds (strict calibration binding) and publishes gates stamped with the gate start",
+   "ok": true,
+   "gates": 21,
+   "attachment": "HEAD-DEMO-001",
+   "stamp_ok": true,
+   "stamp": [
+    5974498249,
+    5974498249
+   ],
+   "events": [
+    [
+     "link_down",
+     "TIMEOUT:HELLO"
+    ],
+    [
+     "session_open",
+     ""
+    ]
+   ]
+  },
+  {
+   "check": "stand-alone chassis_bridge_node: publishes odom and chassis state",
+   "ok": true,
+   "odom": 162,
+   "chassis": 13
+  }
+ ],
+ "holds": [
+  {
+   "t_wall": 41.83,
+   "reason": "OPERATOR_PAUSE",
+   "task": "pair0:A+",
+   "phase": "PASS"
+  }
+ ],
+ "passed": true
+}

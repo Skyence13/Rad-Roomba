@@ -1,0 +1,715 @@
+{
+ "scenario": "s11_search_then_count_deferred",
+ "evidence_class": "simulated",
+ "against": "Python protocol fakes (rr_core.fakes), virtual clock",
+ "seed": 22,
+ "sim_time_s": 253.72,
+ "checks": [
+  {
+   "check": "mission complete",
+   "ok": true
+  },
+  {
+   "check": "ratemeter alarm at the hot spot",
+   "ok": true,
+   "alarms": 1,
+   "observations": 1
+  },
+  {
+   "check": "alarming lane parked over the spot for the count (within 30 mm of the patch centre along track)",
+   "ok": true,
+   "achieved": [
+    1.53890551412284,
+    -0.14623063795362035
+   ]
+  },
+  {
+   "check": "scaler count valid (stationary, no stop event inside) and decided at alpha_recount",
+   "ok": true,
+   "outcome": "EXCEEDS_INVESTIGATION_LEVEL",
+   "result": {
+    "D": 2.039700145126546,
+    "u_stat": 0.10388469740261656,
+    "u_total": 0.3232199446466537,
+    "D_star": 0.1522473709001179,
+    "D_hash": 0.26054188163377284,
+    "T_F": 9.891090000000004,
+    "detected": true,
+    "method": "linear-exact/gil-pelaez/predictive-U(N=120.0)/provisional-no-check",
+    "m": 1,
+    "alpha_lane": 0.00017096303211345723,
+    "status": "OK"
+   }
+  },
+  {
+   "check": "scaler result consistent with the injected patch (lane-average 2.0 Bq/cm2 +/- 30 %)",
+   "ok": true,
+   "D": 2.039700145126546
+  },
+  {
+   "check": "floor that only saw the search stage is reported with stage SEARCH",
+   "ok": true
+  },
+  {
+   "check": "deferred: counts taken after the scan passes",
+   "ok": true
+  },
+  {
+   "check": "ratemeter view available (per-lane rate with alarm set-point)",
+   "ok": true
+  }
+ ],
+ "passed": true,
+ "field_use_approved": false,
+ "coverage": {
+  "target_area_m2": 3.0,
+  "areas_m2": {
+   "UNVISITED": 1.0052,
+   "ACCEPTABLE": 0.01,
+   "INSUFFICIENT_SENSITIVITY": 1.7737,
+   "INVALID_DATA": 0.0,
+   "BLOCKED": 0.0,
+   "EXCLUDED": 0.0,
+   "NO_DECISION": 0.0,
+   "INCOMPLETE_COVERAGE": 0.041100000000000005,
+   "ALARM": 0.17,
+   "ACQUISITION_GAP": 0.0
+  },
+  "valid_exposure_fraction": 0.6581750000000001,
+  "acceptable_fraction": 0.0033333333333333335,
+  "sub_cell_m": 0.005,
+  "decision_cell_m": 0.1,
+  "position_allowance_m": 0.01,
+  "provisional": false
+ },
+ "time_sync": {
+  "limit_us": 10000.0,
+  "fits": 131,
+  "max_gate_bound_us": 838.0033213786841,
+  "median_gate_bound_us": 798.8715225695466
+ },
+ "link_stats": {
+  "tx": 12863,
+  "rx": 12860,
+  "bad_lines": 0,
+  "stale": 0,
+  "duplicates": 0,
+  "gates": 2518,
+  "gaps": 0,
+  "retries": 2,
+  "unassigned_frames": 0,
+  "time_exchanges": 131,
+  "time_exchanges_rejected": 0
+ },
+ "localization_error_vs_truth_m": {
+  "max_x_m": 0.0018723436011334194,
+  "max_y_m": 0.001234488341015777
+ },
+ "plan": {
+  "n_pairs": 2,
+  "offset_m": 0.04375,
+  "pair_stride_m": 0.33625,
+  "seam_overlap_per_side_m": 0.01625,
+  "predicted_residual": {
+   "left_wall_strip_m": 0.1487,
+   "right_wall_strip_m": 0.1487,
+   "door_end_strip_m": 0.1413,
+   "front_end_strip_m": 0.0713,
+   "end_zone_single_heading_m": {
+    "door": 0.3399,
+    "front": 0.3399
+   },
+   "note": "wall strips are set by the in-place turn radius of the outline; see README coverage section"
+  },
+  "estimated_time_s": 244.2
+ },
+ "flags": [
+  {
+   "id": "HS-0001",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 1,
+   "x_m": 1.1144544670140348,
+   "y_m": -0.14624171974325167,
+   "D": 0.4032424356506909,
+   "u_total": 0.3453110005710285,
+   "D_star": 0.34854257482507506,
+   "D_hash": 1.0475899759384204,
+   "location": {
+    "distance_from_door_m": 1.114,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.354,
+    "text": "1.11 m from the door threshold, 0.35 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0002",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 1,
+   "x_m": 1.5464131015166138,
+   "y_m": -0.16613033708407932,
+   "D": 0.8098896477675943,
+   "u_total": 0.1650259592742135,
+   "D_star": 0.11461666766890867,
+   "D_hash": 0.26327089651397984,
+   "location": {
+    "distance_from_door_m": 1.546,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.334,
+    "text": "1.55 m from the door threshold, 0.33 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0003",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 3,
+   "x_m": 2.149961475103976,
+   "y_m": -0.32124708012570513,
+   "D": 0.30825630640794904,
+   "u_total": 0.1558073293546515,
+   "D_star": 0.21779512561623715,
+   "D_hash": 0.542237443175972,
+   "location": {
+    "distance_from_door_m": 2.15,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.179,
+    "text": "2.15 m from the door threshold, 0.18 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0004",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 1,
+   "x_m": 2.353224263884515,
+   "y_m": -0.1462549664563819,
+   "D": 0.21565559448989044,
+   "u_total": 0.13262713728005163,
+   "D_star": 0.18790215666670004,
+   "D_hash": 0.4710316308947386,
+   "location": {
+    "distance_from_door_m": 2.353,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.354,
+    "text": "2.35 m from the door threshold, 0.35 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0005",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 3,
+   "x_m": 0.7836419779459564,
+   "y_m": -0.014987422139290591,
+   "D": 0.26228326847178296,
+   "u_total": 0.1872276092904326,
+   "D_star": 0.2536996198886539,
+   "D_hash": 0.7017377109688365,
+   "location": {
+    "distance_from_door_m": 0.784,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.485,
+    "text": "0.78 m from the door threshold, 0.49 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0006",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 0,
+   "x_m": 0.33883558585885803,
+   "y_m": -0.28521732782175724,
+   "D": 0.22277090701616215,
+   "u_total": 0.13128037983170818,
+   "D_star": 0.18207548680946817,
+   "D_hash": 0.4650408087022318,
+   "location": {
+    "distance_from_door_m": 0.339,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.215,
+    "text": "0.34 m from the door threshold, 0.21 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0008",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 1,
+   "x_m": 1.6451738637664293,
+   "y_m": 0.17438757624885687,
+   "D": 0.30644783489008287,
+   "u_total": 0.11343346124254797,
+   "D_star": 0.15844963166694587,
+   "D_hash": 0.37204131077506364,
+   "location": {
+    "distance_from_door_m": 1.645,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.326,
+    "text": "1.65 m from the door threshold, 0.33 m from the left wall"
+   }
+  },
+  {
+   "id": "HS-0010",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 2,
+   "x_m": 2.841848565918136,
+   "y_m": 0.12028133185353712,
+   "D": 0.21782049221697355,
+   "u_total": 0.15660827546718556,
+   "D_star": 0.2339003632701722,
+   "D_hash": 0.5843233667228105,
+   "location": {
+    "distance_from_door_m": 2.842,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.38,
+    "text": "2.84 m from the door threshold, 0.38 m from the left wall"
+   }
+  },
+  {
+   "id": "HS-0011",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 3,
+   "x_m": 1.0880386303431282,
+   "y_m": 0.3212688281127476,
+   "D": 0.2259464326422028,
+   "u_total": 0.09758664633918347,
+   "D_star": 0.14225721871111563,
+   "D_hash": 0.3370796255392559,
+   "location": {
+    "distance_from_door_m": 1.088,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.179,
+    "text": "1.09 m from the door threshold, 0.18 m from the left wall"
+   }
+  },
+  {
+   "id": "HS-0012",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 1,
+   "x_m": 2.7528904063544264,
+   "y_m": -0.13368505839717157,
+   "D": 0.16906867266391284,
+   "u_total": 0.1021786978794126,
+   "D_star": 0.15989293594673393,
+   "D_hash": 0.3782475999146808,
+   "location": {
+    "distance_from_door_m": 2.753,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.366,
+    "text": "2.75 m from the door threshold, 0.37 m from the right wall"
+   }
+  }
+ ],
+ "scan_detections": 2,
+ "observations": [
+  {
+   "id": "OBS-0001",
+   "flag": null,
+   "lane": 1,
+   "valid": true,
+   "invalid_reason": "COUNT_END",
+   "outcome": "EXCEEDS_INVESTIGATION_LEVEL",
+   "stage": "SCALER",
+   "mode": "PRESET_TIME",
+   "alpha": 0.00017096303211345723,
+   "beta": 0.05,
+   "n_gates": 99,
+   "pose": [
+    1.4076978750850013,
+    -0.18995772290238214,
+    -0.00017465231777524472
+   ],
+   "target_xy": [
+    1.5405893847417294,
+    -0.14624719252140472
+   ],
+   "achieved_xy": [
+    1.53890551412284,
+    -0.14623063795362035
+   ],
+   "t_end_us": 1253661000,
+   "lanes": [
+    {
+     "lane": 0,
+     "D": 0.08050994012131679,
+     "u_stat": 0.04810818096166122,
+     "u_total": 0.05000977277381804,
+     "D_star": 0.16872976249446472,
+     "D_hash": 0.28787043655084454,
+     "T_F": 9.891090000000004,
+     "detected": false,
+     "method": "linear-exact/gil-pelaez/predictive-U(N=133.0)/provisional-no-check",
+     "m": 1,
+     "alpha_lane": 0.00017096303211345723,
+     "status": "OK",
+     "N_F": 69.0,
+     "N_U": 46.0,
+     "U0": 5.383029284970363,
+     "u0_method": "other-lanes-during-recount:two-sided:N=157/29.7s",
+     "u0": {
+      "n_min": 125,
+      "dwell_seq": [
+       2414,
+       2512
+      ],
+      "source": "other-lanes-during-recount",
+      "status": "OK",
+      "U0": 5.383029284970363,
+      "N_post": 133.04737200006915,
+      "T_post": 24.71607805878798,
+      "lane_ratio": 1.0180127832655432,
+      "ratio_counts": [
+       1168.0,
+       3442.0
+      ],
+      "windows": [
+       {
+        "n": 157.0,
+        "t_s": 29.69108999999992,
+        "seq_lo": 2414,
+        "seq_hi": 2512,
+        "side": "during",
+        "span_m": 0.0,
+        "mean": 5.287781620681505
+       }
+      ],
+      "selected": 0,
+      "gradient_per_m": 0.0,
+      "projected_bias": 0.0,
+      "two_sided": true
+     },
+     "envelope_ok": true
+    },
+    {
+     "lane": 1,
+     "D": 2.039700145126546,
+     "u_stat": 0.10388469740261656,
+     "u_total": 0.3232199446466537,
+     "D_star": 0.1522473709001179,
+     "D_hash": 0.26054188163377284,
+     "T_F": 9.891090000000004,
+     "detected": true,
+     "method": "linear-exact/gil-pelaez/predictive-U(N=120.0)/provisional-no-check",
+     "m": 1,
+     "alpha_lane": 0.00017096303211345723,
+     "status": "OK",
+     "N_F": 565.0,
+     "N_U": 64.0,
+     "U0": 4.608706207950039,
+     "u0_method": "other-lanes-during-recount:two-sided:N=139/29.7s",
+     "u0": {
+      "n_min": 125,
+      "dwell_seq": [
+       2414,
+       2512
+      ],
+      "source": "other-lanes-during-recount",
+      "status": "OK",
+      "U0": 4.608706207950039,
+      "N_post": 119.61280175976148,
+      "T_post": 25.95366169217488,
+      "lane_ratio": 0.9844425237683665,
+      "ratio_counts": [
+       1139.0,
+       3471.0
+      ],
+      "windows": [
+       {
+        "n": 139.0,
+        "t_s": 29.69108999999992,
+        "seq_lo": 2414,
+        "seq_hi": 2512,
+        "side": "during",
+        "span_m": 0.0,
+        "mean": 4.681539141877256
+       }
+      ],
+      "selected": 0,
+      "gradient_per_m": 0.0,
+      "projected_bias": 0.0,
+      "two_sided": true
+     },
+     "envelope_ok": true
+    },
+    {
+     "lane": 2,
+     "D": -0.005563220259086034,
+     "u_stat": 0.04304588719886695,
+     "u_total": 0.04354246494167472,
+     "D_star": 0.15858689128883688,
+     "D_hash": 0.27093480930927505,
+     "T_F": 9.891090000000004,
+     "detected": false,
+     "method": "linear-exact/gil-pelaez/predictive-U(N=130.0)/provisional-no-check",
+     "m": 1,
+     "alpha_lane": 0.00017096303211345723,
+     "status": "OK",
+     "N_F": 53.0,
+     "N_U": 50.0,
+     "U0": 5.1739478257648095,
+     "u0_method": "other-lanes-during-recount:two-sided:N=153/29.7s",
+     "u0": {
+      "n_min": 125,
+      "dwell_seq": [
+       2414,
+       2512
+      ],
+      "source": "other-lanes-during-recount",
+      "status": "OK",
+      "U0": 5.1739478257648095,
+      "N_post": 130.030235705343,
+      "T_post": 25.13172534478003,
+      "lane_ratio": 1.0040532715691952,
+      "ratio_counts": [
+       1156.0,
+       3454.0
+      ],
+      "windows": [
+       {
+        "n": 153.0,
+        "t_s": 29.69108999999992,
+        "seq_lo": 2414,
+        "seq_hi": 2512,
+        "side": "during",
+        "span_m": 0.0,
+        "mean": 5.153061069836116
+       }
+      ],
+      "selected": 0,
+      "gradient_per_m": 0.0,
+      "projected_bias": 0.0,
+      "two_sided": true
+     },
+     "envelope_ok": true
+    },
+    {
+     "lane": 3,
+     "D": 0.03610933576121273,
+     "u_stat": 0.04680749779046438,
+     "u_total": 0.04752121476444935,
+     "D_star": 0.17223972978919275,
+     "D_hash": 0.2938653860470936,
+     "T_F": 9.891090000000004,
+     "detected": false,
+     "method": "linear-exact/gil-pelaez/predictive-U(N=135.0)/provisional-no-check",
+     "m": 1,
+     "alpha_lane": 0.00017096303211345723,
+     "status": "OK",
+     "N_F": 56.0,
+     "N_U": 43.0,
+     "U0": 5.354587530568668,
+     "u0_method": "other-lanes-during-recount:two-sided:N=160/29.7s",
+     "u0": {
+      "n_min": 125,
+      "dwell_seq": [
+       2414,
+       2512
+      ],
+      "source": "other-lanes-during-recount",
+      "status": "OK",
+      "U0": 5.354587530568668,
+      "N_post": 134.9417208584652,
+      "T_post": 25.201142027859266,
+      "lane_ratio": 0.9936471267686978,
+      "ratio_counts": [
+       1147.0,
+       3463.0
+      ],
+      "windows": [
+       {
+        "n": 160.0,
+        "t_s": 29.69108999999992,
+        "seq_lo": 2414,
+        "seq_hi": 2512,
+        "side": "during",
+        "span_m": 0.0,
+        "mean": 5.388822033815546
+       }
+      ],
+      "selected": 0,
+      "gradient_per_m": 0.0,
+      "projected_bias": 0.0,
+      "two_sided": true
+     },
+     "envelope_ok": true
+    }
+   ],
+   "result": {
+    "D": 2.039700145126546,
+    "u_stat": 0.10388469740261656,
+    "u_total": 0.3232199446466537,
+    "D_star": 0.1522473709001179,
+    "D_hash": 0.26054188163377284,
+    "T_F": 9.891090000000004,
+    "detected": true,
+    "method": "linear-exact/gil-pelaez/predictive-U(N=120.0)/provisional-no-check",
+    "m": 1,
+    "alpha_lane": 0.00017096303211345723,
+    "status": "OK"
+   }
+  }
+ ],
+ "decision_status": {
+  "cells_with_gates": 232,
+  "no_decision": 0,
+  "no_decision_text": [],
+  "no_decision_within_0.5m_of_an_end": 0,
+  "cells_within_0.5m_of_an_end": 72
+ },
+ "rev5": {
+  "cells_with_data": 232,
+  "status": {
+   "INCOMPLETE COVERAGE": 13,
+   "SENSITIVITY INSUFFICIENT": 201,
+   "ALARM": 17,
+   "ACCEPTABLE": 1
+  },
+  "status_reasons": {
+   "D# above the detection goal": 201,
+   "coverage 0.35 < 0.5": 6,
+   "flagged by combined": 6,
+   "flagged by combined+lane0": 3,
+   "coverage 0.39 < 0.5": 2,
+   "coverage 0.21 < 0.5": 2,
+   "flagged by combined+lane1": 2,
+   "flagged by combined+lane1+lane2; one-sided reference: recount required before an investigation is reported": 2
+  },
+  "acceptable_fraction": 0.0033333333333333335,
+  "median_D_hash": 0.2695116042621921,
+  "undecidable_recorded": 0,
+  "undecidable_provisional_live": 0,
+  "alarm_bookkeeping": {
+   "recorded alarm (provisional alarm confirmed)": 16,
+   "provisional alarm not confirmed": 11,
+   "alarm found at final evaluation": 1
+  },
+  "flags": {
+   "INVESTIGATION_LEVEL:provisional alarm not confirmed": 2,
+   "INVESTIGATION_LEVEL:recorded alarm": 2,
+   "UNRESOLVED_EXCEEDANCE:provisional alarm not confirmed": 2,
+   "UNRESOLVED_EXCEEDANCE:recorded alarm": 3,
+   "SCAN_DETECTION:recorded alarm": 1,
+   "SCAN_DETECTION:provisional alarm not confirmed": 1,
+   "UNRESOLVED_EXCEEDANCE:alarm found at final evaluation": 1
+  },
+  "review_queue_items": 7,
+  "recount_required_flags": 6,
+  "one_sided_cells": 26,
+  "one_sided_alarm_cells_needing_recount": 4,
+  "search_preroll_s": [
+   1.24
+  ],
+  "recorded_evaluation": null,
+  "revisit": 1,
+  "position_credit": {
+   "samples": 2513,
+   "credited_fraction": 1.0,
+   "credited_with_true_error_above_budget": 0,
+   "fraction_of_credited_above_budget": 0.0,
+   "max_true_error_when_credited_m": 0.001886312000222016,
+   "max_true_error_m": 0.001886312000222016,
+   "no_credit_reasons_samples": {},
+   "localizer": {
+    "wheel_scale": {
+     "estimate": -5.067590808389619e-06,
+     "sigma": 8.365250582675272e-05
+    },
+    "stats": {
+     "x_fixes": 3213,
+     "x_rejects": 0,
+     "big_corrections": 0,
+     "max_correction_m": 0.0009304037522169262,
+     "deferred_scans": 26
+    }
+   }
+  }
+ },
+ "policy": "DEFERRED",
+ "alarms": [
+  {
+   "lane": 1,
+   "xy": [
+    1.5405893847417294,
+    -0.14624719252140472
+   ],
+   "pose": [
+    1.4093840105110902,
+    -0.18998107267167152,
+    -0.00012286219182968203
+   ],
+   "D_search": 1.3227407870236152,
+   "task": "T000",
+   "t_us": 1020421000,
+   "alarm_record": {
+    "D": 0.668557250599003,
+    "D_star": 0.5858590062115804,
+    "U0": 4.304570059542456,
+    "u0_source": "pooled-past",
+    "u0_N": 103.90895596239486,
+    "method": "linear-exact/gil-pelaez/predictive-U(N=104.0)",
+    "alpha": 1e-05,
+    "provisional": true
+   },
+   "ev": "search_alarm",
+   "state": "SCAN"
+  }
+ ],
+ "ratemeter": {
+  "0": {
+   "rate": 8.007206485837253,
+   "net": 2.550198983586578,
+   "alarm_level": 22.013150739049344,
+   "alarm": false,
+   "D": 0.10954462987914854,
+   "D_star": 0.6759814662948777,
+   "U0": 5.816962480048367,
+   "u0_source": "pooled-past",
+   "u0_N": 105.86722073810232,
+   "method": "linear-exact/gil-pelaez/predictive-U(N=106.0)",
+   "alpha": 1e-05,
+   "t_us": 1253688279.1607168,
+   "provisional": true
+  },
+  "1": {
+   "rate": 41.036933239915925,
+   "net": 32.26586217859753,
+   "alarm_level": 22.79304809360931,
+   "alarm": true,
+   "D": 1.3180499255963043,
+   "D_star": 0.6646833583699152,
+   "U0": 5.816962480048367,
+   "u0_source": "pooled-past",
+   "u0_N": 105.86722073810232,
+   "method": "linear-exact/gil-pelaez/predictive-U(N=106.0)",
+   "alpha": 1e-05,
+   "t_us": 1253688279.1607168,
+   "provisional": true
+  },
+  "2": {
+   "rate": 5.004504053648284,
+   "net": -2.3945103206640104,
+   "alarm_level": 21.870598665246323,
+   "alarm": false,
+   "D": -0.09977126336100044,
+   "D_star": 0.6512760707920259,
+   "U0": 5.816962480048367,
+   "u0_source": "pooled-past",
+   "u0_N": 105.86722073810232,
+   "method": "linear-exact/gil-pelaez/predictive-U(N=106.0)",
+   "alpha": 1e-05,
+   "t_us": 1253688279.1607168,
+   "provisional": true
+  },
+  "3": {
+   "rate": 6.00540486437794,
+   "net": 1.5124977822533023,
+   "alarm_level": 22.062086417253497,
+   "alarm": false,
+   "D": 0.0663376220286536,
+   "D_star": 0.6904933748823183,
+   "U0": 5.816962480048367,
+   "u0_source": "pooled-past",
+   "u0_N": 105.86722073810232,
+   "method": "linear-exact/gil-pelaez/predictive-U(N=106.0)",
+   "alpha": 1e-05,
+   "t_us": 1253688279.1607168,
+   "provisional": true
+  }
+ },
+ "false_alarm_counts": 0
+}

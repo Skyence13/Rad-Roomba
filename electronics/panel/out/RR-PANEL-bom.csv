@@ -1,0 +1,15 @@
+Refs,Qty,Value,Footprint,Manufacturer,MPN,DNP,Notes
+BZ1,1,piezo 4 kHz,Buzzer_Beeper:Buzzer_Murata_PKLCS1212E,Murata,PKLCS1212E4001-R1,,"Recalled data [U]: >= 75 dB at 10 cm with 3 Vp-p, -40..+85 C. Driven single-ended 5 Vp-p at 4 kHz by the main-board FET (TIM5_CH1). Expected about 80 dB at 10 cm, i.e. about 60 dB at 1 m: NOT enough as a pre-motion alert in a noisy trailer. Fit the external sounder on J2 unless a sound-level test says otherwise.; verify: true"
+C1 C2,2,100n,Capacitor_SMD:C_0603_1608Metric,Yageo,CC0603KRX7R9BB104,,
+D1,1,BAT54,Diode_SMD:D_SOD-123,Diodes Inc.,BAT54W-7-F,,
+J1,1,JST GH 10p side,Connector_JST:JST_GH_SM10B-GHS-TB_1x10-1MP_P1.25mm_Horizontal,JST,SM10B-GHS-TB(LF)(SN),,JST GH rated -25..+85 C [U]
+J2,1,JST GH 2p side,Connector_JST:JST_GH_SM02B-GHS-TB_1x02-1MP_P1.25mm_Horizontal,JST,SM02B-GHS-TB(LF)(SN),,"Candidate: Schneider Harmony XB5KSB/XB5KS2 class buzzer [U part, level and temperature]. Requirement: >= 85 dB(A) at 30 cm, -25 C."
+LED1,1,green,LED_SMD:LED_0805_2012Metric,Wurth Elektronik,150080GS75000,,I = (5.0 - 3.2) / 120 ohm = 15 mA [C]. Luminous intensity and daylight legibility through the light pipe are UNVERIFIED: test with the real pipe and bezel; resistor value is the adjustment.; verify: true
+LED2,1,amber,LED_SMD:LED_0805_2012Metric,Wurth Elektronik,150080YS75000,,I = (5.0 - 2.0) / 200 ohm = 15 mA [C]. Luminous intensity and daylight legibility through the light pipe are UNVERIFIED: test with the real pipe and bezel; resistor value is the adjustment.; verify: true
+LED3,1,white,LED_SMD:LED_0805_2012Metric,Wurth Elektronik,158080227A,,I = (5.0 - 3.0) / 130 ohm = 15 mA [C]. Luminous intensity and daylight legibility through the light pipe are UNVERIFIED: test with the real pipe and bezel; resistor value is the adjustment.; verify: true
+LED4,1,blue,LED_SMD:LED_0805_2012Metric,Wurth Elektronik,150080BS75000,,I = (5.0 - 3.2) / 120 ohm = 15 mA [C]. Luminous intensity and daylight legibility through the light pipe are UNVERIFIED: test with the real pipe and bezel; resistor value is the adjustment.; verify: true
+LED5,1,red,LED_SMD:LED_0805_2012Metric,Wurth Elektronik,150080RS75000,,I = (5.0 - 2.0) / 200 ohm = 15 mA [C]. Luminous intensity and daylight legibility through the light pipe are UNVERIFIED: test with the real pipe and bezel; resistor value is the adjustment.; verify: true
+R1 R4,2,120,Resistor_SMD:R_0805_2012Metric,Yageo,RC0805FR-07120RL,,
+R2 R5,2,200,Resistor_SMD:R_0805_2012Metric,Yageo,RC0805FR-07200RL,,
+R3,1,130,Resistor_SMD:R_0805_2012Metric,Yageo,RC0805FR-07130RL,,
+R6,1,1k,Resistor_SMD:R_0805_2012Metric,Yageo,RC0805FR-071KL,,

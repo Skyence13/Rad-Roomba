@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rad Roomba operator interface</title><link rel="stylesheet" href="/static/app.css"></head>
+<body>
+<div id="banner" class="banner" hidden></div>
+<header><b>Rad Roomba</b> <span id="robot"></span>
+  <span id="conn" class="pill">connecting…</span>
+  <span id="owner" class="pill"></span>
+  <span id="who"></span>
+  <button id="take">Take control</button><button id="release" hidden>Release control</button>
+  <button id="logout">Log out</button></header>
+<section id="login" class="card"><h2>Sign in</h2>
+  <input id="user" placeholder="user" autocomplete="username"> <input id="pass" type="password" placeholder="password" autocomplete="current-password">
+  <button id="dologin">Sign in</button> <span id="loginmsg"></span>
+  <p class="small warn">Simulator / demo build: the packaged accounts are DEMONSTRATION accounts (viewer/viewer, operator/operator, operator2/operator2, rp/rp) over plain HTTP. TLS and real authentication are required before field use.</p>
+  <p class="small">Roles: viewer (read only), operator (mission commands, one controller at a time), rp (profiles and disposition).</p></section>
+<main id="main" hidden>
+<nav><button data-tab="scan" class="on">Scan</button><button data-tab="review">Review flagged areas</button><button data-tab="service">Reports &amp; settings</button></nav>
+<div class="grid">
+ <div class="card wide"><h3>Plan view <span class="small" id="frame"></span></h3>
+  <div class="layers">Layer:
+   <label><input type="radio" name="layer" value="coverage" checked> coverage quality</label>
+   <label><input type="radio" name="layer" value="activity"> activity (Bq/cm²)</label>
+   <label><input type="radio" name="layer" value="sensitivity"> uncertainty / detection limit</label></div>
+  <canvas id="map" width="900" height="360"></canvas>
+  <div id="legend" class="small"></div><div id="covsum" class="small"></div></div>
+ <div class="card"><h3>Status</h3><table id="status"></table>
+  <h3>Safety</h3><div id="safety"></div></div>
+ <div class="card tab" data-tab="scan"><h3>Mission</h3><div id="mission"></div>
+  <div class="btns" id="missionbtns">
+   <button data-cmd="register_datum">Register datum (robot on start mark)</button><button data-cmd="preflight">Preflight / brake test</button>
+   <button data-cmd="arm">Arm</button><button data-cmd="start" class="go">Start</button><button data-cmd="pause">Pause</button>
+   <button data-cmd="rearm">Re-arm (software)</button><button data-cmd="resume" class="go">Resume</button>
+   <button data-cmd="defer">Defer blocked strip</button><button data-cmd="abort" class="warn">Abort</button></div>
+  <h3>Ratemeter (per lane, s⁻¹; ▲ alarm set-point)</h3><div id="rate"></div>
+  <h3>Scaler counts</h3><div id="scaler" class="small"></div></div>
+ <div class="card tab" data-tab="review" hidden><h3>Review queue <span class="small" id="qpolicy"></span></h3><div id="queue"></div>
+  <div class="btns"><button data-cmd="next" class="go">Next</button><button data-cmd="expose">Expose spot</button>
+   <button data-cmd="park">Park</button><button data-cmd="repeat">Repeat (count)</button><button id="skip">Skip…</button></div></div>
+ <div class="card tab" data-tab="service" hidden><h3>Reports, data and settings</h3>
+  <p id="svcnote" class="small"></p>
+  <div class="btns"><button data-cmd="export" data-free="1">Export survey</button> <span id="exportres" class="small"></span></div>
+  <h3>Profiles (RP)</h3><div id="profiles" class="small"></div>
+  <div>Investigation level: <input id="pval" size="6"> <select id="punit"><option>Bq/cm2</option><option>Bq/m2</option></select>
+   <button id="pedit">Save as new revision (RP)</button></div>
+  <h3>Audit log</h3><pre id="audit" class="small"></pre></div>
+ <div class="card"><h3>Events</h3><pre id="events" class="small"></pre><div id="ack" class="small"></div>
+  <div id="simpanel" hidden><h3>Simulation: local controls on the robot</h3><div class="btns">
+   <button data-sim="rearm_button">REARM button</button><button data-sim="pause_button">PAUSE button</button>
+   <button data-sim="estop_on">E-stop press</button><button data-sim="estop_off">E-stop release</button>
+   <button data-sim="charger_on">Charger in</button><button data-sim="charger_off">Charger out</button>
+   <button data-sim="person_path">Person in path</button><button data-sim="person_clear">Person away</button></div></div></div>
+</div></main>
+<script src="/static/app.js"></script></body></html>

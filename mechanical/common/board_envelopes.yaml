@@ -1,0 +1,439 @@
+# Rad Roomba board envelopes -- mechanical lead's confirmation of contract.yaml > boards.
+# Positions are in base_link (mm) for the Rev E layout. STEP solids: out/boards/*.step
+generated_by: mechanical/common/gen_interfaces.py from params.py -- do not edit by hand
+contract_version: 0.4.0-draft9
+evidence_class: calculated (fit tool-checked by layout.py)
+convention: 'Board frame: origin at the rear-left corner seen from above with robot-forward up; +u toward robot right (= -y of base_link), +v forward (= +x of base_link),
+  +w up (= +z); top/component side faces +z. base_link = origin + (v, -u, w). Origin z is the PCB UNDERSIDE. All dimensions mm.'
+head_stack_up:
+  datum: Optical stack below z = 28.5 is Rev D, unchanged (entrance film z = 10.0).
+  layers_z_mm:
+  - layer: module_retention_pad_and_heater
+    z:
+    - 28.5
+    - 30.0
+    note: 1.2 mm compliant thermal/light-seal pad + 0.3 mm polyimide heater film bonded to the spreader underside, zoned per lane
+  - layer: spreader_plate
+    z:
+    - 30.0
+    - 32.0
+    note: one-piece 2.0 mm aluminium heat spreader / stiffener / EMI screen across the y = 0 split (DEC-034); sits on the frame top
+  - layer: pcb_bottom_clearance
+    z:
+    - 32.0
+    - 34.5
+    note: 0.25 mm insulating film on the spreader + 2.0 mm bottom-side parts + 0.25 mm air
+  - layer: RR-HEAD-ACQ_pcb
+    z:
+    - 34.5
+    - 36.1
+    note: 1.6 mm, 4 layers
+  - layer: pcb_top_parts
+    z:
+    - 36.1
+    - 42.1
+    note: 6.0 mm maximum component height
+  - layer: cover_clearance
+    z:
+    - 42.1
+    - 43.0
+    note: 0.9 mm (cover deflection + tolerance)
+  - layer: cover_skin
+    z:
+    - 43.0
+    - 45.0
+    note: 2.0 mm cover (printed PA-CF/ASA prototype, 1.5 mm Al or MJF PA12 production) with perimeter seal
+  head_top_z_mm: 45.0
+  ceiling_z_mm: 50.0
+  head_envelope_rev_e_used_mm:
+    x:
+    - 66.0
+    - 212.5
+    y:
+    - -175.0
+    - 175.0
+    z:
+    - 5.0
+    - 45.0
+  order_rationale: 'Spreader between optics and board: it heats the optical modules uniformly, screens the SiPMs from the logic, takes the board''s own dissipation
+    and bridges the printed y = 0 split. Board above it stays accessible under the cover.'
+RR-HEAD-ACQ:
+  status: 'CONFIRMED as built (IB-52): H1 at (75.5, 30.0) [CR-M02], J1 landing u 50..101 with 8 mm local height [CCR-HE-02], shield cans at v 8.25..40.25 [CR-M01];
+    source electronics/head_acq/layout.py HOLES, libs.py, STAGE2_CHANGE_REQUESTS.md. Origin x 83.2 (mount option C, CCR-11)'
+  outline_mm:
+  - 326.0
+  - 96.0
+  shape: rectangle, corner radius <= 1.0
+  thickness_mm: 1.6
+  layers: 4
+  origin_base_link_mm:
+  - 83.2
+  - 163.0
+  - 34.5
+  orientation: long axis (u) along -y; rpy = (0, 0, -90 deg) from base x to board u
+  centre_base_link_mm:
+  - 131.2
+  - 0.0
+  - 34.5
+  corners_base_link_mm:
+    rear_left_origin:
+    - 83.2
+    - 163.0
+    - 34.5
+    rear_right:
+    - 83.2
+    - -163.0
+    - 34.5
+    front_right:
+    - 179.2
+    - -163.0
+    - 34.5
+    front_left:
+    - 179.2
+    - 163.0
+    - 34.5
+  mounting:
+    screw: 8 x M2.5 into standoffs clinched in the spreader plate (standoff height 2.5 mm)
+    hole_diameter_mm: 2.7
+    pad_keepout_diameter_mm: 6.0
+    holes:
+    - id: H1
+      board_uv_mm:
+      - 75.5
+      - 30.0
+      base_link_xyz_mm:
+      - 113.2
+      - 87.5
+      - 34.5
+    - id: H2
+      board_uv_mm:
+      - 163.0
+      - 4.5
+      base_link_xyz_mm:
+      - 87.7
+      - 0.0
+      - 34.5
+    - id: H3
+      board_uv_mm:
+      - 250.5
+      - 4.5
+      base_link_xyz_mm:
+      - 87.7
+      - -87.5
+      - 34.5
+    - id: H4
+      board_uv_mm:
+      - 75.5
+      - 91.5
+      base_link_xyz_mm:
+      - 174.7
+      - 87.5
+      - 34.5
+    - id: H5
+      board_uv_mm:
+      - 163.0
+      - 91.5
+      base_link_xyz_mm:
+      - 174.7
+      - 0.0
+      - 34.5
+    - id: H6
+      board_uv_mm:
+      - 250.5
+      - 91.5
+      base_link_xyz_mm:
+      - 174.7
+      - -87.5
+      - 34.5
+    - id: H7
+      board_uv_mm:
+      - 5.0
+      - 48.0
+      base_link_xyz_mm:
+      - 131.2
+      - 158.0
+      - 34.5
+    - id: H8
+      board_uv_mm:
+      - 321.0
+      - 48.0
+      base_link_xyz_mm:
+      - 131.2
+      - -158.0
+      - 34.5
+    rationale: Holes on the three inactive lane seams (y = +87.5, 0, -87.5) so the four lane circuits stay identical and unbroken; H1 moved to v 30 (CR-M02) because
+      the J1 header sits on the rear edge; two end holes at mid-height carry the 75 mm end overhangs. Longest unsupported span 87.5 mm.
+  max_height_top_mm: 6.0
+  max_height_bottom_mm: 2.0
+  height_headroom_note: Head top is z = 45.0 against the 50.0 ceiling. Each extra mm of top-side height raises the cover 1:1; up to 11 mm top-side is possible before
+    the ceiling, but costs look-ahead sightline margin (see out/mech_calcs.md). Request before using it.
+  lane_centre_u_mm:
+    S0: 31.75
+    S1: 119.25
+    S2: 206.75
+    S3: 294.25
+  zones_uv_mm:
+  - id: AFE_STRIP
+    u:
+    - 0
+    - 326
+    v:
+    - 0
+    - 30
+    top_max: 6.0
+    bottom_max: 2.0
+    use: 'Eight SiPM front ends. Pigtail connector pairs (floor + reference) on the REAR edge centred on each lane centre u (+/-13 mm): the SiPM carriers stand in
+      the rear chimney (9 mm deep, directly behind the spreader) below this edge at z 11..28.5, so the pigtails are < 35 mm long. Per-lane NTC travels in the same
+      pigtail.'
+  - id: J1_LANDING
+    u:
+    - 50
+    - 101
+    v:
+    - 0
+    - 18
+    top_max: 8.0
+    use: 'J1 pigtail (8-way J2001, body u 73.0..100.7) + heater/NTC (6-way J2601, body u 50.2..72.0): rear-facing Micro-Fit headers, pin row v 10.57, mating faces
+      v 1.5, mated plugs overhang the rear edge to v -8.4 (electronics/head_acq/layout.py, STAGE2_CHANGE_REQUESTS.md S2-L5, CR-M03). top_max 8.0 under the 8.9 mm
+      head-lid blister (CCR-HE-02 accepted, CR-M05; header seat height <= 6.0 UNVERIFIED). The board centres J2001 on y = 76.2 (u 86.8); CR-M03 asks head mechanical
+      to move the J1 cable port there (head-owned, `HEAD_PIGTAIL_EXIT`).'
+  - id: LANE_SHIELD_CANS
+    u:
+    - - 13.75
+      - 49.75
+    - - 101.25
+      - 137.25
+    - - 188.75
+      - 224.75
+    - - 276.25
+      - 312.25
+    v:
+    - 8.25
+    - 40.25
+    top_max: 5.0
+    use: RR-HEAD-SHLD-A cans 36 x 32 x 5 mm (0.2 mm wall) per lane, rear outer face v 8.25 (+2.75 mm, CR-M01; electronics/head_acq/libs.py CAN_V0/CAN_D); anode mouse
+      holes in the rear wall at du -10.38 / +11.87 (CR-M04).
+  - id: J2_LANDING
+    u:
+    - 226
+    - 276
+    v:
+    - 0
+    - 18
+    top_max: 6.0
+    use: J2 pigtail (RS-485, BUS_5V, sync pair, J2_PRES). On the S2|S3 seam (y = -87.5). Isolation barrier belongs here. Excludes the H3 pad.
+  - id: RAIL_SWITCH_LANDING
+    u:
+    - 150
+    - 176
+    v:
+    - 84
+    - 96
+    top_max: 6.0
+    use: Three head rail switches (front, left, right NC loop) land on the FRONT edge centre; leads run in the front wall channel.
+  - id: DIGITAL_POWER
+    u:
+    - 0
+    - 326
+    v:
+    - 30
+    - 84
+    top_max: 6.0
+    bottom_max: 2.0
+    use: 'Bias supply, DACs, comparators, event logic and head MCU (100-pin LQFP, DEC-037: no FPGA; 1.6 mm package height is inside the 6.0 mm limit), rails. Heater
+      switch next to J1_LANDING; keep heater current out of AFE_STRIP (route in v > 30).'
+  - id: SERVICE
+    u:
+    - 100
+    - 226
+    v:
+    - 84
+    - 96
+    top_max: 6.0
+    use: 'SWD/JTAG, 50 ohm monitor output, test points: reachable with the cover off, no external opening.'
+  keepouts:
+  - 6.0 mm diameter around every mounting hole, both sides (standoff + screw head).
+  - 1.5 mm from every edge for copper/components; no part may overhang the rear edge (chimney is 9 mm deep in x).
+  - 'Bottom side: 2.0 mm max everywhere; 0.25 mm polyimide/Formex sheet lies on the spreader.'
+  - 'Mount option C (DEC-041): no socket collar behind the board any more. The two bearing shoes are below the board (z 16..30) on the seams; the J1/J2 ports sit
+    above them at z = 39.'
+  cable_exits:
+    sipm_pigtails: down (-z) off the rear edge into the chimney at each lane centre
+    J1: rear wall port at base [71.7, 76.2, 39.0], cable leaves the head toward -x/+z, strain relief inside the wall
+    J2: rear wall port at base [71.7, -87.5, 39.0], cable leaves the head toward -x/+z
+    heater_and_ntc: heater film is bonded under the spreader; its tail and the spreader NTC come up the chimney at y = +87.5 to J1_LANDING
+  contract_deviation: 'Origin x in base_link is 83.2 (contract 0.4.0-draft4 says 156.0): the head moves 72.8 mm rearward with mount option C (CCR-11). In the head_mount
+    frame nothing moves: origin = (+17.5, +163.0, +2.5) from the mount datum. Note for the layout: the board rear edge is now about 65 mm ahead of the gearmotor cans.'
+RR-CHS-MAIN:
+  status: CONFIRMED (160 x 100 rectangle) in the adopted Rev E body (DEC-039); unchanged by the 12 Ah pack and by mount option C
+  outline_mm:
+  - 160.0
+  - 100.0
+  shape: rectangle, corner radius <= 2.0
+  thickness_mm: 1.6
+  layers: 4
+  origin_base_link_mm:
+  - -67.0
+  - 80.0
+  - 83.0
+  orientation: long axis (u) along -y, horizontal, top side up; rpy = (0, 0, -90 deg) from base x to board u
+  centre_base_link_mm:
+  - -17.0
+  - 0.0
+  - 83.0
+  corners_base_link_mm:
+    rear_left_origin:
+    - -67.0
+    - 80.0
+    - 83.0
+    rear_right:
+    - -67.0
+    - -80.0
+    - 83.0
+    front_right:
+    - 33.0
+    - -80.0
+    - 83.0
+    front_left:
+    - 33.0
+    - 80.0
+    - 83.0
+  position_rationale: Flat on a 2 mm aluminium bridge tray over the two gearmotors, under the removable carry-grip saddle cover (service access from above, no shell
+    split needed). Centre of the board is 17 mm behind the axle.
+  pack_and_receiver_note: '12 Ah baseline pack (DEC-040): the cassette top is now z = 144 and stands 6.5 mm behind the rear edge (was z = 110, 3.5 mm). The blind-mate
+    coupler is still under the board on the centre line (x -73.5..-16).'
+  mounting:
+    screw: 6 x M3 into standoffs on the electronics bridge (standoff height 3.0 mm)
+    hole_diameter_mm: 3.2
+    pad_keepout_diameter_mm: 7.0
+    holes:
+    - id: H1
+      board_uv_mm:
+      - 4.0
+      - 4.0
+      base_link_xyz_mm:
+      - -63.0
+      - 76.0
+      - 83.0
+    - id: H2
+      board_uv_mm:
+      - 80.0
+      - 4.0
+      base_link_xyz_mm:
+      - -63.0
+      - 0.0
+      - 83.0
+    - id: H3
+      board_uv_mm:
+      - 156.0
+      - 4.0
+      base_link_xyz_mm:
+      - -63.0
+      - -76.0
+      - 83.0
+    - id: H4
+      board_uv_mm:
+      - 4.0
+      - 96.0
+      base_link_xyz_mm:
+      - 29.0
+      - 76.0
+      - 83.0
+    - id: H5
+      board_uv_mm:
+      - 80.0
+      - 96.0
+      base_link_xyz_mm:
+      - 29.0
+      - 0.0
+      - 83.0
+    - id: H6
+      board_uv_mm:
+      - 156.0
+      - 96.0
+      base_link_xyz_mm:
+      - 29.0
+      - -76.0
+      - 83.0
+  max_height_top_mm: 18.0
+  max_height_bottom_mm: 3.0
+  zones_uv_mm:
+  - id: FRONT_CORNER_LOW
+    u:
+    - - 0
+      - 14
+    - - 146
+      - 160
+    v:
+    - 88
+    - 100
+    top_max: 12.0
+    use: The shell roof closes in on the two front corners.
+  - id: REAR_CORNER_LOW
+    u:
+    - - 0
+      - 45
+    - - 112
+      - 160
+    v:
+    - - 0
+      - 20
+    - - 0
+      - 22
+    top_max: 12.0
+    use: 'Rear corners (chassis electronics CCR-E08 request, CR-06): the saddle-cover rear screw bosses hang to 13.0 mm above the PCB here.'
+  - id: THERMAL_TO_BRIDGE
+    u:
+    - 50
+    - 110
+    v:
+    - 30
+    - 70
+    bottom_max: 3.0
+    use: 'Preferred place for the H-bridges and the 5 V converter: a 3 mm gap pad on the bottom side couples them to the aluminium bridge tray.'
+  - id: IMU
+    u:
+    - 74
+    - 86
+    v:
+    - 61
+    - 73
+    use: 'Reserved BMI088 footprint centred (80, 67): exactly above base_link origin (yaw centre). imu_link in frames.yaml assumes it.'
+  connector_edges:
+    right_edge_rear  (u = 160, v 4..34): 'POWER ENTRY: pack feed from the blind-mate coupler (under the board, routed around the right side), charge inlet feed (inlet
+      is on the right rear quarter). Main protection, charger and latch/brake relays belong in this corner.'
+    right_edge_front (u = 160, v 72..96): Right motor + encoder, right look-ahead ToF (in the right grip cheek).
+    left_edge_front  (u = 0, v 72..96): Left motor + encoder, left look-ahead ToF.
+    left_edge_rear   (u = 0, v 4..34): 'HOST: USB to the CM5 and the 5.1 V compute feed (CM5 carrier is in the left rear bay), LiDAR 12 V.'
+    rear_corners     (v = 0, u 0..18 and 142..160): 'left: RR-PANEL, selector / REARM; rear ToF x5, body bumper switches. right: E-stop (2 poles), HANDS-ON, Pause/Stop,
+      charge-cover switch, chassis heater + bay NTCs. Only 18 mm of rear edge is free each side of the battery hump: put the larger connectors on the left/right edge
+      rear zones.'
+    front_edge       (v = 100, u 8..40): J1 feed (HEAD_PWR, HEAD_HTR, loop, PRES_ID) to the left shoulder receptacle.
+    front_edge       (v = 100, u 120..152): J2 feed (RS-485, BUS_5V, sync, J2_PRES) to the right shoulder receptacle.
+    front_edge       (v = 100, u 50..110): Front cliff ToF x2 (on the chassis front beam beside the tyres), HEAD_DOCK switch (behind the left receiver channel), head
+      latch switch if fitted.
+  keepouts:
+  - 'NO connectors on the rear edge between u = 20 and 140: the battery hump front wall and cassette (top z 144) stand 3.5 to 6.5 mm behind it.'
+  - 'NO connectors on the left/right edges between v = 34 and 70: the grip cheek legs and cheeks (|y| 84..98) stand 4 mm outboard of the board there.'
+  - 7.0 mm diameter around every mounting hole, both sides.
+  - 'Top-entry plugs are not possible above 18 mm: the saddle cover underside is 20.4 mm above the PCB top. Use right-angle or low-profile vertical headers.'
+  cable_exits: Horizontally outward from the named edges; side bays (|y| 80..115) and the front bay (x > 33) are the cable corridors.
+  contract_deviation: None.
+RR-TOF:
+  status: CONFIRMED
+  outline_mm:
+  - 18.0
+  - 14.0
+  note: Sensor on the board centre; long axis tangent to the skin. 6 mm depth behind a 1 mm window, window clear aperture >= 8 x 6 mm (emitter/receiver split by a
+    light barrier). 11 positions in frames.yaml.
+RR-PANEL:
+  status: CONFIRMED
+  outline_mm:
+  - 70.0
+  - 24.0
+  centre_base_link_mm:
+  - -80.0
+  - 97.0
+  - 130.71
+  orientation: long axis along y, component side up under the top skin between grip and LiDAR; max height top 8 mm (light pipes), bottom 3 mm
+  note: Buttons are separate 22 mm panel devices on the left/right rear decks; the board carries only LEDs, buzzer and the harness landing.

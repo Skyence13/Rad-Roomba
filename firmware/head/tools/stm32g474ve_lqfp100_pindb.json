@@ -1,0 +1,1792 @@
+{
+"_source": "Derived from STMicroelectronics/STM32_open_pin_data (mcu/STM32G474V(B-C-E)Tx.xml, mcu/IP/GPIO-STM32G47x_gpio_v1_0_Modes.xml), fetched 2026-11-26 from raw.githubusercontent.com. Subset: pin position, signal list and alternate-function number per signal.",
+"pins": {
+"PA0": {
+"full_name": "PA0",
+"positions": [
+20
+],
+"signals": {
+"ADC1_IN1": null,
+"ADC2_IN1": null,
+"COMP1_INM": null,
+"COMP1_OUT": 8,
+"COMP3_INP": null,
+"GPIO": null,
+"RTC_TAMP2": null,
+"SYS_WKUP1": null,
+"TIM2_CH1": 1,
+"TIM2_ETR": 14,
+"TIM5_CH1": 2,
+"TIM8_BKIN": 9,
+"TIM8_ETR": 10,
+"USART2_CTS": 7,
+"USART2_NSS": 7
+},
+"type": "I/O"
+},
+"PA1": {
+"full_name": "PA1",
+"positions": [
+21
+],
+"signals": {
+"ADC1_IN2": null,
+"ADC2_IN2": null,
+"COMP1_INP": null,
+"GPIO": null,
+"OPAMP1_VINP": null,
+"OPAMP1_VINP_SEC": null,
+"OPAMP3_VINP": null,
+"OPAMP3_VINP_SEC": null,
+"OPAMP6_VINM": null,
+"OPAMP6_VINM0": null,
+"OPAMP6_VINM_SEC": null,
+"RTC_REFIN": 0,
+"TIM15_CH1N": 9,
+"TIM2_CH2": 1,
+"TIM5_CH2": 2,
+"USART2_DE": 7,
+"USART2_RTS": 7
+},
+"type": "I/O"
+},
+"PA10": {
+"full_name": "PA10",
+"positions": [
+71
+],
+"signals": {
+"COMP6_OUT": 8,
+"CRS_SYNC": 3,
+"DAC1_EXTI10": null,
+"DAC2_EXTI10": null,
+"DAC3_EXTI10": null,
+"DAC4_EXTI10": null,
+"GPIO": null,
+"HRTIM1_CHB1": 13,
+"I2C2_SMBA": 4,
+"SAI1_D1": 12,
+"SAI1_SD_A": 14,
+"SPI2_MISO": 5,
+"SYS_PVD_IN": null,
+"TIM17_BKIN": 1,
+"TIM1_CH3": 6,
+"TIM2_CH4": 10,
+"TIM8_BKIN": 11,
+"UCPD1_DBCC2": null,
+"USART1_RX": 7
+},
+"type": "I/O"
+},
+"PA11": {
+"full_name": "PA11",
+"positions": [
+72
+],
+"signals": {
+"ADC1_EXTI11": null,
+"ADC2_EXTI11": null,
+"COMP1_OUT": 8,
+"FDCAN1_RX": 9,
+"GPIO": null,
+"HRTIM1_CHB2": 13,
+"I2S2_SD": 5,
+"SPI2_MOSI": 5,
+"TIM1_BKIN2": 12,
+"TIM1_CH1N": 6,
+"TIM1_CH4": 11,
+"TIM4_CH1": 10,
+"USART1_CTS": 7,
+"USART1_NSS": 7,
+"USB_DM": null
+},
+"type": "I/O"
+},
+"PA12": {
+"full_name": "PA12",
+"positions": [
+73
+],
+"signals": {
+"COMP2_OUT": 8,
+"FDCAN1_TX": 9,
+"GPIO": null,
+"HRTIM1_FLT1": 13,
+"I2S_CKIN": 5,
+"TIM16_CH1": 1,
+"TIM1_CH2N": 6,
+"TIM1_ETR": 11,
+"TIM4_CH2": 10,
+"USART1_DE": 7,
+"USART1_RTS": 7,
+"USB_DP": null
+},
+"type": "I/O"
+},
+"PA13": {
+"full_name": "PA13",
+"positions": [
+76
+],
+"signals": {
+"GPIO": null,
+"I2C1_SCL": 4,
+"I2C4_SCL": 3,
+"IR_OUT": 5,
+"SAI1_SD_B": 13,
+"SYS_JTMS-SWDIO": 0,
+"TIM16_CH1N": 1,
+"TIM4_CH3": 10,
+"USART3_CTS": 7,
+"USART3_NSS": 7
+},
+"type": "I/O"
+},
+"PA14": {
+"full_name": "PA14",
+"positions": [
+77
+],
+"signals": {
+"GPIO": null,
+"I2C1_SDA": 4,
+"I2C4_SMBA": 3,
+"LPTIM1_OUT": 1,
+"SAI1_FS_B": 13,
+"SYS_JTCK-SWCLK": 0,
+"TIM1_BKIN": 6,
+"TIM8_CH2": 5,
+"USART2_TX": 7
+},
+"type": "I/O"
+},
+"PA15": {
+"full_name": "PA15",
+"positions": [
+78
+],
+"signals": {
+"ADC1_EXTI15": null,
+"ADC2_EXTI15": null,
+"FDCAN3_TX": 11,
+"GPIO": null,
+"HRTIM1_FLT2": 13,
+"I2C1_SCL": 4,
+"I2S3_WS": 6,
+"SPI1_NSS": 5,
+"SPI3_NSS": 6,
+"SYS_JTDI": 0,
+"TIM1_BKIN": 9,
+"TIM2_CH1": 1,
+"TIM2_ETR": 14,
+"TIM8_CH1": 2,
+"UART4_DE": 8,
+"UART4_RTS": 8,
+"USART2_RX": 7
+},
+"type": "I/O"
+},
+"PA2": {
+"full_name": "PA2",
+"positions": [
+22
+],
+"signals": {
+"ADC1_IN3": null,
+"ADC3_EXTI2": null,
+"ADC4_EXTI2": null,
+"ADC5_EXTI2": null,
+"COMP2_INM": null,
+"COMP2_OUT": 8,
+"GPIO": null,
+"LPUART1_TX": 12,
+"OPAMP1_VOUT": null,
+"QUADSPI1_BK1_NCS": 10,
+"RCC_LSCO": null,
+"SYS_WKUP4": null,
+"TIM15_CH1": 9,
+"TIM2_CH3": 1,
+"TIM5_CH3": 2,
+"UCPD1_FRSTX1": 14,
+"UCPD1_FRSTX2": 14,
+"USART2_TX": 7
+},
+"type": "I/O"
+},
+"PA3": {
+"full_name": "PA3",
+"positions": [
+25
+],
+"signals": {
+"ADC1_IN4": null,
+"ADC3_EXTI3": null,
+"ADC4_EXTI3": null,
+"ADC5_EXTI3": null,
+"COMP2_INP": null,
+"GPIO": null,
+"LPUART1_RX": 12,
+"OPAMP1_VINM": null,
+"OPAMP1_VINM0": null,
+"OPAMP1_VINM_SEC": null,
+"OPAMP1_VINP": null,
+"OPAMP1_VINP_SEC": null,
+"OPAMP5_VINM": null,
+"OPAMP5_VINM1": null,
+"OPAMP5_VINM_SEC": null,
+"QUADSPI1_CLK": 10,
+"SAI1_CK1": 3,
+"SAI1_MCLK_A": 13,
+"TIM15_CH2": 9,
+"TIM2_CH4": 1,
+"TIM5_CH4": 2,
+"USART2_RX": 7
+},
+"type": "I/O"
+},
+"PA4": {
+"full_name": "PA4",
+"positions": [
+26
+],
+"signals": {
+"ADC2_IN17": null,
+"COMP1_INM": null,
+"DAC1_OUT1": null,
+"GPIO": null,
+"I2S3_WS": 6,
+"SAI1_FS_B": 13,
+"SPI1_NSS": 5,
+"SPI3_NSS": 6,
+"TIM3_CH2": 2,
+"USART2_CK": 7
+},
+"type": "I/O"
+},
+"PA5": {
+"full_name": "PA5",
+"positions": [
+27
+],
+"signals": {
+"ADC2_IN13": null,
+"COMP2_INM": null,
+"DAC1_OUT2": null,
+"GPIO": null,
+"OPAMP2_VINM": null,
+"OPAMP2_VINM0": null,
+"OPAMP2_VINM_SEC": null,
+"SPI1_SCK": 5,
+"TIM2_CH1": 1,
+"TIM2_ETR": 2,
+"UCPD1_FRSTX1": 14,
+"UCPD1_FRSTX2": 14
+},
+"type": "I/O"
+},
+"PA6": {
+"full_name": "PA6",
+"positions": [
+28
+],
+"signals": {
+"ADC2_IN3": null,
+"COMP1_OUT": 8,
+"DAC2_OUT1": null,
+"GPIO": null,
+"LPUART1_CTS": 12,
+"OPAMP2_VOUT": null,
+"QUADSPI1_BK1_IO3": 10,
+"SPI1_MISO": 5,
+"TIM16_CH1": 1,
+"TIM1_BKIN": 6,
+"TIM3_CH1": 2,
+"TIM8_BKIN": 4
+},
+"type": "I/O"
+},
+"PA7": {
+"full_name": "PA7",
+"positions": [
+29
+],
+"signals": {
+"ADC2_IN4": null,
+"COMP2_INP": null,
+"COMP2_OUT": 8,
+"GPIO": null,
+"OPAMP1_VINP": null,
+"OPAMP1_VINP_SEC": null,
+"OPAMP2_VINP": null,
+"OPAMP2_VINP_SEC": null,
+"QUADSPI1_BK1_IO2": 10,
+"SPI1_MOSI": 5,
+"TIM17_CH1": 1,
+"TIM1_CH1N": 6,
+"TIM3_CH2": 2,
+"TIM8_CH1N": 4,
+"UCPD1_FRSTX1": 14,
+"UCPD1_FRSTX2": 14
+},
+"type": "I/O"
+},
+"PA8": {
+"full_name": "PA8",
+"positions": [
+69
+],
+"signals": {
+"ADC5_IN1": null,
+"COMP7_OUT": 8,
+"FDCAN3_RX": 11,
+"GPIO": null,
+"HRTIM1_CHA1": 13,
+"I2C2_SDA": 4,
+"I2C3_SCL": 2,
+"I2S2_MCK": 5,
+"OPAMP5_VOUT": null,
+"RCC_MCO": 0,
+"SAI1_CK2": 12,
+"SAI1_SCK_A": 14,
+"TIM1_CH1": 6,
+"TIM4_ETR": 10,
+"USART1_CK": 7
+},
+"type": "I/O"
+},
+"PA9": {
+"full_name": "PA9",
+"positions": [
+70
+],
+"signals": {
+"ADC5_IN2": null,
+"COMP5_OUT": 8,
+"DAC1_EXTI9": null,
+"DAC2_EXTI9": null,
+"DAC3_EXTI9": null,
+"DAC4_EXTI9": null,
+"GPIO": null,
+"HRTIM1_CHA2": 13,
+"I2C2_SCL": 4,
+"I2C3_SMBA": 2,
+"I2S3_MCK": 5,
+"SAI1_FS_A": 14,
+"TIM15_BKIN": 9,
+"TIM1_CH2": 6,
+"TIM2_CH3": 10,
+"UCPD1_DBCC1": null,
+"USART1_TX": 7
+},
+"type": "I/O"
+},
+"PB0": {
+"full_name": "PB0",
+"positions": [
+32
+],
+"signals": {
+"ADC1_IN15": null,
+"ADC3_IN12": null,
+"COMP4_INP": null,
+"GPIO": null,
+"HRTIM1_FLT5": 13,
+"OPAMP2_VINP": null,
+"OPAMP2_VINP_SEC": null,
+"OPAMP3_VINP": null,
+"OPAMP3_VINP_SEC": null,
+"QUADSPI1_BK1_IO1": 10,
+"TIM1_CH2N": 6,
+"TIM3_CH3": 2,
+"TIM8_CH2N": 4,
+"UCPD1_FRSTX1": 14,
+"UCPD1_FRSTX2": 14
+},
+"type": "I/O"
+},
+"PB1": {
+"full_name": "PB1",
+"positions": [
+33
+],
+"signals": {
+"ADC1_IN12": null,
+"ADC3_IN1": null,
+"COMP1_INP": null,
+"COMP4_OUT": 8,
+"GPIO": null,
+"HRTIM1_SCOUT": 13,
+"LPUART1_DE": 12,
+"LPUART1_RTS": 12,
+"OPAMP3_VOUT": null,
+"OPAMP6_VINM": null,
+"OPAMP6_VINM1": null,
+"OPAMP6_VINM_SEC": null,
+"QUADSPI1_BK1_IO0": 10,
+"TIM1_CH3N": 6,
+"TIM3_CH4": 2,
+"TIM8_CH3N": 4
+},
+"type": "I/O"
+},
+"PB10": {
+"full_name": "PB10",
+"positions": [
+47
+],
+"signals": {
+"COMP5_INM": null,
+"DAC1_EXTI10": null,
+"DAC2_EXTI10": null,
+"DAC3_EXTI10": null,
+"DAC4_EXTI10": null,
+"GPIO": null,
+"HRTIM1_FLT3": 13,
+"LPUART1_RX": 8,
+"OPAMP3_VINM": null,
+"OPAMP3_VINM1": null,
+"OPAMP3_VINM_SEC": null,
+"OPAMP4_VINM": null,
+"OPAMP4_VINM0": null,
+"OPAMP4_VINM_SEC": null,
+"QUADSPI1_CLK": 10,
+"SAI1_SCK_A": 14,
+"TIM1_BKIN": 12,
+"TIM2_CH3": 1,
+"USART3_TX": 7
+},
+"type": "I/O"
+},
+"PB11": {
+"full_name": "PB11",
+"positions": [
+50
+],
+"signals": {
+"ADC1_EXTI11": null,
+"ADC1_IN14": null,
+"ADC2_EXTI11": null,
+"ADC2_IN14": null,
+"COMP6_INP": null,
+"GPIO": null,
+"HRTIM1_FLT4": 13,
+"LPUART1_TX": 8,
+"OPAMP4_VINP": null,
+"OPAMP4_VINP_SEC": null,
+"OPAMP6_VOUT": null,
+"QUADSPI1_BK1_NCS": 10,
+"TIM2_CH4": 1,
+"USART3_RX": 7
+},
+"type": "I/O"
+},
+"PB12": {
+"full_name": "PB12",
+"positions": [
+51
+],
+"signals": {
+"ADC1_IN11": null,
+"ADC4_IN3": null,
+"COMP7_INM": null,
+"FDCAN2_RX": 9,
+"GPIO": null,
+"HRTIM1_CHC1": 13,
+"I2C2_SMBA": 4,
+"I2S2_WS": 5,
+"LPUART1_DE": 8,
+"LPUART1_RTS": 8,
+"OPAMP4_VOUT": null,
+"OPAMP6_VINP": null,
+"OPAMP6_VINP_SEC": null,
+"SPI2_NSS": 5,
+"TIM1_BKIN": 6,
+"TIM5_ETR": 2,
+"USART3_CK": 7
+},
+"type": "I/O"
+},
+"PB13": {
+"full_name": "PB13",
+"positions": [
+52
+],
+"signals": {
+"ADC3_IN5": null,
+"COMP5_INP": null,
+"FDCAN2_TX": 9,
+"GPIO": null,
+"HRTIM1_CHC2": 13,
+"I2S2_CK": 5,
+"LPUART1_CTS": 8,
+"OPAMP3_VINP": null,
+"OPAMP3_VINP_SEC": null,
+"OPAMP4_VINP": null,
+"OPAMP4_VINP_SEC": null,
+"OPAMP6_VINP": null,
+"OPAMP6_VINP_SEC": null,
+"SPI2_SCK": 5,
+"TIM1_CH1N": 6,
+"USART3_CTS": 7,
+"USART3_NSS": 7
+},
+"type": "I/O"
+},
+"PB14": {
+"full_name": "PB14",
+"positions": [
+53
+],
+"signals": {
+"ADC1_IN5": null,
+"ADC4_IN4": null,
+"COMP4_OUT": 8,
+"COMP7_INP": null,
+"GPIO": null,
+"HRTIM1_CHD1": 13,
+"OPAMP2_VINP": null,
+"OPAMP2_VINP_SEC": null,
+"OPAMP5_VINP": null,
+"OPAMP5_VINP_SEC": null,
+"SPI2_MISO": 5,
+"TIM15_CH1": 1,
+"TIM1_CH2N": 6,
+"USART3_DE": 7,
+"USART3_RTS": 7
+},
+"type": "I/O"
+},
+"PB15": {
+"full_name": "PB15",
+"positions": [
+54
+],
+"signals": {
+"ADC1_EXTI15": null,
+"ADC2_EXTI15": null,
+"ADC2_IN15": null,
+"ADC4_IN5": null,
+"COMP3_OUT": 3,
+"COMP6_INM": null,
+"GPIO": null,
+"HRTIM1_CHD2": 13,
+"I2S2_SD": 5,
+"OPAMP5_VINM": null,
+"OPAMP5_VINM0": null,
+"OPAMP5_VINM_SEC": null,
+"RTC_REFIN": 0,
+"SPI2_MOSI": 5,
+"TIM15_CH1N": 2,
+"TIM15_CH2": 1,
+"TIM1_CH3N": 4
+},
+"type": "I/O"
+},
+"PB2": {
+"full_name": "PB2",
+"positions": [
+34
+],
+"signals": {
+"ADC2_IN12": null,
+"ADC3_EXTI2": null,
+"ADC4_EXTI2": null,
+"ADC5_EXTI2": null,
+"COMP4_INM": null,
+"GPIO": null,
+"HRTIM1_SCIN": 13,
+"I2C3_SMBA": 4,
+"LPTIM1_OUT": 1,
+"OPAMP3_VINM": null,
+"OPAMP3_VINM0": null,
+"OPAMP3_VINM_SEC": null,
+"QUADSPI1_BK2_IO1": 10,
+"RTC_OUT2": 0,
+"TIM20_CH1": 3,
+"TIM5_CH1": 2
+},
+"type": "I/O"
+},
+"PB3": {
+"full_name": "PB3",
+"positions": [
+90
+],
+"signals": {
+"ADC3_EXTI3": null,
+"ADC4_EXTI3": null,
+"ADC5_EXTI3": null,
+"CRS_SYNC": 3,
+"FDCAN3_RX": 11,
+"GPIO": null,
+"HRTIM1_EEV9": 13,
+"HRTIM1_SCOUT": 12,
+"I2S3_CK": 6,
+"SAI1_SCK_B": 14,
+"SPI1_SCK": 5,
+"SPI3_SCK": 6,
+"SYS_JTDO-SWO": 0,
+"TIM2_CH2": 1,
+"TIM3_ETR": 10,
+"TIM4_ETR": 2,
+"TIM8_CH1N": 4,
+"USART2_TX": 7
+},
+"type": "I/O"
+},
+"PB4": {
+"full_name": "PB4",
+"positions": [
+91
+],
+"signals": {
+"FDCAN3_TX": 11,
+"GPIO": null,
+"HRTIM1_EEV7": 13,
+"SAI1_MCLK_B": 14,
+"SPI1_MISO": 5,
+"SPI3_MISO": 6,
+"SYS_JTRST": 0,
+"TIM16_CH1": 1,
+"TIM17_BKIN": 10,
+"TIM3_CH1": 2,
+"TIM8_CH2N": 4,
+"UART5_DE": 8,
+"UART5_RTS": 8,
+"UCPD1_CC2": null,
+"USART2_RX": 7
+},
+"type": "I/O"
+},
+"PB5": {
+"full_name": "PB5",
+"positions": [
+92
+],
+"signals": {
+"FDCAN2_RX": 9,
+"GPIO": null,
+"HRTIM1_EEV6": 13,
+"I2C1_SMBA": 4,
+"I2C3_SDA": 8,
+"I2S3_SD": 6,
+"LPTIM1_IN1": 11,
+"SAI1_SD_B": 12,
+"SPI1_MOSI": 5,
+"SPI3_MOSI": 6,
+"TIM16_BKIN": 1,
+"TIM17_CH1": 10,
+"TIM3_CH2": 2,
+"TIM8_CH3N": 3,
+"UART5_CTS": 14,
+"USART2_CK": 7
+},
+"type": "I/O"
+},
+"PB6": {
+"full_name": "PB6",
+"positions": [
+93
+],
+"signals": {
+"COMP4_OUT": 8,
+"FDCAN2_TX": 9,
+"GPIO": null,
+"HRTIM1_EEV4": 13,
+"HRTIM1_SCIN": 12,
+"LPTIM1_ETR": 11,
+"SAI1_FS_B": 14,
+"TIM16_CH1N": 1,
+"TIM4_CH1": 2,
+"TIM8_BKIN2": 10,
+"TIM8_CH1": 5,
+"TIM8_ETR": 6,
+"UCPD1_CC1": null,
+"USART1_TX": 7
+},
+"type": "I/O"
+},
+"PB7": {
+"full_name": "PB7",
+"positions": [
+94
+],
+"signals": {
+"COMP3_OUT": 8,
+"FMC_NL": 12,
+"GPIO": null,
+"HRTIM1_EEV3": 13,
+"I2C1_SDA": 4,
+"I2C4_SDA": 3,
+"LPTIM1_IN2": 11,
+"TIM17_CH1N": 1,
+"TIM3_CH4": 10,
+"TIM4_CH2": 2,
+"TIM8_BKIN": 5,
+"UART4_CTS": 14,
+"USART1_RX": 7
+},
+"type": "I/O"
+},
+"PB8": {
+"full_name": "PB8-BOOT0",
+"positions": [
+95
+],
+"signals": {
+"COMP1_OUT": 8,
+"FDCAN1_RX": 9,
+"GPIO": null,
+"HRTIM1_EEV8": 13,
+"I2C1_SCL": 4,
+"SAI1_CK1": 3,
+"SAI1_MCLK_A": 14,
+"TIM16_CH1": 1,
+"TIM1_BKIN": 12,
+"TIM4_CH3": 2,
+"TIM8_CH2": 10,
+"USART3_RX": 7
+},
+"type": "I/O"
+},
+"PB9": {
+"full_name": "PB9",
+"positions": [
+96
+],
+"signals": {
+"COMP2_OUT": 8,
+"DAC1_EXTI9": null,
+"DAC2_EXTI9": null,
+"DAC3_EXTI9": null,
+"DAC4_EXTI9": null,
+"FDCAN1_TX": 9,
+"GPIO": null,
+"HRTIM1_EEV5": 13,
+"I2C1_SDA": 4,
+"IR_OUT": 6,
+"SAI1_D2": 3,
+"SAI1_FS_A": 14,
+"TIM17_CH1": 1,
+"TIM1_CH3N": 12,
+"TIM4_CH4": 2,
+"TIM8_CH3": 10,
+"USART3_TX": 7
+},
+"type": "I/O"
+},
+"PC0": {
+"full_name": "PC0",
+"positions": [
+15
+],
+"signals": {
+"ADC1_IN6": null,
+"ADC2_IN6": null,
+"COMP3_INM": null,
+"GPIO": null,
+"LPTIM1_IN1": 1,
+"LPUART1_RX": 8,
+"TIM1_CH1": 2
+},
+"type": "I/O"
+},
+"PC1": {
+"full_name": "PC1",
+"positions": [
+16
+],
+"signals": {
+"ADC1_IN7": null,
+"ADC2_IN7": null,
+"COMP3_INP": null,
+"GPIO": null,
+"LPTIM1_OUT": 1,
+"LPUART1_TX": 8,
+"QUADSPI1_BK2_IO0": 10,
+"SAI1_SD_A": 13,
+"TIM1_CH2": 2
+},
+"type": "I/O"
+},
+"PC10": {
+"full_name": "PC10",
+"positions": [
+79
+],
+"signals": {
+"DAC1_EXTI10": null,
+"DAC2_EXTI10": null,
+"DAC3_EXTI10": null,
+"DAC4_EXTI10": null,
+"GPIO": null,
+"HRTIM1_FLT6": 13,
+"I2S3_CK": 6,
+"SPI3_SCK": 6,
+"TIM8_CH1N": 4,
+"UART4_TX": 5,
+"USART3_TX": 7
+},
+"type": "I/O"
+},
+"PC11": {
+"full_name": "PC11",
+"positions": [
+80
+],
+"signals": {
+"ADC1_EXTI11": null,
+"ADC2_EXTI11": null,
+"GPIO": null,
+"HRTIM1_EEV2": 3,
+"I2C3_SDA": 8,
+"SPI3_MISO": 6,
+"TIM8_CH2N": 4,
+"UART4_RX": 5,
+"USART3_RX": 7
+},
+"type": "I/O"
+},
+"PC12": {
+"full_name": "PC12",
+"positions": [
+81
+],
+"signals": {
+"GPIO": null,
+"HRTIM1_EEV1": 3,
+"I2S3_SD": 6,
+"SPI3_MOSI": 6,
+"TIM5_CH2": 1,
+"TIM8_CH3N": 4,
+"UART5_TX": 5,
+"UCPD1_FRSTX1": 14,
+"UCPD1_FRSTX2": 14,
+"USART3_CK": 7
+},
+"type": "I/O"
+},
+"PC13": {
+"full_name": "PC13",
+"positions": [
+7
+],
+"signals": {
+"GPIO": null,
+"RTC_OUT1": null,
+"RTC_TAMP1": null,
+"RTC_TS": null,
+"SYS_WKUP2": null,
+"TIM1_BKIN": 2,
+"TIM1_CH1N": 4,
+"TIM8_CH4N": 6
+},
+"type": "I/O"
+},
+"PC14": {
+"full_name": "PC14-OSC32_IN",
+"positions": [
+8
+],
+"signals": {
+"GPIO": null,
+"RCC_OSC32_IN": null
+},
+"type": "I/O"
+},
+"PC15": {
+"full_name": "PC15-OSC32_OUT",
+"positions": [
+9
+],
+"signals": {
+"ADC1_EXTI15": null,
+"ADC2_EXTI15": null,
+"GPIO": null,
+"RCC_OSC32_OUT": null
+},
+"type": "I/O"
+},
+"PC2": {
+"full_name": "PC2",
+"positions": [
+17
+],
+"signals": {
+"ADC1_IN8": null,
+"ADC2_IN8": null,
+"ADC3_EXTI2": null,
+"ADC4_EXTI2": null,
+"ADC5_EXTI2": null,
+"COMP3_OUT": 3,
+"GPIO": null,
+"LPTIM1_IN2": 1,
+"QUADSPI1_BK2_IO1": 10,
+"TIM1_CH3": 2,
+"TIM20_CH2": 6
+},
+"type": "I/O"
+},
+"PC3": {
+"full_name": "PC3",
+"positions": [
+18
+],
+"signals": {
+"ADC1_IN9": null,
+"ADC2_IN9": null,
+"ADC3_EXTI3": null,
+"ADC4_EXTI3": null,
+"ADC5_EXTI3": null,
+"GPIO": null,
+"LPTIM1_ETR": 1,
+"OPAMP5_VINP": null,
+"OPAMP5_VINP_SEC": null,
+"QUADSPI1_BK2_IO2": 10,
+"SAI1_D1": 3,
+"SAI1_SD_A": 13,
+"TIM1_BKIN2": 6,
+"TIM1_CH4": 2
+},
+"type": "I/O"
+},
+"PC4": {
+"full_name": "PC4",
+"positions": [
+30
+],
+"signals": {
+"ADC2_IN5": null,
+"GPIO": null,
+"I2C2_SCL": 4,
+"QUADSPI1_BK2_IO3": 10,
+"TIM1_ETR": 2,
+"USART1_TX": 7
+},
+"type": "I/O"
+},
+"PC5": {
+"full_name": "PC5",
+"positions": [
+31
+],
+"signals": {
+"ADC2_IN11": null,
+"GPIO": null,
+"HRTIM1_EEV10": 13,
+"OPAMP1_VINM": null,
+"OPAMP1_VINM1": null,
+"OPAMP1_VINM_SEC": null,
+"OPAMP2_VINM": null,
+"OPAMP2_VINM1": null,
+"OPAMP2_VINM_SEC": null,
+"SAI1_D3": 3,
+"SYS_WKUP5": null,
+"TIM15_BKIN": 2,
+"TIM1_CH4N": 6,
+"USART1_RX": 7
+},
+"type": "I/O"
+},
+"PC6": {
+"full_name": "PC6",
+"positions": [
+65
+],
+"signals": {
+"COMP6_OUT": 7,
+"GPIO": null,
+"HRTIM1_CHF1": 13,
+"HRTIM1_EEV10": 3,
+"I2C4_SCL": 8,
+"I2S2_MCK": 6,
+"TIM3_CH1": 2,
+"TIM8_CH1": 4
+},
+"type": "I/O"
+},
+"PC7": {
+"full_name": "PC7",
+"positions": [
+66
+],
+"signals": {
+"COMP5_OUT": 7,
+"GPIO": null,
+"HRTIM1_CHF2": 13,
+"HRTIM1_FLT5": 3,
+"I2C4_SDA": 8,
+"I2S3_MCK": 6,
+"TIM3_CH2": 2,
+"TIM8_CH2": 4
+},
+"type": "I/O"
+},
+"PC8": {
+"full_name": "PC8",
+"positions": [
+67
+],
+"signals": {
+"COMP7_OUT": 7,
+"GPIO": null,
+"HRTIM1_CHE1": 3,
+"I2C3_SCL": 8,
+"TIM20_CH3": 6,
+"TIM3_CH3": 2,
+"TIM8_CH3": 4
+},
+"type": "I/O"
+},
+"PC9": {
+"full_name": "PC9",
+"positions": [
+68
+],
+"signals": {
+"DAC1_EXTI9": null,
+"DAC2_EXTI9": null,
+"DAC3_EXTI9": null,
+"DAC4_EXTI9": null,
+"GPIO": null,
+"HRTIM1_CHE2": 3,
+"I2C3_SDA": 8,
+"I2S_CKIN": 5,
+"TIM3_CH4": 2,
+"TIM8_BKIN2": 6,
+"TIM8_CH4": 4
+},
+"type": "I/O"
+},
+"PD0": {
+"full_name": "PD0",
+"positions": [
+82
+],
+"signals": {
+"FDCAN1_RX": 9,
+"FMC_D2": 12,
+"FMC_DA2": 12,
+"GPIO": null,
+"TIM8_CH4N": 6
+},
+"type": "I/O"
+},
+"PD1": {
+"full_name": "PD1",
+"positions": [
+83
+],
+"signals": {
+"FDCAN1_TX": 9,
+"FMC_D3": 12,
+"FMC_DA3": 12,
+"GPIO": null,
+"TIM8_BKIN2": 6,
+"TIM8_CH4": 4
+},
+"type": "I/O"
+},
+"PD10": {
+"full_name": "PD10",
+"positions": [
+57
+],
+"signals": {
+"ADC3_IN7": null,
+"ADC4_IN7": null,
+"ADC5_IN7": null,
+"COMP6_INM": null,
+"DAC1_EXTI10": null,
+"DAC2_EXTI10": null,
+"DAC3_EXTI10": null,
+"DAC4_EXTI10": null,
+"FMC_D15": 12,
+"FMC_DA15": 12,
+"GPIO": null,
+"USART3_CK": 7
+},
+"type": "I/O"
+},
+"PD11": {
+"full_name": "PD11",
+"positions": [
+58
+],
+"signals": {
+"ADC1_EXTI11": null,
+"ADC2_EXTI11": null,
+"ADC3_IN8": null,
+"ADC4_IN8": null,
+"ADC5_IN8": null,
+"COMP6_INP": null,
+"FMC_A16": 12,
+"FMC_CLE": null,
+"GPIO": null,
+"I2C4_SMBA": 4,
+"OPAMP4_VINP": null,
+"OPAMP4_VINP_SEC": null,
+"TIM5_ETR": 1,
+"USART3_CTS": 7,
+"USART3_NSS": 7
+},
+"type": "I/O"
+},
+"PD12": {
+"full_name": "PD12",
+"positions": [
+59
+],
+"signals": {
+"ADC3_IN9": null,
+"ADC4_IN9": null,
+"ADC5_IN9": null,
+"COMP5_INP": null,
+"FMC_A17": 12,
+"FMC_ALE": null,
+"GPIO": null,
+"OPAMP5_VINP": null,
+"OPAMP5_VINP_SEC": null,
+"TIM4_CH1": 2,
+"USART3_DE": 7,
+"USART3_RTS": 7
+},
+"type": "I/O"
+},
+"PD13": {
+"full_name": "PD13",
+"positions": [
+60
+],
+"signals": {
+"ADC3_IN10": null,
+"ADC4_IN10": null,
+"ADC5_IN10": null,
+"COMP5_INM": null,
+"FMC_A18": 12,
+"GPIO": null,
+"TIM4_CH2": 2
+},
+"type": "I/O"
+},
+"PD14": {
+"full_name": "PD14",
+"positions": [
+61
+],
+"signals": {
+"ADC3_IN11": null,
+"ADC4_IN11": null,
+"ADC5_IN11": null,
+"COMP7_INP": null,
+"FMC_D0": 12,
+"FMC_DA0": 12,
+"GPIO": null,
+"OPAMP2_VINP": null,
+"OPAMP2_VINP_SEC": null,
+"TIM4_CH3": 2
+},
+"type": "I/O"
+},
+"PD15": {
+"full_name": "PD15",
+"positions": [
+62
+],
+"signals": {
+"ADC1_EXTI15": null,
+"ADC2_EXTI15": null,
+"COMP7_INM": null,
+"FMC_D1": 12,
+"FMC_DA1": 12,
+"GPIO": null,
+"SPI2_NSS": 6,
+"TIM4_CH4": 2
+},
+"type": "I/O"
+},
+"PD2": {
+"full_name": "PD2",
+"positions": [
+84
+],
+"signals": {
+"ADC3_EXTI2": null,
+"ADC4_EXTI2": null,
+"ADC5_EXTI2": null,
+"GPIO": null,
+"TIM3_ETR": 2,
+"TIM8_BKIN": 4,
+"UART5_RX": 5
+},
+"type": "I/O"
+},
+"PD3": {
+"full_name": "PD3",
+"positions": [
+85
+],
+"signals": {
+"ADC3_EXTI3": null,
+"ADC4_EXTI3": null,
+"ADC5_EXTI3": null,
+"FMC_CLK": 12,
+"GPIO": null,
+"QUADSPI1_BK2_NCS": 10,
+"TIM2_CH1": 2,
+"TIM2_ETR": 2,
+"USART2_CTS": 7,
+"USART2_NSS": 7
+},
+"type": "I/O"
+},
+"PD4": {
+"full_name": "PD4",
+"positions": [
+86
+],
+"signals": {
+"FMC_NOE": 12,
+"GPIO": null,
+"QUADSPI1_BK2_IO0": 10,
+"TIM2_CH2": 2,
+"USART2_DE": 7,
+"USART2_RTS": 7
+},
+"type": "I/O"
+},
+"PD5": {
+"full_name": "PD5",
+"positions": [
+87
+],
+"signals": {
+"FMC_NWE": 12,
+"GPIO": null,
+"QUADSPI1_BK2_IO1": 10,
+"USART2_TX": 7
+},
+"type": "I/O"
+},
+"PD6": {
+"full_name": "PD6",
+"positions": [
+88
+],
+"signals": {
+"FMC_NWAIT": 12,
+"GPIO": null,
+"QUADSPI1_BK2_IO2": 10,
+"SAI1_D1": 3,
+"SAI1_SD_A": 13,
+"TIM2_CH4": 2,
+"USART2_RX": 7
+},
+"type": "I/O"
+},
+"PD7": {
+"full_name": "PD7",
+"positions": [
+89
+],
+"signals": {
+"FMC_NCE": 12,
+"FMC_NE1": 12,
+"GPIO": null,
+"QUADSPI1_BK2_IO3": 10,
+"TIM2_CH3": 2,
+"USART2_CK": 7
+},
+"type": "I/O"
+},
+"PD8": {
+"full_name": "PD8",
+"positions": [
+55
+],
+"signals": {
+"ADC4_IN12": null,
+"ADC5_IN12": null,
+"FMC_D13": 12,
+"FMC_DA13": 12,
+"GPIO": null,
+"OPAMP4_VINM": null,
+"OPAMP4_VINM1": null,
+"OPAMP4_VINM_SEC": null,
+"USART3_TX": 7
+},
+"type": "I/O"
+},
+"PD9": {
+"full_name": "PD9",
+"positions": [
+56
+],
+"signals": {
+"ADC4_IN13": null,
+"ADC5_IN13": null,
+"DAC1_EXTI9": null,
+"DAC2_EXTI9": null,
+"DAC3_EXTI9": null,
+"DAC4_EXTI9": null,
+"FMC_D14": 12,
+"FMC_DA14": 12,
+"GPIO": null,
+"OPAMP6_VINP": null,
+"OPAMP6_VINP_SEC": null,
+"USART3_RX": 7
+},
+"type": "I/O"
+},
+"PE0": {
+"full_name": "PE0",
+"positions": [
+97
+],
+"signals": {
+"FMC_NBL0": 12,
+"GPIO": null,
+"TIM16_CH1": 4,
+"TIM20_CH4N": 3,
+"TIM20_ETR": 6,
+"TIM4_ETR": 2,
+"USART1_TX": 7
+},
+"type": "I/O"
+},
+"PE1": {
+"full_name": "PE1",
+"positions": [
+98
+],
+"signals": {
+"FMC_NBL1": 12,
+"GPIO": null,
+"TIM17_CH1": 4,
+"TIM20_CH4": 6,
+"USART1_RX": 7
+},
+"type": "I/O"
+},
+"PE10": {
+"full_name": "PE10",
+"positions": [
+41
+],
+"signals": {
+"ADC3_IN14": null,
+"ADC4_IN14": null,
+"ADC5_IN14": null,
+"DAC1_EXTI10": null,
+"DAC2_EXTI10": null,
+"DAC3_EXTI10": null,
+"DAC4_EXTI10": null,
+"FMC_D7": 12,
+"FMC_DA7": 12,
+"GPIO": null,
+"QUADSPI1_CLK": 10,
+"SAI1_MCLK_B": 13,
+"TIM1_CH2N": 2
+},
+"type": "I/O"
+},
+"PE11": {
+"full_name": "PE11",
+"positions": [
+42
+],
+"signals": {
+"ADC1_EXTI11": null,
+"ADC2_EXTI11": null,
+"ADC3_IN15": null,
+"ADC4_IN15": null,
+"ADC5_IN15": null,
+"FMC_D8": 12,
+"FMC_DA8": 12,
+"GPIO": null,
+"QUADSPI1_BK1_NCS": 10,
+"SPI4_NSS": 5,
+"TIM1_CH2": 2
+},
+"type": "I/O"
+},
+"PE12": {
+"full_name": "PE12",
+"positions": [
+43
+],
+"signals": {
+"ADC3_IN16": null,
+"ADC4_IN16": null,
+"ADC5_IN16": null,
+"FMC_D9": 12,
+"FMC_DA9": 12,
+"GPIO": null,
+"QUADSPI1_BK1_IO0": 10,
+"SPI4_SCK": 5,
+"TIM1_CH3N": 2
+},
+"type": "I/O"
+},
+"PE13": {
+"full_name": "PE13",
+"positions": [
+44
+],
+"signals": {
+"ADC3_IN3": null,
+"FMC_D10": 12,
+"FMC_DA10": 12,
+"GPIO": null,
+"QUADSPI1_BK1_IO1": 10,
+"SPI4_MISO": 5,
+"TIM1_CH3": 2
+},
+"type": "I/O"
+},
+"PE14": {
+"full_name": "PE14",
+"positions": [
+45
+],
+"signals": {
+"ADC4_IN1": null,
+"FMC_D11": 12,
+"FMC_DA11": 12,
+"GPIO": null,
+"QUADSPI1_BK1_IO2": 10,
+"SPI4_MOSI": 5,
+"TIM1_BKIN2": 6,
+"TIM1_CH4": 2
+},
+"type": "I/O"
+},
+"PE15": {
+"full_name": "PE15",
+"positions": [
+46
+],
+"signals": {
+"ADC1_EXTI15": null,
+"ADC2_EXTI15": null,
+"ADC4_IN2": null,
+"FMC_D12": 12,
+"FMC_DA12": 12,
+"GPIO": null,
+"QUADSPI1_BK1_IO3": 10,
+"TIM1_BKIN": 2,
+"TIM1_CH4N": 6,
+"USART3_RX": 7
+},
+"type": "I/O"
+},
+"PE2": {
+"full_name": "PE2",
+"positions": [
+1
+],
+"signals": {
+"ADC3_EXTI2": null,
+"ADC4_EXTI2": null,
+"ADC5_EXTI2": null,
+"FMC_A23": 12,
+"GPIO": null,
+"SAI1_CK1": 3,
+"SAI1_MCLK_A": 13,
+"SPI4_SCK": 5,
+"SYS_TRACECLK": 0,
+"TIM20_CH1": 6,
+"TIM3_CH1": 2
+},
+"type": "I/O"
+},
+"PE3": {
+"full_name": "PE3",
+"positions": [
+2
+],
+"signals": {
+"ADC3_EXTI3": null,
+"ADC4_EXTI3": null,
+"ADC5_EXTI3": null,
+"FMC_A19": 12,
+"GPIO": null,
+"SAI1_SD_B": 13,
+"SPI4_NSS": 5,
+"SYS_TRACED0": 0,
+"TIM20_CH2": 6,
+"TIM3_CH2": 2
+},
+"type": "I/O"
+},
+"PE4": {
+"full_name": "PE4",
+"positions": [
+3
+],
+"signals": {
+"FMC_A20": 12,
+"GPIO": null,
+"SAI1_D2": 3,
+"SAI1_FS_A": 13,
+"SPI4_NSS": 5,
+"SYS_TRACED1": 0,
+"TIM20_CH1N": 6,
+"TIM3_CH3": 2
+},
+"type": "I/O"
+},
+"PE5": {
+"full_name": "PE5",
+"positions": [
+4
+],
+"signals": {
+"FMC_A21": 12,
+"GPIO": null,
+"SAI1_CK2": 3,
+"SAI1_SCK_A": 13,
+"SPI4_MISO": 5,
+"SYS_TRACED2": 0,
+"TIM20_CH2N": 6,
+"TIM3_CH4": 2
+},
+"type": "I/O"
+},
+"PE6": {
+"full_name": "PE6",
+"positions": [
+5
+],
+"signals": {
+"FMC_A22": 12,
+"GPIO": null,
+"RTC_TAMP3": null,
+"SAI1_D1": 3,
+"SAI1_SD_A": 13,
+"SPI4_MOSI": 5,
+"SYS_TRACED3": 0,
+"SYS_WKUP3": null,
+"TIM20_CH3N": 6
+},
+"type": "I/O"
+},
+"PE7": {
+"full_name": "PE7",
+"positions": [
+38
+],
+"signals": {
+"ADC3_IN4": null,
+"COMP4_INP": null,
+"FMC_D4": 12,
+"FMC_DA4": 12,
+"GPIO": null,
+"SAI1_SD_B": 13,
+"TIM1_ETR": 2
+},
+"type": "I/O"
+},
+"PE8": {
+"full_name": "PE8",
+"positions": [
+39
+],
+"signals": {
+"ADC3_IN6": null,
+"ADC4_IN6": null,
+"ADC5_IN6": null,
+"COMP4_INM": null,
+"FMC_D5": 12,
+"FMC_DA5": 12,
+"GPIO": null,
+"SAI1_SCK_B": 13,
+"TIM1_CH1N": 2,
+"TIM5_CH3": 1
+},
+"type": "I/O"
+},
+"PE9": {
+"full_name": "PE9",
+"positions": [
+40
+],
+"signals": {
+"ADC3_IN2": null,
+"DAC1_EXTI9": null,
+"DAC2_EXTI9": null,
+"DAC3_EXTI9": null,
+"DAC4_EXTI9": null,
+"FMC_D6": 12,
+"FMC_DA6": 12,
+"GPIO": null,
+"SAI1_FS_B": 13,
+"TIM1_CH1": 2,
+"TIM5_CH4": 1
+},
+"type": "I/O"
+},
+"PF0": {
+"full_name": "PF0-OSC_IN",
+"positions": [
+12
+],
+"signals": {
+"ADC1_IN10": null,
+"GPIO": null,
+"I2C2_SDA": 4,
+"I2S2_WS": 5,
+"RCC_OSC_IN": null,
+"SPI2_NSS": 5,
+"TIM1_CH3N": 6
+},
+"type": "I/O"
+},
+"PF1": {
+"full_name": "PF1-OSC_OUT",
+"positions": [
+13
+],
+"signals": {
+"ADC2_IN10": null,
+"COMP3_INM": null,
+"GPIO": null,
+"I2S2_CK": 5,
+"RCC_OSC_OUT": null,
+"SPI2_SCK": 5
+},
+"type": "I/O"
+},
+"PF10": {
+"full_name": "PF10",
+"positions": [
+11
+],
+"signals": {
+"DAC1_EXTI10": null,
+"DAC2_EXTI10": null,
+"DAC3_EXTI10": null,
+"DAC4_EXTI10": null,
+"FMC_A0": 12,
+"GPIO": null,
+"QUADSPI1_CLK": 10,
+"SAI1_D3": 13,
+"SPI2_SCK": 5,
+"TIM15_CH2": 3,
+"TIM20_BKIN2": 2
+},
+"type": "I/O"
+},
+"PF2": {
+"full_name": "PF2",
+"positions": [
+19
+],
+"signals": {
+"ADC3_EXTI2": null,
+"ADC4_EXTI2": null,
+"ADC5_EXTI2": null,
+"FMC_A2": 12,
+"GPIO": null,
+"I2C2_SMBA": 4,
+"TIM20_CH3": 2
+},
+"type": "I/O"
+},
+"PF9": {
+"full_name": "PF9",
+"positions": [
+10
+],
+"signals": {
+"DAC1_EXTI9": null,
+"DAC2_EXTI9": null,
+"DAC3_EXTI9": null,
+"DAC4_EXTI9": null,
+"FMC_A25": 12,
+"GPIO": null,
+"QUADSPI1_BK1_IO1": 10,
+"SAI1_FS_B": 13,
+"SPI2_SCK": 5,
+"TIM15_CH1": 3,
+"TIM20_BKIN": 2,
+"TIM5_CH4": 6
+},
+"type": "I/O"
+},
+"PG10": {
+"full_name": "PG10-NRST",
+"positions": [
+14
+],
+"signals": {
+"DAC1_EXTI10": null,
+"DAC2_EXTI10": null,
+"DAC3_EXTI10": null,
+"DAC4_EXTI10": null,
+"GPIO": null,
+"RCC_MCO": 0
+},
+"type": "I/O"
+},
+"VBAT": {
+"full_name": "VBAT",
+"positions": [
+6
+],
+"signals": {},
+"type": "Power"
+},
+"VDD": {
+"full_name": "VDD",
+"positions": [
+24,
+49,
+64,
+75,
+100
+],
+"signals": {},
+"type": "Power"
+},
+"VDDA": {
+"full_name": "VDDA",
+"positions": [
+37
+],
+"signals": {},
+"type": "Power"
+},
+"VREF+": {
+"full_name": "VREF+",
+"positions": [
+36
+],
+"signals": {
+"VREFBUF_OUT": null
+},
+"type": "MonoIO"
+},
+"VSS": {
+"full_name": "VSS",
+"positions": [
+23,
+48,
+63,
+74,
+99
+],
+"signals": {},
+"type": "Power"
+},
+"VSSA": {
+"full_name": "VSSA",
+"positions": [
+35
+],
+"signals": {},
+"type": "Power"
+}
+}
+}

@@ -1,0 +1,286 @@
+[
+ {
+  "id": "S2-01a",
+  "kind": "NET",
+  "new": null,
+  "old": [
+   "5",
+   "PAUSE_BTN_RAW"
+  ],
+  "pin": "5",
+  "reason": "IB-33: PAUSE contact moves to the new J_PAUSE in the rear-right cluster (J_BTN keeps its 8-way housing so its circuit count stays unique among the CLIK-Mate safety headers; pins 1-4, 6, 7 unchanged)",
+  "ref": "J_BTN"
+ },
+ {
+  "id": "S2-01b",
+  "kind": "NET",
+  "new": null,
+  "old": [
+   "8",
+   "LAMP_PAUSE_K"
+  ],
+  "pin": "8",
+  "reason": "IB-33: PAUSE lamp return moves to J_PAUSE pin 4",
+  "ref": "J_BTN"
+ },
+ {
+  "id": "S2-01c",
+  "kind": "NET",
+  "new": null,
+  "old": [
+   "IO2",
+   "PAUSE_BTN_RAW"
+  ],
+  "pin": "2",
+  "reason": "IB-33: PAUSE_BTN_RAW gets its ESD channel at J_PAUSE (D_PAUSE); D29 stays at J_BTN",
+  "ref": "D29"
+ },
+ {
+  "id": "S2-01d",
+  "kind": "NET",
+  "new": null,
+  "old": [
+   "IO4",
+   "PACK_PRES_N"
+  ],
+  "pin": "5",
+  "reason": "IB-33: PACK_PRES_N (J_PAUX, right edge) moves to D_PAUSE next to J_PAUX so the line does not cross the board to D29",
+  "ref": "D29"
+ },
+ {
+  "id": "S2-05",
+  "kind": "NET",
+  "new": [
+   "GNDA",
+   "GND"
+  ],
+  "old": null,
+  "pin": "2",
+  "reason": "Stock KiCad BMI088 symbol (from the Bosch datasheet) has GNDA on pins 2 AND 4 (stacked); stage 1 left pin 2 open with pin numbers 'recalled [U]'. Tie both GNDA pins to GND. VERIFY against the BMI088 datasheet pin table.",
+  "ref": "U42"
+ },
+ {
+  "changes": {
+   "footprint_hint": [
+    "Connector_Molex:Molex_Micro-Fit_3.0_43045-0800_2x04_P3.00mm_Horizontal",
+    "Connector_Molex:Molex_Mini-Fit_Jr_5569-10A2_2x05_P4.20mm_Horizontal"
+   ],
+   "manufacturer": [
+    "Molex",
+    "Molex"
+   ],
+   "mpn": [
+    "43045-0800",
+    "39-30-1100"
+   ],
+   "package": [
+    "MICROFIT-2x4-RA",
+    "MINIFIT-2x5-RA"
+   ],
+   "rating": [
+    "8.5 A/contact max [D family], -40..+105 C",
+    "9 A/contact (Mini-Fit Jr, 5556 terminals 18-24 AWG) [U], -40..+105 C"
+   ],
+   "symbol_hint": [
+    "Connector_Generic:Conn_02x04_Top_Bottom",
+    "Connector_Generic:Conn_02x05_Top_Bottom"
+   ],
+   "value": [
+    "Micro-Fit 3.0 2x4 RA",
+    "Mini-Fit Jr 2x5 RA"
+   ]
+  },
+  "id": "S2-02",
+  "kind": "PART",
+  "reason": "IB-32: the head heater pair (pins 3/4, 4.05 A, AWG 18 per contract J1) needs an AWG 18 contact. Mini-Fit Jr 5556 crimp terminals take 18-24 AWG; 10 circuits so it cannot mate with the 8-way J_PWR. Pins 1-8 keep their nets (pin n = J1 pin n), pins 9/10 not connected. MPN/terminal recalled [U].",
+  "ref": "J_HEAD1"
+ },
+ {
+  "changes": {
+   "mpn": [
+    "RC0603FR-07825RL",
+    "RC0603FR-07845RL"
+   ],
+   "value": [
+    "825",
+    "845"
+   ]
+  },
+  "id": "S2-04",
+  "kind": "PART",
+  "reason": "IB-28: U17 (HEAD_HTR) current limit ILIM = 3343 / RILM [stage-1 formula]: 825 -> 4.05 A is above the contract's 4.0 A; 845 -> 3.96 A nominal (3.56-4.35 A with +-10 %). Heater draw is <= 3.04 A (4.8 ohm at 14.6 V), so no nuisance trips.",
+  "ref": "R46"
+ },
+ {
+  "id": "S2-01e",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "PAUSE_3V3"
+   ],
+   "2": [
+    "2",
+    "PAUSE_BTN_RAW"
+   ],
+   "3": [
+    "3",
+    "V12_AUX"
+   ],
+   "4": [
+    "4",
+    "LAMP_PAUSE_K"
+   ],
+   "5": null,
+   "MP": [
+    "MP",
+    "GND"
+   ]
+  },
+  "reason": "IB-33: separate PAUSE connector in the rear-right cluster (PAUSE button is on the right deck)",
+  "ref": "J_PAUSE"
+ },
+ {
+  "id": "S2-01f",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "3V3"
+   ],
+   "2": [
+    "2",
+    "PAUSE_3V3"
+   ]
+  },
+  "reason": "IB-33: own 1 k contact supply for J_PAUSE (BTN_3V3 stays local to J_BTN)",
+  "ref": "R_PAUSE"
+ },
+ {
+  "id": "S2-01g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "IO1",
+    "PAUSE_BTN_RAW"
+   ],
+   "10": null,
+   "2": [
+    "IO2",
+    "PAUSE_3V3"
+   ],
+   "3": [
+    "GND",
+    "GND"
+   ],
+   "4": [
+    "IO3",
+    "PACK_PRES_N"
+   ],
+   "5": null,
+   "6": null,
+   "7": null,
+   "8": [
+    "GND",
+    "GND"
+   ],
+   "9": null
+  },
+  "reason": "IB-33: ESD for the moved PAUSE lines and PACK_PRES_N at the rear-right connectors",
+  "ref": "D_PAUSE"
+ },
+ {
+  "id": "S2-06a",
+  "kind": "RENUM",
+  "mapping": {
+   "6": null,
+   "7": null,
+   "8": null,
+   "9": null
+  },
+  "reason": "SON-5x6 / SON-3x3 NexFET: KiCad TDSON-8-1 and VSON-8_3.3x3.3mm_P0.65mm_NexFET number all drain leads and the tab '5' (stock symbols Transistor_FET:CSD18540Q5B / CSD18543Q3A have pins 1-3 S, 4 G, 5 D). Same nets.",
+  "refs": [
+   "Q1",
+   "Q2",
+   "Q4",
+   "Q5",
+   "Q40"
+  ]
+ },
+ {
+  "id": "S2-06b",
+  "kind": "RENUM",
+  "mapping": {
+   "1": "A1",
+   "2": "12",
+   "3": "11",
+   "4": "14",
+   "5": "24",
+   "6": "21",
+   "7": "22",
+   "8": "A2"
+  },
+  "reason": "G2RL-2: stage-1 used recalled numbers 1..8 [U]; KiCad's Relay:G2RL-2 symbol and footprint use the terminal marks A1/A2 (coil), 11/12/14 (COM1/NC1/NO1), 21/22/24 (COM2/NC2/NO2). Mapping by pin NAME (authoritative in stage 1).",
+  "refs": [
+   "K2",
+   "K3"
+  ]
+ },
+ {
+  "footprint_by_mpn": {
+   "5019": "TestPoint:TestPoint_Keystone_5019_Miniature"
+  },
+  "footprints": {
+   "J_BTN": "Connector_Molex:Molex_CLIK-Mate_502443-0870_1x08-1MP_P2.00mm_Vertical",
+   "J_BUMP_L": "Connector_Molex:Molex_CLIK-Mate_502443-0270_1x02-1MP_P2.00mm_Vertical",
+   "J_BUMP_R": "Connector_Molex:Molex_CLIK-Mate_502443-0270_1x02-1MP_P2.00mm_Vertical",
+   "J_COVER": "Connector_Molex:Molex_CLIK-Mate_502443-0370_1x03-1MP_P2.00mm_Vertical",
+   "J_DOCK": "Connector_Molex:Molex_CLIK-Mate_502443-0370_1x03-1MP_P2.00mm_Vertical",
+   "J_ESTOP": "Connector_Molex:Molex_CLIK-Mate_502443-0470_1x04-1MP_P2.00mm_Vertical",
+   "J_HANDS": "Connector_Molex:Molex_CLIK-Mate_502443-0570_1x05-1MP_P2.00mm_Vertical",
+   "J_MODE": "Connector_Molex:Molex_CLIK-Mate_502443-0670_1x06-1MP_P2.00mm_Vertical",
+   "L2": "Inductor_SMD:L_Coilcraft_XAL6030-XXX",
+   "L3": "rr_local:L_Wuerth_WE-LQS-5040",
+   "L4": "rr_local:L_Wuerth_WE-LQS-5040",
+   "L60": "Inductor_SMD:L_CommonModeChoke_Coilank_ACM2012",
+   "Q4": "rr_local:VSON-8_3.3x3.3mm_P0.65mm_NexFET_G0.2",
+   "Q40": "rr_local:VSON-8_3.3x3.3mm_P0.65mm_NexFET_G0.2",
+   "Q5": "rr_local:VSON-8_3.3x3.3mm_P0.65mm_NexFET_G0.2",
+   "SW1": "Button_Switch_SMD:SW_Tactile_SPST_NO_Straight_CK_PTS636Sx25SMTRLFS",
+   "SW2": "Button_Switch_SMD:SW_Tactile_SPST_NO_Straight_CK_PTS636Sx25SMTRLFS",
+   "U10": "rr_local:TI_RJR0014A_VQFN-HR-14_4x3.5mm_PLACEHOLDER",
+   "U13": "rr_local:TI_RPW0010A_VQFN-HR-10_2x2mm_PLACEHOLDER",
+   "U15": "Package_DFN_QFN:Texas_RGV0016A_VQFN-16-1EP_4x4mm_P0.65mm_EP2.1x2.1mm",
+   "U16": "rr_local:TI_RPW0010A_VQFN-HR-10_2x2mm_PLACEHOLDER",
+   "U17": "rr_local:TI_RPW0010A_VQFN-HR-10_2x2mm_PLACEHOLDER",
+   "U18": "rr_local:TI_RPW0010A_VQFN-HR-10_2x2mm_PLACEHOLDER",
+   "U19": "rr_local:TI_RPW0010A_VQFN-HR-10_2x2mm_PLACEHOLDER",
+   "U42": "rr_local:Bosch_LGA-16_4.5x3mm_P0.5mm_ClockwisePinNumbering",
+   "U5": "Package_SO:HTSSOP-16-1EP_4.4x5mm_P0.65mm_EP3.4x5mm_Mask2.46x2.31mm",
+   "U6": "Package_SO:HTSSOP-16-1EP_4.4x5mm_P0.65mm_EP3.4x5mm_Mask2.46x2.31mm",
+   "U8": "rr_local:TI_TPS25982_VQFN-24_4x4mm_SplitPad_PLACEHOLDER",
+   "W1": "rr_local:WirePads_2x2.5mm_P5.0mm"
+  },
+  "id": "S2-07",
+  "kind": "LIB",
+  "reason": "CAD library choices: stock symbols where they exist with matching pin numbers, stock or project-local footprints for the 15 parts without one (see README)",
+  "symbol_by_mpn": {
+   "BSS138": "Transistor_FET:BSS138",
+   "BSS84,215": "Transistor_FET:BSS84",
+   "CSD18540Q5B": "Transistor_FET:CSD18540Q5B",
+   "CSD18543Q3A": "Transistor_FET:CSD18543Q3A"
+  },
+  "symbols": {
+   "J_HTR": "Connector_Generic:Conn_01x02",
+   "J_LIDAR": "Connector_Generic:Conn_01x02",
+   "R_SH1": "Device:R",
+   "R_SH2": "Device:R",
+   "R_SH3": "Device:R",
+   "R_SH4": "Device:R",
+   "R_SNSB": "Device:R",
+   "R_SNSI": "Device:R",
+   "U42": "rr_local:BMI088_SPI",
+   "U45": "Interface_Expansion:TCA9534"
+  }
+ }
+]

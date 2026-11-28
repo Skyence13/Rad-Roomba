@@ -1,0 +1,147 @@
+(session "REPL-TEST"
+  (base_design "REPL-TEST")
+  (placement
+    (resolution um 10)
+    (component "Resistor_SMD:R_0402_1005Metric"
+      (place R11 615000 -987500 front 0)
+      (place R12 815000 -987500 front 0)
+    )
+    (component "Capacitor_SMD:C_0402_1005Metric"
+      (place C1 615000 -940000 front 0)
+      (place C2 815000 -940000 front 0)
+    )
+    (component "Package_TO_SOT_SMD:SOT-23-5"
+      (place U1 580000 -950000 front 0)
+      (place U2 780000 -950000 front 0)
+    )
+    (component "Resistor_SMD:R_0402_1005Metric::1"
+      (place R1 572500 -982500 front 270)
+      (place R2 772500 -982500 front 270)
+    )
+    (component "Resistor_SMD:R_0402_1005Metric::2"
+      (place R21 582500 -917500 front 90)
+      (place R22 782500 -917500 front 90)
+    )
+  )
+  (was_is
+  )
+  (routes 
+    (resolution um 10)
+    (parser
+      (host_cad "KiCad's Pcbnew")
+      (host_version "9.0.9")
+    )
+    (library_out 
+      (padstack "Via[0-1]_600:300_um"
+        (shape
+          (circle F.Cu 6000 0 0)
+        )
+        (shape
+          (circle B.Cu 6000 0 0)
+        )
+        (attach off)
+      )
+    )
+    (network_out 
+      (net +3V3
+        (wire
+          (path F.Cu 2000
+            809700 -940500
+            810200 -940000
+          )
+        )
+        (wire
+          (path F.Cu 2000
+            791375 -940500
+            809700 -940500
+          )
+        )
+        (wire
+          (path F.Cu 2000
+            809700 -940500
+            825747 -956547
+            825747 -990883
+            822685 -993945
+            664145 -993945
+            610200 -940000
+          )
+        )
+        (wire
+          (path F.Cu 2000
+            591375 -940500
+            609700 -940500
+            610200 -940000
+          )
+        )
+      )
+      (net GND
+        (wire
+          (path F.Cu 2000
+            620100 -987500
+            603259 -970659
+            589873 -970659
+            578017 -958803
+            578017 -956231
+            571786 -950000
+            568625 -950000
+          )
+        )
+        (wire
+          (path F.Cu 2000
+            820100 -987500
+            803260 -970660
+            789874 -970660
+            778017 -958803
+            778017 -956231
+            771786 -950000
+            768625 -950000
+          )
+        )
+        (wire
+          (path F.Cu 2000
+            582500 -912400
+            558841 -936059
+            558841 -943999
+            564842 -950000
+            568625 -950000
+          )
+        )
+        (wire
+          (path F.Cu 2000
+            759232 -940000
+            759232 -935668
+            782500 -912400
+          )
+        )
+        (wire
+          (path F.Cu 2000
+            768625 -950000
+            764596 -950000
+            759232 -944636
+            759232 -940000
+          )
+        )
+        (wire
+          (path F.Cu 2000
+            759232 -940000
+            619800 -940000
+          )
+        )
+        (wire
+          (path F.Cu 2000
+            582500 -912400
+            592200 -912400
+            619800 -940000
+          )
+        )
+        (wire
+          (path F.Cu 2000
+            782500 -912400
+            792200 -912400
+            819800 -940000
+          )
+        )
+      )
+    )
+  )
+)

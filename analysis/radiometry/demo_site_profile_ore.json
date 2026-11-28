@@ -1,0 +1,64 @@
+{
+  "format_version": "0.3-demo",
+  "purpose": "SYNTHETIC demonstration site profile for the simulator. Not a site decision.",
+  "synthetic": true,
+  "field_use_approved": false,
+  "surface_activity_unit": "Bq/cm2",
+  "profiles": [
+    {
+      "id": "ore-floor-demo-synthetic",
+      "revision": 1,
+      "enabled_for_operational_surveys": false,
+      "field_use_approved": false,
+      "material": "Uranium ore",
+      "survey_scope": "Trailer or seacan floor",
+      "decision_class": "beta_window",
+      "investigation_level_Bq_cm2": 0.3,
+      "site_reported_comparison_Bq_cm2": 0.4,
+      "detection_goal_Bq_cm2": 0.2,
+      "detection_goal_acceptance": "D# strictly below the goal and calibration validity envelope satisfied (MODEL.md section 3)",
+      "alpha_per_decision": 0.05,
+      "beta_per_decision": 0.05,
+      "per_mission_false_investigation_allowance": {
+        "probability_of_at_least_one": 0.05,
+        "method": "sidak",
+        "independent_decision_areas": null,
+        "note": "alpha per decision = 1 - (1 - allowance)^(1/n); n is counted by the host for each mission and stored with the result",
+        "example": {
+          "independent_decision_areas": 4480,
+          "alpha_per_decision": 1.14493e-05
+        }
+      },
+      "stationary_recount_s": {
+        "default": 30.0,
+        "maximum": 100.0
+      },
+      "scan_speed_m_s": {
+        "commanded": 0.1,
+        "note": "must not exceed the calibration's speed_m_s.max minus the speed-control tolerance"
+      },
+      "head_calibration_id": "DEMO-CAL-SYNTH-0001",
+      "criterion_basis_and_averaging_area_cm2": null,
+      "minimum_patch_shape_and_dimensions_cm": null,
+      "calibration_material_and_channels": null,
+      "site_procedure_and_revision": null,
+      "design_entrance_gap_mm": 10
+    },
+    {
+      "id": "uranium-concentrate-floor-template",
+      "revision": 1,
+      "enabled_for_operational_surveys": false,
+      "field_use_approved": false,
+      "material": "Uranium concentrate (yellowcake)",
+      "decision_class": null,
+      "investigation_level_Bq_cm2": null,
+      "site_reported_comparison_Bq_cm2": null,
+      "detection_goal_Bq_cm2": null,
+      "alpha_per_decision": null,
+      "beta_per_decision": null,
+      "per_mission_false_investigation_allowance": null,
+      "head_calibration_id": null,
+      "note": "Unconfigured. The site radiation-protection team supplies every value."
+    }
+  ]
+}

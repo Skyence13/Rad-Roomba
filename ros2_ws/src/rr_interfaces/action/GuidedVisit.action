@@ -1,0 +1,11 @@
+# One guided action per goal: next | expose | park | repeat
+string command
+string flag_id
+string operator_id
+---
+bool success
+string status
+float32 error_m
+string detail
+---
+string state

@@ -1,0 +1,2651 @@
+[
+ {
+  "id": "S2-01a",
+  "kind": "NET",
+  "new": null,
+  "old": [
+   "5",
+   "PAUSE_BTN_RAW"
+  ],
+  "pin": "5",
+  "reason": "IB-33: PAUSE contact moves to the new J_PAUSE in the rear-right cluster (J_BTN keeps its 8-way housing so its circuit count stays unique among the CLIK-Mate safety headers; pins 1-4, 6, 7 unchanged)",
+  "ref": "J_BTN"
+ },
+ {
+  "id": "S2-01b",
+  "kind": "NET",
+  "new": null,
+  "old": [
+   "8",
+   "LAMP_PAUSE_K"
+  ],
+  "pin": "8",
+  "reason": "IB-33: PAUSE lamp return moves to J_PAUSE pin 4",
+  "ref": "J_BTN"
+ },
+ {
+  "id": "S2-01c",
+  "kind": "NET",
+  "new": null,
+  "old": [
+   "IO2",
+   "PAUSE_BTN_RAW"
+  ],
+  "pin": "2",
+  "reason": "IB-33: PAUSE_BTN_RAW gets its ESD channel at J_PAUSE (D_PAUSE); D29 stays at J_BTN",
+  "ref": "D29"
+ },
+ {
+  "id": "S2-01d",
+  "kind": "NET",
+  "new": null,
+  "old": [
+   "IO4",
+   "PACK_PRES_N"
+  ],
+  "pin": "5",
+  "reason": "IB-33: PACK_PRES_N (J_PAUX, right edge) moves to D_PAUSE next to J_PAUX so the line does not cross the board to D29",
+  "ref": "D29"
+ },
+ {
+  "id": "S2-05",
+  "kind": "NET",
+  "new": [
+   "GNDA",
+   "GND"
+  ],
+  "old": null,
+  "pin": "2",
+  "reason": "Stock KiCad BMI088 symbol (from the Bosch datasheet) has GNDA on pins 2 AND 4 (stacked); stage 1 left pin 2 open with pin numbers 'recalled [U]'. Tie both GNDA pins to GND. VERIFY against the BMI088 datasheet pin table.",
+  "ref": "U42"
+ },
+ {
+  "id": "S3-C1a",
+  "kind": "NET",
+  "new": [
+   "1",
+   "REARM_SET_SRC"
+  ],
+  "old": [
+   "1",
+   "SET_CAP"
+  ],
+  "pin": "1",
+  "reason": "C1: J_BTN pin 1 = 5 V contact supply of the REARM set contact (V5_AUX via 1 k); C_SET no longer leaves the board",
+  "ref": "J_BTN"
+ },
+ {
+  "id": "S3-C1b",
+  "kind": "NET",
+  "new": [
+   "2",
+   "REARM_SET_RAW"
+  ],
+  "old": [
+   "2",
+   "K1_SET"
+  ],
+  "pin": "2",
+  "reason": "C1: J_BTN pin 2 = REARM set contact output into the on-board edge-triggered set stage; the K1 coil node no longer leaves the board",
+  "ref": "J_BTN"
+ },
+ {
+  "id": "S3-C1c",
+  "kind": "NET",
+  "new": [
+   "1",
+   "REARM_BTN_D"
+  ],
+  "old": [
+   "1",
+   "REARM_BTN_RAW"
+  ],
+  "pin": "1",
+  "reason": "C1/M2: aux contact reaches IOX_A GPB2 through blocking diode D_RB, so GPB2 as an output cannot enable the set stage",
+  "ref": "R129"
+ },
+ {
+  "id": "S3-C1d",
+  "kind": "NET",
+  "new": [
+   "NO2",
+   "K1_RUN"
+  ],
+  "old": [
+   "NO2",
+   "RUN_12V"
+  ],
+  "pin": "8",
+  "reason": "C1: K1 pole B now feeds K1_RUN -> second, diverse hold element U_HOLD -> RUN_HD -> D_RUN -> RUN_12V",
+  "ref": "K1"
+ },
+ {
+  "id": "S3-C1e",
+  "kind": "NET",
+  "new": [
+   "NC1",
+   "K1_NC1"
+  ],
+  "old": null,
+  "pin": "3",
+  "reason": "C1: K1 pole A NC contact read back (K1_SEAL_A biased from 3V3), valid with the chain dead",
+  "ref": "K1"
+ },
+ {
+  "id": "S3-C1f",
+  "kind": "NET",
+  "new": [
+   "1",
+   "RUN_HD"
+  ],
+  "old": [
+   "1",
+   "RUN_12V"
+  ],
+  "pin": "1",
+  "reason": "C1/M6: VMOT eFuse enable taken before D_RUN: a short of RUN_12V to a supply does not enable VMOT",
+  "ref": "R133"
+ },
+ {
+  "id": "S3-M6a",
+  "kind": "NET",
+  "new": [
+   "A2",
+   "RELAY_RTN"
+  ],
+  "old": [
+   "A2",
+   "COIL_RTN"
+  ],
+  "pin": "8",
+  "reason": "M6: K2 coil return through U_LS (on only with a real latch)",
+  "ref": "K2"
+ },
+ {
+  "id": "S3-M6b",
+  "kind": "NET",
+  "new": [
+   "A2",
+   "RELAY_RTN"
+  ],
+  "old": [
+   "A2",
+   "COIL_RTN"
+  ],
+  "pin": "8",
+  "reason": "M6: K3 coil return through U_LS",
+  "ref": "K3"
+ },
+ {
+  "id": "S3-M6c",
+  "kind": "NET",
+  "new": [
+   "A",
+   "RELAY_RTN"
+  ],
+  "old": [
+   "A",
+   "COIL_RTN"
+  ],
+  "pin": "2",
+  "reason": "M6: K2 clamp stays across the coil",
+  "ref": "D31"
+ },
+ {
+  "id": "S3-M6d",
+  "kind": "NET",
+  "new": [
+   "A",
+   "RELAY_RTN"
+  ],
+  "old": [
+   "A",
+   "COIL_RTN"
+  ],
+  "pin": "2",
+  "reason": "M6: K3 clamp stays across the coil",
+  "ref": "D34"
+ },
+ {
+  "id": "S3-M1a",
+  "kind": "NET",
+  "new": [
+   "1",
+   "RSET_A"
+  ],
+  "old": [
+   "1",
+   "CHAIN_END"
+  ],
+  "pin": "1",
+  "reason": "M1: series diode D_RSET (anode CHAIN_END) before R_SET",
+  "ref": "R_SET"
+ },
+ {
+  "id": "S3-C2a",
+  "kind": "NET",
+  "new": [
+   "DRAIN2",
+   "CH_N6A"
+  ],
+  "old": [
+   "DRAIN2",
+   "CH_N6"
+  ],
+  "pin": "4",
+  "reason": "C2: channel B photo-MOS U21B follows U21 (new node CH_N6A)",
+  "ref": "U21"
+ },
+ {
+  "id": "S3-M2a",
+  "kind": "NET",
+  "new": [
+   "GPA5",
+   "HEAD_LOOP_OK_IO"
+  ],
+  "old": [
+   "GPA5",
+   "HEAD_LOOP_OK_RB"
+  ],
+  "pin": "26",
+  "reason": "M2: GPA5 through 47 k (R_GA5)",
+  "ref": "U43"
+ },
+ {
+  "id": "S3-M2b",
+  "kind": "NET",
+  "new": [
+   "GPA7",
+   "LAB_KEY_N_IO"
+  ],
+  "old": [
+   "GPA7",
+   "LAB_KEY_N_RB"
+  ],
+  "pin": "28",
+  "reason": "M2: GPA7 through 47 k (R_GA7)",
+  "ref": "U43"
+ },
+ {
+  "id": "S3-M2c",
+  "kind": "NET",
+  "new": [
+   "GPB7",
+   "WDG_STROBE_IO"
+  ],
+  "old": [
+   "GPB7",
+   "WDG_STROBE"
+  ],
+  "pin": "8",
+  "reason": "M2: sentinel GPB7 through 47 k (R_GB7) + 10 k pull-down on WDG_STROBE",
+  "ref": "U43"
+ },
+ {
+  "id": "S3-M2d",
+  "kind": "NET",
+  "new": [
+   "B",
+   "HW_LATCH_G"
+  ],
+  "old": [
+   "B",
+   "HW_LATCH_RB"
+  ],
+  "pin": "2",
+  "reason": "M2/M3: U9.B has its own tap on RUN_HD; PD2 no longer touches the nSLEEP gate",
+  "ref": "U9"
+ },
+ {
+  "id": "S4-N1a",
+  "kind": "NET",
+  "new": [
+   "2IN+",
+   "SET_DIV"
+  ],
+  "old": [
+   "2IN+",
+   "GND"
+  ],
+  "pin": "5",
+  "reason": "N1: spare U33B compares the set reservoir with CLAMP_REF (2.5 V)",
+  "ref": "U33"
+ },
+ {
+  "id": "S4-N1b",
+  "kind": "NET",
+  "new": [
+   "2OUT",
+   "SET_READY"
+  ],
+  "old": null,
+  "pin": "7",
+  "reason": "N1: SET_READY (open collector, R_SRP 10 k to 3V3)",
+  "ref": "U33"
+ },
+ {
+  "id": "S4-N2a",
+  "kind": "NET",
+  "new": [
+   "GPB6",
+   "REARM_SET_RB"
+  ],
+  "old": [
+   "GPB6",
+   "BUS_CLAMP_ACTIVE"
+  ],
+  "pin": "7",
+  "reason": "N2: set contact read at 1 kHz on IOX_A; BUS_CLAMP_ACTIVE moves to IOX_D P3",
+  "ref": "U43"
+ },
+ {
+  "id": "S5-S4",
+  "kind": "NET",
+  "new": [
+   "1",
+   "LOOP_SNS"
+  ],
+  "old": [
+   "1",
+   "LOOP_F"
+  ],
+  "pin": "1",
+  "reason": "review S4: the analog loop copy (PC1) is taken from LOOP_SNS, independent of channel A's filter and Q_LTA",
+  "ref": "R76"
+ },
+ {
+  "changes": {
+   "footprint_hint": [
+    "Connector_Molex:Molex_Micro-Fit_3.0_43045-0800_2x04_P3.00mm_Horizontal",
+    "Connector_Molex:Molex_Mini-Fit_Jr_5569-10A2_2x05_P4.20mm_Horizontal"
+   ],
+   "manufacturer": [
+    "Molex",
+    "Molex"
+   ],
+   "mpn": [
+    "43045-0800",
+    "39-30-1100"
+   ],
+   "package": [
+    "MICROFIT-2x4-RA",
+    "MINIFIT-2x5-RA"
+   ],
+   "rating": [
+    "8.5 A/contact max [D family], -40..+105 C",
+    "9 A/contact (Mini-Fit Jr, 5556 terminals 18-24 AWG) [U], -40..+105 C"
+   ],
+   "symbol_hint": [
+    "Connector_Generic:Conn_02x04_Top_Bottom",
+    "Connector_Generic:Conn_02x05_Top_Bottom"
+   ],
+   "value": [
+    "Micro-Fit 3.0 2x4 RA",
+    "Mini-Fit Jr 2x5 RA"
+   ]
+  },
+  "id": "S2-02",
+  "kind": "PART",
+  "reason": "IB-32: the head heater pair (pins 3/4, 4.05 A, AWG 18 per contract J1) needs an AWG 18 contact. Mini-Fit Jr 5556 crimp terminals take 18-24 AWG; 10 circuits so it cannot mate with the 8-way J_PWR. Pins 1-8 keep their nets (pin n = J1 pin n), pins 9/10 not connected. MPN/terminal recalled [U].",
+  "ref": "J_HEAD1"
+ },
+ {
+  "changes": {
+   "mpn": [
+    "RC0603FR-07825RL",
+    "RC0603FR-07845RL"
+   ],
+   "value": [
+    "825",
+    "845"
+   ]
+  },
+  "id": "S2-04",
+  "kind": "PART",
+  "reason": "IB-28: U17 (HEAD_HTR) current limit ILIM = 3343 / RILM [stage-1 formula]: 825 -> 4.05 A is above the contract's 4.0 A; 845 -> 3.96 A nominal (3.56-4.35 A with +-10 %). Heater draw is <= 3.04 A (4.8 ohm at 14.6 V), so no nuisance trips.",
+  "ref": "R46"
+ },
+ {
+  "changes": {
+   "mpn": [
+    "RC0603FR-07100KL",
+    "RC0603FR-0722KL"
+   ],
+   "value": [
+    "100k",
+    "22k"
+   ]
+  },
+  "id": "S3-M3a",
+  "kind": "PART",
+  "reason": "M3: ESTOP_A_RB (PB12) tap 22 k / 15 k: HIGH above 7.7 V even with the STM32 pull-down (25 k) enabled",
+  "ref": "R99"
+ },
+ {
+  "changes": {
+   "mpn": [
+    "RC0603FR-0756KL",
+    "RC0603FR-0715KL"
+   ],
+   "value": [
+    "56k",
+    "15k"
+   ]
+  },
+  "id": "S3-M3b",
+  "kind": "PART",
+  "reason": "M3: see R99",
+  "ref": "R100"
+ },
+ {
+  "changes": {
+   "mpn": [
+    "RC0603FR-07100KL",
+    "RC0603FR-0722KL"
+   ],
+   "value": [
+    "100k",
+    "22k"
+   ]
+  },
+  "id": "S3-M3c",
+  "kind": "PART",
+  "reason": "M3: HW_LATCH_RB (PD2) tap 22 k / 15 k, as R99/R100",
+  "ref": "R117"
+ },
+ {
+  "changes": {
+   "mpn": [
+    "RC0603FR-0756KL",
+    "RC0603FR-0715KL"
+   ],
+   "value": [
+    "56k",
+    "15k"
+   ]
+  },
+  "id": "S3-M3d",
+  "kind": "PART",
+  "reason": "M3: see R117",
+  "ref": "R118"
+ },
+ {
+  "changes": {
+   "mpn": [
+    "RC0603FR-0710KL",
+    "RC0603FR-074K7L"
+   ],
+   "value": [
+    "10k",
+    "4.7k"
+   ]
+  },
+  "id": "S3-M3e",
+  "kind": "PART",
+  "reason": "M3: REARM_BTN high level 2.9 V with D_RB (was 2.67 V against MCP23S17 VIH 0.8 VDD = 2.64 V)",
+  "ref": "R129"
+ },
+ {
+  "changes": {
+   "mpn": [
+    "RC0603FR-0747KL",
+    "RC0603FR-07100KL"
+   ],
+   "value": [
+    "47k",
+    "100k"
+   ]
+  },
+  "id": "S3-M3f",
+  "kind": "PART",
+  "reason": "M3: see R129",
+  "ref": "R130"
+ },
+ {
+  "changes": {
+   "description": [
+    "Zener 24 V 0.5 W",
+    "Zener 20 V 0.5 W"
+   ],
+   "mpn": [
+    "BZT52C24-7-F",
+    "BZT52C20-7-F"
+   ],
+   "value": [
+    "Z24",
+    "Z20"
+   ]
+  },
+  "id": "S3-M6e",
+  "kind": "PART",
+  "reason": "M6: K2 clamp Zener 20 V: with RUN_12V held up by a fault, U_LS sees <= 14.6 + 21.2 + 0.7 = 36.5 V (TLP241A 40 V [U]); release ~0.3 ms slower [A]",
+  "ref": "D32"
+ },
+ {
+  "changes": {
+   "description": [
+    "RR-TOF LOOK_LO (mux 0 ch 2), left edge front. Pin order as RR-TOF-A J1",
+    "RR-TOF LOOK_FL (index 4, mux 0 ch 2), left edge front. Pin order as RR-TOF-A J1"
+   ]
+  },
+  "id": "S3-N1a",
+  "kind": "PART",
+  "reason": "IB-34 / DEC-043 sensor names (no electrical change)",
+  "ref": "J_TOF4"
+ },
+ {
+  "changes": {
+   "description": [
+    "RR-TOF LOOK_LI (mux 1 ch 2), left edge front. Pin order as RR-TOF-A J1",
+    "RR-TOF LOOK_RL (index 5, mux 1 ch 2), rear-left GH row (tail, looking behind). Pin order as RR-TOF-A J1"
+   ]
+  },
+  "id": "S3-N1b",
+  "kind": "PART",
+  "reason": "IB-34 / DEC-043 sensor names (no electrical change)",
+  "ref": "J_TOF5"
+ },
+ {
+  "changes": {
+   "description": [
+    "RR-TOF LOOK_RI (mux 0 ch 3), right edge front. Pin order as RR-TOF-A J1",
+    "RR-TOF LOOK_RR (index 6, mux 0 ch 3), rear-right GH row (tail, looking behind). Pin order as RR-TOF-A J1"
+   ]
+  },
+  "id": "S3-N1c",
+  "kind": "PART",
+  "reason": "IB-34 / DEC-043 sensor names (no electrical change)",
+  "ref": "J_TOF6"
+ },
+ {
+  "changes": {
+   "description": [
+    "RR-TOF LOOK_RO (mux 1 ch 3), right edge front. Pin order as RR-TOF-A J1",
+    "RR-TOF LOOK_FR (index 7, mux 1 ch 3), right edge front. Pin order as RR-TOF-A J1"
+   ]
+  },
+  "id": "S3-N1d",
+  "kind": "PART",
+  "reason": "IB-34 / DEC-043 sensor names (no electrical change)",
+  "ref": "J_TOF7"
+ },
+ {
+  "changes": {
+   "description": [
+    "Zener 24 V 0.5 W",
+    "Zener 20 V 0.5 W"
+   ],
+   "mpn": [
+    "BZT52C24-7-F",
+    "BZT52C20-7-F"
+   ],
+   "value": [
+    "Z24",
+    "Z20"
+   ]
+  },
+  "id": "S3-M6f",
+  "kind": "PART",
+  "reason": "M6: K3 clamp Zener 20 V (see D32)",
+  "ref": "D35"
+ },
+ {
+  "changes": {
+   "mpn": [
+    "RC0603FR-0722KL",
+    "RC0603FR-0715KL"
+   ],
+   "value": [
+    "22k",
+    "15k"
+   ]
+  },
+  "id": "S4-N1c",
+  "kind": "PART",
+  "reason": "N1: charge tau 1.5 s; a held set stack still gives <= 0.94 V on the coil (must-release 1.2 V)",
+  "ref": "R_SET"
+ },
+ {
+  "id": "S2-01e",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "PAUSE_3V3"
+   ],
+   "2": [
+    "2",
+    "PAUSE_BTN_RAW"
+   ],
+   "3": [
+    "3",
+    "V12_AUX"
+   ],
+   "4": [
+    "4",
+    "LAMP_PAUSE_K"
+   ],
+   "5": null,
+   "MP": [
+    "MP",
+    "GND"
+   ]
+  },
+  "reason": "IB-33: separate PAUSE connector in the rear-right cluster (PAUSE button is on the right deck)",
+  "ref": "J_PAUSE"
+ },
+ {
+  "id": "S2-01f",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "3V3"
+   ],
+   "2": [
+    "2",
+    "PAUSE_3V3"
+   ]
+  },
+  "reason": "IB-33: own 1 k contact supply for J_PAUSE (BTN_3V3 stays local to J_BTN)",
+  "ref": "R_PAUSE"
+ },
+ {
+  "id": "S2-01g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "IO1",
+    "PAUSE_BTN_RAW"
+   ],
+   "10": null,
+   "2": [
+    "IO2",
+    "PAUSE_3V3"
+   ],
+   "3": [
+    "GND",
+    "GND"
+   ],
+   "4": [
+    "IO3",
+    "PACK_PRES_N"
+   ],
+   "5": null,
+   "6": null,
+   "7": null,
+   "8": [
+    "GND",
+    "GND"
+   ],
+   "9": null
+  },
+  "reason": "IB-33: ESD for the moved PAUSE lines and PACK_PRES_N at the rear-right connectors",
+  "ref": "D_PAUSE"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "V5_AUX"
+   ],
+   "2": [
+    "2",
+    "REARM_SET_SRC"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "R_SSRC"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "REARM_SET_RAW"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "R_SPD"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "REARM_SET_RAW"
+   ],
+   "2": [
+    "2",
+    "REARM_SET"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "R_SSER"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "REARM_SET"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "C_SF"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "K",
+    "V5_AUX"
+   ],
+   "2": [
+    "A",
+    "REARM_SET"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "D_SCL"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "K1",
+    "REARM_SET_RAW"
+   ],
+   "2": [
+    "K2",
+    "REARM_SET_SRC"
+   ],
+   "3": [
+    "COM",
+    "GND"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "D_SET"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "REARM_SET"
+   ],
+   "2": [
+    "2",
+    "SET_G"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "C_SC"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SET_G"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "R_SG"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "K",
+    "SET_G"
+   ],
+   "2": [
+    "A",
+    "GND"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "D_SGN"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "REARM_SET_RAW"
+   ],
+   "2": [
+    "2",
+    "REARM_SET_RB"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "R_SRB"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "REARM_SET_RB"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "R_SRB2"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "K",
+    "3V3"
+   ],
+   "2": [
+    "A",
+    "REARM_SET_RB"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "D_SRB"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "K",
+    "REARM_BTN_D"
+   ],
+   "2": [
+    "A",
+    "REARM_BTN_RAW"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "D_RB"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "REARM_BTN_RAW"
+   ],
+   "2": [
+    "2",
+    "REARM_AUX_G"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "R_AG"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "REARM_AUX_G"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "R_AGP"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "REARM_AUX_G"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "C_AG"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "G",
+    "SET_G"
+   ],
+   "2": [
+    "S",
+    "SET_S"
+   ],
+   "3": [
+    "D",
+    "U_SET_K"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "Q_SETA"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "G",
+    "SETC_G"
+   ],
+   "2": [
+    "S",
+    "SET_S2"
+   ],
+   "3": [
+    "D",
+    "SET_S"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "Q_SETC"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "G",
+    "REARM_AUX_G"
+   ],
+   "2": [
+    "S",
+    "GND"
+   ],
+   "3": [
+    "D",
+    "SET_S2"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "Q_SETB"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SET_READY"
+   ],
+   "2": [
+    "2",
+    "SETC_G"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "R_SCG"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SETC_G"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "C_SCG"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SET_CAP"
+   ],
+   "2": [
+    "2",
+    "SET_DIV"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "R_SD1"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SET_DIV"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "R_SD2"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SET_READY"
+   ],
+   "2": [
+    "2",
+    "SET_DIV"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "R_SDH"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SET_DIV"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "C_SD"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "3V3"
+   ],
+   "2": [
+    "2",
+    "SET_READY"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "R_SRP"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SET_READY"
+   ],
+   "2": [
+    "2",
+    "SET_READY_RB"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "R_SRR"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "V5_AUX"
+   ],
+   "2": [
+    "2",
+    "U_SET_A"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "R_USA"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "ANODE",
+    "U_SET_A"
+   ],
+   "2": [
+    "CATHODE",
+    "U_SET_K"
+   ],
+   "3": [
+    "DRAIN1",
+    "SET_CAP"
+   ],
+   "4": [
+    "DRAIN2",
+    "K1_SET"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "U_SET"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "V5_AUX"
+   ],
+   "2": [
+    "2",
+    "U_SET_K"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "R_USK"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "G",
+    "U_SET_K"
+   ],
+   "2": [
+    "S",
+    "V5_AUX"
+   ],
+   "3": [
+    "D",
+    "HSET_D"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "Q_HSET"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "K",
+    "RSET_A"
+   ],
+   "2": [
+    "A",
+    "CHAIN_END"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "D_RSET"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SET_CAP"
+   ],
+   "2": [
+    "2",
+    "SET_DIS"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "R_SDIS"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "G",
+    "SDIS_G"
+   ],
+   "2": [
+    "S",
+    "GND"
+   ],
+   "3": [
+    "D",
+    "SET_DIS"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "Q_SDIS"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "3V3"
+   ],
+   "2": [
+    "2",
+    "SDIS_G"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "R_SDG"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "G",
+    "SDISB_G"
+   ],
+   "2": [
+    "S",
+    "GND"
+   ],
+   "3": [
+    "D",
+    "SDIS_G"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "Q_SDISB"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "CHAIN_END"
+   ],
+   "2": [
+    "2",
+    "SDISB_G"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "R_SDB1"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SDISB_G"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "R_SDB2"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SDISB_G"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "C_SDB"
+ },
+ {
+  "id": "S3-C1h",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "ANODE",
+    "HOLD_A"
+   ],
+   "2": [
+    "CATHODE",
+    "GND"
+   ],
+   "3": [
+    "DRAIN1",
+    "K1_RUN"
+   ],
+   "4": [
+    "DRAIN2",
+    "RUN_HD"
+   ]
+  },
+  "reason": "C1/M6: U_HOLD (diverse hold), D_RUN, U_LS (low-side), K1 NC and K1_RUN readbacks, U9 own tap",
+  "ref": "U_HOLD"
+ },
+ {
+  "id": "S3-C1h",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "RUN_HD"
+   ],
+   "2": [
+    "2",
+    "HOLD_A"
+   ]
+  },
+  "reason": "C1/M6: U_HOLD (diverse hold), D_RUN, U_LS (low-side), K1 NC and K1_RUN readbacks, U9 own tap",
+  "ref": "R_HA"
+ },
+ {
+  "id": "S3-C1h",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "HSET_D"
+   ],
+   "2": [
+    "2",
+    "HOLD_A"
+   ]
+  },
+  "reason": "C1/M6: U_HOLD (diverse hold), D_RUN, U_LS (low-side), K1 NC and K1_RUN readbacks, U9 own tap",
+  "ref": "R_HS"
+ },
+ {
+  "id": "S3-C1h",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "K",
+    "HOLD_A"
+   ],
+   "2": [
+    "A",
+    "GND"
+   ]
+  },
+  "reason": "C1/M6: U_HOLD (diverse hold), D_RUN, U_LS (low-side), K1 NC and K1_RUN readbacks, U9 own tap",
+  "ref": "D_HR"
+ },
+ {
+  "id": "S3-C1h",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "K",
+    "RUN_12V"
+   ],
+   "2": [
+    "A",
+    "RUN_HD"
+   ]
+  },
+  "reason": "C1/M6: U_HOLD (diverse hold), D_RUN, U_LS (low-side), K1 NC and K1_RUN readbacks, U9 own tap",
+  "ref": "D_RUN"
+ },
+ {
+  "id": "S3-C1h",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "RUN_HD"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "C1/M6: U_HOLD (diverse hold), D_RUN, U_LS (low-side), K1 NC and K1_RUN readbacks, U9 own tap",
+  "ref": "R_RHD"
+ },
+ {
+  "id": "S3-C1h",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "ANODE",
+    "LS_A"
+   ],
+   "2": [
+    "CATHODE",
+    "GND"
+   ],
+   "3": [
+    "DRAIN1",
+    "RELAY_RTN"
+   ],
+   "4": [
+    "DRAIN2",
+    "COIL_RTN"
+   ]
+  },
+  "reason": "C1/M6: U_HOLD (diverse hold), D_RUN, U_LS (low-side), K1 NC and K1_RUN readbacks, U9 own tap",
+  "ref": "U_LS"
+ },
+ {
+  "id": "S3-C1h",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "RUN_HD"
+   ],
+   "2": [
+    "2",
+    "LS_A"
+   ]
+  },
+  "reason": "C1/M6: U_HOLD (diverse hold), D_RUN, U_LS (low-side), K1 NC and K1_RUN readbacks, U9 own tap",
+  "ref": "R_LSA"
+ },
+ {
+  "id": "S3-C1h",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "K",
+    "LS_A"
+   ],
+   "2": [
+    "A",
+    "GND"
+   ]
+  },
+  "reason": "C1/M6: U_HOLD (diverse hold), D_RUN, U_LS (low-side), K1 NC and K1_RUN readbacks, U9 own tap",
+  "ref": "D_LSR"
+ },
+ {
+  "id": "S3-C1h",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "K",
+    "K1_BIAS"
+   ],
+   "2": [
+    "A",
+    "3V3"
+   ]
+  },
+  "reason": "C1/M6: U_HOLD (diverse hold), D_RUN, U_LS (low-side), K1 NC and K1_RUN readbacks, U9 own tap",
+  "ref": "D_K1B"
+ },
+ {
+  "id": "S3-C1h",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "K1_BIAS"
+   ],
+   "2": [
+    "2",
+    "K1_SEAL_A"
+   ]
+  },
+  "reason": "C1/M6: U_HOLD (diverse hold), D_RUN, U_LS (low-side), K1 NC and K1_RUN readbacks, U9 own tap",
+  "ref": "R_K1B"
+ },
+ {
+  "id": "S3-C1h",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "K1_NC1"
+   ],
+   "2": [
+    "2",
+    "LATCH_NC_RB"
+   ]
+  },
+  "reason": "C1/M6: U_HOLD (diverse hold), D_RUN, U_LS (low-side), K1 NC and K1_RUN readbacks, U9 own tap",
+  "ref": "R_NC1"
+ },
+ {
+  "id": "S3-C1h",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "LATCH_NC_RB"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "C1/M6: U_HOLD (diverse hold), D_RUN, U_LS (low-side), K1 NC and K1_RUN readbacks, U9 own tap",
+  "ref": "R_NC2"
+ },
+ {
+  "id": "S3-C1h",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "LATCH_NC_RB"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "C1/M6: U_HOLD (diverse hold), D_RUN, U_LS (low-side), K1 NC and K1_RUN readbacks, U9 own tap",
+  "ref": "C_NC"
+ },
+ {
+  "id": "S3-C1h",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "K",
+    "3V3"
+   ],
+   "2": [
+    "A",
+    "LATCH_NC_RB"
+   ]
+  },
+  "reason": "C1/M6: U_HOLD (diverse hold), D_RUN, U_LS (low-side), K1 NC and K1_RUN readbacks, U9 own tap",
+  "ref": "D_NC"
+ },
+ {
+  "id": "S3-C1h",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "K1_RUN"
+   ],
+   "2": [
+    "2",
+    "LATCH_RUN_RB"
+   ]
+  },
+  "reason": "C1/M6: U_HOLD (diverse hold), D_RUN, U_LS (low-side), K1 NC and K1_RUN readbacks, U9 own tap",
+  "ref": "R_KR1"
+ },
+ {
+  "id": "S3-C1h",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "LATCH_RUN_RB"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "C1/M6: U_HOLD (diverse hold), D_RUN, U_LS (low-side), K1 NC and K1_RUN readbacks, U9 own tap",
+  "ref": "R_KR2"
+ },
+ {
+  "id": "S3-C1h",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "LATCH_RUN_RB"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "C1/M6: U_HOLD (diverse hold), D_RUN, U_LS (low-side), K1 NC and K1_RUN readbacks, U9 own tap",
+  "ref": "C_KR"
+ },
+ {
+  "id": "S3-C1h",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "K",
+    "3V3"
+   ],
+   "2": [
+    "A",
+    "LATCH_RUN_RB"
+   ]
+  },
+  "reason": "C1/M6: U_HOLD (diverse hold), D_RUN, U_LS (low-side), K1 NC and K1_RUN readbacks, U9 own tap",
+  "ref": "D_KR"
+ },
+ {
+  "id": "S3-C1h",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "RUN_HD"
+   ],
+   "2": [
+    "2",
+    "HW_LATCH_G"
+   ]
+  },
+  "reason": "C1/M6: U_HOLD (diverse hold), D_RUN, U_LS (low-side), K1 NC and K1_RUN readbacks, U9 own tap",
+  "ref": "R_U9T1"
+ },
+ {
+  "id": "S3-C1h",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "HW_LATCH_G"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "C1/M6: U_HOLD (diverse hold), D_RUN, U_LS (low-side), K1 NC and K1_RUN readbacks, U9 own tap",
+  "ref": "R_U9T2"
+ },
+ {
+  "id": "S3-C1h",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "HW_LATCH_G"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "C1/M6: U_HOLD (diverse hold), D_RUN, U_LS (low-side), K1 NC and K1_RUN readbacks, U9 own tap",
+  "ref": "C_U9T"
+ },
+ {
+  "id": "S3-C1h",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "K",
+    "3V3"
+   ],
+   "2": [
+    "A",
+    "HW_LATCH_G"
+   ]
+  },
+  "reason": "C1/M6: U_HOLD (diverse hold), D_RUN, U_LS (low-side), K1 NC and K1_RUN readbacks, U9 own tap",
+  "ref": "D_U9T"
+ },
+ {
+  "id": "S3-C2b",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "LOOP_SNS"
+   ],
+   "2": [
+    "2",
+    "LOOP_FB"
+   ]
+  },
+  "reason": "C2: second, diverse head-loop evaluation with its own series photo-MOS",
+  "ref": "R_LB1"
+ },
+ {
+  "id": "S3-C2b",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "LOOP_FB"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "C2: second, diverse head-loop evaluation with its own series photo-MOS",
+  "ref": "C_LB1"
+ },
+ {
+  "id": "S3-C2b",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "V5_AUX"
+   ],
+   "2": [
+    "2",
+    "LOOP_VB"
+   ]
+  },
+  "reason": "C2: second, diverse head-loop evaluation with its own series photo-MOS",
+  "ref": "R_LB2"
+ },
+ {
+  "id": "S3-C2b",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "LOOP_VB"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "C2: second, diverse head-loop evaluation with its own series photo-MOS",
+  "ref": "R_LB3"
+ },
+ {
+  "id": "S3-C2b",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "LOOP_VB"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "C2: second, diverse head-loop evaluation with its own series photo-MOS",
+  "ref": "C_LB2"
+ },
+ {
+  "id": "S3-C2b",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "OUT",
+    "HEAD_LOOP2_OK"
+   ],
+   "2": [
+    "V-",
+    "GND"
+   ],
+   "3": [
+    "IN+",
+    "LOOP_FB"
+   ],
+   "4": [
+    "IN-",
+    "LOOP_VB"
+   ],
+   "5": [
+    "V+",
+    "V5_AUX"
+   ]
+  },
+  "reason": "C2: second, diverse head-loop evaluation with its own series photo-MOS",
+  "ref": "U46"
+ },
+ {
+  "id": "S3-C2b",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "V5_AUX"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "C2: second, diverse head-loop evaluation with its own series photo-MOS",
+  "ref": "C_U46"
+ },
+ {
+  "id": "S3-C2b",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "HEAD_LOOP2_OK"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "C2: second, diverse head-loop evaluation with its own series photo-MOS",
+  "ref": "R_LBG"
+ },
+ {
+  "id": "S3-C2b",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "HEAD_LOOP2_OK"
+   ],
+   "2": [
+    "2",
+    "HEAD_LOOP2_OK_RB"
+   ]
+  },
+  "reason": "C2: second, diverse head-loop evaluation with its own series photo-MOS",
+  "ref": "R_LBR"
+ },
+ {
+  "id": "S3-C2b",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "G",
+    "HEAD_LOOP2_OK"
+   ],
+   "2": [
+    "S",
+    "GND"
+   ],
+   "3": [
+    "D",
+    "U21B_K"
+   ]
+  },
+  "reason": "C2: second, diverse head-loop evaluation with its own series photo-MOS",
+  "ref": "Q_LB"
+ },
+ {
+  "id": "S3-C2b",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "V5_AUX"
+   ],
+   "2": [
+    "2",
+    "U21B_A"
+   ]
+  },
+  "reason": "C2: second, diverse head-loop evaluation with its own series photo-MOS",
+  "ref": "R_21BA"
+ },
+ {
+  "id": "S3-C2b",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "ANODE",
+    "U21B_A"
+   ],
+   "2": [
+    "CATHODE",
+    "U21B_K"
+   ],
+   "3": [
+    "DRAIN1",
+    "CH_N6A"
+   ],
+   "4": [
+    "DRAIN2",
+    "CH_N6"
+   ]
+  },
+  "reason": "C2: second, diverse head-loop evaluation with its own series photo-MOS",
+  "ref": "U21B"
+ },
+ {
+  "id": "S3-M2e",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "HEAD_LOOP_OK_RB"
+   ],
+   "2": [
+    "2",
+    "HEAD_LOOP_OK_IO"
+   ]
+  },
+  "reason": "M2: series isolation of the expander pins on chain-control nodes",
+  "ref": "R_GA5"
+ },
+ {
+  "id": "S3-M2e",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "LAB_KEY_N_RB"
+   ],
+   "2": [
+    "2",
+    "LAB_KEY_N_IO"
+   ]
+  },
+  "reason": "M2: series isolation of the expander pins on chain-control nodes",
+  "ref": "R_GA7"
+ },
+ {
+  "id": "S3-M2e",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "WDG_STROBE"
+   ],
+   "2": [
+    "2",
+    "WDG_STROBE_IO"
+   ]
+  },
+  "reason": "M2: series isolation of the expander pins on chain-control nodes",
+  "ref": "R_GB7"
+ },
+ {
+  "id": "S3-M2e",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "WDG_STROBE"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "M2: series isolation of the expander pins on chain-control nodes",
+  "ref": "R_WDPD"
+ },
+ {
+  "id": "S3-F1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "A0",
+    "GND"
+   ],
+   "10": [
+    "P5",
+    "SET_READY_RB"
+   ],
+   "11": [
+    "P6",
+    "CHN6A_RB"
+   ],
+   "12": [
+    "P7",
+    "LOOP_TEST_B"
+   ],
+   "13": null,
+   "14": [
+    "SCL",
+    "I2C_SYS_SCL"
+   ],
+   "15": [
+    "SDA",
+    "I2C_SYS_SDA"
+   ],
+   "16": [
+    "VCC",
+    "3V3"
+   ],
+   "2": [
+    "A1",
+    "3V3"
+   ],
+   "3": [
+    "A2",
+    "GND"
+   ],
+   "4": [
+    "P0",
+    "LATCH_NC_RB"
+   ],
+   "5": [
+    "P1",
+    "LATCH_RUN_RB"
+   ],
+   "6": [
+    "P2",
+    "HEAD_LOOP2_OK_RB"
+   ],
+   "7": [
+    "P3",
+    "BUS_CLAMP_ACTIVE"
+   ],
+   "8": [
+    "GND",
+    "GND"
+   ],
+   "9": [
+    "P4",
+    "LOOP_TEST_A"
+   ]
+  },
+  "reason": "new IOX_D for the stage-3 readbacks (S4: pattern resistors R_D4-R_D7 withdrawn)",
+  "ref": "U47"
+ },
+ {
+  "id": "S3-F1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "3V3"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "new IOX_D for the stage-3 readbacks (S4: pattern resistors R_D4-R_D7 withdrawn)",
+  "ref": "C_U47"
+ },
+ {
+  "id": "S3-M6g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "CH_N6A"
+   ]
+  },
+  "reason": "test points for the new chain nodes",
+  "ref": "TP60"
+ },
+ {
+  "id": "S3-M6g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "K1_RUN"
+   ]
+  },
+  "reason": "test points for the new chain nodes",
+  "ref": "TP61"
+ },
+ {
+  "id": "S3-M6g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "RELAY_RTN"
+   ]
+  },
+  "reason": "test points for the new chain nodes",
+  "ref": "TP62"
+ },
+ {
+  "id": "S4-N3",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "CH_N6A"
+   ],
+   "2": [
+    "2",
+    "CHN6A_RB"
+   ]
+  },
+  "reason": "N3: readback between the two loop photo-MOS and a self-test that can only open a channel",
+  "ref": "R_N6A1"
+ },
+ {
+  "id": "S4-N3",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "CHN6A_RB"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "N3: readback between the two loop photo-MOS and a self-test that can only open a channel",
+  "ref": "R_N6A2"
+ },
+ {
+  "id": "S4-N3",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "CHN6A_RB"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "N3: readback between the two loop photo-MOS and a self-test that can only open a channel",
+  "ref": "C_N6A"
+ },
+ {
+  "id": "S4-N3",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "K",
+    "3V3"
+   ],
+   "2": [
+    "A",
+    "CHN6A_RB"
+   ]
+  },
+  "reason": "N3: readback between the two loop photo-MOS and a self-test that can only open a channel",
+  "ref": "D_N6A"
+ },
+ {
+  "id": "S4-N3",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "G",
+    "LOOP_TEST_A"
+   ],
+   "2": [
+    "S",
+    "GND"
+   ],
+   "3": [
+    "D",
+    "LOOP_F"
+   ]
+  },
+  "reason": "N3: readback between the two loop photo-MOS and a self-test that can only open a channel",
+  "ref": "Q_LTA"
+ },
+ {
+  "id": "S4-N3",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "LOOP_TEST_A"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "N3: readback between the two loop photo-MOS and a self-test that can only open a channel",
+  "ref": "R_LTA"
+ },
+ {
+  "id": "S4-N3",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "G",
+    "LOOP_TEST_B"
+   ],
+   "2": [
+    "S",
+    "GND"
+   ],
+   "3": [
+    "D",
+    "LOOP_FB"
+   ]
+  },
+  "reason": "N3: readback between the two loop photo-MOS and a self-test that can only open a channel",
+  "ref": "Q_LTB"
+ },
+ {
+  "id": "S4-N3",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "LOOP_TEST_B"
+   ],
+   "2": [
+    "2",
+    "GND"
+   ]
+  },
+  "reason": "N3: readback between the two loop photo-MOS and a self-test that can only open a channel",
+  "ref": "R_LTB"
+ },
+ {
+  "id": "S4-mC",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "K1",
+    "REARM_BTN_RAW"
+   ],
+   "2": [
+    "K2",
+    "BTN_3V3"
+   ],
+   "3": [
+    "COM",
+    "GND"
+   ]
+  },
+  "reason": "m-C: 15 V ESD on the aux contact lines",
+  "ref": "D_AUX"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "CHAIN_END"
+   ],
+   "2": [
+    "2",
+    "SVC_CHAIN_END"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "R_SV2"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "K1_RUN"
+   ],
+   "2": [
+    "2",
+    "SVC_K1_RUN"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "R_SV3"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "RUN_HD"
+   ],
+   "2": [
+    "2",
+    "SVC_RUN_HD"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "R_SV4"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "RUN_12V"
+   ],
+   "2": [
+    "2",
+    "SVC_RUN_12V"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "R_SV5"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "RELAY_RTN"
+   ],
+   "2": [
+    "2",
+    "SVC_RELAY_RTN"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "R_SV6"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "HOLD_A"
+   ],
+   "2": [
+    "2",
+    "SVC_HOLD_A"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "R_SV7"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "LS_A"
+   ],
+   "2": [
+    "2",
+    "SVC_LS_A"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "R_SV8"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "CH_N6A"
+   ],
+   "2": [
+    "2",
+    "SVC_CH_N6A"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "R_SV9"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SET_CAP"
+   ],
+   "2": [
+    "2",
+    "SVC_SET_CAP"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "R_SV10"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SVC_CHAIN_END"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "TP64"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SVC_K1_RUN"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "TP65"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SVC_RUN_HD"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "TP66"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SVC_RUN_12V"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "TP67"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SVC_RELAY_RTN"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "TP68"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SVC_HOLD_A"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "TP69"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SVC_LS_A"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "TP70"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SVC_CH_N6A"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "TP71"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SVC_SET_CAP"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "TP72"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "GND"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "TP63"
+ },
+ {
+  "id": "S4-mC",
+  "kind": "REMOVE",
+  "reason": "m-C: 5.5 V array on lines that a W-018 short can take to 12 V; replaced by D_AUX (15 V). Its other channels were already unused after S2-01c/d",
+  "ref": "D29"
+ },
+ {
+  "id": "S2-06a",
+  "kind": "RENUM",
+  "mapping": {
+   "6": null,
+   "7": null,
+   "8": null,
+   "9": null
+  },
+  "reason": "SON-5x6 / SON-3x3 NexFET: KiCad TDSON-8-1 and VSON-8_3.3x3.3mm_P0.65mm_NexFET number all drain leads and the tab '5' (stock symbols Transistor_FET:CSD18540Q5B / CSD18543Q3A have pins 1-3 S, 4 G, 5 D). Same nets.",
+  "refs": [
+   "Q1",
+   "Q2",
+   "Q4",
+   "Q5",
+   "Q40"
+  ]
+ },
+ {
+  "id": "S2-06b",
+  "kind": "RENUM",
+  "mapping": {
+   "1": "A1",
+   "2": "12",
+   "3": "11",
+   "4": "14",
+   "5": "24",
+   "6": "21",
+   "7": "22",
+   "8": "A2"
+  },
+  "reason": "G2RL-2: stage-1 used recalled numbers 1..8 [U]; KiCad's Relay:G2RL-2 symbol and footprint use the terminal marks A1/A2 (coil), 11/12/14 (COM1/NC1/NO1), 21/22/24 (COM2/NC2/NO2). Mapping by pin NAME (authoritative in stage 1).",
+  "refs": [
+   "K2",
+   "K3"
+  ]
+ },
+ {
+  "footprint_by_mpn": {
+   "5019": "TestPoint:TestPoint_Keystone_5019_Miniature"
+  },
+  "footprints": {
+   "J_BTN": "Connector_Molex:Molex_CLIK-Mate_502443-0870_1x08-1MP_P2.00mm_Vertical",
+   "J_BUMP_L": "Connector_Molex:Molex_CLIK-Mate_502443-0270_1x02-1MP_P2.00mm_Vertical",
+   "J_BUMP_R": "Connector_Molex:Molex_CLIK-Mate_502443-0270_1x02-1MP_P2.00mm_Vertical",
+   "J_COVER": "Connector_Molex:Molex_CLIK-Mate_502443-0370_1x03-1MP_P2.00mm_Vertical",
+   "J_DOCK": "Connector_Molex:Molex_CLIK-Mate_502443-0370_1x03-1MP_P2.00mm_Vertical",
+   "J_ESTOP": "Connector_Molex:Molex_CLIK-Mate_502443-0470_1x04-1MP_P2.00mm_Vertical",
+   "J_HANDS": "Connector_Molex:Molex_CLIK-Mate_502443-0570_1x05-1MP_P2.00mm_Vertical",
+   "J_MODE": "Connector_Molex:Molex_CLIK-Mate_502443-0670_1x06-1MP_P2.00mm_Vertical",
+   "L2": "Inductor_SMD:L_Coilcraft_XAL6030-XXX",
+   "L3": "rr_local:L_Wuerth_WE-LQS-5040",
+   "L4": "rr_local:L_Wuerth_WE-LQS-5040",
+   "L60": "Inductor_SMD:L_CommonModeChoke_Coilank_ACM2012",
+   "Q4": "rr_local:VSON-8_3.3x3.3mm_P0.65mm_NexFET_G0.2",
+   "Q40": "rr_local:VSON-8_3.3x3.3mm_P0.65mm_NexFET_G0.2",
+   "Q5": "rr_local:VSON-8_3.3x3.3mm_P0.65mm_NexFET_G0.2",
+   "SW1": "Button_Switch_SMD:SW_Tactile_SPST_NO_Straight_CK_PTS636Sx25SMTRLFS",
+   "SW2": "Button_Switch_SMD:SW_Tactile_SPST_NO_Straight_CK_PTS636Sx25SMTRLFS",
+   "U10": "rr_local:TI_RJR0014A_VQFN-HR-14_4x3.5mm_PLACEHOLDER",
+   "U13": "rr_local:TI_RPW0010A_VQFN-HR-10_2x2mm_PLACEHOLDER",
+   "U15": "Package_DFN_QFN:Texas_RGV0016A_VQFN-16-1EP_4x4mm_P0.65mm_EP2.1x2.1mm",
+   "U16": "rr_local:TI_RPW0010A_VQFN-HR-10_2x2mm_PLACEHOLDER",
+   "U17": "rr_local:TI_RPW0010A_VQFN-HR-10_2x2mm_PLACEHOLDER",
+   "U18": "rr_local:TI_RPW0010A_VQFN-HR-10_2x2mm_PLACEHOLDER",
+   "U19": "rr_local:TI_RPW0010A_VQFN-HR-10_2x2mm_PLACEHOLDER",
+   "U42": "rr_local:Bosch_LGA-16_4.5x3mm_P0.5mm_ClockwisePinNumbering",
+   "U5": "Package_SO:HTSSOP-16-1EP_4.4x5mm_P0.65mm_EP3.4x5mm_Mask2.46x2.31mm",
+   "U6": "Package_SO:HTSSOP-16-1EP_4.4x5mm_P0.65mm_EP3.4x5mm_Mask2.46x2.31mm",
+   "U8": "rr_local:TI_TPS25982_VQFN-24_4x4mm_SplitPad_PLACEHOLDER",
+   "W1": "rr_local:WirePads_2x2.5mm_P5.0mm"
+  },
+  "id": "S2-07",
+  "kind": "LIB",
+  "reason": "CAD library choices: stock symbols where they exist with matching pin numbers, stock or project-local footprints for the 15 parts without one (see README)",
+  "symbol_by_mpn": {
+   "BSS138": "Transistor_FET:BSS138",
+   "BSS84,215": "Transistor_FET:BSS84",
+   "CSD18540Q5B": "Transistor_FET:CSD18540Q5B",
+   "CSD18543Q3A": "Transistor_FET:CSD18543Q3A"
+  },
+  "symbols": {
+   "J_HTR": "Connector_Generic:Conn_01x02",
+   "J_LIDAR": "Connector_Generic:Conn_01x02",
+   "R_SH1": "Device:R",
+   "R_SH2": "Device:R",
+   "R_SH3": "Device:R",
+   "R_SH4": "Device:R",
+   "R_SNSB": "Device:R",
+   "R_SNSI": "Device:R",
+   "U42": "rr_local:BMI088_SPI",
+   "U45": "Interface_Expansion:TCA9534"
+  }
+ }
+]

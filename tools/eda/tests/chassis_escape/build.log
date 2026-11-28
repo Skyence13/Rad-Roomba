@@ -1,0 +1,13 @@
+[rrkicad] definition: 771 parts, 432 nets, 12 groups
+[rrkicad] schematic: 18 sheet(s): power_entry, charger, rails, branches, chain, chain_2, chain_3, drive, drive_2, mcu, mcu_2, tof, tof_2, head_link, panel_io, test, mech
+[rrkicad] netlist cross-check OK (771 components, 549 nets incl. unconnected)
+[rrkicad] plane fan-out: 559 via(s) on 3V3, GND, VBAT_SW, VMOT, VSYS (25 with an extended stub), 52 long fan-out(s) (maze-routed to the plane), 80 pad(s) without
+[rrkicad] escape: 82 via(s), 2 direct pre-route(s) on U20M, U3, U42, U61, U8; 64 pad(s) skipped {"no legal escape position": 36, "no legal escape position inside its own plane polygon": 21, "not connected (single-pin net)": 7}
+[rrkicad] DSN exported (changed)
+[rrkicad] routing: freerouting passes<=200 threads=3 timeout=900s
+    [75B1E4\D02B20] Auto-routing pass #1 on board '063d60d1a0115b4c48d08649ca782888' was completed in 899.87 seconds with score 642.86 (480 unrouted and 2
+[rrkicad] routing finished in 909.2 s
+[rrkicad] import: 351 connection(s) open
+[rrkicad] routing: first run -> 351 open (kept)
+[rrkicad] routing: 351 connection(s) open -> continue run 2
+[rrkicad] routing: freerouting passes<=200 threads=3 timeout=900s

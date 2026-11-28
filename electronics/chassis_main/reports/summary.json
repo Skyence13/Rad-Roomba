@@ -1,0 +1,5032 @@
+{
+  "autoplaced": [],
+  "board": "RR-CHS-MAIN",
+  "board_bbox_mm": [
+    0.0,
+    0.0,
+    160.0,
+    100.0
+  ],
+  "bom": {
+    "missing_mpn": [],
+    "verify": [
+      "J_PWR",
+      "U1",
+      "R_SH1",
+      "C7",
+      "C8",
+      "C9",
+      "Q3",
+      "C11",
+      "U3",
+      "Q4",
+      "Q5",
+      "R_SNSI",
+      "R_SNSB",
+      "L1",
+      "C14",
+      "C15",
+      "C17",
+      "C18",
+      "C20",
+      "C21",
+      "C22",
+      "U10",
+      "C26",
+      "L2",
+      "C29",
+      "C30",
+      "C31",
+      "C32",
+      "C33",
+      "U13",
+      "C40",
+      "L3",
+      "C42",
+      "C43",
+      "C44",
+      "L4",
+      "C46",
+      "C47",
+      "C48",
+      "U14",
+      "C49",
+      "C50",
+      "FB_A",
+      "C52",
+      "J_CM5",
+      "R_SH2",
+      "R_SH3",
+      "R_SH4",
+      "U16",
+      "U17",
+      "R46",
+      "U18",
+      "U19",
+      "L5",
+      "C67",
+      "C68",
+      "C69",
+      "C70",
+      "C71",
+      "U25",
+      "C72",
+      "C73",
+      "J_HTR",
+      "J_LIDAR",
+      "F_CHAIN",
+      "J_MODE",
+      "J_ESTOP",
+      "J_HANDS",
+      "J_COVER",
+      "J_DOCK",
+      "J_BUMP_L",
+      "J_BUMP_R",
+      "J_BTN",
+      "U20",
+      "D9",
+      "D10",
+      "U21",
+      "D12",
+      "U22",
+      "U23",
+      "U24",
+      "K1",
+      "R_SET",
+      "C_SET",
+      "R99",
+      "R100",
+      "R117",
+      "R118",
+      "R129",
+      "R130",
+      "C_SF",
+      "D_SET",
+      "C_SC",
+      "C_SCG",
+      "U_SET",
+      "C_SDB",
+      "U_HOLD",
+      "D_RUN",
+      "U_LS",
+      "U46",
+      "U21B",
+      "D_AUX",
+      "U8",
+      "C105",
+      "C106",
+      "C107",
+      "U34",
+      "Q40",
+      "R149",
+      "R150",
+      "F_CLAMP",
+      "C117",
+      "K2",
+      "D32",
+      "R161",
+      "FB1",
+      "FB2",
+      "J_MOT_L",
+      "F1",
+      "C129",
+      "K3",
+      "D35",
+      "R179",
+      "FB3",
+      "FB4",
+      "J_MOT_R",
+      "F2",
+      "C142",
+      "C144",
+      "Y1",
+      "SW1",
+      "SW2",
+      "U42",
+      "U43",
+      "U44",
+      "U45",
+      "RT1",
+      "F_AUX",
+      "U47",
+      "FB5",
+      "FB6",
+      "FB7",
+      "FB8",
+      "J_TOF4",
+      "FB9",
+      "J_TOF5",
+      "FB10",
+      "J_TOF6",
+      "FB11",
+      "J_TOF7",
+      "FB12",
+      "FB13",
+      "FB14",
+      "FB15",
+      "FB_U",
+      "U61",
+      "C172",
+      "L60",
+      "J_HEAD1"
+    ]
+  },
+  "counts": {
+    "nets": 484,
+    "parts": 881,
+    "sheets": 19
+  },
+  "date": "2026-11-26",
+  "docnum": "RR-EL-0100",
+  "drc": {
+    "by_type": {
+      "copper_sliver": {
+        "errors": 0,
+        "warnings": 1
+      },
+      "silk_edge_clearance": {
+        "errors": 0,
+        "warnings": 9
+      },
+      "silk_over_copper": {
+        "errors": 0,
+        "warnings": 73
+      },
+      "silk_overlap": {
+        "errors": 0,
+        "warnings": 86
+      },
+      "via_dangling": {
+        "errors": 0,
+        "warnings": 61
+      }
+    },
+    "error_items": [],
+    "errors": 0,
+    "excluded": 0,
+    "parity": 0,
+    "parity_items": [],
+    "report": "reports/drc.json",
+    "unconnected": 1260,
+    "unconnected_items": [
+      "unconnected_items | Missing connection between items | Pad 5 [VBAT_RAW] of Q1 on F.Cu | Pad 2 [VBAT_RAW] of C3 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 5 [VBAT_RAW] of Q1 on F.Cu | Pad 5 [VBAT_RAW] of U1 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 5 [VBAT_RAW] of Q1 on F.Cu | Pad 1 [VBAT_RAW] of R7 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [VBAT_RAW] of C1 on B.Cu | Pad 2 [VBAT_RAW] of C3 on B.Cu",
+      "unconnected_items | Missing connection between items | PTH pad 1 [VBAT_RAW] of J_PWR | Pad 1 [VBAT_RAW] of R4 on B.Cu",
+      "unconnected_items | Missing connection between items | PTH pad 2 [VBAT_RAW] of J_PWR | PTH pad 1 [VBAT_RAW] of J_PWR",
+      "unconnected_items | Missing connection between items | Pad 1 [VBAT_RAW] of R4 on B.Cu | Pad 1 [VBAT_RAW] of C1 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [VBAT_RAW] of R4 on B.Cu | Pad 1 [VBAT_RAW] of D1 on F.Cu",
+      "unconnected_items | Missing connection between items | PTH pad 3 [CHG_IN] of J_PWR | Pad 1 [CHG_IN] of F_CHG on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 2 [PLUG_LINK] of R64 on B.Cu | Pad 1 [PLUG_LINK] of D9 on B.Cu",
+      "unconnected_items | Missing connection between items | PTH pad 4 [PLUG_LINK] of J_PWR | Pad 2 [PLUG_LINK] of R64 on B.Cu",
+      "unconnected_items | Missing connection between items | Track [GND] on B.Cu, length 1.2750 mm | Pad 3 [GND] of U15 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 3 [GND] of U15 on F.Cu | Pad 17 [GND] of U15 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 5 [GND] of U8 on F.Cu | Pad 4 [GND] of U8 on F.Cu",
+      "unconnected_items | Missing connection between items | Track [GND] on F.Cu, length 0.6700 mm | Pad 5 [GND] of U8 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 2 [GND] of NT1 on F.Cu | Via [GND] on F.Cu - B.Cu",
+      "unconnected_items | Missing connection between items | Track [GND] on B.Cu, length 1.0000 mm | Pad 29 [GND] of U3 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 2 [PACK_NTC] of Q6 on F.Cu | Pad 1 [PACK_NTC] of C24 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [PACK_NTC] of C24 on B.Cu | Pad 2 [PACK_NTC] of D9 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [PACK_NTC] of J_PAUX on F.Cu | Pad 2 [PACK_NTC] of D9 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 2 [PACK_NTC] of R24 on F.Cu | Pad 2 [PACK_NTC] of Q6 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [PACK_PRES_N] of TP1 on B.Cu | Pad 4 [PACK_PRES_N] of D_PAUSE on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 2 [PACK_PRES_N] of R13 on B.Cu | Pad 4 [PACK_PRES_N] of D_PAUSE on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 2 [PACK_PRES_N] of J_PAUX on F.Cu | Pad 2 [PACK_PRES_N] of R13 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 7 [EN_SYS] of U10 on F.Cu | Pad 4 [EN_SYS] of U11 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 7 [EN_SYS] of U10 on F.Cu | Pad 2 [EN_SYS] of J_MODE on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 4 [EN_SYS] of U11 on F.Cu | Pad 4 [EN_SYS] of U12 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [EN_SYS] of R8 on F.Cu | Pad 4 [EN_SYS] of U12 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [EN_SYS] of C4 on F.Cu | Pad 1 [EN_SYS] of R8 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [EN_SYS] of U1 on F.Cu | Pad 1 [EN_SYS] of C4 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [EN_SYS] of TP51 on B.Cu | Pad 1 [EN_SYS] of U1 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 4 [U1_VCAP] of U1 on F.Cu | Pad 1 [U1_VCAP] of C3 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [U1_GATE] of R3 on F.Cu | Pad 6 [U1_GATE] of U1 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 6 [U1_GATE] of U1 on F.Cu | Pad 1 [U1_GATE] of R1 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [U1_GATE] of R2 on F.Cu | Pad 6 [U1_GATE] of U1 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [U1_OV] of R5 on F.Cu | Pad 7 [U1_OV] of U1 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 2 [U1_OV] of R6 on F.Cu | Pad 1 [U1_OV] of R5 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 2 [PSW_SRC] of C2 on F.Cu | Pad 1 [PSW_SRC] of Q1 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 8 [PSW_SRC] of U1 on F.Cu | Pad 1 [PSW_SRC] of Q2 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [PSW_SRC] of Q2 on F.Cu | Pad 2 [PSW_SRC] of Q2 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [PSW_SRC] of Q1 on F.Cu | Pad 2 [PSW_SRC] of Q1 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 2 [PSW_SRC] of Q2 on F.Cu | Pad 3 [PSW_SRC] of Q2 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 2 [PSW_SRC] of Q1 on F.Cu | Pad 3 [PSW_SRC] of Q1 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 3 [PSW_SRC] of Q1 on F.Cu | Pad 3 [PSW_SRC] of Q2 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 2 [Q1_G] of R1 on F.Cu | Pad 4 [Q1_G] of Q1 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 4 [Q2_G] of Q2 on F.Cu | Pad 2 [Q2_G] of R2 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [VBAT_PROT] of R_SH1 on F.Cu | Pad 5 [VBAT_PROT] of Q2 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 5 [VBAT_PROT] of Q2 on F.Cu | Pad 1 [VBAT_PROT] of R9 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [U1_SLEW] of C2 on F.Cu | Pad 2 [U1_SLEW] of R3 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [U1_OVT] of R6 on F.Cu | Pad 2 [U1_OVT] of R4 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [EN_SRC] of J_MODE on F.Cu | Pad 2 [EN_SRC] of R7 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 5 [VBAT_SW] of U19 on B.Cu | Pad 1 [VBAT_SW] of F_CHAIN on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [VBAT_SW] of R11 on F.Cu | Pad 5 [VBAT_SW] of U19 on B.Cu",
+      "unconnected_items | Missing connection between items | Via [VBAT_SW] on F.Cu - B.Cu | Pad 1 [VBAT_SW] of R11 on F.Cu",
+      "unconnected_items | Missing connection between items | Via [VBAT_SW] on F.Cu - B.Cu | Pad 1 [VBAT_SW] of R11 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 25 [VBAT_SW] of U8 on F.Cu | Track [VBAT_SW] on F.Cu, length 1.0308 mm",
+      "unconnected_items | Missing connection between items | Pad 1 [VBAT_SW] of R148 on F.Cu | Pad 1 [VBAT_SW] of F_AUX on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [VBAT_SW] of R143 on F.Cu | Pad 1 [VBAT_SW] of Q5 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [VBAT_SW] of R143 on F.Cu | Pad 1 [VBAT_SW] of F_AUX on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [VBAT_SW] of Q5 on F.Cu | Pad 2 [VBAT_SW] of Q5 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 2 [VBAT_SW] of Q5 on F.Cu | Pad 3 [VBAT_SW] of Q5 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 3 [VBAT_SW] of Q5 on F.Cu | Pad 1 [VBAT_SW] of C22 on B.Cu",
+      "unconnected_items | Missing connection between items | Track [VBAT_SW] on F.Cu, length 2.7500 mm | Pad 1 [VBAT_SW] of C22 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 8 [VBAT_SW] of U3 on F.Cu | Pad 1 [VBAT_SW] of C22 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 8 [VBAT_SW] of U3 on F.Cu | Pad 2 [VBAT_SW] of R_SNSB on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 9 [VBAT_SW] of U3 on F.Cu | Pad 8 [VBAT_SW] of U3 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [VBAT_SW] of C21 on B.Cu | Pad 9 [VBAT_SW] of U3 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 10 [U2_INP] of U2 on F.Cu | Pad 2 [U2_INP] of R9 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 2 [U2_INP] of R9 on F.Cu | Pad 1 [U2_INP] of C5 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 2 [U2_INN] of C5 on F.Cu | Pad 2 [U2_INN] of R10 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 2 [U2_INN] of R10 on F.Cu | Pad 9 [U2_INN] of U2 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of R120 on F.Cu | Track [3V3] on B.Cu, length 3.5000 mm",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of D_KR on F.Cu | Pad 1 [3V3] of D_SRB on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of D_N6A on F.Cu | Pad 1 [3V3] of D_KR on F.Cu",
+      "unconnected_items | Missing connection between items | Track [3V3] on B.Cu, length 0.6964 mm | Pad 1 [3V3] of R123 on F.Cu",
+      "unconnected_items | Missing connection between items | Track [3V3] on F.Cu, length 0.8602 mm | Pad 2 [3V3] of Q_J2PRE on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of D_SRB on B.Cu | Track [3V3] on B.Cu, length 0.4243 mm",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of C54 on B.Cu | Pad 5 [3V3] of U15 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 4 [3V3] of U15 on F.Cu | Pad 1 [3V3] of C54 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 16 [3V3] of U15 on F.Cu | Pad 4 [3V3] of U15 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 5 [3V3] of U15 on F.Cu | Track [3V3] on B.Cu, length 3.4234 mm",
+      "unconnected_items | Missing connection between items | Track [3V3] on B.Cu, length 0.4243 mm | Pad 1 [3V3] of R128 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of R45 on F.Cu | Track [3V3] on B.Cu, length 12.3822 mm",
+      "unconnected_items | Missing connection between items | Track [3V3] on B.Cu, length 2.6000 mm | Pad 1 [3V3] of R47 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of R32 on F.Cu | Track [3V3] on B.Cu, length 6.3655 mm",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of R32 on F.Cu | Pad 2 [3V3] of L3 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 16 [3V3] of U5 on F.Cu | Track [3V3] on B.Cu, length 11.4490 mm",
+      "unconnected_items | Missing connection between items | Track [3V3] on B.Cu, length 0.4243 mm | Pad 1 [3V3] of R40 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 24 [3V3] of U50 on F.Cu | Track [3V3] on B.Cu, length 3.3526 mm",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of R_SDG on F.Cu | Pad 1 [3V3] of R137 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of R_SDG on F.Cu | Pad 1 [3V3] of D_NC on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of R156 on F.Cu | Track [3V3] on In2.Cu, length 10.6775 mm",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of R137 on F.Cu | Pad 1 [3V3] of R93 on F.Cu",
+      "unconnected_items | Missing connection between items | Track [3V3] on B.Cu, length 4.6000 mm | Pad 3 [3V3] of U42 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 5 [3V3] of U9 on F.Cu | Track [3V3] on F.Cu, length 9.5525 mm",
+      "unconnected_items | Missing connection between items | Pad 5 [3V3] of U9 on F.Cu | Pad 1 [3V3] of D_U9T on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of R91 on F.Cu | Pad 1 [3V3] of R40 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of R93 on F.Cu | Pad 1 [3V3] of C_U47 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of C_U47 on B.Cu | Pad 1 [3V3] of R91 on F.Cu",
+      "unconnected_items | Missing connection between items | Track [3V3] on F.Cu, length 0.5858 mm | Pad 1 [3V3] of R254 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of R263 on F.Cu | Pad 1 [3V3] of R264 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of R254 on F.Cu | Pad 1 [3V3] of R263 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of R274 on F.Cu | Track [3V3] on F.Cu, length 0.5483 mm",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of C86 on B.Cu | Pad 1 [3V3] of U40 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of C86 on B.Cu | Pad 1 [3V3] of C_U47 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of R248 on F.Cu | Pad 1 [3V3] of R249 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of R249 on F.Cu | Pad 1 [3V3] of R254 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of R229 on F.Cu | Pad 1 [3V3] of R263 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 6 [3V3] of U40 on B.Cu | Pad 1 [3V3] of R90 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 10 [3V3] of U40 on B.Cu | Pad 6 [3V3] of U40 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 10 [3V3] of U40 on B.Cu | Pad 1 [3V3] of U40 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of R174 on F.Cu | Pad 1 [3V3] of R238 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of U51 on F.Cu | Pad 1 [3V3] of C158 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of U51 on F.Cu | Pad 1 [3V3] of R228 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of U51 on F.Cu | Pad 1 [3V3] of R229 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of U51 on F.Cu | Pad 1 [3V3] of FB6 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of C122 on B.Cu | Pad 1 [3V3] of R174 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of C122 on B.Cu | Pad 16 [3V3] of U6 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of C158 on B.Cu | Pad 24 [3V3] of U51 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of R_PAUSE on B.Cu | Pad 2 [3V3] of D_K1B on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of R_PAUSE on B.Cu | Pad 10 [3V3] of U40 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 24 [3V3] of U51 on F.Cu | Pad 1 [3V3] of R269 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of R239 on F.Cu | Pad 1 [3V3] of R238 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of R92 on B.Cu | Pad 1 [3V3] of R90 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of R269 on F.Cu | Pad 1 [3V3] of R258 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of R258 on F.Cu | Pad 1 [3V3] of R259 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of R258 on F.Cu | Pad 1 [3V3] of R239 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of R259 on F.Cu | Pad 1 [3V3] of R268 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of R259 on F.Cu | Pad 2 [3V3] of D36 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of R183 on F.Cu | Pad 1 [3V3] of R268 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of FB8 on B.Cu | Pad 2 [3V3] of D_K1B on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 2 [3V3] of D36 on B.Cu | Pad 1 [3V3] of R_SRP on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of R25 on F.Cu | Pad 1 [3V3] of C6 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of R13 on B.Cu | Pad 1 [3V3] of FB8 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of R13 on B.Cu | Pad 1 [3V3] of FB15 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of R61 on F.Cu | Pad 1 [3V3] of R_SRP on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of C6 on B.Cu | Pad 6 [3V3] of U2 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 6 [3V3] of U2 on F.Cu | Pad 1 [3V3] of C16 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of FB15 on B.Cu | Pad 1 [3V3] of FB11 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of C16 on B.Cu | Pad 17 [3V3] of U3 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 17 [3V3] of U3 on F.Cu | Pad 1 [3V3] of TP44 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of R49 on B.Cu | Pad 1 [3V3] of FB11 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of R49 on B.Cu | Pad 1 [3V3] of TP44 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of FB12 on B.Cu | Pad 5 [3V3] of U38 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [3V3] of FB12 on B.Cu | Pad 17 [3V3] of U3 on F.Cu",
+      "unconnected_items | Missing connection between items | Track [I2C_SYS_SDA] on F.Cu, length 0.5500 mm | Pad 2 [I2C_SYS_SDA] of R211 on F.Cu",
+      "unconnected_items | Missing connection between items | Track [I2C_SYS_SDA] on F.Cu, length 1.0450 mm | Pad 23 [I2C_SYS_SDA] of U44 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 15 [I2C_SYS_SDA] of U45 on B.Cu | Pad 23 [I2C_SYS_SDA] of U44 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 15 [I2C_SYS_SDA] of U47 on F.Cu | Pad 23 [I2C_SYS_SDA] of U44 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 15 [I2C_SYS_SDA] of U47 on F.Cu | Pad 7 [I2C_SYS_SDA] of U15 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 4 [I2C_SYS_SDA] of U2 on F.Cu | Pad 1 [I2C_SYS_SDA] of TP34 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 4 [I2C_SYS_SDA] of U2 on F.Cu | Pad 15 [I2C_SYS_SDA] of U47 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [I2C_SYS_SDA] of TP34 on B.Cu | Track [I2C_SYS_SDA] on F.Cu, length 0.3430 mm",
+      "unconnected_items | Missing connection between items | Pad 43 [I2C_SYS_SCL] of U20M on F.Cu | Pad 2 [I2C_SYS_SCL] of R212 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 6 [I2C_SYS_SCL] of U15 on F.Cu | Pad 22 [I2C_SYS_SCL] of U44 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 22 [I2C_SYS_SCL] of U44 on B.Cu | Pad 14 [I2C_SYS_SCL] of U45 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 22 [I2C_SYS_SCL] of U44 on B.Cu | Pad 43 [I2C_SYS_SCL] of U20M on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 14 [I2C_SYS_SCL] of U47 on F.Cu | Pad 22 [I2C_SYS_SCL] of U44 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 14 [I2C_SYS_SCL] of U47 on F.Cu | Pad 5 [I2C_SYS_SCL] of U2 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 5 [I2C_SYS_SCL] of U2 on F.Cu | Track [I2C_SYS_SCL] on F.Cu, length 0.6950 mm",
+      "unconnected_items | Missing connection between items | Pad 1 [I2C_SYS_SCL] of TP35 on B.Cu | Via [I2C_SYS_SCL] on F.Cu - B.Cu",
+      "unconnected_items | Missing connection between items | Pad 11 [PMON_NALERT] of U45 on B.Cu | Pad 2 [PMON_NALERT] of R210 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 2 [PMON_NALERT] of R210 on B.Cu | Pad 3 [PMON_NALERT] of U2 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [VBAT_SENSE] of C10 on F.Cu | Pad 2 [VBAT_SENSE] of R11 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [VBAT_SENSE] of R12 on F.Cu | Pad 1 [VBAT_SENSE] of C10 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 2 [VBAT_SENSE] of R11 on F.Cu | Via [VBAT_SENSE] on F.Cu - B.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [CHG_F] of D2 on F.Cu | Pad 2 [CHG_F] of F_CHG on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 2 [CHG_F] of Q3 on F.Cu | Pad 1 [CHG_F] of D2 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [Q3_G] of R14 on F.Cu | Pad 1 [Q3_G] of Q3 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 2 [Q3_G] of D3 on F.Cu | Pad 1 [Q3_G] of R14 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [CHG_VIN] of Q4 on F.Cu | Pad 1 [CHG_VIN] of D3 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [CHG_VIN] of Q4 on F.Cu | Pad 1 [CHG_VIN] of U3 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 2 [CHG_VIN] of Q4 on F.Cu | Pad 3 [CHG_VIN] of Q4 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 2 [CHG_VIN] of Q4 on F.Cu | Pad 1 [CHG_VIN] of Q4 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 3 [CHG_VIN] of Q4 on F.Cu | Pad 1 [CHG_VIN] of R26 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [CHG_VIN] of R26 on F.Cu | Pad 1 [CHG_VIN] of C11 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [CHG_VIN] of C11 on F.Cu | Pad 1 [CHG_VIN] of C12 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [CHG_VIN] of C12 on F.Cu | Pad 3 [CHG_VIN] of Q3 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 2 [U3_INFET] of U3 on F.Cu | Pad 4 [U3_INFET] of Q4 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 5 [U3_CLP] of Q4 on F.Cu | Pad 3 [U3_CLP] of U3 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [U3_CLP] of R_SNSI on F.Cu | Pad 5 [U3_CLP] of Q4 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [VSYS] of C34 on B.Cu | Pad 1 [VSYS] of C33 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [VSYS] of C34 on B.Cu | Pad 8 [VSYS] of U10 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [VSYS] of C35 on B.Cu | Pad 1 [VSYS] of C33 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [VSYS] of C32 on B.Cu | Pad 1 [VSYS] of C34 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 8 [VSYS] of U10 on F.Cu | Pad 12 [VSYS] of U10 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 8 [VSYS] of U10 on F.Cu | Pad 1 [VSYS] of C42 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [VSYS] of C42 on B.Cu | Pad 1 [VSYS] of C46 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 5 [VSYS] of U11 on F.Cu | Pad 1 [VSYS] of C42 on B.Cu",
+      "unconnected_items | Missing connection between items | Pad 5 [VSYS] of U11 on F.Cu | Pad 5 [VSYS] of U12 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 5 [VSYS] of U12 on F.Cu | Via [VSYS] on F.Cu - B.Cu",
+      "unconnected_items | Missing connection between items | Track [VSYS] on B.Cu, length 1.0250 mm | Via [VSYS] on F.Cu - B.Cu",
+      "unconnected_items | Missing connection between items | Via [VSYS] on F.Cu - B.Cu | Pad 1 [VSYS] of TP42 on B.Cu",
+      "unconnected_items | Missing connection between items | Track [VSYS] on F.Cu, length 1.9250 mm | Track [VSYS] on F.Cu, length 1.5000 mm",
+      "unconnected_items | Missing connection between items | Pad 4 [U3_BATFET] of Q5 on F.Cu | Pad 6 [U3_BATFET] of U3 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 2 [U3_CSP] of L1 on F.Cu | Pad 7 [U3_CSP] of U3 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 1 [U3_CSP] of R_SNSB on F.Cu | Pad 2 [U3_CSP] of L1 on F.Cu",
+      "unconnected_items | Missing connection between items | Pad 2 [U3_SW] of C13 on F.Cu | Track [U3_SW] on F.Cu, length 1.3963 mm",
+      "unconnected_items | Missing connection between items | Pad 1 [U3_SW] of L1 on F.Cu | Track [U3_SW] on F.Cu, length 0.6950 mm",
+      "unconnected_items | Missing connection between items | Pad 11 [U3_SW] of U3 on F.Cu | Track [U3_SW] on F.Cu, length 0.6950 mm"
+    ],
+    "unconnected_listed": 499,
+    "unrouted": [
+      {
+        "ends": [
+          {
+            "item": "Pad 5 [VBAT_RAW] of Q1 on F.Cu",
+            "xy_mm": [
+              133.5,
+              31.05
+            ]
+          },
+          {
+            "item": "Pad 2 [VBAT_RAW] of C3 on B.Cu",
+            "xy_mm": [
+              140.025,
+              35.0
+            ]
+          }
+        ],
+        "net": "VBAT_RAW"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 5 [VBAT_RAW] of Q1 on F.Cu",
+            "xy_mm": [
+              133.5,
+              31.05
+            ]
+          },
+          {
+            "item": "Pad 5 [VBAT_RAW] of U1 on F.Cu",
+            "xy_mm": [
+              129.637,
+              39.525
+            ]
+          }
+        ],
+        "net": "VBAT_RAW"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 5 [VBAT_RAW] of Q1 on F.Cu",
+            "xy_mm": [
+              133.5,
+              31.05
+            ]
+          },
+          {
+            "item": "Pad 1 [VBAT_RAW] of R7 on B.Cu",
+            "xy_mm": [
+              123.325,
+              26.75
+            ]
+          }
+        ],
+        "net": "VBAT_RAW"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [VBAT_RAW] of C1 on B.Cu",
+            "xy_mm": [
+              143.775,
+              35.0
+            ]
+          },
+          {
+            "item": "Pad 2 [VBAT_RAW] of C3 on B.Cu",
+            "xy_mm": [
+              140.025,
+              35.0
+            ]
+          }
+        ],
+        "net": "VBAT_RAW"
+      },
+      {
+        "ends": [
+          {
+            "item": "PTH pad 1 [VBAT_RAW] of J_PWR",
+            "xy_mm": [
+              145.25,
+              30.35
+            ]
+          },
+          {
+            "item": "Pad 1 [VBAT_RAW] of R4 on B.Cu",
+            "xy_mm": [
+              146.0,
+              34.925
+            ]
+          }
+        ],
+        "net": "VBAT_RAW"
+      },
+      {
+        "ends": [
+          {
+            "item": "PTH pad 2 [VBAT_RAW] of J_PWR",
+            "xy_mm": [
+              145.25,
+              26.15
+            ]
+          },
+          {
+            "item": "PTH pad 1 [VBAT_RAW] of J_PWR",
+            "xy_mm": [
+              145.25,
+              30.35
+            ]
+          }
+        ],
+        "net": "VBAT_RAW"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [VBAT_RAW] of R4 on B.Cu",
+            "xy_mm": [
+              146.0,
+              34.925
+            ]
+          },
+          {
+            "item": "Pad 1 [VBAT_RAW] of C1 on B.Cu",
+            "xy_mm": [
+              143.775,
+              35.0
+            ]
+          }
+        ],
+        "net": "VBAT_RAW"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [VBAT_RAW] of R4 on B.Cu",
+            "xy_mm": [
+              146.0,
+              34.925
+            ]
+          },
+          {
+            "item": "Pad 1 [VBAT_RAW] of D1 on F.Cu",
+            "xy_mm": [
+              156.5,
+              35.85
+            ]
+          }
+        ],
+        "net": "VBAT_RAW"
+      },
+      {
+        "ends": [
+          {
+            "item": "PTH pad 3 [CHG_IN] of J_PWR",
+            "xy_mm": [
+              145.25,
+              21.95
+            ]
+          },
+          {
+            "item": "Pad 1 [CHG_IN] of F_CHG on F.Cu",
+            "xy_mm": [
+              147.545,
+              36.5
+            ]
+          }
+        ],
+        "net": "CHG_IN"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 2 [PLUG_LINK] of R64 on B.Cu",
+            "xy_mm": [
+              132.325,
+              24.75
+            ]
+          },
+          {
+            "item": "Pad 1 [PLUG_LINK] of D9 on B.Cu",
+            "xy_mm": [
+              121.2,
+              22.562
+            ]
+          }
+        ],
+        "net": "PLUG_LINK"
+      },
+      {
+        "ends": [
+          {
+            "item": "PTH pad 4 [PLUG_LINK] of J_PWR",
+            "xy_mm": [
+              145.25,
+              17.75
+            ]
+          },
+          {
+            "item": "Pad 2 [PLUG_LINK] of R64 on B.Cu",
+            "xy_mm": [
+              132.325,
+              24.75
+            ]
+          }
+        ],
+        "net": "PLUG_LINK"
+      },
+      {
+        "ends": [
+          {
+            "item": "Track [GND] on B.Cu, length 1.2750 mm",
+            "xy_mm": [
+              43.475,
+              84.0
+            ]
+          },
+          {
+            "item": "Pad 3 [GND] of U15 on F.Cu",
+            "xy_mm": [
+              45.138,
+              82.675
+            ]
+          }
+        ],
+        "net": "GND"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 3 [GND] of U15 on F.Cu",
+            "xy_mm": [
+              45.138,
+              82.675
+            ]
+          },
+          {
+            "item": "Pad 17 [GND] of U15 on F.Cu",
+            "xy_mm": [
+              47.0,
+              83.0
+            ]
+          }
+        ],
+        "net": "GND"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 5 [GND] of U8 on F.Cu",
+            "xy_mm": [
+              77.55,
+              33.75
+            ]
+          },
+          {
+            "item": "Pad 4 [GND] of U8 on F.Cu",
+            "xy_mm": [
+              77.55,
+              34.25
+            ]
+          }
+        ],
+        "net": "GND"
+      },
+      {
+        "ends": [
+          {
+            "item": "Track [GND] on F.Cu, length 0.6700 mm",
+            "xy_mm": [
+              79.75,
+              32.55
+            ]
+          },
+          {
+            "item": "Pad 5 [GND] of U8 on F.Cu",
+            "xy_mm": [
+              77.55,
+              33.75
+            ]
+          }
+        ],
+        "net": "GND"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 2 [GND] of NT1 on F.Cu",
+            "xy_mm": [
+              115.5,
+              41.5
+            ]
+          },
+          {
+            "item": "Via [GND] on F.Cu - B.Cu",
+            "xy_mm": [
+              117.625,
+              41.6
+            ]
+          }
+        ],
+        "net": "GND"
+      },
+      {
+        "ends": [
+          {
+            "item": "Track [GND] on B.Cu, length 1.0000 mm",
+            "xy_mm": [
+              127.725,
+              49.5
+            ]
+          },
+          {
+            "item": "Pad 29 [GND] of U3 on F.Cu",
+            "xy_mm": [
+              128.0,
+              50.0
+            ]
+          }
+        ],
+        "net": "GND"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 2 [PACK_NTC] of Q6 on F.Cu",
+            "xy_mm": [
+              112.812,
+              48.8
+            ]
+          },
+          {
+            "item": "Pad 1 [PACK_NTC] of C24 on B.Cu",
+            "xy_mm": [
+              115.525,
+              25.5
+            ]
+          }
+        ],
+        "net": "PACK_NTC"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [PACK_NTC] of C24 on B.Cu",
+            "xy_mm": [
+              115.525,
+              25.5
+            ]
+          },
+          {
+            "item": "Pad 2 [PACK_NTC] of D9 on B.Cu",
+            "xy_mm": [
+              119.3,
+              22.562
+            ]
+          }
+        ],
+        "net": "PACK_NTC"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [PACK_NTC] of J_PAUX on F.Cu",
+            "xy_mm": [
+              116.125,
+              20.65
+            ]
+          },
+          {
+            "item": "Pad 2 [PACK_NTC] of D9 on B.Cu",
+            "xy_mm": [
+              119.3,
+              22.562
+            ]
+          }
+        ],
+        "net": "PACK_NTC"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 2 [PACK_NTC] of R24 on F.Cu",
+            "xy_mm": [
+              118.175,
+              59.5
+            ]
+          },
+          {
+            "item": "Pad 2 [PACK_NTC] of Q6 on F.Cu",
+            "xy_mm": [
+              112.812,
+              48.8
+            ]
+          }
+        ],
+        "net": "PACK_NTC"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [PACK_PRES_N] of TP1 on B.Cu",
+            "xy_mm": [
+              16.25,
+              73.5
+            ]
+          },
+          {
+            "item": "Pad 4 [PACK_PRES_N] of D_PAUSE on B.Cu",
+            "xy_mm": [
+              95.865,
+              18.25
+            ]
+          }
+        ],
+        "net": "PACK_PRES_N"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 2 [PACK_PRES_N] of R13 on B.Cu",
+            "xy_mm": [
+              116.825,
+              21.0
+            ]
+          },
+          {
+            "item": "Pad 4 [PACK_PRES_N] of D_PAUSE on B.Cu",
+            "xy_mm": [
+              95.865,
+              18.25
+            ]
+          }
+        ],
+        "net": "PACK_PRES_N"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 2 [PACK_PRES_N] of J_PAUX on F.Cu",
+            "xy_mm": [
+              117.375,
+              20.65
+            ]
+          },
+          {
+            "item": "Pad 2 [PACK_PRES_N] of R13 on B.Cu",
+            "xy_mm": [
+              116.825,
+              21.0
+            ]
+          }
+        ],
+        "net": "PACK_PRES_N"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 7 [EN_SYS] of U10 on F.Cu",
+            "xy_mm": [
+              52.9,
+              32.7
+            ]
+          },
+          {
+            "item": "Pad 4 [EN_SYS] of U11 on F.Cu",
+            "xy_mm": [
+              67.638,
+              28.55
+            ]
+          }
+        ],
+        "net": "EN_SYS"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 7 [EN_SYS] of U10 on F.Cu",
+            "xy_mm": [
+              52.9,
+              32.7
+            ]
+          },
+          {
+            "item": "Pad 2 [EN_SYS] of J_MODE on F.Cu",
+            "xy_mm": [
+              20.8,
+              3.7
+            ]
+          }
+        ],
+        "net": "EN_SYS"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 4 [EN_SYS] of U11 on F.Cu",
+            "xy_mm": [
+              67.638,
+              28.55
+            ]
+          },
+          {
+            "item": "Pad 4 [EN_SYS] of U12 on F.Cu",
+            "xy_mm": [
+              73.638,
+              28.55
+            ]
+          }
+        ],
+        "net": "EN_SYS"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [EN_SYS] of R8 on F.Cu",
+            "xy_mm": [
+              115.0,
+              43.675
+            ]
+          },
+          {
+            "item": "Pad 4 [EN_SYS] of U12 on F.Cu",
+            "xy_mm": [
+              73.638,
+              28.55
+            ]
+          }
+        ],
+        "net": "EN_SYS"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [EN_SYS] of C4 on F.Cu",
+            "xy_mm": [
+              117.25,
+              43.725
+            ]
+          },
+          {
+            "item": "Pad 1 [EN_SYS] of R8 on F.Cu",
+            "xy_mm": [
+              115.0,
+              43.675
+            ]
+          }
+        ],
+        "net": "EN_SYS"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [EN_SYS] of U1 on F.Cu",
+            "xy_mm": [
+              127.363,
+              41.475
+            ]
+          },
+          {
+            "item": "Pad 1 [EN_SYS] of C4 on F.Cu",
+            "xy_mm": [
+              117.25,
+              43.725
+            ]
+          }
+        ],
+        "net": "EN_SYS"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [EN_SYS] of TP51 on B.Cu",
+            "xy_mm": [
+              129.5,
+              3.5
+            ]
+          },
+          {
+            "item": "Pad 1 [EN_SYS] of U1 on F.Cu",
+            "xy_mm": [
+              127.363,
+              41.475
+            ]
+          }
+        ],
+        "net": "EN_SYS"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 4 [U1_VCAP] of U1 on F.Cu",
+            "xy_mm": [
+              127.363,
+              39.525
+            ]
+          },
+          {
+            "item": "Pad 1 [U1_VCAP] of C3 on B.Cu",
+            "xy_mm": [
+              138.475,
+              35.0
+            ]
+          }
+        ],
+        "net": "U1_VCAP"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [U1_GATE] of R3 on F.Cu",
+            "xy_mm": [
+              129.325,
+              43.5
+            ]
+          },
+          {
+            "item": "Pad 6 [U1_GATE] of U1 on F.Cu",
+            "xy_mm": [
+              129.637,
+              40.175
+            ]
+          }
+        ],
+        "net": "U1_GATE"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 6 [U1_GATE] of U1 on F.Cu",
+            "xy_mm": [
+              129.637,
+              40.175
+            ]
+          },
+          {
+            "item": "Pad 1 [U1_GATE] of R1 on F.Cu",
+            "xy_mm": [
+              129.25,
+              28.825
+            ]
+          }
+        ],
+        "net": "U1_GATE"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [U1_GATE] of R2 on F.Cu",
+            "xy_mm": [
+              137.75,
+              36.575
+            ]
+          },
+          {
+            "item": "Pad 6 [U1_GATE] of U1 on F.Cu",
+            "xy_mm": [
+              129.637,
+              40.175
+            ]
+          }
+        ],
+        "net": "U1_GATE"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [U1_OV] of R5 on F.Cu",
+            "xy_mm": [
+              131.425,
+              43.5
+            ]
+          },
+          {
+            "item": "Pad 7 [U1_OV] of U1 on F.Cu",
+            "xy_mm": [
+              129.637,
+              40.825
+            ]
+          }
+        ],
+        "net": "U1_OV"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 2 [U1_OV] of R6 on F.Cu",
+            "xy_mm": [
+              135.175,
+              43.0
+            ]
+          },
+          {
+            "item": "Pad 1 [U1_OV] of R5 on F.Cu",
+            "xy_mm": [
+              131.425,
+              43.5
+            ]
+          }
+        ],
+        "net": "U1_OV"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 2 [PSW_SRC] of C2 on F.Cu",
+            "xy_mm": [
+              127.0,
+              27.225
+            ]
+          },
+          {
+            "item": "Pad 1 [PSW_SRC] of Q1 on F.Cu",
+            "xy_mm": [
+              131.595,
+              27.1
+            ]
+          }
+        ],
+        "net": "PSW_SRC"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 8 [PSW_SRC] of U1 on F.Cu",
+            "xy_mm": [
+              129.637,
+              41.475
+            ]
+          },
+          {
+            "item": "Pad 1 [PSW_SRC] of Q2 on F.Cu",
+            "xy_mm": [
+              131.595,
+              35.1
+            ]
+          }
+        ],
+        "net": "PSW_SRC"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [PSW_SRC] of Q2 on F.Cu",
+            "xy_mm": [
+              131.595,
+              35.1
+            ]
+          },
+          {
+            "item": "Pad 2 [PSW_SRC] of Q2 on F.Cu",
+            "xy_mm": [
+              132.865,
+              35.1
+            ]
+          }
+        ],
+        "net": "PSW_SRC"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [PSW_SRC] of Q1 on F.Cu",
+            "xy_mm": [
+              131.595,
+              27.1
+            ]
+          },
+          {
+            "item": "Pad 2 [PSW_SRC] of Q1 on F.Cu",
+            "xy_mm": [
+              132.865,
+              27.1
+            ]
+          }
+        ],
+        "net": "PSW_SRC"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 2 [PSW_SRC] of Q2 on F.Cu",
+            "xy_mm": [
+              132.865,
+              35.1
+            ]
+          },
+          {
+            "item": "Pad 3 [PSW_SRC] of Q2 on F.Cu",
+            "xy_mm": [
+              134.135,
+              35.1
+            ]
+          }
+        ],
+        "net": "PSW_SRC"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 2 [PSW_SRC] of Q1 on F.Cu",
+            "xy_mm": [
+              132.865,
+              27.1
+            ]
+          },
+          {
+            "item": "Pad 3 [PSW_SRC] of Q1 on F.Cu",
+            "xy_mm": [
+              134.135,
+              27.1
+            ]
+          }
+        ],
+        "net": "PSW_SRC"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 3 [PSW_SRC] of Q1 on F.Cu",
+            "xy_mm": [
+              134.135,
+              27.1
+            ]
+          },
+          {
+            "item": "Pad 3 [PSW_SRC] of Q2 on F.Cu",
+            "xy_mm": [
+              134.135,
+              35.1
+            ]
+          }
+        ],
+        "net": "PSW_SRC"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 2 [Q1_G] of R1 on F.Cu",
+            "xy_mm": [
+              129.25,
+              27.175
+            ]
+          },
+          {
+            "item": "Pad 4 [Q1_G] of Q1 on F.Cu",
+            "xy_mm": [
+              135.405,
+              27.1
+            ]
+          }
+        ],
+        "net": "Q1_G"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 4 [Q2_G] of Q2 on F.Cu",
+            "xy_mm": [
+              135.405,
+              35.1
+            ]
+          },
+          {
+            "item": "Pad 2 [Q2_G] of R2 on F.Cu",
+            "xy_mm": [
+              137.75,
+              34.925
+            ]
+          }
+        ],
+        "net": "Q2_G"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [VBAT_PROT] of R_SH1 on F.Cu",
+            "xy_mm": [
+              127.7,
+              31.037
+            ]
+          },
+          {
+            "item": "Pad 5 [VBAT_PROT] of Q2 on F.Cu",
+            "xy_mm": [
+              133.5,
+              39.05
+            ]
+          }
+        ],
+        "net": "VBAT_PROT"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 5 [VBAT_PROT] of Q2 on F.Cu",
+            "xy_mm": [
+              133.5,
+              39.05
+            ]
+          },
+          {
+            "item": "Pad 1 [VBAT_PROT] of R9 on F.Cu",
+            "xy_mm": [
+              125.575,
+              43.75
+            ]
+          }
+        ],
+        "net": "VBAT_PROT"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [U1_SLEW] of C2 on F.Cu",
+            "xy_mm": [
+              127.0,
+              28.775
+            ]
+          },
+          {
+            "item": "Pad 2 [U1_SLEW] of R3 on F.Cu",
+            "xy_mm": [
+              127.675,
+              43.5
+            ]
+          }
+        ],
+        "net": "U1_SLEW"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [U1_OVT] of R6 on F.Cu",
+            "xy_mm": [
+              136.825,
+              43.0
+            ]
+          },
+          {
+            "item": "Pad 2 [U1_OVT] of R4 on B.Cu",
+            "xy_mm": [
+              146.0,
+              36.575
+            ]
+          }
+        ],
+        "net": "U1_OVT"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [EN_SRC] of J_MODE on F.Cu",
+            "xy_mm": [
+              18.8,
+              3.7
+            ]
+          },
+          {
+            "item": "Pad 2 [EN_SRC] of R7 on B.Cu",
+            "xy_mm": [
+              121.675,
+              26.75
+            ]
+          }
+        ],
+        "net": "EN_SRC"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 5 [VBAT_SW] of U19 on B.Cu",
+            "xy_mm": [
+              16.75,
+              28.0
+            ]
+          },
+          {
+            "item": "Pad 1 [VBAT_SW] of F_CHAIN on B.Cu",
+            "xy_mm": [
+              23.0,
+              6.9
+            ]
+          }
+        ],
+        "net": "VBAT_SW"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [VBAT_SW] of R11 on F.Cu",
+            "xy_mm": [
+              24.175,
+              37.25
+            ]
+          },
+          {
+            "item": "Pad 5 [VBAT_SW] of U19 on B.Cu",
+            "xy_mm": [
+              16.75,
+              28.0
+            ]
+          }
+        ],
+        "net": "VBAT_SW"
+      },
+      {
+        "ends": [
+          {
+            "item": "Via [VBAT_SW] on F.Cu - B.Cu",
+            "xy_mm": [
+              42.0,
+              77.025
+            ]
+          },
+          {
+            "item": "Pad 1 [VBAT_SW] of R11 on F.Cu",
+            "xy_mm": [
+              24.175,
+              37.25
+            ]
+          }
+        ],
+        "net": "VBAT_SW"
+      },
+      {
+        "ends": [
+          {
+            "item": "Via [VBAT_SW] on F.Cu - B.Cu",
+            "xy_mm": [
+              69.5,
+              22.425
+            ]
+          },
+          {
+            "item": "Pad 1 [VBAT_SW] of R11 on F.Cu",
+            "xy_mm": [
+              24.175,
+              37.25
+            ]
+          }
+        ],
+        "net": "VBAT_SW"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 25 [VBAT_SW] of U8 on F.Cu",
+            "xy_mm": [
+              78.9,
+              34.5
+            ]
+          },
+          {
+            "item": "Track [VBAT_SW] on F.Cu, length 1.0308 mm",
+            "xy_mm": [
+              77.55,
+              34.75
+            ]
+          }
+        ],
+        "net": "VBAT_SW"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [VBAT_SW] of R148 on F.Cu",
+            "xy_mm": [
+              97.425,
+              72.25
+            ]
+          },
+          {
+            "item": "Pad 1 [VBAT_SW] of F_AUX on B.Cu",
+            "xy_mm": [
+              105.1,
+              73.5
+            ]
+          }
+        ],
+        "net": "VBAT_SW"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [VBAT_SW] of R143 on F.Cu",
+            "xy_mm": [
+              111.25,
+              56.575
+            ]
+          },
+          {
+            "item": "Pad 1 [VBAT_SW] of Q5 on F.Cu",
+            "xy_mm": [
+              116.56,
+              54.975
+            ]
+          }
+        ],
+        "net": "VBAT_SW"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [VBAT_SW] of R143 on F.Cu",
+            "xy_mm": [
+              111.25,
+              56.575
+            ]
+          },
+          {
+            "item": "Pad 1 [VBAT_SW] of F_AUX on B.Cu",
+            "xy_mm": [
+              105.1,
+              73.5
+            ]
+          }
+        ],
+        "net": "VBAT_SW"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [VBAT_SW] of Q5 on F.Cu",
+            "xy_mm": [
+              116.56,
+              54.975
+            ]
+          },
+          {
+            "item": "Pad 2 [VBAT_SW] of Q5 on F.Cu",
+            "xy_mm": [
+              116.56,
+              54.325
+            ]
+          }
+        ],
+        "net": "VBAT_SW"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 2 [VBAT_SW] of Q5 on F.Cu",
+            "xy_mm": [
+              116.56,
+              54.325
+            ]
+          },
+          {
+            "item": "Pad 3 [VBAT_SW] of Q5 on F.Cu",
+            "xy_mm": [
+              116.56,
+              53.675
+            ]
+          }
+        ],
+        "net": "VBAT_SW"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 3 [VBAT_SW] of Q5 on F.Cu",
+            "xy_mm": [
+              116.56,
+              53.675
+            ]
+          },
+          {
+            "item": "Pad 1 [VBAT_SW] of C22 on B.Cu",
+            "xy_mm": [
+              121.475,
+              46.75
+            ]
+          }
+        ],
+        "net": "VBAT_SW"
+      },
+      {
+        "ends": [
+          {
+            "item": "Track [VBAT_SW] on F.Cu, length 2.7500 mm",
+            "xy_mm": [
+              120.175,
+              43.75
+            ]
+          },
+          {
+            "item": "Pad 1 [VBAT_SW] of C22 on B.Cu",
+            "xy_mm": [
+              121.475,
+              46.75
+            ]
+          }
+        ],
+        "net": "VBAT_SW"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 8 [VBAT_SW] of U3 on F.Cu",
+            "xy_mm": [
+              126.05,
+              48.25
+            ]
+          },
+          {
+            "item": "Pad 1 [VBAT_SW] of C22 on B.Cu",
+            "xy_mm": [
+              121.475,
+              46.75
+            ]
+          }
+        ],
+        "net": "VBAT_SW"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 8 [VBAT_SW] of U3 on F.Cu",
+            "xy_mm": [
+              126.05,
+              48.25
+            ]
+          },
+          {
+            "item": "Pad 2 [VBAT_SW] of R_SNSB on F.Cu",
+            "xy_mm": [
+              133.5,
+              58.963
+            ]
+          }
+        ],
+        "net": "VBAT_SW"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 9 [VBAT_SW] of U3 on F.Cu",
+            "xy_mm": [
+              126.75,
+              47.55
+            ]
+          },
+          {
+            "item": "Pad 8 [VBAT_SW] of U3 on F.Cu",
+            "xy_mm": [
+              126.05,
+              48.25
+            ]
+          }
+        ],
+        "net": "VBAT_SW"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [VBAT_SW] of C21 on B.Cu",
+            "xy_mm": [
+              127.525,
+              46.5
+            ]
+          },
+          {
+            "item": "Pad 9 [VBAT_SW] of U3 on F.Cu",
+            "xy_mm": [
+              126.75,
+              47.55
+            ]
+          }
+        ],
+        "net": "VBAT_SW"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 10 [U2_INP] of U2 on F.Cu",
+            "xy_mm": [
+              123.2,
+              41.6
+            ]
+          },
+          {
+            "item": "Pad 2 [U2_INP] of R9 on F.Cu",
+            "xy_mm": [
+              123.925,
+              43.75
+            ]
+          }
+        ],
+        "net": "U2_INP"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 2 [U2_INP] of R9 on F.Cu",
+            "xy_mm": [
+              123.925,
+              43.75
+            ]
+          },
+          {
+            "item": "Pad 1 [U2_INP] of C5 on F.Cu",
+            "xy_mm": [
+              122.275,
+              46.0
+            ]
+          }
+        ],
+        "net": "U2_INP"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 2 [U2_INN] of C5 on F.Cu",
+            "xy_mm": [
+              120.725,
+              46.0
+            ]
+          },
+          {
+            "item": "Pad 2 [U2_INN] of R10 on F.Cu",
+            "xy_mm": [
+              121.825,
+              43.75
+            ]
+          }
+        ],
+        "net": "U2_INN"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 2 [U2_INN] of R10 on F.Cu",
+            "xy_mm": [
+              121.825,
+              43.75
+            ]
+          },
+          {
+            "item": "Pad 9 [U2_INN] of U2 on F.Cu",
+            "xy_mm": [
+              123.2,
+              41.1
+            ]
+          }
+        ],
+        "net": "U2_INN"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of R120 on F.Cu",
+            "xy_mm": [
+              8.425,
+              21.5
+            ]
+          },
+          {
+            "item": "Track [3V3] on B.Cu, length 3.5000 mm",
+            "xy_mm": [
+              14.75,
+              23.675
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of D_KR on F.Cu",
+            "xy_mm": [
+              10.6,
+              5.0
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of D_SRB on B.Cu",
+            "xy_mm": [
+              22.35,
+              10.0
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of D_N6A on F.Cu",
+            "xy_mm": [
+              10.6,
+              2.25
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of D_KR on F.Cu",
+            "xy_mm": [
+              10.6,
+              5.0
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Track [3V3] on B.Cu, length 0.6964 mm",
+            "xy_mm": [
+              13.138,
+              70.0
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of R123 on F.Cu",
+            "xy_mm": [
+              10.925,
+              72.5
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Track [3V3] on F.Cu, length 0.8602 mm",
+            "xy_mm": [
+              13.45,
+              67.225
+            ]
+          },
+          {
+            "item": "Pad 2 [3V3] of Q_J2PRE on F.Cu",
+            "xy_mm": [
+              15.05,
+              67.938
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of D_SRB on B.Cu",
+            "xy_mm": [
+              22.35,
+              10.0
+            ]
+          },
+          {
+            "item": "Track [3V3] on B.Cu, length 0.4243 mm",
+            "xy_mm": [
+              20.287,
+              13.5
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of C54 on B.Cu",
+            "xy_mm": [
+              45.0,
+              81.775
+            ]
+          },
+          {
+            "item": "Pad 5 [3V3] of U15 on F.Cu",
+            "xy_mm": [
+              46.025,
+              81.138
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 4 [3V3] of U15 on F.Cu",
+            "xy_mm": [
+              45.138,
+              82.025
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of C54 on B.Cu",
+            "xy_mm": [
+              45.0,
+              81.775
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 16 [3V3] of U15 on F.Cu",
+            "xy_mm": [
+              46.025,
+              84.862
+            ]
+          },
+          {
+            "item": "Pad 4 [3V3] of U15 on F.Cu",
+            "xy_mm": [
+              45.138,
+              82.025
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 5 [3V3] of U15 on F.Cu",
+            "xy_mm": [
+              46.025,
+              81.138
+            ]
+          },
+          {
+            "item": "Track [3V3] on B.Cu, length 3.4234 mm",
+            "xy_mm": [
+              51.1,
+              79.4
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Track [3V3] on B.Cu, length 0.4243 mm",
+            "xy_mm": [
+              47.037,
+              13.5
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of R128 on B.Cu",
+            "xy_mm": [
+              42.0,
+              5.575
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of R45 on F.Cu",
+            "xy_mm": [
+              48.75,
+              69.925
+            ]
+          },
+          {
+            "item": "Track [3V3] on B.Cu, length 12.3822 mm",
+            "xy_mm": [
+              47.7,
+              72.6
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Track [3V3] on B.Cu, length 2.6000 mm",
+            "xy_mm": [
+              53.975,
+              72.0
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of R47 on F.Cu",
+            "xy_mm": [
+              53.0,
+              72.675
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of R32 on F.Cu",
+            "xy_mm": [
+              59.075,
+              29.0
+            ]
+          },
+          {
+            "item": "Track [3V3] on B.Cu, length 6.3655 mm",
+            "xy_mm": [
+              55.4,
+              23.225
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of R32 on F.Cu",
+            "xy_mm": [
+              59.075,
+              29.0
+            ]
+          },
+          {
+            "item": "Pad 2 [3V3] of L3 on F.Cu",
+            "xy_mm": [
+              69.3,
+              35.0
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 16 [3V3] of U5 on F.Cu",
+            "xy_mm": [
+              59.725,
+              58.863
+            ]
+          },
+          {
+            "item": "Track [3V3] on B.Cu, length 11.4490 mm",
+            "xy_mm": [
+              60.025,
+              56.1
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Track [3V3] on B.Cu, length 0.4243 mm",
+            "xy_mm": [
+              64.5,
+              21.925
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of R40 on F.Cu",
+            "xy_mm": [
+              75.325,
+              22.75
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 24 [3V3] of U50 on F.Cu",
+            "xy_mm": [
+              68.862,
+              87.575
+            ]
+          },
+          {
+            "item": "Track [3V3] on B.Cu, length 3.3526 mm",
+            "xy_mm": [
+              69.175,
+              87.2
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of R_SDG on F.Cu",
+            "xy_mm": [
+              70.75,
+              10.575
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of R137 on F.Cu",
+            "xy_mm": [
+              76.75,
+              9.175
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of R_SDG on F.Cu",
+            "xy_mm": [
+              70.75,
+              10.575
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of D_NC on F.Cu",
+            "xy_mm": [
+              70.5,
+              3.6
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of R156 on F.Cu",
+            "xy_mm": [
+              71.25,
+              86.075
+            ]
+          },
+          {
+            "item": "Track [3V3] on In2.Cu, length 10.6775 mm",
+            "xy_mm": [
+              72.35,
+              86.45
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of R137 on F.Cu",
+            "xy_mm": [
+              76.75,
+              9.175
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of R93 on F.Cu",
+            "xy_mm": [
+              82.175,
+              17.5
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Track [3V3] on B.Cu, length 4.6000 mm",
+            "xy_mm": [
+              79.425,
+              70.7
+            ]
+          },
+          {
+            "item": "Pad 3 [3V3] of U42 on F.Cu",
+            "xy_mm": [
+              79.5,
+              68.26
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 5 [3V3] of U9 on F.Cu",
+            "xy_mm": [
+              81.137,
+              56.95
+            ]
+          },
+          {
+            "item": "Track [3V3] on F.Cu, length 9.5525 mm",
+            "xy_mm": [
+              77.55,
+              59.85
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 5 [3V3] of U9 on F.Cu",
+            "xy_mm": [
+              81.137,
+              56.95
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of D_U9T on F.Cu",
+            "xy_mm": [
+              83.75,
+              52.6
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of R91 on F.Cu",
+            "xy_mm": [
+              81.925,
+              24.0
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of R40 on F.Cu",
+            "xy_mm": [
+              75.325,
+              22.75
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of R93 on F.Cu",
+            "xy_mm": [
+              82.175,
+              17.5
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of C_U47 on B.Cu",
+            "xy_mm": [
+              82.25,
+              20.025
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of C_U47 on B.Cu",
+            "xy_mm": [
+              82.25,
+              20.025
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of R91 on F.Cu",
+            "xy_mm": [
+              81.925,
+              24.0
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Track [3V3] on F.Cu, length 0.5858 mm",
+            "xy_mm": [
+              85.5,
+              83.825
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of R254 on F.Cu",
+            "xy_mm": [
+              87.075,
+              86.0
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of R263 on F.Cu",
+            "xy_mm": [
+              87.075,
+              88.25
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of R264 on F.Cu",
+            "xy_mm": [
+              87.075,
+              90.5
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of R254 on F.Cu",
+            "xy_mm": [
+              87.075,
+              86.0
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of R263 on F.Cu",
+            "xy_mm": [
+              87.075,
+              88.25
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of R274 on F.Cu",
+            "xy_mm": [
+              87.5,
+              94.325
+            ]
+          },
+          {
+            "item": "Track [3V3] on F.Cu, length 0.5483 mm",
+            "xy_mm": [
+              85.25,
+              94.325
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of C86 on B.Cu",
+            "xy_mm": [
+              87.5,
+              22.225
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of U40 on B.Cu",
+            "xy_mm": [
+              89.525,
+              22.0
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of C86 on B.Cu",
+            "xy_mm": [
+              87.5,
+              22.225
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of C_U47 on B.Cu",
+            "xy_mm": [
+              82.25,
+              20.025
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of R248 on F.Cu",
+            "xy_mm": [
+              88.0,
+              79.575
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of R249 on F.Cu",
+            "xy_mm": [
+              88.5,
+              83.325
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of R249 on F.Cu",
+            "xy_mm": [
+              88.5,
+              83.325
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of R254 on F.Cu",
+            "xy_mm": [
+              87.075,
+              86.0
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of R229 on F.Cu",
+            "xy_mm": [
+              91.175,
+              88.25
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of R263 on F.Cu",
+            "xy_mm": [
+              87.075,
+              88.25
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 6 [3V3] of U40 on B.Cu",
+            "xy_mm": [
+              92.475,
+              24.0
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of R90 on B.Cu",
+            "xy_mm": [
+              94.5,
+              24.825
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 10 [3V3] of U40 on B.Cu",
+            "xy_mm": [
+              92.475,
+              22.0
+            ]
+          },
+          {
+            "item": "Pad 6 [3V3] of U40 on B.Cu",
+            "xy_mm": [
+              92.475,
+              24.0
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 10 [3V3] of U40 on B.Cu",
+            "xy_mm": [
+              92.475,
+              22.0
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of U40 on B.Cu",
+            "xy_mm": [
+              89.525,
+              22.0
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of R174 on F.Cu",
+            "xy_mm": [
+              94.25,
+              76.325
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of R238 on F.Cu",
+            "xy_mm": [
+              98.575,
+              78.5
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of U51 on F.Cu",
+            "xy_mm": [
+              95.137,
+              87.575
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of C158 on B.Cu",
+            "xy_mm": [
+              95.475,
+              87.5
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of U51 on F.Cu",
+            "xy_mm": [
+              95.137,
+              87.575
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of R228 on F.Cu",
+            "xy_mm": [
+              92.75,
+              84.425
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of U51 on F.Cu",
+            "xy_mm": [
+              95.137,
+              87.575
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of R229 on F.Cu",
+            "xy_mm": [
+              91.175,
+              88.25
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of U51 on F.Cu",
+            "xy_mm": [
+              95.137,
+              87.575
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of FB6 on B.Cu",
+            "xy_mm": [
+              94.787,
+              92.0
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of C122 on B.Cu",
+            "xy_mm": [
+              95.275,
+              71.0
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of R174 on F.Cu",
+            "xy_mm": [
+              94.25,
+              76.325
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of C122 on B.Cu",
+            "xy_mm": [
+              95.275,
+              71.0
+            ]
+          },
+          {
+            "item": "Pad 16 [3V3] of U6 on F.Cu",
+            "xy_mm": [
+              95.725,
+              58.863
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of C158 on B.Cu",
+            "xy_mm": [
+              95.475,
+              87.5
+            ]
+          },
+          {
+            "item": "Pad 24 [3V3] of U51 on F.Cu",
+            "xy_mm": [
+              100.863,
+              87.575
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of R_PAUSE on B.Cu",
+            "xy_mm": [
+              98.75,
+              15.075
+            ]
+          },
+          {
+            "item": "Pad 2 [3V3] of D_K1B on B.Cu",
+            "xy_mm": [
+              101.25,
+              16.1
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of R_PAUSE on B.Cu",
+            "xy_mm": [
+              98.75,
+              15.075
+            ]
+          },
+          {
+            "item": "Pad 10 [3V3] of U40 on B.Cu",
+            "xy_mm": [
+              92.475,
+              22.0
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 24 [3V3] of U51 on F.Cu",
+            "xy_mm": [
+              100.863,
+              87.575
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of R269 on F.Cu",
+            "xy_mm": [
+              104.825,
+              83.0
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of R239 on F.Cu",
+            "xy_mm": [
+              102.325,
+              78.5
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of R238 on F.Cu",
+            "xy_mm": [
+              98.575,
+              78.5
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of R92 on B.Cu",
+            "xy_mm": [
+              102.575,
+              25.75
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of R90 on B.Cu",
+            "xy_mm": [
+              94.5,
+              24.825
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of R269 on F.Cu",
+            "xy_mm": [
+              104.825,
+              83.0
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of R258 on F.Cu",
+            "xy_mm": [
+              104.825,
+              80.75
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of R258 on F.Cu",
+            "xy_mm": [
+              104.825,
+              80.75
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of R259 on F.Cu",
+            "xy_mm": [
+              106.075,
+              78.5
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of R258 on F.Cu",
+            "xy_mm": [
+              104.825,
+              80.75
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of R239 on F.Cu",
+            "xy_mm": [
+              102.325,
+              78.5
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of R259 on F.Cu",
+            "xy_mm": [
+              106.075,
+              78.5
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of R268 on F.Cu",
+            "xy_mm": [
+              106.575,
+              75.5
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of R259 on F.Cu",
+            "xy_mm": [
+              106.075,
+              78.5
+            ]
+          },
+          {
+            "item": "Pad 2 [3V3] of D36 on B.Cu",
+            "xy_mm": [
+              111.85,
+              78.5
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of R183 on F.Cu",
+            "xy_mm": [
+              108.0,
+              73.325
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of R268 on F.Cu",
+            "xy_mm": [
+              106.575,
+              75.5
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of FB8 on B.Cu",
+            "xy_mm": [
+              111.0,
+              15.287
+            ]
+          },
+          {
+            "item": "Pad 2 [3V3] of D_K1B on B.Cu",
+            "xy_mm": [
+              101.25,
+              16.1
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 2 [3V3] of D36 on B.Cu",
+            "xy_mm": [
+              111.85,
+              78.5
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of R_SRP on F.Cu",
+            "xy_mm": [
+              113.75,
+              80.825
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of R25 on F.Cu",
+            "xy_mm": [
+              112.925,
+              52.75
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of C6 on B.Cu",
+            "xy_mm": [
+              122.275,
+              40.0
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of R13 on B.Cu",
+            "xy_mm": [
+              115.175,
+              21.0
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of FB8 on B.Cu",
+            "xy_mm": [
+              111.0,
+              15.287
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of R13 on B.Cu",
+            "xy_mm": [
+              115.175,
+              21.0
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of FB15 on B.Cu",
+            "xy_mm": [
+              124.5,
+              15.287
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of R61 on F.Cu",
+            "xy_mm": [
+              118.5,
+              89.575
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of R_SRP on F.Cu",
+            "xy_mm": [
+              113.75,
+              80.825
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of C6 on B.Cu",
+            "xy_mm": [
+              122.275,
+              40.0
+            ]
+          },
+          {
+            "item": "Pad 6 [3V3] of U2 on F.Cu",
+            "xy_mm": [
+              123.2,
+              39.6
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 6 [3V3] of U2 on F.Cu",
+            "xy_mm": [
+              123.2,
+              39.6
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of C16 on B.Cu",
+            "xy_mm": [
+              129.275,
+              49.5
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of FB15 on B.Cu",
+            "xy_mm": [
+              124.5,
+              15.287
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of FB11 on B.Cu",
+            "xy_mm": [
+              128.25,
+              22.537
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of C16 on B.Cu",
+            "xy_mm": [
+              129.275,
+              49.5
+            ]
+          },
+          {
+            "item": "Pad 17 [3V3] of U3 on F.Cu",
+            "xy_mm": [
+              129.95,
+              49.25
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 17 [3V3] of U3 on F.Cu",
+            "xy_mm": [
+              129.95,
+              49.25
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of TP44 on B.Cu",
+            "xy_mm": [
+              143.0,
+              38.75
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of R49 on B.Cu",
+            "xy_mm": [
+              134.425,
+              26.5
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of FB11 on B.Cu",
+            "xy_mm": [
+              128.25,
+              22.537
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of R49 on B.Cu",
+            "xy_mm": [
+              134.425,
+              26.5
+            ]
+          },
+          {
+            "item": "Pad 1 [3V3] of TP44 on B.Cu",
+            "xy_mm": [
+              143.0,
+              38.75
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of FB12 on B.Cu",
+            "xy_mm": [
+              148.213,
+              67.0
+            ]
+          },
+          {
+            "item": "Pad 5 [3V3] of U38 on B.Cu",
+            "xy_mm": [
+              143.137,
+              81.0
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [3V3] of FB12 on B.Cu",
+            "xy_mm": [
+              148.213,
+              67.0
+            ]
+          },
+          {
+            "item": "Pad 17 [3V3] of U3 on F.Cu",
+            "xy_mm": [
+              129.95,
+              49.25
+            ]
+          }
+        ],
+        "net": "3V3"
+      },
+      {
+        "ends": [
+          {
+            "item": "Track [I2C_SYS_SDA] on F.Cu, length 0.5500 mm",
+            "xy_mm": [
+              36.63,
+              47.75
+            ]
+          },
+          {
+            "item": "Pad 2 [I2C_SYS_SDA] of R211 on F.Cu",
+            "xy_mm": [
+              13.25,
+              62.175
+            ]
+          }
+        ],
+        "net": "I2C_SYS_SDA"
+      },
+      {
+        "ends": [
+          {
+            "item": "Track [I2C_SYS_SDA] on F.Cu, length 1.0450 mm",
+            "xy_mm": [
+              37.675,
+              47.75
+            ]
+          },
+          {
+            "item": "Pad 23 [I2C_SYS_SDA] of U44 on B.Cu",
+            "xy_mm": [
+              46.862,
+              48.075
+            ]
+          }
+        ],
+        "net": "I2C_SYS_SDA"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 15 [I2C_SYS_SDA] of U45 on B.Cu",
+            "xy_mm": [
+              46.862,
+              39.375
+            ]
+          },
+          {
+            "item": "Pad 23 [I2C_SYS_SDA] of U44 on B.Cu",
+            "xy_mm": [
+              46.862,
+              48.075
+            ]
+          }
+        ],
+        "net": "I2C_SYS_SDA"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 15 [I2C_SYS_SDA] of U47 on F.Cu",
+            "xy_mm": [
+              52.875,
+              48.863
+            ]
+          },
+          {
+            "item": "Pad 23 [I2C_SYS_SDA] of U44 on B.Cu",
+            "xy_mm": [
+              46.862,
+              48.075
+            ]
+          }
+        ],
+        "net": "I2C_SYS_SDA"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 15 [I2C_SYS_SDA] of U47 on F.Cu",
+            "xy_mm": [
+              52.875,
+              48.863
+            ]
+          },
+          {
+            "item": "Pad 7 [I2C_SYS_SDA] of U15 on F.Cu",
+            "xy_mm": [
+              47.325,
+              81.138
+            ]
+          }
+        ],
+        "net": "I2C_SYS_SDA"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 4 [I2C_SYS_SDA] of U2 on F.Cu",
+            "xy_mm": [
+              118.8,
+              40.1
+            ]
+          },
+          {
+            "item": "Pad 1 [I2C_SYS_SDA] of TP34 on B.Cu",
+            "xy_mm": [
+              133.25,
+              40.5
+            ]
+          }
+        ],
+        "net": "I2C_SYS_SDA"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 4 [I2C_SYS_SDA] of U2 on F.Cu",
+            "xy_mm": [
+              118.8,
+              40.1
+            ]
+          },
+          {
+            "item": "Pad 15 [I2C_SYS_SDA] of U47 on F.Cu",
+            "xy_mm": [
+              52.875,
+              48.863
+            ]
+          }
+        ],
+        "net": "I2C_SYS_SDA"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [I2C_SYS_SDA] of TP34 on B.Cu",
+            "xy_mm": [
+              133.25,
+              40.5
+            ]
+          },
+          {
+            "item": "Track [I2C_SYS_SDA] on F.Cu, length 0.3430 mm",
+            "xy_mm": [
+              130.693,
+              49.709
+            ]
+          }
+        ],
+        "net": "I2C_SYS_SDA"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 43 [I2C_SYS_SCL] of U20M on F.Cu",
+            "xy_mm": [
+              37.675,
+              48.25
+            ]
+          },
+          {
+            "item": "Pad 2 [I2C_SYS_SCL] of R212 on F.Cu",
+            "xy_mm": [
+              9.575,
+              53.75
+            ]
+          }
+        ],
+        "net": "I2C_SYS_SCL"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 6 [I2C_SYS_SCL] of U15 on F.Cu",
+            "xy_mm": [
+              46.675,
+              81.138
+            ]
+          },
+          {
+            "item": "Pad 22 [I2C_SYS_SCL] of U44 on B.Cu",
+            "xy_mm": [
+              46.862,
+              48.725
+            ]
+          }
+        ],
+        "net": "I2C_SYS_SCL"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 22 [I2C_SYS_SCL] of U44 on B.Cu",
+            "xy_mm": [
+              46.862,
+              48.725
+            ]
+          },
+          {
+            "item": "Pad 14 [I2C_SYS_SCL] of U45 on B.Cu",
+            "xy_mm": [
+              46.862,
+              40.025
+            ]
+          }
+        ],
+        "net": "I2C_SYS_SCL"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 22 [I2C_SYS_SCL] of U44 on B.Cu",
+            "xy_mm": [
+              46.862,
+              48.725
+            ]
+          },
+          {
+            "item": "Pad 43 [I2C_SYS_SCL] of U20M on F.Cu",
+            "xy_mm": [
+              37.675,
+              48.25
+            ]
+          }
+        ],
+        "net": "I2C_SYS_SCL"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 14 [I2C_SYS_SCL] of U47 on F.Cu",
+            "xy_mm": [
+              53.525,
+              48.863
+            ]
+          },
+          {
+            "item": "Pad 22 [I2C_SYS_SCL] of U44 on B.Cu",
+            "xy_mm": [
+              46.862,
+              48.725
+            ]
+          }
+        ],
+        "net": "I2C_SYS_SCL"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 14 [I2C_SYS_SCL] of U47 on F.Cu",
+            "xy_mm": [
+              53.525,
+              48.863
+            ]
+          },
+          {
+            "item": "Pad 5 [I2C_SYS_SCL] of U2 on F.Cu",
+            "xy_mm": [
+              118.8,
+              39.6
+            ]
+          }
+        ],
+        "net": "I2C_SYS_SCL"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 5 [I2C_SYS_SCL] of U2 on F.Cu",
+            "xy_mm": [
+              118.8,
+              39.6
+            ]
+          },
+          {
+            "item": "Track [I2C_SYS_SCL] on F.Cu, length 0.6950 mm",
+            "xy_mm": [
+              129.95,
+              50.25
+            ]
+          }
+        ],
+        "net": "I2C_SYS_SCL"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [I2C_SYS_SCL] of TP35 on B.Cu",
+            "xy_mm": [
+              136.5,
+              40.5
+            ]
+          },
+          {
+            "item": "Via [I2C_SYS_SCL] on F.Cu - B.Cu",
+            "xy_mm": [
+              131.616,
+              50.274
+            ]
+          }
+        ],
+        "net": "I2C_SYS_SCL"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 11 [PMON_NALERT] of U45 on B.Cu",
+            "xy_mm": [
+              46.862,
+              41.975
+            ]
+          },
+          {
+            "item": "Pad 2 [PMON_NALERT] of R210 on B.Cu",
+            "xy_mm": [
+              64.5,
+              23.575
+            ]
+          }
+        ],
+        "net": "PMON_NALERT"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 2 [PMON_NALERT] of R210 on B.Cu",
+            "xy_mm": [
+              64.5,
+              23.575
+            ]
+          },
+          {
+            "item": "Pad 3 [PMON_NALERT] of U2 on F.Cu",
+            "xy_mm": [
+              118.8,
+              40.6
+            ]
+          }
+        ],
+        "net": "PMON_NALERT"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [VBAT_SENSE] of C10 on F.Cu",
+            "xy_mm": [
+              22.025,
+              39.0
+            ]
+          },
+          {
+            "item": "Pad 2 [VBAT_SENSE] of R11 on F.Cu",
+            "xy_mm": [
+              25.825,
+              37.25
+            ]
+          }
+        ],
+        "net": "VBAT_SENSE"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [VBAT_SENSE] of R12 on F.Cu",
+            "xy_mm": [
+              22.325,
+              41.25
+            ]
+          },
+          {
+            "item": "Pad 1 [VBAT_SENSE] of C10 on F.Cu",
+            "xy_mm": [
+              22.025,
+              39.0
+            ]
+          }
+        ],
+        "net": "VBAT_SENSE"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 2 [VBAT_SENSE] of R11 on F.Cu",
+            "xy_mm": [
+              25.825,
+              37.25
+            ]
+          },
+          {
+            "item": "Via [VBAT_SENSE] on F.Cu - B.Cu",
+            "xy_mm": [
+              26.819,
+              38.477
+            ]
+          }
+        ],
+        "net": "VBAT_SENSE"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [CHG_F] of D2 on F.Cu",
+            "xy_mm": [
+              147.85,
+              41.0
+            ]
+          },
+          {
+            "item": "Pad 2 [CHG_F] of F_CHG on F.Cu",
+            "xy_mm": [
+              152.455,
+              36.5
+            ]
+          }
+        ],
+        "net": "CHG_F"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 2 [CHG_F] of Q3 on F.Cu",
+            "xy_mm": [
+              151.26,
+              48.0
+            ]
+          },
+          {
+            "item": "Pad 1 [CHG_F] of D2 on F.Cu",
+            "xy_mm": [
+              147.85,
+              41.0
+            ]
+          }
+        ],
+        "net": "CHG_F"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [Q3_G] of R14 on F.Cu",
+            "xy_mm": [
+              141.075,
+              50.75
+            ]
+          },
+          {
+            "item": "Pad 1 [Q3_G] of Q3 on F.Cu",
+            "xy_mm": [
+              144.96,
+              50.28
+            ]
+          }
+        ],
+        "net": "Q3_G"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 2 [Q3_G] of D3 on F.Cu",
+            "xy_mm": [
+              141.15,
+              53.25
+            ]
+          },
+          {
+            "item": "Pad 1 [Q3_G] of R14 on F.Cu",
+            "xy_mm": [
+              141.075,
+              50.75
+            ]
+          }
+        ],
+        "net": "Q3_G"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [CHG_VIN] of Q4 on F.Cu",
+            "xy_mm": [
+              135.56,
+              47.975
+            ]
+          },
+          {
+            "item": "Pad 1 [CHG_VIN] of D3 on F.Cu",
+            "xy_mm": [
+              137.85,
+              53.25
+            ]
+          }
+        ],
+        "net": "CHG_VIN"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [CHG_VIN] of Q4 on F.Cu",
+            "xy_mm": [
+              135.56,
+              47.975
+            ]
+          },
+          {
+            "item": "Pad 1 [CHG_VIN] of U3 on F.Cu",
+            "xy_mm": [
+              126.05,
+              51.75
+            ]
+          }
+        ],
+        "net": "CHG_VIN"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 2 [CHG_VIN] of Q4 on F.Cu",
+            "xy_mm": [
+              135.56,
+              47.325
+            ]
+          },
+          {
+            "item": "Pad 3 [CHG_VIN] of Q4 on F.Cu",
+            "xy_mm": [
+              135.56,
+              46.675
+            ]
+          }
+        ],
+        "net": "CHG_VIN"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 2 [CHG_VIN] of Q4 on F.Cu",
+            "xy_mm": [
+              135.56,
+              47.325
+            ]
+          },
+          {
+            "item": "Pad 1 [CHG_VIN] of Q4 on F.Cu",
+            "xy_mm": [
+              135.56,
+              47.975
+            ]
+          }
+        ],
+        "net": "CHG_VIN"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 3 [CHG_VIN] of Q4 on F.Cu",
+            "xy_mm": [
+              135.56,
+              46.675
+            ]
+          },
+          {
+            "item": "Pad 1 [CHG_VIN] of R26 on F.Cu",
+            "xy_mm": [
+              138.5,
+              40.825
+            ]
+          }
+        ],
+        "net": "CHG_VIN"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [CHG_VIN] of R26 on F.Cu",
+            "xy_mm": [
+              138.5,
+              40.825
+            ]
+          },
+          {
+            "item": "Pad 1 [CHG_VIN] of C11 on F.Cu",
+            "xy_mm": [
+              141.5,
+              43.225
+            ]
+          }
+        ],
+        "net": "CHG_VIN"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [CHG_VIN] of C11 on F.Cu",
+            "xy_mm": [
+              141.5,
+              43.225
+            ]
+          },
+          {
+            "item": "Pad 1 [CHG_VIN] of C12 on F.Cu",
+            "xy_mm": [
+              144.5,
+              43.025
+            ]
+          }
+        ],
+        "net": "CHG_VIN"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [CHG_VIN] of C12 on F.Cu",
+            "xy_mm": [
+              144.5,
+              43.025
+            ]
+          },
+          {
+            "item": "Pad 3 [CHG_VIN] of Q3 on F.Cu",
+            "xy_mm": [
+              144.96,
+              45.72
+            ]
+          }
+        ],
+        "net": "CHG_VIN"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 2 [U3_INFET] of U3 on F.Cu",
+            "xy_mm": [
+              126.05,
+              51.25
+            ]
+          },
+          {
+            "item": "Pad 4 [U3_INFET] of Q4 on F.Cu",
+            "xy_mm": [
+              135.56,
+              46.025
+            ]
+          }
+        ],
+        "net": "U3_INFET"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 5 [U3_CLP] of Q4 on F.Cu",
+            "xy_mm": [
+              137.6,
+              47.0
+            ]
+          },
+          {
+            "item": "Pad 3 [U3_CLP] of U3 on F.Cu",
+            "xy_mm": [
+              126.05,
+              50.75
+            ]
+          }
+        ],
+        "net": "U3_CLP"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [U3_CLP] of R_SNSI on F.Cu",
+            "xy_mm": [
+              141.0,
+              45.537
+            ]
+          },
+          {
+            "item": "Pad 5 [U3_CLP] of Q4 on F.Cu",
+            "xy_mm": [
+              137.6,
+              47.0
+            ]
+          }
+        ],
+        "net": "U3_CLP"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [VSYS] of C34 on B.Cu",
+            "xy_mm": [
+              48.025,
+              30.75
+            ]
+          },
+          {
+            "item": "Pad 1 [VSYS] of C33 on B.Cu",
+            "xy_mm": [
+              43.725,
+              36.0
+            ]
+          }
+        ],
+        "net": "VSYS"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [VSYS] of C34 on B.Cu",
+            "xy_mm": [
+              48.025,
+              30.75
+            ]
+          },
+          {
+            "item": "Pad 8 [VSYS] of U10 on F.Cu",
+            "xy_mm": [
+              54.85,
+              33.3
+            ]
+          }
+        ],
+        "net": "VSYS"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [VSYS] of C35 on B.Cu",
+            "xy_mm": [
+              49.025,
+              45.25
+            ]
+          },
+          {
+            "item": "Pad 1 [VSYS] of C33 on B.Cu",
+            "xy_mm": [
+              43.725,
+              36.0
+            ]
+          }
+        ],
+        "net": "VSYS"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [VSYS] of C32 on B.Cu",
+            "xy_mm": [
+              50.75,
+              23.725
+            ]
+          },
+          {
+            "item": "Pad 1 [VSYS] of C34 on B.Cu",
+            "xy_mm": [
+              48.025,
+              30.75
+            ]
+          }
+        ],
+        "net": "VSYS"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 8 [VSYS] of U10 on F.Cu",
+            "xy_mm": [
+              54.85,
+              33.3
+            ]
+          },
+          {
+            "item": "Pad 12 [VSYS] of U10 on F.Cu",
+            "xy_mm": [
+              54.85,
+              35.7
+            ]
+          }
+        ],
+        "net": "VSYS"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 8 [VSYS] of U10 on F.Cu",
+            "xy_mm": [
+              54.85,
+              33.3
+            ]
+          },
+          {
+            "item": "Pad 1 [VSYS] of C42 on B.Cu",
+            "xy_mm": [
+              64.525,
+              28.75
+            ]
+          }
+        ],
+        "net": "VSYS"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [VSYS] of C42 on B.Cu",
+            "xy_mm": [
+              64.525,
+              28.75
+            ]
+          },
+          {
+            "item": "Pad 1 [VSYS] of C46 on B.Cu",
+            "xy_mm": [
+              64.525,
+              26.0
+            ]
+          }
+        ],
+        "net": "VSYS"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 5 [VSYS] of U11 on F.Cu",
+            "xy_mm": [
+              67.638,
+              29.5
+            ]
+          },
+          {
+            "item": "Pad 1 [VSYS] of C42 on B.Cu",
+            "xy_mm": [
+              64.525,
+              28.75
+            ]
+          }
+        ],
+        "net": "VSYS"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 5 [VSYS] of U11 on F.Cu",
+            "xy_mm": [
+              67.638,
+              29.5
+            ]
+          },
+          {
+            "item": "Pad 5 [VSYS] of U12 on F.Cu",
+            "xy_mm": [
+              73.638,
+              29.5
+            ]
+          }
+        ],
+        "net": "VSYS"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 5 [VSYS] of U12 on F.Cu",
+            "xy_mm": [
+              73.638,
+              29.5
+            ]
+          },
+          {
+            "item": "Via [VSYS] on F.Cu - B.Cu",
+            "xy_mm": [
+              118.6,
+              54.0
+            ]
+          }
+        ],
+        "net": "VSYS"
+      },
+      {
+        "ends": [
+          {
+            "item": "Track [VSYS] on B.Cu, length 1.0250 mm",
+            "xy_mm": [
+              125.25,
+              53.525
+            ]
+          },
+          {
+            "item": "Via [VSYS] on F.Cu - B.Cu",
+            "xy_mm": [
+              124.55,
+              52.25
+            ]
+          }
+        ],
+        "net": "VSYS"
+      },
+      {
+        "ends": [
+          {
+            "item": "Via [VSYS] on F.Cu - B.Cu",
+            "xy_mm": [
+              125.275,
+              46.575
+            ]
+          },
+          {
+            "item": "Pad 1 [VSYS] of TP42 on B.Cu",
+            "xy_mm": [
+              135.5,
+              17.5
+            ]
+          }
+        ],
+        "net": "VSYS"
+      },
+      {
+        "ends": [
+          {
+            "item": "Track [VSYS] on F.Cu, length 1.9250 mm",
+            "xy_mm": [
+              126.05,
+              49.75
+            ]
+          },
+          {
+            "item": "Track [VSYS] on F.Cu, length 1.5000 mm",
+            "xy_mm": [
+              126.05,
+              50.25
+            ]
+          }
+        ],
+        "net": "VSYS"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 4 [U3_BATFET] of Q5 on F.Cu",
+            "xy_mm": [
+              116.56,
+              53.025
+            ]
+          },
+          {
+            "item": "Pad 6 [U3_BATFET] of U3 on F.Cu",
+            "xy_mm": [
+              126.05,
+              49.25
+            ]
+          }
+        ],
+        "net": "U3_BATFET"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 2 [U3_CSP] of L1 on F.Cu",
+            "xy_mm": [
+              129.655,
+              57.5
+            ]
+          },
+          {
+            "item": "Pad 7 [U3_CSP] of U3 on F.Cu",
+            "xy_mm": [
+              126.05,
+              48.75
+            ]
+          }
+        ],
+        "net": "U3_CSP"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [U3_CSP] of R_SNSB on F.Cu",
+            "xy_mm": [
+              133.5,
+              56.037
+            ]
+          },
+          {
+            "item": "Pad 2 [U3_CSP] of L1 on F.Cu",
+            "xy_mm": [
+              129.655,
+              57.5
+            ]
+          }
+        ],
+        "net": "U3_CSP"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 2 [U3_SW] of C13 on F.Cu",
+            "xy_mm": [
+              122.25,
+              48.225
+            ]
+          },
+          {
+            "item": "Track [U3_SW] on F.Cu, length 1.3963 mm",
+            "xy_mm": [
+              127.25,
+              46.855
+            ]
+          }
+        ],
+        "net": "U3_SW"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 1 [U3_SW] of L1 on F.Cu",
+            "xy_mm": [
+              126.345,
+              57.5
+            ]
+          },
+          {
+            "item": "Track [U3_SW] on F.Cu, length 0.6950 mm",
+            "xy_mm": [
+              127.25,
+              47.55
+            ]
+          }
+        ],
+        "net": "U3_SW"
+      },
+      {
+        "ends": [
+          {
+            "item": "Pad 11 [U3_SW] of U3 on F.Cu",
+            "xy_mm": [
+              127.75,
+              47.55
+            ]
+          },
+          {
+            "item": "Track [U3_SW] on F.Cu, length 0.6950 mm",
+            "xy_mm": [
+              127.25,
+              47.55
+            ]
+          }
+        ],
+        "net": "U3_SW"
+      }
+    ],
+    "unrouted_nets": [
+      "3V3",
+      "3V3A",
+      "BTN_3V3",
+      "BUS5V_NFLT",
+      "BUS_5V",
+      "CHG_F",
+      "CHG_GATE",
+      "CHG_IN",
+      "CHG_NSMBALERT",
+      "CHG_TEMP_OK",
+      "CHG_VIN",
+      "CHG_VIN_DIV",
+      "CHS_HTR_EN",
+      "CHS_HTR_EN_G",
+      "CHS_HTR_F",
+      "CHS_HTR_NFLT",
+      "CHS_HTR_P",
+      "CH_N0",
+      "CH_N1",
+      "CH_N2",
+      "CH_N3",
+      "CH_N4",
+      "CH_N4A",
+      "CH_N5",
+      "CH_N7",
+      "CH_N8",
+      "CH_N8A",
+      "COIL_RTN",
+      "EN_SRC",
+      "EN_SYS",
+      "GND",
+      "HANDS_LAMP_K",
+      "HANDS_LAMP_P",
+      "HEAD_HTR_EN",
+      "HEAD_HTR_EN_G",
+      "HEAD_HTR_F",
+      "HEAD_HTR_NFLT",
+      "HEAD_HTR_P",
+      "HEAD_LOOP_OK_RB",
+      "HEAD_LOOP_OUT",
+      "HEAD_LOOP_RET",
+      "HEAD_PWR_E",
+      "HEAD_PWR_EN",
+      "HEAD_PWR_EN_G",
+      "HEAD_PWR_F",
+      "HEAD_PWR_NFLT",
+      "HEAD_PWR_P",
+      "I2C_SYS_SCL",
+      "I2C_SYS_SDA",
+      "LAMP_REARM_K",
+      "LIDAR_EN_G",
+      "LOOP_F",
+      "LOOP_SNS",
+      "LOOP_SRC",
+      "LOOP_VHI",
+      "LOOP_VLO",
+      "PACK_NTC",
+      "PACK_PRES_N",
+      "PLUG_LINK",
+      "PMON_NALERT",
+      "PSW_SRC",
+      "Q1_G",
+      "Q2_G",
+      "Q3_G",
+      "REARM_BTN_RAW",
+      "REARM_SET_RAW",
+      "REARM_SET_SRC",
+      "U10_CBOOT",
+      "U10_FB",
+      "U10_RBOOT",
+      "U10_RT",
+      "U10_SW",
+      "U10_VCC",
+      "U11_CB",
+      "U11_FB",
+      "U11_SW",
+      "U12_CB",
+      "U12_FB",
+      "U12_SW",
+      "U13_DVDT",
+      "U13_EN",
+      "U13_ILM",
+      "U13_ITMR",
+      "U16_DVDT",
+      "U16_ILM",
+      "U16_ITMR",
+      "U17_DVDT",
+      "U17_ILM",
+      "U17_ITMR",
+      "U18_DVDT",
+      "U18_ILM",
+      "U18_ITMR",
+      "U19_DVDT",
+      "U19_ILM",
+      "U19_ITMR",
+      "U1_GATE",
+      "U1_OV",
+      "U1_OVT",
+      "U1_SLEW",
+      "U1_VCAP",
+      "U20_A",
+      "U20_K",
+      "U21_A",
+      "U25_ILIM",
+      "U2_INN",
+      "U2_INP",
+      "U3_BATFET",
+      "U3_BOOST",
+      "U3_CELLS0",
+      "U3_CELLS1",
+      "U3_CLP",
+      "U3_CSP",
+      "U3_INFET",
+      "U3_INTVCC",
+      "U3_NTC",
+      "U3_NTCBIAS",
+      "U3_RT",
+      "U3_SW",
+      "U3_V2P5",
+      "U3_VC",
+      "U3_VCC",
+      "V12_AUX",
+      "V12_LIDAR",
+      "V12_LIDAR_EN",
+      "V12_LIDAR_NFLT",
+      "V5_AUX",
+      "V5_BUCK",
+      "V5_CM5",
+      "V5_CM5_NFLT",
+      "V5_CM5_OFF_REQ",
+      "V5_PGOOD",
+      "V5_SENSE",
+      "VBAT_PROT",
+      "VBAT_RAW",
+      "VBAT_SENSE",
+      "VBAT_SW",
+      "VREF_3V0",
+      "VSYS",
+      "WDG_FAULT"
+    ],
+    "waived": 0,
+    "warnings": 230
+  },
+  "erc": {
+    "by_type": {},
+    "error_items": [],
+    "errors": 0,
+    "excluded": 0,
+    "report": "reports/erc.json",
+    "waived": 0,
+    "warnings": 0
+  },
+  "fail_reasons": [
+    "DRC: 1260 unconnected item(s) (499 listed by KiCad) on nets: 3V3, 3V3A, BTN_3V3, BUS5V_NFLT, BUS_5V, CHG_F, CHG_GATE, CHG_IN, CHG_NSMBALERT, CHG_TEMP_OK, CHG_VIN, CHG_VIN_DIV, CHS_HTR_EN, CHS_HTR_EN_G, CHS_HTR_F, CHS_HTR_NFLT, CHS_HTR_P, CH_N0, CH_N1, CH_N2, CH_N3, CH_N4, CH_N4A, CH_N5, CH_N7, CH_N8, CH_N8A, COIL_RTN, EN_SRC, EN_SYS"
+  ],
+  "notes": [
+    "J_MODE pad 'MP' has no pin in symbol Connector_Generic:Conn_01x06 (left without net)",
+    "J_MODE pad 'MP' has no pin in symbol Connector_Generic:Conn_01x06 (left without net)",
+    "J_ESTOP pad 'MP' has no pin in symbol Connector_Generic:Conn_01x04 (left without net)",
+    "J_ESTOP pad 'MP' has no pin in symbol Connector_Generic:Conn_01x04 (left without net)",
+    "J_HANDS pad 'MP' has no pin in symbol Connector_Generic:Conn_01x05 (left without net)",
+    "J_HANDS pad 'MP' has no pin in symbol Connector_Generic:Conn_01x05 (left without net)",
+    "J_COVER pad 'MP' has no pin in symbol Connector_Generic:Conn_01x03 (left without net)",
+    "J_COVER pad 'MP' has no pin in symbol Connector_Generic:Conn_01x03 (left without net)",
+    "J_DOCK pad 'MP' has no pin in symbol Connector_Generic:Conn_01x03 (left without net)",
+    "J_DOCK pad 'MP' has no pin in symbol Connector_Generic:Conn_01x03 (left without net)",
+    "J_BUMP_L pad 'MP' has no pin in symbol Connector_Generic:Conn_01x02 (left without net)",
+    "J_BUMP_L pad 'MP' has no pin in symbol Connector_Generic:Conn_01x02 (left without net)",
+    "J_BUMP_R pad 'MP' has no pin in symbol Connector_Generic:Conn_01x02 (left without net)",
+    "J_BUMP_R pad 'MP' has no pin in symbol Connector_Generic:Conn_01x02 (left without net)",
+    "J_BTN pad 'MP' has no pin in symbol Connector_Generic:Conn_01x08 (left without net)",
+    "J_BTN pad 'MP' has no pin in symbol Connector_Generic:Conn_01x08 (left without net)",
+    "JP1: 3D envelope uses the default height 1.0 mm (give height=)",
+    "W1: 3D envelope uses the default height 1.0 mm (give height=)",
+    "JP2: 3D envelope uses the default height 1.0 mm (give height=)",
+    "NT1: 3D envelope uses the default height 1.0 mm (give height=)",
+    "escape: U3.1 [CHG_VIN]: no legal escape position (left to the autorouter)",
+    "escape: U3.2 [U3_INFET]: no legal escape position (left to the autorouter)",
+    "escape: U3.3 [U3_CLP]: no legal escape position (left to the autorouter)",
+    "escape: U3.4 [VSYS]: no legal escape position inside its own plane polygon (left to the autorouter)",
+    "escape: U3.5 [VSYS]: no legal escape position inside its own plane polygon (left to the autorouter)",
+    "escape: U3.6 [U3_BATFET]: no legal escape position (left to the autorouter)",
+    "escape: U3.7 [U3_CSP]: no legal escape position (left to the autorouter)",
+    "escape: U3.8 [VBAT_SW]: no legal escape position inside its own plane polygon (left to the autorouter)",
+    "escape: U3.17 [3V3]: no legal escape position inside its own plane polygon (left to the autorouter)",
+    "escape: U3.16 [U3_V2P5]: no legal escape position (left to the autorouter)",
+    "escape: U3.28 [GND]: no legal escape position inside its own plane polygon (left to the autorouter)",
+    "escape: U3.27 [U3_CELLS1]: no legal escape position (left to the autorouter)",
+    "escape: U3.26 [U3_CELLS0]: no legal escape position (left to the autorouter)",
+    "escape: U3.25 [U3_VC]: no legal escape position (left to the autorouter)",
+    "escape: U3.24 [GND]: no legal escape position inside its own plane polygon (left to the autorouter)",
+    "escape: U3.23 [U3_RT]: no legal escape position (left to the autorouter)",
+    "escape: U3.9 [VBAT_SW]: no legal escape position inside its own plane polygon (left to the autorouter)",
+    "escape: U3.11 [U3_SW]: no legal escape position (left to the autorouter)",
+    "escape: U3.12 [GND]: no legal escape position inside its own plane polygon (left to the autorouter)",
+    "escape: U3.13 [GND]: no legal escape position inside its own plane polygon (left to the autorouter)",
+    "escape: U3.14 [U3_BOOST]: no legal escape position (left to the autorouter)",
+    "escape: U8.1 [VBAT_SW]: no legal escape position inside its own plane polygon (left to the autorouter)",
+    "escape: U8.2 [VBAT_SW]: no legal escape position inside its own plane polygon (left to the autorouter)",
+    "escape: U8.3 [VBAT_SW]: no legal escape position inside its own plane polygon (left to the autorouter)",
+    "escape: U8.4 [GND]: no legal escape position inside its own plane polygon (left to the autorouter)",
+    "escape: U8.5 [GND]: no legal escape position inside its own plane polygon (left to the autorouter)",
+    "escape: U8.17 [VMOT]: no legal escape position inside its own plane polygon (left to the autorouter)",
+    "escape: U8.15 [U8_DVDT]: no legal escape position (left to the autorouter)",
+    "escape: U8.14 [GND]: no legal escape position inside its own plane polygon (left to the autorouter)",
+    "escape: U8.13 [VMOT_PG]: no legal escape position (left to the autorouter)",
+    "escape: U20M.1 [3V3]: no legal escape position inside its own plane polygon (left to the autorouter)",
+    "escape: U20M.2 [WDG_OK_RB]: no legal escape position (left to the autorouter)",
+    "escape: U20M.3 [BRAKE_L_RB]: no legal escape position (left to the autorouter)",
+    "escape: U20M.4 [BRAKE_R_RB]: no legal escape position (left to the autorouter)",
+    "escape: U20M.5 [OSC_IN]: no legal escape position (left to the autorouter)",
+    "escape: U20M.8 [HEAD_PRES_ID_ADC]: no legal escape position (left to the autorouter)",
+    "escape: U20M.14 [VMOT_SENSE]: no legal escape position (left to the autorouter)",
+    "escape: U20M.15 [GND]: no legal escape position inside its own plane polygon (left to the autorouter)",
+    "escape: U20M.47 [GND]: no legal escape position inside its own plane polygon (left to the autorouter)",
+    "escape: U20M.45 [MCU_USB_DM]: no legal escape position (left to the autorouter)",
+    "escape: U20M.43 [I2C_SYS_SCL]: no legal escape position (left to the autorouter)",
+    "escape: U20M.41 [MOT_R_IN2]: no legal escape position (left to the autorouter)",
+    "escape: U20M.34 [ESTOP_A_RB]: no legal escape position (left to the autorouter)",
+    "escape: U20M.33 [WDG_STROBE]: no legal escape position (left to the autorouter)",
+    "escape: U20M.62 [I2C_TOF_SDA]: no legal escape position (left to the autorouter)",
+    "escape: U20M.60 [ENC_L_B]: no legal escape position (left to the autorouter)",
+    "escape: U20M.56 [SWO_SPARE]: no legal escape position (left to the autorouter)",
+    "escape: U20M.54 [J2_PRES_RB]: no legal escape position (left to the autorouter)",
+    "escape: U20M.49 [SWDIO]: no legal escape position (left to the autorouter)",
+    "escape: U20M.18 [IMU_CS_ACC_N]: no legal escape position (left to the autorouter)",
+    "escape: U20M.19 [SPI1_SCK]: no legal escape position (left to the autorouter)",
+    "escape: U20M.21 [SPI1_MOSI]: no legal escape position (left to the autorouter)",
+    "escape: U20M.25 [V5_SENSE]: no legal escape position (left to the autorouter)",
+    "escape: U42.3 [3V3]: no legal escape position inside its own plane polygon (left to the autorouter)",
+    "escape: U42.11 [3V3]: no legal escape position inside its own plane polygon (left to the autorouter)",
+    "escape: U61.1 [FT_TXD]: no legal escape position (left to the autorouter)",
+    "plane fan-out: no legal via position for TP47 pad at (147.25, 39.25) [VMOT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for TP44 pad at (143.00, 38.75) [3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for TP42 pad at (135.50, 17.50) [VSYS] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R274 pad at (87.50, 94.32) [3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for FB15 pad at (124.50, 15.29) [3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R269 pad at (104.82, 83.00) [3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R268 pad at (106.57, 75.50) [3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R264 pad at (87.07, 90.50) [3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R263 pad at (87.07, 88.25) [3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R259 pad at (106.07, 78.50) [3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R258 pad at (104.82, 80.75) [3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for FB12 pad at (148.21, 67.00) [3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R254 pad at (87.07, 86.00) [3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for FB11 pad at (128.25, 22.54) [3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R249 pad at (88.50, 83.32) [3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R248 pad at (88.00, 79.57) [3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R239 pad at (102.32, 78.50) [3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R238 pad at (98.57, 78.50) [3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for FB8 pad at (111.00, 15.29) [3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R229 pad at (91.18, 88.25) [3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R228 pad at (92.75, 84.43) [3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for FB6 pad at (94.79, 92.00) [3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C158 pad at (95.48, 87.50) [3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U51 pad at (95.14, 87.58) [3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U51 pad at (100.86, 87.58) [3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U50 pad at (68.86, 87.58) [3V3] - long fan-out: exact re-check: seg: pad I2C_TOF_SDA U50 (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for F_AUX pad at (105.10, 73.50) [VBAT_SW] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U42 pad at (79.50, 68.26) [3V3] - long fan-out: exact re-check: seg: pad GND U42 (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U38 pad at (143.14, 81.00) [3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R183 pad at (108.00, 73.32) [3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for D36 pad at (111.85, 78.50) [3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R174 pad at (94.25, 76.32) [3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U6 pad at (95.73, 58.86) [3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C122 pad at (95.27, 71.00) [3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R156 pad at (71.25, 86.07) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U5 pad at (59.72, 58.86) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for F_CLAMP pad at (89.86, 66.50) [VMOT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R148 pad at (97.43, 72.25) [VBAT_SW] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R144 pad at (111.25, 60.33) [VMOT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R143 pad at (111.25, 56.57) [VBAT_SW] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C109 pad at (60.75, 70.97) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U9 pad at (81.14, 56.95) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R139 pad at (20.43, 36.75) [VMOT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R138 pad at (72.00, 21.46) [VMOT] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R137 pad at (76.75, 9.18) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U8 pad at (77.55, 34.25) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U8 pad at (77.55, 33.75) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U8 pad at (78.90, 34.50) [VBAT_SW] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for D_N6A pad at (10.60, 2.25) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C_U47 pad at (82.25, 20.02) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for D_U9T pad at (83.75, 52.60) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for D_KR pad at (10.60, 5.00) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for D_NC pad at (70.50, 3.60) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for D_K1B pad at (101.25, 16.10) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R_SDG pad at (70.75, 10.57) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R_SRP pad at (113.75, 80.82) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for D_SRB pad at (22.35, 10.00) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R_PAUSE pad at (98.75, 15.07) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R128 pad at (42.00, 5.57) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for Q_J2PRE pad at (15.05, 67.94) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R123 pad at (10.92, 72.50) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R120 pad at (8.42, 21.50) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R93 pad at (82.18, 17.50) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R92 pad at (102.57, 25.75) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R91 pad at (81.93, 24.00) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R90 pad at (94.50, 24.82) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C86 pad at (87.50, 22.23) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U40 pad at (89.52, 22.00) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U40 pad at (92.48, 24.00) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U40 pad at (92.48, 22.00) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for F_CHAIN pad at (23.00, 6.90) [VBAT_SW] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R61 pad at (118.50, 89.57) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U19 pad at (16.75, 28.00) [VBAT_SW] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R49 pad at (134.43, 26.50) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R47 pad at (53.00, 72.68) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R45 pad at (48.75, 69.93) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C54 pad at (45.00, 81.78) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U15 pad at (45.14, 82.67) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U15 pad at (45.14, 82.03) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U15 pad at (46.03, 81.14) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U15 pad at (46.03, 84.86) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U15 pad at (47.00, 83.00) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C46 pad at (64.53, 26.00) [VSYS] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U12 pad at (73.64, 29.50) [VSYS] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C42 pad at (64.53, 28.75) [VSYS] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R40 pad at (75.32, 22.75) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for L3 pad at (69.30, 35.00) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U11 pad at (67.64, 29.50) [VSYS] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R32 pad at (59.07, 29.00) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C35 pad at (49.03, 45.25) [VSYS] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C34 pad at (48.03, 30.75) [VSYS] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C33 pad at (43.72, 36.00) [VSYS] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C32 pad at (50.75, 23.73) [VSYS] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U10 pad at (54.85, 33.30) [VSYS] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U10 pad at (54.85, 35.70) [VSYS] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R25 pad at (112.93, 52.75) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C22 pad at (121.48, 46.75) [VBAT_SW] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C21 pad at (127.52, 46.50) [VBAT_SW] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C16 pad at (129.27, 49.50) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R_SNSB pad at (133.50, 58.96) [VBAT_SW] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for Q5 pad at (116.56, 54.97) [VBAT_SW] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for Q5 pad at (116.56, 54.32) [VBAT_SW] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for Q5 pad at (116.56, 53.68) [VBAT_SW] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U3 pad at (126.05, 48.25) [VBAT_SW] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U3 pad at (126.75, 47.55) [VBAT_SW] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U3 pad at (129.95, 49.25) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U3 pad at (128.00, 50.00) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R13 pad at (115.18, 21.00) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R11 pad at (24.18, 37.25) [VBAT_SW] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for C6 pad at (122.27, 40.00) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U2 pad at (123.20, 39.60) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)"
+  ],
+  "outputs": [
+    {
+      "ok": true,
+      "output": "out/RR-CHS-MAIN-schematic.pdf"
+    },
+    {
+      "ok": true,
+      "output": "out/gerber/*.g*"
+    },
+    {
+      "ok": true,
+      "output": "out/gerber/*.drl + drill map"
+    },
+    {
+      "ok": true,
+      "output": "out/RR-CHS-MAIN-pos.csv"
+    },
+    {
+      "ok": true,
+      "output": "out/RR-CHS-MAIN-bom.csv"
+    },
+    {
+      "ok": true,
+      "output": "out/pinmap.json"
+    },
+    {
+      "ok": true,
+      "output": "out/RR-CHS-MAIN.net"
+    },
+    {
+      "ok": true,
+      "output": "out/RR-CHS-MAIN-fab.pdf"
+    },
+    {
+      "ok": true,
+      "output": "out/RR-CHS-MAIN-assembly-top.pdf"
+    },
+    {
+      "ok": true,
+      "output": "out/RR-CHS-MAIN-assembly-bottom.pdf"
+    },
+    {
+      "ok": true,
+      "output": "out/RR-CHS-MAIN-copper.pdf"
+    },
+    {
+      "ok": true,
+      "output": "out/RR-CHS-MAIN.step"
+    },
+    {
+      "ok": true,
+      "output": "out/RR-CHS-MAIN-render-top.png"
+    },
+    {
+      "ok": true,
+      "output": "out/RR-CHS-MAIN-render-bottom.png"
+    }
+  ],
+  "pwr_flags": [
+    "GND",
+    "VBAT_SW",
+    "3V3",
+    "VSYS",
+    "V5_BUCK",
+    "V5_CM5",
+    "V5_AUX",
+    "3V3A",
+    "V12_AUX",
+    "VMOT",
+    "FT_VCC"
+  ],
+  "rev": "A",
+  "routing": {
+    "autorouter": null,
+    "escape": {
+      "direct": 2,
+      "enabled": true,
+      "inward": 26,
+      "layers": [
+        "In2.Cu",
+        "In3.Cu",
+        "B.Cu"
+      ],
+      "parts": {
+        "U20M": {
+          "direct": 1,
+          "exposed_pad": false,
+          "inward": 22,
+          "pads": 64,
+          "pitch": 0.5,
+          "ring": 18,
+          "skipped": 23
+        },
+        "U3": {
+          "direct": 1,
+          "exposed_pad": true,
+          "pads": 29,
+          "pitch": 0.5,
+          "ring": 6,
+          "skipped": 21
+        },
+        "U42": {
+          "exposed_pad": false,
+          "pads": 16,
+          "pitch": 0.5,
+          "ring": 10,
+          "skipped": 6
+        },
+        "U61": {
+          "exposed_pad": false,
+          "inward": 4,
+          "pads": 16,
+          "pitch": 0.635,
+          "ring": 8,
+          "skipped": 4
+        },
+        "U8": {
+          "exposed_pad": true,
+          "pads": 26,
+          "pitch": 0.5,
+          "ring": 15,
+          "skipped": 9
+        }
+      },
+      "pitch_limit": 0.65,
+      "skipped": [
+        "U3.1 [CHG_VIN]: no legal escape position",
+        "U3.2 [U3_INFET]: no legal escape position",
+        "U3.3 [U3_CLP]: no legal escape position",
+        "U3.4 [VSYS]: no legal escape position inside its own plane polygon",
+        "U3.5 [VSYS]: no legal escape position inside its own plane polygon",
+        "U3.6 [U3_BATFET]: no legal escape position",
+        "U3.7 [U3_CSP]: no legal escape position",
+        "U3.8 [VBAT_SW]: no legal escape position inside its own plane polygon",
+        "U3.17 [3V3]: no legal escape position inside its own plane polygon",
+        "U3.16 [U3_V2P5]: no legal escape position",
+        "U3.28 [GND]: no legal escape position inside its own plane polygon",
+        "U3.27 [U3_CELLS1]: no legal escape position",
+        "U3.26 [U3_CELLS0]: no legal escape position",
+        "U3.25 [U3_VC]: no legal escape position",
+        "U3.24 [GND]: no legal escape position inside its own plane polygon",
+        "U3.23 [U3_RT]: no legal escape position",
+        "U3.9 [VBAT_SW]: no legal escape position inside its own plane polygon",
+        "U3.11 [U3_SW]: no legal escape position",
+        "U3.12 [GND]: no legal escape position inside its own plane polygon",
+        "U3.13 [GND]: no legal escape position inside its own plane polygon",
+        "U3.14 [U3_BOOST]: no legal escape position",
+        "U8.1 [VBAT_SW]: no legal escape position inside its own plane polygon",
+        "U8.2 [VBAT_SW]: no legal escape position inside its own plane polygon",
+        "U8.3 [VBAT_SW]: no legal escape position inside its own plane polygon",
+        "U8.4 [GND]: no legal escape position inside its own plane polygon",
+        "U8.5 [GND]: no legal escape position inside its own plane polygon",
+        "U8.17 [VMOT]: no legal escape position inside its own plane polygon",
+        "U8.15 [U8_DVDT]: no legal escape position",
+        "U8.14 [GND]: no legal escape position inside its own plane polygon",
+        "U8.13 [VMOT_PG]: no legal escape position",
+        "U20M.1 [3V3]: no legal escape position inside its own plane polygon",
+        "U20M.2 [WDG_OK_RB]: no legal escape position",
+        "U20M.3 [BRAKE_L_RB]: no legal escape position",
+        "U20M.4 [BRAKE_R_RB]: no legal escape position",
+        "U20M.5 [OSC_IN]: no legal escape position",
+        "U20M.8 [HEAD_PRES_ID_ADC]: no legal escape position",
+        "U20M.14 [VMOT_SENSE]: no legal escape position",
+        "U20M.15 [GND]: no legal escape position inside its own plane polygon",
+        "U20M.47 [GND]: no legal escape position inside its own plane polygon",
+        "U20M.45 [MCU_USB_DM]: no legal escape position",
+        "U20M.43 [I2C_SYS_SCL]: no legal escape position",
+        "U20M.41 [MOT_R_IN2]: no legal escape position",
+        "U20M.34 [ESTOP_A_RB]: no legal escape position",
+        "U20M.33 [WDG_STROBE]: no legal escape position",
+        "U20M.62 [I2C_TOF_SDA]: no legal escape position",
+        "U20M.60 [ENC_L_B]: no legal escape position",
+        "U20M.56 [SWO_SPARE]: no legal escape position",
+        "U20M.54 [J2_PRES_RB]: no legal escape position",
+        "U20M.49 [SWDIO]: no legal escape position",
+        "U20M.18 [IMU_CS_ACC_N]: no legal escape position",
+        "U20M.19 [SPI1_SCK]: no legal escape position",
+        "U20M.21 [SPI1_MOSI]: no legal escape position",
+        "U20M.25 [V5_SENSE]: no legal escape position",
+        "U42.16 [unconnected-(U42-INT1-Pad16)]: not connected (single-pin net)",
+        "U42.1 [unconnected-(U42-INT2-Pad1)]: not connected (single-pin net)",
+        "U42.13 [unconnected-(U42-INT4-Pad13)]: not connected (single-pin net)",
+        "U42.12 [unconnected-(U42-INT3-Pad12)]: not connected (single-pin net)",
+        "U42.3 [3V3]: no legal escape position inside its own plane polygon",
+        "U42.11 [3V3]: no legal escape position inside its own plane polygon",
+        "U61.2 [unconnected-(U61-~{RTS}-Pad2)]: not connected (single-pin net)",
+        "U61.14 [unconnected-(U61-CBUS1-Pad14)]: not connected (single-pin net)",
+        "U61.16 [unconnected-(U61-CBUS3-Pad16)]: not connected (single-pin net)",
+        "U61.1 [FT_TXD]: no legal escape position"
+      ],
+      "skipped_by_reason": {
+        "no legal escape position": 35,
+        "no legal escape position inside its own plane polygon": 21,
+        "not connected (single-pin net)": 7
+      },
+      "skipped_detail": [
+        "U3.1 planned: courtyard of C17 path=[(176.05, 136.25), (175.355, 136.25), (175.084, 136.023), (174.884, 136.023)] r0=0.741 dr=0.580 e1=0.270; last: courtyard of C17",
+        "U3.2 planned: courtyard of C17 path=[(176.05, 136.75), (175.355, 136.75), (175.161, 136.588), (174.304, 136.588)] r0=0.741 dr=0.580 e1=0.270; last: courtyard of C17",
+        "U3.3 planned: courtyard of C17 path=[(176.05, 137.25), (175.355, 137.25), (175.239, 137.153), (174.884, 137.153)] r0=0.741 dr=0.580 e1=0.270; last: courtyard of C17",
+        "U3.4 planned: courtyard of C17 path=[(176.05, 137.75), (175.355, 137.75), (175.316, 137.718), (174.304, 137.718)] r0=0.741 dr=0.580 e1=0.270; last: courtyard of C17",
+        "U3.5 planned: courtyard of C17 path=[(176.05, 138.25), (175.355, 138.25), (175.316, 138.282), (174.884, 138.282)] r0=0.741 dr=0.580 e1=0.270; last: courtyard of C19",
+        "U3.6 planned: courtyard of C17 path=[(176.05, 138.75), (175.355, 138.75), (175.239, 138.847), (174.304, 138.847)] r0=0.741 dr=0.580 e1=0.270; last: courtyard of C19",
+        "U3.7 planned: courtyard of C17 path=[(176.05, 139.25), (175.355, 139.25), (175.161, 139.412), (174.884, 139.412)] r0=0.741 dr=0.580 e1=0.270; last: courtyard of C19",
+        "U3.8 planned: outside own plane path=[(176.05, 139.75), (175.355, 139.75), (175.084, 139.978), (174.304, 139.978)] r0=0.741 dr=0.580 e1=0.270; last: outside own plane",
+        "U3.17 planned: outside own plane path=[(179.95, 138.75), (180.645, 138.75), (180.771, 138.856), (181.616, 138.856)] r0=0.661 dr=0.580 e1=0.270; last: outside own plane",
+        "U3.16 planned: via: seg U3_INTVCC  path=[(179.95, 139.25), (180.645, 139.25), (180.848, 139.421), (181.036, 139.421)] r0=0.661 dr=0.580 e1=0.270; last: courtyard of TP15",
+        "U3.28 planned: courtyard of C18 path=[(176.75, 135.55), (176.75, 134.855), (176.588, 134.661), (176.588, 134.46)] r0=0.665 dr=0.580 e1=0.270; last: courtyard of TP21",
+        "U3.27 planned: courtyard of TP21 path=[(177.25, 135.55), (177.25, 134.855), (177.153, 134.739), (177.153, 133.88)] r0=0.665 dr=0.580 e1=0.270; last: courtyard of TP21",
+        "U3.26 planned: courtyard of TP21 path=[(177.75, 135.55), (177.75, 134.855), (177.718, 134.816), (177.718, 134.46)] r0=0.665 dr=0.580 e1=0.270; last: courtyard of TP21",
+        "U3.25 planned: courtyard of TP21 path=[(178.25, 135.55), (178.25, 134.855), (178.282, 134.816), (178.282, 133.88)] r0=0.665 dr=0.580 e1=0.270; last: courtyard of TP21",
+        "U3.24 planned: courtyard of TP21 path=[(178.75, 135.55), (178.75, 134.855), (178.847, 134.739), (178.847, 134.46)] r0=0.665 dr=0.580 e1=0.270; last: courtyard of TP21",
+        "U3.23 planned: courtyard of TP21 path=[(179.25, 135.55), (179.25, 134.855), (179.412, 134.661), (179.412, 133.88)] r0=0.665 dr=0.580 e1=0.270; last: courtyard of L1",
+        "U3.9 planned: outside own plane path=[(176.75, 140.45), (176.75, 141.145), (176.588, 141.339), (176.588, 141.54)] r0=0.665 dr=0.580 e1=0.270; last: outside own plane",
+        "U3.11 planned: courtyard of C21 path=[(177.75, 140.45), (177.75, 141.145), (177.718, 141.184), (177.718, 141.54)] r0=0.665 dr=0.580 e1=0.270; last: courtyard of C21",
+        "U3.12 planned: courtyard of C21 path=[(178.25, 140.45), (178.25, 141.145), (178.282, 141.184), (178.282, 142.12)] r0=0.665 dr=0.580 e1=0.270; last: courtyard of C21",
+        "U3.13 planned: courtyard of C21 path=[(178.75, 140.45), (178.75, 141.145), (178.847, 141.261), (178.847, 141.54)] r0=0.665 dr=0.580 e1=0.270; last: courtyard of C21",
+        "U3.14 planned: courtyard of C21 path=[(179.25, 140.45), (179.25, 141.145), (179.412, 141.339), (179.412, 142.12)] r0=0.665 dr=0.580 e1=0.270; last: courtyard of C21",
+        "U8.1 planned: courtyard of L4 path=[(127.55, 152.25), (126.88, 152.25), (126.686, 152.088), (126.485, 152.088)] r0=0.665 dr=0.580 e1=0.270; last: courtyard of L4",
+        "U8.2 planned: courtyard of L4 path=[(127.55, 152.75), (126.88, 152.75), (126.764, 152.653), (125.905, 152.653)] r0=0.665 dr=0.580 e1=0.270; last: courtyard of L4",
+        "U8.3 planned: courtyard of L4 path=[(127.55, 153.25), (126.88, 153.25), (126.841, 153.218), (126.485, 153.218)] r0=0.665 dr=0.580 e1=0.270; last: courtyard of L4",
+        "U8.4 planned: courtyard of L4 path=[(127.55, 153.75), (126.88, 153.75), (126.841, 153.782), (125.905, 153.782)] r0=0.665 dr=0.580 e1=0.270; last: courtyard of L4",
+        "U8.5 planned: courtyard of L4 path=[(127.55, 154.25), (126.88, 154.25), (126.764, 154.347), (126.485, 154.347)] r0=0.665 dr=0.580 e1=0.270; last: courtyard of L4",
+        "U8.17 planned: outside own plane path=[(131.45, 152.75), (132.12, 152.75), (132.236, 152.653), (133.095, 152.653)] r0=0.665 dr=0.580 e1=0.270; last: outside own plane",
+        "U8.15 planned: courtyard of K1 path=[(131.45, 153.75), (132.12, 153.75), (132.159, 153.782), (133.095, 153.782)] r0=0.665 dr=0.580 e1=0.270; last: courtyard of K1",
+        "U8.14 planned: courtyard of K1 path=[(131.45, 154.25), (132.12, 154.25), (132.236, 154.347), (132.515, 154.347)] r0=0.665 dr=0.580 e1=0.270; last: courtyard of K1",
+        "U8.13 planned: courtyard of K1 path=[(131.45, 154.75), (132.12, 154.75), (132.314, 154.912), (133.095, 154.912)] r0=0.665 dr=0.580 e1=0.270; last: courtyard of K1",
+        "U20M.1 planned: courtyard of R191 path=[(76.325, 137.25), (75.28, 137.25), (74.801, 136.848), (74.552, 136.848)] r0=0.998 dr=0.580 e1=0.270; last: courtyard of C51",
+        "U20M.2 planned: courtyard of Y1 path=[(76.325, 137.75), (75.28, 137.75), (74.878, 137.413), (73.972, 137.413)] r0=0.998 dr=0.580 e1=0.270; last: courtyard of C51",
+        "U20M.3 planned: courtyard of C_U46 path=[(76.325, 138.25), (75.28, 138.25), (74.956, 137.978), (74.552, 137.978)] r0=0.998 dr=0.580 e1=0.270; last: courtyard of C51",
+        "U20M.4 planned: courtyard of Y1 path=[(76.325, 138.75), (75.28, 138.75), (75.033, 138.543), (73.972, 138.543)] r0=0.998 dr=0.580 e1=0.270; last: seg: via 3V3 ",
+        "U20M.5 planned: courtyard of C_U46 path=[(76.325, 139.25), (75.28, 139.25), (75.111, 139.108), (74.552, 139.108)] r0=0.998 dr=0.580 e1=0.270; last: courtyard of TP4",
+        "U20M.8 planned: courtyard of Y1 path=[(76.325, 140.75), (75.28, 140.75), (75.188, 140.673), (73.972, 140.673)] r0=0.998 dr=0.580 e1=0.270; last: courtyard of TP4",
+        "U20M.14 planned: courtyard of C78 path=[(76.325, 143.75), (75.28, 143.75), (74.907, 144.063), (73.972, 144.063)] r0=0.998 dr=0.580 e1=0.270; last: via: via IPROPI_R ",
+        "U20M.15 planned: courtyard of C78 path=[(76.325, 144.25), (75.28, 144.25), (74.83, 144.628), (74.552, 144.628)] r0=0.998 dr=0.580 e1=0.270; last: via: seg IPROPI_R ",
+        "U20M.47 planned: courtyard of U44 path=[(87.675, 137.75), (88.72, 137.75), (89.228, 137.323), (90.076, 137.323)] r0=1.046 dr=0.580 e1=0.270; last: seg: via 3V3 ",
+        "U20M.45 planned: courtyard of U44 path=[(87.675, 138.75), (88.72, 138.75), (89.073, 138.453), (90.076, 138.453)] r0=1.046 dr=0.580 e1=0.270; last: courtyard of TP3",
+        "U20M.43 planned: courtyard of U44 path=[(87.675, 139.75), (88.72, 139.75), (88.919, 139.583), (90.076, 139.583)] r0=1.046 dr=0.580 e1=0.270; last: courtyard of TP3",
+        "U20M.41 planned: courtyard of U44 path=[(87.675, 140.75), (88.72, 140.75), (88.764, 140.713), (90.076, 140.713)] r0=1.046 dr=0.580 e1=0.270; last: courtyard of TP3",
+        "U20M.34 planned: courtyard of TP7 path=[(87.675, 144.25), (88.72, 144.25), (89.219, 144.668), (89.496, 144.668)] r0=1.046 dr=0.580 e1=0.270; last: via: via GND ",
+        "U20M.33 planned: courtyard of U45 path=[(87.675, 144.75), (88.72, 144.75), (89.296, 145.233), (90.076, 145.233)] r0=1.046 dr=0.580 e1=0.270; last: courtyard of R82",
+        "U20M.62 planned: courtyard of C49 path=[(79.25, 135.325), (79.25, 134.28), (78.88, 133.839), (78.88, 133.514)] r0=1.036 dr=0.580 e1=0.270; last: courtyard of TP4",
+        "U20M.60 planned: courtyard of C49 path=[(80.25, 135.325), (80.25, 134.28), (80.01, 133.994), (80.01, 133.514)] r0=1.036 dr=0.580 e1=0.270; last: courtyard of TP4",
+        "U20M.56 planned: courtyard of C53 path=[(82.25, 135.325), (82.25, 134.28), (82.27, 134.256), (82.27, 133.514)] r0=1.036 dr=0.580 e1=0.270; last: seg: via ENC_L_A ",
+        "U20M.54 planned: courtyard of C53 path=[(83.25, 135.325), (83.25, 134.28), (83.4, 134.101), (83.4, 133.514)] r0=1.036 dr=0.580 e1=0.270; last: courtyard of TP3",
+        "U20M.49 planned: courtyard of R80 path=[(85.75, 135.325), (85.75, 134.28), (86.225, 133.714), (86.225, 132.934)] r0=1.036 dr=0.580 e1=0.270; last: courtyard of TP3",
+        "U20M.18 planned: courtyard of SW1 path=[(78.75, 146.675), (78.75, 147.72), (78.384, 148.156), (78.384, 148.943)] r0=0.913 dr=0.580 e1=0.270; last: via: seg IPROPI_L ",
+        "U20M.19 planned: courtyard of R98 path=[(79.25, 146.675), (79.25, 147.72), (78.949, 148.078), (78.949, 148.363)] r0=0.913 dr=0.580 e1=0.270; last: via: via IPROPI_L ",
+        "U20M.21 planned: courtyard of R98 path=[(80.25, 146.675), (80.25, 147.72), (80.079, 147.923), (80.079, 148.363)] r0=0.913 dr=0.580 e1=0.270; last: via: via IPROPI_R ",
+        "U20M.25 planned: courtyard of R89 path=[(82.25, 146.675), (82.25, 147.72), (82.339, 147.827), (82.339, 148.363)] r0=0.913 dr=0.580 e1=0.270; last: via: via IOX_A_CS_N ",
+        "U42.3 planned: outside own plane path=[(129.5, 119.74), (129.5, 119.13), (129.426, 119.041), (129.426, 118.765)] r0=0.635 dr=0.580 e1=0.270; last: outside own plane",
+        "U42.11 planned: outside own plane path=[(130.5, 122.26), (130.5, 122.87), (130.481, 122.892), (130.481, 123.105)] r0=0.505 dr=0.580 e1=0.270; last: outside own plane",
+        "U61.1 planned: courtyard of J_DBG path=[(105.4, 163.222), (104.53, 163.222), (103.715, 163.223)] r0=0.505 dr=0.580 e1=0.270; last: courtyard of J_DBG"
+      ],
+      "track": 0.15,
+      "via": [
+        0.6,
+        0.3
+      ],
+      "via_target_layers": {
+        "B.Cu": 27,
+        "In2.Cu": 28,
+        "In3.Cu": 28
+      },
+      "vias": 83
+    },
+    "finisher": null,
+    "plane_fanout": {
+      "extended": [
+        "U47 [3V3] 4.5 mm",
+        "R211 [3V3] 3.5 mm",
+        "U44 [GND] 1.8 mm",
+        "U41 [3V3] 2.5 mm",
+        "C140 [3V3] 3.8 mm",
+        "U20M [GND] 2.8 mm",
+        "D37 [GND] 2.2 mm",
+        "U33 [VBAT_SW] 4.0 mm",
+        "U8 [GND] 2.8 mm",
+        "U8 [VBAT_SW] 1.0 mm",
+        "U8 [GND] 3.2 mm",
+        "C_U46 [GND] 2.5 mm",
+        "U46 [GND] 1.3 mm",
+        "R_SDB2 [GND] 1.0 mm",
+        "R59 [3V3] 4.5 mm",
+        "C66 [VBAT_SW] 2.2 mm",
+        "U19 [GND] 1.5 mm",
+        "U16 [GND] 2.0 mm",
+        "U16 [GND] 0.8 mm",
+        "U15 [VBAT_SW] 1.0 mm",
+        "U15 [VBAT_SW] 1.8 mm",
+        "C51 [GND] 3.3 mm",
+        "C16 [GND] 3.8 mm",
+        "U3 [VSYS] 3.5 mm",
+        "U3 [GND] 2.2 mm",
+        "C8 [VBAT_SW] 3.6 mm",
+        "R10 [VBAT_SW] 2.8 mm",
+        "U2 [GND] 2.2 mm",
+        "U2 [VBAT_SW] 3.0 mm",
+        "U1 [GND] 2.2 mm"
+      ],
+      "failed": [
+        "TP47 pad at (147.25, 39.25) [VMOT] - long fan-out: long fan-out time cap (600 s) used up",
+        "TP44 pad at (143.00, 38.75) [3V3] - long fan-out: no free path to the plane within the board",
+        "TP42 pad at (135.50, 17.50) [VSYS] - long fan-out: long fan-out time cap (600 s) used up",
+        "R274 pad at (87.50, 94.32) [3V3] - long fan-out: no free path to the plane within the board",
+        "FB15 pad at (124.50, 15.29) [3V3] - long fan-out: no free path to the plane within the board",
+        "R269 pad at (104.82, 83.00) [3V3] - long fan-out: no free path to the plane within the board",
+        "R268 pad at (106.57, 75.50) [3V3] - long fan-out: no free path to the plane within the board",
+        "R264 pad at (87.07, 90.50) [3V3] - long fan-out: no free path to the plane within the board",
+        "R263 pad at (87.07, 88.25) [3V3] - long fan-out: no free path to the plane within the board",
+        "R259 pad at (106.07, 78.50) [3V3] - long fan-out: no free path to the plane within the board",
+        "R258 pad at (104.82, 80.75) [3V3] - long fan-out: no free path to the plane within the board",
+        "FB12 pad at (148.21, 67.00) [3V3] - long fan-out: no free path to the plane within the board",
+        "R254 pad at (87.07, 86.00) [3V3] - long fan-out: no free path to the plane within the board",
+        "FB11 pad at (128.25, 22.54) [3V3] - long fan-out: no free path to the plane within the board",
+        "R249 pad at (88.50, 83.32) [3V3] - long fan-out: no free path to the plane within the board",
+        "R248 pad at (88.00, 79.57) [3V3] - long fan-out: no free path to the plane within the board",
+        "R239 pad at (102.32, 78.50) [3V3] - long fan-out: no free path to the plane within the board",
+        "R238 pad at (98.57, 78.50) [3V3] - long fan-out: no free path to the plane within the board",
+        "FB8 pad at (111.00, 15.29) [3V3] - long fan-out: no free path to the plane within the board",
+        "R229 pad at (91.18, 88.25) [3V3] - long fan-out: no free path to the plane within the board",
+        "R228 pad at (92.75, 84.43) [3V3] - long fan-out: no free path to the plane within the board",
+        "FB6 pad at (94.79, 92.00) [3V3] - long fan-out: no free path to the plane within the board",
+        "C158 pad at (95.48, 87.50) [3V3] - long fan-out: no free path to the plane within the board",
+        "U51 pad at (95.14, 87.58) [3V3] - long fan-out: no free path to the plane within the board",
+        "U51 pad at (100.86, 87.58) [3V3] - long fan-out: no free path to the plane within the board",
+        "U50 pad at (68.86, 87.58) [3V3] - long fan-out: exact re-check: seg: pad I2C_TOF_SDA U50",
+        "F_AUX pad at (105.10, 73.50) [VBAT_SW] - long fan-out: long fan-out time cap (600 s) used up",
+        "U42 pad at (79.50, 68.26) [3V3] - long fan-out: exact re-check: seg: pad GND U42",
+        "U38 pad at (143.14, 81.00) [3V3] - long fan-out: no free path to the plane within the board",
+        "R183 pad at (108.00, 73.32) [3V3] - long fan-out: no free path to the plane within the board",
+        "D36 pad at (111.85, 78.50) [3V3] - long fan-out: no free path to the plane within the board",
+        "R174 pad at (94.25, 76.32) [3V3] - long fan-out: no free path to the plane within the board",
+        "U6 pad at (95.73, 58.86) [3V3] - long fan-out: no free path to the plane within the board",
+        "C122 pad at (95.27, 71.00) [3V3] - long fan-out: no free path to the plane within the board",
+        "R156 pad at (71.25, 86.07) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "U5 pad at (59.72, 58.86) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "F_CLAMP pad at (89.86, 66.50) [VMOT] - long fan-out: long fan-out time cap (600 s) used up",
+        "R148 pad at (97.43, 72.25) [VBAT_SW] - long fan-out: long fan-out time cap (600 s) used up",
+        "R144 pad at (111.25, 60.33) [VMOT] - long fan-out: long fan-out time cap (600 s) used up",
+        "R143 pad at (111.25, 56.57) [VBAT_SW] - long fan-out: long fan-out time cap (600 s) used up",
+        "C109 pad at (60.75, 70.97) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "U9 pad at (81.14, 56.95) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "R139 pad at (20.43, 36.75) [VMOT] - long fan-out: long fan-out time cap (600 s) used up",
+        "R138 pad at (72.00, 21.46) [VMOT] - long fan-out: long fan-out time cap (600 s) used up",
+        "R137 pad at (76.75, 9.18) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "U8 pad at (77.55, 34.25) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+        "U8 pad at (77.55, 33.75) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+        "U8 pad at (78.90, 34.50) [VBAT_SW] - long fan-out: long fan-out time cap (600 s) used up",
+        "D_N6A pad at (10.60, 2.25) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "C_U47 pad at (82.25, 20.02) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "D_U9T pad at (83.75, 52.60) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "D_KR pad at (10.60, 5.00) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "D_NC pad at (70.50, 3.60) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "D_K1B pad at (101.25, 16.10) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "R_SDG pad at (70.75, 10.57) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "R_SRP pad at (113.75, 80.82) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "D_SRB pad at (22.35, 10.00) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "R_PAUSE pad at (98.75, 15.07) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "R128 pad at (42.00, 5.57) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "Q_J2PRE pad at (15.05, 67.94) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "R123 pad at (10.92, 72.50) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "R120 pad at (8.42, 21.50) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "R93 pad at (82.18, 17.50) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "R92 pad at (102.57, 25.75) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "R91 pad at (81.93, 24.00) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "R90 pad at (94.50, 24.82) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "C86 pad at (87.50, 22.23) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "U40 pad at (89.52, 22.00) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "U40 pad at (92.48, 24.00) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "U40 pad at (92.48, 22.00) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "F_CHAIN pad at (23.00, 6.90) [VBAT_SW] - long fan-out: long fan-out time cap (600 s) used up",
+        "R61 pad at (118.50, 89.57) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "U19 pad at (16.75, 28.00) [VBAT_SW] - long fan-out: long fan-out time cap (600 s) used up",
+        "R49 pad at (134.43, 26.50) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "R47 pad at (53.00, 72.68) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "R45 pad at (48.75, 69.93) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "C54 pad at (45.00, 81.78) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "U15 pad at (45.14, 82.67) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+        "U15 pad at (45.14, 82.03) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "U15 pad at (46.03, 81.14) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "U15 pad at (46.03, 84.86) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "U15 pad at (47.00, 83.00) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+        "C46 pad at (64.53, 26.00) [VSYS] - long fan-out: long fan-out time cap (600 s) used up",
+        "U12 pad at (73.64, 29.50) [VSYS] - long fan-out: long fan-out time cap (600 s) used up",
+        "C42 pad at (64.53, 28.75) [VSYS] - long fan-out: long fan-out time cap (600 s) used up",
+        "R40 pad at (75.32, 22.75) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "L3 pad at (69.30, 35.00) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "U11 pad at (67.64, 29.50) [VSYS] - long fan-out: long fan-out time cap (600 s) used up",
+        "R32 pad at (59.07, 29.00) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "C35 pad at (49.03, 45.25) [VSYS] - long fan-out: long fan-out time cap (600 s) used up",
+        "C34 pad at (48.03, 30.75) [VSYS] - long fan-out: long fan-out time cap (600 s) used up",
+        "C33 pad at (43.72, 36.00) [VSYS] - long fan-out: long fan-out time cap (600 s) used up",
+        "C32 pad at (50.75, 23.73) [VSYS] - long fan-out: long fan-out time cap (600 s) used up",
+        "U10 pad at (54.85, 33.30) [VSYS] - long fan-out: long fan-out time cap (600 s) used up",
+        "U10 pad at (54.85, 35.70) [VSYS] - long fan-out: long fan-out time cap (600 s) used up",
+        "R25 pad at (112.93, 52.75) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "C22 pad at (121.48, 46.75) [VBAT_SW] - long fan-out: long fan-out time cap (600 s) used up",
+        "C21 pad at (127.52, 46.50) [VBAT_SW] - long fan-out: long fan-out time cap (600 s) used up",
+        "C16 pad at (129.27, 49.50) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "R_SNSB pad at (133.50, 58.96) [VBAT_SW] - long fan-out: long fan-out time cap (600 s) used up",
+        "Q5 pad at (116.56, 54.97) [VBAT_SW] - long fan-out: long fan-out time cap (600 s) used up",
+        "Q5 pad at (116.56, 54.32) [VBAT_SW] - long fan-out: long fan-out time cap (600 s) used up",
+        "Q5 pad at (116.56, 53.68) [VBAT_SW] - long fan-out: long fan-out time cap (600 s) used up",
+        "U3 pad at (126.05, 48.25) [VBAT_SW] - long fan-out: long fan-out time cap (600 s) used up",
+        "U3 pad at (126.75, 47.55) [VBAT_SW] - long fan-out: long fan-out time cap (600 s) used up",
+        "U3 pad at (129.95, 49.25) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "U3 pad at (128.00, 50.00) [GND] - long fan-out: long fan-out time cap (600 s) used up",
+        "R13 pad at (115.18, 21.00) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "R11 pad at (24.18, 37.25) [VBAT_SW] - long fan-out: long fan-out time cap (600 s) used up",
+        "C6 pad at (122.27, 40.00) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+        "U2 pad at (123.20, 39.60) [3V3] - long fan-out: long fan-out time cap (600 s) used up"
+      ],
+      "long_fanout": [
+        "R299 [3V3] 32.2 mm",
+        "R273 [3V3] 50.8 mm",
+        "FB14 [3V3] 16.3 mm",
+        "FB13 [3V3] 16.3 mm",
+        "R253 [3V3] 50.3 mm",
+        "FB10 [3V3] 11.1 mm",
+        "R244 [3V3] 48.1 mm",
+        "R243 [3V3] 48.0 mm",
+        "FB9 [3V3] 5.4 mm",
+        "R234 [3V3] 46.8 mm",
+        "R233 [3V3] 49.2 mm",
+        "FB7 [3V3] 16.3 mm",
+        "R224 [3V3] 45.0 mm",
+        "R223 [3V3] 49.2 mm",
+        "FB5 [3V3] 34.9 mm",
+        "C157 [3V3] 41.9 mm",
+        "R214 [3V3] 14.1 mm",
+        "R213 [3V3] 7.3 mm",
+        "R210 [3V3] 17.7 mm",
+        "C153 [3V3] 8.9 mm",
+        "C151 [3V3] 39.6 mm",
+        "C150 [3V3] 37.3 mm",
+        "C149 [3V3] 7.1 mm",
+        "U42 [3V3] 37.9 mm",
+        "R196 [3V3] 12.0 mm",
+        "R192 [3V3] 10.2 mm",
+        "C141 [3V3] 7.0 mm",
+        "C139 [3V3] 3.8 mm",
+        "C134 [3V3] 26.1 mm",
+        "U37 [3V3] 10.8 mm",
+        "R165 [3V3] 41.1 mm",
+        "D33 [3V3] 32.3 mm"
+      ],
+      "plane_nets": [
+        "3V3",
+        "GND",
+        "VBAT_SW",
+        "VMOT",
+        "VSYS"
+      ],
+      "vias": 603
+    },
+    "routed": false,
+    "stats": {
+      "track_length_mm": 1776.13,
+      "tracks": 1088,
+      "unconnected_after_fill": 1260,
+      "vias": 724
+    }
+  },
+  "single_pin_nets": [],
+  "status": "fail",
+  "title": "Chassis main board",
+  "tools": {
+    "kicad": "9.0.9"
+  },
+  "waived_items": [],
+  "waivers": []
+}

@@ -1,0 +1,20 @@
+﻿board,mpn,manufacturer,value,description,package,rating,tolerance,quantity,dnp,verify,purchasable,blocks,refs,notes
+RR-PANEL,150080BS75000,Wurth Elektronik,blue,LED 0805 blue under a 3 mm light pipe at u = 45 mm: CHARGE / SERVICE - plug - steady (charging: 1 Hz),0805,,,1,,VERIFY,TRUE,annunciator,LED4,I = (5.0 - 3.2) / 120 ohm = 15 mA [C]. Luminous intensity and daylight legibility through the light pipe are UNVERIFIED: test with the real pipe and bezel; resistor value is the adjustment.
+RR-PANEL,150080GS75000,Wurth Elektronik,green,LED 0805 green under a 3 mm light pipe at u = 9 mm: READY - circle - steady,0805,,,1,,VERIFY,TRUE,annunciator,LED1,I = (5.0 - 3.2) / 120 ohm = 15 mA [C]. Luminous intensity and daylight legibility through the light pipe are UNVERIFIED: test with the real pipe and bezel; resistor value is the adjustment.
+RR-PANEL,150080RS75000,Wurth Elektronik,red,LED 0805 red under a 3 mm light pipe at u = 61 mm: FAULT / INHIBITED - triangle - steady or 4 Hz; set apart by a 16 mm gap,0805,,,1,,VERIFY,TRUE,annunciator,LED5,I = (5.0 - 2.0) / 200 ohm = 15 mA [C]. Luminous intensity and daylight legibility through the light pipe are UNVERIFIED: test with the real pipe and bezel; resistor value is the adjustment.
+RR-PANEL,150080YS75000,Wurth Elektronik,amber,"LED 0805 amber under a 3 mm light pipe at u = 21 mm: MOVING - arrow - 2 Hz flash, with the pre-motion tone",0805,,,1,,VERIFY,TRUE,annunciator,LED2,I = (5.0 - 2.0) / 200 ohm = 15 mA [C]. Luminous intensity and daylight legibility through the light pipe are UNVERIFIED: test with the real pipe and bezel; resistor value is the adjustment.
+RR-PANEL,158080227A,Wurth Elektronik,white,LED 0805 white under a 3 mm light pipe at u = 33 mm: HOLD / WAITING FOR NEXT - two bars - slow 0.5 Hz pulse,0805,,,1,,VERIFY,TRUE,annunciator,LED3,I = (5.0 - 3.0) / 130 ohm = 15 mA [C]. Luminous intensity and daylight legibility through the light pipe are UNVERIFIED: test with the real pipe and bezel; resistor value is the adjustment.
+RR-PANEL,BAT54W-7-F,Diodes Inc.,BAT54,Schottky: stops the external 12 V sounder back-feeding V5_AUX,SOD-123,,,1,,,TRUE,sounder,D1,
+RR-PANEL,CC0603KRX7R9BB104,Yageo,100n,MLCC 100 nF 50 V X7R,0603,50 V,10%,2,,,TRUE,connector,C1 C2,
+RR-PANEL,FIDUCIAL,(pcb feature),fiducial,Fiducial 1 mm,FID,,,2,,,FALSE,mech,FID1 FID2,
+RR-PANEL,MOUNTING-HOLE-M2.5,(pcb feature),M2.5,"Mounting hole 2.7 mm at (3.5, 20.5) mm, unplated | Mounting hole 2.7 mm at (66.5, 20.5) mm, unplated",HOLE,,,2,,,FALSE,mech,H1 H2,
+RR-PANEL,PKLCS1212E4001-R1,Murata,piezo 4 kHz,"SMD piezo sounder 12 x 12 x 3 mm, 4 kHz",12x12,,,1,,VERIFY,TRUE,sounder,BZ1,"Recalled data [U]: >= 75 dB at 10 cm with 3 Vp-p, -40..+85 C. Driven single-ended 5 Vp-p at 4 kHz by the main-board FET (TIM5_CH1). Expected about 80 dB at 10 cm, i.e. about 60 dB at 1 m: NOT enough as a pre-motion alert in a noisy trailer. Fit the external sounder on J2 unless a sound-level test says otherwise."
+RR-PANEL,RC0805FR-07120RL,Yageo,120,Resistor 120 ohm 1 %,0805,0.125 W,1%,2,,,TRUE,annunciator,R1 R4,
+RR-PANEL,RC0805FR-07130RL,Yageo,130,Resistor 130 ohm 1 %,0805,0.125 W,1%,1,,,TRUE,annunciator,R3,
+RR-PANEL,RC0805FR-071KL,Yageo,1k,Piezo discharge resistor,0805,0.125 W,1%,1,,,TRUE,sounder,R6,
+RR-PANEL,RC0805FR-07200RL,Yageo,200,Resistor 200 ohm 1 %,0805,0.125 W,1%,2,,,TRUE,annunciator,R2 R5,
+RR-PANEL,SM02B-GHS-TB(LF)(SN),JST,JST GH 2p side,"Optional external 22 mm panel sounder, 12 V self-driven, <= 100 mA (firmware then drives BUZZER as a level, not a tone)",GH-H,1 A/contact,,1,,,TRUE,sounder,J2,"Candidate: Schneider Harmony XB5KSB/XB5KS2 class buzzer [U part, level and temperature]. Requirement: >= 85 dB(A) at 30 cm, -25 C."
+RR-PANEL,SM10B-GHS-TB(LF)(SN),JST,JST GH 10p side,"To RR-CHS-MAIN J_PANEL, straight 1:1 cable (bottom side, cable leaves along the long axis)",GH-H,1 A/contact,,1,,,TRUE,connector,J1,JST GH rated -25..+85 C [U]
+RR-PANEL,TP-PAD-1.5,(pcb feature),V5_AUX,Test pad 1.5 mm,TP,,,1,,,FALSE,test,TP1,
+RR-PANEL,TP-PAD-1.5,(pcb feature),GND,Test pad 1.5 mm,TP,,,1,,,FALSE,test,TP2,
+RR-PANEL,TP-PAD-1.5,(pcb feature),BUZ_N,Test pad 1.5 mm,TP,,,1,,,FALSE,test,TP3,

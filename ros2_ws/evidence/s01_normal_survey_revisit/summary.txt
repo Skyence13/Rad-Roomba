@@ -1,0 +1,58 @@
+RAD ROOMBA FLOOR SURVEY SUMMARY
+SYNTHETIC CALIBRATION/PROFILE - field_use_approved: false - NOT FOR SURVEY OR RELEASE DECISIONS
+synthetic — not for field use
+run 00000000-0000-4000-8000-001100000001  trailer SIM-SECTION-3.0x1.0  floor 3 x 1 m (floor only)
+method CONTINUOUS_SCAN  profile ore-floor-demo-synthetic rev 1  calibration(s) DEMO-CAL-SYNTH-0001
+model analysis/radiometry/MODEL.md revision 5 (2026-11-27); recorded results (evaluated once on the complete record); README.txt says how to read them
+unit Bq/cm2  investigation level 0.3  detection goal < 0.2
+review queue policy ALARM_ONLY
+alpha_scan 0.05  alpha_recount 0.000171  beta 0.05  decision cells 300
+
+WHERE THE ROBOT MEASURED
+  valid exposure on 83.6 % of the target floor (3.000 m2)
+  UNVISITED                    0.4797 m2
+  ACCEPTABLE                   2.3058 m2
+  INSUFFICIENT_SENSITIVITY     0.0720 m2
+  INVALID_DATA                 0.0000 m2
+  BLOCKED                      0.0000 m2
+  EXCLUDED                     0.0000 m2
+  NO_DECISION                  0.0000 m2
+  INCOMPLETE_COVERAGE          0.0425 m2
+  ALARM                        0.1000 m2
+  ACQUISITION_GAP              0.0000 m2
+
+CELL STATUS (cells with data)
+  ALARM                      10
+  NO DECISION                0
+  INCOMPLETE COVERAGE        17
+  SENSITIVITY INSUFFICIENT   12
+  ACCEPTABLE                 251
+  provisional alarm not confirmed: 24
+  recorded alarm (provisional alarm confirmed): 10
+
+HOW SENSITIVE IT WAS
+  decision cells with data 290; ACCEPTABLE 251
+  D# median 0.117  best 0.089  worst 0.677 Bq/cm2 (beta_window, alpha_combined 0.04)
+  time sync: max gate bound 838.0033213786841 us (limit 10000)
+
+WHAT STILL NEEDS ATTENTION
+  HS-0002 INVESTIGATION_LEVEL lane 2 D=0.073 +/- 0.031 Bq/cm2 at 0.95 m from the door threshold, 0.21 m from the right wall [recorded alarm]
+  HS-0003 UNRESOLVED_EXCEEDANCE lane 0 D=0.107 +/- 0.067 Bq/cm2 at 1.31 m from the door threshold, 0.44 m from the right wall [provisional alarm not confirmed]
+  HS-0004 UNRESOLVED_EXCEEDANCE lane 2 D=0.131 +/- 0.042 Bq/cm2 at 1.60 m from the door threshold, 0.37 m from the left wall [recorded alarm]
+  HS-0007 UNRESOLVED_EXCEEDANCE lane 1 D=0.224 +/- 0.166 Bq/cm2 at 2.37 m from the door threshold, 0.35 m from the right wall [provisional alarm not confirmed]
+  HS-0008 UNRESOLVED_EXCEEDANCE lane 1 D=0.105 +/- 0.064 Bq/cm2 at 2.74 m from the door threshold, 0.35 m from the right wall [provisional alarm not confirmed]
+  HS-0010 UNRESOLVED_EXCEEDANCE lane 1 D=0.074 +/- 0.044 Bq/cm2 at 0.23 m from the door threshold, 0.30 m from the right wall [provisional alarm not confirmed]
+  HS-0012 INVESTIGATION_LEVEL lane 1 D=0.720 +/- 0.117 Bq/cm2 at 1.52 m from the door threshold, 0.32 m from the left wall [recorded alarm]
+  HS-0014 UNRESOLVED_EXCEEDANCE lane 2 D=0.152 +/- 0.107 Bq/cm2 at 2.88 m from the door threshold, 0.37 m from the left wall [provisional alarm not confirmed]
+  HS-0016 INVESTIGATION_LEVEL lane 0 D=0.318 +/- 0.180 Bq/cm2 at 2.60 m from the door threshold, 0.08 m from the left wall [provisional alarm not confirmed]
+  HS-0017 UNRESOLVED_EXCEEDANCE lane 0 D=0.164 +/- 0.086 Bq/cm2 at 2.83 m from the door threshold, 0.08 m from the left wall [recorded alarm]
+  HS-0018 SCAN_DETECTION lane 3 D=0.133 +/- 0.080 Bq/cm2 at 0.25 m from the door threshold, 0.12 m from the left wall [recorded alarm]
+  HS-0019 UNRESOLVED_EXCEEDANCE lane 3 D=0.275 +/- 0.181 Bq/cm2 at 2.08 m from the door threshold, 0.08 m from the right wall [provisional alarm not confirmed]
+  HS-0020 SCAN_DETECTION lane 3 D=0.061 +/- 0.037 Bq/cm2 at 2.55 m from the door threshold, 0.15 m from the right wall [recorded alarm]
+  scan-stage detections below the investigation level awaiting a recount under the two-stage rule: 9
+  unresolved floor ALARM: 0.1000 m2 (rectangles in residuals.json)
+  unresolved floor INCOMPLETE_COVERAGE: 0.0425 m2 (rectangles in residuals.json)
+  unresolved floor INSUFFICIENT_SENSITIVITY: 0.0720 m2 (rectangles in residuals.json)
+  unresolved floor UNVISITED: 0.4797 m2 (rectangles in residuals.json)
+
+A release-status entry is a radiation-protection decision under the site procedure; this report is not one.

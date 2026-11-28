@@ -1,0 +1,44 @@
+{
+    "$schema": "https://schemas.kicad.org/erc.v1.json",
+    "coordinate_units": "mm",
+    "date": "",
+    "included_severities": [
+        "error",
+        "warning",
+        "exclusion"
+    ],
+    "kicad_version": "9.0.9",
+    "sheets": [
+        {
+            "path": "/",
+            "uuid_path": "/4a74baf6-d702-51ce-849f-4b0363c00fcd",
+            "violations": []
+        },
+        {
+            "path": "/annunciator/",
+            "uuid_path": "/4a74baf6-d702-51ce-849f-4b0363c00fcd/5f12320c-bbff-52b5-8938-18508c067d74",
+            "violations": []
+        },
+        {
+            "path": "/connector/",
+            "uuid_path": "/4a74baf6-d702-51ce-849f-4b0363c00fcd/7ba8bcda-a808-5106-8d79-7dec59ae4d86",
+            "violations": []
+        },
+        {
+            "path": "/sounder/",
+            "uuid_path": "/4a74baf6-d702-51ce-849f-4b0363c00fcd/e783d537-af80-5a08-844b-9052f8c5005f",
+            "violations": []
+        },
+        {
+            "path": "/mech/",
+            "uuid_path": "/4a74baf6-d702-51ce-849f-4b0363c00fcd/c0ec4d79-a780-57c2-8f26-255e04bdcffa",
+            "violations": []
+        },
+        {
+            "path": "/test/",
+            "uuid_path": "/4a74baf6-d702-51ce-849f-4b0363c00fcd/5f5693f5-a61d-5719-8396-d5ced375a66d",
+            "violations": []
+        }
+    ],
+    "source": "RR-PANEL.kicad_sch"
+}

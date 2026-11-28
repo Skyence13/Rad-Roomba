@@ -1,0 +1,201 @@
+# Purchased-part envelope library (mm, kg, deg C). Source of the solids in library.py.
+# verification: per dimension -> VERIFIED (read from the cited source in this session), PARTIAL (secondary source or
+# sibling model), UNVERIFIED (recalled or assumed; must be checked against a drawing before detail design).
+# Retrieval date for every URL: 2026-11-25.
+motor:
+  mpn: "Pololu #2828"
+  desc: "150:1 metal gearmotor 37Dx73L, 12 V, 64 CPR encoder, helical pinion"
+  qty: 2
+  envelope: {can_d: 37.0, body_l: 72.5, shaft_d: 6.0, shaft_l: 16.0, boss_d: 12.0, boss_l: 6.0, shaft_offset: 7.0, mount_bcd: 31.0, mount_screw: "6 x M3, <= 3 mm engagement"}
+  mass_kg: 0.210
+  temp_c: null
+  ratings: {no_load_rpm: 67, stall_current_a: 5.5, stall_torque_nm: 4.8, max_cont_torque_nm: 0.98, max_instant_torque_nm: 2.45, encoder_counts_per_output_rev: 9600}
+  source: ["https://www.pololu.com/product/2828/specs", "https://www.pololu.com/file/0J1706/pololu-37d-metal-gearmotors.pdf"]
+  verification: {can_d: VERIFIED, body_l: VERIFIED, shaft_d: VERIFIED, shaft_l: VERIFIED, mass: VERIFIED, ratings: VERIFIED,
+                 boss: UNVERIFIED, shaft_offset: UNVERIFIED, mount_pattern: UNVERIFIED, temp: "UNVERIFIED - no rating published; cold grease/brush behaviour is a test item"}
+  notes: "Stall torque 49 kg-cm and stall current are Pololu extrapolations. Recommended continuous limit 100 kg-mm, instantaneous 250 kg-mm (datasheet p.1)."
+wheel:
+  mpn: "SELECT TO FIT - no catalogue 104 mm x 25 mm treaded wheel was verified"
+  desc: "Drive wheel, nominal diameter 104 (contract), tyre section 25 (Rev D), clamping hub for 6 mm D shaft (candidate hub: Pololu #1999 universal 6 mm hub)"
+  qty: 2
+  envelope: {d: 104.0, width: 25.0, hub_d: 25.4, hub_l: 9.2}
+  mass_kg: 0.15
+  temp_c: null
+  source: ["interface/system/contract.yaml frames.wheel", "cad/source/body_chassis.py tire_shape"]
+  verification: {d: "contract value", width: "Rev D model value", hub: "Pololu #1999 (M3 holes): 25.4 x 9.2 mm, six M3 tapped holes, 6.8 g VERIFIED (pololu.com/product/1999/specs, 2026-11-26); bolt circle UNVERIFIED", mass: UNVERIFIED, temp: UNVERIFIED}
+  notes: "OPEN ITEM. A 4 in (101.6 mm) wheel would lower the axle 1.2 mm and the film gap with it; any substitution needs the contract diameter updated."
+caster:
+  mpn: "TENTE Compacta 1430POI025P60-35x30"
+  desc: "Swivel caster, 25 mm polypropylene wheel, pressed steel housing, single ball race swivel, plate fitting"
+  qty: 1
+  envelope: {wheel_d: 25.0, wheel_w: 12.0, overall_h: 36.0, plate: [35.0, 30.0], plate_holes: [28.0, 23.0], hole_d: 4.2, offset: 9.0, swivel_radius: 21.5, caster_w: 24.0}
+  mass_kg: 0.03
+  temp_c: [-20, 60]
+  ratings: {load_dynamic_kg: 10, load_static_kg: 20, tread_hardness: "Shore D 65"}
+  source: ["https://cdn.tente.com/datasheets/1430POI025P60_35x30_us.pdf"]
+  verification: {all_dimensions: VERIFIED, mass: VERIFIED, temp: VERIFIED}
+  bearing: "plain bearing (not sealed)"
+  meets_cold_objective: false
+  notes: "DOES NOT MEET the -25 C qualification objective: plain (unsealed) wheel bearing, rated -20 C (TENTE datasheet). The baseline W13 asks for a sealed bearing. Overall height 36 mm vs 33 mm Rev D ride height -> mounting face at z = 36 through a cut-out in the 4 mm plate (ride height kept). No verified sealed-bearing caster of <= 36 mm height found: lead decision / supplier search (IB-26)."
+battery_8ah:
+  mpn: "Power-Sonic PSL-SC-1290"
+  desc: "12.8 V 9.0 Ah LiFePO4 monobloc with BMS, F2 terminals: OPTIONAL alternative in the same cassette with a 34 mm spacer (the 12 Ah pack is the fitted baseline, DEC-040)"
+  qty: 0
+  envelope: {l: 151.0, w: 65.0, h: 94.0, h_total: 99.0}
+  mass_kg: 1.0
+  temp_c: {discharge: [-20, 60], charge: [0, 45]}
+  ratings: {capacity_ah: 9.0, nominal_v: 12.8}
+  source: ["https://cdn.shopify.com/s/files/1/2694/4298/files/PSL-SC-1290-Technical-Document.pdf"]
+  verification: {l: VERIFIED, w: VERIFIED, h: VERIFIED, h_total: VERIFIED, mass: VERIFIED, temp: "PARTIAL - range read without row labels; identical to the verified PSL-SC-12120 sheet", max_current: UNVERIFIED}
+  notes: "Discharge limit -20 C equals the operating target with no margin; -25 C is outside the rating -> bay heater and warm start are mandatory, and the BMS low-temperature discharge behaviour must be confirmed with Power-Sonic."
+battery_12ah:
+  mpn: "Power-Sonic PSL-SC-12120"
+  desc: "12.8 V 12 Ah LiFePO4 monobloc with BMS, F2 terminals: FITTED BASELINE (DEC-040)"
+  qty: 1
+  envelope: {l: 151.0, w: 99.0, h: 95.0, h_total: 101.0}
+  mass_kg: 1.65
+  temp_c: {discharge: [-20, 60], charge: [0, 45]}
+  ratings: {capacity_ah: 12.0, max_continuous_discharge_a: 15.0, over_discharge_trip_a: 25.0}
+  source: ["https://www.power-sonic.com/wp-content/uploads/datasheets/psl-sc-12120.pdf"]
+  verification: {all_dimensions: VERIFIED, mass: VERIFIED, temp: VERIFIED, max_current: VERIFIED}
+  notes: "Baseline pack (DEC-040). Same 151 mm length and terminals as the 9 Ah pack but 34 mm thicker: lies on its side in the 104 mm tall cassette under the dorsal hump."
+battery_coupler:
+  mpn: "Anderson Power SBS50 (candidate), one half on the cassette, one on the bay bulkhead"
+  desc: "Keyed, finger-proof blind-mate DC coupler with two auxiliary contacts for pack-presence"
+  qty: 1
+  envelope: {mated_l: 57.5, w: 38.0, h: 18.0}
+  mass_kg: 0.06
+  temp_c: [-20, 105]
+  source: ["recalled from the Anderson SBS catalogue - not opened in this session"]
+  verification: {all: UNVERIFIED}
+cm5:
+  mpn: "Raspberry Pi CM5104032"
+  desc: "Compute Module 5, 4 GB, 32 GB eMMC, Wi-Fi"
+  qty: 1
+  envelope: {l: 55.0, w: 40.0, h: 4.7}
+  mass_kg: 0.02
+  temp_c: [-20, 85]
+  source: ["https://www.raspberrypi.com/products/compute-module-5/ (not opened in this session)"]
+  verification: {all: "UNVERIFIED - recalled"}
+  notes: "Recalled -20 C lower limit has no margin to the -25 C objective; compute bay shares the chassis heater."
+cm5_carrier:
+  mpn: "Waveshare CM5-IO-BASE-A"
+  desc: "Mini base board (A) for CM5: Gigabit Ethernet RJ45, 2 x USB 3.2 Gen1 Type-A, 2 x USB 2.0 on FFC, M.2"
+  qty: 1
+  envelope: {l: 85.0, w: 56.0, h_assembled: 24.0, pcb_t: 1.6}
+  mass_kg: 0.09
+  temp_c: null
+  source: ["https://www.waveshare.com/cm5-io-base-a.htm", "https://core-electronics.com.au/mini-base-board-raspberry-pi-compute-module-5-without-case.html"]
+  verification: {l: VERIFIED, w: VERIFIED, interfaces: VERIFIED, h_assembled: "UNVERIFIED - assumed 24 mm with CM5, heat sink and RJ45", mounting_holes: UNVERIFIED, temp: UNVERIFIED}
+  notes: "One RJ45 only: the LiDAR uses it, so a wired service port needs a USB-Ethernet adapter or a different carrier (flag to chassis electronics)."
+lidar:
+  mpn: "Richbeam LakiBeam 1L"
+  desc: "2D ToF LiDAR, 270 deg, Ethernet UDP, 9-36 V, IP65"
+  qty: 1
+  envelope: {l: 60.0, w: 60.0, h: 80.0, scan_plane_above_base: 60.0}
+  mass_kg: 0.16
+  temp_c: [-25, 60]
+  source: ["https://core-electronics.com.au/lakibeam-1l-270-degree-industrial-grade-single-line-2d-tof-lidar-40m-12v-ethernet-udp-ip65.html", "https://www.dfrobot.com/product-2669.html"]
+  verification: {footprint_and_height: "PARTIAL - 60 x 60 x 80 listed for the LakiBeam 1 family", mass: VERIFIED, temp: VERIFIED, scan_plane_above_base: UNVERIFIED, mounting_holes: UNVERIFIED, connector_exit: UNVERIFIED}
+lidar_alt:
+  mpn: "SICK picoScan150 PICS150-01000 Prime-1 (#1134609)"
+  desc: "Colder-rated alternative 2D LiDAR (BOM W16)"
+  qty: 0
+  envelope: {l: 60.0, w: 60.0, h: 82.0, scan_plane_above_base: 60.0}
+  mass_kg: 0.22
+  temp_c: null
+  source: ["https://www.sick.com/media/pdf/9/49/849/dataSheet_PICS150-01000-Prime-1_1134609_en.pdf"]
+  verification: {l: VERIFIED, w: VERIFIED, h: VERIFIED, mass: "VERIFIED (without system plug)", temp: UNVERIFIED, system_plug_envelope: UNVERIFIED}
+  notes: "Same 60 x 60 footprint, 2 mm taller, +60 g: fits the LiDAR pad without layout change; system plug exit direction to be checked."
+estop:
+  mpn: "Schneider Electric Harmony XB5AS8444"
+  desc: "Emergency stop, 40 mm red mushroom, 22 mm cut-out, trigger action, turn to release, 2 NC"
+  qty: 1
+  envelope: {head_d: 40.0, head_h: 32.0, cutout_d: 22.0, body_d: 30.0, depth_behind_panel: 50.0}
+  mass_kg: 0.07
+  temp_c: [-40, 70]
+  source: ["https://www.se.com/il/en/product/XB5AS8444/", "https://uk.rs-online.com/web/p/emergency-stop-push-buttons/1238167"]
+  verification: {cutout_d: VERIFIED, head_d: VERIFIED, contacts_2nc: VERIFIED, depth_behind_panel: "PARTIAL - distributor lists 43 mm; 50 used", head_h: UNVERIFIED, temp: "PARTIAL - distributor value", mass: UNVERIFIED}
+mode_selector:
+  mpn: "Schneider Electric Harmony XB5AD33 (candidate)"
+  desc: "22 mm selector, 3 positions stay-put, OFF / SERVICE / RUN, standard black handle (glove operable)"
+  qty: 1
+  envelope: {head_d: 30.0, head_h: 28.0, cutout_d: 22.0, body_d: 30.0, depth_behind_panel: 50.0}
+  mass_kg: 0.06
+  temp_c: [-40, 70]
+  source: ["recalled from the Harmony XB5 catalogue"]
+  verification: {all: UNVERIFIED}
+pushbutton_22:
+  mpn: "Harmony XB5 family: illuminated latching (HANDS-ON), guarded flush momentary (REARM/Start), projecting momentary (Pause/Stop) - exact references TBD by chassis electronics"
+  desc: "22 mm pushbuttons"
+  qty: 3
+  envelope: {head_d: 29.0, head_h: 12.0, cutout_d: 22.0, body_d: 30.0, depth_behind_panel: 50.0, guard_d: 36.0, guard_h: 16.0}
+  mass_kg: 0.05
+  temp_c: [-40, 70]
+  source: ["recalled from the Harmony XB5 catalogue"]
+  verification: {all: UNVERIFIED}
+charge_inlet:
+  mpn: "M12 L-coded 4+FE male panel receptacle (candidate) under a printed hinged cover"
+  desc: "Keyed charge inlet; spare contacts carry the plug-present link; cover switch = D2HW"
+  qty: 1
+  envelope: {body_d: 20.0, depth_behind_panel: 25.0, front_projection: 10.0, cover: [36.0, 36.0, 5.0]}
+  mass_kg: 0.03
+  temp_c: [-40, 85]
+  source: ["recalled; family per IEC 61076-2-111"]
+  verification: {all: UNVERIFIED}
+j1_receptacle:
+  mpn: "binder M16 IP67 8-pole female panel receptacle, shieldable (series 423/723, 09 0174 xx 08 family)"
+  desc: "J1 HEAD POWER / INTERLOCK, chassis side; mating cable plug on the head pigtail"
+  qty: 1
+  envelope: {flange_d: 20.0, depth_behind_panel: 22.0, front_projection: 9.0, plug_nut_d: 20.0, plug_nut_l: 22.0, plug_l: 62.0, cable_d: 7.5, cable_bend_r: 40.0}
+  mass_kg: 0.02
+  temp_c: [-40, 85]
+  source: ["https://www.binder-usa.com/us-en/products/miniature-circular-connectors/m16-ip67/", "https://www.ac-solutions.be/en/pdf/productSheet/09017429008"]
+  verification: {connector_d_20: "PARTIAL - one variant sheet", everything_else: UNVERIFIED}
+j2_receptacle:
+  mpn: "binder M12-A 8-pole female panel receptacle, shieldable (series 763 family)"
+  desc: "J2 HEAD DATA, chassis side"
+  qty: 1
+  envelope: {flange_d: 17.0, depth_behind_panel: 18.0, front_projection: 8.0, plug_nut_d: 15.0, plug_nut_l: 18.0, plug_l: 55.0, cable_d: 6.5, cable_bend_r: 35.0}
+  mass_kg: 0.015
+  temp_c: [-40, 85]
+  source: ["recalled; IEC 61076-2-101 interface"]
+  verification: {all: UNVERIFIED}
+bumper_switch:
+  mpn: "Omron D2HW-C201M"
+  desc: "Sealed ultra-subminiature basic switch, pin plunger, lead wires, M3 screw mount, wired NC"
+  qty: 8
+  envelope: {l: 13.3, w: 5.3, h: 7.0, plunger: 1.5}
+  mass_kg: 0.004
+  temp_c: [-40, 85]
+  source: ["https://components.omron.com/eu-en/products/switches/D2HW", "https://www.datasheets.com/omron/d2hw-c201m"]
+  verification: {temp: VERIFIED, ip67: VERIFIED, dimensions: "PARTIAL - 13.3 / 5.3 / 6.5 seen as drawing fragments", mass: UNVERIFIED}
+  notes: "Quantity 8 = 3 head rail + head lid interlock (mechanical/head LID_SW) + 2 body bumper (BOM W24) + HEAD_DOCK + CHG_COVER (contract safety_chain). BOM lists 5: raise with the registers owner (IB-26)."
+tof_board:
+  mpn: "RR-TOF (custom) with ST VL53L4ED"
+  desc: "ToF carrier 18 x 14 mm behind a 1 mm window"
+  qty: 11
+  envelope: {l: 18.0, w: 14.0, depth: 6.0, window: [12.0, 8.0, 1.0]}
+  mass_kg: 0.002
+  temp_c: [-40, 105]
+  source: ["interface/system/contract.yaml boards.RR-TOF", "https://www.st.com/resource/en/datasheet/vl53l4ed.pdf (not opened)"]
+  verification: {outline: "contract value", fov_18deg: UNVERIFIED, temp: UNVERIFIED}
+panel_board:
+  mpn: "RR-PANEL (custom)"
+  desc: "Annunciator board 70 x 24 mm"
+  qty: 1
+  envelope: {l: 70.0, w: 24.0, h: 12.6}
+  mass_kg: 0.012
+  temp_c: null
+  source: ["interface/system/contract.yaml boards.RR-PANEL"]
+  verification: {outline: "contract value"}
+chassis_heater:
+  mpn: "Polyimide film heater 90 x 70 mm, 12 V, 20 W class with PSA (catalogue item TBD after thermal test)"
+  desc: "Battery-bay / chassis heater pad on the bay floor under the cassette, plus bay NTC and bimetal cut-out"
+  qty: 1
+  envelope: {l: 90.0, w: 70.0, h: 0.5}
+  mass_kg: 0.01
+  temp_c: [-40, 120]
+  source: ["sized in calc/thermal.py"]
+  verification: {all: "design value"}
+# clamp_resistor: REMOVED (IB-26) -- RR-CHS-MAIN carries its own clamp resistors; no bolt-on 50 W resistor in either body build.

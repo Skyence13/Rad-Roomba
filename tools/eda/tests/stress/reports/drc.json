@@ -1,0 +1,211 @@
+{
+    "$schema": "https://schemas.kicad.org/drc.v1.json",
+    "coordinate_units": "mm",
+    "date": "",
+    "included_severities": [
+        "error",
+        "warning",
+        "exclusion"
+    ],
+    "kicad_version": "9.0.9",
+    "schematic_parity": [],
+    "source": "STRESS-150.kicad_pcb",
+    "unconnected_items": [],
+    "violations": [
+        {
+            "description": "Via is not connected or connected on only one layer",
+            "items": [
+                {
+                    "description": "Via [IO18] on F.Cu - B.Cu",
+                    "pos": {
+                        "x": 69.286167,
+                        "y": 88.150624
+                    },
+                    "uuid": "b907957a-fa35-47c8-bb0b-72a8f048336c"
+                }
+            ],
+            "severity": "warning",
+            "type": "via_dangling"
+        },
+        {
+            "description": "Via is not connected or connected on only one layer",
+            "items": [
+                {
+                    "description": "Via [IO19] on F.Cu - B.Cu",
+                    "pos": {
+                        "x": 68.64135,
+                        "y": 88.715624
+                    },
+                    "uuid": "88f91be8-0979-46f8-885c-9960905ca682"
+                }
+            ],
+            "severity": "warning",
+            "type": "via_dangling"
+        },
+        {
+            "description": "Via is not connected or connected on only one layer",
+            "items": [
+                {
+                    "description": "Via [IO21] on F.Cu - B.Cu",
+                    "pos": {
+                        "x": 69.286167,
+                        "y": 93.800625
+                    },
+                    "uuid": "c400eba6-2886-4f09-8278-21071b734363"
+                }
+            ],
+            "severity": "warning",
+            "type": "via_dangling"
+        },
+        {
+            "description": "Via is not connected or connected on only one layer",
+            "items": [
+                {
+                    "description": "Via [IO26] on F.Cu - B.Cu",
+                    "pos": {
+                        "x": 74.292812,
+                        "y": 99.274125
+                    },
+                    "uuid": "f31ff6a5-7c7c-42d9-98da-1f0ddb520e3c"
+                }
+            ],
+            "severity": "warning",
+            "type": "via_dangling"
+        },
+        {
+            "description": "Via is not connected or connected on only one layer",
+            "items": [
+                {
+                    "description": "Via [IO32] on F.Cu - B.Cu",
+                    "pos": {
+                        "x": 84.286455,
+                        "y": 88.130312
+                    },
+                    "uuid": "8e0f293e-726b-4846-8ca8-f42104935e27"
+                }
+            ],
+            "severity": "warning",
+            "type": "via_dangling"
+        },
+        {
+            "description": "Via is not connected or connected on only one layer",
+            "items": [
+                {
+                    "description": "Via [IO37] on F.Cu - B.Cu",
+                    "pos": {
+                        "x": 102.252083,
+                        "y": 83.474241
+                    },
+                    "uuid": "d83743e7-0edb-4c56-937c-f7b3aa931484"
+                }
+            ],
+            "severity": "warning",
+            "type": "via_dangling"
+        },
+        {
+            "description": "Via is not connected or connected on only one layer",
+            "items": [
+                {
+                    "description": "Via [IO38] on F.Cu - B.Cu",
+                    "pos": {
+                        "x": 99.992083,
+                        "y": 83.474241
+                    },
+                    "uuid": "86596a3e-1fd6-472f-ade6-b45a380533b2"
+                }
+            ],
+            "severity": "warning",
+            "type": "via_dangling"
+        },
+        {
+            "description": "Via is not connected or connected on only one layer",
+            "items": [
+                {
+                    "description": "Via [IO40] on F.Cu - B.Cu",
+                    "pos": {
+                        "x": 101.122083,
+                        "y": 83.474241
+                    },
+                    "uuid": "5b463792-5b2c-4972-8337-5cabd60ec440"
+                }
+            ],
+            "severity": "warning",
+            "type": "via_dangling"
+        },
+        {
+            "description": "Via is not connected or connected on only one layer",
+            "items": [
+                {
+                    "description": "Via [IO42] on F.Cu - B.Cu",
+                    "pos": {
+                        "x": 75.339687,
+                        "y": 83.051596
+                    },
+                    "uuid": "935434b2-2f44-4ba9-8565-dc8656be7116"
+                }
+            ],
+            "severity": "warning",
+            "type": "via_dangling"
+        },
+        {
+            "description": "Via is not connected or connected on only one layer",
+            "items": [
+                {
+                    "description": "Via [IO44] on F.Cu - B.Cu",
+                    "pos": {
+                        "x": 97.670865,
+                        "y": 76.0425
+                    },
+                    "uuid": "152f2af4-aa97-46f7-9d9c-0e3f33e442bd"
+                }
+            ],
+            "severity": "warning",
+            "type": "via_dangling"
+        },
+        {
+            "description": "Via is not connected or connected on only one layer",
+            "items": [
+                {
+                    "description": "Via [IO49] on F.Cu - B.Cu",
+                    "pos": {
+                        "x": 97.670865,
+                        "y": 79.3025
+                    },
+                    "uuid": "89d7018f-3b20-4b2e-a648-2149565c4136"
+                }
+            ],
+            "severity": "warning",
+            "type": "via_dangling"
+        },
+        {
+            "description": "Via is not connected or connected on only one layer",
+            "items": [
+                {
+                    "description": "Via [IO51] on F.Cu - B.Cu",
+                    "pos": {
+                        "x": 107.892049,
+                        "y": 76.64875
+                    },
+                    "uuid": "77e65fe2-4855-402f-868f-79785be43d01"
+                }
+            ],
+            "severity": "warning",
+            "type": "via_dangling"
+        },
+        {
+            "description": "Via is not connected or connected on only one layer",
+            "items": [
+                {
+                    "description": "Via [AUX07] on F.Cu - B.Cu",
+                    "pos": {
+                        "x": 105.612083,
+                        "y": 83.474241
+                    },
+                    "uuid": "4bd73642-8988-4ea2-9a86-7470f49f89ac"
+                }
+            ],
+            "severity": "warning",
+            "type": "via_dangling"
+        }
+    ]
+}

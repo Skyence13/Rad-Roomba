@@ -1,0 +1,54 @@
+{
+  "counts": {
+    "nets": 581,
+    "parts": 1081,
+    "sheets": 22
+  },
+  "generated_files": [
+    "AFE_FLOOR.kicad_sch",
+    "AFE_FLOOR_2.kicad_sch",
+    "AFE_FLOOR_3.kicad_sch",
+    "AFE_FLOOR_4.kicad_sch",
+    "AFE_REF.kicad_sch",
+    "AFE_REF_2.kicad_sch",
+    "AFE_REF_3.kicad_sch",
+    "BIAS.kicad_sch",
+    "BIAS_2.kicad_sch",
+    "COMM_ISOLATED.kicad_sch",
+    "DAC.kicad_sch",
+    "HEATER.kicad_sch",
+    "IMPORT-HEAD.kicad_sch",
+    "LANE.kicad_sch",
+    "LANE_2.kicad_sch",
+    "LANE_3.kicad_sch",
+    "LANE_4.kicad_sch",
+    "MCU.kicad_sch",
+    "MECH.kicad_sch",
+    "MONITOR.kicad_sch",
+    "POWER_IN.kicad_sch",
+    "POWER_REG.kicad_sch"
+  ],
+  "name": "IMPORT-HEAD",
+  "pwr_flags": [
+    "GND",
+    "+5V_A",
+    "+3V3_EVT",
+    "+3V3",
+    "+3V3A",
+    "BUS_GND",
+    "BUS_5VF"
+  ],
+  "routing": {
+    "enabled": true,
+    "extra_args": [],
+    "fanout": false,
+    "layers": 6,
+    "optimizer": true,
+    "passes": 100,
+    "plane_fanout": true,
+    "retries": 2,
+    "threads": null,
+    "timeout": null
+  },
+  "single_pin_nets": []
+}

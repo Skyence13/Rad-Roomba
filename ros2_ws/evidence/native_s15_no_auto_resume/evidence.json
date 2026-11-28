@@ -1,0 +1,452 @@
+{
+ "scenario": "native_s15_no_auto_resume",
+ "evidence_class": "simulated",
+ "against": "native firmware emulators rr_head_sim + rr_chassis_sim (real time; world/LiDAR from rr_sim.world)",
+ "seed": 35,
+ "sim_time_s": 56.24,
+ "checks": [
+  {
+   "check": "bumper: HOLD with a hardware inhibit",
+   "ok": true,
+   "stops": {
+    "hw": [
+     "BODY_BUMPER"
+    ],
+    "sw": []
+   }
+  },
+  {
+   "check": "operator prompt does not offer REARM before rearm_ready (reason shown)",
+   "ok": true,
+   "prompt": {
+    "press_rearm": false,
+    "text": "Do not press REARM yet",
+    "reasons": [
+     "chain not closed (open or unknown): BODY_BUMPER, WDG_OK",
+     "fault / warning flags: CONFIG_DEFAULTED"
+    ],
+    "warnings": [],
+    "refused": null
+   },
+   "ready": false
+  },
+  {
+   "check": "REARM pressed too early is not accepted (latch stays open)",
+   "ok": true,
+   "mode": "HW_INHIBIT",
+   "ready": false
+  },
+  {
+   "check": "the early press yields REARM_REFUSED with a reason, reported to the operator",
+   "ok": true,
+   "events": [
+    {
+     "seq": 47,
+     "t_us": 20445000,
+     "kind": "REARM_REFUSED",
+     "detail": {
+      "why": "CHAIN_OPEN"
+     },
+     "boot_id": "c8db4e6c-d2df-45e0-ab6a-02525c5ca18b",
+     "t_host_us": 4486720396.653424
+    }
+   ],
+   "state_refusal": "CHAIN_OPEN",
+   "prompt": {
+    "press_rearm": false,
+    "text": "Do not press REARM yet",
+    "reasons": [
+     "fault / warning flags: CONFIG_DEFAULTED",
+     "last REARM press refused: CHAIN_OPEN"
+    ],
+    "warnings": [],
+    "refused": "last REARM press refused: CHAIN_OPEN"
+   }
+  },
+  {
+   "check": "operator prompt offers REARM once rearm_ready",
+   "ok": true,
+   "prompt": {
+    "press_rearm": true,
+    "text": "Press REARM once on the robot (briefly)",
+    "reasons": [],
+    "warnings": [],
+    "refused": "last REARM press refused: CHAIN_OPEN"
+   }
+  },
+  {
+   "check": "bumper: ARMED_IDLE again, mission still HOLD",
+   "ok": true
+  },
+  {
+   "check": "bumper: zero non-zero DRIVE after the inhibit (and the early press) until resume",
+   "ok": true,
+   "sent": 0
+  },
+  {
+   "check": "explicit resume accepted",
+   "ok": true
+  },
+  {
+   "check": "motion only after the command, same task",
+   "ok": true
+  },
+  {
+   "check": "pause accepted",
+   "ok": true
+  },
+  {
+   "check": "pause + inhibit + local re-arm: zero non-zero DRIVE, still HOLD",
+   "ok": true
+  },
+  {
+   "check": "resume accepted, paused task only",
+   "ok": true
+  },
+  {
+   "check": "moves again on the paused task",
+   "ok": true
+  },
+  {
+   "check": "link outage: mission in HOLD after the link is back",
+   "ok": true,
+   "state": "HOLD",
+   "reason": "CHASSIS_LINK_DOWN",
+   "stops": {
+    "hw": [],
+    "sw": [
+     "HOST_LINK_LOST"
+    ]
+   }
+  },
+  {
+   "check": "link outage: zero non-zero DRIVE after the link is back",
+   "ok": true,
+   "sent": 0
+  },
+  {
+   "check": "software re-arm after the link loss still moves nothing",
+   "ok": true,
+   "sent": 0,
+   "mode": "ARMED_IDLE"
+  },
+  {
+   "check": "explicit resume accepted after the link loss",
+   "ok": true
+  },
+  {
+   "check": "moves again on the interrupted task",
+   "ok": true,
+   "task": "pair0:A+",
+   "was": "pair0:A+"
+  }
+ ],
+ "passed": true,
+ "field_use_approved": false,
+ "coverage": {
+  "target_area_m2": 3.0,
+  "areas_m2": {
+   "UNVISITED": 2.697175,
+   "ACCEPTABLE": 0.0,
+   "INSUFFICIENT_SENSITIVITY": 0.27240000000000003,
+   "INVALID_DATA": 0.0,
+   "BLOCKED": 0.0,
+   "EXCLUDED": 0.0,
+   "NO_DECISION": 0.0,
+   "INCOMPLETE_COVERAGE": 0.010425,
+   "ALARM": 0.02,
+   "ACQUISITION_GAP": 0.0
+  },
+  "valid_exposure_fraction": 0.09756666666666668,
+  "acceptable_fraction": 0.0,
+  "sub_cell_m": 0.005,
+  "decision_cell_m": 0.1,
+  "position_allowance_m": 0.01,
+  "provisional": false
+ },
+ "time_sync": {
+  "limit_us": 10000.0,
+  "fits": 33,
+  "max_gate_bound_us": 1092.8055072084426,
+  "median_gate_bound_us": 985.3098143114853
+ },
+ "link_stats": {
+  "tx": 3096,
+  "rx": 3095,
+  "bad_lines": 0,
+  "stale": 0,
+  "duplicates": 0,
+  "gates": 551,
+  "gaps": 0,
+  "retries": 0,
+  "unassigned_frames": 0,
+  "time_exchanges": 33,
+  "time_exchanges_rejected": 0
+ },
+ "localization_error_vs_truth_m": {
+  "max_x_m": 0.00862640448699159,
+  "max_y_m": 0.00010713110243656954
+ },
+ "plan": {
+  "n_pairs": 2,
+  "offset_m": 0.04375,
+  "pair_stride_m": 0.33625,
+  "seam_overlap_per_side_m": 0.01625,
+  "predicted_residual": {
+   "left_wall_strip_m": 0.1487,
+   "right_wall_strip_m": 0.1487,
+   "door_end_strip_m": 0.1413,
+   "front_end_strip_m": 0.0713,
+   "end_zone_single_heading_m": {
+    "door": 0.3399,
+    "front": 0.3399
+   },
+   "note": "wall strips are set by the in-place turn radius of the outline; see README coverage section"
+  },
+  "estimated_time_s": 244.2
+ },
+ "flags": [
+  {
+   "id": "HS-0001",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 0,
+   "x_m": 0.5270363249273475,
+   "y_m": -0.0587702555966119,
+   "D": 0.24752334103994508,
+   "u_total": 0.12061852793587077,
+   "D_star": 0.16316258556833507,
+   "D_hash": 0.4099538528232373,
+   "location": {
+    "distance_from_door_m": 0.527,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.441,
+    "text": "0.53 m from the door threshold, 0.44 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0002",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 1,
+   "x_m": 1.2539539938409987,
+   "y_m": -0.1462649866115982,
+   "D": 0.1816166575673817,
+   "u_total": 0.12259338275975618,
+   "D_star": 0.18082387471989608,
+   "D_hash": 0.45640995546989915,
+   "location": {
+    "distance_from_door_m": 1.254,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.354,
+    "text": "1.25 m from the door threshold, 0.35 m from the right wall"
+   }
+  }
+ ],
+ "scan_detections": 0,
+ "observations": [],
+ "decision_status": {
+  "cells_with_gates": 44,
+  "no_decision": 0,
+  "no_decision_text": [],
+  "no_decision_within_0.5m_of_an_end": 0,
+  "cells_within_0.5m_of_an_end": 4
+ },
+ "rev5": {
+  "cells_with_data": 44,
+  "status": {
+   "INCOMPLETE COVERAGE": 4,
+   "SENSITIVITY INSUFFICIENT": 38,
+   "ALARM": 2
+  },
+  "status_reasons": {
+   "D# above the detection goal": 38,
+   "coverage 0.15 < 0.5": 1,
+   "coverage 0.48 < 0.5": 1,
+   "coverage 0.21 < 0.5": 1,
+   "coverage 0.20 < 0.5": 1,
+   "flagged by combined+lane1": 1,
+   "flagged by combined+lane0": 1
+  },
+  "acceptable_fraction": 0.0,
+  "median_D_hash": 0.45640995546989915,
+  "undecidable_recorded": 0,
+  "undecidable_provisional_live": 3,
+  "alarm_bookkeeping": {
+   "recorded alarm (provisional alarm confirmed)": 2,
+   "provisional alarm not confirmed": 1
+  },
+  "flags": {
+   "INVESTIGATION_LEVEL:recorded alarm": 1,
+   "UNRESOLVED_EXCEEDANCE:recorded alarm": 1
+  },
+  "review_queue_items": 2,
+  "recount_required_flags": 0,
+  "one_sided_cells": 17,
+  "one_sided_alarm_cells_needing_recount": 0,
+  "search_preroll_s": [],
+  "recorded_evaluation": null,
+  "revisit": 0,
+  "position_credit": {
+   "samples": 540,
+   "credited_fraction": 1.0,
+   "credited_with_true_error_above_budget": 0,
+   "fraction_of_credited_above_budget": 0.0,
+   "max_true_error_when_credited_m": 0.00864715307564846,
+   "max_true_error_m": 0.00864715307564846,
+   "no_credit_reasons_samples": {},
+   "localizer": {
+    "wheel_scale": {
+     "estimate": -0.00020690700340513987,
+     "sigma": 0.0003598696852745898
+    },
+    "stats": {
+     "x_fixes": 571,
+     "x_rejects": 0,
+     "big_corrections": 0,
+     "max_correction_m": 0.00044559667110433517,
+     "deferred_scans": 77
+    }
+   },
+   "worst_credited": [
+    {
+     "t_s": 14.91,
+     "truth": [
+      0.8981,
+      -0.19,
+      0.0001
+     ],
+     "est": [
+      0.8895,
+      -0.19,
+      -0.0
+     ],
+     "err_m": 0.0086,
+     "phase": "SCAN:PASS",
+     "dist_since_x_m": 0.006,
+     "x_rejects": 0,
+     "x_fix_age_s": 0.04,
+     "last_x_residual": {
+      "innovation": 0.00042782193648149835,
+      "sigma": 0.0022964314479432765,
+      "nis": 0.034707163937987624
+     }
+    },
+    {
+     "t_s": 42.76,
+     "truth": [
+      1.1918,
+      -0.19,
+      0.0001
+     ],
+     "est": [
+      1.1938,
+      -0.19,
+      0.0001
+     ],
+     "err_m": 0.002,
+     "phase": "SCAN:PASS",
+     "dist_since_x_m": 0.005,
+     "x_rejects": 0,
+     "x_fix_age_s": 0.08,
+     "last_x_residual": {
+      "innovation": -0.0008467981824828996,
+      "sigma": 0.0022038573316961138,
+      "nis": 0.14763620767629212
+     }
+    },
+    {
+     "t_s": 42.86,
+     "truth": [
+      1.1918,
+      -0.19,
+      0.0001
+     ],
+     "est": [
+      1.1938,
+      -0.19,
+      0.0001
+     ],
+     "err_m": 0.002,
+     "phase": "SCAN:PASS",
+     "dist_since_x_m": 0.005,
+     "x_rejects": 0,
+     "x_fix_age_s": 0.08,
+     "last_x_residual": {
+      "innovation": -0.0008467981824828996,
+      "sigma": 0.0022038573316961138,
+      "nis": 0.14763620767629212
+     }
+    },
+    {
+     "t_s": 42.96,
+     "truth": [
+      1.1918,
+      -0.19,
+      0.0001
+     ],
+     "est": [
+      1.1938,
+      -0.19,
+      0.0001
+     ],
+     "err_m": 0.002,
+     "phase": "SCAN:PASS",
+     "dist_since_x_m": 0.005,
+     "x_rejects": 0,
+     "x_fix_age_s": 0.08,
+     "last_x_residual": {
+      "innovation": -0.0008467981824828996,
+      "sigma": 0.0022038573316961138,
+      "nis": 0.14763620767629212
+     }
+    },
+    {
+     "t_s": 43.06,
+     "truth": [
+      1.1918,
+      -0.19,
+      0.0001
+     ],
+     "est": [
+      1.1938,
+      -0.19,
+      0.0001
+     ],
+     "err_m": 0.002,
+     "phase": "SCAN:PASS",
+     "dist_since_x_m": 0.005,
+     "x_rejects": 0,
+     "x_fix_age_s": 0.08,
+     "last_x_residual": {
+      "innovation": -0.0008467981824828996,
+      "sigma": 0.0022038573316961138,
+      "nis": 0.14763620767629212
+     }
+    },
+    {
+     "t_s": 43.16,
+     "truth": [
+      1.1918,
+      -0.19,
+      0.0001
+     ],
+     "est": [
+      1.1938,
+      -0.19,
+      0.0001
+     ],
+     "err_m": 0.002,
+     "phase": "SCAN:PASS",
+     "dist_since_x_m": 0.005,
+     "x_rejects": 0,
+     "x_fix_age_s": 0.08,
+     "last_x_residual": {
+      "innovation": -0.0008467981824828996,
+      "sigma": 0.0022038573316961138,
+      "nis": 0.14763620767629212
+     }
+    }
+   ]
+  }
+ },
+ "deterministic": false
+}

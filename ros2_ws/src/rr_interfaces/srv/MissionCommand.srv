@@ -1,0 +1,10 @@
+# Narrow command API. Rejected commands are never queued.
+string command
+string args_json
+string operator_id
+string role
+string idempotency_key
+---
+bool accepted
+string reason
+string result_json

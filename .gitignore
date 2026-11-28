@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+*.egg-info/
+# Build trees (deliverable outputs live in explicitly named out/ or build_out/ directories)
+build/
+# ...but docs/build/ holds the build documentation, not a build tree
+!docs/build/
+install/
+log/
+.pio/
+# KiCad local/backup files
+*-backups/
+*.kicad_prl
+*.lck
+fp-info-cache
+# Editors / OS
+.DS_Store
+*.swp

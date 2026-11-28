@@ -1,0 +1,292 @@
+#!/usr/bin/env python3
+"""Tool-check firmware/chassis/pinmap.yaml against extracted STM32G474R LQFP64 pin facts.
+
+Checks: every pin exists in the package, LQFP64 number matches, the claimed peripheral signal is
+available on that pin, the alternate-function number matches, no pin is used twice, every I/O is
+accounted for. Optionally emits the C header used by the STM32 port and the README table.
+
+Also (when electronics/chassis_main/out/pinmap.json exists) cross-checks every MCU pin, every expander
+pin and every ToF connector -> mux channel against the board's netlist export.
+Usage:
+  check_pinmap.py                      # verify only (exit 1 on any mismatch)
+  check_pinmap.py --emit-header FILE   # also write board_pins.h
+  check_pinmap.py --emit-markdown FILE # also write the hardware mapping table
+"""
+import argparse
+import json
+import os
+import re
+import sys
+
+import yaml
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(HERE)
+
+
+def load():
+    with open(os.path.join(ROOT, "pinmap.yaml")) as f:
+        pm = yaml.safe_load(f)
+    with open(os.path.join(HERE, "stm32g474r_lqfp64_pindata.json")) as f:
+        facts = json.load(f)["pins"]
+    return pm, facts
+
+
+def check(pm, facts):
+    errors = []
+    seen = {}
+    for p in pm["pins"]:
+        name = p["pin"]
+        if name not in facts:
+            errors.append(f"{name}: not an I/O of STM32G474R LQFP64")
+            continue
+        if name in seen:
+            errors.append(f"{name}: used twice ({seen[name]} and {p['signal']})")
+        seen[name] = p["signal"]
+        f = facts[name]
+        if f["lqfp64"] != p["lqfp64"]:
+            errors.append(f"{name}: LQFP64 pin {p['lqfp64']} claimed, package data says {f['lqfp64']}")
+        funcs = [(p["function"], str(p["af"]))]
+        if "alt" in p:
+            funcs.append((p["alt"]["function"], str(p["alt"]["af"])))
+        for func, af in funcs:
+            if func == "GPIO":
+                if af != "GPIO":
+                    errors.append(f"{name}: GPIO must have af GPIO")
+                continue
+            if func not in f["signals"]:
+                errors.append(f"{name}: signal {func} not available on this pin")
+                continue
+            if func.startswith("SYS_") or func.startswith("RCC_OSC"):
+                continue  # reset-default / analog functions; not in the AF table
+            want = f["af"].get(func)
+            if want is None:
+                errors.append(f"{name}: no AF data for {func} (cannot tool-check)")
+            elif want != af:
+                errors.append(f"{name}: {func} is {want}, pinmap says {af}")
+    missing = sorted(set(facts) - set(seen) - {"PG10"})
+    if missing:
+        errors.append("unassigned I/O: " + ", ".join(missing))
+    if len(seen) != pm["mcu"]["io_used"]:
+        errors.append(f"io_used says {pm['mcu']['io_used']}, table has {len(seen)}")
+    # expander pin names unique / signal names globally unique
+    sigs = {}
+    for p in pm["pins"]:
+        sigs.setdefault(p["signal"], []).append(p["pin"])
+    for xname in ("IOX_A", "IOX_B", "IOX_C", "IOX_D"):
+        for pin, d in pm["expanders"][xname]["pins"].items():
+            sigs.setdefault(d["signal"], []).append(f"{xname}.{pin}")
+    for s, where in sigs.items():
+        if len(where) > 1:
+            errors.append(f"signal {s} assigned twice: {where}")
+    chans = pm["i2c"]["I2C_TOF"]["mux_channels"]
+    used = set()
+    for idx, c in chans.items():
+        key = (c["mux"], c["ch"])
+        if key in used:
+            errors.append(f"ToF mux channel {key} used twice")
+        used.add(key)
+    if len(chans) != 11:
+        errors.append("expected 11 ToF sensors")
+    return errors
+
+
+NETLIST = os.path.join(ROOT, "..", "..", "electronics", "chassis_main", "out", "pinmap.json")
+EXPANDER_REF = {"IOX_A": "U43", "IOX_B": "U44", "IOX_C": "U45", "IOX_D": "U47"}
+# IOX_A GPB7 is wired to the strobe net on purpose; stage 3 (S3 F7/F8) puts 47 k series resistors in front of
+# GPA5/GPA7/GPB7, so the expander pins then sit on *_IO nets
+NET_ALIAS = {"SENTINEL": ("WDG_STROBE", "WDG_STROBE_IO"), "HEAD_LOOP_OK_RB": ("HEAD_LOOP_OK_RB", "HEAD_LOOP_OK_IO"),
+             "LAB_KEY_N_RB": ("LAB_KEY_N_RB", "LAB_KEY_N_IO")}
+
+
+def check_netlist(pm):
+    """Returns (errors, summary). The netlist export is the electronics' as-built record (read only)."""
+    if not os.path.exists(NETLIST):
+        return [], "netlist export not found: cross-check skipped"
+    with open(NETLIST) as f:
+        d = json.load(f)
+    parts = {p["ref"]: p for p in d["parts"]}
+    nets = d["nets"]
+    errors, n = [], 0
+
+    def net_ok(sig, net):
+        for want in NET_ALIAS.get(sig, (sig,)):
+            if net in (want, want + "_ADC", "MCU_" + want):
+                return True
+        return False
+
+    mcu = {x["pin"]: x for x in parts["U20M"]["pins"]}
+    for p in pm["pins"]:
+        x = mcu.get(str(p["lqfp64"]))
+        n += 1
+        if x is None or not net_ok(p["signal"], x["net"]):
+            errors.append(f"netlist: MCU pin {p['lqfp64']} ({p['pin']}) is net {x and x['net']}, pinmap says {p['signal']}")
+    for xname, ref in EXPANDER_REF.items():
+        byname = {x["name"]: x["net"] for x in parts[ref]["pins"]}
+        for pin, dd in pm["expanders"][xname]["pins"].items():
+            n += 1
+            if not net_ok(dd["signal"], byname.get(pin)):
+                errors.append(f"netlist: {xname} ({ref}) {pin} is net {byname.get(pin)}, pinmap says {dd['signal']}")
+
+    def two_pin_other(ref, net):
+        ps = parts[ref]["pins"]
+        if len(ps) != 2:
+            return None
+        return ps[1]["net"] if ps[0]["net"] == net else ps[0]["net"]
+
+    for idx, c in pm["i2c"]["I2C_TOF"]["mux_channels"].items():
+        conn = c.get("connector")
+        if not conn or conn not in parts:
+            errors.append(f"netlist: ToF {idx} {c['id']}: connector {conn} not on the board")
+            continue
+        sda = {x["pin"]: x["net"] for x in parts[conn]["pins"]}.get("3")
+        found = set()
+        for m in nets.get(sda, []):
+            ref = m.split(".")[0]
+            if ref.startswith("R"):
+                o = two_pin_other(ref, sda)
+                mm = re.match(r"TOF(\d)(\d)_SDA$", o or "")
+                if mm:
+                    found.add((int(mm.group(1)), int(mm.group(2))))
+        n += 1
+        if found != {(c["mux"], c["ch"])}:
+            errors.append(f"netlist: ToF {idx} {c['id']} on {conn} reaches mux/channel {sorted(found)}, pinmap says {(c['mux'], c['ch'])}")
+    return errors, f"netlist cross-check against {os.path.relpath(NETLIST, ROOT)}: {n} items"
+
+
+def port_pin(name):
+    m = re.match(r"P([A-G])(\d+)$", name)
+    return m.group(1), int(m.group(2))
+
+
+def emit_header(pm, path):
+    lines = [
+        "/* GENERATED by tools/check_pinmap.py from pinmap.yaml - do not edit. */",
+        "#ifndef RR_BOARD_PINS_H",
+        "#define RR_BOARD_PINS_H",
+        "",
+    ]
+    for p in pm["pins"]:
+        port, num = port_pin(p["pin"])
+        s = p["signal"]
+        lines.append(f"#define PIN_{s}_PORT GPIO{port}")
+        lines.append(f"#define PIN_{s}_PIN  GPIO_PIN_{num}")
+        af = str(p["af"])
+        if af.startswith("AF"):
+            lines.append(f"#define PIN_{s}_AF   {af[2:]}u")
+        if "alt" in p:
+            lines.append(f"#define PIN_{s}_ALT_AF {str(p['alt']['af'])[2:]}u")
+    lines.append("")
+    for xname in ("IOX_A", "IOX_B", "IOX_C", "IOX_D"):
+        x = pm["expanders"][xname]
+        if "address_7bit" in x:
+            lines.append(f"#define {xname}_I2C_ADDR 0x{x['address_7bit']:02X}u")
+        for pin, d in x["pins"].items():
+            m = re.match(r"(?:GP|P)([AB01]?)(\d)$", pin)
+            bank, bit = m.group(1), int(m.group(2))
+            base = 8 if bank in ("B", "1") else 0
+            lines.append(f"#define {xname}_BIT_{d['signal']} {base + bit}u")
+        if xname == "IOX_B":
+            mask = 0
+            for pin, d in x["pins"].items():
+                m = re.match(r"P([01])(\d)$", pin)
+                if d.get("dir") == "in":
+                    mask |= 1 << (8 * int(m.group(1)) + int(m.group(2)))
+            lines.append(f"#define IOX_B_INPUT_MASK 0x{mask:04X}u /* configuration register bits = 1 (input); never driven */")
+    lines.append("")
+    for d in pm["i2c"]["I2C_SYS"]["devices"] + pm["i2c"]["I2C_TOF"]["devices"]:
+        ref = re.sub(r"\W+", "_", d["ref"]).strip("_").upper()
+        if ref.startswith("IOX"):
+            continue
+        lines.append(f"#define I2C_ADDR_{ref} 0x{d['address_7bit']:02X}u")
+    lines.append("")
+    lines.append("#define TOF_MUX_MAP { \\")
+    for idx in sorted(pm["i2c"]["I2C_TOF"]["mux_channels"]):
+        c = pm["i2c"]["I2C_TOF"]["mux_channels"][idx]
+        lines.append(f"    {{ {c['mux']}u, {c['ch']}u }}, /* {idx} {c['id']} */ \\")
+    lines.append("}")
+    lines += ["", "#endif", ""]
+    with open(path, "w") as f:
+        f.write("\n".join(lines))
+
+
+def emit_markdown(pm, path):
+    out = ["<!-- GENERATED by tools/check_pinmap.py from pinmap.yaml - do not edit. -->", "",
+           "| Pin | LQFP64 | Signal | Function | AF | Dir | Reset state / note |", "|---|---:|---|---|---|---|---|"]
+    for p in sorted(pm["pins"], key=lambda p: p["lqfp64"]):
+        note = p.get("reset_state", "")
+        if note and p.get("note"):
+            note += ". "
+        note += p.get("note", "")
+        note = note.replace("|", "/")
+        if len(note) > 110:
+            note = note[:107] + "..."
+        out.append(f"| {p['pin']} | {p['lqfp64']} | `{p['signal']}` | {p['function']} | {p['af']} | {p['dir']} | {note} |")
+    for xname in ("IOX_A", "IOX_B", "IOX_C", "IOX_D"):
+        x = pm["expanders"][xname]
+        out += ["", f"**{xname}** - {x['part']} on {x['bus']}" + (f", address 0x{x['address_7bit']:02X}" if "address_7bit" in x else f", CS {x['cs']}"), "",
+                "| Expander pin | Signal | Note |", "|---|---|---|"]
+        for pin, d in x["pins"].items():
+            note = d.get("note", "")
+            if d.get("default"):
+                note = f"default {d['default']}. " + note
+            out.append(f"| {pin} | `{d['signal']}` | {note} |")
+    out += ["", "**ToF sensors** (I2C_TOF, two TCA9548A)", "", "| Index | Id | Mux | Channel | XSHUT group | Role |", "|---:|---|---:|---:|---|---|"]
+    for idx in sorted(pm["i2c"]["I2C_TOF"]["mux_channels"]):
+        c = pm["i2c"]["I2C_TOF"]["mux_channels"][idx]
+        out.append(f"| {idx} | `{c['id']}` | {c['mux']} | {c['ch']} | {c['xshut']} | {c['role']} |")
+    out.append("")
+    with open(path, "w") as f:
+        f.write("\n".join(out))
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--emit-header")
+    ap.add_argument("--emit-markdown")
+    ap.add_argument("--readme", help="update (or with --check: verify) the table between the HARDWARE_MAPPING markers")
+    ap.add_argument("--check", action="store_true")
+    a = ap.parse_args()
+    pm, facts = load()
+    errors = check(pm, facts)
+    nerr, nsum = check_netlist(pm)
+    errors += nerr
+    for e in errors:
+        print("PINMAP ERROR:", e)
+    if errors:
+        return 1
+    print(f"pinmap.yaml: {len(pm['pins'])} native pins tool-checked against LQFP64 pin data: OK")
+    print(f"pinmap.yaml: {nsum}: OK")
+    if a.emit_header:
+        emit_header(pm, a.emit_header)
+        print("wrote", a.emit_header)
+    if a.emit_markdown:
+        emit_markdown(pm, a.emit_markdown)
+        print("wrote", a.emit_markdown)
+    if a.readme:
+        # keep the hardware mapping table inside README.md identical to the generated one
+        tmp = a.readme + ".map.tmp"
+        emit_markdown(pm, tmp)
+        with open(tmp) as f:
+            table = f.read()
+        os.remove(tmp)
+        with open(a.readme) as f:
+            txt = f.read()
+        b, e = "<!-- HARDWARE_MAPPING_BEGIN -->\n", "<!-- HARDWARE_MAPPING_END -->"
+        if b not in txt or e not in txt:
+            print("README markers missing")
+            return 1
+        new = txt[: txt.index(b) + len(b)] + table + txt[txt.index(e):]
+        if a.check:
+            if new != txt:
+                print("README.md hardware mapping table is stale: run tools/check_pinmap.py --readme README.md")
+                return 1
+        else:
+            with open(a.readme, "w") as f:
+                f.write(new)
+            print("updated", a.readme)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

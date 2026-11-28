@@ -1,0 +1,278 @@
+{
+ "scenario": "s13_door_target",
+ "evidence_class": "simulated",
+ "against": "Python protocol fakes (rr_core.fakes), virtual clock",
+ "seed": 23,
+ "sim_time_s": 91.92,
+ "checks": [
+  {
+   "check": "doors open, no target, trailer longer than LiDAR range: arm refused with ALONG_TRACK_REFERENCE",
+   "ok": true,
+   "result": {
+    "accepted": false,
+    "reason": "PREREQUISITES",
+    "missing": [
+     "ALONG_TRACK_REFERENCE: trailer 3.0 m > LiDAR range 2.0 m with the doors open - close the doors or place the door-end target and set trailer.door_target_x_m",
+     "LOCALIZATION"
+    ]
+   }
+  },
+  {
+   "check": "... the only other missing item is LOCALIZATION (no x reference in range: the existing guard still applies)",
+   "ok": true,
+   "missing": [
+    "ALONG_TRACK_REFERENCE: trailer 3.0 m > LiDAR range 2.0 m with the doors open - close the doors or place the door-end target and set trailer.door_target_x_m",
+    "LOCALIZATION"
+   ]
+  },
+  {
+   "check": "start rejected",
+   "ok": true
+  },
+  {
+   "check": "with the door-end target: no ALONG_TRACK_REFERENCE prerequisite",
+   "ok": true,
+   "missing": []
+  },
+  {
+   "check": "plan keeps the door end clear of the target",
+   "ok": true,
+   "pivot_x": [
+    0.64,
+    2.68
+   ]
+  },
+  {
+   "check": "start accepted",
+   "ok": true
+  },
+  {
+   "check": "x updated from the door-end target while heading to the door (bulkhead out of the configured range)",
+   "ok": true,
+   "n": 225,
+   "n_all": 763
+  },
+  {
+   "check": "localisation error vs truth stays within 10 mm in x",
+   "ok": true,
+   "err": {
+    "max_x_m": 0.0018269103041168577,
+    "max_y_m": 0.000512007260459052
+   }
+  },
+  {
+   "check": "no LOCALIZATION hold",
+   "ok": true,
+   "state": "SCAN",
+   "hold": null
+  }
+ ],
+ "passed": true,
+ "field_use_approved": false,
+ "coverage": {
+  "target_area_m2": 3.0,
+  "areas_m2": {
+   "UNVISITED": 2.0471250000000003,
+   "ACCEPTABLE": 0.009625,
+   "INSUFFICIENT_SENSITIVITY": 0.799825,
+   "INVALID_DATA": 0.02035,
+   "BLOCKED": 0.0,
+   "EXCLUDED": 0.0,
+   "NO_DECISION": 0.0,
+   "INCOMPLETE_COVERAGE": 0.073075,
+   "ALARM": 0.05,
+   "ACQUISITION_GAP": 0.0
+  },
+  "valid_exposure_fraction": 0.3020083333333334,
+  "acceptable_fraction": 0.0032083333333333334,
+  "sub_cell_m": 0.005,
+  "decision_cell_m": 0.1,
+  "position_allowance_m": 0.01,
+  "provisional": false
+ },
+ "time_sync": {
+  "limit_us": 10000.0,
+  "fits": 51,
+  "max_gate_bound_us": 838.0033213786841,
+  "median_gate_bound_us": 805.5573056875348
+ },
+ "link_stats": {
+  "tx": 4613,
+  "rx": 4610,
+  "bad_lines": 0,
+  "stale": 0,
+  "duplicates": 0,
+  "gates": 900,
+  "gaps": 0,
+  "retries": 2,
+  "unassigned_frames": 0,
+  "time_exchanges": 51,
+  "time_exchanges_rejected": 0
+ },
+ "localization_error_vs_truth_m": {
+  "max_x_m": 0.0018269103041168577,
+  "max_y_m": 0.000512007260459052
+ },
+ "plan": {
+  "n_pairs": 2,
+  "offset_m": 0.04375,
+  "pair_stride_m": 0.33625,
+  "seam_overlap_per_side_m": 0.01625,
+  "predicted_residual": {
+   "left_wall_strip_m": 0.1487,
+   "right_wall_strip_m": 0.1487,
+   "door_end_strip_m": 0.3913,
+   "front_end_strip_m": 0.0713,
+   "end_zone_single_heading_m": {
+    "door": 0.3399,
+    "front": 0.3399
+   },
+   "note": "wall strips are set by the in-place turn radius of the outline; see README coverage section"
+  },
+  "estimated_time_s": 234.2
+ },
+ "flags": [
+  {
+   "id": "HS-0002",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 1,
+   "x_m": 2.480917007825206,
+   "y_m": -0.1564993122846273,
+   "D": 0.23841656833479377,
+   "u_total": 0.1413508131633981,
+   "D_star": 0.19603120224477955,
+   "D_hash": 0.4926454995225371,
+   "location": {
+    "distance_from_door_m": 2.481,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.344,
+    "text": "2.48 m from the door threshold, 0.34 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0003",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 0,
+   "x_m": 2.8348826586003373,
+   "y_m": -0.015073396654687566,
+   "D": 0.36380838208078053,
+   "u_total": 0.18206875174904258,
+   "D_star": 0.24917698404668215,
+   "D_hash": 0.624430648005385,
+   "location": {
+    "distance_from_door_m": 2.835,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.485,
+    "text": "2.83 m from the door threshold, 0.48 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0004",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 3,
+   "x_m": 2.2589982545429232,
+   "y_m": -0.015021771702044375,
+   "D": 0.2347639559905552,
+   "u_total": 0.15014910637184598,
+   "D_star": 0.20922424307461196,
+   "D_hash": 0.5289787426981202,
+   "location": {
+    "distance_from_door_m": 2.259,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.485,
+    "text": "2.26 m from the door threshold, 0.48 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0005",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 3,
+   "x_m": 0.48066047634375914,
+   "y_m": -0.014992745228350863,
+   "D": 0.250889559436801,
+   "u_total": 0.1632995223435045,
+   "D_star": 0.23274805355092298,
+   "D_hash": 0.6037360444768535,
+   "location": {
+    "distance_from_door_m": 0.481,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.485,
+    "text": "0.48 m from the door threshold, 0.49 m from the right wall"
+   }
+  }
+ ],
+ "scan_detections": 1,
+ "observations": [],
+ "decision_status": {
+  "cells_with_gates": 131,
+  "no_decision": 0,
+  "no_decision_text": [],
+  "no_decision_within_0.5m_of_an_end": 0,
+  "cells_within_0.5m_of_an_end": 32
+ },
+ "rev5": {
+  "cells_with_data": 131,
+  "status": {
+   "INCOMPLETE COVERAGE": 34,
+   "SENSITIVITY INSUFFICIENT": 91,
+   "ACCEPTABLE": 1,
+   "ALARM": 5
+  },
+  "status_reasons": {
+   "D# above the detection goal": 91,
+   "coverage 0.20 < 0.5": 16,
+   "coverage 0.15 < 0.5": 3,
+   "coverage 0.13 < 0.5": 3,
+   "coverage 0.35 < 0.5": 3,
+   "flagged by combined+lane0": 2,
+   "flagged by combined+lane3": 2,
+   "coverage 0.49 < 0.5": 1
+  },
+  "acceptable_fraction": 0.0032083333333333334,
+  "median_D_hash": 0.3574678158614741,
+  "undecidable_recorded": 0,
+  "undecidable_provisional_live": 0,
+  "alarm_bookkeeping": {
+   "provisional alarm not confirmed": 2,
+   "recorded alarm (provisional alarm confirmed)": 5
+  },
+  "flags": {
+   "SCAN_DETECTION:provisional alarm not confirmed": 1,
+   "INVESTIGATION_LEVEL:recorded alarm": 2,
+   "UNRESOLVED_EXCEEDANCE:recorded alarm": 2
+  },
+  "review_queue_items": 4,
+  "recount_required_flags": 1,
+  "one_sided_cells": 54,
+  "one_sided_alarm_cells_needing_recount": 0,
+  "search_preroll_s": [],
+  "recorded_evaluation": null,
+  "revisit": 0,
+  "position_credit": {
+   "samples": 895,
+   "credited_fraction": 0.9631284916201117,
+   "credited_with_true_error_above_budget": 0,
+   "fraction_of_credited_above_budget": 0.0,
+   "max_true_error_when_credited_m": 0.0019516807560927194,
+   "max_true_error_m": 0.0019516807560927194,
+   "no_credit_reasons_samples": {
+    "STALE_X": 33
+   },
+   "localizer": {
+    "wheel_scale": {
+     "estimate": 3.1796082930508006e-05,
+     "sigma": 0.0001508864999126032
+    },
+    "stats": {
+     "x_fixes": 778,
+     "x_rejects": 0,
+     "big_corrections": 0,
+     "max_correction_m": 0.0019494289889006968,
+     "deferred_scans": 26
+    }
+   }
+  }
+ },
+ "door_target_x_m": 0.25,
+ "lidar_range_max_m": 2.0
+}

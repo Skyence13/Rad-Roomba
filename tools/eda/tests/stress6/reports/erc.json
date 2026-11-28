@@ -1,0 +1,49 @@
+{
+    "$schema": "https://schemas.kicad.org/erc.v1.json",
+    "coordinate_units": "mm",
+    "date": "",
+    "included_severities": [
+        "error",
+        "warning",
+        "exclusion"
+    ],
+    "kicad_version": "9.0.9",
+    "sheets": [
+        {
+            "path": "/",
+            "uuid_path": "/4e63a673-ce57-55b7-80bc-f55c9d76b3ab",
+            "violations": []
+        },
+        {
+            "path": "/power/",
+            "uuid_path": "/4e63a673-ce57-55b7-80bc-f55c9d76b3ab/0c7151b5-2d43-575b-80a1-77bef4125131",
+            "violations": []
+        },
+        {
+            "path": "/mcu/",
+            "uuid_path": "/4e63a673-ce57-55b7-80bc-f55c9d76b3ab/e449b1d7-bb22-5d99-87b8-804ba2ceaeda",
+            "violations": []
+        },
+        {
+            "path": "/aux/",
+            "uuid_path": "/4e63a673-ce57-55b7-80bc-f55c9d76b3ab/1cd468a2-3d74-54d5-84cd-7c1a9ffc01f2",
+            "violations": []
+        },
+        {
+            "path": "/buf1/",
+            "uuid_path": "/4e63a673-ce57-55b7-80bc-f55c9d76b3ab/6e9cb69a-ddd5-54c3-86c9-27235f91ad9d",
+            "violations": []
+        },
+        {
+            "path": "/buf2/",
+            "uuid_path": "/4e63a673-ce57-55b7-80bc-f55c9d76b3ab/c16b60c6-370d-50c5-8318-f855a20098aa",
+            "violations": []
+        },
+        {
+            "path": "/misc/",
+            "uuid_path": "/4e63a673-ce57-55b7-80bc-f55c9d76b3ab/41e5555d-b34f-516f-8673-9a230188b675",
+            "violations": []
+        }
+    ],
+    "source": "STRESS-150-6L.kicad_sch"
+}
