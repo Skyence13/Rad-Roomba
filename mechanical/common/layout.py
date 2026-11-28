@@ -232,7 +232,7 @@ def build(rail_projection=3.0):
     # ---- compute, LiDAR, annunciator
     c = P.CM5_POSE
     e = L.env("cm5_carrier")
-    add("CM5_carrier_assembly", L.box(c["x"][0], c["x"][1], c["y"][0], c["y"][1], c["pcb_z"] - 3, c["pcb_z"] - 3 + e["h_assembled"]), "compute", "compute", L.mass("cm5") + L.mass("cm5_carrier") + 0.04)
+    add("CM5_carrier_assembly", L.box(c["x"][0], c["x"][1], c["y"][0], c["y"][1], c["pcb_z"], c["pcb_z"] - 3 + e["h_assembled"]), "compute", "compute", L.mass("cm5") + L.mass("cm5_carrier") + 0.04)
     lx, ly = P.LIDAR_POSE["xy"]
     add("lidar_LakiBeam1L", L.lidar().moved(cq.Location(cq.Vector(lx, ly, P.LIDAR_POSE["base_z"]))), "lidar", "lidar", L.mass("lidar"), internal=False)
     pc = P.PANEL_CONTROLS["annunciator"]["xyz"]

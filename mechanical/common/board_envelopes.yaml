@@ -1,7 +1,7 @@
 # Rad Roomba board envelopes -- mechanical lead's confirmation of contract.yaml > boards.
 # Positions are in base_link (mm) for the Rev E layout. STEP solids: out/boards/*.step
 generated_by: mechanical/common/gen_interfaces.py from params.py -- do not edit by hand
-contract_version: 0.4.0-draft9
+contract_version: 0.4.0-draft11
 evidence_class: calculated (fit tool-checked by layout.py)
 convention: 'Board frame: origin at the rear-left corner seen from above with robot-forward up; +u toward robot right (= -y of base_link), +v forward (= +x of base_link),
   +w up (= +z); top/component side faces +z. base_link = origin + (v, -u, w). Origin z is the PCB UNDERSIDE. All dimensions mm.'
@@ -65,7 +65,7 @@ RR-HEAD-ACQ:
   - 96.0
   shape: rectangle, corner radius <= 1.0
   thickness_mm: 1.6
-  layers: 4
+  layers: 6
   origin_base_link_mm:
   - 83.2
   - 163.0
@@ -271,7 +271,7 @@ RR-CHS-MAIN:
   - 100.0
   shape: rectangle, corner radius <= 2.0
   thickness_mm: 1.6
-  layers: 4
+  layers: 6
   origin_base_link_mm:
   - -67.0
   - 80.0
@@ -298,8 +298,10 @@ RR-CHS-MAIN:
     - 33.0
     - 80.0
     - 83.0
-  position_rationale: Flat on a 2 mm aluminium bridge tray over the two gearmotors, under the removable carry-grip saddle cover (service access from above, no shell
-    split needed). Centre of the board is 17 mm behind the axle.
+  position_rationale: 'Flat on a 2 mm aluminium bridge tray over the two gearmotors, under the removable carry-grip saddle cover (routine plug access from above through
+    the saddle cover; board REMOVAL needs the lid off -- prototype: shoulders and rear decks, production: the one-piece lid -- after the grip bar, cheek fairings
+    and cover; the 160 mm board does not pass the 150 mm cover opening, fit review M1; tool-checked sweep in both body builds). Centre of the board is 17 mm behind
+    the axle.'
   pack_and_receiver_note: '12 Ah baseline pack (DEC-040): the cassette top is now z = 144 and stands 6.5 mm behind the rear edge (was z = 110, 3.5 mm). The blind-mate
     coupler is still under the board on the centre line (x -73.5..-16).'
   mounting:
@@ -424,8 +426,10 @@ RR-TOF:
   outline_mm:
   - 18.0
   - 14.0
-  note: Sensor on the board centre; long axis tangent to the skin. 6 mm depth behind a 1 mm window, window clear aperture >= 8 x 6 mm (emitter/receiver split by a
-    light barrier). 11 positions in frames.yaml.
+  note: 'Sensor at the board origin, 2.4 mm off the outline centre (RR-TOF-A file, review o1): the body seats centre the aperture on the sensor. Real stack behind
+    the window plane: 1.1 recess + 1.5 foam + 1.6 PCB + 4.25 J1 (bottom side, horizontal GH) = 8.45 mm, plus the mated plug and wire exit beyond the J1 edge (seat
+    relief). Long axis tangent to the skin. (was: 6 mm depth behind a 1 mm window, window clear aperture >= 8 x 6 mm (emitter/receiver split by a light barrier).
+    11 positions in frames.yaml.'
 RR-PANEL:
   status: CONFIRMED
   outline_mm:
@@ -435,5 +439,6 @@ RR-PANEL:
   - -80.0
   - 97.0
   - 130.71
-  orientation: long axis along y, component side up under the top skin between grip and LiDAR; max height top 8 mm (light pipes), bottom 3 mm
+  orientation: long axis along x (u = +x), v = 24 edge with J1 / J2 inboard (-y), component side up, in the tray under the left deck (fixed by the body, fit review
+    M7 / m3); max height top 8 mm (light pipes), bottom 3 mm
   note: Buttons are separate 22 mm panel devices on the left/right rear decks; the board carries only LEDs, buzzer and the harness landing.

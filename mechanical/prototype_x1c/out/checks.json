@@ -194,11 +194,29 @@
   ],
   "methods": {
    "mesh screen": 1027,
+   "boolean": 36,
    "boolean: contact film 0.000 mm thick": 6,
-   "boolean: contact film 0.030 mm thick": 1,
-   "boolean": 36
+   "boolean: contact film 0.030 mm thick": 1
   },
   "slowest_pairs_s": [
+   [
+    4.5,
+    "nose_cowl",
+    "head_latch",
+    "boolean"
+   ],
+   [
+    3.2,
+    "J1_receptacle",
+    "J1_mated_plug",
+    "boolean"
+   ],
+   [
+    2.9,
+    "J2_receptacle",
+    "J2_mated_plug",
+    "boolean"
+   ],
    [
     0.0,
     "wheel_rim_R",
@@ -209,24 +227,6 @@
     0.0,
     "wheel_rim_R",
     "tyre_R",
-    "mesh screen"
-   ],
-   [
-    0.0,
-    "wheel_rim_R",
-    "motor_R",
-    "mesh screen"
-   ],
-   [
-    0.0,
-    "wheel_rim_R",
-    "cliff_pod_R",
-    "mesh screen"
-   ],
-   [
-    0.0,
-    "wheel_rim_L",
-    "wheel_hub_L",
     "mesh screen"
    ]
   ]
@@ -5654,9 +5654,9 @@
    "min_bend_r_mm": 40.0,
    "polyline": [
     [
-     64.1,
-     30.1,
-     83.0
+     62.7,
+     29.7,
+     86.0
     ],
     [
      58.5,
@@ -5674,7 +5674,7 @@
      88.1
     ]
    ],
-   "route_mm": 28.4,
+   "route_mm": 28.1,
    "termination_mm": 50.0,
    "service_loop_mm": 40.0,
    "length_mm": 120,
@@ -5685,8 +5685,8 @@
       49.5,
       86.5
      ],
-     "turn_deg": 61,
-     "fits_radius_mm": 4.4,
+     "turn_deg": 63,
+     "fits_radius_mm": 4.3,
      "ok": "False"
     },
     {
@@ -5739,9 +5739,9 @@
    "min_bend_r_mm": 35.0,
    "polyline": [
     [
-     67.6,
-     -31.1,
-     84.7
+     66.2,
+     -30.7,
+     87.7
     ],
     [
      39.7,
@@ -5749,7 +5749,7 @@
      86.7
     ]
    ],
-   "route_mm": 35.2,
+   "route_mm": 34.3,
    "termination_mm": 50.0,
    "service_loop_mm": 40.0,
    "length_mm": 130,
@@ -8982,7 +8982,7 @@
    "od_mm": 4.0,
    "diag": {
     "reach_from_far_end_voxels": 309,
-    "reach_from_near_end_voxels": 86054,
+    "reach_from_near_end_voxels": 86053,
     "near_end": [
      27.0,
      -16.0,
@@ -9004,7 +9004,7 @@
    "od_mm": 4.0,
    "diag": {
     "reach_from_far_end_voxels": 10,
-    "reach_from_near_end_voxels": 86066,
+    "reach_from_near_end_voxels": 86065,
     "near_end": [
      -51.8,
      32.0,
@@ -9026,7 +9026,7 @@
    "od_mm": 4.0,
    "diag": {
     "reach_from_far_end_voxels": 10,
-    "reach_from_near_end_voxels": 86065,
+    "reach_from_near_end_voxels": 86064,
     "near_end": [
      -51.8,
      -34.0,
@@ -9924,7 +9924,7 @@
    "od_mm": 4.0,
    "diag": {
     "reach_from_far_end_voxels": 10,
-    "reach_from_near_end_voxels": 86054,
+    "reach_from_near_end_voxels": 86053,
     "near_end": [
      -51.8,
      59.0,
@@ -10317,7 +10317,7 @@
    "to": "CHS.J_HTR",
    "od_mm": 4.5,
    "diag": {
-    "reach_from_far_end_voxels": 86150,
+    "reach_from_far_end_voxels": 86149,
     "reach_from_near_end_voxels": 1,
     "near_end": [
      -71.0,
@@ -10339,7 +10339,7 @@
    "to": "CHS.J_NTC",
    "od_mm": 3.1,
    "diag": {
-    "reach_from_far_end_voxels": 86054,
+    "reach_from_far_end_voxels": 86053,
     "reach_from_near_end_voxels": 1,
     "near_end": [
      -71.0,
@@ -10371,38 +10371,38 @@
      88.0
     ],
     [
-     203.32882663884914,
-     14.280303998007888,
-     84.62409025466415
+     202.0004978467934,
+     13.85400914317281,
+     87.62409025466415
     ],
     [
-     204.05012469048026,
-     39.96916086173115,
-     115.2763717709861
+     202.72179589842452,
+     39.54286600689607,
+     118.2763717709861
     ],
     [
-     180.2057119241884,
-     53.937874242100584,
-     128.4512465912959
+     178.87738313213265,
+     53.511579387265506,
+     131.4512465912959
     ],
     [
-     149.91557135027915,
-     53.870438903805564,
-     124.00589658358966
+     148.5872425582234,
+     53.444144048970486,
+     127.00589658358966
     ]
    ],
-   "route_mm": 253.0,
-   "free_length_mm": 283,
-   "max_z_mm": 132.2,
+   "route_mm": 252.0,
+   "free_length_mm": 282,
+   "max_z_mm": 135.2,
    "tof_cone_margin": {
-    "min_mm": 25.5,
-    "deg_at_min": 9.3,
+    "min_mm": 26.5,
+    "deg_at_min": 9.8,
     "sensor": "tof_look_fwd_left",
     "ok": true,
     "rule": ">= 20 mm or >= 10 deg"
    },
    "lidar_plane_z": 210.0,
-   "lidar_plane_gap_mm": 77.8,
+   "lidar_plane_gap_mm": 74.8,
    "tof_limit_ok": null,
    "bends": [],
    "own_parts": [
@@ -10434,13 +10434,13 @@
      88.0
     ],
     [
-     269.32882663884914,
-     14.280303998007888,
-     84.62409025466415
+     268.0004978467934,
+     13.85400914317281,
+     87.62409025466415
     ]
    ],
-   "route_mm": 151.8,
-   "free_length_mm": 283,
+   "route_mm": 150.8,
+   "free_length_mm": 282,
    "max_z_mm": 91.8,
    "tof_cone_margin": {
     "min_mm": 9.9,
@@ -10482,38 +10482,38 @@
      88.0
     ],
     [
-     189.68257804450624,
-     -17.23057260543149,
-     86.16586995185423
+     188.3542492524505,
+     -16.804277750596412,
+     89.16586995185423
     ],
     [
-     190.3137138396835,
-     -39.70832236118934,
-     112.98661627863595
+     188.98538504762774,
+     -39.28202750635426,
+     115.98661627863595
     ],
     [
-     169.4498526691781,
-     -51.9309465690126,
-     124.51463174640703
+     168.12152387712237,
+     -51.50465171417752,
+     127.51463174640703
     ],
     [
-     142.94597966700752,
-     -51.871940648004454,
-     120.62495048966406
+     141.61765087495178,
+     -51.445645793169376,
+     123.62495048966406
     ]
    ],
-   "route_mm": 239.0,
-   "free_length_mm": 269,
-   "max_z_mm": 127.8,
+   "route_mm": 238.2,
+   "free_length_mm": 268,
+   "max_z_mm": 130.8,
    "tof_cone_margin": {
-    "min_mm": 22.3,
-    "deg_at_min": 10.2,
+    "min_mm": 22.0,
+    "deg_at_min": 10.0,
     "sensor": "tof_look_fwd_right",
     "ok": true,
     "rule": ">= 20 mm or >= 10 deg"
    },
    "lidar_plane_z": 210.0,
-   "lidar_plane_gap_mm": 82.2,
+   "lidar_plane_gap_mm": 79.2,
    "tof_limit_ok": null,
    "bends": [],
    "own_parts": [
@@ -10545,23 +10545,23 @@
      88.0
     ],
     [
-     255.68257804450624,
-     -17.23057260543149,
-     86.16586995185423
+     254.3542492524505,
+     -16.804277750596412,
+     89.16586995185423
     ]
    ],
-   "route_mm": 150.4,
-   "free_length_mm": 269,
-   "max_z_mm": 91.2,
+   "route_mm": 149.6,
+   "free_length_mm": 268,
+   "max_z_mm": 92.4,
    "tof_cone_margin": {
-    "min_mm": -2.3,
+    "min_mm": -2.4,
     "deg_at_min": -0.8,
     "sensor": "tof_look_fwd_right",
     "ok": false,
     "rule": ">= 20 mm or >= 10 deg"
    },
    "lidar_plane_z": 210.0,
-   "lidar_plane_gap_mm": 118.8,
+   "lidar_plane_gap_mm": 117.6,
    "tof_limit_ok": null,
    "bends": [],
    "own_parts": [
@@ -10762,9 +10762,9 @@
  "mass_cg": {
   "base_without_head": {
    "mass": 6.69,
-   "x": -92.44,
+   "x": -92.45,
    "y": 1.08,
-   "z": 81.83
+   "z": 81.84
   },
   "groups": {
    "battery_bay": {
@@ -10814,8 +10814,8 @@
    },
    "connectors": {
     "mass_kg": 0.035,
-    "x": 84.3,
-    "z": 92.2
+    "x": 83.0,
+    "z": 95.2
    },
    "controls": {
     "mass_kg": 0.295,
@@ -11263,7 +11263,7 @@
     "nose_cowl",
     0.0904,
     72.7,
-    90.0
+    89.9
    ],
    [
     "shoulder_L",
@@ -11622,14 +11622,14 @@
    [
     "J1_receptacle",
     0.02,
-    83.7,
-    91.9
+    82.4,
+    94.9
    ],
    [
     "J2_receptacle",
     0.015,
-    85.1,
-    92.6
+    83.8,
+    95.6
    ],
    [
     "rrtof_cliff_fl_pcb",
@@ -11741,7 +11741,7 @@
     "tip_margin_rearward_mm": 101.9,
     "tip_margin_lateral_mm": 54.4,
     "hang_angle_deg": -37.2,
-    "hang_angle_deg_old_bar_x-11": -44.7
+    "hang_angle_deg_old_bar_x-11": -44.8
    },
    {
     "head": "prototype head RR-HD-X (1.881 kg)",

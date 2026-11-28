@@ -473,11 +473,11 @@ _ci = skin_point(-128.0, 88.0)
 CHARGE_INLET = {"xyz": _ci, "normal": _unit((_ci[0] - (-150.0), _ci[1], 0.0)),
                 "desc": "charge inlet (M12 L-coded) under a hinged cover with cover switch, right rear quarter"}
 # J1 / J2 panel receptacles (lead request 2026-11-28, fit review M6): moved from the nose roof (72, +-32, 117, axis mostly up:
-# docked pigtail loops to z 195..226, 258..298 mm long) to the nose FRONT at skin angle +-17 deg, z 94, axis 25 deg above
+# docked pigtail loops to z 195..226, 258..298 mm long) to the nose FRONT at skin angle +-17 deg, z 97, axis 25 deg above
 # horizontal and 16 deg outward.  Selected by a tool-checked search (scratch jsearch): the 45 mm grasp annulus round each
-# coupling nut is free of the skin and of the head (z <= 45), the plug and cable stay >= 20 mm outside both look-ahead ToF
+# coupling nut is free of the skin and of the head incl. its cold jacket (z <= 48), the plug and cable stay >= 20 mm outside both look-ahead ToF
 # cones (18 deg FoV), far below the LiDAR plane; lower or level axes put the nose skin or the head into the grasp zone.
-J_AXIS = {"skin_deg": 17.0, "z": 94.0, "elev_deg": 25.0, "yaw_out_deg": 16.0}   # spaced so each grasp annulus clears the other receptacle
+J_AXIS = {"skin_deg": 17.0, "z": 97.0, "elev_deg": 25.0, "yaw_out_deg": 16.0}   # spaced so each grasp annulus clears the other receptacle
 J_RECEPTACLES = {}
 for _jn, _sg in (("J1", 1.0), ("J2", -1.0)):
     _p = skin_point(_sg * J_AXIS["skin_deg"], J_AXIS["z"])

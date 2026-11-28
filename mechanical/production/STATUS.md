@@ -44,5 +44,7 @@ boolean of lower hull x lid (contact only, 0.0 mm3; RR_BOOL_TIMEOUT=1200 in buil
 
 The production body takes every fit-review change through the shared rrx code (prototype_x1c/STATUS.md, stage 1, lists them) plus
 the production assembly sequence with harness steps (M8: in-line disconnects for the lid-mounted devices, plug order, board service
-with the one-piece lid off) and the flat bridge tray (m7).  RUNNING: production build with the new checks (cold skins, about
-60-90 min on the shared machine); result to be added here.
+with the one-piece lid off) and the flat bridge tray (m7).  Production run 1 with every new check: exit 0, ALL CHECKS PASS (3856 s cold: 0 clashes in 1010 pairs, 96 fasteners / 114 tool columns
+0 blocked, sweeps free, SVC PASS, 27 / 39 cables routed, OPEN routes listed in production_report.md, 49 drawing sheets).
+Mass (calculated): body 7.35 kg; prototype head 9.23 kg, CG x -46.2, fwd tip 37.0 mm, hang -9.9 deg; production head 9.45 kg,
+CG x -42.0, 33.0 mm, -7.3 deg.  Run 2 (receptacles at z 97) RUNNING after the prototype run 8.

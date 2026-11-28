@@ -73,8 +73,8 @@ Result of the last prototype build: see the block "Prototype build result" at th
 - M3: look-ahead lead slot 10 x 7 under the fairing nose + fairing channel.
 - M7: RR-PANEL orientation fixed (plugs outboard), notches, M2.5 bosses, light pipes from the LED positions.
 - SVC1..SVC10 (stage 5): 11 test pads found in the board file; no part, route or clip over the probe zone.
-- J1/J2 receptacles: nose front, skin +-17 deg, z 94, axis 25 deg up / 16 deg out; pigtail apex about z 128 (was 195..226); free
-  length about 283 / 269 mm (not shorter); corridors >= 20 mm from the look-ahead cones, about 80 mm below the LiDAR plane; grasp
+- J1/J2 receptacles: nose front, skin +-17 deg, z 97, axis 25 deg up / 16 deg out (z 94 -> 97 after the common layout found the
+  grasp annulus touching the head cold jacket, z 48); pigtail apex about z 131 (was 195..226); free length about 285 / 270 mm (not shorter); corridors >= 20 mm from the look-ahead cones, about 80 mm below the LiDAR plane; grasp
   zones free; receptacle depth + 5 mm free.
 - Minor: m2 (no nyloc), m3 / m4 (interfaces text, 6-layer from the files), m7 (tray flat, production rule), m9, o1, o4.
 
@@ -89,6 +89,8 @@ head / harness items; M9 is CR-15; m6 (can strap bond hole) open.
   prototype head RR-HD-X (1.881 kg): 8.57 kg, CG x -44.2, fwd tip 35.1 mm, hang -8.7 deg
   production head (2.100 kg): 8.79 kg, CG x -39.8, fwd tip 30.8 mm, hang -6.0 deg
   production head + 15 % margin: 9.1 kg, CG x -34.0, fwd tip 25.2 mm, hang -2.4 deg
+
+- 2026-11-28 later: receptacles raised to z 97 (head jacket); common build exit 0; prototype run 8 and production run 2 RUNNING (chained).
 
 ## Run times (shared 4-core machine)
 
