@@ -3,7 +3,7 @@
  "evidence_class": "simulated",
  "against": "Python protocol fakes (rr_core.fakes), virtual clock",
  "seed": 22,
- "sim_time_s": 263.8,
+ "sim_time_s": 263.86,
  "checks": [
   {
    "check": "restart opens a new archive epoch; earlier segments sealed read-only",
@@ -66,32 +66,37 @@
  "coverage": {
   "target_area_m2": 3.0,
   "areas_m2": {
-   "UNVISITED": 1.14035,
+   "UNVISITED": 1.0078500000000001,
    "ACCEPTABLE": 0.0,
-   "INSUFFICIENT_SENSITIVITY": 1.85965,
+   "INSUFFICIENT_SENSITIVITY": 1.882325,
    "INVALID_DATA": 0.0,
    "BLOCKED": 0.0,
-   "EXCLUDED": 0.0
+   "EXCLUDED": 0.0,
+   "NO_DECISION": 0.0,
+   "INCOMPLETE_COVERAGE": 0.039825,
+   "ALARM": 0.07,
+   "ACQUISITION_GAP": 0.0
   },
-  "valid_exposure_fraction": 0.6198833333333333,
+  "valid_exposure_fraction": 0.6583500000000001,
   "acceptable_fraction": 0.0,
   "sub_cell_m": 0.005,
   "decision_cell_m": 0.1,
-  "position_allowance_m": 0.01
+  "position_allowance_m": 0.01,
+  "provisional": false
  },
  "time_sync": {
   "limit_us": 10000.0,
   "fits": 141,
-  "max_gate_bound_us": 838.0520796923137,
-  "median_gate_bound_us": 798.7271255766964
+  "max_gate_bound_us": 838.0033213786841,
+  "median_gate_bound_us": 798.8811226159668
  },
  "link_stats": {
-  "tx": 13203,
-  "rx": 13200,
+  "tx": 13340,
+  "rx": 13337,
   "bad_lines": 0,
   "stale": 1,
   "duplicates": 0,
-  "gates": 2606,
+  "gates": 2607,
   "gaps": 0,
   "retries": 2,
   "unassigned_frames": 0,
@@ -99,8 +104,8 @@
   "time_exchanges_rejected": 0
  },
  "localization_error_vs_truth_m": {
-  "max_x_m": 0.0009522447396781986,
-  "max_y_m": 0.000591303167690016
+  "max_x_m": 0.001000890802258625,
+  "max_y_m": 0.0006243145584320098
  },
  "plan": {
   "n_pairs": 2,
@@ -122,50 +127,190 @@
  },
  "flags": [
   {
-   "id": "HS-0002",
-   "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 2,
-   "x_m": 2.313308412290993,
-   "y_m": -0.10253264996193398,
-   "D": 0.11969773786383711,
-   "u_total": 0.06027058876082089,
-   "D_star": 0.09105946477419526,
-   "D_hash": 0.20583519190461383,
+   "id": "HS-0001",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 0,
+   "x_m": 1.265692189292785,
+   "y_m": -0.2775444989865156,
+   "D": 0.11926415632687265,
+   "u_total": 0.06730075499137766,
+   "D_star": 0.10697502710627521,
+   "D_hash": 0.242393037335102,
    "location": {
-    "distance_from_door_m": 2.313,
+    "distance_from_door_m": 1.266,
     "wall": "right wall",
-    "distance_from_wall_m": 0.397,
-    "text": "2.31 m from the door threshold, 0.40 m from the right wall"
+    "distance_from_wall_m": 0.222,
+    "text": "1.27 m from the door threshold, 0.22 m from the right wall"
    }
   },
   {
-   "id": "HS-0005",
+   "id": "HS-0002",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 2,
+   "x_m": 2.2565440887914314,
+   "y_m": -0.23376765049574447,
+   "D": 0.15677340051379685,
+   "u_total": 0.10229543931481994,
+   "D_star": 0.1548693800019949,
+   "D_hash": 0.36356585286024606,
+   "location": {
+    "distance_from_door_m": 2.257,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.266,
+    "text": "2.26 m from the door threshold, 0.27 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0003",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 2,
+   "x_m": 2.3029839981471576,
+   "y_m": -0.1026108281760196,
+   "D": 0.10958186976396116,
+   "u_total": 0.05662341022519948,
+   "D_star": 0.08739594588199624,
+   "D_hash": 0.1950336397202505,
+   "location": {
+    "distance_from_door_m": 2.303,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.397,
+    "text": "2.30 m from the door threshold, 0.40 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0004",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 0,
+   "x_m": 2.835206299280298,
+   "y_m": -0.023947567479575993,
+   "D": 0.2926203107103115,
+   "u_total": 0.14731725215098063,
+   "D_star": 0.20897836527269956,
+   "D_hash": 0.5119413588884526,
+   "location": {
+    "distance_from_door_m": 2.835,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.476,
+    "text": "2.84 m from the door threshold, 0.48 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0006",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 0,
-   "x_m": 0.19547272558889217,
-   "y_m": 0.027326521964351858,
-   "D": 0.26298093406400114,
-   "u_total": 0.11842142787615467,
-   "D_star": 0.17035911553197455,
-   "D_hash": 0.41792175116110564,
+   "x_m": 1.2648789020930344,
+   "y_m": -0.2775398914548928,
+   "D": 0.16982208386063696,
+   "u_total": 0.1005015169750712,
+   "D_star": 0.15337089975337406,
+   "D_hash": 0.361802652437607,
    "location": {
-    "distance_from_door_m": 0.195,
+    "distance_from_door_m": 1.265,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.222,
+    "text": "1.26 m from the door threshold, 0.22 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0007",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 0,
+   "x_m": 0.19149794353720181,
+   "y_m": -0.31112444956949153,
+   "D": 0.32343446684320515,
+   "u_total": 0.20453045178452867,
+   "D_star": 0.2686956282820417,
+   "D_hash": 0.6735271846877805,
+   "location": {
+    "distance_from_door_m": 0.191,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.189,
+    "text": "0.19 m from the door threshold, 0.19 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0008",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 0,
+   "x_m": 0.2006901594492329,
+   "y_m": 0.02423525319274092,
+   "D": 0.24092092670490353,
+   "u_total": 0.10098574550573287,
+   "D_star": 0.14668908227261793,
+   "D_hash": 0.35032326260677904,
+   "location": {
+    "distance_from_door_m": 0.201,
     "wall": "left wall",
-    "distance_from_wall_m": 0.473,
-    "text": "0.20 m from the door threshold, 0.47 m from the left wall"
+    "distance_from_wall_m": 0.476,
+    "text": "0.20 m from the door threshold, 0.48 m from the left wall"
    }
   }
  ],
- "scan_detections": 5,
+ "scan_detections": 2,
  "observations": [],
  "decision_status": {
-  "cells_with_gates": 231,
-  "no_decision": 28,
-  "no_decision_text": [
-   "no decision \u2014 null reference unavailable"
-  ],
-  "no_decision_within_0.5m_of_an_end": 7,
-  "cells_within_0.5m_of_an_end": 71
+  "cells_with_gates": 232,
+  "no_decision": 0,
+  "no_decision_text": [],
+  "no_decision_within_0.5m_of_an_end": 0,
+  "cells_within_0.5m_of_an_end": 72
+ },
+ "rev5": {
+  "cells_with_data": 232,
+  "status": {
+   "ALARM": 7,
+   "SENSITIVITY INSUFFICIENT": 212,
+   "INCOMPLETE COVERAGE": 13
+  },
+  "status_reasons": {
+   "D# above the detection goal": 109,
+   "reference gradient": 91,
+   "speed 0.1037 m/s outside the calibrated range": 8,
+   "coverage 0.35 < 0.5": 6,
+   "flagged by combined": 5,
+   "speed 0.1022 m/s outside the calibrated range": 4,
+   "coverage 0.26 < 0.5": 2,
+   "coverage 0.21 < 0.5": 2
+  },
+  "acceptable_fraction": 0.0,
+  "median_D_hash": 0.2636786160644475,
+  "undecidable_recorded": 0,
+  "undecidable_provisional_live": 0,
+  "alarm_bookkeeping": {
+   "recorded alarm (provisional alarm confirmed)": 7,
+   "provisional alarm not confirmed": 10
+  },
+  "flags": {
+   "INVESTIGATION_LEVEL:recorded alarm": 3,
+   "UNRESOLVED_EXCEEDANCE:provisional alarm not confirmed": 1,
+   "INVESTIGATION_LEVEL:provisional alarm not confirmed": 1,
+   "SCAN_DETECTION:provisional alarm not confirmed": 1,
+   "UNRESOLVED_EXCEEDANCE:recorded alarm": 2,
+   "SCAN_DETECTION:recorded alarm": 1
+  },
+  "review_queue_items": 6,
+  "revisit": 0,
+  "position_credit": {
+   "samples": 1891,
+   "credited_fraction": 1.0,
+   "credited_with_true_error_above_budget": 0,
+   "fraction_of_credited_above_budget": 0.0,
+   "max_true_error_when_credited_m": 0.001155746807476436,
+   "max_true_error_m": 0.001155746807476436,
+   "no_credit_reasons_samples": {},
+   "localizer": {
+    "wheel_scale": {
+     "estimate": 2.1635810951886056e-05,
+     "sigma": 9.527069272964466e-05
+    },
+    "stats": {
+     "x_fixes": 2470,
+     "x_rejects": 0,
+     "big_corrections": 0,
+     "max_correction_m": 0.0005574187250722758
+    }
+   }
+  }
  },
  "done_before_reboot": [
   "T000",
@@ -179,7 +324,7 @@
   },
   {
    "epoch": 1,
-   "t_us": 1071100000,
+   "t_us": 1071240000,
    "reason": "PROCESS_RESTART"
   }
  ]

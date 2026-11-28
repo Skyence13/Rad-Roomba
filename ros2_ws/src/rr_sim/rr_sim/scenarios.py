@@ -890,7 +890,8 @@ def s12_reboot_resume(tmp, seed=22):
     sim2.run(1.0)
     app2.command("rearm", actor="op1")
     sim2.run(1.5)
-    sim2.press_rearm()
+    if not app2.chassis.state.get("hw_latch"):        # the operator presses REARM only when the page asks for it
+        sim2.press_rearm()
     sim2.run(1.0)
     r = app2.command("arm")
     c.add("deliberate re-arm and arm after restart", r["accepted"], missing=r.get("missing"), mode=app2.chassis.drive.get("mode"))

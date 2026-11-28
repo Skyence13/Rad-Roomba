@@ -203,9 +203,7 @@
     "plane fan-out: no legal via position for U2503 pad at (234.10, 17.47) [BUS_GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U2503 pad at (234.10, 12.53) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U2503 pad at (237.90, 12.53) [+3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for U2403 pad at (240.89, 33.35) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for U2403 pad at (240.89, 34.00) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for U2402 pad at (53.89, 39.00) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for U2402 pad at (53.89, 39.00) [+3V3] - long fan-out: exact re-check: seg: pad I2C_SDA U2402 (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for C2706 pad at (186.62, 50.20) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U2704 pad at (209.14, 86.00) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U2704 pad at (209.14, 86.95) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
@@ -6978,9 +6976,7 @@
       "U2503 pad at (234.10, 17.47) [BUS_GND] - long fan-out: long fan-out time cap (600 s) used up",
       "U2503 pad at (234.10, 12.53) [GND] - long fan-out: long fan-out time cap (600 s) used up",
       "U2503 pad at (237.90, 12.53) [+3V3] - long fan-out: no free path to the plane within the board",
-      "U2403 pad at (240.89, 33.35) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
-      "U2403 pad at (240.89, 34.00) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
-      "U2402 pad at (53.89, 39.00) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
+      "U2402 pad at (53.89, 39.00) [+3V3] - long fan-out: exact re-check: seg: pad I2C_SDA U2402",
       "C2706 pad at (186.62, 50.20) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
       "U2704 pad at (209.14, 86.00) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
       "U2704 pad at (209.14, 86.95) [+5V_A] - long fan-out: long fan-out time cap (600 s) used up",
@@ -7042,7 +7038,9 @@
       "R1017 [+3V3] 39.9 mm",
       "R2503 [+3V3] 17.7 mm",
       "C2501 [+3V3] 23.8 mm",
-      "U2501 [+3V3] 25.4 mm"
+      "U2501 [+3V3] 25.4 mm",
+      "U2403 [+3V3] 11.7 mm",
+      "U2403 [+3V3] 11.4 mm"
     ],
     "plane_nets": [
       "+3V3",
@@ -7097,10 +7095,10 @@
     "timed_out": false
   },
   "route_stats": {
-    "track_length_mm": 1645.96,
-    "tracks": 928,
-    "unconnected_after_fill": 1465,
-    "vias": 904
+    "track_length_mm": 1669.11,
+    "tracks": 937,
+    "unconnected_after_fill": 1463,
+    "vias": 908
   },
   "routed": false,
   "routing": {

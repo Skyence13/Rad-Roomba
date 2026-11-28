@@ -26,7 +26,7 @@ CZ0, CZ1 = B["cassette_z"]
 WALL = 2.5
 RIB_Y = (44.0, 50.0)                 # floor ribs the cassette runs on (top z = cassette underside)
 KEY_Y = D.KEY_RIB_Y                  # off-centre key rib on the cassette floor (left of centre)
-FEET_X = (-212.0, -190.0, -150.0, -110.0, -76.0)        # rear foot at x -212 (fit review: the x -222 screw met the lower hull)
+FEET_X = (-204.0, -180.0, -150.0, -110.0, -76.0)        # rear feet at x -204 / -180 (fit review: the x -222 screw met the lower hull)
 PLUG = (-164.6, -74.0, 42.0)         # flange of the floor plug on the plate top (starts clear of the caster disc, x -165.0)
 HANDLE_Y = (32.3, 36.3)               # handle arm |y| (outboard of the hinge lugs)
 LUG_Y = (27.8, 32.0)                  # hinge lugs on the cassette rear face
