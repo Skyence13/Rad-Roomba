@@ -2,7 +2,7 @@ RAD ROOMBA FLOOR SURVEY SUMMARY
 SYNTHETIC CALIBRATION/PROFILE - field_use_approved: false - NOT FOR SURVEY OR RELEASE DECISIONS
 synthetic — not for field use
 DEMONSTRATION CALIBRATION BINDING - head identity NOT checked
-run 84b768ae-1558-4867-a082-0715faf83510  trailer SIM-SECTION-3.0x1.0  floor 3 x 1 m (floor only)
+run 24e60fbb-27e9-4cfc-b83d-1c0f1fd60b85  trailer SIM-SECTION-3.0x1.0  floor 3 x 1 m (floor only)
 method CONTINUOUS_SCAN  profile ore-floor-demo-synthetic rev 1  calibration(s) DEMO-CAL-SYNTH-0001
 model analysis/radiometry/MODEL.md revision 5 (2026-11-27); recorded results (evaluated once on the complete record); README.txt says how to read them
 unit Bq/cm2  investigation level 0.3  detection goal < 0.2
@@ -11,9 +11,9 @@ alpha_scan 0.05  alpha_recount 0.000171  beta 0.05  decision cells 300
 
 WHERE THE ROBOT MEASURED
   valid exposure on 9.7 % of the target floor (3.000 m2)
-  UNVISITED                    2.7007 m2
+  UNVISITED                    2.7001 m2
   ACCEPTABLE                   0.0000 m2
-  INSUFFICIENT_SENSITIVITY     0.2792 m2
+  INSUFFICIENT_SENSITIVITY     0.2798 m2
   INVALID_DATA                 0.0000 m2
   BLOCKED                      0.0000 m2
   EXCLUDED                     0.0000 m2
@@ -29,20 +29,18 @@ CELL STATUS (cells with data)
   SENSITIVITY INSUFFICIENT   39
   ACCEPTABLE                 0
   alarm found at final evaluation: 1
-  provisional alarm not confirmed: 1
 
 HOW SENSITIVE IT WAS
   decision cells with data 44; ACCEPTABLE 0
-  D# median 0.457  best 0.250  worst 0.916 Bq/cm2 (beta_window, alpha_combined 0.04)
-  time sync: max gate bound 1122.3889090546418 us (limit 10000)
+  D# median 0.457  best 0.250  worst 0.920 Bq/cm2 (beta_window, alpha_combined 0.04)
+  time sync: max gate bound 1403.768202265501 us (limit 10000)
 
 WHAT STILL NEEDS ATTENTION
-  HS-0001 UNRESOLVED_EXCEEDANCE lane 1 D=0.181 +/- 0.117 Bq/cm2 at 1.25 m from the door threshold, 0.35 m from the right wall [provisional alarm not confirmed]
-  HS-0002 UNRESOLVED_EXCEEDANCE lane 0 D=0.248 +/- 0.125 Bq/cm2 at 0.52 m from the door threshold, 0.44 m from the right wall [alarm found at final evaluation]
+  HS-0001 UNRESOLVED_EXCEEDANCE lane 0 D=0.248 +/- 0.125 Bq/cm2 at 0.52 m from the door threshold, 0.44 m from the right wall [alarm found at final evaluation]
   scan-stage detections below the investigation level awaiting a recount under the two-stage rule: 0
   unresolved floor ALARM: 0.0100 m2 (rectangles in residuals.json)
   unresolved floor INCOMPLETE_COVERAGE: 0.0101 m2 (rectangles in residuals.json)
-  unresolved floor INSUFFICIENT_SENSITIVITY: 0.2792 m2 (rectangles in residuals.json)
-  unresolved floor UNVISITED: 2.7007 m2 (rectangles in residuals.json)
+  unresolved floor INSUFFICIENT_SENSITIVITY: 0.2798 m2 (rectangles in residuals.json)
+  unresolved floor UNVISITED: 2.7001 m2 (rectangles in residuals.json)
 
 A release-status entry is a radiation-protection decision under the site procedure; this report is not one.

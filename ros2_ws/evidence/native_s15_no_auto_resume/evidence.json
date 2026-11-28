@@ -3,7 +3,7 @@
  "evidence_class": "simulated",
  "against": "native firmware emulators rr_head_sim + rr_chassis_sim (real time; world/LiDAR from rr_sim.world)",
  "seed": 35,
- "sim_time_s": 56.51,
+ "sim_time_s": 56.49,
  "checks": [
   {
    "check": "bumper: HOLD with a hardware inhibit",
@@ -42,13 +42,13 @@
    "events": [
     {
      "seq": 47,
-     "t_us": 20428000,
+     "t_us": 20661000,
      "kind": "REARM_REFUSED",
      "detail": {
       "why": "CHAIN_OPEN"
      },
      "boot_id": "c8db4e6c-d2df-45e0-ab6a-02525c5ca18b",
-     "t_host_us": 4042084484.35842
+     "t_host_us": 1915982219.5464246
     }
    ],
    "state_refusal": "CHAIN_OPEN",
@@ -146,9 +146,9 @@
  "coverage": {
   "target_area_m2": 3.0,
   "areas_m2": {
-   "UNVISITED": 2.700675,
+   "UNVISITED": 2.700075,
    "ACCEPTABLE": 0.0,
-   "INSUFFICIENT_SENSITIVITY": 0.2792,
+   "INSUFFICIENT_SENSITIVITY": 0.2798,
    "INVALID_DATA": 0.0,
    "BLOCKED": 0.0,
    "EXCLUDED": 0.0,
@@ -157,7 +157,7 @@
    "ALARM": 0.01,
    "ACQUISITION_GAP": 0.0
   },
-  "valid_exposure_fraction": 0.09706666666666668,
+  "valid_exposure_fraction": 0.09726666666666667,
   "acceptable_fraction": 0.0,
   "sub_cell_m": 0.005,
   "decision_cell_m": 0.1,
@@ -167,12 +167,12 @@
  "time_sync": {
   "limit_us": 10000.0,
   "fits": 33,
-  "max_gate_bound_us": 1122.3889090546418,
-  "median_gate_bound_us": 941.1067982809353
+  "max_gate_bound_us": 1403.768202265501,
+  "median_gate_bound_us": 1023.1584717528867
  },
  "link_stats": {
-  "tx": 3119,
-  "rx": 3119,
+  "tx": 3122,
+  "rx": 3122,
   "bad_lines": 0,
   "stale": 0,
   "duplicates": 0,
@@ -184,8 +184,8 @@
   "time_exchanges_rejected": 0
  },
  "localization_error_vs_truth_m": {
-  "max_x_m": 0.01834901027322644,
-  "max_y_m": 0.0001071332445812534
+  "max_x_m": 0.027662071128517818,
+  "max_y_m": 0.00010714472782916151
  },
  "plan": {
   "n_pairs": 2,
@@ -209,26 +209,9 @@
   {
    "id": "HS-0001",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 1,
-   "x_m": 1.2540460416130685,
-   "y_m": -0.14626549391578264,
-   "D": 0.18149737480317868,
-   "u_total": 0.11669439913041413,
-   "D_star": 0.16890303431479117,
-   "D_hash": 0.4209491595711327,
-   "location": {
-    "distance_from_door_m": 1.254,
-    "wall": "right wall",
-    "distance_from_wall_m": 0.354,
-    "text": "1.25 m from the door threshold, 0.35 m from the right wall"
-   }
-  },
-  {
-   "id": "HS-0002",
-   "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 0,
-   "x_m": 0.5213541208762504,
-   "y_m": -0.05878002338069825,
+   "x_m": 0.5213536293895829,
+   "y_m": -0.058779557947623656,
    "D": 0.24752334103994508,
    "u_total": 0.12462024268547386,
    "D_star": 0.1899128022012663,
@@ -267,15 +250,13 @@
    "D# above the detection goal": 1
   },
   "acceptable_fraction": 0.0,
-  "median_D_hash": 0.4572438767567183,
+  "median_D_hash": 0.45730496429392986,
   "undecidable_recorded": 0,
   "undecidable_provisional_live": 16,
   "alarm_bookkeeping": {
-   "provisional alarm not confirmed": 1,
    "alarm found at final evaluation": 1
   },
   "flags": {
-   "UNRESOLVED_EXCEEDANCE:provisional alarm not confirmed": 1,
    "UNRESOLVED_EXCEEDANCE:alarm found at final evaluation": 1
   },
   "review_queue_items": 1,
@@ -285,159 +266,159 @@
    "credited_fraction": 1.0,
    "credited_with_true_error_above_budget": 1,
    "fraction_of_credited_above_budget": 0.0018552875695732839,
-   "max_true_error_when_credited_m": 0.01838255994449656,
-   "max_true_error_m": 0.01838255994449656,
+   "max_true_error_when_credited_m": 0.027686562222254286,
+   "max_true_error_m": 0.027686562222254286,
    "no_credit_reasons_samples": {},
    "localizer": {
     "wheel_scale": {
-     "estimate": -0.000362592079521487,
-     "sigma": 0.00036366856671280596
+     "estimate": -0.00012982594976095532,
+     "sigma": 0.0003643109569830534
     },
     "stats": {
-     "x_fixes": 570,
+     "x_fixes": 571,
      "x_rejects": 0,
      "big_corrections": 0,
-     "max_correction_m": 0.00044559667109027453,
-     "deferred_scans": 68
+     "max_correction_m": 0.00044559667108922947,
+     "deferred_scans": 46
     }
    },
    "worst_credited": [
     {
-     "t_s": 15.03,
+     "t_s": 15.2,
      "truth": [
-      0.9078,
+      0.9174,
       -0.19,
       0.0001
      ],
      "est": [
-      0.8895,
+      0.8897,
       -0.19,
       -0.0
      ],
-     "err_m": 0.0184,
+     "err_m": 0.0277,
      "phase": "SCAN:PASS",
      "dist_since_x_m": 0.006,
      "x_rejects": 0,
      "x_fix_age_s": 0.04,
      "last_x_residual": {
-      "innovation": -0.00041038295321194074,
-      "sigma": 0.0022964914975996203,
-      "nis": 0.0319336779529213
+      "innovation": 0.00037328255472179883,
+      "sigma": 0.002296408990582197,
+      "nis": 0.026422682760312233
      }
     },
     {
-     "t_s": 43.04,
+     "t_s": 43.07,
      "truth": [
-      1.2025,
+      1.1633,
       -0.19,
-      0.0001
+      0.0
      ],
      "est": [
-      1.2054,
+      1.1658,
       -0.19,
       0.0001
      ],
-     "err_m": 0.0028,
+     "err_m": 0.0025,
      "phase": "SCAN:PASS",
-     "dist_since_x_m": 0.003,
+     "dist_since_x_m": 0.001,
      "x_rejects": 0,
-     "x_fix_age_s": 0.05,
+     "x_fix_age_s": 0.0,
      "last_x_residual": {
-      "innovation": -0.0024974779055413343,
-      "sigma": 0.0022038011244516265,
-      "nis": 1.2842764208497204
+      "innovation": -0.0005314276817192098,
+      "sigma": 0.0022082608432305675,
+      "nis": 0.05791453881131102
      }
     },
     {
-     "t_s": 43.14,
+     "t_s": 43.17,
      "truth": [
-      1.2025,
+      1.1633,
       -0.19,
-      0.0001
+      0.0
      ],
      "est": [
-      1.2054,
+      1.1658,
       -0.19,
       0.0001
      ],
-     "err_m": 0.0028,
+     "err_m": 0.0025,
      "phase": "SCAN:PASS",
-     "dist_since_x_m": 0.003,
+     "dist_since_x_m": 0.001,
      "x_rejects": 0,
-     "x_fix_age_s": 0.05,
+     "x_fix_age_s": 0.0,
      "last_x_residual": {
-      "innovation": -0.0024974779055413343,
-      "sigma": 0.0022038011244516265,
-      "nis": 1.2842764208497204
+      "innovation": -0.0005314276817192098,
+      "sigma": 0.0022082608432305675,
+      "nis": 0.05791453881131102
      }
     },
     {
-     "t_s": 43.24,
+     "t_s": 43.27,
      "truth": [
-      1.2025,
+      1.1633,
       -0.19,
-      0.0001
+      0.0
      ],
      "est": [
-      1.2054,
+      1.1658,
       -0.19,
       0.0001
      ],
-     "err_m": 0.0028,
+     "err_m": 0.0025,
      "phase": "SCAN:PASS",
-     "dist_since_x_m": 0.003,
+     "dist_since_x_m": 0.001,
      "x_rejects": 0,
-     "x_fix_age_s": 0.05,
+     "x_fix_age_s": 0.0,
      "last_x_residual": {
-      "innovation": -0.0024974779055413343,
-      "sigma": 0.0022038011244516265,
-      "nis": 1.2842764208497204
+      "innovation": -0.0005314276817192098,
+      "sigma": 0.0022082608432305675,
+      "nis": 0.05791453881131102
      }
     },
     {
-     "t_s": 43.34,
+     "t_s": 43.37,
      "truth": [
-      1.2025,
+      1.1633,
       -0.19,
-      0.0001
+      0.0
      ],
      "est": [
-      1.2054,
+      1.1658,
       -0.19,
       0.0001
      ],
-     "err_m": 0.0028,
+     "err_m": 0.0025,
      "phase": "SCAN:PASS",
-     "dist_since_x_m": 0.003,
+     "dist_since_x_m": 0.001,
      "x_rejects": 0,
-     "x_fix_age_s": 0.05,
+     "x_fix_age_s": 0.0,
      "last_x_residual": {
-      "innovation": -0.0024974779055413343,
-      "sigma": 0.0022038011244516265,
-      "nis": 1.2842764208497204
+      "innovation": -0.0005314276817192098,
+      "sigma": 0.0022082608432305675,
+      "nis": 0.05791453881131102
      }
     },
     {
-     "t_s": 43.44,
+     "t_s": 43.47,
      "truth": [
-      1.2025,
+      1.1633,
       -0.19,
-      0.0001
+      0.0
      ],
      "est": [
-      1.2054,
+      1.1658,
       -0.19,
       0.0001
      ],
-     "err_m": 0.0028,
+     "err_m": 0.0025,
      "phase": "SCAN:PASS",
-     "dist_since_x_m": 0.003,
+     "dist_since_x_m": 0.001,
      "x_rejects": 0,
-     "x_fix_age_s": 0.05,
+     "x_fix_age_s": 0.0,
      "last_x_residual": {
-      "innovation": -0.0024974779055413343,
-      "sigma": 0.0022038011244516265,
-      "nis": 1.2842764208497204
+      "innovation": -0.0005314276817192098,
+      "sigma": 0.0022082608432305675,
+      "nis": 0.05791453881131102
      }
     }
    ]
