@@ -282,26 +282,31 @@ RECEIVER = {
     "contact_k_printed": 1500.0, "contact_k_aluminium": 6000.0,   # N/mm per bearing land -- STATED ASSUMPTION for all mount options
 }
 # Receiver thermal break (contract draft8 power.thermal_policy.head_receiver_thermal_break, DEC-045, IB-64).
-# Each channel hangs under the plate on a ground G10 shim; no metal part bridges the shim (screws in G10 top-hat bushings,
-# the location dowels split into two staggered sets so that each set engages metal on one side of the shim only).
-# Datum C (z 16) and the land pins (centre z 14) are unchanged: the channel ears are lowered by the shim thickness and the
-# two roof bridges at the land stations stand up into 1.5 mm pockets milled in the plate underside (1.5 mm air gap).
+# Each channel hangs under the plate on a ground G10 shim under its INBOARD ear only (fit review C2: the outboard ear sat under the
+# motor pod and covered the pod screw).  No metal part bridges the shim: three M4 screws come FROM BELOW (head, spring washer,
+# washer and G10 top-hat bushing under the ear, sleeve in the ear) into the tapped plate, so they are reached from the floor side
+# for the re-torque with the robot on its back; the location pins are split into two staggered sets that each touch metal on
+# one side of the shim only.  Datum C (z 16) and the land pins (centre z 14) are unchanged; the roof bridges at the land
+# stations stand up into 1.5 mm pockets milled in the plate underside (1.5 mm air gap).
 RECEIVER_BREAK = {
     "shim_material": "NEMA G-10 (FR4 class) glass-epoxy laminate, both faces surface ground",
-    "shim_t": 4.0, "shim_t_tol": 0.02, "shim_flatness": 0.01,             # mm; the two shims of a set ground together
+    "shim_t": 4.0, "shim_t_tol": 0.02, "shim_flatness": 0.01,             # mm; the shims of a set ground together
     "k_shim_w_mk": 0.30,             # through-thickness, handbook class value for G-10/FR4 (0.25..0.30) -- UNVERIFIED for the purchased sheet
     "e_shim_flatwise_mpa": 10000.0,  # compressive modulus normal to the laminate -- ASSUMED handbook class, UNVERIFIED
     "shim_creep_factor": 1.3,        # total / elastic strain after ~1e5 h at <= 25 % of flatwise strength, RT -- ASSUMED, UNVERIFIED
-    "shim_dy": (12.5, 21.0),         # |dy| band of the shim strips about the channel centre line (ear footprint minus the spine)
+    "ear_x": (4.0, 60.0),            # inboard ear (and shim strip) along the channel
+    "shim_dy": (12.5, 22.5),         # |dy| band of the shim strip about the channel centre line (ear footprint minus the spine)
     "ear_top_z": CHASSIS_PLATE_Z[0] - 4.0, "ear_t": 7.5,                  # ear top = plate underside - shim
     "bridge_x": ((2.0, 13.0), (56.0, HEAD_MOUNT[0])),                     # roof bridges over the slot at the two land stations
     "bridge_top_z": CHASSIS_PLATE_Z[0], "plate_pocket_depth": 1.5, "pocket_margin": 1.0,
-    "screw": "M4 x 18 ISO 4762 A2-70", "screw_preload_n": 1500.0, "screw_torque_nm": 1.2,
+    "screws": ((9.0, -17.0), (32.0, -17.0), (55.0, -17.0)),               # (x, dy) M4 from below into the tapped plate
+    "screw": "M4 x 18 ISO 4762 A2-70 from below", "screw_preload_n": 1500.0, "screw_torque_nm": 1.2,
+    "plate_engagement": 3.4,         # mm of M4 thread in the 4 mm plate (tip 0.6 below the plate top)
     "disc_spring": "DIN 6796 4 A2 conical spring washer (d1 4.3, d2 9, h 1.3, s 1.0; flat load about 2 kN) -- UNVERIFIED",
     "washer": "ISO 7089 4 A2 (OD 9 x 0.8)",
     "bushing": {"flange_od": 10.0, "flange_t": 1.0, "sleeve_od": 6.0, "sleeve_len": 3.5, "id": 4.3, "material": "G-10 machined top-hat bushing (PEEK-GF30 alternative) -- UNVERIFIED stock item"},
-    "pins_lower": ((28.5, -17.0), (43.5, -17.0)),   # 4 m6 x 8 pressed 5.5 into the ear, 2.5 into the shim; top 1.5 below the plate
-    "pins_upper": ((21.0, -17.0), (36.0, -17.0)),   # 4 m6 x 8 pressed flush into the plate, through the shim; tip in a 6.5 x 1.5 ear relief
+    "pins_lower": ((24.0, -17.0), (40.0, -17.0)),   # 4 m6 x 8 pressed 5.5 into the ear, 2.5 into the shim; top 1.5 below the plate
+    "pins_upper": ((16.5, -17.0), (47.5, -17.0)),   # 4 m6 x 8 pressed flush into the plate, through the shim; tip in a 6.5 x 1.5 ear relief
     "pin_relief": (6.5, 1.5),
     "target_w_per_k": 0.10,          # per channel, body side (task statement / DEC-045)
 }
@@ -362,7 +367,7 @@ GRIP = {                   # transverse bridge grip above the centre of gravity 
 GRIP["bar_bottom_z"] = SADDLE["floor_z"][1] + GRIP["glove_clearance_below"]
 GRIP["bar_top_z"] = GRIP["bar_bottom_z"] + GRIP["bar_z"]
 LIDAR_POSE = {"xy": (-150.0, 0.0), "base_z": 150.0}          # behind the grip, on the battery hump
-CM5_POSE = {"x": (-154.0, -69.0), "y": (59.0, 115.0), "pcb_z": 55.0}   # left side bay
+CM5_POSE = {"x": (-154.0, -69.0), "y": (59.0, 115.0), "pcb_z": 47.0}   # left side bay; lowered 8 mm (fit review M2: room for the 40-pin plug under the selector / REARM bodies)
 DRIVE_POD = {"inner_r": 21.0, "outer_r": 23.5, "end_y": 119.5}   # motor pod on each flank behind the tyre (local growth, hidden by the wheel)
 ELECTRONICS_BRIDGE_X = (-69.0, 35.0)
 GLOVE_CLEARANCE_CONNECTOR = 45.0     # required free radius around J1/J2 coupling nuts

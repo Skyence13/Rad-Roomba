@@ -222,3 +222,46 @@ def points_in_parts(parts, pts) -> np.ndarray:
             idx = np.nonzero(cand)[0]
             mask[idx[inside_convex(part, pts[idx, 0], pts[idx, 1])]] = True
     return mask
+
+
+def convex_hull(points) -> np.ndarray:
+    """CCW convex hull (Andrew's monotone chain) of Nx2 points."""
+    pts = sorted(set((round(float(p[0]), 12), round(float(p[1]), 12)) for p in np.asarray(points, float)))
+    if len(pts) <= 2:
+        return np.array(pts, float)
+
+    def cross(o, a, b):
+        return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])
+    lower, upper = [], []
+    for p in pts:
+        while len(lower) >= 2 and cross(lower[-2], lower[-1], p) <= 0:
+            lower.pop()
+        lower.append(p)
+    for p in reversed(pts):
+        while len(upper) >= 2 and cross(upper[-2], upper[-1], p) <= 0:
+            upper.pop()
+        upper.append(p)
+    return np.array(lower[:-1] + upper[:-1], float)
+
+
+def rect_clip_area(poly, x0, x1, y0, y1) -> float:
+    """Area of a convex polygon inside the axis-aligned rectangle [x0, x1] x [y0, y1] (exact, Sutherland-Hodgman)."""
+    p = [tuple(q) for q in np.asarray(poly, float)]
+    for axis, bound, keep_ge in ((0, x0, True), (0, x1, False), (1, y0, True), (1, y1, False)):
+        if not p:
+            return 0.0
+        out = []
+        for i in range(len(p)):
+            a, b = p[i - 1], p[i]
+            ina = (a[axis] >= bound) if keep_ge else (a[axis] <= bound)
+            inb = (b[axis] >= bound) if keep_ge else (b[axis] <= bound)
+            if inb:
+                if not ina:
+                    f = (bound - a[axis]) / (b[axis] - a[axis])
+                    out.append((a[0] + f * (b[0] - a[0]), a[1] + f * (b[1] - a[1])))
+                out.append(b)
+            elif ina:
+                f = (bound - a[axis]) / (b[axis] - a[axis])
+                out.append((a[0] + f * (b[0] - a[0]), a[1] + f * (b[1] - a[1])))
+        p = out
+    return abs(polygon_area(p)) if len(p) >= 3 else 0.0

@@ -75,8 +75,9 @@ H = 0.5                                   # column pitch (mm) of the z-ray scree
 OFF = (0.2137 * H, 0.3291 * H)            # grid offset: no column runs exactly along a modelled face
 
 
-def z_intervals(shape, tol=0.05):
-    """Solid -> (column keys, z0, z1): inside-intervals along +z rays on a global H-pitch grid (mesh parity)."""
+def z_intervals(shape, tol=0.05, h=None, off=None):
+    """Solid -> (column keys, z0, z1): inside-intervals along +z rays on a global h-pitch grid (mesh parity; default H)."""
+    H, OFF = (globals()["H"] if h is None else h), (globals()["OFF"] if off is None else off)
     import numpy as np
     v, f = shape.tessellate(tol, 0.2)
     V = np.array([(p.x, p.y, p.z) for p in v], dtype=float)

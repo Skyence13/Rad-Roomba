@@ -31,10 +31,10 @@ HEAD_SUMMARY = P.REPO / "mechanical" / "head" / "out" / "thermal_summary.json"
 
 
 def shim_area_mm2():
-    """Shim strip area per channel (mm2): inboard strip x 8..56, outboard strip x 8..24, |dy| 12.5..21, minus the screw and pin holes."""
+    """Shim strip area per channel (mm2): inboard strip only (fit review C2), minus the screw and pin holes."""
     w = RB["shim_dy"][1] - RB["shim_dy"][0]
-    gross = (56.0 - 8.0) * w + (24.0 - 8.0) * w
-    holes = 3 * math.pi * 2.25 ** 2 + 4 * math.pi * 2.0 ** 2
+    gross = (RB["ear_x"][1] - RB["ear_x"][0]) * w
+    holes = len(RB["screws"]) * math.pi * 2.25 ** 2 + 4 * math.pi * 2.0 ** 2
     return gross, gross - holes
 
 
@@ -56,9 +56,9 @@ def conductance():
     g_fl = k * a_fl / (b["flange_t"] / 1000)
     a_sl = 0.5 * math.pi * b["sleeve_od"] * b["sleeve_len"] / 1e6
     g_sl = k * a_sl / ((b["sleeve_od"] - b["id"]) / 2 / 1000)
-    g_screw_metal = K_A2 * AS_M4 / 1e6 / ((b["flange_t"] + 4.0 + RB["shim_t"]) / 1000)
+    g_screw_metal = K_A2 * AS_M4 / 1e6 / ((b["flange_t"] + RB["ear_t"] + RB["shim_t"]) / 1000)   # plate thread -> shank -> head under the ear
     g_per_screw = 1 / (1 / (g_fl + g_sl) + 1 / g_screw_metal)
-    g_screws = 3 * g_per_screw
+    g_screws = len(RB["screws"]) * g_per_screw
     # pins: the metal pin ends face the other part across an air gap; the G10 fringe round each pin end is counted as a 1 mm band
     a_pin = math.pi * 2.0 ** 2 / 1e6
     g_lower = 2 * (K_AIR * a_pin / 0.0015 + k * (math.pi * 4.0 * 1.0 / 1e6) / 0.0015)
@@ -188,15 +188,17 @@ def preload():
 
 
 def thread():
+    """Screws from below (fit review C2): M4 x 18 through spring washer, washer, bushing flange, ear and shim into the tapped 4 mm plate."""
     b = RB["bushing"]
-    disc_loaded = 1.0 + 0.3 * (1 - 1500.0 / 2000.0)                 # disc height at the preload (linearised)
-    grip = disc_loaded + 0.8 + b["flange_t"] + 4.0 + RB["shim_t"]
-    le = 18.0 - grip
-    a_strip = 0.6 * math.pi * D_M4 * le                              # internal-thread shear area, conservative 0.6 pi d Le
+    disc_loaded = 1.0 + 0.3 * (1 - 1500.0 / 2000.0)
+    stack = disc_loaded + 0.8 + b["flange_t"] + RB["ear_t"] + RB["shim_t"]
+    le = min(18.0 - stack, 4.0)
+    a_strip = 0.6 * math.pi * D_M4 * le                              # internal-thread shear area in the plate, conservative 0.6 pi d Le
     f_strip = a_strip * TAU_6061
     f_bolt = AS_M4 * A2_70_RM
-    return {"screw": RB["screw"], "grip": grip, "engagement": le, "engagement_d": le / D_M4, "ear_t": RB["ear_t"], "tip_inside_ear": RB["ear_t"] - le,
-            "strip_n": f_strip, "bolt_n": f_bolt, "ratio": f_strip / f_bolt, "before": {"screw": "M4 x 10", "engagement": 6.0, "engagement_d": 1.5}}
+    return {"screw": RB["screw"], "grip": stack, "engagement": le, "engagement_d": le / D_M4, "ear_t": RB["ear_t"], "tip_below_plate_top": 4.0 - le,
+            "strip_n": f_strip, "bolt_n": f_bolt, "ratio": f_strip / f_bolt, "preload_margin": f_strip / RB["screw_preload_n"],
+            "before": {"screw": "M4 x 18 from above into the 7.5 mm ear", "engagement": 7.1, "engagement_d": 1.78}}
 
 
 # ---------------------------------------------------------------------------------------------------------- stiffness
@@ -288,10 +290,12 @@ def run():
               "force per land against 4.5 kN of clamp, so the shim never unloads. Without the conical spring washer the joint would lose about half its preload to creep "
               "and embedding; with it the loss is a few per cent. Re-torque check at the first service (assembly note).")
     th = thread()
-    md.append("\n**Thread engagement (calculated):** " + f"{th['screw']} through spring washer, washer, bushing flange, 4 mm plate and {RB['shim_t']:.0f} mm shim: grip "
-              f"{th['grip']:.2f} mm, engagement {th['engagement']:.2f} mm = {th['engagement_d']:.2f} d in the {th['ear_t']:.1f} mm ear (tip {th['tip_inside_ear']:.2f} mm "
-              f"inside the ear); 6061-T6 internal-thread strip strength {th['strip_n'] / 1000:.1f} kN against the A2-70 screw {th['bolt_n'] / 1000:.1f} kN (ratio "
-              f"{th['ratio']:.1f}, the screw fails first). Before: M4 x 10, 6.0 mm = 1.5 d in a 6 mm ear.")
+    md.append("\n**Thread engagement (calculated):** " + f"{th['screw']} through spring washer, washer, bushing flange, {RB['ear_t']:.1f} mm ear and {RB['shim_t']:.0f} mm shim "
+              f"(stack {th['grip']:.2f} mm) into the tapped 4 mm plate: engagement {th['engagement']:.2f} mm = {th['engagement_d']:.2f} d (tip {th['tip_below_plate_top']:.2f} mm below "
+              f"the plate top, nothing stands above the plate). 6061-T6 strip strength {th['strip_n'] / 1000:.1f} kN against the A2-70 screw {th['bolt_n'] / 1000:.1f} kN "
+              f"(ratio {th['ratio']:.2f}: the plate thread strips first, at {th['preload_margin']:.1f} x the 1.5 kN preload; torque must not exceed 1.2 N m, a thread insert "
+              "(helical, M4 x 1d) is the upgrade if the plate thread is re-worked). The joint was turned round after the fit review (C2): the head and its "
+              "tool are now under the ear, reachable from the floor side with the robot on its back, so the re-torque at service needs no disassembly.")
     st = stiffness()
     md.append(f"\n**Mount stiffness (calculated):** shim per land {st['k_shim_land'] / 1000:.0f} kN/mm, roof bridge ({st['bridge_t']:.1f} mm, fixed-fixed) "
               f"{st['k_bridge'] / 1000:.0f} kN/mm in series with the up-loaded rear land.\n")

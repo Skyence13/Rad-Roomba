@@ -50,16 +50,35 @@ def tof_boss(xyz, d, kind="std", grow=0.0, back=0.0):
     return place(_lbox(bx + 2 * grow, by + 2 * grow, -bz - back - grow, grow), xyz, d, seat_xdir(d, kind))
 
 
+def _tof_board():
+    """RR-TOF-A outline and J1 (header + mated plug + wire exit) from the board file, in the seat frame (board u, v = local x, y)."""
+    from mechanical.common import boards as BD
+    b = BD.load("RR-TOF-A")
+    return b["outline_uv"], BD.connector_mating("RR-TOF-A", "J1")
+
+
+CLIP_Y = (-2.0, 4.4)            # clip bar and pads on the half of the board without the J1 header (header v -8.95..-2.55)
+PAD_U = (7.0, 9.0)              # end pads |u| 7..9: clear of the bottom-side parts (|u| <= 3.7)
+
+
 def tof_pocket(xyz, d, sight=14.0, kind="std"):
-    """Cut for one RR-TOF: window recess, aperture, board pocket, clip recess open to the rear, two M2 insert bores, sight tunnel."""
-    e = L.env("tof_board")
+    """Cut for one RR-TOF (fit review C3): window recess and aperture on the sensor axis, board pocket on the REAL board outline
+    (sensor 2.4 mm off the board centre, o1), relief for the J1 header, the mated GH plug and its wire exit, open to the rear,
+    clip recess on the header-free half, two M2 insert bores."""
+    (u0, v0, u1, v1), j1 = _tof_board()
     bx, by, bz, cx = SEAT[kind]
+    m = 0.25
+    deep = -40.0 if kind == "std" else -(bz + 4.5)
     c = fuse(_lbox(TOF_WIN[0] + 0.3, TOF_WIN[1] + 0.3, -(TOF_WIN[2] + 0.1), 0.0),
              _lbox(TOF_AP[0], TOF_AP[1], -3.0, 0.0),
-             _lbox(e["l"] + 0.5, e["w"] + 0.5, -40.0 if kind == "std" else -bz, -2.6),
-             _lbox(cx + 0.4, CLIP_W + 0.4, -bz - 12.0, -bz))            # clip recess and rear access
+             box(u0 - m, u1 + m, v0 - m, v1 + m, deep, -TOF_FRONT))
+    pu0, pu1, pv0, pv1, pz0, pz1 = j1["plug"]
+    eu0, eu1, ev0, ev1, ez0, ez1 = j1["exit"]
+    c = c.fuse(box(min(pu0, eu0) - 0.5, max(pu1, eu1) + 0.5, min(pv0, ev0) - 0.5, v0, -TOF_FRONT - 0.2, -bz - 12.0))   # plug + wire-exit relief, open rearward
+    cy0, cy1 = CLIP_Y
+    c = c.fuse(box(-(cx + 0.4) / 2, (cx + 0.4) / 2, cy0 - 0.2, cy1 + 0.2, -bz - 12.0, -bz))            # clip recess and rear access
     for sx in (-1, 1):
-        c = c.fuse(cyl(D.INSERT["M2"][0] / 2, D.INSERT["M2"][1], (sx * SCREW_X, 0, -bz)))
+        c = c.fuse(cyl(D.INSERT["M2"][0] / 2, D.INSERT["M2"][1], (sx * SCREW_X, (cy0 + cy1) / 2, -bz)))
     tunnel = cq.Workplane("XY").rect(TOF_WIN[0] + 0.3, TOF_WIN[1] + 0.3).workplane(offset=sight).rect(TOF_WIN[0] + 0.3 + 0.5 * sight, TOF_WIN[1] + 0.3 + 0.5 * sight).loft().val()
     return place(c.fuse(tunnel), xyz, d, seat_xdir(d, kind))
 
@@ -69,12 +88,16 @@ def tof_window(xyz, d, kind="std"):
 
 
 def tof_clip(xyz, d, kind="std"):
-    """Rear clip that holds the board against the light-blocker gasket (2 x M2)."""
+    """Rear clip (fit review C3 / m9): bar on the header-free half of the board, two end pads that bear on the PCB back
+    (local z -4.2), 2 x M2 into the seat inserts.  Nothing of the clip crosses the J1 header or its plug."""
     bx, by, bz, cx = SEAT[kind]
-    c = _lbox(cx, CLIP_W, -bz - CLIP_T, -bz)
+    cy0, cy1 = CLIP_Y
+    c = box(-cx / 2, cx / 2, cy0, cy1, -bz - CLIP_T, -bz)
+    back = -TOF_FRONT - 1.6
     for sx in (-1, 1):
-        c = c.cut(cyl(D.CLEAR["M2"] / 2, 4, (sx * SCREW_X, 0, -bz - 2.5)))
-    return place(c, xyz, d, seat_xdir(d, kind))
+        c = c.fuse(box(sx * PAD_U[0], sx * PAD_U[1], cy0, cy1, -bz, back))
+        c = c.cut(cyl(D.CLEAR["M2"] / 2, 4, (sx * SCREW_X, (cy0 + cy1) / 2, -bz - 2.5)))
+    return place(c.clean(), xyz, d, seat_xdir(d, kind))
 
 
 def device_seat(xyz, n, hole_d=22.3, face_d=34.0, boss_d=38.0, notch=True, panel_t=4.5):
@@ -99,11 +122,19 @@ def panel_tray():
     zb = zt - e["h"]
     t = box(pc[0] - e["l"] / 2 - 1.5, pc[0] + e["l"] / 2 + 1.0, pc[1] - e["w"] / 2 - 2.5, pc[1] + e["w"] / 2 + 2.5, zb - 2.0, zb + 6.0)
     t = t.cut(box(pc[0] - e["l"] / 2 - 0.3, pc[0] + e["l"] / 2 + 0.3, pc[1] - e["w"] / 2 - 0.3, pc[1] + e["w"] / 2 + 0.3, zb, zb + 10))
-    t = t.cut(box(pc[0] - e["l"] / 2 + 4, pc[0] + e["l"] / 2 - 4, pc[1] - e["w"] / 2 + 3, pc[1] + e["w"] / 2 - 3, zb - 3, zb + 1))
+    # fit review M7: board orientation fixed (long axis x, v = 24 edge with J1 / J2 inboard (-y), parts up); window under the
+    # bottom-side parts (v 2.4..22, u 2..68 of the board file), two M2.5 bosses at the board holes H1 / H2, notches for the plugs
+    X = lambda u: pc[0] - e["l"] / 2 + u
+    Y = lambda v: pc[1] + e["w"] / 2 - v
+    t = t.cut(box(X(2.0), X(68.0), Y(22.0), Y(2.4), zb - 3, zb + 1))
+    for hu, hv in ((3.5, 20.5), (66.5, 20.5)):
+        t = t.fuse(cyl(3.2, 6.0, (X(hu), Y(hv), zb - 6.0))).cut(cyl(D.INSERT["M2.5"][0] / 2, D.INSERT["M2.5"][1], (X(hu), Y(hv), zb - D.INSERT["M2.5"][1])))
+    for nu0, nu1 in ((20.0, 40.0), (44.5, 54.5)):
+        t = t.cut(box(X(nu0), X(nu1), Y(24.0) - 6.0, Y(24.0) + 1.0, zb + 0.5, zb + 7.0))
     for sy in (-1, 1):
         ear = box(pc[0] - 6.0, pc[0] + 6.0, pc[1] + sy * (e["w"] / 2 + 2.5), pc[1] + sy * (PANEL_BOSS_DY + 3.5), zb + 3.0, zb + 6.0)   # ear stays out of the hump_side_left corridor
         t = t.fuse(ear).cut(cyl(D.CLEAR["M3"] / 2, 10, (pc[0], pc[1] + sy * PANEL_BOSS_DY, zb)))
-    t = t.cut(box(pc[0] - 28.0, pc[0] - 16.0, pc[1] - e["w"] / 2 - 4.0, pc[1] + e["w"] / 2 + 4.0, zb + 0.5, zb + 7.0))   # cable notches in both long walls (J1/J2 on top, cable over a long edge)
+
     sw = D.WELL_WALL
     t = t.cut(box(P.SADDLE["x"][0] - sw - 0.5, 0.0, P.SADDLE["half_y"] - 0.5, P.SADDLE["half_y"] + sw + 0.4, 102.3, 120.0))   # under the saddle-well wall
     return t.clean(), zb + 6.0

@@ -19,7 +19,11 @@ case "$what" in
   unit)      rr_docker_run -- "${PYT[@]}" $(unit_dirs) "$@" ;;
   scenarios) rr_docker_run -- "${PYT[@]}" "$RR_WS/src/rr_sim/test" "$@" ;;
   native)    PP="$(ls -d "$RR_WS"/src/*/ | tr '\n' ':')"
-             rr_docker_run -e PYTHONPATH="$PP" -- python3 -m rr_sim.native_scenarios "$@" ;;
+             # emulators built from the current firmware into ros2_ws/build/fw (README 3.2) take precedence
+             HS="${RR_HEAD_SIM:-}"; CS="${RR_CHASSIS_SIM:-}"
+             [ -z "$HS" ] && [ -x "$RR_WS/build/fw/head/rr_head_sim" ] && HS="$RR_WS/build/fw/head/rr_head_sim"
+             [ -z "$CS" ] && [ -x "$RR_WS/build/fw/chassis/rr_chassis_sim" ] && CS="$RR_WS/build/fw/chassis/rr_chassis_sim"
+             rr_docker_run -e PYTHONPATH="$PP" -e RR_HEAD_SIM="$HS" -e RR_CHASSIS_SIM="$CS" -- python3 -m rr_sim.native_scenarios "$@" ;;
   snapshot)  rr_docker_run -- python3 "$RR_WS/tools/snapshot_contract.py" "$@" ;;
   plan)      rr_docker_run -- python3 "$RR_WS/tools/plan_report.py" "$@" > "$RR_WS/evidence/plan_2.5x16.json.tmp" \
                && mv "$RR_WS/evidence/plan_2.5x16.json.tmp" "$RR_WS/evidence/plan_2.5x16.json" && echo "wrote evidence/plan_2.5x16.json" ;;

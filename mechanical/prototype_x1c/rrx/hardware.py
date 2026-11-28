@@ -32,12 +32,12 @@ def rows():
         R.append({"subassembly": sub, "item": item, "spec": spec, "qty": qty, "where": where, "status": status, "torque_Nm": torque, "note": note})
 
     # A  chassis plate, receiver, caster, front sensors
-    add("A chassis", "socket cap screw", "M4 x 18 ISO 4762 A2-70", 2 * len(RX_SCREWS), "plate (from above) -> G10 bushing -> shim -> tapped ear of the receiver channel (7.1 mm engagement)",
+    add("A chassis", "socket cap screw", "M4 x 18 ISO 4762 A2-70", 2 * len(RX_SCREWS), "FROM BELOW: spring washer + washer + G10 bushing (in the ear) -> ear -> shim -> tapped 4 mm plate (3.6 mm engagement)",
         torque="1.2", note="thermal break joint: 1500 N preload, medium thread-lock; re-check torque at the first service")
     add("A chassis", "conical spring washer", "DIN 6796 4 A2", 2 * len(RX_SCREWS), "under each receiver screw head", "UNVERIFIED", note="keeps the preload against G10 creep (loss 6 % vs 57 % without, calculated)")
     add("A chassis", "flat washer", "ISO 7089 4 A2", 2 * len(RX_SCREWS), "between the spring washer and the G10 bushing flange")
     add("A chassis", "top-hat bushing", "G-10, flange 10 x 1.0, sleeve 6.0 x 3.5, bore 4.3 (machined; PEEK-GF30 alternative)", 2 * len(RX_SCREWS),
-        "6.0 mm plate hole of each receiver screw", "UNVERIFIED", note="insulates the screw from the plate; stock item not confirmed, make from G10 tube/rod if needed")
+        "6.1 mm bore in the receiver ear, flange under the ear", "UNVERIFIED", note="insulates the screw head from the channel; stock item not confirmed, make from G10 tube/rod if needed")
     add("A chassis", "dowel pin (lower)", "4 m6 x 8 ISO 8734", 2 * len(RX_PINS_LOWER), "pressed 5.5 into the channel ear (4 H7 blind), 2.5 into the G10 shim",
         note="second shim hole of each pair is a 4.6 x 4.0 slot; pin top 1.5 below the plate")
     add("A chassis", "dowel pin (upper)", "4 m6 x 8 ISO 8734", 2 * len(RX_PINS_UPPER), "pressed flush into the plate (4 H7), through the shim; tip in a 6.5 x 1.5 ear relief",
@@ -51,7 +51,7 @@ def rows():
     add("A chassis", "socket cap screw", "M4 x 10 ISO 4762 A2", 4, "draw latch -> chin floor -> tapped latch arm", torque="2.0", status="UNVERIFIED", note="latch hole pattern depends on the selected latch")
     add("A chassis", "snap-action switch", "Omron D2HW-C201M", 1, "CHG_COVER (HEAD_DOCK and the 2 BODY_BUMPER switches are RRX-H53 in the parts list)", "UNVERIFIED", note="dimensions PARTIAL in parts.yaml")
     add("A chassis", "pan head screw + insert", "M2 x 10 ISO 7045 A2 + M2 heat-set insert", 8, "D2HW retention in the four printed pockets", "UNVERIFIED", "0.15")
-    add("A chassis", "cable grommet", "8 mm hole, 5 mm bore, silicone", 2, "plate grommet holes (dock switch / cliff leads)", "UNVERIFIED")
+    add("A chassis", "cable grommet", "8 mm hole, 5 mm bore, silicone", 1, "dock-switch lead pass-through at (28, 58) (fit review C4); the cliff leads rise through the pod window bays", "UNVERIFIED")
     # B  lower hull
     add("B lower hull", "countersunk screw", "M3 x 8 ISO 10642 A2", N_SOLE, "plate (from below) -> sole-ring inserts", torque="0.6")
     add("B lower hull", "membrane vent", "M12 x 1.5 ePTFE protective vent + nut, IP67", 1, "right rear quarter (12.2 mm hole)", "UNVERIFIED")
@@ -77,8 +77,9 @@ def rows():
     add("D cassette", "pack leads", "2.5 mm2 silicone wire, 6.3 mm insulated receptacles", 1, "pack F2 tabs -> SBS50 contacts", "UNVERIFIED")
     # E  bridge / electronics
     add("E bridge", "countersunk screw", "M4 x 10 ISO 10642 A2", 4, "plate (from below) -> bridge posts", torque="1.5")
-    add("E bridge", "pan head screw", "M4 x 8 ISO 7045 A2", 4, "tray -> bridge posts", torque="1.5")
-    add("E bridge", "pan head screw + nyloc nut", "M3 x 10 ISO 7045 A2 + M3 ISO 10511", 6, "RR-CHS-MAIN -> 3 mm spacers -> tray", torque="0.5", note="H1, H3 hard chassis bond")
+    add("E bridge", "countersunk screw", "M3 x 8 ISO 10642 A2", 4, "tray (from above, flush) -> M3 tapped bridge posts", torque="0.8", note="fit review C1: flush, nothing above the tray under the PCB")
+    add("E bridge", "pan head screw", "M3 x 6 ISO 7045 A2", 6, "RR-CHS-MAIN -> self-clinching standoffs in the tray", torque="0.5", note="H1, H3 hard chassis bond; fit review C1 (no nuts under the tray)")
+    add("E bridge", "self-clinching standoff", D.CLINCH_SO["spec"], 6, "pressed into the tray at the six board holes", "UNVERIFIED", note="tray holes 4.2; press before the tray is fitted")
     add("E bridge", "thermal gap pad", "60 x 40 x 2 mm, >= 3 W/mK", 1, "board underside zone u 50..110, v 30..70 -> tray", "UNVERIFIED")
     add("E bridge", "countersunk screw", "M3 x 8 ISO 10642 A2", 4, "plate -> CM5 tray inserts", torque="0.6")
     add("E bridge", "pan head screw", "M2.5 x 6 ISO 7045 A2", 4, "CM5 carrier -> tray inserts", "UNVERIFIED", "0.3", "carrier hole pattern UNVERIFIED")

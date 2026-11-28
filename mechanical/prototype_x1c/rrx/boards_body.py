@@ -81,7 +81,10 @@ def tof_xf(name):
     """Seat frame -> board frame for one carrier: board (u, v) = seat local (x, y) with the sensor (board origin) on the boresight;
     PCB front (F side, sensor) at local z -S.TOF_FRONT (1.1 window recess + 1.5 foam), so local z = z_from_top - TOF_FRONT."""
     t = P.TOF_SENSORS[name]
-    xdir = (1.0, 0.0, 0.0) if name.startswith("tof_cliff_f") else S.seat_xdir(t["dir"], S.seat_kind(name))
+    if name.startswith("tof_cliff_f"):                     # front cliff pods: J1 toward the centre line (left u -> -x, right u -> +x)
+        xdir = (-1.0, 0.0, 0.0) if t["xyz"][1] > 0 else (1.0, 0.0, 0.0)
+    else:
+        xdir = S.seat_xdir(t["dir"], S.seat_kind(name))
     loc = frame(t["xyz"], t["dir"], xdir)
     return lambda u, v, z: to_frame(loc, (u, v, z - S.TOF_FRONT))
 

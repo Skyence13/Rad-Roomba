@@ -67,7 +67,9 @@ MOTOR_BCD = 31.0                               # UNVERIFIED (Pololu 37D drawing)
 
 # ---- bridge / board
 TRAY_T = 2.0
-POSTS = [(-64.0, 76.0), (-64.0, -76.0), (30.0, 45.0), (30.0, -45.0)]
+POSTS = [(-64.0, 62.0), (-64.0, -62.0), (30.0, 45.0), (30.0, -45.0)]   # fit review C1: posts 0/1 moved 14 mm off board holes H1/H3
+CLINCH_SO = {"spec": "PEM SO-M3-3 class self-clinching standoff, through-threaded M3, 3 mm above a 2 mm sheet (UNVERIFIED part data)", "od": 5.4, "hole": 4.2, "h": 3.0}
+DOCK_GROMMET = (28.0, 58.0)                     # fit review C4: dock-switch lead pass-through, ahead of the motor can, inboard of the receiver ear
 
 # ---- grip frame (fabricated): two 6 mm 6061 side plates, 14 mm solid 6061 bar with M6 tapped ends, 25 x 25 x 3 angle feet
 GRIP_PLATE_Y = (88.0, 94.0)                    # inside the cheek envelope 84..98

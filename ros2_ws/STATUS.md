@@ -5,6 +5,18 @@ All calibration and profile data are synthetic (`field_use_approved: false`); th
 profile is present and unconfigured. Observed results are in the verification log below and in
 `evidence/*/evidence.json`; this file says what exists, what is thin and what is missing.
 
+## Session 2026-11-28 (IN PROGRESS - data-path review IB-72, MODEL.md rev 5, head 0.6.0, chassis stage 4)
+
+Resume notes (keep current; a usage limit may stop this work):
+- Review probes reproduced on the unmodified sources (`build/repro/probe{1,2,3}.py`, copies of the reviewer's scratch scripts;
+  outputs identical to the reviewer's: C1 121 vs 0 no-decision cells, D* +44 %, D# +52 %, 123 outcome changes; M1 cell (6,15) D = 1.95,
+  coverage 0.40, unflagged, ACCEPTABLE; C2 P3 setup mismatch accepted; P4 second attachment processed with the mission calibration).
+- Native emulators are rebuilt from the current firmware into `build/fw/{head,chassis}` (ros2_ws/build is git-ignored;
+  `firmware/*/build` is not touched). `rr_sim/native.py` honours `RR_HEAD_SIM` / `RR_CHASSIS_SIM`.
+- Work order: (A) rev-5 U_null + predictive threshold, recorded/provisional evaluation, per-attachment calibration, status/alarms,
+  footprint, records/export/recompute tool, position credit; (B) head 0.6.0 / chassis stage 4 / native bring-up / native s15; (C) docs.
+- Progress per item is logged under "Session 2026-11-28 log" below as it lands.
+
 ## Update 2026-11-27 (contract draft7, MODEL.md rev 3, IB-46) - all `simulated` / `tool-checked` / `calculated`, nothing measured
 
 Observed in the follow-up of this update (revision 4, safety follow-up, head 0.5.2 set-up): `tools/test.sh unit` exit 0, **79 passed**;

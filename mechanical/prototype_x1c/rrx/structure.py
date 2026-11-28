@@ -15,13 +15,14 @@ from .util import (Part, V, box, cached, cut, cyl, fuse, loft, mirror_y, prism, 
 Z0, Z1 = D.PLATE_Z
 RC = D.RC
 SIDES = (("L", 1), ("R", -1))
-RX_SCREWS = [(14.0, -17.0), (50.0, -17.0), (14.0, 17.0)]      # (x, dy from the channel centre; -dy = inboard)
 RB = P.RECEIVER_BREAK                                              # G10 thermal break (DEC-045, IB-64)
+RX_SCREWS = [tuple(v) for v in RB["screws"]]                       # (x, dy from the channel centre; -dy = inboard): M4 from below (C2)
 RX_PINS_LOWER = [tuple(v) for v in RB["pins_lower"]]               # pressed in the ear, engage the shim only
 RX_PINS_UPPER = [tuple(v) for v in RB["pins_upper"]]               # pressed in the plate, through the shim, tip in an ear relief
 RX_DOWELS = RX_PINS_LOWER + RX_PINS_UPPER                          # all location pins (count for the hardware list)
 EAR_TOP = RB["ear_top_z"]
-CLIFF_SCREWS = [(30.5, 104.0), (30.5, 115.5), (54.5, 115.0)]       # rear pair + one ahead, all aft of the x-stop flange (x 59.7)
+CLIFF_SCREWS = [(30.5, 104.0), (30.5, 115.5), (58.0, 104.0)]       # rear pair + one ahead of the window (the old (54.5, 115) fell inside the plate window)
+CLIFF_WINDOW = (35.25, 56.75, 89.25, 116.85)                        # plate window (left side): collar + inboard plug / cable bay (fit review C4)
 
 
 # ----------------------------------------------------------------------------------------------- plate holes
@@ -31,8 +32,8 @@ def plate_holes():
     H = []
     for _, s in SIDES:
         yc = s * RC["shoe_y"]
-        for x, dy in RX_SCREWS:                                    # receiver channel: 3 x M4 from above through G10 top-hat bushings
-            H.append((x, yc + s * dy, RB["bushing"]["sleeve_od"], "thru", "receiver M4 x 18 in a G10 top-hat bushing (sleeve 6.0 in the plate), into the tapped ear"))
+        for x, dy in RX_SCREWS:                                    # receiver channel: 3 x M4 from below (bushing in the ear) into the tapped plate
+            H.append((x, yc + s * dy, D.TAP["M4"], "tap", "receiver M4-6H through (screw from below: G10 bushing + washers under the ear)"))
         for x, dy in RX_PINS_UPPER:
             H.append((x, yc + s * dy, 4.0, "ream", "upper location pin 4 m6 x 8 pressed flush from above (plate hole 4 H7) -> G10 shim"))
         for (bx0, bx1) in RB["bridge_x"]:                          # pockets over the channel roof bridges (1.5 mm air gap)
@@ -44,12 +45,14 @@ def plate_holes():
                 H.append((x, s * y, D.CLEAR["M4"], "csk_bottom", "motor pod foot M4"))
         for x in (-48.0, -30.0):                                   # grip angle foot, through-bolted M5
             H.append((x, s * 71.0, D.CLEAR["M5"], "csk_bottom", "grip foot M5 through-bolt (proof-load path)"))
-        H.append((46.0, s * 109.5, 0.0, "window 21.5x17.5", "front cliff ToF capsule collar"))
+        wx0, wx1, wy0, wy1 = CLIFF_WINDOW
+        H.append(((wx0 + wx1) / 2, s * (wy0 + wy1) / 2, 0.0, f"window {wx1 - wx0:.1f}x{wy1 - wy0:.1f}", "front cliff ToF collar + plug / cable bay (lead rises into the body here)"))
         for x, y in CLIFF_SCREWS:
             H.append((x, s * y, D.CLEAR["M3"], "thru", "cliff pod / deflector M3 (pan head from above into the pod insert)"))
         for x in (37.0, 47.0):
             H.append((x, s * 34.0, D.CLEAR["M5"], "csk_bottom", "latch arm pedestal M5 through-bolt"))
-        H.append((-2.0, s * 80.0, 8.0, "thru", "grommet: dock switch / cliff ToF leads" if s > 0 else "grommet: cliff ToF lead"))
+        if s > 0:                                                  # C4: the x -2 grommets were under the motor can; cliff leads now rise through the pod window bay
+            H.append((D.DOCK_GROMMET[0], D.DOCK_GROMMET[1], 8.0, "thru", "grommet: dock switch lead (8 mm hole, 5 mm bore)"))
     for x, y in D.POSTS:
         H.append((x, y, D.CLEAR["M4"], "csk_bottom", "bridge post M4"))
     cx, cy = P.CASTER_SWIVEL
@@ -112,7 +115,8 @@ def chassis_plate():
     s = s.cut(win)
     for (x, y, d, kind, _) in plate_holes() + [(x, y, D.CLEAR["M3"], "csk_bottom", "hull sole") for x, y in sole_screw_xy()]:
         if kind.startswith("window"):
-            s = s.cut(box(x - 10.75, x + 10.75, y - 8.75, y + 8.75, Z0 - 1, Z1 + 1))
+            lx, ly = (float(v) for v in kind.split()[1].split("x"))
+            s = s.cut(box(x - lx / 2, x + lx / 2, y - ly / 2, y + ly / 2, Z0 - 1, Z1 + 1))
             continue
         if kind.startswith("pocket"):
             lx, ly = (float(v) for v in kind.split()[1].split("x"))
@@ -143,8 +147,8 @@ def receiver_channel(s):
     fx0, fx1 = D.RX_FLANGE_X
     flange = box(fx0, fx1, yc - hw - 0.5 - D.RX_PAD[0] - 1.0, yc + hw + 0.5 + D.RX_PAD[0] + 1.0, zb, zt)   # x-stop pads each side of the shoe
     et = RB["ear_t"]
-    ears = fuse(box(8.0, 56.0, yc - s * 21.0, yc - s * 11.0, zt - et, zt),            # inboard ear, full length
-                box(8.0, 24.0, yc + s * 11.0, yc + s * 21.0, zt - et, zt))             # outboard ear, short (cliff pod ahead of it)
+    ex0, ex1 = RB["ear_x"]
+    ears = box(ex0, ex1, yc - s * (RB["shim_dy"][1] + 0.5), yc - s * 11.0, zt - et, zt)   # inboard ear only (C2: no ear under the motor pod)
     blk = fuse(blk, flange, ears)
     c = D.RX_SLOT_CLEAR
     slot = box(x0 + 1.5, fx1 + 1, yc - hw - c, yc + hw + c, zb - 1, sz1 + c)     # open underneath, to the front and (between the stations) on top
@@ -157,8 +161,9 @@ def receiver_channel(s):
         blk = blk.fuse(box(a, b, yc - hw - c, yc + hw + c, sz1 + D.RX_FIT_Z, sz1 + c))     # roof pad on the bridge = hold-down
         blk = blk.cut(cyl(D.RX_LAND_PIN_D / 2, 2 * w + 2, (xs, yc - w - 1, sz0 - D.RX_LAND_PIN_D / 2), (0, 1, 0)))   # reamed 4 H7 cross hole
     blk = blk.clean()
-    for x, dy in RX_SCREWS:
-        blk = blk.cut(cyl(D.TAP["M4"] / 2, et + 1, (x, yc + s * dy, zt - et - 0.5)))
+    b_ = RB["bushing"]
+    for x, dy in RX_SCREWS:                                          # sleeve bore of the G10 top-hat bushing, from below
+        blk = blk.cut(cyl(b_["sleeve_od"] / 2 + 0.05, et + 1, (x, yc + s * dy, zt - et - 0.5)))
     for x, dy in RX_PINS_LOWER:                                      # 4 H7 blind 6 deep, pin pressed 5.5, stands 2.5 into the shim
         blk = blk.cut(cyl(2.0, 6.0, (x, yc + s * dy, zt - 6.0)))
     rd, rh = RB["pin_relief"]
@@ -170,22 +175,21 @@ def receiver_channel(s):
 
 
 def receiver_shims(s):
-    """Ground G10 shim strips under the two ears of one channel (z = ear top .. plate underside), with screw and pin holes.
-    Returns (inboard strip, outboard strip); each strip is the same flat part on both sides (flipped)."""
+    """Ground G10 shim strip under the inboard ear of one channel (z = ear top .. plate underside), with screw and pin holes.
+    Returns [strip] (one part; the same flat part on both sides, flipped)."""
     yc = s * RC["shoe_y"]
     d0, d1 = RB["shim_dy"]
     z0, z1 = EAR_TOP, EAR_TOP + RB["shim_t"]
-    out = []
-    for strip in (box(8.0, 56.0, yc - s * d1, yc - s * d0, z0, z1), box(8.0, 24.0, yc + s * d0, yc + s * d1, z0, z1)):
-        for x, dy in RX_SCREWS:
-            strip = strip.cut(cyl(2.25, 6, (x, yc + s * dy, z0 - 1)))
-        for i, (x, dy) in enumerate(RX_PINS_LOWER + RX_PINS_UPPER):
-            if i in (1, 3):                                          # second hole of each pin pair: slot along the pair line
-                strip = strip.cut(box(x - 2.3, x + 2.3, yc + s * dy - 2.0, yc + s * dy + 2.0, z0 - 1, z1 + 1))
-            else:
-                strip = strip.cut(cyl(2.0, 6, (x, yc + s * dy, z0 - 1)))
-        out.append(strip.clean())
-    return out
+    ex0, ex1 = RB["ear_x"]
+    strip = box(ex0, ex1, yc - s * d1, yc - s * d0, z0, z1)
+    for x, dy in RX_SCREWS:
+        strip = strip.cut(cyl(2.25, 6, (x, yc + s * dy, z0 - 1)))
+    for i, (x, dy) in enumerate(RX_PINS_LOWER + RX_PINS_UPPER):
+        if i in (1, 3):                                              # second hole of each pin pair: slot along the pair line
+            strip = strip.cut(box(x - 2.3, x + 2.3, yc + s * dy - 2.0, yc + s * dy + 2.0, z0 - 1, z1 + 1))
+        else:
+            strip = strip.cut(cyl(2.0, 6, (x, yc + s * dy, z0 - 1)))
+    return [strip.clean()]
 
 
 def location_pins(s):
@@ -252,30 +256,36 @@ def screw_ring(s):
 
 # ----------------------------------------------------------------------------------------------- bridge
 def bridge_tray():
+    """2 mm 5052 flat plate: countersunk M3 to the posts (flush, nothing above the tray under the board) and six clinch-standoff
+    holes at the board holes (fit review C1: no nuts under the tray, no screw heads under the PCB)."""
     bz = P.ELECTRONICS_BRIDGE_Z
     ex0, ex1 = P.ELECTRONICS_BRIDGE_X
     hy = P.SADDLE["half_y"]
     t = box(ex0, ex1, -hy, hy, *bz)
     for x, y in D.POSTS:
-        t = t.cut(cyl(D.CLEAR["M4"] / 2, 4, (x, y, bz[0] - 1)))
+        t = t.cut(cyl(D.CLEAR["M3"] / 2, 4, (x, y, bz[0] - 1)))
+        t = t.cut(cq.Solid.makeCone(D.CLEAR["M3"] / 2, D.CSK["M3"] / 2, (D.CSK["M3"] - D.CLEAR["M3"]) / 2, V(x, y, bz[1] - (D.CSK["M3"] - D.CLEAR["M3"]) / 2)))
     b = P.CHS_MAIN
     for u, v in b["holes_uv"]:
         px, py, _ = P.board_to_base(b["origin"], u, v)
-        t = t.cut(cyl(D.CLEAR["M3"] / 2, 4, (px, py, bz[0] - 1)))
-    for y in (-60.0, 60.0):                                       # harness pass-throughs under the board edges
+        t = t.cut(cyl(D.CLINCH_SO["hole"] / 2, 4, (px, py, bz[0] - 1)))
+    for y in (-60.0, 60.0):                                       # harness pass-throughs under the board edges (CM5 / motor leads)
         t = t.cut(box(ex0 + 14, ex0 + 30, y - 6, y + 6, bz[0] - 1, bz[1] + 1))
     return t
 
 
 def bridge_post(x, y):
-    return cyl(4.0, P.ELECTRONICS_BRIDGE_Z[0] - Z1, (x, y, Z1)).cut(cyl(D.TAP["M4"] / 2, 60, (x, y, Z1 - 1)))
+    """8 mm round bar between plate and tray: M4 tapped from below (plate screw), M3 tapped from above (flush tray screw)."""
+    return cyl(4.0, P.ELECTRONICS_BRIDGE_Z[0] - Z1, (x, y, Z1)).cut(cyl(D.TAP["M4"] / 2, 10, (x, y, Z1 - 1))).cut(cyl(D.TAP["M3"] / 2, 9, (x, y, P.ELECTRONICS_BRIDGE_Z[0] - 8)))
 
 
 def board_standoff(u, v):
+    """Self-clinching standoff pressed into the tray (flush underneath), 3 mm above it, M3 through thread (bore = tap drill)."""
     b = P.CHS_MAIN
     px, py, _ = P.board_to_base(b["origin"], u, v)
-    z = P.ELECTRONICS_BRIDGE_Z[1]
-    return cyl(2.75, b["origin"][2] - z, (px, py, z))
+    z0, z1 = P.ELECTRONICS_BRIDGE_Z[0], b["origin"][2]
+    so = cyl(D.CLINCH_SO["hole"] / 2, z1 - z0 - D.CLINCH_SO["h"] + 0.0, (px, py, z0)).fuse(cyl(D.CLINCH_SO["od"] / 2, D.CLINCH_SO["h"], (px, py, z1 - D.CLINCH_SO["h"])))
+    return so.cut(cyl(D.TAP["M3"] / 2, 20, (px, py, z0 - 1)))
 
 
 # ----------------------------------------------------------------------------------------------- grip frame
@@ -358,7 +368,7 @@ def cheek_fairing(s):
         f = f.cut(cyl(D.CLEAR["M3"] / 2, 20, (D.GRIP_BAR_X, y0 - 1, z), (0, 1, 0)))
         f = f.cut(cyl(3.2, 2.2, (D.GRIP_BAR_X, y1 - 2.0, z), (0, 1, 0)))
     f = f.cut(tof_pocket(t["xyz"], t["dir"], kind="look_f"))
-    f = f.cut(box(CHEEK_X0 + 2.0, -2.0, y0 + 0.8, D.GRIP_PLATE_Y[0] - gap - 0.6, 100.0, 156.0))       # ToF lead channel inboard of the plate, back to the roof slot
+    f = f.cut(box(-15.0, -1.0, 87.5, 94.0, 95.0, 156.0))                                                # M3: plug + lead drop from the seat relief to the roof slot (x -15..-5)
     uo = cached(["UO", P.BODY_ROWS["upper_outer"]], lambda: loft(P.BODY_ROWS["upper_outer"]))
     f = f.cut(uo)                                                                                      # sits on the shoulder roof, covers the plate slot
     return f if s > 0 else mirror_y(f)
@@ -428,8 +438,8 @@ def build(add):
              note="4 mm 6061-T6 laser/waterjet blank, countersunk, tapped and reamed per holes table; 4 receiver bridge pockets 1.5 deep milled from below; DXF in out/dxf", mates={"*"}))
     for tag, s in SIDES:
         add(Part(f"RRX-F02{tag}", f"receiver_channel_{tag}", receiver_channel(s), "fabricated", "AL6061", "receiver", color=AL, internal=False,
-                 note="machined 6061 (printed PAHT-CF copy RRX-P02x for fit check only); hangs on the G10 shim, no metal contact with the plate", mates={f"receiver_shim_{tag}_in", f"receiver_shim_{tag}_out", f"rx_pin_lower_{tag}*", f"land_pin_{tag}", "dock_switch_bracket", f"head_shoe_{tag}"}))
-        for pn, suf, sh in zip(("RRX-F12", "RRX-F13"), ("in", "out"), receiver_shims(s)):
+                 note="machined 6061 (printed PAHT-CF copy RRX-P02x for fit check only); hangs on the G10 shim, no metal contact with the plate", mates={f"receiver_shim_{tag}_in", f"rx_pin_lower_{tag}*", f"land_pin_{tag}", "dock_switch_bracket", f"head_shoe_{tag}"}))
+        for pn, suf, sh in zip(("RRX-F12",), ("in",), receiver_shims(s)):
             add(Part(pn, f"receiver_shim_{tag}_{suf}", sh, "fabricated", "G10", "receiver", color="#c9c27a", internal=False,
                      note=f"G-10 sheet, {'inboard' if suf == 'in' else 'outboard'} ear strip, both faces surface ground 4.00 +-0.02, flatness 0.01; one set ground together; thermal break (DEC-045)",
                      mates={"chassis_plate", f"receiver_channel_{tag}", f"rx_pin_*_{tag}*"}))
@@ -460,11 +470,10 @@ def build(add):
     add(Part("RRX-F04", "bridge_tray", bridge_tray(), "fabricated", "AL5052", "bridge", color=AL, note="2 mm 5052 laser cut; gap pad zone u 50..110, v 30..70",
              mates={"*post*", "*standoff*"}))
     for i, (x, y) in enumerate(D.POSTS):
-        add(Part("RRX-F07", f"bridge_post_{i}", bridge_post(x, y), "fabricated", "AL6061", "bridge", color=AL, note="8 mm round bar x 41, M4 tapped both ends",
+        add(Part("RRX-F07", f"bridge_post_{i}", bridge_post(x, y), "fabricated", "AL6061", "bridge", color=AL, note="8 mm round bar x 41, M4 tapped from below, M3 tapped from above",
                  mates={"bridge_tray", "chassis_plate"}))
     for i, (u, v) in enumerate(P.CHS_MAIN["holes_uv"]):
-        add(Part("RRX-H02", f"board_standoff_{i}", board_standoff(u, v), "purchased", "AL6061", "bridge", color="#c9a24a", mpn="M3 x 3 mm round spacer + M3x10 screw + nyloc nut under the tray",
-                 verified="standard part", mates={"bridge_tray"}))
+        add(Part("RRX-H02", f"board_standoff_{i}", board_standoff(u, v), "purchased", "AL6061", "bridge", color="#c9a24a", mpn=D.CLINCH_SO["spec"], verified="UNVERIFIED part data (class dimensions)", mates={"bridge_tray"}))
     add(Part("RRX-F08", "grip_bar", grip_bar(), "fabricated", "AL6061", "grip", color=AL, internal=False, note="14 mm 6061-T6 round bar cut to 176 mm, ends drilled 5.0 x 15 and tapped M6 x 12"))
     for tag, s in SIDES:
         add(Part("RRX-H03", f"grip_screw_{tag}", grip_screw(s), "purchased", "SS304", "grip", color=D.MAT["SS304"]["color"], internal=False, mass=0.007,

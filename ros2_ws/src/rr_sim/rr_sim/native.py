@@ -107,8 +107,8 @@ class NativeChassis:
 
 def find_binaries():
     repo = Path(os.environ.get("RR_REPO", Path(__file__).resolve().parents[4]))
-    head = repo / "firmware/head/build/host/rr_head_sim"
-    chassis = repo / "firmware/chassis/build/rr_chassis_sim"
+    head = Path(os.environ.get("RR_HEAD_SIM") or repo / "firmware/head/build/host/rr_head_sim")
+    chassis = Path(os.environ.get("RR_CHASSIS_SIM") or repo / "firmware/chassis/build/rr_chassis_sim")
     return (head if head.exists() else None), (chassis if chassis.exists() else None)
 
 

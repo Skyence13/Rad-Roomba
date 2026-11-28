@@ -62,19 +62,28 @@ def hub(s):
 
 
 def cliff_pod(s):
-    """Bezel under the horn end with the ToF collar through the plate window, plus the debris deflector ahead of the tyre."""
+    """Bezel under the horn end with the ToF collar through the plate window, plus the debris deflector ahead of the tyre.
+    Fit review C3 / C4: board pocket on the real RR-TOF-A outline (board long axis x, J1 toward the robot centre line), and an
+    inboard bay in the collar for the mated GH plug and its wire exit; the lead rises out of the bay into the body."""
+    from .structure import CLIFF_WINDOW
     t = P.TOF_SENSORS["tof_cliff_fl"]
     x, y, z = t["xyz"]
-    e = L.env("tof_board")
+    (u0, v0, u1, v1), j1 = S._tof_board()
     xb = D.RX_FLANGE_X[0] - 0.5                                            # stops 0.5 mm short of the receiver x-stop flange
     bez = box(26.0, xb, 100.0, D.BEAM_HALF_Y, z, Z0)
-    collar = box(x - 10.5, x + 10.5, y - 8.5, y + 8.5, Z0, Z1 + 1.5)
+    wx0, wx1, wy0, wy1 = CLIFF_WINDOW
+    collar = box(wx0 + 0.25, wx1 - 0.25, wy0 + 0.25, wy1 - 0.25, Z0, Z1 + 1.5)
     ym = P.WHEEL_Y + P.TYRE_WIDTH / 2 - 0.5                               # deflector stays inside the 295 mm tyre width
     arm = box(53.0, 59.0, 104.0, ym, 25.0, Z0)
     blade = prism([(55.0, 119.6), (59.0, 119.6), (57.0, ym), (53.0, ym)], 8.0, Z0)
     lugs = fuse(*[box(cx - 4.0, min(cx + 4.0, xb), cy - 4.0, min(cy + 4.0, D.BEAM_HALF_Y), Z0 - 7.0, Z0) for cx, cy in CLIFF_SCREWS])
     p = fuse(bez, collar, arm, blade, lugs)
-    p = p.cut(box(x - e["l"] / 2 - 0.25, x + e["l"] / 2 + 0.25, y - e["w"] / 2 - 0.25, y + e["w"] / 2 + 0.25, z + 2.6, Z1 + 3))    # board pocket (long axis x)
+    zf = z + S.TOF_FRONT                                                  # PCB front face (sensor side down)
+    # left side: board u -> -x, v -> +y (header and plug toward -y = inboard)
+    p = p.cut(box(x - u1 - 0.25, x - u0 + 0.25, y + v0 - 0.25, y + v1 + 0.25, zf, Z1 + 3))                       # board pocket (real outline)
+    pu0, pu1, pv0, pv1, pz0, pz1 = j1["plug"]
+    eu0, eu1, ev0, ev1, ez0, ez1 = j1["exit"]
+    p = p.cut(box(x - max(pu1, eu1) - 0.5, x - min(pu0, eu0) + 0.5, y + min(pv0, ev0) - 0.5, y + v0, zf, Z1 + 3))  # plug + exit bay, open upward
     p = p.cut(box(x - S.TOF_AP[0] / 2, x + S.TOF_AP[0] / 2, y - S.TOF_AP[1] / 2, y + S.TOF_AP[1] / 2, z - 1, z + 3))
     p = p.cut(box(x - S.TOF_WIN[0] / 2 - 0.15, x + S.TOF_WIN[0] / 2 + 0.15, y - S.TOF_WIN[1] / 2 - 0.15, y + S.TOF_WIN[1] / 2 + 0.15, z - 1, z + 1.1))
     for cx, cy in CLIFF_SCREWS:

@@ -206,3 +206,185 @@ class Evaluator:
             if self.power(t, lo) >= target:
                 lo = 0.0
         return float(brentq(lambda d: self.power(t, d) - target, lo, hi, xtol=1e-12 * hi, rtol=1e-7))
+
+
+# ====================================================================== revision 5: predictive threshold
+def posterior_nodes(n_w: float, T_w: float, k: int = 12):
+    """Gauss-Legendre-in-probability nodes of the Jeffreys posterior Gamma(n_w + 1/2, scale 1/T_w) of the reference
+    rate given a window of n_w counts in live time T_w (MODEL.md rev 5 section 3, 12 nodes).  Identical to
+    analysis/radiometry/rrrad/unull.posterior_nodes (gamma.ppf(q, a, scale) = gammaincinv(a, q) * scale)."""
+    from scipy.special import gammaincinv
+    x, w = np.polynomial.legendre.leggauss(k)
+    q = 0.5 * (x + 1.0)
+    return np.array([float(gammaincinv(n_w + 0.5, qq)) / T_w for qq in q]), 0.5 * w
+
+
+class Unit:
+    """One lane (of one attachment) inside a decision statistic S = sum_i c_i r_i / K_i.
+
+    cK = c_i / K_i; floor coefficients cK w_j / T_F, reference coefficients -cK k w_j / T_U; null means
+    (k U + b) t_f,j and U t_u,j; Gaussian lane term cK^2 var_lane(U) and the diagonal part of the common term
+    (cK u_common U)^2, both evaluated at every posterior node U of the lane; the K D t_f,j signal is added to the
+    floor means.  nodes_U / nodes_p: the posterior nodes (one node with weight 1 = U known / plug-in)."""
+
+    def __init__(self, cK, cal, w, tf, tu, nodes_U, nodes_p):
+        w, tf, tu = (np.asarray(x, float) for x in (w, tf, tu))
+        self.cK, self.cal = float(cK), cal
+        T_F, T_U = float(np.dot(w, tf)), float(np.dot(w, tu))
+        self.aF, self.tF = aggregate(cK * w / T_F, tf)
+        self.aU, self.tU = aggregate(-cK * cal.k * w / T_U, tu)
+        self.U = np.asarray(nodes_U, float)
+        self.p = np.asarray(nodes_p, float)
+        self.s2 = np.array([cK * cK * max(u * u * cal.u_k_lane ** 2 + cal.u_b ** 2 + 2.0 * u * cal.cov_kb, 0.0)
+                            + (cK * cal.u_k_common * u) ** 2 for u in self.U])
+
+    def var(self, D=0.0):
+        """Largest variance over the nodes (grid sizing)."""
+        c = self.cal
+        return float(max((c.k * u + c.b + c.K * D) * np.dot(self.aF ** 2, self.tF) + u * np.dot(self.aU ** 2, self.tU) + s2
+                         for u, s2 in zip(self.U, self.s2)))
+
+    def mean(self, D=0.0):
+        c = self.cal
+        return float(np.dot(self.p, [(c.k * u + c.b + c.K * D) * np.dot(self.aF, self.tF) + u * np.dot(self.aU, self.tU)
+                                     for u in self.U]))
+
+    def amax(self):
+        return float(max(np.max(np.abs(self.aF)) if self.aF.size else 0.0, np.max(np.abs(self.aU)) if self.aU.size else 0.0))
+
+
+class PredictiveStat:
+    """Exact tail of the predictive null (and alternatives) of S = sum_i Unit_i + mu + Z (MODEL.md rev 5 sections 3, 6).
+
+    Characteristic function: exp(i u mu - u^2 (s_x^2 + (u_rel D)^2) / 2) * prod_i sum_k p_ik phi_i(u; U_ik, D): the posterior
+    nodes of the lanes are combined as independent.  The common calibration term (sum_i cK_i u_common,i U_i)^2 is fully
+    correlated across lanes: its diagonal parts are evaluated at the nodes of each lane, the cross terms
+    2 sum_{i<j} g_i g_j U0_i U0_j at the point values U0 (s_x^2 = `cross_var`); with one lane the evaluation is exact.
+    Gil-Pelaez inversion, midpoint rule with step h = 2 pi / P (the exact tail of the distribution periodised with
+    period P), as `_GP`.  The A_F(u) = sum_j t_j expm1(i u a_j) sums are computed once per grid; nodes and alternatives
+    only rescale them."""
+
+    def __init__(self, units, mu, cross_var=0.0, u_rel=0.0):
+        self.units, self.mu, self.cross_var, self.u_rel = units, float(mu), max(float(cross_var), 0.0), float(u_rel)
+        self.sig_min2 = sum(float(np.min(u.s2)) for u in units) + self.cross_var
+        self.regularised = self.sig_min2 <= 0
+        if self.regularised:            # no Gaussian term at all (tests that switch every calibration term off)
+            self.cross_var = 1e-8 * self.var(0.0)
+            self.sig_min2 = self.cross_var
+        self._grids = {}
+
+    def var(self, D=0.0):
+        return sum(u.var(D) for u in self.units) + self.cross_var + (self.u_rel * D) ** 2
+
+    def mean(self, D=0.0):
+        return sum(u.mean(D) for u in self.units) + self.mu
+
+    def _grid(self, span, half_step=False):
+        """(h, u, [(A_F, A_U) per unit]) for a period covering `span` (|x - mean| + 40 sd + 40 max|a|)."""
+        key = (round(span, 12), half_step)
+        g = self._grids.get(key)
+        if g is None:
+            P = 2.0 * span * (2.0 if half_step else 1.0)
+            h = 2.0 * math.pi / P
+            n = int(math.ceil(math.sqrt(-2.0 * math.log(EPS_PHI)) / math.sqrt(self.sig_min2) / h))
+            u = (np.arange(n) + 0.5) * h
+            parts = []
+            for un in self.units:
+                AF = np.zeros(n, complex)
+                for a, t in zip(un.aF, un.tF):
+                    AF += t * np.expm1(1j * u * a)
+                AU = np.zeros(n, complex)
+                for a, t in zip(un.aU, un.tU):
+                    AU += t * np.expm1(1j * u * a)
+                parts.append((AF, AU))
+            g = (h, u, parts)
+            if len(self._grids) > 6:
+                self._grids.clear()
+            self._grids[key] = g
+        return g
+
+    def _phi(self, grid, D):
+        h, u, parts = grid
+        lp = 1j * u * self.mu - 0.5 * u * u * (self.cross_var + (self.u_rel * D) ** 2)
+        phi = np.exp(lp)
+        for un, (AF, AU) in zip(self.units, parts):
+            c = un.cal
+            mix = np.zeros(u.size, complex)
+            for U, p, s2 in zip(un.U, un.p, un.s2):
+                mix += p * np.exp((c.k * U + c.b + c.K * D) * AF + U * AU - 0.5 * s2 * u * u)
+            phi = phi * mix
+        return phi
+
+    def span_for(self, x, D=0.0):
+        sd = math.sqrt(self.var(D))
+        amax = max(un.amax() for un in self.units)
+        return abs(x - self.mean(D)) + 15.0 * sd + SD_SPAN * sd + 40.0 * amax
+
+    @staticmethod
+    def _tail_pdf(grid, phi, x):
+        h, u, _ = grid
+        z = np.exp(-1j * u * x) * phi
+        tail = 0.5 + h / math.pi * float(np.sum(z.imag / u))
+        pdf = h / math.pi * float(np.sum(z.real))
+        return min(max(tail, 0.0), 1.0), pdf
+
+    def tail(self, x, D=0.0, half_step=False):
+        g = self._grid(self.span_for(x, D), half_step)
+        return self._tail_pdf(g, self._phi(g, D), x)[0]
+
+    def threshold(self, alpha: float):
+        """(t*, check_ok, achieved tail): P(S > t*) = alpha under the predictive null; half-step check (1e-3)."""
+        sd = math.sqrt(self.var(0.0))
+        m = self.mean(0.0)
+        g = self._grid(self.span_for(m, 0.0) + 14.0 * sd)
+        phi = self._phi(g, 0.0)
+        x = m + float(-ndtri(alpha)) * sd
+        lo, hi = m - 2.0 * sd, m + 14.0 * sd
+        for _ in range(60):
+            tail, pdf = self._tail_pdf(g, phi, x)
+            if abs(tail - alpha) <= 1e-12 * alpha + 1e-15:
+                break
+            if tail > alpha:
+                lo = max(lo, x)
+            else:
+                hi = min(hi, x)
+            step = (tail - alpha) / pdf if pdf > 0 else 0.0
+            x_new = x + step
+            if not (lo < x_new < hi):
+                x_new = 0.5 * (lo + hi)
+            if abs(x_new - x) < 1e-13 * sd:
+                x = x_new
+                break
+            x = x_new
+        tail, _ = self._tail_pdf(g, phi, x)
+        gh = self._grid(self.span_for(x, 0.0), half_step=True)
+        half, _ = self._tail_pdf(gh, self._phi(gh, 0.0), x)
+        ok = abs(half - tail) <= CHECK_REL * max(tail, alpha)
+        return float(x), bool(ok), float(tail)
+
+    def detection_limit(self, t: float, beta: float, seed: float = None) -> float:
+        """Smallest D >= 0 with P(S > t | D) = 1 - beta under the predictive distribution (signal on the floor means,
+        u_rel(K) D as a Gaussian term); inf if not reached below 1e9.  One grid serves every trial D up to 4 x the
+        bracket (rebuilt when the bracket grows)."""
+        target = 1.0 - beta
+        hi = max(seed if seed and seed > 0 else 1.0, 1e-9)
+        state = {"grid": None, "Dmax": -1.0}
+
+        def power(D):
+            if D > state["Dmax"]:
+                state["Dmax"] = 4.0 * max(D, hi)
+                state["grid"] = self._grid(self.span_for(t, state["Dmax"]) + abs(self.mean(state["Dmax"]) - self.mean(0.0)))
+            g = state["grid"]
+            return self._tail_pdf(g, self._phi(g, D), t)[0]
+        lo, n = 0.0, 0
+        while power(hi) < target:
+            lo, hi, n = hi, 2.0 * hi, n + 1
+            if hi > 1e9:
+                return math.inf
+        if n == 0 and seed:
+            lo = 0.5 * hi
+            while lo > 1e-12 and power(lo) >= target:
+                hi, lo = lo, 0.5 * lo
+            if power(lo) >= target:
+                lo = 0.0
+        return float(brentq(lambda d: power(d) - target, lo, hi, xtol=1e-12 * hi, rtol=1e-9))
