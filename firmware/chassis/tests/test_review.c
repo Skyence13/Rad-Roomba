@@ -340,11 +340,11 @@ int main(void)
             th_env(t, "{\"rearm_aux_short\":true,\"rearm_set_short\":true}");
             th_run(t, 400);
             bool armed_once = t->sim.latch;
-            /* round 4: a REARM contact still closed 2 s after the latch rose withdraws ARM_PERMIT (REARM_HELD) */
-            th_run(t, 1500);
+            /* a REARM contact still closed 5 s after the latch rose withdraws ARM_PERMIT (REARM_HELD; stage 5 H6) */
+            th_run(t, 4400); /* stage 5 H6: dropped 5 s after the rise */
             bool still = t->sim.latch;
-            th_run(t, 300);
-            CHECK(armed_once && still && !t->sim.latch && fault(t, RRCH_FLT(REARM_HELD)) && th_req(t, "STATE", "{}") && th_has(t, "hw_inhibit_reasons", "MCU_NOT_READY"));
+            th_run(t, 400);
+            CHECK(armed_once && still && !t->sim.latch && fault(t, RRCH_FLT(REARM_HELD)) && th_req(t, "STATE", "{}") && th_has(t, "hw_inhibit_reasons", "REARM_HELD"));
             th_env(t, "{\"bumper_r\":true}");
             th_run(t, 200);
             th_env(t, "{\"bumper_r\":false}");

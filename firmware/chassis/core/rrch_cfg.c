@@ -14,6 +14,7 @@ const char *const rrch_opmode_names[RRCH_OP_N] = {RRCH_OPMODE_LIST(X)};
 const char *const rrch_pres_names[RRCH_PRES_N] = {RRCH_PRES_LIST(X)};
 const char *const rrch_flt_names[RRCH_FLT_N] = {RRCH_FLT_LIST(X)};
 const char *const rrch_rref_names[RRCH_RREF_N] = {RRCH_RREF_LIST(X)};
+const char *const rrch_lcause_names[RRCH_LC_N] = {RRCH_LCAUSE_LIST(X)};
 const char *const rrch_tof_names[RRCH_TOF_COUNT] = {RRCH_TOF_LIST(X)};
 const char *const rrch_di_names[RRCH_DI_N] = {RRCH_DI_LIST(X)};
 const char *const rrch_el_names[RRCH_EL_N] = {RRCH_EL_LIST(X)};

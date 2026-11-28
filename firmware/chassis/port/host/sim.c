@@ -40,7 +40,7 @@ static bool tapped(int k)
 static void loop_channels(const sim_t *s, double *lo_ana, bool *a_ok, bool *b_ok)
 {
     double lo = (s->rail_weld || s->loop_sns_leak) ? 1000.0 : s->loop_ohm; /* section 6.1 residual faults: the loop reads healthy */
-    bool ta = (s->iox_d_out & 0x10u) != 0, tb = (s->iox_d_out & 0x80u) != 0;
+    bool ta = (s->iox_d_out & 0x10u) != 0 || s->lta_stuck, tb = (s->iox_d_out & 0x80u) != 0 || s->ltb_stuck;
     *lo_ana = ta ? 1e9 : lo;
     *a_ok = ((lo >= 590.0 && lo <= 1550.0) && !ta) || s->loop_cmp_stuck || s->iox_drive_loop;
     *b_ok = ((lo < s->loop_b_ohm && !tb) || s->loop_b_stuck_ok) && !s->loop_b_stuck_open;
@@ -129,7 +129,7 @@ static void h_read(void *ctx, rrch_in_t *in)
     SET(HW_LATCH, s->run12) /* the tap on RUN_12V, not the K1 armature (review M5) */
     SET(J2_PRES, s->j2)
     SET(BTN_REARM, s->rearm_ms > 0 || s->rearm_aux_short) /* aux contact */
-    SET(REARM_SET, s->rearm_ms > 0 || s->rearm_set_short) /* set contact, IOX_A GPB6 (stage 4 G4) */
+    SET(REARM_SET, (s->rearm_ms > 0 || s->rearm_set_short) && s->set_rb_v > 0.8 * s->v3v3) /* set contact, IOX_A GPB6: analog level vs VIH(max) (S3) */
     SET(BTN_PAUSE, s->pause_ms > 0)
 #undef SET
     memset(in, 0, sizeof *in);
@@ -149,7 +149,7 @@ static void h_read(void *ctx, rrch_in_t *in)
         in->enc[k] = s->enc_raw[k];
         in->ntc_c[k] = (float)s->temp[k];
     }
-    in->ntc_c[2] = (float)s->temp[2];
+    in->ntc_c[2] = (float)(s->temp[2] + s->board_ntc_rise_k); /* the coil (k1_coil_c NAN) is at temp_board */
     in->imu_ok = !s->imu_off;
     double tilt = s->tilt_deg * 0.017453292519943295;
     in->gyro[0] = (float)(0.002 * rnd(s));
@@ -348,6 +348,8 @@ void sim_init(sim_t *s, uint64_t seed)
     s->set_ready_v = 10.8;
     s->set_qual_ms = 6.0;
     s->loop_b_ohm = 1890.0;
+    s->set_rb_v = 2.80;
+    s->v3v3 = 3.30;
     s->mode_run = true;
     s->head_docked = true;
     s->j2 = true;
@@ -758,12 +760,12 @@ bool sim_env_apply(sim_t *s, const char *json, size_t len)
     B("usb_stall", usb_stall) B("usb_down", usb_down) B("imu_off", imu_off) B("iox_fail", iox_fail) B("latch_weld", latch_weld)
     B("estop_a_stuck", estop_a_stuck) B("freeze_control", freeze_control) B("freeze_supervisor", freeze_supervisor)
     B("freeze_background", freeze_background) B("nv_fail", nv_fail) B("iox_b_fail", iox_b_fail) B("permit_short", permit_short) B("permit_open", permit_open) B("run12_short", run12_short) B("loop_cmp_stuck", loop_cmp_stuck)
-    B("iox_drive_loop", iox_drive_loop) B("io_cfg_fault", io_cfg_fault) B("cset_diode", cset_diode) B("cset_energy", cset_energy) B("uhold_open", uhold_open) B("set_ready_stuck", set_ready_stuck) B("u21_short", u21_short) B("u21b_short", u21b_short) B("jp1_open", jp1_open)
+    B("iox_drive_loop", iox_drive_loop) B("io_cfg_fault", io_cfg_fault) B("cset_diode", cset_diode) B("cset_energy", cset_energy) B("uhold_open", uhold_open) B("set_ready_stuck", set_ready_stuck) B("u21_short", u21_short) B("u21b_short", u21b_short) B("lta_stuck", lta_stuck) B("ltb_stuck", ltb_stuck) B("jp1_open", jp1_open)
     B("rail_weld", rail_weld) B("loop_sns_leak", loop_sns_leak) B("bumper_l_weld", bumper_l_weld) B("run_hd_short", run_hd_short)
     B("k1_run_short", k1_run_short) B("chain_end_short", chain_end_short) B("uhold_short", uhold_short) B("loop_b_stuck_ok", loop_b_stuck_ok)
     B("iox_d_fail", iox_d_fail) B("iox_d_bad_pattern", iox_d_bad_pattern) B("loop_b_stuck_open", loop_b_stuck_open) B("rearm_aux_short", rearm_aux_short) B("rearm_set_short", rearm_set_short) B("pmon_fail", pmon_fail) B("branch_fail", branch_fail) B("charger_fail", charger_fail)
     N("pres_ohm", pres_ohm) N("loop_ohm", loop_ohm) N("vbat", vbat) N("soc", soc) N("temp_bay", temp[0]) N("temp_pack", temp[1])
-    N("temp_board", temp[2]) N("tilt_deg", tilt_deg) N("vmot_tau_s", vmot_tau_s) N("cset_uf", cset_uf) N("k1_coil_c", k1_coil_c) N("k1_pickup_ms", k1_pickup_ms) N("rset_ohm", rset_ohm) N("set_ready_v", set_ready_v) N("set_qual_ms", set_qual_ms) N("loop_b_ohm", loop_b_ohm)
+    N("temp_board", temp[2]) N("tilt_deg", tilt_deg) N("vmot_tau_s", vmot_tau_s) N("cset_uf", cset_uf) N("k1_coil_c", k1_coil_c) N("k1_pickup_ms", k1_pickup_ms) N("rset_ohm", rset_ohm) N("set_ready_v", set_ready_v) N("set_qual_ms", set_qual_ms) N("loop_b_ohm", loop_b_ohm) N("set_rb_v", set_rb_v) N("v3v3", v3v3) N("board_ntc_rise_k", board_ntc_rise_k)
 #undef B
 #undef N
     if ((t = rrc_json_get(&d, 0, "k1_fault")) >= 0) { /* "NONE", "SEAL_WELD", "SET_SHORT" */

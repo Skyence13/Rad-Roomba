@@ -66,6 +66,11 @@ typedef struct {
     bool u21_short, u21b_short;     /* loop photo-MOS U21 (channel A) / U21B (channel B) conducting whatever the channel says */
     double loop_b_ohm;              /* channel B threshold, default 1890 ohm (G7) */
     uint8_t iox_d_out;              /* IOX_D output register as written by the port (P4 LOOP_TEST_A, P7 LOOP_TEST_B) */
+    /* stage-4 review: analog levels the emulator used to treat as logic, and stuck test FETs */
+    bool lta_stuck, ltb_stuck;      /* Q_LTA / Q_LTB D-S short (S4) */
+    double set_rb_v, v3v3;          /* GPB6 high level with the set contact closed (2.80 V nominal, 2.76-2.83 V) and the 3V3
+                                     * rail: reads high only above VIH(max) = 0.8 x 3V3 (S3) */
+    double board_ntc_rise_k;        /* board NTC (beside the H-bridges) above the K1 coil / ambient, e.g. after driving (S2) */
     /* TPS3430 window watchdog: WDI edges counted per wdi_mode (0 falling, 1 rising, 2 both); a counted edge
      * closer than 2.2 ms to the previous one or none for 23.4 ms (tWDU min) asserts WDO for 200 ms; with
      * JP1 closed WDO also holds NRST, so the MCU sits in reset for those 200 ms */

@@ -31,7 +31,7 @@
 
 /* ---- enumerations (names spelled as in contract.yaml enums) ---- */
 #define RRCH_MODE_LIST(X) X(BOOT) X(SERVICE_CHARGE) X(LAB) X(STANDBY) X(ARMED_IDLE) X(MOVING) X(HOLD) X(PROTECTIVE_STOP) X(HW_INHIBIT) X(FAULT)
-#define RRCH_HW_LIST(X) X(MODE_NOT_RUN) X(ESTOP) X(HANDS_ON) X(CHARGER) X(HEAD_UNDOCKED) X(HEAD_LOOP_OPEN) X(HEAD_LOOP_SHORT) X(J1_ABSENT) X(LAB_KEY) X(BODY_BUMPER) X(WATCHDOG) X(MCU_NOT_READY) X(VMOT_FAULT) X(LATCH_UNEXPLAINED)
+#define RRCH_HW_LIST(X) X(MODE_NOT_RUN) X(ESTOP) X(HANDS_ON) X(CHARGER) X(HEAD_UNDOCKED) X(HEAD_LOOP_OPEN) X(HEAD_LOOP_SHORT) X(J1_ABSENT) X(LAB_KEY) X(BODY_BUMPER) X(WATCHDOG) X(MCU_NOT_READY) X(VMOT_FAULT) X(LATCH_UNEXPLAINED) X(REARM_HELD)
 #define RRCH_SW_LIST(X) X(FIELD_FRONT) X(FIELD_REAR) X(FIELD_LEFT) X(FIELD_RIGHT) X(CLIFF_FL) X(CLIFF_FR) X(CLIFF_RL) X(CLIFF_RR) X(LOOKAHEAD_L) X(LOOKAHEAD_R) X(TOF_STALE) X(TOF_DISAGREE) X(CMD_TIMEOUT) X(HOST_LINK_LOST) X(STALL) X(ENCODER_FAULT) X(IMU_FAULT) X(TILT) X(BATTERY_LOW) X(TEMP_RANGE) X(HOST_REQUEST) X(HEAD_LINK) X(LOCALIZATION) X(BRAKE_TEST_FAIL) X(STOP_ESCALATED)
 #define RRCH_OPMODE_LIST(X) X(COMMISSIONING) X(SURVEY_SHARED) X(SURVEY_UNATTENDED) X(GUIDED) X(LAB) X(SERVICE)
 #define RRCH_PRES_LIST(X) X(ABSENT) X(HEAD_DIRECT) X(HEAD_VIA_LAB_EXTENSION) X(LAB_EXTENSION_ONLY) X(FAULT)
@@ -40,7 +40,7 @@
     X(LATCH_NO_REARM) X(LATCH_NO_DROP) X(LOOP_FAIL) X(PIN_CONFIG) X(K1_WELD) X(RUN_SHORT) X(LOOP_SW_SHORT) \
     X(PERMIT_STUCK_OFF) X(IOX_B) X(IOX_D) X(REARM_HELD) X(REARM_DISCREPANCY) X(CONFIG_DEFAULTED) X(LOOP_DISCREPANCY) X(J1_PRES_FAULT) X(CHARGER_COMM) X(PMON_COMM) X(TOF_BUS) X(HEATER_SENSOR) \
     X(EFUSE_HEAD_PWR) X(EFUSE_HEAD_HTR) X(EFUSE_CHS_HTR) X(EFUSE_LIDAR) X(EFUSE_V5) X(BRIDGE_L) X(BRIDGE_R) X(BUS_CLAMP) \
-    X(EVENT_OVERFLOW) X(BATTERY_WARN) X(LOOP_HIGH_R) X(SET_STAGE_FAULT)
+    X(EVENT_OVERFLOW) X(BATTERY_WARN) X(LOOP_HIGH_R) X(SET_STAGE_FAULT) X(REARM_RB_FAULT) X(BATTERY_REARM_LOW) X(COIL_HOT)
 /* IB-34 (lead decision, corrected mapping): two forward-looking (grip cheeks, over the head) and two rearward-looking
  * (tail) oblique sensors. Index 4 LOOK_FL (J_TOF4, mux 0 ch 2), 5 LOOK_RL (J_TOF5, mux 1 ch 2), 6 LOOK_RR (J_TOF6,
  * mux 0 ch 3), 7 LOOK_FR (J_TOF7, mux 1 ch 3): each pair is split across the two muxes. */
@@ -86,11 +86,18 @@ extern const char *const rrch_pres_names[RRCH_PRES_N];
 extern const char *const rrch_flt_names[RRCH_FLT_N];
 /* round 4 (N1): why a REARM press would not, or did not, set the hardware latch. NONE = a press will set it. */
 #define RRCH_RREF_LIST(X) X(NONE) X(FAULT_OR_MODE) X(CHAIN_OPEN) X(REARM_HELD) X(PERMIT_WITHHELD) X(LOOP_TEST) X(SUPPLY_LOW) X(COIL_HOT) \
-    X(NOT_READY) X(TOO_SHORT) X(PARTIAL) X(SET_FAILED)
+    X(NOT_READY) X(TOO_SHORT) X(PARTIAL) X(SET_FAILED) X(REARM_HELD_AFTER_SET)
 #define X(n) RRCH_RREF_##n,
 typedef enum { RRCH_RREF_LIST(X) RRCH_RREF_N } rrch_rref_t;
 #undef X
 extern const char *const rrch_rref_names[RRCH_RREF_N];
+/* stage-4 review S4: diagnosis of a head-loop LOOP_FAIL (or of a B-only opening) */
+#define RRCH_LCAUSE_LIST(X) X(NONE) X(A_STUCK_HEALTHY) X(CHECKING_B) X(B_STUCK_HEALTHY) X(TEST_PATH_A) X(SELF_TEST_A) X(SELF_TEST_B) \
+    X(A_ANALOG_DISAGREE) X(B_OPEN_OR_TEST_PATH_B) X(A_OPEN_OR_TEST_PATH_A)
+#define X(n) RRCH_LC_##n,
+typedef enum { RRCH_LCAUSE_LIST(X) RRCH_LC_N } rrch_lcause_t;
+#undef X
+extern const char *const rrch_lcause_names[RRCH_LC_N];
 extern const char *const rrch_tof_names[RRCH_TOF_COUNT];
 
 /* ---- digital inputs: one bit each, logical level 1 = closed / healthy / present / pressed ---- */
@@ -283,6 +290,9 @@ typedef struct {
      * open element can read live for ~10 s. The current netlist (S3, F12) has D_RSET: 0. 12000 for a stage-2 board. */ \
     X(CHAIN_BACKFEED_MS, "chain.backfeed_ms", 0, 0, 20000, "ms") \
     X(LOOP_B_STUCK_OHM, "loop.b_stuck_ohm", 2050, 1900, 3500, "ohm") \
+    X(REARM_VBAT_WARN_V, "rearm.vbat_warn_v", 12.0, 11.5, 13.0, "V") \
+    X(REARM_NTC_OFFSET_K, "rearm.ntc_coil_offset_k", 0, 0, 30, "K") \
+    X(REARM_COIL_SELFHEAT_K, "rearm.coil_selfheat_k", 10, 0, 30, "K") \
     X(BRK_LATCH_DROP_MAX_MS, "brake.latch_drop_max_ms", 50, 5, 500, "ms") \
     X(BRK_VMOT_MIN_V, "brake.vmot_min_v", 9.0, 5, 12, "V") \
     X(BRK_VMOT_OFF_V, "brake.vmot_off_v", 1.0, 0.2, 5, "V") \
@@ -402,7 +412,16 @@ typedef struct {
     uint8_t n_unheld;
     uint64_t unheld_until_us;
     uint32_t latched_held_ms;   /* W-018: a REARM contact closed while latched */
-    bool held_drop;
+    bool held_drop, set_edge_ok, aux_raw_prev;
+    uint64_t aux_open_us;
+    uint8_t rb_fault_line;      /* REARM_RB_FAULT: 1 set line missed the press, 2 aux line missed it */
+    uint8_t loop_cause;         /* rrch_lcause_t: diagnosis of the last LOOP_FAIL / loop discrepancy (S4) */
+    uint8_t ld_phase;           /* S4 diagnostic TEST_B after a 'B stuck' verdict: 0 idle, 1 pending, 2 running */
+    uint16_t ld_ms;
+    bool ld_b_low;
+    uint16_t t_vbat_warn;
+    float coil_f, coil_c;       /* stage 5 H2: latch-set self-heating filter, K1 coil estimate */
+    bool short_dip;             /* stage 5 H4: the current permit withdrawal is the 30 ms PARTIAL-set dip */
     uint16_t t_loop_high;
 } rrch_chain_t;
 

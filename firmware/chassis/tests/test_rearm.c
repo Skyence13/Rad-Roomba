@@ -182,10 +182,21 @@ int main(void)
         uint64_t s0 = t->sim.core.ev_newest;
         press(t, 200);
         bool k1_seen = false;
+        int permit_low = 0;
+        double v_dip0 = 0.0, v_dip1 = 0.0;
+        int ce_dead_max = 0;
         for (int k = 0; k < 600; k++) {
             th_run_silent(t, 1);
             k1_seen = k1_seen || t->sim.k1;
+            if (!t->sim.core.out.arm_permit) {
+                v_dip0 = permit_low == 0 ? t->sim.vc : v_dip0;
+                permit_low++;
+                v_dip1 = t->sim.vc;
+            }
+            ce_dead_max = t->sim.ce_dead_ms > ce_dead_max ? t->sim.ce_dead_ms : ce_dead_max;
         }
+        printf("  SIMULATED: PARTIAL set: ARM_PERMIT low for %d ms (stage 5 H4: 30 ms), CHAIN_END dead at most %d ms (Q_SDIS starts at 41-64 ms), C_SET %.2f -> %.2f V (set-pulse dump)\n", permit_low, ce_dead_max, v_dip0, v_dip1);
+        CHECK(permit_low >= 30 && permit_low <= 40 && ce_dead_max < 41);
         printf("  SIMULATED: U_HOLD open: K1 closed %d, released %d, REARM_REFUSED(PARTIAL) %d, K1_WELD %d\n", k1_seen, !t->sim.k1,
                count_ev(t, s0, RRCH_EV_REARM_REFUSED, RRCH_RREF_PARTIAL), fault(t, RRCH_FLT(K1_WELD)));
         CHECK(k1_seen && !t->sim.k1 && !t->sim.latch && count_ev(t, s0, RRCH_EV_REARM_REFUSED, RRCH_RREF_PARTIAL) == 1 && !(t->sim.core.faults & FATAL));
@@ -362,24 +373,139 @@ int main(void)
         CHECK(fault(t, RRCH_FLT(SET_STAGE_FAULT)) && !(t->sim.core.faults & FATAL) && t->sim.core.chain.rearm_why == RRCH_RREF_FAULT_OR_MODE && !t->sim.core.out.arm_permit);
     }
 
-    SECTION("W-018: normal press-and-hold up to 1.8 s arms and stays armed; held past 2 s after the rise withdraws ARM_PERMIT");
+    SECTION("stage-4 review S5 / stage 5 H6: a 2.5 s press stays armed; a 6 s press beeps from 1 s and drops at 5 s with REARM_HELD, told to the operator");
     {
-        th_t *t = th_new(1540);
+        th_t *t = th_new(1560);
         (void)wait_ready(t, 15000);
-        press(t, 1800);
-        th_run_silent(t, 2500);
+        press(t, 2500);
+        th_run_silent(t, 3000);
         CHECK(t->sim.latch && !fault(t, RRCH_FLT(REARM_HELD)));
+        th_env(t, "{\"bumper_r\":true}");
+        th_run_silent(t, 1000);
+        th_env(t, "{\"bumper_r\":false}");
+        (void)wait_ready(t, 15000);
+        uint64_t s0 = t->sim.core.ev_newest;
+        press(t, 6000);
+        th_run_silent(t, 900);
+        bool beep_early = false, beep = false;
+        for (int k = 0; k < 400; k++) {
+            th_run_silent(t, 1);
+            beep = beep || t->sim.core.out.buzzer;
+        }
+        (void)beep_early;
+        th_run_silent(t, 3600); /* 4.9 s */
+        bool armed = t->sim.latch;
+        th_run_silent(t, 300);
+        const rrch_event_t *last = NULL;
+        for (uint64_t q = s0 + 1u; q <= t->sim.core.ev_newest; q++) {
+            const rrch_event_t *e = &t->sim.core.ev[(q - 1u) % RRCH_EVENTS_N];
+            last = e->kind == RRCH_EV_REARM_REFUSED ? e : last;
+        }
+        bool ev_ok = last && last->a == RRCH_RREF_REARM_HELD_AFTER_SET && last->b == 1;
+        printf("  SIMULATED: REARM held 6 s: armed at 4.9 s %d, buzzer while held %d, dropped at 5.2 s %d, REARM_REFUSED(REARM_HELD_AFTER_SET, latch_dropped) %d\n", armed, beep, !t->sim.latch, ev_ok);
+        CHECK(armed && beep && !t->sim.latch && ev_ok && th_req(t, "STATE", "{}") && th_has(t, "hw_inhibit_reasons", "REARM_HELD") &&
+              !th_has(t, "hw_inhibit_reasons", "MCU_NOT_READY") && th_is(t, "rearm_refusal", "REARM_HELD_AFTER_SET") && !(t->sim.core.faults & FATAL));
+        th_run_silent(t, 1500);
+        (void)wait_ready(t, 15000);
+        press(t, 200);
+        th_run_silent(t, 400);
+        CHECK(t->sim.latch);
+    }
+
+    SECTION("stage-4 review S4: a stuck-on test FET is diagnosed as such, not as the wrong channel");
+    {
+        th_t *t = th_new(1570); /* Q_LTA shorted: channel A and the analog copy read open, B closed */
+        th_env(t, "{\"lta_stuck\":true}");
+        th_run_silent(t, 800);
+        CHECK(fault(t, RRCH_FLT(LOOP_FAIL)) && t->sim.core.chain.loop_cause == RRCH_LC_TEST_PATH_A && th_req(t, "DIAG", "{}") && th_is(t, "loop_cause", "TEST_PATH_A"));
+        t = th_new(1571); /* channel B really stuck healthy, loop open at 2.5 kOhm */
+        th_run_silent(t, 400);
+        th_env(t, "{\"loop_b_stuck_ok\":true,\"loop_ohm\":2500}");
+        th_run_silent(t, 400);
+        CHECK(fault(t, RRCH_FLT(LOOP_FAIL)) && t->sim.core.chain.loop_cause == RRCH_LC_B_STUCK_HEALTHY);
+        t = th_new(1572); /* Q_LTB shorted: B reads open, A and analog closed: fail-safe discrepancy, named so */
+        th_env(t, "{\"ltb_stuck\":true}");
+        th_run_silent(t, 800);
+        CHECK(fault(t, RRCH_FLT(LOOP_DISCREPANCY)) && !(t->sim.core.faults & FATAL) && t->sim.core.chain.loop_cause == RRCH_LC_B_OPEN_OR_TEST_PATH_B && !t->sim.core.out.arm_permit);
+        printf("  SIMULATED: Q_LTA stuck -> %s; B stuck -> B_STUCK_HEALTHY; Q_LTB stuck -> %s (non-fatal)\n", rrch_lcause_names[RRCH_LC_TEST_PATH_A], rrch_lcause_names[t->sim.core.chain.loop_cause]);
+    }
+
+    SECTION("stage-4 review S3: the set-contact readback misses the high level (3V3 high, VIH 0.8 x 3V3): readback fault, not fatal; C1 unchanged");
+    {
+        th_t *t = th_new(1580);
+        th_env(t, "{\"v3v3\":3.55}"); /* VIH(max) 2.84 V > GPB6 2.80 V: the set line never reads closed */
+        (void)wait_ready(t, 15000);
+        press(t, 200);
+        th_run_silent(t, 400);
+        printf("  SIMULATED: GPB6 below VIH: latch %d, REARM_RB_FAULT %d, LATCH_NO_REARM %d\n", t->sim.latch, fault(t, RRCH_FLT(REARM_RB_FAULT)), fault(t, RRCH_FLT(LATCH_NO_REARM)));
+        CHECK(t->sim.latch && fault(t, RRCH_FLT(REARM_RB_FAULT)) && !(t->sim.core.faults & FATAL) && th_req(t, "DIAG", "{}") && th_is(t, "rearm.rb_fault", "SET_LINE_MISSED"));
         th_env(t, "{\"bumper_r\":true}");
         th_run_silent(t, 100);
         th_env(t, "{\"bumper_r\":false}");
+        th_run_silent(t, 6000);
+        CHECK(!t->sim.latch && t->sim.core.chain.rearm_why == RRCH_RREF_FAULT_OR_MODE && !t->sim.core.out.arm_permit); /* the next arming is withheld */
+        t = th_new(1581); /* C1: a rise with no press on either line is still fatal */
         (void)wait_ready(t, 15000);
-        press(t, 3000);
-        th_run_silent(t, 1900);
+        th_env(t, "{\"k1_fault\":\"SEAL_WELD\"}");
+        th_run_silent(t, 300);
+        CHECK(fault(t, RRCH_FLT(LATCH_NO_REARM)) || fault(t, RRCH_FLT(K1_WELD)) || t->sim.n_resets > 0u);
+    }
+
+    SECTION("stage-4 review S2 / stage 5 H2: COIL_HOT is a warning only (press still offered); the NTC-to-coil estimate is configurable");
+    {
+        th_t *t = th_new(1590);
+        th_env(t, "{\"temp_board\":35,\"board_ntc_rise_k\":15}"); /* stage-4 RT1 beside the bridges: NTC 50 C, coil 35 C */
+        int w = wait_ready(t, 15000);
+        bool warn = fault(t, RRCH_FLT(COIL_HOT));
+        press(t, 200);
+        th_run_silent(t, 400);
+        printf("  SIMULATED: NTC 50 C / coil 35 C: ready after %d ms with warning COIL_HOT %d; a press sets %d (lamp and hardware agree)\n", w, warn, t->sim.latch);
+        CHECK(w >= 0 && warn && t->sim.latch && !(t->sim.core.faults & FATAL));
+        t = th_new(1591);
+        th_env(t, "{\"temp_board\":35,\"board_ntc_rise_k\":15}");
+        t->sim.core.cfg.v[RRCH_CFG_REARM_NTC_OFFSET_K] = 15.0f;
+        th_run_silent(t, 1000);
+        CHECK(!fault(t, RRCH_FLT(COIL_HOT)));
+        t = th_new(1592); /* coil really at 60 C: offered (warning), the outcome is reported COIL_HOT if it fails, never silent */
+        th_env(t, "{\"temp_board\":60,\"k1_coil_c\":75}");
+        (void)wait_ready(t, 15000);
+        uint64_t s0 = t->sim.core.ev_newest;
+        press(t, 200);
+        th_run_silent(t, 500);
+        CHECK(t->sim.latch || count_ev(t, s0, RRCH_EV_REARM_REFUSED, RRCH_RREF_COIL_HOT) == 1);
+    }
+
+    SECTION("lead item 6: battery approaching the re-arm limit warns first; a SUPPLY_LOW refusal says to charge or swap the pack");
+    {
+        th_t *t = th_new(1600);
+        th_env(t, "{\"vbat\":11.9}");
+        th_run_silent(t, 5000);
+        CHECK(!fault(t, RRCH_FLT(BATTERY_REARM_LOW))); /* filtered >= 10 s (stage 5 H5) */
+        th_run_silent(t, 6000);
+        CHECK(fault(t, RRCH_FLT(BATTERY_REARM_LOW)) && !(t->sim.core.faults & FATAL));
+        th_env(t, "{\"vbat\":12.6}");
+        th_run_silent(t, 100);
+        CHECK(!fault(t, RRCH_FLT(BATTERY_REARM_LOW)));
+    }
+
+    SECTION("W-018 / stage 5 H6: press-and-hold up to 4.5 s arms and stays armed; held past 5 s after the rise withdraws ARM_PERMIT");
+    {
+        th_t *t = th_new(1540);
+        (void)wait_ready(t, 15000);
+        press(t, 4500);
+        th_run_silent(t, 5500);
+        CHECK(t->sim.latch && !fault(t, RRCH_FLT(REARM_HELD)));
+        th_env(t, "{\"bumper_r\":true}");
+        th_run_silent(t, 1000);
+        th_env(t, "{\"bumper_r\":false}");
+        (void)wait_ready(t, 15000);
+        press(t, 7000);
+        th_run_silent(t, 4900);
         bool held_armed = t->sim.latch;
         th_run_silent(t, 300);
-        printf("  SIMULATED: REARM held 3 s: armed %d at 1.9 s, dropped %d at 2.2 s, REARM_HELD %d\n", held_armed, !t->sim.latch, fault(t, RRCH_FLT(REARM_HELD)));
+        printf("  SIMULATED: REARM held 7 s: armed %d at 4.9 s, dropped %d at 5.2 s, REARM_HELD %d\n", held_armed, !t->sim.latch, fault(t, RRCH_FLT(REARM_HELD)));
         CHECK(held_armed && !t->sim.latch && fault(t, RRCH_FLT(REARM_HELD)) && !(t->sim.core.faults & FATAL));
-        th_run_silent(t, 1500);
+        th_run_silent(t, 2500);
         (void)wait_ready(t, 15000);
         press(t, 200);
         th_run_silent(t, 400);

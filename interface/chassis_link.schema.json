@@ -41,7 +41,8 @@
     "WATCHDOG",
     "MCU_NOT_READY",
     "VMOT_FAULT",
-    "LATCH_UNEXPLAINED"
+    "LATCH_UNEXPLAINED",
+    "REARM_HELD"
    ]
   },
   "protective_stop_reason": {
@@ -1302,6 +1303,7 @@
       "TOO_SHORT",
       "PARTIAL",
       "SET_FAILED",
+      "REARM_HELD_AFTER_SET",
       null
      ]
     },
@@ -1684,7 +1686,8 @@
         "NOT_READY",
         "TOO_SHORT",
         "PARTIAL",
-        "SET_FAILED"
+        "SET_FAILED",
+        "REARM_HELD_AFTER_SET"
        ]
       },
       "set_ready": {
@@ -1703,6 +1706,13 @@
       "loop_tests_passed": {
        "type": "integer",
        "minimum": 0
+      },
+      "rb_fault": {
+       "enum": [
+        "NONE",
+        "SET_LINE_MISSED",
+        "AUX_LINE_MISSED"
+       ]
       }
      },
      "required": [
@@ -1710,7 +1720,23 @@
       "set_ready",
       "set_contact",
       "loop_test",
-      "loop_tests_passed"
+      "loop_tests_passed",
+      "rb_fault"
+     ]
+    },
+    "loop_cause": {
+     "description": "(+) stage-4 review S4: diagnosis of the last head-loop LOOP_FAIL or B-only opening",
+     "enum": [
+      "NONE",
+      "A_STUCK_HEALTHY",
+      "CHECKING_B",
+      "B_STUCK_HEALTHY",
+      "TEST_PATH_A",
+      "SELF_TEST_A",
+      "SELF_TEST_B",
+      "A_ANALOG_DISAGREE",
+      "B_OPEN_OR_TEST_PATH_B",
+      "A_OPEN_OR_TEST_PATH_A"
      ]
     }
    },

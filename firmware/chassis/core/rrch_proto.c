@@ -552,7 +552,9 @@ static void op_diag(ctx_t *x)
     rrc_jw_kbool(w, "set_contact", ch->rearm_set);
     rrc_jw_kstr(w, "loop_test", ch->lt_phase != 0u ? "RUNNING" : (ch->lt_passed ? "PASSED" : "PENDING"));
     rrc_jw_ku64(w, "loop_tests_passed", ch->lt_n);
+    rrc_jw_kstr(w, "rb_fault", ch->rb_fault_line == 1u ? "SET_LINE_MISSED" : (ch->rb_fault_line == 2u ? "AUX_LINE_MISSED" : "NONE"));
     rrc_jw_obj_end(w);
+    rrc_jw_kstr(w, "loop_cause", rrch_lcause_names[ch->loop_cause % RRCH_LC_N]); /* (+) S4 LOOP_FAIL diagnosis */
     if (ch->chain_end_known) {
         rrc_jw_kbool(w, "chain_end", ch->chain_end);
     } else {
@@ -690,6 +692,14 @@ static void event_detail(rrch_t *c, rrc_jw_t *w, const rrch_event_t *e)
         break;
     case RRCH_EV_REARM_REFUSED:
         rrc_jw_kstr(w, "why", rrch_rref_names[e->a % RRCH_RREF_N]);
+        if (e->b) {
+            rrc_jw_kbool(w, "latch_dropped", true); /* REARM held 2 s after the latch rose (S5) */
+        }
+        if (e->a == RRCH_RREF_SUPPLY_LOW) {
+            rrc_jw_kstr(w, "action", "CHARGE_OR_SWAP_PACK");
+        } else if (e->a == RRCH_RREF_REARM_HELD) {
+            rrc_jw_kstr(w, "action", "RELEASE_REARM_PRESS_BRIEFLY");
+        }
         break;
     case RRCH_EV_TOF:
         rrc_jw_kstr(w, "id", rrch_tof_names[e->a]);

@@ -109,19 +109,50 @@ uint8_t rrch_iox_d_out(const rrch_t *c)
 
 bool rrch_iox_d_fast(const rrch_t *c)
 {
-    return c->chain.lt_phase != 0u;
+    return c->chain.lt_phase != 0u || c->chain.ld_phase == 2u;
+}
+
+/* S4: after "A open, analog open, B closed" (LOOP_FAIL, fail-safe already), one LOOP_TEST_B pulse of 30 ms with the
+ * latch down tells the two causes apart: channel B goes open -> B is healthy, the fault is on the A side (Q_LTA stuck
+ * on or LOOP_F grounded: "loop self-test path fault"); B stays closed -> B stuck healthy. The pulse can only open. */
+static void loop_diag_step(rrch_t *c, bool latch)
+{
+    rrch_chain_t *ch = &c->chain;
+    const rrch_iox_d_t *xd = &ch->iox_d;
+    if (ch->ld_phase == 1u && !latch && ch->lt_phase == 0u && ch->iox_d_known) {
+        ch->ld_phase = 2;
+        ch->ld_ms = 0;
+        ch->ld_b_low = false;
+        ch->lt_out = 0x80u;
+    } else if (ch->ld_phase == 2u) {
+        if (latch) {
+            ch->lt_out = 0;
+            ch->ld_phase = 1;
+            return;
+        }
+        uint64_t start = c->now_us - 1000u * (uint64_t)ch->ld_ms;
+        if (ch->iox_d_known && (xd->out & 0x80u) && xd->t_us >= start + 10000u && !(xd->val & 0x04u)) {
+            ch->ld_b_low = true;
+        }
+        if (++ch->ld_ms >= 30u) {
+            ch->lt_out = 0;
+            ch->ld_phase = 0;
+            ch->loop_cause = ch->ld_b_low ? RRCH_LC_TEST_PATH_A : RRCH_LC_B_STUCK_HEALTHY;
+        }
+    }
 }
 
 /* stage 4 G1/G2: what a REARM press would meet now (latch down). SET_READY_RB is the set stage's own comparator
  * (C_SET >= 10.8 V; Q_SETC keeps the reservoir untouched while it is low); the set margin is guaranteed for a coil
  * <= +45 C, taken as the board NTC (unreadable counts as hot). */
 #define REARM_COIL_MAX_C 45.0f
+#define REARM_HELD_LATCHED_MS 5000u /* stage 5 H6 (was 2 s): a W-018 crush now arms for 5 s */
 #define REARM_VBAT_MIN_V 11.7f /* G2: SET_READY never comes below this (worst case) */
 static uint8_t rearm_why(const rrch_t *c, bool others_closed)
 {
     const rrch_chain_t *ch = &c->chain;
     if (!c->boot_done || c->mode == RRCH_MODE_FAULT || c->mode == RRCH_MODE_BOOT || c->mode == RRCH_MODE_LAB || c->mode == RRCH_MODE_SERVICE_CHARGE ||
-        (c->faults & (RRCH_FLT_FATAL_MASK | RRCH_FLT(SET_STAGE_FAULT)))) {
+        (c->faults & (RRCH_FLT_FATAL_MASK | RRCH_FLT(SET_STAGE_FAULT) | RRCH_FLT(REARM_RB_FAULT)))) {
         return RRCH_RREF_FAULT_OR_MODE;
     }
     if (ch->rearm_held_ms > 2000u || ch->rearm_set_held_ms > 2000u) {
@@ -138,10 +169,6 @@ static uint8_t rearm_why(const rrch_t *c, bool others_closed)
     }
     if (!ch->lt_passed) {
         return RRCH_RREF_LOOP_TEST;
-    }
-    float tb = c->in.ntc_c[2];
-    if (!(tb <= REARM_COIL_MAX_C)) {
-        return RRCH_RREF_COIL_HOT;
     }
     /* Q_SETC conducts 13-28 ms after SET_READY rises (T13): offer the press only 30 ms after the first high sample */
     if (!(ch->iox_d_known && ch->set_ready && ch->set_ready_since_us != 0u && c->now_us - ch->set_ready_since_us >= 30000u)) {
@@ -202,6 +229,9 @@ static void loop_test_step(rrch_t *c, bool start_ok)
             ch->lt_phase = 4;
             ch->lt_ms = 0;
             if (!(ch->lt_a_ok && ch->lt_b_ok)) {
+                if (!(c->faults & RRCH_FLT(LOOP_FAIL))) {
+                    ch->loop_cause = !ch->lt_a_ok ? RRCH_LC_SELF_TEST_A : RRCH_LC_SELF_TEST_B;
+                }
                 rrch_fault_set(c, RRCH_FLT(LOOP_FAIL), true); /* a channel or its photo-MOS does not open */
             }
         }
@@ -472,7 +502,8 @@ void rrch_chain_step(rrch_t *c)
         bool run_short = raw_latch && !ch->k1_run;
         ch->n_unheld = unheld ? (uint8_t)(ch->n_unheld + 1u) : 0u;
         if (ch->n_unheld >= 2u) {
-            ch->unheld_until_us = c->now_us + 200000u;
+            ch->unheld_until_us = c->now_us + 30000u; /* stage 5 H4: 30 ms keeps C_SET (discharge starts >= 41 ms) */
+            ch->short_dip = true;
             if (ch->press_pending || (ch->press_us != 0u && c->now_us - ch->press_us < 1000000u)) {
                 ch->press_why = RRCH_RREF_PARTIAL;
                 ch->press_pending = true;
@@ -531,6 +562,13 @@ void rrch_chain_step(rrch_t *c)
     bool a_stuck = cmp == 0u && ana == 1u;
     bool b_stuck = !b_open && lo > b_lim;
     if (ab_t && (a_stuck || b_stuck)) {
+        /* S4: the analog copy is taken from LOOP_F, the node Q_LTA (LOOP_TEST_A) pulls to ground, so "A open, analog
+         * open, B closed" is either B stuck healthy or the A path (Q_LTA stuck on, LOOP_F grounded). Fail safe at once;
+         * the diagnosis is settled by one LOOP_TEST_B pulse once the latch is down (loop_diag_step). */
+        if (!(c->faults & RRCH_FLT(LOOP_FAIL))) {
+            ch->loop_cause = a_stuck ? RRCH_LC_A_STUCK_HEALTHY : RRCH_LC_CHECKING_B;
+            ch->ld_phase = a_stuck ? 0u : 1u;
+        }
         rrch_fault_set(c, RRCH_FLT(LOOP_FAIL), true);
     }
     bool ab_disc = ab_t && !(high_r && cmp == 1u && !b_open);
@@ -546,7 +584,18 @@ void rrch_chain_step(rrch_t *c)
         ch->loop_disc_latched = latched_now; /* latched when the disagreement began */
     }
     if (timer_run(&ch->t_loop_fail, ch->loop_disc_latched && disagree, 5)) {
+        if (!(c->faults & RRCH_FLT(LOOP_FAIL))) {
+            ch->loop_cause = RRCH_LC_A_ANALOG_DISAGREE;
+        }
         rrch_fault_set(c, RRCH_FLT(LOOP_FAIL), true);
+    }
+    if (ab_disc && b_open && cmp == 0u && ch->loop_cause == RRCH_LC_NONE) {
+        ch->loop_cause = RRCH_LC_B_OPEN_OR_TEST_PATH_B; /* B (or Q_LTB stuck on) says open, A and analog closed */
+    } else if (ab_disc && !b_open && cmp == 1u && ana == 0u && ch->loop_cause == RRCH_LC_NONE) {
+        ch->loop_cause = RRCH_LC_A_OPEN_OR_TEST_PATH_A; /* stage 5 H3 (analog from LOOP_SNS): A or Q_LTA stuck on */
+    } else if (!(c->faults & (RRCH_FLT(LOOP_FAIL) | RRCH_FLT(LOOP_DISCREPANCY))) &&
+               (ch->loop_cause == RRCH_LC_B_OPEN_OR_TEST_PATH_B || ch->loop_cause == RRCH_LC_A_OPEN_OR_TEST_PATH_A)) {
+        ch->loop_cause = RRCH_LC_NONE;
     }
     bool lab_code = ch->pres == RRCH_PRES_HEAD_VIA_LAB_EXTENSION || ch->pres == RRCH_PRES_LAB_EXTENSION_ONLY;
 
@@ -664,7 +713,8 @@ void rrch_chain_step(rrch_t *c)
     bool bt_running = c->bt.state == RRCH_BT_RUNNING;
     /* (the 50 ms permit hold after a latch fall is a consequence of the drop, not a cause) */
     if (!c->out.arm_permit && c->boot_done && !bt_running && c->mode != RRCH_MODE_SERVICE_CHARGE && c->mode != RRCH_MODE_LAB && ch->drop_ms >= 60u) {
-        hw |= RRCH_HW(MCU_NOT_READY);
+        /* S5: withheld because a REARM contact is held: say so */
+        hw |= (ch->rearm_held_ms > 2000u || ch->rearm_set_held_ms > 2000u) ? RRCH_HW(REARM_HELD) : RRCH_HW(MCU_NOT_READY);
     }
     if (c->faults & RRCH_FLT(PERMIT_STUCK_OFF)) {
         hw |= RRCH_HW(MCU_NOT_READY); /* the ARM_PERMIT element does not close (fails safe) */
@@ -697,9 +747,13 @@ void rrch_chain_step(rrch_t *c)
         all_closed = all_closed && ch->el[e] == RRCH_ELS_CLOSED;
         others_closed = others_closed && (e == RRCH_EL_ARM_PERMIT || ch->el[e] == RRCH_ELS_CLOSED);
     }
+    bool qual_now = all_closed && !latch && c->boot_done && c->out.arm_permit;
+    if (ch->rearm_set_edge_us == c->now_us) {
+        ch->set_edge_ok = qual_now; /* S3: the set line's edge is qualified like the aux edge */
+    }
     if (rb_now && !ch->rearm_prev) {
         ch->rearm_edge_us = c->now_us;
-        ch->rearm_edge_ok = all_closed && !latch && c->boot_done && c->out.arm_permit;
+        ch->rearm_edge_ok = qual_now;
         if (!ch->rearm_edge_ok && !latch) {
             /* pressed before the chain closed: refuse it by holding ARM_PERMIT low for longer than the
              * C_SET set pulse can hold K1 (245 ms above must-release, review m3) */
@@ -712,28 +766,47 @@ void rrch_chain_step(rrch_t *c)
             ch->press_why = ch->rearm_why;
         }
     }
+    bool aux_raw = (in->di & RRCH_DI(BTN_REARM)) != 0u;
+    if (!aux_raw && ch->aux_raw_prev) {
+        ch->aux_open_us = c->now_us;
+    }
+    ch->aux_raw_prev = aux_raw;
     ch->rearm_prev = rb_now;
     ch->rearm_held_ms = rb_now ? (ch->rearm_held_ms < 0x7FFFFFFFu ? ch->rearm_held_ms + 1u : ch->rearm_held_ms) : 0u;
-    rrch_fault_set(c, RRCH_FLT(REARM_HELD), ch->rearm_held_ms > 2000u || ch->rearm_set_held_ms > 2000u); /* held / welded REARM: permit withheld */
+    rrch_fault_set(c, RRCH_FLT(REARM_HELD), (!latch && (ch->rearm_held_ms > 2000u || ch->rearm_set_held_ms > 2000u)) || ch->latched_held_ms > REARM_HELD_LATCHED_MS); /* held / welded REARM: permit withheld */
     /* F5: the two REARM contact lines must agree; F17: both closing edges within 100 ms (+ the 10 ms IOX_D
      * sampling) and the rise within the window after the later one */
     rrch_fault_set(c, RRCH_FLT(REARM_DISCREPANCY), timer_run(&ch->t_rearm_disc, ch->rearm_set != rb_now, 200));
     ch->rearm_set_held_ms = ch->rearm_set ? ch->rearm_set_held_ms + 1u : 0u;
-    if (ch->rearm_set_held_ms > 2000u) {
-        rrch_fault_set(c, RRCH_FLT(REARM_HELD), true);
-    }
-    /* legitimacy of a latch rise (F17, stage 4 G4): both contact lines are sampled at 1 kHz and the set stage needs
-     * >= 3.2 ms of set-contact closure, so every press that can set shows both closing edges */
+
+    /* legitimacy of a latch rise (C1, F17, stage 4 G4): both contact lines are sampled at 1 kHz and the set stage needs
+     * >= 3.2 ms of set-contact closure, so every press that can set shows both closing edges. Stage-4 review S3: the
+     * set-contact readback (GPB6) has a thin high-level margin. A rise with ONE line showing a qualified press (edge
+     * seen with every element closed, ARM_PERMIT high, latch down, within the window, and that contact still closed or
+     * released < 20 ms before the rise) while the other line showed nothing is a readback fault, not an unexplained
+     * latch: REARM_RB_FAULT (warning, sticky until reset, withholds every later arming). A rise with NEITHER line showing
+     * a qualified press stays LATCH_NO_REARM (fatal). */
     uint64_t a_e = ch->rearm_edge_us, b_e = ch->rearm_set_edge_us;
     bool both = a_e != 0u && b_e != 0u && (a_e > b_e ? a_e - b_e : b_e - a_e) <= 110000u;
     if (latch && !ch->latch) {
+        uint64_t win = 250000u + 1000u * (uint64_t)CFG(c, CHAIN_CLOSE_DEBOUNCE_MS);
         uint64_t later = b_e > a_e ? b_e : a_e;
-        bool legit = ch->rearm_edge_ok && both && c->now_us - later <= 250000u + 1000u * (uint64_t)CFG(c, CHAIN_CLOSE_DEBOUNCE_MS);
+        bool legit = ch->rearm_edge_ok && both && c->now_us - later <= win;
+        bool aux_level = (in->di & RRCH_DI(BTN_REARM)) != 0u || (ch->aux_open_us >= a_e && c->now_us - ch->aux_open_us < 20000u);
+        bool set_level = ch->rearm_set || (ch->set_open_us >= b_e && c->now_us - ch->set_open_us < 20000u);
+        bool aux_press = ch->rearm_edge_ok && a_e != 0u && c->now_us - a_e <= win && aux_level;
+        bool set_press = ch->set_edge_ok && b_e != 0u && c->now_us - b_e <= win && set_level;
         ch->rearm_edge_ok = false;
+        ch->set_edge_ok = false;
         ch->held_drop = false;
         ch->lt_passed = false; /* G5: a fresh loop self-test before the next arming */
         if (!legit) {
-            rrch_fault_set(c, RRCH_FLT(LATCH_NO_REARM), true); /* welded K1, K1_SET short, RUN_12V short */
+            if (aux_press != set_press) {
+                rrch_fault_set(c, RRCH_FLT(REARM_RB_FAULT), true); /* one contact line missed the press (S3) */
+                ch->rb_fault_line = aux_press ? 1u : 2u;        /* 1: set line (GPB6) missed, 2: aux line missed */
+            } else {
+                rrch_fault_set(c, RRCH_FLT(LATCH_NO_REARM), true); /* welded K1, K1_SET short, RUN_12V short */
+            }
         }
     }
     /* N1: outcome of a press made with the latch down */
@@ -749,7 +822,9 @@ void rrch_chain_step(rrch_t *c)
                              ch->set_close_us + 110000u >= ch->press_us;
             uint8_t why = ch->press_why;
             if (why == RRCH_RREF_NONE) {
-                why = (short_set || ch->set_close_us + 110000u < ch->press_us) ? RRCH_RREF_TOO_SHORT : RRCH_RREF_SET_FAILED;
+                why = (short_set || ch->set_close_us + 110000u < ch->press_us) ? RRCH_RREF_TOO_SHORT
+                      : (c->faults & RRCH_FLT(COIL_HOT))                    ? RRCH_RREF_COIL_HOT /* H2: margin not guaranteed */
+                                                                            : RRCH_RREF_SET_FAILED;
             }
             ch->rearm_refusal = why;
             rrch_event(c, RRCH_EV_REARM_REFUSED, ch->rearm_refusal, 0, 0);
@@ -757,9 +832,18 @@ void rrch_chain_step(rrch_t *c)
         }
     }
     /* W-018: a REARM contact still closed 2 s after the latch rose (held, welded, or a body against the button) */
+    /* S5 / stage 5 H6: the hardware sets the latch 7-15 ms into a press, so the firmware cannot know the press length
+     * before the rise and cannot defer the set (the set pulse ends at most 170 ms after closure; ARM_PERMIT low during
+     * it only makes the press fail). So: the buzzer beeps fast from 1 s of holding after the rise ("release"), the drop
+     * at 5 s carries the latched reason REARM_HELD and a REARM_REFUSED {why: REARM_HELD_AFTER_SET, latch_dropped}. */
     ch->latched_held_ms = (latch && (rb_now || ch->rearm_set)) ? (ch->latched_held_ms < 0x7FFFFFFFu ? ch->latched_held_ms + 1u : ch->latched_held_ms) : 0u;
-    if (ch->latched_held_ms > 2000u) {
+    if (ch->latched_held_ms > REARM_HELD_LATCHED_MS) {
         rrch_fault_set(c, RRCH_FLT(REARM_HELD), true);
+        if (!ch->held_drop) {
+            ch->rearm_refusal = RRCH_RREF_REARM_HELD_AFTER_SET;
+            rrch_event(c, RRCH_EV_REARM_REFUSED, RRCH_RREF_REARM_HELD_AFTER_SET, 1, 0);
+            ch->refused_us = c->now_us;
+        }
         ch->held_drop = true;
     }
     /* G5: loop self-test before every arming: latch down, every element (but ARM_PERMIT) closed for 100 ms, ARM_PERMIT
@@ -775,6 +859,18 @@ void rrch_chain_step(rrch_t *c)
         ch->lt_out = 0;
     }
     loop_test_step(c, lt_start);
+    loop_diag_step(c, latch);
+    /* low-battery re-arm warning (lead item 6): re-arming needs SET_READY (>= 11.7 V worst case) while the
+     * battery-low stop is lower; warn (2 s filter, 0.2 V hysteresis) before re-arming becomes impossible */
+    float vb = c->in.vbat_v, vw = CFG(c, REARM_VBAT_WARN_V);
+    bool vlow_now = (c->faults & RRCH_FLT(BATTERY_REARM_LOW)) ? vb < vw + 0.2f : vb <= vw;
+    rrch_fault_set(c, RRCH_FLT(BATTERY_REARM_LOW), c->boot_done && timer_run(&ch->t_vbat_warn, vlow_now, 10000)); /* stage 5 H5 */
+    /* stage 5 H2: K1 coil estimate = RT1 (now beside K1) - configured offset + self-heating 10 K x f, f = latch-set
+     * state filtered with tau 300 s. COIL_HOT above 45 C is a warning only: the press is still offered */
+    ch->coil_f += ((latch ? 1.0f : 0.0f) - ch->coil_f) * 3.3333e-6f;
+    float tcoil = c->in.ntc_c[2] - CFG(c, REARM_NTC_OFFSET_K) + CFG(c, REARM_COIL_SELFHEAT_K) * ch->coil_f;
+    ch->coil_c = tcoil;
+    rrch_fault_set(c, RRCH_FLT(COIL_HOT), c->boot_done && !(tcoil <= REARM_COIL_MAX_C));
     ch->rearm_why = latch ? RRCH_RREF_NONE : rearm_why(c, others_closed);
     if (timer_run(&ch->t_latch_boot, latch && !c->boot_done, 40)) {
         rrch_fault_set(c, RRCH_FLT(LATCH_NO_REARM), true); /* latch readback high at boot (ARM_PERMIT is low) */
@@ -803,7 +899,7 @@ void rrch_chain_step(rrch_t *c)
         if (!latch) {
             ch->hw_latched = hw | prev_live; /* causes seen just before the drop count too */
             if (ch->held_drop) {
-                ch->hw_latched |= RRCH_HW(MCU_NOT_READY); /* W-018: ARM_PERMIT withdrawn, REARM held */
+                ch->hw_latched = (ch->hw_latched & ~RRCH_HW(LATCH_UNEXPLAINED)) | RRCH_HW(REARM_HELD); /* W-018 / S5 */
             }
             ch->held_drop = false;
             if (ch->hw_latched == 0 && !bt_running) {
@@ -825,7 +921,7 @@ bool rrch_rearm_blocked(const rrch_t *c)
      * be read, or while K1 pole A does not read released (F1, F2, F5) */
     bool raw_latch = (c->in.di & RRCH_DI(HW_LATCH)) != 0;
     if (ch->latch || raw_latch) {
-        return ch->latched_held_ms > 2000u; /* W-018 */
+        return ch->latched_held_ms > REARM_HELD_LATCHED_MS; /* W-018 / stage 5 H6 */
     }
     if (c->now_us < ch->unheld_until_us) {
         return true; /* N2: K1 sealed in without U_HOLD: release it */
@@ -833,5 +929,5 @@ bool rrch_rearm_blocked(const rrch_t *c)
     /* K1 must read released before ARM_PERMIT is raised (F2): blocks raising only, never withdraws */
     bool k1_unproven = !c->out.arm_permit && !(ch->iox_d_known && ch->k1_nc);
     return c->now_us < ch->rearm_block_until_us || ch->rearm_held_ms > 2000u || ch->rearm_set_held_ms > 2000u ||
-           (c->faults & (RRCH_FLT(REARM_DISCREPANCY) | RRCH_FLT(SET_STAGE_FAULT))) || !ch->iox_d_known || k1_unproven;
+           (c->faults & (RRCH_FLT(REARM_DISCREPANCY) | RRCH_FLT(SET_STAGE_FAULT) | RRCH_FLT(REARM_RB_FAULT))) || !ch->iox_d_known || k1_unproven;
 }

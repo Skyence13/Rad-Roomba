@@ -640,6 +640,9 @@ static void panel_step(rrch_t *c)
     if (alert) {
         bz = (c->ms % 250u) < 125u;
     }
+    if (c->chain.latch && c->chain.latched_held_ms > 1000u) {
+        bz = (c->ms % 200u) < 100u; /* S5 / H6: REARM still held after the latch rose: "release" (drops at 5 s) */
+    }
     c->out.buzzer = bz;
     bool ready = !c->chain.latch && c->chain.rearm_why == RRCH_RREF_NONE; /* round 4 N1: a press will set the latch */
     bool clearable = (c->sw_latched || c->hold) && !(c->sw_active & c->sw_latched);
@@ -743,13 +746,15 @@ void rrch_tick_1khz(rrch_t *c)
                   c->chain.chain_end_known && !rrch_rearm_blocked(c) && c->chain.drop_ms >= 50u && !(c->faults & RRCH_FLT(LOOP_DISCREPANCY));
     /* once withdrawn, ARM_PERMIT stays low for at least 50 ms: K1 releases 4 ms after its coil loses
      * CHAIN_END; a shorter dip would let RUN_12V (HW_LATCH_RB) come back without REARM */
-    if (!c->out.arm_permit && c->permit_low_ms < 50u) {
+    if (!c->out.arm_permit && c->permit_low_ms < (c->chain.short_dip ? 30u : 50u)) { /* stage 5 H4: PARTIAL dip 30 ms */
         c->permit_low_ms++;
         permit = false;
     }
     if (permit != c->out.arm_permit) {
         if (!permit) {
             c->permit_low_ms = 0;
+        } else {
+            c->chain.short_dip = false;
         }
         if (permit || !c->permit_withdrawn) {
             rrch_event(c, RRCH_EV_PERMIT, permit, permit ? 0 : (bt_permit ? 4 : 3), 0);

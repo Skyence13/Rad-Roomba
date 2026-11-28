@@ -3,7 +3,8 @@
 # DEC-xxx entry in planning/decisions.csv and a line in docs/architecture/CHANGELOG.md.
 # Human-readable rationale: docs/architecture/SYSTEM_ARCHITECTURE.md
 # Units: SI (m, s, rad, V, A, W, kg) unless a key name carries another unit suffix (_mm, _us, _ms, _c).
-contract_version: "0.4.0-draft10"   # draft10: both large boards are 6-layer; heater delivered-power and receiver conductance notes (register contradictions C-03..C-05)
+contract_version: "0.4.0-draft11"   # draft11: hw_inhibit_reason REARM_HELD added (chassis firmware, stage-4 review)
+# previous: "0.4.0-draft10"   # draft10: both large boards are 6-layer; heater delivered-power and receiver conductance notes (register contradictions C-03..C-05)
 # previous: "0.4.0-draft9"   # draft9: head set-point +5 C (owner decision 2026-11-27); head loop evaluated by two channels in series; latch set stage kept on the board (chassis board stage 3)
 # previous:   # draft8: thermal_policy added (bay not held at +10 C on pack power; receiver thermal break required)
 # previous:   # draft7: tail swept radius 0.290 m (rear bumper included, prototype body CR-09); grip bar moved aft to x = -30 (CR-04); look-ahead ToF set = 2 forward + 2 rearward (IB-34); branch limits reconciled with the stage-2 board (IB-28)
@@ -145,7 +146,7 @@ safety_chain:
 # ---------------------------------------------------------------- enumerations shared by firmware, ROS and UI
 enums:
   chassis_mode: [BOOT, SERVICE_CHARGE, LAB, STANDBY, ARMED_IDLE, MOVING, HOLD, PROTECTIVE_STOP, HW_INHIBIT, FAULT]
-  hw_inhibit_reason: [MODE_NOT_RUN, ESTOP, HANDS_ON, CHARGER, HEAD_UNDOCKED, HEAD_LOOP_OPEN, HEAD_LOOP_SHORT, J1_ABSENT, LAB_KEY, BODY_BUMPER, WATCHDOG, MCU_NOT_READY, VMOT_FAULT, LATCH_UNEXPLAINED]
+  hw_inhibit_reason: [MODE_NOT_RUN, ESTOP, HANDS_ON, CHARGER, HEAD_UNDOCKED, HEAD_LOOP_OPEN, HEAD_LOOP_SHORT, J1_ABSENT, LAB_KEY, BODY_BUMPER, WATCHDOG, MCU_NOT_READY, VMOT_FAULT, LATCH_UNEXPLAINED, REARM_HELD]
   protective_stop_reason: [FIELD_FRONT, FIELD_REAR, FIELD_LEFT, FIELD_RIGHT, CLIFF_FL, CLIFF_FR, CLIFF_RL, CLIFF_RR, LOOKAHEAD_L, LOOKAHEAD_R, TOF_STALE, TOF_DISAGREE, CMD_TIMEOUT, HOST_LINK_LOST, STALL, ENCODER_FAULT, IMU_FAULT, TILT, BATTERY_LOW, TEMP_RANGE, HOST_REQUEST, HEAD_LINK, LOCALIZATION, BRAKE_TEST_FAIL, STOP_ESCALATED]
   op_mode: [COMMISSIONING, SURVEY_SHARED, SURVEY_UNATTENDED, GUIDED, LAB, SERVICE]
   head_presence: [ABSENT, HEAD_DIRECT, HEAD_VIA_LAB_EXTENSION, LAB_EXTENSION_ONLY, FAULT]
