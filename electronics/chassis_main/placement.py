@@ -360,6 +360,9 @@ def setup(board):
 
 
 def routing(board):
-    """Autorouter settings for the stage-2 attempt: one Freerouting run of at most 13 min (shared 4-core host),
-    rrkicad's fine-pitch escape (default for 6 layers) and the finisher; no continue runs (time budget)."""
-    board.route(passes=100, threads=3, timeout=780, retries=0, escape="auto", finisher=True)
+    """Autorouter settings for the long unattended run (tools/eda/README.md "Recommended recipe"): plane nets stay
+    routable because 111 plane pads have no fan-out via (zone_nets="route"); fine-pitch escape off (56 of 139 escapes had
+    no legal position); run with `build board.py --budget 7200` in 40-minute chunks so that an interrupted job keeps its
+    best result on disk (a single uninterrupted job routes more per hour but leaves nothing if it is killed)."""
+    board.route(passes=500, threads=3, timeout=7200, retries=2, restarts=0, optimizer=False, zone_nets="route",
+                escape=False, finisher=True, chunk=2400, stall=3)

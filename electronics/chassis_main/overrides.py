@@ -85,6 +85,7 @@ PART = [
     ("S2-02", "J_HEAD1", {"value": ("Micro-Fit 3.0 2x4 RA", "Mini-Fit Jr 2x5 RA"), "mpn": ("43045-0800", "39-30-1100"),
                           "manufacturer": ("Molex", "Molex"),
                           "package": ("MICROFIT-2x4-RA", "MINIFIT-2x5-RA"),
+                          "height_mm": (7.0, 12.8),     # same family height as J_PWR (body CR-16); Molex drawing value [U]
                           "symbol_hint": ("Connector_Generic:Conn_02x04_Top_Bottom", "Connector_Generic:Conn_02x05_Top_Bottom"),
                           "footprint_hint": ("Connector_Molex:Molex_Micro-Fit_3.0_43045-0800_2x04_P3.00mm_Horizontal",
                                              "Connector_Molex:Molex_Mini-Fit_Jr_5569-10A2_2x05_P4.20mm_Horizontal"),
