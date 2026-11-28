@@ -181,3 +181,61 @@ def gradient_bias(gradient_per_m=0.0, step=0.0, L_window_m=1.0, mode="centred", 
     if step and step_at_m is not None:
         frac = np.clip((b - max(a, step_at_m)) / (b - a), 0.0, 1.0)
     return float(mean_lin + step * frac)
+
+
+# ====================================================================== one-sided reference (MODEL.md rev 5 CR-13)
+def one_sided_study(case: LaneCase, U, N_sub, alpha, field, estimator, n_nodes=40, grid_pts=25, guard=0.02):
+    """Achieved false-alarm probability / alpha and the expected D# ratio for a ONE-SIDED reference made of two adjacent
+    sub-windows before the dwell (B adjacent to the dwell, A beyond it), each of expected count N_sub at the cell rate.
+
+    field(x) -> rate relative to the cell, x in units of one sub-window length measured backwards from the dwell
+    (B covers [0, 1], A covers [1, 2]); the sub-window means are field averages over those intervals.
+    estimator: 'larger'      U_null = larger of the two means, predictive with that sub-window (rev 5 as written)
+               'larger+guard' the same, cells with |U_null / (1.5 U_B - 0.5 U_A) - 1| > guard discarded (rev 5 guard)
+               'linear'     local-linear extrapolation U0 = 1.5 U_B - 0.5 U_A, predictive with the extrapolation's
+                            effective count N_eff = 1 / (2.25 / n_B + 0.25 / n_A)  (slope uncertainty in the posterior)
+               'linear+floor' max(linear, U_B), effective count of whichever is used
+    Returns (achieved/nominal over kept cells, fraction of cells discarded, D# at the expected estimate / D# with U known)."""
+    from scipy.integrate import quad
+    from scipy.interpolate import interp1d
+    mB = quad(field, 0.0, 1.0)[0]
+    mA = quad(field, 1.0, 2.0)[0]
+    T_s = N_sub / U                                   # sub-window live time at the cell rate
+    nB, pB = window_nodes(N_sub * mB, max_enum=0, n_quant=n_nodes)
+    nA, pA = window_nodes(N_sub * mA, max_enum=0, n_quant=n_nodes)
+    tl = case.tail(U)
+    est = []                                          # (U0, N_post, weight, kept)
+    for a_, wa in zip(nA, pA):
+        for b_, wb in zip(nB, pB):
+            uA, uB = a_ / T_s, b_ / T_s
+            lin = 1.5 * uB - 0.5 * uA
+            neff = 1.0 / (2.25 / max(b_, 0.5) + 0.25 / max(a_, 0.5))
+            if estimator.startswith("larger"):
+                u0, npost = (uB, b_) if uB >= uA else (uA, a_)
+                kept = True
+                if estimator == "larger+guard":
+                    kept = lin > 0 and abs(u0 / lin - 1.0) <= guard
+            elif estimator == "linear":
+                u0, npost, kept = max(lin, 0.05 * uB), neff, True
+            else:
+                u0, npost, kept = (lin, neff, True) if lin >= uB else (uB, b_, True)
+            est.append((u0, npost, wa * wb, kept))
+    est = np.array(est)
+    keep = est[:, 3] > 0
+    if not np.any(keep):
+        return float("nan"), 1.0, float("nan")
+    # thresholds: smooth in (U0, N_post); N_post varies little, so interpolate in U0 at the median N_post
+    npost_med = float(np.median(est[keep, 1]))
+    lo, hi = np.percentile(est[keep, 0], [0.01, 99.99])
+    ug = np.linspace(lo, hi, grid_pts)
+    tg = [threshold_rule(case, npost_med, npost_med / u, alpha, "predictive") for u in ug]
+    tfun = interp1d(ug, tg, kind="cubic", fill_value="extrapolate")
+    ts = tfun(est[keep, 0])
+    w = est[keep, 2]
+    ach = float(np.dot(w, tl(ts)) / w.sum()) / alpha
+    lost = float(1.0 - w.sum() / est[:, 2].sum())
+    u_mean = float(np.dot(w, est[keep, 0]) / w.sum())
+    t_mean = threshold_rule(case, npost_med, npost_med / u_mean, alpha, "predictive")
+    t_true = threshold_rule(case, 10 ** 7, 10 ** 7 / U, alpha, "plugin")
+    dh = rate_for_power(case, U, t_mean) / rate_for_power(case, U, t_true)
+    return ach, lost, dh

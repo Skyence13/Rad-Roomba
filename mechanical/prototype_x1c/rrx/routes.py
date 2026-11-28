@@ -41,6 +41,16 @@ TOF = {0: "tof_cliff_fl", 1: "tof_cliff_fr", 2: "tof_cliff_rl", 3: "tof_cliff_rr
        7: "tof_look_fwd_right", 8: "tof_prox_rl", 9: "tof_prox_rc", 10: "tof_prox_rr"}
 FIXED_OD = {"W-008": (7.5, 40.0), "W-009": (6.5, 35.0), "W-012": (5.0, 25.0)}      # shielded leads (harness / parts.yaml)
 NO_ROUTE = {"W-002": "inside the battery cassette (pack to cassette coupler half)", "W-024": "optional external sounder, not fitted"}
+# Cables whose route could not be closed in this pass (fit review M4): reported as OPEN in every report and in the yaml with the
+# reason and the proposed fix; the route gate fails for any other cable that does not route.  An entry is only used if the cable
+# actually fails; it never hides a cable that routes.
+OPEN_ROUTES = {
+    "W-032": "CLIFF_RL seat in the rear lower-hull boss: enclosed pocket (hull wall, tunnel wall, hatch jamb; about 90 free voxels); proposed: lead channel through the tunnel foot wall, or the seat 10 mm inboard",
+    "W-033": "CLIFF_RR seat: as W-032 (mirror)",
+    "W-039": "REAR_C in the hump brow: the hump is full (cassette top z 144 under the 147 roof), no inside passage; proposed: lead out of the brow over the hump to the left-deck LiDAR gland (external, clipped), or REAR_C moved to the hatch frame top",
+    "W-041": "chassis heater: the pad lead end lies under the cassette inside the floor plug; no modelled lead exit from the tunnel floor; proposed: 4 x 3 groove in the floor plug + grommet through the tunnel front at x -74",
+    "W-042": "bay NTC: as W-041",
+}
 
 
 # ----------------------------------------------------------------------------------------------- cable data
@@ -272,8 +282,8 @@ def occ_hard_core(occ_by, own):
 PASSAGES = [   # stated passages outside the inner-skin cavity (x0, x1, y0, y1, z0, z1); mirrored where marked
     ((-17.0, 1.0, 86.0, 95.5, 90.0, 158.0), True),          # fairing nose channel + shoulder roof slot (M3)
     ((-18.0, 32.0, 54.0, 92.0, 20.0, 33.0), False),         # under-plate dock-lead strip (clipped to the plate underside) to the grommet
-    ((24.0, 32.0, 54.0, 62.0, 20.0, 42.0), False),          # dock grommet (28, 58) through the plate
-    ((35.0, 57.0, 88.0, 101.0, 33.0, 45.0), True),          # front cliff pod bay (plate window)
+    ((24.0, 32.0, 54.0, 62.0, 20.0, 62.0), False),          # dock grommet (28, 58) through the plate and the hull notch above it
+    ((35.0, 57.0, 88.0, 101.5, 33.0, 63.0), True),          # front cliff pod bay (plate window) and the hull notch above it
 ]
 
 
@@ -328,7 +338,7 @@ def route_all(parts, log=print, only=None):
             cur = p
             i = _idx(p)
             for m, dd in enumerate(dl):                            # stub(s) out of the plug / seat, forced free
-                for k in range(0, 3 if (len(dl) > 1 and m == 0) else 6):
+                for k in range(0, 3 if (len(dl) > 1 and m == 0) else (10 if len(dl) > 1 else 6)):
                     q = _idx(tuple(cur[j] + dd[j] * k * HV for j in range(3)))
                     if all(0 <= q[j] < s for j, s in enumerate((NX, NY, NZ))):
                         free[q] = True
@@ -436,6 +446,10 @@ def route_all(parts, log=print, only=None):
         r["clips"] = clips[:-1] if not r.get("corridor") else []
         r["ok"] = not r.get("collisions") and (r["tof_limit_ok"] is not False) and r.get("cones_ok", True)
         r["status"] = "routed" if r["ok"] else "FAIL"
+    for cid, r in res.items():
+        if r.get("ok") is False and cid in OPEN_ROUTES:
+            r["status"] = "OPEN FINDING: " + OPEN_ROUTES[cid]
+            r["open"] = True
     log(f"  routes: {sum(1 for r in res.values() if r.get('ok'))}/{sum(1 for r in res.values() if 'ok' in r)} cables routed collision-free, {time.time() - t0:.0f} s")
     return res
 

@@ -192,7 +192,7 @@ def lower_master():
                      box(D.FOOT_X[0] - 1, D.FOOT_X[1] + 1, s * 60.0, s * (D.GRIP_PLATE_Y[1] + 0.6), Z1 - 0.1, Z1 + 26.5))
         sh = cut(sh, *internal_clearance())
         return sh.clean()
-    return cached(["lower_master", 13, R, D.PLATE_INSET, D.BEAM_X, D.BEAM_HALF_Y, B, D.TONGUE, D.HATCH_JAMB, D.POD_Y0, D.FOOT_X, D.GRIP_PLATE_Y, P.RECEIVER["chin_cut"]], b)
+    return cached(["lower_master", 14, R, D.PLATE_INSET, D.BEAM_X, D.BEAM_HALF_Y, B, D.TONGUE, D.HATCH_JAMB, D.POD_Y0, D.FOOT_X, D.GRIP_PLATE_Y, P.RECEIVER["chin_cut"]], b)
 
 
 def internal_clearance():
@@ -205,8 +205,12 @@ def internal_clearance():
         tools.append(cyl(19.0, 80.0, (0, s * 40.0, P.MOTOR_AXIS_Z), (0, s, 0)))                                # gearmotor can
     for x, y in D.POSTS:
         tools.append(cyl(4.6, 10.0, (x, y, Z1 - 0.1)))                                                         # bridge posts
-    from .structure import front_bulkhead
+    from .structure import front_bulkhead, CLIFF_WINDOW
     tools.append(front_bulkhead())                                                                             # bulkhead + latch-arm pedestals
+    wx0, wx1, wy0, wy1 = CLIFF_WINDOW                                                                         # fit review C4: cable rise above the
+    for s in (1, -1):                                                                                          # cliff-pod bays and the dock grommet
+        tools.append(box(wx0, wx1, s * (wy0 - 1.0), s * 101.5, Z1 - 0.1, Z1 + 26.0).intersect(LI()))
+    tools.append(cyl(7.0, 26.0, (D.DOCK_GROMMET[0], D.DOCK_GROMMET[1], Z1 - 0.1)))
     return tools
 
 
@@ -491,7 +495,7 @@ def lower_piece(front, s):
         return p.clean()
 
     def b():
-        p = cached(["lower_base", front, 16, SPLICE_Z, R, D.X_LOWER, PERIM_DEG, D.TONGUE, D.POSTS, P.CM5_POSE], base)
+        p = cached(["lower_base", front, 17, SPLICE_Z, R, D.X_LOWER, PERIM_DEG, D.TONGUE, D.POSTS, P.CM5_POSE], base)
         p = p if s > 0 else mirror_y(p)
         if not front:
             blk, hole = bumper_switch_seat(s)
@@ -503,7 +507,7 @@ def lower_piece(front, s):
                 a, c, _ = S.device_seat(pt, n, hole_d=12.2, face_d=20.0, boss_d=24.0, notch=False, panel_t=4.0)
                 p = p.fuse(a.intersect(LO())).cut(c)
         return p
-    return cached(["lower_piece", tag, 18, S.SEAT, R, D.X_LOWER, PERIM_DEG, P.TOF_SENSORS, D.HATCH_JAMB], b)
+    return cached(["lower_piece", tag, 19, S.SEAT, R, D.X_LOWER, PERIM_DEG, P.TOF_SENSORS, D.HATCH_JAMB], b)
 
 
 # ----------------------------------------------------------------------------------------------- hatch frame and door
@@ -566,7 +570,7 @@ def lower_hull_one_piece():
         return p.clean()
 
     def b():
-        p = cached(["lower_one_base", 2, R, PERIM_DEG, D.TONGUE, D.POSTS, P.CM5_POSE], base)
+        p = cached(["lower_one_base", 3, R, PERIM_DEG, D.TONGUE, D.POSTS, P.CM5_POSE], base)
         for s in (1, -1):
             tag = "L" if s > 0 else "R"
             blk, hole = bumper_switch_seat(s)
@@ -576,7 +580,7 @@ def lower_hull_one_piece():
         pt, n = skin_frame(-136.0, 55.0, "outer", "lower")              # membrane breather (M12 x 1.5 ePTFE vent), right rear quarter
         a, c, _ = S.device_seat(pt, n, hole_d=12.2, face_d=20.0, boss_d=24.0, notch=False, panel_t=4.0)
         return p.fuse(a.intersect(LO())).cut(c).clean()
-    return cached(["lower_one", 3, S.SEAT, R, PERIM_DEG, P.TOF_SENSORS, D.HATCH_JAMB], b)
+    return cached(["lower_one", 4, S.SEAT, R, PERIM_DEG, P.TOF_SENSORS, D.HATCH_JAMB], b)
 
 
 def upper_shell_one_piece():
