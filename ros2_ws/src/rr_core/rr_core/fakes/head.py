@@ -10,7 +10,12 @@ gate's live time (seeded, deterministic).
 
 Fault hooks: `reset()` (MCU reset: new boot UUID, binding/buffer/clock state
 cleared), `power(False)`, `drop_replies`, `corrupt_replies`, `lane_null`,
-`lane_flags`, `head_flags`, `mute` (no replies at all).
+`lane_flags`, `head_flags`, `mute` (no replies at all), `lose_gates(n)` (head 0.6.0: the next n gate records are lost:
+their sequence numbers are skipped and the next frame delivered carries ACQ_FAULT once; STATUS health RECORD_LOST until
+FAULT_CLEAR / HELLO), `saturate[lane] = "rate" | "forced"` (floor chain SATURATED; GATESTAT tells live < 50 % without
+forced clears from forced clears), `health` (latched codes reported by STATUS).
+Head 0.6.0 ops: STATUS (build, identity incl. cal_id, health, reset_cause), FAULT_CLEAR, GATESTAT (per-gate statistics,
+same sequence numbers and retention as ACQ).
 
 No ROS imports.
 """
@@ -32,7 +37,8 @@ class FakeHead:
     def __init__(self, clock, transport, descriptor_bytes: bytes, firmware: str = "sim-1.0",
                  seed: int = 1, clock_drift_ppm: float = 0.0, boot_offset_us: int = 250_000,
                  buffer_frames: int = 128, floor_dead_us: int = 90, ref_dead_us: int = 30,
-                 holdover_ppm: float = 2400.0, diag: bool = True, head_c: float = 8.2):
+                 holdover_ppm: float = 2400.0, diag: bool = True, head_c: float = 8.2, cal_id: str | None = "FAKE-BOARD-CAL-0",
+                 status: bool = True):
         self.clock, self.transport = clock, transport
         self.descriptor_bytes = descriptor_bytes
         self.desc = json.loads(descriptor_bytes)
@@ -47,6 +53,13 @@ class FakeHead:
         self.diag = diag
         self.head_c = head_c
         self.heater_duty = 0
+        self.cal_id = cal_id
+        self.status_supported = status
+        self.health = []
+        self.saturate = {}
+        self._lose = 0
+        self._fault_next = False
+        self.reset_cause = "POWER_ON"
         self.rates = {lane: {ch: 0.0 for ch in CHANNELS} for lane in range(4)}
         self.lane_null = {}        # lane -> set of channels reported null
         self.lane_flags = {}       # lane -> list of flags
@@ -77,15 +90,22 @@ class FakeHead:
         self._decoder.reset()
         self._diag_seq = 0
         self._reject = [0, 0, 0, 0]
+        self.gstats = OrderedDict()   # sequence -> GATESTAT entry
 
     def now_us(self) -> int:
         """Head monotonic clock since MCU boot."""
         return int((self.clock.now_us() - self._boot_host_us) * self.drift) + self.boot_offset_us
 
-    def reset(self):
+    def reset(self, cause="WATCHDOG"):
         """MCU reset (watchdog/brownout): fresh boot UUID, everything volatile cleared."""
         self.stats["resets"] += 1
+        self.reset_cause = cause
+        if cause == "WATCHDOG" and "WATCHDOG_RESET" not in self.health:
+            self.health.append("WATCHDOG_RESET")
         self._boot()
+
+    def lose_gates(self, n: int):
+        self._lose += int(n)
 
     def power(self, on: bool):
         if on and not self.powered:
@@ -147,14 +167,24 @@ class FakeHead:
                 sync = {"state": "HOLDOVER", "sync_id": self.sync["sync_id"],
                         "bound_us": min(grown, 10_000_000), "age_us": age}
         segments = []
+        gs = {k: [0] * 4 for k in ("fr", "as", "am", "ic", "ff", "rf", "sc", "lf", "lr", "ga", "gb", "gr")}
         for lane in range(4):
             acc = self._acc[lane]
-            null = self.lane_null.get(lane, set())
+            null = set(self.lane_null.get(lane, set()))
             flags = list(self.lane_flags.get(lane, []))
-            scale_f, scale_r = floor_live / span, ref_live / span
+            sat = self.saturate.get(lane)
+            f_live = floor_live if sat != "rate" else int(0.3 * span)
+            scale_f, scale_r = f_live / span, ref_live / span
             draws = {"alpha": self._poisson(acc["alpha"] * scale_f),
                      "beta": self._poisson(acc["beta"] * scale_f),
                      "ref": self._poisson(acc["ref"] * scale_r)}
+            gs["ga"][lane], gs["gb"][lane], gs["gr"][lane] = draws["alpha"], draws["beta"], draws["ref"]
+            gs["lf"][lane], gs["lr"][lane] = int(1000 * f_live / span), int(1000 * ref_live / span)
+            if sat:
+                null |= {"alpha", "beta"}
+                flags = sorted(set(flags) | {"SATURATED"})
+                gs["sc"][lane] = 2 if sat == "rate" else 1
+                gs["ff"][lane] = 0 if sat == "rate" else 3
             seg = {"id": lane,
                    "alpha": None if "alpha" in null else {"counts": draws["alpha"], "live_us": floor_live},
                    "beta_window": None if "beta" in null else {"counts": draws["beta"], "live_us": floor_live},
@@ -164,14 +194,30 @@ class FakeHead:
                 seg["flags"] = ["REFERENCE_FAULT" if null == {"ref"} else "FLOOR_FAULT"]
             segments.append(seg)
             self._acc[lane] = {ch: 0.0 for ch in CHANNELS}
+        if self._lose > 0:                  # head 0.6.0: a lost gate record -> skipped sequence number
+            self._lose -= 1
+            self._fault_next = True
+            if "RECORD_LOST" not in self.health:
+                self.health.append("RECORD_LOST")
+            self.next_seq += 1
+            self._gate_start = start + span
+            self.stats["gates"] += 1
+            return
+        gflags = list(self.head_flags)
+        if self._fault_next:
+            gflags = sorted(set(gflags) | {"ACQ_FAULT"})
+            self._fault_next = False
         frame = {"type": "ACQ", "icd": "2.0", "sequence": self.next_seq, "start_us": start,
                  "span_us": span, "sync": sync,
                  "thermal": {"head_c": self.head_c, "heater": "ON" if self.heater_duty else "OFF",
                              "duty_pct": self.heater_duty},
-                 "flags": list(self.head_flags), "segments": segments}
+                 "flags": gflags, "segments": segments}
         self.frames[self.next_seq] = frame
+        self.gstats[self.next_seq] = dict(seq=self.next_seq, **gs)
         while len(self.frames) > self.buffer_frames:
             self.frames.popitem(last=False)
+        while len(self.gstats) > self.buffer_frames:
+            self.gstats.popitem(last=False)
         self.next_seq += 1
         self._gate_start = start + span
         self.stats["gates"] += 1
@@ -239,7 +285,9 @@ class FakeHead:
         self.armed = False
         self.sync = None
         self.frames.clear()
+        self.gstats.clear()
         self.next_seq = 0
+        self.health = [h for h in self.health if h not in ("RECORD_LOST", "GATE_TIMING", "GATE_TIMEOUT")]   # new acquisition epoch
         self._reply(tid, "OK", {
             "boot_id": self.boot_id, "head_id": self.desc["serial"], "head_type": self.desc["head_type"],
             "firmware": self.firmware, "supported_discovery": ["2.0"], "acq_format": "2.0",
@@ -372,3 +420,49 @@ class FakeHead:
                                 "health": [],
                                 "lanes": [{"id": n, "floor_reject": self._reject[n], "ref_reject": 0, "alpha_short": 0,
                                            "alpha_idle_clears": 0, "imon_na": [None, None]} for n in range(4)]})
+
+    # ------------------------------------------------------------- head 0.6.0 additive ops
+    def _op_STATUS(self, tid, args, rx_us):
+        if not self.status_supported:
+            self._reply(tid, "UNSUPPORTED")
+            return
+        self._reply(tid, "OK", {
+            "link": "BOUND" if self.bound else ("HANDSHAKE" if self._hello_seen else "UNBOUND"), "armed": self.armed,
+            "uptime_us": self.now_us(), "reset_cause": self.reset_cause, "span_us": self.span_us, "next_seq": self.next_seq,
+            "health": list(self.health), "flags": list(self.head_flags),
+            "build": {"firmware": self.firmware, "build_id": "fake-build-1", "image_crc32": "00000000", "proto": "2.0", "acq_format": "2.0"},
+            "identity": {"serial": self.desc["serial"], "electronics_revision": self.desc.get("electronics_revision"),
+                         "mechanical_revision": self.desc.get("mechanical_revision"), "descriptor_id": self.desc["descriptor_id"],
+                         "descriptor_sha256": hashlib.sha256(self.descriptor_bytes).hexdigest(), "setup_id": self.desc["setup_id"],
+                         "boot_id": self.boot_id, "cal_id": self.cal_id}})
+
+    def _op_FAULT_CLEAR(self, tid, args, rx_us):
+        if not self.status_supported:
+            self._reply(tid, "UNSUPPORTED")
+            return
+        codes = args.get("codes")
+        cleared = [h for h in self.health if codes is None or h in codes]
+        self.health = [h for h in self.health if h not in cleared]
+        self._reply(tid, "OK", {"cleared": cleared, "health": list(self.health)})
+
+    def _op_GATESTAT(self, tid, args, rx_us):
+        if not self.status_supported:
+            self._reply(tid, "UNSUPPORTED")
+            return
+        if not self.bound:
+            self._reply(tid, "UNBOUND")
+            return
+        after, limit = args.get("after_seq", -1), args.get("limit", 12)
+        if type(after) is not int or after < -1 or type(limit) is not int or not 1 <= limit <= 12:
+            self._reply(tid, "BAD_ARG")
+            return
+        if self.gstats:
+            oldest = next(iter(self.gstats))
+            if after + 1 < oldest and after + 1 < self.next_seq - len(self.gstats):
+                self._reply(tid, "GAP", {"oldest_seq": oldest, "newest_seq": next(reversed(self.gstats))})
+                return
+        out = [g for q, g in self.gstats.items() if q > after]
+        if not out:
+            self._reply(tid, "EMPTY", {})
+            return
+        self._reply(tid, "OK", {"gates": out[:limit], "more": len(out) > limit, "last_seq": out[:limit][-1]["seq"]})

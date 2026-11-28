@@ -118,6 +118,9 @@ def build(verbose=True):
             print(f"  {mod.__name__.split('.')[-1]:10s} {time.time() - t:6.1f} s  ({len(parts)} parts)", flush=True)
     purchased(add)
     head_placeholder(add)
+    from . import fasteners as FS                                   # fit review: fasteners as solids (interference) + tool columns (fitchecks)
+    for fp in FS.as_parts(FS.fasteners()):
+        add(fp)
     if D.PROD:                                                      # production build: re-label process / material / PN (geometry already switched)
         from . import production
         production.apply(parts)

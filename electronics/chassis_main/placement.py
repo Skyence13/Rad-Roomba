@@ -137,6 +137,13 @@ PLACE = {
     # ---- stage 3 (review M6): chain-node test points >= 10 mm (pad to pad) from each other and from the VBAT_SW / VSYS / VMOT /
     # V12_AUX test points, so one bench clip cannot bridge an element (checked by the DRC rule chain_tp_spacing)
     "TP38": (109.00, 10.00, 0, "B"), "TP39": (106.50, 25.50, 0, "B"), "TP40": (90.00, 3.00, 0, "B"), "TP50": (122.50, 3.00, 0, "B"), "TP60": (132.50, 78.50, 0, "B"), "TP61": (152.00, 53.50, 0, "B"), "TP62": (137.50, 57.50, 0, "B"), "TP8": (68.50, 82.00, 0, "B"), "TP9": (71.00, 3.00, 0, "B"),
+    # ---- stage 5 (stage-4 review S1): top-side service pads SVC1-SVC10 (TP63-TP72), 2 x 5 at 2.54 mm, centre (133.0, 79.5);
+    # SVC1 GND, SVC2 CHAIN_END, SVC3 K1_RUN, SVC4 RUN_HD, SVC5 RUN_12V (row v 80.77), SVC6 RELAY_RTN, SVC7 HOLD_A, SVC8 LS_A,
+    # SVC9 CH_N6A, SVC10 SET_CAP (row v 78.23); every node behind 220 k (R_SV2-R_SV10)
+    "TP63": (127.92, 80.77, 0, "F"), "TP64": (130.46, 80.77, 0, "F"), "TP65": (133.00, 80.77, 0, "F"), "TP66": (135.54, 80.77, 0, "F"), "TP67": (138.08, 80.77, 0, "F"),
+    "TP68": (127.92, 78.23, 0, "F"), "TP69": (130.46, 78.23, 0, "F"), "TP70": (133.00, 78.23, 0, "F"), "TP71": (135.54, 78.23, 0, "F"), "TP72": (138.08, 78.23, 0, "F"),
+    # ---- stage 5 (review S2): board NTC next to K1's coil end (was auto-placed at the left edge)
+    "RT1": (80.5, 26.0, 0, "F"),
     "FID1": (12.0, 38.0, 0, "F"), "FID2": (157.5, 60.0, 0, "F"), "FID3": (12.0, 92.0, 0, "F"),
 }
 

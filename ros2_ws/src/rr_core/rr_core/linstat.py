@@ -22,6 +22,7 @@ from scipy.special import ndtr, ndtri
 EPS_PHI = 1e-15           # |phi| cut-off of the Gaussian factor
 SD_SPAN = 40.0            # periodisation: mass beyond P/2 from x is negligible
 CHECK_REL = 1e-3          # MODEL.md section 3: half-step tail must agree to 1e-3 relative
+PRED_SD_SPAN = 25.0       # predictive evaluator: half period in standard deviations beyond |x - mean|
 
 
 def aggregate(a, lam, decimals=12):
@@ -219,6 +220,47 @@ def posterior_nodes(n_w: float, T_w: float, k: int = 12):
     return np.array([float(gammaincinv(n_w + 0.5, qq)) / T_w for qq in q]), 0.5 * w
 
 
+def _lattice(a, step=None):
+    """(base, integer multipliers) when every coefficient is an integer multiple (|m| <= 400) of one base, else None:
+    the 0.05 weight lattice makes the floor and reference coefficients of a lane lattice-valued, so exp(i u a_j) are
+    powers of one exp(i u base) on the quadrature grid (fast, exact to rounding)."""
+    if a.size == 0:
+        return None
+    base = float(np.min(np.abs(a)))
+    for div in (1, 2, 3, 4, 5, 6, 8, 10, 12, 20):
+        b = base / div
+        m = a / b
+        mi = np.rint(m)
+        if np.all(np.abs(m - mi) <= 1e-9 * np.maximum(1.0, np.abs(m))) and np.max(np.abs(mi)) <= 400:
+            return b, mi.astype(int)
+    return None
+
+
+def _sum_exp(u, a, t, lat):
+    """sum_j t_j expm1(i u a_j) on the grid u."""
+    out = np.zeros(u.size, complex)
+    if lat is None:
+        for aj, tj in zip(a, t):
+            out += tj * np.expm1(1j * u * aj)
+        return out
+    base, m = lat
+    by_m = {}
+    for mj, tj in zip(m, t):
+        by_m[int(mj)] = by_m.get(int(mj), 0.0) + float(tj)
+    z = np.exp(1j * u * base * np.sign(max(by_m, key=abs)))
+    sgn = 1 if max(by_m, key=abs) > 0 else -1
+    zk = np.ones(u.size, complex)
+    for k in range(1, max(abs(x) for x in by_m) + 1):
+        zk = zk * z
+        tk = by_m.get(sgn * k, 0.0)
+        if tk:
+            out += tk * (zk - 1.0)
+    for mj, tj in by_m.items():        # coefficients of the other sign (not expected within one lane)
+        if mj * sgn < 0:
+            out += tj * np.expm1(1j * u * base * mj)
+    return out
+
+
 class Unit:
     """One lane (of one attachment) inside a decision statistic S = sum_i c_i r_i / K_i.
 
@@ -233,6 +275,8 @@ class Unit:
         T_F, T_U = float(np.dot(w, tf)), float(np.dot(w, tu))
         self.aF, self.tF = aggregate(cK * w / T_F, tf)
         self.aU, self.tU = aggregate(-cK * cal.k * w / T_U, tu)
+        self.latF = _lattice(self.aF)
+        self.latU = _lattice(self.aU)
         self.U = np.asarray(nodes_U, float)
         self.p = np.asarray(nodes_p, float)
         self.s2 = np.array([cK * cK * max(u * u * cal.u_k_lane ** 2 + cal.u_b ** 2 + 2.0 * u * cal.cov_kb, 0.0)
@@ -288,15 +332,7 @@ class PredictiveStat:
             h = 2.0 * math.pi / P
             n = int(math.ceil(math.sqrt(-2.0 * math.log(EPS_PHI)) / math.sqrt(self.sig_min2) / h))
             u = (np.arange(n) + 0.5) * h
-            parts = []
-            for un in self.units:
-                AF = np.zeros(n, complex)
-                for a, t in zip(un.aF, un.tF):
-                    AF += t * np.expm1(1j * u * a)
-                AU = np.zeros(n, complex)
-                for a, t in zip(un.aU, un.tU):
-                    AU += t * np.expm1(1j * u * a)
-                parts.append((AF, AU))
+            parts = [(_sum_exp(u, un.aF, un.tF, un.latF), _sum_exp(u, un.aU, un.tU, un.latU)) for un in self.units]
             g = (h, u, parts)
             if len(self._grids) > 6:
                 self._grids.clear()
@@ -316,9 +352,10 @@ class PredictiveStat:
         return phi
 
     def span_for(self, x, D=0.0):
+        """Half period: |x - mean| + 25 sd + 40 max|a| (the periodised mass beyond it is negligible)."""
         sd = math.sqrt(self.var(D))
         amax = max(un.amax() for un in self.units)
-        return abs(x - self.mean(D)) + 15.0 * sd + SD_SPAN * sd + 40.0 * amax
+        return abs(x - self.mean(D)) + PRED_SD_SPAN * sd + 40.0 * amax
 
     @staticmethod
     def _tail_pdf(grid, phi, x):

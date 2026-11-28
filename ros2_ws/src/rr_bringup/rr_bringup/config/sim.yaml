@@ -9,3 +9,5 @@ mover: {patience_s: 10.0}
 link: {}                                    # HeadLinkConfig overrides; use byte_time_us: 0 for TCP emulators
 lidar: {range_max: 12.0}
 simulated: true
+# DEMONSTRATION: the synthetic calibration carries no head identity; the binding is marked DEMONSTRATION in every product
+calibration_binding: DEMONSTRATION

@@ -73,7 +73,7 @@ Design rules applied:
 - **Coil current is the chain current.** K1 is fed from CHAIN_END through D_SEAL and its own seal-in; K2 and K3 are fed from CHAIN_END through K1 pole B, U_HOLD and D_RUN, and return through U_LS. Opening any element removes CHAIN_END at once; K2/K3, the VMOT eFuse enable and the nSLEEP gate do not wait for K1 to release. About 95 mA flows through every element when latched (K1 11.7 mA, K2 and K3 33–40 mA each, U_HOLD and U_LS LEDs 6–9 mA each), which also wets the switch contacts.
 - **E-stop has two poles.** Pole A opens the high side of the chain; pole B opens the common return of all three coils (K2/K3 through U_LS). Either alone drops K1, K2 and K3. With pole B alone, RUN_HD (VMOT enable, nSLEEP) falls when K1 releases (≤ 4 ms [U]).
 - **"No restart without REARM" rests on two diverse hold elements in series:** K1 (relay, seal-in) and U_HOLD (photo-MOS whose LED is fed from its own output RUN_HD). U_HOLD can be set only by the REARM set pulse, through Q_HSET from V5_AUX: nothing on the coil side of K1 can reach its LED. A welded K1 contact (either pole) therefore re-energises K1 when the chain re-closes, but U_HOLD stays off and RUN_HD, RUN_12V, VMOT and the brake relays stay dead. The weld is visible to firmware through LATCH_NC_RB and LATCH_RUN_RB (§2.3).
-- **REARM can only set, never hold, and only from the robot.** The K1 coil node no longer leaves the board (stage 3, review C1). The REARM set contact (J_BTN 1-2) only switches 5 V (V5_AUX through 1 kΩ) into an on-board stage that needs the *closing edge* of the set contact (1 µF coupling, gate pulse about 110 ms) **and** the *level* of the second, separate aux contact (J_BTN 3-4) at the same time. Stage 4 adds a third condition: SET_READY (C_SET ≥ 10.8 V, comparator U33B). Then U_SET dumps C_SET into the K1 coil (τ = 100 µF × 1028 Ω = 103 ms) and Q_HSET lights U_HOLD's LED. **A press while SET_READY is low does nothing and leaves C_SET untouched** (review N1: in stage 3 each early press dumped the reservoir, so repeated presses never armed). A held, shorted or welded REARM gives at most one pulse and then nothing; a shorted U_SET connects C_SET permanently to the coil, so C_SET never charges and the coil sees at most CHAIN_END × 1028/16 028 ≤ 0.94 V (R_SET 15 k, below the 1.2 V must-release [D family]). At SET_READY the set is guaranteed (≥ 1.5 × the operate time at C_SET −20 %) for a coil up to **+45 °C** (T11); the robot can be armed from a supply of **≥ 11.7 V** (T12; 3.2 s after the chain closes at 12.8 V). The firmware's `rearm_ready` and the REARM lamp now follow SET_READY_RB (G1), and refusals are reported with a reason (G2, G3). **Minimum press:** no set pulse can start before the set contact has been closed ≥ 3.2 ms (T13), so the firmware, which samples both contacts at 1 kHz (G4), sees every press that can set.
+- **REARM can only set, never hold, and only from the robot.** The K1 coil node no longer leaves the board (stage 3, review C1). The REARM set contact (J_BTN 1-2) only switches 5 V (V5_AUX through 1 kΩ) into an on-board stage that needs the *closing edge* of the set contact (1 µF coupling, gate pulse about 110 ms) **and** the *level* of the second, separate aux contact (J_BTN 3-4) at the same time. Stage 4 adds a third condition: SET_READY (C_SET ≥ 10.8 V, comparator U33B). Then U_SET dumps C_SET into the K1 coil (τ = 100 µF × 1028 Ω = 103 ms) and Q_HSET lights U_HOLD's LED. **A press while SET_READY is low does nothing and leaves C_SET untouched** (review N1: in stage 3 each early press dumped the reservoir, so repeated presses never armed). A held, shorted or welded REARM gives at most one pulse and then nothing; a shorted U_SET connects C_SET permanently to the coil, so C_SET never charges and the coil sees at most CHAIN_END × 1028/16 028 ≤ 0.94 V (R_SET 15 k, below the 1.2 V must-release [D family]). At SET_READY the set is guaranteed (≥ 1.5 × the operate time at C_SET −20 %) for a coil up to **+45 °C** (T11; the coil is judged from RT1, which stage 5 moved next to K1, plus a firmware self-heating term of up to +10 K [A], H2); the robot can be armed from a supply of **≥ 11.7 V** (T12; 3.2 s after the chain closes at 12.8 V). The firmware's `rearm_ready` and the REARM lamp now follow SET_READY_RB (G1), and refusals are reported with a reason (G2, G3). **Minimum press:** no set pulse can start before the set contact has been closed ≥ 3.2 ms (T13), so the firmware, which samples both contacts at 1 kHz (G4), sees every press that can set.
 - **REARM needs a healthy, closed chain for about 3 s first** (T12; SET_READY tells the firmware when). C_SET charges only from CHAIN_END (τ 1.5 s) and is emptied within about 0.35 s once CHAIN_END has been dead for more than 41–64 ms (Q_SDIS; shorter permit dips no longer cost charge). A REARM pressed while any element is open finds C_SET empty; a chain that closes during the pulse charges C_SET far too slowly to set K1 (review m3, m11: "re-arming is locked out" now applies after every drop, not only after a REARM press).
 - **No back-feed, no leakage hold.** D_RSET (silicon, low leakage) stops C_SET feeding CHAIN_END and the nodes behind an opened element (review M1); D_RUN (silicon S1G since stage 4; a Schottky's hot leakage could light U_LS / U_HOLD, review N5) with the 10 kΩ bleed R_RHD stops anything on RUN_12V feeding RUN_HD, K1_RUN or CHAIN_END (T14), and keeps the K2/K3 coil kick away from the chain elements (an opening photo-MOS now sees at most the pack voltage instead of pack + 25 V). The HANDS-ON lamp is fed from the upstream node to ground, not across the contact. Every readback is a 100 kΩ (22 kΩ on PB12/PD2) tap or sits behind ≥ 47 kΩ (§2.3).
 - **Three independent consequences of a drop**: (1) K2/K3 release: each motor's two terminals leave the bridge (NO contacts) and are joined through a 1.0 Ω brake resistor (NC contacts); (2) the VMOT eFuse U8 loses its enable (RUN_HD) and VMOT is bled to zero through 1 kΩ; (3) the bridges' nSLEEP is forced low by U9 (AND of the MCU's DRV_NSLEEP and its own RUN_HD tap HW_LATCH_G), independent of firmware. The firmware also configures PD2 (HW_LATCH_RB) as TIM8 break input (`bsp.c`, stage-3 firmware, CCR-CHS-19 a): a fourth, firmware-configured path; harmless for U9, which has its own tap.
@@ -131,7 +131,7 @@ Back-drive: a tap pin configured as a 3.3 V output pushes at most 33 µA (150 µ
 | HW_LATCH_RB | RUN_12V (22 k/15 k): K1 AND U_HOLD AND chain live | PD2 |
 | LATCH_RUN_RB (stage 3) | K1_RUN: K1 pole B closed AND CHAIN_END live | IOX_D P1 |
 | LATCH_NC_RB (stage 3) | K1 pole A **NC** contact; K1_SEAL_A biased from 3V3 (D_K1B + 47 kΩ, ≤ 62 µA into the coil), so high = pole A released is valid with the chain dead | IOX_D P0 |
-| REARM_BTN, REARM_SET_RB | aux contact (J_BTN 3-4); set contact (J_BTN 1-2, from REARM_SET_RAW through 33 k / 47 k, stage 4) | IOX_A GPB2, **IOX_A GPB6** (both 1 kHz) |
+| REARM_BTN, REARM_SET_RB | aux contact (J_BTN 3-4); set contact (J_BTN 1-2, from REARM_SET_RAW through 10 k / 47 k with a BAT54 clamp to 3V3, stage 5: HIGH ≥ 3.5 V against VIH(max) 2.73 V) | IOX_A GPB2, **IOX_A GPB6** (both 1 kHz) |
 | VMOT_SENSE, HEAD_LOOP_SENSE, HEAD_PRES_ID | analogue | PA2, PC1, PC0 |
 | BRAKE_L_RB, BRAKE_R_RB | §2.4 | PC14, PC15 |
 
@@ -277,10 +277,15 @@ Every row is a statement about the netlist after stage 4 (stage-4 changes: `STAG
 | 74 | **U21 or Q22 shorted** (loop channel A photo-MOS side) | U21 always closed | channel B (U21B) opens the chain on a pressed rail | CHN6A_RB (stage 4 tap) live while comparator A says open → U21/Q22 SHORT (G5): requested; self-test LOOP_TEST_A at every arming | detected at the next arming (stage 3: latent, review N3) |
 | 75 | **U21B or Q_LB shorted** (channel B photo-MOS side) | U21B always closed | channel A (U21) opens the chain | BODY_BUMPER_L_RB (CH_N8A) live while channel B says open → U21B/Q_LB SHORT (G5): requested; self-test LOOP_TEST_B | detected at the next arming |
 | 76 | CH_N6A tap open / short | wrong readback | chain unaffected | self-test fails (reads closed during TEST_A, or never live) → LOOP_FAIL, no arming (G5) | none |
-| 77 | Q_LTA / Q_LTB D-S short, LOOP_TEST_x stuck high | that loop channel always open | chain open | cannot arm; self-test result | none (a test FET can only open a channel) |
+| 77 | Q_LTA / Q_LTB D-S short, LOOP_TEST_x stuck high | that loop channel always open | chain open | cannot arm; since stage 5 the analog copy is taken from LOOP_SNS (R76), so a stuck Q_LTA reads "A open, B closed, analog OK" = LOOP_DISCREPANCY / self-test failure, no longer misread as "B stuck healthy" (review S4) | none (a test FET can only open a channel) |
 | 78 | Q_LTA / Q_LTB open, R_LTA/R_LTB open | self-test cannot force the channel | — | self-test reports the channel not forced open → LOOP_FAIL (G5) | none (fail-safe report) |
 | 79 | Loop resistance 1.55–1.93 kΩ (aged rail contacts, damaged cable) | channel A open, channel B closed: chain open | correct by design (marginal band, G7) | HEAD_LOOP_OPEN + "loop resistance high" (G7): requested (stage 3 firmware made it LOOP_FAIL, review N6) | none |
 | 80 | Leakage into a photo-MOS LED at temperature (any element) | could hold an element partly on | T14: every path ≤ 20 µA at +85 °C against an assumed 0.1 mA lowest holding current; RUN_HD bled by 10 k | none | none on recalled leakage values [U] |
+| 81 | **CLAMP_REF (U34 LM4040, shared by the bus clamp U33A and SET_READY U33B) shorted or U33 output stage dead low** | SET_READY never high; bus clamp forced on (CLAMP_REF 0 V) or off | cannot arm; a forced clamp trips F_CLAMP (BUS_CLAMP_ACTIVE) | REARM_NOT_READY / SUPPLY_LOW (firmware cannot tell it from a low supply); BUS_CLAMP fault | **common cause**: the regeneration clamp may be lost (only matters with the BMS open), revealed because arming is blocked |
+| 82 | **CLAMP_REF open (VBAT_SW through 10 k on both comparator inputs) or LM4040 drift** | U33A: clamp disabled or threshold shifted (latent); U33B: never ready (open) or SET_READY threshold shifted by the same ratio as the clamp (drift ±x % moves both 10.8 V and 15.6 V) | — | SET_READY too early is caught only by REARM_REFUSED SET_FAILED (K1 not set); too late by SUPPLY_LOW at a good pack | **common cause**, availability and the BMS-open clamp case; S3 (SVC10 at SET_READY 10.34–10.75 V) measures the shared reference indirectly |
+| 83 | U33 (whole IC) supply short / dead | both halves lost | clamp lost (latent, BMS-open case), cannot arm | NOT_READY | as #81 |
+| 84 | Service pad slip, two pads shorted, a pad tied to a supply or GND | ≤ 66 µA into any node through 220 kΩ | cannot hold K1, light a photo-MOS LED or pick up a relay (T15) | a lifted CHAIN_END/CH_N6A may raise CHAIN_IMPLAUSIBLE (fail-safe) | none |
+| 85 | R_SVx shorted (service resistor) | that node directly on its pad | a probe slip onto that pad is then unprotected (latent) | none | **⚠ latent**; R_SVx are inspected at each S-test (each pad's reading in T15 includes its 220 k) |
 
 ### 6.1 Single faults that leave no hardware barrier
 
@@ -299,35 +304,70 @@ Faults that the reviews listed here and that now have a hardware barrier (stage 
 
 The stated limits remain: no hardware speed or force limit (#73), no holding brake on slopes (T8), the latent faults of §6.2, and the common-cause 3V3 over-voltage (#71). Conditional on temperature: the K1 set margin (T11: guaranteed to +45 °C at SET_READY); the RUN_12V-short barrier no longer is (T14).
 
-### 6.2 Latent faults and how each is controlled
+**Operating limits created by the chain (stage 5, one statement for all documents):**
 
-"Readback" = a stage-3/4 readback makes it visible in operation; "self-test" = automatic at each arming; "service test" = the periodic test below. Nothing here is a certified proof-test interval.
+| Limit | Value | Basis | What the robot does |
+|---|---|---|---|
+| Re-arm needs the pack at | **≥ 11.7 V** worst case (11.4 V nominal) | T12 | below: SET_READY never comes, REARM_REFUSED / REARM_NOT_READY SUPPLY_LOW |
+| Battery-low protective stop | 11.2 V (firmware) | firmware | stops; between 11.7 and 11.2 V an armed robot drives on but cannot re-arm after a stop |
+| Low-battery warning (proposed, H5) | **12.0 V** resting | this table | warns that re-arming will soon be impossible; end the mission or swap the pack |
+| Guaranteed re-arm | coil (board at K1 + self-heating) ≤ **+45 °C** | T11 | above: COIL_HOT warning, the press is still offered, it may be refused (REARM_REFUSED COIL_HOT); after long armed periods at ≥ 35 °C board or hard driving in a warm trailer expect the warning |
+| REARM press | ≥ 3.2 ms to be able to set; < 2 s (5 s once H6 is in) | T13, firmware | longer: the latch drops again (W-018 crush rule) |
+| Partial set (press released inside K1/U_HOLD operate time) | permit dip 200 ms in the firmware (H4 recommends 30 ms) | T13 | REARM_REFUSED PARTIAL, non-fatal; with 200 ms the next press waits for the recharge (2.3–6 s) |
+| Speed / force | no hardware limit (0.44 m/s no-load, 93–170 N at stall) | #73 | firmware caps only |
+| Slopes | stops only up to about 3–6° downhill | T8 | no holding brake |
 
-| Latent fault (one barrier left) | Control chosen | Why |
+
+### 6.2 Latent faults and how each is controlled (stage 5: every test works on the assembled robot)
+
+"Readback" = visible in operation; "self-test" = automatic at each arming; "S-test" = the 6-monthly service test below. Nothing here is a certified proof-test interval. All S-tests work **with the service cover off and the board fitted**: they use the top-side service pads SVC1–SVC10 (TP63–TP72, 2 × 5 array at 2.54 mm, board (128–138, 78–81), each node behind 220 kΩ, R_SV2–R_SV10), the top-side connector J_BTN, SWD and the test firmware. **No test needs the board removed.** Expected readings with tolerances: `chassis_braking_tables.md` T15.
+
+| Latent fault (one barrier left) | Control | Why this control |
 |---|---|---|
-| U21/Q22, U21B/Q_LB shorted (#74, #75) | **readback + self-test** (CHN6A_RB; LOOP_TEST_A/B at every arming, G5) | cheap, automatic; the review's N3 regression is closed |
-| Loop comparator side of either channel stuck closed (#16, #17) | **self-test** (G5) + A/B/analog comparison | as above |
-| U_HOLD, Q_HSET shorted, HOLD_A/HSET_D on a logic supply (#39) | **service test S4** | U_HOLD is always set together with K1; a firmware path that sets K1 without U_HOLD just to test it would itself be a new set path (rejected, as the review advises) |
-| U_LS shorted, LS_A on a logic supply, RELAY_RTN to GND, D_RUN shorted, R_RHD open (#52, #53) | **service test S5** | only visible with an applied RUN_12V fault |
-| Q_SETA / C_SC / R_SG, Q_SETB, Q_SETC faults (#45, #46, #48) | **service test S3** | the set coincidence is exercised only by presses |
-| Q_SDIS open / Q_SDISB short (#49) | firmware rule (`rrch_chain_step`, early press → permit held low) + **S3 (e)** | firmware barrier exists |
-| U40/Q23/U23 (#33) | **service test S6** until the boot test (IB-60) exists | |
-| K2/K3 brake path open or degraded (#60, #61) | **service test S7** (spin-down) + dynamic deceleration check (requested) | |
-| Clamp Zener short / open (#63–#65) | **S7** release timing (§8 step 8) | |
-| U9 stuck high (#68) | **S6** with the test firmware: latch down, DRV_NSLEEP high, DRV_NSLEEP_G must stay low | no readback of DRV_NSLEEP_G |
-| Selector RUN welded (#3), plug link / inlet channels (#13, #15) | **pre-use check P1** / **S8** | |
-| Bumper, rail, HANDS-ON, E-stop contacts (#9, #23, #27, §6.1) | **pre-use check P1** | single channel by design |
+| U21/Q22, U21B/Q_LB shorted; loop comparator side stuck closed (#16, #17, #74, #75) | **readback + self-test** (CHN6A_RB, LOOP_TEST_A/B every arming, `loop_test_step`) | automatic |
+| U_HOLD shorted (#39) | **S4a** (resistance) | U_HOLD is always set with K1; a firmware path that sets K1 alone to test it would be a new set path (rejected) |
+| Q_HSET shorted, set stack stuck on, HOLD_A/HSET_D on a logic supply (#39) | **S4b** (voltage) | |
+| U_LS shorted, RELAY_RTN to GND (#53) | **S5a** | an off-state readback of U_LS was evaluated and **rejected**: it needs a bias into RELAY_RTN, which through the 180 Ω coils lifts RUN_12V and the HW_LATCH_RB tap towards its logic threshold, plus a comparator (not just a divider), and IOX_D has no spare input |
+| LS_A on a logic supply (#53) | **S5d** | |
+| D_RUN shorted (#52) | **S5b** | |
+| R_RHD open (#52) | **S5c** | (stage 4 claimed S5 covered it; it did not, review S1) |
+| Q_SETA / C_SC / R_SG, Q_SETB, Q_SETC faults (#45, #46, #48) | **S3** steps a, b, c, h | step h is new (review S6): C_SC short and R_SG open |
+| Q_SDIS open / Q_SDISB short / C_SDB open (#49) | firmware (early press → permit held low) + **S3 e** | |
+| U40/Q23/U23 (#33) | **S6** until the boot test (IB-60) exists | |
+| U9 stuck high (#68) | **S6** | no readback of DRV_NSLEEP_G |
+| K2/K3 brake path open or degraded, clamp Zener short/open (#60, #61, #63–#65) | **S7** | dynamic deceleration check still requested |
+| Plug link / inlet channels (#13, #15) | **S8** | |
+| Selector RUN welded, HANDS-ON, E-stop poles, bumpers, rail zones (#3, #6, #7, #9, #23, #27) | **P1** every shift | single channel by design |
+| LOOP_SNS leak, head-internal bypass (#19, #22) | not testable at the chassis (§6.1) | |
 
-**Pre-use check P1 (every shift, operator, 2 min):** E-stop (each press drops, lamp/STATE shows ESTOP), HANDS-ON (lamp lights while pressed), each body bumper and each head-rail zone pressed in turn (latch drops; robot reports the element), selector to SERVICE (MODE_RUN shown open) and back to RUN, REARM (arms only when the REARM lamp blinks "ready").
+**Instruments:** DMM (10 MΩ DC, 2 MΩ resistance range, ±1 %); REARM test plug RTP-1 (CLIK-Mate 8-way to J_BTN with two separate push buttons, SET = pins 1–2 and AUX = pins 3–4, lamp pins open); SWD probe + test firmware (S6); scope with ×10 probe (S7); the charge plug (S8).
 
-**Periodic service test (every 6 months, after any repair on the chassis board, its relays or W-015…W-022, and after a fault code K1_WELD, RUN_SHORT, LOOP_FAIL or REARM_REFUSED PARTIAL; wheels off the ground; record every result):**
-- **S3** set stage: §8 step 7 (a)–(g).
-- **S4** U_HOLD: §8 step 9 (K1 pole B bridged: RUN_HD must stay dead without REARM).
-- **S5** U_LS / D_RUN / RELAY_RTN: §8 step 10 (RUN_12V tied to VBAT_SW through 10 Ω: relays stay released) and RELAY_RTN to GND resistance > 100 kΩ with the latch down.
-- **S6** watchdog element and U9: §8 step 6 with the test firmware.
-- **S7** braking: §8 steps 8 and 13 (drop times, spin-down warm and cold).
-- **S8** charge-plug channels: §8 step 5.
-The operator sees the result as a service record; the robot shows nothing for S3–S8 (they need the test firmware or a bench).
+**P1 — every shift, operator, about 2 min, robot complete:**
+
+| Step | Action | Pass | Fail |
+|---|---|---|---|
+| P1.1 | Arm. Press the E-stop, release, re-arm when the REARM lamp says ready | latch drops (ESTOP shown); re-arm only after "ready" | robot stays armed, or ESTOP_DISCREPANCY |
+| P1.2 | Press and hold HANDS-ON | lamp lit, latch drops | lamp dark (do not work at the wheels) |
+| P1.3 | Press each body bumper and each head-rail zone in turn, re-arm between | latch drops, the element is named | no drop |
+| P1.4 | Selector to SERVICE, then back to RUN | MODE_RUN shown open in SERVICE | not shown: use OFF for any work at the wheels |
+| P1.5 | Press REARM briefly (< 2 s) only when the lamp says ready | arms | REARM_REFUSED: note the reason |
+
+**S-tests — every 6 months, after any repair on the chassis board, K1/K2/K3 or W-015…W-022, and after any of K1_WELD, RUN_SHORT, LOOP_FAIL, LOOP_SW_SHORT, SET_STAGE_FAULT or REARM_REFUSED PARTIAL; service cover off, wheels off the ground; record every reading:**
+
+| Test | Conditions | Action / pads | Pass (healthy board, T15) | Fail (fault produces) |
+|---|---|---|---|---|
+| S4a U_HOLD | pack removed, E-stop released | resistance SVC3 (red) – SVC4 | 593–617 kΩ | 431–449 kΩ: U_HOLD shorted |
+| S4b Q_HSET / HOLD_A | pack fitted, RUN, latch down | DC volts SVC7 – SVC1 | < 0.05 V | 1.05–1.28 V: U_HOLD LED lit |
+| S5a U_LS / RELAY_RTN | pack removed, E-stop released | resistance SVC6 (red) – SVC1 | 252–262 kΩ | 216–224 kΩ: U_LS shorted or RELAY_RTN to GND |
+| S5b D_RUN | pack removed | resistance SVC5 (red) – SVC4 | 476–495 kΩ | 431–449 kΩ: D_RUN shorted |
+| S5c R_RHD | pack removed | resistance SVC4 (red) – SVC1 | 224–233 kΩ | 283–294 kΩ: R_RHD open |
+| S5d LS_A | pack fitted, RUN, latch down | DC volts SVC8 – SVC1 | < 0.05 V | 1.05–1.28 V: U_LS LED lit |
+| S3 set stage | pack fitted, RUN, chain closed, W-018 unplugged, RTP-1 on J_BTN; DMM on SVC10 | a) SET alone while SVC10 ≥ 10.6 V; b) AUX alone held 1 s; c) SET+AUX together within 1 s of chain closure (SVC10 < 10.3 V); d) SET+AUX together with SVC10 ≥ 10.6 V; e) E-stop pressed 1 s; h) SET held alone 0.5 s, then AUX | a), b): no set; c) no set and SVC10 keeps rising; d) sets; e) SVC10 < 0.5 V; h) no set | a) sets: Q_SETB short; b) sets: Q_SETA short; c) sets or SVC10 drops: Q_SETC short / SET_READY stuck; d) no set: set stage faulty; e) > 1 V: Q_SDIS open; h) sets: C_SC short or R_SG open |
+| S6 U23 / U9 | JP1 open, test firmware | stop the strobe: WDG_OK_RB and CH_N9 fall within 35 ms; latch down, DRV_NSLEEP high: U5/U6 pin 3 (nSLEEP, top side) stays low | as stated | CH_N9 stays live: U40/Q23/U23; nSLEEP high: U9 |
+| S7 braking | wheels free, scope on SVC4/SVC5 (220 k + ×10 probe: < 5 µs) and a K2/K3 NC pin | open each element; spin-down warm and cold | RUN_HD falls < 1 ms; NC closed ≤ 10.8 ms; spin-down tau ≤ 2 × the commissioning value | slower: clamp / relay; tau high: brake path |
+| S8 plug channels | charge plug | §8 step 5 | CH_N4 falls with the link and with 24 V | no fall |
+
+Resistance readings assume the meter's lowest-voltage resistance range (node voltages < 0.2 V, so the tap clamp diodes stay off). The service pads are safe against slips: any pad to 14.6 V drives ≤ 66 µA into its node, any two pads shorted ≤ 33 µA, which can neither hold K1 (1.16 mA must-release at −25 °C), light a photo-MOS LED, nor pick up a relay (T15).
 
 ## 7. Stationary brake self-test (BRAKE_TEST): what it can and cannot show
 

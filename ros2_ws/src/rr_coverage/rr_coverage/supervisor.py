@@ -583,41 +583,82 @@ class Mission:
 
     # ------------------------------------------------------ search-then-count
     def on_gate(self, gate):
-        """Ratemeter (contract survey_methods): sliding window per lane, evaluated every gate."""
+        """Search-stage ratemeter (MODEL.md rev 5 section 3 "Search stage", review M2): per lane the section-6 statistic
+        (m = 1, weights 1) over the trailing dwell (`ratemeter_window_s`, nominally L/v), U_null from a PAST-ONLY reference
+        under the section-3 rule (two past sub-windows, larger mean; lane, else ratio-scaled four-lane pool; never the
+        gates under test), predictive threshold at alpha_scan, decision class of the profile.  Provisional: it triggers
+        recounts only.  Thresholds are cached on a quantised key (U_null 1 % log grid, window count to 1, live times to
+        1 ms; the threshold is computed from the quantised inputs) - the recorded cell decision never uses this cache."""
+        from rr_core import unull
+        from rr_core.processing import CHANNELS
+        from rr_core.profiles import CLASS_OF_CHANNEL
+        a = self.app
+        proc = a.pipeline.proc
         n_win = max(1, int(round(self.cfg.ratemeter_window_s * 1e6 / gate["span_us"])))
         searching = (self.state == "SCAN" and self.phase == "PASS" and self.cfg.method == "SEARCH_THEN_COUNT"
-                     and self.app.mover.state == "RUNNING")
-        prof, cal = self.app.pipeline.proc.profile, self.app.pipeline.proc.cal
+                     and a.mover.state == "RUNNING")
+        prof = proc.profile
         alpha = self.cfg.ratemeter_alpha or prof["alpha_per_decision"]
-        for lane in gate["lanes"]:
+        channel = next(ch for ch in CHANNELS if CLASS_OF_CHANNEL[ch] == prof["decision_class"])
+        att = gate["attachment"]
+        try:
+            a_idx = proc.a_index(att)
+        except KeyError:
+            return
+        cal_a = proc.cal_of(a_idx)
+        ref = self.__dict__.setdefault("_rm_ref", {}).setdefault(att, {})
+        geo = self.__dict__.setdefault("_rm_geo", {}).setdefault(att, {})
+        seq = gate["sequence"]
+        lanes = sorted(gate["lanes"], key=lambda l: l["id"])
+        ref[seq] = [(l["ref"][0], l["ref"][1] * 1e-6) if proc._ref_valid(l) else None for l in lanes]
+        try:
+            p = a.pipeline.traj.at(0.5 * (gate["t0_us"] + gate["t1_us"])) if gate["t0_us"] is not None else None
+            if p is not None:
+                geo[seq] = (p["x"], p["y"])
+        except Exception:
+            pass
+        for old in [q for q in ref if q < seq - 1500]:
+            ref.pop(old, None)
+            geo.pop(old, None)
+        series = None
+        dec = self.__dict__.setdefault("_rm_decider", est.Decider())
+        for lane in lanes:
             n = lane["id"]
-            ok = not lane["reasons"] and lane["beta"] is not None and lane["ref"] is not None
+            ok = not lane["reasons"] and lane.get(channel) is not None and lane["ref"] is not None and gate["t0_us"] is not None
             hist = self._rate[n]
-            hist.append((gate["t0_us"], gate["t1_us"], lane["beta"][0], lane["beta"][1] * 1e-6,
-                         lane["ref"][0], lane["ref"][1] * 1e-6) if ok else None)
+            hist.append((gate["t0_us"], gate["t1_us"], lane[channel][0], lane[channel][1] * 1e-6,
+                         lane["ref"][0], lane["ref"][1] * 1e-6, seq) if ok else None)
             win = list(hist)[-n_win:]
-            if len(win) < n_win or any(w is None for w in win):
+            if len(win) < n_win or any(w is None for w in win) or cal_a is None:
                 self.ratemeter[n].update(rate=None, net=None, alarm=False)
                 continue
             N_F, T_F = sum(w[2] for w in win), sum(w[3] for w in win)
             N_U, T_U = sum(w[4] for w in win), sum(w[5] for w in win)
-            older = [w for w in list(hist)[:-n_win] if w is not None]
-            if sum(w[5] for w in older) >= 5.0:
-                U0 = sum(w[4] for w in older) / sum(w[5] for w in older)
-            else:
-                # MODEL.md 3 (R1) fallback: four-lane pooled reference rate over the same gates
-                pool = [w for h in self._rate.values() for w in list(h)[-n_win:] if w is not None]
-                U0 = sum(w[4] for w in pool) / max(sum(w[5] for w in pool), 1e-9)
-            c = cal.cal(n, "beta")
-            key = (n, round(U0, 1), alpha)
-            cache = self.__dict__.setdefault("_thr_cache", {})
-            if key not in cache:
-                cache[key] = est.decision_threshold(round(U0, 1), T_F, T_U, c, alpha)[0]
-            r_star = cache[key]
+            c = cal_a.cal(n, channel)
             r = N_F / T_F - c.k * N_U / T_U - c.b
-            alarm = r > r_star
-            self.ratemeter[n] = {"rate": N_F / T_F, "net": r, "alarm_level": c.k * U0 + c.b + r_star, "alarm": alarm,
-                                 "D": r / c.K, "t_us": gate["t1_us"]}
+            if self.cfg.method != "SEARCH_THEN_COUNT":
+                self.ratemeter[n] = {"rate": N_F / T_F, "net": r, "alarm_level": None, "alarm": False, "D": r / c.K,
+                                     "t_us": gate["t1_us"], "statistic": "display only (no search stage in this method)"}
+                continue
+            if series is None:
+                series = unull.Series.build(ref, geo)
+            rec = unull.u_null(series, n, (win[0][6], win[-1][6]), alpha, past_only=True)
+            if rec.get("U0") is None:
+                self.ratemeter[n] = {"rate": N_F / T_F, "net": r, "alarm_level": None, "alarm": False, "D": r / c.K,
+                                     "t_us": gate["t1_us"], "u0": "unavailable (past reference too short)"}
+                continue
+            qU = math.exp(round(math.log(rec["U0"]) / 0.01) * 0.01)
+            qN = max(1.0, float(round(rec["N_post"])))
+            tf = [round(w[3], 3) for w in win]
+            tu = [round(w[5], 3) for w in win]
+            g = est.LaneGates(n, [1.0] * len(win), tf, [w[2] for w in win], tu, [w[4] for w in win], qU, "search", c,
+                              N_post=qN, T_post=qN / qU)
+            _c, t_star, ok_t, meth = dec.threshold((dec._lane_key(g),), alpha)
+            D = r / c.K
+            alarm = bool(ok_t and D > t_star)
+            self.ratemeter[n] = {"rate": N_F / T_F, "net": r, "alarm_level": c.k * rec["U0"] + c.b + t_star * c.K, "alarm": alarm,
+                                 "D": D, "D_star": t_star, "U0": rec["U0"], "u0_source": rec["source"], "u0_N": rec["N_post"],
+                                 "method": meth, "alpha": alpha, "t_us": gate["t1_us"], "provisional": True}
             if searching:
                 self._track_peak(n, 0.5 * (win[0][0] + win[-1][1]), r, c.K, alarm)
             else:
@@ -651,7 +692,9 @@ class Mission:
             if math.hypot(s["xy"][0] - centre[0], s["xy"][1] - centre[1]) < self.cfg.refractory_m:
                 return                       # already counted / queued (any lane, any pass)
         spot = {"lane": lane, "xy": [float(centre[0]), float(centre[1])], "pose": [p["x"], p["y"], p["yaw"]],
-                "D_search": D, "task": t["id"], "t_us": t_centre}
+                "D_search": D, "task": t["id"], "t_us": t_centre,
+                "alarm_record": {k: v for k, v in (self.ratemeter.get(lane) or {}).items()
+                                 if k in ("D", "D_star", "U0", "u0_source", "u0_N", "method", "alpha", "provisional")}}
         self._log("search_alarm", **spot)
         if self.cfg.count_policy == "DEFERRED":
             self.deferred_counts.append(spot)

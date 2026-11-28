@@ -43,7 +43,26 @@ DEFAULTS = {
     "start_pose": None,                  # default: first pass start
     "simulated": True,
     "chassis_thread": False,             # real-time hosts: chassis link on its own thread (IB-46); the virtual-time harness keeps False
+    # MODEL.md rev 5 section 1 / review C2: STRICT = a calibration is bound only to the head whose serial, electronics revision,
+    # firmware, setup_id (and cal_id) it names; DEMONSTRATION = explicit, loudly marked mode for the synthetic calibration
+    "calibration_binding": "STRICT",
+    "archive_scans": True,               # MODEL.md rev 5 section 8: range data archived as received (S entries)
 }
+
+
+def scan_record(t_us, angles, ranges):
+    """Archived LiDAR scan (MODEL.md rev 5 section 8): time stamp, angles and ranges as received; ranges in mm as
+    little-endian uint16 (0 = no return / out of range), angles as start, increment and count when uniform."""
+    import base64 as _b64
+    a = np.asarray(angles, float)
+    r = np.asarray(ranges, float)
+    mm = np.where(np.isfinite(r) & (r > 0) & (r < 65.0), np.round(r * 1000.0), 0).astype("<u2")
+    rec = {"t_us": int(t_us), "n": int(a.size), "ranges_mm_u16le_b64": _b64.b64encode(mm.tobytes()).decode("ascii")}
+    if a.size > 1 and np.allclose(np.diff(a), a[1] - a[0], rtol=0, atol=1e-9):
+        rec.update(angle_min=float(a[0]), angle_inc=float(a[1] - a[0]))
+    else:
+        rec["angles"] = [float(x) for x in a]
+    return rec
 
 
 def merge(base, over):
@@ -68,7 +87,9 @@ class RobotApp:
         self.run_dir = Path(run_dir)
         self.calibrations = calibrations or [Calibration.load(DATA / "demo_calibration.json")]
         self.profiles = profiles or ProfileStore.load(DATA / "demo_site_profile_ore.json")
-        self.cal_store = CalibrationStore(self.calibrations)
+        if cfg["calibration_binding"] not in ("STRICT", "DEMONSTRATION"):
+            raise ValueError("calibration_binding must be STRICT or DEMONSTRATION")
+        self.cal_store = CalibrationStore(self.calibrations, demonstration=cfg["calibration_binding"] == "DEMONSTRATION")
         self.outline = RobotOutline(**cfg["outline"])
         self.archive_error = None
         self._events = []
@@ -80,7 +101,7 @@ class RobotApp:
         self.archive = Archive(self.run_dir)
         if resume and (self.run_dir / "run.json").exists():
             # reboot / pack swap: replay the committed raw data, continue as a NEW epoch
-            self.pipeline, self.run = build_from_run(self.run_dir, archive=self.archive)
+            self.pipeline, self.run = build_from_run(self.run_dir, archive=self.archive, calibrations=self.calibrations)
             self.calibration = self.pipeline.proc.cal
             self.profile = self.pipeline.proc.profile
             self.resumed = True
@@ -93,11 +114,13 @@ class RobotApp:
             self.run = {"run_id": self._uuid(), "trailer_id": tr["id"], "survey_config": survey_cfg,
                         "link_config": {"mode": cfg["mode"], **cfg["link"]}, "method": method,
                         "profile": self.profile, "calibration_record": self.calibration.record,
+                        "calibration_records": [c.record for c in self.calibrations],
+                        "calibration_binding": cfg["calibration_binding"],
                         "robot_outline": self.outline.as_dict(), "simulated": cfg["simulated"],
                         "trajectory_config": {}, "config": cfg}
             self.archive.write_run_manifest(self.run)
             self.pipeline = SurveyPipeline(SurveyConfig(**survey_cfg), self.calibration, self.profile, link_cfg,
-                                           method, archive=self.archive)
+                                           method, archive=self.archive, calibrations=self.calibrations)
             self.resumed = False
         self.head = HeadLinkMaster(head_transport, clock, registry, link_cfg, resolve_calibration=self.cal_store.resolve,
                                    sink=self._head_sink, uuid_factory=self._uuid)
@@ -218,6 +241,7 @@ class RobotApp:
             s = self.chassis.samples.popleft()
             if not self.loc.initialized:
                 continue
+            self._aux_sink((now, "K", _plain(s)))          # pose-estimate input as received (MODEL.md rev 5 section 8)
             p = self.loc.predict(s)
             try:
                 self.pipeline.record(now, "P", p)
@@ -272,6 +296,8 @@ class RobotApp:
     def on_scan(self, t_us, angles, ranges):
         if not self.loc.initialized:
             return
+        if self.cfg.get("archive_scans", True):
+            self._aux_sink((self.clock.now_us(), "S", scan_record(t_us, angles, ranges)))
         pts = self.loc.update_scan(t_us, angles, ranges, self.cfg["lidar"]["range_max"])
         self.mover.set_obstacles(pts, t_us)
 

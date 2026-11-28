@@ -463,6 +463,10 @@ def run_all(parts, table, log=print):
     R["corridors"] = corridors(parts)
     R["ccr_e08"] = ccr_e08(parts)
     R["slivers"] = slivers(parts)
+    from . import fasteners as FS, fitchecks as FC, routes as RT
+    R["fasteners"] = FC.fastener_access(parts, FS.fasteners(), log=log)
+    R["service_sweeps"] = FC.service_sweeps(parts, log=log)
+    R["routes"] = RT.route_all(parts, log=log)
     R["mass_cg"] = mass_cg(parts)
     R["grip"] = grip_proof(R["mass_cg"])
     svc_block = {k: v["blocked_by"] for k, v in R["service"].items() if v.get("blocked_by")}
@@ -483,5 +487,8 @@ def run_all(parts, table, log=print):
         "cable corridors of the master layout free": [not any(v["blocked_by"] for v in R["corridors"].values()), (str({k: v["blocked_by"] for k, v in R["corridors"].items() if v["blocked_by"]}) if any(v["blocked_by"] for v in R["corridors"].values()) else "all free")],
         "CCR-E08 keep-outs over RR-CHS-MAIN free of body parts (interface-placed purchased envelopes reported as findings)": [not any(n for v in R["ccr_e08"].values() for n, _ in v["blocked_by"] if not n.endswith(("_body", "_operator"))), (str({k[:30]: v["blocked_by"] for k, v in R["ccr_e08"].items() if v["blocked_by"]}) if any(v["blocked_by"] for v in R["ccr_e08"].values()) else "all free")],
         "boolean slivers dropped from parts below %.0f mm3" % SLIVER_MAX: [R["slivers"]["ok"], str(R["slivers"]["dropped"]) if R["slivers"]["dropped"] else "none"],
+        "every modelled fastener reachable with its tool at its assembly step and in its service state (fasteners as solids)": [R["fasteners"]["ok"], f"{R['fasteners']['count']} fasteners; blocked: {R['fasteners']['blocked'][:12]}"],
+        "service sweeps of real parts (board, CM5 carrier, every board plug + finger zone)": [R["service_sweeps"]["ok"], "all free" if R["service_sweeps"]["ok"] else str(R["service_sweeps"]["blocked"][:8])],
+        "every robot cable routed collision-free (ToF <= 270 mm incl. 30 mm margin)": [all(r.get("ok", True) for r in R["routes"].values()), str([k for k, r in R["routes"].items() if r.get("ok") is False])],
     }
     return R

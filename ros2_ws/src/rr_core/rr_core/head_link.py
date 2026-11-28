@@ -68,6 +68,12 @@ class HeadLinkConfig:
         self.block_retry_us = 5_000_000
         self.diag_period_us = 1_000_000
         self.diag_enabled = True
+        self.gatestat_period_us = 1_000_000    # head 0.6.0 GATESTAT poll (per-gate statistics, joined by sequence)
+        self.gatestat_limit = 12
+        self.status_enabled = True             # STATUS at session open (head 0.6.0: build, identity, cal_id, health)
+        self.clear_latched = ("RECORD_LOST", "GATE_TIMING", "GATE_TIMEOUT", "WATCHDOG_RESET")   # cleared deliberately at open
+        self.refuse_health = ("ENTROPY",)      # boot UUID may not be random: no attachment
+        self.acq_fault_persist_gates = 20      # consecutive ACQ_FAULT gates -> BLOCKED (persistent SOURCE / INJECTED latch)
         self.setup = None                      # ENG_SETUP_SET members written before the first ARM (firmware 0.5.2: device,
                                                # thresholds / thresholds_confirmed); None = leave the head's setup alone
         self.max_status_faults = 5
@@ -94,6 +100,7 @@ class HeadStreamInterpreter:
         self.last_end_us = None
         self.first_seq = None
         self.armed = False
+        self.acq_fault_run = 0         # consecutive gates with ACQ_FAULT (persistent latch detection)
         self._pending = OrderedDict()  # tid -> request info
         self._seen_frames = OrderedDict()   # sequence -> sha256 of canonical body
         self.stats = {"tx": 0, "rx": 0, "bad_lines": 0, "stale": 0, "duplicates": 0,
@@ -126,6 +133,8 @@ class HeadStreamInterpreter:
             self.installed_fits = set()
             self.last_seq = self.last_end_us = self.first_seq = None
             self.armed = False
+            self._prev_heater, self._marked_next = None, False      # review m10: no comparison across attachments
+            self.acq_fault_run = 0
             self._seen_frames.clear()
             self._pending.clear()
             return [{"ev": "session_open", "t_us": t, "manifest": manifest, "raw_index": idx}]
@@ -211,6 +220,13 @@ class HeadStreamInterpreter:
             return []
         if op == "DIAG" and status == "OK":
             return [{"ev": "diag", "t_us": t, "attachment": aid, "body": body, "raw_index": idx}]
+        if op == "GATESTAT" and status == "OK":
+            return [{"ev": "gatestat", "t_us": t, "attachment": aid, "gate": g, "raw_index": idx}
+                    for g in (body.get("gates") or []) if isinstance(g, dict)]
+        if op == "STATUS" and status == "OK":
+            return [{"ev": "head_status", "t_us": t, "attachment": aid, "body": body, "raw_index": idx}]
+        if op == "FAULT_CLEAR":
+            return [{"ev": "fault_clear", "t_us": t, "attachment": aid, "status": status, "body": body, "raw_index": idx}]
         return []
 
     def _on_time(self, t, info, body, rsp_bytes, idx):
@@ -329,6 +345,7 @@ class HeadStreamInterpreter:
             marks.append("AFTER_GAP")
         self._prev_heater, self._marked_next = heater, False
         self.stats["gates"] += 1
+        self.acq_fault_run = self.acq_fault_run + 1 if "ACQ_FAULT" in frame["flags"] else 0
         out.append({"ev": "gate", "t_us": t, "gate": {
             "marks": marks, "heater_transition": "HEATER_TRANSITION" in marks,
             "attachment": aid, "sequence": seq, "start_us": frame["start_us"],
@@ -613,11 +630,15 @@ class HeadLinkMaster:
                     raise _LinkLost("DESCRIPTOR_CHANGED") from err
                 self._block(err.reason, str(err))
         data = bytes(data)
+        head_status = yield from self._read_status()
         try:
             verified = evaluate(hello, data, self.registry, self.cfg.mode)
             calibration = None
             if self.resolve_calibration is not None:
-                calibration = self.resolve_calibration(verified, hello)
+                try:
+                    calibration = self.resolve_calibration(verified, hello, head_status)
+                except TypeError:
+                    calibration = self.resolve_calibration(verified, hello)
         except DescriptorError as err:
             self._block(err.reason, str(err))
         self.descriptor_bytes, self.verified = data, verified
@@ -634,11 +655,42 @@ class HeadLinkMaster:
             "geometry_basis": verified["geometry_basis"],
             "mount_transform": verified.get("mount_transform"),
             "calibration": calibration,
+            "head_status_at_open": head_status,
+            "head_build": (head_status or {}).get("build"), "head_identity": (head_status or {}).get("identity"),
+            "head_cal_id": ((head_status or {}).get("identity") or {}).get("cal_id"),
+            "electronics_revision": verified["descriptor"].get("electronics_revision"),
             "descriptor_b64": base64.b64encode(data).decode("ascii"),
             "host_clock": "CLOCK_MONOTONIC", "link_url": self.transport.url,
         })
         # Persist the immutable attachment record before accepting counts (ICD 4 step 3).
         self._emit("C", {"c": "SESSION_OPEN", "manifest": manifest})
+
+    def _read_status(self):
+        """Head 0.6.0 STATUS at session open (archived like every transaction): build, identity, cal_id, reset cause and
+        latched health.  ENTROPY refuses the attachment; acquisition latches and WATCHDOG_RESET are cleared deliberately
+        (FAULT_CLEAR with the named codes, archived) after they have been recorded; everything else is reported."""
+        if not self.cfg.status_enabled:
+            return None
+        rsp = yield from self._transact("STATUS", {}, self.cfg.handshake_timeout_us)
+        if rsp["status"] == "UNSUPPORTED":
+            self._note(note="STATUS_UNSUPPORTED")
+            return None
+        if rsp["status"] != "OK":
+            self._note(note="STATUS_" + rsp["status"])
+            return None
+        st = rsp["body"]
+        health = [str(h) for h in (st.get("health") or [])]
+        self.events.append({"ev": "head_health", "t_us": self.clock.now_us(), "health": health,
+                            "reset_cause": st.get("reset_cause"), "build": st.get("build"), "identity": st.get("identity")})
+        bad = [h for h in health if h in self.cfg.refuse_health]
+        if bad:
+            self._block("HEAD_HEALTH:" + "|".join(bad), "head reports " + ", ".join(bad) + " (boot identity not trustworthy)")
+        clear = [h for h in health if h in self.cfg.clear_latched]
+        if clear:
+            rsp2 = yield from self._transact("FAULT_CLEAR", {"codes": clear}, self.cfg.handshake_timeout_us)
+            self._note(note="FAULT_CLEAR_AT_OPEN", codes=clear, status=rsp2["status"],
+                       cleared=(rsp2.get("body") or {}).get("cleared"), health=(rsp2.get("body") or {}).get("health"))
+        return st
 
     def _block(self, reason, detail):
         self.block_reason, self.block_detail = reason, detail
@@ -696,6 +748,9 @@ class HeadLinkMaster:
         next_time = now + cfg.sync_refresh_us
         next_read = now
         next_diag = now + cfg.diag_period_us
+        next_gs = now + cfg.gatestat_period_us
+        self._gs_supported = True
+        self._gs_after = -1 if self.interp.first_seq is None else self.interp.first_seq - 1
         status_faults = 0
         while True:
             now = self.clock.now_us()
@@ -741,6 +796,29 @@ class HeadLinkMaster:
                     if status_faults >= cfg.max_status_faults:
                         raise _LinkLost(f"STATUS:{status}")
                 continue
+            if self._gs_supported and now >= next_gs and self.interp.last_seq is not None:
+                next_gs = now + cfg.gatestat_period_us
+                rsp = yield from self._transact("GATESTAT", {"after_seq": max(self._gs_after, self.interp.last_seq - cfg.gatestat_limit),
+                                                             "limit": cfg.gatestat_limit})
+                if rsp["status"] == "UNSUPPORTED":
+                    self._gs_supported = False
+                    self._note(note="GATESTAT_UNSUPPORTED")
+                elif rsp["status"] == "OK":
+                    body = rsp.get("body") or {}
+                    if type(body.get("last_seq")) is int:
+                        self._gs_after = body["last_seq"]
+                    if body.get("more"):
+                        next_gs = self.clock.now_us()      # drain: more retained statistics are waiting
+                elif rsp["status"] == "GAP":
+                    self._gs_after = int((rsp.get("body") or {}).get("oldest_seq", 0)) - 1
+                elif rsp["status"] == "UNBOUND":
+                    raise _LinkLost("UNBOUND")
+                continue
+            if self.interp.acq_fault_run >= cfg.acq_fault_persist_gates:
+                self.interp.acq_fault_run = 0
+                st = yield from self._read_status()
+                self._block("ACQ_FAULT_PERSISTENT", "every gate carries ACQ_FAULT; head health "
+                            + ",".join(str(h) for h in ((st or {}).get("health") or [])) + " - clear only under the site procedure")
             if self._diag_supported and now >= next_diag:
                 next_diag = now + cfg.diag_period_us
                 if self.interp.last_seq is None:

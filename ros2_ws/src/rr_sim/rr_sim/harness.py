@@ -38,7 +38,7 @@ class SimSystem:
         self.clink = MemoryLink(self.clock, "chassis", delay_us=chassis_delay)
         self.head = FakeHead(self.clock, self.hlink.ends[1], desc, seed=seed, clock_drift_ppm=head_drift_ppm)
         cal = Calibration.load(DATA / "demo_calibration.json")
-        cfg = merge({"link": {}}, config)
+        cfg = merge({"link": {}, "calibration_binding": "DEMONSTRATION"}, config)
         n = [0]
 
         def uuid():
@@ -82,7 +82,7 @@ class SimSystem:
             angles, ranges = self.world.scan(truth)
             self.app.on_scan(self.clock.now_us(), angles, ranges)
             if self.app.loc.initialized:
-                self.trace.append((self.t, *truth, *[float(v) for v in self.app.loc.x]))
+                self.trace.append((self.t, *truth, *[float(v) for v in self.app.loc.x[:3]]))
         self.app.step()
 
     def run(self, seconds=None, until=None, timeout=3600.0):

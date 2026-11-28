@@ -127,7 +127,7 @@ Firmware limit `brake.vmot_decay_max_ms` must be >= 3.5 s (worst case 2.7 s); be
 
 ### T11. K1 set from the reservoir at the SET_READY threshold (stage 4, follow-up review N1)
 
-SET_READY (U33B) rises at C_SET = 10.77 V (10.57-10.99 V with 1 % resistors and the 0.5 % LM4040C) and falls at 9.32 V [C]. A press while SET_READY is low does not reach U_SET (Q_SETC in the stack), so the reservoir is never dumped by an early press. At the moment SET_READY is first high C_SET holds at least 10.57 V; the table gives the time the K1 coil current stays above the must-operate current 8.75 mA (9 V / 1028 ohm, 75 % of rated at 23 C [D family G6S, U]; ampere-turns, so the same current at any coil temperature) with C_SET -20 % / nominal, D_RSET not in the discharge path, U_SET 0.15 ohm. Guaranteed set = >= 6 ms (1.5 x the 4 ms operate time [U]). The coil is at board temperature (it carries no current before the set). [C]
+SET_READY (U33B) rises at C_SET = 10.77 V (10.57-10.99 V with 1 % resistors and the 0.5 % LM4040C) and falls at 9.32 V [C]. A press while SET_READY is low does not reach U_SET (Q_SETC in the stack), so the reservoir is never dumped by an early press. At the moment SET_READY is first high C_SET holds at least 10.57 V; the table gives the time the K1 coil current stays above the must-operate current 8.75 mA (9 V / 1028 ohm, 75 % of rated at 23 C [D family G6S, U]; ampere-turns, so the same current at any coil temperature) with C_SET -20 % / nominal, D_RSET not in the discharge path, U_SET 0.15 ohm. Guaranteed set = >= 6 ms (1.5 x the 4 ms operate time [U]). The coil is at board temperature at K1 (RT1, moved next to K1 in stage 5) plus its own self-heating after an armed period (0.17 W, up to about +10 K [A], firmware H2). [C]
 
 | Coil (board) temperature | Coil R (ohm) | Must-operate voltage (V) | Time above must-operate, C_SET 80 uF (ms) | Same, 100 uF (ms) | Set at SET_READY? |
 |---|---:|---:|---:|---:|---|
@@ -170,7 +170,7 @@ Set contact closes at t = 0 and stays closed (REARM_SET_RAW = 4.65-4.9 V from V5
 | latest (C +20 %, 4.65 V, Vth 1.5 V) | 11.2 | 151 |
 | shortest pulse (C -20 %, 4.65 V, Vth 1.5 V) | 7.4 | 101 |
 
-Firmware guarantee: no set pulse can start before the set contact has been closed for the 'earliest' time above; both REARM contacts are sampled at 1 kHz on IOX_A (GPB2, GPB6), so every press that can set the latch is seen in at least 3 samples. A press released after the start but before K1 (<= 4 ms [U]) and U_HOLD (<= 3 ms [U]) have both closed can leave K1 sealed with RUN_HD dead: firmware treats it as REARM_REFUSED (PARTIAL), drops ARM_PERMIT 50 ms, non-fatal. Q_SETC gate (100 k / 470 nF): on 13-28 ms after SET_READY rises, off 37-67 ms after it falls (the falling hysteresis adds about 15 ms of dump before that). C_SET discharge gate (100 k || 56 k, 1 uF): discharge starts 41-64 ms after CHAIN_END dies, stops 6-13 ms after it returns. [C]
+Firmware guarantee: no set pulse can start before the set contact has been closed for the 'earliest' time above; both REARM contacts are sampled at 1 kHz on IOX_A (GPB2, GPB6), so every press that can set the latch is seen in at least 3 samples. A press released after the start but before K1 (<= 4 ms [U]) and U_HOLD (<= 3 ms [U]) have both closed can leave K1 sealed with RUN_HD dead: firmware treats it as REARM_REFUSED (PARTIAL), non-fatal, and drops ARM_PERMIT for 200 ms (firmware; 30 ms would suffice and keep C_SET, since the discharge cannot start before 41 ms: H4). Q_SETC gate (100 k / 470 nF): on 13-28 ms after SET_READY rises, off 37-67 ms after it falls (the falling hysteresis adds about 15 ms of dump before that). C_SET discharge gate (100 k || 56 k, 1 uF): discharge starts 41-64 ms after CHAIN_END dies, stops 6-13 ms after it returns. [C]
 
 ### T14. Leakage into photo-MOS LEDs (stage 4, follow-up review N5)
 
@@ -187,4 +187,23 @@ An element is held only if its LED gets a meaningful forward current. TLP241A: I
 | loop channels A/B inputs | loop self-test FETs Q_LTA/Q_LTB off-state into LOOP_F / LOOP_FB | <= 0.5 uA / <= 5 uA [U] | R69 / R_LB1 10 k | (not an LED) -50 mV on a 1.56 V signal, towards 'open' | ok |
 
 The K2/K3 coil-hold case of the review (G2RL must-release about 5 % of rated [U]) cannot arise in stage 4: U_LS cannot be held by leakage, so the coil return opens. [C]
+
+### T15. Service-pad readings (stage 5, review S1): expected values for §6.2
+
+Pads SVC1-SVC10 (TP63-TP72, top side, 2 x 5 at 2.54 mm): SVC1 GND; SVC2 CHAIN_END, SVC3 K1_RUN, SVC4 RUN_HD, SVC5 RUN_12V, SVC6 RELAY_RTN, SVC7 HOLD_A, SVC8 LS_A, SVC9 CH_N6A, SVC10 SET_CAP, each behind 220 k 1 %. Resistances: pack removed, charge plug out, E-stop released, DMM 2 Mohm range, red lead on the first pad named. Voltages: DMM 10 Mohm, pack fitted, selector RUN, latch down; the 220 k series resistor reads 2.2 % low. Tolerance band: 1 % resistors + 1 % meter [C].
+
+| Test | Pads (red - black) | Healthy (kohm) | Fault | Faulty reading (kohm) |
+|---|---|---:|---|---:|
+| S4a | SVC3 - SVC4 | 605 (593-617) | U_HOLD output short | 440 (431-449) |
+| S5a | SVC6 - SVC1 | 257 (252-262) | U_LS output short, RELAY_RTN to GND | 220 (216-224) |
+| S5b | SVC5 - SVC4 | 486 (476-495) | D_RUN short | 440 (431-449) |
+| S5c | SVC4 - SVC1 | 229 (224-233) | R_RHD open | 288 (283-294) |
+
+| Test | Pad (to SVC1) | Healthy (V) | Fault | Faulty reading (V) |
+|---|---|---:|---|---:|
+| S4b | SVC7 HOLD_A | < 0.05 | Q_HSET D-S short, set stack stuck on, HOLD_A or HSET_D on a logic supply (U_HOLD LED lit) | 1.05-1.28 (LED 1.1-1.3 V x 0.978) |
+| S5d | SVC8 LS_A | < 0.05 | LS_A on a logic supply (U_LS LED lit) | 1.05-1.28 |
+| S3 | SVC10 SET_CAP | 0 with the chain open > 0.4 s; rises with tau 1.5 s after closure; SET_READY at 10.34-10.75 (10.57-10.99 V x 0.978) | Q_SDIS open: stays charged with the chain open | > 1 V after 1 s open |
+
+Pin-short safety: any pad to 14.6 V drives <= 66 uA into its node (any two pads: <= 33 uA). Worst cases: K1 coil 834 ohm at -25 C sees <= 55 mV (must-release 0.97 V at -25 C); RUN_HD (10 k bleed) <= 0.66 V, below a photo-MOS LED's forward voltage, and 0.66 V x 22/122 = 0.12 V on U8 EN (1.2 V threshold); RUN_12V into the coils <= 12 mV; RELAY_RTN to GND through 220 k carries <= 66 uA of coil current (release current several mA); HOLD_A / LS_A <= 66 uA LED current (< the 0.1 mA assumed holding level, T14); CH_N6A / CHAIN_END lifted to <= 6.2 V through the 156 k taps (no coil fed: K1 needs 1.16 mA to hold; the firmware may report CHAIN_IMPLAUSIBLE, fail-safe); SET_CAP: C_SET is held at 0 by Q_SDIS while the chain is open, and charging it while closed is the normal state. Pad to GND: removes at most 66 uA from a node. [C]
 

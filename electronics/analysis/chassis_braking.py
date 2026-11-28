@@ -215,7 +215,7 @@ def build():
       "does not reach U_SET (Q_SETC in the stack), so the reservoir is never dumped by an early press. At the moment SET_READY is first high C_SET holds at least "
       "%.2f V; the table gives the time the K1 coil current stays above the must-operate current 8.75 mA (9 V / 1028 ohm, 75 %% of rated at 23 C [D family G6S, U]; "
       "ampere-turns, so the same current at any coil temperature) with C_SET -20 %% / nominal, D_RSET not in the discharge path, U_SET 0.15 ohm. Guaranteed set = "
-      ">= 6 ms (1.5 x the 4 ms operate time [U]). The coil is at board temperature (it carries no current before the set). [C]\n" % (v_rise, v_rise_lo, v_rise_hi, v_fall, v_rise_lo))
+      ">= 6 ms (1.5 x the 4 ms operate time [U]). The coil is at board temperature at K1 (RT1, moved next to K1 in stage 5) plus its own self-heating after an armed period (0.17 W, up to about +10 K [A], firmware H2). [C]\n" % (v_rise, v_rise_lo, v_rise_hi, v_fall, v_rise_lo))
     A("| Coil (board) temperature | Coil R (ohm) | Must-operate voltage (V) | Time above must-operate, C_SET 80 uF (ms) | Same, 100 uF (ms) | Set at SET_READY? |\n|---|---:|---:|---:|---:|---|")
     t_lim = None
     for tc in (-25.0, 0.0, 23.0, 35.0, 45.0, 50.0, 60.0, 85.0):
@@ -280,7 +280,7 @@ def build():
         A("| %s | %.1f | %.0f |" % (lab, ton * 1000, (toff - ton) * 1000 if toff else float("nan")))
     A("\nFirmware guarantee: no set pulse can start before the set contact has been closed for the 'earliest' time above; both REARM contacts are sampled at 1 kHz on IOX_A "
       "(GPB2, GPB6), so every press that can set the latch is seen in at least 3 samples. A press released after the start but before K1 (<= 4 ms [U]) and U_HOLD "
-      "(<= 3 ms [U]) have both closed can leave K1 sealed with RUN_HD dead: firmware treats it as REARM_REFUSED (PARTIAL), drops ARM_PERMIT 50 ms, non-fatal. "
+      "(<= 3 ms [U]) have both closed can leave K1 sealed with RUN_HD dead: firmware treats it as REARM_REFUSED (PARTIAL), non-fatal, and drops ARM_PERMIT for 200 ms (firmware; 30 ms would suffice and keep C_SET, since the discharge cannot start before 41 ms: H4). "
       "Q_SETC gate (100 k / 470 nF): on 13-28 ms after SET_READY rises, off 37-67 ms after it falls (the falling hysteresis adds about 15 ms of dump before that). "
       "C_SET discharge gate (100 k || 56 k, 1 uF): discharge starts 41-64 ms after CHAIN_END dies, stops 6-13 ms after it returns. [C]\n")
     A("### T14. Leakage into photo-MOS LEDs (stage 4, follow-up review N5)\n")
@@ -300,6 +300,35 @@ def build():
     for r in rows:
         A("| %s | %s | %s | %s | %s | %s |" % r)
     A("\nThe K2/K3 coil-hold case of the review (G2RL must-release about 5 % of rated [U]) cannot arise in stage 4: U_LS cannot be held by leakage, so the coil return opens. [C]\n")
+    A("### T15. Service-pad readings (stage 5, review S1): expected values for §6.2\n")
+    A("Pads SVC1-SVC10 (TP63-TP72, top side, 2 x 5 at 2.54 mm): SVC1 GND; SVC2 CHAIN_END, SVC3 K1_RUN, SVC4 RUN_HD, SVC5 RUN_12V, SVC6 RELAY_RTN, SVC7 HOLD_A, "
+      "SVC8 LS_A, SVC9 CH_N6A, SVC10 SET_CAP, each behind 220 k 1 %%. Resistances: pack removed, charge plug out, E-stop released, DMM 2 Mohm range, red lead on "
+      "the first pad named. Voltages: DMM 10 Mohm, pack fitted, selector RUN, latch down; the 220 k series resistor reads 2.2 %% low. Tolerance band: 1 %% resistors "
+      "+ 1 %% meter [C].\n" % ())
+    def par(*r):
+        return 1.0 / sum(1.0 / x for x in r)
+    rs = 220e3
+    r_hd = par(10e3, 122e3, 156e3)                 # RUN_HD to GND: R_RHD, U8 EN divider, U9 tap
+    r_12 = 37e3 + 0.0                              # RUN_12V to GND: HW_LATCH_RB tap 22 k + 15 k
+    rows = [
+        ("S4a", "SVC3 - SVC4", "U_HOLD output short", 2 * rs + 156e3 + r_hd, 2 * rs),
+        ("S5a", "SVC6 - SVC1", "U_LS output short, RELAY_RTN to GND", rs + 180.0 + r_12, rs),
+        ("S5b", "SVC5 - SVC4", "D_RUN short", 2 * rs + r_12 + r_hd, 2 * rs),
+        ("S5c", "SVC4 - SVC1", "R_RHD open", rs + r_hd, rs + par(122e3, 156e3)),
+    ]
+    A("| Test | Pads (red - black) | Healthy (kohm) | Fault | Faulty reading (kohm) |\n|---|---|---:|---|---:|")
+    for t, pads, fault, rh, rf in rows:
+        A("| %s | %s | %.0f (%.0f-%.0f) | %s | %.0f (%.0f-%.0f) |" % (t, pads, rh / 1e3, rh * 0.98 / 1e3, rh * 1.02 / 1e3, fault, rf / 1e3, rf * 0.98 / 1e3, rf * 1.02 / 1e3))
+    A("\n| Test | Pad (to SVC1) | Healthy (V) | Fault | Faulty reading (V) |\n|---|---|---:|---|---:|")
+    A("| S4b | SVC7 HOLD_A | < 0.05 | Q_HSET D-S short, set stack stuck on, HOLD_A or HSET_D on a logic supply (U_HOLD LED lit) | 1.05-1.28 (LED 1.1-1.3 V x 0.978) |")
+    A("| S5d | SVC8 LS_A | < 0.05 | LS_A on a logic supply (U_LS LED lit) | 1.05-1.28 |")
+    A("| S3 | SVC10 SET_CAP | 0 with the chain open > 0.4 s; rises with tau 1.5 s after closure; SET_READY at 10.34-10.75 (10.57-10.99 V x 0.978) | Q_SDIS open: stays charged with the chain open | > 1 V after 1 s open |")
+    A("\nPin-short safety: any pad to 14.6 V drives <= 66 uA into its node (any two pads: <= 33 uA). Worst cases: K1 coil 834 ohm at -25 C sees <= 55 mV (must-release "
+      "0.97 V at -25 C); RUN_HD (10 k bleed) <= 0.66 V, below a photo-MOS LED's forward voltage, and 0.66 V x 22/122 = 0.12 V on U8 EN (1.2 V threshold); "
+      "RUN_12V into the coils <= 12 mV; RELAY_RTN to GND through 220 k carries <= 66 uA of coil current (release current several mA); HOLD_A / LS_A <= 66 uA "
+      "LED current (< the 0.1 mA assumed holding level, T14); CH_N6A / CHAIN_END lifted to <= 6.2 V through the 156 k taps (no coil fed: K1 needs 1.16 mA to "
+      "hold; the firmware may report CHAIN_IMPLAUSIBLE, fail-safe); SET_CAP: C_SET is held at 0 by Q_SDIS while the chain is open, and charging it while closed "
+      "is the normal state. Pad to GND: removes at most 66 uA from a node. [C]\n")
     return "\n".join(o) + "\n", out
 
 if __name__ == "__main__":

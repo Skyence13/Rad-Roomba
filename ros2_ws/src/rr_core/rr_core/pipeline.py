@@ -20,10 +20,11 @@ from .trajectory import TrajectoryBuffer
 class SurveyPipeline:
     def __init__(self, survey_cfg: SurveyConfig, calibration: Calibration, profile: dict,
                  link_cfg: HeadLinkConfig | None = None, method: dict | None = None, interp=None,
-                 archive=None, traj_kwargs: dict | None = None):
+                 archive=None, traj_kwargs: dict | None = None, calibrations=None):
         self.interp = interp or HeadStreamInterpreter(link_cfg or HeadLinkConfig())
         self.traj = TrajectoryBuffer(**(traj_kwargs or {}))
-        self.proc = SurveyProcessor(survey_cfg, calibration, profile, self.traj, method)
+        self.proc = SurveyProcessor(survey_cfg, calibration, profile, self.traj, method, calibrations=calibrations)
+        self.head_health = []
         self.archive = archive
         self.fits, self.sessions, self.closes, self.link_notes = [], [], [], []
         self.epoch_log = []
@@ -49,6 +50,10 @@ class SurveyPipeline:
                 self.proc.add_gap(ev)
             elif kind == "diag":
                 self.proc.add_diag(ev)
+            elif kind == "gatestat":
+                self.proc.add_gatestat(ev)
+            elif kind in ("head_status", "fault_clear"):
+                self.head_health.append({k: v for k, v in ev.items() if k != "raw_index"})
             elif kind == "fit":
                 self.fits.append(ev["fit"] | {"attachment": ev["attachment"]})
             elif kind == "session_close":
@@ -87,10 +92,12 @@ class SurveyPipeline:
         if entry[1] in ("T", "R", "C"):
             self.on_head_events(self.interp.feed(entry))
             return None
+        if entry[1] in ("X", "K", "S"):
+            return None                     # chassis link / LiDAR / audit records: archived inputs, not replayed here
         return self.apply(entry)
 
 
-def build_from_run(run_dir, calibration=None, profile=None, archive=None):
+def build_from_run(run_dir, calibration=None, profile=None, archive=None, calibrations=None):
     """Rebuild a pipeline from an archived run (replay, or resume after a reboot)."""
     from .archive import read_journal
     import json
@@ -98,10 +105,13 @@ def build_from_run(run_dir, calibration=None, profile=None, archive=None):
     run = json.loads((Path(run_dir) / "run.json").read_text())
     calibration = calibration or Calibration(run["calibration_record"])
     profile = profile or run["profile"]
+    cals = [Calibration(r) for r in run.get("calibration_records") or []]
+    if calibrations is not None:
+        cals = list(calibrations)
     cfg = SurveyConfig(**run["survey_config"])
     link = HeadLinkConfig(**run.get("link_config", {}))
     pipe = SurveyPipeline(cfg, calibration, profile, link, run.get("method"), archive=None,
-                          traj_kwargs=run.get("trajectory_config"))
+                          traj_kwargs=run.get("trajectory_config"), calibrations=cals)
     n = 0
     for _epoch, entry in read_journal(run_dir):
         pipe.feed(entry)

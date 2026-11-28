@@ -5231,7 +5231,7 @@
 	)
 	(wire
 		(pts
-			(xy 205.74 179.07) (xy 205.74 181.61)
+			(xy 205.74 181.61) (xy 205.74 184.15)
 		)
 		(stroke
 			(width 0)
@@ -5241,7 +5241,7 @@
 	)
 	(wire
 		(pts
-			(xy 205.74 171.45) (xy 205.74 168.91)
+			(xy 205.74 173.99) (xy 205.74 171.45)
 		)
 		(stroke
 			(width 0)
@@ -7348,7 +7348,7 @@
 	)
 	(global_label "HEAD_LOOP_SENSE"
 		(shape passive)
-		(at 205.74 181.61 270)
+		(at 205.74 184.15 270)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -7357,7 +7357,7 @@
 		)
 		(uuid "98a61682-0e42-5338-8e8f-035e006d92f4")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 205.74 181.61 0)
+			(at 205.74 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7367,9 +7367,9 @@
 			)
 		)
 	)
-	(global_label "LOOP_F"
+	(global_label "LOOP_SNS"
 		(shape passive)
-		(at 205.74 168.91 90)
+		(at 205.74 171.45 90)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -7378,7 +7378,7 @@
 		)
 		(uuid "7d67e16d-52d8-5fe3-8aab-c95e0590f178")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 205.74 168.91 0)
+			(at 205.74 171.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13595,7 +13595,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 205.74 175.26 0)
+		(at 205.74 177.8 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -13603,7 +13603,7 @@
 		(dnp no)
 		(uuid "56137e9e-7930-5867-899a-e0478d03b042")
 		(property "Reference" "R76"
-			(at 207.756 174.26 0)
+			(at 207.756 176.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13612,7 +13612,7 @@
 			)
 		)
 		(property "Value" "10k"
-			(at 207.756 176.26 0)
+			(at 207.756 178.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13621,7 +13621,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 205.74 175.26 0)
+			(at 205.74 177.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13630,7 +13630,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 205.74 175.26 0)
+			(at 205.74 177.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13639,7 +13639,7 @@
 			)
 		)
 		(property "Description" "Resistor 10k 1%"
-			(at 205.74 175.26 0)
+			(at 205.74 177.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13648,7 +13648,7 @@
 			)
 		)
 		(property "MPN" "RC0603FR-0710KL"
-			(at 205.74 175.26 0)
+			(at 205.74 177.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13657,7 +13657,7 @@
 			)
 		)
 		(property "Manufacturer" "Yageo"
-			(at 205.74 175.26 0)
+			(at 205.74 177.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)

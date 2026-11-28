@@ -79,8 +79,9 @@ class Calibration:
         return sorted({c for _, c in self._cal})
 
     def check_envelope(self, lane: int, channel: str, U: float, head_c, setup_id=None,
-                       goal=None, alpha=0.05, beta=0.05):
-        """(ok, reason).  Reference-rate range with the R7 cap, temperature, setup."""
+                       goal=None, alpha=0.05, beta=0.05, speed_mps=None, speed_tol=0.0, standoff_mm=None):
+        """(ok, reason).  Reference-rate range with the R7 cap, head temperature, speed of the member gates (pose interval),
+        standoff (descriptor value; nominal until measured), setup_id where given (review M7)."""
         env = self.envelope
         rr = env.get("reference_rate_cps") or {}
         if rr and not (rr.get("min", 0.0) <= U <= rr.get("max", float("inf"))):
@@ -90,23 +91,58 @@ class Calibration:
         tr = env.get("head_temperature_C") or {}
         if tr and head_c is not None and not (tr.get("min", -1e9) <= head_c <= tr.get("max", 1e9)):
             return False, "head temperature outside qualified range"
+        sp = env.get("speed_m_s") or {}
+        if sp and speed_mps is not None and not (sp.get("min", 0.0) - speed_tol <= speed_mps <= sp.get("max", 1e9) + speed_tol):
+            return False, f"speed {speed_mps:.4f} m/s outside the calibrated range"
+        so = env.get("standoff_mm") or {}
+        if so and standoff_mm is not None and not (so.get("min", -1e9) <= standoff_mm <= so.get("max", 1e9)):
+            return False, "standoff outside the calibrated range"
+        if so and standoff_mm is None:
+            return False, "standoff unknown"
+        es = env.get("setup_id")
+        if setup_id is not None and es and es != setup_id:
+            return False, "setup_id differs from the calibration"
         return True, ""
+
+    @property
+    def identity(self) -> dict:
+        """MODEL.md rev 5 section 1: head serial, electronics revision, firmware, setup_id and the per-board cal_id the
+        record is bound to (record member `identity`; the demonstration record has none)."""
+        return dict(self.record.get("identity") or {})
 
     def summary(self) -> dict:
         return {"calibration_id": self.calibration_id, "sha256": self.sha256,
                 "synthetic": self.synthetic, "field_use_approved": self.field_use_approved,
-                "u0_evaluation": self.u0_evaluation, "cov_FU_assumed": self.cov_FU_assumed,
+                "identity": self.identity or None, "cov_FU_assumed": self.cov_FU_assumed,
+                "u0_evaluation_in_record": self.u0_evaluation,
+                "u0_evaluation_used": "MODEL.md rev 5 section 3 (two reference sub-windows, larger mean, predictive threshold); the record's u0_evaluation is not used",
                 "validity_envelope": self.envelope}
 
 
+IDENTITY_FIELDS = (("head_serial", "head_id"), ("electronics_revision", "electronics_revision"), ("firmware", "firmware"),
+                   ("setup_id", "setup_id"), ("cal_id", "cal_id"))
+DEMONSTRATION_BANNER = ("DEMONSTRATION CALIBRATION BINDING - the calibration's head identity was NOT checked against the attached "
+                        "head; synthetic coefficients; never for a survey or a release decision")
+
+
 class CalibrationStore:
-    """Robot-side calibration registry; `resolve` is the head-link calibration check."""
+    """Robot-side calibration registry; `resolve` is the head-link calibration check (MODEL.md rev 5 section 1, review C2).
 
-    def __init__(self, calibrations=(), strict_setup: bool = False):
+    strict (default): the record named by the registry must carry an `identity` that equals the attached head's serial
+    (HELLO head_id), electronics revision (descriptor), firmware (HELLO), setup_id (HELLO) and, where the head reports
+    one, the per-board cal_id (STATUS identity); otherwise CALIBRATION_IDENTITY_MISMATCH and no session is opened.
+    demonstration=True: an explicit, loudly marked mode for the synthetic demonstration calibration: the identity is
+    not checked, the binding says so and every product carries the DEMONSTRATION banner."""
+
+    def __init__(self, calibrations=(), strict_setup: bool = True, demonstration: bool = False):
         self.by_id = {c.calibration_id: c for c in calibrations}
-        self.strict_setup = strict_setup
+        self.strict_setup = strict_setup and not demonstration
+        self.demonstration = bool(demonstration)
+        if self.demonstration:
+            import sys
+            print("WARNING: " + DEMONSTRATION_BANNER, file=sys.stderr)
 
-    def resolve(self, verified: dict, hello: dict) -> dict:
+    def resolve(self, verified: dict, hello: dict, head_status: dict | None = None) -> dict:
         from .descriptor import DescriptorError
         cal_id = verified.get("calibration_id")
         if verified["mode"] == "BENCH" and not cal_id:
@@ -116,13 +152,32 @@ class CalibrationStore:
             raise DescriptorError("CALIBRATION_UNKNOWN", f"no local calibration record {cal_id!r}")
         if verified["mode"] == "SURVEY" and not cal.field_use_approved:
             raise DescriptorError("CALIBRATION_NOT_APPROVED", "calibration is not approved for field use")
-        setup = cal.envelope.get("setup_id")
-        if self.strict_setup and setup and setup != hello["setup_id"]:
-            raise DescriptorError("CALIBRATION_SETUP_MISMATCH",
-                                  f"calibration is for setup {setup}, head reports {hello['setup_id']}")
+        if verified["mode"] == "SURVEY" and self.demonstration:
+            raise DescriptorError("CALIBRATION_DEMONSTRATION", "the demonstration calibration binding is refused in SURVEY mode")
+        head = {"head_id": hello.get("head_id"), "firmware": hello.get("firmware"), "setup_id": hello.get("setup_id"),
+                "electronics_revision": (verified.get("descriptor") or {}).get("electronics_revision", verified.get("electronics_revision")),
+                "cal_id": ((head_status or {}).get("identity") or {}).get("cal_id")}
+        ident = cal.identity
+        mism = []
+        for rec_key, head_key in IDENTITY_FIELDS:
+            want = ident.get(rec_key)
+            have = head.get(head_key)
+            if rec_key == "cal_id" and have is None:
+                continue                      # head without STATUS identity: cal_id not checkable
+            if want is None or want != have:
+                mism.append(f"{rec_key}: calibration {want!r} vs head {have!r}")
+        env_setup = cal.envelope.get("setup_id")
+        if env_setup and env_setup != hello.get("setup_id"):
+            mism.append(f"validity_envelope.setup_id {env_setup!r} vs head {hello.get('setup_id')!r}")
+        if mism and self.strict_setup:
+            raise DescriptorError("CALIBRATION_IDENTITY_MISMATCH", "; ".join(mism))
         return {"calibration_id": cal.calibration_id, "sha256": cal.sha256,
                 "field_use_approved": cal.field_use_approved, "synthetic": cal.synthetic,
-                "setup_match": (setup == hello["setup_id"]) if setup else None}
+                "identity_match": not mism, "identity_mismatches": mism, "head_identity": head,
+                "demonstration": bool(mism) and self.demonstration,
+                "binding_mode": "STRICT" if self.strict_setup else "DEMONSTRATION",
+                "setup_match": (env_setup == hello.get("setup_id")) if env_setup else None,
+                "notice": DEMONSTRATION_BANNER if (mism and self.demonstration) else None}
 
 
 # -------------------------------------------------------------------- profiles

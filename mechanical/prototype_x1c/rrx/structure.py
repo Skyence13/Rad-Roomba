@@ -383,7 +383,9 @@ def caster_disc():
         for sy in (-1, 1):
             d = d.cut(cyl(D.TAP["M4"] / 2 if False else 1.65, 4, (cx + sx * e["plate_holes"][0] / 2, cy + sy * e["plate_holes"][1] / 2, Z1 - 1)))
     for a in (45, 135, 225, 315):
-        d = d.cut(cyl(D.CLEAR["M3"] / 2, 4, (cx + 27.5 * math.cos(math.radians(a)), cy + 27.5 * math.sin(math.radians(a)), Z1 - 1)))
+        px, py = cx + 27.5 * math.cos(math.radians(a)), cy + 27.5 * math.sin(math.radians(a))
+        d = d.cut(cyl(D.CLEAR["M3"] / 2, 4, (px, py, Z1 - 1)))
+        d = d.cut(cq.Solid.makeCone(D.CLEAR["M3"] / 2, D.CSK["M3"] / 2, (D.CSK["M3"] - D.CLEAR["M3"]) / 2, V(px, py, Z1 + 2.5 - (D.CSK["M3"] - D.CLEAR["M3"]) / 2)))   # countersink (hardware: M3 x 6 csk)
     return d
 
 

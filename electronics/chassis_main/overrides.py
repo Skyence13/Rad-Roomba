@@ -329,8 +329,9 @@ S3_ADD = [
                 _ESD_SET,
                 _c("C_SC", "1u", "REARM_SET", "SET_G", "AC coupling: one gate pulse per closing edge (tau 110 ms with R_SG + R_SSER)"),
                 _r("R_SG", "100k", "SET_G", "GND"), _d("D_SGN", "BAT54", "GND", "SET_G", "negative clamp / reset on release"),
-                _r("R_SRB", "33k", "REARM_SET_RAW", "REARM_SET_RB", "S4 (N2): fast set-contact readback to IOX_A GPB6 (1 kHz)"),
-                _r("R_SRB2", "47k", "REARM_SET_RB", "GND", "33 k / 47 k: 2.7-2.9 V HIGH at the MCP23S17 input"),
+                _r("R_SRB", "10k", "REARM_SET_RAW", "REARM_SET_RB", "S4 (N2): fast set-contact readback to IOX_A GPB6 (1 kHz); S5 (review S3): 33 k -> 10 k"),
+                _r("R_SRB2", "47k", "REARM_SET_RB", "GND"),
+                _d("D_SRB", "BAT54", "REARM_SET_RB", "3V3", "S5: HIGH = clamp level VDD + 0.1-0.3 V (>= 3.5 V) against VIH(max) 2.73 V"),
                 _d("D_RB", "BAT54", "REARM_BTN_RAW", "REARM_BTN_D", "GPB2 cannot drive the aux contact node"),
                 _r("R_AG", "10k", "REARM_BTN_RAW", "REARM_AUX_G"), _r("R_AGP", "100k", "REARM_AUX_G", "GND"),
                 _c("C_AG", "10n", "REARM_AUX_G", "GND"),
@@ -395,7 +396,26 @@ S4_ADD = [
                     notes="15 V stand-off on the REARM aux pair (replaces D29, 5.5 V): survives V12_AUX on W-018.3/.4")],
      "m-C: 15 V ESD on the aux contact lines"),
 ]
-S3_ADD = S3_ADD + S4_ADD
+# ---- stage 5 (stage-4 review S1): top-side service pads, every node behind 220 k
+_SVC = [("CHAIN_END", 2), ("K1_RUN", 3), ("RUN_HD", 4), ("RUN_12V", 5), ("RELAY_RTN", 6), ("HOLD_A", 7), ("LS_A", 8), ("CH_N6A", 9),
+        ("SET_CAP", 10)]
+
+
+def _pad(ref, net, n):
+    return dict(ref=ref, value="SVC%d %s" % (n, net), mpn="TEST-PAD", manufacturer="(pcb feature)",
+                description="Service test pad %d (top side, 2 x 5 array at 2.54 mm): %s" % (n, net), package="TP",
+                symbol_hint="Connector:TestPoint", footprint_hint="TestPoint:TestPoint_Pad_D1.5mm", pins={"1": ("1", net)},
+                block="test", dnp=False, rating=None, tolerance=None, verify=False, height_mm=0.1, area_mm2=4,
+                notes="S5 (review S1): service access on the assembled robot; see chassis_safety_chain.md section 6.2")
+
+
+S5_ADD = [
+    ("S5-S1", [_r("R_SV%d" % n, "220k", node, "SVC_" + node, "S5: service-pad protection: 14.6 V through 220 k is 66 uA, which can "
+                  "neither hold K1 (1.16 mA must-release at -25 C), nor light a photo-MOS LED, nor pick up a relay") for node, n in _SVC]
+     + [_pad("TP%d" % (62 + n), "SVC_" + node, n) for node, n in _SVC] + [_pad("TP63", "GND", 1)],
+     "S1: top-side service pads for the latent-fault tests"),
+]
+S3_ADD = S3_ADD + S4_ADD + S5_ADD
 for _oid, _lst, _why in S3_ADD:
     for _p in _lst:
         ADD.append((_oid, _p, _why))
@@ -403,6 +423,7 @@ S4_NET = [
     ("S4-N1a", "U33", "5", ("2IN+", "GND"), ("2IN+", "SET_DIV"), "N1: spare U33B compares the set reservoir with CLAMP_REF (2.5 V)"),
     ("S4-N1b", "U33", "7", None, ("2OUT", "SET_READY"), "N1: SET_READY (open collector, R_SRP 10 k to 3V3)"),
     ("S4-N2a", "U43", "7", ("GPB6", "BUS_CLAMP_ACTIVE"), ("GPB6", "REARM_SET_RB"), "N2: set contact read at 1 kHz on IOX_A; BUS_CLAMP_ACTIVE moves to IOX_D P3"),
+    ("S5-S4", "R76", "1", ("1", "LOOP_F"), ("1", "LOOP_SNS"), "review S4: the analog loop copy (PC1) is taken from LOOP_SNS, independent of channel A's filter and Q_LTA"),
 ]
 S4_PART = [
     ("S4-N1c", "R_SET", {"value": ("22k", "15k"), "mpn": ("RC0603FR-0722KL", "RC0603FR-0715KL")},

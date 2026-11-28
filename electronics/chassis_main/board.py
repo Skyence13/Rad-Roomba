@@ -144,7 +144,7 @@ for g in board.groups:
 
 # PCB features: stock footprints are excluded from the BOM -> symbols too (schematic parity)
 for p in board.parts:
-    if p.mpn in ("MOUNTING-HOLE-M3", "FIDUCIAL", "NET-TIE", "SOLDER-JUMPER", "WIRE-PADS"):
+    if p.mpn in ("MOUNTING-HOLE-M3", "FIDUCIAL", "NET-TIE", "SOLDER-JUMPER", "WIRE-PADS", "TEST-PAD"):
         p.bom = False
     if p.ref.startswith(("H", "FID")) and p.mpn in ("MOUNTING-HOLE-M3", "FIDUCIAL"):
         p.silk_ref = False
@@ -153,6 +153,9 @@ for p in board.parts:
     # (the 600 passives are identified on the assembly drawings / Fab layer)
     if not p.ref.startswith(("J", "U", "K", "L", "F_", "SW", "JP", "Q", "H")) or p.ref.startswith("LED"):
         p.silk_ref = False
+    # stage 5: the service pads carry their reference on silk (the service tests name them)
+    if p.ref in ["TP%d" % n for n in range(63, 73)]:
+        p.silk_ref = True
 
 # ----------------------------------------------------------------- rails, classes, outline, copper, placement
 placement.setup(board)

@@ -129,7 +129,8 @@ class NativeSystem:
         self.clock = Clock()
         registry = provision_registry_from_head("tcp://127.0.0.1:5540")       # simulation-only provisioning
         self.registry = registry
-        cfg = merge({"link": {"byte_time_us": 0.0, "reply_timeout_us": 60_000}, "chassis_thread": True}, config)
+        cfg = merge({"link": {"byte_time_us": 0.0, "reply_timeout_us": 60_000}, "chassis_thread": True,
+                     "calibration_binding": "DEMONSTRATION"}, config)
         self.app = RobotApp(self.clock, open_transport("tcp://127.0.0.1:5540"), open_transport("tcp://127.0.0.1:5550"),
                             run_dir, registry, cfg)
         self.head, self.chassis = NativeHead(), NativeChassis()
@@ -174,7 +175,7 @@ class NativeSystem:
             self.app.on_scan(self.clock.now_us(), angles, ranges)
             if self.app.loc.initialized:
                 odom = (self.app.chassis.drive.get("odom") or {}).get("t_us")
-                self.trace.append((self.t, *pose, *[float(v) for v in self.app.loc.x], odom,
+                self.trace.append((self.t, *pose, *[float(v) for v in self.app.loc.x[:3]], odom,
                                    self.chassis._truth.get("emu_lag_us"), self.chassis._truth.get("emu_rebases")))
         time.sleep(0.0004)
 

@@ -14,6 +14,17 @@ from . import params as P
 R = lambda v, n=2: [round(float(c), n) for c in v]   # noqa: E731
 
 
+
+def _cu_layers(rel, fallback):
+    """Copper layer count read from the board file (fit review m4: the contract value said 4, the boards are 6-layer)."""
+    import re
+    try:
+        t = (P.REPO / rel).read_text()[:40000]
+        n = len(re.findall(r'\(\d+ "[A-Za-z0-9]+\.Cu" (?:signal|power|mixed)', t))
+        return n or fallback
+    except OSError:
+        return fallback
+
 def holes(board):
     out = []
     for i, (u, v) in enumerate(board["holes_uv"], 1):
@@ -38,7 +49,7 @@ def head_acq():
     return {
         "status": "CONFIRMED as built (IB-52): H1 at (75.5, 30.0) [CR-M02], J1 landing u 50..101 with 8 mm local height [CCR-HE-02], shield cans at v 8.25..40.25 [CR-M01]; source electronics/head_acq/layout.py HOLES, libs.py, STAGE2_CHANGE_REQUESTS.md. Origin x %.1f (mount option C, CCR-11)" % b["origin"][0],
         "outline_mm": list(b["outline"]), "shape": "rectangle, corner radius <= 1.0",
-        "thickness_mm": b["thickness"], "layers": P.BOARDS_C["RR-HEAD-ACQ"]["layers"],
+        "thickness_mm": b["thickness"], "layers": _cu_layers("electronics/head_acq/RR-HEAD-ACQ.kicad_pcb", P.BOARDS_C["RR-HEAD-ACQ"]["layers"]),
         "origin_base_link_mm": R(b["origin"]), "orientation": "long axis (u) along -y; rpy = (0, 0, -90 deg) from base x to board u",
         "centre_base_link_mm": R(P.board_to_base(b["origin"], b["outline"][0] / 2, b["outline"][1] / 2)),
         "corners_base_link_mm": corners(b),
@@ -87,11 +98,11 @@ def chs_main():
     return {
         "status": "CONFIRMED (160 x 100 rectangle) in the adopted Rev E body (DEC-039); unchanged by the 12 Ah pack and by mount option C",
         "outline_mm": list(b["outline"]), "shape": "rectangle, corner radius <= 2.0",
-        "thickness_mm": b["thickness"], "layers": P.BOARDS_C["RR-CHS-MAIN"]["layers"],
+        "thickness_mm": b["thickness"], "layers": _cu_layers("electronics/chassis_main/RR-CHS-MAIN.kicad_pcb", P.BOARDS_C["RR-CHS-MAIN"]["layers"]),
         "origin_base_link_mm": R(b["origin"]), "orientation": "long axis (u) along -y, horizontal, top side up; rpy = (0, 0, -90 deg) from base x to board u",
         "centre_base_link_mm": R(P.board_to_base(b["origin"], 80, 50)),
         "corners_base_link_mm": corners(b),
-        "position_rationale": "Flat on a 2 mm aluminium bridge tray over the two gearmotors, under the removable carry-grip saddle cover (service access from above, no shell split needed). Centre of the board is 17 mm behind the axle.",
+        "position_rationale": "Flat on a 2 mm aluminium bridge tray over the two gearmotors, under the removable carry-grip saddle cover (routine plug access from above through the saddle cover; board REMOVAL needs the lid off -- prototype: shoulders and rear decks, production: the one-piece lid -- after the grip bar, cheek fairings and cover; the 160 mm board does not pass the 150 mm cover opening, fit review M1; tool-checked sweep in both body builds). Centre of the board is 17 mm behind the axle.",
         "pack_and_receiver_note": "12 Ah baseline pack (DEC-040): the cassette top is now z = 144 and stands 6.5 mm behind the rear edge (was z = 110, 3.5 mm). The blind-mate coupler is still under the board on the centre line (x -73.5..-16).",
         "mounting": {"screw": "6 x M3 into standoffs on the electronics bridge (standoff height 3.0 mm)",
                      "hole_diameter_mm": b["hole_d"], "pad_keepout_diameter_mm": b["hole_keepout_d"], "holes": holes(b)},
@@ -129,10 +140,10 @@ def chs_main():
 def small_boards():
     return {
         "RR-TOF": {"status": "CONFIRMED", "outline_mm": list(P.TOF_BOARD["outline"]),
-                   "note": "Sensor on the board centre; long axis tangent to the skin. 6 mm depth behind a 1 mm window, window clear aperture >= 8 x 6 mm (emitter/receiver split by a light barrier). 11 positions in frames.yaml."},
+                   "note": "Sensor at the board origin, 2.4 mm off the outline centre (RR-TOF-A file, review o1): the body seats centre the aperture on the sensor. Real stack behind the window plane: 1.1 recess + 1.5 foam + 1.6 PCB + 4.25 J1 (bottom side, horizontal GH) = 8.45 mm, plus the mated plug and wire exit beyond the J1 edge (seat relief). Long axis tangent to the skin. (was: 6 mm depth behind a 1 mm window, window clear aperture >= 8 x 6 mm (emitter/receiver split by a light barrier). 11 positions in frames.yaml."},
         "RR-PANEL": {"status": "CONFIRMED", "outline_mm": list(P.PANEL_BOARD["outline"]),
                      "centre_base_link_mm": R(P.PANEL_CONTROLS["annunciator"]["xyz"]),
-                     "orientation": "long axis along y, component side up under the top skin between grip and LiDAR; max height top 8 mm (light pipes), bottom 3 mm",
+                     "orientation": "long axis along x (u = +x), v = 24 edge with J1 / J2 inboard (-y), component side up, in the tray under the left deck (fixed by the body, fit review M7 / m3); max height top 8 mm (light pipes), bottom 3 mm",
                      "note": "Buttons are separate 22 mm panel devices on the left/right rear decks; the board carries only LEDs, buzzer and the harness landing."},
     }
 
@@ -225,7 +236,7 @@ def interfaces_md():
     A(f"| HEAD_DOCK switch | D2HW-C201M on the body at {t(P.HEAD_DOCK_SWITCH)} behind the left channel; the left shoe tip (x = {RCV['shoe_x'][0]}) presses it in the last 1.5 mm of travel | body (switch), head (flat shoe tip) |")
     A(f"| Nose over the head | lower hull removed for x > {RCV['chin_cut'][0]} below z = {RCV['chin_cut'][1]}; nothing of the body below z = {RCV['chin_cut'][1]} ahead of x = {RCV['chin_cut'][0]} except the latch; head top is z = {P.HEAD_TOP_Z} | body |")
     A(f"| Tyre to head | head rear-most parts (wing returns) at x = {141.6 + P.HEAD_DX:.1f}; tyre front at head height x = 51.5 -> 17 mm; the head carries a wipeable splash lip on the wing rear faces, the body a debris deflector ahead of each tyre | both |")
-    A(f"| Cable ports on the head | J1 at {t(P.HEAD_PIGTAIL_EXIT['J1'])}, J2 at {t(P.HEAD_PIGTAIL_EXIT['J2'])} in the rear wall above the shoes; sealed strain relief inside the wall, cable leaves -x/+z; pigtail free length 150..200 mm, clipped to the shoe root | head |")
+    A(f"| Cable ports on the head | J1 at {t(P.HEAD_PIGTAIL_EXIT['J1'])}, J2 at {t(P.HEAD_PIGTAIL_EXIT['J2'])} in the rear wall above the shoes; sealed strain relief inside the wall, cable leaves +z (fit review M6: the nose lip is 4..11 mm behind the wall, so -x is not available), then forward over the head top and up in front of the nose; body keeps the corridor {P.PIGTAIL_CORRIDOR['J1']} (J1) / {P.PIGTAIL_CORRIDOR['J2']} (J2), tube OD + {P.PIGTAIL_CORRIDOR['margin']:.0f} mm, free of body parts docked and over the {P.PIGTAIL_CORRIDOR['docking_slide']:.0f} mm slide (tool-checked in both body builds); clip points: {P.PIGTAIL_CORRIDOR['clip_points']}; splice: {P.PIGTAIL_CORRIDOR['splice']} | head (cable, exit, clips), body (corridor) |")
     A(f"| J1 / J2 receptacles on the body | J1 at {t(P.J_RECEPTACLES['J1']['xyz'])}, axis {t(P.J_RECEPTACLES['J1']['normal'], 3)}; J2 at {t(P.J_RECEPTACLES['J2']['xyz'])}, axis {t(P.J_RECEPTACLES['J2']['normal'], 3)}; keep the 45 mm radial grasp zone round each coupling nut free | body |")
     A("| Bench stand | the head stands on its two shoes and a front foot; the stand must not touch the films | head |")
     A("\n## 2. Head internal stack and RR-HEAD-ACQ mounting (head engineer)\n")

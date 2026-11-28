@@ -263,6 +263,20 @@ HEAD_SPREADER_X = (round(155.0 + HEAD_DX, 3), round(257.5 + HEAD_DX, 3))   # rea
 HEAD_SPREADER_HALF_Y = 168.5
 HEAD_PIGTAIL_EXIT = {"J1": (round(144.5 + HEAD_DX, 3), 76.2, 39.0), "J2": (round(144.5 + HEAD_DX, 3), -SEG_PITCH, 39.0)}  # J1 at y 76.2: head-board CR-M03a accepted (IB-52), as in the head model  # strain-relief ports in the rear wall at the inactive seams, cables leave -x/+z
 
+# Docked J1 / J2 pigtails (fit review M6; body side of the interface, head side owned by the head engineer).
+# The pigtail leaves the head rear wall upward (+z, not -x: the nose lip is 4..11 mm behind the wall), runs forward over the head
+# top and up in front of the nose to the plug on the receptacle.  The corridor below is kept free of every body part (tool-checked
+# in both body builds, docked and swept over the 66 mm docking slide); clip points are on the head (rear wall above z 45 and head
+# top), never at the shoe root / datum-A seating plane; the AWG 18 -> 20 heater splice sits in the straight run in front of the
+# nose (>= 80 mm from the gland).  Cable OD 7.5 (J1) / 6.5 (J2), bend radius 40 / 35 (parts.yaml); corridor tube = OD + 4 mm.
+PIGTAIL_CORRIDOR = {
+    "J1": [(71.7, 76.2, 45.0), (80.0, 74.0, 62.0), (112.0, 62.0, 70.0), (118.0, 52.0, 120.0), (110.0, 46.0, 158.0)],
+    "J2": [(71.7, -87.5, 45.0), (80.0, -84.0, 62.0), (112.0, -66.0, 70.0), (118.0, -52.0, 120.0), (110.0, -46.0, 158.0)],
+    "od": {"J1": 7.5, "J2": 6.5}, "bend_r": {"J1": 40.0, "J2": 35.0}, "margin": 4.0, "docking_slide": 66.0,
+    "clip_points": "head rear wall above z 45 and the head top (head side); none on the body; never at the shoe root",
+    "splice": "AWG 18 -> 20 splice in the straight run in front of the nose, x 112..118, z 75..115 (>= 80 mm from the gland)",
+}
+
 # --------------------------------------------------------------------------- head / body receiver interface (option C)
 RECEIVER = {
     "type": "twin shoe: two rails on the head slide rearward (-x) into two channels under the chassis front beam",

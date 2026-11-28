@@ -1613,6 +1613,106 @@
 		)
 		(uuid "8d54df58-4a2f-5e9d-831f-162f50b67a9a")
 	)
+	(wire
+		(pts
+			(xy 25.4 93.98) (xy 25.4 96.52)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b8c5256d-d7fc-5c4a-86b2-270fb1e9bf34")
+	)
+	(wire
+		(pts
+			(xy 53.34 93.98) (xy 53.34 96.52)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6984eb83-479f-5370-8f1e-3d8adb64fe9c")
+	)
+	(wire
+		(pts
+			(xy 53.34 121.92) (xy 53.34 124.46)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b96e57bd-117b-5db2-87dc-be519af56a33")
+	)
+	(wire
+		(pts
+			(xy 78.74 93.98) (xy 78.74 96.52)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d0fce19e-e8fd-580a-8cc4-b9e2432a7e76")
+	)
+	(wire
+		(pts
+			(xy 106.68 93.98) (xy 106.68 96.52)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e1dd0c49-f1e0-5294-85ee-eb31f49fc2d7")
+	)
+	(wire
+		(pts
+			(xy 134.62 93.98) (xy 134.62 96.52)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7626a000-0e83-5ef2-8a8d-09b74eb21dee")
+	)
+	(wire
+		(pts
+			(xy 134.62 121.92) (xy 134.62 124.46)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "670e3243-109e-5058-85da-0af4bbd18ebf")
+	)
+	(wire
+		(pts
+			(xy 160.02 93.98) (xy 160.02 96.52)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "53e62f28-0ac1-5ac9-8fa1-582e1dd06918")
+	)
+	(wire
+		(pts
+			(xy 160.02 121.92) (xy 160.02 124.46)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "72e5804f-6a8d-5647-8a59-77f9fc13dc9f")
+	)
+	(wire
+		(pts
+			(xy 187.96 93.98) (xy 187.96 96.52)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4f90dfb1-4904-54cc-87dc-7c78be8079c8")
+	)
 	(text "Test points"
 		(exclude_from_sim no)
 		(at 20 23 0)
@@ -2226,6 +2326,195 @@
 		(uuid "ccdf4108-4ee8-5822-8d0e-02d9949e2290")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 363.22 40.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "SVC_CHAIN_END"
+		(shape passive)
+		(at 25.4 96.52 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "0a76e940-a74c-5196-86e6-204eeb028a4d")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 25.4 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "SVC_K1_RUN"
+		(shape passive)
+		(at 53.34 96.52 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "29059da5-8cb6-563a-8ed0-efd5e8499a6d")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 53.34 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "SVC_RUN_HD"
+		(shape passive)
+		(at 53.34 124.46 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "86ce888a-8805-557f-8c45-ce6105f9a15e")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 53.34 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "SVC_RUN_12V"
+		(shape passive)
+		(at 78.74 96.52 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "fa8ecbbe-c2d4-5d3d-8bb1-5043761bbafe")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 78.74 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "SVC_RELAY_RTN"
+		(shape passive)
+		(at 106.68 96.52 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "f3ab2c4a-517d-5172-8cda-7246ab472b14")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 106.68 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "SVC_HOLD_A"
+		(shape passive)
+		(at 134.62 96.52 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "6b6d6c6d-96b1-567b-8388-dbd30185d6ba")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 134.62 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "SVC_LS_A"
+		(shape passive)
+		(at 134.62 124.46 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "5c0878c9-7844-5ac5-8f7e-32bcec814440")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 134.62 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "SVC_CH_N6A"
+		(shape passive)
+		(at 160.02 96.52 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "92943ea0-6d7b-5e23-8b27-29f8c2201e37")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 160.02 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "SVC_SET_CAP"
+		(shape passive)
+		(at 160.02 124.46 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "069bff0f-b624-5777-888c-1f9246647186")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 160.02 124.46 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3672,7 +3961,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "b03e57c1-dca5-5c9e-841f-f5236365705b")
-		(property "Reference" "#PWR0806"
+		(property "Reference" "#PWR0807"
 			(at 187.96 66.04 0)
 			(effects
 				(font
@@ -3722,7 +4011,7 @@
 		(instances
 			(project "RR-CHS-MAIN"
 				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63/ceae78a1-e090-59f6-87b2-a274c07d1163"
-					(reference "#PWR0806")
+					(reference "#PWR0807")
 					(unit 1)
 				)
 			)
@@ -3821,7 +4110,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "aa547c42-0bbf-5dc4-8781-352aa29ebd05")
-		(property "Reference" "#PWR0807"
+		(property "Reference" "#PWR0808"
 			(at 205.74 40.64 0)
 			(effects
 				(font
@@ -3871,7 +4160,7 @@
 		(instances
 			(project "RR-CHS-MAIN"
 				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63/ceae78a1-e090-59f6-87b2-a274c07d1163"
-					(reference "#PWR0807")
+					(reference "#PWR0808")
 					(unit 1)
 				)
 			)
@@ -3970,7 +4259,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "0eb7d168-faa8-5265-873d-def46e6cf7b6")
-		(property "Reference" "#PWR0808"
+		(property "Reference" "#PWR0809"
 			(at 208.28 58.42 0)
 			(effects
 				(font
@@ -4020,7 +4309,7 @@
 		(instances
 			(project "RR-CHS-MAIN"
 				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63/ceae78a1-e090-59f6-87b2-a274c07d1163"
-					(reference "#PWR0808")
+					(reference "#PWR0809")
 					(unit 1)
 				)
 			)
@@ -4119,7 +4408,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "5eff1252-b0cf-5236-8712-09e01378a5c7")
-		(property "Reference" "#PWR0809"
+		(property "Reference" "#PWR0810"
 			(at 205.74 76.2 0)
 			(effects
 				(font
@@ -4169,7 +4458,7 @@
 		(instances
 			(project "RR-CHS-MAIN"
 				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63/ceae78a1-e090-59f6-87b2-a274c07d1163"
-					(reference "#PWR0809")
+					(reference "#PWR0810")
 					(unit 1)
 				)
 			)
@@ -4268,7 +4557,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "03e16137-ed99-5660-89da-6b7cf479b7e7")
-		(property "Reference" "#PWR0810"
+		(property "Reference" "#PWR0811"
 			(at 226.06 40.64 0)
 			(effects
 				(font
@@ -4318,7 +4607,7 @@
 		(instances
 			(project "RR-CHS-MAIN"
 				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63/ceae78a1-e090-59f6-87b2-a274c07d1163"
-					(reference "#PWR0810")
+					(reference "#PWR0811")
 					(unit 1)
 				)
 			)
@@ -4417,7 +4706,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "e33c57ea-7878-505b-84ab-8c81a5ba191a")
-		(property "Reference" "#PWR0811"
+		(property "Reference" "#PWR0812"
 			(at 226.06 58.42 0)
 			(effects
 				(font
@@ -4467,7 +4756,7 @@
 		(instances
 			(project "RR-CHS-MAIN"
 				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63/ceae78a1-e090-59f6-87b2-a274c07d1163"
-					(reference "#PWR0811")
+					(reference "#PWR0812")
 					(unit 1)
 				)
 			)
@@ -4566,7 +4855,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "25f0a835-25cc-5d5a-80a4-7e19e230ddf1")
-		(property "Reference" "#PWR0812"
+		(property "Reference" "#PWR0813"
 			(at 223.52 76.2 0)
 			(effects
 				(font
@@ -4616,7 +4905,7 @@
 		(instances
 			(project "RR-CHS-MAIN"
 				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63/ceae78a1-e090-59f6-87b2-a274c07d1163"
-					(reference "#PWR0812")
+					(reference "#PWR0813")
 					(unit 1)
 				)
 			)
@@ -4715,7 +5004,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "860e0c18-d85c-5ee5-8e22-fd69e49c5b5a")
-		(property "Reference" "#PWR0813"
+		(property "Reference" "#PWR0814"
 			(at 243.84 40.64 0)
 			(effects
 				(font
@@ -4765,7 +5054,7 @@
 		(instances
 			(project "RR-CHS-MAIN"
 				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63/ceae78a1-e090-59f6-87b2-a274c07d1163"
-					(reference "#PWR0813")
+					(reference "#PWR0814")
 					(unit 1)
 				)
 			)
@@ -4864,7 +5153,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "95083707-b34f-5588-8817-27e69224c943")
-		(property "Reference" "#PWR0814"
+		(property "Reference" "#PWR0815"
 			(at 243.84 58.42 0)
 			(effects
 				(font
@@ -4914,7 +5203,7 @@
 		(instances
 			(project "RR-CHS-MAIN"
 				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63/ceae78a1-e090-59f6-87b2-a274c07d1163"
-					(reference "#PWR0814")
+					(reference "#PWR0815")
 					(unit 1)
 				)
 			)
@@ -5769,7 +6058,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "d4e778ce-d04f-5bd8-807d-b98dd08c7b82")
-		(property "Reference" "#PWR0815"
+		(property "Reference" "#PWR0816"
 			(at 330.2 63.5 0)
 			(effects
 				(font
@@ -5819,7 +6108,7 @@
 		(instances
 			(project "RR-CHS-MAIN"
 				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63/ceae78a1-e090-59f6-87b2-a274c07d1163"
-					(reference "#PWR0815")
+					(reference "#PWR0816")
 					(unit 1)
 				)
 			)
@@ -6183,6 +6472,1001 @@
 			(project "RR-CHS-MAIN"
 				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63/ceae78a1-e090-59f6-87b2-a274c07d1163"
 					(reference "TP62")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 25.4 93.98 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "1a05be98-3512-58be-8ab4-22bc049d169c")
+		(property "Reference" "TP64"
+			(at 27.162 89.678 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "SVC2 SVC_CHAIN_END"
+			(at 27.162 91.678 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+			(at 25.4 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 25.4 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Service test pad 2 (top side, 2 x 5 array at 2.54 mm): SVC_CHAIN_END"
+			(at 25.4 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "TEST-PAD"
+			(at 25.4 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "(pcb feature)"
+			(at 25.4 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Notes" "S5 (review S1): service access on the assembled robot; see chassis_safety_chain.md section 6.2"
+			(at 25.4 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "7e29a2dc-2c59-5cec-82d6-64b07e707d6d")
+		)
+		(instances
+			(project "RR-CHS-MAIN"
+				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63/ceae78a1-e090-59f6-87b2-a274c07d1163"
+					(reference "TP64")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 53.34 93.98 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "616bb7f6-fe33-5d4e-8f77-6e2846fbc2df")
+		(property "Reference" "TP65"
+			(at 55.102 89.678 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "SVC3 SVC_K1_RUN"
+			(at 55.102 91.678 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+			(at 53.34 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 53.34 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Service test pad 3 (top side, 2 x 5 array at 2.54 mm): SVC_K1_RUN"
+			(at 53.34 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "TEST-PAD"
+			(at 53.34 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "(pcb feature)"
+			(at 53.34 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Notes" "S5 (review S1): service access on the assembled robot; see chassis_safety_chain.md section 6.2"
+			(at 53.34 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "e279167f-05e9-56f0-84de-73ae66bd37ab")
+		)
+		(instances
+			(project "RR-CHS-MAIN"
+				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63/ceae78a1-e090-59f6-87b2-a274c07d1163"
+					(reference "TP65")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 53.34 121.92 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "b9674476-fa8c-502d-8713-2d919bc7cd50")
+		(property "Reference" "TP66"
+			(at 55.102 117.618 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "SVC4 SVC_RUN_HD"
+			(at 55.102 119.618 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+			(at 53.34 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 53.34 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Service test pad 4 (top side, 2 x 5 array at 2.54 mm): SVC_RUN_HD"
+			(at 53.34 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "TEST-PAD"
+			(at 53.34 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "(pcb feature)"
+			(at 53.34 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Notes" "S5 (review S1): service access on the assembled robot; see chassis_safety_chain.md section 6.2"
+			(at 53.34 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "125e3df5-a090-5eb4-8090-58f11f811fd5")
+		)
+		(instances
+			(project "RR-CHS-MAIN"
+				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63/ceae78a1-e090-59f6-87b2-a274c07d1163"
+					(reference "TP66")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 78.74 93.98 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "303ba04e-4ed9-536e-8970-a610f1b3ef9a")
+		(property "Reference" "TP67"
+			(at 80.502 89.678 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "SVC5 SVC_RUN_12V"
+			(at 80.502 91.678 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+			(at 78.74 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 78.74 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Service test pad 5 (top side, 2 x 5 array at 2.54 mm): SVC_RUN_12V"
+			(at 78.74 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "TEST-PAD"
+			(at 78.74 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "(pcb feature)"
+			(at 78.74 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Notes" "S5 (review S1): service access on the assembled robot; see chassis_safety_chain.md section 6.2"
+			(at 78.74 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "eab10b6e-4699-5562-88f9-7d8e633df1e0")
+		)
+		(instances
+			(project "RR-CHS-MAIN"
+				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63/ceae78a1-e090-59f6-87b2-a274c07d1163"
+					(reference "TP67")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 106.68 93.98 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "22f3a7f4-a9c5-59ea-8128-e8bb0d30c91a")
+		(property "Reference" "TP68"
+			(at 108.442 89.678 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "SVC6 SVC_RELAY_RTN"
+			(at 108.442 91.678 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+			(at 106.68 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 106.68 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Service test pad 6 (top side, 2 x 5 array at 2.54 mm): SVC_RELAY_RTN"
+			(at 106.68 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "TEST-PAD"
+			(at 106.68 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "(pcb feature)"
+			(at 106.68 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Notes" "S5 (review S1): service access on the assembled robot; see chassis_safety_chain.md section 6.2"
+			(at 106.68 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "d8640e70-b7df-5f13-8230-e4bdfba50501")
+		)
+		(instances
+			(project "RR-CHS-MAIN"
+				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63/ceae78a1-e090-59f6-87b2-a274c07d1163"
+					(reference "TP68")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 134.62 93.98 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "c04dae09-ddaa-594f-8ec9-17094897d19a")
+		(property "Reference" "TP69"
+			(at 136.382 89.678 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "SVC7 SVC_HOLD_A"
+			(at 136.382 91.678 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+			(at 134.62 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 134.62 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Service test pad 7 (top side, 2 x 5 array at 2.54 mm): SVC_HOLD_A"
+			(at 134.62 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "TEST-PAD"
+			(at 134.62 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "(pcb feature)"
+			(at 134.62 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Notes" "S5 (review S1): service access on the assembled robot; see chassis_safety_chain.md section 6.2"
+			(at 134.62 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "4633e1c9-6bb3-5acb-8d2d-cbff289ff733")
+		)
+		(instances
+			(project "RR-CHS-MAIN"
+				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63/ceae78a1-e090-59f6-87b2-a274c07d1163"
+					(reference "TP69")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 134.62 121.92 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "b305df61-81e5-5268-80d5-a85caf821973")
+		(property "Reference" "TP70"
+			(at 136.382 117.618 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "SVC8 SVC_LS_A"
+			(at 136.382 119.618 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+			(at 134.62 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 134.62 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Service test pad 8 (top side, 2 x 5 array at 2.54 mm): SVC_LS_A"
+			(at 134.62 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "TEST-PAD"
+			(at 134.62 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "(pcb feature)"
+			(at 134.62 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Notes" "S5 (review S1): service access on the assembled robot; see chassis_safety_chain.md section 6.2"
+			(at 134.62 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "e5bcff63-9b03-592d-84cd-a5fb6caa8458")
+		)
+		(instances
+			(project "RR-CHS-MAIN"
+				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63/ceae78a1-e090-59f6-87b2-a274c07d1163"
+					(reference "TP70")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 160.02 93.98 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "1d3ccfec-26b0-5a00-8060-6e601f2ad6e7")
+		(property "Reference" "TP71"
+			(at 161.782 89.678 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "SVC9 SVC_CH_N6A"
+			(at 161.782 91.678 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+			(at 160.02 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 160.02 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Service test pad 9 (top side, 2 x 5 array at 2.54 mm): SVC_CH_N6A"
+			(at 160.02 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "TEST-PAD"
+			(at 160.02 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "(pcb feature)"
+			(at 160.02 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Notes" "S5 (review S1): service access on the assembled robot; see chassis_safety_chain.md section 6.2"
+			(at 160.02 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "8897dd75-30a5-57d9-831d-c2cd90606817")
+		)
+		(instances
+			(project "RR-CHS-MAIN"
+				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63/ceae78a1-e090-59f6-87b2-a274c07d1163"
+					(reference "TP71")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 160.02 121.92 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "bd70630a-bd1d-5a52-8188-059f3ed848ff")
+		(property "Reference" "TP72"
+			(at 161.782 117.618 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "SVC10 SVC_SET_CAP"
+			(at 161.782 119.618 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+			(at 160.02 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 160.02 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Service test pad 10 (top side, 2 x 5 array at 2.54 mm): SVC_SET_CAP"
+			(at 160.02 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "TEST-PAD"
+			(at 160.02 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "(pcb feature)"
+			(at 160.02 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Notes" "S5 (review S1): service access on the assembled robot; see chassis_safety_chain.md section 6.2"
+			(at 160.02 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "8a1fe1bc-800d-5e39-8fba-c06c667cd94c")
+		)
+		(instances
+			(project "RR-CHS-MAIN"
+				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63/ceae78a1-e090-59f6-87b2-a274c07d1163"
+					(reference "TP72")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 187.96 96.52 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "91e3ae33-5bf6-5c18-8651-8ceffd455058")
+		(property "Reference" "#PWR0817"
+			(at 187.96 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 187.96 100.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 187.96 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 187.96 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 187.96 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "0fb8ddf1-bf37-5099-8615-6b052ad6a5e3")
+		)
+		(instances
+			(project "RR-CHS-MAIN"
+				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63/ceae78a1-e090-59f6-87b2-a274c07d1163"
+					(reference "#PWR0817")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 187.96 93.98 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "66673bcb-b36d-52a5-8186-cd97bdd0e1b1")
+		(property "Reference" "TP63"
+			(at 189.722 89.678 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "SVC1 GND"
+			(at 189.722 91.678 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+			(at 187.96 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 187.96 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Service test pad 1 (top side, 2 x 5 array at 2.54 mm): GND"
+			(at 187.96 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "TEST-PAD"
+			(at 187.96 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "(pcb feature)"
+			(at 187.96 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Notes" "S5 (review S1): service access on the assembled robot; see chassis_safety_chain.md section 6.2"
+			(at 187.96 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "0056538b-f375-5566-8fd2-8de23ebd3f53")
+		)
+		(instances
+			(project "RR-CHS-MAIN"
+				(path "/a3c3656f-df30-5193-840b-4f2ff2e89e63/ceae78a1-e090-59f6-87b2-a274c07d1163"
+					(reference "TP63")
 					(unit 1)
 				)
 			)

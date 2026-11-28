@@ -339,6 +339,21 @@
   "ref": "U43"
  },
  {
+  "id": "S5-S4",
+  "kind": "NET",
+  "new": [
+   "1",
+   "LOOP_SNS"
+  ],
+  "old": [
+   "1",
+   "LOOP_F"
+  ],
+  "pin": "1",
+  "reason": "review S4: the analog loop copy (PC1) is taken from LOOP_SNS, independent of channel A's filter and Q_LTA",
+  "ref": "R76"
+ },
+ {
   "changes": {
    "footprint_hint": [
     "Connector_Molex:Molex_Micro-Fit_3.0_43045-0800_2x04_P3.00mm_Horizontal",
@@ -847,6 +862,22 @@
   },
   "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
   "ref": "R_SRB2"
+ },
+ {
+  "id": "S3-C1g",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "K",
+    "3V3"
+   ],
+   "2": [
+    "A",
+    "REARM_SET_RB"
+   ]
+  },
+  "reason": "C1/m3/m11: on-board edge-triggered, two-contact set stage; C_SET emptied whenever the chain is open",
+  "ref": "D_SRB"
  },
  {
   "id": "S3-C1g",
@@ -2252,6 +2283,270 @@
   },
   "reason": "m-C: 15 V ESD on the aux contact lines",
   "ref": "D_AUX"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "CHAIN_END"
+   ],
+   "2": [
+    "2",
+    "SVC_CHAIN_END"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "R_SV2"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "K1_RUN"
+   ],
+   "2": [
+    "2",
+    "SVC_K1_RUN"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "R_SV3"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "RUN_HD"
+   ],
+   "2": [
+    "2",
+    "SVC_RUN_HD"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "R_SV4"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "RUN_12V"
+   ],
+   "2": [
+    "2",
+    "SVC_RUN_12V"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "R_SV5"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "RELAY_RTN"
+   ],
+   "2": [
+    "2",
+    "SVC_RELAY_RTN"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "R_SV6"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "HOLD_A"
+   ],
+   "2": [
+    "2",
+    "SVC_HOLD_A"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "R_SV7"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "LS_A"
+   ],
+   "2": [
+    "2",
+    "SVC_LS_A"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "R_SV8"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "CH_N6A"
+   ],
+   "2": [
+    "2",
+    "SVC_CH_N6A"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "R_SV9"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SET_CAP"
+   ],
+   "2": [
+    "2",
+    "SVC_SET_CAP"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "R_SV10"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SVC_CHAIN_END"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "TP64"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SVC_K1_RUN"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "TP65"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SVC_RUN_HD"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "TP66"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SVC_RUN_12V"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "TP67"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SVC_RELAY_RTN"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "TP68"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SVC_HOLD_A"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "TP69"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SVC_LS_A"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "TP70"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SVC_CH_N6A"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "TP71"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "SVC_SET_CAP"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "TP72"
+ },
+ {
+  "id": "S5-S1",
+  "kind": "ADD",
+  "pins": {
+   "1": [
+    "1",
+    "GND"
+   ]
+  },
+  "reason": "S1: top-side service pads for the latent-fault tests",
+  "ref": "TP63"
  },
  {
   "id": "S4-mC",

@@ -334,6 +334,22 @@ def route_all(parts, log=print, only=None):
         import cadquery as cq
         joints = [cq.Solid.makeSphere(c["od"] / 2, cq.Vector(*q)) for q in pts[1:-1]]
         tubes.append((cid, Part("ROUTE", f"route_{cid}", compound(segs + joints), "purchased", "-", "route"), own))
+    # docked J1 / J2 pigtail corridors (fit review M6): fixed polylines from params, docked and at the start of the docking slide
+    import cadquery as cq
+    PC = P.PIGTAIL_CORRIDOR
+    for jn in ("J1", "J2"):
+        for state, dx in (("docked", 0.0), ("docking start (head 66 mm forward, plug not mated)", PC["docking_slide"])):
+            pts = [tuple(p_) for p_ in PC[jn]]
+            if dx:
+                pts = [(x + dx, y, z) for x, y, z in pts[:3]]
+            d = PC["od"][jn] + PC["margin"]
+            segs = [cyl(d / 2, math.dist(a, b), a, tuple(np.subtract(b, a))) for a, b in zip(pts, pts[1:])]
+            joints = [cq.Solid.makeSphere(d / 2, cq.Vector(*q)) for q in pts[1:-1]]
+            cid = f"PIGTAIL-{jn} {state}"
+            own = [f"{jn}_receptacle", f"{jn}_mated_plug", "head_*"]
+            res[cid] = {"from": f"head rear wall {jn} exit", "to": f"{jn} plug on the receptacle", "od_mm": PC["od"][jn], "min_bend_r_mm": PC["bend_r"][jn], "polyline": [list(q) for q in pts],
+                        "route_mm": round(sum(math.dist(a, b) for a, b in zip(pts, pts[1:])), 1), "tof_limit_ok": None, "bends": [], "own_parts": own, "corridor": True}
+            tubes.append((cid, Part("ROUTE", f"route_{cid}", compound(segs + joints), "purchased", "-", "route"), own))
     # exact check of every tube against every part (except its own end parts)
     if tubes:
         rows = overlaps([t[1] for t in tubes] + hard, CACHE.parent / "_interference", log=lambda *a: None)
@@ -365,7 +381,7 @@ def route_all(parts, log=print, only=None):
                 v = cq.Vertex.makeVertex(*q)
                 best = min(((p.shape.distance(v), p.name) for p in struct if all(p.bb[i] - 15 <= q[i] <= p.bb[i + 3] + 15 for i in range(3))), default=(999.0, "-"))
                 clips.append({"at": [round(c_, 1) for c_ in q], "to_part": best[1], "gap_mm": round(best[0], 1), "ok": best[0] <= 12.0})
-        r["clips"] = clips[:-1]
+        r["clips"] = clips[:-1] if not r.get("corridor") else []
         r["ok"] = not r.get("collisions") and (r["tof_limit_ok"] is not False)
         r["status"] = "routed" if r["ok"] else "FAIL"
     log(f"  routes: {sum(1 for r in res.values() if r.get('ok'))}/{sum(1 for r in res.values() if 'ok' in r)} cables routed collision-free, {time.time() - t0:.0f} s")

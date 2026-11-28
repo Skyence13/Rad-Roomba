@@ -291,18 +291,24 @@ class Decider:
     Keys are the EXACT inputs (no quantisation; review C3): a cache hit returns exactly what a miss computes, so results
     do not depend on the order of evaluation."""
 
-    def __init__(self, n_post=12, max_entries=20000, **_legacy):
+    def __init__(self, n_post=12, max_entries=20000, quantise=False, **_legacy):
+        """quantise=True is for PROVISIONAL (live) results only: U0 on a 0.25 % log grid, the window count to 1, live times
+        per gate to 1 ms; the value is computed from the quantised inputs (deterministic).  Recorded results: False."""
         self.n_post, self.max_entries = n_post, max_entries
-        self.quantise = False
+        self.quantise = bool(quantise)
         self._thr, self._lim, self._fam = {}, {}, {}
         self.stats = {"threshold_calls": 0, "threshold_computed": 0, "limit_calls": 0, "limit_computed": 0,
                       "seconds_threshold": 0.0, "seconds_limit": 0.0}
 
-    @staticmethod
-    def _lane_key(g: "LaneGates"):
-        gates = tuple(sorted(zip((float(x) for x in g.w), (float(x) for x in g.tf), (float(x) for x in g.tu))))
-        post = None if g.N_post is None else (float(g.N_post), float(g.T_post))
-        return (g.cal, float(g.U0), post, gates)
+    def _lane_key(self, g: "LaneGates"):
+        if not self.quantise:
+            gates = tuple(sorted(zip((float(x) for x in g.w), (float(x) for x in g.tf), (float(x) for x in g.tu))))
+            post = None if g.N_post is None else (float(g.N_post), float(g.T_post))
+            return (g.cal, float(g.U0), post, gates)
+        U0 = math.exp(round(math.log(g.U0) / 0.0025) * 0.0025) if g.U0 > 0 else float(g.U0)
+        gates = tuple(sorted(zip((round(float(x), 9) for x in g.w), (round(float(x), 3) for x in g.tf), (round(float(x), 3) for x in g.tu))))
+        post = None if g.N_post is None else (float(max(1, round(g.N_post))), float(max(1, round(g.N_post))) / U0)
+        return (g.cal, U0, post, gates)
 
     def _family(self, keys):
         """(c, PredictiveStat or LinStat-evaluator, method) for the lanes given by their keys."""
