@@ -217,7 +217,7 @@ class RobotNode(Node):
         with self.rt.lock:
             snap = self.app.snapshot()
             proc = self.app.pipeline.proc
-            summ = proc.coverage_summary() if not proc.dirty else None
+            summ = proc.coverage_summary()          # no evaluation inside (provisional values of the last journaled evaluate)
             flags = [dict(f) for f in proc.flags]
         m = snap["mission"]
         ms = MissionState(state=str(m["state"]), hold_reason=str(m.get("hold_reason") or ""), phase=str(m.get("phase") or ""),

@@ -84,7 +84,10 @@ function render() {
   $("scaler").innerHTML = (s.observations || []).slice(-6).map((o) => `${o.id} lane ${o.lane}: ${o.outcome}` + (o.result ? ` D=${o.result.D.toFixed(3)}±${o.result.u_total.toFixed(3)} D*=${o.result.D_star.toFixed(3)} D#=${fmt(o.result.D_hash, 3)} T=${o.result.T_F.toFixed(1)} s (${o.result.method})` : "")).join("<br>") || "none";
   $("qpolicy").textContent = s.review.policy === "ALL_UNRESOLVED" ? "— policy ALL_UNRESOLVED: every cell not cleared at the investigation level"
     : `— policy ALARM_ONLY: scan alarms at α = ${s.review.alpha_queue} only (insufficient-sensitivity floor is on the map, not here)`;
-  $("queue").innerHTML = (s.review.items || []).map((i) => `<div class="item ${s.review.current === i.id ? "cur" : ""}"><b>${i.id}</b> ${i.kind} — <b>${i.status}</b>` +
+  const rec = s.recorded_evaluation;
+  const recTxt = rec ? (rec.state === "running" ? `<div class="small"><b>Recorded evaluation in progress: ${rec.done} / ${rec.total} cells</b> — the queue still shows provisional alarms</div>`
+                                                : `<div class="small">Recorded evaluation: ${rec.total} cells in ${fmt(rec.seconds, 1)} s</div>`) : "";
+  $("queue").innerHTML = recTxt + (s.review.items || []).map((i) => `<div class="item ${s.review.current === i.id ? "cur" : ""}"><b>${i.id}</b> ${i.kind} — <b>${i.status}</b>` +
     `${i.recount_required ? ' <b style="color:#b00020">one-sided reference: RECOUNT REQUIRED before reporting an investigation</b>' : ""}<br>` +
     `${i.location.text}; lane ${i.source_lane}; D=${fmt(i.D, 3)} ± ${fmt(i.u_total, 3)} Bq/cm² (D* ${fmt(i.D_star, 3)}, D# ${fmt(i.D_hash, 3)}); position ±${(i.position_uncertainty_m * 1000).toFixed(0)} mm<br>` +
     `<span class="small">${(i.notes || []).join(" · ")}</span></div>`).join("") || "<i>no flagged areas</i>";

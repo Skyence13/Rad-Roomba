@@ -68,7 +68,10 @@ Written to disk so far (both builds share it through the rrx code):
   sweeps PASS, receptacle depth PASS, interference 1 clash (LiDAR gland boss vs hump: gland moved to y 80); the remaining FAILs were
   interactions of old checks with the new solids (cover screws in the cover-lift sweep, board screws in the CCR-E08 boxes, plugs in
   the harness corridors / containment, perimeter screw washers 0.23 mm over the width rule) and 8 routes; all addressed in run 2.
-- RUNNING: prototype build run 2; then production build (cold skins about 60 min) and the common build.
+- Prototype run 2: interference 0 clashes, fastener access PASS, sweeps PASS, SVC pads PASS (11 pads, nothing over them), receptacle
+  depth PASS; open: J1/J2 grasp annuli reached the other receptacle (receptacles re-spaced: skin +-17 deg, z 94, axis 25 deg up /
+  16 deg out), 5 routes (stub geometry fixed), CM5 tray 0.4 mm outside the cavity (trimmed), bottom-zone rule (flush tray screws now info).
+- RUNNING: prototype build run 3; then production build and the common build.
 
 ## Run times (shared 4-core machine)
 

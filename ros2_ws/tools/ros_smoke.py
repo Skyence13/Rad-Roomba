@@ -91,8 +91,8 @@ try:
     with urllib.request.urlopen(req, timeout=5) as resp:
         cookie = resp.headers["Set-Cookie"].split(";")[0]
     st = json.load(urllib.request.urlopen(urllib.request.Request("http://127.0.0.1:8097/api/state", headers={"Cookie": cookie}), timeout=5))
-    check("web interface serves the live state", st["mission"]["state"] == "SCAN" and st["banner"], mission=st["mission"]["state"], hold=st["mission"].get("hold_reason"), loc=st["localization"],
-          events=[(e.get("ev"), e.get("reason")) for e in st["events"][-8:]], head=st["head"], chassis=st["chassis"])
+    check("web interface serves the live state", st["mission"]["state"] == "SCAN" and st["banner"], mission=st["mission"]["state"], hold=st["mission"].get("hold_reason"),
+          events=[(e.get("ev"), e.get("reason"), e.get("step_ms"), e.get("lock_wait_ms")) for e in st["events"][-12:]])
     call(cmd, "pause"); spin(2.0)
     fut = exp.call_async(ExportSurvey.Request(directory=""))
     rclpy.spin_until_future_complete(n, fut, timeout_sec=60)
@@ -103,6 +103,59 @@ finally:
         launch.wait(10)
     except subprocess.TimeoutExpired:
         launch.kill()
+
+# ---- IB-49: the stand-alone head-driver and chassis-bridge nodes against the Python fakes of sim_node (no robot_node)
+if not NATIVE:
+    from nav_msgs.msg import Odometry
+    from rr_interfaces.msg import AttachmentManifest, ChassisState
+    from rr_sim.harness import demo_registry
+    for name in ("robot_node", "sim_node"):                    # the launch's children must be gone (ports 5540 / 5550)
+        subprocess.run(["pkill", "-f", name], check=False)
+    time.sleep(2.0)
+    reg = Path("/tmp/rrhome/smoke_registry.json")
+    reg.write_text(json.dumps(demo_registry()))
+    time.sleep(2.0)
+    procs = [subprocess.Popen(["ros2", "run", "rr_sim", "sim_node"], stdout=open(out / "standalone_sim.log", "w"), stderr=subprocess.STDOUT)]
+    time.sleep(3.0)
+    procs += [subprocess.Popen(["ros2", "run", "rr_head_driver", "head_driver_node", "--ros-args", "-p", f"registry:={reg}",
+                                "-p", "mode:=COMMISSIONING", "-p", f"run_dir:=/tmp/rrhome/head_bench_{int(time.time())}"],
+                               stdout=open(out / "standalone_head_driver.log", "w"), stderr=subprocess.STDOUT),
+              subprocess.Popen(["ros2", "run", "rr_chassis_bridge", "chassis_bridge_node"],
+                               stdout=open(out / "standalone_chassis_bridge.log", "w"), stderr=subprocess.STDOUT)]
+    from rr_interfaces.msg import SessionEvent
+    sa = {"gates": 0, "att": None, "odom": 0, "chassis": 0, "stamp_ok": None, "stamp": None, "events": []}
+
+    def on_gate(m):
+        sa["gates"] += 1
+        if m.host_t0_us >= 0:
+            st_us = m.header.stamp.sec * 1_000_000 + m.header.stamp.nanosec // 1000
+            ok = abs(st_us - m.host_t0_us) <= 1
+            sa["stamp_ok"] = ok if sa["stamp_ok"] is None else (sa["stamp_ok"] and ok)
+            sa["stamp"] = (st_us, m.host_t0_us)
+    n.create_subscription(SessionEvent, "head/events", lambda m: sa["events"].append((m.kind, m.reason)), 20)
+    n.create_subscription(GateCounts, "head/gates", on_gate, 50)
+    n.create_subscription(AttachmentManifest, "head/attachment", lambda m: sa.update(att=m), 5)
+    n.create_subscription(Odometry, "odom", lambda m: sa.update(odom=sa["odom"] + 1), 20)
+    n.create_subscription(ChassisState, "chassis/state", lambda m: sa.update(chassis=sa["chassis"] + 1), 5)
+    ccmd = n.create_client(MissionCommand, "chassis/command")
+    try:
+        if ccmd.wait_for_service(timeout_sec=20):
+            call(ccmd, "activate", {"on": True})         # the bridge drives (zeros) and reads odometry only when active
+            call(ccmd, "head_power", {"electronics": True, "heater_enable": False})   # the fake head is powered by the chassis
+        spin(40, lambda: sa["gates"] > 20 and sa["odom"] > 20 and sa["chassis"] > 2)
+        check("stand-alone head_driver_node: binds (strict calibration binding) and publishes gates stamped with the gate start",
+              sa["gates"] > 20 and sa["att"] is not None and sa["stamp_ok"] is True, gates=sa["gates"],
+              attachment=None if sa["att"] is None else sa["att"].head_id, stamp_ok=sa["stamp_ok"], stamp=sa["stamp"], events=sa["events"][-6:])
+        check("stand-alone chassis_bridge_node: publishes odom and chassis state", sa["odom"] > 20 and sa["chassis"] > 2,
+              odom=sa["odom"], chassis=sa["chassis"])
+    finally:
+        for p_ in procs:
+            p_.terminate()
+        for p_ in procs:
+            try:
+                p_.wait(10)
+            except subprocess.TimeoutExpired:
+                p_.kill()
     ev = {"scenario": "ros_smoke", "evidence_class": "simulated", "against": "native emulators" if NATIVE else "Python protocol fakes over TCP 5540/5550",
           "real_time": True, "deterministic": False, "checks": checks, "holds": holds, "passed": bool(checks) and all(c["ok"] for c in checks)}
     (out / "evidence.json").write_text(json.dumps(ev, indent=1) + "\n")

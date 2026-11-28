@@ -12,6 +12,31 @@ one pooled sub-window N_scan with lane ratios + reuse + pre-roll, exact multi-la
 `analysis/radiometry/results/rev5_predictive_vectors.json` in a test); (2) calibration/profile refresh script + staleness test +
 schema validation, speed_m_s as a maximum; (3) recorded evaluation on a worker thread with progress; (4) `tools/test.sh ros` +
 stand-alone nodes; (5) independent rrrad cross-check of exported cells; (6) full verification.  Log:
+- [x] (1) rev 6: `linstat.PredictiveStat` exact over the product of the lanes' posterior nodes (common term conditioned on
+  e ~ N(0,1), Gauss-Hermite 24 nodes; equals the 12^m node-tuple sum); analyst vectors m = 1, 2, 4 pass to 1e-6 (t*) / 1e-5
+  (D#) in `test_rev6.py`; one-sided U_null = max(U_B, 1.5 U_B - 0.5 U_A) with N_eff, gradient guard removed, decisions
+  marked one-sided, flagged one-sided cells `recount_required` (flags.json, cells.csv, review queue, UI); m = 1 is one test at
+  alpha (scan cells and recounts; N_min by that alpha); search stage = one pooled past sub-window N_scan (25/50/105) with the
+  calibration record's lane ratios, reuse < 10 min and within 2 m, pre-roll phase SEARCH_REFERENCE waits for N_scan.
+- [x] (2) `tools/refresh_demo_data.py [--check]` copies demo calibration, ore profile and the record schema from
+  analysis/radiometry; `test_demo_data.py` fails when stale; records validated against the schema on load
+  (`profiles.validate_calibration_record`); fakes now bind STRICT (the 0.2-demo record names the fake head), native keeps
+  DEMONSTRATION (rr_head_sim reports another identity); speed_m_s is a strict maximum (tolerance removed).
+- [x] (3) recorded evaluation off the app thread: `SurveyProcessor.start_finalize_async` (frozen copy at the journaled
+  `finalize` op, worker thread, progress in the snapshot / UI queue header), cells recorded once (again only if they gain
+  members); `test_rev6::test_async_*` equals the synchronous result (284 cells, 15.5 s, 55 ms per cell on this host).
+  Provisional (live) values now use U_null at its point value (one node, quantised cache) and display paths
+  (classify_subcells / coverage_summary) no longer evaluate: the ROS node had 0.2-0.9 s app-loop stalls under its lock and a
+  CMD_TIMEOUT hold in the smoke test before this change.
+- [x] (4) `tools/build.sh` + `tools/test.sh ros`: main graph checks pass after the stall fix; the smoke test now also runs
+  the stand-alone `head_driver_node` (strict binding, gates stamped with the gate start) and `chassis_bridge_node`
+  (activated, odom + chassis/state) against sim_node's fakes (IB-49); `Runtime` logs `slow_step` events (> 150 ms).
+- [x] (5) `tools/crosscheck_rrrad.py`: raw frames parsed from the journal by its own parser, statistic rebuilt from
+  `cell_members.csv`, rrrad `tail_gp` over the product of posterior nodes; reference sub-window counts re-summed from the raw
+  frames; run in s08 (4 cells, m <= 2): agree to 2e-7 (D*, D#), 1e-15 (D); U_null itself (window choice) is taken from the
+  export and checked only by the re-summed counts.  `recompute.py` honours the evaluation point (`recorded_reference_upto`).
+- [x] s11: search pre-roll measured 1.24 s at the first pass start (head armed during bring-up; rev 5 needed 2 x 200 + 20
+  pooled counts = ~26 s after arming, rev 6 N_scan 105 = ~6.6 s after arming at 4 1/s per lane, calculated).
 
 ## Session 2026-11-28 (data-path review IB-72, MODEL.md rev 5, head 0.6.0, chassis stage 4/5) - DONE, final runs below
 

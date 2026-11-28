@@ -2,7 +2,7 @@
 
 ROS 2 Jazzy workspace for the Rad Roomba floor-survey robot: head link, chassis link, wall-referenced
 localisation, coverage planning and mission supervision for three survey methods, count-to-floor
-mapping per `analysis/radiometry/MODEL.md` **revision 5**, hotspot flags, guided revisit (Next / Expose spot /
+mapping per `analysis/radiometry/MODEL.md` **revision 6**, hotspot flags, guided revisit (Next / Expose spot /
 Park) and a browser operator interface. The real logic lives in ROS-free Python libraries; the ROS
 nodes are thin adapters.
 
@@ -307,7 +307,7 @@ Carried from `STATUS.md` (read that file for the current, complete list):
   (as-built tail incl. rear bumper 0.2892 m, tool-checked on nominal CAD, rounded up; contract draft7); the rectangle
   outline used for route holds and the wall-track checks reaches 0.309 m. Not measured on a built robot.
 - Continuous scan at 0.10 m/s does not meet the 0.20 Bq/cm² goal with the demo calibration.
-- Cell statistics (**MODEL.md revision 5**, 2026-11-28; data-path review IB-72): S = sum a_j N_j + Z with the footprint
+- Cell statistics (**MODEL.md revision 6** amends rev 5, 2026-11-28: one-sided local-linear reference instead of the 2 % guard; m = 1 one test at alpha; search stage one pooled sub-window N_scan with the record's lane ratios; multi-lane predictive null exact over the node product; `tools/refresh_demo_data.py` refreshes the demo calibration/profile/schema; recorded evaluation on a worker thread on real-time hosts; independent rrrad cross-check `tools/crosscheck_rrrad.py`). Revision 5 text: S = sum a_j N_j + Z with the footprint
   weights (0.05 lattice) as exact coefficients; rule `linear-exact/combined+per-lane/0.8-0.2`; **predictive threshold**
   (12 posterior nodes of Gamma(N + 1/2, 1/T) of each lane's U_null sub-window, characteristic functions averaged; lanes
   independent; `rr_core/linstat.PredictiveStat`), agreement with `analysis/radiometry/rrrad` ~1e-11 (m = 1, beta and alpha

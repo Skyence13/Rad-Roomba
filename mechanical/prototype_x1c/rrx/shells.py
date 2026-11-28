@@ -603,12 +603,12 @@ def upper_shell_one_piece():
         return n.cut(tongue_keepout()).clean()
 
     def b():
-        p = cached(["upper_one_base", 6, R, SAD, B, HUMP_X, LEDGE_Z, PERIM_DEG, COVER_SCREWS, P.J_RECEPTACLES, LATCH_ARM_Z, LATCH_ARM_X1, LATCH_SCREW_X], base)
+        p = cached(["upper_one_base", 7, R, SAD, B, HUMP_X, LEDGE_Z, PERIM_DEG, COVER_SCREWS, P.J_RECEPTACLES, LATCH_ARM_Z, LATCH_ARM_X1, LATCH_SCREW_X], base)
         for s in (1, -1):
             p, feats = _deck_feats(p, s)
             p = _features(p, feats)
         return p.cut(tongue_keepout()).clean()
-    return cached(["upper_one", 7, S.SEAT, R, P.TOF_SENSORS, P.PANEL_CONTROLS, P.CHARGE_INLET, D.BUMPER_DIR, ("inlet_seat", S.INLET_COVER_T, 2)], b)
+    return cached(["upper_one", 8, S.SEAT, R, P.TOF_SENSORS, P.PANEL_CONTROLS, P.CHARGE_INLET, D.BUMPER_DIR, ("inlet_seat", S.INLET_COVER_T, 2)], b)
 
 
 def build(add):

@@ -67,12 +67,12 @@ def test_exact_threshold_controls_false_alarm(alpha):
 
 def test_exact_decision_approaches_the_closed_form_at_large_counts():
     """Revision 4: the exact threshold and detection limit agree with the section 3 closed forms (planning
-    approximations) to a few percent when counts are large; the test of a single lane (m = 1) runs at 0.8 alpha."""
+    approximations) to a few percent when counts are large; revision 6: a single lane (m = 1) is ONE test at alpha."""
     cal = Cal(k=1.0, b=0.5, K=24.0, u_rel_K=0.15)
     d = est.combine([LaneStat(0, 2020, 20.0, 2000, 20.0, 100.0, "t", cal)], 0.05, 0.05)
     assert d.m == 1 and d.method.startswith("linear-exact/") and d.rule == est.RULE and d.check_ok
-    assert d.alpha_comb == pytest.approx(0.04)
-    kap = est.kappa(0.04)
+    assert d.alpha_comb == pytest.approx(0.05) and d.alpha_lane == pytest.approx(0.05)
+    kap = est.kappa(0.05)
     v0 = (100.5) / 20 + 100 / 20
     assert d.D_star == pytest.approx(kap * math.sqrt(v0) / 24, rel=0.03)
     kb = est.kappa(0.05)

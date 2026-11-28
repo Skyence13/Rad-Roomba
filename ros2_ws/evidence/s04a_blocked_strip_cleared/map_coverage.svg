@@ -179,6 +179,11 @@
 <rect x="20.0" y="76.0" width="1200.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="20.0" y="68.0" width="1200.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="20.0" y="60.0" width="1200.0" height="8.0" fill="url(#p-UNVISITED)"/>
+<rect x="220.0" y="612.0" width="40.0" height="8.0" fill="url(#p-ACCEPTABLE)"/>
+<rect x="220.0" y="604.0" width="40.0" height="8.0" fill="url(#p-ACCEPTABLE)"/>
+<rect x="220.0" y="596.0" width="40.0" height="8.0" fill="url(#p-ACCEPTABLE)"/>
+<rect x="220.0" y="588.0" width="40.0" height="8.0" fill="url(#p-ACCEPTABLE)"/>
+<rect x="220.0" y="580.0" width="40.0" height="8.0" fill="url(#p-ACCEPTABLE)"/>
 <rect x="260.0" y="292.0" width="160.0" height="8.0" fill="url(#p-ACCEPTABLE)"/>
 <rect x="260.0" y="284.0" width="160.0" height="8.0" fill="url(#p-ACCEPTABLE)"/>
 <rect x="260.0" y="276.0" width="160.0" height="8.0" fill="url(#p-ACCEPTABLE)"/>
@@ -191,14 +196,19 @@
 <rect x="220.0" y="628.0" width="960.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="100.0" y="620.0" width="40.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="220.0" y="620.0" width="960.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="76.0" y="612.0" width="976.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="76.0" y="612.0" width="144.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="260.0" y="612.0" width="792.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="1124.0" y="612.0" width="56.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="76.0" y="604.0" width="976.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="76.0" y="604.0" width="144.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="260.0" y="604.0" width="792.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="1124.0" y="604.0" width="56.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="76.0" y="596.0" width="1104.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="76.0" y="596.0" width="144.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="260.0" y="596.0" width="920.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="76.0" y="588.0" width="72.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="212.0" y="588.0" width="968.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="76.0" y="580.0" width="1104.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="212.0" y="588.0" width="8.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="260.0" y="588.0" width="920.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="76.0" y="580.0" width="144.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="260.0" y="580.0" width="920.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="76.0" y="572.0" width="144.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="260.0" y="572.0" width="120.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="420.0" y="572.0" width="632.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
@@ -538,40 +548,42 @@
 <text x="20.0" y="714.0">DOOR (x = 0)</text>
 <text x="1130.0" y="714.0">BULKHEAD (x = 3 m)</text>
 <line x1="60.0" y1="726.0" x2="260.0" y2="726.0" stroke="#000" stroke-width="2"/><text x="60.0" y="740.0">0.5 m | +y = left wall (top)</text>
-<polygon points="480.4,644.5 520.4,644.5 520.4,612.5 480.4,612.5" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
-<text x="506.4" y="622.5" font-weight="bold">HS-0001</text>
-<polygon points="347.7,520.6 387.7,520.6 387.7,488.6 347.7,488.6" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
-<text x="373.7" y="498.6" font-weight="bold">HS-0002</text>
-<polygon points="876.1,644.5 916.1,644.5 916.1,612.5 876.1,612.5" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
-<text x="902.1" y="622.5" font-weight="bold">HS-0003</text>
-<polygon points="698.3,609.5 738.3,609.5 738.3,577.5 698.3,577.5" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
-<text x="724.3" y="587.5" font-weight="bold">HS-0004</text>
-<polygon points="904.4,489.1 864.4,489.0 864.4,521.0 904.4,521.1" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
-<text x="890.4" y="499.1" font-weight="bold">HS-0005</text>
-<polygon points="778.7,490.0 738.7,490.0 738.7,522.0 778.7,522.0" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
-<text x="764.7" y="500.0" font-weight="bold">HS-0006</text>
-<polygon points="650.6,520.4 690.6,520.4 690.6,488.4 650.6,488.4" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
-<text x="676.6" y="498.4" font-weight="bold">HS-0007</text>
 <polygon points="257.2,550.7 217.2,550.7 217.2,582.7 257.2,582.7" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
-<text x="243.2" y="560.7" font-weight="bold">HS-0008</text>
-<polygon points="117.1,595.0 77.1,595.0 77.1,627.0 117.1,627.0" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
-<text x="103.1" y="605.0" font-weight="bold">HS-0009</text>
+<text x="243.2" y="560.7" font-weight="bold">HS-0001</text>
+<polygon points="480.2,644.5 520.2,644.5 520.2,612.5 480.2,612.5" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
+<text x="506.2" y="622.5" font-weight="bold">HS-0002</text>
+<polygon points="347.7,520.6 387.7,520.6 387.7,488.6 347.7,488.6" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
+<text x="373.7" y="498.6" font-weight="bold">HS-0003</text>
+<polygon points="876.0,644.5 916.0,644.5 916.0,612.5 876.0,612.5" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
+<text x="902.1" y="622.5" font-weight="bold">HS-0004</text>
+<polygon points="698.2,609.5 738.2,609.5 738.2,577.5 698.2,577.5" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
+<text x="724.1" y="587.5" font-weight="bold">HS-0005</text>
+<polygon points="904.4,489.1 864.4,489.0 864.4,521.0 904.4,521.1" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
+<text x="890.4" y="499.1" font-weight="bold">HS-0006</text>
+<polygon points="1006.9,574.5 1046.9,574.5 1046.9,542.5 1006.9,542.5" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
+<text x="1032.9" y="552.5" font-weight="bold">HS-0007</text>
+<polygon points="650.6,520.4 690.6,520.4 690.6,488.4 650.6,488.4" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
+<text x="676.6" y="498.4" font-weight="bold">HS-0008</text>
+<polygon points="778.8,490.0 738.8,490.0 738.8,522.0 778.8,522.0" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
+<text x="764.8" y="500.0" font-weight="bold">HS-0009</text>
+<polygon points="608.0,488.8 568.0,488.8 568.0,520.8 608.0,520.8" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
+<text x="593.9" y="498.8" font-weight="bold">HS-0010</text>
 <polygon points="346.4,520.4 386.4,520.5 386.4,488.5 346.4,488.4" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
-<text x="372.4" y="498.5" font-weight="bold">HS-0010</text>
+<text x="372.4" y="498.5" font-weight="bold">HS-0011</text>
+<polygon points="117.1,595.0 77.1,595.0 77.1,627.0 117.1,627.0" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
+<text x="103.1" y="605.0" font-weight="bold">HS-0012</text>
 <polygon points="1132.6,390.3 1172.6,390.3 1172.6,358.3 1132.6,358.3" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
-<text x="1158.6" y="368.3" font-weight="bold">HS-0012</text>
+<text x="1158.6" y="368.3" font-weight="bold">HS-0013</text>
 <polygon points="1145.7,484.6 1185.7,484.6 1185.7,452.6 1145.7,452.6" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
-<text x="1171.7" y="462.7" font-weight="bold">HS-0013</text>
-<polygon points="927.5,395.8 967.5,395.8 967.5,363.8 927.5,363.8" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
-<text x="953.5" y="373.8" font-weight="bold">HS-0014</text>
+<text x="1171.7" y="462.7" font-weight="bold">HS-0014</text>
+<polygon points="1013.2,322.0 973.2,322.0 973.2,354.0 1013.2,354.0" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
+<text x="999.2" y="332.0" font-weight="bold">HS-0015</text>
 <polygon points="134.6,416.2 94.6,416.2 94.6,448.2 134.6,448.2" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
-<text x="120.6" y="426.2" font-weight="bold">HS-0015</text>
-<polygon points="766.5,327.2 806.5,327.2 806.5,295.2 766.5,295.2" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
-<text x="792.5" y="305.2" font-weight="bold">HS-0016</text>
+<text x="120.6" y="426.2" font-weight="bold">HS-0016</text>
+<polygon points="766.7,327.2 806.7,327.2 806.6,295.2 766.6,295.2" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
+<text x="792.7" y="305.2" font-weight="bold">HS-0017</text>
 <polygon points="820.6,395.8 860.6,395.8 860.6,363.8 820.6,363.8" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
-<text x="846.6" y="373.8" font-weight="bold">HS-0017</text>
-<polygon points="991.0,316.1 1031.0,316.1 1031.0,284.1 991.0,284.1" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
-<text x="1016.9" y="294.1" font-weight="bold">HS-0018</text>
+<text x="846.6" y="373.8" font-weight="bold">HS-0018</text>
 <polygon points="1123.0,232.0 1163.0,232.0 1163.0,200.0 1123.0,200.0" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
 <text x="1149.0" y="210.0" font-weight="bold">HS-0019</text>
 <polygon points="382.4,165.0 422.4,165.0 422.4,133.0 382.4,133.0" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>

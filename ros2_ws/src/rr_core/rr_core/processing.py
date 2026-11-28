@@ -649,12 +649,18 @@ class SurveyProcessor:
                                        keys=[(self.sessions[a]["attachment_session_id"], q, ln, wq) for q, wq in rows]))
         return units
 
-    def _decide(self, cell, channel, alpha, decider):
+    def _decide(self, cell, channel, alpha, decider, provisional=False):
         members = self.members.get(cell, [])
         m_cand = max(1, len({(a, ln) for a, _q, ln, _w in members}))
         # MODEL.md rev 6: N_min by the smallest alpha of the tests sharing the reference (m = 1: one test at alpha)
         alpha_min = alpha if m_cand == 1 else (1.0 - est.ALPHA_SPLIT_COMBINED) * alpha / m_cand
         units = self._units(cell, channel, alpha_min)
+        if provisional:
+            # live (provisional) values: U_null at its point value (one node) - cheap enough for the real-time loop; the
+            # recorded result always uses the predictive posterior (MODEL.md rev 6 section 3: provisional values drive the
+            # live display and the search stage only)
+            for g in units:
+                g.N_post = g.T_post = None
         if not units and members:
             return est.Decision(alpha=alpha, beta=self.params["beta"], status="NO_CALIBRATION", status_text=NO_CALIBRATION)
         d = est.combine(units, alpha, self.params["beta"], decider=decider)
@@ -694,7 +700,7 @@ class SurveyProcessor:
             for ch in channels:
                 if cell not in self.members:
                     continue
-                d = self._decide(cell, ch, self.params["alpha_scan"], self.decider)
+                d = self._decide(cell, ch, self.params["alpha_scan"], self.decider, provisional=True)
                 d.provisional = True
                 self.provisional[ch][cell] = d
                 self.decisions[ch][cell] = d
@@ -711,24 +717,110 @@ class SurveyProcessor:
         return changed
 
     def finalize(self):
-        """RECORDED evaluation (MODEL.md rev 5 section 3): once per cell from the complete record, independent of the
-        order of arrival and of the live schedule (members sorted, a fresh evaluator, exact inputs).  Idempotent while
-        no new data arrive; flags reconciled with the provisional alarms."""
+        """RECORDED evaluation (MODEL.md rev 5/6 section 3): once per cell from the record complete at that point,
+        independent of the order of arrival and of the live schedule (members sorted, a fresh exact evaluator).  A cell
+        is evaluated again only if it gained members since; flags are reconciled with the provisional alarms.  A pending
+        asynchronous evaluation (start_finalize_async) is joined and installed first."""
+        self.join_finalize_async()
         if self._recorded_version == self._version:
             return
         self.evaluate()
-        decider = est.Decider()
+        cells = self._cells_to_record()
+        self.install_recorded(self._record_cells(cells, est.Decider()), self._version)
+
+    def _cells_to_record(self):
+        rm = self.__dict__.setdefault("_rec_members", {})
         ch0 = self._decision_channel()
-        self.recorded = {ch: {} for ch in CHANNELS}
-        for cell in sorted(self.members):
-            for ch in (ch0,):          # the profile's decision class; the other class is not a decision of this survey
-                d = self._decide(cell, ch, self.params["alpha_scan"], decider)
-                d.provisional = False
-                self.recorded[ch][cell] = d
-        self.decisions = {ch: dict(self.recorded[ch]) for ch in CHANNELS}
-        self.recorded_decider = decider
+        return [c for c in sorted(self.members) if c not in self.recorded[ch0] or rm.get(c) != len(self.members[c])]
+
+    def _record_cells(self, cells, decider, progress=None):
+        """{cell: recorded Decision} for the profile's decision class; D# is solved here too (not lazily later)."""
+        ch0 = self._decision_channel()
+        point = {a: (max(r) if r else -1) for a, r in self._ref.items()}     # the record this evaluation saw (per attachment)
+        out = {}
+        for i, cell in enumerate(cells):
+            d = self._decide(cell, ch0, self.params["alpha_scan"], decider)
+            d.provisional = False
+            d.record_point = dict(point)
+            _ = d.D_hash
+            out[cell] = (d, len(self.members.get(cell, [])))
+            if progress is not None:
+                progress(i + 1)
+        return out
+
+    def install_recorded(self, result, version):
+        ch0 = self._decision_channel()
+        rm = self.__dict__.setdefault("_rec_members", {})
+        for cell, (d, n_mem) in result.items():
+            self.recorded[ch0][cell] = d
+            rm[cell] = n_mem
+            self.decisions[ch0][cell] = d
         self._reconcile_flags(ch0)
-        self._recorded_version = self._version
+        self._recorded_version = version if version == self._version else self._recorded_version
+
+    # ---------------------------------------------------- off the application thread (lead task 3, 2026-11-28)
+    def _frozen(self):
+        """A copy of the inputs of the recorded evaluation at this point (the live processor keeps changing)."""
+        import copy
+        snap = copy.copy(self)
+        snap.members = {k: list(v) for k, v in self.members.items()}
+        snap._gate_counts = dict(self._gate_counts)
+        snap._ref = {a: dict(r) for a, r in self._ref.items()}
+        snap._gate_geo = dict(self._gate_geo)
+        snap._gate_t = dict(self._gate_t)
+        snap.cell_temp = {k: list(v) for k, v in self.cell_temp.items()}
+        snap.gatestat = dict(self.gatestat)
+        snap._series_cache = {}
+        snap.recorded = {ch: dict(v) for ch, v in self.recorded.items()}
+        snap.__dict__["_rec_members"] = dict(self.__dict__.get("_rec_members", {}))
+        return snap
+
+    def start_finalize_async(self):
+        """Run the recorded evaluation on a worker thread from a frozen copy taken NOW (the journaled point); the result
+        is identical to finalize() at this point.  Progress: `finalize_progress()`; installed by `poll_finalize_async()`."""
+        import threading
+        import time as _t
+        self.join_finalize_async()
+        self.finish()
+        self.evaluate()
+        snap = self._frozen()
+        cells = snap._cells_to_record()
+        job = {"total": len(cells), "done": 0, "result": None, "error": None, "version": self._version, "t0": _t.perf_counter(), "t1": None}
+
+        def run():
+            try:
+                job["result"] = snap._record_cells(cells, est.Decider(), progress=lambda k: job.__setitem__("done", k))
+            except Exception as err:          # noqa: BLE001 - reported, finalize() then recomputes synchronously
+                job["error"] = repr(err)
+            job["t1"] = _t.perf_counter()
+        job["thread"] = threading.Thread(target=run, name="recorded-evaluation", daemon=True)
+        self._async_job = job
+        job["thread"].start()
+        return job
+
+    def finalize_progress(self):
+        job = getattr(self, "_async_job", None)
+        if job is None:
+            return None
+        return {"state": "running" if job["thread"].is_alive() else ("failed" if job["error"] else "done"),
+                "done": job["done"], "total": job["total"],
+                "seconds": (job["t1"] or __import__("time").perf_counter()) - job["t0"], "error": job["error"]}
+
+    def poll_finalize_async(self):
+        job = getattr(self, "_async_job", None)
+        if job is None or job["thread"].is_alive():
+            return False
+        self._async_job = None
+        self.last_finalize = {k: job[k] for k in ("total", "error")} | {"seconds": (job["t1"] or 0) - job["t0"]}
+        if job["result"] is not None:
+            self.install_recorded(job["result"], job["version"])
+        return True
+
+    def join_finalize_async(self):
+        job = getattr(self, "_async_job", None)
+        if job is not None:
+            job["thread"].join()
+            self.poll_finalize_async()
 
     def _reconcile_flags(self, ch):
         rec = self.recorded[ch]
@@ -1063,8 +1155,7 @@ class SurveyProcessor:
     # ---------------------------------------------------------------- outputs
     def classify_subcells(self) -> np.ndarray:
         """uint8 raster of REASONS indices for every sub-cell of the target (from the decisions shown now: recorded once
-        finalised, else provisional)."""
-        self.evaluate()
+        finalised, else the last journaled provisional evaluation; no evaluation here - real-time displays call this)."""
         self._paint_gaps()
         s = self.sub_per_cell
         status = np.full((self.ncy, self.ncx), -1, dtype=np.int16)
@@ -1195,6 +1286,7 @@ class SurveyProcessor:
                                             "alarm found at final evaluation" if rec_alarm and not fa else
                                             "recorded alarm (provisional alarm confirmed)" if rec_alarm else "")
                 d0 = self.recorded[ch0].get((cy, cx))
+                row["recorded_reference_upto"] = "|".join(f"a{a}:{q}" for a, q in sorted((getattr(d0, "record_point", None) or {}).items())) if d0 else ""
                 row["one_sided_reference"] = "|".join(getattr(d0, "one_sided_lanes", None) or []) if d0 else ""
                 row["recount_required"] = bool(d0 is not None and d0.detected and getattr(d0, "one_sided_lanes", None))
                 row["flag"] = fstate
@@ -1210,4 +1302,5 @@ def _u0_text(l):
     sub = ",".join(f"{w['side']}[{w['seq_lo']}-{w['seq_hi']}]N={w['n']:.0f}/T={w['t_s']:.3f}s/span={w.get('span_m', 0.0):.3f}m" for w in ws)
     extra = f":ratio={rec['lane_ratio']:.5f}(n={rec['ratio_counts'][0]:.0f}/{rec['ratio_counts'][1]:.0f})" if rec.get("lane_ratio") else ""
     return (f"{l['unit']}:{rec['source']}:U0={rec['U0']:.6g}/s:sel={rec['selected']}:{sub}:grad={rec.get('gradient_per_m', 0.0):.4g}/m"
-            f":bias={rec.get('projected_bias', 0.0):.4g}:Nmin={rec['n_min']}:status={rec['status']}{extra}")
+            f":bias={rec.get('projected_bias', 0.0):.4g}:Nmin={rec['n_min']}:status={rec['status']}{extra}"
+            f":Npost={rec['N_post']!r}:Tpost={rec['T_post']!r}:U0x={rec['U0']!r}" + (":one-sided" if rec.get("one_sided") else ""))

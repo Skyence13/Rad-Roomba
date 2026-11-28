@@ -72,8 +72,8 @@
   "target_area_m2": 1.8,
   "areas_m2": {
    "UNVISITED": 0.8103250000000001,
-   "ACCEPTABLE": 0.594175,
-   "INSUFFICIENT_SENSITIVITY": 0.293225,
+   "ACCEPTABLE": 0.7388750000000001,
+   "INSUFFICIENT_SENSITIVITY": 0.14852500000000002,
    "INVALID_DATA": 0.00045000000000000004,
    "BLOCKED": 0.0,
    "EXCLUDED": 0.0,
@@ -83,7 +83,7 @@
    "ACQUISITION_GAP": 0.0
   },
   "valid_exposure_fraction": 0.5489027777777777,
-  "acceptable_fraction": 0.3300972222222222,
+  "acceptable_fraction": 0.4104861111111111,
   "sub_cell_m": 0.005,
   "decision_cell_m": 0.1,
   "position_allowance_m": 0.01,
@@ -135,17 +135,17 @@
    "id": "HS-0001",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 3,
-   "x_m": 0.6193723491002187,
-   "y_m": -0.3213068367443974,
-   "D": 0.16031201044677662,
-   "u_total": 0.09510351692217527,
-   "D_star": 0.14925675141076084,
-   "D_hash": 0.3512986422743606,
+   "x_m": 0.6440835036003606,
+   "y_m": -0.32128855978540644,
+   "D": 0.10340404251174899,
+   "u_total": 0.0697235409437067,
+   "D_star": 0.10279690893099556,
+   "D_hash": 0.24265477730576787,
    "location": {
-    "distance_from_door_m": 0.619,
+    "distance_from_door_m": 0.644,
     "wall": "right wall",
     "distance_from_wall_m": 0.179,
-    "text": "0.62 m from the door threshold, 0.18 m from the right wall"
+    "text": "0.64 m from the door threshold, 0.18 m from the right wall"
    }
   },
   {
@@ -156,34 +156,17 @@
    "y_m": -0.16208958185802436,
    "D": 0.5862605049628828,
    "u_total": 0.10931860410891045,
-   "D_star": 0.07915267843469602,
-   "D_hash": 0.17480110196405335,
+   "D_star": 0.07915839068747443,
+   "D_hash": 0.17481227371106806,
    "location": {
     "distance_from_door_m": 0.99,
     "wall": "right wall",
     "distance_from_wall_m": 0.338,
     "text": "0.99 m from the door threshold, 0.34 m from the right wall"
    }
-  },
-  {
-   "id": "HS-0003",
-   "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 0,
-   "x_m": 1.5909709247184984,
-   "y_m": -0.014962977638852024,
-   "D": 0.16475974752928202,
-   "u_total": 0.1052432251268056,
-   "D_star": 0.1613934455247614,
-   "D_hash": 0.3771757539103449,
-   "location": {
-    "distance_from_door_m": 1.591,
-    "wall": "right wall",
-    "distance_from_wall_m": 0.485,
-    "text": "1.59 m from the door threshold, 0.49 m from the right wall"
-   }
   }
  ],
- "scan_detections": 1,
+ "scan_detections": 2,
  "observations": [],
  "decision_status": {
   "cells_with_gates": 120,
@@ -196,22 +179,22 @@
   "cells_with_data": 120,
   "status": {
    "INCOMPLETE COVERAGE": 7,
-   "SENSITIVITY INSUFFICIENT": 41,
-   "ACCEPTABLE": 64,
+   "ACCEPTABLE": 80,
+   "SENSITIVITY INSUFFICIENT": 25,
    "ALARM": 8
   },
   "status_reasons": {
-   "D# above the detection goal": 23,
-   "reference gradient": 18,
+   "D# above the detection goal": 25,
    "coverage 0.26 < 0.5": 2,
    "flagged by combined": 2,
    "flagged by combined+lane1+lane2": 2,
    "coverage 0.46 < 0.5": 1,
    "coverage 0.39 < 0.5": 1,
-   "flagged by combined+lane1": 1
+   "flagged by combined+lane1": 1,
+   "flagged by lane1": 1
   },
-  "acceptable_fraction": 0.3300972222222222,
-  "median_D_hash": 0.16749583092125292,
+  "acceptable_fraction": 0.4104861111111111,
+  "median_D_hash": 0.16751197156476252,
   "undecidable_recorded": 0,
   "undecidable_provisional_live": 0,
   "alarm_bookkeeping": {
@@ -219,11 +202,16 @@
    "recorded alarm (provisional alarm confirmed)": 8
   },
   "flags": {
-   "UNRESOLVED_EXCEEDANCE:provisional alarm not confirmed": 2,
+   "UNRESOLVED_EXCEEDANCE:provisional alarm not confirmed": 1,
    "INVESTIGATION_LEVEL:recorded alarm": 1,
-   "SCAN_DETECTION:provisional alarm not confirmed": 1
+   "SCAN_DETECTION:provisional alarm not confirmed": 2
   },
   "review_queue_items": 1,
+  "recount_required_flags": 3,
+  "one_sided_cells": 19,
+  "one_sided_alarm_cells_needing_recount": 0,
+  "search_preroll_s": [],
+  "recorded_evaluation": null,
   "revisit": 0,
   "position_credit": {
    "samples": 4034,
@@ -253,7 +241,7 @@
  "stations": 53,
  "stations_invalid": 1,
  "station_preset_s": 3.0,
- "D_hash_median": 0.16749583092125292,
+ "D_hash_median": 0.16751197156476252,
  "note": "station pitch 0.10 m with a 100 mm aperture eroded by 10 mm per side leaves 20 mm uncredited stripes between stations; pitch <= L - 2e = 0.08 m closes them (CONTRACT_CHANGE_REQUESTS CR-05)",
  "unvisited_m2": 0.8103250000000001
 }

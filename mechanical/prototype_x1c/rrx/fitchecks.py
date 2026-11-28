@@ -220,8 +220,7 @@ def board_bottom_zone(parts):
     from .boards_body import _xf_chs
     b = BD.load("RR-CHS-MAIN")
     feats = []
-    for i, (x, y) in enumerate(D.POSTS):
-        feats.append((f"tray countersunk screw at post {i}", x, y, D.CSK["M3"] / 2 + 0.5))
+    flush = [(f"flush countersunk tray screw at post {i} (no protrusion, info)", x, y, D.CSK["M3"] / 2 + 0.5) for i, (x, y) in enumerate(D.POSTS)]
     for h in [h for h in b["holes"] if h.get("mounting") and h["ref"].startswith("H")]:
         x, y, _ = _xf_chs(h["uv"][0], h["uv"][1], 0.0)
         feats.append((f"clinch standoff {h['ref']}", x, y, D.CLINCH_SO["od"] / 2 + 0.5))
@@ -238,6 +237,9 @@ def board_bottom_zone(parts):
         for name, fx, fy, r in feats:
             if x0 - r <= fx <= x1 + r and y0 - r <= fy <= y1 + r:
                 over.append((ref, name))
+        for name, fx, fy, r in flush:
+            if x0 - r <= fx <= x1 + r and y0 - r <= fy <= y1 + r:
+                info.append((ref, name))
         for yy in (-60.0, 60.0):
             if x0 <= ex0 + 30 and x1 >= ex0 + 14 and y0 <= yy + 6 and y1 >= yy - 6:
                 info.append((ref, f"over the tray pass-through at y {yy:+.0f} (hole: no contact, info)"))

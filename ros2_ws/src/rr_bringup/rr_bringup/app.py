@@ -47,6 +47,7 @@ DEFAULTS = {
     # firmware, setup_id (and cal_id) it names; DEMONSTRATION = explicit, loudly marked mode for the synthetic calibration
     "calibration_binding": "STRICT",
     "archive_scans": True,               # MODEL.md rev 5 section 8: range data archived as received (S entries)
+    "async_finalize": None,              # recorded evaluation on a worker thread; None = follow chassis_thread (real-time hosts)
 }
 
 
@@ -122,6 +123,8 @@ class RobotApp:
             self.pipeline = SurveyPipeline(SurveyConfig(**survey_cfg), self.calibration, self.profile, link_cfg,
                                            method, archive=self.archive, calibrations=self.calibrations)
             self.resumed = False
+        af = cfg["async_finalize"]
+        self.pipeline.async_finalize = bool(cfg["chassis_thread"] if af is None else af)
         self.head = HeadLinkMaster(head_transport, clock, registry, link_cfg, resolve_calibration=self.cal_store.resolve,
                                    sink=self._head_sink, uuid_factory=self._uuid)
         self.head.interp = self.pipeline.interp          # one interpreter: live == replay
@@ -236,6 +239,9 @@ class RobotApp:
                 elif ev["ev"] in ("session_open", "session_close", "blocked", "link_down", "fault", "gap"):
                     self.log_event({k: v for k, v in ev.items() if k not in ("manifest", "gate")})
             self._ensure_plan()
+        if self.pipeline.proc.poll_finalize_async():
+            lf = self.pipeline.proc.last_finalize
+            self.log_event({"ev": "recorded_evaluation_done", "cells": lf["total"], "seconds": round(lf["seconds"], 2), "error": lf["error"]})
         self.chassis.step()
         while self.chassis.samples:
             s = self.chassis.samples.popleft()
@@ -423,6 +429,7 @@ class RobotApp:
                                                          "detection_goal": self.profile["detection_goal_Bq_cm2"],
                                                          "decision_class": self.profile["decision_class"]},
             "calibration_id": self.calibration.calibration_id,
+            "recorded_evaluation": self.pipeline.proc.finalize_progress() or getattr(self.pipeline.proc, "last_finalize", None),
             "chassis": {"link": self.chassis.link_state, "mode": mode, "op_mode": self.chassis.op_mode,
                         "motion": d.get("motion"), "accepted": d.get("accepted"), "reject_reason": d.get("reject_reason"),
                         "applied": d.get("applied"), "stationary": d.get("stationary"),

@@ -1,19 +1,12 @@
 {
  "interference": {
-  "pairs_evaluated": 1069,
-  "clashes": [
-   [
-    "rear_deck_L",
-    "battery_hump",
-    18.9,
-    "boolean"
-   ]
-  ],
+  "pairs_evaluated": 1070,
+  "clashes": [],
   "declared_overlaps": [
    [
     "rear_deck_L",
     "mode_selector_body",
-    2323.6,
+    2318.3,
     "boolean"
    ],
    [
@@ -200,41 +193,41 @@
    ]
   ],
   "methods": {
-   "boolean": 38,
-   "boolean: contact film 0.000 mm thick": 6,
    "boolean: contact film 0.030 mm thick": 1,
-   "mesh screen": 1024
+   "boolean": 36,
+   "boolean: contact film 0.000 mm thick": 6,
+   "mesh screen": 1027
   },
   "slowest_pairs_s": [
    [
-    112.2,
-    "front_bulkhead",
-    "lower_hull_FR",
-    "boolean: contact film 0.030 mm thick"
-   ],
-   [
-    101.0,
-    "front_bulkhead",
-    "lower_hull_FL",
-    "boolean: contact film 0.000 mm thick"
-   ],
-   [
-    80.3,
-    "lower_hull_RR",
-    "rear_deck_R",
-    "boolean: contact film 0.000 mm thick"
-   ],
-   [
-    61.7,
-    "lower_hull_RL",
-    "rear_deck_L",
-    "boolean: contact film 0.000 mm thick"
-   ],
-   [
-    31.3,
-    "rear_deck_L",
-    "hatch_door",
+    2.7,
+    "nose_cowl",
+    "head_latch",
     "boolean"
+   ],
+   [
+    0.0,
+    "wheel_rim_R",
+    "wheel_hub_R",
+    "mesh screen"
+   ],
+   [
+    0.0,
+    "wheel_rim_R",
+    "tyre_R",
+    "mesh screen"
+   ],
+   [
+    0.0,
+    "wheel_rim_R",
+    "motor_R",
+    "mesh screen"
+   ],
+   [
+    0.0,
+    "wheel_rim_R",
+    "cliff_pod_R",
+    "mesh screen"
    ]
   ]
  },
@@ -267,95 +260,12 @@
    "RR-CHS-MAIN_pcb",
    "RR-CHS-MAIN_top_parts",
    "RR-CHS-MAIN_bottom_parts",
-   "RR-CHS-MAIN_plug_J_TOF4",
-   "RR-CHS-MAIN_plug_J_BUMP_L",
-   "RR-CHS-MAIN_plug_J_TOF10",
-   "RR-CHS-MAIN_plug_J_TOF7",
-   "RR-CHS-MAIN_plug_J_USB_HEAD",
-   "RR-CHS-MAIN_plug_J_TOF1",
-   "RR-CHS-MAIN_plug_J_HTR",
-   "RR-CHS-MAIN_plug_J_TOF9",
-   "RR-CHS-MAIN_plug_J_LIDAR",
-   "RR-CHS-MAIN_plug_J_USB_MCU",
-   "RR-CHS-MAIN_plug_J_DBG",
-   "RR-CHS-MAIN_plug_J_PWR",
-   "RR-CHS-MAIN_plug_J_HEAD1",
-   "RR-CHS-MAIN_plug_J_CM5",
-   "RR-CHS-MAIN_plug_J_PAUX",
-   "RR-CHS-MAIN_plug_J_NTC",
-   "RR-CHS-MAIN_plug_J_DOCK",
-   "RR-CHS-MAIN_plug_J_TOF8",
-   "RR-CHS-MAIN_plug_J_TOF6",
-   "RR-CHS-MAIN_plug_J_BUMP_R",
-   "RR-CHS-MAIN_plug_J_TOF5",
-   "RR-CHS-MAIN_plug_J_PAUSE",
-   "RR-CHS-MAIN_plug_J_TOF0",
-   "RR-CHS-MAIN_plug_J_HANDS",
-   "RR-CHS-MAIN_plug_J_HEAD2",
-   "RR-CHS-MAIN_plug_J_TOF3",
-   "RR-CHS-MAIN_plug_J_MODE",
-   "RR-CHS-MAIN_plug_J_ESTOP",
-   "RR-CHS-MAIN_plug_J_BTN",
-   "RR-CHS-MAIN_plug_J_COVER",
-   "RR-CHS-MAIN_plug_J_PANEL",
-   "RR-CHS-MAIN_plug_J_MOT_R",
-   "RR-CHS-MAIN_plug_J_MOT_L",
-   "RR-CHS-MAIN_plug_J_AUX",
-   "RR-CHS-MAIN_plug_J_TOF2",
    "CM5_carrier_pcb",
    "RR-PANEL_pcb",
    "RR-PANEL_top_parts",
-   "RR-PANEL_bottom_parts",
-   "RR-PANEL_plug_J2",
-   "RR-PANEL_plug_J1"
+   "RR-PANEL_bottom_parts"
   ],
-  "outside": [
-   [
-    "cm5_tray",
-    [
-     -154.0,
-     114.0,
-     41.5,
-     -4.4
-    ]
-   ],
-   [
-    "RR-CHS-MAIN_plug_J_HEAD1",
-    [
-     59.7,
-     66.5,
-     92.6,
-     -0.1
-    ]
-   ],
-   [
-    "RR-CHS-MAIN_plug_J_MOT_R",
-    [
-     22.2,
-     -97.7,
-     92.6,
-     -2.4
-    ]
-   ],
-   [
-    "RR-CHS-MAIN_plug_J_MOT_L",
-    [
-     22.2,
-     97.7,
-     92.6,
-     -2.4
-    ]
-   ],
-   [
-    "CM5_carrier_pcb",
-    [
-     -69.0,
-     115.0,
-     47.0,
-     -0.2
-    ]
-   ]
-  ]
+  "outside": []
  },
  "floor": {
   "contact_z": {
@@ -470,32 +380,7 @@
   },
   "service_cover_lift": {
    "what": "cover lifted straight up to the underside of the grip bar (45 mm), then slid forward over the nose",
-   "blocked_by": [
-    [
-     "fx_cover_0",
-     57.0
-    ],
-    [
-     "fx_cover_1",
-     57.0
-    ],
-    [
-     "fx_cover_2",
-     57.0
-    ],
-    [
-     "fx_cover_3",
-     57.0
-    ],
-    [
-     "fx_cover_4",
-     57.0
-    ],
-    [
-     "fx_cover_5",
-     57.0
-    ]
-   ]
+   "blocked_by": []
   },
   "grip_hand_zone": {
    "what": "45 mm in front of the bar and below it, 25 mm behind it below the bar, 45 mm behind it at bar height and above; 130 mm wide (same boxes as layout.py, CR-04)",
@@ -503,29 +388,11 @@
   },
   "J1_glove_zone": {
    "what": "annulus 45 mm round the coupling nut, all solids incl. the skin",
-   "blocked_by": [
-    [
-     "J2_receptacle",
-     22
-    ],
-    [
-     "J2_mated_plug",
-     960
-    ]
-   ]
+   "blocked_by": []
   },
   "J2_glove_zone": {
    "what": "annulus 45 mm round the coupling nut, all solids incl. the skin",
-   "blocked_by": [
-    [
-     "J1_receptacle",
-     156
-    ],
-    [
-     "J1_mated_plug",
-     1108
-    ]
-   ]
+   "blocked_by": []
   },
   "charge_inlet_glove_zone": {
    "what": "45 mm sphere in front of the opened inlet (cover swung up)",
@@ -1312,8 +1179,8 @@
    "pn": "RRX-P51",
    "bbox_print": [
     87.0,
-    44.0,
-    7.0
+    36.0,
+    9.0
    ],
    "verdict": "OK",
    "note": "",
@@ -1382,23 +1249,14 @@
  ],
  "width_rule": {
   "limit_half_width_mm": 147.51,
-  "over": [
-   [
-    "fx_perim_8",
-    147.74
-   ],
-   [
-    "fx_perim_9",
-    147.74
-   ]
-  ],
-  "ok": false
+  "over": [],
+  "ok": true
  },
  "swept_radius": {
   "tail_max_radius_mm": 289.2,
   "tail_part": "bumper_centre",
-  "tail_without_bumper_mm": 273.3,
-  "tail_without_bumper_part": "rrtof_cliff_rl_plug_J1",
+  "tail_without_bumper_mm": 271.8,
+  "tail_without_bumper_part": "hatch_door",
   "front_body_max_radius_mm": 158.4,
   "front_body_part": "cliff_pod_L",
   "head_envelope_corner_radius_mm": 275.3,
@@ -1439,12 +1297,7 @@
     92
    ],
    "use": "pack feed from the coupler, charge feed, right motor/encoder, E-stop loop",
-   "blocked_by": [
-    [
-     "RR-CHS-MAIN_plug_J_PWR",
-     1008.0
-    ]
-   ]
+   "blocked_by": []
   },
   "front_bay": {
    "box": [
@@ -1505,12 +1358,7 @@
     84.6,
     96.6
    ],
-   "blocked_by": [
-    [
-     "fx_board_H1",
-     58.0
-    ]
-   ]
+   "blocked_by": []
   },
   "rear-right corner u 112-160, v 0-22, 12 mm above the PCB": {
    "box": [
@@ -1521,12 +1369,7 @@
     84.6,
     96.6
    ],
-   "blocked_by": [
-    [
-     "fx_board_H3",
-     58.0
-    ]
-   ]
+   "blocked_by": []
   },
   "front-centre strip u 40-120, v 80-100, 12 mm above the PCB (strip extent ASSUMED)": {
    "box": [
@@ -1537,12 +1380,7 @@
     84.6,
     96.6
    ],
-   "blocked_by": [
-    [
-     "fx_board_H5",
-     58.0
-    ]
-   ]
+   "blocked_by": []
   },
   "J_PWR mated plug + loom: u 160..183 (23 mm beyond the right edge), v 13..35 (header v 14.5..33.6), PCB top .. +14 mm": {
    "box": [
@@ -2228,7 +2066,7 @@
     "step": "07_lid",
     "tool": "hex key / bit driver, column dia 4.0 x 60",
     "blocked_by": [],
-    "note": ""
+    "note": "ISO 7380-2 flanged button head, O-ring under the flange in the spot face (no washer: width rule)"
    },
    {
     "fastener": "perim_1",
@@ -2236,7 +2074,7 @@
     "step": "07_lid",
     "tool": "hex key / bit driver, column dia 4.0 x 60",
     "blocked_by": [],
-    "note": ""
+    "note": "ISO 7380-2 flanged button head, O-ring under the flange in the spot face (no washer: width rule)"
    },
    {
     "fastener": "perim_2",
@@ -2244,7 +2082,7 @@
     "step": "07_lid",
     "tool": "hex key / bit driver, column dia 4.0 x 60",
     "blocked_by": [],
-    "note": ""
+    "note": "ISO 7380-2 flanged button head, O-ring under the flange in the spot face (no washer: width rule)"
    },
    {
     "fastener": "perim_3",
@@ -2252,7 +2090,7 @@
     "step": "07_lid",
     "tool": "hex key / bit driver, column dia 4.0 x 60",
     "blocked_by": [],
-    "note": ""
+    "note": "ISO 7380-2 flanged button head, O-ring under the flange in the spot face (no washer: width rule)"
    },
    {
     "fastener": "perim_4",
@@ -2260,7 +2098,7 @@
     "step": "07_lid",
     "tool": "hex key / bit driver, column dia 4.0 x 60",
     "blocked_by": [],
-    "note": ""
+    "note": "ISO 7380-2 flanged button head, O-ring under the flange in the spot face (no washer: width rule)"
    },
    {
     "fastener": "perim_5",
@@ -2268,7 +2106,7 @@
     "step": "07_lid",
     "tool": "hex key / bit driver, column dia 4.0 x 60",
     "blocked_by": [],
-    "note": ""
+    "note": "ISO 7380-2 flanged button head, O-ring under the flange in the spot face (no washer: width rule)"
    },
    {
     "fastener": "perim_6",
@@ -2276,7 +2114,7 @@
     "step": "07_lid",
     "tool": "hex key / bit driver, column dia 4.0 x 60",
     "blocked_by": [],
-    "note": ""
+    "note": "ISO 7380-2 flanged button head, O-ring under the flange in the spot face (no washer: width rule)"
    },
    {
     "fastener": "perim_7",
@@ -2284,7 +2122,7 @@
     "step": "07_lid",
     "tool": "hex key / bit driver, column dia 4.0 x 60",
     "blocked_by": [],
-    "note": ""
+    "note": "ISO 7380-2 flanged button head, O-ring under the flange in the spot face (no washer: width rule)"
    },
    {
     "fastener": "perim_8",
@@ -2292,7 +2130,7 @@
     "step": "07_lid",
     "tool": "hex key / bit driver, column dia 4.0 x 60",
     "blocked_by": [],
-    "note": ""
+    "note": "ISO 7380-2 flanged button head, O-ring under the flange in the spot face (no washer: width rule)"
    },
    {
     "fastener": "perim_9",
@@ -2300,7 +2138,7 @@
     "step": "07_lid",
     "tool": "hex key / bit driver, column dia 4.0 x 60",
     "blocked_by": [],
-    "note": ""
+    "note": "ISO 7380-2 flanged button head, O-ring under the flange in the spot face (no washer: width rule)"
    },
    {
     "fastener": "perim_10",
@@ -2308,7 +2146,7 @@
     "step": "07_lid",
     "tool": "hex key / bit driver, column dia 4.0 x 60",
     "blocked_by": [],
-    "note": ""
+    "note": "ISO 7380-2 flanged button head, O-ring under the flange in the spot face (no washer: width rule)"
    },
    {
     "fastener": "perim_11",
@@ -2316,7 +2154,7 @@
     "step": "07_lid",
     "tool": "hex key / bit driver, column dia 4.0 x 60",
     "blocked_by": [],
-    "note": ""
+    "note": "ISO 7380-2 flanged button head, O-ring under the flange in the spot face (no washer: width rule)"
    },
    {
     "fastener": "perim_12",
@@ -2324,7 +2162,7 @@
     "step": "07_lid",
     "tool": "hex key / bit driver, column dia 4.0 x 60",
     "blocked_by": [],
-    "note": ""
+    "note": "ISO 7380-2 flanged button head, O-ring under the flange in the spot face (no washer: width rule)"
    },
    {
     "fastener": "perim_13",
@@ -2332,7 +2170,7 @@
     "step": "07_lid",
     "tool": "hex key / bit driver, column dia 4.0 x 60",
     "blocked_by": [],
-    "note": ""
+    "note": "ISO 7380-2 flanged button head, O-ring under the flange in the spot face (no washer: width rule)"
    },
    {
     "fastener": "gripplate_L-48",
@@ -4307,12 +4145,8 @@
    "tof_withdrawal_in_place": {
     "tof_cliff_fl": [
      [
-      "lower_hull_FL",
-      176.3
-     ],
-     [
       "shoulder_L",
-      48.4
+      27.2
      ],
      [
       "cliff_pod_L",
@@ -4321,12 +4155,8 @@
     ],
     "tof_cliff_fr": [
      [
-      "lower_hull_FR",
-      176.3
-     ],
-     [
       "shoulder_R",
-      48.4
+      27.2
      ]
     ],
     "tof_cliff_rl": [
@@ -4368,13 +4198,13 @@
     "tof_look_fwd_left": [
      [
       "cheek_fairing_L",
-      16.8
+      8.0
      ]
     ],
     "tof_look_fwd_right": [
      [
       "cheek_fairing_R",
-      16.8
+      8.0
      ]
     ],
     "tof_look_rev_left": [
@@ -4430,37 +4260,37 @@
     "tof_prox_rl": [
      [
       "battery_tunnel",
-      104.8
+      69.3
      ],
      [
       "lower_hull_RL",
-      50.1
+      32.3
      ],
      [
       "rear_deck_L",
-      723.8
+      689.1
      ],
      [
       "hatch_frame",
-      112.2
+      89.5
      ]
     ],
     "tof_prox_rr": [
      [
       "battery_tunnel",
-      104.8
+      69.3
      ],
      [
       "lower_hull_RR",
-      50.1
+      32.3
      ],
      [
       "rear_deck_R",
-      731.3
+      696.6
      ],
      [
       "hatch_frame",
-      112.2
+      89.5
      ]
     ]
    }
@@ -4483,43 +4313,18 @@
     ],
     [
      -16.5,
-     -25.5,
-     65.5
+     -49.5,
+     44.5
     ],
     [
-     -28.5,
-     -37.5,
-     65.5
+     -19.5,
+     -67.5,
+     47.5
     ],
     [
-     -52.5,
-     -70.5,
-     65.5
-    ],
-    [
-     -55.5,
-     -73.5,
-     65.5
-    ],
-    [
-     -61.5,
-     -76.5,
-     65.5
-    ],
-    [
-     -64.5,
-     -79.5,
-     65.5
-    ],
-    [
-     -64.5,
+     -34.5,
      -88.5,
      68.5
-    ],
-    [
-     -46.5,
-     -106.5,
-     89.5
     ],
     [
      -43.0,
@@ -4527,90 +4332,40 @@
      91.0
     ]
    ],
-   "route_mm": 147.9,
+   "route_mm": 132.3,
    "termination_mm": 50.0,
    "service_loop_mm": 40.0,
-   "length_mm": 240,
+   "length_mm": 230,
    "bends": [
     {
      "at": [
       -16.5,
-      -25.5,
-      65.5
+      -49.5,
+      44.5
      ],
-     "turn_deg": 44,
-     "fits_radius_mm": 20.9,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -28.5,
-      -37.5,
-      65.5
-     ],
-     "turn_deg": 9,
-     "fits_radius_mm": 108.1,
+     "turn_deg": 20,
+     "fits_radius_mm": 53.0,
      "ok": "True"
     },
     {
      "at": [
-      -52.5,
-      -70.5,
-      65.5
+      -19.5,
+      -67.5,
+      47.5
      ],
-     "turn_deg": 9,
+     "turn_deg": 38,
      "fits_radius_mm": 27.0,
      "ok": "False"
     },
     {
      "at": [
-      -55.5,
-      -73.5,
-      65.5
-     ],
-     "turn_deg": 18,
-     "fits_radius_mm": 13.1,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -61.5,
-      -76.5,
-      65.5
-     ],
-     "turn_deg": 18,
-     "fits_radius_mm": 13.1,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -64.5,
-      -79.5,
-      65.5
-     ],
-     "turn_deg": 48,
-     "fits_radius_mm": 4.8,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -64.5,
+      -34.5,
       -88.5,
       68.5
      ],
-     "turn_deg": 44,
-     "fits_radius_mm": 11.7,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -46.5,
-      -106.5,
-      89.5
-     ],
-     "turn_deg": 39,
-     "fits_radius_mm": 5.4,
-     "ok": "False"
+     "turn_deg": 12,
+     "fits_radius_mm": 145.5,
+     "ok": "True"
     }
    ],
    "own_parts": [
@@ -4619,91 +4374,50 @@
     "RR-CHS-MAIN_plug_J_PWR"
    ],
    "tof_limit_ok": null,
-   "collisions": [],
+   "collisions": [
+    [
+     "grip_foot_R",
+     54.2
+    ],
+    [
+     "fx_gripplate_R-30",
+     34.5
+    ]
+   ],
    "clips": [
     {
      "at": [
       -16.5,
-      -25.5,
-      65.5
+      -49.5,
+      44.5
      ],
-     "to_part": "battery_tunnel",
-     "gap_mm": 11.1,
+     "to_part": "chassis_plate",
+     "gap_mm": 7.5,
      "ok": true
     },
     {
      "at": [
-      -28.5,
-      -37.5,
-      65.5
-     ],
-     "to_part": "bridge_tray",
-     "gap_mm": 12.5,
-     "ok": false
-    },
-    {
-     "at": [
-      -52.5,
-      -70.5,
-      65.5
-     ],
-     "to_part": "bridge_post_1",
-     "gap_mm": 10.3,
-     "ok": true
-    },
-    {
-     "at": [
-      -55.5,
-      -73.5,
-      65.5
-     ],
-     "to_part": "bridge_post_1",
-     "gap_mm": 10.3,
-     "ok": true
-    },
-    {
-     "at": [
-      -61.5,
-      -76.5,
-      65.5
+      -19.5,
+      -67.5,
+      47.5
      ],
      "to_part": "grip_foot_R",
-     "gap_mm": 10.7,
+     "gap_mm": 7.9,
      "ok": true
     },
     {
      "at": [
-      -64.5,
-      -79.5,
-      65.5
-     ],
-     "to_part": "grip_foot_R",
-     "gap_mm": 10.7,
-     "ok": true
-    },
-    {
-     "at": [
-      -64.5,
+      -34.5,
       -88.5,
       68.5
      ],
      "to_part": "grip_side_plate_R",
-     "gap_mm": 10.1,
-     "ok": true
-    },
-    {
-     "at": [
-      -46.5,
-      -106.5,
-      89.5
-     ],
-     "to_part": "rear_deck_R",
-     "gap_mm": 8.4,
+     "gap_mm": 3.5,
      "ok": true
     }
    ],
-   "ok": true,
-   "status": "routed"
+   "ok": false,
+   "status": "FAIL"
   },
   "W-002": {
    "status": "not routed: inside the battery cassette (pack to cassette coupler half)"
@@ -4777,21 +4491,16 @@
     ],
     [
      -46.5,
-     -43.5,
-     98.5
-    ],
-    [
-     -46.5,
      -40.5,
-     101.5
+     98.5
     ],
     [
      -44.4,
      -38.0,
-     98.8
+     96.8
     ]
    ],
-   "route_mm": 198.9,
+   "route_mm": 196.8,
    "termination_mm": 50.0,
    "service_loop_mm": 40.0,
    "length_mm": 290,
@@ -4902,28 +4611,18 @@
       -49.5,
       95.5
      ],
-     "turn_deg": 51,
-     "fits_radius_mm": 4.5,
+     "turn_deg": 48,
+     "fits_radius_mm": 4.8,
      "ok": "False"
     },
     {
      "at": [
       -46.5,
-      -43.5,
+      -40.5,
       98.5
      ],
-     "turn_deg": 18,
-     "fits_radius_mm": 13.1,
-     "ok": "True"
-    },
-    {
-     "at": [
-      -46.5,
-      -40.5,
-      101.5
-     ],
-     "turn_deg": 92,
-     "fits_radius_mm": 2.0,
+     "turn_deg": 60,
+     "fits_radius_mm": 3.2,
      "ok": "False"
     }
    ],
@@ -5048,21 +4747,11 @@
     {
      "at": [
       -46.5,
-      -43.5,
+      -40.5,
       98.5
      ],
      "to_part": "saddle_cover",
      "gap_mm": 6.5,
-     "ok": true
-    },
-    {
-     "at": [
-      -46.5,
-      -40.5,
-      101.5
-     ],
-     "to_part": "saddle_cover",
-     "gap_mm": 3.5,
      "ok": true
     }
    ],
@@ -5082,54 +4771,19 @@
      88.0
     ],
     [
-     -184.5,
-     -91.5,
-     86.5
-    ],
-    [
-     -187.5,
-     -94.5,
-     83.5
-    ],
-    [
-     -184.5,
-     -97.5,
-     80.5
-    ],
-    [
-     -178.5,
-     -103.5,
-     80.5
-    ],
-    [
-     -94.5,
-     -118.5,
-     71.5
-    ],
-    [
-     -70.5,
-     -118.5,
-     71.5
-    ],
-    [
-     -64.5,
-     -112.5,
-     77.5
-    ],
-    [
-     -61.5,
-     -109.5,
-     77.5
-    ],
-    [
-     -49.5,
-     -103.5,
-     86.5
-    ],
-    [
-     -46.5,
-     -106.5,
+     -172.5,
+     -100.5,
      89.5
+    ],
+    [
+     -88.5,
+     -115.5,
+     80.5
+    ],
+    [
+     -52.5,
+     -115.5,
+     83.5
     ],
     [
      -43.0,
@@ -5137,109 +4791,39 @@
      91.0
     ]
    ],
-   "route_mm": 175.6,
+   "route_mm": 155.1,
    "termination_mm": 50.0,
    "service_loop_mm": 40.0,
-   "length_mm": 270,
+   "length_mm": 250,
    "bends": [
     {
      "at": [
-      -184.5,
-      -91.5,
-      86.5
-     ],
-     "turn_deg": 132,
-     "fits_radius_mm": 1.2,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -187.5,
-      -94.5,
-      83.5
-     ],
-     "turn_deg": 71,
-     "fits_radius_mm": 3.7,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -184.5,
-      -97.5,
-      80.5
-     ],
-     "turn_deg": 35,
-     "fits_radius_mm": 8.2,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -178.5,
-      -103.5,
-      80.5
-     ],
-     "turn_deg": 35,
-     "fits_radius_mm": 13.3,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -94.5,
-      -118.5,
-      71.5
+      -172.5,
+      -100.5,
+      89.5
      ],
      "turn_deg": 12,
-     "fits_radius_mm": 116.5,
+     "fits_radius_mm": 87.8,
      "ok": "True"
     },
     {
      "at": [
-      -70.5,
-      -118.5,
-      71.5
+      -88.5,
+      -115.5,
+      80.5
      ],
-     "turn_deg": 55,
-     "fits_radius_mm": 10.0,
-     "ok": "False"
+     "turn_deg": 15,
+     "fits_radius_mm": 139.2,
+     "ok": "True"
     },
     {
      "at": [
-      -64.5,
-      -112.5,
-      77.5
+      -52.5,
+      -115.5,
+      83.5
      ],
-     "turn_deg": 35,
-     "fits_radius_mm": 6.7,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -61.5,
-      -109.5,
-      77.5
-     ],
-     "turn_deg": 38,
-     "fits_radius_mm": 6.2,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -49.5,
-      -103.5,
-      86.5
-     ],
-     "turn_deg": 58,
-     "fits_radius_mm": 4.7,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -46.5,
-      -106.5,
-      89.5
-     ],
-     "turn_deg": 38,
-     "fits_radius_mm": 5.5,
+     "turn_deg": 48,
+     "fits_radius_mm": 17.0,
      "ok": "False"
     }
    ],
@@ -5253,112 +4837,42 @@
    "clips": [
     {
      "at": [
-      -184.5,
-      -91.5,
-      86.5
-     ],
-     "to_part": "rear_deck_R",
-     "gap_mm": 24.2,
-     "ok": false
-    },
-    {
-     "at": [
-      -187.5,
-      -94.5,
-      83.5
-     ],
-     "to_part": "rear_deck_R",
-     "gap_mm": 19.7,
-     "ok": false
-    },
-    {
-     "at": [
-      -184.5,
-      -97.5,
-      80.5
-     ],
-     "to_part": "rear_deck_R",
-     "gap_mm": 17.6,
-     "ok": false
-    },
-    {
-     "at": [
-      -178.5,
-      -103.5,
-      80.5
-     ],
-     "to_part": "rear_deck_R",
-     "gap_mm": 15.1,
-     "ok": false
-    },
-    {
-     "at": [
-      -136.5,
-      -111.0,
-      76.0
-     ],
-     "to_part": "lower_hull_RR",
-     "gap_mm": 26.1,
-     "ok": false
-    },
-    {
-     "at": [
-      -94.5,
-      -118.5,
-      71.5
-     ],
-     "to_part": "lower_hull_RR",
-     "gap_mm": 17.6,
-     "ok": false
-    },
-    {
-     "at": [
-      -70.5,
-      -118.5,
-      71.5
-     ],
-     "to_part": "lower_hull_FR",
-     "gap_mm": 10.0,
-     "ok": true
-    },
-    {
-     "at": [
-      -64.5,
-      -112.5,
-      77.5
-     ],
-     "to_part": "rear_deck_R",
-     "gap_mm": 11.6,
-     "ok": true
-    },
-    {
-     "at": [
-      -61.5,
-      -109.5,
-      77.5
-     ],
-     "to_part": "rear_deck_R",
-     "gap_mm": 11.2,
-     "ok": true
-    },
-    {
-     "at": [
-      -49.5,
-      -103.5,
-      86.5
-     ],
-     "to_part": "rear_deck_R",
-     "gap_mm": 13.5,
-     "ok": false
-    },
-    {
-     "at": [
-      -46.5,
-      -106.5,
+      -172.5,
+      -100.5,
       89.5
      ],
      "to_part": "rear_deck_R",
-     "gap_mm": 8.4,
+     "gap_mm": 21.3,
+     "ok": false
+    },
+    {
+     "at": [
+      -130.5,
+      -108.0,
+      85.0
+     ],
+     "to_part": "rear_deck_R",
+     "gap_mm": 25.4,
+     "ok": false
+    },
+    {
+     "at": [
+      -88.5,
+      -115.5,
+      80.5
+     ],
+     "to_part": "rear_deck_R",
+     "gap_mm": 19.3,
+     "ok": false
+    },
+    {
+     "at": [
+      -52.5,
+      -115.5,
+      83.5
+     ],
+     "to_part": "rear_deck_R",
+     "gap_mm": 3.1,
      "ok": true
     }
    ],
@@ -5378,29 +4892,39 @@
      88.0
     ],
     [
-     -184.5,
-     -91.5,
+     -178.5,
+     -100.5,
      86.5
     ],
     [
-     -181.5,
-     -94.5,
-     83.5
-    ],
-    [
      -175.5,
-     -100.5,
-     83.5
+     -103.5,
+     86.5
     ],
     [
      -91.5,
-     -115.5,
-     74.5
+     -118.5,
+     77.5
     ],
     [
-     -25.5,
-     -109.5,
+     -64.5,
+     -118.5,
      77.5
+    ],
+    [
+     -58.5,
+     -115.5,
+     83.5
+    ],
+    [
+     -55.5,
+     -112.5,
+     83.5
+    ],
+    [
+     -37.5,
+     -112.5,
+     71.5
     ],
     [
      -16.5,
@@ -5448,74 +4972,94 @@
      95.5
     ],
     [
-     -55.5,
-     -49.5,
+     -58.5,
+     -46.5,
      98.5
     ],
     [
-     -58.5,
-     -46.5,
+     -61.5,
+     -43.5,
      101.5
     ],
     [
      -60.6,
      -42.8,
-     101.6
+     99.6
     ]
    ],
-   "route_mm": 281.9,
+   "route_mm": 288.0,
    "termination_mm": 50.0,
    "service_loop_mm": 40.0,
    "length_mm": 380,
    "bends": [
     {
      "at": [
-      -184.5,
-      -91.5,
+      -178.5,
+      -100.5,
       86.5
      ],
-     "turn_deg": 77,
-     "fits_radius_mm": 3.2,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -181.5,
-      -94.5,
-      83.5
-     ],
-     "turn_deg": 35,
-     "fits_radius_mm": 8.2,
+     "turn_deg": 24,
+     "fits_radius_mm": 10.1,
      "ok": "False"
     },
     {
      "at": [
       -175.5,
-      -100.5,
-      83.5
+      -103.5,
+      86.5
      ],
      "turn_deg": 35,
-     "fits_radius_mm": 13.3,
-     "ok": "True"
+     "fits_radius_mm": 6.7,
+     "ok": "False"
     },
     {
      "at": [
       -91.5,
-      -115.5,
-      74.5
+      -118.5,
+      77.5
      ],
-     "turn_deg": 18,
-     "fits_radius_mm": 214.8,
+     "turn_deg": 12,
+     "fits_radius_mm": 131.0,
      "ok": "True"
     },
     {
      "at": [
-      -25.5,
-      -109.5,
+      -64.5,
+      -118.5,
       77.5
      ],
-     "turn_deg": 49,
-     "fits_radius_mm": 17.0,
+     "turn_deg": 48,
+     "fits_radius_mm": 10.1,
+     "ok": "False"
+    },
+    {
+     "at": [
+      -58.5,
+      -115.5,
+      83.5
+     ],
+     "turn_deg": 45,
+     "fits_radius_mm": 5.1,
+     "ok": "False"
+    },
+    {
+     "at": [
+      -55.5,
+      -112.5,
+      83.5
+     ],
+     "turn_deg": 54,
+     "fits_radius_mm": 4.2,
+     "ok": "False"
+    },
+    {
+     "at": [
+      -37.5,
+      -112.5,
+      71.5
+     ],
+     "turn_deg": 71,
+     "fits_radius_mm": 15.1,
      "ok": "True"
     },
     {
@@ -5604,28 +5148,28 @@
       -52.5,
       95.5
      ],
-     "turn_deg": 19,
-     "fits_radius_mm": 29.9,
+     "turn_deg": 26,
+     "fits_radius_mm": 29.8,
      "ok": "True"
-    },
-    {
-     "at": [
-      -55.5,
-      -49.5,
-      98.5
-     ],
-     "turn_deg": 29,
-     "fits_radius_mm": 9.9,
-     "ok": "False"
     },
     {
      "at": [
       -58.5,
       -46.5,
+      98.5
+     ],
+     "turn_deg": 28,
+     "fits_radius_mm": 10.4,
+     "ok": "False"
+    },
+    {
+     "at": [
+      -61.5,
+      -43.5,
       101.5
      ],
-     "turn_deg": 37,
-     "fits_radius_mm": 6.4,
+     "turn_deg": 123,
+     "fits_radius_mm": 0.6,
      "ok": "False"
     }
    ],
@@ -5639,9 +5183,29 @@
    "clips": [
     {
      "at": [
-      -184.5,
-      -91.5,
+      -178.5,
+      -100.5,
       86.5
+     ],
+     "to_part": "rear_deck_R",
+     "gap_mm": 18.9,
+     "ok": false
+    },
+    {
+     "at": [
+      -175.5,
+      -103.5,
+      86.5
+     ],
+     "to_part": "rear_deck_R",
+     "gap_mm": 18.7,
+     "ok": false
+    },
+    {
+     "at": [
+      -133.5,
+      -111.0,
+      82.0
      ],
      "to_part": "rear_deck_R",
      "gap_mm": 24.2,
@@ -5649,52 +5213,52 @@
     },
     {
      "at": [
-      -181.5,
-      -94.5,
-      83.5
-     ],
-     "to_part": "rear_deck_R",
-     "gap_mm": 21.9,
-     "ok": false
-    },
-    {
-     "at": [
-      -175.5,
-      -100.5,
-      83.5
-     ],
-     "to_part": "rear_deck_R",
-     "gap_mm": 19.8,
-     "ok": false
-    },
-    {
-     "at": [
-      -133.5,
-      -108.0,
-      79.0
-     ],
-     "to_part": "rear_deck_R",
-     "gap_mm": 28.1,
-     "ok": false
-    },
-    {
-     "at": [
       -91.5,
-      -115.5,
-      74.5
-     ],
-     "to_part": "lower_hull_RR",
-     "gap_mm": 20.5,
-     "ok": false
-    },
-    {
-     "at": [
-      -25.5,
-      -109.5,
+      -118.5,
       77.5
      ],
-     "to_part": "motor_pod_R",
-     "gap_mm": 8.0,
+     "to_part": "rear_deck_R",
+     "gap_mm": 17.8,
+     "ok": false
+    },
+    {
+     "at": [
+      -64.5,
+      -118.5,
+      77.5
+     ],
+     "to_part": "rear_deck_R",
+     "gap_mm": 10.4,
+     "ok": true
+    },
+    {
+     "at": [
+      -58.5,
+      -115.5,
+      83.5
+     ],
+     "to_part": "rear_deck_R",
+     "gap_mm": 7.8,
+     "ok": true
+    },
+    {
+     "at": [
+      -55.5,
+      -112.5,
+      83.5
+     ],
+     "to_part": "rear_deck_R",
+     "gap_mm": 7.1,
+     "ok": true
+    },
+    {
+     "at": [
+      -37.5,
+      -112.5,
+      71.5
+     ],
+     "to_part": "shoulder_R",
+     "gap_mm": 5.2,
      "ok": true
     },
     {
@@ -5789,22 +5353,22 @@
     },
     {
      "at": [
-      -55.5,
-      -49.5,
+      -58.5,
+      -46.5,
       98.5
      ],
-     "to_part": "saddle_cover",
-     "gap_mm": 6.5,
+     "to_part": "rear_deck_R",
+     "gap_mm": 5.4,
      "ok": true
     },
     {
      "at": [
-      -58.5,
-      -46.5,
+      -61.5,
+      -43.5,
       101.5
      ],
-     "to_part": "saddle_cover",
-     "gap_mm": 3.5,
+     "to_part": "rear_deck_R",
+     "gap_mm": 1.2,
      "ok": true
     }
    ],
@@ -5834,14 +5398,14 @@
      74.5
     ],
     [
-     7.5,
+     10.5,
      94.5,
-     83.5
+     86.5
     ],
     [
-     10.5,
+     13.5,
      97.5,
-     86.5
+     89.5
     ],
     [
      14.1,
@@ -5849,7 +5413,7 @@
      88.1
     ]
    ],
-   "route_mm": 73.4,
+   "route_mm": 74.8,
    "termination_mm": 50.0,
    "service_loop_mm": 40.0,
    "length_mm": 170,
@@ -5870,28 +5434,28 @@
       88.5,
       74.5
      ],
-     "turn_deg": 31,
-     "fits_radius_mm": 7.7,
+     "turn_deg": 38,
+     "fits_radius_mm": 6.2,
      "ok": "False"
     },
     {
      "at": [
-      7.5,
+      10.5,
       94.5,
-      83.5
+      86.5
      ],
-     "turn_deg": 11,
-     "fits_radius_mm": 26.0,
+     "turn_deg": 15,
+     "fits_radius_mm": 19.4,
      "ok": "True"
     },
     {
      "at": [
-      10.5,
+      13.5,
       97.5,
-      86.5
+      89.5
      ],
-     "turn_deg": 38,
-     "fits_radius_mm": 5.8,
+     "turn_deg": 103,
+     "fits_radius_mm": 0.6,
      "ok": "False"
     }
    ],
@@ -5924,22 +5488,22 @@
     },
     {
      "at": [
-      7.5,
+      10.5,
       94.5,
-      83.5
+      86.5
      ],
      "to_part": "motor_pod_L",
-     "gap_mm": 4.5,
+     "gap_mm": 7.2,
      "ok": true
     },
     {
      "at": [
-      10.5,
+      13.5,
       97.5,
-      86.5
+      89.5
      ],
-     "to_part": "motor_pod_L",
-     "gap_mm": 6.0,
+     "to_part": "shoulder_L",
+     "gap_mm": 4.0,
      "ok": true
     }
    ],
@@ -5974,9 +5538,9 @@
      83.5
     ],
     [
-     10.5,
-     -94.5,
-     86.5
+     13.5,
+     -97.5,
+     89.5
     ],
     [
      14.1,
@@ -5984,7 +5548,7 @@
      88.1
     ]
    ],
-   "route_mm": 73.4,
+   "route_mm": 75.1,
    "termination_mm": 50.0,
    "service_loop_mm": 40.0,
    "length_mm": 170,
@@ -6016,17 +5580,17 @@
       83.5
      ],
      "turn_deg": 22,
-     "fits_radius_mm": 13.2,
-     "ok": "False"
+     "fits_radius_mm": 26.5,
+     "ok": "True"
     },
     {
      "at": [
-      10.5,
-      -94.5,
-      86.5
+      13.5,
+      -97.5,
+      89.5
      ],
-     "turn_deg": 17,
-     "fits_radius_mm": 16.8,
+     "turn_deg": 103,
+     "fits_radius_mm": 0.6,
      "ok": "False"
     }
    ],
@@ -6069,12 +5633,12 @@
     },
     {
      "at": [
-      10.5,
-      -94.5,
-      86.5
+      13.5,
+      -97.5,
+      89.5
      ],
-     "to_part": "motor_pod_R",
-     "gap_mm": 7.2,
+     "to_part": "shoulder_R",
+     "gap_mm": 4.0,
      "ok": true
     }
    ],
@@ -6089,19 +5653,19 @@
    "min_bend_r_mm": 40.0,
    "polyline": [
     [
-     64.2,
-     23.2,
-     87.0
+     64.1,
+     30.1,
+     83.0
     ],
     [
-     64.5,
-     46.5,
-     83.5
-    ],
-    [
-     67.5,
+     58.5,
      49.5,
      86.5
+    ],
+    [
+     61.5,
+     52.5,
+     89.5
     ],
     [
      59.7,
@@ -6109,29 +5673,29 @@
      88.1
     ]
    ],
-   "route_mm": 37.9,
+   "route_mm": 28.4,
    "termination_mm": 50.0,
    "service_loop_mm": 40.0,
-   "length_mm": 130,
+   "length_mm": 120,
    "bends": [
     {
      "at": [
-      64.5,
-      46.5,
-      83.5
+      58.5,
+      49.5,
+      86.5
      ],
-     "turn_deg": 60,
-     "fits_radius_mm": 4.5,
+     "turn_deg": 61,
+     "fits_radius_mm": 4.4,
      "ok": "False"
     },
     {
      "at": [
-      67.5,
-      49.5,
-      86.5
+      61.5,
+      52.5,
+      89.5
      ],
-     "turn_deg": 97,
-     "fits_radius_mm": 2.3,
+     "turn_deg": 113,
+     "fits_radius_mm": 0.9,
      "ok": "False"
     }
    ],
@@ -6144,22 +5708,22 @@
    "clips": [
     {
      "at": [
-      64.5,
-      46.5,
-      83.5
-     ],
-     "to_part": "nose_cowl",
-     "gap_mm": 12.3,
-     "ok": false
-    },
-    {
-     "at": [
-      67.5,
+      58.5,
       49.5,
       86.5
      ],
      "to_part": "nose_cowl",
-     "gap_mm": 7.4,
+     "gap_mm": 14.1,
+     "ok": false
+    },
+    {
+     "at": [
+      61.5,
+      52.5,
+      89.5
+     ],
+     "to_part": "nose_cowl",
+     "gap_mm": 9.1,
      "ok": true
     }
    ],
@@ -6174,17 +5738,17 @@
    "min_bend_r_mm": 35.0,
    "polyline": [
     [
-     68.1,
-     -23.8,
-     88.5
+     67.6,
+     -31.1,
+     84.7
     ],
     [
-     41.7,
+     39.7,
      -52.5,
      86.7
     ]
    ],
-   "route_mm": 39.0,
+   "route_mm": 35.2,
    "termination_mm": 50.0,
    "service_loop_mm": 40.0,
    "length_mm": 130,
@@ -6209,17 +5773,17 @@
     [
      -109.0,
      111.5,
-     74.6
+     76.6
     ],
     [
-     -103.5,
-     112.5,
-     83.5
+     -55.5,
+     94.5,
+     86.5
     ],
     [
-     -58.5,
-     109.5,
-     83.5
+     -52.5,
+     97.5,
+     89.5
     ],
     [
      -52.4,
@@ -6227,29 +5791,29 @@
      88.1
     ]
    ],
-   "route_mm": 69.7,
+   "route_mm": 63.6,
    "termination_mm": 50.0,
    "service_loop_mm": 40.0,
    "length_mm": 160,
    "bends": [
     {
      "at": [
-      -103.5,
-      112.5,
-      83.5
+      -55.5,
+      94.5,
+      86.5
      ],
-     "turn_deg": 59,
-     "fits_radius_mm": 9.3,
+     "turn_deg": 62,
+     "fits_radius_mm": 4.3,
      "ok": "False"
     },
     {
      "at": [
-      -58.5,
-      109.5,
-      83.5
+      -52.5,
+      97.5,
+      89.5
      ],
-     "turn_deg": 61,
-     "fits_radius_mm": 12.0,
+     "turn_deg": 117,
+     "fits_radius_mm": 0.4,
      "ok": "False"
     }
    ],
@@ -6262,22 +5826,22 @@
    "clips": [
     {
      "at": [
-      -103.5,
-      112.5,
-      83.5
+      -55.5,
+      94.5,
+      86.5
      ],
      "to_part": "panel_tray",
-     "gap_mm": 11.7,
+     "gap_mm": 11.2,
      "ok": true
     },
     {
      "at": [
-      -58.5,
-      109.5,
-      83.5
+      -52.5,
+      97.5,
+      89.5
      ],
-     "to_part": "rear_deck_L",
-     "gap_mm": 11.1,
+     "to_part": "panel_tray",
+     "gap_mm": 6.8,
      "ok": true
     }
    ],
@@ -6292,14 +5856,14 @@
    "min_bend_r_mm": 12.7,
    "polyline": [
     [
-     -119.8,
-     70.6,
-     130.7
+     -119.7,
+     77.7,
+     128.7
     ],
     [
-     -79.5,
-     76.5,
-     92.5
+     -82.5,
+     73.5,
+     95.5
     ],
     [
      -76.5,
@@ -6327,25 +5891,30 @@
      77.5
     ],
     [
+     -49.5,
+     103.5,
+     80.5
+    ],
+    [
      -39.9,
      97.7,
      88.1
     ]
    ],
-   "route_mm": 113.7,
+   "route_mm": 115.1,
    "termination_mm": 50.0,
    "service_loop_mm": 40.0,
    "length_mm": 210,
    "bends": [
     {
      "at": [
-      -79.5,
-      76.5,
-      92.5
+      -82.5,
+      73.5,
+      95.5
      ],
-     "turn_deg": 29,
-     "fits_radius_mm": 10.0,
-     "ok": "False"
+     "turn_deg": 40,
+     "fits_radius_mm": 14.2,
+     "ok": "True"
     },
     {
      "at": [
@@ -6354,7 +5923,7 @@
       89.5
      ],
      "turn_deg": 16,
-     "fits_radius_mm": 18.7,
+     "fits_radius_mm": 32.4,
      "ok": "True"
     },
     {
@@ -6393,8 +5962,18 @@
       100.5,
       77.5
      ],
-     "turn_deg": 65,
-     "fits_radius_mm": 9.9,
+     "turn_deg": 35,
+     "fits_radius_mm": 8.2,
+     "ok": "False"
+    },
+    {
+     "at": [
+      -49.5,
+      103.5,
+      80.5
+     ],
+     "turn_deg": 61,
+     "fits_radius_mm": 4.4,
      "ok": "False"
     }
    ],
@@ -6407,12 +5986,12 @@
    "clips": [
     {
      "at": [
-      -79.5,
-      76.5,
-      92.5
+      -82.5,
+      73.5,
+      95.5
      ],
      "to_part": "panel_tray",
-     "gap_mm": 6.5,
+     "gap_mm": 6.1,
      "ok": true
     },
     {
@@ -6464,6 +6043,16 @@
      "to_part": "grip_side_plate_L",
      "gap_mm": 15.9,
      "ok": false
+    },
+    {
+     "at": [
+      -49.5,
+      103.5,
+      80.5
+     ],
+     "to_part": "panel_tray",
+     "gap_mm": 12.6,
+     "ok": false
     }
    ],
    "ok": true,
@@ -6477,9 +6066,19 @@
    "min_bend_r_mm": 25.0,
    "polyline": [
     [
-     -119.8,
-     70.6,
-     130.7
+     -119.7,
+     77.7,
+     128.7
+    ],
+    [
+     -121.5,
+     73.5,
+     122.5
+    ],
+    [
+     -127.5,
+     67.5,
+     116.5
     ],
     [
      -175.5,
@@ -6492,24 +6091,49 @@
      107.5
     ],
     [
+     -181.5,
+     67.5,
+     101.5
+    ],
+    [
      -187.0,
      73.0,
-     55.4
+     57.4
     ]
    ],
-   "route_mm": 116.6,
+   "route_mm": 122.2,
    "termination_mm": 50.0,
    "service_loop_mm": 40.0,
-   "length_mm": 210,
+   "length_mm": 220,
    "bends": [
+    {
+     "at": [
+      -121.5,
+      73.5,
+      122.5
+     ],
+     "turn_deg": 24,
+     "fits_radius_mm": 18.2,
+     "ok": "False"
+    },
+    {
+     "at": [
+      -127.5,
+      67.5,
+      116.5
+     ],
+     "turn_deg": 50,
+     "fits_radius_mm": 11.2,
+     "ok": "False"
+    },
     {
      "at": [
       -175.5,
       67.5,
       110.5
      ],
-     "turn_deg": 25,
-     "fits_radius_mm": 9.5,
+     "turn_deg": 38,
+     "fits_radius_mm": 6.2,
      "ok": "False"
     },
     {
@@ -6518,8 +6142,18 @@
       67.5,
       107.5
      ],
-     "turn_deg": 36,
-     "fits_radius_mm": 6.5,
+     "turn_deg": 18,
+     "fits_radius_mm": 13.1,
+     "ok": "False"
+    },
+    {
+     "at": [
+      -181.5,
+      67.5,
+      101.5
+     ],
+     "turn_deg": 21,
+     "fits_radius_mm": 18.4,
      "ok": "False"
     }
    ],
@@ -6530,6 +6164,26 @@
    "tof_limit_ok": null,
    "collisions": [],
    "clips": [
+    {
+     "at": [
+      -121.5,
+      73.5,
+      122.5
+     ],
+     "to_part": "rear_deck_L",
+     "gap_mm": 7.0,
+     "ok": true
+    },
+    {
+     "at": [
+      -127.5,
+      67.5,
+      116.5
+     ],
+     "to_part": "battery_hump",
+     "gap_mm": 7.0,
+     "ok": true
+    },
     {
      "at": [
       -175.5,
@@ -6549,6 +6203,16 @@
      "to_part": "battery_hump",
      "gap_mm": 7.0,
      "ok": true
+    },
+    {
+     "at": [
+      -181.5,
+      67.5,
+      101.5
+     ],
+     "to_part": "battery_hump",
+     "gap_mm": 7.0,
+     "ok": true
     }
    ],
    "ok": true,
@@ -6564,27 +6228,17 @@
     [
      -197.0,
      96.5,
-     56.6
+     58.6
     ],
     [
-     -151.5,
-     109.5,
-     56.5
+     -130.5,
+     97.5,
+     77.5
     ],
     [
-     -118.5,
-     112.5,
-     65.5
-    ],
-    [
-     -112.5,
-     112.5,
-     71.5
-    ],
-    [
-     -109.5,
-     109.5,
-     74.5
+     -91.5,
+     91.5,
+     77.5
     ],
     [
      -70.5,
@@ -6602,64 +6256,39 @@
      95.5
     ],
     [
-     -49.5,
-     52.5,
-     98.5
-    ],
-    [
      -46.5,
      49.5,
-     101.5
+     98.5
     ],
     [
      -44.4,
      46.1,
-     98.8
+     96.8
     ]
    ],
-   "route_mm": 192.4,
+   "route_mm": 179.3,
    "termination_mm": 50.0,
    "service_loop_mm": 40.0,
-   "length_mm": 290,
+   "length_mm": 270,
    "bends": [
     {
      "at": [
-      -151.5,
-      109.5,
-      56.5
+      -130.5,
+      97.5,
+      77.5
      ],
-     "turn_deg": 19,
-     "fits_radius_mm": 104.6,
+     "turn_deg": 18,
+     "fits_radius_mm": 121.3,
      "ok": "True"
     },
     {
      "at": [
-      -118.5,
-      112.5,
-      65.5
+      -91.5,
+      91.5,
+      77.5
      ],
-     "turn_deg": 30,
-     "fits_radius_mm": 15.8,
-     "ok": "True"
-    },
-    {
-     "at": [
-      -112.5,
-      112.5,
-      71.5
-     ],
-     "turn_deg": 35,
-     "fits_radius_mm": 8.2,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -109.5,
-      109.5,
-      74.5
-     ],
-     "turn_deg": 17,
-     "fits_radius_mm": 17.2,
+     "turn_deg": 44,
+     "fits_radius_mm": 41.2,
      "ok": "True"
     },
     {
@@ -6668,8 +6297,8 @@
       70.5,
       92.5
      ],
-     "turn_deg": 17,
-     "fits_radius_mm": 17.2,
+     "turn_deg": 8,
+     "fits_radius_mm": 35.1,
      "ok": "True"
     },
     {
@@ -6688,28 +6317,18 @@
       61.5,
       95.5
      ],
-     "turn_deg": 14,
-     "fits_radius_mm": 34.8,
+     "turn_deg": 11,
+     "fits_radius_mm": 44.5,
      "ok": "True"
-    },
-    {
-     "at": [
-      -49.5,
-      52.5,
-      98.5
-     ],
-     "turn_deg": 25,
-     "fits_radius_mm": 11.7,
-     "ok": "False"
     },
     {
      "at": [
       -46.5,
       49.5,
-      101.5
+      98.5
      ],
-     "turn_deg": 70,
-     "fits_radius_mm": 3.4,
+     "turn_deg": 37,
+     "fits_radius_mm": 6.4,
      "ok": "False"
     }
    ],
@@ -6722,42 +6341,22 @@
    "clips": [
     {
      "at": [
-      -151.5,
-      109.5,
-      56.5
+      -130.5,
+      97.5,
+      77.5
      ],
      "to_part": "lower_hull_RL",
-     "gap_mm": 12.1,
+     "gap_mm": 37.0,
      "ok": false
     },
     {
      "at": [
-      -118.5,
-      112.5,
-      65.5
+      -91.5,
+      91.5,
+      77.5
      ],
-     "to_part": "lower_hull_RL",
-     "gap_mm": 19.4,
-     "ok": false
-    },
-    {
-     "at": [
-      -112.5,
-      112.5,
-      71.5
-     ],
-     "to_part": "lower_hull_RL",
-     "gap_mm": 21.0,
-     "ok": false
-    },
-    {
-     "at": [
-      -109.5,
-      109.5,
-      74.5
-     ],
-     "to_part": "lower_hull_RL",
-     "gap_mm": 25.0,
+     "to_part": "rear_deck_L",
+     "gap_mm": 28.0,
      "ok": false
     },
     {
@@ -6792,22 +6391,12 @@
     },
     {
      "at": [
-      -49.5,
-      52.5,
+      -46.5,
+      49.5,
       98.5
      ],
      "to_part": "saddle_cover",
      "gap_mm": 6.5,
-     "ok": true
-    },
-    {
-     "at": [
-      -46.5,
-      49.5,
-      101.5
-     ],
-     "to_part": "saddle_cover",
-     "gap_mm": 3.5,
      "ok": true
     }
    ],
@@ -6824,27 +6413,17 @@
     [
      -197.0,
      96.5,
-     56.6
+     58.6
     ],
     [
-     -151.5,
-     109.5,
-     56.5
+     -130.5,
+     97.5,
+     77.5
     ],
     [
-     -118.5,
-     112.5,
-     68.5
-    ],
-    [
-     -115.5,
-     112.5,
-     71.5
-    ],
-    [
-     -112.5,
-     109.5,
-     74.5
+     -97.5,
+     94.5,
+     77.5
     ],
     [
      -67.5,
@@ -6852,69 +6431,39 @@
      95.5
     ],
     [
-     -64.5,
-     61.5,
-     95.5
-    ],
-    [
-     -49.5,
-     40.5,
-     98.5
-    ],
-    [
      -46.5,
      37.5,
-     101.5
+     98.5
     ],
     [
      -44.4,
      33.9,
-     98.8
+     96.8
     ]
    ],
-   "route_mm": 199.4,
+   "route_mm": 187.2,
    "termination_mm": 50.0,
    "service_loop_mm": 40.0,
-   "length_mm": 290,
+   "length_mm": 280,
    "bends": [
     {
      "at": [
-      -151.5,
-      109.5,
-      56.5
+      -130.5,
+      97.5,
+      77.5
      ],
-     "turn_deg": 23,
-     "fits_radius_mm": 88.1,
+     "turn_deg": 17,
+     "fits_radius_mm": 111.2,
      "ok": "True"
     },
     {
      "at": [
-      -118.5,
-      112.5,
-      68.5
+      -97.5,
+      94.5,
+      77.5
      ],
-     "turn_deg": 25,
-     "fits_radius_mm": 9.4,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -115.5,
-      112.5,
-      71.5
-     ],
-     "turn_deg": 35,
-     "fits_radius_mm": 6.7,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -112.5,
-      109.5,
-      74.5
-     ],
-     "turn_deg": 17,
-     "fits_radius_mm": 17.4,
+     "turn_deg": 45,
+     "fits_radius_mm": 40.0,
      "ok": "True"
     },
     {
@@ -6923,38 +6472,18 @@
       64.5,
       95.5
      ],
-     "turn_deg": 18,
-     "fits_radius_mm": 13.2,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -64.5,
-      61.5,
-      95.5
-     ],
-     "turn_deg": 12,
-     "fits_radius_mm": 21.0,
+     "turn_deg": 19,
+     "fits_radius_mm": 101.2,
      "ok": "True"
-    },
-    {
-     "at": [
-      -49.5,
-      40.5,
-      98.5
-     ],
-     "turn_deg": 30,
-     "fits_radius_mm": 9.7,
-     "ok": "False"
     },
     {
      "at": [
       -46.5,
       37.5,
-      101.5
+      98.5
      ],
-     "turn_deg": 70,
-     "fits_radius_mm": 3.6,
+     "turn_deg": 28,
+     "fits_radius_mm": 9.0,
      "ok": "False"
     }
    ],
@@ -6967,42 +6496,22 @@
    "clips": [
     {
      "at": [
-      -151.5,
-      109.5,
-      56.5
+      -130.5,
+      97.5,
+      77.5
      ],
      "to_part": "lower_hull_RL",
-     "gap_mm": 12.1,
+     "gap_mm": 37.0,
      "ok": false
     },
     {
      "at": [
-      -118.5,
-      112.5,
-      68.5
+      -97.5,
+      94.5,
+      77.5
      ],
-     "to_part": "lower_hull_RL",
-     "gap_mm": 20.5,
-     "ok": false
-    },
-    {
-     "at": [
-      -115.5,
-      112.5,
-      71.5
-     ],
-     "to_part": "lower_hull_RL",
-     "gap_mm": 20.6,
-     "ok": false
-    },
-    {
-     "at": [
-      -112.5,
-      109.5,
-      74.5
-     ],
-     "to_part": "lower_hull_RL",
-     "gap_mm": 24.3,
+     "to_part": "rear_deck_L",
+     "gap_mm": 31.2,
      "ok": false
     },
     {
@@ -7017,32 +6526,12 @@
     },
     {
      "at": [
-      -64.5,
-      61.5,
-      95.5
-     ],
-     "to_part": "battery_hump",
-     "gap_mm": 6.6,
-     "ok": true
-    },
-    {
-     "at": [
-      -49.5,
-      40.5,
+      -46.5,
+      37.5,
       98.5
      ],
      "to_part": "saddle_cover",
      "gap_mm": 6.5,
-     "ok": true
-    },
-    {
-     "at": [
-      -46.5,
-      37.5,
-      101.5
-     ],
-     "to_part": "saddle_cover",
-     "gap_mm": 3.5,
      "ok": true
     }
    ],
@@ -7062,14 +6551,14 @@
      78.3
     ],
     [
-     -40.5,
-     -94.5,
-     68.5
+     -49.5,
+     -85.5,
+     71.5
     ],
     [
      -34.5,
      -100.5,
-     68.5
+     71.5
     ],
     [
      -16.5,
@@ -7122,45 +6611,45 @@
      95.5
     ],
     [
-     -55.5,
-     -16.5,
+     -58.5,
+     -13.5,
      98.5
     ],
     [
-     -58.5,
-     -13.5,
+     -61.5,
+     -10.5,
      101.5
     ],
     [
      -60.6,
      -11.8,
-     101.6
+     99.6
     ]
    ],
-   "route_mm": 232.0,
+   "route_mm": 235.7,
    "termination_mm": 50.0,
    "service_loop_mm": 40.0,
    "length_mm": 330,
    "bends": [
     {
      "at": [
-      -40.5,
-      -94.5,
-      68.5
+      -49.5,
+      -85.5,
+      71.5
      ],
-     "turn_deg": 34,
-     "fits_radius_mm": 13.7,
-     "ok": "False"
+     "turn_deg": 40,
+     "fits_radius_mm": 29.2,
+     "ok": "True"
     },
     {
      "at": [
       -34.5,
       -100.5,
-      68.5
+      71.5
      ],
-     "turn_deg": 60,
-     "fits_radius_mm": 7.3,
-     "ok": "False"
+     "turn_deg": 57,
+     "fits_radius_mm": 19.5,
+     "ok": "True"
     },
     {
      "at": [
@@ -7168,8 +6657,8 @@
       -100.5,
       86.5
      ],
-     "turn_deg": 60,
-     "fits_radius_mm": 3.7,
+     "turn_deg": 57,
+     "fits_radius_mm": 3.9,
      "ok": "False"
     },
     {
@@ -7258,28 +6747,28 @@
       -49.5,
       95.5
      ],
-     "turn_deg": 30,
-     "fits_radius_mm": 7.9,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -55.5,
-      -16.5,
-      98.5
-     ],
-     "turn_deg": 41,
-     "fits_radius_mm": 7.0,
+     "turn_deg": 27,
+     "fits_radius_mm": 8.9,
      "ok": "False"
     },
     {
      "at": [
       -58.5,
       -13.5,
+      98.5
+     ],
+     "turn_deg": 39,
+     "fits_radius_mm": 7.3,
+     "ok": "False"
+    },
+    {
+     "at": [
+      -61.5,
+      -10.5,
       101.5
      ],
-     "turn_deg": 34,
-     "fits_radius_mm": 4.5,
+     "turn_deg": 163,
+     "fits_radius_mm": 0.2,
      "ok": "False"
     }
    ],
@@ -7293,29 +6782,19 @@
    "clips": [
     {
      "at": [
-      -79.8,
-      -86.7,
-      73.4
+      -49.5,
+      -85.5,
+      71.5
      ],
      "to_part": "bridge_tray",
-     "gap_mm": 12.6,
-     "ok": false
-    },
-    {
-     "at": [
-      -40.5,
-      -94.5,
-      68.5
-     ],
-     "to_part": "grip_side_plate_R",
-     "gap_mm": 5.5,
+     "gap_mm": 7.4,
      "ok": true
     },
     {
      "at": [
       -34.5,
       -100.5,
-      68.5
+      71.5
      ],
      "to_part": "grip_side_plate_R",
      "gap_mm": 7.4,
@@ -7423,22 +6902,22 @@
     },
     {
      "at": [
-      -55.5,
-      -16.5,
+      -58.5,
+      -13.5,
       98.5
      ],
-     "to_part": "saddle_cover",
-     "gap_mm": 6.5,
+     "to_part": "rear_deck_R",
+     "gap_mm": 5.4,
      "ok": true
     },
     {
      "at": [
-      -58.5,
-      -13.5,
+      -61.5,
+      -10.5,
       101.5
      ],
-     "to_part": "saddle_cover",
-     "gap_mm": 3.5,
+     "to_part": "rear_deck_R",
+     "gap_mm": 1.2,
      "ok": true
     }
    ],
@@ -7459,13 +6938,8 @@
     ],
     [
      -127.5,
-     70.5,
-     71.5
-    ],
-    [
-     -124.5,
-     70.5,
-     74.5
+     73.5,
+     77.5
     ],
     [
      -67.5,
@@ -7480,15 +6954,20 @@
     [
      -64.5,
      58.5,
+     95.5
+    ],
+    [
+     -61.5,
+     55.5,
      98.5
     ],
     [
      -60.6,
      56.2,
-     101.6
+     99.6
     ]
    ],
-   "route_mm": 89.5,
+   "route_mm": 81.7,
    "termination_mm": 50.0,
    "service_loop_mm": 40.0,
    "length_mm": 180,
@@ -7496,21 +6975,11 @@
     {
      "at": [
       -127.5,
-      70.5,
-      71.5
+      73.5,
+      77.5
      ],
-     "turn_deg": 112,
-     "fits_radius_mm": 1.4,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -124.5,
-      70.5,
-      74.5
-     ],
-     "turn_deg": 25,
-     "fits_radius_mm": 9.4,
+     "turn_deg": 55,
+     "fits_radius_mm": 4.2,
      "ok": "False"
     },
     {
@@ -7519,8 +6988,8 @@
       64.5,
       95.5
      ],
-     "turn_deg": 43,
-     "fits_radius_mm": 5.4,
+     "turn_deg": 40,
+     "fits_radius_mm": 5.9,
      "ok": "False"
     },
     {
@@ -7529,18 +6998,28 @@
       61.5,
       95.5
      ],
-     "turn_deg": 60,
-     "fits_radius_mm": 3.7,
+     "turn_deg": 45,
+     "fits_radius_mm": 3.6,
      "ok": "False"
     },
     {
      "at": [
       -64.5,
       58.5,
+      95.5
+     ],
+     "turn_deg": 55,
+     "fits_radius_mm": 2.9,
+     "ok": "False"
+    },
+    {
+     "at": [
+      -61.5,
+      55.5,
       98.5
      ],
-     "turn_deg": 46,
-     "fits_radius_mm": 5.0,
+     "turn_deg": 62,
+     "fits_radius_mm": 1.3,
      "ok": "False"
     }
    ],
@@ -7555,21 +7034,11 @@
     {
      "at": [
       -127.5,
-      70.5,
-      71.5
+      73.5,
+      77.5
      ],
      "to_part": "battery_tunnel",
-     "gap_mm": 12.5,
-     "ok": false
-    },
-    {
-     "at": [
-      -124.5,
-      70.5,
-      74.5
-     ],
-     "to_part": "battery_tunnel",
-     "gap_mm": 12.5,
+     "gap_mm": 15.5,
      "ok": false
     },
     {
@@ -7596,6 +7065,16 @@
      "at": [
       -64.5,
       58.5,
+      95.5
+     ],
+     "to_part": "battery_tunnel",
+     "gap_mm": 6.0,
+     "ok": true
+    },
+    {
+     "at": [
+      -61.5,
+      55.5,
       98.5
      ],
      "to_part": "rear_deck_L",
@@ -7619,14 +7098,14 @@
      76.3
     ],
     [
-     -37.5,
-     -97.5,
-     68.5
+     -49.5,
+     -85.5,
+     71.5
     ],
     [
      -34.5,
      -100.5,
-     68.5
+     71.5
     ],
     [
      -16.5,
@@ -7679,45 +7158,45 @@
      95.5
     ],
     [
-     -55.5,
-     -34.5,
+     -58.5,
+     -31.5,
      98.5
     ],
     [
-     -58.5,
-     -31.5,
+     -61.5,
+     -28.5,
      101.5
     ],
     [
      -60.6,
      -27.8,
-     101.6
+     99.6
     ]
    ],
-   "route_mm": 258.6,
+   "route_mm": 261.9,
    "termination_mm": 50.0,
    "service_loop_mm": 40.0,
-   "length_mm": 350,
+   "length_mm": 360,
    "bends": [
     {
      "at": [
-      -37.5,
-      -97.5,
-      68.5
+      -49.5,
+      -85.5,
+      71.5
      ],
-     "turn_deg": 35,
-     "fits_radius_mm": 6.8,
-     "ok": "False"
+     "turn_deg": 39,
+     "fits_radius_mm": 29.7,
+     "ok": "True"
     },
     {
      "at": [
       -34.5,
       -100.5,
-      68.5
+      71.5
      ],
-     "turn_deg": 60,
-     "fits_radius_mm": 3.7,
-     "ok": "False"
+     "turn_deg": 57,
+     "fits_radius_mm": 19.5,
+     "ok": "True"
     },
     {
      "at": [
@@ -7725,8 +7204,8 @@
       -100.5,
       86.5
      ],
-     "turn_deg": 60,
-     "fits_radius_mm": 3.7,
+     "turn_deg": 57,
+     "fits_radius_mm": 3.9,
      "ok": "False"
     },
     {
@@ -7815,28 +7294,28 @@
       -49.5,
       95.5
      ],
-     "turn_deg": 17,
-     "fits_radius_mm": 14.2,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -55.5,
-      -34.5,
-      98.5
-     ],
-     "turn_deg": 29,
-     "fits_radius_mm": 10.2,
-     "ok": "False"
+     "turn_deg": 14,
+     "fits_radius_mm": 17.6,
+     "ok": "True"
     },
     {
      "at": [
       -58.5,
       -31.5,
+      98.5
+     ],
+     "turn_deg": 29,
+     "fits_radius_mm": 10.0,
+     "ok": "False"
+    },
+    {
+     "at": [
+      -61.5,
+      -28.5,
       101.5
      ],
-     "turn_deg": 37,
-     "fits_radius_mm": 6.4,
+     "turn_deg": 123,
+     "fits_radius_mm": 0.6,
      "ok": "False"
     }
    ],
@@ -7850,29 +7329,29 @@
    "clips": [
     {
      "at": [
-      -99.5,
-      -85.8,
-      72.4
+      -105.5,
+      -79.8,
+      73.9
      ],
-     "to_part": "rear_deck_R",
-     "gap_mm": 39.5,
+     "to_part": "battery_tunnel",
+     "gap_mm": 21.8,
      "ok": false
     },
     {
      "at": [
-      -37.5,
-      -97.5,
-      68.5
+      -49.5,
+      -85.5,
+      71.5
      ],
-     "to_part": "grip_side_plate_R",
-     "gap_mm": 6.5,
+     "to_part": "bridge_tray",
+     "gap_mm": 7.4,
      "ok": true
     },
     {
      "at": [
       -34.5,
       -100.5,
-      68.5
+      71.5
      ],
      "to_part": "grip_side_plate_R",
      "gap_mm": 7.4,
@@ -7980,22 +7459,22 @@
     },
     {
      "at": [
-      -55.5,
-      -34.5,
+      -58.5,
+      -31.5,
       98.5
      ],
-     "to_part": "saddle_cover",
-     "gap_mm": 6.5,
+     "to_part": "rear_deck_R",
+     "gap_mm": 5.4,
      "ok": true
     },
     {
      "at": [
-      -58.5,
-      -31.5,
+      -61.5,
+      -28.5,
       101.5
      ],
-     "to_part": "saddle_cover",
-     "gap_mm": 3.5,
+     "to_part": "rear_deck_R",
+     "gap_mm": 1.2,
      "ok": true
     }
    ],
@@ -8015,11 +7494,6 @@
      76.3
     ],
     [
-     -151.5,
-     67.5,
-     68.5
-    ],
-    [
      -67.5,
      64.5,
      95.5
@@ -8030,49 +7504,34 @@
      95.5
     ],
     [
-     -58.5,
-     43.5,
+     -64.5,
+     37.5,
      95.5
     ],
     [
-     -55.5,
-     40.5,
+     -61.5,
+     34.5,
      98.5
-    ],
-    [
-     -58.5,
-     37.5,
-     101.5
     ],
     [
      -60.6,
      35.2,
-     101.6
+     99.6
     ]
    ],
-   "route_mm": 139.4,
+   "route_mm": 131.6,
    "termination_mm": 50.0,
    "service_loop_mm": 40.0,
    "length_mm": 230,
    "bends": [
     {
      "at": [
-      -151.5,
-      67.5,
-      68.5
-     ],
-     "turn_deg": 59,
-     "fits_radius_mm": 12.8,
-     "ok": "False"
-    },
-    {
-     "at": [
       -67.5,
       64.5,
       95.5
      ],
-     "turn_deg": 46,
-     "fits_radius_mm": 5.0,
+     "turn_deg": 41,
+     "fits_radius_mm": 5.7,
      "ok": "False"
     },
     {
@@ -8081,38 +7540,28 @@
       61.5,
       95.5
      ],
-     "turn_deg": 27,
-     "fits_radius_mm": 9.0,
+     "turn_deg": 45,
+     "fits_radius_mm": 5.1,
      "ok": "False"
     },
     {
      "at": [
-      -58.5,
-      43.5,
+      -64.5,
+      37.5,
       95.5
      ],
-     "turn_deg": 43,
-     "fits_radius_mm": 6.6,
+     "turn_deg": 55,
+     "fits_radius_mm": 5.0,
      "ok": "False"
     },
     {
      "at": [
-      -55.5,
-      40.5,
+      -61.5,
+      34.5,
       98.5
      ],
-     "turn_deg": 71,
-     "fits_radius_mm": 3.7,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -58.5,
-      37.5,
-      101.5
-     ],
-     "turn_deg": 34,
-     "fits_radius_mm": 5.2,
+     "turn_deg": 62,
+     "fits_radius_mm": 1.3,
      "ok": "False"
     }
    ],
@@ -8126,22 +7575,12 @@
    "clips": [
     {
      "at": [
-      -151.5,
-      67.5,
-      68.5
+      -114.5,
+      69.3,
+      85.9
      ],
      "to_part": "battery_tunnel",
-     "gap_mm": 9.5,
-     "ok": true
-    },
-    {
-     "at": [
-      -109.5,
-      66.0,
-      82.0
-     ],
-     "to_part": "battery_tunnel",
-     "gap_mm": 8.0,
+     "gap_mm": 11.3,
      "ok": true
     },
     {
@@ -8166,32 +7605,22 @@
     },
     {
      "at": [
-      -58.5,
-      43.5,
+      -64.5,
+      37.5,
       95.5
      ],
-     "to_part": "rear_deck_L",
-     "gap_mm": 7.9,
+     "to_part": "battery_tunnel",
+     "gap_mm": 6.0,
      "ok": true
     },
     {
      "at": [
-      -55.5,
-      40.5,
+      -61.5,
+      34.5,
       98.5
      ],
-     "to_part": "saddle_cover",
-     "gap_mm": 6.5,
-     "ok": true
-    },
-    {
-     "at": [
-      -58.5,
-      37.5,
-      101.5
-     ],
-     "to_part": "saddle_cover",
-     "gap_mm": 3.5,
+     "to_part": "rear_deck_L",
+     "gap_mm": 4.1,
      "ok": true
     }
    ],
@@ -8271,22 +7700,17 @@
      95.5
     ],
     [
-     -46.5,
-     -28.5,
-     98.5
-    ],
-    [
      -49.5,
      -25.5,
-     101.5
+     98.5
     ],
     [
      -51.8,
      -21.4,
-     98.8
+     96.8
     ]
    ],
-   "route_mm": 185.3,
+   "route_mm": 182.8,
    "termination_mm": 50.0,
    "service_loop_mm": 40.0,
    "length_mm": 280,
@@ -8397,28 +7821,18 @@
       -49.5,
       95.5
      ],
-     "turn_deg": 46,
-     "fits_radius_mm": 5.0,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -46.5,
-      -28.5,
-      98.5
-     ],
-     "turn_deg": 49,
-     "fits_radius_mm": 5.7,
+     "turn_deg": 38,
+     "fits_radius_mm": 6.1,
      "ok": "False"
     },
     {
      "at": [
       -49.5,
       -25.5,
-      101.5
+      98.5
      ],
-     "turn_deg": 67,
-     "fits_radius_mm": 3.9,
+     "turn_deg": 35,
+     "fits_radius_mm": 8.0,
      "ok": "False"
     }
    ],
@@ -8552,22 +7966,12 @@
     },
     {
      "at": [
-      -46.5,
-      -28.5,
+      -49.5,
+      -25.5,
       98.5
      ],
      "to_part": "saddle_cover",
      "gap_mm": 6.5,
-     "ok": true
-    },
-    {
-     "at": [
-      -49.5,
-      -25.5,
-      101.5
-     ],
-     "to_part": "saddle_cover",
-     "gap_mm": 3.5,
      "ok": true
     }
    ],
@@ -8587,11 +7991,6 @@
      23.0
     ],
     [
-     -19.5,
-     85.5,
-     23.5
-    ],
-    [
      4.5,
      61.5,
      23.5
@@ -8607,54 +8006,34 @@
      32.5
     ],
     [
-     34.5,
-     49.5,
-     68.5
-    ],
-    [
      37.5,
      46.5,
-     71.5
+     68.5
     ],
     [
      34.5,
      19.5,
-     98.5
-    ],
-    [
-     28.5,
-     13.5,
-     104.5
+     95.5
     ],
     [
      26.7,
      9.5,
-     101.6
+     99.6
     ]
    ],
-   "route_mm": 160.4,
+   "route_mm": 148.1,
    "termination_mm": 50.0,
    "service_loop_mm": 40.0,
-   "length_mm": 260,
+   "length_mm": 240,
    "bends": [
-    {
-     "at": [
-      -19.5,
-      85.5,
-      23.5
-     ],
-     "turn_deg": 111,
-     "fits_radius_mm": 1.7,
-     "ok": "False"
-    },
     {
      "at": [
       4.5,
       61.5,
       23.5
      ],
-     "turn_deg": 48,
-     "fits_radius_mm": 21.4,
+     "turn_deg": 55,
+     "fits_radius_mm": 18.2,
      "ok": "True"
     },
     {
@@ -8673,49 +8052,29 @@
       58.5,
       32.5
      ],
-     "turn_deg": 35,
-     "fits_radius_mm": 8.2,
-     "ok": "False"
-    },
-    {
-     "at": [
-      34.5,
-      49.5,
-      68.5
-     ],
-     "turn_deg": 35,
-     "fits_radius_mm": 8.2,
+     "turn_deg": 29,
+     "fits_radius_mm": 9.9,
      "ok": "False"
     },
     {
      "at": [
       37.5,
       46.5,
-      71.5
+      68.5
      ],
-     "turn_deg": 40,
-     "fits_radius_mm": 7.2,
-     "ok": "False"
+     "turn_deg": 34,
+     "fits_radius_mm": 62.1,
+     "ok": "True"
     },
     {
      "at": [
       34.5,
       19.5,
-      98.5
+      95.5
      ],
-     "turn_deg": 31,
-     "fits_radius_mm": 18.9,
+     "turn_deg": 38,
+     "fits_radius_mm": 19.5,
      "ok": "True"
-    },
-    {
-     "at": [
-      28.5,
-      13.5,
-      104.5
-     ],
-     "turn_deg": 71,
-     "fits_radius_mm": 3.7,
-     "ok": "False"
     }
    ],
    "own_parts": [
@@ -8724,23 +8083,8 @@
     "RR-CHS-MAIN_plug_J_DOCK"
    ],
    "tof_limit_ok": null,
-   "collisions": [
-    [
-     "saddle_cover",
-     1.8
-    ]
-   ],
+   "collisions": [],
    "clips": [
-    {
-     "at": [
-      -19.5,
-      85.5,
-      23.5
-     ],
-     "to_part": "dock_switch_bracket",
-     "gap_mm": 6.5,
-     "ok": true
-    },
     {
      "at": [
       4.5,
@@ -8773,19 +8117,9 @@
     },
     {
      "at": [
-      34.5,
-      49.5,
-      68.5
-     ],
-     "to_part": "bridge_post_2",
-     "gap_mm": 2.4,
-     "ok": true
-    },
-    {
-     "at": [
       37.5,
       46.5,
-      71.5
+      68.5
      ],
      "to_part": "bridge_post_2",
      "gap_mm": 3.6,
@@ -8795,25 +8129,15 @@
      "at": [
       34.5,
       19.5,
-      98.5
+      95.5
      ],
      "to_part": "shoulder_L",
-     "gap_mm": 4.5,
-     "ok": true
-    },
-    {
-     "at": [
-      28.5,
-      13.5,
-      104.5
-     ],
-     "to_part": "saddle_cover",
-     "gap_mm": 0.5,
+     "gap_mm": 5.0,
      "ok": true
     }
    ],
-   "ok": false,
-   "status": "FAIL"
+   "ok": true,
+   "status": "routed"
   },
   "W-021": {
    "from": "BUMP-L-DEV",
@@ -8828,18 +8152,18 @@
      66.0
     ],
     [
-     -136.5,
-     82.5,
+     -181.5,
+     76.5,
      71.5
     ],
     [
-     -133.5,
-     82.5,
-     74.5
+     -178.5,
+     73.5,
+     71.5
     ],
     [
-     -85.5,
-     82.5,
+     -121.5,
+     73.5,
      77.5
     ],
     [
@@ -8853,59 +8177,54 @@
      95.5
     ],
     [
-     -58.5,
-     28.5,
+     -64.5,
+     22.5,
      95.5
     ],
     [
-     -55.5,
-     25.5,
+     -61.5,
+     19.5,
      98.5
-    ],
-    [
-     -58.5,
-     22.5,
-     101.5
     ],
     [
      -60.6,
      18.2,
-     101.6
+     99.6
     ]
    ],
-   "route_mm": 225.3,
+   "route_mm": 216.0,
    "termination_mm": 50.0,
    "service_loop_mm": 40.0,
-   "length_mm": 320,
+   "length_mm": 310,
    "bends": [
     {
      "at": [
-      -136.5,
-      82.5,
+      -181.5,
+      76.5,
       71.5
      ],
-     "turn_deg": 42,
-     "fits_radius_mm": 5.5,
+     "turn_deg": 25,
+     "fits_radius_mm": 9.5,
      "ok": "False"
     },
     {
      "at": [
-      -133.5,
-      82.5,
-      74.5
+      -178.5,
+      73.5,
+      71.5
      ],
-     "turn_deg": 41,
-     "fits_radius_mm": 5.6,
+     "turn_deg": 45,
+     "fits_radius_mm": 5.1,
      "ok": "False"
     },
     {
      "at": [
-      -85.5,
-      82.5,
+      -121.5,
+      73.5,
       77.5
      ],
-     "turn_deg": 52,
-     "fits_radius_mm": 31.8,
+     "turn_deg": 15,
+     "fits_radius_mm": 213.5,
      "ok": "True"
     },
     {
@@ -8914,8 +8233,8 @@
       64.5,
       95.5
      ],
-     "turn_deg": 35,
-     "fits_radius_mm": 6.7,
+     "turn_deg": 39,
+     "fits_radius_mm": 5.9,
      "ok": "False"
     },
     {
@@ -8924,39 +8243,29 @@
       61.5,
       95.5
      ],
-     "turn_deg": 35,
-     "fits_radius_mm": 6.8,
+     "turn_deg": 45,
+     "fits_radius_mm": 5.1,
      "ok": "False"
     },
     {
      "at": [
-      -58.5,
-      28.5,
+      -64.5,
+      22.5,
       95.5
      ],
-     "turn_deg": 48,
-     "fits_radius_mm": 5.9,
+     "turn_deg": 55,
+     "fits_radius_mm": 5.0,
      "ok": "False"
     },
     {
      "at": [
-      -55.5,
-      25.5,
+      -61.5,
+      19.5,
       98.5
      ],
-     "turn_deg": 71,
-     "fits_radius_mm": 3.7,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -58.5,
-      22.5,
-      101.5
-     ],
-     "turn_deg": 38,
-     "fits_radius_mm": 6.9,
-     "ok": "False"
+     "turn_deg": 8,
+     "fits_radius_mm": 13.0,
+     "ok": "True"
     }
    ],
    "own_parts": [
@@ -8968,42 +8277,32 @@
    "clips": [
     {
      "at": [
-      -180.6,
-      87.7,
-      68.8
-     ],
-     "to_part": "lower_hull_RL",
-     "gap_mm": 27.8,
-     "ok": false
-    },
-    {
-     "at": [
-      -136.5,
-      82.5,
+      -181.5,
+      76.5,
       71.5
      ],
      "to_part": "battery_tunnel",
-     "gap_mm": 24.5,
+     "gap_mm": 18.5,
      "ok": false
     },
     {
      "at": [
-      -133.5,
-      82.5,
-      74.5
+      -178.5,
+      73.5,
+      71.5
      ],
      "to_part": "battery_tunnel",
-     "gap_mm": 24.5,
+     "gap_mm": 15.5,
      "ok": false
     },
     {
      "at": [
-      -85.5,
-      82.5,
+      -121.5,
+      73.5,
       77.5
      ],
      "to_part": "battery_tunnel",
-     "gap_mm": 24.6,
+     "gap_mm": 15.5,
      "ok": false
     },
     {
@@ -9028,32 +8327,22 @@
     },
     {
      "at": [
-      -58.5,
-      28.5,
+      -64.5,
+      22.5,
       95.5
      ],
-     "to_part": "rear_deck_L",
-     "gap_mm": 7.9,
+     "to_part": "battery_tunnel",
+     "gap_mm": 6.0,
      "ok": true
     },
     {
      "at": [
-      -55.5,
-      25.5,
+      -61.5,
+      19.5,
       98.5
      ],
-     "to_part": "saddle_cover",
-     "gap_mm": 6.5,
-     "ok": true
-    },
-    {
-     "at": [
-      -58.5,
-      22.5,
-      101.5
-     ],
-     "to_part": "saddle_cover",
-     "gap_mm": 3.5,
+     "to_part": "rear_deck_L",
+     "gap_mm": 4.1,
      "ok": true
     }
    ],
@@ -9073,8 +8362,13 @@
      66.0
     ],
     [
-     -49.5,
-     -85.5,
+     -61.5,
+     -88.5,
+     65.5
+    ],
+    [
+     -58.5,
+     -88.5,
      68.5
     ],
     [
@@ -9123,35 +8417,45 @@
      92.5
     ],
     [
-     -55.5,
+     -58.5,
      -52.5,
      98.5
     ],
     [
-     -58.5,
-     -52.5,
+     -61.5,
+     -55.5,
      101.5
     ],
     [
      -60.6,
      -54.8,
-     101.6
+     99.6
     ]
    ],
-   "route_mm": 312.7,
+   "route_mm": 313.4,
    "termination_mm": 50.0,
    "service_loop_mm": 40.0,
    "length_mm": 410,
    "bends": [
     {
      "at": [
-      -49.5,
-      -85.5,
+      -61.5,
+      -88.5,
+      65.5
+     ],
+     "turn_deg": 45,
+     "fits_radius_mm": 5.1,
+     "ok": "False"
+    },
+    {
+     "at": [
+      -58.5,
+      -88.5,
       68.5
      ],
-     "turn_deg": 47,
-     "fits_radius_mm": 24.2,
-     "ok": "True"
+     "turn_deg": 51,
+     "fits_radius_mm": 4.5,
+     "ok": "False"
     },
     {
      "at": [
@@ -9159,8 +8463,8 @@
       -100.5,
       68.5
      ],
-     "turn_deg": 60,
-     "fits_radius_mm": 18.4,
+     "turn_deg": 51,
+     "fits_radius_mm": 26.8,
      "ok": "True"
     },
     {
@@ -9239,28 +8543,28 @@
       -52.5,
       92.5
      ],
-     "turn_deg": 47,
-     "fits_radius_mm": 4.9,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -55.5,
-      -52.5,
-      98.5
-     ],
-     "turn_deg": 31,
-     "fits_radius_mm": 7.7,
+     "turn_deg": 46,
+     "fits_radius_mm": 5.0,
      "ok": "False"
     },
     {
      "at": [
       -58.5,
       -52.5,
+      98.5
+     ],
+     "turn_deg": 46,
+     "fits_radius_mm": 6.1,
+     "ok": "False"
+    },
+    {
+     "at": [
+      -61.5,
+      -55.5,
       101.5
      ],
-     "turn_deg": 60,
-     "fits_radius_mm": 2.7,
+     "turn_deg": 156,
+     "fits_radius_mm": 0.2,
      "ok": "False"
     }
    ],
@@ -9273,28 +8577,38 @@
    "clips": [
     {
      "at": [
-      -166.2,
-      -90.4,
-      66.8
+      -170.2,
+      -91.4,
+      65.8
      ],
      "to_part": "lower_hull_RR",
-     "gap_mm": 25.8,
+     "gap_mm": 24.8,
      "ok": false
     },
     {
      "at": [
-      -107.9,
-      -87.9,
-      67.7
+      -115.9,
+      -89.9,
+      65.7
      ],
      "to_part": "lower_hull_RR",
-     "gap_mm": 35.4,
+     "gap_mm": 32.8,
      "ok": false
     },
     {
      "at": [
-      -49.5,
-      -85.5,
+      -61.5,
+      -88.5,
+      65.5
+     ],
+     "to_part": "grip_side_plate_R",
+     "gap_mm": 6.0,
+     "ok": true
+    },
+    {
+     "at": [
+      -58.5,
+      -88.5,
       68.5
      ],
      "to_part": "grip_side_plate_R",
@@ -9393,22 +8707,22 @@
     },
     {
      "at": [
-      -55.5,
+      -58.5,
       -52.5,
       98.5
      ],
-     "to_part": "saddle_cover",
-     "gap_mm": 6.5,
+     "to_part": "rear_deck_R",
+     "gap_mm": 5.4,
      "ok": true
     },
     {
      "at": [
-      -58.5,
-      -52.5,
+      -61.5,
+      -55.5,
       101.5
      ],
-     "to_part": "saddle_cover",
-     "gap_mm": 3.5,
+     "to_part": "rear_deck_R",
+     "gap_mm": 1.2,
      "ok": true
     }
    ],
@@ -9425,152 +8739,47 @@
     [
      -51.8,
      16.0,
-     98.8
-    ],
-    [
-     -52.5,
-     19.5,
-     101.5
-    ],
-    [
-     -52.5,
-     22.5,
-     98.5
+     96.8
     ],
     [
      -61.5,
-     61.5,
-     95.5
-    ],
-    [
-     -64.5,
-     64.5,
-     95.5
-    ],
-    [
-     -70.5,
-     82.5,
-     89.5
-    ],
-    [
-     -70.5,
-     115.5,
-     89.5
-    ],
-    [
-     -70.5,
-     118.5,
+     94.5,
      92.5
     ],
     [
-     -70.5,
-     118.5,
-     95.5
-    ],
-    [
-     -70.5,
-     121.5,
-     98.5
+     -64.5,
+     112.5,
+     92.5
     ],
     [
      -75.0,
-     117.8,
+     115.8,
      100.8
     ]
    ],
-   "route_mm": 123.7,
+   "route_mm": 111.2,
    "termination_mm": 50.0,
    "service_loop_mm": 40.0,
-   "length_mm": 220,
+   "length_mm": 210,
    "bends": [
     {
      "at": [
-      -52.5,
-      19.5,
-      101.5
-     ],
-     "turn_deg": 83,
-     "fits_radius_mm": 2.4,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -52.5,
-      22.5,
-      98.5
-     ],
-     "turn_deg": 42,
-     "fits_radius_mm": 5.5,
-     "ok": "False"
-    },
-    {
-     "at": [
       -61.5,
-      61.5,
-      95.5
+      94.5,
+      92.5
      ],
-     "turn_deg": 32,
-     "fits_radius_mm": 7.3,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -64.5,
-      64.5,
-      95.5
-     ],
-     "turn_deg": 31,
-     "fits_radius_mm": 7.5,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -70.5,
-      82.5,
-      89.5
-     ],
-     "turn_deg": 25,
-     "fits_radius_mm": 44.4,
+     "turn_deg": 4,
+     "fits_radius_mm": 265.3,
      "ok": "True"
     },
     {
      "at": [
-      -70.5,
-      115.5,
-      89.5
-     ],
-     "turn_deg": 45,
-     "fits_radius_mm": 5.1,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -70.5,
-      118.5,
+      -64.5,
+      112.5,
       92.5
      ],
-     "turn_deg": 45,
-     "fits_radius_mm": 3.6,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -70.5,
-      118.5,
-      95.5
-     ],
-     "turn_deg": 45,
-     "fits_radius_mm": 3.6,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -70.5,
-      121.5,
-      98.5
-     ],
-     "turn_deg": 99,
-     "fits_radius_mm": 1.8,
+     "turn_deg": 69,
+     "fits_radius_mm": 10.1,
      "ok": "False"
     }
    ],
@@ -9579,101 +8788,40 @@
     "RR-PANEL_plug_J1"
    ],
    "tof_limit_ok": null,
-   "collisions": [],
+   "collisions": [
+    [
+     "panel_tray",
+     4.4
+    ],
+    [
+     "RR-CHS-MAIN_plug_J_CM5",
+     12.3
+    ]
+   ],
    "clips": [
     {
      "at": [
-      -52.5,
-      19.5,
-      101.5
-     ],
-     "to_part": "saddle_cover",
-     "gap_mm": 3.5,
-     "ok": true
-    },
-    {
-     "at": [
-      -52.5,
-      22.5,
-      98.5
-     ],
-     "to_part": "saddle_cover",
-     "gap_mm": 6.5,
-     "ok": true
-    },
-    {
-     "at": [
       -61.5,
-      61.5,
-      95.5
+      94.5,
+      92.5
      ],
-     "to_part": "rear_deck_L",
-     "gap_mm": 7.1,
+     "to_part": "panel_tray",
+     "gap_mm": 7.6,
      "ok": true
     },
     {
      "at": [
       -64.5,
-      64.5,
-      95.5
-     ],
-     "to_part": "rear_deck_L",
-     "gap_mm": 7.1,
-     "ok": true
-    },
-    {
-     "at": [
-      -70.5,
-      82.5,
-      89.5
-     ],
-     "to_part": "panel_tray",
-     "gap_mm": 5.6,
-     "ok": true
-    },
-    {
-     "at": [
-      -70.5,
-      115.5,
-      89.5
-     ],
-     "to_part": "panel_tray",
-     "gap_mm": 6.9,
-     "ok": true
-    },
-    {
-     "at": [
-      -70.5,
-      118.5,
+      112.5,
       92.5
      ],
      "to_part": "panel_tray",
-     "gap_mm": 7.5,
-     "ok": true
-    },
-    {
-     "at": [
-      -70.5,
-      118.5,
-      95.5
-     ],
-     "to_part": "panel_tray",
-     "gap_mm": 7.0,
-     "ok": true
-    },
-    {
-     "at": [
-      -70.5,
-      121.5,
-      98.5
-     ],
-     "to_part": "rear_deck_L",
-     "gap_mm": 3.6,
+     "gap_mm": 2.8,
      "ok": true
     }
    ],
-   "ok": true,
-   "status": "routed"
+   "ok": false,
+   "status": "FAIL"
   },
   "W-024": {
    "status": "not routed: optional external sounder, not fitted"
@@ -9688,153 +8836,78 @@
     [
      27.0,
      22.0,
-     98.8
+     96.8
     ],
     [
-     31.5,
-     22.5,
-     104.5
-    ],
-    [
-     34.5,
-     22.5,
-     101.5
-    ],
-    [
-     43.5,
-     31.5,
-     98.5
-    ],
-    [
-     58.5,
-     46.5,
-     95.5
-    ],
-    [
-     61.5,
-     49.5,
-     92.5
-    ],
-    [
-     61.5,
-     58.5,
-     83.5
-    ],
-    [
-     58.5,
-     61.5,
+     37.5,
+     40.5,
      80.5
     ],
     [
-     46.5,
-     73.5,
-     71.5
+     37.5,
+     88.5,
+     62.5
     ],
     [
-     46.5,
-     79.5,
-     65.5
+     40.5,
+     91.5,
+     59.5
+    ],
+    [
+     43.5,
+     91.5,
+     59.5
     ],
     [
      46.0,
-     91.5,
+     93.5,
      37.3
     ]
    ],
-   "route_mm": 127.5,
+   "route_mm": 108.7,
    "termination_mm": 30.0,
    "service_loop_mm": 20.0,
-   "length_mm": 180,
+   "length_mm": 160,
    "bends": [
     {
      "at": [
-      31.5,
-      22.5,
-      104.5
+      37.5,
+      40.5,
+      80.5
      ],
-     "turn_deg": 97,
-     "fits_radius_mm": 1.9,
+     "turn_deg": 31,
+     "fits_radius_mm": 48.8,
+     "ok": "True"
+    },
+    {
+     "at": [
+      37.5,
+      88.5,
+      62.5
+     ],
+     "turn_deg": 42,
+     "fits_radius_mm": 6.8,
      "ok": "False"
     },
     {
      "at": [
-      34.5,
-      22.5,
-      101.5
+      40.5,
+      91.5,
+      59.5
      ],
-     "turn_deg": 50,
-     "fits_radius_mm": 4.6,
+     "turn_deg": 55,
+     "fits_radius_mm": 2.9,
      "ok": "False"
     },
     {
      "at": [
       43.5,
-      31.5,
-      98.5
+      91.5,
+      59.5
      ],
-     "turn_deg": 5,
-     "fits_radius_mm": 143.6,
-     "ok": "True"
-    },
-    {
-     "at": [
-      58.5,
-      46.5,
-      95.5
-     ],
-     "turn_deg": 27,
-     "fits_radius_mm": 10.7,
+     "turn_deg": 84,
+     "fits_radius_mm": 1.7,
      "ok": "False"
-    },
-    {
-     "at": [
-      61.5,
-      49.5,
-      92.5
-     ],
-     "turn_deg": 35,
-     "fits_radius_mm": 8.2,
-     "ok": "False"
-    },
-    {
-     "at": [
-      61.5,
-      58.5,
-      83.5
-     ],
-     "turn_deg": 35,
-     "fits_radius_mm": 8.2,
-     "ok": "False"
-    },
-    {
-     "at": [
-      58.5,
-      61.5,
-      80.5
-     ],
-     "turn_deg": 7,
-     "fits_radius_mm": 40.6,
-     "ok": "True"
-    },
-    {
-     "at": [
-      46.5,
-      73.5,
-      71.5
-     ],
-     "turn_deg": 39,
-     "fits_radius_mm": 11.9,
-     "ok": "False"
-    },
-    {
-     "at": [
-      46.5,
-      79.5,
-      65.5
-     ],
-     "turn_deg": 22,
-     "fits_radius_mm": 21.9,
-     "ok": "True"
     }
    ],
    "own_parts": [
@@ -9846,102 +8919,52 @@
    "collisions": [
     [
      "lower_hull_FL",
-     154.9
+     1.2
     ],
     [
      "cliff_pod_L",
-     8.5
+     6.2
     ]
    ],
    "clips": [
     {
      "at": [
-      31.5,
-      22.5,
-      104.5
+      37.5,
+      40.5,
+      80.5
      ],
-     "to_part": "saddle_cover",
-     "gap_mm": 0.5,
+     "to_part": "bridge_tray",
+     "gap_mm": 2.5,
      "ok": true
     },
     {
      "at": [
-      34.5,
-      22.5,
-      101.5
+      37.5,
+      88.5,
+      62.5
      ],
-     "to_part": "saddle_cover",
-     "gap_mm": 3.5,
+     "to_part": "lower_hull_FL",
+     "gap_mm": 1.9,
+     "ok": true
+    },
+    {
+     "at": [
+      40.5,
+      91.5,
+      59.5
+     ],
+     "to_part": "lower_hull_FL",
+     "gap_mm": 3.2,
      "ok": true
     },
     {
      "at": [
       43.5,
-      31.5,
-      98.5
-     ],
-     "to_part": "shoulder_L",
-     "gap_mm": 4.1,
-     "ok": true
-    },
-    {
-     "at": [
-      58.5,
-      46.5,
-      95.5
-     ],
-     "to_part": "nose_cowl",
-     "gap_mm": 11.1,
-     "ok": true
-    },
-    {
-     "at": [
-      61.5,
-      49.5,
-      92.5
-     ],
-     "to_part": "nose_cowl",
-     "gap_mm": 9.6,
-     "ok": true
-    },
-    {
-     "at": [
-      61.5,
-      58.5,
-      83.5
-     ],
-     "to_part": "nose_cowl",
-     "gap_mm": 7.4,
-     "ok": true
-    },
-    {
-     "at": [
-      58.5,
-      61.5,
-      80.5
-     ],
-     "to_part": "nose_cowl",
-     "gap_mm": 8.4,
-     "ok": true
-    },
-    {
-     "at": [
-      46.5,
-      73.5,
-      71.5
-     ],
-     "to_part": "shoulder_L",
-     "gap_mm": 2.3,
-     "ok": true
-    },
-    {
-     "at": [
-      46.5,
-      79.5,
-      65.5
+      91.5,
+      59.5
      ],
      "to_part": "lower_hull_FL",
-     "gap_mm": 3.5,
+     "gap_mm": 3.2,
      "ok": true
     }
    ],
@@ -9949,178 +8972,25 @@
    "status": "FAIL"
   },
   "W-031": {
+   "status": "FAIL: no collision-free route in the free space",
+   "ok": false,
    "from": "CHS.J_TOF1",
    "to": "TOF1.J1",
-   "title": "ToF carrier CLIFF_FR (RR-TOF #1): main board J_TOF1 to the carrier J1",
    "od_mm": 4.0,
-   "min_bend_r_mm": 15.9,
-   "polyline": [
-    [
+   "diag": {
+    "reach_from_far_end_voxels": 309,
+    "reach_from_near_end_voxels": 86054,
+    "near_end": [
      27.0,
      -16.0,
-     98.8
+     96.8
     ],
-    [
-     28.5,
-     -19.5,
-     104.5
-    ],
-    [
-     28.5,
-     -22.5,
-     101.5
-    ],
-    [
-     40.5,
-     -52.5,
-     92.5
-    ],
-    [
-     43.5,
-     -55.5,
-     89.5
-    ],
-    [
-     43.5,
-     -79.5,
-     65.5
-    ],
-    [
+    "far_end": [
      46.0,
-     -91.5,
+     -93.5,
      37.3
     ]
-   ],
-   "route_mm": 114.5,
-   "termination_mm": 30.0,
-   "service_loop_mm": 20.0,
-   "length_mm": 170,
-   "bends": [
-    {
-     "at": [
-      28.5,
-      -19.5,
-      104.5
-     ],
-     "turn_deg": 103,
-     "fits_radius_mm": 1.7,
-     "ok": "False"
-    },
-    {
-     "at": [
-      28.5,
-      -22.5,
-      101.5
-     ],
-     "turn_deg": 35,
-     "fits_radius_mm": 6.8,
-     "ok": "False"
-    },
-    {
-     "at": [
-      40.5,
-      -52.5,
-      92.5
-     ],
-     "turn_deg": 29,
-     "fits_radius_mm": 10.2,
-     "ok": "False"
-    },
-    {
-     "at": [
-      43.5,
-      -55.5,
-      89.5
-     ],
-     "turn_deg": 35,
-     "fits_radius_mm": 8.2,
-     "ok": "False"
-    },
-    {
-     "at": [
-      43.5,
-      -79.5,
-      65.5
-     ],
-     "turn_deg": 22,
-     "fits_radius_mm": 77.6,
-     "ok": "True"
-    }
-   ],
-   "own_parts": [
-    "RR-CHS-MAIN_plug_J_TOF1",
-    "rrtof_cliff_fr_plug_J1",
-    "tof_clip_cliff_fr"
-   ],
-   "tof_limit_ok": true,
-   "collisions": [
-    [
-     "lower_hull_FR",
-     145.3
-    ],
-    [
-     "cliff_pod_R",
-     8.5
-    ],
-    [
-     "RR-CHS-MAIN_plug_J_HEAD2",
-     3.1
-    ]
-   ],
-   "clips": [
-    {
-     "at": [
-      28.5,
-      -19.5,
-      104.5
-     ],
-     "to_part": "saddle_cover",
-     "gap_mm": 0.5,
-     "ok": true
-    },
-    {
-     "at": [
-      28.5,
-      -22.5,
-      101.5
-     ],
-     "to_part": "saddle_cover",
-     "gap_mm": 3.5,
-     "ok": true
-    },
-    {
-     "at": [
-      40.5,
-      -52.5,
-      92.5
-     ],
-     "to_part": "shoulder_R",
-     "gap_mm": 10.1,
-     "ok": true
-    },
-    {
-     "at": [
-      43.5,
-      -55.5,
-      89.5
-     ],
-     "to_part": "bridge_tray",
-     "gap_mm": 12.7,
-     "ok": false
-    },
-    {
-     "at": [
-      43.5,
-      -79.5,
-      65.5
-     ],
-     "to_part": "shoulder_R",
-     "gap_mm": 4.5,
-     "ok": true
-    }
-   ],
-   "ok": false,
-   "status": "FAIL"
+   }
   },
   "W-032": {
    "status": "OPEN FINDING: CLIFF_RL seat in the rear lower-hull boss: enclosed pocket (hull wall, tunnel wall, hatch jamb; about 90 free voxels); proposed: lead channel through the tunnel foot wall, or the seat 10 mm inboard",
@@ -10129,15 +8999,15 @@
    "to": "TOF2.J1",
    "od_mm": 4.0,
    "diag": {
-    "reach_from_far_end_voxels": 126,
-    "reach_from_near_end_voxels": 100347,
+    "reach_from_far_end_voxels": 10,
+    "reach_from_near_end_voxels": 86066,
     "near_end": [
      -51.8,
      32.0,
-     98.8
+     96.8
     ],
     "far_end": [
-     -259.7,
+     -257.7,
      78.3,
      47.3
     ]
@@ -10151,15 +9021,15 @@
    "to": "TOF3.J1",
    "od_mm": 4.0,
    "diag": {
-    "reach_from_far_end_voxels": 126,
-    "reach_from_near_end_voxels": 100346,
+    "reach_from_far_end_voxels": 10,
+    "reach_from_near_end_voxels": 86065,
     "near_end": [
      -51.8,
      -34.0,
-     98.8
+     96.8
     ],
     "far_end": [
-     -259.7,
+     -257.7,
      -78.3,
      47.3
     ]
@@ -10176,16 +9046,11 @@
     [
      -2.0,
      72.0,
-     98.8
+     96.8
     ],
     [
      -1.5,
      76.5,
-     101.5
-    ],
-    [
-     -1.5,
-     79.5,
      98.5
     ],
     [
@@ -10200,48 +9065,48 @@
     ],
     [
      -7.5,
-     88.5,
-     113.5
-    ],
-    [
-     -13.5,
-     91.5,
-     134.5
-    ],
-    [
-     -19.5,
      91.5,
      140.5
     ],
     [
-     -10.0,
-     89.8,
-     146.9
+     -16.5,
+     88.5,
+     149.5
+    ],
+    [
+     -22.5,
+     88.5,
+     149.5
+    ],
+    [
+     -25.5,
+     88.5,
+     152.5
+    ],
+    [
+     -28.5,
+     85.5,
+     152.5
+    ],
+    [
+     -9.4,
+     89.9,
+     148.8
     ]
    ],
-   "route_mm": 75.3,
+   "route_mm": 105.2,
    "termination_mm": 30.0,
    "service_loop_mm": 20.0,
-   "length_mm": 130,
+   "length_mm": 160,
    "bends": [
     {
      "at": [
       -1.5,
       76.5,
-      101.5
-     ],
-     "turn_deg": 76,
-     "fits_radius_mm": 2.7,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -1.5,
-      79.5,
       98.5
      ],
-     "turn_deg": 45,
-     "fits_radius_mm": 5.1,
+     "turn_deg": 21,
+     "fits_radius_mm": 12.7,
      "ok": "False"
     },
     {
@@ -10260,38 +9125,58 @@
       88.5,
       101.5
      ],
-     "turn_deg": 51,
-     "fits_radius_mm": 4.5,
+     "turn_deg": 41,
+     "fits_radius_mm": 5.6,
      "ok": "False"
     },
     {
      "at": [
       -7.5,
-      88.5,
-      113.5
+      91.5,
+      140.5
      ],
-     "turn_deg": 13,
-     "fits_radius_mm": 58.1,
+     "turn_deg": 40,
+     "fits_radius_mm": 17.9,
      "ok": "True"
     },
     {
      "at": [
-      -13.5,
-      91.5,
-      134.5
+      -16.5,
+      88.5,
+      149.5
      ],
-     "turn_deg": 30,
-     "fits_radius_mm": 15.8,
+     "turn_deg": 47,
+     "fits_radius_mm": 7.0,
      "ok": "False"
     },
     {
      "at": [
-      -19.5,
-      91.5,
-      140.5
+      -22.5,
+      88.5,
+      149.5
      ],
-     "turn_deg": 101,
-     "fits_radius_mm": 3.5,
+     "turn_deg": 45,
+     "fits_radius_mm": 5.1,
+     "ok": "False"
+    },
+    {
+     "at": [
+      -25.5,
+      88.5,
+      152.5
+     ],
+     "turn_deg": 60,
+     "fits_radius_mm": 3.7,
+     "ok": "False"
+    },
+    {
+     "at": [
+      -28.5,
+      85.5,
+      152.5
+     ],
+     "turn_deg": 146,
+     "fits_radius_mm": 0.6,
      "ok": "False"
     }
    ],
@@ -10303,8 +9188,8 @@
    "tof_limit_ok": true,
    "collisions": [
     [
-     "grip_side_plate_L",
-     16.0
+     "shoulder_L",
+     2.7
     ]
    ],
    "clips": [
@@ -10312,16 +9197,6 @@
      "at": [
       -1.5,
       76.5,
-      101.5
-     ],
-     "to_part": "shoulder_L",
-     "gap_mm": 1.1,
-     "ok": true
-    },
-    {
-     "at": [
-      -1.5,
-      79.5,
       98.5
      ],
      "to_part": "shoulder_L",
@@ -10351,30 +9226,50 @@
     {
      "at": [
       -7.5,
-      88.5,
-      113.5
-     ],
-     "to_part": "shoulder_L",
-     "gap_mm": 2.8,
-     "ok": true
-    },
-    {
-     "at": [
-      -13.5,
-      91.5,
-      134.5
-     ],
-     "to_part": "cheek_fairing_L",
-     "gap_mm": 1.5,
-     "ok": true
-    },
-    {
-     "at": [
-      -19.5,
       91.5,
       140.5
      ],
+     "to_part": "cheek_fairing_L",
+     "gap_mm": 2.5,
+     "ok": true
+    },
+    {
+     "at": [
+      -16.5,
+      88.5,
+      149.5
+     ],
+     "to_part": "cheek_fairing_L",
+     "gap_mm": 1.1,
+     "ok": true
+    },
+    {
+     "at": [
+      -22.5,
+      88.5,
+      149.5
+     ],
      "to_part": "grip_side_plate_L",
+     "gap_mm": 0.5,
+     "ok": true
+    },
+    {
+     "at": [
+      -25.5,
+      88.5,
+      152.5
+     ],
+     "to_part": "grip_side_plate_L",
+     "gap_mm": 0.5,
+     "ok": true
+    },
+    {
+     "at": [
+      -28.5,
+      85.5,
+      152.5
+     ],
+     "to_part": "cheek_fairing_L",
      "gap_mm": 1.5,
      "ok": true
     }
@@ -10392,77 +9287,37 @@
     [
      -44.4,
      59.0,
-     98.8
+     96.8
     ],
     [
-     -46.5,
-     58.5,
-     104.5
-    ],
-    [
-     -49.5,
-     58.5,
-     101.5
-    ],
-    [
-     -70.5,
+     -76.5,
      61.5,
      98.5
     ],
     [
-     -193.5,
-     64.5,
-     98.5
+     -208.5,
+     70.5,
+     101.5
     ],
     [
-     -238.7,
-     82.3,
+     -239.1,
+     80.3,
      102.4
     ]
    ],
-   "route_mm": 203.5,
+   "route_mm": 196.7,
    "termination_mm": 30.0,
    "service_loop_mm": 20.0,
-   "length_mm": 260,
+   "length_mm": 250,
    "bends": [
     {
      "at": [
-      -46.5,
-      58.5,
-      104.5
-     ],
-     "turn_deg": 115,
-     "fits_radius_mm": 1.4,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -49.5,
-      58.5,
+      -208.5,
+      70.5,
       101.5
      ],
-     "turn_deg": 38,
-     "fits_radius_mm": 6.2,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -70.5,
-      61.5,
-      98.5
-     ],
-     "turn_deg": 10,
-     "fits_radius_mm": 116.8,
-     "ok": "True"
-    },
-    {
-     "at": [
-      -193.5,
-      64.5,
-      98.5
-     ],
-     "turn_deg": 21,
-     "fits_radius_mm": 134.1,
+     "turn_deg": 14,
+     "fits_radius_mm": 132.3,
      "ok": "True"
     }
    ],
@@ -10475,33 +9330,17 @@
    "collisions": [
     [
      "rear_deck_L",
-     9.4
+     17.5
+    ],
+    [
+     "rearm_start_body",
+     9.6
     ]
    ],
    "clips": [
     {
      "at": [
-      -46.5,
-      58.5,
-      104.5
-     ],
-     "to_part": "saddle_cover",
-     "gap_mm": 0.5,
-     "ok": true
-    },
-    {
-     "at": [
-      -49.5,
-      58.5,
-      101.5
-     ],
-     "to_part": "saddle_cover",
-     "gap_mm": 3.5,
-     "ok": true
-    },
-    {
-     "at": [
-      -70.5,
+      -76.5,
       61.5,
       98.5
      ],
@@ -10511,22 +9350,22 @@
     },
     {
      "at": [
-      -132.0,
-      63.0,
-      98.5
+      -142.5,
+      66.0,
+      100.0
      ],
      "to_part": "battery_hump",
-     "gap_mm": 2.9,
+     "gap_mm": 5.5,
      "ok": true
     },
     {
      "at": [
-      -193.5,
-      64.5,
-      98.5
+      -208.5,
+      70.5,
+      101.5
      ],
-     "to_part": "battery_hump",
-     "gap_mm": 4.3,
+     "to_part": "rear_deck_L",
+     "gap_mm": 7.4,
      "ok": true
     }
    ],
@@ -10543,227 +9382,47 @@
     [
      -44.4,
      -51.2,
-     98.8
+     96.8
     ],
     [
-     -40.5,
-     -52.5,
-     101.5
-    ],
-    [
-     -37.5,
-     -52.5,
+     -73.5,
+     -61.5,
      98.5
-    ],
-    [
-     -31.5,
-     -52.5,
-     98.5
-    ],
-    [
-     -28.5,
-     -55.5,
-     98.5
-    ],
-    [
-     -22.5,
-     -79.5,
-     95.5
-    ],
-    [
-     -19.5,
-     -82.5,
-     95.5
-    ],
-    [
-     -16.5,
-     -82.5,
-     95.5
-    ],
-    [
-     -13.5,
-     -85.5,
-     95.5
-    ],
-    [
-     -13.5,
-     -97.5,
-     95.5
-    ],
-    [
-     -16.5,
-     -100.5,
-     92.5
-    ],
-    [
-     -31.5,
-     -100.5,
-     77.5
-    ],
-    [
-     -88.5,
-     -115.5,
-     71.5
-    ],
-    [
-     -187.5,
-     -97.5,
-     83.5
     ],
     [
      -208.5,
-     -79.5,
-     104.5
+     -70.5,
+     101.5
     ],
     [
-     -238.7,
-     -82.3,
+     -239.1,
+     -80.3,
      102.4
     ]
    ],
-   "route_mm": 319.9,
+   "route_mm": 198.4,
    "termination_mm": 30.0,
    "service_loop_mm": 20.0,
-   "length_mm": 370,
+   "length_mm": 250,
    "bends": [
     {
      "at": [
-      -40.5,
-      -52.5,
-      101.5
-     ],
-     "turn_deg": 80,
-     "fits_radius_mm": 2.5,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -37.5,
-      -52.5,
+      -73.5,
+      -61.5,
       98.5
      ],
-     "turn_deg": 45,
-     "fits_radius_mm": 5.1,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -31.5,
-      -52.5,
-      98.5
-     ],
-     "turn_deg": 45,
-     "fits_radius_mm": 5.1,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -28.5,
-      -55.5,
-      98.5
-     ],
-     "turn_deg": 32,
-     "fits_radius_mm": 7.5,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -22.5,
-      -79.5,
-      95.5
-     ],
-     "turn_deg": 32,
-     "fits_radius_mm": 7.5,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -19.5,
-      -82.5,
-      95.5
-     ],
-     "turn_deg": 45,
-     "fits_radius_mm": 3.6,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -16.5,
-      -82.5,
-      95.5
-     ],
-     "turn_deg": 45,
-     "fits_radius_mm": 3.6,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -13.5,
-      -85.5,
-      95.5
-     ],
-     "turn_deg": 45,
-     "fits_radius_mm": 5.1,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -13.5,
-      -97.5,
-      95.5
-     ],
-     "turn_deg": 55,
-     "fits_radius_mm": 5.0,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -16.5,
-      -100.5,
-      92.5
-     ],
-     "turn_deg": 35,
-     "fits_radius_mm": 8.2,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -31.5,
-      -100.5,
-      77.5
-     ],
-     "turn_deg": 41,
-     "fits_radius_mm": 28.2,
-     "ok": "True"
-    },
-    {
-     "at": [
-      -88.5,
-      -115.5,
-      71.5
-     ],
-     "turn_deg": 28,
-     "fits_radius_mm": 118.8,
-     "ok": "True"
-    },
-    {
-     "at": [
-      -187.5,
-      -97.5,
-      83.5
-     ],
-     "turn_deg": 41,
-     "fits_radius_mm": 46.4,
+     "turn_deg": 16,
+     "fits_radius_mm": 111.6,
      "ok": "True"
     },
     {
      "at": [
       -208.5,
-      -79.5,
-      104.5
+      -70.5,
+      101.5
      ],
-     "turn_deg": 59,
-     "fits_radius_mm": 26.7,
+     "turn_deg": 14,
+     "fits_radius_mm": 131.4,
      "ok": "True"
     }
    ],
@@ -10772,167 +9431,56 @@
     "rrtof_look_rev_right_plug_J1",
     "tof_clip_look_rev_right"
    ],
-   "tof_limit_ok": false,
+   "tof_limit_ok": true,
    "collisions": [
     [
      "rear_deck_R",
-     97.1
+     17.5
+    ],
+    [
+     "battery_hump",
+     1.1
+    ],
+    [
+     "hands_on_body",
+     10.9
     ]
    ],
    "clips": [
     {
      "at": [
-      -40.5,
-      -52.5,
-      101.5
-     ],
-     "to_part": "saddle_cover",
-     "gap_mm": 3.5,
-     "ok": true
-    },
-    {
-     "at": [
-      -37.5,
-      -52.5,
+      -73.5,
+      -61.5,
       98.5
      ],
-     "to_part": "saddle_cover",
-     "gap_mm": 6.5,
+     "to_part": "battery_hump",
+     "gap_mm": 1.8,
      "ok": true
     },
     {
      "at": [
-      -31.5,
-      -52.5,
-      98.5
+      -141.0,
+      -66.0,
+      100.0
      ],
-     "to_part": "saddle_cover",
-     "gap_mm": 6.5,
-     "ok": true
-    },
-    {
-     "at": [
-      -28.5,
-      -55.5,
-      98.5
-     ],
-     "to_part": "saddle_cover",
-     "gap_mm": 6.5,
-     "ok": true
-    },
-    {
-     "at": [
-      -22.5,
-      -79.5,
-      95.5
-     ],
-     "to_part": "shoulder_R",
-     "gap_mm": 7.1,
-     "ok": true
-    },
-    {
-     "at": [
-      -19.5,
-      -82.5,
-      95.5
-     ],
-     "to_part": "grip_side_plate_R",
+     "to_part": "battery_hump",
      "gap_mm": 5.5,
      "ok": true
     },
     {
      "at": [
-      -16.5,
-      -82.5,
-      95.5
-     ],
-     "to_part": "grip_side_plate_R",
-     "gap_mm": 5.7,
-     "ok": true
-    },
-    {
-     "at": [
-      -13.5,
-      -85.5,
-      95.5
-     ],
-     "to_part": "grip_side_plate_R",
-     "gap_mm": 5.1,
-     "ok": true
-    },
-    {
-     "at": [
-      -13.5,
-      -97.5,
-      95.5
-     ],
-     "to_part": "grip_side_plate_R",
-     "gap_mm": 5.7,
-     "ok": true
-    },
-    {
-     "at": [
-      -16.5,
-      -100.5,
-      92.5
-     ],
-     "to_part": "grip_side_plate_R",
-     "gap_mm": 6.7,
-     "ok": true
-    },
-    {
-     "at": [
-      -31.5,
-      -100.5,
-      77.5
-     ],
-     "to_part": "grip_side_plate_R",
-     "gap_mm": 6.5,
-     "ok": true
-    },
-    {
-     "at": [
-      -88.5,
-      -115.5,
-      71.5
-     ],
-     "to_part": "lower_hull_RR",
-     "gap_mm": 19.2,
-     "ok": false
-    },
-    {
-     "at": [
-      -138.0,
-      -106.5,
-      77.5
-     ],
-     "to_part": "rear_deck_R",
-     "gap_mm": 29.8,
-     "ok": false
-    },
-    {
-     "at": [
-      -187.5,
-      -97.5,
-      83.5
-     ],
-     "to_part": "rear_deck_R",
-     "gap_mm": 17.0,
-     "ok": false
-    },
-    {
-     "at": [
       -208.5,
-      -79.5,
-      104.5
+      -70.5,
+      101.5
      ],
      "to_part": "rear_deck_R",
-     "gap_mm": 7.6,
+     "gap_mm": 7.4,
      "ok": true
     }
    ],
    "ok": false,
-   "status": "FAIL"
+   "status": "OPEN FINDING: LOOK_RR: the route round the right-deck devices (E-stop, HANDS-ON, Pause/Stop, charge inlet) to J_TOF6 at the rear edge exceeds the 270 mm budget; proposed (electronics): land LOOK_RR on a right-corner connector or accept a 300 mm cable without margin",
+   "open": true
   },
   "W-037": {
    "from": "CHS.J_TOF7",
@@ -10944,16 +9492,11 @@
     [
      2.0,
      -73.0,
-     98.8
+     96.8
     ],
     [
      1.5,
      -76.5,
-     101.5
-    ],
-    [
-     1.5,
-     -79.5,
      98.5
     ],
     [
@@ -10967,49 +9510,54 @@
      101.5
     ],
     [
-     -7.5,
+     -4.5,
      -88.5,
-     113.5
+     116.5
     ],
     [
-     -13.5,
+     -10.5,
      -88.5,
-     134.5
+     143.5
     ],
     [
-     -19.5,
+     -16.5,
      -88.5,
-     140.5
+     149.5
     ],
     [
-     -10.0,
-     -89.8,
-     146.9
+     -22.5,
+     -88.5,
+     149.5
+    ],
+    [
+     -25.5,
+     -88.5,
+     152.5
+    ],
+    [
+     -28.5,
+     -85.5,
+     152.5
+    ],
+    [
+     -9.4,
+     -89.9,
+     148.8
     ]
    ],
-   "route_mm": 75.8,
+   "route_mm": 103.9,
    "termination_mm": 30.0,
    "service_loop_mm": 20.0,
-   "length_mm": 130,
+   "length_mm": 160,
    "bends": [
     {
      "at": [
       1.5,
       -76.5,
-      101.5
-     ],
-     "turn_deg": 83,
-     "fits_radius_mm": 2.4,
-     "ok": "False"
-    },
-    {
-     "at": [
-      1.5,
-      -79.5,
       98.5
      ],
-     "turn_deg": 45,
-     "fits_radius_mm": 5.1,
+     "turn_deg": 27,
+     "fits_radius_mm": 8.2,
      "ok": "False"
     },
     {
@@ -11028,38 +9576,68 @@
       -88.5,
       101.5
      ],
-     "turn_deg": 56,
-     "fits_radius_mm": 4.0,
+     "turn_deg": 49,
+     "fits_radius_mm": 4.7,
      "ok": "False"
     },
     {
      "at": [
-      -7.5,
+      -4.5,
       -88.5,
-      113.5
+      116.5
      ],
-     "turn_deg": 21,
-     "fits_radius_mm": 40.6,
+     "turn_deg": 9,
+     "fits_radius_mm": 99.6,
      "ok": "True"
     },
     {
      "at": [
-      -13.5,
+      -10.5,
       -88.5,
-      134.5
+      143.5
      ],
-     "turn_deg": 29,
-     "fits_radius_mm": 16.4,
-     "ok": "True"
+     "turn_deg": 32,
+     "fits_radius_mm": 14.6,
+     "ok": "False"
     },
     {
      "at": [
-      -19.5,
+      -16.5,
       -88.5,
-      140.5
+      149.5
      ],
-     "turn_deg": 101,
-     "fits_radius_mm": 3.5,
+     "turn_deg": 45,
+     "fits_radius_mm": 7.2,
+     "ok": "False"
+    },
+    {
+     "at": [
+      -22.5,
+      -88.5,
+      149.5
+     ],
+     "turn_deg": 45,
+     "fits_radius_mm": 5.1,
+     "ok": "False"
+    },
+    {
+     "at": [
+      -25.5,
+      -88.5,
+      152.5
+     ],
+     "turn_deg": 60,
+     "fits_radius_mm": 3.7,
+     "ok": "False"
+    },
+    {
+     "at": [
+      -28.5,
+      -85.5,
+      152.5
+     ],
+     "turn_deg": 146,
+     "fits_radius_mm": 0.6,
      "ok": "False"
     }
    ],
@@ -11072,7 +9650,7 @@
    "collisions": [
     [
      "shoulder_R",
-     9.1
+     1.1
     ]
    ],
    "clips": [
@@ -11080,16 +9658,6 @@
      "at": [
       1.5,
       -76.5,
-      101.5
-     ],
-     "to_part": "shoulder_R",
-     "gap_mm": 1.1,
-     "ok": true
-    },
-    {
-     "at": [
-      1.5,
-      -79.5,
       98.5
      ],
      "to_part": "shoulder_R",
@@ -11118,19 +9686,19 @@
     },
     {
      "at": [
-      -7.5,
+      -4.5,
       -88.5,
-      113.5
+      116.5
      ],
      "to_part": "shoulder_R",
-     "gap_mm": 2.8,
+     "gap_mm": 1.5,
      "ok": true
     },
     {
      "at": [
-      -13.5,
+      -10.5,
       -88.5,
-      134.5
+      143.5
      ],
      "to_part": "cheek_fairing_R",
      "gap_mm": 1.0,
@@ -11138,12 +9706,42 @@
     },
     {
      "at": [
-      -19.5,
+      -16.5,
       -88.5,
-      140.5
+      149.5
+     ],
+     "to_part": "cheek_fairing_R",
+     "gap_mm": 1.1,
+     "ok": true
+    },
+    {
+     "at": [
+      -22.5,
+      -88.5,
+      149.5
      ],
      "to_part": "grip_side_plate_R",
      "gap_mm": 0.5,
+     "ok": true
+    },
+    {
+     "at": [
+      -25.5,
+      -88.5,
+      152.5
+     ],
+     "to_part": "grip_side_plate_R",
+     "gap_mm": 0.5,
+     "ok": true
+    },
+    {
+     "at": [
+      -28.5,
+      -85.5,
+      152.5
+     ],
+     "to_part": "cheek_fairing_R",
+     "gap_mm": 1.5,
      "ok": true
     }
    ],
@@ -11160,16 +9758,16 @@
     [
      -51.8,
      45.5,
-     98.8
+     96.8
     ],
     [
      -52.5,
      49.5,
-     101.5
+     98.5
     ],
     [
-     -58.5,
-     55.5,
+     -61.5,
+     58.5,
      95.5
     ],
     [
@@ -11178,39 +9776,44 @@
      95.5
     ],
     [
-     -217.5,
+     -124.5,
      64.5,
-     62.5
+     83.5
+    ],
+    [
+     -220.5,
+     64.5,
+     65.5
     ],
     [
      -244.2,
      78.4,
-     62.0
+     64.0
     ]
    ],
-   "route_mm": 211.7,
+   "route_mm": 209.4,
    "termination_mm": 30.0,
    "service_loop_mm": 20.0,
-   "length_mm": 270,
+   "length_mm": 260,
    "bends": [
     {
      "at": [
       -52.5,
       49.5,
-      101.5
+      98.5
      ],
-     "turn_deg": 76,
-     "fits_radius_mm": 3.1,
+     "turn_deg": 50,
+     "fits_radius_mm": 4.7,
      "ok": "False"
     },
     {
      "at": [
-      -58.5,
-      55.5,
+      -61.5,
+      58.5,
       95.5
      ],
-     "turn_deg": 35,
-     "fits_radius_mm": 16.3,
+     "turn_deg": 13,
+     "fits_radius_mm": 36.5,
      "ok": "True"
     },
     {
@@ -11220,17 +9823,17 @@
       95.5
      ],
      "turn_deg": 46,
-     "fits_radius_mm": 14.9,
+     "fits_radius_mm": 9.9,
      "ok": "False"
     },
     {
      "at": [
-      -217.5,
+      -220.5,
       64.5,
-      62.5
+      65.5
      ],
-     "turn_deg": 30,
-     "fits_radius_mm": 57.0,
+     "turn_deg": 31,
+     "fits_radius_mm": 49.5,
      "ok": "True"
     }
    ],
@@ -11246,20 +9849,20 @@
      "at": [
       -52.5,
       49.5,
-      101.5
+      98.5
      ],
      "to_part": "saddle_cover",
-     "gap_mm": 3.5,
+     "gap_mm": 6.5,
      "ok": true
     },
     {
      "at": [
-      -58.5,
-      55.5,
+      -61.5,
+      58.5,
       95.5
      ],
      "to_part": "rear_deck_L",
-     "gap_mm": 7.9,
+     "gap_mm": 7.1,
      "ok": true
     },
     {
@@ -11274,9 +9877,9 @@
     },
     {
      "at": [
-      -142.5,
+      -124.5,
       64.5,
-      79.0
+      83.5
      ],
      "to_part": "battery_tunnel",
      "gap_mm": 6.5,
@@ -11284,9 +9887,19 @@
     },
     {
      "at": [
-      -217.5,
+      -172.5,
       64.5,
-      62.5
+      74.5
+     ],
+     "to_part": "battery_tunnel",
+     "gap_mm": 6.5,
+     "ok": true
+    },
+    {
+     "at": [
+      -220.5,
+      64.5,
+      65.5
      ],
      "to_part": "battery_tunnel",
      "gap_mm": 6.5,
@@ -11303,17 +9916,17 @@
    "to": "TOF9.J1",
    "od_mm": 4.0,
    "diag": {
-    "reach_from_far_end_voxels": 126,
-    "reach_from_near_end_voxels": 100335,
+    "reach_from_far_end_voxels": 10,
+    "reach_from_near_end_voxels": 86054,
     "near_end": [
      -51.8,
      59.0,
-     98.8
+     96.8
     ],
     "far_end": [
      -229.7,
      -0.0,
-     175.9
+     173.9
     ]
    },
    "open": true
@@ -11328,16 +9941,11 @@
     [
      -51.8,
      -47.5,
-     98.8
+     96.8
     ],
     [
      -49.5,
      -46.5,
-     101.5
-    ],
-    [
-     -46.5,
-     -49.5,
      98.5
     ],
     [
@@ -11398,37 +10006,27 @@
     [
      -220.5,
      -67.5,
-     59.5
+     65.5
     ],
     [
      -244.2,
      -78.4,
-     62.0
+     64.0
     ]
    ],
-   "route_mm": 330.6,
+   "route_mm": 328.5,
    "termination_mm": 30.0,
    "service_loop_mm": 20.0,
-   "length_mm": 390,
+   "length_mm": 380,
    "bends": [
     {
      "at": [
       -49.5,
       -46.5,
-      101.5
-     ],
-     "turn_deg": 103,
-     "fits_radius_mm": 1.5,
-     "ok": "False"
-    },
-    {
-     "at": [
-      -46.5,
-      -49.5,
       98.5
      ],
-     "turn_deg": 35,
-     "fits_radius_mm": 6.7,
+     "turn_deg": 72,
+     "fits_radius_mm": 2.1,
      "ok": "False"
     },
     {
@@ -11438,7 +10036,7 @@
       98.5
      ],
      "turn_deg": 45,
-     "fits_radius_mm": 5.1,
+     "fits_radius_mm": 10.2,
      "ok": "False"
     },
     {
@@ -11538,17 +10136,17 @@
       71.5
      ],
      "turn_deg": 35,
-     "fits_radius_mm": 95.2,
+     "fits_radius_mm": 94.5,
      "ok": "True"
     },
     {
      "at": [
       -220.5,
       -67.5,
-      59.5
+      65.5
      ],
-     "turn_deg": 46,
-     "fits_radius_mm": 31.0,
+     "turn_deg": 45,
+     "fits_radius_mm": 31.8,
      "ok": "True"
     }
    ],
@@ -11564,16 +10162,6 @@
      "at": [
       -49.5,
       -46.5,
-      101.5
-     ],
-     "to_part": "saddle_cover",
-     "gap_mm": 3.5,
-     "ok": true
-    },
-    {
-     "at": [
-      -46.5,
-      -49.5,
       98.5
      ],
      "to_part": "saddle_cover",
@@ -11694,25 +10282,26 @@
      "at": [
       -154.5,
       -91.5,
-      65.5
+      68.5
      ],
      "to_part": "lower_hull_RR",
-     "gap_mm": 24.6,
+     "gap_mm": 27.6,
      "ok": false
     },
     {
      "at": [
       -220.5,
       -67.5,
-      59.5
+      65.5
      ],
      "to_part": "battery_tunnel",
-     "gap_mm": 8.1,
+     "gap_mm": 9.5,
      "ok": true
     }
    ],
    "ok": false,
-   "status": "FAIL"
+   "status": "OPEN FINDING: REAR_R: as W-036 (J_TOF10)",
+   "open": true
   },
   "W-041": {
    "status": "OPEN FINDING: chassis heater: the pad lead end lies under the cassette inside the floor plug; no modelled lead exit from the tunnel floor; proposed: 4 x 3 groove in the floor plug + grommet through the tunnel front at x -74",
@@ -11721,7 +10310,7 @@
    "to": "CHS.J_HTR",
    "od_mm": 4.5,
    "diag": {
-    "reach_from_far_end_voxels": 85423,
+    "reach_from_far_end_voxels": 86150,
     "reach_from_near_end_voxels": 1,
     "near_end": [
      -71.0,
@@ -11743,7 +10332,7 @@
    "to": "CHS.J_NTC",
    "od_mm": 3.1,
    "diag": {
-    "reach_from_far_end_voxels": 100335,
+    "reach_from_far_end_voxels": 86054,
     "reach_from_near_end_voxels": 1,
     "near_end": [
      -71.0,
@@ -11753,7 +10342,7 @@
     "far_end": [
      -51.8,
      -9.8,
-     98.8
+     96.8
     ]
    },
    "open": true
@@ -11775,38 +10364,38 @@
      88.0
     ],
     [
-     200.75447841910295,
-     41.47910260161513,
-     56.98422095722455
+     203.98185698472696,
+     26.301777418105118,
+     76.17194469069918
     ],
     [
-     207.6328082406519,
-     42.44578881609397,
-     96.3765310777129
+     204.40008259810224,
+     46.41144905122567,
+     110.74688061463668
     ],
     [
-     187.15111916355255,
-     39.56727513708358,
-     118.94803682615215
+     180.308212222201,
+     55.824776766445524,
+     127.12458934692566
     ],
     [
-     156.86323929672426,
-     35.31059121923377,
-     120.28343017612248
+     149.91557135027915,
+     53.870438903805564,
+     124.00589658358966
     ]
    ],
-   "route_mm": 244.3,
-   "free_length_mm": 274,
-   "max_z_mm": 124.0,
+   "route_mm": 249.0,
+   "free_length_mm": 279,
+   "max_z_mm": 130.9,
    "tof_cone_margin": {
-    "min_mm": 30.8,
-    "deg_at_min": 15.6,
+    "min_mm": 25.2,
+    "deg_at_min": 8.5,
     "sensor": "tof_look_fwd_left",
     "ok": true,
     "rule": ">= 20 mm or >= 10 deg"
    },
    "lidar_plane_z": 210.0,
-   "lidar_plane_gap_mm": 86.0,
+   "lidar_plane_gap_mm": 79.1,
    "tof_limit_ok": null,
    "bends": [],
    "own_parts": [
@@ -11838,13 +10427,13 @@
      88.0
     ],
     [
-     266.75447841910295,
-     41.47910260161513,
-     56.98422095722455
+     269.98185698472696,
+     26.301777418105118,
+     76.17194469069918
     ]
    ],
-   "route_mm": 143.0,
-   "free_length_mm": 274,
+   "route_mm": 147.8,
+   "free_length_mm": 279,
    "max_z_mm": 91.8,
    "tof_cone_margin": {
     "min_mm": 9.9,
@@ -11886,38 +10475,38 @@
      88.0
     ],
     [
-     187.82369275443466,
-     -39.66179919094493,
-     62.16046096298144
+     190.25397959714937,
+     -27.749361848016562,
+     78.77024258338488
     ],
     [
-     193.84223134829003,
-     -40.50764962861392,
-     96.62873231840874
+     190.6199270088527,
+     -45.34532452699705,
+     109.0233115168302
     ],
     [
-     175.92075340582807,
-     -37.98895015947982,
-     116.37879984829308
+     169.53954042993914,
+     -53.581986277814416,
+     123.35380665758306
     ],
     [
-     149.41885852235333,
-     -34.264351731361245,
-     117.54726902951712
+     142.94597966700752,
+     -51.871940648004454,
+     120.62495048966406
     ]
    ],
-   "route_mm": 232.0,
-   "free_length_mm": 262,
-   "max_z_mm": 120.8,
+   "route_mm": 238.3,
+   "free_length_mm": 268,
+   "max_z_mm": 126.6,
    "tof_cone_margin": {
-    "min_mm": 21.9,
-    "deg_at_min": 9.5,
+    "min_mm": 19.5,
+    "deg_at_min": 8.4,
     "sensor": "tof_look_fwd_right",
-    "ok": true,
+    "ok": false,
     "rule": ">= 20 mm or >= 10 deg"
    },
    "lidar_plane_z": 210.0,
-   "lidar_plane_gap_mm": 89.2,
+   "lidar_plane_gap_mm": 83.4,
    "tof_limit_ok": null,
    "bends": [],
    "own_parts": [
@@ -11926,11 +10515,11 @@
     "head_*"
    ],
    "corridor": true,
-   "cones_ok": true,
+   "cones_ok": false,
    "collisions": [],
    "clips": [],
-   "ok": true,
-   "status": "routed"
+   "ok": false,
+   "status": "FAIL"
   },
   "PIGTAIL-J2 docking start (head 66 mm forward, plug not mated)": {
    "from": "head boot J2 (top z 70)",
@@ -11949,17 +10538,17 @@
      88.0
     ],
     [
-     253.82369275443466,
-     -39.66179919094493,
-     62.16046096298144
+     256.2539795971494,
+     -27.749361848016562,
+     78.77024258338488
     ]
    ],
-   "route_mm": 143.5,
-   "free_length_mm": 262,
+   "route_mm": 149.7,
+   "free_length_mm": 268,
    "max_z_mm": 91.2,
    "tof_cone_margin": {
-    "min_mm": -5.2,
-    "deg_at_min": -1.7,
+    "min_mm": -5.9,
+    "deg_at_min": -1.9,
     "sensor": "tof_look_fwd_right",
     "ok": false,
     "rule": ">= 20 mm or >= 10 deg"
@@ -11982,7 +10571,49 @@
   }
  },
  "svc_access": {
-  "pads_in_board_file": [],
+  "pads_in_board_file": [
+   "TP60",
+   "TP63",
+   "TP64",
+   "TP65",
+   "TP66",
+   "TP67",
+   "TP68",
+   "TP69",
+   "TP70",
+   "TP71",
+   "TP72"
+  ],
+  "board_components_in_zone (info)": [
+   [
+    "R281",
+    0.9
+   ],
+   [
+    "R285",
+    1.2
+   ],
+   [
+    "K3",
+    15.7
+   ],
+   [
+    "C136",
+    0.9
+   ],
+   [
+    "R186",
+    0.9
+   ],
+   [
+    "U38",
+    1.2
+   ],
+   [
+    "C135",
+    0.9
+   ]
+  ],
   "zone_base_link": [
    8.0,
    17.0,
@@ -11991,123 +10622,119 @@
    84.6,
    124.6
   ],
-  "parts_in_zone": [
-   [
-    "RR-CHS-MAIN_top_parts",
-    125.7
-   ]
-  ],
+  "parts_in_zone": [],
   "routes_over_zone": [],
   "clips_over_zone": [],
-  "ok": false
+  "ok": true
  },
  "board_bottom": {
   "bottom_parts": 455,
   "max_height_mm": 2.5,
   "over_3mm": [],
-  "over_tray_features": [
+  "over_tray_features": [],
+  "over_pass_throughs_info": [
    [
     "R49",
-    "tray pass-through at y -60"
+    "over the tray pass-through at y -60 (hole: no contact, info)"
    ],
    [
     "R132",
-    "tray pass-through at y +60"
+    "over the tray pass-through at y +60 (hole: no contact, info)"
    ],
    [
     "TP42",
-    "tray pass-through at y -60"
+    "over the tray pass-through at y -60 (hole: no contact, info)"
    ],
    [
     "C65",
-    "tray pass-through at y +60"
+    "over the tray pass-through at y +60 (hole: no contact, info)"
    ],
    [
     "TP6",
-    "tray pass-through at y +60"
+    "over the tray pass-through at y +60 (hole: no contact, info)"
    ],
    [
     "U19",
-    "tray pass-through at y +60"
+    "over the tray pass-through at y +60 (hole: no contact, info)"
    ],
    [
     "D44",
-    "tray pass-through at y +60"
+    "over the tray pass-through at y +60 (hole: no contact, info)"
    ],
    [
     "C147",
-    "tray pass-through at y +60"
+    "over the tray pass-through at y +60 (hole: no contact, info)"
    ],
    [
     "D7",
-    "tray pass-through at y -60"
+    "over the tray pass-through at y -60 (hole: no contact, info)"
    ],
    [
     "D48",
-    "tray pass-through at y +60"
+    "over the tray pass-through at y +60 (hole: no contact, info)"
    ],
    [
     "C168",
-    "tray pass-through at y +60"
+    "over the tray pass-through at y +60 (hole: no contact, info)"
    ],
    [
     "TP45",
-    "tray countersunk screw at post 1"
+    "flush countersunk tray screw at post 1 (no protrusion, info)"
    ],
    [
     "R250",
-    "tray pass-through at y +60"
+    "over the tray pass-through at y +60 (hole: no contact, info)"
    ],
    [
     "Q_LTA",
-    "tray countersunk screw at post 2"
+    "flush countersunk tray screw at post 2 (no protrusion, info)"
    ],
    [
     "R50",
-    "tray pass-through at y +60"
+    "over the tray pass-through at y +60 (hole: no contact, info)"
    ],
    [
     "C177",
-    "tray countersunk screw at post 2"
+    "flush countersunk tray screw at post 2 (no protrusion, info)"
    ],
    [
     "C164",
-    "tray pass-through at y +60"
+    "over the tray pass-through at y +60 (hole: no contact, info)"
    ],
    [
     "R192",
-    "tray pass-through at y +60"
+    "over the tray pass-through at y +60 (hole: no contact, info)"
    ],
    [
     "FB14",
-    "tray pass-through at y +60"
+    "over the tray pass-through at y +60 (hole: no contact, info)"
    ],
    [
     "R59",
-    "tray pass-through at y +60"
+    "over the tray pass-through at y +60 (hole: no contact, info)"
    ],
    [
     "FB10",
-    "tray pass-through at y +60"
+    "over the tray pass-through at y +60 (hole: no contact, info)"
    ],
    [
     "TP56",
-    "tray countersunk screw at post 1"
+    "flush countersunk tray screw at post 1 (no protrusion, info)"
    ],
    [
     "TP36",
-    "tray pass-through at y -60"
+    "over the tray pass-through at y -60 (hole: no contact, info)"
    ],
    [
     "C149",
-    "tray pass-through at y +60"
+    "over the tray pass-through at y +60 (hole: no contact, info)"
    ],
    [
     "TP41",
-    "tray pass-through at y -60"
+    "over the tray pass-through at y -60 (hole: no contact, info)"
    ]
   ],
-  "ok": false,
+  "ok": true,
   "source": "board file"
  },
  "receptacle_depth": {
@@ -12128,9 +10755,9 @@
  "mass_cg": {
   "base_without_head": {
    "mass": 6.69,
-   "x": -92.41,
-   "y": 1.09,
-   "z": 81.78
+   "x": -92.44,
+   "y": 1.08,
+   "z": 81.83
   },
   "groups": {
    "battery_bay": {
@@ -12174,14 +10801,14 @@
     "z": 83.8
    },
    "compute": {
-    "mass_kg": 0.158,
-    "x": -111.5,
-    "z": 47.4
+    "mass_kg": 0.157,
+    "x": -111.6,
+    "z": 49.4
    },
    "connectors": {
     "mass_kg": 0.035,
-    "x": 86.8,
-    "z": 94.5
+    "x": 84.3,
+    "z": 92.2
    },
    "controls": {
     "mass_kg": 0.295,
@@ -12195,13 +10822,13 @@
    },
    "front_sensors": {
     "mass_kg": 0.012,
-    "x": 50.0,
-    "z": 26.8
+    "x": 49.9,
+    "z": 27.0
    },
    "grip": {
-    "mass_kg": 0.256,
+    "mass_kg": 0.257,
     "x": -28.6,
-    "z": 131.3
+    "z": 131.4
    },
    "hatch": {
     "mass_kg": 0.13,
@@ -12209,7 +10836,7 @@
     "z": 107.9
    },
    "lid": {
-    "mass_kg": 0.518,
+    "mass_kg": 0.519,
     "x": -87.2,
     "z": 108.5
    },
@@ -12219,8 +10846,8 @@
     "z": 190.0
    },
    "lower_hull": {
-    "mass_kg": 0.218,
-    "x": -119.1,
+    "mass_kg": 0.217,
+    "x": -120.3,
     "z": 46.5
    },
    "lumped: RR-TOF harness ends, NTCs, cut-out, vent, light pipes": {
@@ -12345,9 +10972,9 @@
    ],
    [
     "cheek_fairing_L",
-    0.0155,
-    -20.8,
-    151.8
+    0.0159,
+    -20.6,
+    151.6
    ],
    [
     "receiver_channel_R",
@@ -12423,9 +11050,9 @@
    ],
    [
     "cheek_fairing_R",
-    0.0155,
-    -20.8,
-    151.8
+    0.0159,
+    -20.6,
+    151.6
    ],
    [
     "dock_switch_bracket",
@@ -12603,15 +11230,15 @@
    ],
    [
     "lower_hull_FL",
-    0.0337,
-    1.0,
-    46.3
+    0.0329,
+    0.0,
+    46.1
    ],
    [
     "lower_hull_FR",
-    0.0337,
-    1.0,
-    46.3
+    0.0329,
+    0.0,
+    46.1
    ],
    [
     "lower_hull_RL",
@@ -12627,33 +11254,33 @@
    ],
    [
     "nose_cowl",
-    0.0903,
-    72.6,
+    0.0904,
+    72.7,
     90.0
    ],
    [
     "shoulder_L",
     0.0303,
-    2.7,
-    100.6
+    2.6,
+    100.7
    ],
    [
     "rear_deck_L",
-    0.1328,
-    -141.6,
+    0.133,
+    -141.7,
     106.0
    ],
    [
     "shoulder_R",
     0.0303,
-    2.7,
-    100.6
+    2.6,
+    100.7
    ],
    [
     "rear_deck_R",
-    0.1324,
-    -144.2,
-    106.4
+    0.1326,
+    -144.4,
+    106.3
    ],
    [
     "battery_hump",
@@ -12699,9 +11326,9 @@
    ],
    [
     "cliff_pod_L",
-    0.0058,
-    50.0,
-    26.8
+    0.0059,
+    49.9,
+    27.0
    ],
    [
     "bumper_side_L",
@@ -12729,9 +11356,9 @@
    ],
    [
     "cliff_pod_R",
-    0.0058,
-    50.0,
-    26.8
+    0.0059,
+    49.9,
+    27.0
    ],
    [
     "bumper_side_R",
@@ -12753,9 +11380,9 @@
    ],
    [
     "cm5_tray",
-    0.0077,
-    -112.0,
-    40.5
+    0.0067,
+    -113.1,
+    40.8
    ],
    [
     "inlet_cover",
@@ -12935,7 +11562,7 @@
     "CM5_carrier_pcb",
     0.15,
     -111.5,
-    47.8
+    49.8
    ],
    [
     "lidar",
@@ -12988,14 +11615,14 @@
    [
     "J1_receptacle",
     0.02,
-    86.2,
-    94.3
+    83.7,
+    91.9
    ],
    [
     "J2_receptacle",
     0.015,
-    87.6,
-    94.8
+    85.1,
+    92.6
    ],
    [
     "rrtof_cliff_fl_pcb",
@@ -13117,9 +11744,9 @@
     "caster_N": 18.2,
     "each_wheel_N": 32.9,
     "caster_fraction": 0.217,
-    "tip_margin_forward_mm": 35.0,
+    "tip_margin_forward_mm": 35.1,
     "tip_margin_rearward_mm": 151.4,
-    "tip_margin_lateral_mm": 82.0,
+    "tip_margin_lateral_mm": 81.9,
     "hang_angle_deg": -8.7,
     "hang_angle_deg_old_bar_x-11": -19.7
    },
@@ -13132,9 +11759,9 @@
     "each_wheel_N": 34.7,
     "caster_fraction": 0.195,
     "tip_margin_forward_mm": 30.8,
-    "tip_margin_rearward_mm": 156.0,
+    "tip_margin_rearward_mm": 155.9,
     "tip_margin_lateral_mm": 84.5,
-    "hang_angle_deg": -5.9,
+    "hang_angle_deg": -6.0,
     "hang_angle_deg_old_bar_x-11": -17.0
    },
    {
@@ -13251,10 +11878,10 @@
     "chassis plate bending at x = -140 (aft masses 2.84 kg x 3 g; net width 133 mm x 4 mm, shells and tunnel ignored)",
     5.1,
     "MPa",
-    "allow 240 (6061-T6) -> SF 47.3"
+    "allow 240 (6061-T6) -> SF 47.2"
    ],
    [
-    "chassis plate bending at x = -15 (fore masses 3.11 kg x 3 g; net width 239 mm x 4 mm, shells and tunnel ignored)",
+    "chassis plate bending at x = -15 (fore masses 3.10 kg x 3 g; net width 239 mm x 4 mm, shells and tunnel ignored)",
     14.2,
     "MPa",
     "allow 240 (6061-T6) -> SF 16.9"
@@ -13271,12 +11898,12 @@
  },
  "summary": {
   "no interference among real parts and purchased envelopes": [
-   false,
-   "1 clash(es) in 1069 pairs; 24 declared through-wall envelope overlaps"
+   true,
+   "0 clash(es) in 1070 pairs; 24 declared through-wall envelope overlaps"
   ],
   "internals inside the shell cavity": [
-   false,
-   "68 parts checked, 5 outside"
+   true,
+   "31 parts checked, 0 outside"
   ],
   "wheels and caster on the floor": [
    true,
@@ -13287,8 +11914,8 @@
    "blocked ToF []; LiDAR bearings blocked 0"
   ],
   "removal sweeps and glove zones": [
-   false,
-   "{'service_cover_lift': [('fx_cover_0', 57.0), ('fx_cover_1', 57.0), ('fx_cover_2', 57.0), ('fx_cover_3', 57.0), ('fx_cover_4', 57.0), ('fx_cover_5', 57.0)], 'J1_glove_zone': [('J2_receptacle', 22), ('J2_mated_plug', 960)], 'J2_glove_zone': [('J1_receptacle', 156), ('J1_mated_plug', 1108)]}"
+   true,
+   "free"
   ],
   "nothing below z = 50 ahead of x = 62 except latch / datum A": [
    true,
@@ -13311,16 +11938,16 @@
    "calculated"
   ],
   "nothing wider than the tyres (295 mm)": [
-   false,
-   "[('fx_perim_8', 147.74), ('fx_perim_9', 147.74)]"
+   true,
+   "none over"
   ],
   "cable corridors of the master layout free": [
-   false,
-   "{'right_gutter': [('RR-CHS-MAIN_plug_J_PWR', 1008.0)]}"
+   true,
+   "all free"
   ],
   "CCR-E08 keep-outs over RR-CHS-MAIN free of body parts (interface-placed purchased envelopes reported as findings)": [
-   false,
-   "{'rear-left corner u 0-45, v 0-2': [('fx_board_H1', 58.0)], 'rear-right corner u 112-160, v': [('fx_board_H3', 58.0)], 'front-centre strip u 40-120, v': [('fx_board_H5', 58.0)]}"
+   true,
+   "all free"
   ],
   "boolean slivers dropped from parts below 100 mm3": [
    true,
@@ -13335,12 +11962,12 @@
    "all free"
   ],
   "SVC1..SVC10 test pads reachable by a probe with the cover off (no part, route or clip over u 126-140, v 75-84, 40 mm)": [
-   false,
-   "pads 0; parts [('RR-CHS-MAIN_top_parts', 125.7)]; routes []; clips []"
+   true,
+   "pads 11; parts []; routes []; clips []"
   ],
   "RR-CHS-MAIN bottom-side parts within 3.0 mm and clear of bridge-tray features": [
-   false,
-   "455 parts, max 2.5 mm; over features [('R49', 'tray pass-through at y -60'), ('R132', 'tray pass-through at y +60'), ('TP42', 'tray pass-through at y -60'), ('C65', 'tray pass-through at y +60'), ('TP6', 'tray pass-through at y +60'), ('U19', 'tray pass-through at y +60'), ('D44', 'tray pass-through at y +60'), ('C147', 'tray pass-through at y +60'), ('D7', 'tray pass-through at y -60'), ('D48', 'tray pass-through at y +60'), ('C168', 'tray pass-through at y +60'), ('TP45', 'tray countersunk screw at post 1'), ('R250', 'tray pass-through at y +60'), ('Q_LTA', 'tray countersunk screw at post 2'), ('R50', 'tray pass-through at y +60'), ('C177', 'tray countersunk screw at post 2'), ('C164', 'tray pass-through at y +60'), ('R192', 'tray pass-through at y +60'), ('FB14', 'tray pass-through at y +60'), ('R59', 'tray pass-through at y +60'), ('FB10', 'tray pass-through at y +60'), ('TP56', 'tray countersunk screw at post 1'), ('TP36', 'tray pass-through at y -60'), ('C149', 'tray pass-through at y +60'), ('TP41', 'tray pass-through at y -60')]"
+   true,
+   "455 parts, max 2.5 mm; over features []"
   ],
   "J1 / J2 receptacle bodies (depth + 5 mm, UNVERIFIED depths) clear of boards, CM5 carrier and front beam": [
    true,
@@ -13348,7 +11975,7 @@
   ],
   "every robot cable routed collision-free (ToF <= 270 mm incl. 30 mm margin; pigtail corridors clear of ToF cones by 20 mm / 10 deg)": [
    false,
-   "failed: ['W-020', 'W-030', 'W-031', 'W-034', 'W-035', 'W-036', 'W-037', 'W-040']; OPEN findings (not closed, listed in the report): ['W-032', 'W-033', 'W-039', 'W-041', 'W-042']"
+   "failed: ['W-001', 'W-023', 'W-030', 'W-031', 'W-034', 'W-035', 'W-037', 'PIGTAIL-J2 docked']; OPEN findings (not closed, listed in the report): ['W-032', 'W-033', 'W-036', 'W-039', 'W-040', 'W-041', 'W-042']"
   ],
   "every printed/fabricated part is one valid solid": [
    true,

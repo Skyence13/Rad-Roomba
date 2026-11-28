@@ -25,6 +25,7 @@ class SurveyPipeline:
         self.traj = TrajectoryBuffer(**(traj_kwargs or {}))
         self.proc = SurveyProcessor(survey_cfg, calibration, profile, self.traj, method, calibrations=calibrations)
         self.head_health = []
+        self.async_finalize = False            # RobotApp sets it on real-time hosts (identical result, off the app thread)
         self.archive = archive
         self.fits, self.sessions, self.closes, self.link_notes = [], [], [], []
         self.epoch_log = []
@@ -84,6 +85,8 @@ class SurveyPipeline:
                 return self.proc.evaluate()
             elif op == "finalize":                 # end of the scan: recorded results (MODEL.md rev 5 section 3)
                 self.proc.finish()
+                if self.async_finalize:            # real-time hosts: worker thread from a frozen copy of this point
+                    return self.proc.start_finalize_async()
                 return self.proc.finalize()
             elif op in ("epoch", "resume"):
                 self.traj.new_epoch(payload.get("t_us"), payload.get("reason", op.upper()))

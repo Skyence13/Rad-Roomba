@@ -223,16 +223,16 @@
  "flags": [
   {
    "id": "HS-0001",
-   "kind": "UNRESOLVED_EXCEEDANCE",
+   "kind": "INVESTIGATION_LEVEL",
    "source_lane": 3,
-   "x_m": 0.7441809943827129,
-   "y_m": -0.3211018291127872,
-   "D": 0.20228080552462163,
-   "u_total": 0.09994744027795474,
-   "D_star": 0.14396230755253536,
-   "D_hash": 0.3412097518439004,
+   "x_m": 0.7446640010576563,
+   "y_m": -0.32110270419964854,
+   "D": 0.20338190311440557,
+   "u_total": 0.09968750609672596,
+   "D_star": 0.1421347533567947,
+   "D_hash": 0.33755699928818644,
    "location": {
-    "distance_from_door_m": 0.744,
+    "distance_from_door_m": 0.745,
     "wall": "right wall",
     "distance_from_wall_m": 0.179,
     "text": "0.74 m from the door threshold, 0.18 m from the right wall"
@@ -256,27 +256,32 @@
    "ALARM": 1
   },
   "status_reasons": {
-   "reference gradient": 34,
-   "D# above the detection goal": 3,
+   "D# above the detection goal": 38,
    "coverage 0.15 < 0.5": 1,
    "coverage 0.48 < 0.5": 1,
    "coverage 0.21 < 0.5": 1,
-   "flagged by combined": 1,
+   "flagged by combined; one-sided reference: recount required before an investigation is reported": 1,
    "coverage 0.20 < 0.5": 1,
    "coverage 0.19 < 0.5": 1
   },
   "acceptable_fraction": 0.0,
-  "median_D_hash": 0.45022820162829563,
+  "median_D_hash": 0.47703102345637277,
   "undecidable_recorded": 0,
-  "undecidable_provisional_live": 12,
+  "undecidable_provisional_live": 2,
   "alarm_bookkeeping": {
+   "provisional alarm not confirmed": 1,
    "alarm found at final evaluation": 1
   },
   "flags": {
-   "UNRESOLVED_EXCEEDANCE:alarm found at final evaluation": 1
+   "INVESTIGATION_LEVEL:recorded alarm": 1
   },
   "review_queue_items": 1,
-  "revisit": 1,
+  "recount_required_flags": 1,
+  "one_sided_cells": 18,
+  "one_sided_alarm_cells_needing_recount": 1,
+  "search_preroll_s": [],
+  "recorded_evaluation": null,
+  "revisit": 0,
   "position_credit": {
    "samples": 619,
    "credited_fraction": 1.0,

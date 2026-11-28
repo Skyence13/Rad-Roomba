@@ -82,6 +82,12 @@ def rev5_metrics(sim):
            "alarm_bookkeeping": dict(Counter(r["alarm_bookkeeping"] for r in rows if r["alarm_bookkeeping"])),
            "flags": dict(Counter(f"{f['kind']}:{f.get('recorded', 'provisional')}" for f in proc.flags)),
            "review_queue_items": len(sim.app.guidance.items()) if sim.app.guidance is not None else None,
+           "recount_required_flags": sum(1 for f in proc.flags if f.get("recount_required")),
+           "one_sided_cells": sum(1 for r in rows if r.get("one_sided_reference")),
+           "one_sided_alarm_cells_needing_recount": sum(1 for r in rows if r.get("recount_required")),
+           "search_preroll_s": [round(e.get("waited_s", 0.0), 2) for e in (sim.app.mission.events if sim.app.mission else [])
+                                if e.get("ev") == "search_reference_ready"],
+           "recorded_evaluation": getattr(proc, "last_finalize", None),
            "revisit": len(proc.revisit)}
     try:
         out["position_credit"] = sim.credit_vs_truth()
@@ -693,6 +699,14 @@ def s08_replay(tmp, seed=18):
             mism.append({"cell": q["cell"], "recompute": q, "export": {k: r[k] for k in ("status", "beta_window.D", "beta_window.D_star", "beta_window.D_hash", "beta_window.detected")}})
     c.add("tools/recompute_cell.py reproduces D, D*, D#, decision and status of named cells from the archive, calibration and profile",
           bool(pick) and not mism, cells=[q["cell"] for q in rc], statuses=sorted({r["status"] for r in pick}), mismatches=mism[:3])
+    # lead task 5: an independent cross-check with the analysis library (rrrad) from the raw frames and the exported members
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("crosscheck_rrrad", Path(__file__).resolve().parents[3] / "tools" / "crosscheck_rrrad.py")
+    cx = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(cx)
+    xr = cx.crosscheck(app.run_dir, live["dir"], n_cells=4, max_lanes=2)
+    c.add("independent rrrad cross-check (raw frames + exported members): D, D*, D#, decision agree (1e-5) for m <= 2 cells",
+          bool(xr) and all(r["agree"] for r in xr), cells=[(r["cell"], r["m"], r["rel_diff"], r["detected"], r["reference_windows_resummed_equal"]) for r in xr])
     n = sum(1 for _ in read_journal(app.run_dir))
     idx = [json.loads(l) for l in (app.run_dir / "journal" / "index.ndjson").read_text().splitlines()]
     c.add("raw segments sealed with digests", all(len(s["sha256"]) == 64 for s in idx) and sum(s["entries"] for s in idx) == n, entries=n)

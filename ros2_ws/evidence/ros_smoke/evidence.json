@@ -38,7 +38,7 @@
    "ok": true,
    "holds": [
     {
-     "t_wall": 42.09,
+     "t_wall": 41.71,
      "reason": "OPERATOR_PAUSE",
      "task": "pair0:A+",
      "phase": "PASS"
@@ -55,13 +55,13 @@
   {
    "check": "credited coverage grows",
    "ok": true,
-   "fraction": 0.0360555537045002
+   "fraction": 0.07569444179534912
   },
   {
    "check": "eligible lane-gates received",
    "ok": true,
-   "eligible": 1448,
-   "gates": 362
+   "eligible": 1440,
+   "gates": 360
   },
   {
    "check": "coverage flagged not approved for field use",
@@ -72,105 +72,124 @@
    "ok": true,
    "mission": "SCAN",
    "hold": null,
-   "loc": {
-    "pose": [
-     1.246078822629287,
-     -0.30195889947673393,
-     0.000130925790132525
-    ],
-    "frame": "map (trailer): origin door-threshold centre, +x to bulkhead, +y left",
-    "uncertainty_2s_m": 0.0009881138127678403,
-    "credit": true,
-    "slip": false,
-    "hold_request": false,
-    "sigma": [
-     0.00044489026256905903,
-     0.00018830327541783382,
-     0.000323354570947624
-    ]
-   },
    "events": [
     [
+     "link_down",
+     "TIMEOUT:ENG_SETUP_GET",
+     null,
+     null
+    ],
+    [
      "session_open",
+     null,
+     null,
      null
     ],
     [
      "plan",
+     null,
+     null,
      null
     ],
     [
      "command",
-     "STATE:CONFIGURE"
-    ],
-    [
-     "command",
+     "STATE:CONFIGURE",
+     null,
      null
     ],
     [
      "command",
+     null,
+     null,
      null
     ],
     [
      "command",
+     null,
+     null,
      null
     ],
     [
      "command",
+     null,
+     null,
+     null
+    ],
+    [
+     "command",
+     null,
+     null,
      null
     ],
     [
      "task_start",
+     null,
+     null,
      null
+    ],
+    [
+     "slow_step",
+     null,
+     219,
+     0
+    ],
+    [
+     "slow_step",
+     null,
+     161,
+     0
+    ],
+    [
+     "slow_step",
+     null,
+     11,
+     171
     ]
-   ],
-   "head": {
-    "state": "ARMED",
-    "block_reason": null,
-    "block_detail": null,
-    "attachment": "de804fe1-95b3-419e-ad18-e2cd57a63995",
-    "head_id": "HEAD-DEMO-001",
-    "last_seq": 362,
-    "bound_us": 788.196308855896
-   },
-   "chassis": {
-    "link": "UP",
-    "mode": "MOVING",
-    "op_mode": "COMMISSIONING",
-    "motion": "RUN",
-    "accepted": true,
-    "reject_reason": null,
-    "applied": {
-     "v_mps": 0.1,
-     "w_radps": -0.0002
-    },
-    "stationary": {
-     "is_stationary": false,
-     "since_us": null
-    },
-    "battery": {
-     "soc_pct": 80,
-     "temp_c": [
-      18.0,
-      18.5
-     ],
-     "charge_state": "NONE"
-    },
-    "head_presence": "HEAD_DIRECT",
-    "time_bound_us": 636.8261655883789
-   }
+   ]
   },
   {
    "check": "export service wrote the product set",
    "ok": true
+  },
+  {
+   "check": "stand-alone head_driver_node: binds (strict calibration binding) and publishes gates stamped with the gate start",
+   "ok": false,
+   "gates": 21,
+   "attachment": null,
+   "stamp_ok": true,
+   "stamp": [
+    3601664829,
+    3601664829
+   ],
+   "events": [
+    [
+     "link_down",
+     "TIMEOUT:HELLO"
+    ],
+    [
+     "link_down",
+     "TIMEOUT:HELLO"
+    ],
+    [
+     "session_open",
+     ""
+    ]
+   ]
+  },
+  {
+   "check": "stand-alone chassis_bridge_node: publishes odom and chassis state",
+   "ok": true,
+   "odom": 161,
+   "chassis": 13
   }
  ],
  "holds": [
   {
-   "t_wall": 42.09,
+   "t_wall": 41.71,
    "reason": "OPERATOR_PAUSE",
    "task": "pair0:A+",
    "phase": "PASS"
   }
  ],
- "passed": true
+ "passed": false
 }

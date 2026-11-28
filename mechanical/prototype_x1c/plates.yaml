@@ -434,6 +434,20 @@ plates:
     - 68.0
     - 10.0
     bed_fit: OK
+  - part: bumper_side_L
+    mesh: out/stl/bumper_side_L.stl
+    position:
+    - 208.7
+    - 180.0
+    qty: 1
+    part_number: RRX-P33L
+    orientation_note: as fitted (band edge on the bed); bosses need small supports
+    supports: as fitted (band edge on the bed); bosses need small supports
+    bbox_print_mm:
+    - 50.08
+    - 71.18
+    - 20.0
+    bed_fit: OK
   - part: tof_clip_shallow
     mesh: out/stl/tof_clip_shallow.stl
     position:
@@ -488,38 +502,10 @@ plates:
   name: ASA small parts
   material: ASA
   parts:
-  - part: cm5_tray
-    mesh: out/stl/cm5_tray.stl
-    position:
-    - 69.5
-    - 30.0
-    qty: 1
-    part_number: RRX-P51
-    orientation_note: base on the bed; deck bridges between the four legs (supports under the deck)
-    supports: base on the bed; deck bridges between the four legs (supports under the deck)
-    bbox_print_mm:
-    - 87.0
-    - 44.0
-    - 7.0
-    bed_fit: OK
-  - part: bumper_side_L
-    mesh: out/stl/bumper_side_L.stl
-    position:
-    - 146.0
-    - 43.6
-    qty: 1
-    part_number: RRX-P33L
-    orientation_note: as fitted (band edge on the bed); bosses need small supports
-    supports: as fitted (band edge on the bed); bosses need small supports
-    bbox_print_mm:
-    - 50.08
-    - 71.18
-    - 20.0
-    bed_fit: OK
   - part: bumper_side_R
     mesh: out/stl/bumper_side_R.stl
     position:
-    - 204.1
+    - 51.0
     - 43.6
     qty: 1
     part_number: RRX-P33R
@@ -529,6 +515,20 @@ plates:
     - 50.08
     - 71.18
     - 20.0
+    bed_fit: OK
+  - part: cm5_tray
+    mesh: out/stl/cm5_tray.stl
+    position:
+    - 127.6
+    - 26.0
+    qty: 1
+    part_number: RRX-P51
+    orientation_note: base on the bed; deck bridges between the four legs (supports under the deck)
+    supports: base on the bed; deck bridges between the four legs (supports under the deck)
+    bbox_print_mm:
+    - 87.0
+    - 36.0
+    - 9.0
     bed_fit: OK
   - part: tray_chock_L
     mesh: out/stl/tray_chock_L.stl

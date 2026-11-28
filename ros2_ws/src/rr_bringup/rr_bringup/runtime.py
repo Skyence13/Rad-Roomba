@@ -138,8 +138,13 @@ class Runtime:
 
     def _loop(self):
         while not self._stop.is_set():
+            t0 = time.perf_counter()
             with self.lock:
+                t1 = time.perf_counter()
                 self.app.step()
+            t2 = time.perf_counter()
+            if t2 - t0 > 0.15:            # real-time diagnosis: a step (or the wait for the lock) longer than 150 ms
+                self.app.log_event({"ev": "slow_step", "lock_wait_ms": round(1e3 * (t1 - t0)), "step_ms": round(1e3 * (t2 - t1))})
             time.sleep(0.0005)
 
     def _web(self):

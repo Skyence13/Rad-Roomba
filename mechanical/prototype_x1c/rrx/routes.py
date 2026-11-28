@@ -331,42 +331,41 @@ def route_all(parts, log=print, only=None):
         for n, v in occ_by.items():
             if not any(fnmatch.fnmatch(n, q) for q in own):
                 occ |= v
-        r = int(math.ceil((c["od"] / 2 + 0.5) / HV))             # first try with the cable radius; narrower passages: centre line only
-        free = cav & ~_dilate(occ, r)
-        free0 = cav & ~occ
-        ends = []
-        for p, d in ((pa, da), (pb, db)):
-            dl = d if isinstance(d[0], (tuple, list)) else [d]
-            cur = p
-            i = _idx(p)
-            for m, dd in enumerate(dl):                            # stub(s) out of the plug / seat, forced free
-                for k in range(0, 3 if (len(dl) > 1 and m == 0) else (10 if len(dl) > 1 else 6)):
-                    q = _idx(tuple(cur[j] + dd[j] * k * HV for j in range(3)))
-                    if all(0 <= q[j] < s for j, s in enumerate((NX, NY, NZ))):
-                        free[q] = True
-                        i = q
-                cur = _ctr(i)
-            ends.append(i)
-        forced = np.zeros_like(free)
-        for e in ends:
-            free[e] = True
-        forced |= free & ~(cav & ~_dilate(occ, r))
-        forced = _dilate(forced, 1) & ~occ_hard_core(occ_by, own)          # stub corridors one voxel wide round the stub axis
-        free |= forced
-        dist = _bfs(free, ends[1])
-        vp = _descend(dist, ends[0])
-        if vp is None:                                             # fall back to centre-line clearance (exact tube check follows)
+        r = int(math.ceil((c["od"] / 2 + 0.5) / HV))
+        hard_core = occ_hard_core(occ_by, own)
+        cands = []
+        for rr in (r + 1, r, 0):                                    # candidate paths: wide clearance first, centre line last
+            free = cav & ~(_dilate(occ, rr) if rr else occ)
+            ends = []
+            for p, d in ((pa, da), (pb, db)):
+                dl = d if isinstance(d[0], (tuple, list)) else [d]
+                cur = p
+                i = _idx(p)
+                for m, dd in enumerate(dl):                        # stub(s) out of the plug / seat, forced free
+                    for k in range(0, (2 if m == 0 else 9) if len(dl) > 1 else 3):
+                        q = _idx(tuple(cur[j] + dd[j] * k * HV for j in range(3)))
+                        if all(0 <= q[j] < s for j, s in enumerate((NX, NY, NZ))) and not hard_core[q]:
+                            free[q] = True
+                            i = q
+                    cur = _ctr(i)
+                ends.append(i)
             for e in ends:
-                free0[e] = True
-            free = free0 | forced
+                free[e] = True
             dist = _bfs(free, ends[1])
             vp = _descend(dist, ends[0])
-        if vp is None:
+            if vp is not None:
+                cands.append((rr, free, vp))
+        if not cands:
             da = _bfs(free, ends[0])
             res[cid] = {"status": "FAIL: no collision-free route in the free space", "ok": False, "from": c["from"], "to": c["to"], "od_mm": c["od"],
                         "diag": {"reach_from_far_end_voxels": int((dist >= 0).sum()), "reach_from_near_end_voxels": int((da >= 0).sum()),
                                  "near_end": [round(v, 1) for v in pa], "far_end": [round(v, 1) for v in pb]}}
             continue
+        rr, free, vp = cands[0]
+        alts = []
+        for rr2, fr2, vp2 in cands[1:]:
+            sm2 = _smooth(fr2, vp2)
+            alts.append([tuple(round(v, 1) for v in pa)] + [tuple(round(v, 1) for v in _ctr(q)) for q in sm2[1:-1]] + [tuple(round(v, 1) for v in pb)])
         sm = _smooth(free, vp)
         pts = [tuple(round(v, 1) for v in pa)] + [tuple(round(v, 1) for v in _ctr(q)) for q in sm[1:-1]] + [tuple(round(v, 1) for v in pb)]
         L = sum(math.dist(a, b) for a, b in zip(pts, pts[1:]))
@@ -385,7 +384,7 @@ def route_all(parts, log=print, only=None):
         tof = c["to"].startswith("TOF") or c["from"].startswith("TOF")
         res[cid] = {"from": c["from"], "to": c["to"], "title": c["title"], "od_mm": c["od"], "min_bend_r_mm": c["bend_r"], "polyline": [list(p) for p in pts],
                     "route_mm": round(L, 1), "termination_mm": 2 * c["end"], "service_loop_mm": c["loop"], "length_mm": int(math.ceil(total / 10.0) * 10),
-                    "bends": bends, "own_parts": own, "tof_limit_ok": (total <= TOF_LIMIT) if tof else None}
+                    "bends": bends, "own_parts": own, "tof_limit_ok": (total <= TOF_LIMIT) if tof else None, "_alts": alts, "_c": c}
         segs = [cyl(c["od"] / 2, math.dist(a, b), a, tuple(np.subtract(b, a))) for a, b in zip(pts, pts[1:]) if math.dist(a, b) > 0.5]
         import cadquery as cq
         joints = [cq.Solid.makeSphere(c["od"] / 2, cq.Vector(*q)) for q in pts[1:-1]]
@@ -429,6 +428,33 @@ def route_all(parts, log=print, only=None):
                 hits[rn].append((other, round(v, 1)))
         for cid, _, _ in tubes:
             res[cid]["collisions"] = hits[f"route_{cid}"]
+    # retry: a cable whose first path touches a part takes the first collision-free alternative (narrower clearance search)
+    import fnmatch as _fn
+    for level in (0, 1):
+        retry = [(cid, r) for cid, r in res.items() if r.get("collisions") and r.get("_alts") and len(r["_alts"]) > level]
+        if not retry:
+            break
+        alt_parts = []
+        for cid, r in retry:
+            pts = r["_alts"][level]
+            od = r["od_mm"]
+            segs = [cyl(od / 2, math.dist(a, b), a, tuple(np.subtract(b, a))) for a, b in zip(pts, pts[1:]) if math.dist(a, b) > 0.5]
+            if segs:
+                alt_parts.append((cid, Part("ROUTE", f"route_{cid}_alt{level}", compound(segs + [cq.Solid.makeSphere(od / 2, cq.Vector(*q)) for q in pts[1:-1]]), "purchased", "-", "route"), pts))
+        rows = overlaps([a[1] for a in alt_parts] + hard, CACHE.parent / "_interference", log=lambda *a: None)
+        for cid, prt, pts in alt_parts:
+            own = res[cid]["own_parts"]
+            hit = [(b if a == prt.name else a, round(v, 1)) for a, b, v, m_, dt in rows if prt.name in (a, b) and v > 1.0]
+            hit = [h for h in hit if not h[0].startswith("route_") and not any(_fn.fnmatch(h[0], q) for q in own)]
+            if not hit:
+                c = res[cid]["_c"]
+                L = sum(math.dist(a, b) for a, b in zip(pts, pts[1:]))
+                total = L + 2 * c["end"] + c["loop"]
+                res[cid].update(polyline=[list(q) for q in pts], route_mm=round(L, 1), length_mm=int(math.ceil(total / 10.0) * 10), collisions=[],
+                                tof_limit_ok=(total <= TOF_LIMIT) if res[cid]["tof_limit_ok"] is not None else None, path_choice=f"alternative {level + 1} (narrower clearance)")
+    for r in res.values():
+        r.pop("_alts", None)
+        r.pop("_c", None)
     # clip points: every <= CLIP_STEP along the route and at bends, nearest structural part
     struct = [p for p in hard if p.kind in ("printed", "fabricated")]
     import cadquery as cq

@@ -40,3 +40,46 @@ def test_predictive_null_equals_the_analyst_vectors(i):
         if r.get("D_hash_Bq_cm2_u_rel_K_0") is not None:
             d = st.detection_limit(t, 0.05, t * 2)
             assert d == pytest.approx(r["D_hash_Bq_cm2_u_rel_K_0"], rel=1e-5), (case["m"], r["alpha"])
+
+
+def test_async_recorded_evaluation_equals_the_synchronous_one_and_reports_progress():
+    """Lead task 3: the recorded evaluation on a worker thread (frozen copy at the journaled point) gives exactly the
+    synchronous result, while the live processor keeps receiving gates."""
+    import test_rev5 as T
+    sync = T.survey(n_pass=2)
+    sig_sync = T.recorded_signature(sync)
+    live = T.survey(n_pass=2)                       # same data; survey() ends with finalize(): redo it asynchronously
+    live.recorded = {ch: {} for ch in live.recorded}
+    live.__dict__["_rec_members"] = {}
+    live._recorded_version = None
+    job = live.start_finalize_async()
+    assert job["total"] == len(live.members)
+    live.join_finalize_async()
+    assert live.finalize_progress() is None and live.last_finalize["error"] is None
+    assert T.recorded_signature(live) == sig_sync
+    per_cell = live.last_finalize["seconds"] / max(1, job["total"])
+    print(f"recorded evaluation: {job['total']} cells in {live.last_finalize['seconds']:.1f} s ({1e3 * per_cell:.0f} ms per cell)")
+
+
+def test_one_sided_reference_local_linear_and_marked():
+    from test_rev5 import _series
+    s = _series(n=600, seed=3)
+    rec = unull.u_null(s, 0, (0, 4), 0.01, exclude_seqs=set(range(5)))
+    assert rec["one_sided"] and rec["status"] == "OK" and "gradient_per_m" in rec
+    w1, w2 = rec["windows"]
+    ext = 1.5 * w1["mean"] - 0.5 * w2["mean"]
+    if ext > w1["mean"]:
+        assert rec["U0"] == pytest.approx(ext) and rec["N_post"] == pytest.approx(1.0 / (2.25 / w1["n"] + 0.25 / w2["n"]))
+    else:
+        assert rec["U0"] == pytest.approx(w1["mean"]) and rec["N_post"] == w1["n"]
+
+
+def test_search_reference_one_pooled_sub_window_and_reuse_limits():
+    from test_rev5 import _series
+    s = _series(n=300)
+    assert unull.n_scan(0.05) == 25 and unull.n_scan(1e-3) == 50 and unull.n_scan(1e-5) == 105
+    rec = unull.search_u_null(s, 2, (290, 299), 1e-5, lane_ratio=1.02, ratio_rel_u=0.01)
+    assert rec["status"] == "OK" and rec["n"] >= 105 and rec["U0"] == pytest.approx(1.02 * rec["n"] / rec["t_s"])
+    assert rec["N_post"] == pytest.approx(1.0 / (1.0 / rec["n"] + 1e-4))
+    none = unull.search_u_null(s, 2, (290, 299), 1e-5, usable=lambda q: q > 280)     # reuse limited to the last 1 s
+    assert none["status"] == "UNAVAILABLE"

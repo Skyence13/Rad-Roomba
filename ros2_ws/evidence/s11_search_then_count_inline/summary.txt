@@ -1,7 +1,6 @@
 RAD ROOMBA FLOOR SURVEY SUMMARY
 SYNTHETIC CALIBRATION/PROFILE - field_use_approved: false - NOT FOR SURVEY OR RELEASE DECISIONS
 synthetic — not for field use
-DEMONSTRATION CALIBRATION BINDING - head identity NOT checked
 run 00000000-0000-4000-8000-002200000001  trailer SIM-SECTION-3.0x1.0  floor 3 x 1 m (floor only)
 method SEARCH_THEN_COUNT  profile ore-floor-demo-synthetic rev 1  calibration(s) DEMO-CAL-SYNTH-0001
 model analysis/radiometry/MODEL.md revision 5 (2026-11-27); recorded results (evaluated once on the complete record); README.txt says how to read them
@@ -11,46 +10,47 @@ alpha_scan 0.05  alpha_recount 0.000171  beta 0.05  decision cells 300
 
 WHERE THE ROBOT MEASURED
   valid exposure on 65.8 % of the target floor (3.000 m2)
-  UNVISITED                    1.0249 m2
-  ACCEPTABLE                   0.0000 m2
-  INSUFFICIENT_SENSITIVITY     1.8314 m2
+  UNVISITED                    1.0165 m2
+  ACCEPTABLE                   0.0100 m2
+  INSUFFICIENT_SENSITIVITY     1.7998 m2
   INVALID_DATA                 0.0000 m2
   BLOCKED                      0.0000 m2
   EXCLUDED                     0.0000 m2
   NO_DECISION                  0.0000 m2
   INCOMPLETE_COVERAGE          0.0437 m2
-  ALARM                        0.1000 m2
+  ALARM                        0.1300 m2
   ACQUISITION_GAP              0.0000 m2
 
 CELL STATUS (cells with data)
-  ALARM                      10
+  ALARM                      13
   NO DECISION                0
   INCOMPLETE COVERAGE        14
-  SENSITIVITY INSUFFICIENT   208
-  ACCEPTABLE                 0
-  provisional alarm not confirmed: 10
-  recorded alarm (provisional alarm confirmed): 10
+  SENSITIVITY INSUFFICIENT   204
+  ACCEPTABLE                 1
+  provisional alarm not confirmed: 12
+  recorded alarm (provisional alarm confirmed): 13
 
 HOW SENSITIVE IT WAS
-  decision cells with data 232; ACCEPTABLE 0
-  D# median 0.260  best 0.173  worst 0.973 Bq/cm2 (beta_window, alpha_combined 0.04)
+  decision cells with data 232; ACCEPTABLE 1
+  D# median 0.267  best 0.172  worst 1.123 Bq/cm2 (beta_window, alpha_combined 0.04)
   time sync: max gate bound 838.0033213786841 us (limit 10000)
 
 WHAT STILL NEEDS ATTENTION
-  HS-0001 UNRESOLVED_EXCEEDANCE lane 1 D=0.145 +/- 0.081 Bq/cm2 at 0.55 m from the door threshold, 0.33 m from the right wall [recorded alarm]
-  HS-0002 UNRESOLVED_EXCEEDANCE lane 3 D=0.206 +/- 0.124 Bq/cm2 at 0.98 m from the door threshold, 0.18 m from the right wall [provisional alarm not confirmed]
-  HS-0003 INVESTIGATION_LEVEL lane 1 D=0.178 +/- 0.072 Bq/cm2 at 1.02 m from the door threshold, 0.34 m from the right wall [recorded alarm]
-  HS-0004 INVESTIGATION_LEVEL lane 1 D=1.271 +/- 0.219 Bq/cm2 at 1.54 m from the door threshold, 0.35 m from the right wall [recorded alarm]
-  HS-0005 INVESTIGATION_LEVEL lane 0 D=0.677 +/- 0.309 Bq/cm2 at 2.78 m from the door threshold, 0.44 m from the right wall [provisional alarm not confirmed]
-  HS-0006 UNRESOLVED_EXCEEDANCE lane 3 D=0.256 +/- 0.149 Bq/cm2 at 2.26 m from the door threshold, 0.48 m from the right wall [provisional alarm not confirmed]
-  HS-0008 SCAN_DETECTION lane 3 D=0.133 +/- 0.071 Bq/cm2 at 2.06 m from the door threshold, 0.50 m from the left wall [recorded alarm]
-  HS-0009 INVESTIGATION_LEVEL lane 3 D=0.309 +/- 0.196 Bq/cm2 at 0.49 m from the door threshold, 0.18 m from the left wall [provisional alarm not confirmed]
-  HS-0010 SCAN_DETECTION lane 2 D=0.141 +/- 0.072 Bq/cm2 at 0.25 m from the door threshold, 0.29 m from the left wall [recorded alarm]
-  scan-stage detections below the investigation level awaiting a recount under the two-stage rule: 3
-  scaler count OBS-0001 (flag None, lane 1): EXCEEDS_INVESTIGATION_LEVEL D=2.182 +/- 0.344, D*=0.151, D#=0.257, T=9.9 s
-  unresolved floor ALARM: 0.1000 m2 (rectangles in residuals.json)
+  HS-0001 INVESTIGATION_LEVEL lane 1 D=0.126 +/- 0.070 Bq/cm2 at 1.15 m from the door threshold, 0.34 m from the right wall [recorded alarm]
+  HS-0002 INVESTIGATION_LEVEL lane 1 D=1.352 +/- 0.230 Bq/cm2 at 1.55 m from the door threshold, 0.34 m from the right wall [recorded alarm]
+  HS-0003 INVESTIGATION_LEVEL lane 1 D=0.149 +/- 0.074 Bq/cm2 at 1.99 m from the door threshold, 0.34 m from the right wall [recorded alarm]
+  HS-0004 INVESTIGATION_LEVEL lane 3 D=0.458 +/- 0.320 Bq/cm2 at 2.31 m from the door threshold, 0.49 m from the right wall [provisional alarm not confirmed]
+  HS-0005 UNRESOLVED_EXCEEDANCE lane 0 D=0.157 +/- 0.097 Bq/cm2 at 0.87 m from the door threshold, 0.22 m from the right wall [recorded alarm]
+  HS-0006 INVESTIGATION_LEVEL lane 0 D=0.411 +/- 0.330 Bq/cm2 at 0.30 m from the door threshold, 0.22 m from the right wall [provisional alarm not confirmed]
+  HS-0007 UNRESOLVED_EXCEEDANCE lane 0 D=0.203 +/- 0.105 Bq/cm2 at 2.30 m from the door threshold, 0.22 m from the left wall [recorded alarm]
+  HS-0008 INVESTIGATION_LEVEL lane 0 D=0.718 +/- 0.399 Bq/cm2 at 2.60 m from the door threshold, 0.22 m from the left wall [provisional alarm not confirmed]
+  HS-0009 UNRESOLVED_EXCEEDANCE lane 3 D=0.217 +/- 0.101 Bq/cm2 at 2.64 m from the door threshold, 0.48 m from the left wall [recorded alarm]
+  HS-0010 INVESTIGATION_LEVEL lane 0 D=0.841 +/- 0.495 Bq/cm2 at 2.87 m from the door threshold, 0.22 m from the left wall [provisional alarm not confirmed]
+  scan-stage detections below the investigation level awaiting a recount under the two-stage rule: 0
+  scaler count OBS-0001 (flag None, lane 1): EXCEEDS_INVESTIGATION_LEVEL D=2.134 +/- 0.336, D*=0.162, D#=0.275, T=9.9 s
+  unresolved floor ALARM: 0.1300 m2 (rectangles in residuals.json)
   unresolved floor INCOMPLETE_COVERAGE: 0.0437 m2 (rectangles in residuals.json)
-  unresolved floor INSUFFICIENT_SENSITIVITY: 1.8314 m2 (rectangles in residuals.json)
-  unresolved floor UNVISITED: 1.0249 m2 (rectangles in residuals.json)
+  unresolved floor INSUFFICIENT_SENSITIVITY: 1.7998 m2 (rectangles in residuals.json)
+  unresolved floor UNVISITED: 1.0165 m2 (rectangles in residuals.json)
 
 A release-status entry is a radiation-protection decision under the site procedure; this report is not one.

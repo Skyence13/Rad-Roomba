@@ -473,11 +473,11 @@ _ci = skin_point(-128.0, 88.0)
 CHARGE_INLET = {"xyz": _ci, "normal": _unit((_ci[0] - (-150.0), _ci[1], 0.0)),
                 "desc": "charge inlet (M12 L-coded) under a hinged cover with cover switch, right rear quarter"}
 # J1 / J2 panel receptacles (lead request 2026-11-28, fit review M6): moved from the nose roof (72, +-32, 117, axis mostly up:
-# docked pigtail loops to z 195..226, 258..298 mm long) to the nose FRONT at skin angle +-12 deg, z 96, axis 20 deg above
-# horizontal and 8 deg outward.  Selected by a tool-checked search (scratch jsearch): the 45 mm grasp annulus round each
+# docked pigtail loops to z 195..226, 258..298 mm long) to the nose FRONT at skin angle +-17 deg, z 94, axis 25 deg above
+# horizontal and 16 deg outward.  Selected by a tool-checked search (scratch jsearch): the 45 mm grasp annulus round each
 # coupling nut is free of the skin and of the head (z <= 45), the plug and cable stay >= 20 mm outside both look-ahead ToF
 # cones (18 deg FoV), far below the LiDAR plane; lower or level axes put the nose skin or the head into the grasp zone.
-J_AXIS = {"skin_deg": 12.0, "z": 96.0, "elev_deg": 20.0, "yaw_out_deg": 8.0}
+J_AXIS = {"skin_deg": 17.0, "z": 94.0, "elev_deg": 25.0, "yaw_out_deg": 16.0}   # spaced so each grasp annulus clears the other receptacle
 J_RECEPTACLES = {}
 for _jn, _sg in (("J1", 1.0), ("J2", -1.0)):
     _p = skin_point(_sg * J_AXIS["skin_deg"], J_AXIS["z"])
@@ -492,7 +492,12 @@ for _jn, _j in J_RECEPTACLES.items():
     _b = HEAD_PIGTAIL_BOOT[_jn]
     _R = PIGTAIL_CORRIDOR["bend_r"][_jn]
     _e = math.radians(J_AXIS["elev_deg"])
-    _pd = (math.sin(_e) * _n[0] / max(math.cos(_e), 1e-9), math.sin(_e) * _n[1] / max(math.cos(_e), 1e-9), -math.cos(_e))   # down-perpendicular to the axis
+    _dp = (math.sin(_e) * _n[0] / max(math.cos(_e), 1e-9), math.sin(_e) * _n[1] / max(math.cos(_e), 1e-9), -math.cos(_e))   # down-perpendicular to the axis
+    _sg = 1.0 if _jn == "J1" else -1.0
+    _h = (_sg * _n[1], -_sg * _n[0], 0.0)
+    _h = tuple(c / math.hypot(*_h) for c in _h)                                        # horizontal, toward the centre line
+    _pd = tuple(0.6 * _dp[i] + 0.4 * _h[i] for i in range(3))                          # loop turns down AND inboard: away from the look-ahead cones
+    _pd = tuple(c / math.sqrt(sum(q * q for q in _pd)) for c in _pd)
     _arc = [tuple(_r[i] + _R * (math.sin(math.radians(f)) * _n[i] + (1 - math.cos(math.radians(f))) * _pd[i]) for i in range(3)) for f in (150.0, 90.0, 45.0)]
     PIGTAIL_CORRIDOR[_jn] = [_b, (_b[0] + 6.0, _b[1] - 4.0, _b[2] + 18.0)] + _arc + [_r]   # boot -> rise -> loop over the plug end (bend R) -> plug rear
     PIGTAIL_CORRIDOR.setdefault("free_length_mm", {})[_jn] = round(sum(math.dist(a, b) for a, b in zip(PIGTAIL_CORRIDOR[_jn], PIGTAIL_CORRIDOR[_jn][1:])) + 30.0)

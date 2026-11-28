@@ -64,11 +64,11 @@ def _members_independent(proc, cell):
     return sorted(out)
 
 
-def _series_from_gates(proc, a_idx):
+def _series_from_gates(proc, a_idx, upto=None):
     """Reference series of one attachment rebuilt from the decoded gates (gate_log reasons + counts), not processing state."""
     ref, geo = {}, {}
     for g in proc.gate_log:
-        if proc.a_index(g["attachment"]) != a_idx:
+        if proc.a_index(g["attachment"]) != a_idx or (upto is not None and g["sequence"] > upto):
             continue
         row = []
         for lane in sorted(g["lanes"], key=lambda l: l["id"]):
@@ -95,6 +95,7 @@ def recompute_cells(run_dir, cells, calibration_files=(), profile=None):
     pipe, run = build_from_run(run_dir, calibration=mission_cal, profile=prof, calibrations=cals)
     proc = pipe.proc
     proc.finish()
+    proc.finalize()             # the replayed record, incl. the journaled finalize points
     return [_one(proc, ix, iy) for ix, iy in cells]
 
 
@@ -104,12 +105,14 @@ def _one(proc, ix, iy):
     alpha, beta = proc.params["alpha_scan"], proc.params["beta"]
     members = _members_independent(proc, cell)
     m_cand = max(1, len({(a, ln) for a, _q, ln, _w in members}))
-    alpha_min = (1.0 - est.ALPHA_SPLIT_COMBINED) * alpha / m_cand
+    alpha_min = alpha if m_cand == 1 else (1.0 - est.ALPHA_SPLIT_COMBINED) * alpha / m_cand      # MODEL.md rev 6
     test = {}
     for a, q, _ln, _w in members:
         test.setdefault(a, set()).add(q)
     units = []
-    series = {a: _series_from_gates(proc, a) for a in test}
+    rd0 = proc.recorded[ch].get(cell)
+    upto = getattr(rd0, "record_point", None)            # the recorded evaluation saw the record up to this point (export
+    series = {a: _series_from_gates(proc, a, None if upto is None else upto.get(a)) for a in test}   # recorded_reference_upto)
     glog = {(proc.a_index(g["attachment"]), g["sequence"]): g for g in proc.gate_log}
     tw = [(glog[(a, q)].get("head_c"), w) for a, q, _ln, w in members if glog[(a, q)].get("head_c") is not None]
     head_c = sum(t * w for t, w in tw) / sum(w for _t, w in tw) if tw else None
