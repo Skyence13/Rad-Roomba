@@ -4,7 +4,110 @@
  "against": "Python protocol fakes (rr_core.fakes), virtual clock",
  "seed": 18,
  "sim_time_s": 214.16,
- "checks": [],
+ "checks": [
+  {
+   "check": "replay of the raw archive reproduces every product bit-for-bit",
+   "ok": true,
+   "differing": []
+  },
+  {
+   "check": "second replay identical to the first",
+   "ok": true
+  },
+  {
+   "check": "manifest records weighted_sum_variance and the cell decision rule (MODEL.md rev 5)",
+   "ok": true,
+   "assumptions": {
+    "cov_FU": 0.0,
+    "spatial_response": "uniform top-hat (MODEL.md 5)",
+    "weighted_sum_variance": "exact_coefficients",
+    "cell_decision": "linear-exact/combined+per-lane/0.8-0.2 (MODEL.md rev 5 section 6); predictive threshold over 12 posterior nodes of each lane's U_null sub-window (Gamma(N + 1/2, scale 1/T)); lanes of different attachments are separate terms, each with its own bound calibration; common k terms fully correlated (diagonal parts at the nodes, cross terms at the point values)",
+    "evaluator": {
+     "method": "linear-exact/gil-pelaez/predictive-U(N=...)",
+     "check": "tail at t* recomputed with half the quadrature step agrees to 1e-3 relative, else `no decision \u2014 evaluator check failed`"
+    },
+    "u0": {
+     "rule": "MODEL.md rev 5 section 3: two sub-windows of >= N_min reference counts nearest to the dwell (before / after, else both on one side), larger mean; lane window unless it spans > 2 m, then the ratio-scaled four-lane pool; gradient guard 2 %; recounts: other three lanes during the recount",
+     "n_min_table": [
+      [
+       0.01,
+       30
+      ],
+      [
+       0.001,
+       75
+      ],
+      [
+       0.0001,
+       125
+      ],
+      [
+       1e-06,
+       200
+      ]
+     ],
+     "max_span_m": 2.0,
+     "gradient_limit": 0.02,
+     "implementation_choices": {
+      "dwell": "the dwell of a lane is the contiguous run of the cell's member gates (sequence numbers) holding the largest weight of that lane in the attachment; sub-windows are built outward from its edges, nearest first, with every member gate of the cell (any lane, any pass) contributing nothing",
+      "n_min_alpha": "N_min is chosen for the smallest alpha of the decision's tests (0.2 alpha / m for the per-lane tests); below 1e-6: 200 (z_alpha / z_1e-6)^2 (computed)",
+      "span": "span of a sub-window = travel distance (path length of the gate mid poses) from the dwell edge to its far end; the lane source is used only if every used sub-window spans <= 2 m",
+      "gradient": "relative difference of the two sub-window means per metre between their centres; one-sided windows: bias = U_null / (linear extrapolation of the two means to the dwell centre) - 1, |bias| > 2 % -> sensitivity insufficient - reference gradient; zero separation -> no gradient (0)",
+      "pool": "pooled: sum of the four lanes' valid reference counts and live times (a per-lane rate); lane ratio = (n_lane/t_lane)/(n_all/t_all) over the attachment outside the cell's dwell; U_null = ratio x pooled sub-window mean; posterior Gamma(N_eff + 1/2, scale U_null/N_eff)",
+      "recount": "recount: the other three lanes' reference counts during the recount gates, ratio-scaled (ratio qualified when lane and other-lane counts over the attachment outside the recount are >= N_min each), N_eff = 1/(1/N_others + 1/n_lane + 1/n_others,att); otherwise the lane's own two-sub-window rule around the recount",
+      "search": "search stage: two past sub-windows before the trailing dwell, larger mean (lane, else pooled); no gradient guard (provisional, controls recounts only)"
+     }
+    },
+    "uncertainty_components": "per cell: u_stat (counting), u_cal_lane (lane-specific k, b terms), u_cal_common_k (spectral part of k, common to all lanes), u_cal_K (|D| u_rel(K)); standard (k = 1), Bq/cm2; only u_stat averages down"
+   }
+  },
+  {
+   "check": "products compared",
+   "ok": true,
+   "n": 20
+  },
+  {
+   "check": "tools/recompute_cell.py reproduces D, D*, D#, decision and status of named cells from the archive, calibration and profile",
+   "ok": true,
+   "cells": [
+    {
+     "ix": 4,
+     "iy": 1
+    },
+    {
+     "ix": 5,
+     "iy": 1
+    },
+    {
+     "ix": 2,
+     "iy": 1
+    },
+    {
+     "ix": 6,
+     "iy": 1
+    },
+    {
+     "ix": 1,
+     "iy": 1
+    },
+    {
+     "ix": 3,
+     "iy": 1
+    }
+   ],
+   "statuses": [
+    "ALARM",
+    "INCOMPLETE COVERAGE",
+    "SENSITIVITY INSUFFICIENT"
+   ],
+   "mismatches": []
+  },
+  {
+   "check": "raw segments sealed with digests",
+   "ok": true,
+   "entries": 46096
+  }
+ ],
  "passed": true,
  "field_use_approved": false,
  "coverage": {
@@ -271,5 +374,51 @@
     }
    }
   }
+ },
+ "journal_entries": 46096,
+ "segments": 4,
+ "products": [
+  "README.txt",
+  "calibration.json",
+  "cell_members.csv",
+  "cells.csv",
+  "cells.geojson",
+  "clock_fits.ndjson",
+  "coverage.png",
+  "flags.json",
+  "gaps.json",
+  "gates.csv",
+  "grid.json",
+  "map_activity.svg",
+  "map_coverage.svg",
+  "observations.json",
+  "poses.csv",
+  "profile.json",
+  "residuals.json",
+  "summary.txt",
+  "survey_manifest.json",
+  "transforms.json"
+ ],
+ "product_sha256": {
+  "README.txt": "a06bf5ad71140ac5ed81c7b272ea482c8e3dc1bc9c7444056f752aee88c7c61a",
+  "calibration.json": "7995d274311fde1d02371817a69839c27ea3da6d05bc1f2717340033e1e74a5b",
+  "cell_members.csv": "6340f95464be85d9cc4786f7b69b85b77e7e2eb9a459d102ed9279da1281a822",
+  "cells.csv": "08df490bf44c5bdfddee98c5b0ae81d2e7a4b707e392040f61488200406dfb75",
+  "cells.geojson": "8abdaace18ce9e509d7dfefc197b4395225ee76118f468cd17b24e3daa657bd0",
+  "clock_fits.ndjson": "d15126100103a834eb548053a0428327e3615988336e19801de6c05a2e333783",
+  "coverage.png": "0fb749ae4fe175eff5f3c910f0ea7e07458fde46f1894da8046ef10ad6f1894d",
+  "flags.json": "e867bf0b26525ac263e25dc0c233ae71e44ec2412c37de70b6963edbbf179429",
+  "gaps.json": "0ade27752795c32c5d5ff2a16abaea23682b0c50e456c46e004270e0e7b1d11c",
+  "gates.csv": "c4e0d4d6c52a0db93d6457a0e74636f698b573c25a4e8d45099d062ebf0fdf50",
+  "grid.json": "d7731db47cf2ebf25ace2475350b8b5347aef30ff672abf29806353ddd12b4dc",
+  "map_activity.svg": "3758f3f5b9f6c2912cf355e8562a3ab7b34af9b80830c077df737f5b15d90b91",
+  "map_coverage.svg": "726b8493371be3c46c85dcf5925ad1622a85dea1054a333154738554b37c75e1",
+  "observations.json": "f6150c751b5fe04c3c3efc045eaca350981ffe0713ab4e4610ccf9aaf398a878",
+  "poses.csv": "e67fd0f29afa99fdb1b10454fc10e3c696e1818cd90f2599c74da8e5c699b395",
+  "profile.json": "352673831205596483f74809f58e2608b4841a6ff30230d07a9a8bf962d72380",
+  "residuals.json": "e6157b13da7f9d1758541c9ef013cf63bfe49f8d1c234b7bdf85689d9681f9a8",
+  "summary.txt": "d99721551320f6e42b3ffc4b8428bd7d0e16f948f77b3e308e6749bfb8dd8f95",
+  "survey_manifest.json": "0e0a3037cb2193ff998ea9f3e240387ae53893214b252dd598c3ce1ea67534fd",
+  "transforms.json": "0f2d9017710bbc525f1ce5de25b8db9b06f002f727a521913aa69f53e1d7bb26"
  }
 }
