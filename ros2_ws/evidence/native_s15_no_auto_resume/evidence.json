@@ -1,0 +1,131 @@
+{
+ "scenario": "native_s15_no_auto_resume",
+ "evidence_class": "simulated",
+ "against": "native firmware emulators rr_head_sim + rr_chassis_sim (real time; world/LiDAR from rr_sim.world)",
+ "seed": 35,
+ "sim_time_s": 42.68,
+ "checks": [
+  {
+   "check": "bumper: HOLD with a hardware inhibit",
+   "ok": true,
+   "stops": {
+    "hw": [
+     "BODY_BUMPER"
+    ],
+    "sw": []
+   }
+  },
+  {
+   "check": "REARM pressed too early is not accepted (latch stays open)",
+   "ok": true,
+   "mode": "HW_INHIBIT",
+   "ready": false
+  },
+  {
+   "check": "bumper: ARMED_IDLE again, mission still HOLD",
+   "ok": true
+  },
+  {
+   "check": "bumper: zero non-zero DRIVE after the inhibit (and the early press) until resume",
+   "ok": true,
+   "sent": 0
+  },
+  {
+   "check": "explicit resume accepted",
+   "ok": true
+  },
+  {
+   "check": "motion only after the command, same task",
+   "ok": true
+  },
+  {
+   "check": "pause accepted",
+   "ok": true
+  },
+  {
+   "check": "pause + inhibit + local re-arm: zero non-zero DRIVE, still HOLD",
+   "ok": true
+  },
+  {
+   "check": "resume accepted, paused task only",
+   "ok": true
+  },
+  {
+   "check": "moves again on the paused task",
+   "ok": true
+  }
+ ],
+ "passed": true,
+ "field_use_approved": false,
+ "coverage": {
+  "target_area_m2": 3.0,
+  "areas_m2": {
+   "UNVISITED": 2.7833,
+   "ACCEPTABLE": 0.0,
+   "INSUFFICIENT_SENSITIVITY": 0.2167,
+   "INVALID_DATA": 0.0,
+   "BLOCKED": 0.0,
+   "EXCLUDED": 0.0
+  },
+  "valid_exposure_fraction": 0.07223333333333333,
+  "acceptable_fraction": 0.0,
+  "sub_cell_m": 0.005,
+  "decision_cell_m": 0.1,
+  "position_allowance_m": 0.01
+ },
+ "time_sync": {
+  "limit_us": 10000.0,
+  "fits": 26,
+  "max_gate_bound_us": 1063.0773970805358,
+  "median_gate_bound_us": 966.3650989768219
+ },
+ "link_stats": {
+  "tx": 2324,
+  "rx": 2324,
+  "bad_lines": 0,
+  "stale": 0,
+  "duplicates": 0,
+  "gates": 416,
+  "gaps": 0,
+  "retries": 0,
+  "unassigned_frames": 0,
+  "time_exchanges": 26,
+  "time_exchanges_rejected": 0
+ },
+ "localization_error_vs_truth_m": {
+  "max_x_m": 0.00793152505287964,
+  "max_y_m": 0.00011445942712628998
+ },
+ "plan": {
+  "n_pairs": 2,
+  "offset_m": 0.04375,
+  "pair_stride_m": 0.33625,
+  "seam_overlap_per_side_m": 0.01625,
+  "predicted_residual": {
+   "left_wall_strip_m": 0.1487,
+   "right_wall_strip_m": 0.1487,
+   "door_end_strip_m": 0.1413,
+   "front_end_strip_m": 0.0713,
+   "end_zone_single_heading_m": {
+    "door": 0.3399,
+    "front": 0.3399
+   },
+   "note": "wall strips are set by the in-place turn radius of the outline; see README coverage section"
+  },
+  "estimated_time_s": 244.2
+ },
+ "flags": [],
+ "scan_detections": 0,
+ "observations": [],
+ "decision_status": {
+  "cells_with_gates": 44,
+  "no_decision": 40,
+  "no_decision_text": [
+   "no decision \u2014 null reference unavailable"
+  ],
+  "no_decision_within_0.5m_of_an_end": 4,
+  "cells_within_0.5m_of_an_end": 4
+ },
+ "gap": "link outage case: no emulator stimulus",
+ "deterministic": false
+}

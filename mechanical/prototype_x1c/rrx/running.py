@@ -187,7 +187,7 @@ def build(add):
     pt, _ = S.panel_tray()
     add(Part("RRX-P50", "panel_tray", pt, "printed", "ASA", "controls", color=ASA, orient=(180, 0, 0), print_note="ears on the bed (upside-down)", mates={"RR-PANEL", "rear_deck_L"}))
     add(Part("RRX-P51", "cm5_tray", S.cm5_tray(), "printed", "ASA", "compute", color=ASA, orient=(0, 0, 0), print_note="base on the bed; deck bridges between the four legs (supports under the deck)",
-             mates={"chassis_plate", "CM5_carrier_assembly", "battery_tunnel"}))
+             mates={"chassis_plate", "CM5_carrier_pcb", "battery_tunnel"}))
     ci = P.CHARGE_INLET
     xd = S.inlet_xdir()
     add(Part("RRX-P52", "inlet_cover", place(S.inlet_cover(), ci["xyz"], ci["normal"], xd), "printed", "ASA", "charge", color="#da9745", internal=False, orient=(180, 0, 0),

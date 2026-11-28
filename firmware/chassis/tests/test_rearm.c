@@ -137,7 +137,7 @@ int main(void)
         CHECK(ok == n);
     }
 
-    SECTION("N1: SUPPLY_LOW, CHAIN_OPEN, REARM_HELD reasons; a coil hotter than the model allows is reported SET_FAILED, not silent");
+    SECTION("N1: SUPPLY_LOW, CHAIN_OPEN, REARM_HELD reasons; a coil hotter than the board is reported SET_FAILED, not silent");
     {
         th_t *t = th_new(1450);
         th_env(t, "{\"vbat\":9.4}");

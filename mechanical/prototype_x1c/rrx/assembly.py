@@ -9,6 +9,7 @@ from mechanical.common import params as P
 from mechanical.common.purchased import library as L
 
 from . import battery, dims as D, running, shells, structure
+from . import boards_body as BB
 from . import sensors as S
 from .util import Part, bounds, box, cyl, fuse, place
 
@@ -37,29 +38,13 @@ def purchased(add):
     add(Part("RRX-H44", "chassis_heater_pad", box(-164, -164 + e["l"], -e["w"] / 2, e["w"] / 2, Z1 + 1.0, Z1 + 1.0 + e["h"]), "purchased", "PI", "battery_bay", color=C["heat"], mass=L.mass("chassis_heater"),
              mpn=L.PARTS["chassis_heater"]["mpn"], verified="design value", mates={"floor_plug", "battery_tunnel"}))
     # (no bolt-on clamp resistor: RR-CHS-MAIN carries its own clamp resistors, IB-26)
-    b = P.CHS_MAIN
-    ox, oy, oz = b["origin"]
-    w_, h_ = b["outline"]
-    add(Part("RRX-E01", "RR-CHS-MAIN_pcb", box(ox, ox + h_, oy - w_, oy, oz, oz + b["thickness"]), "purchased", "FR4", "chs_main", color=C["pcb"], mass=0.22, mpn="RR-CHS-MAIN rev A (custom)", verified="contract outline"))
-    top = oz + b["thickness"]
-    keep = box(ox, ox + h_, oy - w_, oy, top, top + b["max_top"])
-    for (u0, u1, v0, v1) in LOW_ZONES_UV:                     # 12 mm zones: front corners (board_envelopes.yaml) and rear corners (CCR-E08)
-        keep = keep.cut(box(ox + v0, ox + v1, oy - u1, oy - u0, top + 12.0, top + b["max_top"] + 1))
-    add(Part("RRX-E01", "RR-CHS-MAIN_top_parts", keep, "purchased", "KEEPOUT", "chs_main", color=C["keep"], mass=0.0,
-             verified="18 mm top envelope; 12 mm in the front corners (board_envelopes.yaml) and rear corners (CCR-E08 request)"))
-    add(Part("RRX-E01", "RR-CHS-MAIN_bottom_parts", box(ox, ox + h_, oy - w_, oy, oz - b["max_bottom"], oz), "purchased", "KEEPOUT", "chs_main", color=C["keep"], mass=0.0, mates={"*standoff*"}))
-    c = P.CM5_POSE
-    e = L.env("cm5_carrier")
-    add(Part("RRX-H46", "CM5_carrier_assembly", box(c["x"][0], c["x"][1], c["y"][0], c["y"][1], c["pcb_z"] - 3, c["pcb_z"] - 3 + e["h_assembled"]), "purchased", "PCB", "compute", color=C["comp"],
-             mass=L.mass("cm5") + L.mass("cm5_carrier") + 0.04, mpn="Raspberry Pi CM5104032 on Waveshare CM5-IO-BASE-A + heat sink", verified="outline VERIFIED, height/holes UNVERIFIED", mates={"cm5_tray"}))
+    # boards from the board files (PCB + components both sides + mated plug and wire exit per connector), not keep-out boxes
+    BB.chs_main(add)
+    BB.cm5_carrier(add)
     lx, ly = P.LIDAR_POSE["xy"]
     add(Part("RRX-H47", "lidar", L.lidar().moved(cq.Location(cq.Vector(lx, ly, P.LIDAR_POSE["base_z"]))), "purchased", "AL", "lidar", color=C["lidar"], mass=L.mass("lidar"), internal=False,
              mpn=L.PARTS["lidar"]["mpn"], verified="footprint PARTIAL; scan plane, holes, connector UNVERIFIED", mates={"battery_hump"}))
-    pc = P.PANEL_CONTROLS["annunciator"]["xyz"]
-    pe = L.env("panel_board")
-    zt = pc[2] - P.PANEL_BOARD["below_skin"]
-    add(Part("RRX-E02", "RR-PANEL", box(pc[0] - pe["l"] / 2, pc[0] + pe["l"] / 2, pc[1] - pe["w"] / 2, pc[1] + pe["w"] / 2, zt - pe["h"], zt), "purchased", "FR4", "controls", color=C["pcb"],
-             mass=L.mass("panel_board"), mpn="RR-PANEL (custom)", verified="contract outline", mates={"panel_tray"}))
+    BB.panel(add)
     kinds = {"estop": "estop", "hands_on": "pushbutton_22", "mode_selector": "mode_selector", "rearm_start": "pushbutton_22", "pause_stop": "pushbutton_22"}
     for name, kind in kinds.items():
         ctl = P.PANEL_CONTROLS[name]
@@ -80,11 +65,7 @@ def purchased(add):
                  mpn=L.PARTS[key]["mpn"], verified="UNVERIFIED cut-out", mates={"nose_cowl", f"{jn}_mated_plug"}))
         add(Part("RRX-H52", f"{jn}_mated_plug", place(plug, j["xyz"], j["normal"]), "purchased", "BRASS", "head_placeholder", color=C["conn"], internal=False, mass=0.0, hard=True,
                  mates={f"{jn}_receptacle", "nose_cowl"}))
-    for name, t in P.TOF_SENSORS.items():
-        xdir = (1.0, 0.0, 0.0) if name.startswith("tof_cliff_f") else S.seat_xdir(t["dir"], S.seat_kind(name))
-        brd = box(-9.0, 9.0, -7.0, 7.0, -6.0, -2.7)
-        add(Part("RRX-E03", name, place(brd, t["xyz"], t["dir"], xdir), "purchased", "FR4", "tof", color=C["sens"], internal=False, mass=L.mass("tof_board"), mpn="RR-TOF (custom, VL53L4ED)", verified="contract outline",
-                 mates={"*"}))
+    BB.tof_carriers(add)
     sw = L.switch()
     for name, xyz in P.BODY_BUMPER_SWITCHES.items():
         tag = "L" if xyz[1] > 0 else "R"

@@ -22,8 +22,8 @@ from .util import box, cyl, place
 # purchased envelopes that pass through / seat in a printed wall BY DESIGN (the envelope body is larger than the cut-out)
 THROUGH_SKIN = ("*_operator", "*_body", "*_receptacle", "*_mated_plug", "charge_inlet", "tof_*", "bumper_sw_*", "head_dock_switch")
 SHELL_GROUPS = {"lower_hull", "lid", "hatch", "service_cover"}
-INTERNAL = ("battery_tunnel", "battery_cassette", "cassette_lid", "coupler_*", "battery_pack", "cm5_tray", "CM5_carrier_assembly", "bridge_tray", "bridge_post_*",
-            "board_standoff_*", "RR-CHS-MAIN_*", "RR-PANEL", "panel_tray", "grip_foot_*", "chassis_heater_pad", "cassette_handle")
+INTERNAL = ("battery_tunnel", "battery_cassette", "cassette_lid", "coupler_*", "battery_pack", "cm5_tray", "CM5_carrier_pcb", "bridge_tray", "bridge_post_*",
+            "board_standoff_*", "RR-CHS-MAIN_*", "RR-PANEL_*", "panel_tray", "grip_foot_*", "chassis_heater_pad", "cassette_handle")
 ROBOT_EXCLUDE = {"tray", "cassette_option", "head_placeholder"}
 G = 9.81
 OLD_GRIP_X = -11.0           # grip bar centre before CR-04, for the comparison column only

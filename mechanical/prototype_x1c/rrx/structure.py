@@ -458,13 +458,13 @@ def build(add):
     add(Part("RRX-P04", "dock_switch_bracket", dock_switch_bracket(), "printed", "PAHT-CF", "receiver", color=D.MAT["PAHT-CF"]["color"], internal=False,
              orient=(180, 0, 0), print_note="plate face on the bed", mates={"chassis_plate", "receiver_channel_L", "head_dock_switch"}))
     add(Part("RRX-F04", "bridge_tray", bridge_tray(), "fabricated", "AL5052", "bridge", color=AL, note="2 mm 5052 laser cut; gap pad zone u 50..110, v 30..70",
-             mates={"RR-CHS-MAIN_bottom_parts", "*post*", "*standoff*"}))
+             mates={"*post*", "*standoff*"}))
     for i, (x, y) in enumerate(D.POSTS):
         add(Part("RRX-F07", f"bridge_post_{i}", bridge_post(x, y), "fabricated", "AL6061", "bridge", color=AL, note="8 mm round bar x 41, M4 tapped both ends",
                  mates={"bridge_tray", "chassis_plate"}))
     for i, (u, v) in enumerate(P.CHS_MAIN["holes_uv"]):
         add(Part("RRX-H02", f"board_standoff_{i}", board_standoff(u, v), "purchased", "AL6061", "bridge", color="#c9a24a", mpn="M3 x 3 mm round spacer + M3x10 screw + nyloc nut under the tray",
-                 verified="standard part", mates={"bridge_tray", "RR-CHS-MAIN_pcb", "RR-CHS-MAIN_bottom_parts"}))
+                 verified="standard part", mates={"bridge_tray"}))
     add(Part("RRX-F08", "grip_bar", grip_bar(), "fabricated", "AL6061", "grip", color=AL, internal=False, note="14 mm 6061-T6 round bar cut to 176 mm, ends drilled 5.0 x 15 and tapped M6 x 12"))
     for tag, s in SIDES:
         add(Part("RRX-H03", f"grip_screw_{tag}", grip_screw(s), "purchased", "SS304", "grip", color=D.MAT["SS304"]["color"], internal=False, mass=0.007,

@@ -42,7 +42,7 @@ python3 tests/test_integration.py build/rr_chassis_sim
 (cd port/stm32g474 && pio run -e rr_chs_main)        # 8 MHz crystal; -e rr_chs_main_24mhz for 24 MHz
 ```
 
-Results observed on 2026-11-27 with the stage-3 board after the round-4 follow-up fixes (`./check.sh`, exit 0): `test_chain` 331 checks, `test_state_machine` 1195, `test_review` 65 (review regressions, stage-3 checks, section-6.1 residual faults, thermal policy), `test_rearm` 35 (round 4: C_SET model, refusals, tap phase sweep, partial set, loop band, held REARM), `test_drive` 2476, 10 Python integration tests, all passing; netlist cross-check 110 items. Target image: flash 90 096 bytes (text 89 588 + data 508) of 524 288, static RAM 23 812 bytes of 131 072 (hard-float, `-Os` PlatformIO default).
+Results observed on 2026-11-27 with the stage-4 board (round-4 follow-up fixes; `./check.sh`, exit 0): `test_chain` 331 checks, `test_state_machine` 1195, `test_review` 65 (review regressions, stage-3 checks, section-6.1 residual faults, thermal policy), `test_rearm` 45 (round 4 / stage 4: SET_READY, refusals, tap phase sweep, partial set, loop self-test and photo-MOS shorts, loop band, held REARM), `test_drive` 2476, 10 Python integration tests, all passing; netlist cross-check 110 items. Target image: flash 91 096 bytes (text 90 588 + data 508) of 524 288, static RAM 23 860 bytes of 131 072 (hard-float, `-Os` PlatformIO default).
 
 ### Simulated drive performance (plant model, not measurements)
 

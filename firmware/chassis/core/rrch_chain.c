@@ -151,7 +151,7 @@ static uint8_t rearm_why(const rrch_t *c, bool others_closed)
 }
 
 /* stage 4 G5: loop self-test before every arming (latch down, chain otherwise closed, ARM_PERMIT high). Each test
- * output can only force its channel open. TEST_A 30 ms: channel A (GPA5) and CH_N6A_RB must read open/dead;
+ * output can only force its channel open. TEST_A 30 ms: channel A (GPA5) and CHN6A_RB must read open/dead;
  * 20 ms gap; TEST_B 30 ms: channel B (HEAD_LOOP2_OK_RB) and BODY_BUMPER_L_RB (CH_N8A) must read open/dead. For
  * the ~90 ms of the test the chain decode uses the readbacks from before it (no events, no latched reasons, no
  * loop-disagreement rules; the latch is down and the test itself holds the chain open). Any failure: LOOP_FAIL. */
@@ -403,7 +403,7 @@ void rrch_chain_step(rrch_t *c)
         ch->loop_b = (xd->val & 0x04u) != 0;    /* P2 HIGH = loop channel B (U46) sees the loop closed */
         ch->bus_clamp = (xd->val & 0x08u) != 0; /* P3 BUS_CLAMP_ACTIVE (stage 4 G4) */
         ch->set_ready = (xd->val & 0x20u) != 0; /* P5 SET_READY_RB: C_SET >= 10.8 V (stage 4 G1) */
-        ch->chn6a = (xd->val & 0x40u) != 0;     /* P6 CH_N6A_RB: node between U21 and U21B (stage 4 G5) */
+        ch->chn6a = (xd->val & 0x40u) != 0;     /* P6 CHN6A_RB: node between U21 and U21B (stage 4 G5) */
     } else {
         ch->k1_nc = ch->k1_run = ch->loop_b = ch->set_ready = ch->chn6a = false; /* unknown counts as "not healthy" */
     }
@@ -423,7 +423,7 @@ void rrch_chain_step(rrch_t *c)
     ch->rearm_set_prev = ch->rearm_set;
     rrch_fault_set(c, RRCH_FLT(BUS_CLAMP), ch->bus_clamp);
     /* stage 4 G5 (review N3): a loop photo-MOS that conducts while its channel says open. Channel A (GPA5, raw)
-     * open for > 10 ms with CH_N6A_RB high on two samples: U21/Q22 shorted. Channel B (IOX_D P2) low for > 10 ms with
+     * open for > 10 ms with CHN6A_RB high on two samples: U21/Q22 shorted. Channel B (IOX_D P2) low for > 10 ms with
      * BODY_BUMPER_L_RB (CH_N8A, raw) high on two samples: U21B/Q_LB shorted. Both fatal (LOOP_SW_SHORT). */
     bool a_raw_open = !(in->di & RRCH_DI(HEAD_LOOP_OK));
     ch->a_open_since_us = a_raw_open ? (ch->a_open_since_us ? ch->a_open_since_us : c->now_us) : 0u;

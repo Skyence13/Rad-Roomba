@@ -2,7 +2,7 @@
 <defs><pattern id="p-UNVISITED" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#fff"/><path d="M0 8L8 0" stroke="#888" stroke-width="1"/></pattern><pattern id="p-INVALID_DATA" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#f6d5d5"/><path d="M0 0L8 8M0 8L8 0" stroke="#c83c3c" stroke-width="1"/></pattern><pattern id="p-INSUFFICIENT_SENSITIVITY" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="#fdebc8"/><circle cx="3" cy="3" r="1.2" fill="#b9770e"/></pattern><pattern id="p-BLOCKED" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#e4dcf0"/><path d="M0 4H8" stroke="#785aa0" stroke-width="2"/></pattern><pattern id="p-EXCLUDED" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#5a5a5a"/></pattern><pattern id="p-ACCEPTABLE" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#2e8b57"/></pattern></defs>
 <rect width="1240" height="510" fill="#fff"/>
 <text x="20" y="16" font-size="13" font-weight="bold">Coverage quality (patterns: unvisited / invalid / insufficient sensitivity / blocked / acceptable)</text>
-<text x="20" y="32">run 2a4ba2b7-82ce-4fd6-839c-ab8c9d6a8a4e | profile ore-floor-demo-synthetic rev 1 | calibration DEMO-CAL-SYNTH-0001 | method CONTINUOUS_SCAN | map frame: origin door-threshold centre, +x to bulkhead, +y left</text>
+<text x="20" y="32">run c0a4f5a7-4646-4828-bc0a-73f1a23cc04f | profile ore-floor-demo-synthetic rev 1 | calibration DEMO-CAL-SYNTH-0001 | method CONTINUOUS_SCAN | map frame: origin door-threshold centre, +x to bulkhead, +y left</text>
 <text x="20" y="48" fill="#b00020" font-weight="bold">SYNTHETIC CALIBRATION/PROFILE - field_use_approved: false - NOT FOR SURVEY OR RELEASE DECISIONS</text>
 <rect x="20.0" y="452.0" width="1200.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="20.0" y="444.0" width="1200.0" height="8.0" fill="url(#p-UNVISITED)"/>
@@ -24,14 +24,14 @@
 <rect x="20.0" y="364.0" width="64.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="1052.0" y="364.0" width="72.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="1188.0" y="364.0" width="32.0" height="8.0" fill="url(#p-UNVISITED)"/>
-<rect x="20.0" y="356.0" width="64.0" height="8.0" fill="url(#p-UNVISITED)"/>
+<rect x="20.0" y="356.0" width="56.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="140.0" y="356.0" width="80.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="1188.0" y="356.0" width="32.0" height="8.0" fill="url(#p-UNVISITED)"/>
-<rect x="20.0" y="348.0" width="64.0" height="8.0" fill="url(#p-UNVISITED)"/>
+<rect x="20.0" y="348.0" width="56.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="140.0" y="348.0" width="80.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="1188.0" y="348.0" width="32.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="20.0" y="340.0" width="64.0" height="8.0" fill="url(#p-UNVISITED)"/>
-<rect x="172.0" y="340.0" width="16.0" height="8.0" fill="url(#p-UNVISITED)"/>
+<rect x="180.0" y="340.0" width="16.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="1052.0" y="340.0" width="72.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="1188.0" y="340.0" width="32.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="20.0" y="332.0" width="64.0" height="8.0" fill="url(#p-UNVISITED)"/>
@@ -76,10 +76,10 @@
 <rect x="20.0" y="228.0" width="64.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="1052.0" y="228.0" width="72.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="1188.0" y="228.0" width="32.0" height="8.0" fill="url(#p-UNVISITED)"/>
-<rect x="20.0" y="220.0" width="56.0" height="8.0" fill="url(#p-UNVISITED)"/>
+<rect x="20.0" y="220.0" width="64.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="140.0" y="220.0" width="80.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="1188.0" y="220.0" width="32.0" height="8.0" fill="url(#p-UNVISITED)"/>
-<rect x="20.0" y="212.0" width="56.0" height="8.0" fill="url(#p-UNVISITED)"/>
+<rect x="20.0" y="212.0" width="64.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="140.0" y="212.0" width="80.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="1188.0" y="212.0" width="32.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="20.0" y="204.0" width="64.0" height="8.0" fill="url(#p-UNVISITED)"/>
@@ -90,13 +90,15 @@
 <rect x="1188.0" y="196.0" width="32.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="20.0" y="188.0" width="64.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="140.0" y="188.0" width="80.0" height="8.0" fill="url(#p-UNVISITED)"/>
+<rect x="1076.0" y="188.0" width="16.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="1188.0" y="188.0" width="32.0" height="8.0" fill="url(#p-UNVISITED)"/>
-<rect x="20.0" y="180.0" width="56.0" height="8.0" fill="url(#p-UNVISITED)"/>
+<rect x="20.0" y="180.0" width="64.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="140.0" y="180.0" width="80.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="1188.0" y="180.0" width="32.0" height="8.0" fill="url(#p-UNVISITED)"/>
-<rect x="20.0" y="172.0" width="56.0" height="8.0" fill="url(#p-UNVISITED)"/>
+<rect x="20.0" y="172.0" width="64.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="140.0" y="172.0" width="80.0" height="8.0" fill="url(#p-UNVISITED)"/>
-<rect x="1052.0" y="172.0" width="48.0" height="8.0" fill="url(#p-UNVISITED)"/>
+<rect x="1052.0" y="172.0" width="8.0" height="8.0" fill="url(#p-UNVISITED)"/>
+<rect x="1116.0" y="172.0" width="8.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="1188.0" y="172.0" width="32.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="20.0" y="164.0" width="64.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="1052.0" y="164.0" width="72.0" height="8.0" fill="url(#p-UNVISITED)"/>
@@ -104,10 +106,10 @@
 <rect x="20.0" y="156.0" width="64.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="1052.0" y="156.0" width="72.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="1188.0" y="156.0" width="32.0" height="8.0" fill="url(#p-UNVISITED)"/>
-<rect x="20.0" y="148.0" width="56.0" height="8.0" fill="url(#p-UNVISITED)"/>
+<rect x="20.0" y="148.0" width="64.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="140.0" y="148.0" width="80.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="1188.0" y="148.0" width="32.0" height="8.0" fill="url(#p-UNVISITED)"/>
-<rect x="20.0" y="140.0" width="56.0" height="8.0" fill="url(#p-UNVISITED)"/>
+<rect x="20.0" y="140.0" width="64.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="140.0" y="140.0" width="80.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="1188.0" y="140.0" width="32.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="20.0" y="132.0" width="64.0" height="8.0" fill="url(#p-UNVISITED)"/>
@@ -124,26 +126,6 @@
 <rect x="20.0" y="76.0" width="1200.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="20.0" y="68.0" width="1200.0" height="8.0" fill="url(#p-UNVISITED)"/>
 <rect x="20.0" y="60.0" width="1200.0" height="8.0" fill="url(#p-UNVISITED)"/>
-<rect x="500.0" y="252.0" width="40.0" height="8.0" fill="url(#p-ACCEPTABLE)"/>
-<rect x="700.0" y="252.0" width="40.0" height="8.0" fill="url(#p-ACCEPTABLE)"/>
-<rect x="500.0" y="244.0" width="40.0" height="8.0" fill="url(#p-ACCEPTABLE)"/>
-<rect x="700.0" y="244.0" width="40.0" height="8.0" fill="url(#p-ACCEPTABLE)"/>
-<rect x="500.0" y="236.0" width="40.0" height="8.0" fill="url(#p-ACCEPTABLE)"/>
-<rect x="700.0" y="236.0" width="40.0" height="8.0" fill="url(#p-ACCEPTABLE)"/>
-<rect x="500.0" y="228.0" width="40.0" height="8.0" fill="url(#p-ACCEPTABLE)"/>
-<rect x="700.0" y="228.0" width="40.0" height="8.0" fill="url(#p-ACCEPTABLE)"/>
-<rect x="500.0" y="220.0" width="40.0" height="8.0" fill="url(#p-ACCEPTABLE)"/>
-<rect x="700.0" y="220.0" width="40.0" height="8.0" fill="url(#p-ACCEPTABLE)"/>
-<rect x="500.0" y="212.0" width="40.0" height="8.0" fill="url(#p-ACCEPTABLE)"/>
-<rect x="500.0" y="204.0" width="40.0" height="8.0" fill="url(#p-ACCEPTABLE)"/>
-<rect x="500.0" y="196.0" width="40.0" height="8.0" fill="url(#p-ACCEPTABLE)"/>
-<rect x="500.0" y="188.0" width="40.0" height="8.0" fill="url(#p-ACCEPTABLE)"/>
-<rect x="500.0" y="180.0" width="40.0" height="8.0" fill="url(#p-ACCEPTABLE)"/>
-<rect x="500.0" y="172.0" width="40.0" height="8.0" fill="url(#p-ACCEPTABLE)"/>
-<rect x="500.0" y="164.0" width="40.0" height="8.0" fill="url(#p-ACCEPTABLE)"/>
-<rect x="500.0" y="156.0" width="40.0" height="8.0" fill="url(#p-ACCEPTABLE)"/>
-<rect x="500.0" y="148.0" width="40.0" height="8.0" fill="url(#p-ACCEPTABLE)"/>
-<rect x="500.0" y="140.0" width="40.0" height="8.0" fill="url(#p-ACCEPTABLE)"/>
 <rect x="76.0" y="388.0" width="64.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="220.0" y="388.0" width="968.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="76.0" y="380.0" width="64.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
@@ -152,12 +134,12 @@
 <rect x="1124.0" y="372.0" width="64.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="84.0" y="364.0" width="968.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="1124.0" y="364.0" width="64.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="84.0" y="356.0" width="56.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="76.0" y="356.0" width="64.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="220.0" y="356.0" width="968.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="84.0" y="348.0" width="56.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="76.0" y="348.0" width="64.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="220.0" y="348.0" width="968.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="84.0" y="340.0" width="88.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="188.0" y="340.0" width="864.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="84.0" y="340.0" width="96.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="196.0" y="340.0" width="856.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="1124.0" y="340.0" width="64.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="84.0" y="332.0" width="968.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="1124.0" y="332.0" width="64.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
@@ -180,56 +162,38 @@
 <rect x="84.0" y="260.0" width="968.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="1124.0" y="260.0" width="64.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="76.0" y="252.0" width="64.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="220.0" y="252.0" width="280.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="540.0" y="252.0" width="160.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="740.0" y="252.0" width="448.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="220.0" y="252.0" width="968.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="76.0" y="244.0" width="64.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="220.0" y="244.0" width="280.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="540.0" y="244.0" width="160.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="740.0" y="244.0" width="448.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="84.0" y="236.0" width="416.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="540.0" y="236.0" width="160.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="740.0" y="236.0" width="312.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="220.0" y="244.0" width="968.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="84.0" y="236.0" width="968.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="1124.0" y="236.0" width="64.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="84.0" y="228.0" width="416.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="540.0" y="228.0" width="160.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="740.0" y="228.0" width="312.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="84.0" y="228.0" width="968.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="1124.0" y="228.0" width="64.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="76.0" y="220.0" width="64.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="220.0" y="220.0" width="280.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="540.0" y="220.0" width="160.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="740.0" y="220.0" width="448.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="76.0" y="212.0" width="64.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="220.0" y="212.0" width="280.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="540.0" y="212.0" width="648.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="84.0" y="204.0" width="416.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="540.0" y="204.0" width="512.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="84.0" y="220.0" width="56.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="220.0" y="220.0" width="968.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="84.0" y="212.0" width="56.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="220.0" y="212.0" width="968.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="84.0" y="204.0" width="968.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="1124.0" y="204.0" width="64.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="84.0" y="196.0" width="416.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="540.0" y="196.0" width="512.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="84.0" y="196.0" width="968.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="1124.0" y="196.0" width="64.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="84.0" y="188.0" width="56.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="220.0" y="188.0" width="280.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="540.0" y="188.0" width="648.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="76.0" y="180.0" width="64.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="220.0" y="180.0" width="280.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="540.0" y="180.0" width="648.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="76.0" y="172.0" width="64.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="220.0" y="172.0" width="280.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="540.0" y="172.0" width="512.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="1100.0" y="172.0" width="88.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="84.0" y="164.0" width="416.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="540.0" y="164.0" width="512.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="220.0" y="188.0" width="856.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="1092.0" y="188.0" width="96.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="84.0" y="180.0" width="56.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="220.0" y="180.0" width="968.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="84.0" y="172.0" width="56.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="220.0" y="172.0" width="832.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="1060.0" y="172.0" width="56.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="1124.0" y="172.0" width="64.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="84.0" y="164.0" width="968.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="1124.0" y="164.0" width="64.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="84.0" y="156.0" width="416.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="540.0" y="156.0" width="512.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="84.0" y="156.0" width="968.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="1124.0" y="156.0" width="64.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="76.0" y="148.0" width="64.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="220.0" y="148.0" width="280.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="540.0" y="148.0" width="648.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="76.0" y="140.0" width="64.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="220.0" y="140.0" width="280.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
-<rect x="540.0" y="140.0" width="648.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="84.0" y="148.0" width="56.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="220.0" y="148.0" width="968.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="84.0" y="140.0" width="56.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
+<rect x="220.0" y="140.0" width="968.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="84.0" y="132.0" width="968.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="1124.0" y="132.0" width="64.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
 <rect x="84.0" y="124.0" width="968.0" height="8.0" fill="url(#p-INSUFFICIENT_SENSITIVITY)"/>
@@ -238,10 +202,12 @@
 <text x="20.0" y="474.0">DOOR (x = 0)</text>
 <text x="1130.0" y="474.0">BULKHEAD (x = 3 m)</text>
 <line x1="60.0" y1="486.0" x2="260.0" y2="486.0" stroke="#000" stroke-width="2"/><text x="60.0" y="500.0">0.5 m | +y = left wall (top)</text>
-<polygon points="481.6,341.2 521.6,341.2 521.6,309.2 481.6,309.2" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
-<text x="507.6" y="319.2" font-weight="bold">HS-0002</text>
-<polygon points="622.7,180.2 582.7,180.3 582.7,212.3 622.7,212.2" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
-<text x="608.7" y="190.3" font-weight="bold">HS-0004</text>
-<polygon points="668.3,178.2 628.3,178.2 628.3,210.2 668.3,210.2" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
-<text x="654.3" y="188.2" font-weight="bold">HS-0005</text>
+<polygon points="502.4,354.9 462.4,354.9 462.4,386.9 502.4,386.9" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
+<text x="488.4" y="364.9" font-weight="bold">HS-0003</text>
+<polygon points="658.8,178.4 618.8,178.4 618.8,210.4 658.8,210.4" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
+<text x="644.9" y="188.4" font-weight="bold">HS-0005</text>
+<polygon points="184.4,115.5 144.4,115.5 144.4,147.5 184.4,147.5" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
+<text x="170.4" y="125.5" font-weight="bold">HS-0008</text>
+<polygon points="257.7,115.5 217.7,115.5 217.7,147.5 257.7,147.5" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="4 2"/>
+<text x="243.7" y="125.5" font-weight="bold">HS-0009</text>
 </svg>

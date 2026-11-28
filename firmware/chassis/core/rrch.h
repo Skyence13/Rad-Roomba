@@ -587,7 +587,7 @@ void rrch_tof_update(rrch_t *c, int idx, int32_t range_mm, rrch_tof_status_t st,
 void rrch_power_update(rrch_t *c, const rrch_power_t *p);
 void rrch_iox_b_update(rrch_t *c, bool ok, bool chain_end, uint64_t t_us); /* background context, ~100 Hz */
 /* IOX_D (U47, TCA9534 0x22), stage 4 G6 map: P0 LATCH_NC_RB, P1 LATCH_RUN_RB, P2 HEAD_LOOP2_OK_RB, P3 BUS_CLAMP_ACTIVE,
- * P4 LOOP_TEST_A (out), P5 SET_READY_RB, P6 CH_N6A_RB, P7 LOOP_TEST_B (out). `in` = input register, `out` = the output
+ * P4 LOOP_TEST_A (out), P5 SET_READY_RB, P6 CHN6A_RB, P7 LOOP_TEST_B (out). `in` = input register, `out` = the output
  * register value the port has written (and read back); read >= 100 Hz */
 void rrch_iox_d_update(rrch_t *c, bool ok, uint8_t in, uint8_t out, uint64_t t_us);
 uint8_t rrch_iox_d_out(const rrch_t *c);  /* output register the port must write (0 except during the loop self-test) */

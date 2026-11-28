@@ -1,6 +1,6 @@
 RAD ROOMBA FLOOR SURVEY SUMMARY
 SYNTHETIC CALIBRATION/PROFILE - field_use_approved: false - NOT FOR SURVEY OR RELEASE DECISIONS
-run 00000000-0000-4000-8000-002100000001  trailer SIM-SECTION-3.0x1.0  floor 3 x 1 m (floor only)
+run 00000000-0000-4000-8000-002300000001  trailer SIM-SECTION-3.0x1.0  floor 3 x 1 m (floor only)
 method SEARCH_THEN_COUNT  profile ore-floor-demo-synthetic rev 1  calibration DEMO-CAL-SYNTH-0001
 unit Bq/cm2  investigation level 0.3  detection goal < 0.2
 review queue policy ALARM_ONLY
@@ -8,26 +8,28 @@ alpha_scan 0.05  alpha_recount 0.000171  beta 0.05  decision cells 300
 
 WHERE THE ROBOT MEASURED
   valid exposure on 62.0 % of the target floor (3.000 m2)
-  UNVISITED                    1.1402 m2
+  UNVISITED                    1.1398 m2
   ACCEPTABLE                   0.0000 m2
-  INSUFFICIENT_SENSITIVITY     1.8598 m2
+  INSUFFICIENT_SENSITIVITY     1.8603 m2
   INVALID_DATA                 0.0000 m2
   BLOCKED                      0.0000 m2
   EXCLUDED                     0.0000 m2
 
 HOW SENSITIVE IT WAS
   decision cells with data 231; sensitivity sufficient (D# < goal, envelope ok) 0
-  D# median 0.288  best 0.226  worst 1.750 Bq/cm2 (beta_window)
+  D# median 0.290  best 0.227  worst 1.768 Bq/cm2 (beta_window)
   time sync: max gate bound 838.0520796923137 us (limit 10000)
 
 WHAT STILL NEEDS ATTENTION
-  HS-0004 INVESTIGATION_LEVEL lane 2 D=0.879 +/- 0.184 Bq/cm2 at 1.53 m from the door threshold, 0.38 m from the right wall status OK
-  HS-0005 UNRESOLVED_EXCEEDANCE lane 1 D=0.135 +/- 0.083 Bq/cm2 at 0.93 m from the door threshold, 0.32 m from the left wall status OK
-  HS-0006 UNRESOLVED_EXCEEDANCE lane 3 D=0.243 +/- 0.146 Bq/cm2 at 1.34 m from the door threshold, 0.18 m from the left wall status OK
-  HS-0007 UNRESOLVED_EXCEEDANCE lane 1 D=0.153 +/- 0.120 Bq/cm2 at 0.22 m from the door threshold, 0.36 m from the left wall status OK
-  scan-stage detections below the investigation level awaiting a recount under the two-stage rule: 3
-  scaler count OBS-0001 (flag None, lane 1): EXCEEDS_INVESTIGATION_LEVEL D=1.199 +/- 0.198, D*=n/a (no decision), D#=n/a (no decision), T=9.9 s [NO_DECISION_REF]
-  unresolved floor INSUFFICIENT_SENSITIVITY: 1.8598 m2 (rectangles in residuals.json)
-  unresolved floor UNVISITED: 1.1402 m2 (rectangles in residuals.json)
+  HS-0001 INVESTIGATION_LEVEL lane 2 D=1.150 +/- 0.219 Bq/cm2 at 1.53 m from the door threshold, 0.40 m from the right wall status OK
+  HS-0002 UNRESOLVED_EXCEEDANCE lane 3 D=0.172 +/- 0.101 Bq/cm2 at 1.83 m from the door threshold, 0.49 m from the left wall status OK
+  HS-0003 UNRESOLVED_EXCEEDANCE lane 3 D=0.177 +/- 0.088 Bq/cm2 at 2.29 m from the door threshold, 0.49 m from the left wall status OK
+  HS-0004 UNRESOLVED_EXCEEDANCE lane 0 D=0.206 +/- 0.107 Bq/cm2 at 2.86 m from the door threshold, 0.22 m from the left wall status OK
+  HS-0005 UNRESOLVED_EXCEEDANCE lane 3 D=0.167 +/- 0.101 Bq/cm2 at 0.45 m from the door threshold, 0.49 m from the right wall status OK
+  HS-0006 UNRESOLVED_EXCEEDANCE lane 3 D=0.225 +/- 0.137 Bq/cm2 at 0.92 m from the door threshold, 0.18 m from the left wall status OK
+  scan-stage detections below the investigation level awaiting a recount under the two-stage rule: 0
+  scaler count OBS-0001 (flag None, lane 1): EXCEEDS_INVESTIGATION_LEVEL D=1.529 +/- 0.247, D*=n/a (no decision), D#=n/a (no decision), T=9.9 s [NO_DECISION_REF]
+  unresolved floor INSUFFICIENT_SENSITIVITY: 1.8602 m2 (rectangles in residuals.json)
+  unresolved floor UNVISITED: 1.1398 m2 (rectangles in residuals.json)
 
 A release-status entry is a radiation-protection decision under the site procedure; this report is not one.

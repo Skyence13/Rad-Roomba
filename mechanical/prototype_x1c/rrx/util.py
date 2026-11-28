@@ -84,13 +84,24 @@ def rbox(x0, x1, y0, y1, z0, z1, r, axis="z"):
     return b.edges(sel).fillet(r).val()
 
 
-def place(solid, origin, zdir, xdir=None):
-    """Move a solid built in a local frame (z = axis) so local z points along zdir at origin."""
+def frame(origin, zdir, xdir=None):
+    """cq.Location of a local frame (local z along zdir at origin; local x along xdir or a default perpendicular)."""
     zdir = P._unit(zdir)
     if xdir is None:
         ref = (0, 0, 1) if abs(zdir[2]) < 0.9 else (1, 0, 0)
         xdir = P._unit((ref[1] * zdir[2] - ref[2] * zdir[1], ref[2] * zdir[0] - ref[0] * zdir[2], ref[0] * zdir[1] - ref[1] * zdir[0]))
-    return solid.moved(cq.Location(cq.Plane(origin=tuple(origin), xDir=tuple(xdir), normal=tuple(zdir))))
+    return cq.Location(cq.Plane(origin=tuple(origin), xDir=tuple(xdir), normal=tuple(zdir)))
+
+
+def place(solid, origin, zdir, xdir=None):
+    """Move a solid built in a local frame (z = axis) so local z points along zdir at origin."""
+    return solid.moved(frame(origin, zdir, xdir))
+
+
+def to_frame(loc, p):
+    """Local point -> base_link with a cq.Location."""
+    v = cq.Vertex.makeVertex(*p).moved(loc)
+    return (v.X, v.Y, v.Z)
 
 
 def bounds(shape):

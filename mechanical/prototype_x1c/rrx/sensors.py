@@ -15,6 +15,7 @@ from .util import Part, V, box, cut, cyl, fuse, mirror_y, place, prism
 TOF_BOSS = (28.0, 20.0, 9.5)        # local x (board long axis), local y, depth along the boresight
 TOF_WIN = (15.0, 11.0, 1.0)         # IR window blank (PMMA IR-pass), seated in a 1.1 mm recess
 TOF_AP = (12.0, 8.0)                # clear aperture (interfaces: >= 12 x 8)
+TOF_FRONT = 2.6                     # PCB front face (sensor side) behind the aperture plane: 1.1 window recess + 1.5 light-blocker foam
 
 
 def _lbox(x, y, z0, z1):
