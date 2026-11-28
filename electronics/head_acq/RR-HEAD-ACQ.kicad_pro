@@ -185,6 +185,7 @@
         0.2,
         0.25,
         0.4,
+        0.5,
         1.0
       ],
       "tuning_pattern_settings": {
@@ -550,6 +551,24 @@
       },
       {
         "bus_width": 12,
+        "clearance": 0.2,
+        "diff_pair_gap": 0.25,
+        "diff_pair_via_gap": 0.25,
+        "diff_pair_width": 0.5,
+        "line_style": 0,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "name": "LOOP",
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "priority": 3,
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 0.5,
+        "via_diameter": 0.6,
+        "via_drill": 0.3,
+        "wire_width": 6
+      },
+      {
+        "bus_width": 12,
         "clearance": 0.25,
         "diff_pair_gap": 0.25,
         "diff_pair_via_gap": 0.25,
@@ -559,7 +578,7 @@
         "microvia_drill": 0.1,
         "name": "ISOLATED",
         "pcb_color": "rgba(0, 0, 0, 0.000)",
-        "priority": 3,
+        "priority": 4,
         "schematic_color": "rgba(0, 0, 0, 0.000)",
         "track_width": 0.4,
         "via_diameter": 0.6,
@@ -577,7 +596,7 @@
         "microvia_drill": 0.1,
         "name": "DIFF",
         "pcb_color": "rgba(0, 0, 0, 0.000)",
-        "priority": 4,
+        "priority": 5,
         "schematic_color": "rgba(0, 0, 0, 0.000)",
         "track_width": 0.25,
         "via_diameter": 0.6,
@@ -595,7 +614,7 @@
         "microvia_drill": 0.1,
         "name": "SENSITIVE",
         "pcb_color": "rgba(0, 0, 0, 0.000)",
-        "priority": 5,
+        "priority": 6,
         "schematic_color": "rgba(0, 0, 0, 0.000)",
         "track_width": 0.2,
         "via_diameter": 0.6,
@@ -744,6 +763,26 @@
       {
         "netclass": "POWER",
         "pattern": "FRAME_*"
+      },
+      {
+        "netclass": "LOOP",
+        "pattern": "HEAD_LOOP_OUT"
+      },
+      {
+        "netclass": "LOOP",
+        "pattern": "HEAD_LOOP_RET"
+      },
+      {
+        "netclass": "LOOP",
+        "pattern": "LOOP_A"
+      },
+      {
+        "netclass": "LOOP",
+        "pattern": "LOOP_B"
+      },
+      {
+        "netclass": "LOOP",
+        "pattern": "LOOP_C"
       },
       {
         "netclass": "ISOLATED",

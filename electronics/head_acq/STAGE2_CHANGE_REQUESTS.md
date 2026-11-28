@@ -102,5 +102,57 @@ netlist (PASS) and proves that the pin-level diff against `design/circuit.py` is
 | L-03 | Lead, firmware (rev B) | A timer-capture input for OR(ALPHA comparator outputs F0..F3) (ALPHA width / LLD-to-ALPHA delay), and separate address lines for the IMON mux (review M2 rev-B item). |
 | L-04 | Registers / RFQ owner (IB-22, M1) | RFQ: **>= 18 p.e. guaranteed at the MPV deposit of a normally incident MIP at the worst point of the 80 x 100 mm plate**, at the stated overvoltage and +10 C, position map >= 9 points (= 1.6 x LLD(0.05 s^-1, +10 C, max DCR) for another device); ZnS(Ag) decay time of the supplied layer (the alpha TOT cut depends on it). Radiometry to re-derive K_beta from the T17 efficiency. |
 | L-05 | Head mechanical / BOM (M5) | Cut-out with isolated case (>= 100 MOhm case-to-terminals at 100 V, in the BOM line), NTC with isolated lug (or 0.1 mm polyimide pad); end-of-line check E2 of `head_design_review_checklist.md`. |
-| L-06 | Stage 1 (`design/`) | (a) self-check: accept LED_AMPL / DAC1_SPARE for DAC output 7 (CR-H9); (b) `layout_guidance.md`: R2801 + F2801 at H1, C2801..C2804 at H2/H8/H5/H6, stack-up of README section 3, monitor bandwidth, heater-ground links (m5), base_link origin note (IB-27, README section 2). |
+| L-06 | Stage 1 (`design/`) | (a) self-check: accept LED_AMPL / DAC1_SPARE for DAC output 7 (CR-H9); (b) `layout_guidance.md`: R2801 + F2801 at H1, C2801..C2804 at H2/H8/H5/H6, stack-up of README section 3, monitor bandwidth, heater-ground links (m5), base_link origin note (IB-27, README section 2); stage 4: front-edge GH headers 6.25 mm rearward and spread (CR-H17), coax pigtails as routed 44/47 (floor) and 33/30 mm (reference) instead of 35 mm. |
 | L-07 | Test plan (docs/build) | Review M7 items into the T-sheets: averaged aggressor-synchronised capture at FCMP; MON_LANE_EN and IMON-scan states; motor states; CM clamp injection; assembled-head insulation check. |
+
+## Stage 4 (2026-11-28) - CR-H17 front-edge headers, rail-switch sides, as-routed coax, AWG 20 heater pair
+
+No netlist change (self-check, `netcheck.py` unchanged: only the S3 entries). Placement + one net class (LOOP, 0.5 mm).
+
+### CR-H17: front-edge JST GH headers (for head mechanical)
+
+Top-entry GH (BM0xB-GHS-TBT class) rejected: mated vertical header + plug ~8-9 mm plus a >= 4 mm wire bend (recalled, UNVERIFIED, no
+drawing on this machine) against 6.4 mm free under the lid liner (PCB top z 36.1, liner z 42.5) and the 6.0 mm top zone. Instead all five side-entry
+headers moved **6.25 mm rearward** (courtyard v 82.5..89.0, CR-H17 limit v <= 89) and four of them along the front band to where their leads come from.
+Orientation unchanged: rot 180, mating face forward (+v = base +x), pins at the rear of the body. No other part in front of them (board keep-outs
+`KO_PLUG_J200x/J2201/J2402`, checked by `scripts/placecheck.py`).
+
+| Header | was (u, v) | now (u, v) | courtyard u (base y) | mated plug + crimp keep-out (CR-M08 template) | wire exit |
+|---|---|---|---|---|---|
+| J2003 rail switch LEFT (GH-4) | (171.5, 92.0) | **(16.0, 85.75)** | 11.22..20.78 (y 151.78..142.22) | v 89.0..96.25 = x 172.2..179.45, z 36.1..40.35 | forward out of the plug back at x 179.5, then down over the board edge into the front channel and along it to the left side channel (RAIL-L) |
+| J2002 rail switch FRONT (GH-4) | (154.5, 92.0) | **(67.0, 85.75)** | 62.22..71.78 (y 100.78..91.22) - inside the 27 mm front-fence saddle window of the front switch (y 74..101) | same v / x / z | forward, through the saddle window to RAIL-F (y 92.5) |
+| J2402 debug UART (GH-3) | (196.0, 92.0) | **(91.0, 85.75)** | 86.85..95.15 (y 76.15..67.85) | same | bring-up cable only (lid off); no lead in service |
+| J2201 lid switch (GH-2) | (122.0, 92.0) | **(232.0, 85.75)** | 228.47..235.53 (y -65.47..-72.53) | same | forward to the lid switch (base y -80.5) |
+| J2004 rail switch RIGHT (GH-4) | (144.6, 92.0) | **(310.0, 85.75)** | 305.22..314.78 (y -142.22..-151.78) | same | forward, down into the front channel, to the right side channel (RAIL-R) |
+
+The mated plugs now end 0.25 mm beyond the board edge (x 179.45 vs prototype fence x 180.0, production wall x 185.6). The wire bend down over the
+edge needs ~5 mm (AWG 26 bundle 1.8 mm, R 4 mm): it fits the production strip (6.4 mm) but **the prototype front fence needs a passage at each lead
+exit** (J2002 already sits in the switch saddle window; J2003 / J2004 / J2201 need a notch or the leads pass over the fence) - head mechanical to decide and
+re-run `asbuilt.py`. Zone parts (D2002..D2004, R2013..R2018, C2008..C2010) moved behind their headers (v ~80.5); loop resistor R2019 next to J2004.
+The interlock loop now runs on the board between the end headers (LOOP_A..C, HEAD_LOOP_OUT/RET about 0.65 m of trace): net class LOOP 0.5 mm keeps
+the added resistance <= ~0.6 ohm (0.06 % of the 1.00 k contract loop resistor).
+
+### Rail-switch connector sides (for harness and firmware)
+
+Board labels are kept: **J2003 = LEFT zone (BZ_L_IN -> BUMP_ZONE_L_N, PC14), J2004 = RIGHT zone (BZ_R_IN -> BUMP_ZONE_R_N, PC15)** - no net, silk or
+firmware change. With the new positions J2003 sits at the left end (base y +147) and J2004 at the right end (y -147), so the shorter, non-crossing
+assignment is now the board's own: **RAIL-L -> J2003, RAIL-R -> J2004**. With the stage-3 positions (`lead_routes.yaml`: W-105 329 mm, W-106 319 mm,
+crossing) the opposite assignment would have saved ~27 mm per lead; now each side lead shrinks to roughly 140-160 mm (estimate; head mechanical
+re-runs the routes). **Request to the harness owner (H-04):** undo the earlier swap in `harness/cables.csv`: W-106 (LEFT switch) -> HEAD.J2003,
+W-105 (RIGHT switch) -> HEAD.J2004, lengths from the re-run `lead_routes.yaml`. Firmware: BUMP_ZONE_L/R stay not read in rev A; labels then agree everywhere.
+
+### As-routed SiPM coax pigtails (for the RFQ owner and the budget)
+
+Head mechanical, `lead_routes.yaml` (route + termination): floor anode / bias **44 / 47 mm**, reference anode / bias **33 / 30 mm**, aux GH-6 22 mm.
+The stage-1 design value 35 mm (RFQ, budget, `design/layout_guidance.md` section 4) is superseded; for coax pigtails the length is not a pickup
+requirement (T16). RFQ request (L-04 addition): carrier coax receptacles positioned for these lengths, both coax shields terminated at the carrier.
+
+### Heater conductors AWG 20 (for harness)
+
+Recommendation: **AWG 20 continuous from J2001.3/.4 to the M16 contacts, no splice** (H-03 extended to the whole W-101 heater pair; potted transition
+inside the J1 boot only if the M16 contact cannot take AWG 20, UNVERIFIED). Cost against AWG 18 (head_afe_budget.md section 9): +9.7 mOhm loop,
+-0.08 W at 10 V (20.57 W delivered) / -0.12 W at 12 V (29.62 W), 79 mV drop at 3.04 A, conductor rise ~3.5 K in the jacket.
+
+### Firmware
+
+No pin, net, polarity or scale-factor change in stage 4.

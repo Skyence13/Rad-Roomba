@@ -351,8 +351,13 @@ def route_all(parts, log=print, only=None):
             joints = [cq.Solid.makeSphere(d / 2, cq.Vector(*q)) for q in pts[1:-1]]
             cid = f"PIGTAIL-{jn} {state}"
             own = [f"{jn}_receptacle", f"{jn}_mated_plug", "head_*"]
-            res[cid] = {"from": f"head rear wall {jn} exit", "to": f"{jn} plug on the receptacle", "od_mm": PC["od"][jn], "min_bend_r_mm": PC["bend_r"][jn], "polyline": [list(q) for q in pts],
-                        "route_mm": round(sum(math.dist(a, b) for a, b in zip(pts, pts[1:])), 1), "tof_limit_ok": None, "bends": [], "own_parts": own, "corridor": True}
+            cm = cone_margin(pts, PC["od"][jn] / 2)
+            lz = P.LIDAR_POSE["base_z"] + P.LIDAR_SCAN_PLANE_ABOVE_BASE
+            res[cid] = {"from": f"head boot {jn} (top z 70)", "to": f"{jn} plug on the receptacle", "od_mm": PC["od"][jn], "min_bend_r_mm": PC["bend_r"][jn], "polyline": [list(q) for q in pts],
+                        "route_mm": round(sum(math.dist(a, b) for a, b in zip(pts, pts[1:])), 1), "free_length_mm": PC.get("free_length_mm", {}).get(jn),
+                        "max_z_mm": round(max(q[2] for q in pts) + PC["od"][jn] / 2, 1), "tof_cone_margin": cm, "lidar_plane_z": lz,
+                        "lidar_plane_gap_mm": round(lz - max(q[2] for q in pts) - PC["od"][jn] / 2, 1),
+                        "tof_limit_ok": None, "bends": [], "own_parts": own, "corridor": True, "cones_ok": cm["ok"] or bool(dx)}
             tubes.append((cid, Part("ROUTE", f"route_{cid}", compound(segs + joints), "purchased", "-", "route"), own))
     # exact check of every tube against every part (except its own end parts)
     if tubes:
@@ -386,10 +391,34 @@ def route_all(parts, log=print, only=None):
                 best = min(((p.shape.distance(v), p.name) for p in struct if all(p.bb[i] - 15 <= q[i] <= p.bb[i + 3] + 15 for i in range(3))), default=(999.0, "-"))
                 clips.append({"at": [round(c_, 1) for c_ in q], "to_part": best[1], "gap_mm": round(best[0], 1), "ok": best[0] <= 12.0})
         r["clips"] = clips[:-1] if not r.get("corridor") else []
-        r["ok"] = not r.get("collisions") and (r["tof_limit_ok"] is not False)
+        r["ok"] = not r.get("collisions") and (r["tof_limit_ok"] is not False) and r.get("cones_ok", True)
         r["status"] = "routed" if r["ok"] else "FAIL"
     log(f"  routes: {sum(1 for r in res.values() if r.get('ok'))}/{sum(1 for r in res.values() if 'ok' in r)} cables routed collision-free, {time.time() - t0:.0f} s")
     return res
+
+
+def cone_margin(pts, radius, need_mm=20.0, need_deg=10.0):
+    """Smallest clearance of a polyline tube (radius) to every ToF field-of-view cone (18 deg full angle, UNVERIFIED FoV):
+    mm (perpendicular to the cone surface) and degrees off the cone edge; ok if >= need_mm OR >= need_deg everywhere."""
+    half = math.radians(9.0)
+    worst = (1e9, 1e9, None)
+    for a, b in zip(pts, pts[1:]):
+        n = max(2, int(math.dist(a, b) / 2.0))
+        for k in range(n + 1):
+            q = [a[i] + (b[i] - a[i]) * k / n for i in range(3)]
+            for name, t in P.TOF_SENSORS.items():
+                o, d = t["xyz"], P._unit(t["dir"])
+                v = [q[i] - o[i] for i in range(3)]
+                s_ = sum(v[i] * d[i] for i in range(3))
+                if s_ <= 0:
+                    continue
+                perp = math.sqrt(max(sum(c * c for c in v) - s_ * s_, 0.0))
+                mm = (perp - s_ * math.tan(half)) * math.cos(half) - radius
+                deg = math.degrees(math.atan2(perp, s_) - half) - math.degrees(math.atan2(radius, math.hypot(perp, s_)))
+                if mm < worst[0]:
+                    worst = (mm, deg, name)
+    ok = worst[0] >= need_mm or worst[1] >= need_deg
+    return {"min_mm": round(worst[0], 1), "deg_at_min": round(worst[1], 1), "sensor": worst[2], "ok": ok, "rule": f">= {need_mm:.0f} mm or >= {need_deg:.0f} deg"}
 
 
 def write_yaml(res, path, build):

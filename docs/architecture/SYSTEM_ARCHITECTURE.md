@@ -102,6 +102,8 @@ Definitions are in `contract.yaml › survey_methods`. Mission-time estimates be
 | Continuous scan | 0.025 m/s (4 s dwell) | about 2.8 h | Speed set by the dwell the detection goal needs. |
 | Step and count | 3000 stations, 5 s counts | about 5.5 h | Static counts everywhere; several pack swaps. |
 | Step and count | 3000 stations, 10 s counts | about 9.7 h | |
+
+These are the first planning estimates (0.10 m pitch, turns and wall tracks not counted). The planner's calculated figures for a 2.5 × 16 m trailer with the contract's 0.080 m station pitch and the reverse-entry wall tracks supersede them and are kept in `ros2_ws/README.md` section 8.1 with their assumptions: search at 0.10 m/s about 1.0 h, continuous scan at 0.03 m/s about 2.8 h, step and count with 10 s counts about 12.2 h (calculated/simulated).
 | Step and count, single pass family | 1600 stations, 10 s counts | about 5.2 h | 8 passes; the 7.5 mm seams between windows are reported unresolved. |
 
 Pack swaps require the trailer datum to be re-registered (0.3 rule, retained); the mission supervisor checkpoints so a multi-pack survey continues as one record with separate epochs.

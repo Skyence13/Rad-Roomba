@@ -44,7 +44,7 @@ Resume notes (keep current; a usage limit may stop this work):
 - [x] native n15 extended (prompt, early press refused and reported, link outage via `usb_down_ms`); default native set
   n01 n02 n15; fake s15 extended (NOT_READY with action, TOO_SHORT, held press -> REARM_HELD, BATTERY_REARM_LOW text).
 - [x] head driver node (m8): calibration files + binding mode parameters, run.json, header stamp = gate start.
-- [ ] full scenario / native runs and the before/after table (scratch script `ros/dev/table.py` compares evidence with
+- [ ] (machine restarted 06:31; emulators rebuilt 06:34 for chassis stage 5; snapshot draft11 up to date) full scenario / native runs and the before/after table (scratch script `ros/dev/table.py` compares evidence with
   commit ea7ac82), IB-47 analysis (native trace now records phase, x-fix age, rejects; localiser withholds credit on a
   rejected end-wall fix and resets x after 3 rejections).
 

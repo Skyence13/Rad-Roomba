@@ -246,7 +246,7 @@ With MON_LANE_EN = 0 (S3-02) no lane switch is closed or toggled while armed: al
 
 ### T16 Motor pickup into the SiPM loop (M4; calculated, J60035; coaxial-dipole mutual inductance; aggressor values assumed as stated)
 
-| aggressor | open pigtail 0.5 cm2 (35 mm): EMF / FAST p.e. | open pigtail 0.68 cm2 (47.5 mm) | coax, 2 mm2 launch |
+| aggressor | open pigtail 0.5 cm2 (35 mm, stage-1 assumption): EMF / FAST p.e. | open pigtail 0.68 cm2 (47.5 mm ~ as-routed floor coax 44-47 mm) | coax, 2 mm2 launch |
 |---|---|---|---|
 | budget case: 1 A in 100 ns, 10 cm2 lead loop at 65 mm | 364 uV / 7.10 | 495 uV / 9.66 | 14.6 uV / 0.28 |
 | same with 150 ns edges (DRV8874) | 243 uV / 4.69 | 330 uV / 6.38 | 9.71 uV / 0.19 |

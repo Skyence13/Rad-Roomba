@@ -62,6 +62,8 @@ z 11-28.5. Board (u, v) coordinates in the guidance are unaffected.
 * **Board blocks** (explicit ICs/connectors, passives frozen): J1 landing u 50..101 (J2601 + J2001 rear-facing, pin rows at v 17.57 =
   7 mm in from the rear edge (stage 3, IB-61), heater switch and power entry compressed into v 19..41 in front of them, H1 at v 30 with the
   frame bond F2801/R2801/R2802 and the J1 shield parts C2007/R2012/TP2004 around it), REG u 50..101 v 45..67, BIAS u 100..146 v 67..95,
+  front-edge GH headers (stage 4, CR-H17) at courtyard v 82.5..89 with their mated plugs inside the board edge: J2003 rail LEFT (u 16),
+  J2002 rail FRONT (u 67), J2402 debug (u 91), J2201 lid (u 232), J2004 rail RIGHT (u 310) - each with a no-footprint plug zone v 89..96;
   DACs u 143..178 v 47..53, MCU (LQFP-100, pin 1 rear-left) at (168, 77.5), monitor u 182..216, isolated RS-485 island
   u 230..272 v 0..13 with a 4 mm copper-free barrier (keep-out all layers) crossed only by U2501 / U2503.
 * **Net classes**: HV (0.25 mm / 1.0 mm), HEATER (1.0 / 1.0), POWER (0.4 / 0.15), ISOLATED (0.4 / 0.25),

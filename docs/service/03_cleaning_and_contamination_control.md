@@ -2,7 +2,7 @@
 
 **Status.** No cleaning or decontamination trial has been done (VT-023 is pending, RQ-033 "evidence pending"). What follows is what the design documents say about materials, seals and access, plus proposed practice marked as such. **Every statement about radiological handling needs the site's contamination-control procedure; statements that need it are marked [SITE].** The robot's purpose is to survey for alpha/beta surface contamination, so it will be contaminated by the work it does; the design must be cleanable, and the 0.3 baseline lists "clean and check the robot, head, wheels and handling tray" as the last step of the survey sequence (`docs/Rad_Roomba_Design.pdf` chapter 02, step 6).
 
-Evidence classes as in `docs/build/README.md`.
+**Updated 2026-11-28:** the printed prototype body is not released for assembly until the fit-review rework is verified (IB-73), so the features below are as modelled and may change (service access, grommets, J1/J2 receptacle orientation, pigtail routes). New features since the first version that affect cleaning: the receiver shims (4.00 mm G-10 with bushings and split pins, a crevice at each channel), the potted pigtail boots on the head lid rear strip and the parked-plug holsters (IB-75), the production body's SLS PA11 skins and cast PU 85A tyres (IB-68; cold and decontamination properties UNVERIFIED, VT-073), and the motor-terminal suppression capacitors and can straps inside the lower hull (harness section 7). Evidence classes as in `docs/build/README.md`.
 
 ## 1. What the printed prototype can and cannot be
 
@@ -12,6 +12,7 @@ Evidence classes as in `docs/build/README.md`.
 | Load-bearing printed parts (motor pods, wheel rims, bulkhead, hatch frame, saddle cover) | PAHT-CF | Carbon-filled, electrically conductive surface; low moisture uptake | Same layer-line caveat. Chemical compatibility with decontamination agents not stated. |
 | Tyres | TPU 95A (printed) | stiffens in the cold; keyed to the rim and bonded | A printed TPU tyre has layer texture and a 4-wall, 20 % gyroid structure; it is the surface that touches the contaminated floor and the least cleanable surface. **Treat the tyres and the caster as the first items to be considered consumable or replaceable** (proposed). |
 | Head frame, rails, cassettes, covers | PA-CF, PETG-CF | PETG-CF "good chemical resistance to decontamination wipes" (head `plates.yaml`); PA-CF compatibility not stated | printed prototype only; the production head is machined aluminium and MJF PA12 with a wipeable splash lip |
+| Receiver thermal-break shims and the head shoes | G-10 (not a wiping material for fluids; G-10 data UNVERIFIED) and isolators RR-HD-S-113 | an insulating joint with bushings; wiped from the outside only | liquid in the joint is a thermal and an electrical path (frame isolation at least 10 Mohm unmated, E7): re-measure E7 after any wet cleaning near the shoes (proposed) |
 | Head leading rail | printed rail inserts, flip 3 mm / 5 mm projection | reversible wear inserts, print 8 (one spare set) | replaceable: the rail inserts are the head's sacrificial contact surface |
 | Machined aluminium parts (plate, channels, bar), stainless fasteners | 6061, 5052, 304 | cleanable metal | still behind joints and under gaskets |
 | Window | aluminised PET entrance film on a removable cassette | the film is part of the response (areal density "per radiometry"); changing it changes the calibration | see section 3 |
@@ -81,3 +82,6 @@ No source defines this procedure. Points that follow from the design:
 | Opening the robot while contaminated | [SITE] | not yet defined |
 | Effect of cleaning on the calibration (window change, tyre change) | VT-016, VT-023 | not yet defined |
 | Retrieval and contamination control of a robot stopped in a trailer | DEC-004, RSK-012 | site |
+| Production body materials (SLS PA11, cast PU 85A) cleanability and cold behaviour | IB-68, VT-073 | UNVERIFIED |
+| Pigtail boots, holsters and docked pigtails: cleaning and the plug parking | IB-75 | open |
+| Re-measure the head frame isolation (E7) and heater-circuit insulation (W-103.HTR-ISO) after wet cleaning, light tightness (E1) after anything that wets the head | `harness/cables.md` section 8; head `production/README.md` | proposed |

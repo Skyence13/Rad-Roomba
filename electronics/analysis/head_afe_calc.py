@@ -786,7 +786,7 @@ def main():
             e = mutual(a1, a2, rr) * di / te
             cells.append("%.3g uV / %.2f" % (e * 1e6, emf_pe(e, te)))
         rows.append(cells)
-    print(md_table(["aggressor", "open pigtail 0.5 cm2 (35 mm): EMF / FAST p.e.", "open pigtail 0.68 cm2 (47.5 mm)",
+    print(md_table(["aggressor", "open pigtail 0.5 cm2 (35 mm, stage-1 assumption): EMF / FAST p.e.", "open pigtail 0.68 cm2 (47.5 mm ~ as-routed floor coax 44-47 mm)",
                     "coax, 2 mm2 launch"], rows))
     print("\nThe coax column does not depend on the pigtail length (only the launch loop at the U.FL and the carrier pads "
           "remains); the shield-loop term of review m1 (~0.3 p.e.) comes on top.  The band that matters is 1-100 MHz "

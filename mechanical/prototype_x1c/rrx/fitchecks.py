@@ -233,3 +233,21 @@ def board_bottom_zone(parts):
     too_tall = [r for r in out if r[1] > 3.0]
     return {"bottom_parts": len(out), "max_height_mm": max((r[1] for r in out), default=0.0), "over_3mm": too_tall, "over_tray_features": over,
             "ok": not too_tall and not over, "source": b["source"]}
+
+
+def receptacle_depth(parts, margin=5.0):
+    """J1 / J2 receptacle bodies with their UNVERIFIED depth behind the panel + 5 mm against every other part (tool-checked)."""
+    from mechanical.common.purchased import library as L
+    out = {}
+    for jn, key in (("J1", "j1_receptacle"), ("J2", "j2_receptacle")):
+        j, e = P.J_RECEPTACLES[jn], L.env(key)
+        probe = place_cyl((e["flange_d"] - 4.0) / 2, e["depth_behind_panel"] + margin, j["xyz"], j["normal"])
+        present = [p for p in _robot(parts) if p.name not in (f"{jn}_receptacle", f"{jn}_mated_plug") and not p.name.startswith(("nose_cowl", "upper_shell"))]
+        b = _blocked([Part("SWEEP", f"depth_{jn}", probe, "purchased", "-", "tool")], present, jn, print, vol_tol=0.5)
+        out[jn] = {"depth_mm": e["depth_behind_panel"], "margin_mm": margin, "blocked_by": next(iter(b.values()))}
+    return {"rows": out, "ok": all(not v["blocked_by"] for v in out.values())}
+
+
+def place_cyl(r, depth, xyz, n):
+    from .util import place
+    return place(cyl(r, depth, (0, 0, -depth - 0.5)), xyz, n)

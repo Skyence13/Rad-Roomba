@@ -358,7 +358,7 @@ def _deck_feats(p, s):
         pc = P.PANEL_CONTROLS["annunciator"]["xyz"]
         _, ztray = S.panel_tray()
         for sy in (-1, 1):
-            x, y = pc[0] + S.PANEL_EAR_DX, pc[1] + sy * S.PANEL_BOSS_DY
+            x, y = pc[0] + (S.PANEL_EAR_DX if sy > 0 else 0.0), pc[1] + sy * S.PANEL_BOSS_DY
             feats.append((cyl(4.2, 60, (x, y, ztray)), cyl(D.INSERT["M3"][0] / 2, D.INSERT["M3"][1], (x, y, ztray - 0.01))))
         for x, y in S.lightpipe_xy():
             feats.append((None, cyl(1.55, 60, (x, y, 100))))
@@ -400,7 +400,7 @@ def rear_deck(s):
         p = p if s > 0 else mirror_y(p)
         p, feats = _deck_feats(p, s)
         return _features(p, feats).cut(tongue_keepout())                 # features (ToF seats) must clear the hull tongue too
-    key = ["rear_deck", tag, 22, COVER_SCREWS, S.SEAT, R, D.X_DECK, HUMP_X, PERIM_DEG, P.TOF_SENSORS, P.PANEL_CONTROLS, P.CHARGE_INLET, D.BUMPER_DIR]
+    key = ["rear_deck", tag, 23, COVER_SCREWS, S.SEAT, R, D.X_DECK, HUMP_X, PERIM_DEG, P.TOF_SENSORS, P.PANEL_CONTROLS, P.CHARGE_INLET, D.BUMPER_DIR]
     if tag == "r":
         key.append(("inlet_seat", S.INLET_COVER_T, 2))
     return cached(key, b)
@@ -434,7 +434,7 @@ def hump():
         for s in (1, -1):                                                                      # latch (top) + frame screws
             h = h.cut(cyl(D.INSERT["M3"][0] / 2, D.INSERT["M3"][1], (x0 - 0.01, s * (hy - 1.5), 138.0), (1, 0, 0)))
         return h
-    return cached(["hump", 13, S.SEAT, B, HUMP_X, LEDGE_Z, P.LIDAR_POSE, P.TOF_SENSORS["tof_prox_rc"], HUMP_SCREW_X], b)
+    return cached(["hump", 14, S.SEAT, B, HUMP_X, LEDGE_Z, P.LIDAR_POSE, P.TOF_SENSORS["tof_prox_rc"], HUMP_SCREW_X], b)
 
 
 # Captive cover screws: four at the front ledge (ahead of the board edge x 33) and two at the rear corners, where the boss
@@ -595,12 +595,12 @@ def upper_shell_one_piece():
         return n.cut(tongue_keepout()).clean()
 
     def b():
-        p = cached(["upper_one_base", 3, R, SAD, B, HUMP_X, LEDGE_Z, PERIM_DEG, COVER_SCREWS, P.J_RECEPTACLES, LATCH_ARM_Z, LATCH_ARM_X1, LATCH_SCREW_X], base)
+        p = cached(["upper_one_base", 4, R, SAD, B, HUMP_X, LEDGE_Z, PERIM_DEG, COVER_SCREWS, P.J_RECEPTACLES, LATCH_ARM_Z, LATCH_ARM_X1, LATCH_SCREW_X], base)
         for s in (1, -1):
             p, feats = _deck_feats(p, s)
             p = _features(p, feats)
         return p.cut(tongue_keepout()).clean()
-    return cached(["upper_one", 4, S.SEAT, R, P.TOF_SENSORS, P.PANEL_CONTROLS, P.CHARGE_INLET, D.BUMPER_DIR, ("inlet_seat", S.INLET_COVER_T, 2)], b)
+    return cached(["upper_one", 5, S.SEAT, R, P.TOF_SENSORS, P.PANEL_CONTROLS, P.CHARGE_INLET, D.BUMPER_DIR, ("inlet_seat", S.INLET_COVER_T, 2)], b)
 
 
 def build(add):

@@ -40,6 +40,26 @@ build switch (`RR_BUILD=production`, `rrx/production.py`) used by `mechanical/pr
 contract (draft9: +5 C) and the head rows are read from `mechanical/head/out/thermal_summary.json` at build time (0.07 W/K-per-shoe rows,
 stated as depending on the break). The CCR-E08 keep-out check reads the common layout boxes, not `pinmap.json` (re-run, all free).
 
+## Fit-review pass (2026-11-28, docs/reviews/REVIEW_cad_pcb_harness_fit.md) -- IN PROGRESS
+
+Written to disk so far (both builds share it through the rrx code):
+- New checks: `rrx/fasteners.py` (fasteners as solids + tool columns per assembly step / service state), `rrx/boards_body.py` +
+  `mechanical/common/boards.py` (RR-CHS-MAIN, RR-PANEL, RR-TOF-A x 11 read from the KiCad files, both sides, mated plug + wire exit per
+  connector; CM5 carrier with plugs), `rrx/routes.py` (voxel routing + exact tube check of every robot cable, published to
+  `mechanical/common/out/cable_routes.yaml`; docked J1/J2 pigtail corridors with ToF-cone and LiDAR-plane margins), `rrx/fitchecks.py`
+  (tool access, service sweeps of real parts, plug pull + finger zones, ToF carrier withdrawal per seat, SVC1..10 probe access, board
+  bottom zone, receptacle depth + 5 mm).  Wired into checks.run_all and the report section 11.
+- Fixes: C1 posts 0/1 to (-64, +-62), flush M3 tray screws, clinch standoffs (no nuts); C2 receiver joint turned round (screws from
+  below into the tapped plate, inboard ear only); C3 seats on the real RR-TOF-A outline with J1 plug relief, new clip on the
+  header-free half, two carriers turned (TOF_FLIP); C4 grommets moved (dock grommet (28, 58), cliff leads through the pod bay);
+  M3 look-ahead slot moved under the fairing nose; M7 panel turned (plugs outboard), notches, bosses, light pipes from the LED
+  positions; M2 CM5 carrier 8 mm lower; grip plate screws from inboard (tapped plates); pod front screws y 105; tunnel rear foot
+  x -212; cliff pod screws countersunk from above; perimeter / cover / cliff screw lengths; caster disc countersinks.
+- J1 / J2 receptacles moved to the nose front (skin angle +-12 deg, z 96, axis 20 deg up / 8 deg out): docked pigtail apex about
+  z 125 (was 195..226), free length about 262..274 mm (not shorter: the forward-facing plug needs a 180 deg return loop at the
+  40 / 35 mm bend radius), corridors in `mechanical/common` params PIGTAIL_CORRIDOR.
+- NOT yet done at the time of writing: full prototype / production build runs with the new checks; route iteration; M9 / m6.
+
 ## Run times (shared 4-core machine)
 
 Warm BREP cache: about 4-6 min for everything. Cold (empty `out/cache`): the shell pieces take 20-25 min on the shared CPU

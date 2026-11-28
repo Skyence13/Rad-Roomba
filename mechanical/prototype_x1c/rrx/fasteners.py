@@ -86,6 +86,7 @@ class Fastener:
 
 
 # parts fitted later in stage 05 than the grip feet / side plates (stage order of the work instruction)
+LATER_IN_04 = ("grip_side_plate_*", "grip_foot_*", "battery_tunnel", "floor_plug", "chassis_heater_pad", "coupler_fixed", "hatch_frame")
 LATER_IN_05 = ("grip_side_plate_*", "grip_foot_*", "bridge_*", "board_standoff_*", "RR-CHS-MAIN_*", "cm5_tray", "CM5_*")
 
 
@@ -107,8 +108,8 @@ def fasteners():
             if "motor pod" in w:
                 F.append(Fastener(f"pod_{i}", "M4", "csk", 12.0, (x, y, Z0), up, step="03_drive", note="plate -> tapped / insert motor pod"))
             elif "grip foot" in w:
-                F.append(Fastener(f"gripfoot_{i}", "M5", "csk", 16.0, (x, y, Z0), up, step="05_bridge_grip", nut_at=4.0 + 3.0, note="through-bolt, nyloc on the angle leg",
-                                  later=LATER_IN_05))
+                F.append(Fastener(f"gripfoot_{i}", "M5", "csk", 16.0, (x, y, Z0), up, step="04_battery_bay", nut_at=4.0 + 3.0, note="through-bolt, nyloc on the angle leg (grip frame before the bay)",
+                                  later=LATER_IN_04))
             elif "latch arm" in w:
                 F.append(Fastener(f"latch_{i}", "M5", "csk", 25.0, (x, y, Z0), up, step="06_nose", note="plate -> pedestal -> tapped latch arm"))
             elif "bridge post" in w:
@@ -121,8 +122,8 @@ def fasteners():
                 F.append(Fastener(f"cradle_{i}", "M3", "csk", 8.0, (x, y, Z0), up, step="04_battery_bay"))
         elif kind == "tap" and "caster disc" in w:
             F.append(Fastener(f"casterdisc_{i}", "M3", "csk", 6.0, (x, y, Z1 + 2.5), down, step="01_chassis"))
-        elif kind == "thru" and "cliff pod" in w:
-            F.append(Fastener(f"cliff_{i}", "M3", "pan", 8.0, (x, y, Z1), down, step="01_chassis", note="plate -> cliff pod insert (from above)"))
+        elif kind == "csk_top" and "cliff pod" in w:
+            F.append(Fastener(f"cliff_{i}", "M3", "csk", 8.0, (x, y, Z1), down, step="01_chassis", note="plate -> cliff pod insert (countersunk from above, flush)"))
         elif kind == "tap" and "receiver" in w:
             F.append(Fastener(f"rx_{i}", "M4", "shcs", 18.0, (x, y, rb["ear_top_z"] - rb["ear_t"]), up, step="01_chassis",
                               washers=[(rb["bushing"]["flange_od"], rb["bushing"]["flange_t"]), WASHERS["M4"], (9.0, 1.3)],
@@ -150,8 +151,8 @@ def fasteners():
     y0, y1 = D.GRIP_PLATE_Y
     for s in (1, -1):
         for x in (-48.0, -30.0):
-            F.append(Fastener(f"gripplate_{'L' if s > 0 else 'R'}{x:.0f}", "M5", "shcs", 10.0, (x, s * (y0 - 3.0), Z1 + 16.0), (0, s, 0), step="05_bridge_grip",
-                              note="angle foot -> tapped side plate (from inboard)", later=LATER_IN_05[2:]))
+            F.append(Fastener(f"gripplate_{'L' if s > 0 else 'R'}{x:.0f}", "M5", "shcs", 10.0, (x, s * (y0 - 3.0), Z1 + 16.0), (0, s, 0), step="04_battery_bay",
+                              note="angle foot -> tapped side plate (from inboard, before the battery tunnel)", later=LATER_IN_04[2:]))
     return F
 
 

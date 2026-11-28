@@ -44,7 +44,7 @@ def seat_xdir(d, kind):
     return None
 
 
-TOF_FLIP = set()     # sensors whose carrier is turned 180 deg about the boresight (J1 / plug on the other side of the seat)
+TOF_FLIP = {"tof_look_rev_left", "tof_prox_rc"}     # fit review C3 (tool-checked): their J1 plug met the hatch door / frame the other way round; sensors whose carrier is turned 180 deg about the boresight (J1 / plug on the other side of the seat)
 
 
 def seat_x(xyz, d, kind):
@@ -154,7 +154,7 @@ def panel_tray():
     for nu0, nu1 in ((20.0, 40.0), (44.5, 54.5)):
         t = t.cut(box(X(nu1), X(nu0), Y(24.0) - 1.0, Y(24.0) + 12.0, zb + 0.5, zb + 7.0))
     for sy in (-1, 1):
-        ex = pc[0] + PANEL_EAR_DX
+        ex = pc[0] + (PANEL_EAR_DX if sy > 0 else 0.0)                    # outboard ear moved clear of the J1 / J2 plugs; inboard ear stays behind the cover
         ear = box(ex - 6.0, ex + 6.0, pc[1] + sy * (e["w"] / 2 + 2.5), pc[1] + sy * (PANEL_BOSS_DY + 3.5), zb + 3.0, zb + 6.0)   # ear stays out of the hump_side_left corridor
         t = t.fuse(ear).cut(cyl(D.CLEAR["M3"] / 2, 10, (ex, pc[1] + sy * PANEL_BOSS_DY, zb)))
 
@@ -178,7 +178,7 @@ def cm5_tray():
     y0, y1 = c["y"]
     zb = c["pcb_z"] - 3.0
     Z1 = D.PLATE_Z[1]
-    t = fuse(box(x0 - 2, x1 - 1.5, 70.0, 92.0, Z1, Z1 + 2.5), box(x0, x1, y0 + 1.0, y1 - 1.0, zb - 2.5, zb))   # base stops short of bridge post 0
+    t = fuse(box(x0 - 2, x1 - 1.5, 70.0, 92.0, Z1, Z1 + 2.5), box(x0, x1, y0 + 11.0, y1 - 1.0, zb - 2.5, zb))   # base stops short of bridge post 0; deck clear of the tunnel wall (y <= 69)
     for x in (x0 + 4, x1 - 4):
         t = t.fuse(box(x - 4, x + 4, 71.0, 91.0, Z1, zb - 2.5))
     t = t.clean()
@@ -186,7 +186,7 @@ def cm5_tray():
         t = t.cut(cyl(D.INSERT["M3"][0] / 2, 4, (x, y, Z1 - 1)))
     t = t.cut(box(x0 + 14, x1 - 14, y0 + 12, y1 - 12, zb - 3, zb + 1))                 # air / strap window under the carrier
     for x in (x0 + 8, x1 - 8):
-        for y in (y0 + 6, y1 - 6):
+        for y in (y0 + 15, y1 - 6):
             t = t.cut(cyl(D.INSERT["M2.5"][0] / 2, 3, (x, y, zb - 2.6)))
     return t
 

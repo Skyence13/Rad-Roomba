@@ -48,7 +48,7 @@ def plate_holes():
         wx0, wx1, wy0, wy1 = CLIFF_WINDOW
         H.append(((wx0 + wx1) / 2, s * (wy0 + wy1) / 2, 0.0, f"window {wx1 - wx0:.1f}x{wy1 - wy0:.1f}", "front cliff ToF collar + plug / cable bay (lead rises into the body here)"))
         for x, y in CLIFF_SCREWS:
-            H.append((x, s * y, D.CLEAR["M3"], "thru", "cliff pod / deflector M3 (pan head from above into the pod insert)"))
+            H.append((x, s * y, D.CLEAR["M3"], "csk_top", "cliff pod / deflector M3 countersunk from above (flush: clear of the pod collar) into the pod insert"))
         for x in (37.0, 47.0):
             H.append((x, s * 34.0, D.CLEAR["M5"], "csk_bottom", "latch arm pedestal M5 through-bolt"))
         if s > 0:                                                  # C4: the x -2 grommets were under the motor can; cliff leads now rise through the pod window bay
@@ -58,7 +58,8 @@ def plate_holes():
     cx, cy = P.CASTER_SWIVEL
     for a in (45, 135, 225, 315):
         H.append((cx + 27.5 * math.cos(math.radians(a)), cy + 27.5 * math.sin(math.radians(a)), D.TAP["M3"], "tap", "caster disc M3"))
-    for x in (-222.0, -190.0, -150.0, -110.0, -76.0):              # battery tunnel feet
+    from .battery import FEET_X
+    for x in FEET_X:                                               # battery tunnel feet
         for s in (1, -1):
             H.append((x, s * 64.0, D.CLEAR["M3"], "csk_bottom", "battery tunnel foot M3"))
     for x, y in ((-140.0, 76.0), (-140.0, 88.0), (-83.0, 76.0), (-83.0, 88.0)):
@@ -126,6 +127,9 @@ def chassis_plate():
         if kind == "csk_bottom":
             m = min(D.CSK, key=lambda k: abs(D.CLEAR[k] - d))
             s = s.cut(cq.Solid.makeCone(D.CSK[m] / 2, d / 2, (D.CSK[m] - d) / 2, V(x, y, Z0)))
+        if kind == "csk_top":
+            m = min(D.CSK, key=lambda k: abs(D.CLEAR[k] - d))
+            s = s.cut(cq.Solid.makeCone(d / 2, D.CSK[m] / 2, (D.CSK[m] - d) / 2, V(x, y, Z1 - (D.CSK[m] - d) / 2)))
     return s
 
 

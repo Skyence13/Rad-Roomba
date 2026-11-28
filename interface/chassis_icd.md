@@ -496,7 +496,7 @@ From RR-CHS-MAIN rev A (CCR-E03; netlist export `electronics/chassis_main/out/pi
 | Chain readbacks | node voltages, live up to and including the element (§4.1a); tap reads high above 7.4 V | CCR-E03 (d), §2.3 |
 | `BRAKE_x_RB` | OR over both relay poles, valid only with the bridges asleep | CCR-E03 (e), §2.4 |
 | VMOT after a latch drop | 1 kΩ bleed on 810 µF, τ 0.8 s | §2.1, §7 step 4 |
-| Watchdog window | TPS3430, CWD = NC, SET0 = 0, SET1 = 1: next strobe 2.2–23.4 ms after the previous one; firmware strobes every 10 ms; WDO → NRST through JP1 (normally closed): first strobe due within 23 ms of reset release | §2.2, CCR-E11 |
+| Watchdog window | TPS3430, CWD = NC, SET0 = 0, SET1 = 1: next strobe 2.2–23.4 ms after the previous one; firmware strobes every 10 ms; WDO → NRST through JP1 (fitted position closed; **keep JP1 open on rev A until the first-strobe timing after reset has been measured on hardware**, see §9 and the firmware README): first strobe due within 23 ms of reset release | §2.2, CCR-E11 |
 | Latch-drop dead time to the brake resistor | 10.5 ms (contact element), brake loop 3.22 Ω | `chassis_braking_tables.md` T2/T1 |
 
 ---

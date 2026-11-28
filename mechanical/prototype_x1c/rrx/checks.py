@@ -469,6 +469,7 @@ def run_all(parts, table, log=print):
     R["routes"] = RT.route_all(parts, log=log)
     R["svc_access"] = FC.svc_access(parts, R["routes"])
     R["board_bottom"] = FC.board_bottom_zone(parts)
+    R["receptacle_depth"] = FC.receptacle_depth(parts)
     R["mass_cg"] = mass_cg(parts)
     R["grip"] = grip_proof(R["mass_cg"])
     svc_block = {k: v["blocked_by"] for k, v in R["service"].items() if v.get("blocked_by")}
@@ -493,6 +494,7 @@ def run_all(parts, table, log=print):
         "service sweeps of real parts (board, CM5 carrier, every board plug + finger zone)": [R["service_sweeps"]["ok"], "all free" if R["service_sweeps"]["ok"] else str(R["service_sweeps"]["blocked"][:8])],
         "SVC1..SVC10 test pads reachable by a probe with the cover off (no part, route or clip over u 126-140, v 75-84, 40 mm)": [R["svc_access"]["ok"], f"pads {len(R['svc_access']['pads_in_board_file'])}; parts {R['svc_access']['parts_in_zone']}; routes {R['svc_access']['routes_over_zone']}; clips {R['svc_access']['clips_over_zone']}"],
         "RR-CHS-MAIN bottom-side parts within 3.0 mm and clear of bridge-tray features": [R["board_bottom"]["ok"], f"{R['board_bottom']['bottom_parts']} parts, max {R['board_bottom']['max_height_mm']} mm; over features {R['board_bottom']['over_tray_features']}"],
-        "every robot cable routed collision-free (ToF <= 270 mm incl. 30 mm margin)": [all(r.get("ok", True) for r in R["routes"].values()), str([k for k, r in R["routes"].items() if r.get("ok") is False])],
+        "J1 / J2 receptacle bodies (depth + 5 mm, UNVERIFIED depths) clear of boards, CM5 carrier and front beam": [R["receptacle_depth"]["ok"], str({k: v["blocked_by"] for k, v in R["receptacle_depth"]["rows"].items()})],
+        "every robot cable routed collision-free (ToF <= 270 mm incl. 30 mm margin; pigtail corridors clear of ToF cones by 20 mm / 10 deg)": [all(r.get("ok", True) for r in R["routes"].values()), str([k for k, r in R["routes"].items() if r.get("ok") is False])],
     }
     return R

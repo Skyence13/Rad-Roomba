@@ -269,12 +269,10 @@ HEAD_PIGTAIL_EXIT = {"J1": (round(144.5 + HEAD_DX, 3), 76.2, 39.0), "J2": (round
 # in both body builds, docked and swept over the 66 mm docking slide); clip points are on the head (rear wall above z 45 and head
 # top), never at the shoe root / datum-A seating plane; the AWG 18 -> 20 heater splice sits in the straight run in front of the
 # nose (>= 80 mm from the gland).  Cable OD 7.5 (J1) / 6.5 (J2), bend radius 40 / 35 (parts.yaml); corridor tube = OD + 4 mm.
-PIGTAIL_CORRIDOR = {
-    "J1": [(71.7, 76.2, 45.0), (80.0, 74.0, 62.0), (112.0, 62.0, 70.0), (118.0, 52.0, 120.0), (110.0, 46.0, 158.0)],
-    "J2": [(71.7, -87.5, 45.0), (80.0, -84.0, 62.0), (112.0, -66.0, 70.0), (118.0, -52.0, 120.0), (110.0, -46.0, 158.0)],
+PIGTAIL_CORRIDOR = {   # filled in below from J_RECEPTACLES and HEAD_PIGTAIL_BOOT (defined further down)
     "od": {"J1": 7.5, "J2": 6.5}, "bend_r": {"J1": 40.0, "J2": 35.0}, "margin": 4.0, "docking_slide": 66.0,
-    "clip_points": "head rear wall above z 45 and the head top (head side); none on the body; never at the shoe root",
-    "splice": "AWG 18 -> 20 splice in the straight run in front of the nose, x 112..118, z 75..115 (>= 80 mm from the gland)",
+    "clip_points": "head lid and boot strain relief (head side); none on the body; never at the shoe root",
+    "splice": "AWG 18 -> 20 splice in the straight run between the boot and the loop (head side, >= 80 mm from the gland)",
 }
 
 # --------------------------------------------------------------------------- head / body receiver interface (option C)
@@ -471,12 +469,30 @@ for _c in PANEL_CONTROLS.values():
 _ci = skin_point(-128.0, 88.0)
 CHARGE_INLET = {"xyz": _ci, "normal": _unit((_ci[0] - (-150.0), _ci[1], 0.0)),
                 "desc": "charge inlet (M12 L-coded) under a hinged cover with cover switch, right rear quarter"}
-J_RECEPTACLES = {    # panel receptacles on the front shoulders; mating axis = local skin normal
-    "J1": {"xyz": _deck(72.0, 32.0), "family": C["connectors"]["J1"]["family"], "side": "left"},
-    "J2": {"xyz": _deck(72.0, -32.0), "family": C["connectors"]["J2"]["family"], "side": "right"},
-}
-for _c in J_RECEPTACLES.values():
-    _c["normal"] = roof_normal(_c["xyz"][0], _c["xyz"][1])
+# J1 / J2 panel receptacles (lead request 2026-11-28, fit review M6): moved from the nose roof (72, +-32, 117, axis mostly up:
+# docked pigtail loops to z 195..226, 258..298 mm long) to the nose FRONT at skin angle +-12 deg, z 96, axis 20 deg above
+# horizontal and 8 deg outward.  Selected by a tool-checked search (scratch jsearch): the 45 mm grasp annulus round each
+# coupling nut is free of the skin and of the head (z <= 45), the plug and cable stay >= 20 mm outside both look-ahead ToF
+# cones (18 deg FoV), far below the LiDAR plane; lower or level axes put the nose skin or the head into the grasp zone.
+J_AXIS = {"skin_deg": 12.0, "z": 96.0, "elev_deg": 20.0, "yaw_out_deg": 8.0}
+J_RECEPTACLES = {}
+for _jn, _sg in (("J1", 1.0), ("J2", -1.0)):
+    _p = skin_point(_sg * J_AXIS["skin_deg"], J_AXIS["z"])
+    _el, _yw = math.radians(J_AXIS["elev_deg"]), math.radians(_sg * J_AXIS["yaw_out_deg"])
+    J_RECEPTACLES[_jn] = {"xyz": _p, "family": C["connectors"][_jn]["family"], "side": "left" if _sg > 0 else "right",
+                          "normal": (math.cos(_el) * math.cos(_yw), math.cos(_el) * math.sin(_yw), math.sin(_el))}
+HEAD_PIGTAIL_BOOT = {"J1": (80.0, 79.5, 70.0), "J2": (78.5, -99.3, 70.0)}   # head boots on the lid rear strip, top z 70 (head CR-HB1)
+_PL = {"J1": (9.0, 62.0), "J2": (8.0, 55.0)}                     # front projection + plug length (parts.yaml, UNVERIFIED)
+for _jn, _j in J_RECEPTACLES.items():
+    _n, _x = _j["normal"], _j["xyz"]
+    _r = tuple(_x[i] + _n[i] * sum(_PL[_jn]) for i in range(3))                       # plug rear (cable exit)
+    _b = HEAD_PIGTAIL_BOOT[_jn]
+    _R = PIGTAIL_CORRIDOR["bend_r"][_jn]
+    _e = math.radians(J_AXIS["elev_deg"])
+    _pd = (math.sin(_e) * _n[0] / max(math.cos(_e), 1e-9), math.sin(_e) * _n[1] / max(math.cos(_e), 1e-9), -math.cos(_e))   # down-perpendicular to the axis
+    _arc = [tuple(_r[i] + _R * (math.sin(math.radians(f)) * _n[i] + (1 - math.cos(math.radians(f))) * _pd[i]) for i in range(3)) for f in (150.0, 90.0, 45.0)]
+    PIGTAIL_CORRIDOR[_jn] = [_b, (_b[0] + 6.0, _b[1] - 4.0, _b[2] + 18.0)] + _arc + [_r]   # boot -> rise -> loop over the plug end (bend R) -> plug rear
+    PIGTAIL_CORRIDOR.setdefault("free_length_mm", {})[_jn] = round(sum(math.dist(a, b) for a, b in zip(PIGTAIL_CORRIDOR[_jn], PIGTAIL_CORRIDOR[_jn][1:])) + 30.0)
 IMU_POSE = {"xyz": (0.0, 0.0, CHS_MAIN["origin"][2] + CHS_MAIN["thickness"] + 0.5), "rpy": (0.0, 0.0, 0.0),
             "note": "reserved BMI088 footprint on RR-CHS-MAIN at board (u, v) = (80, 67): directly above base_link"}
 LIDAR_SCAN_PLANE_ABOVE_BASE = 60.0   # UNVERIFIED (no Richbeam drawing obtained): confirm before fixing lidar_link z

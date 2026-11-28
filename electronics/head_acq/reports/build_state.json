@@ -203,9 +203,6 @@
     "plane fan-out: no legal via position for U2503 pad at (234.10, 17.47) [BUS_GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U2503 pad at (234.10, 12.53) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U2503 pad at (237.90, 12.53) [+3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for R2503 pad at (243.20, 27.51) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for C2501 pad at (254.40, 21.62) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for U2501 pad at (254.44, 19.65) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U2403 pad at (240.89, 33.35) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U2403 pad at (240.89, 34.00) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U2402 pad at (53.89, 39.00) [+3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
@@ -754,15 +751,15 @@
       "F"
     ],
     "C2008": [
-      164.8,
       68.0,
+      80.5,
       0.0,
       "F"
     ],
     "C2009": [
-      160.6,
-      68.0,
-      180.0,
+      19.0,
+      80.5,
+      0.0,
       "F"
     ],
     "C201": [
@@ -772,9 +769,9 @@
       "F"
     ],
     "C2010": [
-      161.3,
-      66.3,
-      270.0,
+      313.0,
+      80.5,
+      0.0,
       "F"
     ],
     "C202": [
@@ -2404,21 +2401,21 @@
       "F"
     ],
     "D2002": [
-      153.2,
-      86.9,
-      270.0,
+      62.0,
+      80.5,
+      0.0,
       "F"
     ],
     "D2003": [
-      171.6,
-      87.6,
+      13.0,
+      80.5,
       0.0,
       "F"
     ],
     "D2004": [
-      143.6,
-      86.9,
-      270.0,
+      307.0,
+      80.5,
+      0.0,
       "F"
     ],
     "D201": [
@@ -2782,20 +2779,20 @@
       "F"
     ],
     "J2002": [
-      154.5,
-      92.0,
+      67.0,
+      85.75,
       180.0,
       "F"
     ],
     "J2003": [
-      171.5,
-      92.0,
+      16.0,
+      85.75,
       180.0,
       "F"
     ],
     "J2004": [
-      144.6,
-      92.0,
+      310.0,
+      85.75,
       180.0,
       "F"
     ],
@@ -2812,8 +2809,8 @@
       "F"
     ],
     "J2201": [
-      122.0,
-      92.0,
+      232.0,
+      85.75,
       180.0,
       "F"
     ],
@@ -2824,8 +2821,8 @@
       "F"
     ],
     "J2402": [
-      196.0,
-      92.0,
+      91.0,
+      85.75,
       180.0,
       "F"
     ],
@@ -3802,45 +3799,45 @@
       "F"
     ],
     "R2013": [
-      155.1,
-      86.3,
-      270.0,
+      64.5,
+      80.5,
+      90.0,
       "F"
     ],
     "R2014": [
-      162.7,
-      68.0,
-      0.0,
+      66.0,
+      80.5,
+      90.0,
       "F"
     ],
     "R2015": [
-      169.2,
-      87.4,
-      270.0,
+      15.5,
+      80.5,
+      90.0,
       "F"
     ],
     "R2016": [
-      165.7,
-      66.3,
+      17.0,
+      80.5,
       90.0,
       "F"
     ],
     "R2017": [
-      147.0,
-      86.3,
-      270.0,
+      309.5,
+      80.5,
+      90.0,
       "F"
     ],
     "R2018": [
-      158.1,
-      71.3,
-      0.0,
+      311.0,
+      80.5,
+      90.0,
       "F"
     ],
     "R2019": [
-      136.7,
-      76.2,
-      270.0,
+      315.5,
+      80.5,
+      90.0,
       "F"
     ],
     "R202": [
@@ -6893,11 +6890,10 @@
       "C515 [GND] 0.8 mm",
       "FB101 [+5V_A] 2.0 mm",
       "U2401 [+3V3] 3.3 mm",
-      "U2401 [+3V3] 3.3 mm",
+      "U2401 [+3V3] 2.8 mm",
       "U2304 [GND] 1.8 mm",
       "U2303 [GND] 1.8 mm",
       "U2302 [GND] 1.8 mm",
-      "R2227 [+3V3] 3.0 mm",
       "C2214 [GND] 0.8 mm",
       "C2206 [GND] 1.5 mm",
       "R2205 [GND] 4.0 mm"
@@ -6982,9 +6978,6 @@
       "U2503 pad at (234.10, 17.47) [BUS_GND] - long fan-out: long fan-out time cap (600 s) used up",
       "U2503 pad at (234.10, 12.53) [GND] - long fan-out: long fan-out time cap (600 s) used up",
       "U2503 pad at (237.90, 12.53) [+3V3] - long fan-out: no free path to the plane within the board",
-      "R2503 pad at (243.20, 27.51) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
-      "C2501 pad at (254.40, 21.62) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
-      "U2501 pad at (254.44, 19.65) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
       "U2403 pad at (240.89, 33.35) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
       "U2403 pad at (240.89, 34.00) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
       "U2402 pad at (53.89, 39.00) [+3V3] - long fan-out: long fan-out time cap (600 s) used up",
@@ -7046,7 +7039,10 @@
       "R1317 [+3V3] 40.5 mm",
       "R1217 [+3V3] 41.7 mm",
       "R1117 [+3V3] 42.2 mm",
-      "R1017 [+3V3] 39.9 mm"
+      "R1017 [+3V3] 39.9 mm",
+      "R2503 [+3V3] 17.7 mm",
+      "C2501 [+3V3] 23.8 mm",
+      "U2501 [+3V3] 25.4 mm"
     ],
     "plane_nets": [
       "+3V3",
@@ -7101,10 +7097,10 @@
     "timed_out": false
   },
   "route_stats": {
-    "track_length_mm": 1583.56,
-    "tracks": 916,
-    "unconnected_after_fill": 1468,
-    "vias": 898
+    "track_length_mm": 1645.96,
+    "tracks": 928,
+    "unconnected_after_fill": 1465,
+    "vias": 904
   },
   "routed": false,
   "routing": {
