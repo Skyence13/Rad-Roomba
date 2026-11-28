@@ -2,8 +2,8 @@
  "scenario": "s11_search_then_count_inline",
  "evidence_class": "simulated",
  "against": "Python protocol fakes (rr_core.fakes), virtual clock",
- "seed": 23,
- "sim_time_s": 226.84,
+ "seed": 22,
+ "sim_time_s": 246.76,
  "checks": [
   {
    "check": "inline: robot stopped inside the pass for the scaler count",
@@ -23,8 +23,8 @@
    "check": "alarming lane parked over the spot for the count (within 30 mm of the patch centre along track)",
    "ok": true,
    "achieved": [
-    1.528917227901576,
-    -0.14626395571962747
+    1.5525275155816307,
+    -0.1462750833874748
    ]
   },
   {
@@ -32,23 +32,23 @@
    "ok": true,
    "outcome": "EXCEEDS_INVESTIGATION_LEVEL",
    "result": {
-    "D": 1.7115550854959065,
-    "u_stat": 0.0935976034334485,
-    "u_total": 0.2733306162449539,
-    "D_star": null,
-    "D_hash": null,
+    "D": 2.1816582577064514,
+    "u_stat": 0.10447765291480612,
+    "u_total": 0.3435895168191253,
+    "D_star": 0.15059469373890505,
+    "D_hash": 0.25677756939547314,
     "T_F": 9.891090000000004,
-    "detected": null,
-    "method": "",
-    "m": 0,
-    "alpha_lane": 0.0,
-    "status": "NO_DECISION_REF"
+    "detected": true,
+    "method": "linear-exact/gil-pelaez/predictive-U(N=84.0)",
+    "m": 1,
+    "alpha_lane": 3.419260642269144e-05,
+    "status": "OK"
    }
   },
   {
    "check": "scaler result consistent with the injected patch (lane-average 2.0 Bq/cm2 +/- 30 %)",
    "ok": true,
-   "D": 1.7115550854959065
+   "D": 2.1816582577064514
   },
   {
    "check": "floor that only saw the search stage is reported with stage SEARCH",
@@ -64,41 +64,46 @@
  "coverage": {
   "target_area_m2": 3.0,
   "areas_m2": {
-   "UNVISITED": 1.141075,
+   "UNVISITED": 1.0249000000000001,
    "ACCEPTABLE": 0.0,
-   "INSUFFICIENT_SENSITIVITY": 1.8589250000000002,
+   "INSUFFICIENT_SENSITIVITY": 1.8313750000000002,
    "INVALID_DATA": 0.0,
    "BLOCKED": 0.0,
-   "EXCLUDED": 0.0
+   "EXCLUDED": 0.0,
+   "NO_DECISION": 0.0,
+   "INCOMPLETE_COVERAGE": 0.043725,
+   "ALARM": 0.1,
+   "ACQUISITION_GAP": 0.0
   },
-  "valid_exposure_fraction": 0.6196416666666668,
+  "valid_exposure_fraction": 0.6582416666666667,
   "acceptable_fraction": 0.0,
   "sub_cell_m": 0.005,
   "decision_cell_m": 0.1,
-  "position_allowance_m": 0.01
+  "position_allowance_m": 0.01,
+  "provisional": false
  },
  "time_sync": {
   "limit_us": 10000.0,
-  "fits": 118,
-  "max_gate_bound_us": 838.0520796923137,
-  "median_gate_bound_us": 798.7529250011039
+  "fits": 128,
+  "max_gate_bound_us": 838.0033213786841,
+  "median_gate_bound_us": 798.8783225527573
  },
  "link_stats": {
-  "tx": 11379,
-  "rx": 11376,
+  "tx": 12509,
+  "rx": 12506,
   "bad_lines": 0,
   "stale": 0,
   "duplicates": 0,
-  "gates": 2249,
+  "gates": 2448,
   "gaps": 0,
   "retries": 2,
   "unassigned_frames": 0,
-  "time_exchanges": 118,
+  "time_exchanges": 128,
   "time_exchanges_rejected": 0
  },
  "localization_error_vs_truth_m": {
-  "max_x_m": 0.001691666695293803,
-  "max_y_m": 0.0012417939646020004
+  "max_x_m": 0.002439954423573809,
+  "max_y_m": 0.0012298924696748093
  },
  "plan": {
   "n_pairs": 2,
@@ -121,87 +126,121 @@
  "flags": [
   {
    "id": "HS-0001",
-   "kind": "INVESTIGATION_LEVEL",
-   "source_lane": 2,
-   "x_m": 1.5938907235446966,
-   "y_m": -0.10245025605291755,
-   "D": 1.3571973804188344,
-   "u_total": 0.23286468941015195,
-   "D_star": 0.20738501427759756,
-   "D_hash": 0.5175687367814574,
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 1,
+   "x_m": 0.5530159397981241,
+   "y_m": -0.16643687239105573,
+   "D": 0.14534133418401912,
+   "u_total": 0.08087850910355156,
+   "D_star": 0.12871899114196883,
+   "D_hash": 0.3002985469522398,
    "location": {
-    "distance_from_door_m": 1.594,
+    "distance_from_door_m": 0.553,
     "wall": "right wall",
-    "distance_from_wall_m": 0.398,
-    "text": "1.59 m from the door threshold, 0.40 m from the right wall"
+    "distance_from_wall_m": 0.334,
+    "text": "0.55 m from the door threshold, 0.33 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0002",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 3,
+   "x_m": 0.9761157297904363,
+   "y_m": -0.32125275087474503,
+   "D": 0.20577013224403687,
+   "u_total": 0.12408824803639881,
+   "D_star": 0.19527860361963503,
+   "D_hash": 0.4834608251412754,
+   "location": {
+    "distance_from_door_m": 0.976,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.179,
+    "text": "0.98 m from the door threshold, 0.18 m from the right wall"
    }
   },
   {
    "id": "HS-0003",
-   "kind": "UNRESOLVED_EXCEEDANCE",
+   "kind": "INVESTIGATION_LEVEL",
    "source_lane": 1,
-   "x_m": 2.8427118717246826,
-   "y_m": 0.1900349224529976,
-   "D": 0.19491359053297794,
-   "u_total": 0.1259164300620486,
-   "D_star": 0.1945426654775233,
-   "D_hash": 0.4808745780323427,
+   "x_m": 1.0165264202409492,
+   "y_m": -0.16363322055848697,
+   "D": 0.177786114491977,
+   "u_total": 0.07206582405889167,
+   "D_star": 0.10864693797429524,
+   "D_hash": 0.25142754675449575,
    "location": {
-    "distance_from_door_m": 2.843,
-    "wall": "left wall",
-    "distance_from_wall_m": 0.31,
-    "text": "2.84 m from the door threshold, 0.31 m from the left wall"
+    "distance_from_door_m": 1.017,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.336,
+    "text": "1.02 m from the door threshold, 0.34 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0004",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 1,
+   "x_m": 1.5442101870654033,
+   "y_m": -0.15416053736066965,
+   "D": 1.2710354721328154,
+   "u_total": 0.21929660306507712,
+   "D_star": 0.09528313659426592,
+   "D_hash": 0.215995325495626,
+   "location": {
+    "distance_from_door_m": 1.544,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.346,
+    "text": "1.54 m from the door threshold, 0.35 m from the right wall"
    }
   },
   {
    "id": "HS-0005",
-   "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 3,
-   "x_m": 2.458482083775142,
-   "y_m": 0.3213590107123441,
-   "D": 0.2472993627354146,
-   "u_total": 0.14054001876167568,
-   "D_star": 0.21598315652302902,
-   "D_hash": 0.5384163164158784,
-   "location": {
-    "distance_from_door_m": 2.458,
-    "wall": "left wall",
-    "distance_from_wall_m": 0.179,
-    "text": "2.46 m from the door threshold, 0.18 m from the left wall"
-   }
-  },
-  {
-   "id": "HS-0007",
-   "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 3,
-   "x_m": 1.7636301530662213,
-   "y_m": 0.32132565532001567,
-   "D": 0.22370019902784533,
-   "u_total": 0.14599489794516193,
-   "D_star": 0.216368599422968,
-   "D_hash": 0.5385432510174625,
-   "location": {
-    "distance_from_door_m": 1.764,
-    "wall": "left wall",
-    "distance_from_wall_m": 0.179,
-    "text": "1.76 m from the door threshold, 0.18 m from the left wall"
-   }
-  },
-  {
-   "id": "HS-0008",
-   "kind": "UNRESOLVED_EXCEEDANCE",
+   "kind": "INVESTIGATION_LEVEL",
    "source_lane": 0,
-   "x_m": 0.33157612637660333,
-   "y_m": 0.05589841473200561,
-   "D": 0.18610801843782548,
-   "u_total": 0.10689214670494514,
-   "D_star": 0.16236973107252262,
-   "D_hash": 0.3898443664527216,
+   "x_m": 2.776867305681972,
+   "y_m": -0.05881057227364763,
+   "D": 0.6772853357807005,
+   "u_total": 0.3092567271740256,
+   "D_star": 0.37050374120080565,
+   "D_hash": 1.0023208570221995,
    "location": {
-    "distance_from_door_m": 0.332,
+    "distance_from_door_m": 2.777,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.441,
+    "text": "2.78 m from the door threshold, 0.44 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0006",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 3,
+   "x_m": 2.2550277402714154,
+   "y_m": -0.015027802506416988,
+   "D": 0.2560588167855001,
+   "u_total": 0.14924480016265007,
+   "D_star": 0.21361739739932592,
+   "D_hash": 0.5305412913507604,
+   "location": {
+    "distance_from_door_m": 2.255,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.485,
+    "text": "2.26 m from the door threshold, 0.48 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0009",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 3,
+   "x_m": 0.49056038755442966,
+   "y_m": 0.32124842016557037,
+   "D": 0.30866035440668527,
+   "u_total": 0.19622423489405783,
+   "D_star": 0.2869755411956712,
+   "D_hash": 0.7655326996811219,
+   "location": {
+    "distance_from_door_m": 0.491,
     "wall": "left wall",
-    "distance_from_wall_m": 0.444,
-    "text": "0.33 m from the door threshold, 0.44 m from the left wall"
+    "distance_from_wall_m": 0.179,
+    "text": "0.49 m from the door threshold, 0.18 m from the left wall"
    }
   }
  ],
@@ -220,173 +259,447 @@
    "beta": 0.05,
    "n_gates": 99,
    "pose": [
-    1.3977151877872263,
-    -0.19000783723273282,
-    -4.663444606500545e-05
+    1.4213389362670568,
+    -0.19005931750688929,
+    0.0002609421439733951
    ],
    "target_xy": [
-    1.5272300952753373,
-    -0.1463019731265012
+    1.5510213103480717,
+    -0.1462741786701954
    ],
    "achieved_xy": [
-    1.528917227901576,
-    -0.14626395571962747
+    1.5525275155816307,
+    -0.1462750833874748
    ],
-   "t_end_us": 1035281000,
+   "t_end_us": 1055401000,
    "lanes": [
     {
      "lane": 0,
-     "D": 0.08933794152375671,
-     "u_stat": 0.04371226754682965,
-     "u_total": 0.046040073502448965,
-     "D_star": null,
-     "D_hash": null,
+     "D": 0.011024653528262098,
+     "u_stat": 0.04417129880649011,
+     "u_total": 0.044660687607341064,
+     "D_star": 0.16601426968348743,
+     "D_hash": 0.2822695333221583,
      "T_F": 9.891090000000004,
-     "detected": null,
-     "method": "",
-     "m": 0,
-     "alpha_lane": 0.0,
-     "status": "NO_DECISION_REF",
-     "N_F": 63.0,
-     "N_U": 38.0,
-     "U0": null,
-     "u0_method": "unavailable",
+     "detected": false,
+     "method": "linear-exact/gil-pelaez/predictive-U(N=90.0)",
+     "m": 1,
+     "alpha_lane": 3.419260642269144e-05,
+     "status": "OK",
+     "N_F": 53.0,
+     "N_U": 46.0,
+     "U0": 4.979848933034939,
+     "u0_method": "pooled:one-sided:N=200/42.0s",
+     "u0": {
+      "n_min": 200,
+      "dwell_seq": [
+       432,
+       530
+      ],
+      "past_only": false,
+      "source": "pooled",
+      "windows": [
+       {
+        "seq_lo": 327,
+        "seq_hi": 431,
+        "n": 200.0,
+        "t_s": 41.98739999999958,
+        "mean": 4.76333376203342,
+        "centre_m": 1.0429995139486072,
+        "side": "before",
+        "span_m": 0.4852112677090491
+       },
+       {
+        "seq_lo": 207,
+        "seq_hi": 326,
+        "n": 202.0,
+        "t_s": 47.985599999999536,
+        "mean": 4.209596212197033,
+        "centre_m": 0.39773468337170503,
+        "side": "before",
+        "span_m": 1.2805369718406416
+       }
+      ],
+      "two_sided": false,
+      "selected": 0,
+      "gradient_per_m": 0.1912765354403289,
+      "projected_bias": -0.04192086500854264,
+      "U0": 4.979848933034939,
+      "N_post": 90.14251781472684,
+      "T_post": 18.101456294536636,
+      "lane_ratio": 1.0454545454545454,
+      "ratio_counts": [
+       207.0,
+       792.0
+      ],
+      "status": "GRADIENT",
+      "fallback": "own-lane (ratio not qualified or too few counts in the other lanes)"
+     },
      "envelope_ok": true
     },
     {
      "lane": 1,
-     "D": 1.7115550854959065,
-     "u_stat": 0.0935976034334485,
-     "u_total": 0.2733306162449539,
-     "D_star": null,
-     "D_hash": null,
+     "D": 2.1816582577064514,
+     "u_stat": 0.10447765291480612,
+     "u_total": 0.3435895168191253,
+     "D_star": 0.15059469373890505,
+     "D_hash": 0.25677756939547314,
      "T_F": 9.891090000000004,
-     "detected": null,
-     "method": "",
-     "m": 0,
-     "alpha_lane": 0.0,
-     "status": "NO_DECISION_REF",
-     "N_F": 466.0,
-     "N_U": 45.0,
-     "U0": null,
-     "u0_method": "unavailable",
+     "detected": true,
+     "method": "linear-exact/gil-pelaez/predictive-U(N=84.0)",
+     "m": 1,
+     "alpha_lane": 3.419260642269144e-05,
+     "status": "OK",
+     "N_F": 586.0,
+     "N_U": 51.0,
+     "U0": 4.30624617880799,
+     "u0_method": "pooled:one-sided:N=200/42.0s",
+     "u0": {
+      "n_min": 200,
+      "dwell_seq": [
+       432,
+       530
+      ],
+      "past_only": false,
+      "source": "pooled",
+      "windows": [
+       {
+        "seq_lo": 327,
+        "seq_hi": 431,
+        "n": 200.0,
+        "t_s": 41.98739999999958,
+        "mean": 4.76333376203342,
+        "centre_m": 1.0429995139486072,
+        "side": "before",
+        "span_m": 0.4852112677090491
+       },
+       {
+        "seq_lo": 207,
+        "seq_hi": 326,
+        "n": 202.0,
+        "t_s": 47.985599999999536,
+        "mean": 4.209596212197033,
+        "centre_m": 0.39773468337170503,
+        "side": "before",
+        "span_m": 1.2805369718406416
+       }
+      ],
+      "two_sided": false,
+      "selected": 0,
+      "gradient_per_m": 0.1912765354403289,
+      "projected_bias": -0.04192086500854264,
+      "U0": 4.30624617880799,
+      "N_post": 84.39375178588438,
+      "T_post": 19.59798587484503,
+      "lane_ratio": 0.904040404040404,
+      "ratio_counts": [
+       179.0,
+       792.0
+      ],
+      "status": "GRADIENT",
+      "fallback": "own-lane (ratio not qualified or too few counts in the other lanes)"
+     },
      "envelope_ok": true
     },
     {
      "lane": 2,
-     "D": -0.0137978455288218,
-     "u_stat": 0.04268525847928827,
-     "u_total": 0.043263253384831495,
-     "D_star": null,
-     "D_hash": null,
+     "D": -0.010632861542314395,
+     "u_stat": 0.042370158774819325,
+     "u_total": 0.042751427000113196,
+     "D_star": 0.1594695490866055,
+     "D_hash": 0.2711923317303638,
      "T_F": 9.891090000000004,
-     "detected": null,
-     "method": "",
-     "m": 0,
-     "alpha_lane": 0.0,
-     "status": "NO_DECISION_REF",
-     "N_F": 53.0,
-     "N_U": 52.0,
-     "U0": null,
-     "u0_method": "unavailable",
+     "detected": false,
+     "method": "linear-exact/gil-pelaez/predictive-U(N=90.0)",
+     "m": 1,
+     "alpha_lane": 3.419260642269144e-05,
+     "status": "OK",
+     "N_F": 43.0,
+     "N_U": 41.0,
+     "U0": 5.00390617425733,
+     "u0_method": "pooled:one-sided:N=200/42.0s",
+     "u0": {
+      "n_min": 200,
+      "dwell_seq": [
+       432,
+       530
+      ],
+      "past_only": false,
+      "source": "pooled",
+      "windows": [
+       {
+        "seq_lo": 327,
+        "seq_hi": 431,
+        "n": 200.0,
+        "t_s": 41.98739999999958,
+        "mean": 4.76333376203342,
+        "centre_m": 1.0429995139486072,
+        "side": "before",
+        "span_m": 0.4852112677090491
+       },
+       {
+        "seq_lo": 207,
+        "seq_hi": 326,
+        "n": 202.0,
+        "t_s": 47.985599999999536,
+        "mean": 4.209596212197033,
+        "centre_m": 0.39773468337170503,
+        "side": "before",
+        "span_m": 1.2805369718406416
+       }
+      ],
+      "two_sided": false,
+      "selected": 0,
+      "gradient_per_m": 0.1912765354403289,
+      "projected_bias": -0.04192086500854264,
+      "U0": 5.00390617425733,
+      "N_post": 90.33163712932092,
+      "T_post": 18.052224399017188,
+      "lane_ratio": 1.0505050505050506,
+      "ratio_counts": [
+       208.0,
+       792.0
+      ],
+      "status": "GRADIENT",
+      "fallback": "own-lane (ratio not qualified or too few counts in the other lanes)"
+     },
      "envelope_ok": true
     },
     {
      "lane": 3,
-     "D": -0.03062609645108514,
-     "u_stat": 0.04533602545608987,
-     "u_total": 0.04616791844634419,
-     "D_star": null,
-     "D_hash": null,
+     "D": 0.03604286899085784,
+     "u_stat": 0.04578575892653314,
+     "u_total": 0.04656481343143174,
+     "D_star": 0.16633265696393873,
+     "D_hash": 0.2831040615746434,
      "T_F": 9.891090000000004,
-     "detected": null,
-     "method": "",
-     "m": 0,
-     "alpha_lane": 0.0,
-     "status": "NO_DECISION_REF",
-     "N_F": 51.0,
-     "N_U": 53.0,
-     "U0": null,
-     "u0_method": "unavailable",
+     "detected": false,
+     "method": "linear-exact/gil-pelaez/predictive-U(N=88.0)",
+     "m": 1,
+     "alpha_lane": 3.419260642269144e-05,
+     "status": "OK",
+     "N_F": 59.0,
+     "N_U": 46.0,
+     "U0": 4.76333376203342,
+     "u0_method": "pooled:one-sided:N=200/42.0s",
+     "u0": {
+      "n_min": 200,
+      "dwell_seq": [
+       432,
+       530
+      ],
+      "past_only": false,
+      "source": "pooled",
+      "windows": [
+       {
+        "seq_lo": 327,
+        "seq_hi": 431,
+        "n": 200.0,
+        "t_s": 41.98739999999958,
+        "mean": 4.76333376203342,
+        "centre_m": 1.0429995139486072,
+        "side": "before",
+        "span_m": 0.4852112677090491
+       },
+       {
+        "seq_lo": 207,
+        "seq_hi": 326,
+        "n": 202.0,
+        "t_s": 47.985599999999536,
+        "mean": 4.209596212197033,
+        "centre_m": 0.39773468337170503,
+        "side": "before",
+        "span_m": 1.2805369718406416
+       }
+      ],
+      "two_sided": false,
+      "selected": 0,
+      "gradient_per_m": 0.1912765354403289,
+      "projected_bias": -0.04192086500854264,
+      "U0": 4.76333376203342,
+      "N_post": 88.39285714285714,
+      "T_post": 18.556931249999813,
+      "lane_ratio": 1.0,
+      "ratio_counts": [
+       198.0,
+       792.0
+      ],
+      "status": "GRADIENT",
+      "fallback": "own-lane (ratio not qualified or too few counts in the other lanes)"
+     },
      "envelope_ok": true
     }
    ],
    "result": {
-    "D": 1.7115550854959065,
-    "u_stat": 0.0935976034334485,
-    "u_total": 0.2733306162449539,
-    "D_star": null,
-    "D_hash": null,
+    "D": 2.1816582577064514,
+    "u_stat": 0.10447765291480612,
+    "u_total": 0.3435895168191253,
+    "D_star": 0.15059469373890505,
+    "D_hash": 0.25677756939547314,
     "T_F": 9.891090000000004,
-    "detected": null,
-    "method": "",
-    "m": 0,
-    "alpha_lane": 0.0,
-    "status": "NO_DECISION_REF"
+    "detected": true,
+    "method": "linear-exact/gil-pelaez/predictive-U(N=84.0)",
+    "m": 1,
+    "alpha_lane": 3.419260642269144e-05,
+    "status": "OK"
    }
   }
  ],
  "decision_status": {
-  "cells_with_gates": 231,
-  "no_decision": 20,
-  "no_decision_text": [
-   "no decision \u2014 null reference unavailable"
-  ],
-  "no_decision_within_0.5m_of_an_end": 3,
-  "cells_within_0.5m_of_an_end": 71
+  "cells_with_gates": 232,
+  "no_decision": 0,
+  "no_decision_text": [],
+  "no_decision_within_0.5m_of_an_end": 0,
+  "cells_within_0.5m_of_an_end": 72
+ },
+ "rev5": {
+  "cells_with_data": 232,
+  "status": {
+   "INCOMPLETE COVERAGE": 14,
+   "SENSITIVITY INSUFFICIENT": 208,
+   "ALARM": 10
+  },
+  "status_reasons": {
+   "D# above the detection goal": 193,
+   "reference gradient": 8,
+   "speed 0.1027 m/s outside the calibrated range": 7,
+   "coverage 0.35 < 0.5": 6,
+   "flagged by combined": 4,
+   "flagged by combined+lane1": 3,
+   "coverage 0.39 < 0.5": 2,
+   "coverage 0.26 < 0.5": 2
+  },
+  "acceptable_fraction": 0.0,
+  "median_D_hash": 0.25962261663114644,
+  "undecidable_recorded": 0,
+  "undecidable_provisional_live": 0,
+  "alarm_bookkeeping": {
+   "provisional alarm not confirmed": 10,
+   "recorded alarm (provisional alarm confirmed)": 10
+  },
+  "flags": {
+   "UNRESOLVED_EXCEEDANCE:recorded alarm": 1,
+   "UNRESOLVED_EXCEEDANCE:provisional alarm not confirmed": 2,
+   "INVESTIGATION_LEVEL:recorded alarm": 2,
+   "INVESTIGATION_LEVEL:provisional alarm not confirmed": 2,
+   "SCAN_DETECTION:provisional alarm not confirmed": 1,
+   "SCAN_DETECTION:recorded alarm": 2
+  },
+  "review_queue_items": 5,
+  "revisit": 0,
+  "position_credit": {
+   "samples": 2443,
+   "credited_fraction": 1.0,
+   "credited_with_true_error_above_budget": 0,
+   "fraction_of_credited_above_budget": 0.0,
+   "max_true_error_when_credited_m": 0.0024556763380721765,
+   "max_true_error_m": 0.0024556763380721765,
+   "no_credit_reasons_samples": {},
+   "localizer": {
+    "wheel_scale": {
+     "estimate": 0.00010006380660160572,
+     "sigma": 8.676571803950437e-05
+    },
+    "stats": {
+     "x_fixes": 3200,
+     "x_rejects": 0,
+     "big_corrections": 0,
+     "max_correction_m": 0.0009304037522169262,
+     "deferred_scans": 26
+    }
+   }
+  }
  },
  "policy": "INLINE",
  "alarms": [
   {
    "lane": 1,
    "xy": [
-    1.5272300952753373,
-    -0.1463019731265012
+    1.5510213103480717,
+    -0.1462741786701954
    ],
    "pose": [
-    1.396022084665,
-    -0.1900279431177729,
-    -0.00018314996257335898
+    1.4198244516993292,
+    -0.19003359800708688,
+    7.179458577317405e-05
    ],
-   "D_search": 1.9792697541618829,
+   "D_search": 1.6077733688525553,
    "task": "T000",
-   "t_us": 1017803000,
+   "t_us": 1038112000,
+   "alarm_record": {
+    "D": 0.710616436982369,
+    "D_star": 0.5543338140948755,
+    "U0": 3.9195243138808813,
+    "u0_source": "pooled",
+    "u0_N": 72.70530231483963,
+    "method": "linear-exact/gil-pelaez/predictive-U(N=73.0)",
+    "alpha": 1e-05,
+    "provisional": true
+   },
    "ev": "search_alarm",
    "state": "SCAN"
   }
  ],
  "ratemeter": {
   "0": {
-   "rate": 1.0009008107296566,
-   "net": -4.456106691521019,
-   "alarm_level": 19.017376554250877,
+   "rate": 3.00270243218897,
+   "net": -5.469309571412111,
+   "alarm_level": 19.763567353569602,
    "alarm": false,
-   "D": -0.19141351767701972,
-   "t_us": 1226776817.3099535
+   "D": -0.2349359781534412,
+   "D_star": 0.6248185932076951,
+   "U0": 4.763402511888584,
+   "u0_source": "pooled",
+   "u0_N": 166.18660168959372,
+   "method": "linear-exact/gil-pelaez/predictive-U(N=166.0)",
+   "alpha": 1e-05,
+   "t_us": 1246688419.1579168,
+   "provisional": true
   },
   "1": {
-   "rate": 3.00270243218897,
-   "net": -3.7091508637998274,
-   "alarm_level": 19.870044680104293,
+   "rate": 10.009008107296568,
+   "net": 2.2675459286429698,
+   "alarm_level": 19.997442213774878,
    "alarm": false,
-   "D": -0.15151760064541778,
-   "t_us": 1226776817.3099535
+   "D": 0.09262851015698406,
+   "D_star": 0.5956339040051463,
+   "U0": 4.743149950188378,
+   "u0_source": "pooled",
+   "u0_N": 166.0863859745237,
+   "method": "linear-exact/gil-pelaez/predictive-U(N=166.0)",
+   "alpha": 1e-05,
+   "t_us": 1246688419.1579168,
+   "provisional": true
   },
   "2": {
-   "rate": 9.00810729656691,
-   "net": 2.58736640429923,
-   "alarm_level": 18.51715720750213,
+   "rate": 11.009908918026223,
+   "net": 4.589168025758543,
+   "alarm_level": 19.43680905918824,
    "alarm": false,
-   "D": 0.10780693351246791,
-   "t_us": 1226776817.3099535
+   "D": 0.19121533440660596,
+   "D_star": 0.5980816213532282,
+   "U0": 4.633786117007261,
+   "u0_source": "pooled",
+   "u0_N": 165.53227396777612,
+   "method": "linear-exact/gil-pelaez/predictive-U(N=166.0)",
+   "alpha": 1e-05,
+   "t_us": 1246688419.1579168,
+   "provisional": true
   },
   "3": {
-   "rate": 6.00540486437794,
-   "net": -0.4993057588090157,
-   "alarm_level": 18.299639302305295,
+   "rate": 4.003603242918627,
+   "net": -0.48930383920601134,
+   "alarm_level": 19.483506129036822,
    "alarm": false,
-   "D": -0.021899375386360335,
-   "t_us": 1226776817.3099535
+   "D": -0.02146069470201804,
+   "D_star": 0.6324404356631863,
+   "U0": 4.568977919566601,
+   "u0_source": "pooled",
+   "u0_N": 165.1932270684962,
+   "method": "linear-exact/gil-pelaez/predictive-U(N=165.0)",
+   "alpha": 1e-05,
+   "t_us": 1246688419.1579168,
+   "provisional": true
   }
  },
  "false_alarm_counts": 0

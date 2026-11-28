@@ -56,11 +56,18 @@ def cables():
             c["awg"].append(int(r["awg"]))
         except ValueError:
             pass
-        if c["from"].startswith(("SPL", "FUSE")) and not r["from_connector"].startswith(("SPL", "FUSE")):
-            c["from"] = r["from_connector"]
-        if r["to_connector"].startswith("CHS.") or r["to_connector"].startswith("TOF"):
-            c["to"] = r["to_connector"]
+        c.setdefault("ends", [])
+        for e in (r["from_connector"], r["to_connector"]):
+            if e and not e.startswith(("SPL", "FUSE")) and e not in c["ends"]:
+                c["ends"].append(e)
     for cid, c in out.items():
+        ends = c["ends"]
+        board = [e for e in ends if e.startswith(("CHS.", "TOF", "PNL."))]
+        other = [e for e in ends if e not in board]
+        if board and other:
+            c["from"], c["to"] = other[0], board[0]
+        elif len(ends) >= 2:
+            c["from"], c["to"] = ends[0], ends[1]
         d = [AWG_OD.get(a, 1.5) for a in c["awg"]] or [1.5]
         od = 1.25 * math.sqrt(sum(x * x for x in d)) + (0.6 if c["shield"] and not c["shield"].lower().startswith("none") else 0.0)
         od = max(od, max(d))
@@ -68,7 +75,8 @@ def cables():
             od, br = FIXED_OD[cid]
         else:
             br = max(6.0, 4.0 * od)
-        c.update(od=round(od, 1), bend_r=round(br, 1), end=25.0, loop=40.0)
+        tof = any(e.startswith("TOF") for e in ends)
+        c.update(od=round(od, 1), bend_r=round(br, 1), end=15.0 if tof else 25.0, loop=20.0 if tof else 40.0)   # ToF: crimped GH ends, short loop (300 mm I2C limit)
     return out
 
 
@@ -90,7 +98,7 @@ def endpoint(name, byn):
     if name.startswith("TOF"):
         t = TOF[int(name[3:].split(".")[0])]
         p = BB.PORTS[("RR-TOF-A", "J1", "rr" + t)]
-        return p["xyz"], p["dir"], [f"rr{t}_plug_J1", f"tof_clip_{t[4:]}"]
+        return p["xyz"], [p["dir"], tuple(-c for c in P._unit(P.TOF_SENSORS[t]["dir"]))], [f"rr{t}_plug_J1", f"tof_clip_{t[4:]}"]
     if name.startswith("CM5-"):
         k = {"CM5-HDR": "hdr40", "CM5-RJ45": "rj45", "CM5-USB1": "usb_a", "CM5-USB2": "usb_a"}[name]
         p = BB.PORTS[("CM5", k, "CM5")]
@@ -124,9 +132,10 @@ def endpoint(name, byn):
         b = byn[pn].bb
         return ((b[0] + b[3]) / 2 + 6.0, (b[1] + b[4]) / 2 - s * 6.0, (b[2] + b[5]) / 2), (0.7, -0.7 * s, 0), [pn]
     if name.startswith("LIDAR"):
-        lx, ly = P.LIDAR_POSE["xy"]
-        B = P.BATTERY_BAY
-        return (lx + 38.0, ly, B["hump_z"][1] - B["hump_wall"] - 4.0), (0, 0, -1), ["lidar"]
+        gx, gy = P.LIDAR_GLAND_XY
+        n = P.roof_normal(gx, gy)
+        g = (gx, gy, P.roof_z(gx, gy))
+        return tuple(g[i] - n[i] * 8.0 for i in range(3)), tuple(-c for c in n), ["lidar"]
     if name in ("HTR-CHS", "NTC-BAY"):
         b = byn["chassis_heater_pad"].bb
         return (b[3] + 3.0, 0.0, b[5] + 1.0), (1, 0, 0), ["chassis_heater_pad", "floor_plug"]
@@ -185,21 +194,23 @@ def _ctr(i):
 
 
 def _bfs(free, goal):
+    """Breadth-first distance field (26-connected) from goal through free voxels."""
     dist = np.full(free.shape, -1, np.int32)
     dist[goal] = 0
     front = np.zeros(free.shape, bool)
     front[goal] = True
     d = 0
+    sh = [(a, b, c) for a in (-1, 0, 1) for b in (-1, 0, 1) for c in (-1, 0, 1) if (a, b, c) != (0, 0, 0)]
     while front.any():
         d += 1
         nb = np.zeros_like(front)
-        nb[1:] |= front[:-1]; nb[:-1] |= front[1:]
-        nb[:, 1:] |= front[:, :-1]; nb[:, :-1] |= front[:, 1:]
-        nb[:, :, 1:] |= front[:, :, :-1]; nb[:, :, :-1] |= front[:, :, 1:]
+        for a, b, c in sh:
+            src = front[max(-a, 0):front.shape[0] - max(a, 0), max(-b, 0):front.shape[1] - max(b, 0), max(-c, 0):front.shape[2] - max(c, 0)]
+            nb[max(a, 0):front.shape[0] - max(-a, 0), max(b, 0):front.shape[1] - max(-b, 0), max(c, 0):front.shape[2] - max(-c, 0)] |= src
         nb &= free & (dist < 0)
         dist[nb] = d
         front = nb
-        if d > 600:
+        if d > 400:
             break
     return dist
 
@@ -246,6 +257,15 @@ def _smooth(free, path):
         out.append(path[j])
         i = j
     return out
+
+
+def occ_hard_core(occ_by, own):
+    """Voxels of the big structural skins and the plate (never opened by a stub)."""
+    m = np.zeros((NX, NY, NZ), bool)
+    for n, v in occ_by.items():
+        if n.startswith(("chassis_plate", "battery_tunnel", "battery_cassette", "battery_pack")):
+            m |= v
+    return m
 
 
 # ----------------------------------------------------------------------------------------------- main
@@ -299,21 +319,41 @@ def route_all(parts, log=print, only=None):
         for n, v in occ_by.items():
             if not any(fnmatch.fnmatch(n, q) for q in own):
                 occ |= v
-        r = int(math.ceil((c["od"] / 2 + 0.5) / HV))
+        r = int(math.ceil((c["od"] / 2 + 0.5) / HV))             # first try with the cable radius; narrower passages: centre line only
         free = cav & ~_dilate(occ, r)
+        free0 = cav & ~occ
         ends = []
         for p, d in ((pa, da), (pb, db)):
+            dl = d if isinstance(d[0], (tuple, list)) else [d]
+            cur = p
             i = _idx(p)
-            for k in range(0, 4):                                  # stub along the port direction, forced free
-                q = _idx(tuple(p[j] + d[j] * k * HV for j in range(3)))
-                if all(0 <= q[j] < s for j, s in enumerate((NX, NY, NZ))):
-                    free[q] = True
-                    i = q
+            for m, dd in enumerate(dl):                            # stub(s) out of the plug / seat, forced free
+                for k in range(0, 3 if (len(dl) > 1 and m == 0) else 6):
+                    q = _idx(tuple(cur[j] + dd[j] * k * HV for j in range(3)))
+                    if all(0 <= q[j] < s for j, s in enumerate((NX, NY, NZ))):
+                        free[q] = True
+                        i = q
+                cur = _ctr(i)
             ends.append(i)
+        forced = np.zeros_like(free)
+        for e in ends:
+            free[e] = True
+        forced |= free & ~(cav & ~_dilate(occ, r))
+        forced = _dilate(forced, 1) & ~occ_hard_core(occ_by, own)          # stub corridors one voxel wide round the stub axis
+        free |= forced
         dist = _bfs(free, ends[1])
         vp = _descend(dist, ends[0])
+        if vp is None:                                             # fall back to centre-line clearance (exact tube check follows)
+            for e in ends:
+                free0[e] = True
+            free = free0 | forced
+            dist = _bfs(free, ends[1])
+            vp = _descend(dist, ends[0])
         if vp is None:
-            res[cid] = {"status": "FAIL: no collision-free route in the free space", "ok": False, "from": c["from"], "to": c["to"], "od_mm": c["od"]}
+            da = _bfs(free, ends[0])
+            res[cid] = {"status": "FAIL: no collision-free route in the free space", "ok": False, "from": c["from"], "to": c["to"], "od_mm": c["od"],
+                        "diag": {"reach_from_far_end_voxels": int((dist >= 0).sum()), "reach_from_near_end_voxels": int((da >= 0).sum()),
+                                 "near_end": [round(v, 1) for v in pa], "far_end": [round(v, 1) for v in pb]}}
             continue
         sm = _smooth(free, vp)
         pts = [tuple(round(v, 1) for v in pa)] + [tuple(round(v, 1) for v in _ctr(q)) for q in sm[1:-1]] + [tuple(round(v, 1) for v in pb)]
@@ -334,9 +374,12 @@ def route_all(parts, log=print, only=None):
         res[cid] = {"from": c["from"], "to": c["to"], "title": c["title"], "od_mm": c["od"], "min_bend_r_mm": c["bend_r"], "polyline": [list(p) for p in pts],
                     "route_mm": round(L, 1), "termination_mm": 2 * c["end"], "service_loop_mm": c["loop"], "length_mm": int(math.ceil(total / 10.0) * 10),
                     "bends": bends, "own_parts": own, "tof_limit_ok": (total <= TOF_LIMIT) if tof else None}
-        segs = [cyl(c["od"] / 2, math.dist(a, b), a, tuple(np.subtract(b, a))) for a, b in zip(pts, pts[1:]) if math.dist(a, b) > 1e-6]
+        segs = [cyl(c["od"] / 2, math.dist(a, b), a, tuple(np.subtract(b, a))) for a, b in zip(pts, pts[1:]) if math.dist(a, b) > 0.5]
         import cadquery as cq
         joints = [cq.Solid.makeSphere(c["od"] / 2, cq.Vector(*q)) for q in pts[1:-1]]
+        if not segs:
+            res[cid]["collisions"] = []
+            continue
         tubes.append((cid, Part("ROUTE", f"route_{cid}", compound(segs + joints), "purchased", "-", "route"), own))
     # docked J1 / J2 pigtail corridors (fit review M6): fixed polylines from params, docked and at the start of the docking slide
     import cadquery as cq

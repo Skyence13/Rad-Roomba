@@ -55,7 +55,7 @@ RULES = [
     ("grip_side_plate_*", LASER, "AL6061", AL_FINISH, "-", "geometry", "same part"),
     ("grip_foot_*", CNC, "AL6061", AL_FINISH, "-", "geometry (machined from 6061 angle / bar)", "6060 angle cut to length"),
     ("grip_bar", TURNED, "AL6061", "hard anodise", "-", "geometry", "same part"),
-    ("bridge_tray", SHEET, "AL5052", "chromate conversion (EMI / gap pad contact)", "-", "geometry", "same part"),
+    ("bridge_tray", LASER, "AL5052", "chromate conversion (EMI / gap pad contact)", "-", "geometry (flat 2 mm plate with six pressed-in clinch standoffs, review m7)", "same part"),
     ("bridge_post_*", TURNED, "AL6061", AL_FINISH, "-", "geometry", "same part"),
     ("screw_ring_*", LASER, "SS304", "passivate", "-", "geometry", "same part"),
     ("caster_disc", LASER, "SS304", "passivate", "-", "geometry", "same part"),

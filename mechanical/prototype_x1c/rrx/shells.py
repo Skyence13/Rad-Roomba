@@ -363,6 +363,10 @@ def _deck_feats(p, s):
         for x, y in S.lightpipe_xy():
             feats.append((None, cyl(1.55, 60, (x, y, 100))))
         feats.append((None, cyl(4.0, 60, (pc[0] - 26.0, pc[1], 100))))                          # sounder port (membrane vent behind)
+        gx, gy = P.LIDAR_GLAND_XY                                                                 # LiDAR lead gland (M12 x 1.5), fit review M4
+        gz = P.roof_z(gx, gy)
+        a, cu, _ = S.device_seat((gx, gy, gz), P.roof_normal(gx, gy), hole_d=12.2, face_d=20.0, boss_d=24.0, notch=False, panel_t=4.0)
+        feats.append((a, cu))
     else:
         ci = P.CHARGE_INLET
         a, cu, spot = S.inlet_seat()
@@ -400,7 +404,7 @@ def rear_deck(s):
         p = p if s > 0 else mirror_y(p)
         p, feats = _deck_feats(p, s)
         return _features(p, feats).cut(tongue_keepout())                 # features (ToF seats) must clear the hull tongue too
-    key = ["rear_deck", tag, 23, COVER_SCREWS, S.SEAT, R, D.X_DECK, HUMP_X, PERIM_DEG, P.TOF_SENSORS, P.PANEL_CONTROLS, P.CHARGE_INLET, D.BUMPER_DIR]
+    key = ["rear_deck", tag, 24, COVER_SCREWS, S.SEAT, R, D.X_DECK, HUMP_X, PERIM_DEG, P.TOF_SENSORS, P.PANEL_CONTROLS, P.CHARGE_INLET, D.BUMPER_DIR]
     if tag == "r":
         key.append(("inlet_seat", S.INLET_COVER_T, 2))
     return cached(key, b)
@@ -424,7 +428,7 @@ def hump():
         for sx in (-1, 1):
             for sy in (-1, 1):
                 h = h.cut(cyl(D.CLEAR["M3"] / 2, 8, (lx + sx * 25.0, ly + sy * 25.0, hz[1] - hw - 1)))
-        h = h.cut(cyl(6.0, 8, (lx + 38.0, ly, hz[1] - hw - 1)))                                 # LiDAR cable gland (M12)
+        # (no LiDAR gland in the hump roof any more: the lead enters the left rear deck, params.LIDAR_GLAND_XY)
         from .battery import PLUNGER_X
         h = h.cut(cyl(5.1, 8, (PLUNGER_X, 0.0, hz[1] - hw - 1)))                                 # cassette index plunger (M10 body, nut inside)
         for x in HUMP_SCREW_X:
@@ -434,7 +438,7 @@ def hump():
         for s in (1, -1):                                                                      # latch (top) + frame screws
             h = h.cut(cyl(D.INSERT["M3"][0] / 2, D.INSERT["M3"][1], (x0 - 0.01, s * (hy - 1.5), 138.0), (1, 0, 0)))
         return h
-    return cached(["hump", 14, S.SEAT, B, HUMP_X, LEDGE_Z, P.LIDAR_POSE, P.TOF_SENSORS["tof_prox_rc"], HUMP_SCREW_X], b)
+    return cached(["hump", 15, S.SEAT, B, HUMP_X, LEDGE_Z, P.LIDAR_POSE, P.TOF_SENSORS["tof_prox_rc"], HUMP_SCREW_X], b)
 
 
 # Captive cover screws: four at the front ledge (ahead of the board edge x 33) and two at the rear corners, where the boss
@@ -595,12 +599,12 @@ def upper_shell_one_piece():
         return n.cut(tongue_keepout()).clean()
 
     def b():
-        p = cached(["upper_one_base", 4, R, SAD, B, HUMP_X, LEDGE_Z, PERIM_DEG, COVER_SCREWS, P.J_RECEPTACLES, LATCH_ARM_Z, LATCH_ARM_X1, LATCH_SCREW_X], base)
+        p = cached(["upper_one_base", 5, R, SAD, B, HUMP_X, LEDGE_Z, PERIM_DEG, COVER_SCREWS, P.J_RECEPTACLES, LATCH_ARM_Z, LATCH_ARM_X1, LATCH_SCREW_X], base)
         for s in (1, -1):
             p, feats = _deck_feats(p, s)
             p = _features(p, feats)
         return p.cut(tongue_keepout()).clean()
-    return cached(["upper_one", 5, S.SEAT, R, P.TOF_SENSORS, P.PANEL_CONTROLS, P.CHARGE_INLET, D.BUMPER_DIR, ("inlet_seat", S.INLET_COVER_T, 2)], b)
+    return cached(["upper_one", 6, S.SEAT, R, P.TOF_SENSORS, P.PANEL_CONTROLS, P.CHARGE_INLET, D.BUMPER_DIR, ("inlet_seat", S.INLET_COVER_T, 2)], b)
 
 
 def build(add):

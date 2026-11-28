@@ -101,7 +101,7 @@ GRIP_TOP = ("saddle_cover", "grip_bar", "grip_sleeve", "grip_screw_*", "cheek_fa
 SERVICE_STATES = {
     "receiver re-torque (robot on its back, head removed)": (),
     "cover (routine)": (),
-    "board service (lid off)": GRIP_TOP + LID_PIECES + ("*_operator", "*_body", "RR-PANEL_*", "panel_tray", "lidar", "charge_inlet", "inlet_cover", "rrtof_look_rev_*", "rrtof_prox_*",
+    "board service (lid off)": GRIP_TOP + LID_PIECES + ("nose_cowl", "J?_receptacle", "J?_mated_plug", "*_operator", "*_body", "RR-PANEL_*", "panel_tray", "lidar", "charge_inlet", "inlet_cover", "rrtof_look_rev_*", "rrtof_prox_*",
                                                        "tof_clip_look_rev_*", "tof_clip_prox_*", "tof_window_*", "bumper_sw_*", "fx_perim_*", "RR-CHS-MAIN_plug_*", "CM5_plug_*", "battery_hump"),
     "routine (saddle cover off, head removed)": ("saddle_cover", "fx_cover_*"),
 }
@@ -141,18 +141,26 @@ def service_sweeps(parts, log=print):
     run("RR-CHS-MAIN lifted 150 mm (+z) after unplugging all plugs, lid off", _sweep_boxes(brd, parts), lid_off, also_skip=brd + ["fx_board_*"])
     cm5 = [n for n in byn if n.startswith("CM5_carrier")]
     run("CM5 carrier lifted 150 mm (+z), lid off, plugs out", _sweep_boxes(cm5, parts), lid_off, also_skip=cm5 + ["cm5_tray"])
-    # every board plug pulled along its mating direction (+ 10 mm) with a 20 x 20 x 30 mm gloved-finger zone over it
+    # every board plug pulled out of engagement along its mating direction; RR-CHS-MAIN / CM5 plugs also need a gloved-finger zone
+    # over the plug footprint (30 mm).  State: lid off for the main board and the CM5 carrier; cover off for lid-mounted boards
+    # (their plugs are mated on the bench before the lid goes on, so only the pull path is checked in place).
+    ENG = {"JST GH": 4.0, "Molex CLIK-Mate": 5.0, "Molex Micro-Fit 3.0": 6.0, "Molex Mini-Fit Jr": 8.0}
     for (board, ref, tag), port in BB.PORTS.items():
         pn = f"{tag}_plug_{ref}" if board != "CM5" else f"CM5_plug_{ref}"
         if pn not in byn:
             continue
         pl = byn[pn]
-        b = pl.bb
         d = port["dir"]
-        sw = _sweep_boxes([pn], parts, vec=d, dist=10.0)
-        fz = box(b[0] - 2, b[3] + 2, b[1] - 2, b[4] + 2, b[5] + 0.1, b[5] + 30.0) if abs(d[2]) < 0.5 else None
-        state = lid_off if board in ("RR-CHS-MAIN", "CM5") else SERVICE_STATES["routine (saddle cover off, head removed)"]
-        run(f"plug {tag}.{ref} pull + finger zone", compound([s for s in (sw, fz) if s is not None]), state, also_skip=[pn, f"{tag}_*" if board != "CM5" else "CM5_*"])
+        plug_only = pl.shape.Solids()[0] if pl.shape.Solids() else pl.shape
+        bb = plug_only.BoundingBox()
+        dist = ENG.get(port["family"], 8.0)
+        sw = compound([plug_only.translate(tuple(c * dist * k / 4 for c in d)) for k in range(1, 5)])      # oriented: the plug itself, moved out of engagement
+        main = board in ("RR-CHS-MAIN", "CM5")
+        if main and abs(d[2]) < 0.5:
+            sw = compound([sw, box(bb.xmin, bb.xmax, bb.ymin, bb.ymax, bb.zmax + 0.1, bb.zmax + 30.0)])
+        state = lid_off if main else SERVICE_STATES["routine (saddle cover off, head removed)"]
+        own = [pn, f"{tag}_*"] if board != "CM5" else [pn, "CM5_*"]
+        run(f"plug {tag}.{ref} pull{' + finger zone' if main and abs(d[2]) < 0.5 else ''}", sw, state, also_skip=own)
     # ToF carriers: withdrawn 25 mm along -boresight from the seat in the routine state (inside access through the cover only)
     tof = {}
     for name, t in P.TOF_SENSORS.items():

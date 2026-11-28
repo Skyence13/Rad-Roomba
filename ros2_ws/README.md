@@ -196,7 +196,7 @@ manoeuvres; no recharge, no holds):
 |---|---|---|---|---|
 | CONTINUOUS_SCAN | 0.10 m/s | 3560 s ≈ **59 min** | 2695 s ≈ 45 min | +865 s |
 | CONTINUOUS_SCAN | 0.03 m/s (meets the median D# goal in s01) | 10 061 s ≈ **2.8 h** | 7760 s ≈ 2.2 h | +2301 s |
-| SEARCH_THEN_COUNT | 0.10 m/s search | ≈ **59 min + ~40–110 s per alarm** (30 s preset, ≤ 100 s adaptive, plus stop/reverse/realign) | ≈ 45 min + per alarm | +865 s |
+| SEARCH_THEN_COUNT | 0.10 m/s search | ≈ **59 min + ~40–110 s per alarm** (30 s preset, ≤ 100 s adaptive, plus stop/reverse/realign) + a search-reference pre-roll of about 25 s per attachment at ratemeter alpha 1e-5 (CR-17, simulated) | ≈ 45 min + per alarm | +865 s |
 | STEP_AND_COUNT | 10 s preset, 0.080 m pitch (contract default) | 43 848 s ≈ **12.2 h** | 34 103 s ≈ 9.5 h | +9745 s |
 
 At 0.10 m/s the demo calibration does not reach the 0.20 Bq/cm² goal. STEP_AND_COUNT at the former

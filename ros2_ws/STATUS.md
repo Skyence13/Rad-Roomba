@@ -5,7 +5,7 @@ All calibration and profile data are synthetic (`field_use_approved: false`); th
 profile is present and unconfigured. Observed results are in the verification log below and in
 `evidence/*/evidence.json`; this file says what exists, what is thin and what is missing.
 
-## Session 2026-11-28 (IN PROGRESS - data-path review IB-72, MODEL.md rev 5, head 0.6.0, chassis stage 4)
+## Session 2026-11-28 (data-path review IB-72, MODEL.md rev 5, head 0.6.0, chassis stage 4/5) - DONE, final runs below
 
 Resume notes (keep current; a usage limit may stop this work):
 - Review probes reproduced on the unmodified sources (`build/repro/probe{1,2,3}.py`, copies of the reviewer's scratch scripts;
@@ -44,7 +44,25 @@ Resume notes (keep current; a usage limit may stop this work):
 - [x] native n15 extended (prompt, early press refused and reported, link outage via `usb_down_ms`); default native set
   n01 n02 n15; fake s15 extended (NOT_READY with action, TOO_SHORT, held press -> REARM_HELD, BATTERY_REARM_LOW text).
 - [x] head driver node (m8): calibration files + binding mode parameters, run.json, header stamp = gate start.
-- [ ] (machine restarted 06:31; emulators rebuilt 06:34 for chassis stage 5; snapshot draft11 up to date) full scenario / native runs and the before/after table (scratch script `ros/dev/table.py` compares evidence with
+- [x] after the restart (06:31): emulators rebuilt 06:34 (chassis stage 5), snapshot draft11 up to date; full scenario
+  run 06:45-07:07: 14 passed, 3 failed and fixed: s11 INLINE/DEFERRED (the search stage could not alarm at the hot spot:
+  at ratemeter_alpha 1e-5, N_min 200 per sub-window needs 2 x 200 pooled past counts = ~25 s of head data after arming;
+  the supervisor now waits at the first pass start in phase SEARCH_REFERENCE until that exists (`_search_reference_ready`),
+  and the search reference is the attachment's whole past record) - both pass after the fix; s12 (the scenario pressed
+  REARM although the latch was still set after the restart: the stage-4 fake no longer reports rearm_ready for a set latch
+  with nothing to clear; the operator presses only when the page asks) - passes.
+- [x] FINAL RUNS (07:07-07:50, idle-ish host, all `simulated` / `tool-checked`): `tools/test.sh snapshot --check` up to date
+  (0.4.0-draft11); `tools/test.sh unit` **97 passed**, exit 0 (2 min 11 s); `tools/test.sh scenarios` **17 passed**, exit 0
+  (19 min 40 s); `tools/test.sh native` (n01 n02 n15, emulators built 06:34 from the stage-5 chassis / head 0.6.0 firmware)
+  **3 PASS** (11/11, 10/10, 18/18 checks), exit 0 (10 min 18 s).  `tools/test.sh ros` NOT run.
+- Before (commit ea7ac82 evidence, rev 4) -> after (rev 5), simulated, synthetic calibration:
+  s01: acceptable 0.690 -> 0.699, median D# 0.128 -> 0.117 Bq/cm2, ALARM cells 10 of 290 (alpha 0.05 per cell), hot-spot flag
+  33.8 -> 30.3 mm from the patch, review queue 5 (20 provisional alarms not confirmed, 10 confirmed);
+  s10: acceptable 0.256 -> 0.330, median D# 0.182 -> 0.167; s14: acceptable 0.260 -> 0.300; the 230-460 s scenarios: recorded
+  NO DECISION 27-32 -> **0** in every scenario (s15: 40 -> 0; live provisional 12); "sensitivity insufficient - reference
+  gradient" s02 137/232, s04a 97/406, s15 34/44, s03 32/232, s01 21/290 (CR-13); s11 inline/deferred recounts
+  EXCEEDS_INVESTIGATION_LEVEL (D 2.18 / 1.83); native n01: hot-spot flag 20 mm, revisit 1.9 mm true, ACCEPTABLE 0.007 at
+  0.10 m/s, localiser vs truth at its own time max 1.8 mm, 0 rejected fixes. (scratch script `ros/dev/table.py` compares evidence with
   commit ea7ac82), IB-47 analysis (native trace now records phase, x-fix age, rejects; localiser withholds credit on a
   rejected end-wall fix and resets x after 3 rejections).
 

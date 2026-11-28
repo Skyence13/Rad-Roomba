@@ -3,7 +3,7 @@
  "evidence_class": "simulated",
  "against": "native firmware emulators rr_head_sim + rr_chassis_sim (real time; world/LiDAR from rr_sim.world)",
  "seed": 35,
- "sim_time_s": 56.47,
+ "sim_time_s": 56.51,
  "checks": [
   {
    "check": "bumper: HOLD with a hardware inhibit",
@@ -42,13 +42,13 @@
    "events": [
     {
      "seq": 47,
-     "t_us": 20540000,
+     "t_us": 20428000,
      "kind": "REARM_REFUSED",
      "detail": {
       "why": "CHAIN_OPEN"
      },
      "boot_id": "c8db4e6c-d2df-45e0-ab6a-02525c5ca18b",
-     "t_host_us": 4712065112.519752
+     "t_host_us": 4042084484.35842
     }
    ],
    "state_refusal": "CHAIN_OPEN",
@@ -146,18 +146,18 @@
  "coverage": {
   "target_area_m2": 3.0,
   "areas_m2": {
-   "UNVISITED": 2.698375,
+   "UNVISITED": 2.700675,
    "ACCEPTABLE": 0.0,
-   "INSUFFICIENT_SENSITIVITY": 0.2812,
+   "INSUFFICIENT_SENSITIVITY": 0.2792,
    "INVALID_DATA": 0.0,
    "BLOCKED": 0.0,
    "EXCLUDED": 0.0,
    "NO_DECISION": 0.0,
-   "INCOMPLETE_COVERAGE": 0.010425,
+   "INCOMPLETE_COVERAGE": 0.010125,
    "ALARM": 0.01,
    "ACQUISITION_GAP": 0.0
   },
-  "valid_exposure_fraction": 0.09783333333333334,
+  "valid_exposure_fraction": 0.09706666666666668,
   "acceptable_fraction": 0.0,
   "sub_cell_m": 0.005,
   "decision_cell_m": 0.1,
@@ -167,16 +167,16 @@
  "time_sync": {
   "limit_us": 10000.0,
   "fits": 33,
-  "max_gate_bound_us": 1060.998784926243,
-  "median_gate_bound_us": 928.7156832825851
+  "max_gate_bound_us": 1122.3889090546418,
+  "median_gate_bound_us": 941.1067982809353
  },
  "link_stats": {
-  "tx": 3107,
-  "rx": 3107,
+  "tx": 3119,
+  "rx": 3119,
   "bad_lines": 0,
   "stale": 0,
   "duplicates": 0,
-  "gates": 553,
+  "gates": 554,
   "gaps": 0,
   "retries": 0,
   "unassigned_frames": 0,
@@ -184,8 +184,8 @@
   "time_exchanges_rejected": 0
  },
  "localization_error_vs_truth_m": {
-  "max_x_m": 0.02424080950468377,
-  "max_y_m": 0.00010711991281059374
+  "max_x_m": 0.01834901027322644,
+  "max_y_m": 0.0001071332445812534
  },
  "plan": {
   "n_pairs": 2,
@@ -210,25 +210,25 @@
    "id": "HS-0001",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 1,
-   "x_m": 1.255246939861957,
-   "y_m": -0.14626725353267683,
-   "D": 0.17418706784249785,
-   "u_total": 0.11652825880813282,
-   "D_star": 0.16952523962062335,
-   "D_hash": 0.42355431917299463,
+   "x_m": 1.2540460416130685,
+   "y_m": -0.14626549391578264,
+   "D": 0.18149737480317868,
+   "u_total": 0.11669439913041413,
+   "D_star": 0.16890303431479117,
+   "D_hash": 0.4209491595711327,
    "location": {
-    "distance_from_door_m": 1.255,
+    "distance_from_door_m": 1.254,
     "wall": "right wall",
     "distance_from_wall_m": 0.354,
-    "text": "1.26 m from the door threshold, 0.35 m from the right wall"
+    "text": "1.25 m from the door threshold, 0.35 m from the right wall"
    }
   },
   {
    "id": "HS-0002",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 0,
-   "x_m": 0.5213385921639253,
-   "y_m": -0.05877171753508757,
+   "x_m": 0.5213541208762504,
+   "y_m": -0.05878002338069825,
    "D": 0.24752334103994508,
    "u_total": 0.12462024268547386,
    "D_star": 0.1899128022012663,
@@ -260,14 +260,14 @@
   "status_reasons": {
    "reference gradient": 38,
    "coverage 0.15 < 0.5": 1,
-   "coverage 0.48 < 0.5": 1,
+   "coverage 0.45 < 0.5": 1,
    "coverage 0.21 < 0.5": 1,
    "coverage 0.20 < 0.5": 1,
    "flagged by combined": 1,
    "D# above the detection goal": 1
   },
   "acceptable_fraction": 0.0,
-  "median_D_hash": 0.4594820946498782,
+  "median_D_hash": 0.4572438767567183,
   "undecidable_recorded": 0,
   "undecidable_provisional_live": 16,
   "alarm_bookkeeping": {
@@ -281,163 +281,163 @@
   "review_queue_items": 1,
   "revisit": 1,
   "position_credit": {
-   "samples": 537,
+   "samples": 539,
    "credited_fraction": 1.0,
    "credited_with_true_error_above_budget": 1,
-   "fraction_of_credited_above_budget": 0.00186219739292365,
-   "max_true_error_when_credited_m": 0.024271464344606346,
-   "max_true_error_m": 0.024271464344606346,
+   "fraction_of_credited_above_budget": 0.0018552875695732839,
+   "max_true_error_when_credited_m": 0.01838255994449656,
+   "max_true_error_m": 0.01838255994449656,
    "no_credit_reasons_samples": {},
    "localizer": {
     "wheel_scale": {
-     "estimate": -0.0002467247864863645,
-     "sigma": 0.00036581602400110545
+     "estimate": -0.000362592079521487,
+     "sigma": 0.00036366856671280596
     },
     "stats": {
-     "x_fixes": 568,
+     "x_fixes": 570,
      "x_rejects": 0,
      "big_corrections": 0,
-     "max_correction_m": 0.00044559727195816887,
-     "deferred_scans": 53
+     "max_correction_m": 0.00044559667109027453,
+     "deferred_scans": 68
     }
    },
    "worst_credited": [
     {
-     "t_s": 15.1,
+     "t_s": 15.03,
      "truth": [
-      0.9135,
+      0.9078,
       -0.19,
       0.0001
      ],
      "est": [
-      0.8893,
+      0.8895,
       -0.19,
       -0.0
      ],
-     "err_m": 0.0243,
+     "err_m": 0.0184,
      "phase": "SCAN:PASS",
      "dist_since_x_m": 0.006,
      "x_rejects": 0,
      "x_fix_age_s": 0.04,
      "last_x_residual": {
-      "innovation": -0.0005257510009419875,
-      "sigma": 0.002296509994359142,
-      "nis": 0.05241113162261713
+      "innovation": -0.00041038295321194074,
+      "sigma": 0.0022964914975996203,
+      "nis": 0.0319336779529213
      }
     },
     {
-     "t_s": 43.01,
+     "t_s": 43.04,
      "truth": [
-      1.1634,
+      1.2025,
       -0.19,
       0.0001
      ],
      "est": [
-      1.1661,
+      1.2054,
       -0.19,
-      0.0
+      0.0001
      ],
-     "err_m": 0.0026,
+     "err_m": 0.0028,
      "phase": "SCAN:PASS",
      "dist_since_x_m": 0.003,
      "x_rejects": 0,
      "x_fix_age_s": 0.05,
      "last_x_residual": {
-      "innovation": -0.0006392134284460838,
-      "sigma": 0.00221304230484162,
-      "nis": 0.08342809900105433
+      "innovation": -0.0024974779055413343,
+      "sigma": 0.0022038011244516265,
+      "nis": 1.2842764208497204
      }
     },
     {
-     "t_s": 43.11,
+     "t_s": 43.14,
      "truth": [
-      1.1634,
+      1.2025,
       -0.19,
       0.0001
      ],
      "est": [
-      1.1661,
+      1.2054,
       -0.19,
-      0.0
+      0.0001
      ],
-     "err_m": 0.0026,
+     "err_m": 0.0028,
      "phase": "SCAN:PASS",
      "dist_since_x_m": 0.003,
      "x_rejects": 0,
      "x_fix_age_s": 0.05,
      "last_x_residual": {
-      "innovation": -0.0006392134284460838,
-      "sigma": 0.00221304230484162,
-      "nis": 0.08342809900105433
+      "innovation": -0.0024974779055413343,
+      "sigma": 0.0022038011244516265,
+      "nis": 1.2842764208497204
      }
     },
     {
-     "t_s": 43.21,
+     "t_s": 43.24,
      "truth": [
-      1.1634,
+      1.2025,
       -0.19,
       0.0001
      ],
      "est": [
-      1.1661,
+      1.2054,
       -0.19,
-      0.0
+      0.0001
      ],
-     "err_m": 0.0026,
+     "err_m": 0.0028,
      "phase": "SCAN:PASS",
      "dist_since_x_m": 0.003,
      "x_rejects": 0,
      "x_fix_age_s": 0.05,
      "last_x_residual": {
-      "innovation": -0.0006392134284460838,
-      "sigma": 0.00221304230484162,
-      "nis": 0.08342809900105433
+      "innovation": -0.0024974779055413343,
+      "sigma": 0.0022038011244516265,
+      "nis": 1.2842764208497204
      }
     },
     {
-     "t_s": 43.31,
+     "t_s": 43.34,
      "truth": [
-      1.1634,
+      1.2025,
       -0.19,
       0.0001
      ],
      "est": [
-      1.1661,
+      1.2054,
       -0.19,
-      0.0
+      0.0001
      ],
-     "err_m": 0.0026,
+     "err_m": 0.0028,
      "phase": "SCAN:PASS",
      "dist_since_x_m": 0.003,
      "x_rejects": 0,
      "x_fix_age_s": 0.05,
      "last_x_residual": {
-      "innovation": -0.0006392134284460838,
-      "sigma": 0.00221304230484162,
-      "nis": 0.08342809900105433
+      "innovation": -0.0024974779055413343,
+      "sigma": 0.0022038011244516265,
+      "nis": 1.2842764208497204
      }
     },
     {
-     "t_s": 43.41,
+     "t_s": 43.44,
      "truth": [
-      1.1634,
+      1.2025,
       -0.19,
       0.0001
      ],
      "est": [
-      1.1661,
+      1.2054,
       -0.19,
-      0.0
+      0.0001
      ],
-     "err_m": 0.0026,
+     "err_m": 0.0028,
      "phase": "SCAN:PASS",
      "dist_since_x_m": 0.003,
      "x_rejects": 0,
      "x_fix_age_s": 0.05,
      "last_x_residual": {
-      "innovation": -0.0006392134284460838,
-      "sigma": 0.00221304230484162,
-      "nis": 0.08342809900105433
+      "innovation": -0.0024974779055413343,
+      "sigma": 0.0022038011244516265,
+      "nis": 1.2842764208497204
      }
     }
    ]

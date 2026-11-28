@@ -100,7 +100,7 @@ def rows():
     add("G lid", "pan head screw", "M3 x 8 ISO 7045 A2", 2, "RR-PANEL tray -> deck bosses", torque="0.5")
     add("G lid", "pan head screw", "M2 x 6 ISO 7045 A2", 18, "ToF rear clips (9 seats)", torque="0.15")
     add("G lid", "light-blocker gasket", "black closed-cell foam 1.5 mm, die-cut 14 x 10 with two apertures", 11, "between VL53L4ED and window", "DESIGN", note="crosstalk barrier; assumption, see report")
-    add("G lid", "LiDAR screws + gasket", "M3 x 8 x 4, 60 x 60 x 1 silicone gasket, M12 cable gland", 1, "hump pad", "UNVERIFIED", note="LiDAR hole pattern UNVERIFIED: pad drilled 4 x 3.4 on a 50 mm square")
+    add("G lid", "LiDAR screws + gasket", "M3 x 8 x 4, 60 x 60 x 1 silicone gasket; M12 x 1.5 cable gland in the LEFT REAR DECK beside the hump (fit review M4: no room inside the hump)", 1, "hump pad / left deck", "UNVERIFIED", note="LiDAR hole pattern UNVERIFIED: pad drilled 4 x 3.4 on a 50 mm square")
     add("G lid", "set screw (door peg)", "M4 x 10 dog point ISO 4028 A2", 2, "upper jamb bosses", torque="1.0")
     add("G lid", "hinge pin", "2 mm x 40 stainless pin", 1, "charge inlet cover", note="torsion spring optional")
     add("G lid", "draw-latch screws", "M4 x 8 ISO 7045 A2", 4, "hatch latch on the hump roof, catch plate on the door", "UNVERIFIED", "1.0")
