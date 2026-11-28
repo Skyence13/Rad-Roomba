@@ -38,7 +38,7 @@
    "ok": true,
    "holds": [
     {
-     "t_wall": 41.83,
+     "t_wall": 42.23,
      "reason": "OPERATOR_PAUSE",
      "task": "pair0:A+",
      "phase": "PASS"
@@ -55,13 +55,13 @@
   {
    "check": "credited coverage grows",
    "ok": true,
-   "fraction": 0.07083333283662796
+   "fraction": 0.07791666686534882
   },
   {
    "check": "eligible lane-gates received",
    "ok": true,
-   "eligible": 1444,
-   "gates": 361
+   "eligible": 1440,
+   "gates": 360
   },
   {
    "check": "coverage flagged not approved for field use",
@@ -110,6 +110,12 @@
      null
     ],
     [
+     "slow_step",
+     null,
+     153,
+     1
+    ],
+    [
      "command",
      null,
      null,
@@ -126,6 +132,12 @@
      null,
      null,
      null
+    ],
+    [
+     "slow_step",
+     null,
+     178,
+     0
     ]
    ]
   },
@@ -140,8 +152,8 @@
    "attachment": "HEAD-DEMO-001",
    "stamp_ok": true,
    "stamp": [
-    5974498249,
-    5974498249
+    8257171826,
+    8257171826
    ],
    "events": [
     [
@@ -157,13 +169,13 @@
   {
    "check": "stand-alone chassis_bridge_node: publishes odom and chassis state",
    "ok": true,
-   "odom": 162,
+   "odom": 169,
    "chassis": 13
   }
  ],
  "holds": [
   {
-   "t_wall": 41.83,
+   "t_wall": 42.23,
    "reason": "OPERATOR_PAUSE",
    "task": "pair0:A+",
    "phase": "PASS"

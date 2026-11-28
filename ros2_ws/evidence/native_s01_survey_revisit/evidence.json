@@ -3,7 +3,7 @@
  "evidence_class": "simulated",
  "against": "native firmware emulators rr_head_sim + rr_chassis_sim (real time; world/LiDAR from rr_sim.world)",
  "seed": 31,
- "sim_time_s": 282.69,
+ "sim_time_s": 283.23,
  "checks": [
   {
    "check": "start accepted",
@@ -32,13 +32,13 @@
    "check": "arrived AT_SPOT",
    "ok": true,
    "notes": [
-    "ARRIVED: lane 1 over the saved footprint, offset 1.6 mm (tolerance 10 mm, 2-sigma uncertainty 0.4 mm)"
+    "ARRIVED: lane 1 over the saved footprint, offset 1.6 mm (tolerance 10 mm, 2-sigma uncertainty 0.5 mm)"
    ]
   },
   {
    "check": "true lane centre within 10 mm of the saved footprint",
    "ok": true,
-   "err": 0.0018089915963427129
+   "err": 0.0019031173731629634
   },
   {
    "check": "Expose accepted",
@@ -47,7 +47,7 @@
   {
    "check": "Expose reversed 0.35 m (+/- 10 mm)",
    "ok": true,
-   "back": 0.3502810012846829
+   "back": 0.3502590022840242
   },
   {
    "check": "Park accepted",
@@ -63,18 +63,18 @@
  "coverage": {
   "target_area_m2": 3.0,
   "areas_m2": {
-   "UNVISITED": 1.001625,
+   "UNVISITED": 1.011525,
    "ACCEPTABLE": 0.01,
-   "INSUFFICIENT_SENSITIVITY": 1.7781500000000001,
+   "INSUFFICIENT_SENSITIVITY": 1.8157500000000002,
    "INVALID_DATA": 0.0,
    "BLOCKED": 0.0,
    "EXCLUDED": 0.0,
    "NO_DECISION": 0.0,
-   "INCOMPLETE_COVERAGE": 0.040225000000000004,
-   "ALARM": 0.17,
+   "INCOMPLETE_COVERAGE": 0.042725,
+   "ALARM": 0.12000000000000001,
    "ACQUISITION_GAP": 0.0
   },
-  "valid_exposure_fraction": 0.658375,
+  "valid_exposure_fraction": 0.6585333333333333,
   "acceptable_fraction": 0.0033333333333333335,
   "sub_cell_m": 0.005,
   "decision_cell_m": 0.1,
@@ -84,16 +84,16 @@
  "time_sync": {
   "limit_us": 10000.0,
   "fits": 146,
-  "max_gate_bound_us": 1190.1288048084925,
-  "median_gate_bound_us": 976.4715594848537
+  "max_gate_bound_us": 1452.8178755187987,
+  "median_gate_bound_us": 977.5566887955284
  },
  "link_stats": {
-  "tx": 15579,
-  "rx": 15579,
+  "tx": 15468,
+  "rx": 15468,
   "bad_lines": 0,
   "stale": 0,
   "duplicates": 0,
-  "gates": 2815,
+  "gates": 2821,
   "gaps": 0,
   "retries": 0,
   "unassigned_frames": 0,
@@ -101,8 +101,8 @@
   "time_exchanges_rejected": 0
  },
  "localization_error_vs_truth_m": {
-  "max_x_m": 0.026707259935322747,
-  "max_y_m": 0.002875494805475262
+  "max_x_m": 0.028181393092354234,
+  "max_y_m": 0.0019573178580526984
  },
  "plan": {
   "n_pairs": 2,
@@ -127,14 +127,14 @@
    "id": "HS-0001",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 3,
-   "x_m": 0.6655725288483337,
-   "y_m": -0.32128017281280397,
-   "D": 0.1843874709870441,
-   "u_total": 0.09975018188962752,
-   "D_star": 0.14283000992042202,
-   "D_hash": 0.3397935698177761,
+   "x_m": 0.6690757718815435,
+   "y_m": -0.3212800752561544,
+   "D": 0.17547395926864143,
+   "u_total": 0.09701755945087151,
+   "D_star": 0.14353478121749028,
+   "D_hash": 0.34182262651859135,
    "location": {
-    "distance_from_door_m": 0.666,
+    "distance_from_door_m": 0.669,
     "wall": "right wall",
     "distance_from_wall_m": 0.179,
     "text": "0.67 m from the door threshold, 0.18 m from the right wall"
@@ -143,175 +143,124 @@
   {
    "id": "HS-0002",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 1,
-   "x_m": 0.8603153376172601,
-   "y_m": -0.17797915430495898,
-   "D": 0.1532513993413944,
-   "u_total": 0.09013481690544906,
-   "D_star": 0.14672384273161673,
-   "D_hash": 0.3476466703177898,
-   "location": {
-    "distance_from_door_m": 0.86,
-    "wall": "right wall",
-    "distance_from_wall_m": 0.322,
-    "text": "0.86 m from the door threshold, 0.32 m from the right wall"
-   }
-  },
-  {
-   "id": "HS-0003",
-   "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 2,
-   "x_m": 1.3224551218817069,
-   "y_m": -0.23376442744340742,
-   "D": 0.17457995159146927,
-   "u_total": 0.098967014947634,
-   "D_star": 0.1304197835533749,
-   "D_hash": 0.312508591615692,
+   "x_m": 1.3194771524290638,
+   "y_m": -0.23376252953152396,
+   "D": 0.12696358033532612,
+   "u_total": 0.07641770596522406,
+   "D_star": 0.11507810862568951,
+   "D_hash": 0.2656398687386592,
    "location": {
-    "distance_from_door_m": 1.322,
+    "distance_from_door_m": 1.319,
     "wall": "right wall",
     "distance_from_wall_m": 0.266,
     "text": "1.32 m from the door threshold, 0.27 m from the right wall"
    }
   },
   {
-   "id": "HS-0004",
+   "id": "HS-0003",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 1,
-   "x_m": 1.147840750358164,
-   "y_m": -0.16358837799824621,
-   "D": 0.11984727377218968,
-   "u_total": 0.07959875390542241,
-   "D_star": 0.10997495738869908,
-   "D_hash": 0.25359858996778495,
+   "x_m": 1.1121396783300614,
+   "y_m": -0.1593073506194679,
+   "D": 0.11578724509253985,
+   "u_total": 0.07086604627250129,
+   "D_star": 0.1025257547993491,
+   "D_hash": 0.23394230996472812,
    "location": {
-    "distance_from_door_m": 1.148,
+    "distance_from_door_m": 1.112,
     "wall": "right wall",
-    "distance_from_wall_m": 0.336,
-    "text": "1.15 m from the door threshold, 0.34 m from the right wall"
+    "distance_from_wall_m": 0.341,
+    "text": "1.11 m from the door threshold, 0.34 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0004",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 3,
+   "x_m": 2.2552891239210107,
+   "y_m": -0.3212603523095292,
+   "D": 0.11522659779088235,
+   "u_total": 0.0930282826775785,
+   "D_star": 0.15448989297670557,
+   "D_hash": 0.3640461058187298,
+   "location": {
+    "distance_from_door_m": 2.255,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.179,
+    "text": "2.26 m from the door threshold, 0.18 m from the right wall"
    }
   },
   {
    "id": "HS-0005",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 0,
-   "x_m": 2.276875695985648,
-   "y_m": -0.27721989890167875,
-   "D": 0.18762819325025049,
-   "u_total": 0.10233725354418943,
-   "D_star": 0.15497519602462356,
-   "D_hash": 0.36503754451036924,
+   "x_m": 2.448458520014682,
+   "y_m": 0.05941172221350997,
+   "D": 0.1267451299348206,
+   "u_total": 0.07215793240164776,
+   "D_star": 0.11044473423089132,
+   "D_hash": 0.25452547404290177,
    "location": {
-    "distance_from_door_m": 2.277,
-    "wall": "right wall",
-    "distance_from_wall_m": 0.223,
-    "text": "2.28 m from the door threshold, 0.22 m from the right wall"
+    "distance_from_door_m": 2.448,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.441,
+    "text": "2.45 m from the door threshold, 0.44 m from the left wall"
+   }
+  },
+  {
+   "id": "HS-0007",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 3,
+   "x_m": 0.9916558896991642,
+   "y_m": 7.526907784128679e-05,
+   "D": 0.09147484714822182,
+   "u_total": 0.07848126040947691,
+   "D_star": 0.11754064470193493,
+   "D_hash": 0.27271291609392295,
+   "location": {
+    "distance_from_door_m": 0.992,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.5,
+    "text": "0.99 m from the door threshold, 0.50 m from the left wall"
    }
   },
   {
    "id": "HS-0008",
-   "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 3,
-   "x_m": 0.9799579256507789,
-   "y_m": -0.000514360342132924,
-   "D": 0.18826683460315657,
-   "u_total": 0.10356885056769695,
-   "D_star": 0.14683828392794,
-   "D_hash": 0.35229620729099675,
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 1,
+   "x_m": 1.5448290853979665,
+   "y_m": 0.17161419195373254,
+   "D": 1.3581864955250307,
+   "u_total": 0.24216750257465888,
+   "D_star": 0.10500227151641005,
+   "D_hash": 0.24295260453524914,
    "location": {
-    "distance_from_door_m": 0.98,
-    "wall": "right wall",
-    "distance_from_wall_m": 0.499,
-    "text": "0.98 m from the door threshold, 0.50 m from the right wall"
+    "distance_from_door_m": 1.545,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.328,
+    "text": "1.54 m from the door threshold, 0.33 m from the left wall"
    }
   },
   {
    "id": "HS-0009",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 3,
-   "x_m": 0.44642035144055436,
-   "y_m": -0.010406350270456657,
-   "D": 0.18694826890515526,
-   "u_total": 0.08397464921197191,
-   "D_star": 0.12555006676368088,
-   "D_hash": 0.2933921869426115,
+   "source_lane": 0,
+   "x_m": 2.617657813751235,
+   "y_m": 0.27753246919175373,
+   "D": 0.2832068846661249,
+   "u_total": 0.14992182196977652,
+   "D_star": 0.23875171682115098,
+   "D_hash": 0.604245823879101,
    "location": {
-    "distance_from_door_m": 0.446,
-    "wall": "right wall",
-    "distance_from_wall_m": 0.49,
-    "text": "0.45 m from the door threshold, 0.49 m from the right wall"
-   }
-  },
-  {
-   "id": "HS-0010",
-   "kind": "INVESTIGATION_LEVEL",
-   "source_lane": 1,
-   "x_m": 1.5508230296282195,
-   "y_m": 0.16723491718847358,
-   "D": 1.2074117984039734,
-   "u_total": 0.2237108453062165,
-   "D_star": 0.10561247886934798,
-   "D_hash": 0.2443082490584686,
-   "location": {
-    "distance_from_door_m": 1.551,
+    "distance_from_door_m": 2.618,
     "wall": "left wall",
-    "distance_from_wall_m": 0.333,
-    "text": "1.55 m from the door threshold, 0.33 m from the left wall"
-   }
-  },
-  {
-   "id": "HS-0011",
-   "kind": "INVESTIGATION_LEVEL",
-   "source_lane": 2,
-   "x_m": 2.864003797817511,
-   "y_m": 0.11516112307901265,
-   "D": 0.3315912705418087,
-   "u_total": 0.151754709044465,
-   "D_star": 0.2257641809268877,
-   "D_hash": 0.5684722745286296,
-   "location": {
-    "distance_from_door_m": 2.864,
-    "wall": "left wall",
-    "distance_from_wall_m": 0.385,
-    "text": "2.86 m from the door threshold, 0.38 m from the left wall"
-   }
-  },
-  {
-   "id": "HS-0012",
-   "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 2,
-   "x_m": 0.39826636258808107,
-   "y_m": 0.23374594711190907,
-   "D": 0.1500273510653382,
-   "u_total": 0.09230897702792136,
-   "D_star": 0.14702355451302818,
-   "D_hash": 0.36236701239055474,
-   "location": {
-    "distance_from_door_m": 0.398,
-    "wall": "left wall",
-    "distance_from_wall_m": 0.266,
-    "text": "0.40 m from the door threshold, 0.27 m from the left wall"
-   }
-  },
-  {
-   "id": "HS-0013",
-   "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 3,
-   "x_m": 0.7566614312882616,
-   "y_m": 0.3213491513558269,
-   "D": 0.16694180204129053,
-   "u_total": 0.09602890540380372,
-   "D_star": 0.14908459436014382,
-   "D_hash": 0.35054640667634157,
-   "location": {
-    "distance_from_door_m": 0.757,
-    "wall": "left wall",
-    "distance_from_wall_m": 0.179,
-    "text": "0.76 m from the door threshold, 0.18 m from the left wall"
+    "distance_from_wall_m": 0.222,
+    "text": "2.62 m from the door threshold, 0.22 m from the left wall"
    }
   }
  ],
- "scan_detections": 2,
+ "scan_detections": 1,
  "observations": [],
  "decision_status": {
   "cells_with_gates": 232,
@@ -324,284 +273,308 @@
   "cells_with_data": 232,
   "status": {
    "INCOMPLETE COVERAGE": 13,
-   "SENSITIVITY INSUFFICIENT": 201,
-   "ALARM": 17,
+   "SENSITIVITY INSUFFICIENT": 206,
+   "ALARM": 12,
    "ACCEPTABLE": 1
   },
   "status_reasons": {
-   "D# above the detection goal": 201,
-   "flagged by combined": 9,
-   "coverage 0.35 < 0.5": 5,
-   "coverage 0.39 < 0.5": 2,
+   "D# above the detection goal": 206,
+   "flagged by combined": 4,
+   "coverage 0.35 < 0.5": 4,
+   "coverage 0.39 < 0.5": 3,
    "coverage 0.26 < 0.5": 2,
-   "flagged by combined; one-sided reference: recount required before an investigation is reported": 2,
    "coverage 0.21 < 0.5": 2,
-   "flagged by lane2": 2
+   "flagged by combined+lane2": 2,
+   "flagged by combined+lane1": 2
   },
   "acceptable_fraction": 0.0033333333333333335,
-  "median_D_hash": 0.25881869271494984,
+  "median_D_hash": 0.2584741829069705,
   "undecidable_recorded": 0,
   "undecidable_provisional_live": 0,
   "alarm_bookkeeping": {
-   "recorded alarm (provisional alarm confirmed)": 17,
-   "provisional alarm not confirmed": 11
+   "recorded alarm (provisional alarm confirmed)": 12,
+   "provisional alarm not confirmed": 10
   },
   "flags": {
-   "UNRESOLVED_EXCEEDANCE:recorded alarm": 6,
-   "UNRESOLVED_EXCEEDANCE:provisional alarm not confirmed": 3,
-   "SCAN_DETECTION:provisional alarm not confirmed": 1,
+   "UNRESOLVED_EXCEEDANCE:recorded alarm": 5,
+   "UNRESOLVED_EXCEEDANCE:provisional alarm not confirmed": 2,
    "SCAN_DETECTION:recorded alarm": 1,
-   "INVESTIGATION_LEVEL:recorded alarm": 2
+   "INVESTIGATION_LEVEL:recorded alarm": 1
   },
-  "review_queue_items": 9,
-  "recount_required_flags": 5,
-  "one_sided_cells": 46,
-  "one_sided_alarm_cells_needing_recount": 2,
+  "review_queue_items": 7,
+  "recount_required_flags": 3,
+  "one_sided_cells": 47,
+  "one_sided_alarm_cells_needing_recount": 1,
   "search_preroll_s": [],
   "recorded_evaluation": {
    "total": 232,
    "error": null,
-   "seconds": 45.53664508299971
+   "seconds": 48.014211310000064
   },
   "revisit": 0,
   "position_credit": {
-   "samples": 2768,
+   "samples": 2766,
    "credited_fraction": 1.0,
-   "credited_with_true_error_above_budget": 18,
-   "fraction_of_credited_above_budget": 0.006502890173410405,
-   "max_true_error_when_credited_m": 0.026720226042102533,
-   "max_true_error_m": 0.026720226042102533,
+   "credited_with_true_error_above_budget": 16,
+   "fraction_of_credited_above_budget": 0.005784526391901663,
+   "max_true_error_when_credited_m": 0.028196330194871923,
+   "max_true_error_m": 0.028196330194871923,
    "no_credit_reasons_samples": {},
    "localizer": {
     "wheel_scale": {
-     "estimate": 2.5040048038154232e-05,
-     "sigma": 8.248122530291276e-05
+     "estimate": 3.709145409753924e-05,
+     "sigma": 8.351593587081546e-05
     },
     "stats": {
-     "x_fixes": 3644,
-     "x_rejects": 1,
+     "x_fixes": 3633,
+     "x_rejects": 0,
      "big_corrections": 0,
      "max_correction_m": 0.000578650544400214,
-     "deferred_scans": 291
+     "deferred_scans": 212
     }
    },
    "worst_credited": [
     {
-     "t_s": 191.07,
+     "t_s": 186.33,
      "truth": [
-      0.9123,
-      0.1901,
-      -9.4246
+      1.4587,
+      0.1903,
+      -9.4245
      ],
      "est": [
-      0.939,
-      0.1901,
-      -3.1415
+      1.4868,
+      0.1903,
+      -3.1414
      ],
-     "err_m": 0.0267,
+     "err_m": 0.0282,
      "phase": "SCAN:PASS",
      "dist_since_x_m": 0.0,
-     "x_rejects": 1,
-     "x_fix_age_s": -0.01,
+     "x_rejects": 0,
+     "x_fix_age_s": -0.02,
      "last_x_residual": {
-      "innovation": 0.0017627593695697108,
-      "sigma": 0.0021326126287942687,
-      "nis": 0.6832224213568936
+      "innovation": -8.187882509913536e-05,
+      "sigma": 0.0021882016131244716,
+      "nis": 0.001400130566105884
      }
     },
     {
-     "t_s": 185.93,
+     "t_s": 130.76,
      "truth": [
-      1.4028,
-      0.1902,
-      -9.4246
-     ],
-     "est": [
-      1.4295,
-      0.1902,
-      -3.1414
-     ],
-     "err_m": 0.0267,
-     "phase": "SCAN:PASS",
-     "dist_since_x_m": 0.006,
-     "x_rejects": 1,
-     "x_fix_age_s": 0.07,
-     "last_x_residual": {
-      "innovation": 0.0033500222290721027,
-      "sigma": 0.0021780350784071003,
-      "nis": 2.365732507644409
-     }
-    },
-    {
-     "t_s": 180.73,
-     "truth": [
-      1.9078,
-      0.1903,
-      -9.4246
-     ],
-     "est": [
-      1.9332,
-      0.1903,
-      -3.1414
-     ],
-     "err_m": 0.0255,
-     "phase": "SCAN:PASS",
-     "dist_since_x_m": 0.008,
-     "x_rejects": 1,
-     "x_fix_age_s": 0.06,
-     "last_x_residual": {
-      "innovation": -0.0017805028392288147,
-      "sigma": 0.0022228196719552666,
-      "nis": 0.6416185003028656
-     }
-    },
-    {
-     "t_s": 130.42,
-     "truth": [
-      1.4382,
-      0.1465,
+      1.4297,
+      0.1467,
       -6.2832
      ],
      "est": [
-      1.4136,
+      1.4019,
+      0.1467,
+      -0.0002
+     ],
+     "err_m": 0.0278,
+     "phase": "SCAN:PASS",
+     "dist_since_x_m": 0.0,
+     "x_rejects": 0,
+     "x_fix_age_s": -0.02,
+     "last_x_residual": {
+      "innovation": 0.0022636226642689383,
+      "sigma": 0.0021954533749871264,
+      "nis": 1.0630645364270033
+     }
+    },
+    {
+     "t_s": 135.98,
+     "truth": [
+      1.9319,
       0.1465,
-      -0.0001
+      -6.2835
+     ],
+     "est": [
+      1.9061,
+      0.1465,
+      -0.0004
+     ],
+     "err_m": 0.0258,
+     "phase": "SCAN:PASS",
+     "dist_since_x_m": 0.0,
+     "x_rejects": 0,
+     "x_fix_age_s": 0.0,
+     "last_x_residual": {
+      "innovation": 0.0015826368166433902,
+      "sigma": 0.0021518209207630253,
+      "nis": 0.5409414710816983
+     }
+    },
+    {
+     "t_s": 191.41,
+     "truth": [
+      0.9622,
+      0.1902,
+      -9.4246
+     ],
+     "est": [
+      0.9867,
+      0.1902,
+      -3.1415
      ],
      "err_m": 0.0246,
      "phase": "SCAN:PASS",
-     "dist_since_x_m": 0.0,
-     "x_rejects": 1,
-     "x_fix_age_s": -0.01,
+     "dist_since_x_m": 0.002,
+     "x_rejects": 0,
+     "x_fix_age_s": -0.0,
      "last_x_residual": {
-      "innovation": 0.0012842190749617899,
-      "sigma": 0.002191264595032278,
-      "nis": 0.3434698253143203
+      "innovation": -0.0024837325460396187,
+      "sigma": 0.002136067663852682,
+      "nis": 1.3520091945981927
      }
     },
     {
-     "t_s": 80.25,
+     "t_s": 196.48,
      "truth": [
-      0.9412,
-      -0.1462,
-      -3.1414
+      0.462,
+      0.1901,
+      -9.4249
      ],
      "est": [
-      0.9611,
-      -0.1461,
+      0.4854,
+      0.19,
       -3.1414
      ],
-     "err_m": 0.0199,
+     "err_m": 0.0234,
+     "phase": "SCAN:PASS",
+     "dist_since_x_m": 0.0,
+     "x_rejects": 0,
+     "x_fix_age_s": -0.01,
+     "last_x_residual": {
+      "innovation": 0.0006725667434474003,
+      "sigma": 0.0020934213001249846,
+      "nis": 0.10321848973319937
+     }
+    },
+    {
+     "t_s": 80.43,
+     "truth": [
+      0.9459,
+      -0.146,
+      -3.141
+     ],
+     "est": [
+      0.9688,
+      -0.1459,
+      -3.1411
+     ],
+     "err_m": 0.0228,
      "phase": "SCAN:PASS",
      "dist_since_x_m": 0.002,
      "x_rejects": 0,
-     "x_fix_age_s": 0.03,
-     "last_x_residual": {
-      "innovation": 0.0017528229247464333,
-      "sigma": 0.0021348972023102777,
-      "nis": 0.6740966254411852
-     }
-    },
-    {
-     "t_s": 135.44,
-     "truth": [
-      1.9363,
-      0.1464,
-      -6.2834
-     ],
-     "est": [
-      1.9172,
-      0.1464,
-      -0.0003
-     ],
-     "err_m": 0.0191,
-     "phase": "SCAN:PASS",
-     "dist_since_x_m": 0.002,
-     "x_rejects": 1,
      "x_fix_age_s": -0.0,
      "last_x_residual": {
-      "innovation": 0.0025185827897740154,
-      "sigma": 0.0021491901808761574,
-      "nis": 1.3732916116632694
+      "innovation": -0.0006800290668074194,
+      "sigma": 0.002133285007682153,
+      "nis": 0.10161485230422336
      }
     }
    ]
   }
  },
- "flag_position_error_vs_patch_m": 0.02200335562963924,
- "revisit_error_estimated_m": 0.0016126822047761856,
- "revisit_error_true_m": 0.0018089915963427129,
- "expose_reverse_m": 0.3502810012846829,
+ "flag_position_error_vs_patch_m": 0.02534179242915337,
+ "revisit_error_estimated_m": 0.0016402393590448012,
+ "revisit_error_true_m": 0.0019031173731629634,
+ "expose_reverse_m": 0.3502590022840242,
  "localization_error_by_chassis_time_m": {
-  "max_x_m": 0.026609685035570818,
-  "max_y_m": 0.001975494805475264,
-  "samples": 1972,
-  "emu_lag_max_us": 40411,
+  "max_x_m": 0.02785379309235414,
+  "max_y_m": 0.0020603178580526904,
+  "samples": 1964,
+  "emu_lag_max_us": 58279,
   "emu_rebases": 0
  },
  "localization_error_at_own_time": {
-  "samples": 1972,
-  "max_err_m": 0.001639267348748329,
-  "credited": 1972,
+  "samples": 1964,
+  "max_err_m": 0.0015027324942297395,
+  "credited": 1964,
   "credited_above_budget": 0,
-  "p99_err_m": 0.0014245441525339271
+  "p99_err_m": 0.0012483015234814347
  },
  "slow_steps": [
   [
-   70.2,
-   165,
+   70.4,
+   223,
    "SCAN:PASS"
   ],
   [
-   80.2,
-   186,
+   75.4,
+   185,
    "SCAN:PASS"
   ],
   [
-   85.3,
-   183,
+   80.4,
+   243,
    "SCAN:PASS"
   ],
   [
-   125.3,
-   183,
+   85.5,
+   226,
    "SCAN:PASS"
   ],
   [
-   130.4,
-   242,
+   120.6,
+   201,
    "SCAN:PASS"
   ],
   [
-   135.4,
-   186,
+   125.7,
+   198,
    "SCAN:PASS"
   ],
   [
-   144.0,
-   151,
+   130.8,
+   281,
+   "SCAN:PASS"
+  ],
+  [
+   136.0,
+   398,
+   "SCAN:PASS"
+  ],
+  [
+   141.0,
+   176,
+   "SCAN:PASS"
+  ],
+  [
+   144.9,
+   236,
    "SCAN:NEXT"
   ],
   [
-   180.7,
+   176.1,
+   167,
+   "SCAN:PASS"
+  ],
+  [
+   181.2,
+   206,
+   "SCAN:PASS"
+  ],
+  [
+   186.3,
+   320,
+   "SCAN:PASS"
+  ],
+  [
+   191.4,
+   270,
+   "SCAN:PASS"
+  ],
+  [
+   196.5,
    251,
    "SCAN:PASS"
   ],
   [
-   185.9,
-   384,
-   "SCAN:PASS"
-  ],
-  [
-   191.1,
-   316,
-   "SCAN:PASS"
-  ],
-  [
-   196.1,
-   193,
-   "SCAN:PASS"
+   241.9,
+   179,
+   "REVIEW:NEXT"
   ]
  ],
- "n_slow_steps": 11,
+ "n_slow_steps": 16,
  "deterministic": false
 }
