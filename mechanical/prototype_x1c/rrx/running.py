@@ -204,7 +204,7 @@ def build(add):
     for name, t in P.TOF_SENSORS.items():
         front_cliff = name.startswith("tof_cliff_f")
         kind = S.seat_kind(name)
-        xdir = (1.0, 0.0, 0.0) if front_cliff else S.seat_xdir(t["dir"], kind)
+        xdir = (1.0, 0.0, 0.0) if front_cliff else S.seat_x(t["xyz"], t["dir"], kind)
         if kind != "std":
             add(Part("RRX-P54", f"tof_clip_{name[4:]}", S.tof_clip(t["xyz"], t["dir"], kind), "printed", "ASA", "tof", color=ASA, orient=(0, 0, 0), internal=False,
                      local=S.tof_clip((0, 0, 0), (0, 0, 1), "look_r"), print_note="flat; 4 off (shallow look-ahead / look-behind seats)"))

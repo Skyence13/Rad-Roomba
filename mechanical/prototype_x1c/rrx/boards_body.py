@@ -23,10 +23,22 @@ def _xf_chs(u, v, z):
 
 
 def _box_uv(b, xf):
+    """Board-frame box (u0, u1, v0, v1, z0, z1) as a solid in base_link.  Boards in a tilted frame (ToF seats) carry .loc and
+    .zoff on their xf and get an ORIENTED box; axis-aligned boards get the box of the transformed corners."""
     u0, u1, v0, v1, z0, z1 = b
+    if hasattr(xf, "loc"):
+        return box(u0, u1, v0, v1, z0 + xf.zoff, z1 + xf.zoff).moved(xf.loc)
     pts = [xf(u, v, z) for u in (u0, u1) for v in (v0, v1) for z in (z0, z1)]
     xs, ys, zs = [p[0] for p in pts], [p[1] for p in pts], [p[2] for p in pts]
     return box(min(xs), max(xs), min(ys), max(ys), min(zs), max(zs))
+
+
+class _SeatXf:
+    def __init__(self, loc, zoff):
+        self.loc, self.zoff = loc, zoff
+
+    def __call__(self, u, v, z):
+        return to_frame(self.loc, (u, v, z + self.zoff))
 
 
 def _dir(d, xf):
@@ -41,9 +53,9 @@ def board_parts(name, tag, xf, pn, group, add, mass, extra_mates=()):
     th = b["thickness"]
     pcb = _box_uv((u0, u1, v0, v1, -th, 0.0), xf)
     for h in b["holes"]:
-        c = xf(h["uv"][0], h["uv"][1], -th - 1)
-        top = xf(h["uv"][0], h["uv"][1], 1)
-        pcb = pcb.cut(cq.Solid.makeCylinder(h["d"] / 2, abs(top[2] - c[2]) + 0.01, cq.Vector(*c) if top[2] > c[2] else cq.Vector(*top), cq.Vector(0, 0, 1)))
+        c, top = xf(h["uv"][0], h["uv"][1], -th - 1), xf(h["uv"][0], h["uv"][1], 1)
+        d = cq.Vector(*top) - cq.Vector(*c)
+        pcb = pcb.cut(cq.Solid.makeCylinder(h["d"] / 2, d.Length, cq.Vector(*c), d))
     add(Part(pn, f"{tag}_pcb", pcb, "purchased", "FR4", group, color=COL["pcb"], mass=mass, internal=False, mpn=f"{name} (custom)",
              verified=f"tool-read from {b['file']} ({b['source']})", mates=set(extra_mates) | {f"{tag}_*"}))
     for side in ("F", "B"):
@@ -67,13 +79,13 @@ def chs_main(add):
 
 
 def panel(add):
-    """RR-PANEL in its tray under the left deck: long axis along x, the v = 24 edge (J1 / J2 mating faces) inboard (-y),
+    """RR-PANEL in its tray under the left deck: long axis along x, the v = 24 edge (J1 / J2 mating faces) OUTBOARD (+y),
     component side up (light pipes).  Orientation fixed here (panel README asks mechanical to fix it)."""
     pc = P.PANEL_CONTROLS["annunciator"]["xyz"]
     _, ztop = S.panel_tray()
     zb = ztop - 6.0                                       # tray pocket floor = PCB underside
     th = BD.load("RR-PANEL")["thickness"]
-    xf = lambda u, v, z: (pc[0] - 35.0 + u, pc[1] + 12.0 - v, zb + th + z)
+    xf = lambda u, v, z: (pc[0] + 35.0 - u, pc[1] - 12.0 + v, zb + th + z)      # rotated 180 deg about z: plugs face +y (fit review M7)
     board_parts("RR-PANEL", "RR-PANEL", xf, "RRX-E02", "controls", add, L.mass("panel_board"))
 
 
@@ -84,9 +96,8 @@ def tof_xf(name):
     if name.startswith("tof_cliff_f"):                     # front cliff pods: J1 toward the centre line (left u -> -x, right u -> +x)
         xdir = (-1.0, 0.0, 0.0) if t["xyz"][1] > 0 else (1.0, 0.0, 0.0)
     else:
-        xdir = S.seat_xdir(t["dir"], S.seat_kind(name))
-    loc = frame(t["xyz"], t["dir"], xdir)
-    return lambda u, v, z: to_frame(loc, (u, v, z - S.TOF_FRONT))
+        xdir = S.seat_x(t["xyz"], t["dir"], S.seat_kind(name))
+    return _SeatXf(frame(t["xyz"], t["dir"], xdir), -S.TOF_FRONT)
 
 
 def tof_carriers(add):
@@ -95,8 +106,8 @@ def tof_carriers(add):
 
 
 CM5_PLUGS = {   # Waveshare CM5-IO-BASE-A, connector edge toward -x (orientation fixed by the body; connector positions UNVERIFIED)
-    "rj45": ((0.0, 16.0, 6.0, 22.0, 0.0, 13.5), 22.0, 30.0),        # (u0, u1, v0, v1, z0, z1) on the carrier, plug length, cable straight run
-    "usb_a": ((0.0, 15.0, 30.0, 45.0, 0.0, 16.0), 32.0, 25.0),
+    "rj45": ((0.0, 16.0, 6.0, 22.0, 0.0, 13.5), 22.0, 10.0),        # (u0, u1, v0, v1, z0, z1) on the carrier, plug length, cable straight run
+    "usb_a": ((0.0, 15.0, 30.0, 45.0, 0.0, 16.0), 32.0, 10.0),
 }
 
 

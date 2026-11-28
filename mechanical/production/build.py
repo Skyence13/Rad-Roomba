@@ -103,6 +103,8 @@ def main(argv=None):
         print(f"  {'PASS' if good else 'FAIL'}  {k}: {txt[:150]}")
     ok = all(v[0] for v in R["summary"].values())
     (OUT / "checks.json").write_text(json.dumps(R, indent=1, default=str), encoding="utf-8")
+    from mechanical.prototype_x1c.rrx import routes as RT
+    RT.write_yaml(R["routes"], HERE / "cable_routes.yaml", "production (RR-P)")
 
     print(f"[5/7] documents ({time.time() - t0:.0f} s)", flush=True)
     proto = docs.prototype_reference()

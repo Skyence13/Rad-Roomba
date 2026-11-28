@@ -2,8 +2,8 @@
  "scenario": "s11_search_then_count_deferred",
  "evidence_class": "simulated",
  "against": "Python protocol fakes (rr_core.fakes), virtual clock",
- "seed": 23,
- "sim_time_s": 251.14,
+ "seed": 22,
+ "sim_time_s": 207.7,
  "checks": [
   {
    "check": "mission complete",
@@ -11,40 +11,9 @@
   },
   {
    "check": "ratemeter alarm at the hot spot",
-   "ok": true,
-   "alarms": 1,
-   "observations": 1
-  },
-  {
-   "check": "alarming lane parked over the spot for the count (within 30 mm of the patch centre along track)",
-   "ok": true,
-   "achieved": [
-    1.525427626430966,
-    -0.1461840156062461
-   ]
-  },
-  {
-   "check": "scaler count valid (stationary, no stop event inside) and decided at alpha_recount",
-   "ok": true,
-   "outcome": "EXCEEDS_INVESTIGATION_LEVEL",
-   "result": {
-    "D": 1.5294820681991221,
-    "u_stat": 0.09008520044461552,
-    "u_total": 0.24655949536521662,
-    "D_star": null,
-    "D_hash": null,
-    "T_F": 9.891090000000004,
-    "detected": null,
-    "method": "",
-    "m": 0,
-    "alpha_lane": 0.0,
-    "status": "NO_DECISION_REF"
-   }
-  },
-  {
-   "check": "scaler result consistent with the injected patch (lane-average 2.0 Bq/cm2 +/- 30 %)",
-   "ok": true,
-   "D": 1.5294820681991221
+   "ok": false,
+   "alarms": 0,
+   "observations": 0
   },
   {
    "check": "floor that only saw the search stage is reported with stage SEARCH",
@@ -52,53 +21,58 @@
   },
   {
    "check": "deferred: counts taken after the scan passes",
-   "ok": true
+   "ok": false
   },
   {
    "check": "ratemeter view available (per-lane rate with alarm set-point)",
    "ok": true
   }
  ],
- "passed": true,
+ "passed": false,
  "field_use_approved": false,
  "coverage": {
   "target_area_m2": 3.0,
   "areas_m2": {
-   "UNVISITED": 1.13975,
+   "UNVISITED": 1.013325,
    "ACCEPTABLE": 0.0,
-   "INSUFFICIENT_SENSITIVITY": 1.8602500000000002,
+   "INSUFFICIENT_SENSITIVITY": 1.78645,
    "INVALID_DATA": 0.0,
    "BLOCKED": 0.0,
-   "EXCLUDED": 0.0
+   "EXCLUDED": 0.0,
+   "NO_DECISION": 0.0,
+   "INCOMPLETE_COVERAGE": 0.040225000000000004,
+   "ALARM": 0.16,
+   "ACQUISITION_GAP": 0.0
   },
-  "valid_exposure_fraction": 0.6200833333333334,
+  "valid_exposure_fraction": 0.6583500000000001,
   "acceptable_fraction": 0.0,
   "sub_cell_m": 0.005,
   "decision_cell_m": 0.1,
-  "position_allowance_m": 0.01
+  "position_allowance_m": 0.01,
+  "provisional": false
  },
  "time_sync": {
   "limit_us": 10000.0,
-  "fits": 130,
-  "max_gate_bound_us": 838.0520796923137,
-  "median_gate_bound_us": 798.7139259598971
+  "fits": 108,
+  "max_gate_bound_us": 838.0033213786841,
+  "median_gate_bound_us": 799.557430045929
  },
  "link_stats": {
-  "tx": 12606,
-  "rx": 12603,
+  "tx": 10516,
+  "rx": 10512,
   "bad_lines": 0,
   "stale": 0,
   "duplicates": 0,
-  "gates": 2492,
+  "gates": 2057,
   "gaps": 0,
   "retries": 2,
   "unassigned_frames": 0,
-  "time_exchanges": 130,
+  "time_exchanges": 108,
   "time_exchanges_rejected": 0
  },
  "localization_error_vs_truth_m": {
-  "max_x_m": 0.0016276280645737273,
-  "max_y_m": 0.0011821647065988483
+  "max_x_m": 0.0018667805800167692,
+  "max_y_m": 0.0012315355424229735
  },
  "plan": {
   "n_pairs": 2,
@@ -122,288 +96,200 @@
   {
    "id": "HS-0001",
    "kind": "INVESTIGATION_LEVEL",
-   "source_lane": 2,
-   "x_m": 1.5308859120743494,
-   "y_m": -0.10475685934630602,
-   "D": 1.149582151969654,
-   "u_total": 0.21891790097568206,
-   "D_star": 0.21133252209159345,
-   "D_hash": 0.5291423197004829,
+   "source_lane": 1,
+   "x_m": 1.5009085900799346,
+   "y_m": -0.15929626369376998,
+   "D": 0.7274645599848619,
+   "u_total": 0.15872888763622026,
+   "D_star": 0.12249830703401576,
+   "D_hash": 0.28000149242428124,
    "location": {
-    "distance_from_door_m": 1.531,
+    "distance_from_door_m": 1.501,
     "wall": "right wall",
-    "distance_from_wall_m": 0.395,
-    "text": "1.53 m from the door threshold, 0.40 m from the right wall"
+    "distance_from_wall_m": 0.341,
+    "text": "1.50 m from the door threshold, 0.34 m from the right wall"
    }
   },
   {
    "id": "HS-0002",
-   "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 3,
-   "x_m": 1.834499252064209,
-   "y_m": 0.005388482673680429,
-   "D": 0.17202980294463943,
-   "u_total": 0.1007031193305573,
-   "D_star": 0.132927087541229,
-   "D_hash": 0.31201713773703715,
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 0,
+   "x_m": 2.2005021557133686,
+   "y_m": -0.05875515843131979,
+   "D": 0.06308338896404866,
+   "u_total": 0.06339017088820775,
+   "D_star": 0.10706203210857608,
+   "D_hash": 0.24328432037687112,
    "location": {
-    "distance_from_door_m": 1.834,
-    "wall": "left wall",
-    "distance_from_wall_m": 0.495,
-    "text": "1.83 m from the door threshold, 0.49 m from the left wall"
+    "distance_from_door_m": 2.201,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.441,
+    "text": "2.20 m from the door threshold, 0.44 m from the right wall"
    }
   },
   {
    "id": "HS-0003",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 3,
-   "x_m": 2.2867908820590803,
-   "y_m": 0.006540151743868413,
-   "D": 0.176889044501509,
-   "u_total": 0.08780026220802775,
-   "D_star": 0.13296164522984857,
-   "D_hash": 0.3120805747470369,
-   "location": {
-    "distance_from_door_m": 2.287,
-    "wall": "left wall",
-    "distance_from_wall_m": 0.493,
-    "text": "2.29 m from the door threshold, 0.49 m from the left wall"
-   }
-  },
-  {
-   "id": "HS-0004",
-   "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 0,
-   "x_m": 2.8612633613818437,
-   "y_m": 0.2775247985116851,
-   "D": 0.2064982062921409,
-   "u_total": 0.10721986139693948,
-   "D_star": 0.15340938796282155,
-   "D_hash": 0.36901020141948376,
+   "x_m": 2.252325565129323,
+   "y_m": -0.2774776209494047,
+   "D": 0.1911552274805913,
+   "u_total": 0.11312668575235892,
+   "D_star": 0.15079874154281245,
+   "D_hash": 0.35620230024897465,
    "location": {
-    "distance_from_door_m": 2.861,
-    "wall": "left wall",
-    "distance_from_wall_m": 0.222,
-    "text": "2.86 m from the door threshold, 0.22 m from the left wall"
-   }
-  },
-  {
-   "id": "HS-0005",
-   "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 3,
-   "x_m": 0.45202264454065466,
-   "y_m": -0.01498591623369531,
-   "D": 0.1668941381195595,
-   "u_total": 0.10072365076195168,
-   "D_star": 0.1550133119025712,
-   "D_hash": 0.37022824251347514,
-   "location": {
-    "distance_from_door_m": 0.452,
+    "distance_from_door_m": 2.252,
     "wall": "right wall",
-    "distance_from_wall_m": 0.485,
-    "text": "0.45 m from the door threshold, 0.49 m from the right wall"
+    "distance_from_wall_m": 0.223,
+    "text": "2.25 m from the door threshold, 0.22 m from the right wall"
    }
   },
   {
-   "id": "HS-0006",
-   "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 3,
-   "x_m": 0.922250082087153,
-   "y_m": 0.321290816223958,
-   "D": 0.22543508257470216,
-   "u_total": 0.13688781583883639,
-   "D_star": 0.2195987195828308,
-   "D_hash": 0.5460060906756061,
+   "id": "HS-0007",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 1,
+   "x_m": 2.8564093514917452,
+   "y_m": 0.21218402330418198,
+   "D": 0.3595641167114463,
+   "u_total": 0.16438235201124882,
+   "D_star": 0.22976342206172004,
+   "D_hash": 0.5613045999313038,
    "location": {
-    "distance_from_door_m": 0.922,
+    "distance_from_door_m": 2.856,
     "wall": "left wall",
-    "distance_from_wall_m": 0.179,
-    "text": "0.92 m from the door threshold, 0.18 m from the left wall"
+    "distance_from_wall_m": 0.288,
+    "text": "2.86 m from the door threshold, 0.29 m from the left wall"
    }
   }
  ],
- "scan_detections": 0,
- "observations": [
-  {
-   "id": "OBS-0001",
-   "flag": null,
-   "lane": 1,
-   "valid": true,
-   "invalid_reason": "COUNT_END",
-   "outcome": "EXCEEDS_INVESTIGATION_LEVEL",
-   "stage": "SCALER",
-   "mode": "PRESET_TIME",
-   "alpha": 0.00017096303211345723,
-   "beta": 0.05,
-   "n_gates": 99,
-   "pose": [
-    1.3942185527489885,
-    -0.18990679552149628,
-    -0.00020746298342710762
-   ],
-   "target_xy": [
-    1.5272300952753373,
-    -0.1463019731265012
-   ],
-   "achieved_xy": [
-    1.525427626430966,
-    -0.1461840156062461
-   ],
-   "t_end_us": 1251081000,
-   "lanes": [
-    {
-     "lane": 0,
-     "D": 0.05438178735976719,
-     "u_stat": 0.04705723570055552,
-     "u_total": 0.04825130630216351,
-     "D_star": null,
-     "D_hash": null,
-     "T_F": 9.891090000000004,
-     "detected": null,
-     "method": "",
-     "m": 0,
-     "alpha_lane": 0.0,
-     "status": "NO_DECISION_REF",
-     "N_F": 67.0,
-     "N_U": 50.0,
-     "U0": null,
-     "u0_method": "unavailable",
-     "envelope_ok": true
-    },
-    {
-     "lane": 1,
-     "D": 1.5294820681991221,
-     "u_stat": 0.09008520044461552,
-     "u_total": 0.24655949536521662,
-     "D_star": null,
-     "D_hash": null,
-     "T_F": 9.891090000000004,
-     "detected": null,
-     "method": "",
-     "m": 0,
-     "alpha_lane": 0.0,
-     "status": "NO_DECISION_REF",
-     "N_F": 425.0,
-     "N_U": 48.0,
-     "U0": null,
-     "u0_method": "unavailable",
-     "envelope_ok": true
-    },
-    {
-     "lane": 2,
-     "D": 0.06921503722238842,
-     "u_stat": 0.04154359932915089,
-     "u_total": 0.04314113834147074,
-     "D_star": null,
-     "D_hash": null,
-     "T_F": 9.891090000000004,
-     "detected": null,
-     "method": "",
-     "m": 0,
-     "alpha_lane": 0.0,
-     "status": "NO_DECISION_REF",
-     "N_F": 60.0,
-     "N_U": 39.0,
-     "U0": null,
-     "u0_method": "unavailable",
-     "envelope_ok": true
-    },
-    {
-     "lane": 3,
-     "D": 0.02710788537902093,
-     "u_stat": 0.04639914363959435,
-     "u_total": 0.04708700551114758,
-     "D_star": null,
-     "D_hash": null,
-     "T_F": 9.891090000000004,
-     "detected": null,
-     "method": "",
-     "m": 0,
-     "alpha_lane": 0.0,
-     "status": "NO_DECISION_REF",
-     "N_F": 60.0,
-     "N_U": 49.0,
-     "U0": null,
-     "u0_method": "unavailable",
-     "envelope_ok": true
-    }
-   ],
-   "result": {
-    "D": 1.5294820681991221,
-    "u_stat": 0.09008520044461552,
-    "u_total": 0.24655949536521662,
-    "D_star": null,
-    "D_hash": null,
-    "T_F": 9.891090000000004,
-    "detected": null,
-    "method": "",
-    "m": 0,
-    "alpha_lane": 0.0,
-    "status": "NO_DECISION_REF"
-   }
-  }
- ],
+ "scan_detections": 6,
+ "observations": [],
  "decision_status": {
-  "cells_with_gates": 231,
-  "no_decision": 28,
-  "no_decision_text": [
-   "no decision \u2014 null reference unavailable"
-  ],
-  "no_decision_within_0.5m_of_an_end": 8,
-  "cells_within_0.5m_of_an_end": 71
+  "cells_with_gates": 232,
+  "no_decision": 0,
+  "no_decision_text": [],
+  "no_decision_within_0.5m_of_an_end": 0,
+  "cells_within_0.5m_of_an_end": 72
+ },
+ "rev5": {
+  "cells_with_data": 232,
+  "status": {
+   "INCOMPLETE COVERAGE": 13,
+   "SENSITIVITY INSUFFICIENT": 203,
+   "ALARM": 16
+  },
+  "status_reasons": {
+   "D# above the detection goal": 150,
+   "reference gradient": 41,
+   "flagged by combined": 11,
+   "speed 0.1037 m/s outside the calibrated range": 8,
+   "coverage 0.35 < 0.5": 5,
+   "speed 0.1022 m/s outside the calibrated range": 4,
+   "coverage 0.39 < 0.5": 2,
+   "coverage 0.26 < 0.5": 2
+  },
+  "acceptable_fraction": 0.0,
+  "median_D_hash": 0.2751901109026144,
+  "undecidable_recorded": 0,
+  "undecidable_provisional_live": 0,
+  "alarm_bookkeeping": {
+   "recorded alarm (provisional alarm confirmed)": 16,
+   "provisional alarm not confirmed": 3
+  },
+  "flags": {
+   "INVESTIGATION_LEVEL:recorded alarm": 3,
+   "UNRESOLVED_EXCEEDANCE:recorded alarm": 1,
+   "SCAN_DETECTION:recorded alarm": 6
+  },
+  "review_queue_items": 10,
+  "revisit": 0,
+  "position_credit": {
+   "samples": 2053,
+   "credited_fraction": 0.9995129079396006,
+   "credited_with_true_error_above_budget": 0,
+   "fraction_of_credited_above_budget": 0.0,
+   "max_true_error_when_credited_m": 0.0019229699478019004,
+   "max_true_error_m": 0.0019229699478019004,
+   "no_credit_reasons_samples": {
+    "X_RESIDUAL": 1
+   },
+   "localizer": {
+    "wheel_scale": {
+     "estimate": 9.324579938138664e-07,
+     "sigma": 8.804672188079162e-05
+    },
+    "stats": {
+     "x_fixes": 2619,
+     "x_rejects": 1,
+     "big_corrections": 0,
+     "max_correction_m": 0.0009304037522169262,
+     "deferred_scans": 26
+    }
+   }
+  }
  },
  "policy": "DEFERRED",
- "alarms": [
-  {
-   "lane": 1,
-   "xy": [
-    1.5272300952753373,
-    -0.1463019731265012
-   ],
-   "pose": [
-    1.396022084665,
-    -0.1900279431177729,
-    -0.00018314996257335898
-   ],
-   "D_search": 1.9792697541618829,
-   "task": "T000",
-   "t_us": 1017803000,
-   "ev": "search_alarm",
-   "state": "SCAN"
-  }
- ],
+ "alarms": [],
  "ratemeter": {
   "0": {
-   "rate": 1.0009008107296566,
-   "net": -5.461108191971155,
-   "alarm_level": 18.26965832324181,
+   "rate": 5.004504053648284,
+   "net": -0.4525034486023914,
+   "alarm_level": 19.30106999173687,
    "alarm": false,
-   "D": -0.23458368522212864,
-   "t_us": 1251076331.3196735
+   "D": -0.01943743335920925,
+   "D_star": 0.6154326398467194,
+   "U0": 4.520551543849153,
+   "u0_source": "pooled",
+   "u0_N": 147.53409490267506,
+   "method": "linear-exact/gil-pelaez/predictive-U(N=148.0)",
+   "alpha": 1e-05,
+   "t_us": 1207589201.142277,
+   "provisional": true
   },
   "1": {
-   "rate": 50.04504053648284,
-   "net": 46.422013888488436,
-   "alarm_level": 21.16437423774206,
-   "alarm": true,
-   "D": 1.8963240967519785,
-   "t_us": 1251076331.3196735
+   "rate": 7.006305675107597,
+   "net": 2.3536701444483983,
+   "alarm_level": 19.258572665141386,
+   "alarm": false,
+   "D": 0.09614665622746725,
+   "D_star": 0.58450296593239,
+   "U0": 4.290041833397921,
+   "u0_source": "pooled",
+   "u0_N": 145.8959264436613,
+   "method": "linear-exact/gil-pelaez/predictive-U(N=146.0)",
+   "alpha": 1e-05,
+   "t_us": 1207589201.142277,
+   "provisional": true
   },
   "2": {
-   "rate": 3.00270243218897,
-   "net": -3.4180384600787104,
-   "alarm_level": 16.997581643543064,
+   "rate": 4.003603242918627,
+   "net": -1.4388641673044402,
+   "alarm_level": 18.31132896269356,
    "alarm": false,
-   "D": -0.14241826916994627,
-   "t_us": 1251076331.3196735
+   "D": -0.05995267363768501,
+   "D_star": 0.5664985046874417,
+   "U0": 4.258026595835251,
+   "u0_source": "pooled",
+   "u0_N": 145.65744784085396,
+   "method": "linear-exact/gil-pelaez/predictive-U(N=146.0)",
+   "alpha": 1e-05,
+   "t_us": 1207589201.142277,
+   "provisional": true
   },
   "3": {
-   "rate": 4.003603242918627,
-   "net": 1.5224997018563076,
-   "alarm_level": 21.628758855441248,
+   "rate": 0.0,
+   "net": -5.498808852655797,
+   "alarm_level": 19.593883861282702,
    "alarm": false,
-   "D": 0.06677630271299595,
-   "t_us": 1251076331.3196735
+   "D": -0.24117582687086828,
+   "D_star": 0.634334076595312,
+   "U0": 4.635806399074769,
+   "u0_source": "pooled",
+   "u0_N": 148.30460132016626,
+   "method": "linear-exact/gil-pelaez/predictive-U(N=148.0)",
+   "alpha": 1e-05,
+   "t_us": 1207589201.142277,
+   "provisional": true
   }
  },
  "false_alarm_counts": 0

@@ -44,10 +44,26 @@ def seat_xdir(d, kind):
     return None
 
 
+TOF_FLIP = set()     # sensors whose carrier is turned 180 deg about the boresight (J1 / plug on the other side of the seat)
+
+
+def seat_x(xyz, d, kind):
+    """Local x of the seat of the sensor at xyz: seat_xdir, negated for the sensors in TOF_FLIP."""
+    xd = seat_xdir(d, kind)
+    name = next((n for n, t in P.TOF_SENSORS.items() if all(abs(t["xyz"][i] - xyz[i]) < 1e-6 for i in range(3))), None)
+    if name not in TOF_FLIP:
+        return xd
+    if xd is None:
+        z = P._unit(d)
+        ref = (0, 0, 1) if abs(z[2]) < 0.9 else (1, 0, 0)
+        xd = P._unit((ref[1] * z[2] - ref[2] * z[1], ref[2] * z[0] - ref[0] * z[2], ref[0] * z[1] - ref[1] * z[0]))
+    return tuple(-c for c in xd)
+
+
 def tof_boss(xyz, d, kind="std", grow=0.0, back=0.0):
     """Seat block for one RR-TOF: front face in the aperture plane, axis = boresight.  grow/back: envelope for relief cuts."""
     bx, by, bz, _ = SEAT[kind]
-    return place(_lbox(bx + 2 * grow, by + 2 * grow, -bz - back - grow, grow), xyz, d, seat_xdir(d, kind))
+    return place(_lbox(bx + 2 * grow, by + 2 * grow, -bz - back - grow, grow), xyz, d, seat_x(xyz, d, kind))
 
 
 def _tof_board():
@@ -80,11 +96,11 @@ def tof_pocket(xyz, d, sight=14.0, kind="std"):
     for sx in (-1, 1):
         c = c.fuse(cyl(D.INSERT["M2"][0] / 2, D.INSERT["M2"][1], (sx * SCREW_X, (cy0 + cy1) / 2, -bz)))
     tunnel = cq.Workplane("XY").rect(TOF_WIN[0] + 0.3, TOF_WIN[1] + 0.3).workplane(offset=sight).rect(TOF_WIN[0] + 0.3 + 0.5 * sight, TOF_WIN[1] + 0.3 + 0.5 * sight).loft().val()
-    return place(c.fuse(tunnel), xyz, d, seat_xdir(d, kind))
+    return place(c.fuse(tunnel), xyz, d, seat_x(xyz, d, kind))
 
 
 def tof_window(xyz, d, kind="std"):
-    return place(_lbox(TOF_WIN[0], TOF_WIN[1], -TOF_WIN[2], 0.0), xyz, d, seat_xdir(d, kind))
+    return place(_lbox(TOF_WIN[0], TOF_WIN[1], -TOF_WIN[2], 0.0), xyz, d, seat_x(xyz, d, kind))
 
 
 def tof_clip(xyz, d, kind="std"):
@@ -97,7 +113,7 @@ def tof_clip(xyz, d, kind="std"):
     for sx in (-1, 1):
         c = c.fuse(box(sx * PAD_U[0], sx * PAD_U[1], cy0, cy1, -bz, back))
         c = c.cut(cyl(D.CLEAR["M2"] / 2, 4, (sx * SCREW_X, (cy0 + cy1) / 2, -bz - 2.5)))
-    return place(c.clean(), xyz, d, seat_xdir(d, kind))
+    return place(c.clean(), xyz, d, seat_x(xyz, d, kind))
 
 
 def device_seat(xyz, n, hole_d=22.3, face_d=34.0, boss_d=38.0, notch=True, panel_t=4.5):
@@ -110,8 +126,13 @@ def device_seat(xyz, n, hole_d=22.3, face_d=34.0, boss_d=38.0, notch=True, panel
 
 
 def lightpipe_xy():
+    """Light-pipe axes over the RR-PANEL LEDs, read from the board file (board rotated: x = cx + 35 - u, y = cy - 12 + v)."""
+    from mechanical.common import boards as BD
     cx, cy = P.PANEL_BOARD["center"]
-    return [(cx - 16.0 + 8.0 * i, cy) for i in range(5)]
+    leds = sorted((p["uv"] for r, p in BD.load("RR-PANEL")["parts"].items() if "LED" in p["fp"]), key=lambda q: q[0])
+    if not leds:
+        return [(cx - 16.0 + 8.0 * i, cy) for i in range(5)]
+    return [(round(cx + 35.0 - u, 2), round(cy - 12.0 + v, 2)) for u, v in leds]
 
 
 def panel_tray():
@@ -122,18 +143,20 @@ def panel_tray():
     zb = zt - e["h"]
     t = box(pc[0] - e["l"] / 2 - 1.5, pc[0] + e["l"] / 2 + 1.0, pc[1] - e["w"] / 2 - 2.5, pc[1] + e["w"] / 2 + 2.5, zb - 2.0, zb + 6.0)
     t = t.cut(box(pc[0] - e["l"] / 2 - 0.3, pc[0] + e["l"] / 2 + 0.3, pc[1] - e["w"] / 2 - 0.3, pc[1] + e["w"] / 2 + 0.3, zb, zb + 10))
-    # fit review M7: board orientation fixed (long axis x, v = 24 edge with J1 / J2 inboard (-y), parts up); window under the
-    # bottom-side parts (v 2.4..22, u 2..68 of the board file), two M2.5 bosses at the board holes H1 / H2, notches for the plugs
-    X = lambda u: pc[0] - e["l"] / 2 + u
-    Y = lambda v: pc[1] + e["w"] / 2 - v
-    t = t.cut(box(X(2.0), X(68.0), Y(22.0), Y(2.4), zb - 3, zb + 1))
+    # fit review M7: board orientation fixed (long axis x with u = -x, v = 24 edge with J1 / J2 OUTBOARD (+y), parts up); window
+    # under the bottom-side parts (v 2.4..22, u 2..68 of the board file), two M2.5 bosses at the board holes H1 / H2 (thread-
+    # forming screws, bosses end 2 mm under the floor), notches for the plugs in the outboard wall
+    X = lambda u: pc[0] + e["l"] / 2 - u
+    Y = lambda v: pc[1] - e["w"] / 2 + v
+    t = t.cut(box(X(68.0), X(2.0), Y(2.4), Y(22.0), zb - 3, zb + 1))
     for hu, hv in ((3.5, 20.5), (66.5, 20.5)):
-        t = t.fuse(cyl(3.2, 6.0, (X(hu), Y(hv), zb - 6.0))).cut(cyl(D.INSERT["M2.5"][0] / 2, D.INSERT["M2.5"][1], (X(hu), Y(hv), zb - D.INSERT["M2.5"][1])))
+        t = t.fuse(cyl(3.2, 4.0, (X(hu), Y(hv), zb - 4.0))).cut(cyl(1.1, 4.5, (X(hu), Y(hv), zb - 4.2)))
     for nu0, nu1 in ((20.0, 40.0), (44.5, 54.5)):
-        t = t.cut(box(X(nu0), X(nu1), Y(24.0) - 6.0, Y(24.0) + 1.0, zb + 0.5, zb + 7.0))
+        t = t.cut(box(X(nu1), X(nu0), Y(24.0) - 1.0, Y(24.0) + 12.0, zb + 0.5, zb + 7.0))
     for sy in (-1, 1):
-        ear = box(pc[0] - 6.0, pc[0] + 6.0, pc[1] + sy * (e["w"] / 2 + 2.5), pc[1] + sy * (PANEL_BOSS_DY + 3.5), zb + 3.0, zb + 6.0)   # ear stays out of the hump_side_left corridor
-        t = t.fuse(ear).cut(cyl(D.CLEAR["M3"] / 2, 10, (pc[0], pc[1] + sy * PANEL_BOSS_DY, zb)))
+        ex = pc[0] + PANEL_EAR_DX
+        ear = box(ex - 6.0, ex + 6.0, pc[1] + sy * (e["w"] / 2 + 2.5), pc[1] + sy * (PANEL_BOSS_DY + 3.5), zb + 3.0, zb + 6.0)   # ear stays out of the hump_side_left corridor
+        t = t.fuse(ear).cut(cyl(D.CLEAR["M3"] / 2, 10, (ex, pc[1] + sy * PANEL_BOSS_DY, zb)))
 
     sw = D.WELL_WALL
     t = t.cut(box(P.SADDLE["x"][0] - sw - 0.5, 0.0, P.SADDLE["half_y"] - 0.5, P.SADDLE["half_y"] + sw + 0.4, 102.3, 120.0))   # under the saddle-well wall
@@ -141,6 +164,7 @@ def panel_tray():
 
 
 PANEL_BOSS_DY = 16.0          # inboard boss stays out of the hump_side_left corridor (y <= 76)
+PANEL_EAR_DX = 25.0           # tray ears / deck bosses at x = annunciator x + 25: clear of the J1 / J2 plugs on the outboard edge (fit review M7)
 
 
 CM5_TRAY_SCREWS = [(-140.0, 76.0), (-140.0, 88.0), (-83.0, 76.0), (-83.0, 88.0)]

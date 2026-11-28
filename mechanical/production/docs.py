@@ -554,6 +554,8 @@ def write_report(R, made, asm_info, sheets, elapsed):
     md += [f"| {r['item']} | {r['required']} | {r['measured']} | {'yes' if r['ok'] else 'NO'} |" for r in R["receiver"]["rows"]]
     md += ["\n## Process envelopes (tool-checked bounding boxes against UNVERIFIED supplier envelopes)\n", "| PN | Part | Process | Size (mm) | Envelope | Fits |", "|---|---|---|---|---|---|"]
     md += [f"| {r['pn']} | {r['part']} | {r['process']} | {r['size']} | {r['envelope_label']} | {'yes' if r['fits'] else 'NO'} |" for r in R["process_envelope"]]
+    from mechanical.prototype_x1c.rrx.docs import fit_report
+    md += ["\n## Fit checks after the independent fit review (tool-checked)\n", fit_report(R)]
     sw = R["swept_radius"]
     md += ["\n## Swept radius, width, interference\n",
            f"- Swept radius (tool-checked): tail {sw['tail_max_radius_mm']:.1f} mm ({sw['tail_part']}), without bumper {sw['tail_without_bumper_mm']:.1f} mm; front body {sw['front_body_max_radius_mm']:.1f} mm.",

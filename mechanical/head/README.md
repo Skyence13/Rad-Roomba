@@ -35,6 +35,9 @@ Hand-written: this file, `production/README.md` (fabrication / test pack), `STAT
 |---|---|
 | `hp.py` | head parameters; every shared datum is imported from `mechanical/common/params.py` (never retyped) |
 | `asbuilt.py` | reads the as-built RR-HEAD-ACQ placement from `electronics/head_acq/RR-HEAD-ACQ.kicad_pcb` (holes, can outlines, mouse holes, clips, courtyards, 3D heights) for the board-fit check |
+| `pigtail.py` | J1 / J2 pigtails outside the head: boots, docked / parked paths, check against the body nose STEP (review M6) |
+| `routes.py` | every lead inside the head as a routed solid, GH plug keep-outs, `out/lead_routes.yaml` (review M5 / M11) |
+| `CHANGE_REQUESTS.md` | requests to electronics, harness, body, common, lead |
 | `parts.py` | all part geometry (both builds, dummy, cradle, gauges), base_link coordinates, installed position |
 | `assembly.py` | part lists of the three builds with part numbers, materials, masses |
 | `calc.py` | closed-form calculations: deflection / modes, rails, light paths, tolerance stack, thermal, OEM-dependent list |
@@ -72,20 +75,13 @@ Hand-written: this file, `production/README.md` (fabrication / test pack), `STAT
   warm-up, rail-switch lead lengths, light-path table (geometry analysis, not a light test).
 - **Not done**: slicing (owner slices from STEP), FEA, any physical test. Supplier data marked UNVERIFIED / PARTIAL in the BOM csv files.
 
-## Open items (details: head_report.md section 2, STATUS.md)
+## Open items (details: head_report.md section 2, CHANGE_REQUESTS.md, STATUS.md)
 
-1. Closed by stage 3 (CR-M06): J2001 / J2601 7 mm forward; 9.0 mm behind the mated plugs. J1 harness buildable as laid out with thin-wall AWG 20 inside the head
-   (OD <= 1.6 mm, ETFE / XL-PE class, UNVERIFIED; calculated fan-in check); no internal P-clip (the grommet is the strain relief).
-2. **Lid fastener pitch (DEVIATION):** 47 mm on the -y rear line (77.5, -70.5)..(77.5, -117.5): the CR-M08 J2501 GH-8 plug keep-out, the J2 port and the T-head
-   screw washers leave no standoff position; calculated gasket-line sag 0.07 mm. The +y J1 bay is <= 40 mm again (standoff (77.5, +90.3)).
-3. Frame bond (S3-03 / S3-05): every one of the 8 holes has a metal clinch standoff in the aluminium spreader + screw / serrated washer, both builds (table in head_report.md section 12).
-4. **Heater / receiver (IB-39, finding):** baseline 16.9-20.1 W fits the 30 W films; moving air at -25 C needs 30.2-30.7 W; with conductive body channels
-   (receiver metal at ambient) 43-66 W -- the G10 isolator (IB-38) is a weak thermal break. Body receiver material must stay insulating or the T-head gets a thermal break.
-5. `params.HEAD_RAIL_SWITCHES` placeholders vs the designed switch positions (frames.yaml update) -- unchanged.
-6. Head mass 1862 g (prototype) / 2082 g (production) vs 1.67 / 2.10 kg in mech_calcs.md.
-7. Front-fence foot saddle windows 27 mm (> 20 mm slot rule, closed by the spreader).
-8. Rib screws stay M2.5 into heat-set inserts (6.5 mm rib) -- deviation from the "M3 minimum" rule; lid and T-head screws M3.
-9. Closed: grounding (IB-38) identical in both builds, R2801 fitted (production/README.md section 4); jacket standard below 0 C; rail stroke after trip 15.6 mm
-   >= 15 mm in both builds (IB-11, calculated).
-10. Every OEM-dependent dimension (head_report.md section 8); switch data PARTIAL; most PUR items UNVERIFIED, including the Micro-Fit seated / mated
-    height (CR-M05, checked at 8.3 mm), the GH-8 (J2501) plug overhang, the D2HW lead length and the G10 / washer conductivities.
+1. **Front GH headers (DEVIATION, CR-H17):** J2002 / J2003 / J2004 / J2201 / J2402 cannot be mated in the front strip (plug + crimp reach x 185.65,
+   wall 185.6, prototype fence 180.0, bosses, a lid standoff, desiccant). Board-side change requested.
+2. **Pigtail boots / holsters above z 50 (DEVIATION, CR-HL1):** local items to z 70 forward of the nose-cowl V, checked free of the body.
+3. **Lid fastener pitch (DEVIATION):** 47 mm on the -y rear line (CR-M08). 4. Slot / window rule: 27 mm saddle windows in the prototype fence foot.
+5. Head mass 1881 g (prototype) / 2100 g (production) vs 1.67 / 2.10 kg in mech_calcs.md (+17 g: pigtail boots and holsters, review M6).
+6. Heater (IB-39, +5 C, CR-10 shoe basis): fits the 30 W films at 12 V in all jacketed cases; at 10 V the 25 W/m2K cases exceed (head_report.md section 9).
+7. Every OEM-dependent dimension (head_report.md section 8); switch data PARTIAL; most PUR items UNVERIFIED (Micro-Fit / GH plug data, wire ODs,
+   D2HW lead length, G10 / washer conductivities, M16 contact range for AWG 20).

@@ -37,8 +37,9 @@ cables:
       bundle_d: 4.0
       bend_r: 3.2
       term: 25.0
-      route_mm: 37.7
-      length_mm: 63.0
+      ends_in_boot: true
+      route_mm: 41.0
+      length_mm: 66.0
       waypoints_base_link_mm:
       - - 81.8
         - 65.7
@@ -47,11 +48,11 @@ cables:
         - 65.7
         - 39.0
       - - 76.6
-        - 79.5
+        - 82.5
         - 39.0
       - - 76.6
-        - 79.5
-        - 46.0
+        - 82.5
+        - 46.5
       - - 80.0
         - 79.5
         - 60.0
@@ -75,18 +76,19 @@ cables:
       bundle_d: 1.2
       bend_r: 1.8
       term: 18.0
-      route_mm: 24.2
+      ends_in_boot: true
+      route_mm: 23.6
       length_mm: 42.0
       waypoints_base_link_mm:
       - - 76.8
-        - -105.5
+        - -103.7
         - 38.5
       - - 75.0
-        - -105.5
+        - -103.7
         - 38.5
       - - 75.0
-        - -105.5
-        - 46.0
+        - -103.7
+        - 46.5
       - - 78.5
         - -99.3
         - 60.0
@@ -101,7 +103,7 @@ cables:
       length_mm: 258.0
       waypoints_base_link_mm: []
   W-103:
-    longest_lead_mm: 68.0
+    longest_lead_mm: 70.0
     leads:
     - lead: 'heater element pair: J2601 -> film tail at the S0 chimney notch'
       from: HEAD.J2601
@@ -110,8 +112,8 @@ cables:
       bundle_d: 3.5
       bend_r: 3.2
       term: 25.0
-      route_mm: 43.2
-      length_mm: 68.0
+      route_mm: 45.2
+      length_mm: 70.0
       waypoints_base_link_mm:
       - - 81.8
         - 94.4
@@ -120,20 +122,29 @@ cables:
         - 94.4
         - 39.0
       - - 76.6
-        - 126.0
+        - 112.0
         - 39.0
-      - - 76.6
-        - 126.0
-        - 29.8
+      - - 82.0
+        - 113.5
+        - 39.0
+      - - 82.0
+        - 121.0
+        - 39.0
+      - - 78.0
+        - 125.0
+        - 39.0
+      - - 78.0
+        - 125.0
+        - 31.0
     - lead: 'cut-out pair: J2601 -> thermal cut-out'
       from: HEAD.J2601
       to: TCO
       awg: '24'
-      bundle_d: 2.5
+      bundle_d: 1.4
       bend_r: 2.4
       term: 25.0
-      route_mm: 19.9
-      length_mm: 45.0
+      route_mm: 20.9
+      length_mm: 46.0
       waypoints_base_link_mm:
       - - 81.8
         - 97.4
@@ -142,7 +153,13 @@ cables:
         - 97.4
         - 39.0
       - - 76.6
-        - 84.2
+        - 94.0
+        - 39.0
+      - - 74.3
+        - 93.0
+        - 39.0
+      - - 74.3
+        - 88.0
         - 39.0
       - - 79.3
         - 84.2
@@ -170,120 +187,172 @@ cables:
         - 109.0
         - 34.8
   W-104:
-    longest_lead_mm: 99.0
+    longest_lead_mm: 112.0
     leads:
-    - lead: rail switch -> J2002
+    - lead: rail switch front -> J2002
       from: RAIL-F
       to: HEAD.J2002
       awg: '26'
       bundle_d: 1.8
       bend_r: 4.0
       term: 18.0
-      route_mm: 81.0
-      length_mm: 99.0
+      solid_upto: 5
+      route_mm: 93.9
+      length_mm: 112.0
       waypoints_base_link_mm:
       - - 183.2
-        - 87.5
-        - 37.3
-      - - 182.0
-        - 87.5
-        - 36.5
+        - 92.5
+        - 33.8
+      - - 183.2
+        - 92.5
+        - 33.0
+      - - 181.0
+        - 92.5
+        - 33.0
+      - - 178.0
+        - 92.5
+        - 33.4
+      - - 178.0
+        - 8.5
+        - 33.4
       - - 182.0
         - 8.5
-        - 36.5
+        - 33.4
+      - - 182.0
+        - 8.5
+        - 38.1
       - - 185.7
         - 8.5
         - 38.1
   W-106:
-    longest_lead_mm: 336.0
+    longest_lead_mm: 319.0
     leads:
-    - lead: rail switch -> J2003
+    - lead: rail switch side -> J2003
       from: RAIL-L
       to: HEAD.J2003
       awg: '26'
       bundle_d: 1.8
       bend_r: 4.0
       term: 18.0
-      route_mm: 317.9
-      length_mm: 336.0
+      solid_upto: 7
+      route_mm: 300.6
+      length_mm: 319.0
       waypoints_base_link_mm:
       - - 73.8
         - 156.8
         - 20.8
-      - - 75.9
+      - - 76.0
         - 149.2
         - 20.8
-      - - 75.9
+      - - 76.0
         - 149.2
-        - 36.5
-      - - 75.9
-        - 166.8
-        - 36.5
-      - - 182.0
-        - 166.8
-        - 36.5
+        - 33.4
+      - - 79.8
+        - 148.8
+        - 33.4
+      - - 88.0
+        - 161.5
+        - 33.4
+      - - 178.0
+        - 161.5
+        - 33.4
+      - - 178.0
+        - -8.5
+        - 33.4
       - - 182.0
         - -8.5
-        - 36.5
+        - 33.4
+      - - 182.0
+        - -8.5
+        - 38.1
       - - 185.7
         - -8.5
         - 38.1
   W-105:
-    longest_lead_mm: 346.0
+    longest_lead_mm: 328.0
     leads:
-    - lead: rail switch -> J2004
+    - lead: rail switch side -> J2004
       from: RAIL-R
       to: HEAD.J2004
       awg: '26'
       bundle_d: 1.8
       bend_r: 4.0
       term: 18.0
-      route_mm: 327.8
-      length_mm: 346.0
+      solid_upto: 7
+      route_mm: 310.5
+      length_mm: 328.0
       waypoints_base_link_mm:
       - - 73.8
         - -156.8
         - 20.8
-      - - 75.9
+      - - 76.0
         - -149.2
         - 20.8
-      - - 75.9
+      - - 76.0
         - -149.2
-        - 36.5
-      - - 75.9
-        - -166.8
-        - 36.5
-      - - 182.0
-        - -166.8
-        - 36.5
+        - 33.4
+      - - 79.8
+        - -148.8
+        - 33.4
+      - - 88.0
+        - -161.5
+        - 33.4
+      - - 178.0
+        - -161.5
+        - 33.4
+      - - 178.0
+        - 18.4
+        - 33.4
       - - 182.0
         - 18.4
-        - 36.5
+        - 33.4
+      - - 182.0
+        - 18.4
+        - 38.1
       - - 185.7
         - 18.4
         - 38.1
   W-107:
     longest_lead_mm: 150.0
     leads:
-    - lead: lid switch -> J2201
+    - lead: lid switch lid -> J2201
       from: LID-SW
       to: HEAD.J2201
       awg: '26'
       bundle_d: 1.8
       bend_r: 4.0
       term: 18.0
-      route_mm: 132.2
+      solid_upto: 7
+      route_mm: 132.5
       length_mm: 150.0
       waypoints_base_link_mm:
       - - 183.2
-        - -87.5
+        - -80.5
         - 39.4
-      - - 182.0
-        - -87.5
-        - 36.5
+      - - 182.5
+        - -80.5
+        - 38.4
+      - - 182.5
+        - -77.5
+        - 38.4
+      - - 182.5
+        - -77.5
+        - 33.5
+      - - 181.0
+        - -77.5
+        - 33.5
+      - - 178.0
+        - -77.5
+        - 33.4
+      - - 178.0
+        - 41.0
+        - 33.4
       - - 182.0
         - 41.0
-        - 36.5
+        - 33.4
+      - - 182.0
+        - 41.0
+        - 38.1
       - - 185.7
         - 41.0
         - 38.1
@@ -764,7 +833,7 @@ cables:
         - -132.2
         - 29.5
   W-101.S:
-    longest_lead_mm: 58.0
+    longest_lead_mm: 57.0
     leads:
     - lead: drain -> TP2004
       from: W-101 braid
@@ -773,23 +842,30 @@ cables:
       bundle_d: 1.2
       bend_r: 2.4
       term: 15.0
-      route_mm: 43.0
-      length_mm: 58.0
+      ends_in_boot: true
+      route_mm: 42.0
+      length_mm: 57.0
       waypoints_base_link_mm:
-      - - 76.6
-        - 79.5
-        - 46.0
-      - - 76.6
-        - 79.5
+      - - 77.0
+        - 84.5
+        - 46.5
+      - - 77.0
+        - 84.5
+        - 42.0
+      - - 81.0
+        - 84.5
+        - 42.0
+      - - 83.0
+        - 84.5
         - 44.0
-      - - 112.3
-        - 80.0
+      - - 100.0
+        - 84.0
         - 44.0
       - - 112.3
         - 80.0
         - 36.6
   W-102.S:
-    longest_lead_mm: 43.0
+    longest_lead_mm: 40.0
     leads:
     - lead: drain -> TP2501
       from: W-102 braid
@@ -798,18 +874,19 @@ cables:
       bundle_d: 1.2
       bend_r: 2.4
       term: 15.0
-      route_mm: 27.7
-      length_mm: 43.0
+      ends_in_boot: true
+      route_mm: 24.7
+      length_mm: 40.0
       waypoints_base_link_mm:
       - - 75.2
-        - -99.3
-        - 46.0
+        - -95.0
+        - 46.5
       - - 75.2
-        - -99.3
-        - 44.0
-      - - 85.7
-        - -78.5
-        - 40.0
+        - -95.0
+        - 42.0
+      - - 75.2
+        - -90.5
+        - 42.0
       - - 85.7
         - -78.5
         - 36.6

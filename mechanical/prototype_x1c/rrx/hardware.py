@@ -85,7 +85,7 @@ def rows():
     add("E bridge", "pan head screw", "M2.5 x 6 ISO 7045 A2", 4, "CM5 carrier -> tray inserts", "UNVERIFIED", "0.3", "carrier hole pattern UNVERIFIED")
     # F  grip
     add("F grip", "countersunk screw + nyloc nut + washer", "M5 x 16 ISO 10642 A2-70", 4, "plate (from below) -> angle feet", torque="4.0", note="proof-load path, through-bolted")
-    add("F grip", "socket cap screw + nyloc nut + 2 washers", "M5 x 16 ISO 4762 A2-70", 4, "side plates -> angle feet", torque="4.0", note="proof-load path")
+    add("F grip", "socket cap screw + washer", "M5 x 10 ISO 4762 A2-70 + ISO 7089", 4, "angle feet (from inboard) -> M5 tapped side plates", torque="4.0", note="proof-load path; medium thread-lock; fit review: heads inboard so they are reachable at stage 5 and in service")
     add("F grip", "socket cap screw + washer", "M6 x 16 ISO 4762 A2-70 + ISO 7089", 2, "side plates -> tapped ends of the 14 mm bar (in the fairing pockets)", torque="6.0", note="medium thread-lock; proof-load path")
     add("F grip", "pan head screw + nyloc nut", "M3 x 20 ISO 7045 A2", 4, "cheek fairings through the side plates", torque="0.5")
     add("F grip", "end cap", "push-in cap 11 mm, PE", 2, "screw-head pockets of the fairings", "UNVERIFIED")

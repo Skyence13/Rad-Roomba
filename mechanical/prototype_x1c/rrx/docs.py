@@ -220,7 +220,7 @@ STAGE_TEXT = {   # hand-written work instructions per stage: (do, inserts / torq
         "Pack feed + aux leads from the fixed coupler half along under_bridge_right to the right gutter (2-into-1 loom to J_PWR, CCR-E08), heater/NTC leads with them; P-clip at the cradle (strain relief).",
         "An empty cassette slides in and out with no binding; key rib reversed = blocked at the gate; coupler halves mate by hand."),
     "05_bridge_grip": (
-        ["Grip feet (angle) on the plate: 2 x M5 x 16 countersunk from below + nyloc above each; side plates to the feet (2 x M5 x 16 cap + nyloc).",
+        ["Grip feet (angle) on the plate: 2 x M5 x 16 countersunk from below + nyloc above each; side plates to the feet (2 x M5 x 10 cap screws from INBOARD through the foot into the tapped side plate, medium thread-lock).",
          "Bridge tray first, off the robot: press the six self-clinching M3 standoffs (3 mm) into the tray at the board holes. Four bridge posts (M4 x 10 countersunk from below), tray on top with 4 x M3 x 8 countersunk, flush (fit review C1: nothing above the tray under the board, no nuts under the tray). Gap pad on the tray under the bridge zone, RR-CHS-MAIN on the standoffs with 6 x M3 x 6 pan heads from above (H1 and H3 bond to chassis).",
          "CM5 tray (4 x M3 from below), CM5 carrier (4 x M2.5). No bolt-on clamp resistor (RR-CHS-MAIN carries its own, IB-26)."],
         "Torques: M5 grip 4.0 N m (proof-load path: no thread-lock substitutes for the nyloc), M4 1.5 N m, M3 tray 0.8 N m, M3 board 0.5 N m.",
@@ -491,5 +491,51 @@ def write_report(R, table, parts, timing):
     w("\nThe two rear cover-screw bosses hang to z 97.6 (13.0 mm above the PCB) over the rear corners, i.e. above the 12 mm the request asks for. "
       "The combined 8-way Mini-Fit at the right-rear edge (CCR-E08 a) has its mated plug and loom room beyond the board edge. Boolean slivers removed from parts: "
       f"{R['slivers']['dropped'] or 'none'}.\n")
-    w("## 11. Deviations and change requests\n\nSee `CHANGE_REQUESTS.md` (deviations D-01..D-07 taken inside this package, requests CR-01..CR-06 to the lead).\n")
+    w("## 11. Fit checks after the independent fit review (tool-checked; docs/reviews/REVIEW_cad_pcb_harness_fit.md)\n")
+    w(fit_report(R))
+    w("## 12. Deviations and change requests\n\nSee `CHANGE_REQUESTS.md` (deviations taken inside this package, requests to the lead / electronics / harness / head).\n")
     (OUT / "prototype_report.md").write_text("\n".join(A) + "\n", encoding="utf-8")
+
+
+def fit_report(R):
+    """Markdown of the fit-review checks: fasteners, sweeps, routes, SVC pads, board bottom zone (shared by both builds)."""
+    A = []
+    w = A.append
+    F = R.get("fasteners", {})
+    w(f"**Fasteners as solids ({F.get('count', 0)} modelled):** every fastener solid (head, washers, 0.8 d shank, nut) is in the interference check of section 2; "
+      "each tool column (stated tool, from the head or nut outward) is intersected with the parts present at the step that fits it (stage order of assembly.md) "
+      "and in its service state. Blocked: " + (", ".join(F.get("blocked", [])) or "none") + ".\n")
+    w("| Fastener | Size | Step / state | Tool | Blocked by |\n|---|---|---|---|---|")
+    for r in F.get("rows", []):
+        if r["blocked_by"] or r["step"].startswith("SERVICE") or r["fastener"].startswith(("rx_", "board_", "tray_", "gripplate_", "pod_")):
+            w(f"| {r['fastener']} | {r['size']} | {r['step']} | {r['tool']} | {r['blocked_by'] or 'free'} |")
+    S = R.get("service_sweeps", {}).get("sweeps", {})
+    w("\n**Service sweeps of real parts:**\n\n| Sweep | Removed first | Blocked by |\n|---|---|---|")
+    for k, v in S.items():
+        if k == "tof_withdrawal_in_place":
+            continue
+        w(f"| {k} | {', '.join(v['removed'][:8])}{' ...' if len(v['removed']) > 8 else ''} | {v['blocked_by'] or 'free'} |")
+    tof = S.get("tof_withdrawal_in_place", {})
+    if tof:
+        w("\n**ToF carrier replacement in place (fit review M10; cover off, head removed; carrier withdrawn 25 mm along -boresight):**\n\n| Sensor | Withdrawal | Needs |\n|---|---|---|")
+        for n, b in tof.items():
+            need = "from inside after removing the part(s) listed" if b else "replaceable in place (inside access)"
+            w(f"| {n} | {b or 'free'} | {need} |")
+    RT = R.get("routes", {})
+    w("\n**Cable routes (published to mechanical/common/out/cable_routes.yaml):**\n\n| Cable | From -> to | OD / bend R (mm) | Route (mm) | Length (mm) | Collisions | Tight bends | Free spans | Result |\n|---|---|---|---|---|---|---|---|---|")
+    for k, r in RT.items():
+        if "polyline" not in r:
+            w(f"| {k} | - | - | - | - | - | - | - | {r.get('status')} |")
+            continue
+        tb = sum(1 for b in r.get("bends", []) if not b["ok"])
+        fs = sum(1 for c in r.get("clips", []) if not c["ok"])
+        w(f"| {k} | {r['from']} -> {r['to']} | {r['od_mm']} / {r['min_bend_r_mm']} | {r['route_mm']} | {r.get('length_mm', '-')} | {r.get('collisions') or 'none'} | {tb} | {fs} | {r.get('status')} |")
+    sv = R.get("svc_access", {})
+    if sv:
+        w(f"\n**SVC1..SVC10 test-pad array (stage 5 board):** pads in the board file {sv['pads_in_board_file']}; probe zone {sv['zone_base_link']} (u 126-140, v 75-84, 40 mm above the board); "
+          f"parts in the zone {sv['parts_in_zone'] or 'none'}; cable routes over it {sv['routes_over_zone'] or 'none'}; clip points over it {sv['clips_over_zone'] or 'none'} -> {'PASS' if sv['ok'] else 'FAIL'}.")
+    bb = R.get("board_bottom", {})
+    if bb:
+        w(f"\n**RR-CHS-MAIN bottom side ({bb['source']}):** {bb['bottom_parts']} parts, tallest {bb['max_height_mm']} mm (zone 3.0); over 3 mm: {bb['over_3mm'] or 'none'}; "
+          f"over a bridge-tray feature (clinch standoffs, flush post screws, pass-throughs): {bb['over_tray_features'] or 'none'}.")
+    return "\n".join(A) + "\n"

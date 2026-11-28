@@ -86,7 +86,7 @@ plates:
     - 118.0
     - 175.2
     - 32.5
-    volume_cm3: 79.2
+    volume_cm3: 79.5
     mesh_open_edges: 0
 - id: H02
   name: frame_half_right
@@ -119,7 +119,7 @@ plates:
     - 118.0
     - 173.2
     - 32.5
-    volume_cm3: 78.4
+    volume_cm3: 78.6
     mesh_open_edges: 0
 - id: H03
   name: window_cassette
@@ -419,58 +419,100 @@ plates:
     volume_cm3: 0.4
     mesh_open_edges: 0
 - id: H08
-  name: grommet_J1, grommet_J2
-  material: TPU
+  name: boot_J1, boot_J2, holster_J1, holster_J2
+  material: PA-CF
   kit: head
   overrides:
-    wall_loops: 3
+    wall_loops: 4
     sparse_infill_density: 100%
     enable_support: false
     brim_type: no_brim
   edge_margin: 8.0
   fits_one_plate: true
   parts:
-  - part: grommet_J1
+  - part: boot_J1
     part_number: RR-HD-X-511
-    mesh: print/RR-HD-X-511__grommet_J1.stl
-    step: print/RR-HD-X-511__grommet_J1.step
+    mesh: print/RR-HD-X-511__boot_J1.stl
+    step: print/RR-HD-X-511__boot_J1.step
     qty: 1
     positions:
-    - - 13.8
-      - 43.5
+    - - 15.0
+      - 42.8
     rotation_z: 0
-    orientation_note: cable axis vertical; slit with a blade after printing
+    orientation_note: base on the bed, cable bore up
     supports: none
     layer_height: 0.2
-    walls: 3
+    walls: 4
     infill: 100 %
     brim: none
     bbox_print_mm:
-    - 11.5
-    - 15.0
-    - 4.0
-    volume_cm3: 0.4
+    - 14.0
+    - 13.5
+    - 24.0
+    volume_cm3: 4.3
     mesh_open_edges: 0
-  - part: grommet_J2
+  - part: boot_J2
     part_number: RR-HD-X-512
-    mesh: print/RR-HD-X-512__grommet_J2.stl
-    step: print/RR-HD-X-512__grommet_J2.step
+    mesh: print/RR-HD-X-512__boot_J2.stl
+    step: print/RR-HD-X-512__boot_J2.step
     qty: 1
     positions:
-    - - 31.2
-      - 43.5
+    - - 34.5
+      - 42.2
     rotation_z: 0
-    orientation_note: cable axis vertical; slit with a blade after printing
+    orientation_note: base on the bed, cable bore up
     supports: none
     layer_height: 0.2
-    walls: 3
+    walls: 4
     infill: 100 %
     brim: none
     bbox_print_mm:
-    - 11.5
-    - 15.0
-    - 4.0
-    volume_cm3: 0.4
+    - 13.0
+    - 12.5
+    - 25.0
+    volume_cm3: 3.9
+    mesh_open_edges: 0
+  - part: holster_J1
+    part_number: RR-HD-X-513
+    mesh: print/RR-HD-X-513__holster_J1.stl
+    step: print/RR-HD-X-513__holster_J1.step
+    qty: 1
+    positions:
+    - - 59.0
+      - 48.0
+    rotation_z: 0
+    orientation_note: floor on the bed
+    supports: none
+    layer_height: 0.2
+    walls: 3
+    infill: 40 %
+    brim: none
+    bbox_print_mm:
+    - 24.0
+    - 24.0
+    - 10.0
+    volume_cm3: 1.9
+    mesh_open_edges: 0
+  - part: holster_J2
+    part_number: RR-HD-X-514
+    mesh: print/RR-HD-X-514__holster_J2.stl
+    step: print/RR-HD-X-514__holster_J2.step
+    qty: 1
+    positions:
+    - - 89.0
+      - 48.0
+    rotation_z: 0
+    orientation_note: floor on the bed
+    supports: none
+    layer_height: 0.2
+    walls: 3
+    infill: 40 %
+    brim: none
+    bbox_print_mm:
+    - 24.0
+    - 24.0
+    - 10.0
+    volume_cm3: 1.9
     mesh_open_edges: 0
 - id: H09
   name: transport_cover_left

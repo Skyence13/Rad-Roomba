@@ -105,7 +105,7 @@
   {
    "check": "raw segments sealed with digests",
    "ok": true,
-   "entries": 46095
+   "entries": 46096
   }
  ],
  "passed": true,
@@ -113,9 +113,9 @@
  "coverage": {
   "target_area_m2": 3.0,
   "areas_m2": {
-   "UNVISITED": 0.996475,
+   "UNVISITED": 0.9964500000000001,
    "ACCEPTABLE": 0.0,
-   "INSUFFICIENT_SENSITIVITY": 1.854525,
+   "INSUFFICIENT_SENSITIVITY": 1.8545500000000001,
    "INVALID_DATA": 0.0,
    "BLOCKED": 0.0,
    "EXCLUDED": 0.0,
@@ -124,7 +124,7 @@
    "ALARM": 0.11,
    "ACQUISITION_GAP": 0.0
   },
-  "valid_exposure_fraction": 0.658375,
+  "valid_exposure_fraction": 0.6583833333333334,
   "acceptable_fraction": 0.0,
   "sub_cell_m": 0.005,
   "decision_cell_m": 0.1,
@@ -151,8 +151,8 @@
   "time_exchanges_rejected": 0
  },
  "localization_error_vs_truth_m": {
-  "max_x_m": 0.00179187773473366,
-  "max_y_m": 0.0012294817883351516
+  "max_x_m": 0.0017620175048725928,
+  "max_y_m": 0.0012321660748217667
  },
  "plan": {
   "n_pairs": 2,
@@ -177,14 +177,14 @@
    "id": "HS-0001",
    "kind": "INVESTIGATION_LEVEL",
    "source_lane": 0,
-   "x_m": 1.1945153467683505,
-   "y_m": -0.058808573955828815,
-   "D": 0.38089610957145087,
-   "u_total": 0.27683006935539584,
-   "D_star": 0.3666998833609353,
-   "D_hash": 0.986754620945324,
+   "x_m": 1.1944866798107248,
+   "y_m": -0.058820934741873804,
+   "D": 0.39040689077626944,
+   "u_total": 0.2829187264817171,
+   "D_star": 0.37263871594177383,
+   "D_hash": 1.0067642240371018,
    "location": {
-    "distance_from_door_m": 1.195,
+    "distance_from_door_m": 1.194,
     "wall": "right wall",
     "distance_from_wall_m": 0.441,
     "text": "1.19 m from the door threshold, 0.44 m from the right wall"
@@ -194,8 +194,8 @@
    "id": "HS-0002",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 3,
-   "x_m": 1.2677896002946427,
-   "y_m": -0.32128174601201487,
+   "x_m": 1.2677600387203498,
+   "y_m": -0.3212942589335437,
    "D": 0.17530812981731364,
    "u_total": 0.1117713196634888,
    "D_star": 0.16886567270487374,
@@ -211,8 +211,8 @@
    "id": "HS-0004",
    "kind": "INVESTIGATION_LEVEL",
    "source_lane": 0,
-   "x_m": 0.3093841087459783,
-   "y_m": -0.28109898894705243,
+   "x_m": 0.30941487958348524,
+   "y_m": -0.2810992517811862,
    "D": 0.17166820945069092,
    "u_total": 0.09434415484952755,
    "D_star": 0.14249394517210132,
@@ -228,8 +228,8 @@
    "id": "HS-0005",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 2,
-   "x_m": 1.060366066283399,
-   "y_m": 0.10263335810206496,
+   "x_m": 1.0603442014923785,
+   "y_m": 0.10262762699248484,
    "D": 0.16985387035879085,
    "u_total": 0.09930836762583742,
    "D_star": 0.1290035757135772,
@@ -245,8 +245,8 @@
    "id": "HS-0006",
    "kind": "INVESTIGATION_LEVEL",
    "source_lane": 1,
-   "x_m": 1.5486261217346193,
-   "y_m": 0.16597097927757173,
+   "x_m": 1.5486316853701054,
+   "y_m": 0.16596968176103555,
    "D": 1.2513498978368394,
    "u_total": 0.2278806903721119,
    "D_star": 0.11642512738505278,
@@ -262,8 +262,8 @@
    "id": "HS-0007",
    "kind": "UNRESOLVED_EXCEEDANCE",
    "source_lane": 3,
-   "x_m": 2.1211872859791905,
-   "y_m": -0.003927399467279883,
+   "x_m": 2.1212014411487514,
+   "y_m": -0.003925960758708741,
    "D": 0.2237739370113131,
    "u_total": 0.10657103798317191,
    "D_star": 0.16718551813901275,
@@ -279,8 +279,8 @@
    "id": "HS-0008",
    "kind": "INVESTIGATION_LEVEL",
    "source_lane": 0,
-   "x_m": 2.3687714266367763,
-   "y_m": 0.27753208154070075,
+   "x_m": 2.368755787653305,
+   "y_m": 0.2775307235754714,
    "D": 0.1655534118397446,
    "u_total": 0.09811229773321065,
    "D_star": 0.15233490158144322,
@@ -296,8 +296,8 @@
    "id": "HS-0009",
    "kind": "INVESTIGATION_LEVEL",
    "source_lane": 0,
-   "x_m": 2.883978455670969,
-   "y_m": 0.31784447049436626,
+   "x_m": 2.8839815117759438,
+   "y_m": 0.3178423902940977,
    "D": 0.4418418870122696,
    "u_total": 0.2572519847601692,
    "D_star": 0.3566814842412761,
@@ -329,15 +329,15 @@
   "status_reasons": {
    "D# above the detection goal": 135,
    "reference gradient": 63,
-   "speed 0.1023 m/s outside the calibrated range": 6,
+   "speed 0.1028 m/s outside the calibrated range": 11,
    "coverage 0.35 < 0.5": 6,
    "flagged by combined": 4,
-   "speed 0.1027 m/s outside the calibrated range": 4,
    "flagged by combined+lane:A1:L1": 3,
-   "coverage 0.39 < 0.5": 2
+   "coverage 0.39 < 0.5": 2,
+   "coverage 0.26 < 0.5": 1
   },
   "acceptable_fraction": 0.0,
-  "median_D_hash": 0.2685096539785961,
+  "median_D_hash": 0.26841407102349235,
   "undecidable_recorded": 0,
   "undecidable_provisional_live": 0,
   "alarm_bookkeeping": {
@@ -350,31 +350,32 @@
    "SCAN_DETECTION:provisional alarm not confirmed": 1,
    "INVESTIGATION_LEVEL:recorded alarm": 4
   },
-  "review_queue_items": 9,
+  "review_queue_items": 4,
   "revisit": 0,
   "position_credit": {
    "samples": 2117,
    "credited_fraction": 1.0,
    "credited_with_true_error_above_budget": 0,
    "fraction_of_credited_above_budget": 0.0,
-   "max_true_error_when_credited_m": 0.001840123758257468,
-   "max_true_error_m": 0.001840123758257468,
+   "max_true_error_when_credited_m": 0.0018105227931067558,
+   "max_true_error_m": 0.0018105227931067558,
    "no_credit_reasons_samples": {},
    "localizer": {
     "wheel_scale": {
-     "estimate": 3.1966914243033585e-05,
-     "sigma": 8.835668816358655e-05
+     "estimate": 1.9330252072252556e-05,
+     "sigma": 8.865793715363759e-05
     },
     "stats": {
-     "x_fixes": 2736,
+     "x_fixes": 2685,
      "x_rejects": 0,
      "big_corrections": 0,
-     "max_correction_m": 0.001095618906765901
+     "max_correction_m": 0.001095618906765901,
+     "deferred_scans": 26
     }
    }
   }
  },
- "journal_entries": 46095,
+ "journal_entries": 46096,
  "segments": 4,
  "products": [
   "README.txt",
@@ -401,23 +402,23 @@
  "product_sha256": {
   "README.txt": "a06bf5ad71140ac5ed81c7b272ea482c8e3dc1bc9c7444056f752aee88c7c61a",
   "calibration.json": "7995d274311fde1d02371817a69839c27ea3da6d05bc1f2717340033e1e74a5b",
-  "cell_members.csv": "f6c4ab81e20d31e0e767654fff5d87797940ebe6d45fd348ddd0472536fa854b",
-  "cells.csv": "59ef2aa2d63d2de9ebf4cd63e8b15e711eadc48ad5c1e1b169860abb6a96be00",
-  "cells.geojson": "537dc5ff5fe611153388e9d1661322035771ef29530b6c2af3d69a0c687be6e0",
+  "cell_members.csv": "6340f95464be85d9cc4786f7b69b85b77e7e2eb9a459d102ed9279da1281a822",
+  "cells.csv": "08df490bf44c5bdfddee98c5b0ae81d2e7a4b707e392040f61488200406dfb75",
+  "cells.geojson": "8abdaace18ce9e509d7dfefc197b4395225ee76118f468cd17b24e3daa657bd0",
   "clock_fits.ndjson": "d15126100103a834eb548053a0428327e3615988336e19801de6c05a2e333783",
   "coverage.png": "0fb749ae4fe175eff5f3c910f0ea7e07458fde46f1894da8046ef10ad6f1894d",
-  "flags.json": "a2f4d6a2abb4e5810d2fb1116c4a16c09d34870ab7381a8c86165ea8b537ac1c",
+  "flags.json": "e867bf0b26525ac263e25dc0c233ae71e44ec2412c37de70b6963edbbf179429",
   "gaps.json": "0ade27752795c32c5d5ff2a16abaea23682b0c50e456c46e004270e0e7b1d11c",
-  "gates.csv": "98914a49ef838e5d4d2152bb0731672bd93ef11aa6e8fa09d292084aab74a7d6",
+  "gates.csv": "c4e0d4d6c52a0db93d6457a0e74636f698b573c25a4e8d45099d062ebf0fdf50",
   "grid.json": "d7731db47cf2ebf25ace2475350b8b5347aef30ff672abf29806353ddd12b4dc",
-  "map_activity.svg": "a938edfdf159d74ae9c3e6cdcf7e255fc4ce964f7573a5a90846b26734f56d4e",
-  "map_coverage.svg": "d4143bb063f71f24800b5fa36c18e8152c48692d2f8fe547f02deb443c7bf73a",
+  "map_activity.svg": "3758f3f5b9f6c2912cf355e8562a3ab7b34af9b80830c077df737f5b15d90b91",
+  "map_coverage.svg": "726b8493371be3c46c85dcf5925ad1622a85dea1054a333154738554b37c75e1",
   "observations.json": "f6150c751b5fe04c3c3efc045eaca350981ffe0713ab4e4610ccf9aaf398a878",
-  "poses.csv": "b7dfff8d7eaac1060e4028c3c5c34de6d16f2a7813aa170b10e301b495101788",
+  "poses.csv": "e67fd0f29afa99fdb1b10454fc10e3c696e1818cd90f2599c74da8e5c699b395",
   "profile.json": "352673831205596483f74809f58e2608b4841a6ff30230d07a9a8bf962d72380",
-  "residuals.json": "ca7f19c40ac7b2534557dfcc8da0618765c59c493c2db528a8e40a29a4bc4495",
-  "summary.txt": "56f72d5f44897e643ca27e68bcae95b60412ac4c43b710ad51841273ba28c75e",
-  "survey_manifest.json": "c6f8601f1d580849c18ecf36bd8784447e193257660c01763620adc96ac4cc62",
+  "residuals.json": "e6157b13da7f9d1758541c9ef013cf63bfe49f8d1c234b7bdf85689d9681f9a8",
+  "summary.txt": "d99721551320f6e42b3ffc4b8428bd7d0e16f948f77b3e308e6749bfb8dd8f95",
+  "survey_manifest.json": "d8c8220a42c313eb5eb117246a72deaf7e2fab03110f08eca57ddd4dccb57e4f",
   "transforms.json": "0f2d9017710bbc525f1ce5de25b8db9b06f002f727a521913aa69f53e1d7bb26"
  }
 }

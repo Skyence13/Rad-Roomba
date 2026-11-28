@@ -48,6 +48,27 @@ Resume notes (keep current; a usage limit may stop this work):
   commit ea7ac82), IB-47 analysis (native trace now records phase, x-fix age, rejects; localiser withholds credit on a
   rejected end-wall fix and resets x after 3 rejections).
 
+IB-47 / review M3 on the native emulators (simulated, real time, n01, three runs 02:21-02:39):
+- Before the fix: max x error vs TRUTH 29.3-29.6 mm (by trace time and by chassis time), 22-26 end-wall fixes REJECTED by
+  the 4 sigma gate with innovations of +-27..31 mm (NIS 150-190), all during straight passes, with the last fix < 0.1 s old.
+- Cause (confirmed by the like-for-like comparison and the zero-reject rerun): the chassis link thread queues odometry
+  samples; when the application loop is late the localiser STATE is up to ~0.3 s older than a LiDAR scan taken "now"; the
+  scan was applied to that older state -> a ~30 mm innovation -> fix rejected; and the trace compared that older state with
+  the truth "now" (0.1 m/s x 0.3 s = 30 mm).  Fix: a scan newer than the state by > 25 ms is deferred and applied when the
+  odometry has reached its time stamp (`deferred_scans` 301 in the run), plus the lag compensation for older scans.
+- After: 0 rejected fixes; localiser state vs TRUTH at the chassis time of its own last odometry sample (`loc_error_at_own_time`):
+  max 1.5 mm, p99 1.35 mm, 1866 samples, 0 credited samples above the 10 mm budget.  The trace-time comparison still shows
+  33 mm because it measures the queueing lag, not a pose error; gate poses use the P samples at their own time stamps.
+- Whether floor is un-credited when the 10 mm budget is exceeded: on the native runs the budget was never exceeded at the
+  pose's own time, so there was nothing to un-credit; the rule itself is unit-tested (`rr_localization/test`: 2 sigma from the
+  wheel-scale state grows linearly with distance and withdraws credit; STALE_X, CHASSIS_TIME, CORRECTION, X_RESIDUAL).
+  The wheel-scale estimate on the emulator converged to 5e-6 +- 8e-5 (the emulator has no scale error; end-wall fixes
+  every scan in a 3 m section), so the 1 % prior did not cost credit there; in a 16 m trailer with both end walls in
+  range the same holds.  Without any end-wall fix (prior only, 1 % assumed) the along-track 2 sigma reaches 10 mm after
+  0.5 m (calculated: 2 x 0.01 x d); once earlier fixes have estimated the scale (sigma 8e-5 here) it grows by about 0.17 mm
+  per metre plus the 1e-4 /m random walk.  The 1 % prior and the random walk are assumptions to be replaced by a measured
+  wheel-scale stability.
+
 Review findings, host side (state at the time of writing; tests named):
 C1 closed (`test_rev5::test_C1_*`, probe 3 rerun: 0 recorded differences live vs single evaluation); C2 closed host side
 (`test_C2_*`; record format needs `identity`, CR-03); C3 closed host side (K/S archive, software identity, members,

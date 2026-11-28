@@ -62,13 +62,13 @@ def fastener_access(parts, F, log=print):
     rob = _robot(parts)
     st = {p.name: stage_of(p.name, pats) for p in rob}
     res, fails = [], []
-    by_step = {}
+    groups = {}
     for f in F:
         if f.step is not None:
-            by_step.setdefault(f.step, []).append(f)
-    for step, fs in by_step.items():
+            groups.setdefault((f.step, f.later), []).append(f)
+    for (step, later), fs in groups.items():
         k = keys.index(step)
-        present = [p for p in rob if st[p.name] is not None and st[p.name] <= k]
+        present = [p for p in rob if st[p.name] is not None and st[p.name] <= k and not any(fnmatch.fnmatch(p.name, q) for q in later)]
         probes = [Part("TOOL", f"tool_{f.fid}", f.tool(), "purchased", "-", "tool") for f in fs]
         blk = _blocked(probes, present, step, log)
         for f in fs:

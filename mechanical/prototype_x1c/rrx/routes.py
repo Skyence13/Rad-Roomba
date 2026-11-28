@@ -397,5 +397,7 @@ def write_yaml(res, path, build):
     doc = {"schema": "rr-cable-routes/1", "build": build, "evidence": "tool-checked: voxel route through the body free space, then exact tube-vs-solid "
            "intersection with every part; lengths = route + 2 x termination + service loop (calculated). Bundle OD and bend radius are estimates (UNVERIFIED).",
            "generated_by": "mechanical/prototype_x1c/rrx/routes.py", "tof_length_limit_mm": TOF_LIMIT, "cables": res}
+    import json
+    doc = json.loads(json.dumps(doc, default=lambda o: list(o) if isinstance(o, tuple) else str(o)))
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(yaml.safe_dump(doc, sort_keys=False, width=200), encoding="utf-8")

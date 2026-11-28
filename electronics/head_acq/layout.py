@@ -131,21 +131,24 @@ BOARD.update({
     "D2201": (114.5, 82.0, 90, "F"), "Q2201": (124.0, 81.0, 0, "F"), "D2202": (124.0, 86.5, 0, "F"),
     "Q2202": (130.0, 85.0, 0, "F"), "U2202": (132.0, 75.0, 0, "F"), "D2203": (126.0, 74.0, 0, "F"),
     "Q2203": (118.0, 75.0, 0, "F"), "Q2204": (118.0, 70.5, 0, "F"), "U2203": (139.0, 81.0, 0, "F"),
-    "U2204": (139.0, 86.0, 0, "F"), "J2201": (122.0, 92.0, 180, "F"), "Q2205": (130.0, 91.0, 0, "F"),
+    "U2204": (139.0, 86.0, 0, "F"), "J2201": (232.0, 85.75, 180, "F"), "Q2205": (130.0, 91.0, 0, "F"),
     "JP2201": (116.0, 92.0, 0, "F"), "U2205": (142.0, 70.0, 0, "F"), "U2206": (142.0, 76.0, 0, "F"),
     # DACs between lane 1 and lane 2 logic
     "U2301": (146.0, 50.0, 0, "F"), "U2302": (155.0, 50.0, 0, "F"), "U2303": (164.0, 50.0, 0, "F"),
     "U2304": (173.0, 50.0, 0, "F"), "U2305": (150.0, 59.0, 0, "F"), "U2306": (182.0, 59.0, 0, "F"),
     # MCU (pin 1 rear-left), TCXO at pin 12, service connectors
     "U2401": (168.0, 77.5, 90, "F"), "Y2401": (163.5, 65.5, 0, "F"), "FB2401": (159.0, 65.5, 0, "F"),
-    "J2401": (186.0, 89.0, 0, "F"), "J2402": (196.0, 92.0, 180, "F"), "D2401": (180.0, 93.0, 0, "F"),
+    "J2401": (186.0, 89.0, 0, "F"), "J2402": (91.0, 85.75, 180, "F"), "D2401": (180.0, 93.0, 0, "F"),
     "D2402": (180.0, 90.4, 0, "F"), "U2402": (53.0, 39.0, 0, "F"), "U2403": (240.0, 34.0, 0, "F"),
     "U2404": (189.0, 80.0, 0, "F"), "U2405": (190.0, 72.0, 0, "F"),
     # monitor / selects
     "U2701": (203.0, 74.0, 0, "F"), "U2702": (213.0, 74.0, 0, "F"), "U2703": (182.0, 51.0, 0, "F"),
     "U2704": (208.0, 86.0, 0, "F"), "J2701": (214.0, 91.0, 90, "F"), "D2701": (199.0, 86.0, 0, "F"),
-    # rail-switch connectors on the front edge (H5 keep-out splits the landing u 150..176)
-    "J2002": (154.5, 92.0, 180, "F"), "J2003": (171.5, 92.0, 180, "F"), "J2004": (144.6, 92.0, 180, "F"),
+    # front-edge GH headers (stage 4, CR-H17): moved 6.25 mm rearward (courtyard v 82.5..89.0, mated plug + crimp inside
+    # the board to v 96.25) and spread along the front band to where their leads come from: rail switch LEFT (J2003) at
+    # the left end, FRONT (J2002) next to the front switch (base y 92.5), RIGHT (J2004) at the right end, lid switch (J2201)
+    # next to the lid switch (base y -80.5); debug UART J2402 in the free band at u 80..102.  Mating faces forward (+v).
+    "J2003": (16.0, 85.75, 180, "F"), "J2002": (67.0, 85.75, 180, "F"), "J2004": (310.0, 85.75, 180, "F"),
     # isolated RS-485 (J2 landing): island u 230..272, v 0..13; barrier v 13..17; ISO1430 straddles it
     "J2501": (262.3, 4.0, 0, "F"), "U2501": (250.0, 15.0, 270, "F"), "FB2501": (243.0, 9.0, 0, "F"),
     "D2501": (262.0, 10.5, 0, "F"), "D2502": (240.5, 11.5, 0, "F"), "U2502": (236.0, 7.0, 0, "F"),
@@ -201,6 +204,18 @@ def apply(board, parts):
     board.autoplace_options(clearance=0.12, ic_halo=0.5, edge_margin=0.6, spread=0.0, grid=0.1)
 
 
+def front_plug_spans():
+    """u extent of each front-edge GH header courtyard (= width of its mated-plug zone)."""
+    geo = json.load(open(os.path.join(HERE, "scripts", "fp_geometry.json")))
+    n = {"J2002": 4, "J2003": 4, "J2004": 4, "J2201": 2, "J2402": 3}
+    out = {}
+    for ref in FRONT_GH:
+        g = geo["Connector_JST:JST_GH_SM%02dB-GHS-TB_1x%02d-1MP_P1.25mm_Horizontal" % (n[ref], n[ref])]["courtyard"]
+        u = BOARD[ref][0]
+        out[ref] = (round(u - g[2], 3), round(u - g[0], 3))      # rot 180
+    return out
+
+
 def _rules(board):
     hv = ["HV_BUS", "HV_RAW", "HV_RAWF", "HV_SW", "HV_MIR", "HV_G", "HV_BLD", "HV_BFBM", "HV_FBM", "HV_MDM", "HV_CAP",
           "[FR]?_HV1", "[FR]?_HVF"]
@@ -209,6 +224,9 @@ def _rules(board):
     board.netclass("POWER", ["GND", "+5V_A", "+3V3", "+3V3_EVT", "+5V6", "+5V6_A", "+5V6_E", "+3V3A", "+3V3_HV", "VIN_*",
                              "HEAD_PWR_*", "BK_SW", "TCXO_VDD", "EF_RTN", "[FR]?_V5", "FRAME", "FRAME_*"],
                    track=0.4, clearance=0.15, via_dia=0.6, via_drill=0.3)
+    # stage 4 (CR-H17): the interlock loop now runs on the board between the end-of-board rail-switch headers (~0.65 m of
+    # trace): 0.5 mm keeps the added loop resistance <= ~0.6 ohm (0.06 % of the 1.00 k contract loop resistor)
+    board.netclass("LOOP", ["HEAD_LOOP_OUT", "HEAD_LOOP_RET", "LOOP_A", "LOOP_B", "LOOP_C"], track=0.5, clearance=0.2)
     board.netclass("ISOLATED", ["BUS_*", "J2_PRES", "SYNC_RX_B"], track=0.4, clearance=0.25)
     board.netclass("DIFF", ["RS485_DP", "RS485_DN", "SYNC_P", "SYNC_N"], track=0.25, clearance=0.25, diff_width=0.25, diff_gap=0.25)
     board.netclass("SENSITIVE", ["[FR]?_A", "[FR]?_PINA", "[FR]?_PIN", "[FR]?_PFB", "[FR]?_PG", "[FR]?_FS", "[FR]?_FFB",
@@ -255,6 +273,10 @@ def _keepouts(board):
     # mated Micro-Fit plugs on J2601 / J2001 (stage 3, IB-61): plug bodies over the board from the mating faces (v 8.5)
     # to the rear edge (keep-out to v 8.0, where the header courtyards begin) - no footprints there (head mechanical keep-out plug_ko_J2001 / plug_ko_J2601)
     board.keepout("KO_PLUG_J1", polygon=PLUG_KO, layers=("F.Cu",), tracks=False, vias=False, copper=False, footprints=True)
+    for ref, (u0, u1) in front_plug_spans().items():
+        board.keepout("KO_PLUG_" + ref, polygon=[(u0, FRONT_PLUG_V[0] + 0.1), (u1, FRONT_PLUG_V[0] + 0.1), (u1, FRONT_PLUG_V[1]),
+                                                (u0, FRONT_PLUG_V[1])], layers=("F.Cu",), tracks=False, vias=False, copper=False,
+                      footprints=True)
     # HV trunk corridor: no footprints within +-1.5 mm of the trunk (parts kept clear; the trunk is a pre-route)
     board.keepout("KO_TRUNK", polygon=[(12.0, V_TRUNK - 1.6), (314.0, V_TRUNK - 1.6), (314.0, V_TRUNK + 1.6), (12.0, V_TRUNK + 1.6)],
                   layers=("F.Cu",), tracks=False, vias=False, copper=False, footprints=True)
@@ -262,6 +284,9 @@ def _keepouts(board):
 
 ISLAND = [(230.0, 0.0), (272.0, 0.0), (272.0, 13.0), (230.0, 13.0)]
 PLUG_KO = [(50.45, 0.0), (100.9, 0.0), (100.9, 8.0), (50.45, 8.0)]   # header courtyards start at v 8.11
+# stage 4 (CR-H17): mated GH plug + crimp in front of the five front-edge headers (mating face v 89.0 -> v 96.0 = edge)
+FRONT_GH = ("J2002", "J2003", "J2004", "J2201", "J2402")
+FRONT_PLUG_V = (89.0, 96.0)
 BARRIER_OUT = [(226.0, 0.0), (276.0, 0.0), (276.0, 17.0), (226.0, 17.0)]
 
 

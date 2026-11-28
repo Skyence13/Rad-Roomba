@@ -361,6 +361,14 @@ class RobotApp:
                          "release REARM: press it briefly, do not hold it", "RELEASE_REARM": "release the REARM button",
                          "CLOSE_THE_CHAIN_FIRST": "close the open safety element first", "SEE_FAULTS": "see the chassis faults"}
 
+    def _with_refusal_event(self, st):
+        """The refusal action comes with the REARM_REFUSED event (ICD 4.6, CCR-CHS-22); STATE carries only the reason."""
+        if st.get("rearm_refusal_action") or not st.get("rearm_refusal"):
+            return st
+        ev = next((e for e in reversed(self.chassis.chassis_events) if e.get("kind") == "REARM_REFUSED"), None)
+        act = ((ev or {}).get("detail") or {}).get("action")
+        return dict(st, rearm_refusal_action=act) if act else st
+
     @staticmethod
     def _rearm_prompt(st, mode):
         """Operator prompt for the local REARM button (ICD 3.5, 4.6; CCR-CHS-20/22): "press REARM on the robot" ONLY when the
@@ -422,7 +430,7 @@ class RobotApp:
                         "time_bound_us": _fin(self.chassis.time_bound_us())},
             "safety": {"hw_latch": st.get("hw_latch"), "hw_inhibit_reasons": d.get("stops", {}).get("hw", []),
                        "protective_stop_reasons": d.get("stops", {}).get("sw", []), "hold": d.get("hold", []),
-                       "chain": st.get("chain"), "rearm_ready": st.get("rearm_ready"), "rearm_prompt": self._rearm_prompt(st, mode),
+                       "chain": st.get("chain"), "rearm_ready": st.get("rearm_ready"), "rearm_prompt": self._rearm_prompt(self._with_refusal_event(st), mode),
                        "rearm_refusal": st.get("rearm_refusal"), "rearm_refusal_action": st.get("rearm_refusal_action"),
                        # chassis fault flags exactly as reported (unknown names included, never filtered); chain false = open OR unknown
                        "faults": [str(x) for x in (st.get("faults") or [])],

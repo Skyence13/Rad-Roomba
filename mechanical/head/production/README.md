@@ -74,7 +74,7 @@ the lead's acceptance.
 
 | Joint | Seal | Fastening |
 |---|---|---|
-| Lid to frame | lid gasket on the wall-top land, closed-cell silicone 1.2 -> 0.8 (conductive Ni/graphite silicone in production) | 34 x M3 button + bonded sealing washer at <= 40 mm pitch round a closed loop except the 60.5 mm J1 bay forced by CR-M03 (shear panel; tool-checked, DEVIATION for the lead): 16 into standoffs on the spreader, 18 into wall bosses (hard seats z 43.0 inside the gasket loop) |
+| Lid to frame | lid gasket on the wall-top land, closed-cell silicone 1.2 -> 0.8 (conductive Ni/graphite silicone in production) | 35 x M3 button + bonded sealing washer at <= 40 mm pitch round a closed loop except the 60.5 mm J1 bay forced by CR-M03 (shear panel; tool-checked, DEVIATION for the lead): 16 into standoffs on the spreader, 18 into wall bosses (hard seats z 43.0 inside the gasket loop) |
 | Window cassettes | cassette gasket 0.8 -> 0.45, lip in groove, film bonded | 4 x M2.5 CSK each; hard seat bosses |
 | Lanes to each other | rib gasket strips under the spreader, 1.0 -> 0.6 | spreader: 10 x M2.5 CSK on the ribs, 6 x M2.5 rear zone, 8 x M3 into the T-heads |
 | Cable entries J1 / J2 | split grommet (moulded silicone; TPU in the prototype) with three internal ribs, compressed by the lid | lid |
@@ -85,15 +85,20 @@ the lead's acceptance.
 
 ## 6. Harness routing inside the head
 
-- **J1 pigtail** (power, heater pair AWG 20, loop, PRES_ID): grommet in the rear wall at (71.7, +76.2, 39.0) (CR-M03) -> mated J2001 plug (stage 3,
-  CR-M06: headers 7 mm forward, plug over x 81.8..91.7, y 62.3..90.0). The jacket ends in the grommet (its three ribs are the strain relief; no internal
-  P-clip: no jacket inside); the conductors fan in over the 9.0 mm behind the plug (prototype 8.4 mm to the comb wall). Calculated in head_report.md
-  (check "J1 landing harness buildable"): fits with thin-wall AWG 20 of OD <= 1.6 mm at R = 2 x OD; a standard PVC UL1007 AWG 20 does not.
-- **Heater / NTC / cut-out** (J2601 beside J2001, plug over x 81.8..91.7, y 91.1..112.7): wires turn +y along the rear strip to the S0 chimney notch
-  (film tails), the isolated-case thermal cut-out on a polyimide pad at (77..81.6, 81..87.5) (low side of the element) and the isolated-lug NTC at (81, 109).
-  Lid standoff (77.5, +90.3) stands between the J2001 and J2601 wire groups.
-- **J2 pigtail** (RS-485, BUS_5V, sync, J2_PRES): grommet at (71.7, -87.5, 39.0) -> J2501 GH-8 at u 262.3 (y -99.3); mated-plug keep-out of CR-M08
-  (x 76.7..83.95, y -106.6..-92.0) is clear: the lid standoff moved from (77.5, -104.5) to (77.5, -109.2).
+- **J1 / J2 pigtails (review M6, 2026-11-28):** no rear-wall ports. Each pigtail leaves the head vertically from a potted cable-breakout boot on the lid
+  rear strip (J1 RR-HD-x-511 at (80.0, 79.5), J2 -512 at (78.5, -99.3), top z 70), forward of the nose-cowl V. Inside, the J2001 conductors turn into
+  the rear strip, run +y at x 76.6 and rise at y 82.5 through a 6 x 7 mm lid slot; the J2501 conductors rise straight behind the plug through an
+  11.5 mm lid slot and a 14 mm notch in the rear-comb flange. The boot clamps and pots the jacket (strain relief and the only clip point; nothing on
+  the shoe root or any datum / seating face). Docked: boot -> mated plug back on the nose cowl, 298 mm (J1) / 258 mm (J2) at R 45 / 40, clear of the
+  body by >= 5 / 8 mm (tool-checked on the body STEP). Undocked and during the 66 mm docking stroke the plug sits head-down in a holster cup on the lid
+  (-513 / -514) with a 180-degree loop (R 42 / 37), checked free over the stroke. AWG 18/20 transition: none in the free run (AWG 20 to the M16 contacts,
+  or inside the J1 boot, potted). Lengths of every lead: `out/lead_routes.yaml`.
+- **Heater / NTC / cut-out** (J2601): wires into the rear strip, +y past the (77.5, 117.5) standoff on its board side to the S0 chimney notch (film tail),
+  -y behind the (77.5, 90.3) standoff to the isolated-case cut-out at (77..81.6, 81..87.5), and to the isolated-lug NTC at (81, 109).
+- **Rail / lid switch leads:** under the board edge (2.25 mm between the spreader film and the PCB underside, bottom side empty) at x 178, z 33.4;
+  side switches up the potted channel and a 3 mm spreader / comb-foot hole at (76, +-148.75); front / lid switch through 3 x 3.5 mm notches in the
+  prototype front fence (y +92.5 / -77.5; lid lead through a groove in the lid-switch riser). Board: J2002 front, J2003 LEFT, J2004 RIGHT, J2201 lid.
+  The last leg to the front plugs depends on CR-H17 (front GH headers do not fit the front strip mated: `CHANGE_REQUESTS.md`).
 - **SiPM coax** (16 x U.FL class): from each carrier up through the chimney insert channel, R >= 6 mm bend, to the AFE_STRIP rear-edge connector pair at
   the lane centre (u +-13).
 - **Rail switches** (NC loop): front switch at (183, +87.5) and lid interlock at (183, -87.5) in the front strip; side switches at (73.8, +-156.75) with
@@ -131,7 +136,7 @@ requalification by E1 + E4; a change to the receiver (shoe, bridge, keeper) requ
 |---|---|---|
 | Change an entrance film / window | from below, head on the bench cradle or transport cover: 4 x M2.5 CSK per cassette; lid stays closed, light seal unaffected | 1.5 hex, torque driver |
 | Flip / change rail inserts (3 <-> 5 mm), side strips | from the front / sides, 2 x M3 per insert | 2.5 hex |
-| Board, shield cans, desiccant, switches | lid off (34 x M3 through the jacket holes), keeper swung back first; the jacket cap stays on the lid | 2.0 hex |
+| Board, shield cans, desiccant, switches | lid off (35 x M3 through the jacket holes), keeper swung back first; the jacket cap stays on the lid | 2.0 hex |
 | Lane optics | lid, board (8 screws, unplug coax), spreader (24 screws) off, then from above | as above |
 | Vent | from outside | 8 mm spanner |
 | Shoes / bridge / keeper | rear, without opening the head | 2.5 / 3 hex |

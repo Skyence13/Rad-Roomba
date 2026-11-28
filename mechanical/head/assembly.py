@@ -40,7 +40,7 @@ def build(build="prototype", projection=3.0, travel=0.0):
     _p(P, "keeper_pin", "PUR-DP3x40", T.keeper_pin(), "SS304", "purchased", "receiver", "hinge pin 3 x 40, retained by circlips")
     # ---------------- deck
     _p(P, "spreader", "RR-HD-S-121", T.spreader(), "AL6061", "fab", "deck", "one-piece 2 mm spreader / stiffener / FRAME plane (laser cut + tapped)", proc="laser cut 5052-H32 or 6061-T6 2.0 mm, DXF")
-    _p(P, "lid", "RR-HD-S-122", T.lid(), "AL6061", "fab", "deck", "2 mm aluminium lid (shear panel, EMI top), 34 x M3 + bonded washers (<= 40 mm pitch except the J1 bay, CR-M03)", proc="laser cut 2.0 mm, DXF")
+    _p(P, "lid", "RR-HD-S-122", T.lid(), "AL6061", "fab", "deck", "2 mm aluminium lid (shear panel, EMI top), 35 x M3 + bonded washers (<= 40 mm pitch except the J1 bay, CR-M03)", proc="laser cut 2.0 mm, DXF")
     _p(P, "j1_blister", "RR-HD-S-123", T.j1_blister(), "AL6061", "fab", "deck", "1 mm blister plate over the J1 landing opening (8.9 mm internal height)", proc="laser cut 1.0 mm, conductive-bonded + 4 rivets")
     if not dummy:
         _p(P, "jacket_top", "RR-HD-S-131", T.jacket_top(), "EPDM-FOAM", "fab", "deck", "insulating jacket cap 3 mm closed-cell foam, wipeable skin, PSA on the lid (standard cold configuration)", hard=False)

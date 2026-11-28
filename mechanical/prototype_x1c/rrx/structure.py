@@ -41,7 +41,7 @@ def plate_holes():
             a, b = bx0 - m, min(bx1 + m, D.BEAM_X[1] + 5.0)
             H.append(((a + b) / 2, yc, 0.0, f"pocket {b - a:.1f}x{RC['channel_width'] + 2 * m:.1f} depth {RB['plate_pocket_depth']} from below", "receiver roof-bridge clearance pocket (thermal break)"))
         for x in (-20.0, 20.0):                                    # motor pod feet, M4 countersunk from below into inserts
-            for y in (D.POD_Y0 + 5.0, 112.0):
+            for y in (D.POD_Y0 + 6.5, 112.0):                      # front row at y 105: tool column clear of the receiver channel wall
                 H.append((x, s * y, D.CLEAR["M4"], "csk_bottom", "motor pod foot M4"))
         for x in (-48.0, -30.0):                                   # grip angle foot, through-bolted M5
             H.append((x, s * 71.0, D.CLEAR["M5"], "csk_bottom", "grip foot M5 through-bolt (proof-load path)"))
@@ -234,7 +234,7 @@ def motor_pod(s):
         a = math.radians(30 * i)
         pod = pod.cut(cyl(D.CLEAR["M3"] / 2, 10, (D.MOTOR_BCD / 2 * math.cos(a), yf - 1, ax_z + D.MOTOR_BCD / 2 * math.sin(a)), (0, 1, 0)))
     for x in (-20.0, 20.0):
-        for y in (D.POD_Y0 + 5.0, 112.0):
+        for y in (D.POD_Y0 + 6.5, 112.0):
             if D.PROD:                                                # machined 6061 pod: M4 tapped 8 deep (no insert)
                 pod = pod.cut(cyl(D.TAP["M4"] / 2, 8.0, (x, y, Z1)))
             else:
@@ -303,7 +303,7 @@ def grip_side_plate(s):
     for z in FAIRING_SCREW_Z:
         pl = pl.cut(cyl(D.CLEAR["M3"] / 2, 10, (D.GRIP_BAR_X, y0 - 1, z), (0, 1, 0)))
     for x in (-48.0, -30.0):
-        pl = pl.cut(cyl(D.CLEAR["M5"] / 2, 10, (x, y0 - 1, Z1 + 16.0), (0, 1, 0)))
+        pl = pl.cut(cyl(D.TAP["M5"] / 2, 10, (x, y0 - 1, Z1 + 16.0), (0, 1, 0)))      # M5 tapped: screw from inboard through the foot
     return pl if s > 0 else mirror_y(pl)
 
 

@@ -21,7 +21,7 @@ All PA-CF filament is dried (80 C, 8 h) before printing and the parts are stored
 | H05 | lane_spacer_upper (4) | PETG-CF | head | True | wall_loops 3, sparse_infill_density 100%, enable_support False, brim_type no_brim |
 | H06 | lane_barrier (4) | PETG-CF | head | True | wall_loops 3, sparse_infill_density 100%, enable_support False, brim_type no_brim |
 | H07 | chimney_insert (4), rail_insert (8), bail_block (3), front_switch_saddle (1), lid_switch_saddle (1) | PA-CF | head | True | wall_loops 3, sparse_infill_density 100%, enable_support False, brim_type no_brim |
-| H08 | grommet_J1 (1), grommet_J2 (1) | TPU | head | True | wall_loops 3, sparse_infill_density 100%, enable_support False, brim_type no_brim |
+| H08 | boot_J1 (1), boot_J2 (1), holster_J1 (1), holster_J2 (1) | PA-CF | head | True | wall_loops 4, sparse_infill_density 100%, enable_support False, brim_type no_brim |
 | H09 | transport_cover_left (1) | PETG-CF | head | True | wall_loops 3, sparse_infill_density 20%, enable_support True, brim_type no_brim |
 | H10 | transport_cover_right (1) | PETG-CF | head | True | wall_loops 3, sparse_infill_density 20%, enable_support True, brim_type no_brim |
 | H11 | dummy_lane_spacer (4) | PETG-CF | dummy head | True | wall_loops 3, sparse_infill_density 20%, enable_support False, brim_type no_brim |
@@ -45,8 +45,10 @@ Downward faces = faces above the bed whose normal points more than 45 deg down i
 | RR-HD-X-405 | bail_block | 3 | PA-CF | H07 | 8.8 x 30.0 x 4.0 | frame-side face on the bed; the 2.8 mm wire bore prints as a horizontal hole | 0 (0 mm2) | none | 4 / 100 % |
 | RR-HD-X-421 | front_switch_saddle | 1 | PA-CF | H07 | 4.8 x 26.6 x 10.2 | upside down (top bar on the bed) | 0 (0 mm2) | none | 3 / 100 % |
 | RR-HD-X-422 | lid_switch_saddle | 1 | PA-CF | H07 | 4.8 x 26.6 x 5.0 | upside down (top bar on the bed) | 0 (0 mm2) | none | 3 / 100 % |
-| RR-HD-X-511 | grommet_J1 | 1 | TPU | H08 | 11.5 x 15.0 x 4.0 | cable axis vertical; slit with a blade after printing | 0 (0 mm2) | none | 3 / 100 % |
-| RR-HD-X-512 | grommet_J2 | 1 | TPU | H08 | 11.5 x 15.0 x 4.0 | cable axis vertical; slit with a blade after printing | 0 (0 mm2) | none | 3 / 100 % |
+| RR-HD-X-511 | boot_J1 | 1 | PA-CF | H08 | 14.0 x 13.5 x 24.0 | base on the bed, cable bore up | 0 (0 mm2) | none | 4 / 100 % |
+| RR-HD-X-512 | boot_J2 | 1 | PA-CF | H08 | 13.0 x 12.5 x 25.0 | base on the bed, cable bore up | 0 (0 mm2) | none | 4 / 100 % |
+| RR-HD-X-513 | holster_J1 | 1 | PA-CF | H08 | 24.0 x 24.0 x 10.0 | floor on the bed | 0 (0 mm2) | none | 3 / 40 % |
+| RR-HD-X-514 | holster_J2 | 1 | PA-CF | H08 | 24.0 x 24.0 x 10.0 | floor on the bed | 0 (0 mm2) | none | 3 / 40 % |
 | RR-HD-X-601 | transport_cover_left | 1 | PETG-CF | H09 | 151.2 x 177.3 x 30.5 | tray floor on the bed | 2 (833.0 mm2); z 21.9 span 4.5 x 177.3; z 29.1 span 2.0 x 17.6 | yes: snap bridge over the shoe and the front lip (two short bridges, tree supports optional) | 3 / 20 % gyroid |
 | RR-HD-X-602 | transport_cover_right | 1 | PETG-CF | H10 | 151.2 x 177.3 x 30.5 | tray floor on the bed | 2 (833.0 mm2); z 21.9 span 4.5 x 177.3; z 29.1 span 2.0 x 17.6 | yes: as RR-HD-X-601 | 3 / 20 % gyroid |
 | RR-HD-D-302 | dummy_lane_spacer | 4 | PETG-CF | H11 | 100.4 x 80.4 x 15.5 | floor on the bed, open side up (as installed); height follows the ballast thickness in checks.json | 0 (0 mm2) | none | 3 / 20 % gyroid |

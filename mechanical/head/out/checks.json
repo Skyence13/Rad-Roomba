@@ -160,15 +160,15 @@
   },
   {
    "check": "31 routed leads inside the head (end terminations excluded) clear of the rigid head parts (both builds)",
-   "status": "fail",
+   "status": "pass",
    "evidence": "tool-checked (tube solids on the stated waypoints)",
-   "detail": "hits: {'W-101 inside head, J2001 -> J1 boot (pin 1, lo': ['j1_blister (production) 4.3 mm3', 'j1_blister (prototype) 4.3 mm3', 'lid (production) 8.6 mm3', 'lid (prototype) 8.6 mm3'], 'W-102 inside head, J2501 -> J2 boot': ['boot_J2 (production) 0.6 mm3', 'boot_J2 (prototype) 0.6 mm3', 'lid (production) 2.2 mm3', 'lid (prototype) 2.2 mm3'], 'W-103 heater element pair: J2601 -> film tail ': ['lid_standoffs (production) 34.1 mm3', 'lid_standoffs_11 (prototype) 34.1 mm3'], 'W-103 cut-out pair: J2601 -> thermal cut-out': ['lid_standoffs (production) 19.0 mm3', 'lid_standoffs (prototype) 19.0 mm3'], 'W-104 rail switch -> J2002': ['desiccant (production) 109.9 mm3', 'desiccant (prototype) 109.9 mm3', 'frame (production) 24.5 mm3', 'frame_L (prototype) 24.1 mm3', 'lid_standoffs (production) 9.9 mm3', 'lid_standoffs (prototype) 9.9 mm3', 'sw_front (production) 16.9 mm3', 'sw_front (prototype) 16.9 mm3', 'sw_front_saddle (production) 16.5 mm3', 'sw_front_saddle (prototype) 16.5 mm3'], 'W-106 rail switch -> J2003': ['desiccant (production) 109.9 mm3', 'desiccant (prototype) 109.9 mm3', 'fence_rear (prototype) 1.3 mm3', 'frame (production) 116.1 mm3', 'frame_L (prototype) 103.2 mm3', 'frame_R (prototype) 11.6 mm3', 'lid_standoffs (production) 31.0 mm3', 'lid_standoffs (prototype) 31.0 mm3', 'spreader (production) 5.1 mm3', 'spreader (prototype) 5.1 mm3', 'sw_front (production) 33.8 mm3', 'sw_front (prototype) 33.8 mm3', 'sw_front_saddle (production) 33.1 mm3', 'sw_front_saddle (prototype) 33.1 mm3'], 'W-105 rail switch -> J2004': ['desiccant (production) 131.8 mm3', 'desiccant (prototype) 131.8 mm3', 'fence_rear (prototype) 1.3 mm3', 'frame (production) 116.5 mm3', 'frame_L (prototype) 11.9 mm3', 'frame_R (prototype) 103.3 mm3', 'lid_standoffs (production) 31.0 mm3', 'lid_standoffs (prototype) 31.0 mm3', 'spreader (production) 5.1 mm3', 'spreader (prototype) 5.1 mm3', 'sw_lid (production) 30.1 mm3', 'sw_lid (prototype) 30.1 mm3', 'sw_lid_saddle (production) 55.7 mm3', 'sw_lid_saddle (prototype) 55.7 mm3'], 'W-107 lid switch -> J2201': ['desiccant (production) 164.4 mm3', 'desiccant (prototype) 164.4 mm3', 'frame (production) 60.5 mm3', 'frame_L (prototype) 23.8 mm3', 'frame_R (prototype) 35.7 mm3', 'lid_standoffs (production) 12.3 mm3', 'lid_standoffs (prototype) 12.3 mm3', 'sw_lid (production) 15.1 mm3', 'sw_lid (prototype) 15.1 mm3', 'sw_lid_saddle (production) 27.8 mm3', 'sw_lid_saddle (prototype) 27.8 mm3'], 'W-101.S drain -> TP2004': ['lid (production) 11.5 mm3', 'lid (prototype) 11.5 mm3'], 'W-102.S drain -> TP2501': ['lid (production) 3.4 mm3', 'lid (prototype) 3.4 mm3']}; routes and lengths in out/lead_routes.yaml"
+   "detail": "hits: none; routes and lengths in out/lead_routes.yaml"
   },
   {
    "check": "spreader plate: every hole pair keeps >= 1.0 mm web (countersinks at 5.2 mm)",
    "status": "pass",
    "evidence": "tool-checked",
-   "detail": "smallest web 2.00 mm between (174.7, 87.5) (board standoff M2.5 x 2.5 (cli) and (168.0, 87.5) (M2.5 into rib insert, counters)"
+   "detail": "smallest web 1.41 mm between (77.5, 144.5) (lid standoff M3 x 11, M3 CSK f) and (76.0, 148.75) (side-switch lead passage (pott)"
   },
   {
    "check": "J1 landing harness buildable: wire exit + one bend behind the mated J2001 / J2601 plugs into the rear strip, rise to the J1 boot (review M6 routing)",
@@ -190,15 +190,21 @@
   },
   {
    "check": "head without the leading-rail stroke system inside the contract envelope (prototype)",
-   "status": "fail",
+   "status": "pass",
    "evidence": "tool-checked",
-   "detail": "x 66.20..192.20 (66.0..212.5), y -175.00..175.00 (+-175), z 7.00..70.00 (5.0..50.0; lid top 45.0, jacket top 48.0, keeper hook 70.0)"
+   "detail": "x 66.20..192.20 (66.0..212.5), y -175.00..175.00 (+-175), z 7.00..49.80 (5.0..50.0; lid top 45.0, jacket top 48.0, keeper hook 49.8)"
   },
   {
    "check": "head without the leading-rail stroke system inside the contract envelope (production)",
-   "status": "fail",
+   "status": "pass",
    "evidence": "tool-checked",
-   "detail": "x 66.20..192.20 (66.0..212.5), y -175.00..175.00 (+-175), z 7.00..70.00 (5.0..50.0; lid top 45.0, jacket top 48.0, keeper hook 70.0)"
+   "detail": "x 66.20..192.20 (66.0..212.5), y -175.00..175.00 (+-175), z 7.00..49.80 (5.0..50.0; lid top 45.0, jacket top 48.0, keeper hook 49.8)"
+  },
+  {
+   "check": "pigtail boots and plug holsters (review M6) above the contract ceiling z 50, forward of the nose-cowl V",
+   "status": "deviation",
+   "evidence": "design note",
+   "detail": "local items above z 50: x 73.0..87.0, y 72.8..86.2, z 46.0..70.0; x 152.0..176.0, y 67.5..91.5, z 45.0..55.0; x 72.0..85.0, y -105.5..-93.0, z 45.0..70.0; x 140.5..164.5, y -111.3..-87.3, z 45.0..55.0; checked free of the body nose docked and over the docking stroke (pigtail rows); the contract envelope needs a local exception (request in CHANGE_REQUESTS.md)"
   },
   {
    "check": "leading rail inside the contract envelope x <= 212.5 (draft6, sprung rail admitted)",
@@ -288,13 +294,13 @@
    "check": "dummy head mass and CG representative of the prototype head (+-10 g, +-3 mm x/y, +-5 mm z)",
    "status": "pass",
    "evidence": "calculated from model volumes x handbook densities",
-   "detail": "dummy 1882 g vs 1882 g; CG offset +0.1 / +0.5 / -2.2 mm; steel ballast 1.72 mm per lane"
+   "detail": "dummy 1882 g vs 1881 g; CG offset +0.1 / +0.5 / -2.2 mm; steel ballast 1.72 mm per lane"
   },
   {
    "check": "head mass vs the 1.67 kg (prototype) / 2.10 kg (production) used in mech_calcs.md",
    "status": "deviation",
    "evidence": "calculated",
-   "detail": "prototype 1882 g, production 2100 g (model volumes, OEM modules assumed 102 g per lane)"
+   "detail": "prototype 1881 g, production 2100 g (model volumes, OEM modules assumed 102 g per lane)"
   },
   {
    "check": "20 N at the front outer window corner: deflection target < 0.5 mm with the lid fitted",
@@ -848,103 +854,17 @@
     ]
    ]
   ],
-  "lead_route_hits": {
-   "W-101 inside head, J2001 -> J1 boot (pin 1, lo": [
-    "j1_blister (production) 4.3 mm3",
-    "j1_blister (prototype) 4.3 mm3",
-    "lid (production) 8.6 mm3",
-    "lid (prototype) 8.6 mm3"
-   ],
-   "W-102 inside head, J2501 -> J2 boot": [
-    "boot_J2 (production) 0.6 mm3",
-    "boot_J2 (prototype) 0.6 mm3",
-    "lid (production) 2.2 mm3",
-    "lid (prototype) 2.2 mm3"
-   ],
-   "W-103 heater element pair: J2601 -> film tail ": [
-    "lid_standoffs (production) 34.1 mm3",
-    "lid_standoffs_11 (prototype) 34.1 mm3"
-   ],
-   "W-103 cut-out pair: J2601 -> thermal cut-out": [
-    "lid_standoffs (production) 19.0 mm3",
-    "lid_standoffs (prototype) 19.0 mm3"
-   ],
-   "W-104 rail switch -> J2002": [
-    "desiccant (production) 109.9 mm3",
-    "desiccant (prototype) 109.9 mm3",
-    "frame (production) 24.5 mm3",
-    "frame_L (prototype) 24.1 mm3",
-    "lid_standoffs (production) 9.9 mm3",
-    "lid_standoffs (prototype) 9.9 mm3",
-    "sw_front (production) 16.9 mm3",
-    "sw_front (prototype) 16.9 mm3",
-    "sw_front_saddle (production) 16.5 mm3",
-    "sw_front_saddle (prototype) 16.5 mm3"
-   ],
-   "W-106 rail switch -> J2003": [
-    "desiccant (production) 109.9 mm3",
-    "desiccant (prototype) 109.9 mm3",
-    "fence_rear (prototype) 1.3 mm3",
-    "frame (production) 116.1 mm3",
-    "frame_L (prototype) 103.2 mm3",
-    "frame_R (prototype) 11.6 mm3",
-    "lid_standoffs (production) 31.0 mm3",
-    "lid_standoffs (prototype) 31.0 mm3",
-    "spreader (production) 5.1 mm3",
-    "spreader (prototype) 5.1 mm3",
-    "sw_front (production) 33.8 mm3",
-    "sw_front (prototype) 33.8 mm3",
-    "sw_front_saddle (production) 33.1 mm3",
-    "sw_front_saddle (prototype) 33.1 mm3"
-   ],
-   "W-105 rail switch -> J2004": [
-    "desiccant (production) 131.8 mm3",
-    "desiccant (prototype) 131.8 mm3",
-    "fence_rear (prototype) 1.3 mm3",
-    "frame (production) 116.5 mm3",
-    "frame_L (prototype) 11.9 mm3",
-    "frame_R (prototype) 103.3 mm3",
-    "lid_standoffs (production) 31.0 mm3",
-    "lid_standoffs (prototype) 31.0 mm3",
-    "spreader (production) 5.1 mm3",
-    "spreader (prototype) 5.1 mm3",
-    "sw_lid (production) 30.1 mm3",
-    "sw_lid (prototype) 30.1 mm3",
-    "sw_lid_saddle (production) 55.7 mm3",
-    "sw_lid_saddle (prototype) 55.7 mm3"
-   ],
-   "W-107 lid switch -> J2201": [
-    "desiccant (production) 164.4 mm3",
-    "desiccant (prototype) 164.4 mm3",
-    "frame (production) 60.5 mm3",
-    "frame_L (prototype) 23.8 mm3",
-    "frame_R (prototype) 35.7 mm3",
-    "lid_standoffs (production) 12.3 mm3",
-    "lid_standoffs (prototype) 12.3 mm3",
-    "sw_lid (production) 15.1 mm3",
-    "sw_lid (prototype) 15.1 mm3",
-    "sw_lid_saddle (production) 27.8 mm3",
-    "sw_lid_saddle (prototype) 27.8 mm3"
-   ],
-   "W-101.S drain -> TP2004": [
-    "lid (production) 11.5 mm3",
-    "lid (prototype) 11.5 mm3"
-   ],
-   "W-102.S drain -> TP2501": [
-    "lid (production) 3.4 mm3",
-    "lid (prototype) 3.4 mm3"
-   ]
-  },
+  "lead_route_hits": {},
   "lead_routes": {
-   "W-101 | inside head, J2001 -> J1 boot (pin 1, longest)": 63.0,
+   "W-101 | inside head, J2001 -> J1 boot (pin 1, longest)": 66.0,
    "W-102 | inside head, J2501 -> J2 boot": 42.0,
-   "W-103 | heater element pair: J2601 -> film tail at the S0 chimney notch": 68.0,
-   "W-103 | cut-out pair: J2601 -> thermal cut-out": 45.0,
+   "W-103 | heater element pair: J2601 -> film tail at the S0 chimney notch": 70.0,
+   "W-103 | cut-out pair: J2601 -> thermal cut-out": 46.0,
    "W-103 | NTC pair: J2601 -> spreader NTC": 35.0,
-   "W-104 | rail switch -> J2002": 99.0,
-   "W-106 | rail switch -> J2003": 336.0,
-   "W-105 | rail switch -> J2004": 346.0,
-   "W-107 | lid switch -> J2201": 150.0,
+   "W-104 | rail switch front -> J2002": 112.0,
+   "W-106 | rail switch side -> J2003": 319.0,
+   "W-105 | rail switch side -> J2004": 328.0,
+   "W-107 | lid switch lid -> J2201": 150.0,
    "W-108 | lane 0 aux GH-6 -> carrier": 22.0,
    "W-112 | lane 0 F0 anode coax: U.FL J101 -> carrier": 44.0,
    "W-112 | lane 0 F0 bias coax: U.FL J102 -> carrier": 47.0,
@@ -965,8 +885,8 @@
    "W-115 | lane 3 F3 bias coax: U.FL J402 -> carrier": 47.0,
    "W-119 | lane 3 R3 anode coax: U.FL J801 -> carrier": 33.0,
    "W-119 | lane 3 R3 bias coax: U.FL J802 -> carrier": 30.0,
-   "W-101.S | drain -> TP2004": 58.0,
-   "W-102.S | drain -> TP2501": 43.0,
+   "W-101.S | drain -> TP2004": 57.0,
+   "W-102.S | drain -> TP2501": 40.0,
    "W-101 | outside head, J1 boot top -> mated plug back (docked route, free length)": 298.0,
    "W-102 | outside head, J2 boot top -> mated plug back (docked route, free length)": 258.0
   },
@@ -1510,13 +1430,13 @@
    ]
   },
   "mass_prototype": {
-   "mass_g": 1881.6,
+   "mass_g": 1881.4,
    "cg_mm": [
     127.19,
     -0.08,
     33.99
    ],
-   "mass_without_pigtails_g": 1761.6,
+   "mass_without_pigtails_g": 1761.4,
    "cg_without_pigtails_mm": [
     126.36,
     0.08,
@@ -1524,7 +1444,7 @@
    ],
    "largest_items_g": {
     "lid": 211.1,
-    "spreader": 200.6,
+    "spreader": 200.5,
     "pcb": 145.0,
     "frame_L": 97.0,
     "frame_R": 95.9,
@@ -1538,22 +1458,22 @@
    }
   },
   "mass_production": {
-   "mass_g": 2100.4,
+   "mass_g": 2100.2,
    "cg_mm": [
     127.79,
-    -0.07,
+    -0.06,
     32.49
    ],
-   "mass_without_pigtails_g": 1980.4,
+   "mass_without_pigtails_g": 1980.2,
    "cg_without_pigtails_mm": [
-    127.08,
+    127.09,
     0.08,
     27.5
    ],
    "largest_items_g": {
     "frame": 432.8,
     "lid": 211.1,
-    "spreader": 200.6,
+    "spreader": 200.5,
     "pcb": 145.0,
     "shoe_L": 62.3,
     "shoe_R": 62.3,
@@ -1566,26 +1486,26 @@
    }
   },
   "mass_dummy": {
-   "mass_g": 1881.8,
+   "mass_g": 1881.6,
    "cg_mm": [
     127.26,
     0.4,
     31.8
    ],
-   "mass_without_pigtails_g": 1761.8,
+   "mass_without_pigtails_g": 1761.6,
    "cg_without_pigtails_mm": [
     126.44,
-    0.59,
+    0.6,
     26.13
    ],
    "largest_items_g": {
     "lid": 211.1,
-    "spreader": 200.6,
+    "spreader": 200.5,
     "dummy_board": 168.7,
-    "S0_ballast": 106.1,
-    "S3_ballast": 106.1,
-    "S1_ballast": 106.1,
-    "S2_ballast": 106.1,
+    "S0_ballast": 106.0,
+    "S3_ballast": 106.0,
+    "S1_ballast": 106.0,
+    "S2_ballast": 106.0,
     "frame_L": 97.0,
     "frame_R": 95.9,
     "shoe_L": 62.3,
@@ -1618,19 +1538,19 @@
     },
     "roll_if_joint_rigid": 0.01611120290691253,
     "modes_hz": {
-     "pitch on the mount": 78.82075852656399,
-     "roll on the mount": 246.12778114582974,
-     "halves rocking about the y = 0 joint": 172.59781905127429,
-     "wing bending": 3361.455522811889
+     "pitch on the mount": 78.82431310552187,
+     "roll on the mount": 246.13888076791113,
+     "halves rocking about the y = 0 joint": 172.6056026933915,
+     "wing bending": 3361.6071143379368
     },
-    "f1_hz": 78.82075852656399,
+    "f1_hz": 78.82431310552187,
     "joint_terms_Nm_per_rad": {
      "spreader alone (2 mm)": 38.413876543209874,
      "lid alone (2 mm)": 39.94498765432098,
      "spreader + lid as a couple through the lid fasteners near the joint (slip model)": 993.100362343998,
      "rear bridge plate (3 x 13 on edge, T-head to T-head)": 280.3209259259259
     },
-    "mass_kg": 1.8816181950669266
+    "mass_kg": 1.8814484959125972
    },
    "prototype, split PA-CF (conditioned, E x 0.5)": {
     "lid fitted (all screws)": {
@@ -1655,19 +1575,19 @@
     },
     "roll_if_joint_rigid": 0.01611120290691253,
     "modes_hz": {
-     "pitch on the mount": 78.82075852656399,
-     "roll on the mount": 246.12778114582974,
-     "halves rocking about the y = 0 joint": 172.59781905127429,
-     "wing bending": 3092.518913134592
+     "pitch on the mount": 78.82431310552187,
+     "roll on the mount": 246.13888076791113,
+     "halves rocking about the y = 0 joint": 172.6056026933915,
+     "wing bending": 3092.658376429046
     },
-    "f1_hz": 78.82075852656399,
+    "f1_hz": 78.82431310552187,
     "joint_terms_Nm_per_rad": {
      "spreader alone (2 mm)": 38.413876543209874,
      "lid alone (2 mm)": 39.94498765432098,
      "spreader + lid as a couple through the lid fasteners near the joint (slip model)": 993.100362343998,
      "rear bridge plate (3 x 13 on edge, T-head to T-head)": 280.3209259259259
     },
-    "mass_kg": 1.8816181950669266
+    "mass_kg": 1.8814484959125972
    },
    "prototype, split PETG-CF frame": {
     "lid fitted (all screws)": {
@@ -1692,19 +1612,19 @@
     },
     "roll_if_joint_rigid": 0.01611120290691253,
     "modes_hz": {
-     "pitch on the mount": 78.82075852656399,
-     "roll on the mount": 246.12778114582974,
-     "halves rocking about the y = 0 joint": 172.59781905127429,
-     "wing bending": 3199.538687606756
+     "pitch on the mount": 78.82431310552187,
+     "roll on the mount": 246.13888076791113,
+     "halves rocking about the y = 0 joint": 172.6056026933915,
+     "wing bending": 3199.6829771709076
     },
-    "f1_hz": 78.82075852656399,
+    "f1_hz": 78.82431310552187,
     "joint_terms_Nm_per_rad": {
      "spreader alone (2 mm)": 38.413876543209874,
      "lid alone (2 mm)": 39.94498765432098,
      "spreader + lid as a couple through the lid fasteners near the joint (slip model)": 993.100362343998,
      "rear bridge plate (3 x 13 on edge, T-head to T-head)": 280.3209259259259
     },
-    "mass_kg": 1.8816181950669266
+    "mass_kg": 1.8814484959125972
    },
    "production, one-piece 6061 frame": {
     "lid fitted (all screws)": {
@@ -1729,12 +1649,12 @@
     },
     "roll_if_joint_rigid": 0.004061785266769044,
     "modes_hz": {
-     "pitch on the mount": 149.20681962041937,
-     "roll on the mount": 465.91715344407976,
-     "halves rocking about the y = 0 joint": 540.8674268316317,
-     "wing bending": 5791.032213347924
+     "pitch on the mount": 149.21143541326626,
+     "roll on the mount": 465.931566840663,
+     "halves rocking about the y = 0 joint": 540.8841588550489,
+     "wing bending": 5791.211362029831
     },
-    "f1_hz": 149.20681962041937,
+    "f1_hz": 149.21143541326626,
     "joint_terms_Nm_per_rad": {
      "spreader alone (2 mm)": 38.413876543209874,
      "lid alone (2 mm)": 39.94498765432098,
@@ -1742,7 +1662,7 @@
      "rear bridge plate (3 x 13 on edge, T-head to T-head)": 280.3209259259259,
      "one-piece aluminium frame walls": 12590.197952071221
     },
-    "mass_kg": 2.1003678814262936
+    "mass_kg": 2.1002379354464455
    }
   },
   "rails": {
@@ -3131,7 +3051,7 @@
    ],
    "thermal_mass_j_per_k": {
     "prototype": 2066,
-    "production": 2209
+    "production": 2208
    },
    "warmup_from_-25c_soak": {
     "prototype": {
@@ -3145,8 +3065,8 @@
     "production": {
      "ua_w_per_k": 0.664,
      "tau_min": 55.0,
-     "warmup_min_30w_12v": 56.438517997675,
-     "warmup_min_20w8_10v": 131.04865714545065,
+     "warmup_min_30w_12v": 56.41296864593317,
+     "warmup_min_20w8_10v": 130.98933226670664,
      "steady_c_heater_stuck_on_15v_at_+20c": 91.0,
      "steady_c_full_30w_at_-25c": 22.0
     }
@@ -3217,9 +3137,9 @@
   }
  },
  "summary": {
-  "pass": 48,
-  "fail": 3,
-  "deviation": 4
+  "pass": 51,
+  "fail": 0,
+  "deviation": 5
  },
- "runtime_s": 631.7
+ "runtime_s": 325.9
 }

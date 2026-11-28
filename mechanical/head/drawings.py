@@ -302,8 +302,8 @@ def fab():
     # ---------------- sheet 6: assembly with balloons and BOM
     Pp = A.build("production")
     fig = D.sheet("HEAD ASSEMBLY, PRODUCTION", "RR-HD-P-000", notes=[
-        "Torques: M2.5 into aluminium 0.45 N m, M3 0.9 N m, M4 (bridge ears) 2.0 N m (A2-70, medium thread-lock on every screw that is not a service screw). Lid: 34 x M3 button + bonded washer, 0.6 N m, centre outward.",
-        "Sealing: lid gasket = conductive silicone elastomer (Ni/graphite) in the wall-top land; cassette gaskets and rib strips = black closed-cell silicone; ports = moulded split grommets; vent = ePTFE M6.",
+        "Torques: M2.5 into aluminium 0.45 N m, M3 0.9 N m, M4 (bridge ears) 2.0 N m (A2-70, medium thread-lock on every screw that is not a service screw). Lid: 35 x M3 button + bonded washer, 0.6 N m, centre outward.",
+        "Sealing: lid gasket = conductive silicone elastomer (Ni/graphite) in the wall-top land; cassette gaskets and rib strips = black closed-cell silicone; pigtails = potted cable-breakout boots on the lid (review M6); vent = ePTFE M6.",
         "End-of-line tests and service access: production/README.md. Datums A, B, C on the shoes (RR-HD-S-111); film plane and standoff GD&T on sheet RR-HD-P-000-ICD."])
     main = [p for p in Pp if p.group in ("frame", "receiver", "deck", "rail", "window") and p.kind != "purchased" or p.name in ("lid_standoffs",)]
     ax = _hlr_ax(fig, (14, 165, 250, 115), compound([p.shape for p in main if p.name not in ("lid", "j1_blister", "keeper")] + [T.pcb()]), "top", "TOP VIEW, LID AND KEEPER REMOVED", margin=14)
@@ -311,7 +311,7 @@ def fab():
              ("spreader", "RR-HD-S-121", "Spreader plate 2 mm", 1, (100, -150)), ("pcb", "EL-RR-HEAD-ACQ", "Head acquisition board", 1, (140, 60)), ("rail_bar", "RR-HD-S-401", "Leading rail bar", 1, (206.5, -60)),
              ("rail_insert_0", "RR-HD-P-411", "Wear insert, reversible 3 / 5 mm", 4, (210.5, -130)), ("guide_rod_L", "RR-HD-S-402", "Guide rod 4 h6", 2, (196, 87.5)), ("bail", "RR-HD-S-403", "Anti-racking bail", 1, (189.7, 60)),
              ("side_rail_L", "RR-HD-S-431/432", "Side rail LH / RH", 2, (130, 174.6)), ("lid_standoffs", "PUR-SO-M3x11", "Lid standoff M3 x 11", len(T.lid_holes()), (183, 130)), ("sw_front", "PUR-D2HW", "D2HW-C201M (front, 2 side, lid)", 4, (183, 87.5)),
-             ("S1_shield_can", "RR-HEAD-SHLD-A", "Lane shield can", 4, (104, 43.75)), ("grommet_J1", "RR-HD-P-511/512", "Port grommet J1 / J2", 2, (71.5, 76.2))]
+             ("S1_shield_can", "RR-HEAD-SHLD-A", "Lane shield can", 4, (104, 43.75)), ("boot_J1", "RR-HD-P-511/512", "Pigtail boot J1 / J2", 2, (80.0, 79.5))]
     offs = [(-20, -18), (-10, 16), (-14, -14), (-22, 12), (0, 22), (16, -8), (18, 10), (16, 14), (18, 22), (-6, 12), (12, 20), (22, 4), (-10, 20), (-14, 22)]
     for k, ((nm, pn, desc, qty, xy), o) in enumerate(zip(items, offs), start=1):
         p2 = tv((xy[0], xy[1], 0))
@@ -414,12 +414,12 @@ def steps():
     img(3, "load the four lane kits from above", s3, s1 + s2, per=per, labels=["floor assembly on the seat shoulder, lower ring, barrier, upper ring, reference assembly, chimney insert; shims as needed"])
     s4 = ["spreader", "rib_gaskets", "board_standoffs", "lid_standoffs", "lid_standoffs_11"] + lanes("pad", "heater")
     img(4, "spreader with heater zones, pads and rib gaskets: front edge under the lip, then screw down", s4, s1 + s2 + s3, explode=(0, 0, 45), labels=["M2.5 x 8 into the rib and rear-zone inserts 0.35 N m; M3 x 8 low-head with insulating washers into the T-heads 0.9 N m"])
-    s5 = ["fence_front", "fence_side_L", "fence_side_R", "fence_rear", "fence_gaskets", "pcb", "sw_front", "sw_front_saddle", "sw_lid", "sw_lid_saddle", "grommet_J1", "grommet_J2", "pigtail_J1", "pigtail_J2", "plug_J1", "plug_J2",
+    s5 = ["fence_front", "fence_side_L", "fence_side_R", "fence_rear", "fence_gaskets", "pcb", "sw_front", "sw_front_saddle", "sw_lid", "sw_lid_saddle", "boot_J1", "boot_J2", "holster_J1", "holster_J2", "pigtail_J1", "pigtail_J2", "plug_J1", "plug_J2",
           "thermal_cutout", "ntc", "desiccant", "vent"] + [f"S{i}_shield_can" for i in range(4)]
-    img(5, "EMI fences, board, shield cans, switches, pigtails and grommets", s5, s1 + s2 + s3 + s4, explode=(0, 0, 40), per={"fence_rear": (-20, 0, 55), "pcb": (0, 0, 70), **{f"S{i}_shield_can": (0, 0, 95) for i in range(4)},
+    img(5, "EMI fences, board, shield cans, switches, pigtail boots and holsters", s5, s1 + s2 + s3 + s4, explode=(0, 0, 40), per={"fence_rear": (-20, 0, 55), "pcb": (0, 0, 70), **{f"S{i}_shield_can": (0, 0, 95) for i in range(4)},
         "pigtail_J1": (-30, 0, 20), "pigtail_J2": (-30, 0, 20), "plug_J1": (-30, 0, 20), "plug_J2": (-30, 0, 20)}, labels=["8 x M2.5 x 5 board screws 0.35 N m; coax pigtails up through the spreader notches (R >= 6 mm)"])
     s6 = ["lid", "lid_gasket", "lid_liner", "j1_blister", "keeper", "keeper_pin"]
-    img(6, "lid with gasket (34 M3 + bonded washers), keeper plate swings down over it", s6, s1 + s2 + s3 + s4 + s5, explode=(0, 0, 40), per={"keeper": (-10, 0, 75), "keeper_pin": (-10, 40, 75)}, labels=["lid screws 0.6 N m, cross pattern from the centre"])
+    img(6, "lid with gasket (35 M3 + bonded washers), keeper plate swings down over it", s6, s1 + s2 + s3 + s4 + s5, explode=(0, 0, 40), per={"keeper": (-10, 0, 75), "keeper_pin": (-10, 40, 75)}, labels=["lid screws 0.6 N m, cross pattern from the centre"])
     allabove = s1 + s2 + s3 + s4 + s5 + s6
     s7 = lanes("cassette", "film", "cassette_gasket")
     img(7, "underside: window cassettes with film and gasket (4 x M2.5 countersunk each)", s7, [k for k in allabove if not k.startswith(("pigtail", "plug"))], explode=(0, 0, -45), azim=-58, elev=-32,
@@ -456,9 +456,9 @@ def steps_production():
         ("lane kits (MJF rings, barrier, chimney insert) from above", [f"S{i}_{k}" for i in range(4) for k in ("floor_module", "spacer_lower", "barrier", "spacer_upper", "ref_module", "floor_carrier", "ref_carrier",
                                                                                                                 "floor_sipm", "ref_sipm", "chimney_insert")], {}),
         ("spreader with heater, pads, rib gaskets; standoffs; board, cans, switches, cables", ["spreader", "rib_gaskets", "board_standoffs", "lid_standoffs", "pcb", "sw_front", "sw_front_saddle", "sw_lid", "sw_lid_saddle",
-                                                                                            "grommet_J1", "grommet_J2", "thermal_cutout", "ntc", "desiccant", "vent"] + [f"S{i}_{k}" for i in range(4) for k in ("pad", "heater", "shield_can")]
+                                                                                            "boot_J1", "boot_J2", "holster_J1", "holster_J2", "thermal_cutout", "ntc", "desiccant", "vent"] + [f"S{i}_{k}" for i in range(4) for k in ("pad", "heater", "shield_can")]
          + [h for h in heads if not h.startswith("hd_lid")], {"pcb": (0, 0, 50), **{f"S{i}_shield_can": (0, 0, 70) for i in range(4)}}),
-        ("lid (34 x M3 + bonded washers), blister, keeper, insulating jacket", ["lid", "lid_gasket", "lid_liner", "j1_blister", "keeper", "keeper_pin", "jacket_top", "jacket_front"] + [h for h in heads if h.startswith("hd_lid")], {"keeper": (-10, 0, 60), "keeper_pin": (-10, 0, 60)}),
+        ("lid (35 x M3 + bonded washers), blister, keeper, insulating jacket", ["lid", "lid_gasket", "lid_liner", "j1_blister", "keeper", "keeper_pin", "jacket_top", "jacket_front"] + [h for h in heads if h.startswith("hd_lid")], {"keeper": (-10, 0, 60), "keeper_pin": (-10, 0, 60)}),
         ("cassettes and leading rail", [f"S{i}_{k}" for i in range(4) for k in ("cassette", "film", "cassette_gasket")] + ["bail", "bail_block_C", "bail_block_L", "bail_block_R", "rail_bar", "bail_clip_L", "bail_clip_R"]
          + [f"rail_insert_{k}" for k in range(4)], {**{f"S{i}_{k}": (0, 0, -40) for i in range(4) for k in ("cassette", "film", "cassette_gasket")}, "rail_bar": (40, 0, 0), **{f"rail_insert_{k}": (60, 0, 0) for k in range(4)}}),
     ]

@@ -26,6 +26,8 @@ def main(argv=None):
     from .rrx import assembly, checks, docs, export, structure
     from .rrx.util import OUT, Part
     OUT.mkdir(exist_ok=True)
+    import shutil
+    shutil.rmtree(OUT / "parts_base_link", ignore_errors=True)        # review o4: no stale STEP files from earlier builds
     print("[1/6] building parts", flush=True)
     parts = assembly.build()
     from .rrx import util
@@ -57,6 +59,11 @@ def main(argv=None):
         for k, (good, txt) in R["summary"].items():
             print(f"  {'PASS' if good else 'FAIL'}  {k}: {txt[:150]}")
         ok = all(v[0] for v in R["summary"].values())
+    if not args.no_checks:
+        from mechanical.common import params as _P
+        from .rrx import routes as _RT
+        _RT.write_yaml(R["routes"], _P.OUT / "cable_routes.yaml", "prototype_x1c (RR-X)")
+        print("  cable routes -> mechanical/common/out/cable_routes.yaml", flush=True)
     print(f"[5/6] documents ({time.time() - t0:.0f} s)", flush=True)
     docs.write_plates(table)
     docs.write_bom(parts, table)

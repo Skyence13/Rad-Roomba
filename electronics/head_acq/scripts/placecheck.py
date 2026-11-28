@@ -140,6 +140,13 @@ def main():
         px0, py0, px1, py1 = layout.PLUG_KO[0][0], layout.PLUG_KO[0][1], layout.PLUG_KO[2][0], layout.PLUG_KO[2][1]
         if ref not in ("J2001", "J2601") and x0 < px1 and px0 < x1 and y0 < py1 and py0 < y1:
             probs.append("plug zone %s" % ref)
+        # stage 4 (CR-H17): nothing in front of the front-edge GH headers (mated plug + crimp to the board edge)
+        for hdr, (fu0, fu1) in layout.front_plug_spans().items():
+            if ref != hdr and x0 < fu1 and fu0 < x1 and y0 < layout.FRONT_PLUG_V[1] and layout.FRONT_PLUG_V[0] < y1:
+                probs.append("front plug zone %s (%s)" % (hdr, ref))
+    for hdr in layout.FRONT_GH:
+        if rects[hdr][3] > layout.FRONT_PLUG_V[0] + 1e-3:
+            probs.append("front header %s courtyard reaches v %.2f (limit %.1f, CR-H17)" % (hdr, rects[hdr][3], layout.FRONT_PLUG_V[0]))
     probs += frame_bond_check(full, byref, rects)
     print("%d placed with courtyard, %d problems" % (len(rects), len(probs)))
     for p in probs:

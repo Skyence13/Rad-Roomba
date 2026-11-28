@@ -6,7 +6,7 @@ RR-HD-S-114,"rear bridge: ties both T-heads across the split, keeper hinge ears"
 RR-HD-S-115,hinged latch keeper plate with hook at x 104 (flips back to release the lid),1,pcs,SS304,machined / sheet,,-,
 PUR-DP3x40,"hinge pin 3 x 40, retained by circlips",1,pcs,SS304,purchased,dowel / hinge pin 3 x 40 with two circlips,UNVERIFIED,
 RR-HD-S-121,one-piece 2 mm spreader / stiffener / FRAME plane (laser cut + tapped),1,pcs,AL6061,machined / sheet,,-,DXF in production/dxf
-RR-HD-S-122,"2 mm aluminium lid (shear panel, EMI top), 34 x M3 + bonded washers (<= 40 mm pitch except the J1 bay, CR-M03)",1,pcs,AL6061,machined / sheet,,-,DXF in production/dxf
+RR-HD-S-122,"2 mm aluminium lid (shear panel, EMI top), 35 x M3 + bonded washers (<= 40 mm pitch except the J1 bay, CR-M03)",1,pcs,AL6061,machined / sheet,,-,DXF in production/dxf
 RR-HD-S-123,1 mm blister plate over the J1 landing opening (8.9 mm internal height),1,pcs,AL6061,machined / sheet,,-,DXF in production/dxf
 RR-HD-S-131,"insulating jacket cap 3 mm closed-cell foam, wipeable skin, PSA on the lid (standard cold configuration)",1,pcs,EPDM-FOAM,machined / sheet,"die-cut 3 mm closed-cell PE/EPDM foam with wipeable PU skin, PSA, rated -40 C (fabricated from DXF / STEP)",UNVERIFIED,standard cold configuration; lid screws pass through 9 mm holes
 RR-HD-S-132,"insulating jacket front band 3 mm, PSA on the frame front face above the bail blocks",1,pcs,EPDM-FOAM,machined / sheet,"3 mm closed-cell foam strip 12.7 x 340 with skin, PSA",UNVERIFIED,standard cold configuration
@@ -47,12 +47,14 @@ RR-HEAD-SHLD-A,"lane shield can 36 x 32 x 5, 0.2 mm tin-plated steel",4,pcs,STEE
 PUR-TCO,"bimetal thermal cut-out in series with the heater, on the spreader tab",1,pcs,MIXED,purchased,"bimetal thermal cut-out, normally closed, opens 45 C, ISOLATED CASE variant (plastic / insulated cap; >= 100 MOhm case-to-terminals at 100 V) (KSD-01F / Airpax 67F class)",UNVERIFIED,"in series with the heater element (low side); M5: bonded on a 0.1 mm polyimide pad PUR-PI-PAD, never screwed metal-to-spreader"
 PUR-DES-1G,"4 desiccant pouches (about 0.5 g each) + indicator card, front strip between the lid bosses",4,pcs,MIXED,purchased,"silica gel pouch about 0.5 g, 4 off, + humidity indicator card",UNVERIFIED,3.0 cm3 space in the front strip
 PUR-NTC-10K,"10 k NTC ring-lug sensor on the spreader (heater regulation, board J-heater connector)",1,pcs,MIXED,purchased,"10 k NTC ring-lug sensor M3, ISOLATED LUG (bead potted, >= 100 MOhm leads-to-lug at 100 V) (Vishay / TDK class)",UNVERIFIED,regulation input of the board heater controller; M5: lug on a 0.1 mm polyimide pad + nylon M3 screw/washer as second barrier
-RR-HD-P-511,split strain-relief grommet (compressed by the lid),1,pcs,TPU,machined / sheet,,-,
-PUR-CABLE-J1,"J1 pigtail cable, 150 mm free length",1,pcs,MIXED,purchased,"shielded PUR cable 4 x 20 AWG + 3 x 24 AWG (heater pair AWG 20, stage-3 H-03), OD 7.5, -40 C flex, 150 mm free length; conductors inside the head thin-wall ETFE / XL-PE, AWG 20 OD <= 1.6 mm (fan-in to J2001 in 9 mm, head_report.md); Micro-Fit 43030-0007 terminals",UNVERIFIED,OD drives the grommet bore
-PUR-M16-8,J1 cable plug envelope,1,pcs,MIXED,purchased,"binder M16 IP67 8-pole male cable connector, shieldable (series 423 / 723 family)",PARTIAL,envelope from mechanical/common/purchased/parts.yaml j1_receptacle
-RR-HD-P-512,split strain-relief grommet (compressed by the lid),1,pcs,TPU,machined / sheet,,-,
-PUR-CABLE-J2,"J2 pigtail cable, 150 mm free length",1,pcs,MIXED,purchased,"shielded PUR cable 4 x 2 x 24 AWG twisted pairs, OD 6.5, -40 C flex, 150 mm free length",UNVERIFIED,OD drives the grommet bore
-PUR-M12-8,J2 cable plug envelope,1,pcs,MIXED,purchased,"binder M12-A 8-pole male cable connector, shieldable (series 763 family)",UNVERIFIED,envelope from parts.yaml j2_receptacle
+RR-HD-P-511,"J1 cable-breakout boot on the lid: jacket clamp + potting, strain relief and clip point (review M6)",1,pcs,PA12-MJF,machined / sheet,,-,
+RR-HD-P-513,J1 plug parking cup on the lid (unmated / docking state),1,pcs,PA12-MJF,machined / sheet,,-,
+PUR-CABLE-J1,J1 pigtail cable (parked shape; docked route checked against the body),1,pcs,MIXED,purchased,"shielded PUR cable 4 x 20 AWG + 3 x 24 AWG (heater pair AWG 20, stage-3 H-03), OD 7.5, -40 C flex, 150 mm free length; conductors inside the head thin-wall ETFE / XL-PE, AWG 20 OD <= 1.6 mm (fan-in to J2001 in 9 mm, head_report.md); Micro-Fit 43030-0007 terminals",UNVERIFIED,"jacket clamped and potted in the J1 boot RR-HD-x-511; free length boot top -> plug back from out/lead_routes.yaml (docked route, review M6)"
+PUR-M16-8,J1 cable plug envelope (parked in its holster),1,pcs,MIXED,purchased,"binder M16 IP67 8-pole male cable connector, shieldable (series 423 / 723 family)",PARTIAL,envelope from mechanical/common/purchased/parts.yaml j1_receptacle
+RR-HD-P-512,"J2 cable-breakout boot on the lid: jacket clamp + potting, strain relief and clip point (review M6)",1,pcs,PA12-MJF,machined / sheet,,-,
+RR-HD-P-514,J2 plug parking cup on the lid (unmated / docking state),1,pcs,PA12-MJF,machined / sheet,,-,
+PUR-CABLE-J2,J2 pigtail cable (parked shape; docked route checked against the body),1,pcs,MIXED,purchased,"shielded PUR cable 4 x 2 x 24 AWG twisted pairs, OD 6.5, -40 C flex; free length from out/lead_routes.yaml",UNVERIFIED,jacket clamped and potted in the J2 boot
+PUR-M12-8,J2 cable plug envelope (parked in its holster),1,pcs,MIXED,purchased,"binder M12-A 8-pole male cable connector, shieldable (series 763 family)",UNVERIFIED,envelope from parts.yaml j2_receptacle
 PUR-VENT-M6,ePTFE breather vent M6 with internal light baffle,1,pcs,MIXED,purchased,"ePTFE membrane vent M6 x 0.75, black housing (GORE / Amphenol LTW class)",UNVERIFIED,
 PUR-M2.5x8-PAN,"ISO 7045 M2.5 x 8 A2, spreader to rear-zone insert",6,pcs,SS304,purchased,,UNVERIFIED,
 PUR-M3x8-LOW,DIN 7984 M3 x 8 A2 + insulating shoulder washer (prototype) / plain washer,8,pcs,SS304,purchased,,UNVERIFIED,
@@ -73,6 +75,7 @@ PUR-PI-TAPE,"polyimide tape 0.1 mm, 30 x 45 mm, on the lid under the keeper (iso
 PUR-PI-PAD,polyimide insulating pads 0.1 mm under the thermal cut-out and the NTC lug (review M5),2,pcs,-,purchased,"polyimide film 0.1 mm with PSA, die-cut pads 8 x 10 (cut-out) and dia 8 (NTC lug)",UNVERIFIED,M5 second insulation barrier on the spreader
 PUR-M3-NYLON,M3 x 6 polyamide screw + polyamide washer for the NTC lug (review M5),1,pcs,-,purchased,,UNVERIFIED,
 PUR-RIVET-2.4,"blind rivet 2.4 Al, J1 blister front edge",2,pcs,-,purchased,,UNVERIFIED,
+PUR-POT-BOOT,"black flexible potting (polyurethane, -40 C class), J1 / J2 boots: jacket end, conductors, J1 AWG 18/20 transition if present (review M6)",2,pcs,-,purchased,,UNVERIFIED,
 PUR-COAX,"SiPM micro-coax pigtail U.FL class, about 60 mm, through the chimney (harness; length per OEM carrier)",16,pcs,-,purchased,,UNVERIFIED,
 PUR-RTV-BLACK,"black RTV, side-switch lead channel potting (2 x 0.1 ml)",1,pcs,-,purchased,,UNVERIFIED,
 PUR-EPOXY-COND,"conductive epoxy, J1 blister bead",1,pcs,-,purchased,,UNVERIFIED,
