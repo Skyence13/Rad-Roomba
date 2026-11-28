@@ -145,7 +145,7 @@ def fasteners():
     # lid perimeter screws (radial into the tongue inserts)
     for i, (g, sgn, pt, n) in enumerate(shells.perim_stations()):
         sf = tuple(pt[k] + 4.2 * n[k] for k in range(3))                   # bottom of the 7.2 mm spot face (shells.perim_screws)
-        F.append(Fastener(f"perim_{i}", "M3", "button", 10.0, sf, tuple(-c for c in n), step="07_lid", washers=[(7.0, 1.0)]))
+        F.append(Fastener(f"perim_{i}", "M3", "button", 10.0, sf, tuple(-c for c in n), step="07_lid", note="ISO 7380-2 flanged button head, O-ring under the flange in the spot face (no washer: width rule)"))
     # grip: foot -> side plate, M5 cap screw from INBOARD into the tapped 6 mm side plate (fit review: the outboard heads could not be
     # reached once the hull and wheels are on); bar screws M6 are modelled as parts (grip_screw_*)
     y0, y1 = D.GRIP_PLATE_Y

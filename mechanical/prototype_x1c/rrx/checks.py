@@ -128,7 +128,7 @@ def sensor_rays(parts):
 
 def service(parts):
     B, Gp, S = P.BATTERY_BAY, P.GRIP, P.SADDLE
-    robot = [p for p in parts if p.group != "tray" and p.name != "spacer_9ah"]
+    robot = [p for p in parts if p.group != "tray" and p.name != "spacer_9ah" and not p.name.startswith("fx_cover_")]   # captive cover screws lift with the cover
     out = {}
     cx0, cx1 = B["cassette_x"]
     out["battery_removal_sweep"] = {"what": "cassette envelope swept 165 mm along -x; door, centre bumper and coupler removed/unmated",

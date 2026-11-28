@@ -178,7 +178,7 @@ def cm5_tray():
     y0, y1 = c["y"]
     zb = c["pcb_z"] - 3.0
     Z1 = D.PLATE_Z[1]
-    t = fuse(box(x0 - 2, x1 - 1.5, 70.0, 92.0, Z1, Z1 + 2.5), box(x0, x1, y0 + 11.0, y1 - 1.0, zb - 2.5, zb))   # base stops short of bridge post 0; deck clear of the tunnel wall (y <= 69)
+    t = fuse(box(x0 - 2, x1 - 1.5, 70.0, 92.0, Z1, Z1 + 2.5), box(x0, x1, y0 + 11.0, y1 - 5.0, zb - 2.5, zb))   # base stops short of bridge post 0; deck clear of the tunnel wall (y <= 69)
     for x in (x0 + 4, x1 - 4):
         t = t.fuse(box(x - 4, x + 4, 71.0, 91.0, Z1, zb - 2.5))
     t = t.clean()

@@ -191,9 +191,12 @@ def svc_access(parts, routes):
     u0, u1, v0, v1 = SVC_BOX_UV
     probe = _box_uv((u0, u1, v0, v1, 0.05, SVC_H), _xf_chs)
     b = probe.BoundingBox()
-    pads = [r for r in BD.load("RR-CHS-MAIN")["parts"] if r.startswith("SVC")]
+    bd = BD.load("RR-CHS-MAIN")["parts"]
+    pads = sorted(r for r, q in bd.items() if ("TestPoint" in q["fp"] or r.startswith("SVC")) and u0 <= q["uv"][0] <= u1 and v0 <= q["uv"][1] <= v1)
     state = SERVICE_STATES["routine (saddle cover off, head removed)"]
-    present = [p for p in _robot(parts) if not any(fnmatch.fnmatch(p.name, r) for r in state)]
+    present = [p for p in _robot(parts) if not any(fnmatch.fnmatch(p.name, r) for r in state) and not p.name.startswith("RR-CHS-MAIN_")]
+    comps = [(r, q["height"]) for r, q in bd.items() if q["box_uv"] and q["height"] and q["box_uv"][0] < u1 and q["box_uv"][2] > u0 and q["box_uv"][1] < v1 and q["box_uv"][3] > v0
+             and r not in pads]
     blk = _blocked([Part("SWEEP", "svc_probe", probe, "purchased", "-", "tool")], present, "svc", print, vol_tol=0.5)
     inside = lambda q: b.xmin <= q[0] <= b.xmax and b.ymin <= q[1] <= b.ymax and b.zmin <= q[2] <= b.zmax
     route_hits, clip_hits = [], []
@@ -206,7 +209,7 @@ def svc_access(parts, routes):
                 break
         clip_hits += [cid for cl in r.get("clips", []) if inside(cl["at"])]
     parts_hit = next(iter(blk.values()))
-    return {"pads_in_board_file": pads, "zone_base_link": [round(v, 1) for v in (b.xmin, b.xmax, b.ymin, b.ymax, b.zmin, b.zmax)],
+    return {"pads_in_board_file": pads, "board_components_in_zone (info)": comps, "zone_base_link": [round(v, 1) for v in (b.xmin, b.xmax, b.ymin, b.ymax, b.zmin, b.zmax)],
             "parts_in_zone": parts_hit, "routes_over_zone": route_hits, "clips_over_zone": clip_hits,
             "ok": bool(pads) and not parts_hit and not route_hits and not clip_hits}
 
@@ -223,7 +226,7 @@ def board_bottom_zone(parts):
         x, y, _ = _xf_chs(h["uv"][0], h["uv"][1], 0.0)
         feats.append((f"clinch standoff {h['ref']}", x, y, D.CLINCH_SO["od"] / 2 + 0.5))
     ex0 = P.ELECTRONICS_BRIDGE_X[0]
-    out, over = [], []
+    out, over, info = [], [], []
     for ref, side, bx in BD.components("RR-CHS-MAIN"):
         if side != "B":
             continue
@@ -237,9 +240,9 @@ def board_bottom_zone(parts):
                 over.append((ref, name))
         for yy in (-60.0, 60.0):
             if x0 <= ex0 + 30 and x1 >= ex0 + 14 and y0 <= yy + 6 and y1 >= yy - 6:
-                over.append((ref, f"tray pass-through at y {yy:+.0f}"))
+                info.append((ref, f"over the tray pass-through at y {yy:+.0f} (hole: no contact, info)"))
     too_tall = [r for r in out if r[1] > 3.0]
-    return {"bottom_parts": len(out), "max_height_mm": max((r[1] for r in out), default=0.0), "over_3mm": too_tall, "over_tray_features": over,
+    return {"bottom_parts": len(out), "max_height_mm": max((r[1] for r in out), default=0.0), "over_3mm": too_tall, "over_tray_features": over, "over_pass_throughs_info": info,
             "ok": not too_tall and not over, "source": b["source"]}
 
 

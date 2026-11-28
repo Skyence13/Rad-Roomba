@@ -33,6 +33,10 @@
         "default": 30.0,
         "maximum": 100.0
       },
+      "scan_speed_m_s": {
+        "commanded": 0.1,
+        "note": "must not exceed the calibration's speed_m_s.max minus the speed-control tolerance"
+      },
       "head_calibration_id": "DEMO-CAL-SYNTH-0001",
       "criterion_basis_and_averaging_area_cm2": null,
       "minimum_patch_shape_and_dimensions_cm": null,

@@ -5,6 +5,14 @@ All calibration and profile data are synthetic (`field_use_approved: false`); th
 profile is present and unconfigured. Observed results are in the verification log below and in
 `evidence/*/evidence.json`; this file says what exists, what is thin and what is missing.
 
+## Session 2026-11-28 b (MODEL.md revision 6, lead tasks 1-6) - IN PROGRESS
+
+Resume notes: tasks in order (1) rev 6 statistic in rr_core (one-sided local-linear reference, N_min per test set, search stage
+one pooled sub-window N_scan with lane ratios + reuse + pre-roll, exact multi-lane predictive null; analyst vectors
+`analysis/radiometry/results/rev5_predictive_vectors.json` in a test); (2) calibration/profile refresh script + staleness test +
+schema validation, speed_m_s as a maximum; (3) recorded evaluation on a worker thread with progress; (4) `tools/test.sh ros` +
+stand-alone nodes; (5) independent rrrad cross-check of exported cells; (6) full verification.  Log:
+
 ## Session 2026-11-28 (data-path review IB-72, MODEL.md rev 5, head 0.6.0, chassis stage 4/5) - DONE, final runs below
 
 Resume notes (keep current; a usage limit may stop this work):

@@ -455,14 +455,18 @@ def combine(stats: list, alpha: float, beta: float, decider: Decider | None = No
     dec.footprint_dilution = [float(np.dot(g.w * g.w, g.tf) / np.dot(g.w, g.tf)) for g in lanes]
     use = [(g, e) for g, e in zip(lanes, est) if g.U0 is not None]
     dec.excluded_lanes = [g.unit for g in lanes if g.U0 is None]
-    dec.gradient_lanes = [g.unit for g, _ in use if (g.u0_rec or {}).get("status") == "GRADIENT"]
+    dec.one_sided_lanes = [g.unit for g, _ in use if (g.u0_rec or {}).get("one_sided")]       # MODEL.md rev 6
     if not use:
         dec.status, dec.status_text = "NO_DECISION_REF", NO_DECISION_REF
         return dec
     m = len(use)
     dec.m = m
-    dec.alpha_comb = ALPHA_SPLIT_COMBINED * alpha
-    dec.alpha_lane = (1.0 - ALPHA_SPLIT_COMBINED) * alpha / m
+    if m == 1:
+        # MODEL.md rev 6: for m = 1 the combined and the lane test are the same statistic: ONE test at alpha
+        dec.alpha_comb = dec.alpha_lane = alpha
+    else:
+        dec.alpha_comb = ALPHA_SPLIT_COMBINED * alpha
+        dec.alpha_lane = (1.0 - ALPHA_SPLIT_COMBINED) * alpha / m
     keys = tuple(decider._lane_key(g) for g, _ in use)
     c, t_c, ok_c, meth_c = decider.threshold(keys, dec.alpha_comb)
     dec.c, dec.D_star, dec.method, dec.check_ok = [float(x) for x in c], float(t_c), meth_c, bool(ok_c)
@@ -470,7 +474,7 @@ def combine(stats: list, alpha: float, beta: float, decider: Decider | None = No
     flagged = ["combined"] if S > t_c else []
     lane_rows = []
     for ci, (g, e), key in zip(c, use, keys):
-        _c1, t_i, ok_i, meth_i = decider.threshold((key,), dec.alpha_lane)
+        _c1, t_i, ok_i, meth_i = decider.threshold((key,), dec.alpha_lane) if m > 1 else (c, t_c, ok_c, meth_c)
         dec.check_ok = dec.check_ok and bool(ok_i)
         hit = e["D"] > t_i
         if hit:

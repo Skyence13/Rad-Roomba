@@ -372,7 +372,7 @@ def cheek_fairing(s):
         f = f.cut(cyl(D.CLEAR["M3"] / 2, 20, (D.GRIP_BAR_X, y0 - 1, z), (0, 1, 0)))
         f = f.cut(cyl(3.2, 2.2, (D.GRIP_BAR_X, y1 - 2.0, z), (0, 1, 0)))
     f = f.cut(tof_pocket(t["xyz"], t["dir"], kind="look_f"))
-    f = f.cut(box(-15.0, -1.0, 87.5, 94.0, 95.0, 156.0))                                                # M3: plug + lead drop from the seat relief to the roof slot (x -15..-5)
+    f = f.cut(box(-13.0, -1.0, 87.5, 94.0, 95.0, 156.0))                                                # M3: plug + lead drop from the seat relief to the roof slot (x -15..-5)
     uo = cached(["UO", P.BODY_ROWS["upper_outer"]], lambda: loft(P.BODY_ROWS["upper_outer"]))
     f = f.cut(uo)                                                                                      # sits on the shoulder roof, covers the plate slot
     return f if s > 0 else mirror_y(f)

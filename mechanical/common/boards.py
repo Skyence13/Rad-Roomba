@@ -29,7 +29,7 @@ PLUG_MARGIN = 1.0    # mm added all round to every mated-plug / wire-exit estima
 # family -> (match in the footprint name, plug length beyond the header in the mating direction, straight wire run before a bend,
 #            minimum wire bend radius of the conductors leaving the plug).  ESTIMATES, recalled family values: UNVERIFIED.
 FAMILIES = [
-    ("JST GH", "JST_GH", 3.0, 6.0, 3.0),
+    ("JST GH", "JST_GH", 3.0, 4.0, 3.0),
     ("Molex CLIK-Mate", "CLIK-Mate", 4.0, 6.0, 3.0),
     ("Molex Micro-Fit 3.0", "Micro-Fit", 12.0, 6.0, 6.0),
     ("Molex Mini-Fit Jr", "Mini-Fit", 15.0, 12.0, 8.0),

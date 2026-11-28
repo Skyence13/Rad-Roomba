@@ -26,15 +26,17 @@ from .estimator import kappa
 
 N_MIN_TABLE = ((1e-2, 30), (1e-3, 75), (1e-4, 125), (1e-6, 200))     # MODEL.md rev 5 section 3
 MAX_SPAN_M = 2.0
-GRADIENT_LIMIT = 0.02
+GRADIENT_LIMIT = None      # revision 5 guard removed in revision 6
+N_SCAN_TABLE = ((1e-2, 25), (1e-3, 50), (1e-5, 105))   # MODEL.md rev 6 search stage
+REUSE_MAX_M, REUSE_MAX_S = 2.0, 600.0
 IMPL_NOTES = {
     "dwell": "the dwell of a lane is the contiguous run of the cell's member gates (sequence numbers) holding the largest weight of that lane in the attachment; sub-windows are built outward from its edges, nearest first, with every member gate of the cell (any lane, any pass) contributing nothing",
-    "n_min_alpha": "N_min is chosen for the smallest alpha of the decision's tests (0.2 alpha / m for the per-lane tests); below 1e-6: 200 (z_alpha / z_1e-6)^2 (computed)",
+    "n_min_alpha": "N_min for the smallest alpha of the tests sharing the reference: 0.2 alpha / m for m >= 2; m = 1 is one test at alpha (scan cell or recount); below 1e-6: 200 (z_alpha / z_1e-6)^2 (computed)",
     "span": "span of a sub-window = travel distance (path length of the gate mid poses) from the dwell edge to its far end; the lane source is used only if every used sub-window spans <= 2 m",
-    "gradient": "relative difference of the two sub-window means per metre between their centres; one-sided windows: bias = U_null / (linear extrapolation of the two means to the dwell centre) - 1, |bias| > 2 % -> sensitivity insufficient - reference gradient; zero separation -> no gradient (0)",
+    "gradient": "relative difference of the two sub-window means per metre between their centres (stored); one-sided (rev 6): U_null = max(U_B, 1.5 U_B - 0.5 U_A), N_eff = 1/(2.25/n_B + 0.25/n_A) when extrapolated; decision marked `one-sided reference`; a flagged one-sided cell needs a recount before it is reported as an investigation",
     "pool": "pooled: sum of the four lanes' valid reference counts and live times (a per-lane rate); lane ratio = (n_lane/t_lane)/(n_all/t_all) over the attachment outside the cell's dwell; U_null = ratio x pooled sub-window mean; posterior Gamma(N_eff + 1/2, scale U_null/N_eff)",
     "recount": "recount: the other three lanes' reference counts during the recount gates, ratio-scaled (ratio qualified when lane and other-lane counts over the attachment outside the recount are >= N_min each), N_eff = 1/(1/N_others + 1/n_lane + 1/n_others,att); otherwise the lane's own two-sub-window rule around the recount",
-    "search": "search stage: two past sub-windows before the trailing dwell, larger mean (lane, else pooled); no gradient guard (provisional, controls recounts only)",
+    "search": "search stage (rev 6): ONE past four-lane pooled sub-window of N_scan(alpha_scan) counts (25 / 50 / 105), scaled by the calibration record's lane ratio (its relative uncertainty u_r adds 1/u_r^2 counts in quadrature), predictive threshold; reference gates reused across a pause or re-arm only within the attachment, within 2 m of the head and younger than 10 min; no alarm before the sub-window is complete",
 }
 
 
@@ -203,13 +205,27 @@ def u_null(s: Series, lane: int, dwell_seqs, alpha: float, past_only=False, max_
         out.update(status="UNAVAILABLE", source=None, U0=None, N_post=None, T_post=None)
         return out
     source, (w1, w2, two) = found
-    sel = w1 if (w1["mean"] or 0) >= (w2["mean"] or 0) else w2
     g, bias = _gradient(w1, w2, dwell_c, two)
-    out.update(source=source, windows=[w1, w2], two_sided=two, selected=0 if sel is w1 else 1,
-               gradient_per_m=g, projected_bias=bias)
+    out.update(source=source, windows=[w1, w2], two_sided=two, gradient_per_m=g, one_sided=not two)
+    if two:
+        # two-sided: the larger of the two sub-window means, the predictive count of that sub-window
+        sel = 0 if (w1["mean"] or 0) >= (w2["mean"] or 0) else 1
+        Ub, Nb = [w1, w2][sel]["mean"], [w1, w2][sel]["n"]
+        out.update(selected=sel, estimator="larger-of-two-sub-windows")
+    else:
+        # MODEL.md rev 6: one-sided, near sub-window B (adjacent to the dwell) = w1, far A = w2:
+        # U_null = max(U_B, 1.5 U_B - 0.5 U_A); N_eff = 1 / (2.25/n_B + 0.25/n_A) when the extrapolation is used, else n_B
+        UB, UA, nB, nA = w1["mean"], w2["mean"], w1["n"], w2["n"]
+        ext = 1.5 * UB - 0.5 * UA
+        if ext > UB:
+            Ub, Nb = ext, 1.0 / (2.25 / nB + 0.25 / nA)
+            out.update(selected=0, estimator="one-sided local-linear extrapolation 1.5 U_B - 0.5 U_A", extrapolated=True)
+        else:
+            Ub, Nb = UB, nB
+            out.update(selected=0, estimator="one-sided near sub-window U_B", extrapolated=False)
+    out["projected_bias"] = bias
     if source == "lane":
-        U0 = sel["mean"]
-        out.update(U0=U0, N_post=sel["n"], T_post=sel["t_s"])
+        out.update(U0=Ub, N_post=Nb, T_post=Nb / Ub)
     else:
         n_l, t_l = s.totals(lane, None if exclude_seqs else (i0, i1))
         n_a, t_a = s.totals(None, None if exclude_seqs else (i0, i1))
@@ -217,10 +233,10 @@ def u_null(s: Series, lane: int, dwell_seqs, alpha: float, past_only=False, max_
             out.update(status="UNAVAILABLE", source=None, U0=None, N_post=None, T_post=None)
             return out
         ratio = (n_l / t_l) / (n_a / t_a)
-        U0 = ratio * sel["mean"]
-        n_eff = 1.0 / (1.0 / sel["n"] + 1.0 / n_l + 1.0 / n_a)
+        U0 = ratio * Ub
+        n_eff = 1.0 / (1.0 / Nb + 1.0 / n_l + 1.0 / n_a)
         out.update(U0=U0, N_post=n_eff, T_post=n_eff / U0, lane_ratio=ratio, ratio_counts=[n_l, n_a])
-    out["status"] = "GRADIENT" if (not two and not past_only and abs(bias) > GRADIENT_LIMIT) else "OK"
+    out["status"] = "OK"
     return out
 
 
@@ -251,3 +267,35 @@ def recount_u_null(s: Series, lane: int, count_seqs, alpha: float):
     rec = u_null(s, lane, (lo, hi), alpha)
     rec["fallback"] = "own-lane (ratio not qualified or too few counts in the other lanes)"
     return rec
+
+
+def n_scan(alpha: float) -> int:
+    for a, n in N_SCAN_TABLE:
+        if alpha >= a:
+            return n
+    return int(math.ceil(105.0 * (kappa(alpha) / kappa(1e-5)) ** 2))
+
+
+def search_u_null(s: Series, lane: int, dwell_seqs, alpha: float, lane_ratio=1.0, ratio_rel_u=0.0, usable=None):
+    """MODEL.md rev 6 search stage: one past pooled sub-window of N_scan(alpha) counts adjacent to the trailing dwell, from
+    gates allowed by `usable(seq)` (reuse rule), scaled by the calibration record's lane ratio."""
+    need = n_scan(alpha)
+    lo, _hi = dwell_seqs
+    i0 = bisect.bisect_left(s.seqs, lo)
+    n = t = 0.0
+    j = i0 - 1
+    while j >= 0 and n < need:
+        if usable is None or usable(s.seqs[j]):
+            n += float(s.N[:, j].sum())
+            t += float(s.T[:, j].sum())
+        elif n > 0:
+            break                                  # the sub-window must be contiguous in the usable record
+        j -= 1
+    out = {"n_scan": need, "dwell_seq": list(dwell_seqs), "source": "pooled-past", "lane_ratio": lane_ratio}
+    if n < need or t <= 0:
+        out.update(status="UNAVAILABLE", U0=None, N_post=None, T_post=None, n=n)
+        return out
+    U0 = lane_ratio * n / t
+    n_eff = 1.0 / (1.0 / n + ratio_rel_u ** 2) if ratio_rel_u > 0 else n
+    out.update(status="OK", U0=U0, N_post=n_eff, T_post=n_eff / U0, n=n, t_s=t, seq_lo=s.seqs[j + 1], seq_hi=s.seqs[i0 - 1])
+    return out

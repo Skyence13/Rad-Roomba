@@ -29,6 +29,16 @@ from .planner import approach, transit
 STATES = ("CONFIGURE", "READY", "ARMED", "SCAN", "HOLD", "REVIEW", "ABORTED", "SERVICE")
 
 
+def _lane_ratio(cal, lane):
+    """Lane reference-rate ratio to the four-lane mean from the calibration record (MODEL.md rev 6 search stage) and its
+    relative standard uncertainty; 1.0 and 0 when the record carries none."""
+    rr = (cal.record.get("reference_rate_ratios") or {}) if cal is not None else {}
+    v = rr.get("values")
+    if not v or len(v) <= lane:
+        return 1.0, 0.0
+    return float(v[lane]) / (sum(v) / len(v)), float(rr.get("relative_standard_uncertainty") or 0.0)
+
+
 class MissionConfig:
     def __init__(self, op_mode="COMMISSIONING", method="CONTINUOUS_SCAN", speed=0.10, recover_back_m=0.15,
                  max_task_attempts=2, credit_grace_s=2.0, count_policy="INLINE", scaler_mode="PRESET_TIME",
@@ -439,7 +449,7 @@ class Mission:
         else:
             self._hold_ctx = {"phase": "WALL_RETURN", "pose": tuple(pose) if pose else None, "reason": why}
 
-    def _search_reference_ready(self):
+    def _search_reference_ready_rev5(self):
         """MODEL.md rev 5 search stage: a past-only reference of two sub-windows of N_min counts (four-lane pool) must
         exist before the search can alarm; at alpha_scan 1e-5 (N_min 200) that is about 25 s of head data after arming at
         4 1/s per lane.  The robot waits stationary at the pass start until then (logged), instead of searching blind."""
@@ -452,16 +462,42 @@ class Mission:
         n = sum(v[0] for row in proc._ref.get(a_idx, {}).values() for v in row if v is not None)
         return n >= 2 * unull.n_min(alpha) + 20
 
+    def _search_reference_ready(self):
+        """MODEL.md rev 6: the ratemeter alarms only once its one past pooled sub-window of N_scan(alpha_scan) counts exists
+        (same attachment, within 2 m, < 10 min); the robot waits at the first pass start until then (pre-roll N_scan / (4 U))."""
+        from rr_core import unull
+        proc = self.app.pipeline.proc
+        if not proc.sessions:
+            return False
+        a_idx = len(proc.sessions) - 1
+        alpha = self.cfg.ratemeter_alpha or proc.profile["alpha_per_decision"]
+        ref = dict(proc._ref.get(a_idx, {}))
+        ref.update((getattr(self, "_rm_ref", {}) or {}).get(proc.sessions[a_idx]["attachment_session_id"], {}))
+        tnow = self.app.clock.now_us()
+        n = 0.0
+        for q in sorted(ref, reverse=True):
+            tq = (proc._gate_t.get((a_idx, q)) or (None, None))[1] or (getattr(self, "_rm_t", {}).get(proc.sessions[a_idx]["attachment_session_id"], {}).get(q))
+            if tq is not None and tnow - tq > unull.REUSE_MAX_S * 1e6:
+                break
+            n += sum(v[0] for v in ref[q] if v is not None)
+            if n >= unull.n_scan(alpha):
+                if not hasattr(self, "_preroll_s"):
+                    t_arm = self.__dict__.get("_t_wait_start")
+                    self._preroll_s = None if t_arm is None else (tnow - t_arm) * 1e-6
+                return True
+        return False
+
     def _ph_SEARCH_REFERENCE(self):
         if self._search_reference_ready():
-            self._log("search_reference_ready")
+            self._log("search_reference_ready", waited_s=(self.app.clock.now_us() - getattr(self, "_t_wait_start", self.app.clock.now_us())) * 1e-6)
             self._begin_pass()
 
     def _begin_pass(self):
         t = self.task
         if self.cfg.method == "SEARCH_THEN_COUNT" and not self._search_reference_ready():
             if self.phase != "SEARCH_REFERENCE":
-                self._log("search_reference_wait", why="past reference below 2 x N_min for the search stage")
+                self._t_wait_start = self.app.clock.now_us()
+                self._log("search_reference_wait", why="past pooled reference below N_scan(alpha_scan) for the search stage")
             self.phase = "SEARCH_REFERENCE"
             return
         t["phase_reached"] = "PASS"
@@ -634,6 +670,8 @@ class Mission:
         seq = gate["sequence"]
         lanes = sorted(gate["lanes"], key=lambda l: l["id"])
         ref[seq] = [(l["ref"][0], l["ref"][1] * 1e-6) if proc._ref_valid(l) else None for l in lanes]
+        tmap = self.__dict__.setdefault("_rm_t", {}).setdefault(att, {})
+        tmap[seq] = gate["t1_us"]
         try:
             p = a.pipeline.traj.at(0.5 * (gate["t0_us"] + gate["t1_us"])) if gate["t0_us"] is not None else None
             if p is not None:
@@ -644,6 +682,8 @@ class Mission:
             ref.pop(old, None)
             geo.pop(old, None)
         series = None
+        usable = None
+        g_full = {}
         dec = self.__dict__.setdefault("_rm_decider", est.Decider())
         for lane in lanes:
             n = lane["id"]
@@ -671,7 +711,19 @@ class Mission:
                 g_full = {q: g[:2] for (aa, q), g in proc._gate_geo.items() if aa == a_idx and q > seq - 3000}
                 g_full.update(geo)
                 series = unull.Series.build(full, g_full)
-            rec = unull.u_null(series, n, (win[0][6], win[-1][6]), alpha, past_only=True)
+            if usable is None:
+                here = g_full.get(seq) or (geo.get(seq) if geo else None)
+                now_us = gate["t1_us"] or 0.0
+
+                def usable(q, here=here, now_us=now_us):
+                    # MODEL.md rev 6 reuse rule: same attachment (this series), within 2 m of the head, < 10 min old
+                    tq = tmap.get(q) or (proc._gate_t.get((a_idx, q)) or (None, None))[1]
+                    if tq is None or now_us - tq > unull.REUSE_MAX_S * 1e6:
+                        return False
+                    pq = g_full.get(q)
+                    return here is None or pq is None or math.hypot(pq[0] - here[0], pq[1] - here[1]) <= unull.REUSE_MAX_M
+            ratio, ru = _lane_ratio(cal_a, n)
+            rec = unull.search_u_null(series, n, (win[0][6], win[-1][6]), alpha, lane_ratio=ratio, ratio_rel_u=ru, usable=usable)
             if rec.get("U0") is None:
                 self.ratemeter[n] = {"rate": N_F / T_F, "net": r, "alarm_level": None, "alarm": False, "D": r / c.K,
                                      "t_us": gate["t1_us"], "u0": "unavailable (past reference too short)"}

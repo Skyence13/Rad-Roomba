@@ -381,8 +381,8 @@ GRIP["bar_top_z"] = GRIP["bar_bottom_z"] + GRIP["bar_z"]
 LIDAR_POSE = {"xy": (-150.0, 0.0), "base_z": 150.0}          # behind the grip, on the battery hump
 # LiDAR lead (fit review M4): the hump has no room inside (cassette top z 144 under the 147 roof), so the IP65 lead runs outside
 # over the hump side and enters the left rear deck through an M12 cable gland beside the hump (x -120, y 72)
-LIDAR_GLAND_XY = (-120.0, 72.0)
-CM5_POSE = {"x": (-154.0, -69.0), "y": (59.0, 115.0), "pcb_z": 47.0}   # left side bay; lowered 8 mm (fit review M2: room for the 40-pin plug under the selector / REARM bodies)
+LIDAR_GLAND_XY = (-120.0, 80.0)
+CM5_POSE = {"x": (-154.0, -69.0), "y": (59.0, 115.0), "pcb_z": 49.0}   # left side bay; lowered 6 mm (fit review M2: room for the 40-pin plug under the selector / REARM bodies)
 DRIVE_POD = {"inner_r": 21.0, "outer_r": 23.5, "end_y": 119.5}   # motor pod on each flank behind the tyre (local growth, hidden by the wheel)
 ELECTRONICS_BRIDGE_X = (-69.0, 35.0)
 GLOVE_CLEARANCE_CONNECTOR = 45.0     # required free radius around J1/J2 coupling nuts

@@ -64,8 +64,11 @@ Written to disk so far (both builds share it through the rrx code):
   FINDINGS with reasons; receptacle corridors and interface text in mechanical/common.
 - Dev runs (prototype, before the last hull change): interference 2 -> 0 small clashes expected after the tunnel-foot move;
   fastener access 96 fasteners / 114 tool columns, 0 blocked; service sweeps: board, CM5, all main-board plugs free.
-- RUNNING / NOT YET CONFIRMED: full prototype build with every new check (started 2026-11-28 after the container restart),
-  then the production build (cold skins about 60 min) and the common build.
+- Full prototype build run 1 with every new check (2026-11-28): exit 1. Fastener access PASS (96 fasteners, 114 columns), service
+  sweeps PASS, receptacle depth PASS, interference 1 clash (LiDAR gland boss vs hump: gland moved to y 80); the remaining FAILs were
+  interactions of old checks with the new solids (cover screws in the cover-lift sweep, board screws in the CCR-E08 boxes, plugs in
+  the harness corridors / containment, perimeter screw washers 0.23 mm over the width rule) and 8 routes; all addressed in run 2.
+- RUNNING: prototype build run 2; then production build (cold skins about 60 min) and the common build.
 
 ## Run times (shared 4-core machine)
 

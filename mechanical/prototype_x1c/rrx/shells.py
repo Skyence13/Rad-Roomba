@@ -192,7 +192,7 @@ def lower_master():
                      box(D.FOOT_X[0] - 1, D.FOOT_X[1] + 1, s * 60.0, s * (D.GRIP_PLATE_Y[1] + 0.6), Z1 - 0.1, Z1 + 26.5))
         sh = cut(sh, *internal_clearance())
         return sh.clean()
-    return cached(["lower_master", 14, R, D.PLATE_INSET, D.BEAM_X, D.BEAM_HALF_Y, B, D.TONGUE, D.HATCH_JAMB, D.POD_Y0, D.FOOT_X, D.GRIP_PLATE_Y, P.RECEIVER["chin_cut"]], b)
+    return cached(["lower_master", 15, R, D.PLATE_INSET, D.BEAM_X, D.BEAM_HALF_Y, B, D.TONGUE, D.HATCH_JAMB, D.POD_Y0, D.FOOT_X, D.GRIP_PLATE_Y, P.RECEIVER["chin_cut"]], b)
 
 
 def internal_clearance():
@@ -209,7 +209,7 @@ def internal_clearance():
     tools.append(front_bulkhead())                                                                             # bulkhead + latch-arm pedestals
     wx0, wx1, wy0, wy1 = CLIFF_WINDOW                                                                         # fit review C4: cable rise above the
     for s in (1, -1):                                                                                          # cliff-pod bays and the dock grommet
-        tools.append(box(wx0, wx1, s * (wy0 - 1.0), s * 101.5, Z1 - 0.1, Z1 + 26.0).intersect(LI()))
+        tools.append(box(wx0, wx1, s * (wy0 - 1.0), s * 101.5, Z1 - 0.1, Z1 + 26.0))
     tools.append(cyl(7.0, 26.0, (D.DOCK_GROMMET[0], D.DOCK_GROMMET[1], Z1 - 0.1)))
     return tools
 
@@ -335,14 +335,14 @@ def shoulder(s):
         p = p.cut(LOOK_SLOT)                                                                                        # look-ahead ToF lead slot under the fairing nose (M3)
         p = p.cut(tongue_keepout())
         return perim_screws(p, "shoulder", (1,))
-    p = cached(["shoulder", 18, DECK_JOINT, DOWELS, R, D.X_NOSE, D.X_DECK, PERIM_DEG, COVER_SCREWS], b)
+    p = cached(["shoulder", 19, DECK_JOINT, DOWELS, R, D.X_NOSE, D.X_DECK, PERIM_DEG, COVER_SCREWS], b)
     return p if s > 0 else mirror_y(p)
 
 
 HUMP_SCREW_X = (-212.0, -168.0, -124.0, -84.0)
 # fit review M3: the look-ahead ToF plug and cable drop out of the fairing nose through a 10 x 7 mm slot in the shoulder roof
 # ahead of the side plate (x -15..-5, y 87..94: no side plate there above z 92); grommet / edge protector in the slot.
-LOOK_SLOT = box(-15.0, -5.0, 87.0, 94.0, 90.0, 220.0)
+LOOK_SLOT = box(-12.0, -2.0, 87.0, 94.0, 90.0, 220.0)
 
 
 def _deck_feats(p, s):
@@ -408,7 +408,7 @@ def rear_deck(s):
         p = p if s > 0 else mirror_y(p)
         p, feats = _deck_feats(p, s)
         return _features(p, feats).cut(tongue_keepout())                 # features (ToF seats) must clear the hull tongue too
-    key = ["rear_deck", tag, 24, COVER_SCREWS, S.SEAT, R, D.X_DECK, HUMP_X, PERIM_DEG, P.TOF_SENSORS, P.PANEL_CONTROLS, P.CHARGE_INLET, D.BUMPER_DIR]
+    key = ["rear_deck", tag, 25, COVER_SCREWS, S.SEAT, R, D.X_DECK, HUMP_X, PERIM_DEG, P.TOF_SENSORS, P.PANEL_CONTROLS, P.CHARGE_INLET, D.BUMPER_DIR]
     if tag == "r":
         key.append(("inlet_seat", S.INLET_COVER_T, 2))
     return cached(key, b)
@@ -495,7 +495,7 @@ def lower_piece(front, s):
         return p.clean()
 
     def b():
-        p = cached(["lower_base", front, 17, SPLICE_Z, R, D.X_LOWER, PERIM_DEG, D.TONGUE, D.POSTS, P.CM5_POSE], base)
+        p = cached(["lower_base", front, 18, SPLICE_Z, R, D.X_LOWER, PERIM_DEG, D.TONGUE, D.POSTS, P.CM5_POSE], base)
         p = p if s > 0 else mirror_y(p)
         if not front:
             blk, hole = bumper_switch_seat(s)
@@ -507,7 +507,7 @@ def lower_piece(front, s):
                 a, c, _ = S.device_seat(pt, n, hole_d=12.2, face_d=20.0, boss_d=24.0, notch=False, panel_t=4.0)
                 p = p.fuse(a.intersect(LO())).cut(c)
         return p
-    return cached(["lower_piece", tag, 19, S.SEAT, R, D.X_LOWER, PERIM_DEG, P.TOF_SENSORS, D.HATCH_JAMB], b)
+    return cached(["lower_piece", tag, 20, S.SEAT, R, D.X_LOWER, PERIM_DEG, P.TOF_SENSORS, D.HATCH_JAMB], b)
 
 
 # ----------------------------------------------------------------------------------------------- hatch frame and door
@@ -570,7 +570,7 @@ def lower_hull_one_piece():
         return p.clean()
 
     def b():
-        p = cached(["lower_one_base", 3, R, PERIM_DEG, D.TONGUE, D.POSTS, P.CM5_POSE], base)
+        p = cached(["lower_one_base", 4, R, PERIM_DEG, D.TONGUE, D.POSTS, P.CM5_POSE], base)
         for s in (1, -1):
             tag = "L" if s > 0 else "R"
             blk, hole = bumper_switch_seat(s)
@@ -580,7 +580,7 @@ def lower_hull_one_piece():
         pt, n = skin_frame(-136.0, 55.0, "outer", "lower")              # membrane breather (M12 x 1.5 ePTFE vent), right rear quarter
         a, c, _ = S.device_seat(pt, n, hole_d=12.2, face_d=20.0, boss_d=24.0, notch=False, panel_t=4.0)
         return p.fuse(a.intersect(LO())).cut(c).clean()
-    return cached(["lower_one", 4, S.SEAT, R, PERIM_DEG, P.TOF_SENSORS, D.HATCH_JAMB], b)
+    return cached(["lower_one", 5, S.SEAT, R, PERIM_DEG, P.TOF_SENSORS, D.HATCH_JAMB], b)
 
 
 def upper_shell_one_piece():
@@ -603,12 +603,12 @@ def upper_shell_one_piece():
         return n.cut(tongue_keepout()).clean()
 
     def b():
-        p = cached(["upper_one_base", 5, R, SAD, B, HUMP_X, LEDGE_Z, PERIM_DEG, COVER_SCREWS, P.J_RECEPTACLES, LATCH_ARM_Z, LATCH_ARM_X1, LATCH_SCREW_X], base)
+        p = cached(["upper_one_base", 6, R, SAD, B, HUMP_X, LEDGE_Z, PERIM_DEG, COVER_SCREWS, P.J_RECEPTACLES, LATCH_ARM_Z, LATCH_ARM_X1, LATCH_SCREW_X], base)
         for s in (1, -1):
             p, feats = _deck_feats(p, s)
             p = _features(p, feats)
         return p.cut(tongue_keepout()).clean()
-    return cached(["upper_one", 6, S.SEAT, R, P.TOF_SENSORS, P.PANEL_CONTROLS, P.CHARGE_INLET, D.BUMPER_DIR, ("inlet_seat", S.INLET_COVER_T, 2)], b)
+    return cached(["upper_one", 7, S.SEAT, R, P.TOF_SENSORS, P.PANEL_CONTROLS, P.CHARGE_INLET, D.BUMPER_DIR, ("inlet_seat", S.INLET_COVER_T, 2)], b)
 
 
 def build(add):

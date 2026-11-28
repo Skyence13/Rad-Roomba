@@ -45,8 +45,31 @@ def canonical_sha256(obj) -> str:
 
 
 # ---------------------------------------------------------------- calibration
+class CalibrationError(ValueError):
+    pass
+
+
+_SCHEMA = None
+
+
+def validate_calibration_record(record: dict):
+    """JSON Schema 2020-12 check against analysis/radiometry/schemas/calibration_record.schema.json (packaged copy)."""
+    global _SCHEMA
+    from jsonschema import Draft202012Validator
+    if _SCHEMA is None:
+        sch = json.loads((DATA / "calibration_record.schema.json").read_text())
+        sch.pop("$id", None)            # a relative $id would make the internal $refs unresolvable
+        _SCHEMA = Draft202012Validator(sch)
+    errs = sorted(_SCHEMA.iter_errors(record), key=lambda e: e.json_path)
+    if errs:
+        raise CalibrationError("calibration record fails calibration_record.schema.json: "
+                               + "; ".join(f"{e.json_path}: {e.message}" for e in errs[:5]))
+
+
 class Calibration:
-    def __init__(self, record: dict):
+    def __init__(self, record: dict, validate: bool = True):
+        if validate:
+            validate_calibration_record(record)
         self.record = record
         self.calibration_id = record["calibration_id"]
         self.field_use_approved = bool(record.get("field_use_approved", False))
@@ -92,8 +115,9 @@ class Calibration:
         if tr and head_c is not None and not (tr.get("min", -1e9) <= head_c <= tr.get("max", 1e9)):
             return False, "head temperature outside qualified range"
         sp = env.get("speed_m_s") or {}
-        if sp and speed_mps is not None and not (sp.get("min", 0.0) - speed_tol <= speed_mps <= sp.get("max", 1e9) + speed_tol):
-            return False, f"speed {speed_mps:.4f} m/s outside the calibrated range"
+        if sp and speed_mps is not None and not (sp.get("min", 0.0) <= speed_mps <= sp.get("max", 1e9)):
+            # MODEL.md rev 6: speed_m_s bounds the MEASURED gate speed; no tolerance (the survey commands below the maximum)
+            return False, f"measured gate speed {speed_mps:.4f} m/s above the calibrated maximum {sp.get('max')} m/s"
         so = env.get("standoff_mm") or {}
         if so and standoff_mm is not None and not (so.get("min", -1e9) <= standoff_mm <= so.get("max", 1e9)):
             return False, "standoff outside the calibrated range"

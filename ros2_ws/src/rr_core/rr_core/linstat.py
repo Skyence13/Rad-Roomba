@@ -279,8 +279,9 @@ class Unit:
         self.latU = _lattice(self.aU)
         self.U = np.asarray(nodes_U, float)
         self.p = np.asarray(nodes_p, float)
-        self.s2 = np.array([cK * cK * max(u * u * cal.u_k_lane ** 2 + cal.u_b ** 2 + 2.0 * u * cal.cov_kb, 0.0)
-                            + (cK * cal.u_k_common * u) ** 2 for u in self.U])
+        self.s2_lane = np.array([cK * cK * max(u * u * cal.u_k_lane ** 2 + cal.u_b ** 2 + 2.0 * u * cal.cov_kb, 0.0) for u in self.U])
+        self.g = cK * cal.u_k_common                    # common term coefficient: Z_c = e * sum_i g_i U_i, e ~ N(0, 1)
+        self.s2 = self.s2_lane + (self.g * self.U) ** 2  # lane-alone Gaussian variance at each node (m = 1: exact)
 
     def var(self, D=0.0):
         """Largest variance over the nodes (grid sizing)."""
@@ -298,33 +299,44 @@ class Unit:
 
 
 class PredictiveStat:
-    """Exact tail of the predictive null (and alternatives) of S = sum_i Unit_i + mu + Z (MODEL.md rev 5 sections 3, 6).
+    """Exact tail of the predictive null (and alternatives) of S = sum_i Unit_i + mu + Z (MODEL.md rev 6 sections 3, 6).
 
-    Characteristic function: exp(i u mu - u^2 (s_x^2 + (u_rel D)^2) / 2) * prod_i sum_k p_ik phi_i(u; U_ik, D): the posterior
-    nodes of the lanes are combined as independent.  The common calibration term (sum_i cK_i u_common,i U_i)^2 is fully
-    correlated across lanes: its diagonal parts are evaluated at the nodes of each lane, the cross terms
-    2 sum_{i<j} g_i g_j U0_i U0_j at the point values U0 (s_x^2 = `cross_var`); with one lane the evaluation is exact.
-    Gil-Pelaez inversion, midpoint rule with step h = 2 pi / P (the exact tail of the distribution periodised with
-    period P), as `_GP`.  The A_F(u) = sum_j t_j expm1(i u a_j) sums are computed once per grid; nodes and alternatives
-    only rescale them."""
+    Each lane i has its own posterior nodes U_ik (weights p_ik), the lanes independent.  The common calibration term
+    Z_c = e sum_i g_i U_i (e ~ N(0, 1), g_i = c_i u_common,i(k) / K_i) couples the lanes through their U.  The
+    characteristic function is the exact sum over the PRODUCT of the lanes' nodes with (sum_i g_i U_ik_i)^2 at each node
+    tuple.  It is evaluated by conditioning on e: phi(u) = E_e[prod_i sum_k p_ik phi_ik(u) exp(i u e g_i U_ik)], with the
+    Gaussian expectation over e by Gauss-Hermite quadrature (`n_e` nodes; the integrand is analytic in e, the quadrature
+    error is below 1e-12 here) - the same quantity as the 12^m node-tuple sum of rrrad.predictive, at m x 12 x n_e instead
+    of 12^m terms.  m = 1: the common term at each node directly.  The signal D only multiplies phi by
+    exp(D sum_i K_i A_F,i(u) - u^2 (u_rel D)^2 / 2) (the floor means do not depend on U), so detection limits reuse phi_0.
+    Gil-Pelaez inversion, midpoint rule with step h = 2 pi / P (the exact tail of the distribution periodised with period
+    P), as `_GP`."""
 
-    def __init__(self, units, mu, cross_var=0.0, u_rel=0.0):
-        self.units, self.mu, self.cross_var, self.u_rel = units, float(mu), max(float(cross_var), 0.0), float(u_rel)
-        self.sig_min2 = sum(float(np.min(u.s2)) for u in units) + self.cross_var
+    N_E = 24
+
+    def __init__(self, units, mu, cross_var=0.0, u_rel=0.0, n_e=None):
+        self.units, self.mu, self.u_rel = units, float(mu), float(u_rel)
+        self.n_e = int(n_e or self.N_E)
+        common_min = sum(u.g * float(np.min(u.U)) for u in units) ** 2
+        self.sig_min2 = sum(float(np.min(u.s2_lane)) for u in units) + common_min
+        self.extra_var = 0.0
         self.regularised = self.sig_min2 <= 0
         if self.regularised:            # no Gaussian term at all (tests that switch every calibration term off)
-            self.cross_var = 1e-8 * self.var(0.0)
-            self.sig_min2 = self.cross_var
+            self.extra_var = 1e-8 * self.var(0.0)
+            self.sig_min2 = self.extra_var
         self._grids = {}
+        self._phi0 = {}
 
     def var(self, D=0.0):
-        return sum(u.var(D) for u in self.units) + self.cross_var + (self.u_rel * D) ** 2
+        """Upper bound of the variance over the node tuples (grid sizing)."""
+        return (sum(u.var(D) for u in self.units) + sum(u.g * float(np.max(u.U)) for u in self.units) ** 2
+                + self.extra_var + (self.u_rel * D) ** 2)
 
     def mean(self, D=0.0):
         return sum(u.mean(D) for u in self.units) + self.mu
 
     def _grid(self, span, half_step=False):
-        """(h, u, [(A_F, A_U) per unit]) for a period covering `span` (|x - mean| + 40 sd + 40 max|a|)."""
+        """(h, u, [(A_F, A_U) per unit]) for a period covering `span` (|x - mean| + 15 sd + 20 max|a|)."""
         key = (round(span, 12), half_step)
         g = self._grids.get(key)
         if g is None:
@@ -336,20 +348,53 @@ class PredictiveStat:
             g = (h, u, parts)
             if len(self._grids) > 6:
                 self._grids.clear()
+                self._phi0.clear()
             self._grids[key] = g
         return g
 
-    def _phi(self, grid, D):
+    def _phi_null(self, grid):
+        key = id(grid)
+        ph = self._phi0.get(key)
+        if ph is not None:
+            return ph
         h, u, parts = grid
-        lp = 1j * u * self.mu - 0.5 * u * u * (self.cross_var + (self.u_rel * D) ** 2)
-        phi = np.exp(lp)
-        for un, (AF, AU) in zip(self.units, parts):
+        u2 = u * u
+        phi = np.exp(1j * u * self.mu - 0.5 * u2 * self.extra_var)
+        if len(self.units) == 1:
+            un, (AF, AU) = self.units[0], parts[0]
             c = un.cal
             mix = np.zeros(u.size, complex)
             for U, p, s2 in zip(un.U, un.p, un.s2):
-                mix += p * np.exp((c.k * U + c.b + c.K * D) * AF + U * AU - 0.5 * s2 * u * u)
-            phi = phi * mix
-        return phi
+                mix += p * np.exp((c.k * U + c.b) * AF + U * AU - 0.5 * s2 * u2)
+            ph = phi * mix
+        else:
+            base, theta = [], []
+            for un, (AF, AU) in zip(self.units, parts):
+                c = un.cal
+                base.append(np.array([p * np.exp((c.k * U + c.b) * AF + U * AU - 0.5 * s2l * u2)
+                                      for U, p, s2l in zip(un.U, un.p, un.s2_lane)]))
+                theta.append(np.outer(un.g * un.U, u))
+            e, w = np.polynomial.hermite_e.hermegauss(self.n_e)
+            w = w / w.sum()
+            acc = np.zeros(u.size, complex)
+            for ej, wj in zip(e, w):
+                if wj < 1e-300:
+                    continue
+                prod = np.full(u.size, wj, complex)
+                for B, th in zip(base, theta):
+                    prod *= (B * np.exp(1j * ej * th)).sum(axis=0)
+                acc += prod
+            ph = phi * acc
+        self._phi0[key] = ph
+        return ph
+
+    def _phi(self, grid, D):
+        ph = self._phi_null(grid)
+        if D == 0.0:
+            return ph
+        h, u, parts = grid
+        sig = sum(un.cal.K * AF for un, (AF, _AU) in zip(self.units, parts))
+        return ph * np.exp(D * sig - 0.5 * u * u * (self.u_rel * D) ** 2)
 
     def span_for(self, x, D=0.0):
         """Half period: |x - mean| + 15 sd + 20 max|a| (the periodised mass beyond it is negligible)."""

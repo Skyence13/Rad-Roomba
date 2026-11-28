@@ -82,7 +82,7 @@ class SurveyConfig:
     def __init__(self, length_m, width_m, keepouts=(), sub_res=0.005, cell_m=0.10,
                  position_allowance_m=0.010, min_cell_coverage=0.5, speed_ref_mps=0.10,
                  u0_window_factor=None, wall_names=("left wall", "right wall"), door_name="door threshold",
-                 speed_tolerance_mps=0.002):
+                 speed_tolerance_mps=0.0):
         self.length_m, self.width_m = float(length_m), float(width_m)
         self.keepouts = [tuple(k) for k in keepouts]           # (x0, x1, y0, y1) excluded from the target
         self.sub_res, self.cell_m = sub_res, cell_m
@@ -90,7 +90,7 @@ class SurveyConfig:
         self.min_cell_coverage = min_cell_coverage             # default when the profile has no minimum_cell_coverage
         self.speed_ref_mps = speed_ref_mps
         self.u0_window_factor = u0_window_factor               # revision 4 (superseded); kept for old run.json files
-        self.speed_tolerance_mps = speed_tolerance_mps         # numerical tolerance of the envelope speed check
+        self.speed_tolerance_mps = speed_tolerance_mps         # unused since MODEL.md rev 6 (speed_m_s is a maximum)
         self.wall_names, self.door_name = tuple(wall_names), door_name
 
     def as_dict(self):
@@ -652,7 +652,8 @@ class SurveyProcessor:
     def _decide(self, cell, channel, alpha, decider):
         members = self.members.get(cell, [])
         m_cand = max(1, len({(a, ln) for a, _q, ln, _w in members}))
-        alpha_min = (1.0 - est.ALPHA_SPLIT_COMBINED) * alpha / m_cand
+        # MODEL.md rev 6: N_min by the smallest alpha of the tests sharing the reference (m = 1: one test at alpha)
+        alpha_min = alpha if m_cand == 1 else (1.0 - est.ALPHA_SPLIT_COMBINED) * alpha / m_cand
         units = self._units(cell, channel, alpha_min)
         if not units and members:
             return est.Decision(alpha=alpha, beta=self.params["beta"], status="NO_CALIBRATION", status_text=NO_CALIBRATION)
@@ -804,6 +805,8 @@ class SurveyProcessor:
             why = []
             if d is not None and d.detected:
                 why.append("flagged by " + "+".join(d.flagged_by))
+                if getattr(d, "one_sided_lanes", None):
+                    why.append("one-sided reference: recount required before an investigation is reported")
             if rate:
                 why.append(RATE_ALARM)
             return "ALARM", "; ".join(why), fstate
@@ -816,8 +819,6 @@ class SurveyProcessor:
             return "INCOMPLETE COVERAGE", f"coverage {cov:.2f} < {self.min_cell_coverage():g}", fstate
         if self.cell_fault.get(cell):
             return "INCOMPLETE COVERAGE", f"{self.cell_fault[cell]} lane-gate(s) over the cell excluded for a fault", fstate
-        if getattr(d, "gradient_lanes", None):
-            return "SENSITIVITY INSUFFICIENT", "reference gradient (" + ",".join(d.gradient_lanes) + ")", fstate
         if not d.envelope_ok:
             return "SENSITIVITY INSUFFICIENT", d.envelope_reason or "calibration validity envelope", fstate
         if d.D_hash is None or not math.isfinite(d.D_hash) or d.D_hash > self.profile["detection_goal_Bq_cm2"]:
@@ -949,6 +950,10 @@ class SurveyProcessor:
                          "distance_from_wall_m": round(half_w - abs(y), 3),
                          "text": f"{x:.2f} m from the {self.cfg.door_name}, {half_w - abs(y):.2f} m from the {wall}"},
             "position_uncertainty_m": self.cfg.position_allowance_m,
+            # MODEL.md rev 6: a step next to the dwell is invisible to a one-sided reference; a flagged one-sided cell is
+            # recounted before it is reported as an investigation
+            "one_sided_reference": sorted({u for c in cells for u in (getattr(dec[c], "one_sided_lanes", None) or [])}),
+            "recount_required": bool([u for c in cells for u in (getattr(dec[c], "one_sided_lanes", None) or [])]),
             "attachment": self.sessions[a_idx]["attachment_session_id"] if self.sessions else None,
             "contributing_gates": sorted(map(tuple, {tuple(c) for c in contributing}))[:400],
             "stage": sorted(set().union(*[self.cell_stage.get(tuple(c), set()) for c in flag["cells"]])),
@@ -1035,7 +1040,7 @@ class SurveyProcessor:
         cnt = [self._gate_counts[k] for k in keys]
         w = np.ones(len(keys))
         tf = np.array([c[1] for c in cnt])
-        rec = unull.recount_u_null(self._series(a), lane, [k[1] for k in keys], (1.0 - est.ALPHA_SPLIT_COMBINED) * alpha)
+        rec = unull.recount_u_null(self._series(a), lane, [k[1] for k in keys], alpha)       # m = 1: one test at alpha (rev 6)
         ok, why = (True, "") if rec.get("U0") is None else cal_a.check_envelope(
             lane, channel, rec["U0"], None, goal=self.profile["detection_goal_Bq_cm2"], alpha=alpha, beta=self.params["beta"],
             standoff_mm=self.att[a]["standoff"]["mm"])
@@ -1189,6 +1194,9 @@ class SurveyProcessor:
                 row["alarm_bookkeeping"] = ("provisional alarm not confirmed" if fa and not rec_alarm else
                                             "alarm found at final evaluation" if rec_alarm and not fa else
                                             "recorded alarm (provisional alarm confirmed)" if rec_alarm else "")
+                d0 = self.recorded[ch0].get((cy, cx))
+                row["one_sided_reference"] = "|".join(getattr(d0, "one_sided_lanes", None) or []) if d0 else ""
+                row["recount_required"] = bool(d0 is not None and d0.detected and getattr(d0, "one_sided_lanes", None))
                 row["flag"] = fstate
                 rows.append(row)
         return rows

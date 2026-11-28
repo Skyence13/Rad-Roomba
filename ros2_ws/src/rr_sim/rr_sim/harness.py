@@ -40,7 +40,7 @@ class SimSystem:
         self.clink = MemoryLink(self.clock, "chassis", delay_us=chassis_delay)
         self.head = FakeHead(self.clock, self.hlink.ends[1], desc, seed=seed, clock_drift_ppm=head_drift_ppm)
         cal = Calibration.load(DATA / "demo_calibration.json")
-        cfg = merge({"link": {}, "calibration_binding": "DEMONSTRATION"}, config)
+        cfg = merge({"link": {}, "calibration_binding": "STRICT"}, config)   # rev 6: the demo record names the fake head
         n = [0]
 
         def uuid():

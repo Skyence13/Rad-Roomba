@@ -50,6 +50,8 @@ OPEN_ROUTES = {
     "W-039": "REAR_C in the hump brow: the hump is full (cassette top z 144 under the 147 roof), no inside passage; proposed: lead out of the brow over the hump to the left-deck LiDAR gland (external, clipped), or REAR_C moved to the hatch frame top",
     "W-041": "chassis heater: the pad lead end lies under the cassette inside the floor plug; no modelled lead exit from the tunnel floor; proposed: 4 x 3 groove in the floor plug + grommet through the tunnel front at x -74",
     "W-042": "bay NTC: as W-041",
+    "W-036": "LOOK_RR: the route round the right-deck devices (E-stop, HANDS-ON, Pause/Stop, charge inlet) to J_TOF6 at the rear edge exceeds the 270 mm budget; proposed (electronics): land LOOK_RR on a right-corner connector or accept a 300 mm cable without margin",
+    "W-040": "REAR_R: as W-036 (J_TOF10)",
 }
 
 

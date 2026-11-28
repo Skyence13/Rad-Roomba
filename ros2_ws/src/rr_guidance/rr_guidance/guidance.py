@@ -58,6 +58,7 @@ class GuidedReview:
                         "source_lane": f["source_lane"], "D": f["D"], "u_total": f["u_total"], "D_star": f["D_star"],
                         "D_hash": f["D_hash"], "x_m": f["x_m"], "y_m": f["y_m"], "footprint": f["footprint"],
                         "position_uncertainty_m": f["position_uncertainty_m"], "observations": f["observations"],
+                        "recount_required": bool(f.get("recount_required")), "one_sided_reference": f.get("one_sided_reference", []),
                         "recommendation": f["recommendation"]})
         return out
 
