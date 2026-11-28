@@ -71,7 +71,10 @@ Written to disk so far (both builds share it through the rrx code):
 - Prototype run 2: interference 0 clashes, fastener access PASS, sweeps PASS, SVC pads PASS (11 pads, nothing over them), receptacle
   depth PASS; open: J1/J2 grasp annuli reached the other receptacle (receptacles re-spaced: skin +-17 deg, z 94, axis 25 deg up /
   16 deg out), 5 routes (stub geometry fixed), CM5 tray 0.4 mm outside the cavity (trimmed), bottom-zone rule (flush tray screws now info).
-- RUNNING: prototype build run 3; then production build and the common build.
+- Prototype run 3: interference 0, fasteners 0 blocked, sweeps PASS, SVC PASS, receptacle depth PASS; open: docked pigtail corridor
+  6.9 mm from the left look-ahead cone (loop now turns down and inboard: 23-25 mm, calculated), 9 routes with small grazes
+  (alternative-path retry added), CM5 tray deck 1.8 mm outside the cavity (trimmed).
+- RUNNING (restarted after the container restart): prototype build run 5; then production and common builds.
 
 ## Run times (shared 4-core machine)
 
