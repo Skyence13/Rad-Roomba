@@ -39,7 +39,7 @@ class FakeChassis:
         self.inputs = {"estop": False, "hands_on": False, "bumper_l": False, "bumper_r": False,
                        "mode_run": True, "head_docked": True, "j2": True, "chg_cover_open": False,
                        "chg_plug": False, "pres_ohm": 4700.0, "loop_ohm": 1000.0, "rear_blocked": False,
-                       "cliff": False, "slip": 0.0, "usb_down": False, "tilt_deg": 0.0, "faults": []}
+                       "cliff": False, "slip": 0.0, "usb_down": False, "tilt_deg": 0.0, "faults": [], "vbat_v": 13.1}
         self.config = {"alert.rest_ms": 2000.0, "alert.premotion_ms": 1500.0, "cal.track_m": track_m,
                        "cal.wheel_radius_l_m": wheel_radius_m, "cal.wheel_radius_r_m": wheel_radius_m,
                        "safety.require_brake_test": 1.0, "link.timeout_ms": 1000.0, "stationary.min_ms": 100.0}
@@ -47,6 +47,9 @@ class FakeChassis:
         self._last_step = None
         self._boot_count = 0
         self._closed_since = None
+        self._latch_down_since = None
+        self._held_until = None
+        self._refusal_action = None
         self.last_rearm_refusal = None
         self._boot("POWER_ON")
 
@@ -116,7 +119,17 @@ class FakeChassis:
                     self._event("J1", {"from": self._presence, "to": new, "ohm": value})
                     self._presence = new
 
-    REARM_DISCHARGE_US = 2_000_000       # ICD 4.6: REARM can set only after about 2 s of closed chain (C_SET discharge)
+    # ICD 4.6 round 4 / stage 4-5 (CCR-CHS-20/22): rearm_ready follows SET_READY (about 3 s after the chain closes at 12.8 V)
+    # and a passed loop self-test (about 90 ms, run after every latch drop and every element opening)
+    SET_READY_US = 3_000_000
+    LOOP_TEST_US = 90_000
+    REARM_HOLD_DROP_US = 5_000_000       # stage 5 H6: REARM still closed 5 s after the rise drops the latch (REARM_HELD)
+    MIN_TAP_MS = 12                      # set contact closed < 12 ms: TOO_SHORT
+    WITHHOLD_FLAGS = ("SET_STAGE_FAULT", "REARM_RB_FAULT", "REARM_DISCREPANCY", "LOOP_DISCREPANCY", "IOX_D")
+    FATAL_FLAGS = ("K1_WELD", "RUN_SHORT", "LOOP_SW_SHORT", "LOOP_FAIL", "LATCH_NO_REARM", "LATCH_NO_DROP", "PIN_CONFIG")
+    ACTIONS = {"SUPPLY_LOW": "CHARGE_OR_SWAP_PACK", "NOT_READY": "PRESS_AGAIN_WHEN_READY", "LOOP_TEST": "PRESS_AGAIN_WHEN_READY",
+               "TOO_SHORT": "PRESS_LONGER", "CHAIN_OPEN": "CLOSE_THE_CHAIN_FIRST", "REARM_HELD": "RELEASE_REARM",
+               "FAULT_OR_MODE": "SEE_FAULTS", "REARM_HELD_AFTER_SET": "RELEASE_REARM_PRESS_BRIEFLY"}
 
     def _chain_closed(self):
         c = self._chain()
@@ -124,18 +137,36 @@ class FakeChassis:
 
     def rearm_refusal(self):
         """None when a REARM press would act now, else why not (ICD 4.6, rearm_ready)."""
-        if self.mode in ("BOOT", "FAULT", "LAB", "SERVICE_CHARGE") or self.inputs["faults"]:
+        now = self.clock.now_us()
+        flags = set(self.inputs["faults"])
+        if self.mode in ("BOOT", "FAULT", "LAB", "SERVICE_CHARGE") or flags & set(self.FATAL_FLAGS + self.WITHHOLD_FLAGS):
             return "FAULT_OR_MODE"
         if self.inputs.get("rearm_held"):
             return "REARM_HELD"
         if not self._chain_closed():
             return "CHAIN_OPEN"
-        if self._closed_since is None or self.clock.now_us() - self._closed_since < self.REARM_DISCHARGE_US:
-            return "DISCHARGE_TIME"
+        if self._closed_since is None or now - self._closed_since < self.SET_READY_US:
+            return "SUPPLY_LOW" if self.inputs["vbat_v"] < 11.7 else "NOT_READY"
+        if self._latch_down_since is not None and now - self._latch_down_since < self.LOOP_TEST_US:
+            return "LOOP_TEST"
         return None
 
-    def press(self, name):
-        self._event("BUTTON", {"name": name, "pressed": True})
+    def _refuse(self, why, **extra):
+        self.last_rearm_refusal = why
+        self._refusal_action = self.ACTIONS.get(why)
+        self._event("REARM_REFUSED", {"why": why, "action": self._refusal_action, **extra})
+
+    def warnings(self):
+        w = [f for f in self.inputs["faults"]]
+        if self.inputs["vbat_v"] <= 12.0 and "BATTERY_REARM_LOW" not in w:
+            w.append("BATTERY_REARM_LOW")
+        return w
+
+    def press(self, name, press_ms=250):
+        """Local button.  REARM (ICD 4.6, CCR-CHS-20/22): every press with the latch down yields a latch rise or a
+        REARM_REFUSED event with the reason and an action; press_ms < 12 is TOO_SHORT; a press still held 5 s after the rise
+        drops the latch with REARM_HELD (REARM_REFUSED REARM_HELD_AFTER_SET, latch_dropped)."""
+        self._event("BUTTON", {"name": name, "pressed": True, "press_ms": press_ms})
         if name == "PAUSE":
             if self.hw_latch and "LOCAL_PAUSE" not in self.hold:
                 self.hold.append("LOCAL_PAUSE")
@@ -145,15 +176,20 @@ class FakeChassis:
         elif name == "REARM":
             if not self.hw_latch:
                 why = self.rearm_refusal()
-                self.last_rearm_refusal = why
+                if why is None and press_ms < self.MIN_TAP_MS:
+                    why = "TOO_SHORT"
                 if why:
-                    self._event("REARM_REFUSED", {"why": why})
+                    self._refuse(why)
                     return
+                self.last_rearm_refusal = None
+                self._refusal_action = None
             chain = self._chain()
             if not self.hw_latch and all(chain.values()) and self.mode not in ("BOOT", "FAULT"):
                 self.hw_latch = True
                 self.hw_reasons = []
                 self._event("HW_LATCH", {"set": True, "reasons": []})
+                if press_ms >= self.REARM_HOLD_DROP_US / 1000:
+                    self._held_until = self.clock.now_us() + self.REARM_HOLD_DROP_US
             if self.hw_latch and not self._sw_active():
                 if self.sw_reasons or self.hold:
                     self._event("PSTOP_CLEAR", {"by": "LOCAL", "operator": "LOCAL", "cleared": list(self.sw_reasons)})
@@ -336,6 +372,19 @@ class FakeChassis:
             self._physics((now - self._last_step) * 1e-6)
         self._last_step = now
         self._update_mode()
+        if self._held_until is not None and now >= self._held_until:
+            self._held_until = None
+            if self.hw_latch:
+                self.hw_latch = False
+                self.hw_reasons = ["REARM_HELD"]
+                self.cmd = None
+                self._event("HW_LATCH", {"set": False, "reasons": ["REARM_HELD"]})
+                self._refuse("REARM_HELD_AFTER_SET", latch_dropped=True)
+                self._update_mode()
+        if self.hw_latch:
+            self._latch_down_since = None
+        elif self._latch_down_since is None:
+            self._latch_down_since = now
         if self._brake and now >= self._brake[2]:
             tid, raw, _ = self._brake
             self._brake = None
@@ -456,17 +505,18 @@ class FakeChassis:
         return "OK", {"mode": self.mode, "op_mode": self.op_mode, "hw_latch": self.hw_latch, "chain": self._chain(),
                       "hw_inhibit_reasons": list(self.hw_reasons), "protective_stop_reasons": list(self.sw_reasons),
                       "head_presence": self._presence_class(), "j2_present": bool(self.inputs["j2"]),
-                      "rails": {"vbat_v": 13.1, "vmot_v": 13.0 if self.hw_latch else 0.2, "ibat_a": 1.4, "v5_v": 5.09},
+                      "rails": {"vbat_v": self.inputs["vbat_v"], "vmot_v": self.inputs["vbat_v"] - 0.1 if self.hw_latch else 0.2, "ibat_a": 1.4, "v5_v": 5.09},
                       "battery": {"soc_pct": 80, "temp_c": [18.0, 18.5], "charge_state": charge},
                       "temps": {"board_c": 24.0, "bay_c": 19.0}, "tof": [], "bumpers": {
                           "body_l": bool(self.inputs["bumper_l"]), "body_r": bool(self.inputs["bumper_r"]),
                           "head_loop": "OK" if 600 <= self.inputs["loop_ohm"] <= 1600 else "OPEN"},
                       "panel": {"buttons": {"rearm": False, "pause": False}, "pattern": self.panel},
-                      "heater": {"chassis_duty_pct": 0}, "faults": list(self.inputs["faults"]), "sw_active": self._sw_active(),
+                      "heater": {"chassis_duty_pct": 0}, "faults": self.warnings(), "sw_active": self._sw_active(),
                       "hw_active": self._hw_active(), "stationary": t["stationary"],
                       "rearm_ready": ((not self.hw_latch) and self.rearm_refusal() is None)
                                     or (self.hw_latch and bool(self.sw_reasons or self.hold) and not self._sw_active()),   # ICD 4.6: also a clearable software latch / hold
                       "rearm_refusal": self.last_rearm_refusal if not self.hw_latch else None,
+                      "rearm_refusal_action": self._refusal_action if not self.hw_latch else None,
                       "rearm_nonce": self.nonce, "hold": list(self.hold), "head_power": dict(self.head_power),
                       "brake_test": {"state": "PASSED" if self.brake_passed else "NONE"},
                       "event_seq": self.event_seq, "uptime_us": self.now_us()}
@@ -490,13 +540,15 @@ class FakeChassis:
         rb = "".join("1" if v else "0" for v in (chain["MODE_RUN"], chain["ESTOP"], chain["ESTOP"], chain["HANDS_ON"], chain["CHG_COVER"],
                      self.inputs["chg_plug"] is False, chain["HEAD_DOCK"], chain["HEAD_LOOP"], False, chain["LAB_KEY_N"],
                      not self.inputs["bumper_l"], not self.inputs["bumper_r"], chain["WDG_OK"], False, False, self.hw_latch, True,
-                     self.panel_buttons() if hasattr(self, "panel_buttons") else False, False, False, False, False, False))
+                     self.panel_buttons() if hasattr(self, "panel_buttons") else False, False, False, False, False,
+                     self._held_until is not None))     # position 22: REARM_SET (set contact), was BUS_CLAMP (CCR-CHS-20 c)
         assert len(rb) == 23
         return "OK", {"mode": self.mode, "hw_inhibit_reasons": self._hw_active() if not self.hw_latch else [], "hw_active": self._hw_active(),
                       "protective_stop_reasons": sorted(self.sw_reasons), "sw_active": self._sw_active(),
                       "faults": list(self.inputs["faults"]), "estop": {"a": chain["ESTOP"], "b": chain["ESTOP"]}, "readbacks": rb,
                       "chain_state": state, "chain_end": bool(chain["ARM_PERMIT"] and all(chain.values())) if self.mode != "BOOT" else None,
-                      "pres_ohm": int(self.inputs["pres_ohm"])}
+                      "pres_ohm": int(self.inputs["pres_ohm"]), "loop_cause": self.inputs.get("loop_cause"),
+                      "rearm": {"rb_fault": self.inputs.get("rb_fault"), "loop_test": "PASSED", "set_ready": self.rearm_refusal() not in ("NOT_READY", "SUPPLY_LOW")}}
 
     def _op_EVENTS(self, a, rx, tid, raw):
         after = a.get("after_seq")
@@ -567,7 +619,12 @@ class FakeChassis:
         return "OK", dict(self.head_power, head_presence=self._presence_class())
 
     def _op_HEATER(self, a, rx, tid, raw):
-        return "OK", {"chassis_setpoint_c": a.get("chassis_setpoint_c"), "duty_pct": 0, "bay_c": 19.0, "sensor_ok": True}
+        # CCR-CHS-18: chassis_setpoint_c -10..30, null = automatic thermal policy (not "off")
+        sp = a.get("chassis_setpoint_c")
+        if sp is not None and (not isinstance(sp, (int, float)) or not -10 <= sp <= 30):
+            return "BAD_ARG", {"reason": "chassis_setpoint_c"}
+        return "OK", {"chassis_setpoint_c": sp, "policy": "AUTOMATIC" if sp is None else "SETPOINT",
+                      "active_setpoint_c": 15.0 if sp is None else sp, "duty_pct": 0, "bay_c": 19.0, "sensor_ok": True}
 
     def _op_PANEL(self, a, rx, tid, raw):
         self.panel = a.get("pattern", "AUTO")

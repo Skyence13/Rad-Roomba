@@ -17,6 +17,30 @@ Resume notes (keep current; a usage limit may stop this work):
   footprint, records/export/recompute tool, position credit; (B) head 0.6.0 / chassis stage 4 / native bring-up / native s15; (C) docs.
 - Progress per item is logged under "Session 2026-11-28 log" below as it lands.
 
+### Session 2026-11-28 log (landed in the sources; check marks = unit-tested)
+- [x] rev-5 statistic: `linstat.PredictiveStat` / `posterior_nodes` (12 nodes, characteristic functions averaged; lanes
+  independent; common k term diagonal at the nodes, cross terms at U0); `estimator.Decider` exact keys (recorded) or
+  quantised (provisional only); `unull.py` (sub-windows, larger mean, N_min by alpha, 2 m span -> ratio-scaled pool,
+  gradient guard, recount from the other three lanes, past-only search reference). rrrad agreement ~1e-11 (m = 1,
+  beta and alpha classes) in `test_rev5.py`.
+- [x] `processing.py` rewritten: per-attachment bound calibration (refused otherwise, NO_CALIBRATION), recorded
+  (`finalize()`) vs provisional (`evaluate()`), status vocabulary/precedence, alarms never suppressed, RATE_SATURATION
+  from GATESTAT, ACQUISITION_GAP for skipped sequences, normative swept/eroded footprint with exact area weights,
+  members table, uncertainty components.  C1 order/schedule test in `test_rev5.py`.
+- [x] `profiles.CalibrationStore` strict identity binding by default, `demonstration=True` mode (config
+  `calibration_binding: DEMONSTRATION` in sim.yaml / harness / native); envelope adds speed, standoff, setup.
+- [x] head link: STATUS at open (archived, ENTROPY refused, acquisition latches + WATCHDOG_RESET cleared with FAULT_CLEAR
+  and noted), GATESTAT ~1 s joined by sequence, persistent ACQ_FAULT -> BLOCKED; fake head implements STATUS / FAULT_CLEAR /
+  GATESTAT / lost gates / saturation.
+- [x] localiser: wheel-scale state (1 % assumed), x freshness, chassis clock bound, correction epochs, scan lag
+  compensation, trapezoid gyro.  Trajectory carries tb_us / corr_m / nocredit.
+- [x] supervisor ratemeter: section-6 statistic, past-only U_null, predictive threshold at alpha_scan (quantised cache).
+- [x] export: software identity, model rev 5, footprint_model, markers in every file, cell_members.csv, README.txt,
+  statuses, revisit list; `rr_core/recompute.py` + `tools/recompute_cell.py`.
+- [x] fake chassis: NOT_READY / LOOP_TEST / TOO_SHORT / REARM_HELD_AFTER_SET (5 s), actions, BATTERY_REARM_LOW, DIAG
+  position 22 REARM_SET, loop_cause, rearm.rb_fault, HEATER null = automatic; operator prompt shows action and warnings.
+- [ ] scenarios / native re-run, IB-47 analysis, native s15, docs (README, delta, CCR file), final numbers.
+
 ## Update 2026-11-27 (contract draft7, MODEL.md rev 3, IB-46) - all `simulated` / `tool-checked` / `calculated`, nothing measured
 
 Observed in the follow-up of this update (revision 4, safety follow-up, head 0.5.2 set-up): `tools/test.sh unit` exit 0, **79 passed**;

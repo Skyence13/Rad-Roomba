@@ -85,8 +85,7 @@ def _frame(kind):
         cuts.append(box(H.XR - 1, H.XR + H.SW["h"] + 0.2, s * (H.SW_SIDE["y"] - H.SW["l"] / 2 - 0.1), s * (H.SW_SIDE["y"] + H.SW["l"] / 2 + 0.1),
                         H.SW_SIDE["z"] - H.SW["t"] / 2 - 0.1, H.SW_SIDE["z"] + H.SW["t"] / 2 + 0.1))
         cuts.append(box(74.6, H.XR + H.SW["h"] + 0.2, s * 148.3, s * 150.2, H.SW_SIDE["z"] - 2.0, H.Z_SPR0 + 0.02))
-        yp = H.PORT_Y["J1" if s > 0 else "J2"]
-        cuts.append(box(H.XR - 1, H.BAY_X0 + 1, yp - H.PORT_SLOT_HY, yp + H.PORT_SLOT_HY, H.PORT_SLOT_Z0, 60))                             # cable port U-slot (J1 y 76.2, CR-M03)
+        # (review M6: no rear-wall cable port any more; the pigtails leave through the boots on the lid, pigtail.BOOT)
         if kind != "P":                                                                                                                  # relief under the rear-comb bond-screw tips
             cuts += [cyl(1.5, 0.8, (x, y, H.Z_SPR0 - 0.8)) for x, y in H.REAR_BOND if y * s > 0]
         for dy in (-6.0, 6.0):                                                                                                            # bail block inserts (outer blocks)
@@ -271,7 +270,8 @@ def lid():
         i = H.LID_INSET
         pl = round_z(box(H.XR + i, H.XF - i, -H.YW + i, H.YW - i, H.Z_LID0, H.Z_LID1), 3.0)
         x0, x1, y0, y1 = H.LID_OPENING
-        cuts = [cyl(1.7, 4, (x, y, H.Z_LID0 - 1)) for x, y in lid_all_holes()] + [box(x0, x1, y0, y1, 40, 50)]
+        cuts = [cyl(1.7, 4, (x, y, H.Z_LID0 - 1)) for x, y in lid_all_holes()] + [box(x0, x1, y0, y1, 40, 50)] + \
+            [box(a, b, c, d, 40, 50) for a, b, c, d in H.BOOT_SLOTS.values()]                                 # conductor slots under the pigtail boots
         return cut_all(pl, cuts)
     return cached("lid", build)
 
@@ -283,14 +283,13 @@ def blister_rect():
 def j1_blister():
     a, b, c, d = blister_rect()
     pl = box(a, b, c, d, H.Z_LID1, H.Z_LID1 + 1.0)
-    return pl.cut(compound([cyl(1.7, 3, (x, y, H.Z_LID1 - 1)) for x, y in lid_all_holes() if a < x < b and c < y < d]))
+    sa, sb, sc, sd = H.BOOT_SLOTS["J1"]
+    return pl.cut(compound([cyl(1.7, 3, (x, y, H.Z_LID1 - 1)) for x, y in lid_all_holes() if a < x < b and c < y < d] + [box(sa, sb, sc, sd, 40, 50)]))
 
 
 def lid_gasket():
     g = box(H.XR + 0.5, H.XF - 0.5, -H.YW + 0.5, H.YW - 0.5, H.Z_WALL_TOP, H.Z_LID0).cut(
         box(H.BAY_X0 - 0.3, H.BAY_X1 + 0.3, -H.BAY_HY - 0.3, H.BAY_HY + 0.3, 40, 50))
-    for n in ("J1", "J2"):     # the grommets close the two port slots
-        g = g.cut(box(H.XR - 1, H.BAY_X0 + 1, H.PORT_Y[n] - H.PORT_SLOT_HY, H.PORT_Y[n] + H.PORT_SLOT_HY, 40, 50))
     return g
 
 
@@ -336,7 +335,7 @@ def fence_rear():
             ya = yc + s * (H.CHIM_HY - 0.2)
             parts.append(box(x, H.CAV_X0 - 0.5, ya - s * t, ya, H.CHIM_FLOOR_REAR + 0.5, H.Z_SPR0 - 0.3))
     s = fuse_all(parts)
-    cuts = [box(x - 1, x + 3, H.PORT_Y[n] - H.PORT_SLOT_HY, H.PORT_Y[n] + H.PORT_SLOT_HY, H.PORT_SLOT_Z0, 50) for n in ("J1", "J2")]
+    cuts = [box(x + t + 0.01, x + H.FENCE_REAR_FLANGE + 0.1, *H.J2_FLANGE_NOTCH_Y, FENCE_TOP - t - 0.2, 50)]          # flange notch: J2 wires rise behind J2501
     cuts += [cyl(1.45, 3, (bx, by, H.Z_SPR1 - 1)) for bx, by in H.REAR_BOND]                                     # bond screws clamp the tabs
     cuts += [cyl(2.5, 4, (x - 1, H.VENT[1], H.VENT[2]), (1, 0, 0))]
     cuts += [cyl(1.7, 3, (xx, yy, H.Z_SPR1 - 1)) for xx, yy in lid_holes() if xx < 90]                     # standoffs clamp the feet (where there is one)
@@ -352,8 +351,7 @@ def fence_gaskets():
     t = H.FENCE_T
     hy = FENCE_SIDE_Y + t
     rear = box(FENCE_REAR_X, FENCE_REAR_X + H.FENCE_REAR_FLANGE, -hy, hy, FENCE_TOP, H.Z_LID0)
-    for n in ("J1", "J2"):
-        rear = rear.cut(box(70, 80, H.PORT_Y[n] - H.PORT_SLOT_HY, H.PORT_Y[n] + H.PORT_SLOT_HY, 40, 50))
+    rear = rear.cut(box(70, 80, *H.J2_FLANGE_NOTCH_Y, 40, 50))
     out = [box(FENCE_FRONT_X - 2.3, FENCE_FRONT_X + t, -hy, hy, FENCE_TOP, H.Z_LID0), rear]
     for s in (1, -1):
         ya, yb = sorted((s * (FENCE_SIDE_Y - 2.3), s * (FENCE_SIDE_Y + t)))
@@ -668,27 +666,31 @@ def shield_can(i=None):
     return can.translate(V(H.ACQ["origin"][0] + H.CAN_V0, H.SEG_Y[i], oz))
 
 
-def grommet(name):
-    y = H.PORT_Y[name]
-    g = fuse_all([box(H.XR + 0.05, H.BAY_X0 - 0.05, y - H.PORT_SLOT_HY + 0.05, y + H.PORT_SLOT_HY - 0.05, H.PORT_SLOT_Z0, H.Z_LID0),
-                  box(H.XR - 1.5, H.XR + 0.051, y - 7.5, y + 7.5, H.PORT_SLOT_Z0 - 2, H.Z_LID0)])
-    g = g.cut(box(H.XR, H.XR + 0.06, y - 8, y + 8, 30, H.PORT_SLOT_Z0)).cut(box(H.XR, H.XR + 0.06, y + H.PORT_SLOT_HY - 0.05, y + 8, 30, 50)).cut(box(H.XR, H.XR + 0.06, y - 8, y - H.PORT_SLOT_HY + 0.05, 30, 50))
-    return g.cut(cyl(H.CABLE_D[name] / 2 - 0.15, 12, (H.XR - 3, y, H.PORT[name][2]), (1, 0, 0)))
+def boot(name):
+    """RR-HD-S-145 / -146: cable-breakout boot on the lid (review M6): jacket clamp + potting, the conductors come up through the lid slot;
+    the J1 boot also houses the AWG 18 / 20 transition if the harness keeps AWG 18 in the cable (static, potted)."""
+    x0, x1, y0, y1, z0, z1 = H.BOOT_BOX[name]
+    d = H.CABLE_D[name]
+    cx, cy = H.BOOT_CABLE_XY[name]
+    return box(x0, x1, y0, y1, z0, z1).cut(cyl(d / 2 + 0.2, 6, (cx, cy, z1 - 5)))
+
+
+def holster(name):
+    """RR-HD-S-147: parking cup for the unmated pigtail plug (plug head-down) on the lid; dust-cap function."""
+    hx, hy = H.HOLSTER_XY[name]
+    return cyl(12.0, H.HOLSTER_H, (hx, hy, H.Z_LID1)).cut(cyl(10.3, H.HOLSTER_H, (hx, hy, H.Z_LID1 + 2.0)))
 
 
 def pigtail(name):
-    """Cable from the internal clamp through the port, rearward and up 150 mm, with the plug envelope at the end."""
+    """Pigtail cable in the PARKED state (head undocked or docking): up from the boot, 180-degree loop at the bend radius, down into the plug
+    standing in its holster; same cable length as the docked route (pigtail.py; the docked path is checked against the body in checks.py)."""
+    from . import pigtail as PG
+    pk = PG.parked_path(name, PG.docked_path(name)["length_mm"])
     from mechanical.common.purchased import library as L
-    s = 1 if name == "J1" else -1
-    y = H.PORT_Y[name]
-    z = H.PORT[name][2]
-    r = H.CABLE_D[name] / 2
     e = L.env("j1_receptacle" if name == "J1" else "j2_receptacle")
-    p0, p1 = (H.BAY_X0 - 0.05 if name == "J1" else 76.0, y, z), (H.XR - 12.0, y, z)   # J1 jacket ends at the grommet; the wires fan in to J2001 (calc.j1_fan_in)
-    d = V(-0.55, -0.25 * s, 0.80).normalized()
-    p2 = (p1[0] + d.x * 120, p1[1] + d.y * 120, p1[2] + d.z * 120)
-    cable = fuse_all([cyl2(r, p0, p1), cq.Solid.makeSphere(r, V(*p1)), cyl2(r, p1, p2)])
-    plug = cyl(e["plug_nut_d"] / 2, e["plug_l"], p2, (d.x, d.y, d.z))
+    cable = PG.tube(pk["points"], H.CABLE_D[name])
+    top = pk["points"][-1]
+    plug = cyl(e["plug_nut_d"] / 2, pk["plug_len"] - 0.5, (top[0], top[1], top[2] - 0.2), (0, 0, -1))
     return cable, plug
 
 
@@ -863,6 +865,8 @@ def jacket_top():
     x0, x1, y0, y1 = LATCH_CUT
     cuts = [box(a - 0.3, b + 0.3, c - 0.3, d + 0.3, H.Z_LID1 - 1, H.Z_LID1 + 1.3), box(x0, x1, y0, y1, 40, 60)]
     cuts += [cyl(4.5, t + 2, (x, y, H.Z_LID1 - 1)) for x, y in lid_all_holes()]
+    cuts += [box(bx0 - 0.3, bx1 + 0.3, by0 - 0.3, by1 + 0.3, H.Z_LID1 - 1, H.Z_LID1 + t + 1) for bx0, bx1, by0, by1, _, _ in H.BOOT_BOX.values()]
+    cuts += [cyl(12.3, t + 2, (hx, hy, H.Z_LID1 - 1)) for hx, hy in H.HOLSTER_XY.values()]       # holster cups stand on the lid
     return cut_all(cap, cuts)
 
 

@@ -247,12 +247,38 @@ Owner: chassis electronics, 2026-11-28. Overrides **S5-xx**. Firmware-relevant i
 
 | # | Item | Hardware change | What firmware must do / may assume | Status |
 |---|---|---|---|---|
-| H1 | GPB6 (REARM_SET_RB) level (review S3) | R_SRB 33 k → **10 k**, R_SRB2 stays 47 k, new **BAT54 clamp D_SRB to 3V3** (as every chain tap) | HIGH level is now the clamp level VDD + 0.1…0.3 V, **≥ 3.5 V worst case** against MCP23S17 VIH(max) 0.8 VDD = 2.73 V (margin ≥ 0.75 V); LOW 0 V (≤ 0.05 V with ESD leakage) against VIL(min) 0.65 V. No logic change; GPPU stays off | DESIGNED |
-| H2 | Board NTC position (review S2) | **RT1 moved next to K1** (top side at board (80.5, 26.0), 3.5 mm from K1's coil end); same net NTC_BOARD_ADC / PC4 | `board_c` is now the board temperature **at K1** (8 mm from U8, 26 mm from U6; no longer "beside the H-bridges"). Coil estimate for COIL_HOT: **T_coil = T_RT1 + ΔT_self**, ΔT_self = 10 K × f, f = first-order filter (τ 300 s) of the latch-set state (coil 0.17 W at 13.3 V, assumed 60 K/W [A]); set `REARM_NTC_OFFSET_K` to 0 and use the self-heat term instead. COIL_HOT stays a warning (the press is still offered; the hardware decides; T11). Expect COIL_HOT after long armed periods at board ≥ 35 °C and after hard driving in a warm trailer | DESIGNED |
-| H3 | Analog loop copy independent of channel A (review S4) | R76 (HEAD_LOOP_SENSE feed) from LOOP_F → **LOOP_SNS** (filter now R76 10 k / C79 10 n, 0.1 ms) | HEAD_LOOP_SENSE (PC1) no longer follows LOOP_TEST_A or a stuck Q_LTA: during TEST_A expect the analog copy to stay OK; during TEST_B it drops about 6 % (still OK band). A Q_LTA D-S short now reads "A open, B closed, analog OK" = LOOP_DISCREPANCY / self-test failure, no longer "B stuck healthy". Average the ADC over ≥ 1 ms (the 1 ms RC is gone from this path) | DESIGNED |
-| H4 | PARTIAL-set permit dip (review D1: T13 50 ms vs firmware 200 ms) | — | Both are safe. **Recommendation: 30 ms**: K1 releases in ≤ 4 ms [U]; the C_SET discharge cannot start before 41 ms (C_SDB), so a 30 ms dip keeps the reservoir and the operator can press again at once. 200 ms empties C_SET (next press after 2.3-6 s, T12). The general "≥ 50 ms after a drop" rule stays | DESIGNED |
-| H5 | Low-battery warning before re-arm becomes impossible (operating limits) | — | Warning **BATTERY_REARM_LOW at VBAT ≤ 12.0 V** (resting, filtered ≥ 10 s): "re-arming may become impossible below 11.7 V"; BATTERY_LOW stop stays 11.2 V. Between 11.7 and 11.2 V an armed robot keeps driving but cannot be re-armed after a stop | DESIGNED |
-| H6 | Held press (review S5) | — | Report REARM_HELD_AFTER_SET when the W-018 rule drops the latch; raise the limit to **5 s** (crush case then arms for 5 s); buzzer while held > 1 s. Operator text: "press briefly (< 2 s)" | DESIGNED |
-| H7 | Service header J_SVC (S1) | New top-side 2 × 5 box header **J_SVC** carrying CHAIN_END, K1_RUN, RUN_HD, RUN_12V, RELAY_RTN, HOLD_A, LS_A, CH_N6A, SET_CAP through **220 kΩ** each, plus GND | No firmware change. The tests in `chassis_safety_chain.md` §6.2 use a meter only; S3/S6 use the existing test firmware | DESIGNED |
+| H1 | GPB6 (REARM_SET_RB) level (review S3) | R_SRB 33 k → **10 k**, R_SRB2 stays 47 k, new **BAT54 clamp D_SRB to 3V3** (as every chain tap) | HIGH level is now the clamp level VDD + 0.1…0.3 V, **≥ 3.5 V worst case** against MCP23S17 VIH(max) 0.8 VDD = 2.73 V (margin ≥ 0.75 V); LOW 0 V (≤ 0.05 V with ESD leakage) against VIL(min) 0.65 V. No logic change; GPPU stays off | IN NETLIST |
+| H2 | Board NTC position (review S2) | **RT1 moved next to K1** (top side at board (80.5, 26.0), 3.5 mm from K1's coil end); same net NTC_BOARD_ADC / PC4 | `board_c` is now the board temperature **at K1** (8 mm from U8, 26 mm from U6; no longer "beside the H-bridges"). Coil estimate for COIL_HOT: **T_coil = T_RT1 + ΔT_self**, ΔT_self = 10 K × f, f = first-order filter (τ 300 s) of the latch-set state (coil 0.17 W at 13.3 V, assumed 60 K/W [A]); set `REARM_NTC_OFFSET_K` to 0 and use the self-heat term instead. COIL_HOT stays a warning (the press is still offered; the hardware decides; T11). Expect COIL_HOT after long armed periods at board ≥ 35 °C and after hard driving in a warm trailer | IN NETLIST |
+| H3 | Analog loop copy independent of channel A (review S4) | R76 (HEAD_LOOP_SENSE feed) from LOOP_F → **LOOP_SNS** (filter now R76 10 k / C79 10 n, 0.1 ms) | HEAD_LOOP_SENSE (PC1) no longer follows LOOP_TEST_A or a stuck Q_LTA: during TEST_A expect the analog copy to stay OK; during TEST_B it drops about 6 % (still OK band). A Q_LTA D-S short now reads "A open, B closed, analog OK" = LOOP_DISCREPANCY / self-test failure, no longer "B stuck healthy". Average the ADC over ≥ 1 ms (the 1 ms RC is gone from this path) | IN NETLIST |
+| H4 | PARTIAL-set permit dip (review D1: T13 50 ms vs firmware 200 ms) | — | Both are safe. **Recommendation: 30 ms**: K1 releases in ≤ 4 ms [U]; the C_SET discharge cannot start before 41 ms (C_SDB), so a 30 ms dip keeps the reservoir and the operator can press again at once. 200 ms empties C_SET (next press after 2.3-6 s, T12). The general "≥ 50 ms after a drop" rule stays | IN NETLIST |
+| H5 | Low-battery warning before re-arm becomes impossible (operating limits) | — | Warning **BATTERY_REARM_LOW at VBAT ≤ 12.0 V** (resting, filtered ≥ 10 s): "re-arming may become impossible below 11.7 V"; BATTERY_LOW stop stays 11.2 V. Between 11.7 and 11.2 V an armed robot keeps driving but cannot be re-armed after a stop | IN NETLIST |
+| H6 | Held press (review S5) | — | Report REARM_HELD_AFTER_SET when the W-018 rule drops the latch; raise the limit to **5 s** (crush case then arms for 5 s); buzzer while held > 1 s. Operator text: "press briefly (< 2 s)" | IN NETLIST |
+| H7 | Service header J_SVC (S1) | New top-side 2 × 5 box header **J_SVC** carrying CHAIN_END, K1_RUN, RUN_HD, RUN_12V, RELAY_RTN, HOLD_A, LS_A, CH_N6A, SET_CAP through **220 kΩ** each, plus GND | No firmware change. The tests in `chassis_safety_chain.md` §6.2 use a meter only; S3/S6 use the existing test firmware | IN NETLIST |
 
 No MCU pin moves; no expander pin moves; no new readback (a U_LS off-state readback was evaluated and rejected: §6.2).
+
+### 5.2 Netlist / BOM / placement changes (S5-xx)
+
+| ID | Type | Item | Change | Finding |
+|---|---|---|---|---|
+| S5-S1 | ADD | R_SV2-R_SV10 220 k 0603 (CHAIN_END, K1_RUN, RUN_HD, RUN_12V, RELAY_RTN, HOLD_A, LS_A, CH_N6A, SET_CAP → SVC_*); service pads TP63-TP72 (TestPoint_Pad_D1.5mm, PCB feature, not in the BOM) | top-side service access for the latent-fault tests; slip-proof (T15) | S1 |
+| S5-S3 (S3-C1g) | PART/ADD | R_SRB 33 k → **10 k**; **D_SRB** BAT54 REARM_SET_RB → 3V3 | GPB6 HIGH ≥ 3.5 V | S3 |
+| S5-S4 | NET | R76 pin 1 LOOP_F → **LOOP_SNS** | analog loop copy independent of channel A and Q_LTA | S4 |
+| S5-S2 | PLACE | RT1 (10 k NTC, 0603) from (7.5, 35.5) to **(80.5, 26.0) top**, 3.5 mm from K1's coil end | COIL_HOT judged at K1 | S2 |
+| S5-S1 | PLACE | R281, R285 re-placed by the arranger (they sat where the pad array is) | room for the pads | S1 |
+
+### 5.3 For the body owner (mechanical) and the harness owner
+
+* Mounting holes, connector positions and height zones unchanged. New or moved items, all top side: service pad array
+  TP63-TP72, 10 pads Ø1.5 mm, 2 × 5 at 2.54 mm, centre (133.0, 79.5), copper only (height 0); RT1 0603 at (80.5, 26.0),
+  0.9 mm; R_SV2-R_SV10 0603 (0.9 mm) and D_SRB SOD-123 (1.2 mm) at the positions frozen in `placement_auto.py` (listed in
+  README). The pad array must be reachable with a DMM probe when the service cover is off: **please confirm the body leaves
+  (128-138, 77-82) visible and free of cables**.
+* Service tool: REARM test plug RTP-1 (CLIK-Mate 8-way housing as W-018's J_BTN end, two push buttons on pins 1-2 and 3-4).
+  Harness owner: W-018 note still needs the m-D correction (stage 4 §4.3).
+
+### 5.4 UNVERIFIED in stage 5
+
+K1 coil self-heating (0.17 W, 60 K/W assumed: up to +10 K, τ 300 s) used for COIL_HOT; DMM ohm-range test voltage low enough
+that the tap clamps stay off (T15 readings assume it); MCP23S17 VIH/VIL and abs-max as recalled; TestPoint_Pad_D1.5mm
+reachability through the body.

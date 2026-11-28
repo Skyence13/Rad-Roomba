@@ -64,6 +64,32 @@ def _band_fraction(sim, pair, x0=0.75, x1=2.25):
     return float((proc.exposure[iy0:iy1, ix0:ix1] > 0).mean())
 
 
+def rev5_metrics(sim):
+    """Numbers for the before/after comparison (simulated): statuses, acceptable fraction, median D#, flags and review
+    queue by recorded state, undecidable cells, provisional bookkeeping, position credit vs truth."""
+    from collections import Counter
+    proc = sim.app.pipeline.proc
+    rows = [r for r in proc.cells_table() if r["n_lane_gates"] or r["status"] == "ALARM"]
+    ch = proc._decision_channel()
+    dh = sorted(d.D_hash for d in proc.recorded[ch].values() if d.D is not None and d.D_hash is not None and math.isfinite(d.D_hash))
+    prov_nd = sum(1 for d in proc.provisional[ch].values() if d.status == "NO_DECISION_REF")
+    out = {"cells_with_data": len(rows), "status": dict(Counter(r["status"] for r in rows)),
+           "status_reasons": dict(Counter(r["status_reason"].split(" (")[0] for r in rows if r["status"] != "ACCEPTABLE").most_common(8)),
+           "acceptable_fraction": proc.coverage_summary()["acceptable_fraction"],
+           "median_D_hash": dh[len(dh) // 2] if dh else None,
+           "undecidable_recorded": sum(1 for r in rows if r["status"] == "NO DECISION"),
+           "undecidable_provisional_live": prov_nd,
+           "alarm_bookkeeping": dict(Counter(r["alarm_bookkeeping"] for r in rows if r["alarm_bookkeeping"])),
+           "flags": dict(Counter(f"{f['kind']}:{f.get('recorded', 'provisional')}" for f in proc.flags)),
+           "review_queue_items": len(sim.app.guidance.items()) if sim.app.guidance is not None else None,
+           "revisit": len(proc.revisit)}
+    try:
+        out["position_credit"] = sim.credit_vs_truth()
+    except Exception as err:                       # noqa: BLE001 - evidence only
+        out["position_credit"] = repr(err)
+    return out
+
+
 def _finish(name, sim, checks, extra=None, export=True):
     out = EVIDENCE / name
     out.mkdir(parents=True, exist_ok=True)
@@ -93,6 +119,7 @@ def _finish(name, sim, checks, extra=None, export=True):
                                      "no_decision_text": sorted({r[stat_key] for r in nd}),
                                      "no_decision_within_0.5m_of_an_end": sum(1 for r in nd if r["x_m"] < 0.5 or r["x_m"] > L - 0.5),
                                      "cells_within_0.5m_of_an_end": sum(1 for r in rows if r["x_m"] < 0.5 or r["x_m"] > L - 0.5)}
+        ev["rev5"] = rev5_metrics(sim)
     ev.update(extra or {})
     (out / "evidence.json").write_text(json.dumps({k: v for k, v in ev.items() if not k.startswith("_")}, indent=1, default=str) + "\n")
     return ev
@@ -254,7 +281,7 @@ def s15_no_auto_resume(tmp, seed=29):
     c.add("bumper: HOLD with a hardware inhibit", app.mission.state == "HOLD" and "BODY_BUMPER" in app.chassis.drive["stops"]["hw"])
     c.add("REARM pressed too early (element just closed, discharge time not over) is refused and reported",
           app.chassis.state.get("rearm_ready") is False and (sim.chassis.press("REARM") or True)
-          and sim.run(0.5) is not None and sim.chassis.last_rearm_refusal in ("DISCHARGE_TIME", "CHAIN_OPEN")
+          and sim.run(0.5) is not None and sim.chassis.last_rearm_refusal in ("NOT_READY", "CHAIN_OPEN")
           and app.chassis.drive["mode"] == "HW_INHIBIT", refusal=sim.chassis.last_rearm_refusal)
     sim.press_rearm()
     sim.run(5.0)
@@ -300,6 +327,41 @@ def s15_no_auto_resume(tmp, seed=29):
     c.add("explicit resume accepted after the link loss", app.command("resume", actor="op1")["accepted"])
     sim.run(2.0)
     c.add("resumes the interrupted task", moving_since(t_res) > 0 and task_name() == name2, task=task_name(), was=name2)
+    # --- stage-4/5 REARM behaviour (CCR-CHS-20/22) as the operator sees it (the fake follows the firmware names)
+    app.command("pause", actor="op1")
+    sim.run(0.5)
+    sim.chassis.env("bumper_l", True)
+    sim.run(0.3)
+    sim.chassis.env("bumper_l", False)
+    sim.run(0.2)
+    p0 = app.snapshot()["safety"]["rearm_prompt"]
+    sim.chassis.press("REARM")
+    sim.run(0.5)
+    p1 = app.snapshot()["safety"]["rearm_prompt"]
+    c.add("prompt: REARM not offered before rearm_ready; an early press is refused NOT_READY and shown with its action",
+          p0["press_rearm"] is False and p1["press_rearm"] is False and "NOT_READY" in (p1.get("refused") or "")
+          and "press again" in (p1.get("refused") or ""), before=p0, after=p1)
+    _wait(sim, lambda: app.chassis.state.get("rearm_ready") is True, 10)
+    sim.chassis.press("REARM", press_ms=4)
+    sim.run(0.5)
+    p2 = app.snapshot()["safety"]["rearm_prompt"]
+    c.add("a 4 ms tap is refused TOO_SHORT, reported; nothing latched", "TOO_SHORT" in (p2.get("refused") or "")
+          and not sim.chassis.hw_latch, prompt=p2)
+    sim.chassis.press("REARM", press_ms=6000)
+    sim.run(6.0)
+    p3 = app.snapshot()["safety"]["rearm_prompt"]
+    c.add("a REARM press held 5 s after the rise drops the latch (REARM_HELD) and the operator is told to press briefly",
+          not sim.chassis.hw_latch and "REARM_HELD" in sim.chassis.hw_reasons and any("briefly" in r for r in p3["reasons"]),
+          prompt=p3, reasons=sim.chassis.hw_reasons)
+    sim.chassis.inputs["vbat_v"] = 11.95
+    sim.run(1.0)
+    p4 = app.snapshot()["safety"]["rearm_prompt"]
+    c.add("BATTERY_REARM_LOW: the operator is asked to change or charge the pack before the next stop",
+          any("change or charge the pack" in w for w in p4.get("warnings", [])), prompt=p4)
+    sim.chassis.inputs["vbat_v"] = 13.1
+    sim.press_rearm()
+    sim.run(1.0)
+    c.add("after all of it: still HOLD, nothing moved without a resume", app.mission.state == "HOLD")
     # --- chassis firmware additions (CCR-CHS-10): unknown fault flags are shown raw and archived; DIAG members are tolerated
     got = []
     sim.chassis.inputs["faults"] = ["PERMIT_STUCK_ON", "CHAIN_IMPLAUSIBLE", "SOME_FLAG_FROM_A_NEWER_FIRMWARE"]

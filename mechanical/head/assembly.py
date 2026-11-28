@@ -127,10 +127,16 @@ def build(build="prototype", projection=3.0, travel=0.0):
         _p(P, "desiccant", "PUR-DES-1G", T.desiccant(), "MIXED", "purchased", "elec", "4 desiccant pouches (about 0.5 g each) + indicator card, front strip between the lid bosses", mass_g=3.0, hard=False)
         _p(P, "ntc", "PUR-NTC-10K", T.ntc(), "MIXED", "purchased", "elec", "10 k NTC ring-lug sensor on the spreader (heater regulation, board J-heater connector)", mass_g=0.5)
     for nm in ("J1", "J2"):
-        _p(P, f"grommet_{nm}", f"RR-HD-{X}-51{1 if nm == 'J1' else 2}", T.grommet(nm), "TPU", "printed" if printed_frame else "fab", "cable", "split strain-relief grommet (compressed by the lid)", hard=False)
+        k = 1 if nm == "J1" else 2
+        _p(P, f"boot_{nm}", f"RR-HD-{X}-51{k}", T.boot(nm), "PA-CF" if printed_frame else "PA12-MJF", "printed" if printed_frame else "fab", "cable",
+           f"{nm} cable-breakout boot on the lid: jacket clamp + potting, strain relief and clip point (review M6)", mass_g=8.0 if nm == "J1" else 6.0)
+        _p(P, f"holster_{nm}", f"RR-HD-{X}-51{k + 2}", T.holster(nm), "PA-CF" if printed_frame else "PA12-MJF", "printed" if printed_frame else "fab", "cable",
+           f"{nm} plug parking cup on the lid (unmated / docking state)", allow={f"plug_{nm}"})
         c, plug = T.pigtail(nm)
-        _p(P, f"pigtail_{nm}", f"PUR-CABLE-{nm}", c, "MIXED", "purchased", "cable", f"{nm} pigtail cable, 150 mm free length", mass_g=25.0, allow={f"grommet_{nm}"})
-        _p(P, f"plug_{nm}", "PUR-" + ("M16-8" if nm == "J1" else "M12-8"), plug, "MIXED", "purchased", "cable", f"{nm} cable plug envelope", mass_g=40.0 if nm == "J1" else 30.0)
+        _p(P, f"pigtail_{nm}", f"PUR-CABLE-{nm}", c, "MIXED", "purchased", "cable", f"{nm} pigtail cable (parked shape; docked route checked against the body)", mass_g=25.0,
+           allow={f"boot_{nm}", f"holster_{nm}"})
+        _p(P, f"plug_{nm}", "PUR-" + ("M16-8" if nm == "J1" else "M12-8"), plug, "MIXED", "purchased", "cable", f"{nm} cable plug envelope (parked in its holster)",
+           mass_g=40.0 if nm == "J1" else 30.0, allow={f"holster_{nm}"})
     _p(P, "vent", "PUR-VENT-M6", T.vent(), "MIXED", "purchased", "seal", "ePTFE breather vent M6 with internal light baffle", mass_g=1.0)
     # ---------------- lumped small items (mass only, at the head centre)
     for nm, pn, shape, desc in T.fastener_heads(build):

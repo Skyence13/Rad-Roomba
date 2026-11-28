@@ -10,6 +10,8 @@ import math
 import sys
 import time
 
+import numpy as np
+
 import yaml
 
 from .geom import Part
@@ -318,6 +320,10 @@ def board_fit(builds):
                  "; ".join(f"{f['hole']} {'/'.join(f['board_nets'])} ({', '.join(f['board_parts_on_net'][:4]) or 'no part'})" for f in fc)
                  + f"; {len(expects)} holes carry parts, all 8 have the metal stack. H3 washer edge to the edge of its copper keep-out (BUS_GND side): "
                  f"{next(f for f in fc if f['hole'] == 'H2803')['washer_to_foreign_copper_mm']} mm (pad r {next(f for f in fc if f['hole'] == 'H2803')['pad_r']:.2f})"))
+    # (g) bottom side: the head has no room under the board for parts it does not know about -> fail loudly, never skip
+    bottom = sorted(k for k, r in fp.items() if r["side"] == "B" or r.get("b_crtyd_uv") or r.get("b_fab_uv"))
+    rows.append(("no bottom-side parts on the board (B.Cu footprints / B.CrtYd / B.Fab read; the spreader is 2.5 mm below the PCB)", not bottom,
+                 f"bottom-side footprints: {bottom or 'none'}"))
     # (e) mated Micro-Fit plug keep-outs: their interference with the head is part of the assembly interference check; record the rear-strip numbers
     plugs = {ref: bounds(ko) for ref, ko in T.microfit_plugs()}
     data["plug_keepouts_xyz"] = plugs
@@ -326,6 +332,95 @@ def board_fit(builds):
                  f"keep-outs x {back:.1f}..{max(b[3] for b in plugs.values()):.1f}, y {min(b[1] for b in plugs.values()):.2f}..{max(b[4] for b in plugs.values()):.2f}, "
                  f"z {oz:.1f}..{oz + H.MICROFIT_H_ALLOW:.1f}: in the prototype and production assemblies (interference checks above, parts plug_ko_J2001 / plug_ko_J2601 / plug_ko_J2501)"))
     return rows, data
+
+
+RIGID = ("frame", "spreader", "lid", "j1_blister", "pcb", "S0_shield", "S1_shield", "S2_shield", "S3_shield", "lid_standoffs", "board_standoffs", "fence_",
+         "hd_", "desiccant", "sw_", "thermal_cutout", "ntc", "boot_", "S0_chimney", "S1_chimney", "S2_chimney", "S3_chimney", "shoe_", "bridge")
+
+
+def harness_checks(builds, res, add):
+    """Review M5 / M6 / M11: GH plug keep-outs, routed internal leads, pigtails against the body (docked, parked, docking stroke), ToF sight lines,
+    out/lead_routes.yaml."""
+    from . import pigtail as PG
+    from . import routes as RT
+    fp, meta = board_asbuilt()
+    # (1) mated GH plugs incl. wire exit (CR-M08 template) vs every hard head part
+    ko = RT.gh_keepouts(fp)
+    rear, front = {}, {}
+    for b_ in ("prototype", "production"):
+        hard = [(p, bounds(p.shape)) for p in builds[b_] if p.pn != "-" and p.group not in ("optic", "lane", "window") and not p.name.startswith(("pcb", "plug_ko", "pigtail", "plug_J", "fasteners_lumped"))]
+        for ref, k in ko.items():
+            bx = box(*k)
+            for p, bb in hard:
+                if bb[3] < k[0] or bb[0] > k[1] or bb[4] < k[2] or bb[1] > k[3] or bb[5] < k[4] or bb[2] > k[5]:
+                    continue
+                v = volume(bx.intersect(p.shape))
+                if v > TOL_VOL:
+                    (rear if ref in RT.GH_REAR else front).setdefault(ref, set()).add(f"{p.name} ({b_})")
+    res["data"]["gh_keepouts"] = {r: [round(v, 2) for v in k] for r, k in ko.items()}
+    add("mated GH plugs + wire exit, rear edge (J1001..J1301 lane aux, J2501): clear of every head part (both builds)", "pass" if not rear else "fail",
+        f"keep-outs {GH_TXT} for {', '.join(RT.GH_REAR)}; clashes: {({k: sorted(v) for k, v in rear.items()}) or 'none'}", "tool-checked against the board file")
+    add("mated GH plugs + wire exit, FRONT edge (J2002 / J2003 / J2004 rail switches, J2201 lid switch, J2402)", "deviation" if front else "pass",
+        f"keep-outs to x {max(ko[r][1] for r in RT.GH_FRONT):.1f} (front wall inner face x {H.BAY_X1}, prototype front EMI fence x 180.0..180.5); clashes: "
+        f"{({k: sorted(v) for k, v in front.items()}) or 'none'}. The side-entry GH headers face the front wall from 0.8 mm inside the board edge: mated plug + "
+        "crimp + one bend need about 11.5 mm beyond the header body, the front strip has 6.4 (production) / 1.5 (prototype, fence). Board-side change requested "
+        "(CR-H17 in mechanical/head/CHANGE_REQUESTS.md: top-entry GH headers or headers >= 6 mm further rearward)", "tool-checked against the board file")
+    # (2) pigtails vs the body (read-only STEP of mechanical/prototype_x1c)
+    pig = PG.evaluate()
+    res["data"]["pigtails"] = {k: ({kk: vv for kk, vv in v.items() if not kk.startswith("_")} if isinstance(v, dict) and k in ("J1", "J2") else v) for k, v in pig.items()}
+    for n in ("J1", "J2"):
+        g = pig[n]
+        add(f"{n} pigtail free of the body: docked (mated) route, parked (unmated) set and the {pig['stroke_mm']:g} mm docking stroke",
+            "pass" if g["ok"] else "fail",
+            f"cable {g['cable_d']} mm, catalogue bend radius {g['bend_r']:g} (route at {g['docked_min_radius_mm']:g}); boot top {g['boot_top']} -> plug back {g['plug_back']} "
+            f"(body J{n[1]}_mated_plug.step): {g['docked_length_mm']:.0f} mm, x {g['docked_x_range']}, y {g['docked_y_range']}, apex z {g['docked_apex_z']:.0f}; body hits {g['docked_clash'] or 'none'}, "
+            f"clearance >= {g['docked_min_gap_mm']:g} mm (sampled rings). Parked: loop R {g['parked']['loop_r_mm']}, apex z {g['parked']['apex_z']:.0f}, plug in the holster at "
+            f"{g['parked']['holster_xy']}; hits at stroke positions {g['parked']['clash_by_stroke_position']}; swept volume {g['swept_volume']}. Clip / strain relief = the boot "
+            "(z 46..70), outside datum A and every seating face", "tool-checked (sampled point classification on the body STEP files) + calculated")
+    # (3) ToF look-ahead sight lines vs the docked pigtails (cone half-angle 9 deg = 18 deg FoV, UNVERIFIED)
+    worst = (180.0, None)
+    for k, t in P.TOF_SENSORS.items():
+        if "fwd" not in k:
+            continue
+        o, dv = np.array(t["xyz"], float), np.array(t["dir"], float)
+        dv /= np.linalg.norm(dv)
+        for n in ("J1", "J2"):
+            for q in pig[n]["_docked_points"]:
+                w = np.array(q, float) - o
+                ang = math.degrees(math.acos(float(np.clip(w @ dv / np.linalg.norm(w), -1, 1)))) - math.degrees(math.atan(pig[n]["cable_d"] / 2 / np.linalg.norm(w)))
+                if ang < worst[0]:
+                    worst = (ang, (k, n, tuple(round(float(c), 0) for c in q)))
+    res["data"]["tof_pigtail_angle_deg"] = worst
+    add("forward look-ahead ToF cones (18 deg FoV, UNVERIFIED) clear of the docked pigtails", "pass" if worst[0] > 9.0 else "deviation",
+        f"smallest angle between a sensor axis and the cable surface {worst[0]:.1f} deg ({worst[1]}); cone half-angle 9 deg", "calculated")
+    # (4) every lead inside the head as a routed tube vs the rigid head parts
+    R = RT.routes(fp, pig)
+    hits = {}
+    for b_ in ("prototype", "production"):
+        rig = [(p, bounds(p.shape)) for p in builds[b_] if p.name.startswith(RIGID)]
+        for r in R:
+            if not r["points"]:
+                continue
+            t = RT.tube(r["points"][1:-1] if len(r["points"]) > 3 else r["points"], r["bundle_d"])
+            tb = bounds(t)
+            for p, bb in rig:
+                if bb[3] < tb[0] or bb[0] > tb[3] or bb[4] < tb[1] or bb[1] > tb[4] or bb[5] < tb[2] or bb[2] > tb[5]:
+                    continue
+                v = volume(t.intersect(p.shape))
+                if v > 0.5:
+                    hits.setdefault(f"{r['cable_id']} {r['lead'][:40]}", set()).add(f"{p.name} ({b_}) {v:.1f} mm3")
+    res["data"]["lead_route_hits"] = {k: sorted(v) for k, v in hits.items()}
+    add(f"{sum(1 for r in R if r['points'])} routed leads inside the head (end terminations excluded) clear of the rigid head parts (both builds)", "pass" if not hits else "fail",
+        f"hits: {({k: sorted(v) for k, v in hits.items()}) or 'none'}; routes and lengths in out/lead_routes.yaml", "tool-checked (tube solids on the stated waypoints)")
+    RT.write_yaml(R, OUT / "lead_routes.yaml", {"board_file": meta["file"], "board_mtime_utc": meta["mtime_utc"],
+                                               "pigtail_docked": {n: {"boot_top": pig[n]["boot_top"], "plug_back": pig[n]["plug_back"], "free_length_mm": pig[n]["docked_length_mm"]} for n in ("J1", "J2")},
+                                               "note_harness_ids": "W-105 / W-106 sides: board J2003 = LEFT, J2004 = RIGHT (design/circuit.py loop order F, L, R; S2-L6); "
+                                                                   "harness/cables.csv has W-105 RIGHT -> J2003 and W-106 LEFT -> J2004 (swapped)"})
+    res["data"]["lead_routes"] = {r["cable_id"] + " | " + r["lead"]: r["length_mm"] for r in R}
+    return R, pig
+
+
+GH_TXT = "courtyard width x 7.25 mm beyond the mating-side courtyard edge x 4.3 mm high (CR-M08 template, UNVERIFIED housing data)"
 
 
 def spreader_hole_web(min_web=1.0):
@@ -411,6 +506,7 @@ def run():
     res["data"]["board_fit"] = fit_data
     for item, ok_, det in fit_rows:
         add(f"RR-HEAD-ACQ as built vs head: {item}", "pass" if ok_ else "fail", det, "tool-checked against electronics/head_acq/RR-HEAD-ACQ.kicad_pcb")
+    harness_checks(builds, res, add)
     web = spreader_hole_web()
     add("spreader plate: every hole pair keeps >= 1.0 mm web (countersinks at 5.2 mm)", "pass" if web[0] >= 1.0 else "fail",
         f"smallest web {web[0]:.2f} mm between {web[1][0]} ({web[1][1]}) and {web[1][2]} ({web[1][3]})")
@@ -420,12 +516,11 @@ def run():
            "production (to the rear wall x %.1f)" % H.BAY_X0: C.j1_fan_in(board_asbuilt()[0], H.BAY_X0)}
     res["data"]["j1_wire_exit_mm"] = {"to_rear_wall": round(behind, 2), "required_single_bend": H.WIRE_EXIT_MIN, "fan_in": fan}
     ok = behind >= H.WIRE_EXIT_MIN and all(v["ok"] for v in fan.values())
-    add("J1 landing harness buildable: wire exit + bend behind the mated J2001 / J2601 plugs and fan-in of the J2001 wires to the 7.5 mm cable at the port", "pass" if ok else "fail",
-        f"plug backs at x {min(b_[0] for b_ in plugs):.1f} (v {H.PLUG_V[0]:g}, CR-M06): {behind:.1f} mm to the rear wall (>= {H.WIRE_EXIT_MIN:g} for one bend). Fan-in (R = 2 x OD, 2 mm "
-        "straight behind the housing, S-bend into the jacket bundle r 2.75): " + "; ".join(f"{k}: {v['available_mm']} mm available, worst pin {max(v['rows'], key=lambda r: r['x_needed_mm'])['pin']} "
-        f"needs {max(r['x_needed_mm'] for r in v['rows'])} mm, largest wire OD that fits {v['max_od_that_fits_mm']} mm" for k, v in fan.items())
-        + f". Requires thin-wall hook-up wire inside the head: AWG 20 OD <= {min(v['max_od_that_fits_mm'] for v in fan.values()):.2f} mm (assumed {H.J1_WIRE_OD['20']}, ETFE / XL-PE class, UNVERIFIED); "
-        "a standard PVC UL1007 AWG 20 (about 1.9 mm, recalled) does not fit", "calculated on tool-checked positions")
+    add("J1 landing harness buildable: wire exit + one bend behind the mated J2001 / J2601 plugs into the rear strip, rise to the J1 boot (review M6 routing)", "pass" if ok else "fail",
+        f"plug backs at x {min(b_[0] for b_ in plugs):.1f} (v {H.PLUG_V[0]:g}, CR-M06): {behind:.1f} mm to the rear wall. Per wire 2 mm straight + 90-degree bend at R = 2 x OD into "
+        "the strip, run +y at x 76.6 to the boot slot, rise there: " + "; ".join(f"{k}: {v['available_mm']} mm available, worst pin needs {max(r['x_needed_mm'] for r in v['rows'])} mm, "
+        f"largest wire OD that fits {v['max_od_that_fits_mm']} mm" for k, v in fan.items()) + f" (AWG 20 assumed {H.J1_WIRE_OD['20']} mm; PVC UL1007 about 1.9 mm also fits; OD UNVERIFIED)",
+        "calculated on tool-checked positions")
     top, bot, j1 = T.pcb_keepouts()
     lid_under = bounds(T.lid())[2]
     liner_under = lid_under - T.LINER_T
@@ -476,10 +571,9 @@ def run():
     ok = abs(kx - rc["latch_keeper"][0]) < 1e-6 and kp[5] <= P.HEAD_ENV_E_CEILING["z"][1] and kp[5] >= lb[4] and -15.0 <= lb[2] and 15.0 >= lb[3]
     add("latch keeper at (104, 0), hook inside the latch box, load path keeper -> hinge -> bridge -> T-heads -> x-stop shoulders (aluminium)", "pass" if ok else "fail",
         f"hook centre x {kx:.1f}, hook z 47.5..{kp[5]:.1f} (latch box z {lb[4]}..{lb[5]}), width 30 (latch box 24); no latch load in the lid or in a printed part")
-    okp = all(abs(H.PORT_Y[n] - (76.2 if n == "J1" else -H.SHOE_Y)) < 1e-6 and H.XR < H.PORT[n][0] < H.BAY_X0 and H.PORT_SLOT_Z0 + H.CABLE_D[n] / 2 <= H.PORT[n][2] <= H.Z_LID0 - H.CABLE_D[n] / 2 + 0.01 for n, s in (("J1", 1), ("J2", -1)))
-    add("J1 / J2 cable ports in the rear wall at (71.7, 76.2, 39.0) (CR-M03) / (71.7, -87.5, 39.0)", "pass" if okp else "fail", f"wall x {H.XR}..{H.BAY_X0}; slot floor z {H.PORT_SLOT_Z0}; cable top z {H.PORT['J1'][2] + H.CABLE_D['J1'] / 2:.2f} under the lid at {H.Z_LID0}")
     sw = {"rail_sw_front": (H.PIN_X, H.SHOE_Y, 37.3), "rail_sw_left": (H.XR + 3.6, H.SW_SIDE["y"], H.SW_SIDE["z"]), "rail_sw_right": (H.XR + 3.6, -H.SW_SIDE["y"], H.SW_SIDE["z"])}
-    add("rail switch positions vs params.HEAD_RAIL_SWITCHES (layout placeholders)", "deviation",
+    same = all(math.dist(sw[k], P.HEAD_RAIL_SWITCHES[k]) < 0.05 for k in sw)
+    add("rail switch positions vs params.HEAD_RAIL_SWITCHES (layout placeholders)", "pass" if same else "deviation",
         f"designed {sw} vs placeholders {P.HEAD_RAIL_SWITCHES}: the placeholders lie inside the optical stack / on the split plane; frames.yaml needs the designed values", "design note")
     iso = {b: frame_isolation(builds[b]) for b in ("prototype", "production")}
     res["data"]["frame_to_receiver_gap_mm"] = {b: round(v[0], 3) for b, v in iso.items()}
@@ -544,7 +638,9 @@ def run():
     r = interference(sub + covers, "transport cover", only_between={"transport_cover_L", "transport_cover_R"})
     add("transport covers clip on without touching the films or any part except their seats", "pass" if not r["overlaps"] else "fail",
         f"{r['pairs_tested']} pairs; overlaps: {r['overlaps'] or 'none'}; cover rests touch the cassette borders only (z {H.CAS_Z0 - 0.3:.1f} vs film z {H.FILM_Z:g})")
-    slots = {"chimney notch": 2 * H.CHIM_HY, "cable port": 2 * H.PORT_SLOT_HY, "switch saddle window in the front fence foot": 27.0}
+    slots = {"chimney notch": 2 * H.CHIM_HY, "J1 boot slot": max(H.BOOT_SLOTS["J1"][1] - H.BOOT_SLOTS["J1"][0], H.BOOT_SLOTS["J1"][3] - H.BOOT_SLOTS["J1"][2]),
+             "J2 boot slot": H.BOOT_SLOTS["J2"][3] - H.BOOT_SLOTS["J2"][2], "J2 rear-flange notch": H.J2_FLANGE_NOTCH_Y[1] - H.J2_FLANGE_NOTCH_Y[0],
+             "switch saddle window in the front fence foot": 27.0}
     add("shield openings: no slot longer than 20 mm except the cable entries", "deviation" if slots["switch saddle window in the front fence foot"] > 20 else "pass",
         f"{slots}; the 27 mm openings are in the fence FOOT (flat on the spreader, closed by it), not in the wall: electrically closed", "design note")
     # 10 masses

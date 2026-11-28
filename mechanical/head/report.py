@@ -115,7 +115,7 @@ def write(res):
            "25 W/m2K sensitivity the floor side gets 25 W/m2K too (bound); (2) receiver shoes: spreader -> 0.5 mm G10 isolators (k 0.29) + 0.3 mm air round the "
            "T-heads + the 8 T-head screws through insulating washers + keeper and bridge air gaps = "
            f"{rec['prototype']['total']:.2f} W/K (prototype) / {rec['production']['total']:.2f} W/K (production) from the model geometry, in series with the body side "
-           f"{A_['receiver_body_side_w_per_k_per_shoe']:g} W/K per shoe (RR-X PAHT-CF channels with steel dowel lands on the chassis plate at ambient, STATED ASSUMPTION) "
+           "0.11 W/K (still air) / 0.14 W/K (25 W/m2K) per shoe (CR-10, body engineer: RR-X PAHT-CF channels with steel dowel lands on the chassis plate at ambient) "
            "+ exposed bridge / keeper faces; (3) J1 / J2 pigtails as infinite copper fins (contract conductor gauges + 1 mm2 braid, UNVERIFIED). "
            "Heater = UA x (set-point - ambient) - 1.2 W.", "",
            _t(["Build", "h ext (W/m2K)", "Jacket", "UA at -20 C (W/K)", f"Heater at -20 C, +{A_['set_point_c']:g} C BASELINE (W)", f"Heater at -25 C, +{A_['set_point_c']:g} C BASELINE (W)",
@@ -174,4 +174,19 @@ def write(res):
               [(f["hole"], f"{f['uv'][0]}, {f['uv'][1]}", f"{f['base'][0]}, {f['base'][1]}", ", ".join(f["board_nets"]), ", ".join(f["board_parts_on_net"]) or "-",
                 f["copper_keepout_r"], f["washer_to_foreign_copper_mm"], "yes" if f["standoff_metal_both_builds"] else "NO") for f in bf.get("frame_contacts", [])]), "", "Rail-switch lead lengths (calculated, S2-L6): " + "; ".join(f"{k}: {v['route_mm']:.0f} mm" for k, v in d.get("harness_routes", {}).items())
            + ". D2HW-C201M lead length UNVERIFIED: splice to the GH-4 harness where shorter.", ""]
+    pg = d.get("pigtails")
+    if pg:
+        md += ["## 13. J1 / J2 pigtails docked and during docking (review M6; tool-checked on the body STEP + calculated)", "",
+               f"Body solids: `{pg['body_dir']}` (read-only; file times {sorted(set(pg['body_files'].values()))}). Docking stroke {pg['stroke_mm']:g} mm (shoe engagement). "
+               "The pigtails leave the head vertically from two cable-breakout boots on the lid rear strip, forward of the nose-cowl V; the boot is the strain relief "
+               "and the only clip point (z 46..70, clear of datum A and every seating face); the jacket ends potted in the boot. Inside, the conductors run in the "
+               "rear strip and rise through a lid slot (no rear-wall port any more).", "",
+               _t(["Pigtail", "Cable OD / bend R", "Boot top", "Plug back (body)", "Docked free length", "Docked apex z / x range", "Clearance to body", "Parked loop R / apex z / holster", "Stroke sweep hits"],
+                  [(n, f"{g['cable_d']} / {g['bend_r']:g}", g["boot_top"], g["plug_back"], f"{g['docked_length_mm']:.0f}", f"{g['docked_apex_z']:.0f} / {g['docked_x_range']}",
+                    f">= {g['docked_min_gap_mm']:g}", f"{g['parked']['loop_r_mm']} / {g['parked']['apex_z']:.0f} / {g['parked']['holster_xy']}",
+                    g["parked"]["clash_by_stroke_position"]) for n, g in ((k, pg[k]) for k in ("J1", "J2"))]), "",
+               "Splice: no AWG 18/20 transition in the free run. Preferred: AWG 20 from J2001 to the M16 contacts (contact range UNVERIFIED); otherwise the "
+               "transition is made inside the J1 boot (static, potted).", "",
+               "## 14. Lead routes inside the head (review M5; calculated, machine-readable copy `out/lead_routes.yaml`)", "",
+               _t(["Cable / lead", "Length (mm, route + termination)"], sorted(d.get("lead_routes", {}).items())), ""]
     (OUT / "head_report.md").write_text("\n".join(md))

@@ -680,8 +680,8 @@ class HeadLinkMaster:
             return None
         st = rsp["body"]
         health = [str(h) for h in (st.get("health") or [])]
-        self.events.append({"ev": "head_health", "t_us": self.clock.now_us(), "health": health,
-                            "reset_cause": st.get("reset_cause"), "build": st.get("build"), "identity": st.get("identity")})
+        self._note(note="HEAD_STATUS_AT_OPEN", health=health, reset_cause=st.get("reset_cause"), build=st.get("build"),
+                   identity=st.get("identity"))
         bad = [h for h in health if h in self.cfg.refuse_health]
         if bad:
             self._block("HEAD_HEALTH:" + "|".join(bad), "head reports " + ", ".join(bad) + " (boot identity not trustworthy)")

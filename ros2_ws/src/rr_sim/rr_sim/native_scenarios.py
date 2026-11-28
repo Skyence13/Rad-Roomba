@@ -100,8 +100,10 @@ def n02(tmp):
 
 def n15(tmp):
     """No automatic resume against the native chassis emulator (hardware inhibit by bumper, local re-arm with the emulator's
-    realistic timing, remote PAUSE) - the native counterpart of s15 for what the emulator can stimulate.  The link
-    outage case has no emulator stimulus and stays a gap.  Non-zero set-points are counted in ChassisLink.stats."""
+    realistic timing, remote PAUSE, link outage with the emulator's `usb_down_ms` stimulus) - the native counterpart of s15.
+    Also the stage-4/5 REARM behaviour seen by the host: the operator prompt offers REARM only when `rearm_ready`, an early
+    press is refused with a reason (REARM_REFUSED event, STATE.rearm_refusal) and reported.  Non-zero set-points are counted
+    in ChassisLink.stats."""
     sim = NativeSystem(Path(tmp) / "n15", sc._cfg(), seed=35)
     c = sc.Checks()
     try:
@@ -120,8 +122,21 @@ def n15(tmp):
         n_hold = st["drive_nonzero"]
         c.add("bumper: HOLD with a hardware inhibit", app.mission.state == "HOLD" and "BODY_BUMPER" in app.chassis.drive["stops"]["hw"],
               stops=app.chassis.drive["stops"])
-        c.add("REARM pressed too early is not accepted (latch stays open)", (sim.chassis.press("REARM") or True) and sim.run(0.5) is not None
+        prompt0 = app.snapshot()["safety"]["rearm_prompt"]
+        c.add("operator prompt does not offer REARM before rearm_ready (reason shown)", prompt0["press_rearm"] is False and prompt0["reasons"],
+              prompt=prompt0, ready=app.chassis.state.get("rearm_ready"))
+        n_ev = len(app.chassis.chassis_events)
+        c.add("REARM pressed too early is not accepted (latch stays open)", (sim.chassis.press("REARM") or True) and sim.run(0.8) is not None
               and app.chassis.drive["mode"] == "HW_INHIBIT", mode=app.chassis.drive["mode"], ready=app.chassis.state.get("rearm_ready"))
+        sim.run(1.0)
+        ref = [e for e in app.chassis.chassis_events[n_ev:] if e.get("kind") == "REARM_REFUSED"]
+        prompt1 = app.snapshot()["safety"]["rearm_prompt"]
+        c.add("the early press yields REARM_REFUSED with a reason, reported to the operator",
+              bool(ref) and (app.chassis.state.get("rearm_refusal") or (prompt1.get("refused") or "")) is not None,
+              events=ref[:2], state_refusal=app.chassis.state.get("rearm_refusal"), prompt=prompt1)
+        sc._wait(sim, lambda: app.chassis.state.get("rearm_ready") is True, 12)
+        prompt2 = app.snapshot()["safety"]["rearm_prompt"]
+        c.add("operator prompt offers REARM once rearm_ready", prompt2["press_rearm"] is True, prompt=prompt2)
         sim.press_rearm()
         sim.run(5.0)
         c.add("bumper: ARMED_IDLE again, mission still HOLD", app.chassis.drive["mode"] == "ARMED_IDLE" and app.mission.state == "HOLD")
@@ -145,7 +160,25 @@ def n15(tmp):
         c.add("resume accepted, paused task only", app.command("resume", actor="op1")["accepted"])
         sim.run(3.0)
         c.add("moves again on the paused task", st["drive_nonzero"] > n_p and app.mission.task["name"] == name1)
-        ev = sc._finish("native_s15_no_auto_resume", sim, c, {"gap": "link outage case: no emulator stimulus"})
+        # link outage: emulator stimulus usb_down_ms (bytes lost both ways) -> CMD_TIMEOUT / HOST_LINK_LOST protective stop
+        sc._wait(sim, lambda: app.mission.phase == "PASS" and sim.truth()[0] > 0.9, 120)
+        name2 = app.mission.task["name"]
+        sim.chassis.udp.send({"usb_down_ms": 1500})
+        sim.run(1.6)
+        n_o = st["drive_nonzero"]
+        sim.run(6.0)
+        c.add("link outage: mission in HOLD after the link is back", app.mission.state == "HOLD", state=app.mission.state,
+              reason=app.mission.hold_reason, stops=app.chassis.drive.get("stops"))
+        c.add("link outage: zero non-zero DRIVE after the link is back", st["drive_nonzero"] == n_o, sent=st["drive_nonzero"] - n_o)
+        app.command("rearm", actor="op1")
+        sim.run(3.0)
+        c.add("software re-arm after the link loss still moves nothing", st["drive_nonzero"] == n_o, sent=st["drive_nonzero"] - n_o,
+              mode=app.chassis.drive.get("mode"))
+        c.add("explicit resume accepted after the link loss", app.command("resume", actor="op1")["accepted"])
+        sim.run(3.0)
+        c.add("moves again on the interrupted task", st["drive_nonzero"] > n_o and app.mission.task["name"] == name2,
+              task=app.mission.task["name"], was=name2)
+        ev = sc._finish("native_s15_no_auto_resume", sim, c)
     finally:
         sim.close()
     return ev
@@ -187,7 +220,7 @@ def n03(tmp, preset_s=3.0):
 if __name__ == "__main__":
     import json
     import tempfile
-    which = sys.argv[1:] or ["n01", "n02"]
+    which = sys.argv[1:] or ["n01", "n02", "n15"]
     ok = True
     for name in which:
         ev = globals()[name](tempfile.mkdtemp(prefix="rr_native_"))

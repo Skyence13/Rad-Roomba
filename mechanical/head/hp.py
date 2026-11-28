@@ -154,7 +154,14 @@ SW = {"l": 13.3, "t": 5.3, "h": 7.0, "plunger": 1.5, "pt_max": 1.0, "ot_min": 1.
 # ports, vent. J1 at y 76.2 = CR-M03 (a) (electronics/head_acq/STAGE2_CHANGE_REQUESTS.md: J2001 centre, board u 86.8); head mechanical owns the port
 # (mechanical/common P.HEAD_PIGTAIL_EXIT still lists y 87.5: reported by the interface-record check). x and z from the interface (71.7, 39.0).
 PORT_Y = {"J1": 76.2, "J2": PORT["J2"][1]}
-PORT_SLOT_HY, PORT_SLOT_Z0 = 5.5, 33.5
+PORT_SLOT_HY, PORT_SLOT_Z0 = 5.5, 33.5     # (former rear-wall U-slot; no longer cut since review M6)
+# Pigtail exits (review M6): cable-breakout boots on the lid rear strip, vertical cable exit at z 70 forward of the nose-cowl V; lid slots under them
+BOOT_BOX = {"J1": (73.0, 87.0, 72.75, 86.25, Z_LID1 + 1.0, 70.0), "J2": (72.0, 85.0, -105.55, -93.05, Z_LID1, 70.0)}
+BOOT_CABLE_XY = {"J1": (80.0, 79.5), "J2": (78.5, -99.3)}
+BOOT_SLOTS = {"J1": (74.5, 80.5, 79.0, 86.0), "J2": (74.0, 76.5, -105.0, -93.5)}
+J2_FLANGE_NOTCH_Y = (-106.0, -92.0)      # rear-comb flange notch where the J2501 wires rise (14 mm, <= 20 mm slot rule)
+HOLSTER_H = 10.0
+HOLSTER_XY = {"J1": (164.0, 79.5), "J2": (152.5, -99.3)}   # parked loop radius = half the boot-to-holster distance (42 / 37 mm >= R 40 / 35)
 
 # ----------------------------------------------------------------------------- RR-HEAD-ACQ as built (IB-52; checks.py compares every value below
 # with electronics/head_acq/RR-HEAD-ACQ.kicad_pcb, so a board change shows up as a failed check, not as a silent misfit)

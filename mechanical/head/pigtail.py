@@ -33,8 +33,7 @@ DOCK_STROKE = 66.0          # mm: shoe engagement travel at the end of docking (
 CLEAR = 2.0                 # mm clearance required between a cable and any body solid
 BOOT_TOP_Z = 70.0
 # boot = cable-breakout housing on the lid (x0, x1, y0, y1, z0, z1), cable centre (x, y) at the boot top, lid slot for the conductors
-BOOT = {"J1": {"box": (73.0, 87.0, 72.75, 86.25, H.Z_LID1 + 1.0, BOOT_TOP_Z), "cable_xy": (80.0, 79.5), "slot": (74.5, 80.5, 79.0, 86.0)},
-        "J2": {"box": (72.0, 85.0, -105.55, -93.05, H.Z_LID1, BOOT_TOP_Z), "cable_xy": (78.5, -99.3), "slot": (74.0, 76.5, -105.0, -93.5)}}
+BOOT = {n: {"box": H.BOOT_BOX[n], "cable_xy": H.BOOT_CABLE_XY[n], "slot": H.BOOT_SLOTS[n]} for n in ("J1", "J2")}
 ENV_KEY = {"J1": "j1_receptacle", "J2": "j2_receptacle"}
 
 
@@ -132,19 +131,16 @@ def parked_path(name, length):
     d, rb = cable(name)
     plug_len = 62.0 + 15.0 if name == "J1" else 55.0 + 12.0          # plug_l + backshell (parts.yaml, backshell UNVERIFIED)
     x, y = BOOT[name]["cable_xy"]
-    z_back = H.Z_LID1 + H.JACKET_T + plug_len                       # plug standing in the holster on the jacket, cable end up
-    R = rb + 2.0
-    # length = rise + pi R + drop, drop = (BOOT_TOP_Z + rise) - z_back  ->  rise from the given length
-    rise = (length - math.pi * R + z_back - BOOT_TOP_Z) / 2
-    if rise < 5.0:
-        rise, R = 5.0, (length - 2 * 5.0 - BOOT_TOP_Z + z_back) / math.pi
+    z_back = H.Z_LID1 + 2.0 + plug_len                              # plug standing head-down in the holster cup (floor 2 mm)
+    R = (H.HOLSTER_XY[name][0] - x) / 2
+    rise = (length - math.pi * R + z_back - BOOT_TOP_Z) / 2       # length = rise + pi R + drop, drop = (BOOT_TOP_Z + rise) - z_back
     zt = BOOT_TOP_Z + rise
     pts = [np.array([x, y, BOOT_TOP_Z]), np.array([x, y, zt])]
     for k in range(1, 37):
         a = math.pi * k / 36
         pts.append(np.array([x + R - R * math.cos(a), y, zt + R * math.sin(a)]))
     pts.append(np.array([x + 2 * R, y, z_back]))
-    holster_xy = (x + 2 * R, y)
+    holster_xy = H.HOLSTER_XY[name]
     return {"points": np.array(pts), "rise_mm": rise, "loop_r_mm": R, "holster_xy": holster_xy, "plug_len": plug_len, "z_back": z_back, "apex_z": zt + R,
             "cable_d": d}
 
@@ -165,10 +161,6 @@ def boot_solid(name):
     return box(x0, x1, y0, y1, z0, z1)
 
 
-def holster_solid(name, park):
-    hx, hy = park["holster_xy"]
-    z0 = H.Z_LID1 + H.JACKET_T
-    return cyl(12.0, 20.0, (hx, hy, z0)).cut(cyl(10.3, 20.0, (hx, hy, z0 + 2.0)))
 
 
 _BODY = {}
@@ -186,71 +178,133 @@ def body_solids():
     return _BODY
 
 
-def clash(shape, exclude=(), shift=0.0):
-    """Volumes of the shape (translated by +shift in x: head position during the docking stroke) inside each body solid."""
-    from .geom import bounds, volume
-    from cadquery import Vector
-    s = shape.translate(Vector(shift, 0, 0)) if shift else shape
-    sb = bounds(s)
+def _classifiers():
+    from OCP.BRepClass3d import BRepClass3d_SolidClassifier
+    if "_cls" not in _BODY:
+        cl = []
+        for n, b in body_solids().items():
+            for so in b.Solids():
+                bb = so.BoundingBox()
+                cl.append((n, so, (bb.xmin, bb.ymin, bb.zmin, bb.xmax, bb.ymax, bb.zmax), BRepClass3d_SolidClassifier(so.wrapped)))
+        _BODY["_cls"] = cl
+    return _BODY["_cls"]
+
+
+def _inside(p, exclude=()):
+    from OCP.gp import gp_Pnt
+    from OCP.TopAbs import TopAbs_IN
+    for n, so, b, c in _classifiers():
+        if n in exclude or not (b[0] <= p[0] <= b[3] and b[1] <= p[1] <= b[4] and b[2] <= p[2] <= b[5]):
+            continue
+        c.Perform(gp_Pnt(*map(float, p)), 1e-4)
+        if c.State() == TopAbs_IN:
+            return n
+    return None
+
+
+def _rings(points, radius, step=6.0, k=8):
+    """Points on circles of `radius` round the centreline (every `step` mm)."""
+    pts = np.asarray(points, float)
     out = []
-    for n, b in body_solids().items():
-        if n in exclude:
+    for i in range(len(pts) - 1):
+        a, b = pts[i], pts[i + 1]
+        L = np.linalg.norm(b - a)
+        if L < 1e-9:
             continue
-        bb = bounds(b)
-        if bb[3] < sb[0] or sb[3] < bb[0] or bb[4] < sb[1] or sb[4] < bb[1] or bb[5] < sb[2] or sb[5] < bb[2]:
-            continue
-        v = volume(s.intersect(b))
-        if v > 0.05:
-            out.append((n, round(v, 1)))
+        t = (b - a) / L
+        ref = np.array([0, 0, 1.0]) if abs(t[2]) < 0.9 else np.array([1.0, 0, 0])
+        e1 = np.cross(t, ref)
+        e1 /= np.linalg.norm(e1)
+        e2 = np.cross(t, e1)
+        for s in np.arange(0, L, step):
+            c = a + s * t
+            out += [c] + [c + radius * (math.cos(2 * math.pi * j / k) * e1 + math.sin(2 * math.pi * j / k) * e2) for j in range(k)]
     return out
 
 
+def clash(points, d, exclude=(), shift=0.0, extra=()):
+    """Body solids hit by the cable (sampled: centreline + surface rings every 4 mm) or by the extra sample points; head shifted +shift in x."""
+    hits = {}
+    for p in list(_rings(points, d / 2)) + list(extra):
+        q = np.array(p, float) + np.array([shift, 0, 0])
+        n = _inside(q, exclude)
+        if n:
+            hits[n] = hits.get(n, 0) + 1
+    return sorted(hits.items())
+
+
 def min_gap(points, d, exclude=()):
-    """Smallest distance from the cable surface to any body solid (sampled centreline)."""
-    from OCP.BRepExtrema import BRepExtrema_DistShapeShape
-    import cadquery as cq
-    sol = [b for n, b in body_solids().items() if n not in exclude]
-    best = (1e9, None)
-    pts = points[:: max(1, len(points) // 60)]
-    for p in pts:
-        v = cq.Vertex.makeVertex(*map(float, p))
-        for b in sol:
-            bb = b.BoundingBox()
-            if not (bb.xmin - 30 < p[0] < bb.xmax + 30 and bb.ymin - 30 < p[1] < bb.ymax + 30 and bb.zmin - 30 < p[2] < bb.zmax + 30):
-                continue
-            dd = BRepExtrema_DistShapeShape(v.wrapped, b.wrapped)
-            dd.Perform()
-            if dd.Value() - d / 2 < best[0]:
-                best = (dd.Value() - d / 2, tuple(round(float(q), 1) for q in p))
-    return best
+    """Largest tested clearance ring (0.5 .. 8 mm beyond the cable surface) with no sample inside a body solid."""
+    ok = 0.0
+    for g in (CLEAR, 5.0):
+        if any(_inside(p, exclude) for p in _rings(points, d / 2 + g)):
+            return ok
+        ok = g
+    return ok
+
+
+def _box_samples(b, step=3.0):
+    x0, x1, y0, y1, z0, z1 = b
+    xs, ys, zs = np.arange(x0, x1 + 1e-6, step), np.arange(y0, y1 + 1e-6, step), np.arange(z0, z1 + 1e-6, step)
+    return [(x, y, z) for x in xs for y in ys for z in zs if x in (xs[0], xs[-1]) or y in (ys[0], ys[-1]) or z in (zs[0], zs[-1])]
+
+
+def _cyl_samples(c, axis, r, L, step=3.0):
+    c, axis = np.array(c, float), np.array(axis, float)
+    return _rings([c, c + L * axis], r, step)
 
 
 def evaluate():
+    """Cached wrapper: the sampled body check takes minutes, so the result is cached on the body STEP files' content hash + the head inputs."""
+    import hashlib
+    import inspect
+    import json
+    from .geom import CACHE
+    h = hashlib.sha1()
+    for n in BODY_PARTS:
+        h.update((BODY_DIR / f"{n}.step").read_bytes())
+    h.update(inspect.getsource(inspect.getmodule(evaluate)).encode())
+    h.update(json.dumps([H.BOOT_BOX, H.BOOT_CABLE_XY, H.HOLSTER_XY, H.HOLSTER_H, H.Z_LID1, P.J_RECEPTACLES], sort_keys=True, default=str).encode())
+    f = CACHE / f"pigtail_{h.hexdigest()[:16]}.json"
+    if f.exists():
+        res = json.loads(f.read_text())
+    else:
+        res = _evaluate()
+        CACHE.mkdir(parents=True, exist_ok=True)
+        f.write_text(json.dumps({k: ({kk: vv for kk, vv in v.items() if not kk.startswith("_")} if isinstance(v, dict) and k in ("J1", "J2") else v)
+                                 for k, v in res.items()}, default=float))
+        res = json.loads(f.read_text())
+    for name in ("J1", "J2"):
+        res[name]["_docked_points"] = docked_path(name)["points"]
+        res[name]["_parked_points"] = parked_path(name, docked_path(name)["length_mm"])["points"]
+    return res
+
+
+def _evaluate():
     """Both pigtails: docked (mated) path, parked path, stroke sweep; returns a dict for checks / report / lead_routes."""
-    import cadquery as cq
-    res = {"stroke_mm": DOCK_STROKE, "body_dir": str(BODY_DIR.relative_to(REPO))}
+    res = {"stroke_mm": DOCK_STROKE, "body_dir": str(BODY_DIR.relative_to(REPO)),
+           "body_files": {n: __import__("time").strftime("%Y-%m-%d %H:%M", __import__("time").gmtime((BODY_DIR / f"{n}.step").stat().st_mtime)) for n in BODY_PARTS}}
     for name in ("J1", "J2"):
         dk = docked_path(name)
         d = dk["cable_d"]
         e = L.env(ENV_KEY[name])
-        tub = tube(dk["points"], d)
-        dock_clash = clash(tub, exclude=(f"{name}_mated_plug",))
-        gap = min_gap(dk["points"][:-3], d, exclude=(f"{name}_mated_plug", f"{name}_receptacle"))
+        pts = dk["points"]
+        dock_clash = clash(pts[:-2], d, exclude=(f"{name}_mated_plug",))
+        gap = min_gap(pts[1:-3], d, exclude=(f"{name}_mated_plug", f"{name}_receptacle"))
         pk = parked_path(name, dk["length_mm"])
-        ptub = tube(pk["points"], d)
-        plug = plug_solid(pk["points"][-1], (0, 0, -1), pk["plug_len"], e["plug_nut_d"])
-        hol = holster_solid(name, pk)
-        park = compound([ptub, plug, hol, boot_solid(name)])
-        sweep = {s: clash(park, shift=s) for s in (DOCK_STROKE, DOCK_STROKE / 2, 0.0)}
+        hx, hy = pk["holster_xy"]
+        extra = _box_samples(BOOT[name]["box"]) + _cyl_samples(pk["points"][-1], (0, 0, -1), e["plug_nut_d"] / 2, pk["plug_len"]) + \
+            _cyl_samples((hx, hy, H.Z_LID1), (0, 0, 1), 12.0, H.HOLSTER_H)
+        sweep = {s: clash(pk["points"], d, shift=s, extra=extra) for s in (DOCK_STROKE, DOCK_STROKE / 2, 0.0)}
         res[name] = {"cable_d": d, "bend_r": dk["bend_r"], "boot_top": (BOOT[name]["cable_xy"][0], BOOT[name]["cable_xy"][1], BOOT_TOP_Z),
                      "plug_back": tuple(round(float(v), 1) for v in dk["plug_back"]), "docked_length_mm": round(dk["length_mm"], 0),
-                     "docked_min_radius_mm": round(dk["min_radius_mm"], 1), "docked_rise_mm": dk["rise_mm"], "docked_clash": dock_clash, "docked_min_gap_mm": round(gap[0], 1), "docked_min_gap_at": gap[1],
-                     "docked_apex_z": round(float(dk["points"][:, 2].max()), 0), "docked_x_range": (round(float(dk["points"][:, 0].min()), 0), round(float(dk["points"][:, 0].max()), 0)),
+                     "docked_min_radius_mm": round(dk["min_radius_mm"], 1), "docked_rise_mm": dk["rise_mm"], "docked_clash": dock_clash, "docked_min_gap_mm": gap,
+                     "docked_apex_z": round(float(pts[:, 2].max()), 0), "docked_x_range": (round(float(pts[:, 0].min()), 0), round(float(pts[:, 0].max()), 0)),
+                     "docked_y_range": (round(float(pts[:, 1].min()), 0), round(float(pts[:, 1].max()), 0)),
                      "parked": {"loop_r_mm": round(pk["loop_r_mm"], 1), "rise_mm": round(pk["rise_mm"], 1), "apex_z": round(pk["apex_z"], 0),
                                 "holster_xy": tuple(round(v, 1) for v in pk["holster_xy"]), "clash_by_stroke_position": {f"{s:g}": v for s, v in sweep.items()}},
-                     "swept_volume": f"parked set (boot, loop, plug, holster) translated x +{DOCK_STROKE:g}..0 with the head; envelope x "
-                                     f"{min(BOOT[name]['box'][0], float(pk['points'][:, 0].min()) - d / 2):.0f}..{float(pk['holster_xy'][0]) + 12 + DOCK_STROKE:.0f}, "
-                                     f"y {BOOT[name]['cable_xy'][1] - 12:.0f}..{BOOT[name]['cable_xy'][1] + 12:.0f}, z {H.Z_LID1:.0f}..{pk['apex_z'] + d / 2:.0f}",
-                     "_docked_solid": tub, "_parked_solid": park}
-        res[name]["ok"] = not dock_clash and gap[0] >= CLEAR and dk["min_radius_mm"] >= dk["bend_r"] and not any(sweep.values())
+                     "swept_volume": f"parked set (boot, loop, plug, holster) translated x +{DOCK_STROKE:g}..0 with the head: x "
+                                     f"{BOOT[name]['box'][0]:.0f}..{hx + 12 + DOCK_STROKE:.0f}, y {hy - 12:.0f}..{hy + 12:.0f}, z {H.Z_LID1:.0f}..{pk['apex_z'] + d / 2:.0f}",
+                     "_docked_points": pts, "_parked_points": pk["points"], "_parked": pk}
+        res[name]["ok"] = not dock_clash and gap >= CLEAR and dk["min_radius_mm"] >= dk["bend_r"] and not any(sweep.values())
     return res

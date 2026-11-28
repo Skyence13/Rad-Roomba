@@ -254,8 +254,8 @@ def light_paths():
          2.5, 1, "shelf + foam plug; SiPM carriers are opaque-potted by the OEM (UNKNOWN)", "X,P"),
         ("L13", "chimney to chimney via the bay", "lane (carrier aperture)", "other lane", "up the chimney, along the rear strip of the bay, down the next chimney",
          87.5 + 2 * 15, 2, "depends on the OEM carrier-to-guide seal (UNKNOWN); chimney inserts are black; dark-count cross-talk test at end of line", "X,P"),
-        ("L14", "cable port", "ambient", "bay", "split grommet with three internal ribs on a black cable jacket, compressed by the lid", H.BAY_X0 - H.XR + 1.5, 0,
-         "compressed elastomer around the cable", "X,P"),
+        ("L14", "pigtail boots on the lid", "ambient", "bay", "conductors through a lid slot into the potted boot; the jacket is clamped and potted in the boot (review M6)",
+         20.0, 1, "black potting round the conductors + jacket clamp; lid slot under the boot base", "X,P"),
         ("L15", "breather vent", "ambient", "bay", "membrane, then a printed baffle with two 90 deg turns behind the rear comb", 8.0, 2, "ePTFE membrane (translucent) + black baffle", "X,P"),
         ("L16", "rail stop / switch pin", "ambient (rod bore)", "bay", "rod annulus 0.15 x 25 mm, turn up, pin annulus 0.05 x 14 mm, silicone membrane under the saddle",
          25 + 14, 1, "two close annuli + membrane", "X,P"),
@@ -314,10 +314,10 @@ HEATER_FILMS_W = 4 * 7.5              # BOM PUR-HEATER: four 7.5 W polyimide zon
 HEATER_AT_10V_W = 20.8                # head_afe_budget.md section 9: 4.8 ohm at 10.0 V (end of discharge)
 CUTOUT_OPEN_C = 45.0                  # BOM PUR-TCO bimetal, opens 45 C (UNVERIFIED part data)
 # Receiver boundary: the T-heads are isolated from the heated spreader by the 0.5 mm G10 (IB-38), but the shoes sit in the body channels.
-# Body side (prototype body RR-X: PAHT-CF channels with steel dowel-pin lands on the aluminium chassis plate, mechanical/prototype_x1c) per shoe:
-# x-stop pads 560 mm2 through 6 mm PAHT-CF (0.028 W/K) + two dowel-pin line contacts (0.01 W/K each) + printed side / roof pads (0.02 W/K)
-# -> 0.07 W/K, with the chassis plate at ambient. STATED ASSUMPTION (order of magnitude); the bound "receiver metal at ambient" is shown too.
-G_BODY_PER_SHOE = 0.07
+# Body side per shoe (CR-10 from the body engineer, mechanical/common: prototype body RR-X PAHT-CF channels with steel dowel-pin lands on the
+# aluminium chassis plate, plate to ambient): 0.11 W/K in still air, 0.14 W/K at 25 W/m2K (was 0.07, an order-of-magnitude head estimate).
+# The bound "receiver metal at ambient" is still shown.
+G_BODY_PER_SHOE = {12.0: 0.11, 25.0: 0.14}
 C_P = {"PA-CF": 1300, "PETG-CF": 1200, "ASA": 1300, "PA12-MJF": 1600, "POM": 1450, "TPU": 1500, "AL6061": 896, "AL5052": 900, "SS304": 500, "SS301": 500,
        "STEEL": 470, "BRASS": 380, "COPPER": 385, "FR4": 1100, "PMMA": 1450, "PVT": 1400, "SIL-FOAM": 1100, "EPDM-FOAM": 1500, "PI": 1100, "PET": 1200, "MIXED": 900}
 
@@ -388,7 +388,7 @@ def ua_case(build, h_ext, jacket, t_amb, t_set, receiver="body"):
     ua_win = a_win / (0.00525 / 2 / K_GUIDE + 0.00025 / K_GUIDE + 0.001 / K_AIR + 1 / hf)   # floor SiPM carrier at set-point -> floor guide mid-plane
     ua_bot = a_bot / (1 / H_IN + 0.004 / wall_k + 1 / hf)
     rc = receiver_conductance(build)
-    g_ra = 2 * G_BODY_PER_SHOE + h_ext * 0.0036 if receiver == "body" else 1e9      # + exposed bridge / keeper faces (0.0036 m2)
+    g_ra = 2 * G_BODY_PER_SHOE[h_ext] + h_ext * 0.0036 if receiver == "body" else 1e9      # + exposed bridge / keeper faces (0.0036 m2)
     ua_rec = 1 / (1 / rc["total"] + 1 / g_ra)
     cab = sum(cable_conductance(h_ext).values())
     ua = ua_top + ua_side + ua_win + ua_bot + ua_rec + cab
@@ -422,7 +422,7 @@ def thermal(builds=None):
     out = {"_assumptions": {
         "ambient_c": list(T_AMBIENT_C), "set_point_c": T_SET_C, "set_point_comparison_c": T_SET_OPTION_C, "h_ext_w_m2k": dict(H_EXT), "h_in_w_m2k": H_IN,
         "electronics_credit_w": P_ELEC_TYP, "electronics_max_w_not_credited": P_ELEC_MAX, "floor_gap_mm": FLOOR_GAP * 1000, "emissivity": EMISSIVITY,
-        "receiver_body_side_w_per_k_per_shoe": G_BODY_PER_SHOE, "jacket": "RR-HD-S-131/132 fitted below 0 C (standard cold configuration); no-jacket shown"}}
+        "receiver_body_side_w_per_k_per_shoe": {f"h{k:g}": v for k, v in G_BODY_PER_SHOE.items()}, "jacket": "RR-HD-S-131/132 fitted below 0 C (standard cold configuration); no-jacket shown"}}
     a_cap, a_front, a_liner = _COV()
     a_top = (H.XF - H.XR) * 2 * H.YW / 1e6
     out["_jacket_coverage"] = {"top_area_m2": a_top, "cap_covered_m2": a_cap, "cap_fraction": a_cap / a_top, "front_band_m2": a_front, "liner_m2": a_liner,
@@ -439,7 +439,7 @@ def thermal(builds=None):
                             ua, split, hf = ua_case(build, h, jacket, t_amb, t_set, rec)
                             need = max(ua * (t_set - t_amb) - P_ELEC_TYP, 0.0)
                             rows.append({"build": build, "ambient_c": t_amb, "set_point_c": t_set, "h_ext_w_m2k": h, "air": hname, "jacket": jacket,
-                                         "receiver_boundary": "body channels (0.07 W/K per shoe)" if rec == "body" else "BOUND: receiver metal at ambient",
+                                         "receiver_boundary": f"body channels ({G_BODY_PER_SHOE[h]:g} W/K per shoe, CR-10)" if rec == "body" else "BOUND: receiver metal at ambient",
                                          "electronics_credit_w": P_ELEC_TYP, "ua_w_per_k": round(ua, 3), "heater_power_w": round(need, 1),
                                          "within_30w_films": need <= HEATER_FILMS_W, "within_20w8_at_10v": need <= HEATER_AT_10V_W,
                                          "split_w_per_k": {k: round(v, 3) for k, v in split.items()}, "h_floor_w_m2k": round(hf, 2)})
@@ -507,26 +507,16 @@ J1_PIN_AWG = {"1": "20", "2": "20", "3": "20", "4": "20", "5": "24", "6": "24", 
 
 
 def j1_fan_in(fp, x_wall):
-    """Each J2001 wire from the plug back to the J1 jacket at the port (y = H.PORT_Y['J1']): 2 mm straight behind the housing, then an S-bend of two
-    arcs at R = 2 x OD (a 90-degree pair plus a lateral run when the offset exceeds 2R) ending straight at the wall face x_wall, inside the jacket
-    bundle radius. Returns rows and the largest wire OD that fits (calculated; wire OD and bundle radius UNVERIFIED)."""
+    """Review M6 routing: each J2001 wire leaves the plug back (-x), 2 mm straight, one 90-degree bend at R = 2 x OD into the rear strip, runs +y
+    along the strip at x 76.6 to the J1 boot slot (y 79..86) and rises there (bend in the y-z plane, no x needed). The x budget per wire is
+    2 + 2 OD + OD / 2 against plug back - wall (calculated; wire OD UNVERIFIED)."""
     pins = {n: y for n, (u, v) in ((p[0], (p[1], p[2])) for p in fp["J2001"]["pads_uv"]) for y in [163.0 - u] if n in J1_PIN_AWG}
     x_plug = H.ACQ["origin"][0] + H.PLUG_V[0]
     avail = x_plug - x_wall
-    rows, od_max = [], 99.0
+    rows = []
     for n, y in sorted(pins.items(), key=lambda t: int(t[0])):
         od = H.J1_WIRE_OD[J1_PIN_AWG[n]]
-        off = abs(y - H.PORT_Y["J1"])
-
-        def need(o):
-            r = 2 * o
-            d = max(off - (H.J1_BUNDLE_R - o / 2), 0.0)
-            xb = 2 * r * math.sqrt(1 - (1 - d / (2 * r)) ** 2) if d <= 2 * r else 2 * r
-            return 2.0 + xb
-        lo, hi = 0.3, 4.0
-        for _ in range(40):
-            mid = (lo + hi) / 2
-            lo, hi = (mid, hi) if need(mid) <= avail else (lo, mid)
-        od_max = min(od_max, lo)
-        rows.append({"pin": n, "awg": J1_PIN_AWG[n], "y": round(y, 2), "offset_mm": round(off, 2), "od_mm": od, "x_needed_mm": round(need(od), 2), "ok": need(od) <= avail + 1e-9})
+        need = 2.0 + 2.5 * od
+        rows.append({"pin": n, "awg": J1_PIN_AWG[n], "y": round(y, 2), "od_mm": od, "x_needed_mm": round(need, 2), "ok": need <= avail + 1e-9})
+    od_max = (avail - 2.0) / 2.5
     return {"plug_back_x": x_plug, "wall_x": x_wall, "available_mm": round(avail, 2), "rows": rows, "max_od_that_fits_mm": round(od_max, 2), "ok": all(r["ok"] for r in rows)}

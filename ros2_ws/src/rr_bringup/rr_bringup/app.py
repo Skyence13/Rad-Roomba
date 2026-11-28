@@ -356,26 +356,48 @@ class RobotApp:
         return export_survey(self.pipeline, self.run, out_dir, run_dir=self.run_dir)
 
     # ----------------------------------------------------------------- status
+    REARM_ACTION_TEXT = {"CHARGE_OR_SWAP_PACK": "charge or swap the battery pack", "PRESS_AGAIN_WHEN_READY": "press again when the REARM lamp is steady",
+                         "PRESS_LONGER": "press REARM a little longer (a short tap does not set)", "RELEASE_REARM_PRESS_BRIEFLY":
+                         "release REARM: press it briefly, do not hold it", "RELEASE_REARM": "release the REARM button",
+                         "CLOSE_THE_CHAIN_FIRST": "close the open safety element first", "SEE_FAULTS": "see the chassis faults"}
+
     @staticmethod
     def _rearm_prompt(st, mode):
-        """Operator prompt for the local REARM button (ICD 4.6, 6.6): offered ONLY when the chassis reports rearm_ready;
-        otherwise the reason is shown (chain element open, discharge time about 2 s, REARM held, fault)."""
+        """Operator prompt for the local REARM button (ICD 3.5, 4.6; CCR-CHS-20/22): "press REARM on the robot" ONLY when the
+        chassis reports rearm_ready (a press will then set the latch); otherwise the reason (chain element open or unknown,
+        fault and warning flags, last refusal with its action); a refused press is reported with the chassis' action; the
+        BATTERY_REARM_LOW warning asks for a pack change before the next stop."""
+        faults = [str(x) for x in (st.get("faults") or [])]
+        warn = []
+        if "BATTERY_REARM_LOW" in faults:
+            warn.append("battery low for re-arming (VBAT <= 12.0 V): change or charge the pack before the next stop")
+        if "REARM_RB_FAULT" in faults:
+            warn.append("REARM readback fault: the next arming is withheld until the chassis is reset (service)")
+        if "COIL_HOT" in faults:
+            warn.append("latch coil hot: a REARM press may fail")
+        act = st.get("rearm_refusal_action")
+        refusal = st.get("rearm_refusal")
+        refused = (f"last REARM press refused: {refusal}" + (f" - {RobotApp.REARM_ACTION_TEXT.get(act, act)}" if act else "")) if refusal else None
         if mode in ("ARMED_IDLE", "MOVING", "HOLD") and st.get("hw_latch"):
-            return {"press_rearm": False, "text": "hardware latch set", "reasons": []}
+            return {"press_rearm": False, "text": "hardware latch set", "reasons": [], "warnings": warn, "refused": None}
         if st.get("rearm_ready") is True:
-            return {"press_rearm": True, "text": "Press REARM once on the robot", "reasons": []}
+            return {"press_rearm": True, "text": "Press REARM once on the robot (briefly)", "reasons": [], "warnings": warn,
+                    "refused": refused}
         reasons = []
         open_ = [k for k, v in (st.get("chain") or {}).items() if not v and k != "ARM_PERMIT"]
         if open_:
             reasons.append("chain not closed (open or unknown): " + ", ".join(open_))
-        faults = [str(x) for x in (st.get("faults") or [])]
-        if faults:
-            reasons.append("fault flags: " + ", ".join(faults))
-        if st.get("rearm_refusal"):
-            reasons.append("last REARM press refused: " + str(st["rearm_refusal"]))
+        flags = [f for f in faults if f not in ("BATTERY_REARM_LOW", "COIL_HOT")]
+        if flags:
+            reasons.append("fault / warning flags: " + ", ".join(flags))
+        if "REARM_HELD" in (st.get("hw_inhibit_reasons") or []):
+            reasons.append("latch dropped because REARM was held: press it briefly")
+        if refused:
+            reasons.append(refused)
         if not reasons:
-            reasons.append("waiting: REARM is accepted about 2 s after the chain closes, and not while the REARM line is held or pressed early")
-        return {"press_rearm": False, "text": "Do not press REARM yet", "reasons": reasons}
+            reasons.append("waiting: REARM is offered about 3 s after the chain closes (set stage ready, loop self-test passed), "
+                           "not while REARM is held")
+        return {"press_rearm": False, "text": "Do not press REARM yet", "reasons": reasons, "warnings": warn, "refused": refused}
 
     def snapshot(self, with_map=False):
         d, st = self.chassis.drive, self.chassis.state
@@ -401,6 +423,7 @@ class RobotApp:
             "safety": {"hw_latch": st.get("hw_latch"), "hw_inhibit_reasons": d.get("stops", {}).get("hw", []),
                        "protective_stop_reasons": d.get("stops", {}).get("sw", []), "hold": d.get("hold", []),
                        "chain": st.get("chain"), "rearm_ready": st.get("rearm_ready"), "rearm_prompt": self._rearm_prompt(st, mode),
+                       "rearm_refusal": st.get("rearm_refusal"), "rearm_refusal_action": st.get("rearm_refusal_action"),
                        # chassis fault flags exactly as reported (unknown names included, never filtered); chain false = open OR unknown
                        "faults": [str(x) for x in (st.get("faults") or [])],
                        "chain_not_closed": [k for k, v in (st.get("chain") or {}).items() if not v],

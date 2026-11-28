@@ -11,7 +11,14 @@ from rr_core.profiles import Calibration, ProfileStore, DATA
 
 MOUNT = {"xyz_m": [0.1385, 0.0, 0.032], "rpy_rad": [0, 0, 0]}
 DESC_BYTES = (DATA / "head_descriptor_demo.json").read_bytes()
-MANIFEST = {"attachment_session_id": "a-1", "descriptor_b64": base64.b64encode(DESC_BYTES).decode(), "mount_transform": MOUNT}
+MANIFEST = {"attachment_session_id": "a-1", "descriptor_b64": base64.b64encode(DESC_BYTES).decode(), "mount_transform": MOUNT,
+            "calibration": {"calibration_id": "DEMO-CAL-SYNTH-0001", "demonstration": True}}
+COVERED = [REASONS.index(k) for k in ("ACCEPTABLE", "INSUFFICIENT_SENSITIVITY", "NO_DECISION", "INCOMPLETE_COVERAGE", "ALARM")]
+SXX = 0.005 ** 2           # localiser 1 sigma 5 mm per axis -> credited 2 sigma = 10 mm (the position allowance)
+
+
+def cell_TF(proc, cy, cx, lane=None):
+    return sum(w * proc._gate_counts[(a, q, ln)][1] for a, q, ln, w in proc.members.get((cy, cx), []) if lane is None or ln == lane)
 
 
 def make(length=3.0, width=1.0, **kw):
@@ -26,7 +33,7 @@ def make(length=3.0, width=1.0, **kw):
 def drive(traj, t0, x0, x1, y, yaw=0.0, v=0.1, dt=0.02, credit=True):
     n = int(abs(x1 - x0) / (v * dt))
     for i in range(n + 1):
-        traj.add(int(t0 + i * dt * 1e6), x0 + (x1 - x0) * i / n, y, yaw, credit=credit)
+        traj.add(int(t0 + i * dt * 1e6), x0 + (x1 - x0) * i / n, y, yaw, sxx=SXX, syy=SXX, credit=credit)
     return int(t0 + n * dt * 1e6)
 
 
@@ -112,7 +119,7 @@ def test_single_pass_seams_not_credited_and_offset_pass_closes_them():
     ix = int(1.5 / r)
     row = cls[:, ix]
     y = proc.y0 + (np.arange(proc.ny) + 0.5) * r
-    covered = np.isin(row, [1, 2])
+    covered = np.isin(row, COVERED)
     # eroded lanes: 60 mm wide at +/-43.75, +/-131.25; seams (27.5 mm with erosion) stay UNVISITED
     for c in (0.13125, 0.04375, -0.04375, -0.13125):
         assert covered[np.abs(y - c) < 0.027].all()
@@ -128,7 +135,7 @@ def test_single_pass_seams_not_credited_and_offset_pass_closes_them():
     proc.add_mark(t2, stage=None, reason="END")
     proc.finish()
     cls = proc.classify_subcells()
-    covered = np.isin(cls[:, ix], [1, 2])
+    covered = np.isin(cls[:, ix], COVERED)
     band = (y > -0.131) & (y < 0.175)
     assert covered[band].all()
     res = proc.residuals()
@@ -149,15 +156,15 @@ def test_invalid_lane_and_uncertain_pose_earn_no_credit():
     r = proc.cfg.sub_res
     iy = lambda yv: int((yv - proc.y0) / r)
     assert cls[iy(-0.04375), int(0.9 / r)] == REASONS.index("INVALID_DATA")      # reference lost on lane 2
-    assert cls[iy(0.04375), int(0.9 / r)] in (1, 2)
+    assert cls[iy(0.04375), int(0.9 / r)] in COVERED
     assert cls[iy(0.04375), int(2.0 / r)] == REASONS.index("INVALID_DATA")       # pose outside budget
     log = proc.gate_log[-1]
     assert not any(l["credited"] for l in log["lanes"]) and "POSE_UNCERTAIN" in log["lanes"][0]["reasons"]
-    assert proc.acc["beta"]["T_F"][:, int(2.0 / 0.1), :].sum() == 0
+    assert sum(cell_TF(proc, cy, int(2.0 / 0.1)) for cy in range(proc.ncy)) == 0
 
 
 def test_cell_estimate_weights_and_hotspot_flag_with_location():
-    proc, traj, cal = make(u0_window_factor=3.0)   # short synthetic run: the 200 T_F window of rev 4 is tested separately
+    proc, traj, cal = make()   # short synthetic run: the 200 T_F window of rev 4 is tested separately
     rng = np.random.default_rng(3)
     hot = (1.55, 0.04375, 2.4)                 # Bq/cm2 under lane 1 on the first pass
     t1 = drive(traj, 1_000_000, 0.3, 2.5, 0.0)
@@ -180,11 +187,11 @@ def test_cell_estimate_weights_and_hotspot_flag_with_location():
     assert f["contributing_gates"] and f["footprint"] and f["recommendation"]["action"] == "STATIONARY_COUNT"
     # weights: an interior cell sees ~ (cell area x transit) / aperture area of live time per pass
     cy, cx = proc.cell_of(1.05, 0.04375)
-    T = proc.acc["beta"]["T_F"][cy, cx, :].sum()
+    T = cell_TF(proc, cy, cx)
     assert 0.5 < T < 2.6
     d = proc.decisions["beta"][(cy, cx)]
     assert d.m >= 1 and d.rule == est.RULE and d.method.startswith("linear-exact/") and d.status == "OK" and all(
-        m.startswith(("lane-window-excluding-test", "four-lane-pooled-window-excluding-test")) for m in d.u0_methods)
+        m.startswith(("lane:", "pooled:")) for m in d.u0_methods)
     assert d.D_hash > d.D_star > 0 and abs(d.D) < 0.25
     rows = proc.cells_table()
     row = next(q for q in rows if q["ix"] == cx and q["iy"] == cy)
@@ -194,7 +201,7 @@ def test_cell_estimate_weights_and_hotspot_flag_with_location():
 
 
 def test_scaler_observation_two_stage():
-    proc, traj, cal = make(u0_window_factor=3.0)
+    proc, traj, cal = make()
     rng = np.random.default_rng(4)
     t0, t1 = 121_000_000, 151_000_000
     for i in range(0, 7600):

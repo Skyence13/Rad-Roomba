@@ -140,3 +140,13 @@ K1 set margin over supply and temperature is table T11 of `chassis_braking_table
 | D_AUX | PESD15VL2BT on the aux pair (D29 removed) | 15 V stand-off as D_SET; the 5.5 V TPD4E05U06 would conduct from a V12_AUX short (review m-C) |
 | Q_LTA / Q_LTB | BSS138 on LOOP_F / LOOP_FB, gates on IOX_D outputs with 100 k pull-downs | self-test that can only force a channel open; off at power-up; drain leakage pulls the filter node towards "open" (≤ 50 mV hot) |
 | Channel B threshold | R_LB2 30.9 k: 1.89 kΩ (was 2.70 kΩ) | narrows the marginal band between the channels to 1.55-1.93 kΩ (review N6) |
+
+## 13. Stage 5 (stage-4 review): component choices
+
+| Part | Choice | Reason |
+|---|---|---|
+| R_SV2-R_SV10 | 220 k 0603 between each service pad and its node | 14.6 V through 220 k = 66 µA: below K1's 1.16 mA must-release (−25 °C), below the 0.1 mA assumed photo-MOS holding current through the LED paths, and with the 10 k RUN_HD bleed RUN_HD stays ≤ 0.66 V (LEDs off, U8 EN 0.12 V); still low enough for a 10 MΩ DMM (2.2 % reading error) and for the resistance tests of T15 (fault and healthy bands ≥ 27 kΩ apart) |
+| Service pads | 10 × Ø1.5 mm copper pads, top side, 2.54 mm grid | no free top area for a box header (top 59.5 % used); pads need no connector and are probe-reachable; adjacent-pad shorts are harmless by the 220 k |
+| R_SRB / D_SRB | 10 k / 47 k + BAT54 to 3V3 | GPB6 HIGH = clamp level ≥ 3.5 V (VIH(max) 2.73 V); the clamp keeps the input ≤ VDD + 0.3 V; LOW 0 V against VIL 0.65 V |
+| R76 | from LOOP_SNS | analog loop copy no longer shares channel A's filter or test FET (review S4); RC now 10 k / 10 n |
+| RT1 | moved to K1 | the stage-2 auto-arranger had put the "board NTC beside the bridges" at the left edge, 82 mm from K1 and 55 mm from the bridges; at K1 it measures what the COIL_HOT warning needs, and it is 8 mm from U8 and 26 mm from U6 for the board over-temperature limit |

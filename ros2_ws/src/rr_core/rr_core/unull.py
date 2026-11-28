@@ -28,7 +28,7 @@ N_MIN_TABLE = ((1e-2, 30), (1e-3, 75), (1e-4, 125), (1e-6, 200))     # MODEL.md 
 MAX_SPAN_M = 2.0
 GRADIENT_LIMIT = 0.02
 IMPL_NOTES = {
-    "dwell": "the dwell of a cell in an attachment is [first, last] member sequence of the cell (all lanes); sub-windows are taken outside it, nearest first; gates between two passes over the cell are not used",
+    "dwell": "the dwell of a lane is the contiguous run of the cell's member gates (sequence numbers) holding the largest weight of that lane in the attachment; sub-windows are built outward from its edges, nearest first, with every member gate of the cell (any lane, any pass) contributing nothing",
     "n_min_alpha": "N_min is chosen for the smallest alpha of the decision's tests (0.2 alpha / m for the per-lane tests); below 1e-6: 200 (z_alpha / z_1e-6)^2 (computed)",
     "span": "span of a sub-window = travel distance (path length of the gate mid poses) from the dwell edge to its far end; the lane source is used only if every used sub-window spans <= 2 m",
     "gradient": "relative difference of the two sub-window means per metre between their centres; one-sided windows: bias = U_null / (linear extrapolation of the two means to the dwell centre) - 1, |bias| > 2 % -> sensitivity insufficient - reference gradient; zero separation -> no gradient (0)",
@@ -81,6 +81,17 @@ class Series:
 
     def __len__(self):
         return len(self.seqs)
+
+    def masked(self, exclude_seqs):
+        """The same series with the gates `exclude_seqs` (every gate under test of the cell) contributing no reference
+        counts or live time; positions are kept."""
+        idx = [i for i, q in ((bisect.bisect_left(self.seqs, q), q) for q in exclude_seqs) if i < len(self.seqs) and self.seqs[i] == q]
+        if not idx:
+            return self
+        N, T = self.N.copy(), self.T.copy()
+        N[:, idx] = 0.0
+        T[:, idx] = 0.0
+        return Series(self.seqs, N, T, self.dist)
 
     def _cum(self, lane):
         return (self.pN, self.pT) if lane is None else (self.cN[lane], self.cT[lane])
@@ -159,7 +170,7 @@ def _gradient(w1, w2, dwell_centre, two_sided):
     return g, (sel / proj - 1.0) if proj > 0 else math.inf
 
 
-def u_null(s: Series, lane: int, dwell_seqs, alpha: float, past_only=False, max_span_m=MAX_SPAN_M):
+def u_null(s: Series, lane: int, dwell_seqs, alpha: float, past_only=False, max_span_m=MAX_SPAN_M, exclude_seqs=None):
     """U_null record of one lane for a dwell given by its sequence range (lo, hi) in this attachment.
 
     Returns a dict: status OK | GRADIENT | UNAVAILABLE, source lane | pooled, U0, N_post, T_post (posterior inputs),
@@ -167,6 +178,8 @@ def u_null(s: Series, lane: int, dwell_seqs, alpha: float, past_only=False, max_
     its counts where pooled, n_min."""
     need = n_min(alpha)
     lo, hi = dwell_seqs
+    if exclude_seqs:
+        s = s.masked(exclude_seqs)
     i0, i1 = s.index_range(lo, hi)
     out = {"n_min": need, "dwell_seq": [lo, hi], "past_only": bool(past_only)}
     dwell_c = 0.5 * (s.dist[min(i0, len(s) - 1)] + s.dist[max(i1 - 1, 0)]) if len(s) else 0.0
@@ -198,8 +211,8 @@ def u_null(s: Series, lane: int, dwell_seqs, alpha: float, past_only=False, max_
         U0 = sel["mean"]
         out.update(U0=U0, N_post=sel["n"], T_post=sel["t_s"])
     else:
-        n_l, t_l = s.totals(lane, (i0, i1))
-        n_a, t_a = s.totals(None, (i0, i1))
+        n_l, t_l = s.totals(lane, None if exclude_seqs else (i0, i1))
+        n_a, t_a = s.totals(None, None if exclude_seqs else (i0, i1))
         if n_l <= 0 or t_l <= 0 or n_a <= 0:
             out.update(status="UNAVAILABLE", source=None, U0=None, N_post=None, T_post=None)
             return out

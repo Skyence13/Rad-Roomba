@@ -5,6 +5,7 @@ real clock; only the world model talks to the emulators' side sockets."""
 from __future__ import annotations
 
 import json
+import math
 import os
 import shutil
 import socket
@@ -84,8 +85,8 @@ class NativeChassis:
     def env(self, name, value):
         self.udp.send({name: value})
 
-    def press(self, name):
-        self.udp.send({"press": name})
+    def press(self, name, press_ms=250):
+        self.udp.send({"press": name, "press_ms": int(press_ms)})
 
     def poll(self):
         for msg in self.udp.drain():
@@ -175,8 +176,10 @@ class NativeSystem:
             self.app.on_scan(self.clock.now_us(), angles, ranges)
             if self.app.loc.initialized:
                 odom = (self.app.chassis.drive.get("odom") or {}).get("t_us")
+                smp = self.app.loc.sample()
                 self.trace.append((self.t, *pose, *[float(v) for v in self.app.loc.x[:3]], odom,
-                                   self.chassis._truth.get("emu_lag_us"), self.chassis._truth.get("emu_rebases")))
+                                   self.chassis._truth.get("emu_lag_us"), self.chassis._truth.get("emu_rebases"),
+                                   (smp["credit"], smp.get("nocredit"))))
         time.sleep(0.0004)
 
     def run(self, seconds=None, until=None, timeout=600.0):
@@ -234,6 +237,26 @@ class NativeSystem:
         (t0, *a), (t1, *b) = h[i - 1], h[i]
         f = (t_us - t0) / (t1 - t0)
         return tuple(x + f * (y - x) for x, y in zip(a, b))
+
+    def credit_vs_truth(self, lever=0.25, budget=0.010):
+        """Review M3: of the trace samples at which the localiser granted credit, the fraction whose TRUE position error at
+        the outer aperture corner (x, y error + lever x yaw error) exceeds the 10 mm (2 sigma) budget, and the largest such
+        error; plus the fraction of samples credited.  Evidence: simulated."""
+        rows = [t for t in self.trace[5:] if len(t) > 7 and t[-1] is not None]
+        cred = [t for t in rows if t[-1][0]]
+        def err(t):
+            return math.hypot(t[1] - t[4], t[2] - t[5]) + lever * abs(math.atan2(math.sin(t[3] - t[6]), math.cos(t[3] - t[6])))
+        bad = [err(t) for t in cred if err(t) > budget]
+        why = {}
+        for t in rows:
+            for r in (t[-1][1] or "").split("|"):
+                if r:
+                    why[r] = why.get(r, 0) + 1
+        return {"samples": len(rows), "credited_fraction": len(cred) / len(rows) if rows else None,
+                "credited_with_true_error_above_budget": len(bad), "fraction_of_credited_above_budget": len(bad) / len(cred) if cred else None,
+                "max_true_error_when_credited_m": max((err(t) for t in cred), default=None),
+                "max_true_error_m": max((err(t) for t in rows), default=None), "no_credit_reasons_samples": why,
+                "localizer": {k: v for k, v in self.app.loc.status().items() if k in ("wheel_scale", "stats")}}
 
     def loc_error_by_chassis_time(self):
         """IB-47: estimate (state of the last odometry sample, chassis time) against TRUTH at that chassis time, instead of

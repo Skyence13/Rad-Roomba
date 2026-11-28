@@ -34,8 +34,8 @@ SUPPLIER = {
     "PUR-M16-8": ("binder M16 IP67 8-pole male cable connector, shieldable (series 423 / 723 family)", "PARTIAL", "envelope from mechanical/common/purchased/parts.yaml j1_receptacle"),
     "PUR-M12-8": ("binder M12-A 8-pole male cable connector, shieldable (series 763 family)", "UNVERIFIED", "envelope from parts.yaml j2_receptacle"),
     "PUR-CABLE-J1": ("shielded PUR cable 4 x 20 AWG + 3 x 24 AWG (heater pair AWG 20, stage-3 H-03), OD 7.5, -40 C flex, 150 mm free length; conductors inside the head thin-wall "
-                     "ETFE / XL-PE, AWG 20 OD <= 1.6 mm (fan-in to J2001 in 9 mm, head_report.md); Micro-Fit 43030-0007 terminals", "UNVERIFIED", "OD drives the grommet bore"),
-    "PUR-CABLE-J2": ("shielded PUR cable 4 x 2 x 24 AWG twisted pairs, OD 6.5, -40 C flex, 150 mm free length", "UNVERIFIED", "OD drives the grommet bore"),
+                     "ETFE / XL-PE, AWG 20 OD <= 1.6 mm (fan-in to J2001 in 9 mm, head_report.md); Micro-Fit 43030-0007 terminals", "UNVERIFIED", "jacket clamped and potted in the J1 boot RR-HD-x-511; free length boot top -> plug back from out/lead_routes.yaml (docked route, review M6)"),
+    "PUR-CABLE-J2": ("shielded PUR cable 4 x 2 x 24 AWG twisted pairs, OD 6.5, -40 C flex; free length from out/lead_routes.yaml", "UNVERIFIED", "jacket clamped and potted in the J2 boot"),
     "PUR-VENT-M6": ("ePTFE membrane vent M6 x 0.75, black housing (GORE / Amphenol LTW class)", "UNVERIFIED", ""),
     "PUR-FILM": ("aluminised PET entrance film, areal density per radiometry (TBD by detector physics)", "UNVERIFIED", "die-cut 110 x 81.8 with 4 holes"),
     "PUR-HEATER": ("polyimide heater zone 76 x 96, 7.5 W at 12 V, element fully encapsulated between two polyimide layers (>= 25 um each), PSA backed (Minco / Holroyd class)", "UNVERIFIED",
@@ -76,7 +76,7 @@ SCREWS_NOT_MODELLED = [  # (pn, description, qty prototype, qty production)
     ("PUR-INS-M3", "heat-set insert M3 in the printed lid bosses", 18, 0),
     ("PUR-DOWEL-3x6", "dowel pin 3 x 6 h8, split-joint location", 2, 0),
     ("PUR-RIVET-2.4", "blind rivet 2.4 Al, J1 blister front edge", 2, 2),
-    ("PUR-PCLIP-J1", "internal cable P-clip: NOT fitted in rev A (CR-M03 leaves no cable jacket inside the head; see head_report.md 'J1 landing harness')", 0, 0),
+    ("PUR-POT-BOOT", "black flexible potting (polyurethane, -40 C class), J1 / J2 boots: jacket end, conductors, J1 AWG 18/20 transition if present (review M6)", 2, 2),
     ("PUR-COAX", "SiPM micro-coax pigtail U.FL class, about 60 mm, through the chimney (harness; length per OEM carrier)", 16, 16),
     ("PUR-RTV-BLACK", "black RTV, side-switch lead channel potting (2 x 0.1 ml)", 1, 1),
     ("PUR-EPOXY-COND", "conductive epoxy, J1 blister bead", 1, 1),
@@ -231,8 +231,9 @@ Thermal cut-out (isolated-case type) on a 0.1 mm polyimide pad at (77..81.6, 81.
 Rear comb (liners into the chimneys around the coax), side and front fences; their feet are clamped by the standoffs and screws (bond points <= 50 mm,
 tool-checked); on the +y middle foot (under the J1 plugs) 2 x M2.5 x 3 pan at (80.3, 70.5) / (80.3, 104.5) into the tapped spreader -- fit them BEFORE the board. Front-switch saddle (shim the trip point: see section "Checks"), lid-switch saddle. Board on the eight standoffs (8 x M2.5 with serrated
 washers = FRAME bond), lane shield cans clipped on, coax to the board rear edge (bend radius >= 6 mm). J1 / J2 pigtails through the split grommets into
-the U-slots (J1 at y 76.2, CR-M03); the J1 jacket ends in the grommet and the thin-wall wires fan in over the 9 mm behind the J2001 plug (no internal
-P-clip: the grommet is the strain relief). Plugs onto J2001 / J2601 / J2501.
+the lid slots into the two boots (review M6): J2001 wires turn into the rear strip, run +y and rise at y 79.5 into the J1 boot; J2501 wires rise right
+behind the plug (rear-comb flange notch y -106..-92) into the J2 boot. Jacket end clamped and potted in each boot (the boot is the strain relief and the only
+clip point; nothing is clipped to the shoe root). Lengths: out/lead_routes.yaml. Plugs parked in their holster cups until the head is docked and latched.
 **Insulation check (review M5), before the board is connected:** 100 V insulation tester between the heater circuit (J2601 plug pins: element, cut-out,
 NTC leads, shorted together) and the spreader: >= 10 MOhm. Record the value.
 Rail-switch leads to J2002 (front), J2003 (left), J2004 (right, u 144.6 = y +18.4, S2-L6), J2201 (lid): cut lengths in head_report.md section 12. Desiccant pouches into the front strip, indicator card visible.

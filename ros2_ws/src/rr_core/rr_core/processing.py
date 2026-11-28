@@ -320,9 +320,20 @@ class SurveyProcessor:
                 return False
         return True
 
-    def _credited_erosion(self, a_idx, lane, poses):
+    def _credited_erosion(self, a_idx, lane, poses, head_bound_us=0.0):
+        """2 sigma at the lane (farthest aperture corner) over the gate's poses, plus the time-association bound
+        (head clock bound + chassis clock bound) times the speed at that corner (review M4)."""
         lever = self._geom[a_idx][3][lane]
-        return max(2.0 * math.sqrt(max(p["sxx"], p["syy"], 0.0) + lever * lever * max(p["syaw"], 0.0)) for p in poses)
+        e = max(2.0 * math.sqrt(max(p["sxx"], p["syy"], 0.0) + lever * lever * max(p["syaw"], 0.0)) for p in poses)
+        tbs = [p.get("tb_us", 0.0) for p in poses]
+        if any(t is None for t in tbs):
+            return math.inf
+        dt = (poses[-1]["t_us"] - poses[0]["t_us"]) * 1e-6
+        if dt > 0:
+            v = math.hypot(poses[-1]["x"] - poses[0]["x"], poses[-1]["y"] - poses[0]["y"]) / dt
+            w = abs(math.atan2(math.sin(poses[-1]["yaw"] - poses[0]["yaw"]), math.cos(poses[-1]["yaw"] - poses[0]["yaw"]))) / dt
+            e += (float(head_bound_us or 0.0) + max(tbs)) * 1e-6 * (v + w * lever)
+        return e
 
     def _swept(self, poly_base, poses):
         """Swept polygon (convex hull of the polygon at the start, middle and end poses)."""
@@ -379,8 +390,10 @@ class SurveyProcessor:
             reasons = list(lane["reasons"]) + common
             erosion = None
             if poses is not None and not reasons:
-                erosion = self._credited_erosion(a_idx, n, poses)
-                if erosion > self.cfg.position_allowance_m + 1e-12:
+                erosion = self._credited_erosion(a_idx, n, poses, gate.get("bound_us"))
+                # credit: 2 sigma within the allowance (localiser credit flag) and the time-association term below 1 mm
+                # (10 ms x 0.10 m/s, contract max_time_bound_us_for_mapping); the erosion includes both
+                if erosion > self.cfg.position_allowance_m + 0.001:
                     reasons.append("POSE_UNCERTAIN:2sigma>allowance")
             eroded = erode_convex(polys[n], erosion) if erosion is not None and not reasons else None
             ok = not reasons and eroded is not None
@@ -577,12 +590,21 @@ class SurveyProcessor:
         temp = self.cell_temp.get(cell)
         head_c = temp[0] / temp[1] if temp and temp[1] else None
         goal = self.profile["detection_goal_Bq_cm2"]
-        by_unit, dwell = {}, {}
+        by_unit, test_seqs = {}, {}
         for a, q, ln, w in members:
+            test_seqs.setdefault(a, set()).add(q)
             if (a, q, ln) in self._gate_counts and self.cal_of(a) is not None:
                 by_unit.setdefault((a, ln), []).append((q, w))
-                lo, hi = dwell.get(a, (q, q))
-                dwell[a] = (min(lo, q), max(hi, q))
+        groups = {}
+        for a, qs in test_seqs.items():                  # contiguous runs of member gates (passes over the cell)
+            run, out = [], []
+            for q in sorted(qs):
+                if run and q > run[-1] + 1:
+                    out.append(run)
+                    run = []
+                run.append(q)
+            out.append(run)
+            groups[a] = out
         units = []
         for (a, ln), rows in sorted(by_unit.items()):
             ch = 0 if channel == "beta" else 2
@@ -593,7 +615,13 @@ class SurveyProcessor:
                     continue
                 rows, cnt = [r for r, _ in rows_cnt], [c for _, c in rows_cnt]
             w = np.array([r[1] for r in rows])
-            rec = unull.u_null(self._series(a), ln, dwell[a], alpha_min)
+            wsum = {}
+            for q, wq in rows:
+                gi = next(i for i, g in enumerate(groups[a]) if g[0] <= q <= g[-1])
+                wsum[gi] = wsum.get(gi, 0.0) + wq
+            best = max(sorted(wsum), key=lambda i: wsum[i])
+            rec = unull.u_null(self._series(a), ln, (groups[a][best][0], groups[a][best][-1]), alpha_min,
+                               exclude_seqs=test_seqs[a])
             cal_a = self.cal_of(a)
             c = cal_a.cal(ln, channel)
             ok, why = True, ""
@@ -601,7 +629,8 @@ class SurveyProcessor:
                 speeds = [self._gate_t.get((a, q), (None, None, None))[2] for q, _w in rows]
                 ok, why = cal_a.check_envelope(ln, channel, rec["U0"], head_c, goal=goal, alpha=self.params["alpha_scan"],
                                                beta=self.params["beta"], speed_mps=max([s for s in speeds if s is not None], default=None),
-                                               speed_tol=self.cfg.speed_tolerance_mps, standoff_mm=self.att[a]["standoff"]["mm"])
+                                               speed_tol=self.cfg.speed_tolerance_mps, standoff_mm=self.att[a]["standoff"]["mm"],
+                                               require_standoff=True)
             units.append(est.LaneGates(ln, w, [x[1] for x in cnt], [x[ch] for x in cnt], [x[4] for x in cnt], [x[3] for x in cnt],
                                        rec.get("U0"), self._u0_method(rec), c, ok, why,
                                        u0_window_s=(rec["windows"][rec["selected"]]["t_s"] if rec.get("U0") is not None else None),
@@ -682,7 +711,7 @@ class SurveyProcessor:
         ch0 = self._decision_channel()
         self.recorded = {ch: {} for ch in CHANNELS}
         for cell in sorted(self.members):
-            for ch in CHANNELS:
+            for ch in (ch0,):          # the profile's decision class; the other class is not a decision of this survey
                 d = self._decide(cell, ch, self.params["alpha_scan"], decider)
                 d.provisional = False
                 self.recorded[ch][cell] = d

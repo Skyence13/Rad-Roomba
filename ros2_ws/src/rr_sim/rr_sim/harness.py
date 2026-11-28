@@ -4,6 +4,8 @@ scenario tests; the same RobotApp runs in real time against the native firmware
 emulators (`rr_sim.native`)."""
 from __future__ import annotations
 
+import math
+
 import base64
 import json
 from pathlib import Path
@@ -82,7 +84,8 @@ class SimSystem:
             angles, ranges = self.world.scan(truth)
             self.app.on_scan(self.clock.now_us(), angles, ranges)
             if self.app.loc.initialized:
-                self.trace.append((self.t, *truth, *[float(v) for v in self.app.loc.x[:3]]))
+                smp = self.app.loc.sample()
+                self.trace.append((self.t, *truth, *[float(v) for v in self.app.loc.x[:3]], (smp["credit"], smp.get("nocredit"))))
         self.app.step()
 
     def run(self, seconds=None, until=None, timeout=3600.0):
@@ -124,6 +127,26 @@ class SimSystem:
 
     def truth(self):
         return (self.chassis.x, self.chassis.y, self.chassis.yaw)
+
+    def credit_vs_truth(self, lever=0.25, budget=0.010):
+        """Review M3: of the trace samples at which the localiser granted credit, the fraction whose TRUE position error at
+        the outer aperture corner (x, y error + lever x yaw error) exceeds the 10 mm (2 sigma) budget, and the largest such
+        error; plus the fraction of samples credited.  Evidence: simulated."""
+        rows = [t for t in self.trace[5:] if len(t) > 7 and t[-1] is not None]
+        cred = [t for t in rows if t[-1][0]]
+        def err(t):
+            return math.hypot(t[1] - t[4], t[2] - t[5]) + lever * abs(math.atan2(math.sin(t[3] - t[6]), math.cos(t[3] - t[6])))
+        bad = [err(t) for t in cred if err(t) > budget]
+        why = {}
+        for t in rows:
+            for r in (t[-1][1] or "").split("|"):
+                if r:
+                    why[r] = why.get(r, 0) + 1
+        return {"samples": len(rows), "credited_fraction": len(cred) / len(rows) if rows else None,
+                "credited_with_true_error_above_budget": len(bad), "fraction_of_credited_above_budget": len(bad) / len(cred) if cred else None,
+                "max_true_error_when_credited_m": max((err(t) for t in cred), default=None),
+                "max_true_error_m": max((err(t) for t in rows), default=None), "no_credit_reasons_samples": why,
+                "localizer": {k: v for k, v in self.app.loc.status().items() if k in ("wheel_scale", "stats")}}
 
     def loc_error(self):
         e = [abs(t[1] - t[4]) for t in self.trace[5:]], [abs(t[2] - t[5]) for t in self.trace[5:]]

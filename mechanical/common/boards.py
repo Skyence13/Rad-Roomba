@@ -141,7 +141,7 @@ def _parse(path, txt=None):
                 d = nums[0] if nums else None
             pads.append({"num": pd[1], "type": pd[2], "uv": uv(X, Y), "drill": d})
             if d and ("MountingHole" in name or pd[2] == "np_thru_hole") and d >= 2.0:
-                holes.append({"ref": ref, "uv": uv(X, Y), "d": d})
+                holes.append({"ref": ref, "uv": uv(X, Y), "d": d, "mounting": "MountingHole" in name})
         cy = boxes.get(f"{side}.CrtYd") or boxes.get(f"{side}.Fab")
         parts[ref] = {"fp": name, "side": side, "uv": uv(at[0], at[1]), "rot": at[2], "height": h, "box_uv": cy, "pads": pads}
     st = Path(path).stat()

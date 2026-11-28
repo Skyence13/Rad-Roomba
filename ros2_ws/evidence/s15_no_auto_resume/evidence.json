@@ -3,7 +3,7 @@
  "evidence_class": "simulated",
  "against": "Python protocol fakes (rr_core.fakes), virtual clock",
  "seed": 29,
- "sim_time_s": 48.68,
+ "sim_time_s": 51.92,
  "checks": [
   {
    "check": "bumper: HOLD with a hardware inhibit",
@@ -12,7 +12,7 @@
   {
    "check": "REARM pressed too early (element just closed, discharge time not over) is refused and reported",
    "ok": true,
-   "refusal": "DISCHARGE_TIME"
+   "refusal": "NOT_READY"
   },
   {
    "check": "bumper: chassis back in ARMED_IDLE, mission still in HOLD",
@@ -31,7 +31,7 @@
    "check": "bumper: motion resumes only after the command, on the same task",
    "ok": true,
    "task": "pair0:A+",
-   "n": 99
+   "n": 98
   },
   {
    "check": "pause accepted",
@@ -97,41 +97,46 @@
  "coverage": {
   "target_area_m2": 3.0,
   "areas_m2": {
-   "UNVISITED": 2.7844,
+   "UNVISITED": 2.7064,
    "ACCEPTABLE": 0.0,
-   "INSUFFICIENT_SENSITIVITY": 0.2156,
+   "INSUFFICIENT_SENSITIVITY": 0.2713,
    "INVALID_DATA": 0.0,
    "BLOCKED": 0.0,
-   "EXCLUDED": 0.0
+   "EXCLUDED": 0.0,
+   "NO_DECISION": 0.0,
+   "INCOMPLETE_COVERAGE": 0.0123,
+   "ALARM": 0.01,
+   "ACQUISITION_GAP": 0.0
   },
-  "valid_exposure_fraction": 0.07186666666666668,
+  "valid_exposure_fraction": 0.09736666666666667,
   "acceptable_fraction": 0.0,
   "sub_cell_m": 0.005,
   "decision_cell_m": 0.1,
-  "position_allowance_m": 0.01
+  "position_allowance_m": 0.01,
+  "provisional": false
  },
  "time_sync": {
   "limit_us": 10000.0,
-  "fits": 29,
-  "max_gate_bound_us": 838.0520796923137,
-  "median_gate_bound_us": 806.8252877139806
+  "fits": 31,
+  "max_gate_bound_us": 838.0033213786841,
+  "median_gate_bound_us": 806.9481607024264
  },
  "link_stats": {
-  "tx": 2382,
-  "rx": 2379,
+  "tx": 2573,
+  "rx": 2570,
   "bad_lines": 0,
   "stale": 0,
   "duplicates": 0,
-  "gates": 467,
+  "gates": 500,
   "gaps": 0,
   "retries": 2,
   "unassigned_frames": 0,
-  "time_exchanges": 29,
+  "time_exchanges": 31,
   "time_exchanges_rejected": 0
  },
  "localization_error_vs_truth_m": {
-  "max_x_m": 0.011187801502836159,
-  "max_y_m": 0.00017604455659103735
+  "max_x_m": 0.011321640432669478,
+  "max_y_m": 0.00017633697730506936
  },
  "plan": {
   "n_pairs": 2,
@@ -151,17 +156,84 @@
   },
   "estimated_time_s": 244.2
  },
- "flags": [],
+ "flags": [
+  {
+   "id": "HS-0001",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 3,
+   "x_m": 0.7441732572825452,
+   "y_m": -0.3212360209161639,
+   "D": 0.20904885468160572,
+   "u_total": 0.10081595030354874,
+   "D_star": 0.14379426853371938,
+   "D_hash": 0.340761096921218,
+   "location": {
+    "distance_from_door_m": 0.744,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.179,
+    "text": "0.74 m from the door threshold, 0.18 m from the right wall"
+   }
+  }
+ ],
  "scan_detections": 0,
  "observations": [],
  "decision_status": {
   "cells_with_gates": 44,
-  "no_decision": 40,
-  "no_decision_text": [
-   "no decision \u2014 null reference unavailable"
-  ],
-  "no_decision_within_0.5m_of_an_end": 4,
+  "no_decision": 0,
+  "no_decision_text": [],
+  "no_decision_within_0.5m_of_an_end": 0,
   "cells_within_0.5m_of_an_end": 4
  },
- "nonzero_drives_total": 913
+ "rev5": {
+  "cells_with_data": 44,
+  "status": {
+   "INCOMPLETE COVERAGE": 5,
+   "SENSITIVITY INSUFFICIENT": 38,
+   "ALARM": 1
+  },
+  "status_reasons": {
+   "reference gradient": 31,
+   "D# above the detection goal": 6,
+   "coverage 0.15 < 0.5": 1,
+   "coverage 0.48 < 0.5": 1,
+   "coverage 0.21 < 0.5": 1,
+   "flagged by combined": 1,
+   "coverage 0.20 < 0.5": 1,
+   "coverage 0.19 < 0.5": 1
+  },
+  "acceptable_fraction": 0.0,
+  "median_D_hash": 0.45872851853202695,
+  "undecidable_recorded": 0,
+  "undecidable_provisional_live": 12,
+  "alarm_bookkeeping": {
+   "alarm found at final evaluation": 1
+  },
+  "flags": {
+   "UNRESOLVED_EXCEEDANCE:alarm found at final evaluation": 1
+  },
+  "review_queue_items": 1,
+  "revisit": 1,
+  "position_credit": {
+   "samples": 495,
+   "credited_fraction": 1.0,
+   "credited_with_true_error_above_budget": 22,
+   "fraction_of_credited_above_budget": 0.044444444444444446,
+   "max_true_error_when_credited_m": 0.011358550299996885,
+   "max_true_error_m": 0.011358550299996885,
+   "no_credit_reasons_samples": {},
+   "localizer": {
+    "wheel_scale": {
+     "estimate": -0.00016817510820127979,
+     "sigma": 0.00038064773405243577
+    },
+    "stats": {
+     "x_fixes": 542,
+     "x_rejects": 23,
+     "big_corrections": 0,
+     "max_correction_m": 0.0013033916235730195
+    }
+   }
+  }
+ },
+ "nonzero_drives_total": 912
 }

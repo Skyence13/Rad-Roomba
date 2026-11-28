@@ -326,9 +326,13 @@
     "plane fan-out: no legal via position for U8 pad at (77.55, 34.25) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U8 pad at (77.55, 33.75) [GND] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for U8 pad at (78.90, 34.50) [VBAT_SW] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for D_K1B pad at (101.25, 16.10) [3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for R_SRP pad at (113.75, 80.82) [3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
-    "plane fan-out: no legal via position for R_PAUSE pad at (98.75, 15.07) [3V3] - long fan-out: no free path to the plane within the board (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for D_KR pad at (10.60, 5.00) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for D_NC pad at (70.50, 3.60) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for D_K1B pad at (101.25, 16.10) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R_SDG pad at (70.75, 10.57) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R_SRP pad at (113.75, 80.82) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for D_SRB pad at (22.35, 10.00) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
+    "plane fan-out: no legal via position for R_PAUSE pad at (98.75, 15.07) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for R128 pad at (42.00, 5.57) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for Q_J2PRE pad at (15.05, 67.94) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
     "plane fan-out: no legal via position for R123 pad at (10.92, 72.50) [3V3] - long fan-out: long fan-out time cap (600 s) used up (zone net, not autorouted: left to the finisher, else open)",
@@ -1964,6 +1968,12 @@
       67.0,
       90.0,
       "F"
+    ],
+    "D_SRB": [
+      24.0,
+      10.0,
+      0.0,
+      "B"
     ],
     "D_U9T": [
       83.75,
@@ -3947,8 +3957,8 @@
     ],
     "R281": [
       127.0,
-      82.0,
-      270.0,
+      84.25,
+      90.0,
       "F"
     ],
     "R282": [
@@ -3970,9 +3980,9 @@
       "F"
     ],
     "R285": [
-      134.5,
-      82.25,
-      90.0,
+      137.75,
+      84.0,
+      180.0,
       "F"
     ],
     "R286": [
@@ -4552,9 +4562,9 @@
       "B"
     ],
     "RT1": [
-      7.5,
-      35.5,
-      180.0,
+      80.5,
+      26.0,
+      0.0,
       "F"
     ],
     "R_21BA": [
@@ -4648,9 +4658,9 @@
       "F"
     ],
     "R_LBR": [
-      54.25,
-      52.75,
-      270.0,
+      53.0,
+      55.25,
+      0.0,
       "F"
     ],
     "R_LSA": [
@@ -4844,6 +4854,60 @@
       4.75,
       270.0,
       "B"
+    ],
+    "R_SV10": [
+      122.5,
+      80.0,
+      0.0,
+      "F"
+    ],
+    "R_SV2": [
+      111.0,
+      43.75,
+      90.0,
+      "B"
+    ],
+    "R_SV3": [
+      111.0,
+      47.5,
+      90.0,
+      "B"
+    ],
+    "R_SV4": [
+      109.25,
+      85.0,
+      0.0,
+      "F"
+    ],
+    "R_SV5": [
+      104.25,
+      90.25,
+      0.0,
+      "F"
+    ],
+    "R_SV6": [
+      104.25,
+      92.5,
+      0.0,
+      "F"
+    ],
+    "R_SV7": [
+      107.75,
+      88.0,
+      0.0,
+      "F"
+    ],
+    "R_SV8": [
+      104.25,
+      94.75,
+      0.0,
+      "F"
+    ],
+    "R_SV9": [
+      7.5,
+      35.5,
+      0.0,
+      "F"
     ],
     "R_U9T1": [
       78.75,
@@ -5241,11 +5305,71 @@
       0.0,
       "B"
     ],
+    "TP63": [
+      127.92,
+      80.77,
+      0.0,
+      "F"
+    ],
+    "TP64": [
+      130.46,
+      80.77,
+      0.0,
+      "F"
+    ],
+    "TP65": [
+      133.0,
+      80.77,
+      0.0,
+      "F"
+    ],
+    "TP66": [
+      135.54,
+      80.77,
+      0.0,
+      "F"
+    ],
+    "TP67": [
+      138.08,
+      80.77,
+      0.0,
+      "F"
+    ],
+    "TP68": [
+      127.92,
+      78.23,
+      0.0,
+      "F"
+    ],
+    "TP69": [
+      130.46,
+      78.23,
+      0.0,
+      "F"
+    ],
     "TP7": [
       38.25,
       41.75,
       90.0,
       "B"
+    ],
+    "TP70": [
+      133.0,
+      78.23,
+      0.0,
+      "F"
+    ],
+    "TP71": [
+      135.54,
+      78.23,
+      0.0,
+      "F"
+    ],
+    "TP72": [
+      138.08,
+      78.23,
+      0.0,
+      "F"
     ],
     "TP8": [
       68.5,
@@ -5655,9 +5779,13 @@
       "U8 pad at (77.55, 34.25) [GND] - long fan-out: long fan-out time cap (600 s) used up",
       "U8 pad at (77.55, 33.75) [GND] - long fan-out: long fan-out time cap (600 s) used up",
       "U8 pad at (78.90, 34.50) [VBAT_SW] - long fan-out: long fan-out time cap (600 s) used up",
-      "D_K1B pad at (101.25, 16.10) [3V3] - long fan-out: no free path to the plane within the board",
-      "R_SRP pad at (113.75, 80.82) [3V3] - long fan-out: no free path to the plane within the board",
-      "R_PAUSE pad at (98.75, 15.07) [3V3] - long fan-out: no free path to the plane within the board",
+      "D_KR pad at (10.60, 5.00) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+      "D_NC pad at (70.50, 3.60) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+      "D_K1B pad at (101.25, 16.10) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+      "R_SDG pad at (70.75, 10.57) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+      "R_SRP pad at (113.75, 80.82) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+      "D_SRB pad at (22.35, 10.00) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
+      "R_PAUSE pad at (98.75, 15.07) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
       "R128 pad at (42.00, 5.57) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
       "Q_J2PRE pad at (15.05, 67.94) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
       "R123 pad at (10.92, 72.50) [3V3] - long fan-out: long fan-out time cap (600 s) used up",
@@ -5746,16 +5874,13 @@
       "R165 [3V3] 41.1 mm",
       "D33 [3V3] 32.3 mm",
       "R156 [3V3] 39.8 mm",
-      "U5 [3V3] 14.1 mm",
+      "U5 [3V3] 13.8 mm",
       "C109 [3V3] 23.2 mm",
-      "U9 [3V3] 34.8 mm",
+      "U9 [3V3] 35.1 mm",
       "R137 [3V3] 39.8 mm",
       "D_N6A [3V3] 28.5 mm",
       "C_U47 [3V3] 36.9 mm",
-      "D_U9T [3V3] 35.3 mm",
-      "D_KR [3V3] 25.7 mm",
-      "D_NC [3V3] 41.7 mm",
-      "R_SDG [3V3] 33.8 mm"
+      "D_U9T [3V3] 35.3 mm"
     ],
     "plane_nets": [
       "3V3",
@@ -5764,7 +5889,7 @@
       "VMOT",
       "VSYS"
     ],
-    "vias": 602
+    "vias": 603
   },
   "pwr_flags": [
     "GND",
@@ -5781,10 +5906,10 @@
   ],
   "route_info": null,
   "route_stats": {
-    "track_length_mm": 2129.29,
-    "tracks": 1177,
-    "unconnected_after_fill": 1230,
-    "vias": 735
+    "track_length_mm": 2028.51,
+    "tracks": 1143,
+    "unconnected_after_fill": 1252,
+    "vias": 733
   },
   "routed": false,
   "routing": {

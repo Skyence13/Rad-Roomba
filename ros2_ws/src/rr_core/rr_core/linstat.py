@@ -22,7 +22,7 @@ from scipy.special import ndtr, ndtri
 EPS_PHI = 1e-15           # |phi| cut-off of the Gaussian factor
 SD_SPAN = 40.0            # periodisation: mass beyond P/2 from x is negligible
 CHECK_REL = 1e-3          # MODEL.md section 3: half-step tail must agree to 1e-3 relative
-PRED_SD_SPAN = 25.0       # predictive evaluator: half period in standard deviations beyond |x - mean|
+PRED_SD_SPAN = 15.0       # predictive evaluator: half period in standard deviations beyond |x - mean| (checked against rrrad)
 
 
 def aggregate(a, lam, decimals=12):
@@ -352,10 +352,10 @@ class PredictiveStat:
         return phi
 
     def span_for(self, x, D=0.0):
-        """Half period: |x - mean| + 25 sd + 40 max|a| (the periodised mass beyond it is negligible)."""
+        """Half period: |x - mean| + 15 sd + 20 max|a| (the periodised mass beyond it is negligible)."""
         sd = math.sqrt(self.var(D))
         amax = max(un.amax() for un in self.units)
-        return abs(x - self.mean(D)) + PRED_SD_SPAN * sd + 40.0 * amax
+        return abs(x - self.mean(D)) + PRED_SD_SPAN * sd + 20.0 * amax
 
     @staticmethod
     def _tail_pdf(grid, phi, x):

@@ -79,7 +79,7 @@ class Calibration:
         return sorted({c for _, c in self._cal})
 
     def check_envelope(self, lane: int, channel: str, U: float, head_c, setup_id=None,
-                       goal=None, alpha=0.05, beta=0.05, speed_mps=None, speed_tol=0.0, standoff_mm=None):
+                       goal=None, alpha=0.05, beta=0.05, speed_mps=None, speed_tol=0.0, standoff_mm=None, require_standoff=False):
         """(ok, reason).  Reference-rate range with the R7 cap, head temperature, speed of the member gates (pose interval),
         standoff (descriptor value; nominal until measured), setup_id where given (review M7)."""
         env = self.envelope
@@ -97,7 +97,7 @@ class Calibration:
         so = env.get("standoff_mm") or {}
         if so and standoff_mm is not None and not (so.get("min", -1e9) <= standoff_mm <= so.get("max", 1e9)):
             return False, "standoff outside the calibrated range"
-        if so and standoff_mm is None:
+        if so and standoff_mm is None and require_standoff:
             return False, "standoff unknown"
         es = env.get("setup_id")
         if setup_id is not None and es and es != setup_id:

@@ -48,7 +48,7 @@ def test_thresholds_and_detection_limits_equal_the_reference(offsets, U0, alpha)
     dec = Decider(quantise=False)
     keys = tuple(dec._lane_key(lane_gates(i, l.w, l.t, U0)) for i, l in enumerate(lanes))
     c, t, ok, method = dec.threshold(keys, alpha)
-    assert ok and method == "linear-exact/gil-pelaez"
+    assert ok and method.startswith("linear-exact/gil-pelaez")
     assert t == pytest.approx(t_ref, rel=1e-6) and list(c) == pytest.approx(list(C.c), rel=1e-9)
     assert dec.limit(keys, alpha, 0.05) == pytest.approx(d_ref, rel=1e-6)
     # lane test (m = 1)
@@ -68,7 +68,7 @@ def test_lattice_evaluator_equals_the_reference_without_calibration_terms():
     dec = Decider(quantise=False)
     key = dec._lane_key(lane_gates(0, lane.w, lane.t, 3.0, cal))
     _c, t, ok, method = dec.threshold((key,), 0.04)
-    assert method == "linear-exact/lattice" and ok
+    assert method.startswith("linear-exact/lattice") and ok
     assert t == pytest.approx(t_ref, rel=1e-9)
 
 
@@ -77,7 +77,7 @@ def test_combine_fields_rule_and_flags():
     w, tf = [1.0, 1.0, 0.5, 0.25], [0.1] * 4
     lanes = [lane_gates(i, w, tf, 5.0, N=([0.55] * 4, [0.5] * 4)) for i in range(3)]
     d = est.combine(lanes, 0.05, 0.05)
-    assert d.m == 3 and d.rule == est.RULE and d.method == "linear-exact/gil-pelaez" and d.check_ok and d.status == "OK"
+    assert d.m == 3 and d.rule == est.RULE and d.method.startswith("linear-exact/gil-pelaez") and d.check_ok and d.status == "OK"
     assert d.alpha_comb == pytest.approx(0.04) and d.alpha_lane == pytest.approx(0.01 / 3)
     assert sum(d.c) == pytest.approx(1.0) and len(d.lanes) == 3 and {"lane", "c", "D_star", "method", "U0", "u0_window_s"} <= set(d.lanes[0])
     assert d.D_hash > d.D_star > 0 and d.detected is False
@@ -114,8 +114,11 @@ def test_cache_is_order_independent_and_hits_repeat_patterns():
     d1, d2 = Decider(), Decider()
     r1 = [est.combine(a, 0.05, 0.05, decider=d1).D_hash, est.combine(b, 0.05, 0.05, decider=d1).D_hash]
     r2 = [est.combine(b, 0.05, 0.05, decider=d2).D_hash, est.combine(a, 0.05, 0.05, decider=d2).D_hash]
-    assert r1[0] == r2[1] and r1[1] == r2[0]
-    assert r1[0] == r1[1] and d1.stats["limit_computed"] == 1                       # same quantised statistic: one solve
+    assert r1[0] == r2[1] and r1[1] == r2[0]                                         # exact keys: order independent
+    assert r1[0] != r1[1] and d1.stats["limit_computed"] == 2                        # rev 5: no quantisation of the recorded result
+    dq = Decider(quantise=True)                                                      # provisional (live) cache only
+    q = [est.combine(a, 0.05, 0.05, decider=dq).D_hash, est.combine(b, 0.05, 0.05, decider=dq).D_hash]
+    assert q[0] == q[1] and dq.stats["limit_computed"] == 1
 
 
 def test_evaluation_cost_per_cell_is_reported(capsys):

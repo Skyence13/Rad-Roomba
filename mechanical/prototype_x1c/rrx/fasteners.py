@@ -127,7 +127,7 @@ def fasteners():
     bz = P.ELECTRONICS_BRIDGE_Z
     for i, (x, y) in enumerate(D.POSTS):
         F.append(Fastener(f"tray_{i}", "M3", "csk", 8.0, (x, y, bz[1]), down, step="05_bridge_grip", note="tray -> tapped post, flush"))
-    for h in BD.load("RR-CHS-MAIN")["holes"]:
+    for h in [h for h in BD.load("RR-CHS-MAIN")["holes"] if h.get("mounting", True) and h["ref"].startswith("H")]:
         x, y, z = _xf_chs(h["uv"][0], h["uv"][1], 0.0)
         F.append(Fastener(f"board_{h['ref']}", "M3", "pan", 6.0, (x, y, z), down, step="05_bridge_grip", service="board service (lid off)", note="RR-CHS-MAIN -> clinch standoff in the tray"))
     # saddle cover captive screws

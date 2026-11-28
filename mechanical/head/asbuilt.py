@@ -65,7 +65,7 @@ def load(path: str = str(PCB)):
         hm = re.search(r"_h(\d+)p(\d+)\.step", mod.group(1)) if mod else None
         rec = {"u": round(at[0] - ox, 4), "v": round(oy - at[1], 4), "rot": at[2], "side": side, "fp": fp,
                "height": float(f"{hm.group(1)}.{hm.group(2)}") if hm else None}
-        for key, layer in (("crtyd_uv", "F.CrtYd"), ("fab_uv", "F.Fab")):
+        for key, layer in (("crtyd_uv", "F.CrtYd"), ("fab_uv", "F.Fab"), ("b_crtyd_uv", "B.CrtYd"), ("b_fab_uv", "B.Fab")):
             pts = [_xform(at, lx, ly) for lx, ly in _layer_points(blk, layer)]
             bb = _bbox(pts)
             rec[key] = (round(bb[0] - ox, 4), round(oy - bb[3], 4), round(bb[2] - ox, 4), round(oy - bb[1], 4)) if bb else None
