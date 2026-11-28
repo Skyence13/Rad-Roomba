@@ -477,6 +477,14 @@ Numbers in [`model_rev4_unull.md`](model_rev4_unull.md); verdict and proposed wo
 - Taking the larger of the past and future half-window means keeps steps and gradients from biasing U_null low (worst 1.03 × nominal at mission α). A centred mean gives up to 12.2 × at a step; a past-only mean up to 120 ×.
 - Stationary recounts need no bracketing time when the other three lanes' references during the count are used, ratio-scaled. A pooled window needs that scaling too: a 1 % lane-ratio error gives 1.12 × at mission α.
 
+### 7.3 MODEL.md revision 5: one-sided reference, N_min per stage, multi-lane predictive reference
+
+Numbers in [`model_rev5_checks.md`](model_rev5_checks.md); answers and wording in `../MODEL_REVIEW_rev5.md`. `calculated` with synthetic coefficients.
+
+- One-sided reference: the revision-5 2 % gradient guard discards 79 %–90 % of one-sided cells on noise alone. A floored local-linear extrapolation, with its slope uncertainty in the predictive count, holds ≤ 1.04 × nominal with no cell discarded (D# ≤ 1.08 ×).
+- Search-stage reference after arming at α = 1e-5 and 0.1 µSv/h: 31.6 s as implemented, 7.83 s with one pooled, ratio-scaled sub-window.
+- Multi-lane predictive threshold: evaluating the common-term cross parts at point values gives up to 1.035 × α. The exact form (product of the lanes' posterior nodes) is supplied with test vectors.
+
 ## 8. Measurements that replace the assumptions
 
 | Assumption | Measurement that replaces it | Design choice it drives |

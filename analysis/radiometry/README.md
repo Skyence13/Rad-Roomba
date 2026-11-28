@@ -9,7 +9,7 @@ cd analysis/radiometry
 ./run_all.sh
 ```
 
-`run_all.sh` runs the unit tests, regenerates every file under `results/`, the figures, the two demo JSON files and the report, and exits non-zero on any failure. It uses `python3` if numpy, scipy, matplotlib and pytest are importable; otherwise it creates `.venv` here and installs `requirements.txt` (PyPI access needed once). Override with `PYTHON=/path/to/python ./run_all.sh` or `RRRAD_VENV=/path/to/venv`. Tested with Python 3.13 and the pinned versions in `requirements.txt`. Run time is about six minutes on one core. Seeds are fixed in `scripts/common.py` (`SEED`), so results are reproducible for the same numpy version.
+`run_all.sh` runs the unit tests, regenerates every file under `results/`, the figures, the two demo JSON files and the report, and exits non-zero on any failure. It uses `python3` if numpy, scipy, matplotlib and pytest are importable; otherwise it creates `.venv` here and installs `requirements.txt` (PyPI access needed once). Override with `PYTHON=/path/to/python ./run_all.sh` or `RRRAD_VENV=/path/to/venv`. Tested with Python 3.13 and the pinned versions in `requirements.txt`. Run time is about eight minutes on one core. Seeds are fixed in `scripts/common.py` (`SEED`), so results are reproducible for the same numpy version.
 
 Individual steps:
 
@@ -22,6 +22,7 @@ Individual steps:
 .venv/bin/python scripts/s5_demo_files.py        # demo_calibration.json, demo_site_profile_ore.json
 .venv/bin/python scripts/s7_rev3_checks.py       # MODEL.md rev 3 section 6 checks, candidate rev 4 rule (report/model_rev3_checks.md)
 .venv/bin/python scripts/s8_unull.py             # U_null window in counts, predictive threshold, gradients, recounts (report/model_rev4_unull.md)
+.venv/bin/python scripts/s9_rev5_checks.py       # rev 5 questions: one-sided reference, N_min per stage, multi-lane predictive vectors (report/model_rev5_checks.md)
 .venv/bin/python scripts/s6_report.py            # report from template + results (fails on a missing value)
 ```
 
@@ -42,6 +43,9 @@ Run the steps in this order after deleting `results/summary.json`; each one adds
 | `rrrad/patch.py` | MODEL.md §5: overlap integral of a rectangular patch crossing rectangular apertures, gate by gate |
 | `rrrad/exact.py` | Exact Poisson error probabilities of the decision rules |
 | `rrrad/linstat.py` | Tail probabilities of Σ aⱼNⱼ + Gaussian: exact lattice FFT, Gil-Pelaez, saddlepoint; thresholds |
+| `rrrad/predictive.py` | Exact multi-lane predictive threshold (product of the lanes' posterior nodes); test vectors `results/rev5_predictive_vectors.json` |
+| `schemas/calibration_record.schema.json` | JSON Schema of the calibration record (identity, envelope, lane ratios, time-over-threshold cut, per-lane classes) |
+| `MODEL_REVIEW_rev5.md` | Answers to CR-13, CR-14, CR-15, CR-17, calibration identity; proposed revision-6 wording |
 | `rrrad/unull.py` | U_null precision: achieved α for a finite window (plug-in, predictive, upper-bound thresholds), gradient bias |
 | `scripts/probe_unull_windows.py` | Probe of the ros2_ws processing windows (not run by `run_all.sh`; writes `results/rev4_window_probe.csv`) |
 | `MODEL_REVIEW_rev4.md` | U_null rule: verdict on revision 4 and proposed revision-5 wording |

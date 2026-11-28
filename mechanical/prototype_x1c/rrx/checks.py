@@ -23,7 +23,7 @@ from .util import box, cyl, place
 THROUGH_SKIN = ("*_operator", "*_body", "*_receptacle", "*_mated_plug", "charge_inlet", "tof_*", "bumper_sw_*", "head_dock_switch")
 SHELL_GROUPS = {"lower_hull", "lid", "hatch", "service_cover"}
 INTERNAL = ("battery_tunnel", "battery_cassette", "cassette_lid", "coupler_*", "battery_pack", "cm5_tray", "CM5_carrier_pcb", "bridge_tray", "bridge_post_*",
-            "board_standoff_*", "RR-CHS-MAIN_*", "RR-PANEL_*", "panel_tray", "grip_foot_*", "chassis_heater_pad", "cassette_handle")
+            "board_standoff_*", "RR-CHS-MAIN_pcb", "RR-CHS-MAIN_*_parts", "RR-PANEL_pcb", "RR-PANEL_*_parts", "panel_tray", "grip_foot_*", "chassis_heater_pad", "cassette_handle")
 ROBOT_EXCLUDE = {"tray", "cassette_option", "head_placeholder"}
 G = 9.81
 OLD_GRIP_X = -11.0           # grip bar centre before CR-04, for the comparison column only
@@ -410,7 +410,7 @@ def width_rule(parts):
 
 
 def corridors(parts):
-    robot = [p for p in parts if p.group not in ROBOT_EXCLUDE and p.group != "tray"]
+    robot = [p for p in parts if p.group not in ROBOT_EXCLUDE and p.group != "tray" and "_plug_" not in p.name]   # mated plugs / wire exits are the start of the harness in the corridor
     return {k: {"box": list(b), "use": use, "blocked_by": LY.box_free(robot, b)} for k, (b, use) in LY.CORRIDORS.items()}
 
 
@@ -429,7 +429,7 @@ def ccr_e08(parts):
              "J_PWR mated plug + loom: u 160..183 (23 mm beyond the right edge), v 13..35 (header v 14.5..33.6), PCB top .. +14 mm": uv_box(160, 183, 13, 35, top - 1.5, top + 14.0),
              "J_HEAD1 (Mini-Fit 2x5, 12.8 mm, front edge u 14.5..37.8): mated plug + loom room v 100..115, PCB top .. +13 mm": uv_box(14.5, 37.8, 100, 115, top - 1.5, top + 13.0),
              "rear-edge connector space u 0..18 and 142..160 behind the board (x -79..-67), z PCB .. +12 mm (IB-12)": None}
-    robot = [p for p in parts if p.group not in ROBOT_EXCLUDE and p.group != "tray" and not p.name.startswith("RR-CHS-MAIN")]
+    robot = [p for p in parts if p.group not in ROBOT_EXCLUDE and p.group != "tray" and not p.name.startswith(("RR-CHS-MAIN", "fx_board_"))]   # board-mounting screws sit in the board's own hole keep-outs
     out = {}
     for k, bx in zones.items():
         if bx is None:

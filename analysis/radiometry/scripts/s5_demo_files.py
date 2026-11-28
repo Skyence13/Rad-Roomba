@@ -55,13 +55,24 @@ for lane in range(4):
     lanes.append({"lane_index": lane, "classes": classes})
 
 cal = {
-    "format_version": "0.1-demo",
+    "format_version": "0.2-demo",
+    "schema": "analysis/radiometry/schemas/calibration_record.schema.json",
     "document": "Rad Roomba demonstration calibration record",
     "synthetic": True,
     "field_use_approved": False,
     "notice": "SYNTHETIC DEMONSTRATION VALUES. Not measured on any detector. For the simulator and software tests only; "
               "never use for a survey, a release decision or a performance claim.",
     "calibration_id": "DEMO-CAL-SYNTH-0001",
+    "identity": {
+        "head_serial": "HEAD-DEMO-001",
+        "electronics_revision": "bench-A",
+        "firmware": "sim-1.0",
+        "setup_id": "optic-test-01",
+        "cal_id": "FAKE-BOARD-CAL-0",
+        "synthetic": True,
+        "note": "values of the emulated head (ros2_ws rr_core/data/head_descriptor_demo.json, rr_core/fakes/head.py) so that "
+                "strict binding can be exercised; no real head carries them",
+    },
     "generated_by": "analysis/radiometry/scripts/s5_demo_files.py (fixed seed)",
     "model": "analysis/radiometry/MODEL.md sections 1-3: r = F - k*U - b; D = r/K",
     "units": {"k": "dimensionless (floor counts per reference count)", "b_cps": "1/s", "u_k": "same as k",
@@ -70,13 +81,22 @@ cal = {
     "u0_evaluation": "smoothed_reference",
     "cov_FU_assumed": 0.0,
     "validity_envelope": {
-        "setup_id": "DEMO-SETUP-0",
+        "setup_id": "optic-test-01",
         "reference_rate_cps": {"min": float(U_POINTS[0]), "max": float(U_POINTS[-1])},
         "head_temperature_C": {"min": 5.0, "max": 35.0},
         "standoff_mm": {"min": 8.0, "max": 12.0},
-        "speed_m_s": {"min": 0.0, "max": 0.10},
+        "speed_m_s": {"min": 0.0, "max": 0.12, "basis": "qualified range of the MEASURED gate speed (pose interval); "
+                      "surveys command at most max minus the speed-control tolerance (demo: 0.10 m/s commanded)"},
         "photon_field": "synthetic; ore-like spectrum assumed",
     },
+    "reference_rate_ratios": {
+        "values": [1.0, 1.0, 1.0, 1.0], "relative_standard_uncertainty": 0.01,
+        "definition": "lane reference rate / four-lane mean reference rate in a uniform field (MODEL.md section 1, rev 5)",
+        "validity": "same setup_id; synthetic"},
+    "time_over_threshold_cut": {"applies_to": ["floor_beta_window", "reference"], "definition": "pulses classified alpha-like by "
+                                "time over threshold are excluded from both chains (MODEL.md section 1, rev 5)",
+                                "rejected_fraction_qualified_range": {"floor": [0.0, 0.05], "reference": [0.0, 0.05]},
+                                "value": "synthetic"},
     "lanes": lanes,
 }
 (ROOT / "demo_calibration.json").write_text(json.dumps(cal, indent=2) + "\n", encoding="utf-8")
@@ -111,6 +131,7 @@ profile = {
                 "example": {"independent_decision_areas": LAYOUT.n_cells, "alpha_per_decision": float(f"{ALPHA_SIDAK:.6g}")},
             },
             "stationary_recount_s": {"default": 30.0, "maximum": 100.0},
+            "scan_speed_m_s": {"commanded": 0.10, "note": "must not exceed the calibration's speed_m_s.max minus the speed-control tolerance"},
             "head_calibration_id": "DEMO-CAL-SYNTH-0001",
             "criterion_basis_and_averaging_area_cm2": None,
             "minimum_patch_shape_and_dimensions_cm": None,

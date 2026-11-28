@@ -227,10 +227,13 @@ def one_sided_study(case: LaneCase, U, N_sub, alpha, field, estimator, n_nodes=4
     # thresholds: smooth in (U0, N_post); N_post varies little, so interpolate in U0 at the median N_post
     npost_med = float(np.median(est[keep, 1]))
     lo, hi = np.percentile(est[keep, 0], [0.01, 99.99])
-    ug = np.linspace(lo, hi, grid_pts)
-    tg = [threshold_rule(case, npost_med, npost_med / u, alpha, "predictive") for u in ug]
-    tfun = interp1d(ug, tg, kind="cubic", fill_value="extrapolate")
-    ts = tfun(est[keep, 0])
+    if hi - lo < 1e-9 * max(hi, 1e-12):
+        ts = np.full(int(keep.sum()), threshold_rule(case, npost_med, npost_med / lo, alpha, "predictive"))
+    else:
+        ug = np.linspace(lo, hi, grid_pts)
+        tg = [threshold_rule(case, npost_med, npost_med / u, alpha, "predictive") for u in ug]
+        tfun = interp1d(ug, tg, kind="cubic", fill_value="extrapolate")
+        ts = tfun(est[keep, 0])
     w = est[keep, 2]
     ach = float(np.dot(w, tl(ts)) / w.sum()) / alpha
     lost = float(1.0 - w.sum() / est[:, 2].sum())

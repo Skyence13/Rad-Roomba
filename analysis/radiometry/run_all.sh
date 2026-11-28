@@ -31,5 +31,6 @@ $PY scripts/s4_leakage.py
 $PY scripts/s5_demo_files.py
 $PY scripts/s7_rev3_checks.py
 $PY scripts/s8_unull.py
+$PY scripts/s9_rev5_checks.py
 $PY scripts/s6_report.py
 echo "run_all: OK"

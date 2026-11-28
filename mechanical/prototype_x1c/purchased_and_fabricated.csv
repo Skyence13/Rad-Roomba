@@ -46,13 +46,12 @@ tof,printed,RRX-P54,tof_clip_shallow,4,ASA,,"DESIGN (print to out/step, see prin
 chassis,fabricated,RRX-F01,chassis_plate,1,AL6061,"4 mm 6061-T6 laser/waterjet blank, countersunk, tapped and reamed per holes table; 4 receiver bridge pockets 1.5 deep milled from below; DXF in out/dxf",DESIGN (fabricate to the STEP/DXF),out/dxf/chassis_plate.dxf,,"4 mm 6061-T6 laser/waterjet blank, countersunk, tapped and reamed per holes table; 4 receiver bridge pockets 1.5 deep milled from below; DXF in out/dxf"
 receiver,fabricated,RRX-F02L,receiver_channel_L,1,AL6061,"machined 6061 (printed PAHT-CF copy RRX-P02x for fit check only); hangs on the G10 shim, no metal contact with the plate",DESIGN (fabricate to the STEP/DXF),out/fabricated/step/receiver_channel_L.step,,"machined 6061 (printed PAHT-CF copy RRX-P02x for fit check only); hangs on the G10 shim, no metal contact with the plate"
 receiver,fabricated,RRX-F12,receiver_shim_L_in,2,G10,"G-10 sheet, inboard ear strip, both faces surface ground 4.00 +-0.02, flatness 0.01; one set ground together; thermal break (DEC-045)",DESIGN (fabricate to the STEP/DXF),out/fabricated/step/receiver_shim_L_in.step,,"G-10 sheet, inboard ear strip, both faces surface ground 4.00 +-0.02, flatness 0.01; one set ground together; thermal break (DEC-045)"
-receiver,fabricated,RRX-F13,receiver_shim_L_out,2,G10,"G-10 sheet, outboard ear strip, both faces surface ground 4.00 +-0.02, flatness 0.01; one set ground together; thermal break (DEC-045)",DESIGN (fabricate to the STEP/DXF),out/fabricated/step/receiver_shim_L_out.step,,"G-10 sheet, outboard ear strip, both faces surface ground 4.00 +-0.02, flatness 0.01; one set ground together; thermal break (DEC-045)"
 drive,fabricated,RRX-F03,screw_ring,2,SS304,1 mm 304 laser-cut ring,DESIGN (fabricate to the STEP/DXF),out/dxf/screw_ring.dxf,,1 mm 304 laser-cut ring
 grip,fabricated,RRX-F05,grip_side_plate,2,AL6061,6 mm 6061-T6 laser cut; same blank both sides,DESIGN (fabricate to the STEP/DXF),out/dxf/grip_side_plate.dxf,,6 mm 6061-T6 laser cut; same blank both sides
 grip,fabricated,RRX-F06,grip_foot,2,AL6061,"25 x 25 x 3 6060 angle cut to 34 mm, 4 holes",DESIGN (fabricate to the STEP/DXF),out/fabricated/step/grip_foot.step,,"25 x 25 x 3 6060 angle cut to 34 mm, 4 holes"
 receiver,fabricated,RRX-F02R,receiver_channel_R,1,AL6061,"machined 6061 (printed PAHT-CF copy RRX-P02x for fit check only); hangs on the G10 shim, no metal contact with the plate",DESIGN (fabricate to the STEP/DXF),out/fabricated/step/receiver_channel_R.step,,"machined 6061 (printed PAHT-CF copy RRX-P02x for fit check only); hangs on the G10 shim, no metal contact with the plate"
 bridge,fabricated,RRX-F04,bridge_tray,1,AL5052,"2 mm 5052 laser cut; gap pad zone u 50..110, v 30..70",DESIGN (fabricate to the STEP/DXF),out/dxf/bridge_tray.dxf,,"2 mm 5052 laser cut; gap pad zone u 50..110, v 30..70"
-bridge,fabricated,RRX-F07,bridge_post,4,AL6061,"8 mm round bar x 41, M4 tapped both ends",DESIGN (fabricate to the STEP/DXF),out/fabricated/step/bridge_post.step,,"8 mm round bar x 41, M4 tapped both ends"
+bridge,fabricated,RRX-F07,bridge_post,4,AL6061,"8 mm round bar x 41, M4 tapped from below, M3 tapped from above",DESIGN (fabricate to the STEP/DXF),out/fabricated/step/bridge_post.step,,"8 mm round bar x 41, M4 tapped from below, M3 tapped from above"
 grip,fabricated,RRX-F08,grip_bar,1,AL6061,"14 mm 6061-T6 round bar cut to 176 mm, ends drilled 5.0 x 15 and tapped M6 x 12",DESIGN (fabricate to the STEP/DXF),out/fabricated/step/grip_bar.step,,"14 mm 6061-T6 round bar cut to 176 mm, ends drilled 5.0 x 15 and tapped M6 x 12"
 caster,fabricated,RRX-F09,caster_disc,1,SS304,"2.5 mm 304 laser cut, 4 x M4 tapped",DESIGN (fabricate to the STEP/DXF),out/dxf/caster_disc.dxf,,"2.5 mm 304 laser cut, 4 x M4 tapped"
 caster,fabricated,RRX-F10,caster_shim,1,SS304,1 mm 304 shim,DESIGN (fabricate to the STEP/DXF),out/dxf/caster_shim.dxf,,1 mm 304 shim
@@ -60,7 +59,7 @@ receiver,fabricated,RRX-F11,latch_arm,1,AL6061,"4 mm 6061 laser cut, tapped M5 /
 tray,fabricated,RRX-F20,tray_base,1,PLY,"9 mm birch plywood or HDPE, 560 x 424, CNC/jigsaw; DXF",DESIGN (fabricate to the STEP/DXF),out/dxf/tray_base.dxf,,"9 mm birch plywood or HDPE, 560 x 424, CNC/jigsaw; DXF"
 receiver,purchased,RRX-H13,rx_pin_lower_L,8,STEEL,ISO 8734 4 m6 x 8 hardened dowel pin,standard part,,,
 receiver,purchased,RRX-H01,land_pin_L,4,STEEL,ISO 8734 4 m6 x 24 hardened dowel pin,standard part,,,
-bridge,purchased,RRX-H02,board_standoff,6,AL6061,M3 x 3 mm round spacer + M3x10 screw + nyloc nut under the tray,standard part,,,
+bridge,purchased,RRX-H02,board_standoff,6,AL6061,"PEM SO-M3-3 class self-clinching standoff, through-threaded M3, 3 mm above a 2 mm sheet (UNVERIFIED part data)",UNVERIFIED part data (class dimensions),,,
 grip,purchased,RRX-H03,grip_screw,2,SS304,"M6 x 16 ISO 4762 A2-70 + M6 ISO 7089 washer, medium thread-lock",standard part,,,
 hatch,purchased,RRX-H11,door_peg,2,SS304,M4 x 10 A2 dog-point set screw in the M4 insert of the upper jamb boss (dog protrudes 2.4 mm),standard part,,,
 battery_bay,purchased,RRX-H12,cassette_plunger,1,STEEL,"spring index plunger M10 x 1, 5 mm pin, pull knob, stainless, with rest (lock-out) position (GN 617 / Kipp K0338 class)",UNVERIFIED selection; envelope assumed,,,
@@ -71,23 +70,24 @@ caster,purchased,RRX-H41,caster,1,STEEL,TENTE Compacta 1430POI025P60-35x30,"VERI
 cassette,purchased,RRX-H42,battery_pack,1,PACK,Power-Sonic PSL-SC-12120,VERIFIED,,,
 cassette,purchased,RRX-H43,coupler_cassette,2,PA,Anderson SBS50 housing + 2 power + 2 aux contacts (cassette half),UNVERIFIED envelope,,,
 battery_bay,purchased,RRX-H44,chassis_heater_pad,1,PI,"Polyimide film heater 90 x 70 mm, 12 V, 20 W class with PSA (catalogue item TBD after thermal test)",design value,,,
-chs_main,purchased,RRX-E01,RR-CHS-MAIN_pcb,1,FR4,RR-CHS-MAIN rev A (custom),contract outline,,,
-compute,purchased,RRX-H46,CM5_carrier_assembly,1,PCB,Raspberry Pi CM5104032 on Waveshare CM5-IO-BASE-A + heat sink,"outline VERIFIED, height/holes UNVERIFIED",,,
+chs_main,purchased,RRX-E01,RR-CHS-MAIN_pcb,38,FR4,RR-CHS-MAIN (custom),UNVERIFIED: tool-read from electronics/chassis_main/RR-CHS-MAIN.kicad_pcb (board file),,,
+compute,purchased,RRX-H46,CM5_carrier_pcb,5,PCB,Waveshare CM5-IO-BASE-A + Raspberry Pi CM5104032 + heat sink,"outline VERIFIED; height, holes, connector positions UNVERIFIED",,,
 lidar,purchased,RRX-H47,lidar,1,AL,Richbeam LakiBeam 1L,"footprint PARTIAL; scan plane, holes, connector UNVERIFIED",,,
-controls,purchased,RRX-E02,RR-PANEL,1,FR4,RR-PANEL (custom),contract outline,,,
+controls,purchased,RRX-E02,RR-PANEL_pcb,5,FR4,RR-PANEL (custom),UNVERIFIED: tool-read from electronics/panel/RR-PANEL.kicad_pcb (board file),,,
 controls,purchased,RRX-H50,estop_body,1,PA,Schneider Electric Harmony XB5AS8444,"{'cutout_d': 'VERIFIED', 'head_d': 'VERIFIED', 'contacts_2nc",,,
 controls,purchased,RRX-H56,hands_on_body,3,PA,"Harmony XB5 family: illuminated latching (HANDS-ON), guarded flush momentary (REARM/Start), projecting momentary (Pause/Stop) - exact references TBD by chassis electronics",{'all': 'UNVERIFIED'},,,
 controls,purchased,RRX-H55,mode_selector_body,1,PA,Schneider Electric Harmony XB5AD33 (candidate),{'all': 'UNVERIFIED'},,,
 charge,purchased,RRX-H51,charge_inlet,1,BRASS,M12 L-coded 4+FE male panel receptacle (candidate) under a printed hinged cover,UNVERIFIED,,,
 connectors,purchased,RRX-H52,J1_receptacle,1,BRASS,"binder M16 IP67 8-pole female panel receptacle, shieldable (series 423/723, 09 0174 xx 08 family)",UNVERIFIED cut-out,,,
 connectors,purchased,RRX-H57,J2_receptacle,1,BRASS,"binder M12-A 8-pole female panel receptacle, shieldable (series 763 family)",UNVERIFIED cut-out,,,
-tof,purchased,RRX-E03,tof_cliff_fl,11,FR4,"RR-TOF (custom, VL53L4ED)",contract outline,,,
+tof,purchased,RRX-E03,rrtof_cliff_fl_pcb,44,FR4,RR-TOF-A (custom),UNVERIFIED: tool-read from electronics/tof_carrier/RR-TOF-A.kicad_pcb (board file),,,
 bumper,purchased,RRX-H53,bumper_sw_l,3,PBT,Omron D2HW-C201M,UNVERIFIED: dimensions PARTIAL,,,
 receiver,purchased,RRX-H54,head_latch,2,SS304,"over-centre draw latch, stainless, 25 mm glove loop (Southco C7 / Protex class)",UNVERIFIED selection; envelope from interfaces,,,
-A chassis,hardware,,socket cap screw,6,,M4 x 18 ISO 4762 A2-70,STD,,1.2,"plate (from above) -> G10 bushing -> shim -> tapped ear of the receiver channel (7.1 mm engagement); thermal break joint: 1500 N preload, medium thread-lock; re-check torque at the first service"
+fastener,purchased,HW,fx_rx_0,96,SS304,from below: ear -> tapped plate (thermal break),ISO standard dimensions (recalled),,,from below: ear -> tapped plate (thermal break)
+A chassis,hardware,,socket cap screw,6,,M4 x 18 ISO 4762 A2-70,STD,,1.2,"FROM BELOW: spring washer + washer + G10 bushing (in the ear) -> ear -> shim -> tapped 4 mm plate (3.6 mm engagement); thermal break joint: 1500 N preload, medium thread-lock; re-check torque at the first service"
 A chassis,hardware,,conical spring washer,6,,DIN 6796 4 A2,UNVERIFIED,,,"under each receiver screw head; keeps the preload against G10 creep (loss 6 % vs 57 % without, calculated)"
 A chassis,hardware,,flat washer,6,,ISO 7089 4 A2,STD,,,between the spring washer and the G10 bushing flange
-A chassis,hardware,,top-hat bushing,6,,"G-10, flange 10 x 1.0, sleeve 6.0 x 3.5, bore 4.3 (machined; PEEK-GF30 alternative)",UNVERIFIED,,,"6.0 mm plate hole of each receiver screw; insulates the screw from the plate; stock item not confirmed, make from G10 tube/rod if needed"
+A chassis,hardware,,top-hat bushing,6,,"G-10, flange 10 x 1.0, sleeve 6.0 x 3.5, bore 4.3 (machined; PEEK-GF30 alternative)",UNVERIFIED,,,"6.1 mm bore in the receiver ear, flange under the ear; insulates the screw head from the channel; stock item not confirmed, make from G10 tube/rod if needed"
 A chassis,hardware,,dowel pin (lower),4,,4 m6 x 8 ISO 8734,STD,,,"pressed 5.5 into the channel ear (4 H7 blind), 2.5 into the G10 shim; second shim hole of each pair is a 4.6 x 4.0 slot; pin top 1.5 below the plate"
 A chassis,hardware,,dowel pin (upper),4,,4 m6 x 8 ISO 8734,STD,,,"pressed flush into the plate (4 H7), through the shim; tip in a 6.5 x 1.5 ear relief; no metal path across the shim: each pin set touches metal on one side only"
 A chassis,hardware,,push pin (dock switch),1,,"3 h8 x 6 stainless dowel, ends rounded",DESIGN,,,"left channel end wall, between shoe tip and D2HW plunger"
@@ -99,7 +99,7 @@ A chassis,hardware,,countersunk screw,4,,M5 x 25 ISO 10642 A2-70,STD,,3.0,plate 
 A chassis,hardware,,socket cap screw,4,,M4 x 10 ISO 4762 A2,UNVERIFIED,,2.0,draw latch -> chin floor -> tapped latch arm; latch hole pattern depends on the selected latch
 A chassis,hardware,,snap-action switch,1,,Omron D2HW-C201M,UNVERIFIED,,,CHG_COVER (HEAD_DOCK and the 2 BODY_BUMPER switches are RRX-H53 in the parts list); dimensions PARTIAL in parts.yaml
 A chassis,hardware,,pan head screw + insert,8,,M2 x 10 ISO 7045 A2 + M2 heat-set insert,UNVERIFIED,,0.15,D2HW retention in the four printed pockets
-A chassis,hardware,,cable grommet,2,,"8 mm hole, 5 mm bore, silicone",UNVERIFIED,,,plate grommet holes (dock switch / cliff leads)
+A chassis,hardware,,cable grommet,1,,"8 mm hole, 5 mm bore, silicone",UNVERIFIED,,,"dock-switch lead pass-through at (28, 58) (fit review C4); the cliff leads rise through the pod window bays"
 B lower hull,hardware,,countersunk screw,10,,M3 x 8 ISO 10642 A2,STD,,0.6,plate (from below) -> sole-ring inserts
 B lower hull,hardware,,membrane vent,1,,"M12 x 1.5 ePTFE protective vent + nut, IP67",UNVERIFIED,,,right rear quarter (12.2 mm hole)
 B lower hull,hardware,,duck-bill drain valve,2,,"3 mm stem, silicone",UNVERIFIED,,,plate drain holes beside the caster
@@ -121,13 +121,14 @@ D cassette,hardware,,shoulder screw,4,,"M3 thread, 4 mm shoulder x 5",UNVERIFIED
 D cassette,hardware,,foam pads,1,,"closed-cell EPDM 3 mm, PSA",STD,,,pack sides/top inside the cassette (retention under shock); 1 sheet 200 x 300
 D cassette,hardware,,pack leads,1,,"2.5 mm2 silicone wire, 6.3 mm insulated receptacles",UNVERIFIED,,,pack F2 tabs -> SBS50 contacts
 E bridge,hardware,,countersunk screw,4,,M4 x 10 ISO 10642 A2,STD,,1.5,plate (from below) -> bridge posts
-E bridge,hardware,,pan head screw,4,,M4 x 8 ISO 7045 A2,STD,,1.5,tray -> bridge posts
-E bridge,hardware,,pan head screw + nyloc nut,6,,M3 x 10 ISO 7045 A2 + M3 ISO 10511,STD,,0.5,"RR-CHS-MAIN -> 3 mm spacers -> tray; H1, H3 hard chassis bond"
+E bridge,hardware,,countersunk screw,4,,M3 x 8 ISO 10642 A2,STD,,0.8,"tray (from above, flush) -> M3 tapped bridge posts; fit review C1: flush, nothing above the tray under the PCB"
+E bridge,hardware,,pan head screw,6,,M3 x 6 ISO 7045 A2,STD,,0.5,"RR-CHS-MAIN -> self-clinching standoffs in the tray; H1, H3 hard chassis bond; fit review C1 (no nuts under the tray)"
+E bridge,hardware,,self-clinching standoff,6,,"PEM SO-M3-3 class self-clinching standoff, through-threaded M3, 3 mm above a 2 mm sheet (UNVERIFIED part data)",UNVERIFIED,,,pressed into the tray at the six board holes; tray holes 4.2; press before the tray is fitted
 E bridge,hardware,,thermal gap pad,1,,"60 x 40 x 2 mm, >= 3 W/mK",UNVERIFIED,,,"board underside zone u 50..110, v 30..70 -> tray"
 E bridge,hardware,,countersunk screw,4,,M3 x 8 ISO 10642 A2,STD,,0.6,plate -> CM5 tray inserts
 E bridge,hardware,,pan head screw,4,,M2.5 x 6 ISO 7045 A2,UNVERIFIED,,0.3,CM5 carrier -> tray inserts; carrier hole pattern UNVERIFIED
 F grip,hardware,,countersunk screw + nyloc nut + washer,4,,M5 x 16 ISO 10642 A2-70,STD,,4.0,"plate (from below) -> angle feet; proof-load path, through-bolted"
-F grip,hardware,,socket cap screw + nyloc nut + 2 washers,4,,M5 x 16 ISO 4762 A2-70,STD,,4.0,side plates -> angle feet; proof-load path
+F grip,hardware,,socket cap screw + washer,4,,M5 x 10 ISO 4762 A2-70 + ISO 7089,STD,,4.0,angle feet (from inboard) -> M5 tapped side plates; proof-load path; medium thread-lock; fit review: heads inboard so they are reachable at stage 5 and in service
 F grip,hardware,,socket cap screw + washer,2,,M6 x 16 ISO 4762 A2-70 + ISO 7089,STD,,6.0,side plates -> tapped ends of the 14 mm bar (in the fairing pockets); medium thread-lock; proof-load path
 F grip,hardware,,pan head screw + nyloc nut,4,,M3 x 20 ISO 7045 A2,STD,,0.5,cheek fairings through the side plates
 F grip,hardware,,end cap,2,,"push-in cap 11 mm, PE",UNVERIFIED,,,screw-head pockets of the fairings
@@ -141,7 +142,7 @@ G lid,hardware,,acoustic vent,1,,8 mm adhesive ePTFE acoustic membrane,UNVERIFIE
 G lid,hardware,,pan head screw,2,,M3 x 8 ISO 7045 A2,STD,,0.5,RR-PANEL tray -> deck bosses
 G lid,hardware,,pan head screw,18,,M2 x 6 ISO 7045 A2,STD,,0.15,ToF rear clips (9 seats)
 G lid,hardware,,light-blocker gasket,11,,"black closed-cell foam 1.5 mm, die-cut 14 x 10 with two apertures",DESIGN,,,"between VL53L4ED and window; crosstalk barrier; assumption, see report"
-G lid,hardware,,LiDAR screws + gasket,1,,"M3 x 8 x 4, 60 x 60 x 1 silicone gasket, M12 cable gland",UNVERIFIED,,,hump pad; LiDAR hole pattern UNVERIFIED: pad drilled 4 x 3.4 on a 50 mm square
+G lid,hardware,,LiDAR screws + gasket,1,,"M3 x 8 x 4, 60 x 60 x 1 silicone gasket; M12 x 1.5 cable gland in the LEFT REAR DECK beside the hump (fit review M4: no room inside the hump)",UNVERIFIED,,,hump pad / left deck; LiDAR hole pattern UNVERIFIED: pad drilled 4 x 3.4 on a 50 mm square
 G lid,hardware,,set screw (door peg),2,,M4 x 10 dog point ISO 4028 A2,STD,,1.0,upper jamb bosses
 G lid,hardware,,hinge pin,1,,2 mm x 40 stainless pin,STD,,,charge inlet cover; torsion spring optional
 G lid,hardware,,draw-latch screws,4,,M4 x 8 ISO 7045 A2,UNVERIFIED,,1.0,"hatch latch on the hump roof, catch plate on the door"

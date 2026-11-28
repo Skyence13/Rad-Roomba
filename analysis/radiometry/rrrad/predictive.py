@@ -29,7 +29,7 @@ from . import linstat as L
 from . import rev3 as R
 from .unull import posterior_nodes
 
-__all__ = ["LanePost", "PredictiveCombined"]
+__all__ = ["LanePost", "PredictiveCombined", "thresholds"]
 
 
 @dataclass
@@ -165,3 +165,19 @@ class PredictiveCombined:
 
     def detection_limit(self, t, beta=0.05):
         return L.solve_for_power(lambda D: self.tail(t, D), 1.0 - beta, hi=1.0, tol=1e-6)
+
+
+def thresholds(pc: PredictiveCombined, alphas):
+    """Thresholds for several alphas from one characteristic-function evaluation."""
+    m, v = pc.mean_var()
+    sd = math.sqrt(v)
+    lo, hi = m - sd, m + 12.0 * sd
+    f = pc.tail_fn(lo, hi)
+    out = []
+    for a in alphas:
+        h = hi
+        while f(h) > a:
+            h += 6.0 * sd
+            f = pc.tail_fn(lo, h)
+        out.append(float(brentq(lambda x: f(x) - a, lo, h, xtol=1e-10 * sd, rtol=1e-11)))
+    return out

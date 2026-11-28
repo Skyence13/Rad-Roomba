@@ -58,7 +58,14 @@ Written to disk so far (both builds share it through the rrx code):
 - J1 / J2 receptacles moved to the nose front (skin angle +-12 deg, z 96, axis 20 deg up / 8 deg out): docked pigtail apex about
   z 125 (was 195..226), free length about 262..274 mm (not shorter: the forward-facing plug needs a 180 deg return loop at the
   40 / 35 mm bend radius), corridors in `mechanical/common` params PIGTAIL_CORRIDOR.
-- NOT yet done at the time of writing: full prototype / production build runs with the new checks; route iteration; M9 / m6.
+- Since then: LiDAR lead gland moved to the left rear deck (hump interior full); hull cable notches over the cliff-pod bays and the
+  dock grommet; tunnel rear feet x -204 / -180; grip frame fitted at stage 4 (before the tunnel); routes: 26-connected search,
+  seat stubs, ToF allowances 15 mm end / 20 mm loop; open-route register (W-032, W-033, W-039, W-041, W-042) reported as OPEN
+  FINDINGS with reasons; receptacle corridors and interface text in mechanical/common.
+- Dev runs (prototype, before the last hull change): interference 2 -> 0 small clashes expected after the tunnel-foot move;
+  fastener access 96 fasteners / 114 tool columns, 0 blocked; service sweeps: board, CM5, all main-board plugs free.
+- RUNNING / NOT YET CONFIRMED: full prototype build with every new check (started 2026-11-28 after the container restart),
+  then the production build (cold skins about 60 min) and the common build.
 
 ## Run times (shared 4-core machine)
 
