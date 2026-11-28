@@ -496,10 +496,10 @@ for _jn, _j in J_RECEPTACLES.items():
     _sg = 1.0 if _jn == "J1" else -1.0
     _h = (_sg * _n[1], -_sg * _n[0], 0.0)
     _h = tuple(c / math.hypot(*_h) for c in _h)                                        # horizontal, toward the centre line
-    _pd = tuple(0.6 * _dp[i] + 0.4 * _h[i] for i in range(3))                          # loop turns down AND inboard: away from the look-ahead cones
+    _pd = tuple(0.5 * _dp[i] + 0.5 * _h[i] for i in range(3))                          # loop turns down AND inboard: away from the look-ahead cones
     _pd = tuple(c / math.sqrt(sum(q * q for q in _pd)) for c in _pd)
     _arc = [tuple(_r[i] + _R * (math.sin(math.radians(f)) * _n[i] + (1 - math.cos(math.radians(f))) * _pd[i]) for i in range(3)) for f in (150.0, 90.0, 45.0)]
-    PIGTAIL_CORRIDOR[_jn] = [_b, (_b[0] + 6.0, _b[1] - 4.0, _b[2] + 18.0)] + _arc + [_r]   # boot -> rise -> loop over the plug end (bend R) -> plug rear
+    PIGTAIL_CORRIDOR[_jn] = [_b, (_b[0] + 6.0, _b[1] - 4.0 * _sg, _b[2] + 18.0)] + _arc + [_r]   # rise leans inboard   # boot -> rise -> loop over the plug end (bend R) -> plug rear
     PIGTAIL_CORRIDOR.setdefault("free_length_mm", {})[_jn] = round(sum(math.dist(a, b) for a, b in zip(PIGTAIL_CORRIDOR[_jn], PIGTAIL_CORRIDOR[_jn][1:])) + 30.0)
 IMU_POSE = {"xyz": (0.0, 0.0, CHS_MAIN["origin"][2] + CHS_MAIN["thickness"] + 0.5), "rpy": (0.0, 0.0, 0.0),
             "note": "reserved BMI088 footprint on RR-CHS-MAIN at board (u, v) = (80, 67): directly above base_link"}

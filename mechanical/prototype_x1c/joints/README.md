@@ -11,7 +11,7 @@ Lid / lower hull perimeter lap joint at a screw station. Plane x = -122.0 mm, wi
 - 4 x 2.5 silicone foam on the 1.78 mm land gap (z 61.9..63.68)
 - tongue 3 mm inside the lid skirt, 9 mm high: shingled, water cannot climb
 - radial M3 x 10 + bonded washer into the tongue insert
-- parts cut: lower_hull_RL, rear_deck_L
+- parts cut: lower_hull_RL, rear_deck_L, fx_perim_8
 
 ## J02 lid flange x-38
 
@@ -22,7 +22,7 @@ Shoulder / rear deck bolted flange joint (x = -38). Plane z = 100.0 mm, window (
 - 4 mm flanges, 9 mm deep, faces set back 0.25 mm each for the 1 mm gasket
 - M3 x 12 into insert bosses at z 100 and on the roof; 3 mm dowels at z 108 and on the roof
 - flanges start above the hull tongue and stop at the wheel arch
-- parts cut: shoulder_L, rear_deck_L, tyre_L, panel_tray, RR-PANEL
+- parts cut: shoulder_L, rear_deck_L, tyre_L, panel_tray
 
 ## J03 nose flange x47
 
@@ -52,7 +52,7 @@ Saddle well wall, cover ledge, grip side plate through the shoulder slot, cheek 
 
 - cover 3 mm PAHT-CF on a 6 x 2 gasket (no side screws: the board's 18 mm envelope reaches the ledge)
 - side plate passes through a slot covered and RTV-sealed by the fairing; ToF lead slot beside it
-- parts cut: grip_side_plate_L, cheek_fairing_L, grip_bar, grip_screw_L, grip_sleeve, shoulder_L, saddle_cover, RR-CHS-MAIN_top_parts
+- parts cut: grip_side_plate_L, cheek_fairing_L, grip_bar, grip_screw_L, grip_sleeve, shoulder_L, saddle_cover
 
 ## J06 cover rear corner
 
@@ -62,7 +62,7 @@ Saddle cover rear-corner captive screw into the rear-deck ledge boss over the bo
 
 - boss underside z 97.6 = 13.0 mm above the PCB (CCR-E08 rear-corner zone 12 mm)
 - board, bridge tray and top-part envelope shown
-- parts cut: board_standoff_0, rear_deck_L, saddle_cover, panel_tray, RR-CHS-MAIN_pcb, RR-CHS-MAIN_top_parts, RR-CHS-MAIN_bottom_parts, RR-PANEL
+- parts cut: board_standoff_0, rear_deck_L, saddle_cover, panel_tray, RR-CHS-MAIN_pcb, RR-CHS-MAIN_top_parts, RR-CHS-MAIN_plug_J_MODE, RR-PANEL_pcb, RR-PANEL_bottom_parts, fx_board_H1, fx_cover_5
 
 ## J07 hatch frame top
 
@@ -82,7 +82,7 @@ Cassette latch: index plunger through the hump roof into the lid, folded handle,
 
 - plunger pin drops 2.4 mm into the lid hole when the cassette is home (coupler mated)
 - door finger stops 0.5 mm behind the home position: the door closes only on a latched cassette
-- parts cut: chassis_plate, caster_disc, caster_shim, battery_cassette, cassette_lid, cassette_handle, cassette_plunger, battery_hump, hatch_frame, hatch_door, tof_clip_prox_rc, tof_window_prox_rc, battery_pack, tof_prox_rc
+- parts cut: chassis_plate, caster_disc, caster_shim, battery_cassette, cassette_lid, cassette_handle, cassette_plunger, battery_hump, hatch_frame, hatch_door, tof_clip_prox_rc, tof_window_prox_rc, battery_pack, rrtof_prox_rc_pcb, rrtof_prox_rc_top_parts, rrtof_prox_rc_bottom_parts, rrtof_prox_rc_plug_J1
 
 ## J08 door peg
 
@@ -92,7 +92,7 @@ Door hook slot on the jamb peg, jamb / frame joint. Plane z = 100.0 mm, window (
 
 - door hangs on two M4 dog-point pegs (hook-and-swing)
 - skirt fits inside the jamb; frame ring is the gasket land
-- parts cut: battery_tunnel, battery_cassette, door_peg_L, rear_deck_L, battery_hump, hatch_frame, hatch_door, tof_clip_look_rev_left, tof_window_look_rev_left, battery_pack, tof_look_rev_left
+- parts cut: battery_tunnel, battery_cassette, door_peg_L, rear_deck_L, battery_hump, hatch_frame, hatch_door, tof_clip_look_rev_left, tof_window_look_rev_left, battery_pack, rrtof_look_rev_left_pcb, rrtof_look_rev_left_top_parts, rrtof_look_rev_left_bottom_parts
 
 ## J09 sole plate edge
 
@@ -102,7 +102,7 @@ Lower hull sole ring on the chassis plate edge. Plane x = -162.5 mm, window (74.
 
 - hull wraps the plate edge; M3 countersunk from below into the sole insert
 - RTV bead in the corner; plate underside flush with the hull
-- parts cut: chassis_plate, lower_hull_RL
+- parts cut: chassis_plate, lower_hull_RL, fx_sole_3
 
 ## J10 hull splice
 
@@ -112,7 +112,7 @@ Lower hull front / rear butt joint (x = -71) beside the CM5 bay. Plane z = 52.0 
 
 - no splice screw (CM5 bay): both pieces screwed to the plate and held by the lid tongue
 - butt joint sealed with RTV, 1 mm gasket where the flange exists
-- parts cut: grip_side_plate_L, lower_hull_FL, lower_hull_RL, cm5_tray, CM5_carrier_assembly
+- parts cut: grip_side_plate_L, lower_hull_FL, lower_hull_RL, CM5_carrier_parts
 
 ## J11 nose bulkhead latch
 
@@ -133,7 +133,7 @@ Receiver channel at the rear land station (x = 8) with the head shoe. Plane x = 
 - dowel-pin land top = datum C (z 16.0)
 - roof pad 14.06 above the land on the rear bridge; bridge in a 1.5 mm plate pocket (air gap)
 - ears on the 4 mm G10 shim: no metal contact with the plate
-- parts cut: chassis_plate, receiver_channel_L, receiver_shim_L_in, receiver_shim_L_out, land_pin_L0, motor_pod_L, lower_hull_FL, head_shoe_L
+- parts cut: chassis_plate, receiver_channel_L, receiver_shim_L_in, land_pin_L0, motor_pod_L, lower_hull_FL, head_shoe_L, fx_rx_0
 
 ## J17 receiver break
 
@@ -143,7 +143,7 @@ Receiver thermal break, left inboard ear line: M4 in G10 top-hat bushings, lower
 
 - M4 x 18 + DIN 6796 + ISO 7089 + G10 bushing, 1500 N / 1.2 N m
 - lower pins ear -> shim, upper pins plate -> shim; each touches metal on one side only
-- parts cut: chassis_plate, receiver_channel_L, receiver_shim_L_in, rx_pin_lower_L0, rx_pin_lower_L1, rx_pin_upper_L0, rx_pin_upper_L1, lower_hull_FL, motor_L
+- parts cut: chassis_plate, receiver_channel_L, receiver_shim_L_in, rx_pin_lower_L0, rx_pin_lower_L1, rx_pin_upper_L0, rx_pin_upper_L1, lower_hull_FL, motor_L, fx_rx_0, fx_rx_1, fx_rx_2
 
 ## J13 receiver long
 
@@ -163,7 +163,7 @@ Motor pod, gearmotor (shaft 7 mm below the can axis), screw ring, hub, wheel, ty
 
 - pod base bolted to the plate; pod passes the skin through a sealed notch
 - hub fixed on the D shaft first, wheel bolted on from outboard
-- parts cut: chassis_plate, motor_pod_L, screw_ring_L, dock_switch_bracket, bridge_tray, lower_hull_FL, shoulder_L, saddle_cover, wheel_rim_L, tyre_L, wheel_hub_L, motor_L, RR-CHS-MAIN_pcb, RR-CHS-MAIN_top_parts, RR-CHS-MAIN_bottom_parts, head_dock_switch
+- parts cut: chassis_plate, motor_pod_L, screw_ring_L, dock_switch_bracket, bridge_tray, lower_hull_FL, shoulder_L, saddle_cover, wheel_rim_L, tyre_L, wheel_hub_L, motor_L, RR-CHS-MAIN_pcb, RR-CHS-MAIN_top_parts, head_dock_switch
 
 ## J15 bumper
 
@@ -173,5 +173,5 @@ Bumper: side segment on two guide pins with the D2HW, centre segment on the door
 
 - stroke 8.5 mm before the bosses reach the skin
 - centre wings push both side segments
-- parts cut: battery_tunnel, battery_cassette, lower_hull_RL, rear_deck_L, hatch_frame, hatch_door, bumper_side_L, bumper_centre, battery_pack, bumper_sw_l
+- parts cut: battery_tunnel, battery_cassette, lower_hull_RL, rear_deck_L, hatch_frame, hatch_door, bumper_side_L, bumper_centre, battery_pack, rrtof_prox_rl_plug_J1, bumper_sw_l, fx_perim_12
 

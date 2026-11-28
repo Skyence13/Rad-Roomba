@@ -52,6 +52,13 @@ OPEN_ROUTES = {
     "W-042": "bay NTC: as W-041",
     "W-036": "LOOK_RR: the route round the right-deck devices (E-stop, HANDS-ON, Pause/Stop, charge inlet) to J_TOF6 at the rear edge exceeds the 270 mm budget; proposed (electronics): land LOOK_RR on a right-corner connector or accept a 300 mm cable without margin",
     "W-040": "REAR_R: as W-036 (J_TOF10)",
+    "W-001": "pack feed: the voxel route grazes the right grip foot and its M5 screw (54 / 35 mm3); proposed: route over the foot leg with a P-clip on the side plate, to be re-checked with a 2 mm grid",
+    "W-023": "RR-PANEL J1 -> J_PANEL: grazes the panel tray wall (4 mm3) and the J_CM5 plug exit (12 mm3) at the board's left edge; proposed: lead along the tray floor, 10 mm wider notch",
+    "W-030": "CLIFF_FL: rises through the pod bay and the hull notch but grazes the collar (6 mm3) and the hull (1 mm3) at the bay exit; proposed: bay 3 mm wider",
+    "W-031": "CLIFF_FR: the right pod bay region is enclosed in the 3 mm voxel model (309 voxels); proposed as W-030 and re-check",
+    "W-034": "LOOK_FL: drops through the roof slot but grazes the shoulder slot edge (3 mm3); proposed: slot 2 mm wider",
+    "W-037": "LOOK_FR: as W-034 (1 mm3)",
+    "W-035": "LOOK_RL: grazes the left deck (18 mm3) and the REARM body (10 mm3) near the seat; proposed: seat relief extended 5 mm and the lead clipped under the deck",
 }
 
 

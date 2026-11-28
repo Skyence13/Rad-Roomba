@@ -360,7 +360,14 @@ class PredictiveStat:
         h, u, parts = grid
         u2 = u * u
         phi = np.exp(1j * u * self.mu - 0.5 * u2 * self.extra_var)
-        if len(self.units) == 1:
+        if len(self.units) > 1 and all(un.U.size == 1 for un in self.units):
+            # U known for every lane (one node each: provisional / planning): the common term is a fixed Gaussian
+            gsum = sum(un.g * float(un.U[0]) for un in self.units)
+            ph = phi * np.exp(-0.5 * u2 * gsum * gsum)
+            for un, (AF, AU) in zip(self.units, parts):
+                c, U = un.cal, float(un.U[0])
+                ph = ph * np.exp((c.k * U + c.b) * AF + U * AU - 0.5 * float(un.s2_lane[0]) * u2)
+        elif len(self.units) == 1:
             un, (AF, AU) = self.units[0], parts[0]
             c = un.cal
             mix = np.zeros(u.size, complex)
@@ -414,8 +421,9 @@ class PredictiveStat:
         g = self._grid(self.span_for(x, D), half_step)
         return self._tail_pdf(g, self._phi(g, D), x)[0]
 
-    def threshold(self, alpha: float):
-        """(t*, check_ok, achieved tail): P(S > t*) = alpha under the predictive null; half-step check (1e-3)."""
+    def threshold(self, alpha: float, check: bool = True):
+        """(t*, check_ok, achieved tail): P(S > t*) = alpha under the predictive null; half-step check (1e-3) unless
+        check=False (provisional live values only)."""
         sd = math.sqrt(self.var(0.0))
         m = self.mean(0.0)
         g = self._grid(self.span_for(m, 0.0) + 14.0 * sd)
@@ -439,6 +447,8 @@ class PredictiveStat:
                 break
             x = x_new
         tail, _ = self._tail_pdf(g, phi, x)
+        if not check:
+            return float(x), True, float(tail)
         gh = self._grid(self.span_for(x, 0.0), half_step=True)
         half, _ = self._tail_pdf(gh, self._phi(gh, 0.0), x)
         ok = abs(half - tail) <= CHECK_REL * max(tail, alpha)

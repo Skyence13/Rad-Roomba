@@ -5,7 +5,7 @@ All calibration and profile data are synthetic (`field_use_approved: false`); th
 profile is present and unconfigured. Observed results are in the verification log below and in
 `evidence/*/evidence.json`; this file says what exists, what is thin and what is missing.
 
-## Session 2026-11-28 b (MODEL.md revision 6, lead tasks 1-6) - IN PROGRESS
+## Session 2026-11-28 b (MODEL.md revision 6, lead tasks 1-6) - DONE
 
 Resume notes: tasks in order (1) rev 6 statistic in rr_core (one-sided local-linear reference, N_min per test set, search stage
 one pooled sub-window N_scan with lane ratios + reuse + pre-roll, exact multi-lane predictive null; analyst vectors
@@ -35,6 +35,23 @@ stand-alone nodes; (5) independent rrrad cross-check of exported cells; (6) full
   `cell_members.csv`, rrrad `tail_gp` over the product of posterior nodes; reference sub-window counts re-summed from the raw
   frames; run in s08 (4 cells, m <= 2): agree to 2e-7 (D*, D#), 1e-15 (D); U_null itself (window choice) is taken from the
   export and checked only by the re-summed counts.  `recompute.py` honours the evaluation point (`recorded_reference_upto`).
+- (restart 11:31) unit 108 passed and scenarios 17 passed (09:05-09:29, final code) completed before the restart; native and ros
+  were interrupted and are re-run (11:34: snapshot --check, native, ros, unit; logs `scratchpad/ros/H_*.log`).
+- Native after the restart (11:34-12:40): n01/n02 failed with HOLD LOCALIZATION / CMD_TIMEOUT; n02 then passed twice and
+  failed once.  Diagnosis (cProfile + `NativeSystem.slow_steps`): app-loop stalls of 0.2-0.33 s every 5 s from the provisional
+  evaluation.  Fixes: one-node fast path for provisional multi-lane statistics (no Gauss-Hermite when every lane's U is a
+  point), no half-step check for provisional thresholds (the recorded result always has it).  Final runs below.
+- [x] FINAL VERIFICATION (12:34-13:12, final code): snapshot --check up to date (draft11), refresh_demo_data --check up to date;
+  `tools/test.sh unit` **108 passed**, exit 0 (3 min 11 s); `tools/test.sh native` **3 PASS** (11/11, 10/10, 18/18), exit 0
+  (10 min 1 s; recorded evaluation on the worker thread: 232 cells in 45.5 s (n01) / 31.3 s (n02), app-loop stalls up to 0.38 s);
+  `tools/test.sh scenarios` **17 passed**, exit 0 (23 min 9 s); `tools/test.sh ros` **14/14 PASS** incl. both stand-alone
+  nodes, exit 0 (1 min).  All simulated / tool-checked.
+- Numbers (rev 5 commit 0632ed1 -> rev 6, simulated, synthetic calibration): s01 median D# 0.117 -> 0.117 Bq/cm2, acceptable
+  0.699 -> 0.769 (rev 4: 0.690 / 0.128); s01 flags 11 listed, 6 recorded alarms queued (review queue 6); s02 "sensitivity
+  insufficient" 137 gradient + 68 D# -> 209, all "D# above the detection goal" (0 gradient); ACCEPTABLE 0 -> 6; s10 acceptable
+  0.330 -> 0.410; NO DECISION 0 in all 17 scenarios; one-sided cells 930 over the 17 scenarios, of which 39 flagged and marked
+  recount-required (s09 12, s07/s12 5, s11 3-4, others 0-3); s11 search pre-roll 1.24 s at the first pass start (rev 5 needed
+  ~26 s after arming).
 - [x] s11: search pre-roll measured 1.24 s at the first pass start (head armed during bring-up; rev 5 needed 2 x 200 + 20
   pooled counts = ~26 s after arming, rev 6 N_scan 105 = ~6.6 s after arming at 4 1/s per lane, calculated).
 

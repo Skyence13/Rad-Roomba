@@ -39,3 +39,10 @@ boolean of lower hull x lid (contact only, 0.0 mm3; RR_BOOL_TIMEOUT=1200 in buil
 - 45 part STEP, 4 subassembly STEP (largest 44 MB), full assembly 60 MB in out/ (untracked), 9 DXF + hole tables, 50 drawing sheets.
 - Fixes made during this pass: one-piece hull trimmed at x 62 (nose lip and chin belong to the lid); the skin strip that closes the hump
   opening starts at the hump rear face (the hatch frame owns the 3.3 mm gap behind it).
+
+## Fit-review pass (2026-11-28) -- stage 2: production
+
+The production body takes every fit-review change through the shared rrx code (prototype_x1c/STATUS.md, stage 1, lists them) plus
+the production assembly sequence with harness steps (M8: in-line disconnects for the lid-mounted devices, plug order, board service
+with the one-piece lid off) and the flat bridge tray (m7).  RUNNING: production build with the new checks (cold skins, about
+60-90 min on the shared machine); result to be added here.

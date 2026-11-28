@@ -40,41 +40,55 @@ build switch (`RR_BUILD=production`, `rrx/production.py`) used by `mechanical/pr
 contract (draft9: +5 C) and the head rows are read from `mechanical/head/out/thermal_summary.json` at build time (0.07 W/K-per-shoe rows,
 stated as depending on the break). The CCR-E08 keep-out check reads the common layout boxes, not `pinmap.json` (re-run, all free).
 
-## Fit-review pass (2026-11-28, docs/reviews/REVIEW_cad_pcb_harness_fit.md) -- IN PROGRESS
+## Fit-review pass (2026-11-28, docs/reviews/REVIEW_cad_pcb_harness_fit.md) -- STAGE 1: prototype
 
-Written to disk so far (both builds share it through the rrx code):
-- New checks: `rrx/fasteners.py` (fasteners as solids + tool columns per assembly step / service state), `rrx/boards_body.py` +
-  `mechanical/common/boards.py` (RR-CHS-MAIN, RR-PANEL, RR-TOF-A x 11 read from the KiCad files, both sides, mated plug + wire exit per
-  connector; CM5 carrier with plugs), `rrx/routes.py` (voxel routing + exact tube check of every robot cable, published to
-  `mechanical/common/out/cable_routes.yaml`; docked J1/J2 pigtail corridors with ToF-cone and LiDAR-plane margins), `rrx/fitchecks.py`
-  (tool access, service sweeps of real parts, plug pull + finger zones, ToF carrier withdrawal per seat, SVC1..10 probe access, board
-  bottom zone, receptacle depth + 5 mm).  Wired into checks.run_all and the report section 11.
-- Fixes: C1 posts 0/1 to (-64, +-62), flush M3 tray screws, clinch standoffs (no nuts); C2 receiver joint turned round (screws from
-  below into the tapped plate, inboard ear only); C3 seats on the real RR-TOF-A outline with J1 plug relief, new clip on the
-  header-free half, two carriers turned (TOF_FLIP); C4 grommets moved (dock grommet (28, 58), cliff leads through the pod bay);
-  M3 look-ahead slot moved under the fairing nose; M7 panel turned (plugs outboard), notches, bosses, light pipes from the LED
-  positions; M2 CM5 carrier 8 mm lower; grip plate screws from inboard (tapped plates); pod front screws y 105; tunnel rear foot
-  x -212; cliff pod screws countersunk from above; perimeter / cover / cliff screw lengths; caster disc countersinks.
-- J1 / J2 receptacles moved to the nose front (skin angle +-12 deg, z 96, axis 20 deg up / 8 deg out): docked pigtail apex about
-  z 125 (was 195..226), free length about 262..274 mm (not shorter: the forward-facing plug needs a 180 deg return loop at the
-  40 / 35 mm bend radius), corridors in `mechanical/common` params PIGTAIL_CORRIDOR.
-- Since then: LiDAR lead gland moved to the left rear deck (hump interior full); hull cable notches over the cliff-pod bays and the
-  dock grommet; tunnel rear feet x -204 / -180; grip frame fitted at stage 4 (before the tunnel); routes: 26-connected search,
-  seat stubs, ToF allowances 15 mm end / 20 mm loop; open-route register (W-032, W-033, W-039, W-041, W-042) reported as OPEN
-  FINDINGS with reasons; receptacle corridors and interface text in mechanical/common.
-- Dev runs (prototype, before the last hull change): interference 2 -> 0 small clashes expected after the tunnel-foot move;
-  fastener access 96 fasteners / 114 tool columns, 0 blocked; service sweeps: board, CM5, all main-board plugs free.
-- Full prototype build run 1 with every new check (2026-11-28): exit 1. Fastener access PASS (96 fasteners, 114 columns), service
-  sweeps PASS, receptacle depth PASS, interference 1 clash (LiDAR gland boss vs hump: gland moved to y 80); the remaining FAILs were
-  interactions of old checks with the new solids (cover screws in the cover-lift sweep, board screws in the CCR-E08 boxes, plugs in
-  the harness corridors / containment, perimeter screw washers 0.23 mm over the width rule) and 8 routes; all addressed in run 2.
-- Prototype run 2: interference 0 clashes, fastener access PASS, sweeps PASS, SVC pads PASS (11 pads, nothing over them), receptacle
-  depth PASS; open: J1/J2 grasp annuli reached the other receptacle (receptacles re-spaced: skin +-17 deg, z 94, axis 25 deg up /
-  16 deg out), 5 routes (stub geometry fixed), CM5 tray 0.4 mm outside the cavity (trimmed), bottom-zone rule (flush tray screws now info).
-- Prototype run 3: interference 0, fasteners 0 blocked, sweeps PASS, SVC PASS, receptacle depth PASS; open: docked pigtail corridor
-  6.9 mm from the left look-ahead cone (loop now turns down and inboard: 23-25 mm, calculated), 9 routes with small grazes
-  (alternative-path retry added), CM5 tray deck 1.8 mm outside the cavity (trimmed).
-- RUNNING (restarted after the container restart): prototype build run 5; then production and common builds.
+Result of the last prototype build: see the block "Prototype build result" at the end of this section.
+
+**New checks (tool-checked, both builds share the code):**
+- Fasteners as solids (`rrx/fasteners.py`): 96 fasteners from the hole lists (plate table, board holes, posts, cover, perimeter,
+  grip, receiver): head + washers + 0.8 d shank + nut in the interference check; 114 tool columns (stated tool) checked against the
+  parts present at the assembly step that fits them (docs.STEPS order, with "fitted later in the same stage" lists) and in their
+  service state (receiver re-torque from below, board service lid off, cover routine).
+- Boards from the board files (`mechanical/common/boards.py`, method of mechanical/head/asbuilt.py; `rrx/boards_body.py`):
+  RR-CHS-MAIN (stage 5 file, 881 footprints, both sides), RR-PANEL, RR-TOF-A x 11 in their seats (oriented), CM5 carrier with RJ45 /
+  USB-A / 40-pin plugs; a mated plug + wire-exit solid per connector (family estimates + 1 mm, UNVERIFIED).
+- Cable routes (`rrx/routes.py`): every robot cable of harness/cables.csv routed through the voxelised free space, exact tube check
+  against every part, bend / clip-point report, lengths; published to `mechanical/common/out/cable_routes.yaml`; docked J1/J2
+  pigtail corridors with ToF-cone and LiDAR-plane margins.
+- Service sweeps of real parts (`rrx/fitchecks.py`): board lifted with plugs out (lid off), CM5 carrier, every plug pulled out of
+  engagement (+ finger zone on the main board / CM5), ToF carrier withdrawal per seat (M10 table), SVC1..SVC10 probe zone, board
+  bottom zone, receptacle depth + 5 mm.
+
+**Closed (tool-checked in the prototype build):**
+- C1: posts 0/1 at (-64, +-62); flush M3 countersunk tray screws; self-clinching standoffs at the six board holes (no nuts); every
+  fastener solid clash-free and reachable.
+- C2: receiver joint turned round (M4 from below into the tapped plate, bushing under the inboard ear, outboard ear removed);
+  tool access at stage 1 and for the re-torque from below: free.  Thermal break 0.077 W/K per channel (calculated).
+- C3: seats on the real RR-TOF-A outline (sensor offset o1), J1 plug + wire relief, clip on the header-free half (m9), two carriers
+  turned; all 11 carriers with plugs clash-free.  M10 answer per seat in the report (ToF withdrawal table).
+- C4: x -2 grommets removed; dock grommet at (28, 58) + hull notch, dock lead W-020 routed; cliff leads rise through the pod bays
+  (plate window 21.5 x 27.6 + hull notch) -- W-030 / W-031 still OPEN (see below).
+- M1: board service defined as lid off (+ nose cowl in the prototype); board lift and all main-board plug pulls free.
+- M2: CM5 carrier 6 mm lower, connector edge -x with plugs; clear of the selector / REARM bodies (interference + sweeps PASS).
+- M3: look-ahead lead slot 10 x 7 under the fairing nose + fairing channel.
+- M7: RR-PANEL orientation fixed (plugs outboard), notches, M2.5 bosses, light pipes from the LED positions.
+- SVC1..SVC10 (stage 5): 11 test pads found in the board file; no part, route or clip over the probe zone.
+- J1/J2 receptacles: nose front, skin +-17 deg, z 94, axis 25 deg up / 16 deg out; pigtail apex about z 128 (was 195..226); free
+  length about 283 / 269 mm (not shorter); corridors >= 20 mm from the look-ahead cones, about 80 mm below the LiDAR plane; grasp
+  zones free; receptacle depth + 5 mm free.
+- Minor: m2 (no nyloc), m3 / m4 (interfaces text, 6-layer from the files), m7 (tray flat, production rule), m9, o1, o4.
+
+**Not closed (OPEN, listed with reasons in the report and in cable_routes.yaml):** routes W-001, W-023, W-030, W-031, W-034,
+W-035, W-037 (small grazes or an enclosed voxel pocket at plug / seat ends: real fixes proposed, not yet modelled), W-032 / W-033
+(rear cliff seats enclosed), W-036 / W-040 (right look-behind / REAR_R over the 270 mm ToF budget: electronics CR-15), W-039
+(REAR_C in the hump brow, hump full), W-041 / W-042 (heater / NTC lead exit from the tunnel floor not modelled).  M5 and M11 are
+head / harness items; M9 is CR-15; m6 (can strap bond hole) open.
+
+**Prototype build result (2026-11-28, run 7):** `build.sh` exit 0, ALL CHECKS PASS (0 clashes in 1070 pairs; 96 fasteners / 114 tool columns, 0 blocked; all service sweeps free; SVC PASS; receptacle depth PASS; 25 / 39 cables routed collision-free, 2 not routed by design (W-002 inside the cassette, W-024 optional), 12 OPEN findings listed above; both pigtail corridors clear). Mass / CG (calculated):
+  none (transport / LAB): 6.69 kg, CG x -92.4, fwd tip 81.9 mm, hang -37.2 deg
+  prototype head RR-HD-X (1.881 kg): 8.57 kg, CG x -44.2, fwd tip 35.1 mm, hang -8.7 deg
+  production head (2.100 kg): 8.79 kg, CG x -39.8, fwd tip 30.8 mm, hang -6.0 deg
+  production head + 15 % margin: 9.1 kg, CG x -34.0, fwd tip 25.2 mm, hang -2.4 deg
 
 ## Run times (shared 4-core machine)
 

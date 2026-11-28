@@ -1,11 +1,11 @@
-[INFO] [launch]: All log files can be found below /tmp/rrhome/log/2026-11-28-08-46-03-550839-vm-34
+[INFO] [launch]: All log files can be found below /tmp/rrhome/log/2026-11-28-13-10-11-287821-vm-34
 [INFO] [launch]: Default logging verbosity is set to INFO
 [INFO] [sim_node-1]: process started with pid [48]
-[sim_node-1] [WARN] [1795855564.039192901] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
-[sim_node-1] [WARN] [1795855564.039235486] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+[sim_node-1] [WARN] [1795871411.924964910] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[sim_node-1] [WARN] [1795871411.925007601] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
 [INFO] [robot_node-2]: process started with pid [64]
-[robot_node-2] [WARN] [1795855565.822540946] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
-[robot_node-2] [WARN] [1795855565.822580376] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
-[robot_node-2] [WARN] [1795855565.904472250] [rr_robot]: demo registry for the packaged synthetic head descriptor: SIMULATION ONLY
+[robot_node-2] [WARN] [1795871413.619967606] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[robot_node-2] [WARN] [1795871413.619997708] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+[robot_node-2] [WARN] [1795871413.700248654] [rr_robot]: demo registry for the packaged synthetic head descriptor: SIMULATION ONLY
 [robot_node-2] WARNING: DEMONSTRATION ACCOUNTS loaded (operator, operator2, rp, viewer); passwords are trivial or stored in plain text and the operator interface is plain HTTP without TLS. NOT for field use: replace the accounts (password_hash only) and put TLS + real authentication in front of the service first.
-[robot_node-2] [INFO] [1795855566.084490643] [rr_robot]: RobotApp running: head tcp://127.0.0.1:5540, chassis tcp://127.0.0.1:5550, run /tmp/rrhome/ros_smoke_1795855563, UI http://<robot>:8097/
+[robot_node-2] [INFO] [1795871413.863221434] [rr_robot]: RobotApp running: head tcp://127.0.0.1:5540, chassis tcp://127.0.0.1:5550, run /tmp/rrhome/ros_smoke_1795871410, UI http://<robot>:8097/

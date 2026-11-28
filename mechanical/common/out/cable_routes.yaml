@@ -86,7 +86,9 @@ cables:
       gap_mm: 3.5
       ok: true
     ok: false
-    status: FAIL
+    status: 'OPEN FINDING: pack feed: the voxel route grazes the right grip foot and its M5 screw (54 / 35 mm3); proposed: route over the foot leg with a P-clip on the side plate, to be re-checked with
+      a 2 mm grid'
+    open: true
   W-002:
     status: 'not routed: inside the battery cassette (pack to cassette coupler half)'
   W-003:
@@ -3130,7 +3132,8 @@ cables:
       gap_mm: 2.8
       ok: true
     ok: false
-    status: FAIL
+    status: 'OPEN FINDING: RR-PANEL J1 -> J_PANEL: grazes the panel tray wall (4 mm3) and the J_CM5 plug exit (12 mm3) at the board''s left edge; proposed: lead along the tray floor, 10 mm wider notch'
+    open: true
   W-024:
     status: 'not routed: optional external sounder, not fitted'
   W-030:
@@ -3231,9 +3234,10 @@ cables:
       gap_mm: 3.2
       ok: true
     ok: false
-    status: FAIL
+    status: 'OPEN FINDING: CLIFF_FL: rises through the pod bay and the hull notch but grazes the collar (6 mm3) and the hull (1 mm3) at the bay exit; proposed: bay 3 mm wider'
+    open: true
   W-031:
-    status: 'FAIL: no collision-free route in the free space'
+    status: 'OPEN FINDING: CLIFF_FR: the right pod bay region is enclosed in the 3 mm voxel model (309 voxels); proposed as W-030 and re-check'
     ok: false
     from: CHS.J_TOF1
     to: TOF1.J1
@@ -3249,6 +3253,7 @@ cables:
       - 46.0
       - -93.5
       - 37.3
+    open: true
   W-032:
     status: 'OPEN FINDING: CLIFF_RL seat in the rear lower-hull boss: enclosed pocket (hull wall, tunnel wall, hatch jamb; about 90 free voxels); proposed: lead channel through the tunnel foot wall, or
       the seat 10 mm inboard'
@@ -3450,7 +3455,8 @@ cables:
       gap_mm: 1.5
       ok: true
     ok: false
-    status: FAIL
+    status: 'OPEN FINDING: LOOK_FL: drops through the roof slot but grazes the shoulder slot edge (3 mm3); proposed: slot 2 mm wider'
+    open: true
   W-035:
     from: CHS.J_TOF5
     to: TOF5.J1
@@ -3515,7 +3521,8 @@ cables:
       gap_mm: 7.4
       ok: true
     ok: false
-    status: FAIL
+    status: 'OPEN FINDING: LOOK_RL: grazes the left deck (18 mm3) and the REARM body (10 mm3) near the seat; proposed: seat relief extended 5 mm and the lead clipped under the deck'
+    open: true
   W-036:
     from: CHS.J_TOF6
     to: TOF6.J1
@@ -3773,7 +3780,8 @@ cables:
       gap_mm: 1.5
       ok: true
     ok: false
-    status: FAIL
+    status: 'OPEN FINDING: LOOK_FR: as W-034 (1 mm3)'
+    open: true
   W-038:
     from: CHS.J_TOF8
     to: TOF8.J1
@@ -4210,29 +4218,29 @@ cables:
     - - 86.0
       - 75.5
       - 88.0
-    - - 203.98185698472696
-      - 26.301777418105118
-      - 76.17194469069918
-    - - 204.40008259810224
-      - 46.41144905122567
-      - 110.74688061463668
-    - - 180.308212222201
-      - 55.824776766445524
-      - 127.12458934692566
+    - - 203.32882663884914
+      - 14.280303998007888
+      - 84.62409025466415
+    - - 204.05012469048026
+      - 39.96916086173115
+      - 115.2763717709861
+    - - 180.2057119241884
+      - 53.937874242100584
+      - 128.4512465912959
     - - 149.91557135027915
       - 53.870438903805564
       - 124.00589658358966
-    route_mm: 249.0
-    free_length_mm: 279
-    max_z_mm: 130.9
+    route_mm: 253.0
+    free_length_mm: 283
+    max_z_mm: 132.2
     tof_cone_margin:
-      min_mm: 25.2
-      deg_at_min: 8.5
+      min_mm: 25.5
+      deg_at_min: 9.3
       sensor: tof_look_fwd_left
       ok: true
       rule: '>= 20 mm or >= 10 deg'
     lidar_plane_z: 210.0
-    lidar_plane_gap_mm: 79.1
+    lidar_plane_gap_mm: 77.8
     tof_limit_ok: null
     bends: []
     own_parts:
@@ -4257,11 +4265,11 @@ cables:
     - - 152.0
       - 75.5
       - 88.0
-    - - 269.98185698472696
-      - 26.301777418105118
-      - 76.17194469069918
-    route_mm: 147.8
-    free_length_mm: 279
+    - - 269.32882663884914
+      - 14.280303998007888
+      - 84.62409025466415
+    route_mm: 151.8
+    free_length_mm: 283
     max_z_mm: 91.8
     tof_cone_margin:
       min_mm: 9.9
@@ -4293,31 +4301,31 @@ cables:
       - -99.3
       - 70.0
     - - 84.5
-      - -103.3
+      - -95.3
       - 88.0
-    - - 190.25397959714937
-      - -27.749361848016562
-      - 78.77024258338488
-    - - 190.6199270088527
-      - -45.34532452699705
-      - 109.0233115168302
-    - - 169.53954042993914
-      - -53.581986277814416
-      - 123.35380665758306
+    - - 189.68257804450624
+      - -17.23057260543149
+      - 86.16586995185423
+    - - 190.3137138396835
+      - -39.70832236118934
+      - 112.98661627863595
+    - - 169.4498526691781
+      - -51.9309465690126
+      - 124.51463174640703
     - - 142.94597966700752
       - -51.871940648004454
       - 120.62495048966406
-    route_mm: 238.3
-    free_length_mm: 268
-    max_z_mm: 126.6
+    route_mm: 239.0
+    free_length_mm: 269
+    max_z_mm: 127.8
     tof_cone_margin:
-      min_mm: 19.5
-      deg_at_min: 8.4
+      min_mm: 22.3
+      deg_at_min: 10.2
       sensor: tof_look_fwd_right
-      ok: false
+      ok: true
       rule: '>= 20 mm or >= 10 deg'
     lidar_plane_z: 210.0
-    lidar_plane_gap_mm: 83.4
+    lidar_plane_gap_mm: 82.2
     tof_limit_ok: null
     bends: []
     own_parts:
@@ -4325,11 +4333,11 @@ cables:
     - J2_mated_plug
     - head_*
     corridor: true
-    cones_ok: false
+    cones_ok: true
     collisions: []
     clips: []
-    ok: false
-    status: FAIL
+    ok: true
+    status: routed
   PIGTAIL-J2 docking start (head 66 mm forward, plug not mated):
     from: head boot J2 (top z 70)
     to: J2 plug on the receptacle
@@ -4340,17 +4348,17 @@ cables:
       - -99.3
       - 70.0
     - - 150.5
-      - -103.3
+      - -95.3
       - 88.0
-    - - 256.2539795971494
-      - -27.749361848016562
-      - 78.77024258338488
-    route_mm: 149.7
-    free_length_mm: 268
+    - - 255.68257804450624
+      - -17.23057260543149
+      - 86.16586995185423
+    route_mm: 150.4
+    free_length_mm: 269
     max_z_mm: 91.2
     tof_cone_margin:
-      min_mm: -5.9
-      deg_at_min: -1.9
+      min_mm: -2.3
+      deg_at_min: -0.8
       sensor: tof_look_fwd_right
       ok: false
       rule: '>= 20 mm or >= 10 deg'

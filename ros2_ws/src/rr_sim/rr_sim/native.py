@@ -147,6 +147,7 @@ class NativeSystem:
         self.t0 = time.monotonic()
         self._next_world = self._next_scan = 0.0
         self.trace = []
+        self.slow_steps = []
 
     def _ensure_world(self):
         if self.world is None and self.app.pipeline.sessions:
@@ -166,7 +167,11 @@ class NativeSystem:
         return (t["x"], t["y"], t["yaw"])
 
     def tick(self):
+        t_s0 = time.perf_counter()
         self.app.step()
+        dt_s = time.perf_counter() - t_s0
+        if dt_s > 0.15:                       # real-time diagnosis (app-thread stalls)
+            self.slow_steps.append((round(self.t, 1), round(1e3 * dt_s), app_phase(self.app)))
         now = time.monotonic()
         self._ensure_world()
         if now >= self._next_world:

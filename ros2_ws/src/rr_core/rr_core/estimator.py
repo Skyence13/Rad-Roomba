@@ -365,7 +365,11 @@ class Decider:
         if r is None:
             t0 = time.perf_counter()
             c, ev, method = self._family(keys)
-            t, ok, _ach = ev.threshold(alpha)
+            if self.quantise and isinstance(ev, PredictiveStat):
+                t, ok, _ach = ev.threshold(alpha, check=False)     # provisional: no half-step check (recorded: always)
+                method = method + "/provisional-no-check"
+            else:
+                t, ok, _ach = ev.threshold(alpha)
             r = (c, t, ok, method)
             self._thr[k] = r
             self.stats["threshold_computed"] += 1

@@ -38,7 +38,7 @@
    "ok": true,
    "holds": [
     {
-     "t_wall": 41.71,
+     "t_wall": 41.83,
      "reason": "OPERATOR_PAUSE",
      "task": "pair0:A+",
      "phase": "PASS"
@@ -55,13 +55,13 @@
   {
    "check": "credited coverage grows",
    "ok": true,
-   "fraction": 0.07569444179534912
+   "fraction": 0.07083333283662796
   },
   {
    "check": "eligible lane-gates received",
    "ok": true,
-   "eligible": 1440,
-   "gates": 360
+   "eligible": 1444,
+   "gates": 361
   },
   {
    "check": "coverage flagged not approved for field use",
@@ -126,24 +126,6 @@
      null,
      null,
      null
-    ],
-    [
-     "slow_step",
-     null,
-     219,
-     0
-    ],
-    [
-     "slow_step",
-     null,
-     161,
-     0
-    ],
-    [
-     "slow_step",
-     null,
-     11,
-     171
     ]
    ]
   },
@@ -153,19 +135,15 @@
   },
   {
    "check": "stand-alone head_driver_node: binds (strict calibration binding) and publishes gates stamped with the gate start",
-   "ok": false,
+   "ok": true,
    "gates": 21,
-   "attachment": null,
+   "attachment": "HEAD-DEMO-001",
    "stamp_ok": true,
    "stamp": [
-    3601664829,
-    3601664829
+    5974498249,
+    5974498249
    ],
    "events": [
-    [
-     "link_down",
-     "TIMEOUT:HELLO"
-    ],
     [
      "link_down",
      "TIMEOUT:HELLO"
@@ -179,17 +157,17 @@
   {
    "check": "stand-alone chassis_bridge_node: publishes odom and chassis state",
    "ok": true,
-   "odom": 161,
+   "odom": 162,
    "chassis": 13
   }
  ],
  "holds": [
   {
-   "t_wall": 41.71,
+   "t_wall": 41.83,
    "reason": "OPERATOR_PAUSE",
    "task": "pair0:A+",
    "phase": "PASS"
   }
  ],
- "passed": false
+ "passed": true
 }

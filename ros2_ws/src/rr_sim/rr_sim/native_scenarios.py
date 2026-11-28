@@ -51,6 +51,7 @@ def n01(tmp):
             c.add("parked", app.guidance.parked)
         extra["localization_error_by_chassis_time_m"] = sim.loc_error_by_chassis_time()      # IB-47
         extra["localization_error_at_own_time"] = sim.loc_error_at_own_time()
+        extra["slow_steps"], extra["n_slow_steps"] = sim.slow_steps[-40:], len(sim.slow_steps)
         ev = sc._finish("native_s01_survey_revisit", sim, c, extra)
     finally:
         sim.close()
@@ -94,6 +95,7 @@ def n02(tmp):
         c.add("affected strip re-surveyed (bands complete)", min(sc._band_fraction(sim, p) for p in (0, 1)) == 1.0,
               bands=[sc._band_fraction(sim, p) for p in (0, 1)])
         ev = sc._finish("native_s02_head_reset", sim, c, {"localization_error_by_chassis_time_m": sim.loc_error_by_chassis_time(),
+                                                          "slow_steps": sim.slow_steps[-40:], "n_slow_steps": len(sim.slow_steps),
                                                           "localization_error_at_own_time": sim.loc_error_at_own_time()})
     finally:
         sim.close()
