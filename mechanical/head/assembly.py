@@ -101,7 +101,8 @@ def build(build="prototype", projection=3.0, travel=0.0):
        "switch saddle (shim-adjustable trip point)", allow={"sw_front"})
     b, pl = T.lid_switch()
     _p(P, "sw_lid", "PUR-D2HW", b.fuse(pl), "MIXED", "purchased", "switch", "Omron D2HW-C201M, lid interlock (J2201)", mass_g=4.0)
-    _p(P, "sw_lid_saddle", f"RR-HD-{X}-422", T.switch_saddle(H.LID_SW[1], 0, H.Z_SPR1 + 3.85), "PA-CF" if printed_frame else "POM", "printed" if printed_frame else "fab", "switch",
+    _p(P, "sw_lid_saddle", f"RR-HD-{X}-422", T.switch_saddle(H.LID_SW[1], 0, H.Z_SPR1 + 3.85).cut(T.cyl(1.4, 12, (182.5, H.FRONT_NOTCH_Y[1], H.Z_SPR1 - 1))).cut(
+           T.box(180.6, 183.9, H.FRONT_NOTCH_Y[1] - 1.4, H.FRONT_NOTCH_Y[1] + 1.4, H.Z_SPR1 - 1, H.Z_SPR1 + 2.6)), "PA-CF" if printed_frame else "POM", "printed" if printed_frame else "fab", "switch",
        "lid switch riser saddle", allow={"sw_lid"})
     # ---------------- side zones
     for s, tag in ((1, "L"), (-1, "R")):

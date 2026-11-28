@@ -2,7 +2,7 @@
 
 ROS 2 Jazzy workspace for the Rad Roomba floor-survey robot: head link, chassis link, wall-referenced
 localisation, coverage planning and mission supervision for three survey methods, count-to-floor
-mapping per `analysis/radiometry/MODEL.md` rev 2, hotspot flags, guided revisit (Next / Expose spot /
+mapping per `analysis/radiometry/MODEL.md` **revision 5**, hotspot flags, guided revisit (Next / Expose spot /
 Park) and a browser operator interface. The real logic lives in ROS-free Python libraries; the ROS
 nodes are thin adapters.
 
@@ -51,7 +51,7 @@ Groups individually:
 |---|---|---|
 | `tools/test.sh unit` | pytest on every package's `test/` except rr_sim | ~20 s |
 | `tools/test.sh scenarios` | 16 end-to-end scenarios against the Python protocol fakes, deterministic seeds; rewrites `evidence/s*/` | ~10–20 min |
-| `tools/test.sh native [n01] [n02] [n03]` | scenarios 1 and 2 (default) and step-and-count (`n03`, opt-in) against the native firmware emulators, real time; rewrites `evidence/native_*/` | ~9 min for n01+n02, ~9 min for n03 |
+| `tools/test.sh native [n01] [n02] [n15] [n03]` | scenarios 1, 2 and 15 (default: n01 n02 n15) and step-and-count (`n03`, opt-in) against the native firmware emulators, real time; rewrites `evidence/native_*/`. Emulators are taken from `build/fw/{head,chassis}` when built there (below), else `firmware/*/build` | ~12 min for the default set, ~9 min for n03 |
 | `tools/test.sh plan` | calculated 2.5 × 16 m plan and mission times → `evidence/plan_2.5x16.json` | seconds |
 | `tools/test.sh ros [--native]` | ROS graph smoke test (launch, services, topics, web), real time; writes `evidence/ros_smoke/` | ~2 min |
 | `tools/test.sh colcon` | `colcon test` on the built workspace | not part of `all` (see STATUS) |
@@ -68,8 +68,9 @@ missing; a skip is not a failure. Build both to run everything.
 ### 3.2 Native firmware emulators
 
 ```bash
-cmake -S firmware/head -B firmware/head/build/host -G Ninja && cmake --build firmware/head/build/host -j2
-cmake -S firmware/chassis -B firmware/chassis/build -G Ninja && ninja -C firmware/chassis/build -j2
+# into the workspace (git-ignored ros2_ws/build/fw; preferred by tools/test.sh native)
+cmake -S firmware/head -B ros2_ws/build/fw/head -G Ninja && cmake --build ros2_ws/build/fw/head -j2
+cmake -S firmware/chassis -B ros2_ws/build/fw/chassis -G Ninja && ninja -C ros2_ws/build/fw/chassis -j2
 ```
 
 `tools/test.sh native` starts and stops both itself (`rr_sim/native.py`). Ports: head serial-over-TCP
@@ -239,7 +240,7 @@ all cases. Scenario s13 (LiDAR range set to 2 m on a 3 m section).
 | What | Where |
 |---|---|
 | Raw archive of a run | `run_dir` (launch arg / `--run-dir`; default `/tmp/rr_runs/run-<timestamp>` **inside the container** — pass a path under the repository or a mounted volume to keep it): `run.json`, `journal/e<epoch>-<n>.seg` (sealed, SHA-256 in `journal/index.ndjson`), `checkpoint.json` |
-| Export | `<run_dir>/export/` (UI *Export survey*, `mission/export` service): `cells.csv`, `cells.geojson`, `gates.csv`, `poses.csv`, `flags.json`, `observations.json`, `residuals.json`, `gaps.json`, `grid.json`, `transforms.json`, `calibration.json`, `profile.json`, `map_activity.svg`, `map_coverage.svg`, `coverage.png`, `summary.txt`, `survey_manifest.json`, `MANIFEST.sha256.json` |
+| Export | `<run_dir>/export/` (UI *Export survey*, `mission/export` service): `README.txt` (how to read it, what not to conclude), `cells.csv` (recorded results, status, provisional values beside them, uncertainty components, footprint dilution, U_null fields), `cell_members.csv` (every member lane-gate with weight and erosion), `cells.geojson`, `gates.csv` (incl. GATESTAT columns, erosion, speed), `poses.csv`, `flags.json`, `observations.json`, `residuals.json` (incl. `revisit`), `gaps.json`, `grid.json`, `transforms.json`, `calibration*.json`, `profile.json`, `map_activity.svg`, `map_coverage.svg`, `coverage.png`, `summary.txt`, `survey_manifest.json` (software identity of every package, model revision, `footprint_model`, binding per attachment), `MANIFEST.sha256.json`. Every file carries the run id, calibration id(s) and, while `field_use_approved` is false, the marker `synthetic — not for field use` |
 | Test evidence | `evidence/<scenario>/evidence.json` + maps + `summary.txt`; `evidence/ui/` |
 
 ## 10. Replay
@@ -250,7 +251,15 @@ tools/replay.sh <run_dir> <out_dir>      # out_dir is replaced
 
 Rebuilds every export product from the journal (raw head wire stream, recorded poses, supervisor
 marks) under the archived profile/calibration. Scenario s08 checks that two replays reproduce the
-live export bit for bit. The trajectory is replayed as recorded; LiDAR scans are not archived.
+live export bit for bit. The trajectory is replayed as recorded; the pose-estimate inputs (chassis odometry/IMU
+samples `K`, LiDAR scans `S`) are archived as received since 2026-11-28 but not re-fused by the replay.
+
+```bash
+python3 tools/recompute_cell.py <run_dir> <ix> <iy> [--calibration cal.json ...] [--profile profile.json]
+```
+
+Recomputes one cell's D, D*, D#, decision and status from the archive plus calibration and profile (MODEL.md rev 5 §8;
+`rr_core/recompute.py` says which parts are shared with the survey code). s08 checks it against the export.
 
 ## 11. Traceability
 
@@ -298,19 +307,23 @@ Carried from `STATUS.md` (read that file for the current, complete list):
   (as-built tail incl. rear bumper 0.2892 m, tool-checked on nominal CAD, rounded up; contract draft7); the rectangle
   outline used for route holds and the wall-track checks reaches 0.309 m. Not measured on a built robot.
 - Continuous scan at 0.10 m/s does not meet the 0.20 Bq/cm² goal with the demo calibration.
-- Cell statistics (**MODEL.md revision 4**, IB-31; revision 3 withdrawn): every decision statistic is S = sum a_j N_j + Z with the
-  footprint weights (rounded to a 0.05 lattice) as exact coefficients; threshold from the exact distribution (Gil-Pelaez,
-  lattice when Z = 0; `rr_core/linstat.py`, self-contained; the reference `analysis/radiometry/rrrad` is used by a test only);
-  D# = the D with P(S > t* | D) = 1 - beta (lazy, cached). Cell rule `linear-exact/combined+per-lane/0.8-0.2`: combined statistic at
-  0.8 alpha or any contributing lane (m = lanes with a U_null) at 0.2 alpha / m; stored per cell: m, c_i, alpha split, U_null window
-  per lane, lane thresholds, which test flagged, evaluator check (`cells.csv` `*.decision_rule`, `*.decision_status`, `*.m_lanes`,
-  `*.c_weights`, `*.alpha_combined`, `*.alpha_lane`, `*.u0_windows`, `*.lane_thresholds`, `*.flagged_by`, `*.evaluator_check`).
-  U_null: window >= 200 T_F excluding the gates under test (lane window, else four-lane pooled window), never a same-gate pool;
-  otherwise `no decision - null reference unavailable` (estimate D still reported; no flag, no D#). A failed half-step quadrature check gives
-  `no decision - evaluator check failed`. A stationary recount is the same rule with m = 1 (its alpha is then effectively 0.8 alpha_recount)
-  and needs reference data outside the count. Cache keys quantise U_null (0.25 % log grid) and live time (1 ms) so results do not depend on
-  evaluation order. Manifest `weighted_sum_variance: exact_coefficients`. Monte Carlo (seed 20261127, 400 000 trials): clean-cell false
-  alarm / alpha 0.79-0.91 for m = 1, 2, 4, including the former revision-3 failure case (now 0.86 / 0.90 for m = 2 / 4).
+- Cell statistics (**MODEL.md revision 5**, 2026-11-28; data-path review IB-72): S = sum a_j N_j + Z with the footprint
+  weights (0.05 lattice) as exact coefficients; rule `linear-exact/combined+per-lane/0.8-0.2`; **predictive threshold**
+  (12 posterior nodes of Gamma(N + 1/2, 1/T) of each lane's U_null sub-window, characteristic functions averaged; lanes
+  independent; `rr_core/linstat.PredictiveStat`), agreement with `analysis/radiometry/rrrad` ~1e-11 (m = 1, beta and alpha
+  classes; `test_rev5.py`). U_null (`rr_core/unull.py`): two sub-windows of >= N_min counts (30/75/125/200 by alpha) nearest to
+  the dwell, larger mean; lane window unless it spans > 2 m, then the ratio-scaled four-lane pool; gradient guard (2 %);
+  recounts from the other three lanes during the recount; search stage past-only at alpha_scan. **One recorded evaluation per
+  cell** after the survey from the complete record (`SurveyProcessor.finalize`), independent of arrival order and live
+  schedule; live values are provisional. Each attachment uses its **own bound calibration** (strict identity binding by default;
+  `calibration_binding: DEMONSTRATION` for the synthetic record, marked everywhere). Cell status ALARM > NO DECISION >
+  INCOMPLETE COVERAGE > SENSITIVITY INSUFFICIENT > ACCEPTABLE; alarms never suppressed; rate saturation (GATESTAT) is an alarm.
+  Footprint: aperture eroded by the gate's credited 2 sigma, swept start to end, exact area weights (`footprint_model` in the
+  manifest). Cost: about 0.1-0.2 s per cell for the recorded evaluation on this 4-core host (not measured on a CM5).
+- Position credit (2026-11-28, review M3/M4): the localiser carries a wheel-scale state (1 % 1 sigma, ASSUMED - tyre tolerance,
+  compression, wear; not measured), so the along-track error grows linearly with the distance since the last end-wall fix;
+  credit needs x constrained within 3 s, the chassis clock fit valid, no correction above 5 mm (a new trajectory epoch); scans
+  are applied at their own time stamp.
 - TF: the robot node publishes `map → base_link` only, no separate continuous `odom` frame (CR-11, logged by
   the lead for a later decision).
 - LiDAR: no de-skew; 12 m range and noise are assumptions. Along-trailer (x) position comes only from an end

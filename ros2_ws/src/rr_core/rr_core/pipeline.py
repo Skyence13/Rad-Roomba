@@ -82,6 +82,9 @@ class SurveyPipeline:
                 self.proc.add_blocked_region(payload["rect"], payload.get("reason", "BLOCKED"), payload.get("t_us"))
             elif op == "evaluate":
                 return self.proc.evaluate()
+            elif op == "finalize":                 # end of the scan: recorded results (MODEL.md rev 5 section 3)
+                self.proc.finish()
+                return self.proc.finalize()
             elif op in ("epoch", "resume"):
                 self.traj.new_epoch(payload.get("t_us"), payload.get("reason", op.upper()))
                 self.epoch_log.append(payload)

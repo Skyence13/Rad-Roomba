@@ -11,3 +11,6 @@ mover: {patience_s: 20.0}
 link: {byte_time_us: 10.0}                  # 1 Mbaud RS-485
 lidar: {range_max: 12.0}
 simulated: false
+# MODEL.md rev 5 section 1: a calibration is bound only to the head (serial, electronics revision, firmware, setup_id, cal_id)
+# it names; DEMONSTRATION is for the synthetic record only and is refused in SURVEY mode
+calibration_binding: STRICT

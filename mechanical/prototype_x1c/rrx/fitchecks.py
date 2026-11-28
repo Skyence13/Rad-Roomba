@@ -168,3 +168,68 @@ def service_sweeps(parts, log=print):
     log(f"  service sweeps: {len(out)} sweeps, {time.time() - t0:.0f} s")
     hard = [k for k, v in out.items() if k != "tof_withdrawal_in_place" and v["blocked_by"]]
     return {"sweeps": out, "blocked": hard, "ok": not hard}
+
+
+# ----------------------------------------------------------------------------------------------- RR-CHS-MAIN service pads, bottom zone
+SVC_BOX_UV = (126.0, 140.0, 75.0, 84.0)     # SVC1..SVC10 test-pad array (stage 5), probe access zone to 40 mm above the board
+SVC_H = 40.0
+
+
+def svc_access(parts, routes):
+    """Probe access to the SVC1..SVC10 array with the cover off, the board fitted and every cable on its route (tool-checked)."""
+    from mechanical.common import boards as BD
+    from .boards_body import _xf_chs, _box_uv
+    import math
+    u0, u1, v0, v1 = SVC_BOX_UV
+    probe = _box_uv((u0, u1, v0, v1, 0.05, SVC_H), _xf_chs)
+    b = probe.BoundingBox()
+    pads = [r for r in BD.load("RR-CHS-MAIN")["parts"] if r.startswith("SVC")]
+    state = SERVICE_STATES["routine (saddle cover off, head removed)"]
+    present = [p for p in _robot(parts) if not any(fnmatch.fnmatch(p.name, r) for r in state)]
+    blk = _blocked([Part("SWEEP", "svc_probe", probe, "purchased", "-", "tool")], present, "svc", print, vol_tol=0.5)
+    inside = lambda q: b.xmin <= q[0] <= b.xmax and b.ymin <= q[1] <= b.ymax and b.zmin <= q[2] <= b.zmax
+    route_hits, clip_hits = [], []
+    for cid, r in routes.items():
+        pts = r.get("polyline") or []
+        for a, c in zip(pts, pts[1:]):
+            n = max(2, int(math.dist(a, c) / 1.0))
+            if any(inside([a[i] + (c[i] - a[i]) * k / n for i in range(3)]) for k in range(n + 1)):
+                route_hits.append(cid)
+                break
+        clip_hits += [cid for cl in r.get("clips", []) if inside(cl["at"])]
+    parts_hit = next(iter(blk.values()))
+    return {"pads_in_board_file": pads, "zone_base_link": [round(v, 1) for v in (b.xmin, b.xmax, b.ymin, b.ymax, b.zmin, b.zmax)],
+            "parts_in_zone": parts_hit, "routes_over_zone": route_hits, "clips_over_zone": clip_hits,
+            "ok": bool(pads) and not parts_hit and not route_hits and not clip_hits}
+
+
+def board_bottom_zone(parts):
+    """Bottom-side parts of RR-CHS-MAIN: height against the 3.0 mm zone and footprint over a bridge-tray feature (tool-checked)."""
+    from mechanical.common import boards as BD
+    from .boards_body import _xf_chs
+    b = BD.load("RR-CHS-MAIN")
+    feats = []
+    for i, (x, y) in enumerate(D.POSTS):
+        feats.append((f"tray countersunk screw at post {i}", x, y, D.CSK["M3"] / 2 + 0.5))
+    for h in [h for h in b["holes"] if h.get("mounting") and h["ref"].startswith("H")]:
+        x, y, _ = _xf_chs(h["uv"][0], h["uv"][1], 0.0)
+        feats.append((f"clinch standoff {h['ref']}", x, y, D.CLINCH_SO["od"] / 2 + 0.5))
+    ex0 = P.ELECTRONICS_BRIDGE_X[0]
+    out, over = [], []
+    for ref, side, bx in BD.components("RR-CHS-MAIN"):
+        if side != "B":
+            continue
+        h = -bx[4] - b["thickness"]
+        pts = [_xf_chs(u, v, 0) for u in (bx[0], bx[1]) for v in (bx[2], bx[3])]
+        x0, x1 = min(p[0] for p in pts), max(p[0] for p in pts)
+        y0, y1 = min(p[1] for p in pts), max(p[1] for p in pts)
+        out.append((ref, round(h, 2)))
+        for name, fx, fy, r in feats:
+            if x0 - r <= fx <= x1 + r and y0 - r <= fy <= y1 + r:
+                over.append((ref, name))
+        for yy in (-60.0, 60.0):
+            if x0 <= ex0 + 30 and x1 >= ex0 + 14 and y0 <= yy + 6 and y1 >= yy - 6:
+                over.append((ref, f"tray pass-through at y {yy:+.0f}"))
+    too_tall = [r for r in out if r[1] > 3.0]
+    return {"bottom_parts": len(out), "max_height_mm": max((r[1] for r in out), default=0.0), "over_3mm": too_tall, "over_tray_features": over,
+            "ok": not too_tall and not over, "source": b["source"]}

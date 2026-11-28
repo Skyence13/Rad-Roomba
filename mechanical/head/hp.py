@@ -161,6 +161,7 @@ BOOT_CABLE_XY = {"J1": (80.0, 79.5), "J2": (78.5, -99.3)}
 BOOT_SLOTS = {"J1": (74.5, 80.5, 79.0, 86.0), "J2": (74.0, 76.5, -105.0, -93.5)}
 J2_FLANGE_NOTCH_Y = (-106.0, -92.0)      # rear-comb flange notch where the J2501 wires rise (14 mm, <= 20 mm slot rule)
 HOLSTER_H = 10.0
+FRONT_NOTCH_Y = (SHOE_Y + 5.0, -(SHOE_Y - 10.0))   # prototype front-fence lead notches 3 x 3.5 mm: front switch (y +92.5), lid switch (y -77.5) (routes.py)
 HOLSTER_XY = {"J1": (164.0, 79.5), "J2": (152.5, -99.3)}   # parked loop radius = half the boot-to-holster distance (42 / 37 mm >= R 40 / 35)
 
 # ----------------------------------------------------------------------------- RR-HEAD-ACQ as built (IB-52; checks.py compares every value below

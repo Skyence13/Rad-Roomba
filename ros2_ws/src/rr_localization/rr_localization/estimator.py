@@ -44,7 +44,8 @@ class LocalizerConfig:
                  credit_budget_m=0.010, hold_budget_m=0.040, gate_m=0.08, corner_exclusion_m=0.12,
                  min_points=15, range_sigma_m=0.006, slip_yaw_rad=0.012, odo_scale_sigma=0.005,
                  max_constraint_age_us=1_500_000, wheel_scale_sigma=0.01, wheel_scale_walk_per_m=1e-4,
-                 max_x_age_us=3_000_000, jump_credit_m=0.005, max_time_bound_us=10_000.0, history_us=1_000_000):
+                 max_x_age_us=3_000_000, jump_credit_m=0.005, max_time_bound_us=10_000.0, history_us=1_000_000,
+                 x_reject_reset=3):
         self.__dict__.update(locals())
         del self.__dict__["self"]
 
@@ -68,6 +69,8 @@ class WallLocalizer:
         self._corr_pending = 0.0
         self.time_bound_us = math.inf
         self.stats = {"x_fixes": 0, "x_rejects": 0, "big_corrections": 0, "max_correction_m": 0.0}
+        self._pending_scan = None
+        self.last_chassis_us = None
         self.initialized = False
         self.slip = False
         self._slip_acc = 0.0
@@ -98,6 +101,7 @@ class WallLocalizer:
         dl, dr = s["d_left_ticks"] * k, s["d_right_ticks"] * k
         dt = 0.0 if self.t_us is None else max(0.0, (s["t_us"] - self.t_us) * 1e-6)
         self.t_us = s["t_us"]
+        self.last_chassis_us = s.get("chassis_us")
         self.time_bound_us = s.get("bound_us", 0.0) if s.get("bound_us") is not None else math.inf
         ds_odo = 0.5 * (dl + dr)
         scale = 1.0 + self.x[3]
@@ -135,7 +139,28 @@ class WallLocalizer:
         while self._hist and self._hist[0][0] < self.t_us - c.history_us:
             self._hist.pop(0)
         self.correction_m, self._corr_pending = self._corr_pending, 0.0
+        if self._pending_scan is not None and self.t_us >= self._pending_scan[0]:
+            # a scan newer than the odometry it arrived with: applied now that the state has reached its time stamp
+            t_s, a_s, r_s, rm = self._pending_scan
+            self._pending_scan = None
+            self.update_scan(t_s, a_s, r_s, rm)
+            self.correction_m, self._corr_pending = max(self.correction_m, self._corr_pending), 0.0
         return self.sample()
+
+    def _unexplained(self, angles, ranges, range_max):
+        """Base-frame points not near a wall for the current pose (obstacle input while a scan is deferred)."""
+        c = self.cfg
+        angles, ranges = np.asarray(angles, float), np.asarray(ranges, float)
+        ok = np.isfinite(ranges) & (ranges > 0.05) & (ranges < range_max)
+        a, r = angles[ok] + c.lidar_yaw, ranges[ok]
+        pb = np.column_stack((c.lidar_xy[0] + r * np.cos(a), c.lidar_xy[1] + r * np.sin(a)))
+        cy, sy = math.cos(self.x[2]), math.sin(self.x[2])
+        pm = np.column_stack((self.x[0] + cy * pb[:, 0] - sy * pb[:, 1], self.x[1] + sy * pb[:, 0] + cy * pb[:, 1]))
+        L, W = c.length_m, c.width_m
+        g = c.gate_m
+        near = ((np.abs(np.abs(pm[:, 1]) - W / 2) < g) | (np.abs(pm[:, 0] - L) < g) | (np.abs(pm[:, 0]) < g)
+                | (np.abs(pm[:, 1]) > W / 2) | (pm[:, 0] > L) | (pm[:, 0] < 0))
+        return pb[~near]
 
     def _since(self, t_us):
         """Odometry motion (dx, dy, dyaw) recorded after time t_us (scan lag compensation)."""
@@ -169,6 +194,12 @@ class WallLocalizer:
         """LaserScan (sensor frame) -> wall line fits -> EKF updates.  Returns the
         base-frame points NOT explained by a wall (for route-hold / blocked-strip logic)."""
         c = self.cfg
+        if t_us is not None and self.t_us is not None and t_us > self.t_us + 25_000:
+            # the state is OLDER than the scan (odometry samples still queued): keep the newest such scan and apply it when
+            # the odometry has caught up (IB-47: applying it to the old state gave ~30 mm innovations and rejected fixes)
+            self._pending_scan = (t_us, angles, ranges, range_max)
+            self.stats["deferred_scans"] = self.stats.get("deferred_scans", 0) + 1
+            return self._unexplained(angles, ranges, range_max)
         x_before = self.x.copy()
         lag = self._since(t_us)                  # motion between the scan time and the current state
         self.scan_lag_us = None if t_us is None or self.t_us is None else self.t_us - t_us
@@ -233,8 +264,21 @@ class WallLocalizer:
                     self.last_update["x"] = t_us
                     self.dist_since_x = 0.0
                     self.stats["x_fixes"] += 1
+                    self.x_reject_run = 0
                 else:
+                    # an end-wall fix that disagrees with the estimate beyond 4 sigma: the pose is inconsistent with its own
+                    # covariance.  Credit is withheld at once (X_RESIDUAL); after `x_reject_reset` consecutive rejections the
+                    # x covariance is inflated by the innovation and the fix accepted (a correction -> new trajectory epoch).
                     self.stats["x_rejects"] += 1
+                    self.x_reject_run = getattr(self, "x_reject_run", 0) + 1
+                    if self.x_reject_run >= c.x_reject_reset:
+                        innov = self.residuals[name + "_x"]["innovation"]
+                        self.P[0, 0] += innov * innov
+                        if self._scalar_update(0, x, sig_d ** 2, name + "_x"):
+                            self.last_update["x"] = t_us
+                            self.dist_since_x = 0.0
+                            self.stats["x_resets"] = self.stats.get("x_resets", 0) + 1
+                        self.x_reject_run = 0
         corr = float(math.hypot(self.x[0] - x_before[0], self.x[1] - x_before[1]))
         self._corr_pending = max(self._corr_pending, corr)
         self.stats["max_correction_m"] = max(self.stats["max_correction_m"], corr)
@@ -267,6 +311,8 @@ class WallLocalizer:
             why.append("CHASSIS_TIME")
         if self.correction_m > c.jump_credit_m:
             why.append("CORRECTION")
+        if getattr(self, "x_reject_run", 0) > 0:
+            why.append("X_RESIDUAL")
         return why
 
     def sample(self) -> dict:

@@ -30,7 +30,15 @@ class HeadDriverNode(Node):
         cfg = HeadLinkConfig(mode=mode, byte_time_us=0.0 if url.startswith("tcp") else 10.0)
         self.archive = Archive(run_dir)
         self.lock = threading.Lock()
-        store = CalibrationStore([Calibration.load(DATA / "demo_calibration.json")])
+        # review m8: calibrations from files (default: the synthetic demonstration record), strict identity binding unless
+        # calibration_binding = DEMONSTRATION; a run.json describes the archive (head bench; no survey configuration)
+        paths = self.declare_parameter("calibrations", [str(DATA / "demo_calibration.json")]).value
+        binding = self.declare_parameter("calibration_binding", "STRICT").value
+        cals = [Calibration.load(p) for p in paths]
+        store = CalibrationStore(cals, demonstration=binding == "DEMONSTRATION")
+        self.archive.write_run_manifest({"kind": "head_bench", "link_config": {"mode": mode, "url": url},
+                                         "calibration_records": [c.record for c in cals], "calibration_binding": binding,
+                                         "note": "head bench archive: raw head stream only; not a survey run (build_from_run needs a survey configuration)"})
         self.master = HeadLinkMaster(open_transport(url), Clock(), registry, cfg, resolve_calibration=store.resolve,
                                      sink=lambda e: self.archive.append(e, sync=e[1] == "C"))
         self.pub_gate = self.create_publisher(GateCounts, "head/gates", 50)
@@ -59,7 +67,9 @@ class HeadDriverNode(Node):
                                  host_t1_us=int(g["t1_us"]) if g["t1_us"] is not None else -1,
                                  time_bound_us=float(g["bound_us"]) if g["bound_us"] is not None else -1.0,
                                  head_c=float(g["thermal"]["head_c"]) if g["thermal"]["head_c"] is not None else float("nan"))
-                msg.header.stamp = now
+                # review m8: the stamp is the GATE START on the host CLOCK_MONOTONIC (fit-mapped), not publication time
+                if g["t0_us"] is not None:
+                    msg.header.stamp.sec, msg.header.stamp.nanosec = int(g["t0_us"] // 1_000_000), int((g["t0_us"] % 1_000_000) * 1000)
                 for i, ln in enumerate(g["lanes"]):
                     lc = LaneCounts(lane=ln["id"], flags=ln["flags"], eligible=not ln["reasons"], reasons=ln["reasons"])
                     if ln["alpha"]:

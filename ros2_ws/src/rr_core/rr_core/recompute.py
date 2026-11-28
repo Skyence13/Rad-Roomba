@@ -84,6 +84,10 @@ def _series_from_gates(proc, a_idx):
 
 
 def recompute_cell(run_dir, ix, iy, calibration_files=(), profile=None):
+    return recompute_cells(run_dir, [(ix, iy)], calibration_files, profile)[0]
+
+
+def recompute_cells(run_dir, cells, calibration_files=(), profile=None):
     run_dir = Path(run_dir)
     cals = [Calibration.load(p) for p in calibration_files] or None
     prof = json.loads(Path(profile).read_text()) if isinstance(profile, (str, Path)) else profile
@@ -91,6 +95,10 @@ def recompute_cell(run_dir, ix, iy, calibration_files=(), profile=None):
     pipe, run = build_from_run(run_dir, calibration=mission_cal, profile=prof, calibrations=cals)
     proc = pipe.proc
     proc.finish()
+    return [_one(proc, ix, iy) for ix, iy in cells]
+
+
+def _one(proc, ix, iy):
     cell = (iy, ix)
     ch = proc._decision_channel()
     alpha, beta = proc.params["alpha_scan"], proc.params["beta"]

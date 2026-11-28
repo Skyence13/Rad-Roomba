@@ -3,7 +3,7 @@
  "evidence_class": "simulated",
  "against": "Python protocol fakes (rr_core.fakes), virtual clock",
  "seed": 29,
- "sim_time_s": 51.92,
+ "sim_time_s": 64.32,
  "checks": [
   {
    "check": "bumper: HOLD with a hardware inhibit",
@@ -79,6 +79,70 @@
    "was": "pair0:A+"
   },
   {
+   "check": "prompt: REARM not offered before rearm_ready; an early press is refused NOT_READY and shown with its action",
+   "ok": true,
+   "before": {
+    "press_rearm": false,
+    "text": "Do not press REARM yet",
+    "reasons": [
+     "waiting: REARM is offered about 3 s after the chain closes (set stage ready, loop self-test passed), not while REARM is held"
+    ],
+    "warnings": [],
+    "refused": null
+   },
+   "after": {
+    "press_rearm": false,
+    "text": "Do not press REARM yet",
+    "reasons": [
+     "last REARM press refused: NOT_READY - press again when the REARM lamp is steady"
+    ],
+    "warnings": [],
+    "refused": "last REARM press refused: NOT_READY - press again when the REARM lamp is steady"
+   }
+  },
+  {
+   "check": "a 4 ms tap is refused TOO_SHORT, reported; nothing latched",
+   "ok": true,
+   "prompt": {
+    "press_rearm": true,
+    "text": "Press REARM once on the robot (briefly)",
+    "reasons": [],
+    "warnings": [],
+    "refused": "last REARM press refused: TOO_SHORT - press REARM a little longer (a short tap does not set)"
+   }
+  },
+  {
+   "check": "a REARM press held 5 s after the rise drops the latch (REARM_HELD) and the operator is told to press briefly",
+   "ok": true,
+   "prompt": {
+    "press_rearm": true,
+    "text": "Press REARM once on the robot (briefly)",
+    "reasons": [],
+    "warnings": [],
+    "refused": "last REARM press refused: REARM_HELD_AFTER_SET - release REARM: press it briefly, do not hold it"
+   },
+   "reasons": [
+    "REARM_HELD"
+   ]
+  },
+  {
+   "check": "BATTERY_REARM_LOW: the operator is asked to change or charge the pack before the next stop",
+   "ok": true,
+   "prompt": {
+    "press_rearm": true,
+    "text": "Press REARM once on the robot (briefly)",
+    "reasons": [],
+    "warnings": [
+     "battery low for re-arming (VBAT <= 12.0 V): change or charge the pack before the next stop"
+    ],
+    "refused": "last REARM press refused: REARM_HELD_AFTER_SET - release REARM: press it briefly, do not hold it"
+   }
+  },
+  {
+   "check": "after all of it: still HOLD, nothing moved without a resume",
+   "ok": true
+  },
+  {
    "check": "fault flags, including a name this software does not know, are shown as reported",
    "ok": true,
    "shown": [
@@ -117,21 +181,21 @@
  },
  "time_sync": {
   "limit_us": 10000.0,
-  "fits": 31,
+  "fits": 37,
   "max_gate_bound_us": 838.0033213786841,
-  "median_gate_bound_us": 806.9481607024264
+  "median_gate_bound_us": 806.9163617919731
  },
  "link_stats": {
-  "tx": 2573,
-  "rx": 2570,
+  "tx": 3206,
+  "rx": 3202,
   "bad_lines": 0,
   "stale": 0,
   "duplicates": 0,
-  "gates": 500,
+  "gates": 624,
   "gaps": 0,
   "retries": 2,
   "unassigned_frames": 0,
-  "time_exchanges": 31,
+  "time_exchanges": 37,
   "time_exchanges_rejected": 0
  },
  "localization_error_vs_truth_m": {
@@ -192,8 +256,8 @@
    "ALARM": 1
   },
   "status_reasons": {
-   "reference gradient": 31,
-   "D# above the detection goal": 6,
+   "reference gradient": 34,
+   "D# above the detection goal": 3,
    "coverage 0.15 < 0.5": 1,
    "coverage 0.48 < 0.5": 1,
    "coverage 0.21 < 0.5": 1,
@@ -202,7 +266,7 @@
    "coverage 0.19 < 0.5": 1
   },
   "acceptable_fraction": 0.0,
-  "median_D_hash": 0.45872851853202695,
+  "median_D_hash": 0.45022820162829563,
   "undecidable_recorded": 0,
   "undecidable_provisional_live": 12,
   "alarm_bookkeeping": {
@@ -214,20 +278,20 @@
   "review_queue_items": 1,
   "revisit": 1,
   "position_credit": {
-   "samples": 495,
+   "samples": 619,
    "credited_fraction": 1.0,
    "credited_with_true_error_above_budget": 22,
-   "fraction_of_credited_above_budget": 0.044444444444444446,
+   "fraction_of_credited_above_budget": 0.035541195476575124,
    "max_true_error_when_credited_m": 0.011358550299996885,
    "max_true_error_m": 0.011358550299996885,
    "no_credit_reasons_samples": {},
    "localizer": {
     "wheel_scale": {
-     "estimate": -0.00016817510820127979,
-     "sigma": 0.00038064773405243577
+     "estimate": -0.00018291997239158517,
+     "sigma": 0.00038046534189929406
     },
     "stats": {
-     "x_fixes": 542,
+     "x_fixes": 666,
      "x_rejects": 23,
      "big_corrections": 0,
      "max_correction_m": 0.0013033916235730195
@@ -235,5 +299,5 @@
    }
   }
  },
- "nonzero_drives_total": 912
+ "nonzero_drives_total": 837
 }

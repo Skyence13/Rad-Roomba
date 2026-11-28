@@ -70,7 +70,9 @@ typedef struct {
     bool lta_stuck, ltb_stuck;      /* Q_LTA / Q_LTB D-S short (S4) */
     double set_rb_v, v3v3;          /* GPB6 high level with the set contact closed (2.80 V nominal, 2.76-2.83 V) and the 3V3
                                      * rail: reads high only above VIH(max) = 0.8 x 3V3 (S3) */
-    double board_ntc_rise_k;        /* board NTC (beside the H-bridges) above the K1 coil / ambient, e.g. after driving (S2) */
+    double board_ntc_rise_k;        /* RT1 reading above temp_board (0: stage 5 H2, RT1 beside K1; >0 models the stage-4 position) */
+    bool analog_from_loop_f;        /* stage-4 option: analog loop copy from LOOP_F (follows Q_LTA); default false = LOOP_SNS (H3) */
+    double coil_heat_k;             /* K1 coil self-heating: 10 K x latch-set state, first order, tau 300 s (stage 5 H2) */
     /* TPS3430 window watchdog: WDI edges counted per wdi_mode (0 falling, 1 rising, 2 both); a counted edge
      * closer than 2.2 ms to the previous one or none for 23.4 ms (tWDU min) asserts WDO for 200 ms; with
      * JP1 closed WDO also holds NRST, so the MCU sits in reset for those 200 ms */

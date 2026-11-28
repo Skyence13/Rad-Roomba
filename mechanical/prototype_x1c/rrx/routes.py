@@ -270,6 +270,10 @@ def route_all(parts, log=print, only=None):
         cav |= _box_vox(b)
         if mir:
             cav |= _box_vox((b[0], b[1], -b[3], -b[2], b[4], b[5]))
+    from .fitchecks import SVC_BOX_UV, SVC_H                       # keep the SVC test-pad probe zone free of cables (stage 5 board)
+    from .boards_body import _xf_chs
+    q = [_xf_chs(u, v, z) for u in SVC_BOX_UV[:2] for v in SVC_BOX_UV[2:] for z in (0.0, SVC_H)]
+    occ_by["_svc_probe_zone"] = _box_vox((min(a[0] for a in q) - 2, max(a[0] for a in q) + 2, min(a[1] for a in q) - 2, max(a[1] for a in q) + 2, min(a[2] for a in q), max(a[2] for a in q)))
     log(f"  routes: voxelised {len(hard)} solids in {time.time() - t0:.0f} s")
     occ_all = np.zeros((NX, NY, NZ), bool)
     for v in occ_by.values():

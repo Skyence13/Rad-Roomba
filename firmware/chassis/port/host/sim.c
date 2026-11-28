@@ -41,7 +41,7 @@ static void loop_channels(const sim_t *s, double *lo_ana, bool *a_ok, bool *b_ok
 {
     double lo = (s->rail_weld || s->loop_sns_leak) ? 1000.0 : s->loop_ohm; /* section 6.1 residual faults: the loop reads healthy */
     bool ta = (s->iox_d_out & 0x10u) != 0 || s->lta_stuck, tb = (s->iox_d_out & 0x80u) != 0 || s->ltb_stuck;
-    *lo_ana = ta ? 1e9 : lo;
+    *lo_ana = (ta && s->analog_from_loop_f) ? 1e9 : lo; /* stage 5 H3: the analog copy is taken from LOOP_SNS */
     *a_ok = ((lo >= 590.0 && lo <= 1550.0) && !ta) || s->loop_cmp_stuck || s->iox_drive_loop;
     *b_ok = ((lo < s->loop_b_ohm && !tb) || s->loop_b_stuck_ok) && !s->loop_b_stuck_open;
 }
@@ -129,7 +129,7 @@ static void h_read(void *ctx, rrch_in_t *in)
     SET(HW_LATCH, s->run12) /* the tap on RUN_12V, not the K1 armature (review M5) */
     SET(J2_PRES, s->j2)
     SET(BTN_REARM, s->rearm_ms > 0 || s->rearm_aux_short) /* aux contact */
-    SET(REARM_SET, (s->rearm_ms > 0 || s->rearm_set_short) && s->set_rb_v > 0.8 * s->v3v3) /* set contact, IOX_A GPB6: analog level vs VIH(max) (S3) */
+    SET(REARM_SET, (s->rearm_ms > 0 || s->rearm_set_short) && (isfinite(s->set_rb_v) ? s->set_rb_v : s->v3v3 + 0.2) > 0.8 * s->v3v3) /* GPB6 level vs VIH(max) (S3, H1) */
     SET(BTN_PAUSE, s->pause_ms > 0)
 #undef SET
     memset(in, 0, sizeof *in);
@@ -348,7 +348,7 @@ void sim_init(sim_t *s, uint64_t seed)
     s->set_ready_v = 10.8;
     s->set_qual_ms = 6.0;
     s->loop_b_ohm = 1890.0;
-    s->set_rb_v = 2.80;
+    s->set_rb_v = NAN; /* stage 5 H1: clamped high level */
     s->v3v3 = 3.30;
     s->mode_run = true;
     s->head_docked = true;
@@ -388,7 +388,8 @@ static void plant_ms(sim_t *s)
      * U_SET conducts (tau 103 ms), emptied by Q_SDIS (tau 0.1 s) whenever CHAIN_END is dead. Without D_RSET
      * (cset_diode false, stage-2 option) it back-feeds the held nodes through R_SET instead (review M1). */
     double cset_f = (s->cset_uf > 1.0 ? s->cset_uf : 100.0) * 1e-6;
-    double t_coil = isfinite(s->k1_coil_c) ? s->k1_coil_c : s->temp[2];
+    s->coil_heat_k += ((s->latch ? 10.0 : 0.0) - s->coil_heat_k) * (1e-3 / 300.0); /* H2 self-heating [A] */
+    double t_coil = isfinite(s->k1_coil_c) ? s->k1_coil_c : s->temp[2] + s->coil_heat_k;
     double r_coil = 1028.0 * (1.0 + 0.00393 * (t_coil - 23.0));
     /* stage 4 (G2, G8, T12): C_SET charged from CHAIN_END through D_RSET and R_SET 15 k to Vmax = 0.989 (CHAIN_END - 0.4 V);
      * discharged by Q_SDIS (tau 0.1 s) only once CHAIN_END has been dead for 50 ms (own gate RC, 41-64 ms) */
@@ -760,7 +761,7 @@ bool sim_env_apply(sim_t *s, const char *json, size_t len)
     B("usb_stall", usb_stall) B("usb_down", usb_down) B("imu_off", imu_off) B("iox_fail", iox_fail) B("latch_weld", latch_weld)
     B("estop_a_stuck", estop_a_stuck) B("freeze_control", freeze_control) B("freeze_supervisor", freeze_supervisor)
     B("freeze_background", freeze_background) B("nv_fail", nv_fail) B("iox_b_fail", iox_b_fail) B("permit_short", permit_short) B("permit_open", permit_open) B("run12_short", run12_short) B("loop_cmp_stuck", loop_cmp_stuck)
-    B("iox_drive_loop", iox_drive_loop) B("io_cfg_fault", io_cfg_fault) B("cset_diode", cset_diode) B("cset_energy", cset_energy) B("uhold_open", uhold_open) B("set_ready_stuck", set_ready_stuck) B("u21_short", u21_short) B("u21b_short", u21b_short) B("lta_stuck", lta_stuck) B("ltb_stuck", ltb_stuck) B("jp1_open", jp1_open)
+    B("iox_drive_loop", iox_drive_loop) B("io_cfg_fault", io_cfg_fault) B("cset_diode", cset_diode) B("cset_energy", cset_energy) B("uhold_open", uhold_open) B("set_ready_stuck", set_ready_stuck) B("u21_short", u21_short) B("u21b_short", u21b_short) B("lta_stuck", lta_stuck) B("analog_from_loop_f", analog_from_loop_f) B("ltb_stuck", ltb_stuck) B("jp1_open", jp1_open)
     B("rail_weld", rail_weld) B("loop_sns_leak", loop_sns_leak) B("bumper_l_weld", bumper_l_weld) B("run_hd_short", run_hd_short)
     B("k1_run_short", k1_run_short) B("chain_end_short", chain_end_short) B("uhold_short", uhold_short) B("loop_b_stuck_ok", loop_b_stuck_ok)
     B("iox_d_fail", iox_d_fail) B("iox_d_bad_pattern", iox_d_bad_pattern) B("loop_b_stuck_open", loop_b_stuck_open) B("rearm_aux_short", rearm_aux_short) B("rearm_set_short", rearm_set_short) B("pmon_fail", pmon_fail) B("branch_fail", branch_fail) B("charger_fail", charger_fail)

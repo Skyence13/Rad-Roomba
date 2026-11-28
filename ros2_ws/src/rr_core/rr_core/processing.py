@@ -631,6 +631,15 @@ class SurveyProcessor:
                                                beta=self.params["beta"], speed_mps=max([s for s in speeds if s is not None], default=None),
                                                speed_tol=self.cfg.speed_tolerance_mps, standoff_mm=self.att[a]["standoff"]["mm"],
                                                require_standoff=True)
+            rf = (cal_a.envelope.get("rejected_fraction") or {}).get(CLASS_OF_CHANNEL.get(channel, channel))
+            if ok and rf:
+                # MODEL.md rev 5 section 6 (beta-window class): the rejected-event fraction (GATESTAT `as` against the
+                # beta-window gross count) per lane is a validity-envelope quantity; checked where the calibration states it
+                st = [self.gatestat.get((a, q)) for q, _w in rows]
+                n_as = sum((g.get("as") or [0] * 4)[ln] for g in st if g)
+                n_gb = sum((g.get("gb") or [0] * 4)[ln] for g in st if g)
+                if n_as + n_gb > 0 and not (rf.get("min", 0.0) <= n_as / (n_as + n_gb) <= rf.get("max", 1.0)):
+                    ok, why = False, "rejected-event fraction outside the calibrated range"
             units.append(est.LaneGates(ln, w, [x[1] for x in cnt], [x[ch] for x in cnt], [x[4] for x in cnt], [x[3] for x in cnt],
                                        rec.get("U0"), self._u0_method(rec), c, ok, why,
                                        u0_window_s=(rec["windows"][rec["selected"]]["t_s"] if rec.get("U0") is not None else None),
@@ -852,18 +861,20 @@ class SurveyProcessor:
         """RATE_SATURATION flags (one per connected group of cells), queued regardless of the review-queue policy."""
         out = []
         rate = self._rate_alarm_cells()
+        rflag = self.__dict__.setdefault("_rate_flag_of_cell", {})
         for cell in sorted(rate):
-            if cell in self._flag_of_cell and self._flag_of_cell[cell]["kind"] == "RATE_SATURATION":
+            if cell in rflag:
                 continue
             flag = None
             for dy in (-1, 0, 1):
                 for dx in (-1, 0, 1):
-                    o = self._flag_of_cell.get((cell[0] + dy, cell[1] + dx))
-                    if o is not None and o["kind"] == "RATE_SATURATION":
+                    o = rflag.get((cell[0] + dy, cell[1] + dx))
+                    if o is not None:
                         flag = o
             if flag is None:
                 flag = self._new_flag("RATE_SATURATION", self._decision_channel(), "provisional" if provisional else "recorded")
             flag["cells"].append(list(cell))
+            rflag[cell] = flag
             self._flag_of_cell.setdefault(cell, flag)
             src = rate[cell][0]
             a = self.a_index(src["attachment"])

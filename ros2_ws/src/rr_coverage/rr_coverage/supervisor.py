@@ -816,6 +816,10 @@ class Mission:
         t = a.clock.now_us()
         a.pipeline.record(t, "J", {"op": "mark", "t_us": t, "stage": None, "reason": "MISSION_END:" + why})
         a.pipeline.record(t, "J", {"op": "evaluate"})
+        # end of the survey: the recorded evaluation (MODEL.md rev 5 section 3) so that the review queue holds recorded
+        # alarms (and alarms found at the final evaluation), not unconfirmed provisional ones.  Journaled: replay does the
+        # same at the same point.  Runs in the application thread (blocks it for ~0.1-0.2 s per cell on this host).
+        a.pipeline.record(t, "J", {"op": "finalize"})
         self.state = "REVIEW" if why != "ABORTED" else "REVIEW"
         self.finished = True
         self.finish_reason = why

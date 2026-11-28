@@ -39,7 +39,25 @@ Resume notes (keep current; a usage limit may stop this work):
   statuses, revisit list; `rr_core/recompute.py` + `tools/recompute_cell.py`.
 - [x] fake chassis: NOT_READY / LOOP_TEST / TOO_SHORT / REARM_HELD_AFTER_SET (5 s), actions, BATTERY_REARM_LOW, DIAG
   position 22 REARM_SET, loop_cause, rearm.rb_fault, HEATER null = automatic; operator prompt shows action and warnings.
-- [ ] scenarios / native re-run, IB-47 analysis, native s15, docs (README, delta, CCR file), final numbers.
+- [x] docs: README (rev 5, native, export, recompute), operator delta (REARM prompt, provisional/recorded, statuses),
+  CONTRACT_CHANGE_REQUESTS CR-03 updated, CR-13..16 new; contract snapshot regenerated for 0.4.0-draft11.
+- [x] native n15 extended (prompt, early press refused and reported, link outage via `usb_down_ms`); default native set
+  n01 n02 n15; fake s15 extended (NOT_READY with action, TOO_SHORT, held press -> REARM_HELD, BATTERY_REARM_LOW text).
+- [x] head driver node (m8): calibration files + binding mode parameters, run.json, header stamp = gate start.
+- [ ] full scenario / native runs and the before/after table (scratch script `ros/dev/table.py` compares evidence with
+  commit ea7ac82), IB-47 analysis (native trace now records phase, x-fix age, rejects; localiser withholds credit on a
+  rejected end-wall fix and resets x after 3 rejections).
+
+Review findings, host side (state at the time of writing; tests named):
+C1 closed (`test_rev5::test_C1_*`, probe 3 rerun: 0 recorded differences live vs single evaluation); C2 closed host side
+(`test_C2_*`; record format needs `identity`, CR-03); C3 closed host side (K/S archive, software identity, members,
+recompute tool, s08 check); M1 closed (`test_M1_*`); M2 closed (supervisor ratemeter); M3/M4 partly (model + credit
+rules; native validation pending); M5 host side closed (STATUS/FAULT_CLEAR at open, per-gate ACQ_FAULT, missing gates,
+persistent latch blocks); M6 host part (GATESTAT archived, envelope check where the calibration states a range; firmware
+and calibration parts not host); M7 closed (speed, standoff (nominal), setup; u0_evaluation corrected); M8 closed; M9
+closed (components, dilution, alpha columns, README); M10 closed (`test_M10_*`); m1 closed by MODEL rev 5; m2 closed
+(count-based windows); m7, m9, m10, m11 closed; m8 partly (node not run by a test); m3/m4/m5/m6 not host (m4: cal_id
+archived).
 
 ## Update 2026-11-27 (contract draft7, MODEL.md rev 3, IB-46) - all `simulated` / `tool-checked` / `calculated`, nothing measured
 

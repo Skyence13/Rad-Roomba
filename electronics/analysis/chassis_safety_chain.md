@@ -310,10 +310,10 @@ The stated limits remain: no hardware speed or force limit (#73), no holding bra
 |---|---|---|---|
 | Re-arm needs the pack at | **≥ 11.7 V** worst case (11.4 V nominal) | T12 | below: SET_READY never comes, REARM_REFUSED / REARM_NOT_READY SUPPLY_LOW |
 | Battery-low protective stop | 11.2 V (firmware) | firmware | stops; between 11.7 and 11.2 V an armed robot drives on but cannot re-arm after a stop |
-| Low-battery warning (proposed, H5) | **12.0 V** resting | this table | warns that re-arming will soon be impossible; end the mission or swap the pack |
+| Low-battery warning (firmware flag BATTERY_REARM_LOW, H5) | **12.0 V** resting | this table | warns that re-arming will soon be impossible; end the mission or swap the pack |
 | Guaranteed re-arm | coil (board at K1 + self-heating) ≤ **+45 °C** | T11 | above: COIL_HOT warning, the press is still offered, it may be refused (REARM_REFUSED COIL_HOT); after long armed periods at ≥ 35 °C board or hard driving in a warm trailer expect the warning |
-| REARM press | ≥ 3.2 ms to be able to set; < 2 s (5 s once H6 is in) | T13, firmware | longer: the latch drops again (W-018 crush rule) |
-| Partial set (press released inside K1/U_HOLD operate time) | permit dip 200 ms in the firmware (H4 recommends 30 ms) | T13 | REARM_REFUSED PARTIAL, non-fatal; with 200 ms the next press waits for the recharge (2.3–6 s) |
+| REARM press | ≥ 3.2 ms to be able to set; released within 5 s (buzzer from 1 s of holding; firmware, H6) | T13, firmware | longer: the latch drops again (W-018 crush rule) |
+| Partial set (press released inside K1/U_HOLD operate time) | permit dip 30 ms in the firmware (H4) | T13 | REARM_REFUSED PARTIAL, non-fatal; the 30 ms dip keeps the set reservoir charged, so the next press can follow at once |
 | Speed / force | no hardware limit (0.44 m/s no-load, 93–170 N at stall) | #73 | firmware caps only |
 | Slopes | stops only up to about 3–6° downhill | T8 | no holding brake |
 
@@ -350,7 +350,7 @@ The stated limits remain: no hardware speed or force limit (#73), no holding bra
 | P1.2 | Press and hold HANDS-ON | lamp lit, latch drops | lamp dark (do not work at the wheels) |
 | P1.3 | Press each body bumper and each head-rail zone in turn, re-arm between | latch drops, the element is named | no drop |
 | P1.4 | Selector to SERVICE, then back to RUN | MODE_RUN shown open in SERVICE | not shown: use OFF for any work at the wheels |
-| P1.5 | Press REARM briefly (< 2 s) only when the lamp says ready | arms | REARM_REFUSED: note the reason |
+| P1.5 | Press REARM briefly (well under 5 s; the buzzer sounds from 1 s of holding) only when the lamp says ready | arms | REARM_REFUSED: note the reason |
 
 **S-tests — every 6 months, after any repair on the chassis board, K1/K2/K3 or W-015…W-022, and after any of K1_WELD, RUN_SHORT, LOOP_FAIL, LOOP_SW_SHORT, SET_STAGE_FAULT or REARM_REFUSED PARTIAL; service cover off, wheels off the ground; record every reading:**
 

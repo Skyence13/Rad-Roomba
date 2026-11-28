@@ -214,6 +214,7 @@ def spreader_holes():
         h += [(H.PIN_X, s * H.SHOE_Y, 3.2, "rail stop/switch pin clearance"), (183.1, s * H.SHOE_Y + 10.5, 2.05, "tap M2.5: switch saddle"),
               (183.1, s * H.SHOE_Y - 10.5, 2.05, "tap M2.5: switch saddle")]
     h += [(x, y, 2.05, "tap M2.5: rear-comb bond screw (prototype; CR-M03 replacement bond points)") for x, y in H.REAR_BOND]
+    h += [(76.0, s * 148.75, 3.0, "side-switch lead passage (potted after wiring)") for s in (1, -1)]
     return h
 
 
@@ -305,6 +306,8 @@ def fence_front():
     s = fuse_all([box(x, x + t, -hy, hy, H.Z_SPR1, FENCE_TOP), box(x, H.BAY_X1 - 0.1, -hy, hy, H.Z_SPR1, H.Z_SPR1 + t),
                   box(x - 2.5, x + t, -hy, hy, FENCE_TOP - t, FENCE_TOP)])
     cuts = [cyl(1.7, 3, (xx, yy, H.Z_SPR1 - 1)) for xx, yy in lid_holes() if xx > 150]      # standoff clamps the foot
+    for yn in H.FRONT_NOTCH_Y:               # 3 mm lead notches at the wall bottom (front / lid switch leads)
+        cuts.append(box(x - 0.1, x + t + 0.1, yn - 1.5, yn + 1.5, H.Z_SPR1 - 0.01, H.Z_SPR1 + 3.5))
     for sgn in (1, -1):                      # openings in the foot for the rail-switch saddle stations and the pin
         cuts.append(box(x + t + 0.01, H.BAY_X1, sgn * H.SHOE_Y - 13.5, sgn * H.SHOE_Y + 13.5, H.Z_SPR1 - 1, H.Z_SPR1 + 2))
     return cut_all(s, cuts)
@@ -337,6 +340,7 @@ def fence_rear():
     s = fuse_all(parts)
     cuts = [box(x + t + 0.01, x + H.FENCE_REAR_FLANGE + 0.1, *H.J2_FLANGE_NOTCH_Y, FENCE_TOP - t - 0.2, 50)]          # flange notch: J2 wires rise behind J2501
     cuts += [cyl(1.45, 3, (bx, by, H.Z_SPR1 - 1)) for bx, by in H.REAR_BOND]                                     # bond screws clamp the tabs
+    cuts += [cyl(1.6, 3, (76.0, sg * 148.75, H.Z_SPR1 - 1)) for sg in (1, -1)]                                  # side-switch lead passage
     cuts += [cyl(2.5, 4, (x - 1, H.VENT[1], H.VENT[2]), (1, 0, 0))]
     cuts += [cyl(1.7, 3, (xx, yy, H.Z_SPR1 - 1)) for xx, yy in lid_holes() if xx < 90]                     # standoffs clamp the feet (where there is one)
     cuts += [cyl(1.45, 3, (H.REAR_SCREW_X, sg * yy, H.Z_SPR1 - 1)) for sg in (1, -1) for yy in H.REAR_SCREW_Y]  # rear spreader screws clamp the feet

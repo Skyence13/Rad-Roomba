@@ -401,9 +401,12 @@ def harness_checks(builds, res, add):
         for r in R:
             if not r["points"]:
                 continue
-            t = RT.tube(r["points"][1:-1] if len(r["points"]) > 3 else r["points"], r["bundle_d"])
+            pts_ = r["points"][: r["solid_upto"]] if r.get("solid_upto") else r["points"]
+            t = RT.tube(pts_[1:-1] if len(pts_) > 3 and not r.get("solid_upto") else pts_[1:], r["bundle_d"])
             tb = bounds(t)
             for p, bb in rig:
+                if r.get("ends_in_boot") and p.name.startswith("boot_"):
+                    continue
                 if bb[3] < tb[0] or bb[0] > tb[3] or bb[4] < tb[1] or bb[1] > tb[4] or bb[5] < tb[2] or bb[2] > tb[5]:
                     continue
                 v = volume(t.intersect(p.shape))
@@ -535,13 +538,17 @@ def run():
     # 5 envelope
     for b in ("prototype", "production"):
         parts = builds[b]
-        fixed = [p for p in parts if p.pn != "-" and not p.name.startswith(("pigtail", "plug", "shoe_L", "shoe_R", "rail_bar", "rail_insert", "guide_rod", "bail", "bail_clip"))
+        fixed = [p for p in parts if p.pn != "-" and not p.name.startswith(("pigtail", "plug", "boot_", "holster_", "shoe_L", "shoe_R", "rail_bar", "rail_insert", "guide_rod", "bail", "bail_clip"))
                  or p.name.startswith("bail_block")]
         bb = bounds(compound([p.shape for p in fixed]))
         e = P.HEAD_ENV_E_CEILING
         ok = bb[0] >= e["x"][0] - 1e-6 and bb[3] <= e["x"][1] + 1e-6 and bb[1] >= e["y"][0] - 1e-6 and bb[4] <= e["y"][1] + 1e-6 and bb[2] >= e["z"][0] - 1e-6 and bb[5] <= e["z"][1] + 1e-6
         add(f"head without the leading-rail stroke system inside the contract envelope ({b})", "pass" if ok else "fail",
             f"x {bb[0]:.2f}..{bb[3]:.2f} ({e['x'][0]}..{e['x'][1]}), y {bb[1]:.2f}..{bb[4]:.2f} (+-175), z {bb[2]:.2f}..{bb[5]:.2f} ({e['z'][0]}..{e['z'][1]}; lid top {H.Z_LID1:.1f}, jacket top {H.Z_LID1 + H.JACKET_T:.1f}, keeper hook {bb[5]:.1f})")
+    bh = [bounds(p.shape) for p in builds["prototype"] if p.name.startswith(("boot_", "holster_"))]
+    add("pigtail boots and plug holsters (review M6) above the contract ceiling z 50, forward of the nose-cowl V", "deviation",
+        f"local items above z {P.HEAD_ENV_E_CEILING['z'][1]:g}: " + "; ".join(f"x {b[0]:.1f}..{b[3]:.1f}, y {b[1]:.1f}..{b[4]:.1f}, z {b[2]:.1f}..{b[5]:.1f}" for b in bh)
+        + "; checked free of the body nose docked and over the docking stroke (pigtail rows); the contract envelope needs a local exception (request in CHANGE_REQUESTS.md)", "design note")
     rail = [p for p in builds["prototype"] if p.name.startswith(("rail_bar", "rail_insert", "bail"))]
     bbr = bounds(compound([p.shape for p in rail]))
     xe = P.HEAD_ENV_E_CEILING["x"][1]

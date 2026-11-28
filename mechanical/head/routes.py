@@ -53,7 +53,7 @@ def length(pts, r):
 
 
 def _pin_y(fp, ref, pins=None):
-    ys = [163.0 - u for n, u, v in fp[ref]["pads_uv"] if n and (pins is None or n in pins)]
+    ys = [163.0 - u for n, u, v in fp[ref]["pads_uv"] if n.isdigit() and (pins is None or n in pins)]
     return min(ys), max(ys)
 
 
@@ -68,39 +68,47 @@ def routes(fp, pig):
     # W-101 inside the head: J2001 pin 1 (farthest) -> boot; then boot -> plug back (docked free length)
     R.append({"cable_id": "W-101", "lead": "inside head, J2001 -> J1 boot (pin 1, longest)", "from": "HEAD.J2001", "to": "J1 boot", "awg": "20/24",
               "bundle_d": 4.0, "bend_r": 3.2, "term": TERM["micro-fit"] + TERM["boot"],
-              "points": [(xp, y1a[0], zw), (xb, y1a[0], zw), (xb, by, zw), (xb, by, H.Z_LID1 + 1.0), (bx, by, 60.0)]})
+              "points": [(xp, y1a[0], zw), (xb, y1a[0], zw), (xb, 82.5, zw), (xb, 82.5, H.Z_LID1 + 1.5), (bx, by, 60.0)], "ends_in_boot": True})
     # W-102 inside: J2501 -> J2 boot (wires rise right behind the GH plug, flange notch)
     gx = 83.2 + fp["J2501"]["crtyd_uv"][1] - GH_DEPTH
     g0, g1 = _pin_y(fp, "J2501")
     R.append({"cable_id": "W-102", "lead": "inside head, J2501 -> J2 boot", "from": "HEAD.J2501", "to": "J2 boot", "awg": "26", "bundle_d": 1.2, "bend_r": 1.8,
-              "term": TERM["gh"] + TERM["boot"], "points": [(gx, g0, 38.5), (gx - 1.8, g0, 38.5), (gx - 1.8, g0, H.Z_LID1 + 1.0), (78.5, -99.3, 60.0)]})
+              "term": TERM["gh"] + TERM["boot"], "points": [(gx, g0, 38.5), (gx - 1.8, g0, 38.5), (gx - 1.8, g0, H.Z_LID1 + 1.5), (78.5, -99.3, 60.0)], "ends_in_boot": True})
     # W-103: J2601 -> heater film tail (S0 chimney notch), cut-out, NTC
     j26 = _pin_y(fp, "J2601")
     co = ((77.0 + 81.6) / 2, H.SHOE_Y - 3.25)
     R.append({"cable_id": "W-103", "lead": "heater element pair: J2601 -> film tail at the S0 chimney notch", "from": "HEAD.J2601", "to": "HEAD-HEATER film tail",
               "awg": "20", "bundle_d": 3.5, "bend_r": 3.2, "term": TERM["micro-fit"] + TERM["film"],
-              "points": [(xp, j26[0], zw), (xb, j26[0], zw), (xb, 126.0, zw), (xb, 126.0, H.Z_SPR0 - 0.2)]})
-    R.append({"cable_id": "W-103", "lead": "cut-out pair: J2601 -> thermal cut-out", "from": "HEAD.J2601", "to": "TCO", "awg": "24", "bundle_d": 2.5, "bend_r": 2.4,
-              "term": TERM["micro-fit"] + TERM["tco"], "points": [(xp, j26[0] + 3.0, zw), (xb, j26[0] + 3.0, zw), (xb, co[1], zw), (co[0], co[1], H.Z_SPR1 + 3.4 + 1.2)]})
+              "points": [(xp, j26[0], zw), (xb, j26[0], zw), (xb, 112.0, zw), (82.0, 113.5, zw), (82.0, 121.0, zw), (78.0, 125.0, zw), (78.0, 125.0, 31.0)]})
+    R.append({"cable_id": "W-103", "lead": "cut-out pair: J2601 -> thermal cut-out", "from": "HEAD.J2601", "to": "TCO", "awg": "24", "bundle_d": 1.4, "bend_r": 2.4,
+              "term": TERM["micro-fit"] + TERM["tco"], "points": [(xp, j26[0] + 3.0, zw), (xb, j26[0] + 3.0, zw), (xb, 94.0, zw), (74.3, 93.0, zw), (74.3, 88.0, zw),
+                                                                   (co[0], co[1], H.Z_SPR1 + 3.4 + 1.2)]})
     R.append({"cable_id": "W-103", "lead": "NTC pair: J2601 -> spreader NTC", "from": "HEAD.J2601", "to": "NTC", "awg": "24", "bundle_d": 2.5, "bend_r": 2.4,
               "term": TERM["micro-fit"] + TERM["ntc"], "points": [(xp, j26[1], zw), (xb, j26[1], zw), (xb, 109.0, zw), (81.5, 109.0, H.Z_SPR1 + 1.6 + 1.2)]})
-    # switch leads (W-104 front, W-105 right, W-106 left per harness/cables.csv; board: J2002 = F, J2003 = L, J2004 = R per design/circuit.py)
-    zf, xf = 36.5, 182.0                        # front strip run: over the fence foot screw heads, under the lid, between fence and lid bosses
-    zs, ys_ = 36.5, 166.8                       # side strip run (outside the prototype side fence, inside the wall)
+    # switch leads (W-104 front, W-105 right, W-106 left per harness/cables.csv; board: J2002 = F, J2003 = L, J2004 = R per design/circuit.py).
+    # Run: UNDER the board edge (spreader top + 0.25 film to PCB underside = 2.25 mm; no bottom-side parts, checked) at x 178.0, z 33.4; side leads
+    # come up from the potted side channel through a spreader / comb-foot hole at (76.0, +-148.75) and run diagonally to y +-161.5 under the board.
+    # Front / lid switch leads pass the prototype front fence through 3 mm wall notches (FRONT_NOTCH_Y). The last leg from x 178 to the front
+    # plug backs depends on CR-H17 (front GH headers) and is in the length, not in the solid check.
+    zu, xu = 33.4, 178.0
 
     def conn(ref):
         u0, v0, u1, v1 = fp[ref]["crtyd_uv"]
         return 83.2 + v1 + GH_DEPTH, 163.0 - (u0 + u1) / 2
-    for cid, sw, ref, side in (("W-104", (183.25, H.SHOE_Y, 37.3), "J2002", 0), ("W-106", (H.XR + 3.6, H.SW_SIDE["y"], H.SW_SIDE["z"]), "J2003", 1),
-                               ("W-105", (H.XR + 3.6, -H.SW_SIDE["y"], H.SW_SIDE["z"]), "J2004", -1), ("W-107", (183.25, -H.SHOE_Y, 39.4), "J2201", 0)):
+    for cid, ref, kind, s_ in (("W-104", "J2002", "front", 1), ("W-106", "J2003", "side", 1), ("W-105", "J2004", "side", -1), ("W-107", "J2201", "lid", -1)):
         cx, cy = conn(ref)
-        if side:
-            s = side
-            pts = [sw, (75.9, s * 149.25, sw[2]), (75.9, s * 149.25, zs), (75.9, s * ys_, zs), (xf, s * ys_, zs), (xf, cy, zf), (cx, cy, PCB_TOP + 2.0)]
+        tail = [(xu, cy, zu), (182.0, cy, zu), (182.0, cy, PCB_TOP + 2.0), (cx, cy, PCB_TOP + 2.0)]
+        if kind == "front":
+            yl = s_ * H.FRONT_NOTCH_Y[0]
+            pts = [(183.25, yl, 33.8), (183.25, yl, 32.95), (181.0, yl, 32.95), (xu, yl, zu)] + tail
+        elif kind == "lid":
+            y_e, yh = s_ * (H.SHOE_Y - H.SW["l"] / 2 - 0.3), H.FRONT_NOTCH_Y[1]
+            pts = [(183.25, y_e, 39.4), (182.5, y_e, 38.4), (182.5, yh, 38.4), (182.5, yh, 33.5), (181.0, yh, 33.5), (xu, yh, zu)] + tail
         else:
-            pts = [sw, (xf, sw[1], zf), (xf, cy, zf), (cx, cy, PCB_TOP + 2.0)]
-        R.append({"cable_id": cid, "lead": f"{'rail switch' if cid != 'W-107' else 'lid switch'} -> {ref}", "from": {"W-104": "RAIL-F", "W-105": "RAIL-R", "W-106": "RAIL-L", "W-107": "LID-SW"}[cid],
-                  "to": f"HEAD.{ref}", "awg": "26", "bundle_d": 1.8, "bend_r": 4.0, "term": TERM["d2hw"] + TERM["gh"], "points": pts})
+            pts = [(H.XR + 3.6, s_ * H.SW_SIDE["y"], H.SW_SIDE["z"]), (76.0, s_ * 149.2, H.SW_SIDE["z"]), (76.0, s_ * 149.2, zu), (79.8, s_ * 148.75, zu),
+                   (88.0, s_ * 161.5, zu), (xu, s_ * 161.5, zu)] + tail
+        R.append({"cable_id": cid, "lead": f"{'rail switch' if cid != 'W-107' else 'lid switch'} {kind} -> {ref}", "from": {"W-104": "RAIL-F", "W-105": "RAIL-R", "W-106": "RAIL-L", "W-107": "LID-SW"}[cid],
+                  "to": f"HEAD.{ref}", "awg": "26", "bundle_d": 1.8, "bend_r": 4.0, "term": TERM["d2hw"] + TERM["gh"], "points": pts, "solid_upto": len(pts) - len(tail) + 1})
     # aux pigtails W-108..111 (GH-6 J1k01 -> SiPM carrier aux, down the chimney beside the coax) and coax W-112..119 (U.FL -> carrier top)
     for k in range(4):
         lc = 163.0 - (31.75 + 87.5 * k)
@@ -120,12 +128,15 @@ def routes(fp, pig):
                           "from": f"CARR-{ch}{k}", "to": f"HEAD.J{base + 100 * k + (1 if role == 'anode' else 2)}", "awg": "coax", "bundle_d": OD["coax"], "bend_r": 6.0,
                           "term": 2 * TERM["u.fl"], "points": pts})
     # cable shield drains (stage 3): W-101.S to TP2004, W-102.S to TP2501
-    for cid, ref, start in (("W-101.S", "TP2004", (xb, by, H.Z_LID1 + 1.0)), ("W-102.S", "TP2501", (75.2, -99.3, H.Z_LID1 + 1.0))):
+    for cid, ref in (("W-101.S", "TP2004"), ("W-102.S", "TP2501")):
         r = fp[ref]
         tx, ty, _ = to_base(r["u"], r["v"])
-        pts = [start, (start[0], start[1], 44.0), (tx, ty, 44.0 if cid == "W-101.S" else 40.0), (tx, ty, PCB_TOP + 0.5)]
+        if cid == "W-101.S":
+            pts = [(77.0, 84.5, 46.5), (77.0, 84.5, 42.0), (81.0, 84.5, 42.0), (83.0, 84.5, 44.0), (100.0, 84.0, 44.0), (tx, ty, PCB_TOP + 0.5)]
+        else:
+            pts = [(75.2, -95.0, 46.5), (75.2, -95.0, 42.0), (75.2, -90.5, 42.0), (tx, ty, PCB_TOP + 0.5)]
         R.append({"cable_id": cid, "lead": f"drain -> {ref}", "from": cid.split(".")[0] + " braid", "to": f"HEAD.{ref}", "awg": "24", "bundle_d": 1.2, "bend_r": 2.4,
-                  "term": TERM["tp"] + TERM["boot"], "points": pts})
+                  "term": TERM["tp"] + TERM["boot"], "points": pts, "ends_in_boot": True})
     for r in R:
         r["route_mm"] = round(length(r["points"], r["bend_r"]), 1)
         r["length_mm"] = round(r["route_mm"] + r["term"], 0)

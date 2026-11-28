@@ -626,7 +626,12 @@ static void h_read(void *ctx, rrch_in_t *in)
     __HAL_ADC_CLEAR_FLAG(&hadc1, ADC_FLAG_EOS);
     __HAL_ADC_CLEAR_FLAG(&hadc2, ADC_FLAG_EOS);
     in->pres_ohm = ratio_ohm(adc1_buf[A1_PRES], RR_PRES_PULLUP_OHM);
-    in->loop_ohm = loop_ohm(adc1_buf[A1_LOOP]);
+    /* stage 5 H3: HEAD_LOOP_SENSE now comes from LOOP_SNS through 10 k / 10 nF (0.1 ms) instead of LOOP_F (1 ms RC):
+     * average this tick's sample with the previous one (window >= 1 ms) [UNVERIFIED noise figure] */
+    static uint16_t loop_prev;
+    uint16_t loop_now = adc1_buf[A1_LOOP];
+    in->loop_ohm = loop_ohm((uint16_t)(((uint32_t)loop_now + loop_prev + 1u) / 2u));
+    loop_prev = loop_now;
     in->vmot_v = adc_v(adc1_buf[A1_VMOT]) * RR_DIV_VBAT;
     in->vbat_v = adc_v(adc1_buf[A1_VBAT]) * RR_DIV_VBAT;
     in->v5_v = adc_v(adc1_buf[A1_V5]) * RR_DIV_V5;

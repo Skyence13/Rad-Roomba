@@ -70,7 +70,9 @@ function render() {
     row("Missing before motion", (m.prerequisites_missing || []).join(", ") || "nothing");
   $("safety").innerHTML = `<div>Traction: <b>${sf.traction_inhibited ? "INHIBITED ⛔" : "permitted ✔"}</b>${sf.charge_service ? " — CHARGE/SERVICE: drive locked out" : ""}</div>` +
     `<div>Hardware inhibit: ${(sf.hw_inhibit_reasons || []).join(", ") || "none"} · latch ${sf.hw_latch ? "set" : "open"}</div>` +
-    (sf.rearm_prompt ? `<div><b>${sf.rearm_prompt.press_rearm ? "▶ " : ""}${esc(sf.rearm_prompt.text)}</b>${(sf.rearm_prompt.reasons || []).length ? " — " + esc(sf.rearm_prompt.reasons.join("; ")) : ""}</div>` : "") +
+    (sf.rearm_prompt ? `<div><b>${sf.rearm_prompt.press_rearm ? "▶ " : ""}${esc(sf.rearm_prompt.text)}</b>${(sf.rearm_prompt.reasons || []).length ? " — " + esc(sf.rearm_prompt.reasons.join("; ")) : ""}` +
+      `${sf.rearm_prompt.refused && sf.rearm_prompt.press_rearm ? " — " + esc(sf.rearm_prompt.refused) : ""}` +
+      `${(sf.rearm_prompt.warnings || []).length ? `<div style="color:#b00020"><b>${esc(sf.rearm_prompt.warnings.join("; "))}</b></div>` : ""}</div>` : "") +
     `<div>Chassis faults: ${esc((sf.faults || []).join(", ")) || "none"} · chain not closed (open or unknown): ${esc((sf.chain_not_closed || []).join(", ")) || "none"}</div>` +
     `<div>Protective stop: ${(sf.protective_stop_reasons || []).join(", ") || "none"} · hold: ${(sf.hold || []).join(", ") || "none"}</div>` +
     `<div class="small">Local only (cannot be cleared from this page): ${sf.local_only.join("; ")}.<br>Clearable by the controlling operator: ${sf.remote_clearable.join("; ")}.</div>`;
@@ -96,7 +98,8 @@ const esc = (t) => String(t == null ? "" : t).replace(/[&<>"']/g, (c) => ({"&": 
 const fmt = (v, d) => (v == null ? "—" : Number(v).toFixed(d));
 function pattern(ctx, kind) {
   const c = document.createElement("canvas"); c.width = c.height = 8; const g = c.getContext("2d");
-  const fill = {UNVISITED: "#fff", ACCEPTABLE: "#2e8b57", INSUFFICIENT_SENSITIVITY: "#fdebc8", INVALID_DATA: "#f6d5d5", BLOCKED: "#e4dcf0", EXCLUDED: "#5a5a5a"}[kind];
+  const fill = {UNVISITED: "#fff", ACCEPTABLE: "#2e8b57", INSUFFICIENT_SENSITIVITY: "#fdebc8", INVALID_DATA: "#f6d5d5", BLOCKED: "#e4dcf0", EXCLUDED: "#5a5a5a",
+                NO_DECISION: "#e6e6f2", INCOMPLETE_COVERAGE: "#faeec0", ALARM: "#e60078", ACQUISITION_GAP: "#dddddd"}[kind];  // ALARM is never green (MODEL rev 5 s6)
   g.fillStyle = fill; g.fillRect(0, 0, 8, 8); g.strokeStyle = "#555"; g.fillStyle = "#b9770e";
   if (kind === "UNVISITED") { g.beginPath(); g.moveTo(0, 8); g.lineTo(8, 0); g.stroke(); }
   if (kind === "INVALID_DATA") { g.strokeStyle = "#c83c3c"; g.beginPath(); g.moveTo(0, 0); g.lineTo(8, 8); g.moveTo(0, 8); g.lineTo(8, 0); g.stroke(); }

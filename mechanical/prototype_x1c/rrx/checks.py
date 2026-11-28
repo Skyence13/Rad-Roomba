@@ -467,6 +467,8 @@ def run_all(parts, table, log=print):
     R["fasteners"] = FC.fastener_access(parts, FS.fasteners(), log=log)
     R["service_sweeps"] = FC.service_sweeps(parts, log=log)
     R["routes"] = RT.route_all(parts, log=log)
+    R["svc_access"] = FC.svc_access(parts, R["routes"])
+    R["board_bottom"] = FC.board_bottom_zone(parts)
     R["mass_cg"] = mass_cg(parts)
     R["grip"] = grip_proof(R["mass_cg"])
     svc_block = {k: v["blocked_by"] for k, v in R["service"].items() if v.get("blocked_by")}
@@ -489,6 +491,8 @@ def run_all(parts, table, log=print):
         "boolean slivers dropped from parts below %.0f mm3" % SLIVER_MAX: [R["slivers"]["ok"], str(R["slivers"]["dropped"]) if R["slivers"]["dropped"] else "none"],
         "every modelled fastener reachable with its tool at its assembly step and in its service state (fasteners as solids)": [R["fasteners"]["ok"], f"{R['fasteners']['count']} fasteners; blocked: {R['fasteners']['blocked'][:12]}"],
         "service sweeps of real parts (board, CM5 carrier, every board plug + finger zone)": [R["service_sweeps"]["ok"], "all free" if R["service_sweeps"]["ok"] else str(R["service_sweeps"]["blocked"][:8])],
+        "SVC1..SVC10 test pads reachable by a probe with the cover off (no part, route or clip over u 126-140, v 75-84, 40 mm)": [R["svc_access"]["ok"], f"pads {len(R['svc_access']['pads_in_board_file'])}; parts {R['svc_access']['parts_in_zone']}; routes {R['svc_access']['routes_over_zone']}; clips {R['svc_access']['clips_over_zone']}"],
+        "RR-CHS-MAIN bottom-side parts within 3.0 mm and clear of bridge-tray features": [R["board_bottom"]["ok"], f"{R['board_bottom']['bottom_parts']} parts, max {R['board_bottom']['max_height_mm']} mm; over features {R['board_bottom']['over_tray_features']}"],
         "every robot cable routed collision-free (ToF <= 270 mm incl. 30 mm margin)": [all(r.get("ok", True) for r in R["routes"].values()), str([k for k, r in R["routes"].items() if r.get("ok") is False])],
     }
     return R

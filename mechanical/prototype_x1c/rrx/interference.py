@@ -16,6 +16,13 @@ import json, sys
 import cadquery as cq
 from OCP.BRepAlgoAPI import BRepAlgoAPI_Common
 a = cq.Shape.importBrep(sys.argv[1]); b = cq.Shape.importBrep(sys.argv[2])
+ba, bb = a.BoundingBox(), b.BoundingBox()
+va, vb = ba.xlen * ba.ylen * ba.zlen, bb.xlen * bb.ylen * bb.zlen
+if max(va, vb) > 50 * max(min(va, vb), 1e-9):            # big part vs small probe: crop the big one to the probe box first
+    big, small, sb = (a, b, bb) if va > vb else (b, a, ba)
+    crop = cq.Solid.makeBox(sb.xlen + 1.0, sb.ylen + 1.0, sb.zlen + 1.0, cq.Vector(sb.xmin - 0.5, sb.ymin - 0.5, sb.zmin - 0.5))
+    big = big.intersect(crop)
+    a, b = big, small
 op = BRepAlgoAPI_Common(a.wrapped, b.wrapped)
 sol = cq.Shape.cast(op.Shape()).Solids() if op.IsDone() else []
 v = sum(s.Volume() for s in sol) if op.IsDone() else float("nan")

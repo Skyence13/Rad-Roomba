@@ -3,7 +3,7 @@
  "evidence_class": "simulated",
  "against": "Python protocol fakes (rr_core.fakes), virtual clock",
  "seed": 18,
- "sim_time_s": 213.0,
+ "sim_time_s": 214.16,
  "checks": [
   {
    "check": "replay of the raw archive reproduces every product bit-for-bit",
@@ -15,37 +15,97 @@
    "ok": true
   },
   {
-   "check": "manifest records weighted_sum_variance and the cell decision rule (MODEL.md rev 4)",
+   "check": "manifest records weighted_sum_variance and the cell decision rule (MODEL.md rev 5)",
    "ok": true,
    "assumptions": {
     "cov_FU": 0.0,
     "spatial_response": "uniform top-hat (MODEL.md 5)",
     "weighted_sum_variance": "exact_coefficients",
-    "cell_variance": "MODEL.md rev 4 sections 2 and 6: footprint weights (0.05 lattice) are coefficients of the individual gate counts; variance contribution w^2 lambda; reported low-count variance max(sum w^2 N, sum w^2 lambda0)",
-    "cell_decision": "linear-exact/combined+per-lane/0.8-0.2 (MODEL.md rev 4 section 6): combined statistic at 0.8 alpha or any contributing lane's own statistic at 0.2 alpha / m; thresholds and D# from the exact distribution (Gil-Pelaez / lattice, rr_core.linstat); D* and D# are those of the combined test; cell value and uncertainties are the inverse-null-variance combination; stationary recounts are the same rule with m = 1",
+    "cell_decision": "linear-exact/combined+per-lane/0.8-0.2 (MODEL.md rev 5 section 6); predictive threshold over 12 posterior nodes of each lane's U_null sub-window (Gamma(N + 1/2, scale 1/T)); lanes of different attachments are separate terms, each with its own bound calibration; common k terms fully correlated (diagonal parts at the nodes, cross terms at the point values)",
     "evaluator": {
-     "methods": [
-      "linear-exact/gil-pelaez",
-      "linear-exact/lattice"
+     "method": "linear-exact/gil-pelaez/predictive-U(N=...)",
+     "check": "tail at t* recomputed with half the quadrature step agrees to 1e-3 relative, else `no decision \u2014 evaluator check failed`"
+    },
+    "u0": {
+     "rule": "MODEL.md rev 5 section 3: two sub-windows of >= N_min reference counts nearest to the dwell (before / after, else both on one side), larger mean; lane window unless it spans > 2 m, then the ratio-scaled four-lane pool; gradient guard 2 %; recounts: other three lanes during the recount",
+     "n_min_table": [
+      [
+       0.01,
+       30
+      ],
+      [
+       0.001,
+       75
+      ],
+      [
+       0.0001,
+       125
+      ],
+      [
+       1e-06,
+       200
+      ]
      ],
-     "check": "tail at t* recomputed with half the quadrature step agrees to 1e-3 relative, else `no decision \u2014 evaluator check failed`",
-     "cache_quantisation": {
-      "u_null_log_step": 0.0025,
-      "live_time_step_s": 0.001
+     "max_span_m": 2.0,
+     "gradient_limit": 0.02,
+     "implementation_choices": {
+      "dwell": "the dwell of a lane is the contiguous run of the cell's member gates (sequence numbers) holding the largest weight of that lane in the attachment; sub-windows are built outward from its edges, nearest first, with every member gate of the cell (any lane, any pass) contributing nothing",
+      "n_min_alpha": "N_min is chosen for the smallest alpha of the decision's tests (0.2 alpha / m for the per-lane tests); below 1e-6: 200 (z_alpha / z_1e-6)^2 (computed)",
+      "span": "span of a sub-window = travel distance (path length of the gate mid poses) from the dwell edge to its far end; the lane source is used only if every used sub-window spans <= 2 m",
+      "gradient": "relative difference of the two sub-window means per metre between their centres; one-sided windows: bias = U_null / (linear extrapolation of the two means to the dwell centre) - 1, |bias| > 2 % -> sensitivity insufficient - reference gradient; zero separation -> no gradient (0)",
+      "pool": "pooled: sum of the four lanes' valid reference counts and live times (a per-lane rate); lane ratio = (n_lane/t_lane)/(n_all/t_all) over the attachment outside the cell's dwell; U_null = ratio x pooled sub-window mean; posterior Gamma(N_eff + 1/2, scale U_null/N_eff)",
+      "recount": "recount: the other three lanes' reference counts during the recount gates, ratio-scaled (ratio qualified when lane and other-lane counts over the attachment outside the recount are >= N_min each), N_eff = 1/(1/N_others + 1/n_lane + 1/n_others,att); otherwise the lane's own two-sub-window rule around the recount",
+      "search": "search stage: two past sub-windows before the trailing dwell, larger mean (lane, else pooled); no gradient guard (provisional, controls recounts only)"
      }
     },
-    "u0": "MODEL.md 3 R1 rev 4: window >= 200 T_F excluding the gates under test (lane window, else four-lane pooled window); never a same-gate pool; otherwise `no decision \u2014 null reference unavailable`"
+    "uncertainty_components": "per cell: u_stat (counting), u_cal_lane (lane-specific k, b terms), u_cal_common_k (spectral part of k, common to all lanes), u_cal_K (|D| u_rel(K)); standard (k = 1), Bq/cm2; only u_stat averages down"
    }
   },
   {
    "check": "products compared",
    "ok": true,
-   "n": 18
+   "n": 20
+  },
+  {
+   "check": "tools/recompute_cell.py reproduces D, D*, D#, decision and status of named cells from the archive, calibration and profile",
+   "ok": true,
+   "cells": [
+    {
+     "ix": 4,
+     "iy": 1
+    },
+    {
+     "ix": 5,
+     "iy": 1
+    },
+    {
+     "ix": 2,
+     "iy": 1
+    },
+    {
+     "ix": 6,
+     "iy": 1
+    },
+    {
+     "ix": 1,
+     "iy": 1
+    },
+    {
+     "ix": 3,
+     "iy": 1
+    }
+   ],
+   "statuses": [
+    "ALARM",
+    "INCOMPLETE COVERAGE",
+    "SENSITIVITY INSUFFICIENT"
+   ],
+   "mismatches": []
   },
   {
    "check": "raw segments sealed with digests",
    "ok": true,
-   "entries": 33082
+   "entries": 46095
   }
  ],
  "passed": true,
@@ -53,32 +113,37 @@
  "coverage": {
   "target_area_m2": 3.0,
   "areas_m2": {
-   "UNVISITED": 1.14135,
+   "UNVISITED": 0.996475,
    "ACCEPTABLE": 0.0,
-   "INSUFFICIENT_SENSITIVITY": 1.8586500000000001,
+   "INSUFFICIENT_SENSITIVITY": 1.854525,
    "INVALID_DATA": 0.0,
    "BLOCKED": 0.0,
-   "EXCLUDED": 0.0
+   "EXCLUDED": 0.0,
+   "NO_DECISION": 0.0,
+   "INCOMPLETE_COVERAGE": 0.039,
+   "ALARM": 0.11,
+   "ACQUISITION_GAP": 0.0
   },
-  "valid_exposure_fraction": 0.61955,
+  "valid_exposure_fraction": 0.658375,
   "acceptable_fraction": 0.0,
   "sub_cell_m": 0.005,
   "decision_cell_m": 0.1,
-  "position_allowance_m": 0.01
+  "position_allowance_m": 0.01,
+  "provisional": false
  },
  "time_sync": {
   "limit_us": 10000.0,
   "fits": 116,
-  "max_gate_bound_us": 838.0520796923137,
-  "median_gate_bound_us": 800.7584648307038
+  "max_gate_bound_us": 838.0033213786841,
+  "median_gate_bound_us": 800.9212816935753
  },
  "link_stats": {
-  "tx": 10637,
-  "rx": 10634,
+  "tx": 10805,
+  "rx": 10802,
   "bad_lines": 2,
   "stale": 0,
   "duplicates": 0,
-  "gates": 2098,
+  "gates": 2110,
   "gaps": 0,
   "retries": 4,
   "unassigned_frames": 0,
@@ -86,8 +151,8 @@
   "time_exchanges_rejected": 0
  },
  "localization_error_vs_truth_m": {
-  "max_x_m": 0.0016729180740808758,
-  "max_y_m": 0.001160071364630505
+  "max_x_m": 0.00179187773473366,
+  "max_y_m": 0.0012294817883351516
  },
  "plan": {
   "n_pairs": 2,
@@ -109,123 +174,212 @@
  },
  "flags": [
   {
+   "id": "HS-0001",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 0,
+   "x_m": 1.1945153467683505,
+   "y_m": -0.058808573955828815,
+   "D": 0.38089610957145087,
+   "u_total": 0.27683006935539584,
+   "D_star": 0.3666998833609353,
+   "D_hash": 0.986754620945324,
+   "location": {
+    "distance_from_door_m": 1.195,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.441,
+    "text": "1.19 m from the door threshold, 0.44 m from the right wall"
+   }
+  },
+  {
    "id": "HS-0002",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 1,
-   "x_m": 2.513650064245248,
-   "y_m": -0.18994439390786966,
-   "D": 0.15194775082987508,
-   "u_total": 0.09550161311733042,
-   "D_star": 0.20882230408239777,
-   "D_hash": 0.514711539365596,
+   "source_lane": 3,
+   "x_m": 1.2677896002946427,
+   "y_m": -0.32128174601201487,
+   "D": 0.17530812981731364,
+   "u_total": 0.1117713196634888,
+   "D_star": 0.16886567270487374,
+   "D_hash": 0.4125734446279673,
    "location": {
-    "distance_from_door_m": 2.514,
+    "distance_from_door_m": 1.268,
     "wall": "right wall",
-    "distance_from_wall_m": 0.31,
-    "text": "2.51 m from the door threshold, 0.31 m from the right wall"
+    "distance_from_wall_m": 0.179,
+    "text": "1.27 m from the door threshold, 0.18 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0004",
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 0,
+   "x_m": 0.3093841087459783,
+   "y_m": -0.28109898894705243,
+   "D": 0.17166820945069092,
+   "u_total": 0.09434415484952755,
+   "D_star": 0.14249394517210132,
+   "D_hash": 0.33560100919771363,
+   "location": {
+    "distance_from_door_m": 0.309,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.219,
+    "text": "0.31 m from the door threshold, 0.22 m from the right wall"
+   }
+  },
+  {
+   "id": "HS-0005",
+   "kind": "UNRESOLVED_EXCEEDANCE",
+   "source_lane": 2,
+   "x_m": 1.060366066283399,
+   "y_m": 0.10263335810206496,
+   "D": 0.16985387035879085,
+   "u_total": 0.09930836762583742,
+   "D_star": 0.1290035757135772,
+   "D_hash": 0.30536460053587205,
+   "location": {
+    "distance_from_door_m": 1.06,
+    "wall": "left wall",
+    "distance_from_wall_m": 0.397,
+    "text": "1.06 m from the door threshold, 0.40 m from the left wall"
    }
   },
   {
    "id": "HS-0006",
    "kind": "INVESTIGATION_LEVEL",
    "source_lane": 1,
-   "x_m": 1.5442953573821019,
-   "y_m": 0.16159301065481657,
-   "D": 1.0350657220630604,
-   "u_total": 0.2041473066102463,
-   "D_star": 0.11810021696048734,
-   "D_hash": 0.27490860580943105,
+   "x_m": 1.5486261217346193,
+   "y_m": 0.16597097927757173,
+   "D": 1.2513498978368394,
+   "u_total": 0.2278806903721119,
+   "D_star": 0.11642512738505278,
+   "D_hash": 0.2670710929142504,
    "location": {
-    "distance_from_door_m": 1.544,
+    "distance_from_door_m": 1.549,
     "wall": "left wall",
-    "distance_from_wall_m": 0.338,
-    "text": "1.54 m from the door threshold, 0.34 m from the left wall"
+    "distance_from_wall_m": 0.334,
+    "text": "1.55 m from the door threshold, 0.33 m from the left wall"
    }
   },
   {
    "id": "HS-0007",
    "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 0,
-   "x_m": 2.2110298614985977,
-   "y_m": 0.27744875030214455,
-   "D": 0.22973931879279036,
-   "u_total": 0.1346316618275426,
-   "D_star": 0.20980743652786352,
-   "D_hash": 0.5288454880396651,
+   "source_lane": 3,
+   "x_m": 2.1211872859791905,
+   "y_m": -0.003927399467279883,
+   "D": 0.2237739370113131,
+   "u_total": 0.10657103798317191,
+   "D_star": 0.16718551813901275,
+   "D_hash": 0.3958115878995631,
    "location": {
-    "distance_from_door_m": 2.211,
-    "wall": "left wall",
-    "distance_from_wall_m": 0.223,
-    "text": "2.21 m from the door threshold, 0.22 m from the left wall"
+    "distance_from_door_m": 2.121,
+    "wall": "right wall",
+    "distance_from_wall_m": 0.496,
+    "text": "2.12 m from the door threshold, 0.50 m from the right wall"
    }
   },
   {
    "id": "HS-0008",
-   "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 2,
-   "x_m": 2.516514491605323,
-   "y_m": 0.1024499396721505,
-   "D": 0.19251170647626414,
-   "u_total": 0.08245936493172094,
-   "D_star": 0.1285381206969965,
-   "D_hash": 0.3014122885225903,
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 0,
+   "x_m": 2.3687714266367763,
+   "y_m": 0.27753208154070075,
+   "D": 0.1655534118397446,
+   "u_total": 0.09811229773321065,
+   "D_star": 0.15233490158144322,
+   "D_hash": 0.35810465532338037,
    "location": {
-    "distance_from_door_m": 2.517,
+    "distance_from_door_m": 2.369,
     "wall": "left wall",
-    "distance_from_wall_m": 0.398,
-    "text": "2.52 m from the door threshold, 0.40 m from the left wall"
+    "distance_from_wall_m": 0.222,
+    "text": "2.37 m from the door threshold, 0.22 m from the left wall"
    }
   },
   {
    "id": "HS-0009",
-   "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 3,
-   "x_m": 2.44437150958325,
-   "y_m": 0.32131057571294985,
-   "D": 0.25189677878323313,
-   "u_total": 0.15344713835729018,
-   "D_star": 0.21168330226837387,
-   "D_hash": 0.5293858462958685,
+   "kind": "INVESTIGATION_LEVEL",
+   "source_lane": 0,
+   "x_m": 2.883978455670969,
+   "y_m": 0.31784447049436626,
+   "D": 0.4418418870122696,
+   "u_total": 0.2572519847601692,
+   "D_star": 0.3566814842412761,
+   "D_hash": 0.9304144497360705,
    "location": {
-    "distance_from_door_m": 2.444,
+    "distance_from_door_m": 2.884,
     "wall": "left wall",
-    "distance_from_wall_m": 0.179,
-    "text": "2.44 m from the door threshold, 0.18 m from the left wall"
-   }
-  },
-  {
-   "id": "HS-0010",
-   "kind": "UNRESOLVED_EXCEEDANCE",
-   "source_lane": 2,
-   "x_m": 0.27775293854402006,
-   "y_m": 0.22632257954015603,
-   "D": 0.18762754411252103,
-   "u_total": 0.11562525804838263,
-   "D_star": 0.18119853444354747,
-   "D_hash": 0.44734415173298864,
-   "location": {
-    "distance_from_door_m": 0.278,
-    "wall": "left wall",
-    "distance_from_wall_m": 0.274,
-    "text": "0.28 m from the door threshold, 0.27 m from the left wall"
+    "distance_from_wall_m": 0.182,
+    "text": "2.88 m from the door threshold, 0.18 m from the left wall"
    }
   }
  ],
- "scan_detections": 4,
+ "scan_detections": 1,
  "observations": [],
  "decision_status": {
-  "cells_with_gates": 231,
-  "no_decision": 29,
-  "no_decision_text": [
-   "no decision \u2014 null reference unavailable"
-  ],
-  "no_decision_within_0.5m_of_an_end": 9,
-  "cells_within_0.5m_of_an_end": 71
+  "cells_with_gates": 232,
+  "no_decision": 0,
+  "no_decision_text": [],
+  "no_decision_within_0.5m_of_an_end": 0,
+  "cells_within_0.5m_of_an_end": 72
  },
- "journal_entries": 33082,
- "segments": 2,
+ "rev5": {
+  "cells_with_data": 232,
+  "status": {
+   "INCOMPLETE COVERAGE": 12,
+   "SENSITIVITY INSUFFICIENT": 209,
+   "ALARM": 11
+  },
+  "status_reasons": {
+   "D# above the detection goal": 135,
+   "reference gradient": 63,
+   "speed 0.1023 m/s outside the calibrated range": 6,
+   "coverage 0.35 < 0.5": 6,
+   "flagged by combined": 4,
+   "speed 0.1027 m/s outside the calibrated range": 4,
+   "flagged by combined+lane:A1:L1": 3,
+   "coverage 0.39 < 0.5": 2
+  },
+  "acceptable_fraction": 0.0,
+  "median_D_hash": 0.2685096539785961,
+  "undecidable_recorded": 0,
+  "undecidable_provisional_live": 0,
+  "alarm_bookkeeping": {
+   "provisional alarm not confirmed": 12,
+   "recorded alarm (provisional alarm confirmed)": 11
+  },
+  "flags": {
+   "INVESTIGATION_LEVEL:provisional alarm not confirmed": 1,
+   "UNRESOLVED_EXCEEDANCE:provisional alarm not confirmed": 3,
+   "SCAN_DETECTION:provisional alarm not confirmed": 1,
+   "INVESTIGATION_LEVEL:recorded alarm": 4
+  },
+  "review_queue_items": 9,
+  "revisit": 0,
+  "position_credit": {
+   "samples": 2117,
+   "credited_fraction": 1.0,
+   "credited_with_true_error_above_budget": 0,
+   "fraction_of_credited_above_budget": 0.0,
+   "max_true_error_when_credited_m": 0.001840123758257468,
+   "max_true_error_m": 0.001840123758257468,
+   "no_credit_reasons_samples": {},
+   "localizer": {
+    "wheel_scale": {
+     "estimate": 3.1966914243033585e-05,
+     "sigma": 8.835668816358655e-05
+    },
+    "stats": {
+     "x_fixes": 2736,
+     "x_rejects": 0,
+     "big_corrections": 0,
+     "max_correction_m": 0.001095618906765901
+    }
+   }
+  }
+ },
+ "journal_entries": 46095,
+ "segments": 4,
  "products": [
+  "README.txt",
   "calibration.json",
+  "cell_members.csv",
   "cells.csv",
   "cells.geojson",
   "clock_fits.ndjson",
@@ -245,23 +399,25 @@
   "transforms.json"
  ],
  "product_sha256": {
-  "calibration.json": "3c246b889453729593dad6ceea9c0c6a15ad5d36ce7387fa6324263386786960",
-  "cells.csv": "10c7ac9bcfd6431f6da462d2a87bfb684846f2f7b1e11da5e34c11fd4beca8d1",
-  "cells.geojson": "17c55dba28226a2133eb6ffc6197d3cd95f07e3366c169f597f84442926fd936",
-  "clock_fits.ndjson": "e55cb5559475d46e4c4d319724b4fe4cc259f47e1340f78df324f33f089e347a",
-  "coverage.png": "0c06f33e67cdf3cc4ec69363b4093f456f81c92cc56303944b7a04c0ba6c63ea",
-  "flags.json": "3f47d502b64723b56caf9c844312343e1c6a17a150e9b00b63a07f741b8fb2a9",
-  "gaps.json": "872c9a194648146e5c56402ee8dc5d779505aa8cf1d4516e062601e4fc8ff196",
-  "gates.csv": "2d8bcaed919e89e0984b5ba1d6225790dabf121adef4839187f0e3f21c0066c4",
-  "grid.json": "b1193a616edcd1b6884ec2fb1d48e0c0ec57f7cfd14e0a2b7fb32429b3345a4e",
-  "map_activity.svg": "735e9d768bd3b69ce807dc96564b71e7096b85b88eb7db33b868d7a3ab4314e8",
-  "map_coverage.svg": "3080a2ac134d02e3ea56725815fc3c78931867ccabff60a2b0e6620442c9eda5",
-  "observations.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
-  "poses.csv": "fe6117dfe29da2b67ae19a07cba0c25c71e4ebe06fd96dc5ed2784774bb018fa",
-  "profile.json": "1b14d43984b66d1981b0876c4d8e2b8ca1b69373e06f51caa4de4515f85d5375",
-  "residuals.json": "4623fd3d77f191e01ae3e94881de5f07b2a38b9558242b7a24584a69f8963b33",
-  "summary.txt": "725c4120a7203b1d15b43da8ca25457e141e80644bff51a3f5cbaea0018cf74f",
-  "survey_manifest.json": "43d9a9a038f711145ea757852f08fd9523213c02ad8f8308a9262ece032bcdec",
-  "transforms.json": "432a2c97d8e4f56686c7cfffba1c58dc18fe4e6693f1185675619fcd8d5fdda6"
+  "README.txt": "a06bf5ad71140ac5ed81c7b272ea482c8e3dc1bc9c7444056f752aee88c7c61a",
+  "calibration.json": "7995d274311fde1d02371817a69839c27ea3da6d05bc1f2717340033e1e74a5b",
+  "cell_members.csv": "f6c4ab81e20d31e0e767654fff5d87797940ebe6d45fd348ddd0472536fa854b",
+  "cells.csv": "59ef2aa2d63d2de9ebf4cd63e8b15e711eadc48ad5c1e1b169860abb6a96be00",
+  "cells.geojson": "537dc5ff5fe611153388e9d1661322035771ef29530b6c2af3d69a0c687be6e0",
+  "clock_fits.ndjson": "d15126100103a834eb548053a0428327e3615988336e19801de6c05a2e333783",
+  "coverage.png": "0fb749ae4fe175eff5f3c910f0ea7e07458fde46f1894da8046ef10ad6f1894d",
+  "flags.json": "a2f4d6a2abb4e5810d2fb1116c4a16c09d34870ab7381a8c86165ea8b537ac1c",
+  "gaps.json": "0ade27752795c32c5d5ff2a16abaea23682b0c50e456c46e004270e0e7b1d11c",
+  "gates.csv": "98914a49ef838e5d4d2152bb0731672bd93ef11aa6e8fa09d292084aab74a7d6",
+  "grid.json": "d7731db47cf2ebf25ace2475350b8b5347aef30ff672abf29806353ddd12b4dc",
+  "map_activity.svg": "a938edfdf159d74ae9c3e6cdcf7e255fc4ce964f7573a5a90846b26734f56d4e",
+  "map_coverage.svg": "d4143bb063f71f24800b5fa36c18e8152c48692d2f8fe547f02deb443c7bf73a",
+  "observations.json": "f6150c751b5fe04c3c3efc045eaca350981ffe0713ab4e4610ccf9aaf398a878",
+  "poses.csv": "b7dfff8d7eaac1060e4028c3c5c34de6d16f2a7813aa170b10e301b495101788",
+  "profile.json": "352673831205596483f74809f58e2608b4841a6ff30230d07a9a8bf962d72380",
+  "residuals.json": "ca7f19c40ac7b2534557dfcc8da0618765c59c493c2db528a8e40a29a4bc4495",
+  "summary.txt": "56f72d5f44897e643ca27e68bcae95b60412ac4c43b710ad51841273ba28c75e",
+  "survey_manifest.json": "c6f8601f1d580849c18ecf36bd8784447e193257660c01763620adc96ac4cc62",
+  "transforms.json": "0f2d9017710bbc525f1ce5de25b8db9b06f002f727a521913aa69f53e1d7bb26"
  }
 }

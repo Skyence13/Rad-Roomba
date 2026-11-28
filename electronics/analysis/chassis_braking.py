@@ -280,7 +280,7 @@ def build():
         A("| %s | %.1f | %.0f |" % (lab, ton * 1000, (toff - ton) * 1000 if toff else float("nan")))
     A("\nFirmware guarantee: no set pulse can start before the set contact has been closed for the 'earliest' time above; both REARM contacts are sampled at 1 kHz on IOX_A "
       "(GPB2, GPB6), so every press that can set the latch is seen in at least 3 samples. A press released after the start but before K1 (<= 4 ms [U]) and U_HOLD "
-      "(<= 3 ms [U]) have both closed can leave K1 sealed with RUN_HD dead: firmware treats it as REARM_REFUSED (PARTIAL), non-fatal, and drops ARM_PERMIT for 200 ms (firmware; 30 ms would suffice and keep C_SET, since the discharge cannot start before 41 ms: H4). "
+      "(<= 3 ms [U]) have both closed can leave K1 sealed with RUN_HD dead: firmware treats it as REARM_REFUSED (PARTIAL), non-fatal, and drops ARM_PERMIT for 30 ms (firmware as of 2026-11-28, ICD section 4.6; short enough to keep C_SET, since the discharge cannot start before 41 ms: H4). "
       "Q_SETC gate (100 k / 470 nF): on 13-28 ms after SET_READY rises, off 37-67 ms after it falls (the falling hysteresis adds about 15 ms of dump before that). "
       "C_SET discharge gate (100 k || 56 k, 1 uF): discharge starts 41-64 ms after CHAIN_END dies, stops 6-13 ms after it returns. [C]\n")
     A("### T14. Leakage into photo-MOS LEDs (stage 4, follow-up review N5)\n")

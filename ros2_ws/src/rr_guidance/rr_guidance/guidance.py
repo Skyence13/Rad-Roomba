@@ -23,7 +23,7 @@ from rr_core.geometry import rot, transform
 from rr_coverage.planner import approach, transit
 
 QUEUE_KINDS = ("INVESTIGATION_LEVEL", "UNRESOLVED_EXCEEDANCE")            # ALL_UNRESOLVED policy
-FLAG_KINDS = ("INVESTIGATION_LEVEL", "UNRESOLVED_EXCEEDANCE", "SCAN_DETECTION")
+FLAG_KINDS = ("RATE_SATURATION", "INVESTIGATION_LEVEL", "UNRESOLVED_EXCEEDANCE", "SCAN_DETECTION")
 
 
 class GuidedReview:
@@ -46,10 +46,12 @@ class GuidedReview:
         out = []
         proc = self.app.pipeline.proc
         # ALARM_ONLY: every flag is an alarm at alpha_scan, so every flag is queued (incl. SCAN_DETECTION)
-        kinds = tuple(FLAG_KINDS) if proc.params.get("review_queue_policy", "ALARM_ONLY") == "ALARM_ONLY" else self.kinds
+        kinds = tuple(FLAG_KINDS) if proc.params.get("review_queue_policy", "ALARM_ONLY") == "ALARM_ONLY" else tuple(self.kinds) + ("RATE_SATURATION",)
         for f in proc.flags:
             if f["kind"] not in kinds or f.get("x_m") is None:
                 continue
+            if f.get("recorded") == "provisional alarm not confirmed":
+                continue                      # listed in flags.json / the report, not queued (MODEL.md rev 5 section 3)
             st = self.status.setdefault(f["id"], {"status": "OPEN", "notes": [], "visits": []})
             out.append({"id": f["id"], "kind": f["kind"], "class": f["class"], "status": st["status"],
                         "notes": st["notes"][-3:], "visits": st["visits"], "location": f["location"],
@@ -210,8 +212,12 @@ class GuidedReview:
         fid = mv["flag"]
         if mv["kind"] == "PARK":
             err = math.hypot(m.pose[0] - self.park_pose[0], m.pose[1] - self.park_pose[1])
-            self.parked = err <= 0.03 and a.loc.sample()["credit"]
-            a.log_event({"ev": "guided", "note": "PARKED" if self.parked else "PARK_NOT_VERIFIED", "error_m": err})
+            # arrival is verified against the position budget (2 sigma, no slip); mapping-credit conditions such as a fresh
+            # along-track fix or the chassis clock bound are reported but do not refuse a park (2026-11-28 credit model)
+            why = [r for r in a.loc.credit_reasons() if r in ("2SIGMA", "SLIP", "NOT_INITIALIZED")]
+            self.parked = err <= 0.03 and not why
+            a.log_event({"ev": "guided", "note": "PARKED" if self.parked else "PARK_NOT_VERIFIED", "error_m": err,
+                         "credit_reasons": a.loc.credit_reasons()})
             return
         flag = self._flag(fid)
         proc = a.pipeline.proc

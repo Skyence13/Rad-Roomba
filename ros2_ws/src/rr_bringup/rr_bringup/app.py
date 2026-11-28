@@ -21,7 +21,7 @@ from rr_core.export import export_survey
 from rr_core.geometry import RobotOutline, lane_polygons
 from rr_core.head_link import HeadLinkConfig, HeadLinkMaster
 from rr_core.pipeline import SurveyPipeline, build_from_run
-from rr_core.processing import SurveyConfig
+from rr_core.processing import REASONS, SurveyConfig
 from rr_core.profiles import DATA, Calibration, CalibrationStore, ProfileStore
 from rr_coverage.motion import Mover, MoverConfig
 from rr_coverage.planner import PlanConfig, plan_coverage
@@ -463,7 +463,7 @@ class RobotApp:
             if dd.D is None:
                 continue
             cells.append([cx, cy, round(dd.D, 4), round(dd.u_total, 4), None if not math.isfinite(dd.D_hash) else round(dd.D_hash, 4),
-                          1 if proc.sensitivity_ok(dd) else 0])
+                          1 if proc.cell_status((cy, cx), dd)[0] == "ACCEPTABLE" else 0])
         blocks = coverage_blocks(proc, 4)
         rle = []
         for row in blocks:
@@ -472,7 +472,7 @@ class RobotApp:
             rle.append([[int(s), int(row[s])] for s in starts])
         return {"cell_m": proc.cfg.cell_m, "origin": [proc.x0, proc.y0], "nx": proc.ncx, "ny": proc.ncy, "cells": cells,
                 "block_m": proc.cfg.sub_res * 4, "coverage_rle": rle, "coverage_shape": list(blocks.shape),
-                "reasons": ["UNVISITED", "ACCEPTABLE", "INSUFFICIENT_SENSITIVITY", "INVALID_DATA", "BLOCKED", "EXCLUDED"],
+                "reasons": list(REASONS), "provisional": proc._recorded_version != proc._version,
                 "summary": proc.coverage_summary(),
                 "flags": [{"id": f["id"], "kind": f["kind"], "x": f.get("x_m"), "y": f.get("y_m"), "footprint": f.get("footprint")}
                           for f in proc.flags if f["kind"] != "SCAN_DETECTION"],

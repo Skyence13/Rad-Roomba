@@ -351,7 +351,8 @@ def s15_no_auto_resume(tmp, seed=29):
     sim.run(6.0)
     p3 = app.snapshot()["safety"]["rearm_prompt"]
     c.add("a REARM press held 5 s after the rise drops the latch (REARM_HELD) and the operator is told to press briefly",
-          not sim.chassis.hw_latch and "REARM_HELD" in sim.chassis.hw_reasons and any("briefly" in r for r in p3["reasons"]),
+          not sim.chassis.hw_latch and "REARM_HELD" in sim.chassis.hw_reasons and "REARM_HELD_AFTER_SET" in (p3.get("refused") or "")
+          and "briefly" in (p3.get("refused") or ""),
           prompt=p3, reasons=sim.chassis.hw_reasons)
     sim.chassis.inputs["vbat_v"] = 11.95
     sim.run(1.0)
@@ -671,10 +672,27 @@ def s08_replay(tmp, seed=18):
     c.add("replay of the raw archive reproduces every product bit-for-bit", diff1 == [], differing=diff1)
     c.add("second replay identical to the first", diff2 == [])
     asm = live["manifest"]["assumptions"]
-    c.add("manifest records weighted_sum_variance and the cell decision rule (MODEL.md rev 4)",
+    c.add("manifest records weighted_sum_variance and the cell decision rule (MODEL.md rev 5)",
           asm.get("weighted_sum_variance") == "exact_coefficients" and "linear-exact/combined+per-lane/0.8-0.2" in asm.get("cell_decision", ""),
           assumptions=asm)
     c.add("products compared", len([k for k in r1["files"]]) >= 18, n=len(r1["files"]))
+    # review C3 / MODEL.md rev 5 section 8: the stand-alone recomputation reproduces named cells from the archive alone
+    from rr_core.recompute import recompute_cells
+    rows = [r for r in app.pipeline.proc.cells_table() if r["n_lane_gates"]]
+    pick = []
+    for st in ("ALARM", "ACCEPTABLE", "SENSITIVITY INSUFFICIENT", "INCOMPLETE COVERAGE", "NO DECISION"):
+        pick += [r for r in rows if r["status"] == st][:2]
+    rc = recompute_cells(app.run_dir, [(r["ix"], r["iy"]) for r in pick])
+    mism = []
+    for r, q in zip(pick, rc):
+        same = (q["members_equal_processing"] and q["status"] == r["status"]
+                and all((q[k] is None and r[f"beta_window.{k}"] is None) or (q[k] is not None and r[f"beta_window.{k}"] is not None
+                        and abs(q[k] - r[f"beta_window.{k}"]) <= 1e-12 * max(1.0, abs(q[k]))) for k in ("D", "D_star", "D_hash"))
+                and q["detected"] == r["beta_window.detected"])
+        if not same:
+            mism.append({"cell": q["cell"], "recompute": q, "export": {k: r[k] for k in ("status", "beta_window.D", "beta_window.D_star", "beta_window.D_hash", "beta_window.detected")}})
+    c.add("tools/recompute_cell.py reproduces D, D*, D#, decision and status of named cells from the archive, calibration and profile",
+          bool(pick) and not mism, cells=[q["cell"] for q in rc], statuses=sorted({r["status"] for r in pick}), mismatches=mism[:3])
     n = sum(1 for _ in read_journal(app.run_dir))
     idx = [json.loads(l) for l in (app.run_dir / "journal" / "index.ndjson").read_text().splitlines()]
     c.add("raw segments sealed with digests", all(len(s["sha256"]) == 64 for s in idx) and sum(s["entries"] for s in idx) == n, entries=n)

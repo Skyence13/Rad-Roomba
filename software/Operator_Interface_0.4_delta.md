@@ -18,7 +18,7 @@ Status: implemented in `ros2_ws` and exercised in simulation only (evidence clas
 
 | Latched condition | Cleared by |
 |---|---|
-| Hardware latch dropped: E-stop, HANDS-ON, bumper/head loop, undocked head, charger, master switch | **Only the REARM button on the robot.** The page says so and refuses a remote re-arm (`LOCAL_REARM_REQUIRED`). |
+| Hardware latch dropped: E-stop, HANDS-ON, bumper/head loop, undocked head, charger, master switch | **Only the REARM button on the robot.** The page says so and refuses a remote re-arm (`LOCAL_REARM_REQUIRED`). **2026-11-28 (chassis stage 4/5, ICD 3.5/4.6, CCR-CHS-20/22):** the page shows "Press REARM once on the robot (briefly)" **only while the chassis reports `rearm_ready`** (a press will then set the latch, about 3 s after the chain closes); otherwise "Do not press REARM yet" with the reason (element open or unknown, fault/warning flags, last refusal). Every press either sets the latch or is refused within 300 ms; a refused press is shown with the chassis' reason and action (`NOT_READY` / `LOOP_TEST`: press again when the lamp is steady; `TOO_SHORT`: press a little longer; `SUPPLY_LOW`: charge or swap the pack; `REARM_HELD_AFTER_SET`: the latch dropped because REARM was held 5 s - press it briefly). Warning `BATTERY_REARM_LOW` (VBAT <= 12.0 V) is shown in red as "change or charge the pack before the next stop" (re-arming needs about 11.7 V, the battery-low stop is at 11.2 V); `REARM_RB_FAULT` as "next arming withheld until the chassis is reset (service)". |
 | Software protective stop (cliff/rear field, command timeout, host-asserted `FIELD_*`, `HEAD_LINK`, `LOCALIZATION`) | **Re-arm (software)** by the controlling operator once the cause is gone, or the local button. |
 | Controlled-stop hold (web Pause, lost controlling session during a guided move) and a **Pause pressed on the robot** | Re-arm (software) by the controlling operator, or the local button (owner decision 2026-11-26). |
 
@@ -47,10 +47,17 @@ The method is fixed for a mission and shown with every result.
 ## 5. Scan view
 
 - Three separate layers: **coverage quality** (patterns: diagonal = unvisited, crosses = invalid data, dots = insufficient sensitivity, bars = blocked, solid = acceptable), **activity** (signed Bq/cm² per decision cell; the colour clips, the data do not), **detection limit**.
-- Cells are 10 cm decision cells; nothing is interpolated between them. Coverage is accounted on 5 mm sub-cells with the footprint shrunk by the 10 mm position allowance; turns earn no coverage.
+- Cells are 10 cm decision cells; nothing is interpolated between them. Coverage is accounted on 5 mm sub-cells with the footprint shrunk by the **credited 2σ position uncertainty of each gate** (at most the 10 mm allowance; a gate above it earns nothing) and swept from gate start to gate end (MODEL.md rev 5 §6); turns earn no coverage.
 - Wall strips (~0.05 m per wall with the default reverse-entry wall tracks, ~0.15 m with `in_place`, in a 2.5 m trailer; calculated), the door-threshold strip and the bulkhead strip are planned residuals and are listed with position and area.
 - **Blocked strip**: an object seen within 0.8 m in the swept path makes the robot wait without a latch; after the patience time the strip is deferred, marked *blocked*, and retried once after the other passes. A person stepping inside the protective zone (0.25 m look-ahead plus margin) latches a protective stop instead.
 - A red banner marks synthetic calibration/profile data on the page and on every exported map and summary.
+
+### 5a. Results shown during and after the survey (2026-11-28, MODEL.md rev 5, data-path review)
+
+- **Live values are provisional.** During the survey every cell value (D, D*, D#, flag) is a provisional evaluation on the reference data received so far and is labelled *provisional* on the page. The **recorded** result of every cell is computed once, after the survey, from the complete record; exports carry the recorded result (and the provisional one beside it, labelled). A live alarm that the recorded evaluation does not confirm is shown as *provisional alarm not confirmed*; an alarm found only at the final evaluation is added to the review queue and to the revisit list (*alarm found at final evaluation*).
+- **Cell status** replaces the coverage-quality legend: `ALARM` (magenta with a black hatch, never green; also for a gate saturated by rate), `NO DECISION` (grid pattern, with the reason), `INCOMPLETE COVERAGE` (amber hatch: coverage below the profile minimum, no credited gate, or a gate excluded for a fault), `SENSITIVITY INSUFFICIENT` (dots, with the reason: D# above the goal, calibration envelope, reference gradient), `ACCEPTABLE` (solid green, only when none of the above). Precedence in that order. Floor swept while gate records were lost is `ACQUISITION GAP` (grey dots), not *unvisited*.
+- An alarm is **never suppressed by coverage**: a cell with an alarm is queued whatever its coverage, with the coverage stated.
+- A head with a calibration whose identity was not checked (demonstration binding) is marked **DEMONSTRATION CALIBRATION BINDING** on the page and on every product, next to the synthetic banner.
 
 ## 6. Review flagged areas
 

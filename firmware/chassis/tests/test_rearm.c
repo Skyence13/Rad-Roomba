@@ -47,7 +47,7 @@ static void press(th_t *t, int ms)
 /* hardware threshold of the emulator: C_SET can drive the must-operate current for the operate time */
 static bool hw_can_set(th_t *t)
 {
-    double tc = isfinite(t->sim.k1_coil_c) ? t->sim.k1_coil_c : t->sim.temp[2];
+    double tc = isfinite(t->sim.k1_coil_c) ? t->sim.k1_coil_c : t->sim.temp[2] + t->sim.coil_heat_k;
     double rc = 1028.0 * (1.0 + 0.00393 * (tc - 23.0));
     double tau = rc * t->sim.cset_uf * 1e-6;
     return t->sim.vc * exp(-t->sim.k1_pickup_ms * 1e-3 / tau) / rc > 8.75e-3;
@@ -412,12 +412,21 @@ int main(void)
         CHECK(t->sim.latch);
     }
 
-    SECTION("stage-4 review S4: a stuck-on test FET is diagnosed as such, not as the wrong channel");
+    SECTION("stage-4 review S4 / stage 5 H3: a stuck-on Q_LTA is no longer mistaken for channel B");
     {
-        th_t *t = th_new(1570); /* Q_LTA shorted: channel A and the analog copy read open, B closed */
+        th_t *t = th_new(1570); /* stage 5: analog copy from LOOP_SNS: A open, analog OK, B closed */
         th_env(t, "{\"lta_stuck\":true}");
         th_run_silent(t, 800);
-        CHECK(fault(t, RRCH_FLT(LOOP_FAIL)) && t->sim.core.chain.loop_cause == RRCH_LC_TEST_PATH_A && th_req(t, "DIAG", "{}") && th_is(t, "loop_cause", "TEST_PATH_A"));
+        uint8_t c5 = t->sim.core.chain.loop_cause;
+        printf("  SIMULATED: Q_LTA stuck on, stage 5 (analog from LOOP_SNS): LOOP_DISCREPANCY %d, LOOP_FAIL %d, cause %s, ARM_PERMIT %d\n", fault(t, RRCH_FLT(LOOP_DISCREPANCY)),
+               fault(t, RRCH_FLT(LOOP_FAIL)), rrch_lcause_names[c5], t->sim.core.out.arm_permit);
+        CHECK(fault(t, RRCH_FLT(LOOP_DISCREPANCY)) && !(t->sim.core.faults & FATAL) && c5 == RRCH_LC_A_OPEN_OR_TEST_PATH_A && !t->sim.core.out.arm_permit &&
+              th_req(t, "DIAG", "{}") && th_is(t, "loop_cause", "A_OPEN_OR_TEST_PATH_A"));
+        t = th_new(1573); /* stage-4 option (analog from LOOP_F): the ambiguous case, settled by the LOOP_TEST_B pulse */
+        th_env(t, "{\"lta_stuck\":true,\"analog_from_loop_f\":true}");
+        th_run_silent(t, 800);
+        printf("  SIMULATED: Q_LTA stuck on, stage-4 analog source: LOOP_FAIL %d, cause %s\n", fault(t, RRCH_FLT(LOOP_FAIL)), rrch_lcause_names[t->sim.core.chain.loop_cause]);
+        CHECK(fault(t, RRCH_FLT(LOOP_FAIL)) && t->sim.core.chain.loop_cause == RRCH_LC_TEST_PATH_A);
         t = th_new(1571); /* channel B really stuck healthy, loop open at 2.5 kOhm */
         th_run_silent(t, 400);
         th_env(t, "{\"loop_b_stuck_ok\":true,\"loop_ohm\":2500}");
@@ -427,13 +436,18 @@ int main(void)
         th_env(t, "{\"ltb_stuck\":true}");
         th_run_silent(t, 800);
         CHECK(fault(t, RRCH_FLT(LOOP_DISCREPANCY)) && !(t->sim.core.faults & FATAL) && t->sim.core.chain.loop_cause == RRCH_LC_B_OPEN_OR_TEST_PATH_B && !t->sim.core.out.arm_permit);
-        printf("  SIMULATED: Q_LTA stuck -> %s; B stuck -> B_STUCK_HEALTHY; Q_LTB stuck -> %s (non-fatal)\n", rrch_lcause_names[RRCH_LC_TEST_PATH_A], rrch_lcause_names[t->sim.core.chain.loop_cause]);
     }
 
-    SECTION("stage-4 review S3: the set-contact readback misses the high level (3V3 high, VIH 0.8 x 3V3): readback fault, not fatal; C1 unchanged");
+    SECTION("stage-4 review S3 / stage 5 H1: clamped GPB6 reads high at any 3V3; with the stage-4 divider a missed high is a readback fault, not fatal; C1 unchanged");
     {
+        th_t *t0 = th_new(1579); /* stage 5 default: GPB6 high = 3V3 + 0.2 V */
+        th_env(t0, "{\"v3v3\":3.45}");
+        (void)wait_ready(t0, 15000);
+        press(t0, 200);
+        th_run_silent(t0, 400);
+        CHECK(t0->sim.latch && !fault(t0, RRCH_FLT(REARM_RB_FAULT)));
         th_t *t = th_new(1580);
-        th_env(t, "{\"v3v3\":3.55}"); /* VIH(max) 2.84 V > GPB6 2.80 V: the set line never reads closed */
+        th_env(t, "{\"v3v3\":3.55,\"set_rb_v\":2.80}"); /* stage-4 divider, VIH(max) 2.84 V > GPB6 2.80 V: the set line never reads closed */
         (void)wait_ready(t, 15000);
         press(t, 200);
         th_run_silent(t, 400);
@@ -451,28 +465,37 @@ int main(void)
         CHECK(fault(t, RRCH_FLT(LATCH_NO_REARM)) || fault(t, RRCH_FLT(K1_WELD)) || t->sim.n_resets > 0u);
     }
 
-    SECTION("stage-4 review S2 / stage 5 H2: COIL_HOT is a warning only (press still offered); the NTC-to-coil estimate is configurable");
+    SECTION("stage-4 review S2 / stage 5 H2: RT1 beside K1 + self-heat term; COIL_HOT is a warning only (press still offered)");
     {
-        th_t *t = th_new(1590);
-        th_env(t, "{\"temp_board\":35,\"board_ntc_rise_k\":15}"); /* stage-4 RT1 beside the bridges: NTC 50 C, coil 35 C */
-        int w = wait_ready(t, 15000);
-        bool warn = fault(t, RRCH_FLT(COIL_HOT));
+        th_t *t = th_new(1590); /* board 38 C, armed for 10 min: coil self-heating (10 K, tau 300 s) brings the estimate above 45 C */
+        th_env(t, "{\"temp_board\":38}");
+        (void)wait_ready(t, 15000);
         press(t, 200);
         th_run_silent(t, 400);
-        printf("  SIMULATED: NTC 50 C / coil 35 C: ready after %d ms with warning COIL_HOT %d; a press sets %d (lamp and hardware agree)\n", w, warn, t->sim.latch);
-        CHECK(w >= 0 && warn && t->sim.latch && !(t->sim.core.faults & FATAL));
-        t = th_new(1591);
-        th_env(t, "{\"temp_board\":35,\"board_ntc_rise_k\":15}");
-        t->sim.core.cfg.v[RRCH_CFG_REARM_NTC_OFFSET_K] = 15.0f;
+        CHECK(t->sim.latch && !fault(t, RRCH_FLT(COIL_HOT)));
+        for (int k = 0; k < 600 && t->sim.latch; k++) {
+            th_run_silent(t, 1000);
+        }
+        bool warn = fault(t, RRCH_FLT(COIL_HOT));
+        printf("  SIMULATED: board 38 C, armed 10 min: coil %.1f C (emulator), estimate %.1f C, COIL_HOT %d\n", t->sim.temp[2] + t->sim.coil_heat_k, (double)t->sim.core.chain.coil_c, warn);
+        CHECK(warn && t->sim.latch);
+        th_env(t, "{\"bumper_r\":true}");
         th_run_silent(t, 1000);
-        CHECK(!fault(t, RRCH_FLT(COIL_HOT)));
-        t = th_new(1592); /* coil really at 60 C: offered (warning), the outcome is reported COIL_HOT if it fails, never silent */
-        th_env(t, "{\"temp_board\":60,\"k1_coil_c\":75}");
-        (void)wait_ready(t, 15000);
+        th_env(t, "{\"bumper_r\":false}");
+        int w = wait_ready(t, 15000);
         uint64_t s0 = t->sim.core.ev_newest;
         press(t, 200);
-        th_run_silent(t, 500);
-        CHECK(t->sim.latch || count_ev(t, s0, RRCH_EV_REARM_REFUSED, RRCH_RREF_COIL_HOT) == 1);
+        th_run_silent(t, 400);
+        printf("  SIMULATED: after the drop: offered after %d ms with the warning, press sets %d (else reported COIL_HOT %d)\n", w, t->sim.latch,
+               count_ev(t, s0, RRCH_EV_REARM_REFUSED, RRCH_RREF_COIL_HOT));
+        CHECK(w >= 0 && (t->sim.latch || count_ev(t, s0, RRCH_EV_REARM_REFUSED, RRCH_RREF_COIL_HOT) == 1));
+        t = th_new(1591); /* stage-4 RT1 position (beside the bridges, 15 K high) is selectable; the offset corrects it */
+        th_env(t, "{\"temp_board\":35,\"board_ntc_rise_k\":15}");
+        th_run_silent(t, 1000);
+        CHECK(fault(t, RRCH_FLT(COIL_HOT)));
+        t->sim.core.cfg.v[RRCH_CFG_REARM_NTC_OFFSET_K] = 15.0f;
+        th_run_silent(t, 100);
+        CHECK(!fault(t, RRCH_FLT(COIL_HOT)));
     }
 
     SECTION("lead item 6: battery approaching the re-arm limit warns first; a SUPPLY_LOW refusal says to charge or swap the pack");

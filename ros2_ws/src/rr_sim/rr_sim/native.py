@@ -71,6 +71,11 @@ class NativeHead:
         pass
 
 
+def app_phase(app):
+    m = app.mission
+    return None if m is None else f"{m.state}:{m.phase}"
+
+
 class NativeChassis:
     """Environment socket of rr_chassis_sim (firmware/chassis/README.md): inputs + TRUTH stream."""
 
@@ -179,7 +184,10 @@ class NativeSystem:
                 smp = self.app.loc.sample()
                 self.trace.append((self.t, *pose, *[float(v) for v in self.app.loc.x[:3]], odom,
                                    self.chassis._truth.get("emu_lag_us"), self.chassis._truth.get("emu_rebases"),
-                                   (smp["credit"], smp.get("nocredit"))))
+                                   (smp["credit"], smp.get("nocredit"), app_phase(self.app), float(self.app.loc.dist_since_x),
+                                    self.app.loc.stats["x_rejects"], self.app.loc.last_update.get("x"), self.app.loc.t_us,
+                                    float(self.app.loc.x[3]), dict(self.app.loc.residuals.get("front_x") or self.app.loc.residuals.get("door_x") or {}),
+                                    self.app.loc.last_chassis_us)))
         time.sleep(0.0004)
 
     def run(self, seconds=None, until=None, timeout=600.0):
@@ -256,7 +264,33 @@ class NativeSystem:
                 "credited_with_true_error_above_budget": len(bad), "fraction_of_credited_above_budget": len(bad) / len(cred) if cred else None,
                 "max_true_error_when_credited_m": max((err(t) for t in cred), default=None),
                 "max_true_error_m": max((err(t) for t in rows), default=None), "no_credit_reasons_samples": why,
-                "localizer": {k: v for k, v in self.app.loc.status().items() if k in ("wheel_scale", "stats")}}
+                "localizer": {k: v for k, v in self.app.loc.status().items() if k in ("wheel_scale", "stats")},
+                "worst_credited": [{"t_s": round(t[0], 2), "truth": [round(v, 4) for v in t[1:4]], "est": [round(v, 4) for v in t[4:7]],
+                                    "err_m": round(err(t), 4), "phase": t[-1][2] if len(t[-1]) > 2 else None,
+                                    "dist_since_x_m": round(t[-1][3], 3) if len(t[-1]) > 3 else None,
+                                    "x_rejects": t[-1][4] if len(t[-1]) > 4 else None,
+                                    "x_fix_age_s": (round((t[-1][6] - t[-1][5]) * 1e-6, 2) if len(t[-1]) > 6 and t[-1][5] is not None and t[-1][6] is not None else None),
+                                    "last_x_residual": t[-1][8] if len(t[-1]) > 8 else None}
+                                   for t in sorted(cred, key=err, reverse=True)[:6]]}
+
+    def loc_error_at_own_time(self, lever=0.25, budget=0.010):
+        """IB-47, like for like: the localiser state against TRUTH at the chassis time of the last odometry sample the
+        state contains (not at the trace time, when odometry samples may still be queued).  Evidence: simulated."""
+        ex, bad, cred_n = [], 0, 0
+        for t in self.trace[5:]:
+            meta = t[-1]
+            if len(meta) < 10 or meta[9] is None:
+                continue
+            tr = self.truth_at_chassis_us(meta[9])
+            if tr is None:
+                continue
+            e = math.hypot(tr[0] - t[4], tr[1] - t[5]) + lever * abs(math.atan2(math.sin(tr[2] - t[6]), math.cos(tr[2] - t[6])))
+            ex.append(e)
+            if meta[0]:
+                cred_n += 1
+                bad += e > budget
+        return {"samples": len(ex), "max_err_m": max(ex, default=None), "credited": cred_n, "credited_above_budget": bad,
+                "p99_err_m": float(sorted(ex)[int(0.99 * (len(ex) - 1))]) if ex else None}
 
     def loc_error_by_chassis_time(self):
         """IB-47: estimate (state of the last odometry sample, chassis time) against TRUTH at that chassis time, instead of
